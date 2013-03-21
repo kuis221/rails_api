@@ -5,3 +5,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+u =  User.create({email: 'admin@brandscopic.com', first_name: 'Guillermo', last_name: 'Vargas', password: 'adminpass', password_confirmation: 'adminpass'}, without_protection: true)
+u.confirm!
