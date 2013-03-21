@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  b Name:
+  = @activity.name
+p
+  b Start date:
+  = @activity.start_date
+p
+  b End date:
+  = @activity.end_date
+
+= link_to 'Edit', edit_activity_path(@activity)
+'|
+= link_to 'Back', activities_path
