@@ -1,0 +1,58 @@
+/*
+ *= require "theme/jquery-ui-1.8.21.custom.css"
+ *= require "theme/fullcalendar.css"
+ *= require "theme/chosen.css"
+ *= require "theme/uniform.default.css"
+ *= require "theme/jquery.cleditor.css"
+ *= require "theme/jquery.noty.css"
+ *= require "theme/noty_theme_default.css"
+ *= require "theme/elfinder.min.css"
+ *= require "theme/elfinder.theme.css"
+ *= require "theme/jquery.iphone.toggle.css"
+ *= require "theme/uploadify.css"
+ *= require "theme/jquery.gritter.css"
+ *= require "theme/font-awesome.css"
+ *= require "theme/font-awesome-ie7.css"
+ *= require 'theme/style.css'
+ *= require 'theme/style-responsive.css'
+*/
+
+body {
+	background: url(/assets/bg.jpg) repeat right top;
+}
+// body *{
+//   box-sizing: border-box;
+// }
+// input,span {
+//   box-sizing: content-box;
+// }
+#content {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding: 25px 10px 25px 20px;
+}
+.box-header.nav-bar{
+  height: auto;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+.box-header.nav-bar{
+  height: auto;
+}
+
+.login-box {
+	.btn-primary{
+		margin: 0 10px 10px 0;
+	}
+	input[type="text"], input[type="password"], label  {
+		color: #555555;
+		font-size: 14px;
+	}
+	.remember {
+		margin-top: 0px;
+	}
+}

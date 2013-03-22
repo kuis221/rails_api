@@ -1,8 +1,10 @@
-h1 Editing activity
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-calendar
+        span.break
+        = "Edit Activity"
+    .box-content
 
-== render 'form'
-
-= link_to 'Show', @activity
-'|
-= link_to 'Back', activities_path
-
+      == render 'form'

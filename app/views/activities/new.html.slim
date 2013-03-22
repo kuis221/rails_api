@@ -1,5 +1,10 @@
-h1 New activity
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-calendar
+        span.break
+        = "New Activity"
+    .box-content
 
-== render 'form'
-
-= link_to 'Back', activities_path
+      == render 'form'

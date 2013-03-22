@@ -1,0 +1,30 @@
+doctype html
+/[if lt IE 7]
+  | <html class="ie6">
+/[if IE 7]
+  | <html class="ie7">
+/[if IE 8]
+  | <html class="ie8">
+/[if IE 9]
+  | <html class="ie9">
+| <!--[if (gte IE 9)|!(IE)]<!--> <html> <!--<![endif]-->
+head
+  meta name="viewport" content="width=device-width, initial-scale=1.0"
+  title= content_for?(:title) ? yield(:title) : "Nightowl"
+  meta content=(content_for?(:description) ? yield(:description) :"Nightowl") name="description"
+    = stylesheet_link_tag "application", :media => "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+    = yield(:head)
+body class="#{controller_name} #{action_name}"
+  .container-fluid.row-fluid
+    #content.span12
+      - if content_for?(:subnav)
+        #subnav
+          .box-header.nav-bar.btn-toolbar
+            = yield :subnav
+
+      = render 'layouts/messages'
+
+      = yield
+| </html>

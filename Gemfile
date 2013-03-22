@@ -17,6 +17,7 @@ gem 'thin'
 gem 'simple_form'
 gem 'inherited_resources'
 gem 'clerk'
+gem 'faker'
 
 # Gems used only for assets and not required
 # in production environments by default.
