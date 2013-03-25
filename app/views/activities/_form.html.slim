@@ -3,8 +3,10 @@
 
   .form-inputs
     = f.input :name
-    = f.input :start_date, :as => :date_picker
-    = f.input :end_date, :as => :date_picker
+    = f.input :start_date_date, :as => :date_picker
+    = f.input :start_date_time, :as => :time_picker
+    = f.input :end_date_date, :as => :date_picker
+    = f.input :end_date_time, :as => :time_picker
 
   .form-actions
     = f.button :submit

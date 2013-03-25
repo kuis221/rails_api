@@ -2,4 +2,10 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      activity:
+        start_date_date: "Start date"
+        start_date_time: "Start time"
+        end_date_date: "End date"
+        end_date_time: "End time"
