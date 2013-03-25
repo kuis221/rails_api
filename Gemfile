@@ -12,12 +12,15 @@ gem "rolify", ">= 3.2.0"
 gem "slim", ">= 2.0.0.pre.6"
 gem "slim-rails"
 gem "annotate", ">=2.5.0",  :group => :development
-gem "quiet_assets", ">= 1.0.1", :group => :development
+#gem "quiet_assets", ">= 1.0.1", :group => :development
 gem 'thin'
 gem 'simple_form'
 gem 'inherited_resources'
+gem 'has_scope'
 gem 'clerk'
 gem 'faker'
+gem 'rabl'
+gem 'oj'
 
 # Gems used only for assets and not required
 # in production environments by default.
