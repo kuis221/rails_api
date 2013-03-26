@@ -12,5 +12,7 @@
  *= require 'theme/bootstrap'
  *= require 'bootstrap-override'
  *= require 'theme/bootstrap-responsive'
+ *= require 'fullcalendar'
+ *= require 'fullcalendar-custom'
  *= require_directory .
  */

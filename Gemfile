@@ -12,7 +12,7 @@ gem "rolify", ">= 3.2.0"
 gem "slim", ">= 2.0.0.pre.6"
 gem "slim-rails"
 gem "annotate", ">=2.5.0",  :group => :development
-#gem "quiet_assets", ">= 1.0.1", :group => :development
+gem "quiet_assets", ">= 1.0.1", :group => :development
 gem 'thin'
 gem 'simple_form'
 gem 'inherited_resources'

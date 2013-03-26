@@ -1,3 +1,19 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
+jQuery ->
+	$('#calendar').fullCalendar {
+
+		editable: false,
+
+		header: {
+			left: 'title',
+			right: 'prev,next today,month,agendaWeek,agendaDay'
+		},
+
+		events:{ url: "/activities.json", cache: true }
+
+		loading: (bool) ->
+			if bool
+				$('#loading').show()
+			else
+				$('#loading').hide()
+
+	}

@@ -1,0 +1,36 @@
+.fc-widget-header {
+	background-image: -moz-linear-gradient(top, #fafafa, #efefef);
+  	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fafafa), to(#efefef));
+  	background-image: -webkit-linear-gradient(top, #fafafa, #efefef);
+  	background-image: -o-linear-gradient(top, #fafafa, #efefef);
+  	background-image: linear-gradient(to bottom, #fafafa, #efefef);
+	color: #646464;
+}
+
+.fc-button {
+position: relative;
+display: inline-block;
+cursor: pointer;
+margin-top: -51px;
+padding: 7px;
+
+}
+
+.fc-state-default, .fc-state-default .fc-button-inner {
+border-top-style: none;
+border-bottom-style: none;
+border-left-style: solid;
+border-right-style: solid;
+border-color: #ddd;
+background: transparent;
+color: #646464;
+border-top-left-radius: 0;
+border-bottom-left-radius: 0;
+}
+.fc-state-active, .fc-state-active .fc-button-inner {
+border-color: #ddd;
+background: #fcfcfc;
+color: #646464;
+border-bottom: 1px solid #fcfcfc;
+box-shadow: none;
+}
