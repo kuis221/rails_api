@@ -2,8 +2,10 @@
 
 FactoryGirl.define do
   factory :activity do
-    name "MyString"
-    start_date "2013-03-20 08:41:27"
-    end_date "2013-03-20 08:41:27"
+    name "Test Event"
+    start_date_date "02/27/2015"
+    start_date_time "03:20 PM"
+    end_date_date "02/27/2015"
+    end_date_time "05:00 PM"
   end
 end

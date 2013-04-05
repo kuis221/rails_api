@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: activities
+#
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  start_date    :datetime
+#  end_date      :datetime
+#  created_by_id :integer
+#  updated_by_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
 class Activity < ActiveRecord::Base
   attr_accessible :end_date, :name, :start_date, :start_date_date, :end_date_date, :start_date_time, :end_date_time
 
@@ -5,6 +19,10 @@ class Activity < ActiveRecord::Base
   before_validation   :parse_start_end
   after_initialize :set_event_dates
   attr_accessor       :start_date_date, :start_date_time, :end_date_date, :end_date_time
+
+  validates :name, presence: true
+  validates :start_date, presence: true
+  validates :end_date, presence: true
 
   validate :valid_start_end_dates
 
@@ -14,17 +32,21 @@ class Activity < ActiveRecord::Base
   private
 
     def valid_start_end_dates
-      if end_date <= start_date
+      if start_date and end_date and end_date <= start_date
         errors.add(:end_date_date, 'have to be after the start date')
       end
       true
     end
 
     def parse_start_end
-      parts = self.start_date_date.split("/")
-      self.start_date = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.start_date_time].join(' '))
-      parts = self.end_date_date.split("/")
-      self.end_date = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.end_date_time].join(' '))
+      if self.start_date_date
+        parts = self.start_date_date.split("/")
+        self.start_date = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.start_date_time].join(' '))
+      end
+      if self.end_date_date
+        parts = self.end_date_date.split("/")
+        self.end_date = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.end_date_time].join(' '))
+      end
     end
 
     def set_event_dates # get dates
