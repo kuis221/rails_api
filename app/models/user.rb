@@ -29,10 +29,30 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable,
+         :recoverable, :rememberable, :trackable
+
+
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates_presence_of   :email
+  validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
+  validates_format_of     :email, :with  => /\A[^@]+@[^@]+\z/, :allow_blank => true, :if => :email_changed?
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name
+
+  after_create :generate_password, :unless => :password
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+
+  private
+    def generate_password
+      generate_reset_password_token! if should_generate_reset_token?
+      UserMailer.password_generation(self).deliver
+    end
 
 end

@@ -26,5 +26,34 @@
 require 'spec_helper'
 
 describe User do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:first_name) }
+  it { should validate_presence_of(:last_name) }
+  it { should validate_presence_of(:email) }
+
+  it { should allow_mass_assignment_of(:first_name) }
+  it { should allow_mass_assignment_of(:last_name) }
+  it { should allow_mass_assignment_of(:email) }
+
+  it { should allow_value('guilleva@gmail.com').for(:email) }
+
+
+  describe 'new user creation' do
+    it 'should send a password_generation email' do
+      @user = FactoryGirl.build(:user, :password => nil, :password_confirmation => nil)
+      UserMailer.should_receive(:password_generation).with(@user).and_return(double(:deliver => true))
+      @user.save!
+    end
+
+    it 'should generate a reset password token' do
+      @user = FactoryGirl.build(:user, :reset_password_token => nil, :password => nil, :password_confirmation => nil)
+      @user.save!
+      @user.reset_password_token.should_not be_nil
+    end
+
+    it 'should NOT generate a reset password token if the a password is provided' do
+      @user = FactoryGirl.build(:user, :password => 'AbcDEF123!', :password_confirmation => 'AbcDEF123!')
+      @user.save!
+      @user.reset_password_token.should be_nil
+    end
+  end
 end

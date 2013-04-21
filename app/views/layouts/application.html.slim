@@ -17,14 +17,28 @@ head
     = csrf_meta_tags
     = yield(:head)
 body class="#{controller_name} #{action_name}"
-  .container-fluid.row-fluid
-    #content.span12
-      - if content_for?(:subnav)
-        #subnav
-          .box-header.nav-bar.btn-toolbar
-            = yield :subnav
+  header
+    h1 Legacy Marketing Partners
 
-      = render 'layouts/messages'
 
-      = yield
+  - sub_nav = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-list')
+  - content_span_size = sub_nav.nil? ? 12 : 10
+
+  .container-fluid
+    .row-fluid
+      div.span12
+        .box-content
+          = render_navigation renderer: :bootstrap, nav_class: 'nav-tabs'
+          .tab-content
+            .tab-pane.active
+              .row-fluid
+                .span12
+                  - if sub_nav
+                    .nav-collapse.sidebar-nav
+                      .span2.main-menu-span= sub_nav
+
+                  div class="span#{content_span_size}"
+                      = render 'layouts/messages'
+
+                      = yield
 | </html>
