@@ -7,7 +7,7 @@
         = "Users"
     .box-content
 
-      table#users-list2.table.table-striped.table-bordered
+      table#users-list.table.table-striped.table-bordered
         thead
           tr
             th First Name
@@ -22,10 +22,10 @@
 
 br
 
-= link_to 'New User', new_user_path, class: 'btn btn-primary'
+= link_to 'New User', new_user_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
-  $('#users-list2').dataTable({
+  $('#users-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sPaginationType": "bootstrap",
         "bProcessing": true,

@@ -9,7 +9,13 @@ Brandscopic::Application.routes.draw do
     resources :users
   end
 
+  # resources :users, only: [] do
+  #   collection do
+  #     get :dashboard
+  #   end
+  # end
 
-  root :to => 'activities#index'
+
+  root :to => 'users#dashboard'
 
 end

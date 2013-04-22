@@ -13,6 +13,6 @@ node :iTotalDisplayRecords do
 end
 
 node :aaData do
-  @resource_collection.map{|u| [u.first_name, u.last_name, u.email]}
+  @resource_collection.map{|u| datatable_resource_values(u) }
 end
 
