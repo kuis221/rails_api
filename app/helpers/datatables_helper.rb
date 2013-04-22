@@ -33,7 +33,7 @@ module DatatablesHelper
       conditions = []
       values = []
 
-      if params[:sSearch]
+      if params[:sSearch] && !params[:sSearch].empty?
         query = "%#{params[:sSearch]}%"
         self.class.datatable.columns.each do |column|
           if column[:searchable]
