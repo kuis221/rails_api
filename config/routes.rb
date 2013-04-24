@@ -6,14 +6,12 @@ Brandscopic::Application.routes.draw do
   resources :activities
 
   scope '/admin' do
-    resources :users
+    resources :users do
+      member do
+        get :deactivate
+      end
+    end
   end
-
-  # resources :users, only: [] do
-  #   collection do
-  #     get :dashboard
-  #   end
-  # end
 
 
   root :to => 'users#dashboard'

@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (3.0.16)
     actionmailer (3.2.13)
       actionpack (= 3.2.13)
       mail (~> 2.5.3)
@@ -217,6 +218,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aasm
   annotate (>= 2.5.0)
   cancan (>= 1.6.8)
   capybara (>= 2.0.2)

@@ -25,6 +25,7 @@
 
 class User < ActiveRecord::Base
   include SentientUser
+  include AASM
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
@@ -44,10 +45,24 @@ class User < ActiveRecord::Base
 
   after_create :generate_password, :unless => :password
 
+  aasm do
+    state :invited, :initial => true
+    state :active
+    state :inactive
+
+    event :activate do
+      transitions :from => [:inactive, :invited], :to => :active
+    end
+
+    event :deactivate do
+      transitions :from => [:active, :invited], :to => :inactive
+    end
+
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
-
 
   private
     def generate_password

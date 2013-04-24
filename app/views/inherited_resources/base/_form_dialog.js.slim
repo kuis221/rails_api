@@ -1,0 +1,16 @@
+|
+  var user_modal, container = $('#user-form-modal');
+  var content = "#{escape_javascript(render partial: 'form', locals: {remote: true})}";
+  if (!container.length) {
+    container = $('<div id="user-form-modal">'+content+'</div>');
+    user_modal = bootbox.dialog(container);
+  } else {
+    container.html(content);
+  }
+
+  user_modal.find("form").validate();
+  user_modal.find('.btn-cancel').click(function(e){
+    e.preventDefault();
+    user_modal.modal('hide');
+    return false;
+  });

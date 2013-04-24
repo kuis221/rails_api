@@ -15,17 +15,35 @@ module DatatablesHelper
   end
 
   module InstanceMethods
+    def datatable
+      self.class.datatable
+    end
     def datatable_resource_values(resource)
-      self.class.datatable.columns.map{|column| resource.try(column[:attr].to_sym)}
+      actions = []
+      columns = datatable.columns.map{|column| resource.try(column[:attr].to_sym)}
+      if datatable.editable
+        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-edit'), view_context.url_for([:edit, resource]), {remote: true})
+      end
+      if datatable.deactivable
+        if resource.active?
+          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-check'), view_context.url_for([:deactivate, resource]), {remote: true})
+        else
+          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for([:deactivate, resource]), {remote: true})
+        end
+      end
+
+      columns.push actions.join ' ' unless actions.empty?
     end
 
     def end_of_association_chain
       if params.has_key?(:sEcho)
         per_page = params[:iDisplayLength]
         current_page = (params[:iDisplayStart].to_i/per_page.to_i rescue 0)+1
-        super.paginate(:page => current_page, :per_page => per_page, :conditions =>  search_conditions, :order => "#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
+        #super.paginate(:page => current_page, :per_page => per_page, :conditions =>  search_conditions, :order => "#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
+        super.where(search_conditions).order("#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
       else
-        super.paginate(:page => 1, :per_page => 10)
+        #super.paginate(:page => 1, :per_page => 10)
+        super
       end
     end
 
@@ -42,8 +60,8 @@ module DatatablesHelper
           end
         end
       end
-      Rails.logger.debug values.inspect
-      [conditions.join(' OR '), values]
+      Rails.logger.debug [conditions.join(' OR '), values].flatten
+      [conditions.join(' OR '), values].flatten
     end
 
     def set_datatables_vars
@@ -61,6 +79,9 @@ end
 
 module DataTable
   class Base
+    attr_accessor :editable
+    attr_accessor :deactivable
+
     def initialize(klass)
       @klass = klass
     end
@@ -77,5 +98,6 @@ module DataTable
     def column_sort(index)
       @columns[index.to_i][:column_name]
     end
+
   end
 end

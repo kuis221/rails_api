@@ -23,6 +23,7 @@ gem 'rabl'
 gem 'oj'
 gem 'simple-navigation'
 gem 'will_paginate'
+gem 'aasm'
 
 # Gems used only for assets and not required
 # in production environments by default.
