@@ -1,0 +1,15 @@
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-user
+        span.break
+        = "New Team"
+    .box-content
+
+      == render 'form'
+
+javascript:
+  $("#new_team").validate();
+
+/ = link_to 'Back', teams_path

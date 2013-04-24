@@ -1,0 +1,18 @@
+p#notice = notice
+
+p
+  b Name:
+  = @team.name
+p
+  b Description:
+  = @team.description
+p
+  b Created by:
+  = @team.created_by_id
+p
+  b Updated by:
+  = @team.updated_by_id
+
+= link_to 'Edit', edit_team_path(@team)
+'|
+= link_to 'Back', teams_path
