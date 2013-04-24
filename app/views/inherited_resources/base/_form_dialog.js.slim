@@ -1,8 +1,8 @@
 |
-  var user_modal, container = $('#user-form-modal');
+  var user_modal, container = $('#resource-form-modal');
   var content = "#{escape_javascript(render partial: 'form', locals: {remote: true})}";
   if (!container.length) {
-    container = $('<div id="user-form-modal">'+content+'</div>');
+    container = $('<div id="resource-form-modal">'+content+'</div>');
     user_modal = bootbox.dialog(container);
   } else {
     container.html(content);

@@ -16,3 +16,4 @@
 .rvmrc
 .vagrant
 Vagrantfile
+config/database.yml
