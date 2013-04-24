@@ -13,23 +13,25 @@
             th First Name
             th Last Name
             th Email
+            th
         tbody
-          - @users.each do |user|
-            tr
-              td= user.first_name
-              td= user.last_name
-              td= link_to user.email, user
+          / - @users.each do |user|
+          /   tr
+          /     td= user.first_name
+          /     td= user.last_name
+          /     td= user.email
+          /     td= link_to content_tag(:i, '', class: 'icon-edit'), edit_user_path(user), {remote: true}
 
-br
 
-= link_to 'New User', new_user_path, {remote: true, class: 'btn btn-primary'}
+      = link_to 'New User', new_user_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
-  $('#users-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sPaginationType": "bootstrap",
+  var resourceTable = $('#users-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        //"sPaginationType": "bootstrap",
+        "bPaginate": false,
         "bProcessing": true,
-        "bServerSide": true,
+        "bServerSide": false,
         "sAjaxSource": "#{users_path(format: :table)}",
         "iDeferLoading": #{@users.count}
   })

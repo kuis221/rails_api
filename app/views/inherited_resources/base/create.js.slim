@@ -1,0 +1,8 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    if (resourceTable) {
+      resourceTable.fnReloadAjax();
+    }

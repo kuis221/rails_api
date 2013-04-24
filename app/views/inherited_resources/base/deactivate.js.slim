@@ -1,0 +1,8 @@
+- if resource.errors.any?
+  |
+    bootbox.alert('Unknown error')
+- else
+  |
+    if (resourceTable) {
+      resourceTable.fnReloadAjax();
+    }
