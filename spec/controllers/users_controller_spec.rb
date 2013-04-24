@@ -9,17 +9,8 @@ describe UsersController do
   describe "GET 'edit'" do
     let(:user){ FactoryGirl.create(:user) }
     it "returns http success" do
-      get 'edit', id: @user.to_param
+      get 'edit', id: @user.to_param, format: :js
       response.should be_success
-    end
-  end
-
-  describe "GET 'show'" do
-    let(:user){ FactoryGirl.create(:user) }
-    it "returns http success" do
-      get 'show', id: @user.to_param
-      response.should be_success
-      assigns(:user).should == @user
     end
   end
 
@@ -32,7 +23,7 @@ describe UsersController do
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create'
+      post 'create', format: :js
       response.should be_success
     end
   end
