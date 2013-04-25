@@ -22,6 +22,5 @@ class UsersController < InheritedResources::Base
   end
 
   def dashboard
-
   end
 end
