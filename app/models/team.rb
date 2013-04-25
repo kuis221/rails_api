@@ -22,6 +22,9 @@ class Team < ActiveRecord::Base
   has_many :teams_users
   has_many :users, :through => :teams_users
 
+
+  scope :active, where(:active => true)
+
   def activate
     update_attribute :active, true
   end

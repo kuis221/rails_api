@@ -60,8 +60,8 @@ ActiveRecord::Schema.define(:version => 20130425202111) do
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.string   "aasm_state"
-    t.integer  "teams_count",            :default => 0
     t.integer  "user_group_id"
+    t.integer  "teams_count",            :default => 0
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

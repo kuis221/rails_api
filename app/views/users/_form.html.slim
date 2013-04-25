@@ -6,8 +6,12 @@
     = f.input :first_name
     = f.input :last_name
     = f.input :email
+    = f.association :teams, collection: Team.active.all
     = f.association :user_group
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
+
+javascript:
+  $('#user_team_ids').select2();
