@@ -20,7 +20,14 @@ module DatatablesHelper
     end
     def datatable_resource_values(resource)
       actions = []
-      columns = datatable.columns.map{|column| resource.try(column[:attr].to_sym)}
+      columns = datatable.columns.map do |column|
+        if resource.respond_to?("#{column[:attr]}_format".to_sym)
+          resource.try("#{column[:attr]}_format".to_sym)
+        else
+          resource.try(column[:attr].to_sym)
+        end
+      end
+
       if datatable.editable
         actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-edit'), view_context.url_for([:edit, resource]), {remote: true})
       end

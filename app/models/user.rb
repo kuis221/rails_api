@@ -21,6 +21,8 @@
 #  unconfirmed_email      :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  aasm_state             :string(255)
+#  teams_count            :integer
 #
 
 class User < ActiveRecord::Base
@@ -45,6 +47,10 @@ class User < ActiveRecord::Base
 
   after_create :generate_password, :unless => :password
 
+  # Teams-Users relationship
+  has_many :teams_users
+  has_many :teams, :through => :teams_users
+
   aasm do
     state :invited, :initial => true
     state :active
@@ -57,7 +63,6 @@ class User < ActiveRecord::Base
     event :deactivate do
       transitions :from => [:active, :invited], :to => :inactive
     end
-
   end
 
   def full_name

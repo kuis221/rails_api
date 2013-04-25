@@ -11,6 +11,12 @@ Brandscopic::Application.routes.draw do
         get :deactivate
       end
     end
+
+    resources :teams do
+      member do
+        get :deactivate
+      end
+    end    
   end
 
 

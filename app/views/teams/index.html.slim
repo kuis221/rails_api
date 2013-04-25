@@ -10,27 +10,26 @@
       table#teams-list.table.table-striped.table-bordered
         thead
           tr
-            th Name
+            th Teams
+            th Number of Members
             th Description
+            th Status
+            th
         tbody
-          - @teams.each do |team|
-            tr
-              td= link_to team.name, team
-              td= team.description
-br
+          / - @teams.each do |team|
+          /   tr
+          /     td= link_to team.name, team
+          /     td= team.description
 
-      / td= link_to 'Show', team
-      / td= link_to 'Edit', edit_team_path(team)
-      / td= link_to 'Destroy', team, :confirm => 'Are you sure?', :method => :delete
-
-= link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
+      = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
-  $('#teams-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sPaginationType": "bootstrap",
+  var resourceTable = $('#teams-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        //"sPaginationType": "bootstrap",
+        "bPaginate": false,
         "bProcessing": true,
-        "bServerSide": true,
+        "bServerSide": false,
         "sAjaxSource": "#{teams_path(format: :table)}",
         "iDeferLoading": #{@teams.count}
   })
