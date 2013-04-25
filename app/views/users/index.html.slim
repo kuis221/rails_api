@@ -6,8 +6,7 @@
         span.break
         = "Users"
     .box-content
-
-      table#users-list.table.table-striped.table-bordered
+      table#users-list.table.table-striped.table-bordered.table-scrolled
         thead
           tr
             th First Name
@@ -15,19 +14,24 @@
             th Email
             th
         tbody
-          / - @users.each do |user|
-          /   tr
-          /     td= user.first_name
-          /     td= user.last_name
-          /     td= user.email
-          /     td= link_to content_tag(:i, '', class: 'icon-edit'), edit_user_path(user), {remote: true}
 
 
       = link_to 'New User', new_user_path, {remote: true, class: 'btn btn-primary'}
 
+
+    .box-header
+      h2
+        i.icon-user
+        span.break
+        = "User Groups"
+    .box-content
+      = render partial: 'user_groups/list'
+
+
+      = link_to 'New User Group', new_user_group_path, {remote: true, class: 'btn btn-primary'}
 javascript:
   var resourceTable = $('#users-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
         //"sPaginationType": "bootstrap",
         "bPaginate": false,
         "bProcessing": true,

@@ -23,6 +23,7 @@
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
 #  teams_count            :integer
+#  user_group_id          :integer
 #
 
 class User < ActiveRecord::Base
@@ -50,6 +51,8 @@ class User < ActiveRecord::Base
   # Teams-Users relationship
   has_many :teams_users
   has_many :teams, :through => :teams_users
+
+  belongs_to :user_group
 
   aasm do
     state :invited, :initial => true

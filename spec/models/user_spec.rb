@@ -23,6 +23,7 @@
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
 #  teams_count            :integer
+#  user_group_id          :integer
 #
 
 require 'spec_helper'
