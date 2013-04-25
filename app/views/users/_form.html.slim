@@ -6,6 +6,7 @@
     = f.input :first_name
     = f.input :last_name
     = f.input :email
+    = f.association :user_group
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}

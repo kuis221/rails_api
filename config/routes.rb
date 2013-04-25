@@ -6,6 +6,8 @@ Brandscopic::Application.routes.draw do
   resources :activities
 
   scope '/admin' do
+    resources :user_groups
+
     resources :users do
       member do
         get :deactivate
