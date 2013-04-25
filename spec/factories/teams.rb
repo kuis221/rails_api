@@ -6,5 +6,7 @@ FactoryGirl.define do
     description "MyText"
     created_by_id 1
     updated_by_id 1
+    users_count 0
+    active true
   end
 end

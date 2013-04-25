@@ -14,7 +14,9 @@
 #
 
 class Team < ActiveRecord::Base
-  attr_accessible :description, :name
+  attr_accessible :name, :description
+
+  validates :name, presence: true
 
   # Teams-Users relationship
   has_many :teams_users
