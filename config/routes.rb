@@ -1,9 +1,17 @@
 Brandscopic::Application.routes.draw do
 
 
+
   devise_for :users
 
   resources :activities
+
+
+
+  get '/users/complete-profile', to: 'users#complete', as: :complete_profile
+  put '/users/update-profile', to: 'users#update_profile', as: :update_profile
+
+  get "countries/states"
 
   scope '/admin' do
     resources :user_groups
@@ -18,7 +26,7 @@ Brandscopic::Application.routes.draw do
       member do
         get :deactivate
       end
-    end    
+    end
   end
 
 

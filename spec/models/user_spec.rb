@@ -22,8 +22,11 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
-#  teams_count            :integer
 #  user_group_id          :integer
+#  teams_count            :integer          default(0)
+#  country                :string(4)
+#  state                  :string(255)
+#  city                   :string(255)
 #
 
 require 'spec_helper'

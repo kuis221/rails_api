@@ -3,11 +3,16 @@
   = f.error_notification
 
   .form-inputs
-    = f.input :first_name
-    = f.input :last_name
-    = f.input :email
-    = f.association :teams, collection: Team.active.all
-    = f.association :user_group
+    .row-fluid
+
+      .span6
+        = f.input :first_name
+      .span6
+        = f.input :last_name
+    .row-fluid
+      = f.input :email
+      = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
+      = f.association :user_group
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}

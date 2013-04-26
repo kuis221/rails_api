@@ -56,6 +56,9 @@ GEM
       execjs
     coffee-script-source (1.6.2)
     commonjs (0.2.6)
+    countries (0.9.2)
+      currencies (>= 0.4.0)
+    currencies (0.4.0)
     daemons (1.1.9)
     database_cleaner (0.9.1)
     devise (2.2.3)
@@ -224,6 +227,7 @@ DEPENDENCIES
   capybara (>= 2.0.2)
   clerk
   coffee-rails (~> 3.2.1)
+  countries
   database_cleaner (>= 0.9.1)
   devise
   email_spec (>= 1.4.0)

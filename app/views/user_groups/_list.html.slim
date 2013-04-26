@@ -1,6 +1,7 @@
 table#users-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
+      th
       th Events
       th Tasks
       th Analysis
@@ -10,3 +11,14 @@ table#users-list.table.table-striped.table-bordered.table-scrolled
       th Other Admin
 
   tbody
+    - user_groups.each do |g|
+      tr
+        td= g.name
+        td
+        td
+        td
+        td
+        td
+        td
+        td
+

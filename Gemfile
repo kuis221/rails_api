@@ -24,6 +24,7 @@ gem 'oj'
 gem 'simple-navigation'
 gem 'will_paginate'
 gem 'aasm'
+gem 'countries'
 
 # Gems used only for assets and not required
 # in production environments by default.

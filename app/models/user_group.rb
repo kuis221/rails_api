@@ -12,4 +12,6 @@ class UserGroup < ActiveRecord::Base
   attr_accessible :name
 
   has_many :users
+
+  validate :name, presence: true
 end

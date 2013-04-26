@@ -1,0 +1,37 @@
+h2 Complete your profile
+
+= simple_form_for(resource, :url => update_profile_path, :html => { :method => :put }) do |f|
+  = f.error_notification
+
+  = f.input :reset_password_token, :as => :hidden
+  = f.full_error :reset_password_token
+
+  div.form-inputs
+    = f.input :first_name, :autofocus => true
+    = f.input :last_name
+    = f.input :email
+    = f.input :country, collection: Country.all, required: true
+    = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+    = f.input :city
+
+    = f.input :password, :label => "New password", :required => true
+    = f.input :password_confirmation, :label => "Confirm your new password", :required => true
+
+
+
+  div.form-actions
+    = f.button :submit, "Save"
+
+coffee:
+  $('form.edit_user').validate();
+  $('#user_country').change () ->
+    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+      states = $('#user_state')
+      val = states.val()
+      states.html('<option></option>')
+      for state in response.states
+        option = $('<option>').val(state.id).html(state.name)
+        if val is state.id
+          option.attr('selected', 'selected')
+        states.append(option)
+  $('#user_country').change();
