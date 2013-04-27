@@ -91,6 +91,14 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
+  def country_name
+    Country.new(country).name if country
+  end
+
+  def state_name
+    Country.new(country).states[state]['name'] if country and state
+  end
+
   private
     def generate_password
       generate_reset_password_token! if should_generate_reset_token?

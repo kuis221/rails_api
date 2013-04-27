@@ -11,12 +11,18 @@
           tr
             th First Name
             th Last Name
+            th City
+            th State
+            th Country
             th Email
+            th Access Level
+            th Teams(s)
             th
         tbody
 
-
-      = link_to 'New User', new_user_path, {remote: true, class: 'btn btn-primary'}
+      .row-fluid
+        .pull-right
+          = link_to 'Invite New User', new_user_path, {remote: true, class: 'btn btn-primary'}
 
 
     .box-header
@@ -35,5 +41,16 @@ javascript:
         "bProcessing": true,
         "bServerSide": false,
         "sAjaxSource": "#{users_path(format: :table)}",
-        "iDeferLoading": #{@users.count}
+        "iDeferLoading": #{@users.count},
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
   })

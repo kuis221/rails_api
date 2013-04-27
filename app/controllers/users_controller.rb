@@ -12,7 +12,12 @@ class UsersController < InheritedResources::Base
     columns [
       {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true},
       {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true},
-      {:attr => :email ,:column_name => 'users.email'}
+      {:attr => :city ,:column_name => 'users.city'},
+      {:attr => :state_name ,:column_name => 'users.state'},
+      {:attr => :country_name, :column_name => 'users.country'},
+      {:attr => :email ,:column_name => 'users.email'},
+      {:attr => :user_group_name ,:column_name => 'user_groups.name'},
+      {:attr => :teams, :value => Proc.new{|user| user.teams.map(&:name).join ', ' }, :column_name => 'teams.name'}
     ]
     @editable  = true
     @deactivable = true
