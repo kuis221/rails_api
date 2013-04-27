@@ -12,5 +12,6 @@
 require 'spec_helper'
 
 describe TeamsUser do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:team) }
+  it { should belong_to(:user) }
 end

@@ -62,4 +62,56 @@ describe User do
       @user.reset_password_token.should be_nil
     end
   end
+
+  describe "#full_name" do
+    let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }
+
+    it "should return the first_name and last_name concatenated" do
+      user.full_name.should == 'Juanito Perez'
+    end
+
+    it "should return only the first_name if it doesn't have last_name" do
+      user.last_name = nil
+      user.full_name.should == 'Juanito'
+    end
+
+    it "should return only the last_name if it doesn't have first_name" do
+      user.first_name = nil
+      user.full_name.should == 'Perez'
+    end
+  end
+
+  describe "#country_name" do
+    it "should return the correct country name" do
+      user = FactoryGirl.build(:user, country: 'US')
+      user.country_name.should == 'United States'
+    end
+
+    it "should return nil if the user doesn't have a country" do
+      user = FactoryGirl.build(:user, country: nil)
+      user.country_name.should be_nil
+    end
+
+    it "should return nil if the user has an invalid country" do
+      user = FactoryGirl.build(:user, country: 'XYZ')
+      user.country_name.should be_nil
+    end
+  end
+
+  describe "#state_name" do
+    it "should return the correct state name" do
+      user = FactoryGirl.build(:user, country: 'US', state: 'FL')
+      user.state_name.should == 'Florida'
+    end
+
+    it "should return nil if the user doesn't have a state" do
+      user = FactoryGirl.build(:user, country: 'US', state: nil)
+      user.state_name.should be_nil
+    end
+
+    it "should return nil if the user has an invalid state" do
+      user = FactoryGirl.build(:user, country: 'US', state: 'XYZ')
+      user.state_name.should be_nil
+    end
+  end
 end

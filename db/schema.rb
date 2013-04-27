@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130426233632) do
+ActiveRecord::Schema.define(:version => 20130427213149) do
 
   create_table "teams", :force => true do |t|
     t.string   "name"
@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(:version => 20130426233632) do
     t.integer  "updated_by_id"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
-    t.integer  "users_count",   :default => 0
     t.boolean  "active",        :default => true
   end
 
@@ -62,7 +61,6 @@ ActiveRecord::Schema.define(:version => 20130426233632) do
     t.datetime "updated_at",                                          :null => false
     t.string   "aasm_state"
     t.integer  "user_group_id"
-    t.integer  "teams_count",                         :default => 0
     t.string   "country",                :limit => 4
     t.string   "state"
     t.string   "city"

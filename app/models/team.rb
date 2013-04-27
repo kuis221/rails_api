@@ -22,8 +22,8 @@ class Team < ActiveRecord::Base
   validates :name, presence: true
 
   # Teams-Users relationship
-  has_many :teams_users
-  has_many :users, :through => :teams_users
+  has_many :teams_users, dependent: :destroy
+  has_many :users, through: :teams_users
 
   scope :active, where(:active => true)
 

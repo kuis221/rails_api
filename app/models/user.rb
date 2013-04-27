@@ -64,8 +64,8 @@ class User < ActiveRecord::Base
   after_create :generate_password, :unless => :password
 
   # Teams-Users relationship
-  has_many :teams_users
-  has_many :teams, :through => :teams_users
+  has_many :teams_users, dependent: :destroy
+  has_many :teams, through: :teams_users
 
   belongs_to :user_group
 
@@ -88,15 +88,19 @@ class User < ActiveRecord::Base
   end
 
   def full_name
-    "#{first_name} #{last_name}"
+    "#{first_name} #{last_name}".strip
   end
 
   def country_name
-    Country.new(country).name if country
+    load_country.name rescue nil unless load_country.nil?
   end
 
   def state_name
-    Country.new(country).states[state]['name'] if country and state
+    load_country.states[state]['name'] rescue nil if load_country and state
+  end
+
+  def load_country
+    @the_country ||= Country.new(country) if country
   end
 
   private

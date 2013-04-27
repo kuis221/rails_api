@@ -10,7 +10,6 @@
 #
 
 class TeamsUser < ActiveRecord::Base
-  belongs_to :team, :counter_cache => :users_count
-  belongs_to :user, :counter_cache => :teams_count
-  # attr_accessible :title, :body
+  belongs_to :team
+  belongs_to :user
 end
