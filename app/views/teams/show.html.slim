@@ -22,8 +22,8 @@
             th Status
         tbody
 
-      = link_to 'Add', new_team_path, {remote: true, class: 'btn btn-primary'}
-      = link_to 'Remove', new_team_path, {remote: true, class: 'btn'}      
+      = link_to 'Add', '#', {class: 'btn btn-primary'}
+      = link_to 'Remove', '#', {class: 'btn'}
 javascript:
   var resourceTable = $('#team-details').dataTable({
     "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
@@ -33,8 +33,3 @@ javascript:
     "bServerSide": false,
     "sAjaxSource": "#{users_team_path(resource, format: :json)}"
   })
-
-
-/ = link_to 'Edit', edit_team_path(@team)
-/ '|
-/ = link_to 'Back', teams_path
