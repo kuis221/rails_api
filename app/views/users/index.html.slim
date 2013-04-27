@@ -24,11 +24,9 @@
         i.icon-user
         span.break
         = "User Groups"
-    .box-content
-      = render partial: 'user_groups/list'
+    #user-groups-table.box-content
+      = render partial: 'user_groups/list', locals: {user_groups: user_groups}
 
-
-      = link_to 'New User Group', new_user_group_path, {remote: true, class: 'btn btn-primary'}
 javascript:
   var resourceTable = $('#users-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",

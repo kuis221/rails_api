@@ -9,7 +9,7 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  users_count   :integer
+#  users_count   :integer          default(0)
 #  active        :boolean          default(TRUE)
 #
 

@@ -22,8 +22,11 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
-#  teams_count            :integer
 #  user_group_id          :integer
+#  teams_count            :integer          default(0)
+#  country                :string(4)
+#  state                  :string(255)
+#  city                   :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -39,12 +42,24 @@ class User < ActiveRecord::Base
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates_presence_of   :email
+  validates :user_group_id, presence: true
+  validates :email, presence: true
+
+  validates :country, presence: true, if: :updating_profile
+  validates :state, presence: true, if: :updating_profile
+  validates :city, presence: true, if: :updating_profile
+
   validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
-  validates_format_of     :email, :with  => /\A[^@]+@[^@]+\z/, :allow_blank => true, :if => :email_changed?
+  validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
+
+  validates_presence_of     :password, :if => :updating_profile
+  validates_confirmation_of :password, :if => :updating_profile
+  validates_length_of       :password, :within => 8..128, :allow_blank => true
+
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :user_group_id
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :user_group_id, :country, :state
+  attr_accessible :reset_password_token, :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
 
   after_create :generate_password, :unless => :password
 
@@ -55,6 +70,8 @@ class User < ActiveRecord::Base
   belongs_to :user_group
 
   delegate :name, to: :user_group, prefix: true, allow_nil: true
+
+  attr_accessor :updating_profile
 
   aasm do
     state :invited, :initial => true
