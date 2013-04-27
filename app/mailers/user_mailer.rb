@@ -1,9 +1,9 @@
 class UserMailer < ActionMailer::Base
-  default from: "info@brandscopic.com"
+  default from: "noreply@brandscopic.com"
 
   def password_generation(user)
     @user = user
-    @url  = "http://example.com/login"
-    mail(:to => user.email, :subject => "Welcome to My Awesome Site")
+    @url  = complete_profile_url(:auth_token => @user.reset_password_token)
+    mail(:to => user.email, :subject => "Brandscopic Invitation")
   end
 end

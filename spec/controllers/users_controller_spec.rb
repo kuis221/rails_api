@@ -94,6 +94,15 @@ describe UsersController do
         user.last_name.should == 'Perez'
       end
     end
+
+    describe "GET 'complete'" do
+      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
+      it "should redirect to root path with a warning" do
+        get 'complete', auth_token: user.reset_password_token
+        response.should redirect_to(root_path)
+        flash[:notice].should =~ /You cannot access this page/i
+      end
+    end
   end
 
   describe "as unregistered user" do

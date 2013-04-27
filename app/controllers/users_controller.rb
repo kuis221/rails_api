@@ -2,6 +2,8 @@ class UsersController < InheritedResources::Base
   skip_before_filter :authenticate_user!, only: [:complete, :update_profile]
   append_before_filter :assert_auth_token_passed, only: :complete
 
+  before_filter :ensure_no_user, only: [:complete, :update_profile]
+
   respond_to :js, only: [:new, :create, :edit, :update]
 
   custom_actions :resource => [:deactivate], :collection => [:complete]
@@ -59,6 +61,13 @@ class UsersController < InheritedResources::Base
   protected
     def user_groups
       @user_groups ||= UserGroup.all
+    end
+
+    def ensure_no_user
+      if signed_in?
+        flash[:notice] = 'You cannot access this page'
+        redirect_to root_path
+      end
     end
 
     # Check if a reset_password_token is provided in the request
