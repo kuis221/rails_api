@@ -17,10 +17,10 @@ Brandscopic::Application.routes.draw do
     resources :teams do
       member do
         get :deactivate
+        get :users
       end
-    end    
+    end
   end
-
 
   root :to => 'users#dashboard'
 

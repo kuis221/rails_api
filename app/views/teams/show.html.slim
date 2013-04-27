@@ -1,18 +1,40 @@
-p#notice = notice
+.row-fluid
+  .box.span12
+  	h2 = "Details for Team #{@team.name}"
+    .box-header
+      h2
+        i.icon-user
+        span.break
+        = "Team Details"
+    .box-content
+      .span6 = "Team Description: #{@team.description}"
+      .span6
+      	.pull-right = "Total Members: #{@team.users.active.count}"
+      table#team-details.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th Last
+            th First
+            th Level
+            th City
+            th State
+            th Email
+            th Status
+        tbody
 
-p
-  b Name:
-  = @team.name
-p
-  b Description:
-  = @team.description
-p
-  b Created by:
-  = @team.created_by_id
-p
-  b Updated by:
-  = @team.updated_by_id
+      = link_to 'Add', new_team_path, {remote: true, class: 'btn btn-primary'}
+      = link_to 'Remove', new_team_path, {remote: true, class: 'btn'}      
+javascript:
+  var resourceTable = $('#team-details').dataTable({
+    "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+    //"sPaginationType": "bootstrap",
+    "bPaginate": false,
+    "bProcessing": true,
+    "bServerSide": false,
+    "sAjaxSource": "#{users_team_path(resource, format: :json)}"
+  })
 
-= link_to 'Edit', edit_team_path(@team)
-'|
-= link_to 'Back', teams_path
+
+/ = link_to 'Edit', edit_team_path(@team)
+/ '|
+/ = link_to 'Back', teams_path

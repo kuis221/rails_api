@@ -16,16 +16,19 @@ module DatatablesHelper
 
   module InstanceMethods
     def datatable
+      self.class.datatable.controller = self
       self.class.datatable
     end
     def datatable_resource_values(resource)
       actions = []
       columns = datatable.columns.map do |column|
-        if resource.respond_to?("#{column[:attr]}_format".to_sym)
-          resource.try("#{column[:attr]}_format".to_sym)
+        value = ''
+        if column.has_key?(:value) and column[:value]
+          value = column[:value].call(resource)
         else
-          resource.try(column[:attr].to_sym)
+          value = resource.try(column[:attr].to_sym)
         end
+        value
       end
 
       if datatable.editable
@@ -88,6 +91,7 @@ module DataTable
   class Base
     attr_accessor :editable
     attr_accessor :deactivable
+    attr_accessor :controller
 
     def initialize(klass)
       @klass = klass

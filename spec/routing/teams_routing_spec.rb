@@ -31,5 +31,13 @@ describe TeamsController do
       delete("/admin/teams/1").should route_to("teams#destroy", :id => "1")
     end
 
+    it "routes to #deactivate" do
+      get("/admin/teams/1/deactivate").should route_to("teams#deactivate", :id => "1")
+    end
+
+    it "routes to #users" do
+      get("/admin/teams/1/users").should route_to("teams#users", :id => "1")
+    end
+
   end
 end

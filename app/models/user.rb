@@ -54,6 +54,8 @@ class User < ActiveRecord::Base
 
   belongs_to :user_group
 
+  delegate :name, to: :user_group, prefix: true, allow_nil: true
+
   aasm do
     state :invited, :initial => true
     state :active

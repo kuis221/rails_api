@@ -4,8 +4,12 @@
 
   .form-inputs
     = f.input :name
-    = f.input :description
+    = f.input :description, :input_html => {:rows => 6}
+    = f.association :users, label: 'Staff Member(s)', label_method: :full_name, input_html: {class: 'input-large'}, collection: User.active.all
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
+
+javascript:
+  $('#team_user_ids').select2();

@@ -14,14 +14,16 @@
 #
 
 class Team < ActiveRecord::Base
-  attr_accessible :name, :description
+  # created_by_id and updated_by_id fields
+  track_who_does_it
+
+  attr_accessible :name, :description, :user_ids
 
   validates :name, presence: true
 
   # Teams-Users relationship
   has_many :teams_users
   has_many :users, :through => :teams_users
-
 
   scope :active, where(:active => true)
 
@@ -31,9 +33,5 @@ class Team < ActiveRecord::Base
 
   def deactivate
     update_attribute :active, false
-  end
-
-  def active_format
-    active? ? 'Active' : 'Inactive'
   end
 end

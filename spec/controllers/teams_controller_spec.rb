@@ -43,6 +43,24 @@ describe TeamsController do
       post 'create', format: :js
       response.should be_success
     end
+
+    it "should not render form_dialog if no errors" do
+      lambda {
+        post 'create', team: {name: 'Test Team', description: 'Test Team description'}, format: :js
+      }.should change(Team, :count).by(1)
+      response.should be_success
+      response.should render_template(:create)
+      response.should_not render_template(:form_dialog)
+    end
+
+    it "should render the form_dialog template if errors" do
+      lambda {
+        post 'create', format: :js
+      }.should_not change(Team, :count)
+      response.should render_template(:create)
+      response.should render_template(:form_dialog)
+      assigns(:team).errors.count > 0
+    end
   end
 
   describe "GET 'deactivate'" do
