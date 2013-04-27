@@ -98,7 +98,7 @@ describe UsersController do
 
   describe "as unregistered user" do
     describe "PUT 'update_profile'" do
-      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ') }
+      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
       it "must update the user attributes" do
         put 'update_profile', user: {reset_password_token: user.reset_password_token, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123'}
         assigns(:user).should == user
@@ -109,6 +109,7 @@ describe UsersController do
         user.city.should == 'Miami'
         user.state.should == 'FL'
         user.country.should == 'US'
+        user.active?.should be_true
       end
     end
   end

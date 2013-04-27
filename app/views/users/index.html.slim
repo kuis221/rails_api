@@ -17,6 +17,7 @@
             th Email
             th Access Level
             th Teams(s)
+            th Status
             th
         tbody
 
@@ -43,6 +44,7 @@ javascript:
         "sAjaxSource": "#{users_path(format: :table)}",
         "iDeferLoading": #{@users.count},
         "aoColumns": [
+          null,
           null,
           null,
           null,

@@ -17,7 +17,8 @@ class UsersController < InheritedResources::Base
       {:attr => :country_name, :column_name => 'users.country'},
       {:attr => :email ,:column_name => 'users.email'},
       {:attr => :user_group_name ,:column_name => 'user_groups.name'},
-      {:attr => :teams, :value => Proc.new{|user| user.teams.map(&:name).join ', ' }, :column_name => 'teams.name'}
+      {:attr => :teams, :value => Proc.new{|user| user.teams.map(&:name).join ', ' }, :column_name => 'teams.name'},
+      {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
     ]
     @editable  = true
     @deactivable = true
@@ -40,7 +41,8 @@ class UsersController < InheritedResources::Base
     if @user.update_attributes(params[:user], as: :profile)
       sign_in(:user, @user)
       @user.send :generate_reset_password_token!
-      flash[:notice] = 'Your info have successfully updated'
+      @user.activate!
+      flash[:notice] = 'You have successfully completed your profile'
       redirect_to root_path
     else
       render :complete

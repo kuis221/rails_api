@@ -20,7 +20,9 @@
           /     td= link_to team.name, team
           /     td= team.description
 
-      = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
+      .row-fluid
+        .pull-right
+          = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
   var resourceTable = $('#teams-list').dataTable({
@@ -30,5 +32,12 @@ javascript:
         "bProcessing": true,
         "bServerSide": false,
         "sAjaxSource": "#{teams_path(format: :table)}",
-        "iDeferLoading": #{@teams.count}
+        "iDeferLoading": #{@teams.count},
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
   })
