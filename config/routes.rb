@@ -14,7 +14,11 @@ Brandscopic::Application.routes.draw do
   get "countries/states"
 
   scope '/admin' do
-    resources :user_groups
+    resources :user_groups do
+      collection do
+        put :set_permissions
+      end
+    end
 
     resources :users do
       member do

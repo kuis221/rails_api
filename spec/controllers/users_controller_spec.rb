@@ -110,7 +110,6 @@ describe UsersController do
         user.state.should == 'FL'
         user.country.should == 'US'
       end
-
     end
   end
 end
