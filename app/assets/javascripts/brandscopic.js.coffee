@@ -5,6 +5,14 @@ jQuery ->
 	$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
 
+	$.validator.addMethod("oneupperletter",  (value, element) ->
+		return this.optional(element) || /[A-Z]/.test(value);
+	, "Should have at least one upper case letter");
+
+	$.validator.addMethod("onedigit", (value, element) ->
+		return this.optional(element) || /[0-9]/.test(value);
+	, "Should have at least one digit");
+
 # ---------- Additional functions for data table ----------
 $.fn.dataTableExt.oApi.fnPagingInfo = ( oSettings ) ->
 	return {
