@@ -19,7 +19,7 @@ class UsersController < InheritedResources::Base
       {:attr => :country_name, :column_name => 'users.country'},
       {:attr => :email ,:column_name => 'users.email'},
       {:attr => :user_group_name ,:column_name => 'user_groups.name'},
-      {:attr => :teams, :value => Proc.new{|user| user.teams.map(&:name).join ', ' }, :column_name => 'teams.name'},
+      {:attr => :teams, :value => Proc.new{|user| user.teams.active.map(&:name).join ', ' }, :column_name => 'teams.name'},
       {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
     ]
     @editable  = true
