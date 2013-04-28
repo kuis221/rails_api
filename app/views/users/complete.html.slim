@@ -12,9 +12,9 @@ h2 Complete your profile
     = f.input :email
     = f.input :country, collection: Country.all, required: true
     = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
-    = f.input :city
+    = f.input :city, required: true
 
-    = f.input :password, :label => "New password", :required => true
+    = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit'}
     = f.input :password_confirmation, :label => "Confirm your new password", :required => true
 
 

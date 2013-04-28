@@ -43,6 +43,12 @@ describe User do
   it { should allow_value('guilleva@gmail.com').for(:email) }
 
 
+  it { should allow_value("Avalidpassword1").for(:password) }
+  it { should allow_value("validPassw0rd").for(:password) }
+  it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
+  it { should_not allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
+
+
   describe 'new user creation' do
     it 'should send a password_generation email' do
       @user = FactoryGirl.build(:user, :password => nil, :password_confirmation => nil)

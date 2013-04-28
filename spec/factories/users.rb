@@ -6,8 +6,8 @@ FactoryGirl.define do
     last_name 'User'
     sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
     user_group_id 1
-    password 'changeme123'
-    password_confirmation 'changeme123'
+    password 'Changeme123'
+    password_confirmation 'Changeme123'
     city 'Curridabat'
     state 'SJ'
     country 'CR'

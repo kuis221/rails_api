@@ -46,8 +46,8 @@ class User < ActiveRecord::Base
   validates :email, presence: true
 
   validates :country, presence: true, if: :updating_profile
-  validates :state, presence: true, if: :updating_profile
-  validates :city, presence: true, if: :updating_profile
+  validates :state,   presence: true, if: :updating_profile
+  validates :city,    presence: true, if: :updating_profile
 
   validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
   validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
@@ -55,7 +55,8 @@ class User < ActiveRecord::Base
   validates_presence_of     :password, :if => :updating_profile
   validates_confirmation_of :password, :if => :updating_profile
   validates_length_of       :password, :within => 8..128, :allow_blank => true
-
+  validates_format_of     :password, :with  => /[A-Z]/, :allow_blank => true, :message => 'should have at least one upper case letter'
+  validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :user_group_id, :country, :state
@@ -108,5 +109,4 @@ class User < ActiveRecord::Base
       generate_reset_password_token! if should_generate_reset_token?
       UserMailer.password_generation(self).deliver
     end
-
 end
