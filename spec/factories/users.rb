@@ -11,5 +11,6 @@ FactoryGirl.define do
     city 'Curridabat'
     state 'SJ'
     country 'CR'
+    company_id 1
   end
 end

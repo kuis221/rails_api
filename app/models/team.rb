@@ -10,15 +10,19 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  active        :boolean          default(TRUE)
+#  company_id    :integer
 #
 
 class Team < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
+  scoped_to_company
+
   attr_accessible :name, :description, :user_ids, :campaigns_ids
 
   validates :name, presence: true
+  validates :company_id, presence: true, numericality: true
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy

@@ -10,6 +10,7 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  company_id    :integer
 #
 
 class Campaign < ActiveRecord::Base
@@ -18,10 +19,13 @@ class Campaign < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
+  scoped_to_company
+
   attr_accessible :name, :description, :aasm_state, :team_ids
 
   # Required fields
   validates :name, presence: true
+  validates :company_id, presence: true, numericality: true
 
   # Campaigns-Teams relationship
   has_and_belongs_to_many :teams

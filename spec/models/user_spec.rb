@@ -26,6 +26,7 @@
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)
+#  company_id             :integer
 #
 
 require 'spec_helper'

@@ -1,6 +1,10 @@
 Brandscopic::Application.routes.draw do
 
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+
   devise_for :users
+  ActiveAdmin.routes(self)
 
   resources :activities
 
@@ -37,6 +41,6 @@ Brandscopic::Application.routes.draw do
 
   end
 
-  root :to => 'users#dashboard'
+  root :to => 'dashboard#index'
 
 end

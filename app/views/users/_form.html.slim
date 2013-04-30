@@ -14,6 +14,10 @@
       = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
       = f.association :user_group
 
+      - unless resource.invited?
+        = f.input :password
+        = f.input :password_confirmation
+
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
