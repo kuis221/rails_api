@@ -5,6 +5,6 @@ FactoryGirl.define do
     name "Test Campaign"
     description "Test Campaign description"
     aasm_state "active"
-    company_id
+    company_id 1
   end
 end

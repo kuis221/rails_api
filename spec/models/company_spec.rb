@@ -11,9 +11,9 @@
 require 'spec_helper'
 
 describe Company do
-  it { should_have_many(:users) }
-  it { should_have_many(:teams) }
-  it { should_have_many(:campaigns) }
+  it { should have_many(:users) }
+  it { should have_many(:teams) }
+  it { should have_many(:campaigns) }
 
   it { should validate_presence_of(:name) }
 
