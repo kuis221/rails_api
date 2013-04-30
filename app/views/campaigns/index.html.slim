@@ -1,0 +1,48 @@
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-bullhorn
+        span.break
+        = "Campaigns"
+    .box-content
+      table#campaigns-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th Campaign
+            th First Event
+            th Last Event
+            th Status
+            th
+        tbody
+
+      .row-fluid
+        .pull-right
+          = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+
+javascript:
+  var resourceTable = $('#campaigns-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        //"sPaginationType": "bootstrap",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bServerSide": false,
+        "sAjaxSource": "#{campaigns_path(format: :table)}",
+        "iDeferLoading": #{@campaigns.count},
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  })
+
+/ - @campaigns.each do |campaign|
+/   tr
+/     td= campaign.name
+/     td= campaign.description
+/     td= campaign.aasm_state
+/     td= link_to 'Show', campaign
+/     td= link_to 'Edit', edit_campaign_path(campaign)
+/     td= link_to 'Destroy', campaign, :confirm => 'Are you sure?', :method => :delete

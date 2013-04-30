@@ -23,7 +23,6 @@
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
 #  user_group_id          :integer
-#  teams_count            :integer          default(0)
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)

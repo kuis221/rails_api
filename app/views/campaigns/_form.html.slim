@@ -1,0 +1,22 @@
+- remote ||= false
+= simple_form_for(@campaign, remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      = f.input :name
+
+    .row-fluid
+      / .span4
+      /   = f.input :name
+      / .span4
+      /   = f.input :name
+      / .span4
+      = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
+
+    .row-fluid
+      = f.input :description, :input_html => {:rows => 6}
+
+  .form-actions
+    = f.button :submit, input_html: {class: 'btn-primary'}
+    = f.button :button, 'Cancel', class: 'btn-cancel'

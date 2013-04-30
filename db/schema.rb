@@ -11,7 +11,25 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130427213149) do
+ActiveRecord::Schema.define(:version => 20130430001129) do
+
+  create_table "campaigns", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "aasm_state"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "campaigns_teams", :force => true do |t|
+    t.integer "campaign_id"
+    t.integer "team_id"
+  end
+
+  add_index "campaigns_teams", ["campaign_id"], :name => "index_campaigns_teams_on_campaign_id"
+  add_index "campaigns_teams", ["team_id"], :name => "index_campaigns_teams_on_team_id"
 
   create_table "teams", :force => true do |t|
     t.string   "name"

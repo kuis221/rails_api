@@ -9,21 +9,23 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  users_count   :integer          default(0)
 #  active        :boolean          default(TRUE)
 #
 
 class Team < ActiveRecord::Base
-  # created_by_id and updated_by_id fields
+  # Created_by_id and updated_by_id fields
   track_who_does_it
 
-  attr_accessible :name, :description, :user_ids
+  attr_accessible :name, :description, :user_ids, :campaigns_ids
 
   validates :name, presence: true
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy
   has_many :users, through: :teams_users
+
+  # Campaigns-Teams relationship
+  has_and_belongs_to_many :campaigns
 
   scope :active, where(:active => true)
 

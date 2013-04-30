@@ -1,12 +1,8 @@
 Brandscopic::Application.routes.draw do
 
-
-
   devise_for :users
 
   resources :activities
-
-
 
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
@@ -32,6 +28,13 @@ Brandscopic::Application.routes.draw do
         get :users
       end
     end
+
+    resources :campaigns do
+      member do
+        get :deactivate
+      end
+    end
+
   end
 
   root :to => 'users#dashboard'

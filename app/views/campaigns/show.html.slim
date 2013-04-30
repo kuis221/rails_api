@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  b Name:
+  = @campaign.name
+p
+  b Description:
+  = @campaign.description
+p
+  b Aasm state:
+  = @campaign.aasm_state
+
+= link_to 'Edit', edit_campaign_path(@campaign)
+'|
+= link_to 'Back', campaigns_path

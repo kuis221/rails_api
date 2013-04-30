@@ -24,7 +24,7 @@ module DatatablesHelper
       columns = datatable.columns.map do |column|
         value = ''
         if column.has_key?(:value) and column[:value]
-          value = column[:value].call(resource)
+          value = column[:value].respond_to?(:call) ? column[:value].call(resource) : column[:value]
         else
           value = resource.try(column[:attr].to_sym)
         end
