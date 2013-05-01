@@ -13,32 +13,29 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
-  scope '/admin' do
-    resources :user_groups do
-      collection do
-        put :set_permissions
-      end
+  resources :user_groups do
+    collection do
+      put :set_permissions
     end
+  end
 
-    resources :users do
-      member do
-        get :deactivate
-      end
+  resources :users do
+    member do
+      get :deactivate
     end
+  end
 
-    resources :teams do
-      member do
-        get :deactivate
-        get :users
-      end
+  resources :teams do
+    member do
+      get :deactivate
+      get :users
     end
+  end
 
-    resources :campaigns do
-      member do
-        get :deactivate
-      end
+  resources :campaigns do
+    member do
+      get :deactivate
     end
-
   end
 
   root :to => 'dashboard#index'
