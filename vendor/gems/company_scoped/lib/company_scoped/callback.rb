@@ -2,8 +2,7 @@ module CompanyScoped
   class Callback
     def before_validation(record)
       if record.respond_to?(:company_id) && current_user
-        record.company = current_user.company
-        record.company_id = current_user.company_id
+        record.company_id ||= current_user.company_id
       end
     end
 

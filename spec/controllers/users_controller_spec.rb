@@ -28,7 +28,10 @@ describe UsersController do
         end
 
         it "returns the correct structure" do
-          FactoryGirl.create_list(:user, 3)
+          FactoryGirl.create_list(:user, 3, company_id: @user.company_id)
+
+          # Users on other companies should not be included on the results
+          FactoryGirl.create_list(:user, 2, company_id: 9999)
           get 'index', sEcho: 1, format: :table
           parsed_body = JSON.parse(response.body)
           parsed_body["sEcho"].should == 1

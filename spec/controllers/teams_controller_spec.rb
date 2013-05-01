@@ -28,6 +28,10 @@ describe TeamsController do
 
       it "returns the correct structure" do
         FactoryGirl.create_list(:team, 3)
+
+        # Teams on other companies should not be included on the results
+        FactoryGirl.create_list(:team, 2, company_id: 9999)
+
         get 'index', sEcho: 1, format: :table
         parsed_body = JSON.parse(response.body)
         parsed_body["sEcho"].should == 1
