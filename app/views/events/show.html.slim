@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  b Campaign:
+  = @event.campaign
+p
+  b Start at:
+  = @event.start_at
+p
+  b End at:
+  = @event.end_at
+
+= link_to 'Edit', edit_event_path(@event)
+'|
+= link_to 'Back', events_path

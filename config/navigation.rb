@@ -30,7 +30,7 @@ SimpleNavigation::Configuration.run do |navigation|
   # navigation.auto_highlight = false
   navigation.items do |primary|
     primary.item :dashboard, 'Dashboard', root_path
-    primary.item :events, 'Events', '#'
+    primary.item :events, 'Events', events_path
     primary.item :tasks, 'Tasks', '#'
     primary.item :analysis, 'Analysis', '#'
     primary.item :admin, 'Admin', users_path do |secondary|

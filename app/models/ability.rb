@@ -9,5 +9,6 @@ class Ability
     can :manage, User, :company_id => user.company_id
     can :manage, Campaign, :company_id => user.company_id
     can :manage, Team, :company_id => user.company_id
+    can :manage, Event, :company_id => user.company_id
   end
 end

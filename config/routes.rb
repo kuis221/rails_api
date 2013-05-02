@@ -38,6 +38,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
+  resources :events
+
+
   root :to => 'dashboard#index'
 
 end
