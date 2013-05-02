@@ -24,7 +24,7 @@ class Campaign < ActiveRecord::Base
   validates :name, presence: true
 
   # Campaigns-Teams relationship
-  has_and_belongs_to_many :teams
+  has_and_belongs_to_many :teams, :order => 'name ASC'
 
   aasm do
     state :inactive, :initial => true

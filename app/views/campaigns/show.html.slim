@@ -1,15 +1,20 @@
-p#notice = notice
-
-p
-  b Name:
-  = @campaign.name
-p
-  b Description:
-  = @campaign.description
-p
-  b Aasm state:
-  = @campaign.aasm_state
-
-= link_to 'Edit', edit_campaign_path(@campaign)
-'|
-= link_to 'Back', campaigns_path
+.row-fluid
+  .box.span12
+  	h2 = "Details for #{@campaign.name} Campaign"
+    .box-header
+      h2
+        i.icon-bullhorn
+        span.break
+        = "Campaign Guidelines"
+    .box-content
+      dl.dl-horizontal
+        dt = "Portfolios: "
+        dd = "&nbsp;".html_safe
+        dt = "Places: "
+        dd = "&nbsp;".html_safe 
+        dt = "Teams: "
+        dd = @campaign.teams.map(&:name).join(', ')
+        dt = "Date Ranges: "
+        dd = "&nbsp;".html_safe
+        dt = "Date Parts: "
+        dd = "&nbsp;".html_safe
