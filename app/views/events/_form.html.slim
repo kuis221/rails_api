@@ -1,0 +1,36 @@
+= simple_form_for(@event) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.association :campaign
+    .row-fluid
+      .span6
+        = f.input :start_date, :as => :date_picker, inline: true
+        = f.input :start_time, :as => :time_picker, inline: true
+
+      .span6
+        = f.input :end_date, :as => :date_picker, inline: true
+        = f.input :end_time, :as => :time_picker
+
+    .row-fluid
+      = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
+
+
+  .form-actions
+    = f.button :submit
+    = f.button :button, 'Cancel', class: 'btn-cancel'
+
+coffee:
+  val = $('#calendar_start_date').text()
+  $('#calendar_start_date').datepicker {
+    altField: '#event_start_date',
+    defaultDate: $('#calendar_start_date').data('date')
+  }
+
+  $('#calendar_end_date').datepicker {
+    altField: '#event_end_date',
+    defaultDate: $('#calendar_end_date').data('date')
+  }
+  $('input.timepicker').timepicker()
+
+  $('#event_user_ids').select2();

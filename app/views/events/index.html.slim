@@ -1,0 +1,37 @@
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-user
+        span.break
+        = "Users"
+    .box-content
+      table#events-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th Start Date
+            th Start Time
+            th Location
+            th Campaign
+            th
+        tbody
+
+      .row-fluid
+        .pull-right
+          = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
+
+javascript:
+  var resourceTable = $('#events-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bServerSide": false,
+        "sAjaxSource": "#{events_path(format: :table)}",
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  })

@@ -22,9 +22,11 @@ gem 'faker'
 gem 'rabl'
 gem 'oj'
 gem 'simple-navigation'
-gem 'will_paginate'
 gem 'aasm'
 gem 'countries'
+gem 'activeadmin'
+gem "meta_search",    '>= 1.1.0.pre'
+gem "company_scoped", :path => 'vendor/gems/company_scoped'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -1,6 +1,8 @@
 class TeamsController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  load_and_authorize_resource
+
   respond_to_datatables do
     columns [
       {:attr => :name, :column_name => 'teams.name', :value => Proc.new{|team| @controller.view_context.link_to(team.name, @controller.view_context.team_path(team)) }, :searchable => true},

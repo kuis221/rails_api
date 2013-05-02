@@ -1,8 +1,9 @@
 class UsersController < InheritedResources::Base
   skip_before_filter :authenticate_user!, only: [:complete, :update_profile]
   append_before_filter :assert_auth_token_passed, only: :complete
-
   before_filter :ensure_no_user, only: [:complete, :update_profile]
+
+  load_and_authorize_resource
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
@@ -12,8 +13,8 @@ class UsersController < InheritedResources::Base
 
   respond_to_datatables do
     columns [
-      {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true},
       {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true},
+      {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true},
       {:attr => :city ,:column_name => 'users.city'},
       {:attr => :state_name ,:column_name => 'users.state'},
       {:attr => :country_name, :column_name => 'users.country'},

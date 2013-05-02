@@ -28,7 +28,10 @@ describe UsersController do
         end
 
         it "returns the correct structure" do
-          FactoryGirl.create_list(:user, 3)
+          FactoryGirl.create_list(:user, 3, company_id: @user.company_id)
+
+          # Users on other companies should not be included on the results
+          FactoryGirl.create_list(:user, 2, company_id: 9999)
           get 'index', sEcho: 1, format: :table
           parsed_body = JSON.parse(response.body)
           parsed_body["sEcho"].should == 1
@@ -62,6 +65,13 @@ describe UsersController do
         response.should render_template(:form_dialog)
         assigns(:user).errors.count > 0
       end
+
+      it "should assign current_user's company_id to the new user" do
+        lambda {
+          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', user_group_id: 1}, format: :js
+        }.should change(User, :count).by(1)
+        assigns(:user).company_id.should == @user.company_id
+      end
     end
 
     describe "GET 'deactivate'" do
@@ -92,6 +102,15 @@ describe UsersController do
         user.reload
         user.first_name.should == 'Juanito'
         user.last_name.should == 'Perez'
+      end
+
+      it "must update the user password" do
+        old_password = user.encrypted_password
+        put 'update', id: user.to_param, user: {password: 'Juanito123', password_confirmation: 'Juanito123'}, format: :js
+        assigns(:user).should == user
+        response.should be_success
+        user.reload
+        user.encrypted_password.should_not == old_password
       end
     end
 

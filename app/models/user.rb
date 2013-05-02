@@ -26,6 +26,7 @@
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)
+#  company_id             :integer
 #
 
 class User < ActiveRecord::Base
@@ -38,11 +39,13 @@ class User < ActiveRecord::Base
   devise :database_authenticatable,
          :recoverable, :rememberable, :trackable
 
+  scoped_to_company
 
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :user_group_id, presence: true
   validates :email, presence: true
+  validates :company_id, presence: true, numericality: true
 
   validates :country, presence: true, if: :updating_profile
   validates :state,   presence: true, if: :updating_profile
