@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = CompanyScoped::VERSION
   gem.authors       = ["Guillermo Vargas"]
   gem.email         = ["guilleva@gmail.com"]
-  gem.description   = %q{TODO: Makes a model scoped to a company}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Makes a model scoped to a company}
+  gem.summary       = %q{It takes the company_id from the current logged in user and assigns it to the models}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
