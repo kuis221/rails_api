@@ -30,6 +30,9 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Teams relationship
   has_and_belongs_to_many :teams, :order => 'name ASC'
 
+  # Campaigns-Events relationship
+  has_many :events, :order => 'start_at ASC'
+
   aasm do
     state :inactive, :initial => true
     state :active
@@ -43,4 +46,13 @@ class Campaign < ActiveRecord::Base
       transitions :from => :active, :to => :inactive
     end
   end
+
+  def first_event
+    events.order('start_at').first
+  end
+
+  def last_event
+    events.order('start_at').last
+  end
+
 end
