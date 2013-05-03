@@ -2,10 +2,10 @@
 
 FactoryGirl.define do
   factory :task do
-    event nil
+    event_id 1
     title "MyString"
     due_at "2013-05-02 15:56:44"
-    user nil
+    user_id 1
     completed false
   end
 end
