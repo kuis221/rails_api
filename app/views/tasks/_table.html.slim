@@ -1,0 +1,27 @@
+table#tasks-list.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th Task
+      th Last Activity
+      th Due Date
+      th Team member
+      th Completed
+      th
+  tbody
+
+javascript:
+  var tasksTable = $('#tasks-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bServerSide": false,
+        "sAjaxSource": "#{event_tasks_path(event, format: :table)}",
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '40px', 'bSortable': false}
+        ]
+  })

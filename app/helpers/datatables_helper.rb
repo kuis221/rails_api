@@ -43,6 +43,7 @@ module DatatablesHelper
       end
 
       columns.push actions.join ' ' unless actions.empty?
+      columns
     end
 
     def end_of_association_chain

@@ -21,7 +21,7 @@
           = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
-  var resourceTable = $('#campaigns-list').dataTable({
+  var campaignsTable = $('#campaigns-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
         //"sPaginationType": "bootstrap",
         "bPaginate": false,
@@ -37,12 +37,3 @@ javascript:
           {"sWidth": '50px', 'bSortable': false}
         ]
   })
-
-/ - @campaigns.each do |campaign|
-/   tr
-/     td= campaign.name
-/     td= campaign.description
-/     td= campaign.aasm_state
-/     td= link_to 'Show', campaign
-/     td= link_to 'Edit', edit_campaign_path(campaign)
-/     td= link_to 'Destroy', campaign, :confirm => 'Are you sure?', :method => :delete
