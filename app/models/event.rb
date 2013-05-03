@@ -1,7 +1,23 @@
+# == Schema Information
+#
+# Table name: events
+#
+#  id            :integer          not null, primary key
+#  campaign_id   :integer
+#  company_id    :integer
+#  start_at      :datetime
+#  end_at        :datetime
+#  aasm_state    :string(255)
+#  created_by_id :integer
+#  updated_by_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
 class Event < ActiveRecord::Base
   belongs_to :campaign
   has_and_belongs_to_many :users
-
+  has_many :tasks
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids
 
@@ -27,15 +43,15 @@ class Event < ActiveRecord::Base
     end
 
     def end_after_start
-      errors.add(:end_at, "#{start_at} | #{end_at} | #{hours} must be after the start time.") if start_at > end_at
+      errors.add(:end_at, "must be after the start time.") if start_at > end_at
     end
 
     def parse_start_end
-      if self.start_date
+      unless self.start_date.nil? or self.start_date.empty?
         parts = self.start_date.split("/")
         self.start_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.start_time].join(' '))
       end
-      if self.end_date
+      unless self.end_date.nil? or self.end_date.empty?
         parts = self.end_date.split("/")
         self.end_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.end_time].join(' '))
       end

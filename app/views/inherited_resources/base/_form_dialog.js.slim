@@ -1,16 +1,16 @@
 |
-  var user_modal, container = $('#resource-form-modal');
+  var resource_modal, container = $('#resource-form-modal');
   var content = "#{escape_javascript(render partial: 'form', locals: {remote: true})}";
   if (!container.length) {
     container = $('<div id="resource-form-modal">'+content+'</div>');
-    user_modal = bootbox.dialog(container);
+    resource_modal = bootbox.dialog(container);
   } else {
     container.html(content);
   }
 
-  user_modal.find("form").validate();
-  user_modal.find('.btn-cancel').click(function(e){
+  resource_modal.find("form").validate();
+  resource_modal.find('.btn-cancel').click(function(e){
     e.preventDefault();
-    user_modal.modal('hide');
+    resource_modal.modal('hide');
     return false;
   });

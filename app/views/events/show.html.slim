@@ -1,15 +1,34 @@
-p#notice = notice
+.row-fluid
+  h2 = resource.campaign_name
 
-p
-  b Campaign:
-  = @event.campaign
-p
-  b Start at:
-  = @event.start_at
-p
-  b End at:
-  = @event.end_at
+  p
+    = event_date_range(resource)
+    br
 
-= link_to 'Edit', edit_event_path(@event)
-'|
-= link_to 'Back', events_path
+.row-fluid
+  .span6
+    .box
+      .box-header
+        h2 Event Map
+
+      .box-content
+        = "Map goes here"
+
+  .span6
+    .box
+      .box-header
+        h2 Event Team
+
+      .box-content
+        - resource.users.each do |team_member|
+          = team_member.full_name
+          br
+
+.row-fluid
+  .box
+    .box-header
+      h2 Event Tasks
+
+    .box-content
+      = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
+      = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
