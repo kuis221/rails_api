@@ -41,3 +41,5 @@
       h2 Event Documents
 
     .box-content
+      = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
+      = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}    

@@ -1,0 +1,23 @@
+base: &base
+  access_key_id: AKIAIIGAIZKQFFQDIXZA
+  secret_access_key: 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
+  #  distribution_domain: XXXX.cloudfront.net
+  options:
+    use_ssl: true
+    persistent: false
+
+production:
+  bucket_name: vzwireless
+  <<: *base
+
+staging:
+  bucket_name: vzwireless
+  <<: *base
+
+development:
+  bucket_name: vzwireless
+  <<: *base
+
+test:
+  bucket_name: vzwireless
+  <<: *base

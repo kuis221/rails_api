@@ -39,10 +39,8 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :events do
-    resources :tasks
+    resources :tasks, :documents
   end
 
-
   root :to => 'dashboard#index'
-
 end

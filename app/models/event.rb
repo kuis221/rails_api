@@ -18,18 +18,19 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   has_and_belongs_to_many :users
   has_many :tasks
+  has_many :documents, :as => :documentable
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file
 
   scoped_to_company
 
+  #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
   validate :end_after_start, if: :has_start_and_end?
 
-
-  attr_accessor       :start_date, :start_time, :end_date, :end_time
+  attr_accessor :start_date, :start_time, :end_date, :end_time
 
   after_initialize :set_start_end_dates
   before_validation :parse_start_end
@@ -37,7 +38,6 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
 
   private
-
     def has_start_and_end?
       !(start_at.nil? || end_at.nil?)
     end
