@@ -20,6 +20,6 @@ class Task < ActiveRecord::Base
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 
   validates :title, presence: true
-  validates :user_id, presence: true, numericality: true
+  validates :user_id, numericality: true, if: :user_id
   validates :event_id, presence: true, numericality: true
 end

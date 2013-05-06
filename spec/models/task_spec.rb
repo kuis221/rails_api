@@ -31,6 +31,5 @@ describe Task do
   it { should validate_presence_of(:title) }
   it { should validate_presence_of(:event_id) }
   it { should validate_numericality_of(:event_id) }
-  it { should validate_presence_of(:user_id) }
   it { should validate_numericality_of(:user_id) }
 end
