@@ -4,7 +4,7 @@
 
   .form-inputs
     = f.input :name
-    = f.input :file
+    = f.input :file, required: true
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
@@ -12,18 +12,15 @@
 
 javascript:
   $("#new_document").submit(function() {
-	//var fields = ;
-	//var params = {};
-    //$.each(fields, function(i, field){
-    //  params[field.name] = field.value;
-    //});
-    $.ajax(this.action+'.js', {
-        ajaxData: $(":text, :hidden", this).serializeArray(),
-        files: $(":file", this),
-        iframe: true,
-        processData: false
-    }).complete(function(data) {
-        console.log(data);
-    });
+    if ($(this).valid()){
+      $.ajax(this.action+'.js', {
+          ajaxData: $(":text, :hidden", this).serializeArray(),
+          files: $(":file", this),
+          iframe: true,
+          processData: false
+      }).complete(function(data) {
+          console.log(data);
+      });
+    }
     return false;
   });
