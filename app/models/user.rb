@@ -106,6 +106,11 @@ class User < ActiveRecord::Base
     @the_country ||= Country.new(country) if country
   end
 
+  # Method for Devise to make that only active users can login into the app
+  def active_for_authentication?
+    super && active?
+  end
+
   private
     def generate_password
       generate_reset_password_token! if should_generate_reset_token?
