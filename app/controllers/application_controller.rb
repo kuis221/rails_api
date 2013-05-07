@@ -11,6 +11,6 @@ class ApplicationController < ActionController::Base
 
   protected
     def set_layout
-      signed_in? ? 'application' : 'empty'
+      user_signed_in? ? 'application' : 'empty'
     end
 end

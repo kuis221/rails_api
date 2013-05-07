@@ -22,9 +22,10 @@ body class="#{controller_name} #{action_name}"
       .span10
         h1 Brandscopic
       .span2
-        = current_user.full_name
-        br
-        = link_to 'Logout', destroy_user_session_path, method: :delete
+        - if user_signed_in?
+          = current_user.full_name
+          br
+          = link_to 'Logout', destroy_user_session_path, method: :delete
 
 
   - sub_nav = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-list')

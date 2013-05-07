@@ -24,6 +24,7 @@ describe Devise::SessionsController do
           post "create", user: {email: @user.email, password: @user.password}
           @user.reload
         }.should_not change(@user, :last_sign_in_at)
+        flash[:alert].should == 'Your account was not activated yet.'
       end
     end
   end
