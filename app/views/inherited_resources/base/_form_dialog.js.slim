@@ -8,7 +8,18 @@
     container.html(content);
   }
 
-  resource_modal.find("form").validate();
+  resource_modal.find("form").validate({
+    errorClass: 'help-inline',
+    errorElement: 'span',
+    highlight: function(element) {
+      $(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element
+      .addClass('valid')
+      .closest('.control-group').removeClass('error').addClass('success');
+    }
+  });
   resource_modal.find('.btn-cancel').click(function(e){
     e.preventDefault();
     resource_modal.modal('hide');
