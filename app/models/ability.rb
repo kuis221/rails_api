@@ -13,5 +13,7 @@ class Ability
 
     can :create, Task
     can :manage, Task, :event => {:company_id => user.company_id}
+
+    can :manage, Document
   end
 end

@@ -24,6 +24,8 @@
           = team_member.full_name
           br
 
+= event_tasks_progress_bar(resource.tasks)
+
 .row-fluid
   .box
     .box-header
@@ -32,3 +34,12 @@
     .box-content
       = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
       = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+
+.row-fluid
+  .box
+    .box-header
+      h2 Event Documents
+
+    .box-content
+      = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
+      = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}    

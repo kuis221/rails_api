@@ -55,6 +55,10 @@ GEM
     arbre (1.0.1)
       activesupport (>= 3.0.0)
     arel (3.0.2)
+    aws-sdk (1.9.5)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
+      uuidtools (~> 2.1)
     bcrypt-ruby (3.0.1)
     bourbon (3.1.6)
       sass (>= 3.2.0)
@@ -73,6 +77,10 @@ GEM
       activerecord (~> 3)
       railties (~> 3)
       sentient_user (~> 0.3.2)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
+    cocaine (0.5.1)
+      climate_control (>= 0.0.3, < 1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -149,6 +157,12 @@ GEM
     nokogiri (1.5.9)
     oj (2.0.10)
     orm_adapter (0.4.0)
+    paperclip (3.4.1)
+      activemodel (>= 3.0.0)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      cocaine (~> 0.5.0)
+      mime-types
     pg (0.15.1)
     polyamorous (0.5.0)
       activerecord (~> 3.0)
@@ -250,6 +264,7 @@ GEM
     uglifier (2.0.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
+    uuidtools (2.1.4)
     warden (1.2.1)
       rack (>= 1.0)
     xpath (2.0.0)
@@ -262,6 +277,7 @@ DEPENDENCIES
   aasm
   activeadmin
   annotate (>= 2.5.0)
+  aws-sdk
   cancan (>= 1.6.8)
   capybara (>= 2.0.2)
   clerk
@@ -280,6 +296,7 @@ DEPENDENCIES
   meta_search (>= 1.1.0.pre)
   newrelic_rpm
   oj
+  paperclip (~> 3.0)
   pg
   quiet_assets (>= 1.0.1)
   rabl
