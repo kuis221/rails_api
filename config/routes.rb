@@ -42,6 +42,9 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     resources :tasks, :documents
+    member do
+      match 'delete_member/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
+    end
   end
 
   root :to => 'dashboard#index'

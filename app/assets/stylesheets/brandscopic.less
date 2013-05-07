@@ -36,6 +36,20 @@
 	float: left;
 }
 
+body.events.show {
+	.team-member {
+		width: 250px;
+		.remove-member-btn {
+			display: none;
+		}
+		&:hover {
+			.remove-member-btn {
+				display: block;
+			}
+		}
+	}
+}
+
 #post-event-form-builder {
 	#droppable {
 		min-height: 100px;

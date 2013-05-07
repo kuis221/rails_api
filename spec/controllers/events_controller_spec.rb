@@ -88,6 +88,24 @@ describe EventsController do
       end
     end
 
+    describe "DELETE 'delete_member'" do
+      let(:event){ FactoryGirl.create(:event) }
+      it "should remove the team member from the event" do
+        event.users << @user
+        lambda{
+          delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+          response.should be_success
+          event.reload
+        }.should change(event.users, :count).by(-1)
+      end
+
+      it "should not raise error if the user doesn't belongs to the team" do
+        delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+        event.reload
+        response.should be_success
+      end
+    end
+
   end
 
 end

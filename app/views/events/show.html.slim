@@ -1,28 +1,24 @@
-.row-fluid
-  h2 = resource.campaign_name
+.box
+  .box-content
+    h2 = resource.campaign_name
 
-  p
-    = event_date_range(resource)
-    br
+    .row-fluid
+      .span6
+        p
+          = event_date_range(resource)
 
-.row-fluid
-  .span6
-    .box
-      .box-header
-        h2 Event Map
+        h3 Event Team
+        - resource.users.each do |team_member|
+          div.team-member.clearfix id = "team-member-#{team_member.id}"
+            .pull-left
+              = team_member.full_name
+              br
+              = team_member.email
+            = link_to(content_tag(:i,'', class: 'icon-remove'), delete_member_event_path(member_id: team_member.to_param), class: 'remove-member-btn pull-right', remote: true, method: :delete)
 
-      .box-content
+      .span6
         = "Map goes here"
 
-  .span6
-    .box
-      .box-header
-        h2 Event Team
-
-      .box-content
-        - resource.users.each do |team_member|
-          = team_member.full_name
-          br
 
 = event_tasks_progress_bar(resource.tasks)
 
@@ -42,4 +38,4 @@
 
     .box-content
       = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
-      = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}    
+      = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
