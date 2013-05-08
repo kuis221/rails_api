@@ -21,6 +21,8 @@ class Document < ActiveRecord::Base
   has_attached_file :file, PAPERCLIP_SETTINGS
   attr_accessible :name, :file
 
+  track_who_does_it
+
   validates :name, presence: true
 
   validates_attachment_presence :file

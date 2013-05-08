@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130508002549) do
+ActiveRecord::Schema.define(:version => 20130508143802) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -65,6 +65,18 @@ ActiveRecord::Schema.define(:version => 20130508002549) do
   add_index "campaigns_teams", ["campaign_id"], :name => "index_campaigns_teams_on_campaign_id"
   add_index "campaigns_teams", ["team_id"], :name => "index_campaigns_teams_on_team_id"
 
+  create_table "comments", :force => true do |t|
+    t.integer  "commentable_id"
+    t.string   "commentable_type"
+    t.text     "content"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "comments", ["commentable_type", "commentable_id"], :name => "index_comments_on_commentable_type_and_commentable_id"
+
   create_table "companies", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
@@ -116,8 +128,10 @@ ActiveRecord::Schema.define(:version => 20130508002549) do
     t.datetime "due_at"
     t.integer  "user_id"
     t.boolean  "completed"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
@@ -176,6 +190,8 @@ ActiveRecord::Schema.define(:version => 20130508002549) do
     t.string   "state"
     t.string   "city"
     t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

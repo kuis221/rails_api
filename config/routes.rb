@@ -51,5 +51,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
+  resources :tasks, only: [] do
+    resources :comments
+  end
+
   root :to => 'dashboard#index'
 end

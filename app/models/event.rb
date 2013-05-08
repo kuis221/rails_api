@@ -25,6 +25,8 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
+  track_who_does_it
+
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
   validates :start_at, presence: true

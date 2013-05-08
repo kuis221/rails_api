@@ -13,9 +13,12 @@
 #
 
 class Task < ActiveRecord::Base
+  track_who_does_it
+
   belongs_to :event
   belongs_to :user
   attr_accessible :completed, :due_at, :title, :user_id
+  has_many :comments, :as => :commentable
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 

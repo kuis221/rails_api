@@ -30,6 +30,10 @@
 #
 
 class User < ActiveRecord::Base
+
+  track_who_does_it
+
+
   include SentientUser
   include AASM
 
