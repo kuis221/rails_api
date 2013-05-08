@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130508143802) do
+ActiveRecord::Schema.define(:version => 20130508170421) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -110,9 +110,11 @@ ActiveRecord::Schema.define(:version => 20130508143802) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.boolean  "active",        :default => true
+    t.integer  "place_id"
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
+  add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "events_users", :force => true do |t|
     t.integer "event_id"
@@ -121,6 +123,26 @@ ActiveRecord::Schema.define(:version => 20130508143802) do
 
   add_index "events_users", ["event_id"], :name => "index_events_users_on_event_id"
   add_index "events_users", ["user_id"], :name => "index_events_users_on_user_id"
+
+  create_table "places", :force => true do |t|
+    t.string   "name"
+    t.string   "reference",         :limit => 400
+    t.string   "place_id",          :limit => 100
+    t.string   "types"
+    t.string   "formatted_address"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "street_number"
+    t.string   "route"
+    t.string   "zipcode"
+    t.string   "city"
+    t.string   "state"
+    t.string   "country"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "places", ["reference"], :name => "index_places_on_reference"
 
   create_table "tasks", :force => true do |t|
     t.integer  "event_id"

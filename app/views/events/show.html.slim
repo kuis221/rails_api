@@ -8,6 +8,8 @@ h2 = resource.campaign_name
   .span6
     p
       = event_date_range(resource)
+      br
+        = place_address(resource.place).html_safe if resource.place
 
     h3 Event Team
     #event-team-members

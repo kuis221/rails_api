@@ -1,4 +1,5 @@
-= simple_form_for(@event) do |f|
+- remote ||= false
+= simple_form_for(@event, remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs
@@ -13,6 +14,7 @@
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
+      = f.input :place_reference, :as => :location, label: 'Location'
       = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
 
 
@@ -35,3 +37,18 @@ coffee:
   $('input.timepicker').timepicker()
 
   $('#event_user_ids').select2();
+
+
+  input = $('.modal .places-autocomplete')[0]
+  locationAutocomplete = new google.maps.places.Autocomplete(input);
+
+
+  google.maps.event.addListener(locationAutocomplete, 'place_changed', () ->
+    place = locationAutocomplete.getPlace()
+    if not place.geometry
+      # Inform the user that the place was not found and return.
+      alert 'Place not found'
+      return
+
+    $($(input).data('hidden')).val "#{place.reference}||#{place.id}"
+  )

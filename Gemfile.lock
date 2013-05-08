@@ -117,8 +117,13 @@ GEM
     fastercsv (1.5.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
+    google_places (0.12.0)
+      httparty
     has_scope (0.5.1)
     hike (1.2.2)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     i18n (0.6.1)
     inherited_resources (1.4.0)
       has_scope (~> 0.5.0)
@@ -153,6 +158,7 @@ GEM
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     multi_json (1.7.2)
+    multi_xml (0.5.3)
     newrelic_rpm (3.6.1.88)
     nokogiri (1.5.9)
     oj (2.0.10)
@@ -289,6 +295,7 @@ DEPENDENCIES
   email_spec (>= 1.4.0)
   factory_girl_rails (~> 4.0)
   faker
+  google_places
   has_scope
   inherited_resources
   jquery-rails

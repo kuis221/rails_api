@@ -14,6 +14,7 @@ head
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
+    = javascript_include_tag "http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"
     = csrf_meta_tags
     = yield(:head)
 body class="#{controller_name} #{action_name}"

@@ -30,6 +30,7 @@ gem "company_scoped", :path => 'vendor/gems/company_scoped'
 gem 'newrelic_rpm'
 gem "paperclip", "~> 3.0"
 gem "aws-sdk"
+gem 'google_places'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -13,15 +13,19 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  active        :boolean          default(TRUE)
+#  place_id      :integer
 #
 
 class Event < ActiveRecord::Base
   belongs_to :campaign
+  belongs_to :place, autosave: true
   has_and_belongs_to_many :users
-  has_many :tasks
+  has_many :tasks, dependent: :destroy
   has_many :documents, :as => :documentable
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
+
+  attr_accessor :place_reference
 
   scoped_to_company
 
@@ -39,7 +43,7 @@ class Event < ActiveRecord::Base
   before_validation :parse_start_end
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-
+  delegate :name, to: :place, prefix: true, allow_nil: true
 
   def activate
     update_attribute :active, true
@@ -47,6 +51,17 @@ class Event < ActiveRecord::Base
 
   def deactivate
     update_attribute :active, false
+  end
+
+  def place_reference=(value)
+    if value and value != self.place_reference
+      reference, place_id = value.split('||')
+      self.place = Place.find_or_initialize_by_place_id(place_id, {reference: reference}) if value
+    end
+  end
+
+  def place_reference
+    self.place.name if self.place
   end
 
   private
