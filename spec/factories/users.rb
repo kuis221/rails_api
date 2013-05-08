@@ -12,5 +12,6 @@ FactoryGirl.define do
     state 'SJ'
     country 'CR'
     company_id 1
+    aasm_state 'active'
   end
 end

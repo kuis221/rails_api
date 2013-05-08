@@ -42,9 +42,9 @@ class UsersController < InheritedResources::Base
     @user = User.find_by_reset_password_token(params[:user][:reset_password_token])
     @user.updating_profile = true
     if @user.update_attributes(params[:user], as: :profile)
+      @user.activate!
       sign_in(:user, @user)
       @user.send :generate_reset_password_token!
-      @user.activate!
       flash[:notice] = 'You have successfully completed your profile'
       redirect_to root_path
     else

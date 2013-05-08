@@ -125,6 +125,14 @@ describe UsersController do
   end
 
   describe "as unregistered user" do
+    describe "GET 'complete'" do
+      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
+      it "should redirect to root path with a warning" do
+        get 'complete', auth_token: user.reset_password_token
+        response.should be_success
+      end
+    end
+
     describe "PUT 'update_profile'" do
       let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
       it "must update the user attributes" do
