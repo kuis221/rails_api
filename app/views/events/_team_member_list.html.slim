@@ -1,0 +1,7 @@
+- resource.users.each do |team_member|
+  div.team-member.clearfix id = "team-member-#{team_member.id}"
+    .pull-left
+      = team_member.full_name
+      br
+      span.muted= team_member.email
+    = link_to(content_tag(:i,'', class: 'icon-remove'), delete_member_event_path(resource, member_id: team_member.to_param), class: 'remove-member-btn', remote: true, method: :delete)

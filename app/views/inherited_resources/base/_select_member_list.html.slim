@@ -1,0 +1,39 @@
+table#select-users-list.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th Last Name
+      th First Name
+      th City
+      th State
+      th Country
+      th Email
+      th Access Level
+      th
+  tbody
+    - @users.each do |user|
+      tr id = "user-#{user.id}"
+        td= user.first_name
+        td= user.last_name
+        td= user.city
+        td= user.state_name
+        td= user.country_name
+        td= user.email
+        td= user.user_group_name
+        td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_member, member_id: user.id), class: 'select-team-member-btn', data:{'user-id' => user.id}, remote: true, method: :post
+
+javascript:
+  window.selectMemberTable = $('#select-users-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "aoColumns": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  })

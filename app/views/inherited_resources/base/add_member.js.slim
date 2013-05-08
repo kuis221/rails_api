@@ -1,0 +1,4 @@
+|
+  $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}')
+  var pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{@member.id}')[0]);
+  selectMemberTable.fnDeleteRow(pos);

@@ -1,0 +1,9 @@
+|
+  bootbox.classes('modal-xlarge');
+  var selectMemberDialog = bootbox.dialog($('#{escape_javascript(render "select_member_list")}'), [{
+    "label" : "Cancel",
+    "class" : "btn",
+    "callback": function() {
+        selectMemberDialog.modal('hide');
+    }
+  }])

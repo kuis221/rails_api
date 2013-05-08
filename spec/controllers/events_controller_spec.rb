@@ -95,6 +95,7 @@ describe EventsController do
         lambda{
           delete 'delete_member', id: event.id, member_id: @user.id, format: :js
           response.should be_success
+          assigns(:event).should == event
           event.reload
         }.should change(event.users, :count).by(-1)
       end
@@ -103,9 +104,54 @@ describe EventsController do
         delete 'delete_member', id: event.id, member_id: @user.id, format: :js
         event.reload
         response.should be_success
+        assigns(:event).should == event
       end
     end
 
+    describe "GET 'new_member" do
+      let(:event){ FactoryGirl.create(:event) }
+      it 'should be sucess' do
+        get 'new_member', id: event.id, format: :js
+        response.should be_success
+        assigns(:event).should == event
+      end
+    end
+
+
+    describe "POST 'add_member" do
+      let(:event){ FactoryGirl.create(:event) }
+      it 'should assign the user to the event' do
+        lambda {
+          post 'add_member', id: event.id, member_id: @user.to_param, format: :js
+          response.should be_success
+          assigns(:event).should == event
+          assigns(:member).should == @user
+          event.reload
+        }.should change(event.users, :count).by(1)
+      end
+    end
+
+    describe "GET 'activate'" do
+      it "should activate an inactive event" do
+        event = FactoryGirl.create(:event, active: false)
+        lambda {
+          get 'activate', id: event.to_param, format: :js
+          response.should be_success
+          event.reload
+        }.should change(event, :active).to(true)
+      end
+    end
+
+    describe "GET 'deactivate'" do
+      it "should deactivate an active event" do
+        event = FactoryGirl.create(:event, active: true)
+        lambda {
+          get 'deactivate', id: event.to_param, format: :js
+          response.should be_success
+          event.reload
+        }.should change(event, :active).to(false)
+      end
+    end
   end
 
 end

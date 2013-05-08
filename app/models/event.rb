@@ -12,6 +12,7 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  active        :boolean          default(TRUE)
 #
 
 class Event < ActiveRecord::Base
@@ -36,6 +37,15 @@ class Event < ActiveRecord::Base
   before_validation :parse_start_end
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
+
+
+  def activate
+    update_attribute :active, true
+  end
+
+  def deactivate
+    update_attribute :active, false
+  end
 
   private
     def has_start_and_end?

@@ -43,7 +43,11 @@ Brandscopic::Application.routes.draw do
   resources :events do
     resources :tasks, :documents
     member do
-      match 'delete_member/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
+      get :deactivate
+      get :activate
+      match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
+      match 'members/new' => 'events#new_member', via: :get, as: :new_member
+      match 'members' => 'events#add_member', via: :post, as: :add_member
     end
   end
 

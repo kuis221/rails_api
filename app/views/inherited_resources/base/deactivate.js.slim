@@ -1,8 +1,17 @@
+- resource_class = resource.class.name.downcase
 - if resource.errors.any?
   |
     bootbox.alert('Unknown error')
 - else
   |
-    if (resourceTable) {
+    if (typeof resourceTable != 'undefined') {
       resourceTable.fnReloadAjax();
-    }
+    };
+  - if resource.active?
+    |
+      $('.activate-#{resource_class}-btn').addClass('active btn-success');
+      $('.deactivate-#{resource_class}-btn').removeClass('active').removeClass('btn-danger');
+  - else
+    |
+      $('.activate-#{resource_class}-btn').removeClass('active').removeClass('btn-success');
+      $('.deactivate-#{resource_class}-btn').addClass('active btn-danger');

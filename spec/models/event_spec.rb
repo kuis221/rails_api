@@ -12,6 +12,7 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  active        :boolean          default(TRUE)
 #
 
 require 'spec_helper'
@@ -31,6 +32,7 @@ describe Event do
 
   it { should_not allow_mass_assignment_of(:id) }
   it { should_not allow_mass_assignment_of(:aasm_state) }
+  it { should_not allow_mass_assignment_of(:active) }
   it { should_not allow_mass_assignment_of(:created_by_id) }
   it { should_not allow_mass_assignment_of(:updated_by_id) }
   it { should_not allow_mass_assignment_of(:created_at) }

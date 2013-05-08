@@ -17,8 +17,9 @@
 
 
   .form-actions
-    = f.button :submit
-    = f.button :button, 'Cancel', class: 'btn-cancel'
+    = f.button :submit, class: 'btn btn-primary'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 coffee:
   val = $('#calendar_start_date').text()

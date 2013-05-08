@@ -1,41 +1,50 @@
-.box
-  .box-content
-    h2 = resource.campaign_name
+.pull-right
+  = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary btn-small', remote: true
+  = "&nbsp;".html_safe
+  = active_inactive_buttons(resource)
+h2 = resource.campaign_name
 
-    .row-fluid
-      .span6
-        p
-          = event_date_range(resource)
+.row-fluid
+  .span6
+    p
+      = event_date_range(resource)
 
-        h3 Event Team
-        - resource.users.each do |team_member|
-          div.team-member.clearfix id = "team-member-#{team_member.id}"
-            .pull-left
-              = team_member.full_name
-              br
-              = team_member.email
-            = link_to(content_tag(:i,'', class: 'icon-remove'), delete_member_event_path(member_id: team_member.to_param), class: 'remove-member-btn pull-right', remote: true, method: :delete)
+    h3 Event Team
+    #event-team-members
+      = render 'team_member_list'
+    = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
 
-      .span6
-        = "Map goes here"
+  .span6
+    = "Map goes here"
 
-
-= event_tasks_progress_bar(resource.tasks)
 
 .row-fluid
   .box
-    .box-header
-      h2 Event Tasks
+    a href="#tasks-content" data-toggle="collapse"
+      .box-header
+        h2 TASKS
 
-    .box-content
+    #tasks-content.collapse.in
+      .box-content
+        = event_tasks_progress_bar(resource.tasks)
+
+
       = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
       = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
 
 .row-fluid
   .box
-    .box-header
-      h2 Event Documents
+    a href="#documents-content" data-toggle="collapse"
+      .box-header
+        h2 DOCUMENTS
 
-    .box-content
-      = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
-      = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+    #documents-content.collapse.in
+      .box-content
+        = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
+        = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+
+
+javascript:
+  window.addMemberToEvent = function () {
+    $.post('#{add_member_event_path(resource, format: :js)}',{member_id: $(this).data('user-id')})
+  }

@@ -30,6 +30,29 @@
 	background-repeat: repeat-x;
 }
 
+.modal {
+	&.modal-xlarge {
+		width: 900px;
+		margin-left: -450px;
+	}
+	&.modal-large {
+		width: 700px;
+		margin-left: -355px;
+	}
+	&.modal-med {
+		width: 440px;
+		margin-left: -225px;
+	}
+	&.modal-small {
+		width: 252px;
+		margin-left: -126px;
+	}
+	&.modal-mini {
+		width: 200px;
+		margin-left: -430px;
+	}
+}
+
 .bar-unassigned {
 	font-size: 12px;
 	text-align: center;
@@ -39,6 +62,10 @@
 body.events.show {
 	.team-member {
 		width: 250px;
+		padding: 5px 0;
+		.pull-left {
+			margin-right: 10px;
+		}
 		.remove-member-btn {
 			display: none;
 		}

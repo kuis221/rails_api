@@ -2,6 +2,7 @@
   var resource_modal, container = $('#resource-form-modal');
   var content = "#{escape_javascript(render partial: 'form', locals: {remote: true})}";
   if (!container.length) {
+    bootbox.classes('#{@form_modal_class}');
     container = $('<div id="resource-form-modal">'+content+'</div>');
     resource_modal = bootbox.dialog(container);
   } else {
