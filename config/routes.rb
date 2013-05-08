@@ -13,6 +13,8 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
+  resources :documents, only: [:destroy]
+
   resources :user_groups do
     collection do
       put :set_permissions
