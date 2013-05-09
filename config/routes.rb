@@ -24,12 +24,14 @@ Brandscopic::Application.routes.draw do
   resources :users do
     member do
       get :deactivate
+      get :activate
     end
   end
 
   resources :teams do
     member do
       get :deactivate
+      get :activate
       get :users
     end
   end
@@ -37,6 +39,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     member do
       get :deactivate
+      get :activate
     end
   end
 

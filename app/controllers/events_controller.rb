@@ -17,7 +17,7 @@ class EventsController < InheritedResources::Base
       {:attr => :campaign_name ,:column_name => 'campaign.name'}
     ]
     @editable  = true
-    @deactivable = false
+    @deactivable = true
   end
 
 
