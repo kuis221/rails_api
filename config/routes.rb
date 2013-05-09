@@ -13,8 +13,6 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
-  resources :documents, only: [:destroy]
-
   resources :user_groups do
     collection do
       put :set_permissions
@@ -24,12 +22,14 @@ Brandscopic::Application.routes.draw do
   resources :users do
     member do
       get :deactivate
+      get :activate
     end
   end
 
   resources :teams do
     member do
       get :deactivate
+      get :activate
       get :users
     end
   end
@@ -37,6 +37,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     member do
       get :deactivate
+      get :activate
     end
   end
 

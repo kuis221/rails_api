@@ -14,13 +14,13 @@ module DeactivableHelper
     include DeactivableHelper::ViewMethods
     def deactivate
       if resource.active?
-        resource.deactivate
+        resource.deactivate!
       end
     end
 
     def activate
       unless resource.active?
-        resource.activate
+        resource.activate!
       end
       render 'deactivate'
     end

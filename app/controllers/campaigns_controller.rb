@@ -1,6 +1,8 @@
 class CampaignsController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  include DeactivableHelper
+
   load_and_authorize_resource
 
   respond_to_datatables do
@@ -12,14 +14,6 @@ class CampaignsController < InheritedResources::Base
     ]
     @editable  = true
     @deactivable = true
-  end
-
-  def deactivate
-    if resource.active?
-      resource.deactivate!
-    else
-      resource.activate!
-    end
   end
 
 end

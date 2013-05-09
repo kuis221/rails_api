@@ -82,10 +82,14 @@ describe CampaignsController do
       response.should be_success
       campaign.reload.active?.should be_false
     end
+  end
+
+  describe "GET 'activate'" do
+    let(:campaign){ FactoryGirl.create(:campaign,aasm_state: 'inactive') }
 
     it "activates an inactive campaign" do
-      campaign.update_attribute(:aasm_state, 'inactive')
-      get 'deactivate', id: campaign.to_param, format: :js
+      campaign.active?.should be_false
+      get 'activate', id: campaign.to_param, format: :js
       response.should be_success
       campaign.reload.active?.should be_true
     end

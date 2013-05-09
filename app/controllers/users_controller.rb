@@ -3,11 +3,13 @@ class UsersController < InheritedResources::Base
   append_before_filter :assert_auth_token_passed, only: :complete
   before_filter :ensure_no_user, only: [:complete, :update_profile]
 
+  include DeactivableHelper
+
   load_and_authorize_resource
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
-  custom_actions :resource => [:deactivate], :collection => [:complete]
+  custom_actions :collection => [:complete]
 
   helper_method :user_groups
 
@@ -25,14 +27,6 @@ class UsersController < InheritedResources::Base
     ]
     @editable  = true
     @deactivable = true
-  end
-
-  def deactivate
-    if resource.active?
-      resource.deactivate!
-    else
-      resource.activate!
-    end
   end
 
   def dashboard

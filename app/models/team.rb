@@ -33,11 +33,11 @@ class Team < ActiveRecord::Base
 
   scope :active, where(:active => true)
 
-  def activate
+  def activate!
     update_attribute :active, true
   end
 
-  def deactivate
+  def deactivate!
     update_attribute :active, false
   end
 end

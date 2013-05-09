@@ -48,11 +48,11 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, to: :place, prefix: true, allow_nil: true
 
-  def activate
+  def activate!
     update_attribute :active, true
   end
 
-  def deactivate
+  def deactivate!
     update_attribute :active, false
   end
 
