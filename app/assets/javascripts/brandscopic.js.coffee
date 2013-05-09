@@ -5,10 +5,31 @@ jQuery ->
 		$('.chosen-enabled').chosen()
 		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
+		$("form").validate({
+			errorClass: 'help-inline',
+			errorElement: 'span',
+			highlight: function(element) {
+				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error');
+			},
+			success: function(element) {
+				element
+					.addClass('valid')
+					.closest('.control-group').removeClass('error');
+			}
+		});
+
 	attachPluginsToElements()
 
 	$(document).ajaxComplete (e) ->
 		attachPluginsToElements()
+
+
+	('.btn-cancel').click(function(e){
+	    e.preventDefault();
+	    resource_modal.modal('hide');
+	    return false;
+	});
+
 
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->

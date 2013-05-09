@@ -35,14 +35,13 @@ class User < ActiveRecord::Base
 
   track_who_does_it
 
-
   include SentientUser
   include AASM
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
-  devise :database_authenticatable,
+  devise :database_authenticatable, :timeoutable,
          :recoverable, :rememberable, :trackable
 
   scoped_to_company

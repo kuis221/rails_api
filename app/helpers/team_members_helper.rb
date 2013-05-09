@@ -7,13 +7,22 @@ module TeamMembersHelper
 
     def new_member
       @users = company_users
+      @teams = company_teams
       @users = @users.where(['id not in (?)', resource.users]) unless resource.users.empty?
     end
 
-    def add_member
-      @member = company_users.find(params[:member_id])
-      unless resource.users.where(id: @member.id).first
-        resource.users << @member
+    def add_members
+      @members = []
+      if params[:member_id]
+        @members = [company_users.find(params[:member_id])]
+      elsif params[:team_id]
+        @members = company_teams.find(params[:team_id]).users.active.all
+      end
+
+      @members.each do |member|
+        unless resource.users.where(id: member.id).first
+          resource.users << member
+        end
       end
     end
 
@@ -28,6 +37,9 @@ module TeamMembersHelper
 
       def company_users
         current_company.users.active
+      end
+      def company_teams
+        current_company.teams.active
       end
   end
 

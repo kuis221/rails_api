@@ -118,16 +118,43 @@ describe EventsController do
     end
 
 
-    describe "POST 'add_member" do
+    describe "POST 'add_members" do
       let(:event){ FactoryGirl.create(:event) }
       it 'should assign the user to the event' do
         lambda {
-          post 'add_member', id: event.id, member_id: @user.to_param, format: :js
+          post 'add_members', id: event.id, member_id: @user.to_param, format: :js
           response.should be_success
           assigns(:event).should == event
-          assigns(:member).should == @user
+          assigns(:members).should == [@user]
           event.reload
         }.should change(event.users, :count).by(1)
+      end
+
+      it 'should assign all the team\'s users to the event' do
+        expected_users = FactoryGirl.create_list(:user, 3, company_id: @user.company_id)
+        team = FactoryGirl.create(:team, company_id: @user.company_id)
+        lambda {
+          expected_users.each{|u| team.users  << u }
+          post 'add_members', id: event.id, team_id: team.to_param, format: :js
+          response.should be_success
+          assigns(:event).should == event
+          assigns(:members).should =~ expected_users
+          event.reload
+        }.should change(event.users, :count).by(3)
+        event.users.should =~ expected_users
+      end
+
+      it 'should not assign users to the event if they are already part of the event' do
+        team = FactoryGirl.create(:team, company_id: @user.company_id)
+        team.users << @user
+        event.users << @user
+        lambda {
+          post 'add_members', id: event.id, team_id: team.to_param, format: :js
+          response.should be_success
+          assigns(:event).should == event
+          assigns(:members).should =~ [@user]
+          event.reload
+        }.should_not change(event.users, :count)
       end
     end
 

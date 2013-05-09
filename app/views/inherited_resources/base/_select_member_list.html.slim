@@ -1,25 +1,51 @@
-table#select-users-list.table.table-striped.table-bordered.table-scrolled
-  thead
-    tr
-      th Last Name
-      th First Name
-      th City
-      th State
-      th Country
-      th Email
-      th Access Level
-      th
-  tbody
-    - @users.each do |user|
-      tr id = "user-#{user.id}"
-        td= user.first_name
-        td= user.last_name
-        td= user.city
-        td= user.state_name
-        td= user.country_name
-        td= user.email
-        td= user.user_group_name
-        td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_member, member_id: user.id), class: 'select-team-member-btn', data:{'user-id' => user.id}, remote: true, method: :post
+ul#select-members-tabs.nav.nav-tabs
+  li.active
+    a href="#select-users" data-toggle="tab" Users
+  li
+    a href="#select-teams" data-toggle="tab" Teams
+
+
+.tab-content
+  #select-users.tab-pane.active
+    table#select-users-list.table.table-striped.table-bordered.table-scrolled
+      thead
+        tr
+          th Last Name
+          th First Name
+          th City
+          th State
+          th Country
+          th Email
+          th Access Level
+          th
+      tbody
+        - @users.each do |user|
+          tr id = "user-#{user.id}"
+            td= user.first_name
+            td= user.last_name
+            td= user.city
+            td= user.state_name
+            td= user.country_name
+            td= user.email
+            td= user.user_group_name
+            td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, member_id: user.id), data:{'user-id' => user.id}, remote: true, method: :post
+
+  #select-teams.tab-pane
+    table#select-users-list.table.table-striped.table-bordered.table-scrolled
+      thead
+        tr
+          th Teams
+          th Number of Members
+          th Description
+          th
+      tbody
+        - @teams.each do |team|
+          tr id = "team-#{team.id}"
+            td= team.name
+            td=
+            td= team.description
+            td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, team_id: team.id), data:{'team-id' => team.id}, remote: true, method: :post
+
 
 javascript:
   window.selectMemberTable = $('#select-users-list').dataTable({
@@ -36,4 +62,9 @@ javascript:
           null,
           {"sWidth": '50px', 'bSortable': false}
         ]
+  })
+
+  $('#select-members-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
   })

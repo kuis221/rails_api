@@ -4,25 +4,8 @@
   if (!container.length) {
     bootbox.classes('#{@form_modal_class}');
     container = $('<div id="resource-form-modal">'+content+'</div>');
-    resource_modal = bootbox.dialog(container);
+    resource_modal = bootbox.dialog(container,[],{'onEscape': true});
   } else {
     container.html(content);
   }
 
-  resource_modal.find("form").validate({
-    errorClass: 'help-inline',
-    errorElement: 'span',
-    highlight: function(element) {
-      $(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error');
-    },
-    success: function(element) {
-      element
-      .addClass('valid')
-      .closest('.control-group').removeClass('error').addClass('success');
-    }
-  });
-  resource_modal.find('.btn-cancel').click(function(e){
-    e.preventDefault();
-    resource_modal.modal('hide');
-    return false;
-  });
