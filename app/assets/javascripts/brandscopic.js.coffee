@@ -5,30 +5,36 @@ jQuery ->
 		$('.chosen-enabled').chosen()
 		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
-		$("form").validate({
+	validateForm = (e) ->
+		$(this).validate {
 			errorClass: 'help-inline',
 			errorElement: 'span',
-			highlight: function(element) {
-				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error');
-			},
-			success: function(element) {
+			highlight: (element) ->
+				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
+			,
+			success: (element) ->
 				element
 					.addClass('valid')
-					.closest('.control-group').removeClass('error');
-			}
-		});
+					.closest('.control-group').removeClass('error')
+		}
+
+		if not $(this).valid()
+			e.preventDefault()
+			e.stopPropagation()
+			false
 
 	attachPluginsToElements()
 
 	$(document).ajaxComplete (e) ->
 		attachPluginsToElements()
 
+	$(document).on 'submit', "form", validateForm
+	$(document).on 'ajax:before', "form", validateForm
 
-	('.btn-cancel').click(function(e){
-	    e.preventDefault();
-	    resource_modal.modal('hide');
-	    return false;
-	});
+	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
+	    e.preventDefault()
+	    resource_modal.modal 'hide'
+	    false
 
 
 
