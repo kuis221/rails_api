@@ -117,8 +117,13 @@ GEM
     fastercsv (1.5.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
+    google_places (0.12.0)
+      httparty
     has_scope (0.5.1)
     hike (1.2.2)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     i18n (0.6.1)
     inherited_resources (1.4.0)
       has_scope (~> 0.5.0)
@@ -153,6 +158,7 @@ GEM
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     multi_json (1.7.2)
+    multi_xml (0.5.3)
     newrelic_rpm (3.6.1.88)
     nokogiri (1.5.9)
     oj (2.0.10)
@@ -253,6 +259,7 @@ GEM
       rack (>= 1.0.0)
     thor (0.18.1)
     tilt (1.3.7)
+    timeliness (0.3.7)
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
@@ -265,6 +272,8 @@ GEM
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
     uuidtools (2.1.4)
+    validates_timeliness (3.0.14)
+      timeliness (~> 0.3.6)
     warden (1.2.1)
       rack (>= 1.0)
     xpath (2.0.0)
@@ -289,6 +298,7 @@ DEPENDENCIES
   email_spec (>= 1.4.0)
   factory_girl_rails (~> 4.0)
   faker
+  google_places
   has_scope
   inherited_resources
   jquery-rails
@@ -314,3 +324,4 @@ DEPENDENCIES
   thin
   twitter-bootstrap-rails (>= 2.2.4)
   uglifier (>= 1.0.3)
+  validates_timeliness (~> 3.0)

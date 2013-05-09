@@ -21,7 +21,7 @@
           = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
-  var resourceTable = $('#events-list').dataTable({
+  var eventsTable = $('#events-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
         "bPaginate": false,
         "bProcessing": true,

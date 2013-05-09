@@ -14,3 +14,5 @@ ActionMailer::Base.smtp_settings = {
   :domain         => 'heroku.com',
   :enable_starttls_auto => true
 }
+
+GOOGLE_API_KEY='AIzaSyDlvj3cfC0KZNKRCZwtdvd8Acp_kjXIjkQ'

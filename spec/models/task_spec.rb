@@ -2,14 +2,16 @@
 #
 # Table name: tasks
 #
-#  id         :integer          not null, primary key
-#  event_id   :integer
-#  title      :string(255)
-#  due_at     :datetime
-#  user_id    :integer
-#  completed  :boolean
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :integer          not null, primary key
+#  event_id      :integer
+#  title         :string(255)
+#  due_at        :datetime
+#  user_id       :integer
+#  completed     :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 require 'spec_helper'

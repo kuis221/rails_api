@@ -4,7 +4,6 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    var table = #{resource.class.name.pluralize.downcase}Table;
-    if (table) {
-      table.fnReloadAjax();
+    if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined'){
+      #{resource.class.name.pluralize.downcase}Table.fnReloadAjax();
     }
