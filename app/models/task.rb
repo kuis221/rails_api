@@ -22,7 +22,7 @@ class Task < ActiveRecord::Base
   attr_accessible :completed, :due_at, :title, :user_id
   has_many :comments, :as => :commentable
 
-  validates_datetime :due_at
+  validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 
