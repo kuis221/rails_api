@@ -4,9 +4,9 @@
     bootbox.alert('Unknown error')
 - else
   |
-    if (typeof resourceTable != 'undefined') {
-      resourceTable.fnReloadAjax();
-    };
+    if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined'){
+      #{resource.class.name.pluralize.downcase}Table.fnReloadAjax();
+    }
   - if resource.active?
     |
       $('.activate-#{resource_class}-btn').addClass('active btn-success');
