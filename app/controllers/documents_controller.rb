@@ -1,6 +1,6 @@
 class DocumentsController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update, :show, :destroy]
-  belongs_to :event, :optional => true
+  belongs_to :event
 
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event

@@ -79,7 +79,7 @@ describe TeamsController do
 
     it "activates an inactive team" do
       team.update_attribute(:active, false)
-      get 'deactivate', id: team.to_param, format: :js
+      get 'activate', id: team.to_param, format: :js
       response.should be_success
       team.reload.active?.should be_true
     end

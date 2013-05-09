@@ -25,7 +25,7 @@ describe Team do
     let(:team) { FactoryGirl.build(:team, active: false) }
 
     it "should return the active value as true" do
-      team.activate
+      team.activate!
       team.reload
       team.active.should be_true
     end
@@ -35,7 +35,7 @@ describe Team do
     let(:team) { FactoryGirl.build(:team, active: false) }
 
     it "should return the active value as false" do
-      team.deactivate
+      team.deactivate!
       team.reload
       team.active.should be_false
     end

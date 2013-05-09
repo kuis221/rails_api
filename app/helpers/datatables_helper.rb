@@ -42,7 +42,7 @@ module DatatablesHelper
         end
       end
       if datatable.deletable
-        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for(resource), {remote: true, title: 'Delete', method: :delete})
+        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for(parent? ? [parent, resource] : [:resource]), {remote: true, title: 'Delete', method: :delete})
       end
 
       columns.push actions.join ' ' unless actions.empty?

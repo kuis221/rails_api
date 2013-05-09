@@ -83,10 +83,14 @@ describe UsersController do
         response.should be_success
         user.reload.active?.should be_false
       end
+    end
+
+    describe "GET 'activate'" do
+      let(:user){ FactoryGirl.create(:user,aasm_state: 'inactive') }
 
       it "activates an inactive user" do
-        user.update_attribute(:aasm_state, 'inactive')
-        get 'deactivate', id: user.to_param, format: :js
+        user.active?.should be_false
+        get 'activate', id: user.to_param, format: :js
         response.should be_success
         user.reload.active?.should be_true
       end
