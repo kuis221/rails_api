@@ -6,14 +6,17 @@
     = f.association :campaign
     .row-fluid
       .span6
+        = f.error :start_at
         = f.input :start_date, :as => :date_picker, inline: true
         = f.input :start_time, :as => :time_picker, inline: true
 
       .span6
         = f.input :end_date, :as => :date_picker, inline: true
+        = f.error :end_at
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
+      = f.error :place
       = f.input :place_reference, :as => :location, label: 'Location'
       = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
 

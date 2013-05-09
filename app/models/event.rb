@@ -35,7 +35,6 @@ class Event < ActiveRecord::Base
   validates :campaign_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
-  #validate :end_after_start, if: :has_start_and_end?
 
   validates_datetime :start_at
   validates_datetime :end_at, :on_or_after => :start_at
@@ -44,6 +43,7 @@ class Event < ActiveRecord::Base
 
   after_initialize :set_start_end_dates
   before_validation :parse_start_end
+  after_validation :delegate_errors
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, to: :place, prefix: true, allow_nil: true
@@ -57,7 +57,7 @@ class Event < ActiveRecord::Base
   end
 
   def place_reference=(value)
-    if value and value != self.place_reference
+    if value and value != self.place_reference and !value.nil? and !value.empty?
       reference, place_id = value.split('||')
       self.place = Place.find_or_initialize_by_place_id(place_id, {reference: reference}) if value
     end
@@ -68,12 +68,14 @@ class Event < ActiveRecord::Base
   end
 
   private
-    def has_start_and_end?
-      !(start_at.nil? || end_at.nil?)
-    end
 
-    def end_after_start
-      errors.add(:end_at, "must be after the start time.") if start_at > end_at
+    # Copy some errors to the attributes used on the forms so the user
+    # can see them
+    def delegate_errors
+      Rails.logger.debug "#{self.place.inspect}"
+      errors[:start_at].each{|e| errors.add(:start_date, e) }
+      errors[:end_at].each{|e| errors.add(:end_date, e) }
+      place.errors.full_messages.each{|e| errors.add(:place_reference, e) } if place
     end
 
     def parse_start_end

@@ -31,8 +31,8 @@ h2 = resource.campaign_name
         = event_tasks_progress_bar(resource.tasks)
 
 
-      = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
-      = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+        = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
+        = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
 
 .row-fluid
   .box
