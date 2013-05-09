@@ -13,7 +13,7 @@ class TasksController < InheritedResources::Base
       {:attr => :user_full_name },
       {:attr => :completed, :value => Proc.new{|task| task.completed? ? 'Yes' : 'No' } }
     ]
-    @editable  = false
+    @editable  = true
     @deactivable = false
   end
 

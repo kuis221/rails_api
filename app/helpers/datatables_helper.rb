@@ -32,13 +32,13 @@ module DatatablesHelper
       end
 
       if datatable.editable
-        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-edit'), view_context.url_for([:edit, resource]), {remote: true, title: 'Edit'})
+        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-edit'), view_context.url_for(parent? ? [:edit, parent, resource] : [:edit, resource]), {remote: true, title: 'Edit'})
       end
       if datatable.deactivable
         if resource.active?
-          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for([:deactivate, resource]), {remote: true, title: 'Deactivate'})
+          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for(parent? ? [:deactivate, parent, resource] : [:deactivate, resource]), {remote: true, title: 'Deactivate'})
         else
-          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-check'), view_context.url_for([:activate, resource]), {remote: true, title: 'Activate'})
+          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-check'), view_context.url_for(parent? ? [:activate, parent, resource] : [:activate, resource]), {remote: true, title: 'Activate'})
         end
       end
       if datatable.deletable

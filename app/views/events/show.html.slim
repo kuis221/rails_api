@@ -19,7 +19,6 @@ h2 = resource.campaign_name
   .span6
     = "Map goes here"
 
-
 .row-fluid
   .box
     a href="#tasks-content" data-toggle="collapse"
@@ -30,9 +29,10 @@ h2 = resource.campaign_name
       .box-content
         = event_tasks_progress_bar(resource.tasks)
 
-
         = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
-        = link_to 'New Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+        .row-fluid
+          .pull-right
+            = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
 
 .row-fluid
   .box
@@ -43,7 +43,9 @@ h2 = resource.campaign_name
     #documents-content.collapse.in
       .box-content
         = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
-        = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+        .row-fluid
+          .pull-right
+            = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
 
 javascript:
