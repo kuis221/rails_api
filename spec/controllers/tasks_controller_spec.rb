@@ -38,6 +38,7 @@ describe TasksController do
       }.should change(Task, :count).by(1)
       assigns(:event).should == event
       assigns(:task).event_id.should == event.id
+      assigns(:task).due_at.to_s.should == '05/23/2020 00:00:00'
     end
   end
 

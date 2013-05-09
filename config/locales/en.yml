@@ -9,3 +9,7 @@ en:
         start_date_time: "Start time"
         end_date_date: "End date"
         end_date_time: "End time"
+  time:
+    formats:
+      default: '%m/%d/%Y %H:%M:%S'
+      db: '%m/%d/%Y %H:%M:%S'

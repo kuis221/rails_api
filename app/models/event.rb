@@ -35,7 +35,10 @@ class Event < ActiveRecord::Base
   validates :campaign_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
-  validate :end_after_start, if: :has_start_and_end?
+  #validate :end_after_start, if: :has_start_and_end?
+
+  validates_datetime :start_at
+  validates_datetime :end_at, :on_or_after => :start_at
 
   attr_accessor :start_date, :start_time, :end_date, :end_time
 

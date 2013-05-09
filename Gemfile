@@ -31,6 +31,7 @@ gem 'newrelic_rpm'
 gem "paperclip", "~> 3.0"
 gem "aws-sdk"
 gem 'google_places'
+gem 'validates_timeliness', '~> 3.0'
 
 # Gems used only for assets and not required
 # in production environments by default.
