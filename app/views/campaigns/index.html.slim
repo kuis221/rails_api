@@ -9,7 +9,8 @@
       table#campaigns-list.table.table-striped.table-bordered.table-scrolled
         thead
           tr
-            th Campaign
+            th Name
+            th Description
             th First Event
             th Last Event
             th Status
@@ -30,6 +31,7 @@ javascript:
         "sAjaxSource": "#{campaigns_path(format: :table)}",
         "iDeferLoading": #{@campaigns.count},
         "aoColumns": [
+          null,
           null,
           null,
           null,
