@@ -42,6 +42,27 @@ describe TasksController do
     end
   end
 
+  describe "PUT 'update'" do
+    let(:task){ FactoryGirl.create(:task) }
+    it "must update the task attributes" do
+      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', user_id: 3}, format: :js
+      assigns(:task).should == task
+      response.should be_success
+      task.reload
+      task.title.should == 'New task title'
+      task.due_at.should == DateTime.parse('2013-12-31 00:00:00')
+      task.user_id.should == 3
+    end
+
+    it "must update the task completed attribute" do
+      put 'update', event_id: event.to_param, id: task.to_param, task: {completed: true}, format: :js
+      assigns(:task).should == task
+      response.should be_success
+      task.reload
+      task.completed.should == true
+    end
+  end
+
   describe "GET 'index'" do
     it "returns http success" do
       get 'index', event_id: event.to_param, format: :table
