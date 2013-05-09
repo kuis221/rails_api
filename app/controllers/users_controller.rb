@@ -20,7 +20,7 @@ class UsersController < InheritedResources::Base
       {:attr => :country_name, :column_name => 'users.country'},
       {:attr => :email ,:column_name => 'users.email'},
       {:attr => :user_group_name ,:column_name => 'user_groups.name'},
-      {:attr => :teams, :value => Proc.new{|user| user.teams.active.map(&:name).join ', ' }, :column_name => 'teams.name'},
+      {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at'},
       {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
     ]
     @editable  = true

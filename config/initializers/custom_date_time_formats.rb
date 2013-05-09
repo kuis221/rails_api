@@ -6,7 +6,7 @@
   :simple => "%B %d, %Y",
   :event => "%m/%d/%Y @ %l:%M %p",
   :comment => "%m/%d/%Y @ %l:%M %p",
-  :full_friendly => "%b %e, %Y @ %l:%M %p",
+  :full_friendly => "%b %e, %Y %l:%M%p",
   :time_only => "%l:%M %p",
   :slashes => "%m/%d/%Y",
   :slashes_inverted => "%d/%m/%Y",
