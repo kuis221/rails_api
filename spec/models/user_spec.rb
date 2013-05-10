@@ -22,7 +22,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
-#  user_group_id          :integer
+#  role_id                :integer
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)

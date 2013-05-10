@@ -11,7 +11,7 @@ class UsersController < InheritedResources::Base
 
   custom_actions :collection => [:complete]
 
-  helper_method :user_groups
+  helper_method :roles
 
   respond_to_datatables do
     columns [
@@ -21,7 +21,7 @@ class UsersController < InheritedResources::Base
       {:attr => :state_name ,:column_name => 'users.state'},
       {:attr => :country_name, :column_name => 'users.country'},
       {:attr => :email ,:column_name => 'users.email'},
-      {:attr => :user_group_name ,:column_name => 'user_groups.name'},
+      {:attr => :role_name ,:column_name => 'roles.name'},
       {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at'},
       {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
     ]
@@ -54,8 +54,8 @@ class UsersController < InheritedResources::Base
   end
 
   protected
-    def user_groups
-      @user_groups ||= UserGroup.all
+    def roles
+      @roles ||= current_company.roles
     end
 
     def ensure_no_user

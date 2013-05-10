@@ -14,6 +14,7 @@ class Company < ActiveRecord::Base
   has_many :users
   has_many :teams
   has_many :campaigns
+  has_many :roles
 
   validates :name, presence: true
 end

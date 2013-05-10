@@ -22,7 +22,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  aasm_state             :string(255)
-#  user_group_id          :integer
+#  role_id                :integer
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)
@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :user_group_id, presence: true
+  validates :role_id, presence: true
   validates :email, presence: true
   validates :company_id, presence: true, numericality: true
 
@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :user_group_id, :country, :state
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :country, :state
   attr_accessible :reset_password_token, :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
 
   after_create :generate_password, :unless => :password
@@ -75,9 +75,9 @@ class User < ActiveRecord::Base
   has_many :teams_users, dependent: :destroy
   has_many :teams, through: :teams_users
 
-  belongs_to :user_group
+  belongs_to :role
 
-  delegate :name, to: :user_group, prefix: true, allow_nil: true
+  delegate :name, to: :role, prefix: true, allow_nil: true
 
   attr_accessor :updating_profile
 

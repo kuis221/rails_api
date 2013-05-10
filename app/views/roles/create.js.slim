@@ -1,0 +1,6 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    $('#user-groups-table').html("#{escape_javascript(render partial: 'list', locals: {roles: collection})}")

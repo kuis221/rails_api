@@ -1,20 +1,20 @@
-= form_tag(set_permissions_user_groups_path, method: :put, remote: true) do
+= form_tag(set_permissions_roles_path, method: :put, remote: true) do
   table#users-list.table.table-striped.table-bordered.table-scrolled
     thead
       tr
         th
-        - UserGroup::PERMISSIONS.each do |permission|
+        - Role::PERMISSIONS.each do |permission|
           th= permission.humanize.titleize
 
     tbody
-      - user_groups.each do |g|
+      - roles.each do |g|
         tr
           td= g.name
-          - UserGroup::PERMISSIONS.each do |permission|
+          - Role::PERMISSIONS.each do |permission|
             td= select_tag("permissions[#{g.id}][#{permission}]", options_for_select([['Disabled', ''],['View/Create/Edit','vce'],['View/Edit','ve'],['View','v']],(g.permissions[permission.to_s] rescue '')), class: 'input-small')
 
   .row-fluid
     .span12
       .pull-right
         = submit_tag 'Save Changes', class: 'btn'
-        = link_to 'New User Group', new_user_group_path, {remote: true, class: 'btn btn-primary'}
+        = link_to 'New User Group', new_role_path, {remote: true, class: 'btn btn-primary'}

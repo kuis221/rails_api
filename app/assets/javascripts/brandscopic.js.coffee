@@ -31,6 +31,9 @@ jQuery ->
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
 
+	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
+		$($(this).data('filter')).dataTable().fnDraw()
+
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 	    e.preventDefault()
 	    resource_modal.modal 'hide'
@@ -45,6 +48,45 @@ jQuery ->
 	$.validator.addMethod("onedigit", (value, element) ->
 		return this.optional(element) || /[0-9]/.test(value);
 	, "Should have at least one digit");
+
+
+
+$.fn.dataTableExt.afnFiltering.push (oSettings, aData, iDataIndex) ->
+    if $("##{oSettings.sTableId}-filters").length
+    	filtersContainer = $("##{oSettings.sTableId}-filters")
+    	row = $(oSettings.aoData[iDataIndex].nTr)
+    	filters = $.map filtersContainer.find('input[type=checkbox]'), (checkbox, i) ->
+    		checkbox.name
+
+    	filters = $.grep filters, (el,index) ->
+    		index == $.inArray(el,filters);
+
+    	filterValues = {}
+    	for filter in filters
+    		filterValues[filter] = $.map filtersContainer.find("input[name=#{filter}][type=checkbox]:checked"),  (checkbox, i) ->
+    			if "#{parseInt(checkbox.value)}" == checkbox.value
+    				return parseInt(checkbox.value)
+    			else
+    				return checkbox.value
+
+
+    	for filter in filters
+    		rowValue = row.data("filter-" + filter)
+    		if rowValue.length == 0
+    			rowValue = ['']
+    		else if not (rowValue instanceof Array)
+    			rowValue = [rowValue]
+
+    		matches = $.grep(rowValue, (el,index) ->
+    			$.inArray(el, filterValues[filter]) >= 0
+    		)
+    		if matches.length == 0
+    			return false
+
+    	return true
+   	else
+   		return true
+
 
 # ---------- Additional functions for data table ----------
 $.fn.dataTableExt.oApi.fnPagingInfo = ( oSettings ) ->

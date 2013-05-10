@@ -8,6 +8,7 @@ module TeamMembersHelper
     def new_member
       @users = company_users
       @teams = company_teams
+      @roles = company_roles
       @users = @users.where(['id not in (?)', resource.users]) unless resource.users.empty?
     end
 
@@ -36,10 +37,13 @@ module TeamMembersHelper
       end
 
       def company_users
-        current_company.users.active
+        current_company.users.active.includes(:teams)
       end
       def company_teams
-        current_company.teams.active
+        current_company.teams.active.with_active_users.order('teams.name ASC')
+      end
+      def company_roles
+        current_company.roles.active
       end
   end
 

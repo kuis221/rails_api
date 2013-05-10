@@ -5,7 +5,7 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
-    user_group_id 1
+    role_id 1
     password 'Changeme123'
     password_confirmation 'Changeme123'
     city 'Curridabat'

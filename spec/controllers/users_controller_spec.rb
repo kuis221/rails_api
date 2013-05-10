@@ -3,7 +3,7 @@ require 'spec_helper'
 describe UsersController do
   describe "as registered user" do
     before(:each) do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
       sign_in @user
     end
 
@@ -50,7 +50,7 @@ describe UsersController do
 
       it "should not render form_dialog if no errors" do
         lambda {
-          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', user_group_id: 1}, format: :js
+          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', role_id: 1}, format: :js
         }.should change(User, :count).by(1)
         response.should be_success
         response.should render_template(:create)
@@ -68,7 +68,7 @@ describe UsersController do
 
       it "should assign current_user's company_id to the new user" do
         lambda {
-          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', user_group_id: 1}, format: :js
+          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', role_id: 1}, format: :js
         }.should change(User, :count).by(1)
         assigns(:user).company_id.should == @user.company_id
       end

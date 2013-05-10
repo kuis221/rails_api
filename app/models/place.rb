@@ -10,6 +10,8 @@
 #  formatted_address :string(255)
 #  latitude          :float
 #  longitude         :float
+#  street_number     :string(255)
+#  route             :string(255)
 #  zipcode           :string(255)
 #  city              :string(255)
 #  state             :string(255)

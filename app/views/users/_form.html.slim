@@ -12,7 +12,7 @@
     .row-fluid
       = f.input :email
       = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-      = f.association :user_group
+      = f.association :role
 
       - unless resource.invited?
         = f.input :password

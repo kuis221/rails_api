@@ -32,7 +32,7 @@
         span.break
         = "User Groups"
     #user-groups-table.box-content
-      = render partial: 'user_groups/list', locals: {user_groups: user_groups}
+      = render partial: 'roles/list', locals: {roles: roles}
 
 javascript:
   var usersTable = $('#users-list').dataTable({
