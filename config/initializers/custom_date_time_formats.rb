@@ -2,7 +2,6 @@
 
 ::Time::DATE_FORMATS.merge!({
   :default => '%m/%d/%Y %H:%M:%S',
-  :db => '%m/%d/%Y %H:%M:%S',
   :simple => "%B %d, %Y",
   :event => "%m/%d/%Y @ %l:%M %p",
   :comment => "%m/%d/%Y @ %l:%M %p",
@@ -16,6 +15,5 @@
 
 ::Date::DATE_FORMATS.merge!({
   :default => '%m/%d/%Y',
-  :db => '%m/%d/%Y',
   :year_month => '%Y-%m'
 })
