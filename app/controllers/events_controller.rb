@@ -11,10 +11,11 @@ class EventsController < InheritedResources::Base
 
   respond_to_datatables do
     columns [
-      {:attr => :start_date, :value => Proc.new{|event| @controller.view_context.link_to(event.start_date, @controller.view_context.event_path(event)) }, :column_name => 'events.start_at', :searchable => true},
-      {:attr => :start_time, :column_name => 'events.start_at', :searchable => true},
+      {:attr => :start_date, :value => Proc.new{|event| @controller.view_context.link_to(event.start_date, @controller.view_context.event_path(event)) } },
+      {:attr => :start_time },
       {:attr => :place_name },
-      {:attr => :campaign_name ,:column_name => 'campaign.name'}
+      {:attr => :campaign_name },
+      {:attr => :active ,  :value => Proc.new{|user| user.active? ? 'Active' : 'Inactive' } }
     ]
     @editable  = true
     @deactivable = true
