@@ -198,8 +198,10 @@ $.fn.dataTableExt.oApi.fnReloadAjax = ( oSettings, sNewSource, fnCallback, bStan
         # Got the data - add it to the table
         aData =  if oSettings.sAjaxDataProp isnt ""  then that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) else json
 
-        for i in [0..aData.length-1]
+        i = 0
+        while i < aData.length
             that.oApi._fnAddData oSettings, aData[i]
+            i++
 
         oSettings.aiDisplay = oSettings.aiDisplayMaster.slice()
 
