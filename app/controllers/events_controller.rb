@@ -20,5 +20,6 @@ class EventsController < InheritedResources::Base
     @deactivable = true
   end
 
+  has_scope :by_period, :using => [:start_date, :end_date]
 
 end

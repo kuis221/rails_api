@@ -29,6 +29,8 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
+  scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", start_date, Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
+
   track_who_does_it
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']

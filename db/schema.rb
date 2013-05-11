@@ -57,6 +57,8 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.integer  "company_id"
   end
 
+  add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
+
   create_table "campaigns_teams", :force => true do |t|
     t.integer "campaign_id"
     t.integer "team_id"
@@ -179,6 +181,8 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.integer  "company_id"
   end
 
+  add_index "teams", ["company_id"], :name => "index_teams_on_company_id"
+
   create_table "teams_users", :force => true do |t|
     t.integer  "team_id"
     t.integer  "user_id"
@@ -218,6 +222,7 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.integer  "updated_by_id"
   end
 
+  add_index "users", ["company_id"], :name => "index_users_on_company_id"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["role_id"], :name => "index_users_on_role_id"
