@@ -18,7 +18,7 @@ module EventsHelper
       content_tag(:div, "#{assigned} of #{total} Tasks Have Been Assigned. #{completed} are Completed.") +
       content_tag(:div, class: :progress) do
         content_tag(:div, "#{completed_p}%", class: 'bar bar-completed', style: "width: #{completed_p}%") +
-        content_tag(:div, "#{assigned_p}%", class: 'bar bar-assigned', style: "width: #{assigned_p - completed_p}%") +
+        content_tag(:div, "#{assigned_p - completed_p}%", class: 'bar bar-assigned', style: "width: #{assigned_p - completed_p}%") +
         content_tag(:div, "#{100-assigned_p}%", class: 'bar-unassigned', style: "width: #{100-assigned_p}%")
       end
     end

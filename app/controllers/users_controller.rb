@@ -5,7 +5,7 @@ class UsersController < InheritedResources::Base
 
   include DeactivableHelper
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:complete, :update_profile]
 
   respond_to :js, only: [:new, :create, :edit, :update]
 

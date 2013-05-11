@@ -32,9 +32,9 @@ describe EventsController do
 
           # Events on other companies should not be included on the results
           FactoryGirl.create_list(:event, 2, company_id: 9999)
-          get 'index', sEcho: 1, format: :table
+          get 'index', format: :table
           parsed_body = JSON.parse(response.body)
-          parsed_body["sEcho"].should == 1
+          parsed_body["sEcho"].should == nil
           parsed_body["iTotalRecords"].should == 3
           parsed_body["iTotalDisplayRecords"].should == 3
           parsed_body["aaData"].count.should == 3

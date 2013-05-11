@@ -2,6 +2,10 @@ class TasksController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update, :show]
   belongs_to :event
 
+  custom_actions collection: [:progress_bar]
+
+  layout false, only: :progress_bar
+
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
 

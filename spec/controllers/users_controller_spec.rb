@@ -9,6 +9,7 @@ describe UsersController do
 
     describe "GET 'edit'" do
       let(:user){ FactoryGirl.create(:user) }
+
       it "returns http success" do
         get 'edit', id: user.to_param, format: :js
         response.should be_success

@@ -28,7 +28,8 @@ h2 = resource.campaign_name
 
     #tasks-content.collapse.in
       .box-content
-        = event_tasks_progress_bar(resource.tasks)
+        .tasks-progress-bar
+          = render partial: 'tasks/progress_bar', locals: {tasks: resource.tasks}
 
         = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
         .row-fluid
@@ -70,5 +71,9 @@ h2 = resource.campaign_name
           position: placeLocation
         });
       }
+
+      $(document).bind('tasks:change', function(e){
+        $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
+      })
 
       google.maps.event.addDomListener(window, 'load', initialize);
