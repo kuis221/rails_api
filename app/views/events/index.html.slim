@@ -6,20 +6,28 @@
         span.break
         = "Users"
     .box-content
-      table#events-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th Start Date
-            th Start Time
-            th Location
-            th Campaign
-            th Status
-            th
-        tbody
-
       .row-fluid
         .pull-right
           = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
+
+      .row-fluid
+        .span8
+          table#events-list.table.table-striped.table-bordered.table-scrolled
+            thead
+              tr
+                th Start Date
+                th Start Time
+                th Location
+                th Campaign
+                th Status
+                th
+            tbody
+        .box-content.span4
+          #events-list-filters
+            #dates-range-filter
+            = form_tag('#', id: 'event-filters-form',method: :get) do
+              = hidden_field_tag 'by_period[start_date]'
+              = hidden_field_tag 'by_period[end_date]'
 
 javascript:
   var eventsTable = $('#events-list').dataTable({
@@ -28,6 +36,12 @@ javascript:
         "bProcessing": true,
         "bServerSide": false,
         "sAjaxSource": "#{events_path(format: :table)}",
+        "fnServerParams": function (aoData) {
+          data = $("#event-filters-form").serializeArray();
+          $.each(data, function(index, value){
+            aoData.push(value);
+          });
+        },
         "aoColumns": [
           null,
           null,
@@ -35,5 +49,24 @@ javascript:
           null,
           null,
           {"sWidth": '50px', 'bSortable': false}
-        ]
+        ],
   })
+
+  $('#dates-range-filter').datepick({
+    rangeSelect: true,
+    monthsToShow: 2,
+    changeMonth: false,
+    onSelect: function(dates) {
+      var start_date = (dates[0].getMonth() + 1) + "/" + dates[0].getDate() + "/" + dates[0].getFullYear();
+      $('#by_period_start_date').val(start_date);
+
+      $('#by_period_end_date').val('');
+      if (dates[0] != dates[1]) {
+        var end_date = (dates[1].getMonth() + 1) + "/" + dates[1].getDate() + "/" + dates[1].getFullYear();
+        $('#by_period_end_date').val(end_date);
+      }
+
+      eventsTable.fnClearTable();
+      eventsTable.fnReloadAjax();
+    }
+  });
