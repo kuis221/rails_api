@@ -57,7 +57,6 @@ h2 = resource.campaign_name
       function initialize() {
         var mapOptions = {
           zoom: 13,
-          title: '#{escape_javascript(resource.place.name)}',
           center: new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude}),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -72,8 +71,10 @@ h2 = resource.campaign_name
         });
       }
 
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+
+
       $(document).bind('tasks:change', function(e){
         $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
       })
-
-      google.maps.event.addDomListener(window, 'load', initialize);
