@@ -81,13 +81,7 @@ body.events.show {
 		}
 	}
 }
-body.events.index {
-	#map-canvas {
-        margin: 0;
-        padding: 0;
-        height: 400px;
-    }
-}
+
 
 #post-event-form-builder {
 	#droppable {
@@ -115,4 +109,15 @@ table.table form {
 // For google places api
 .pac-container {
 	z-index: 1200 !important;
+}
+
+.google-map {
+	img {
+		max-width: none;
+	}
+}
+
+// Events Calendar picker
+.datepick-month td .datepick-selected {
+	background-color: #2FABE9 !important;
 }

@@ -9,9 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require 'theme/bootstrap'
- *= require 'bootstrap-override'
- *= require 'theme/bootstrap-responsive'
+ *= require bootstrap_and_overrides
  *= require 'fullcalendar'
  *= require 'fullcalendar-custom'
  *= require_directory .

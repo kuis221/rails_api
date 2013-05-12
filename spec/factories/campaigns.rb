@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :campaign do
-    name "Test Campaign"
+     sequence(:name) {|n| "Campaign #{n}" }
     description "Test Campaign description"
     aasm_state "active"
     company_id 1

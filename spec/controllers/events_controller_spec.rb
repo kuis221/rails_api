@@ -21,23 +21,39 @@ describe EventsController do
         response.should be_success
       end
 
-      describe "datatable requests" do
-        it "responds to .table format" do
-          get 'index', format: :table
+      describe "json requests" do
+        it "responds to .json format" do
+          get 'index', format: :json
           response.should be_success
         end
 
         it "returns the correct structure" do
-          FactoryGirl.create_list(:event, 3, company_id: @user.company_id)
+          Place.any_instance.stub(:fetch_place_data)
+          place = FactoryGirl.create(:place, latitude: 1.234, longitude: 4.321, formatted_address: '123 My Street')
+          campaign = FactoryGirl.create(:campaign)
+          events = FactoryGirl.create_list(:event, 3, company_id: @user.company_id, place_id: place.id, campaign_id: campaign.id)
 
           # Events on other companies should not be included on the results
           FactoryGirl.create_list(:event, 2, company_id: 9999)
-          get 'index', format: :table
+          get 'index', format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body["sEcho"].should == nil
-          parsed_body["iTotalRecords"].should == 3
-          parsed_body["iTotalDisplayRecords"].should == 3
-          parsed_body["aaData"].count.should == 3
+          parsed_body.count.should == 3
+          parsed_body.first.tap do |event|
+            event.count.should == 12
+            event['id'].should == events[0].id
+            event['start_date'].should == events[0].start_date
+            event['end_date'].should == events[0].end_date
+            event['start_at'].should == events[0].start_at.to_s
+            event['end_at'].should == events[0].end_at.to_s
+            event['active'].should == events[0].active
+            event['status'].should == 'Active'
+            event['place'].should == {'name' => place.name, 'latitude' => 1.234, 'longitude' => 4.321, 'formatted_address' => '123 My Street'}
+            event['campaign'].should == {'name' => campaign.name}
+            event['links']['show'].should == event_path(events[0])
+            event['links']['edit'].should == edit_event_path(events[0])
+            event['links']['activate'].should == activate_event_path(events[0])
+            event['links']['deactivate'].should == deactivate_event_path(events[0])
+          end
         end
       end
     end

@@ -2,23 +2,27 @@
   .box.span12
     .box-header
       h2
-        i.icon-user
+        i.icon-calendar
         span.break
-        = "Users"
+        = "Events"
     .box-content
       .row-fluid
         .pull-right
           = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
 
       .row-fluid
-        .span8
-          .pull-right
+        #events-index-container.span12
+          #events-list-filters.pull-right
+          .text-right
             #toggle-events-view.btn-group
-              a.btn.active href="#list-view" data-toggle="tab" List
-              a.btn href="#map-view" data-toggle="tab" Map
-          .clearfix
+              a.btn.active href="#list-view" data-toggle="tab" title="List View"
+                i.icon-list
+              a.btn href="#map-view" data-toggle="tab" title="Map View"
+                i.icon-globe
+
           .tab-content
             #list-view.tab-pane.active
+              #events-filter-label
               table#events-list.table.table-striped.table-bordered.table-scrolled
                 thead
                   tr
@@ -29,72 +33,66 @@
                     th Status
                     th
                 tbody
+
             #map-view.tab-pane
-              #map-canvas
-        .box-content.span4
-          #events-list-filters
-            #dates-range-filter
-            = form_tag('#', id: 'event-filters-form',method: :get) do
-              = hidden_field_tag 'by_period[start_date]'
-              = hidden_field_tag 'by_period[end_date]'
+              #map-canvas.google-map
+
 
 javascript:
+  $('#events-list-filters').filterBox({
+    'onChange': function(filterBox){
+      eventsTable.fnReloadAjax();
+    }
+  });
+
   var eventsTable = $('#events-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
         "bPaginate": false,
         "bProcessing": true,
         "bServerSide": false,
-        "sAjaxSource": "#{events_path(format: :table)}",
+        "sAjaxSource": "#{events_path(format: :json)}",
         "fnServerParams": function (aoData) {
-          data = $("#event-filters-form").serializeArray();
+          data = $('#events-list-filters').filterBox('getFilters');
           $.each(data, function(index, value){
             aoData.push(value);
           });
         },
+        "fnServerData": function ( sSource, aoData, fnCallback ){
+          $.getJSON(sSource, aoData, function (json){
+              data = $.map(json, function(event, index){
+                var actionButtons = $('<div>')
+                    .append($('<a>', {'href': event.links.edit, 'class': 'icon-edit','title':'Edit', 'data-remote': true}))
+                    .append(' ');
+                if (event.active){
+                    actionButtons.append($('<a>', {'href': event.links.deactivate, 'class': 'icon-remove', 'title':'Deactivate', 'data-remote': true}))
+                } else{
+                    actionButtons.append($('<a>', {'href': event.links.activate, 'class': 'icon-check', 'title':'Activate', 'data-remote': true}))
+                }
+                return [[
+                    $('<div>').append($('<a>',{'href': event.links.show, 'title':'View Event'}).text(event.start_date)).html(),
+                    $('<div>').append($('<a>',{'href': event.links.show, 'title':'View Event'}).text(event.start_time)).html(),
+                    (event.place ? event.place.name : '' ),
+                    (event.campaign ? event.campaign.name : '' ),
+                    event.status,
+                    actionButtons.html()
+                  ]];
+              });
+              fnCallback({aaData: data});
+              $('#events-filter-label').html(data.length + " events " + $('#events-list-filters').filterBox('describeFilters'))
+
+              $(document).trigger('events-list:changed',[json]);
+          });
+        },
         "aoColumns": [
+          {"sWidth": '100px'},
+          {"sWidth": '100px'},
           null,
           null,
-          null,
-          null,
-          null,
+          {"sWidth": '70px'},
           {"sWidth": '50px', 'bSortable': false}
         ],
   })
 
-  $('#dates-range-filter').datepick({
-    rangeSelect: true,
-    monthsToShow: 2,
-    changeMonth: false,
-    onSelect: function(dates) {
-      var start_date = (dates[0].getMonth() + 1) + "/" + dates[0].getDate() + "/" + dates[0].getFullYear();
-      $('#by_period_start_date').val(start_date);
 
-      $('#by_period_end_date').val('');
-      if (dates[0] != dates[1]) {
-        var end_date = (dates[1].getMonth() + 1) + "/" + dates[1].getDate() + "/" + dates[1].getFullYear();
-        $('#by_period_end_date').val(end_date);
-      }
 
-      eventsTable.fnReloadAjax();
-    }
-  });
-
-  var map;
-  function initializeMap() {
-    var mapOptions = {
-      center: new google.maps.LatLng(-34.397, 150.644),
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map-canvas'),
-        mapOptions);
-  }
-
-  $('#toggle-events-view a').click(function(){
-    $('#toggle-events-view a').removeClass('active');
-    $(this).addClass('active').tab('show');
-    if ($(this).attr('href')=='#map-view' && !map){
-      initializeMap()
-    }
-  })
 
