@@ -29,14 +29,20 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :dashboard, 'Dashboard', root_path
-    primary.item :events, 'Events', events_path, highlights_on: %r(/events)
-    primary.item :tasks, 'Tasks', '#'
-    primary.item :analysis, 'Analysis', '#'
-    primary.item :admin, 'Admin', users_path do |secondary|
-      secondary.item :users, 'User Management', users_path
+    primary.item :home, content_tag(:i, '', class: 'icon-home'), root_path do |secondary|
+      secondary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r(/$)
+      secondary.item :events, 'Events', events_path, highlights_on: %r(/events)
+      secondary.item :tasks, 'Tasks', '/', highlights_on: %r(/tasks)
+      secondary.item :analysis, 'Analysis', '#'
+    end
+
+    primary.item :admin, content_tag(:i, '', class: 'icon-wrench'), users_path do |secondary|
+      secondary.item :users, 'User Management', users_path do |tertiary|
+        tertiary.item :users, 'Users', users_path, highlights_on: %r(/users)
+        tertiary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)
+        tertiary.item :roles, 'Roles', '#', highlights_on: %r(/roles)
+      end
       secondary.item :campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)
-      secondary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)
       secondary.item :places, 'Places', '#'
       secondary.item :brands, 'Brands', '#'
     end

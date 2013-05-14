@@ -21,6 +21,13 @@ describe EventsController do
         response.should be_success
       end
 
+      describe "filters" do
+        it "should call the by_period filter" do
+          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').twice { Event }
+          get :index, {by_period: {start_date: '01/02/2012', end_date: '01/03/2012'}}
+        end
+      end
+
       describe "json requests" do
         it "responds to .json format" do
           get 'index', format: :json
