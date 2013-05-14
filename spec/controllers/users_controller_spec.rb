@@ -97,10 +97,9 @@ describe UsersController do
       end
     end
 
-
     describe "PUT 'update'" do
       let(:user){ FactoryGirl.create(:user) }
-      it "must update the user attributes" do
+      it "must update the user data" do
         put 'update', id: user.to_param, user: {first_name: 'Juanito', last_name: 'Perez'}, format: :js
         assigns(:user).should == user
         response.should be_success
@@ -116,6 +115,21 @@ describe UsersController do
         response.should be_success
         user.reload
         user.encrypted_password.should_not == old_password
+      end
+
+      it "must update the its own profile data" do
+        old_password = @user.encrypted_password
+        put 'update', id: @user.to_param, user: {first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', city: 'Miami', state: 'FL', country: 'US', password: 'Juanito123', password_confirmation: 'Juanito123'}, format: :js
+        assigns(:user).should == @user
+        response.should be_success
+        @user.reload
+        @user.first_name.should == 'Juanito'
+        @user.last_name.should == 'Perez'
+        @user.email.should == 'test@testing.com'
+        @user.city.should == 'Miami'
+        @user.state.should == 'FL'
+        @user.country.should == 'US'
+        @user.encrypted_password.should_not == old_password
       end
     end
 

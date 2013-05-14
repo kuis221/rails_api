@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :country, :state
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id
   attr_accessible :reset_password_token, :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
 
   after_create :generate_password, :unless => :password

@@ -46,10 +46,31 @@ class UsersController < InheritedResources::Base
     end
   end
 
+  def update
+    update! do |success, failure|
+      success.js do
+        sign_in(@user, bypass: true) if @user.id == current_user.id
+        render 'update'
+      end
+    end
+  end
+
   def complete
     unless @user = User.find_by_reset_password_token(params[:auth_token])
       flash[:notice] = 'This url is not longer valid'
       redirect_to root_path
+    end
+  end
+
+  def role_given?
+    true
+  end
+
+  def as_role
+    if params["id"] and current_user.id == resource.id
+      { as: :profile }
+    else
+      {}
     end
   end
 
