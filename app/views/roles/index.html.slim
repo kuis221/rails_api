@@ -1,0 +1,36 @@
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-user
+        span.break
+        = "Roles"
+    .box-content
+      table#roles-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th Name
+            th Description
+            th Status
+            th
+        tbody
+
+      .row-fluid
+        .pull-right
+          = link_to 'New Role', new_role_path, {remote: true, class: 'btn btn-primary'}
+
+javascript:
+  var rolesTable = $('#roles-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bServerSide": false,
+        "sAjaxSource": "#{roles_path(format: :table)}",
+        "iDeferLoading": #{@roles.count},
+        "aoColumns": [
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  })

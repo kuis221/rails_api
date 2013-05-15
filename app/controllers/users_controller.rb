@@ -11,8 +11,6 @@ class UsersController < InheritedResources::Base
 
   custom_actions :collection => [:complete]
 
-  helper_method :roles
-
   respond_to_datatables do
     columns [
       {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true},
@@ -75,9 +73,6 @@ class UsersController < InheritedResources::Base
   end
 
   protected
-    def roles
-      @roles ||= current_company.roles
-    end
 
     def ensure_no_user
       if signed_in?

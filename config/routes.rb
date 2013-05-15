@@ -14,6 +14,10 @@ Brandscopic::Application.routes.draw do
   get "countries/states"
 
   resources :roles do
+    member do
+      get :deactivate
+      get :activate
+    end
     collection do
       put :set_permissions
     end

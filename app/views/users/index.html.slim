@@ -25,15 +25,6 @@
         .pull-right
           = link_to 'Invite New User', new_user_path, {remote: true, class: 'btn btn-primary'}
 
-
-    .box-header
-      h2
-        i.icon-user
-        span.break
-        = "User Groups"
-    #user-groups-table.box-content
-      = render partial: 'roles/list', locals: {roles: roles}
-
 javascript:
   var usersTable = $('#users-list').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",

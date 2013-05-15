@@ -8,11 +8,11 @@
 #  updated_at  :datetime         not null
 #  permissions :text
 #  company_id  :integer
+#  active      :boolean
+#  description :text
 #
 
 class Role < ActiveRecord::Base
-  attr_accessible :name, :permissions
-
   belongs_to :company
   scoped_to_company
 
@@ -20,9 +20,18 @@ class Role < ActiveRecord::Base
 
   has_many :users
 
+  attr_accessible :name, :description, :permissions
   validates :name, presence: true
 
   serialize :permissions
 
   scope :active, where(:active => true)
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 end

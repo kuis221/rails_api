@@ -1,0 +1,18 @@
+.row-fluid
+  .box.span12
+    .box-header
+      h2
+        i.icon-check
+        span.break
+        = "Field Director"
+    .box-content
+      .row-fluid
+	      .span6 = "Manages and directly oversees a group of Field Managers"
+	      .span6
+	      	.pull-right
+		      = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
+		      = link_to 'Deactivate', '#', {class: 'btn'}
+
+      .row-fluid
+        .pull-right
+          = link_to 'Save Changes', '#', {remote: true, class: 'btn btn-primary'}

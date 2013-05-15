@@ -40,7 +40,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :users, 'User Management', users_path do |tertiary|
         tertiary.item :users, 'Users', users_path, highlights_on: %r(/users)
         tertiary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)
-        tertiary.item :roles, 'Roles', '#', highlights_on: %r(/roles)
+        tertiary.item :roles, 'Roles', roles_path, highlights_on: %r(/roles)
       end
       secondary.item :campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)
       secondary.item :places, 'Places', '#'
