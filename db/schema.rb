@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130515163451) do
+ActiveRecord::Schema.define(:version => 20130516181312) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -166,6 +166,7 @@ ActiveRecord::Schema.define(:version => 20130515163451) do
     t.datetime "updated_at",                       :null => false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
+    t.boolean  "active",        :default => true
   end
 
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"

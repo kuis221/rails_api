@@ -3,8 +3,8 @@ module DeactivableHelper
   module ViewMethods
     def active_inactive_buttons(resource)
       content_tag(:div, class: 'btn-group') do
-        link_to('Active', activate_event_path(resource), class: 'btn btn-small activate-event-btn'+(resource.active? ? ' btn-success active' : ''), remote: true)+
-        link_to('Inactive', deactivate_event_path(resource), class: 'btn btn-small deactivate-event-btn'+(resource.active? ? '' : ' btn-danger active'), remote: true)
+        link_to('Active', [:activate, resource], class: 'btn btn-small activate-'+resource.class.name.downcase+'-btn'+(resource.active? ? ' btn-success active' : ''), remote: true)+
+        link_to('Inactive', [:deactivate, resource], class: 'btn btn-small deactivate-'+resource.class.name.downcase+'-btn'+(resource.active? ? '' : ' btn-danger active'), remote: true)
       end
     end
   end

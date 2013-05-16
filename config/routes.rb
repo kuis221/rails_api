@@ -47,6 +47,10 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     resources :tasks do
+      member do
+        get :deactivate
+        get :activate
+      end
       collection do
         get :progress_bar
       end

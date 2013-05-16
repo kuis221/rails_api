@@ -12,6 +12,7 @@
 #  updated_at    :datetime         not null
 #  created_by_id :integer
 #  updated_by_id :integer
+#  active        :boolean
 #
 
 class Task < ActiveRecord::Base
@@ -29,4 +30,12 @@ class Task < ActiveRecord::Base
   validates :title, presence: true
   validates :user_id, numericality: true, if: :user_id
   validates :event_id, presence: true, numericality: true
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 end

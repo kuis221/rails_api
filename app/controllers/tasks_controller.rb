@@ -1,13 +1,17 @@
 class TasksController < InheritedResources::Base
-  respond_to :js, only: [:new, :create, :edit, :update, :show]
   belongs_to :event
 
-  custom_actions collection: [:progress_bar]
+  # This helper provide the methods to activate/deactivate the resource
+  include DeactivableHelper
 
-  layout false, only: :progress_bar
+  respond_to :js, only: [:new, :create, :edit, :update, :show]
 
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
+
+  layout false, only: :progress_bar
+
+  custom_actions collection: [:progress_bar]
 
   respond_to_datatables do
     columns [
@@ -18,7 +22,7 @@ class TasksController < InheritedResources::Base
       {:attr => :completed, :value => Proc.new{|task| @controller.view_context.simple_form_for([task.event, task], remote: true) {|f| f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}} }}
     ]
     @editable  = true
-    @deactivable = false
+    @deactivable = true
   end
 
 end
