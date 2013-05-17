@@ -22,9 +22,10 @@ class UsersController < InheritedResources::Base
       {:attr => :country_name, :column_name => 'users.country'},
       {:attr => :email ,:column_name => 'users.email'},
       {:attr => :role_name ,:column_name => 'roles.name'},
-      {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at'},
-      {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
+      {:attr => :last_activity_at, :value => Proc.new{|user| user.last_activity_at.to_s(:full_friendly) if user.last_activity_at }, :column_name => 'users.last_activity_at'},
+      {:attr => :active, :value => Proc.new{|user| user.active_status }}
     ]
+    includes company_users: :role
     @editable  = true
     @deactivable = true
   end
@@ -75,6 +76,21 @@ class UsersController < InheritedResources::Base
   end
 
   protected
+    def begin_of_association_chain
+      current_company
+    end
+
+    def build_resource
+      if params[:user] and params[:user][:email] and @user = User.where(email: params[:user][:email]).first
+        @user.attributes = {company_users_attributes: params[:user][:company_users_attributes]}
+      else
+        @user ||= User.new(params[:user])
+        @user.company_users.build({company_id: current_company.id}, without_protection: true) if @user.company_users.empty?
+      end
+      @user.company_users.each{|cu| cu.company_id = current_company.id if cu.new_record? }
+      @user
+    end
+
     def roles
       @roles ||= current_company.roles
     end

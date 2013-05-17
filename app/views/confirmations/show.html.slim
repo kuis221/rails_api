@@ -1,6 +1,6 @@
 h2 Complete your profile
 
-= simple_form_for(resource, :url => update_profile_path, :html => { :method => :put }) do |f|
+= simple_form_for(resource, :url => confirmation_url(resource, :confirmation_token => resource.confirmation_token), :html => { :method => :put }) do |f|
   = f.error_notification
 
   = f.input :reset_password_token, :as => :hidden
@@ -23,7 +23,6 @@ h2 Complete your profile
     = f.button :submit, "Save"
 
 coffee:
-  $('form.edit_user').validate();
   $('#user_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
       states = $('#user_state')

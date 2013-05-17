@@ -3,8 +3,8 @@ require 'spec_helper'
 describe EventsController do
   describe "as registered user" do
     before(:each) do
-      @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-      sign_in @user
+      @user = sign_in_as_user
+      @company = @user.companies.first
     end
 
     describe "GET 'edit'" do
@@ -38,7 +38,7 @@ describe EventsController do
           Place.any_instance.stub(:fetch_place_data)
           place = FactoryGirl.create(:place, latitude: 1.234, longitude: 4.321, formatted_address: '123 My Street')
           campaign = FactoryGirl.create(:campaign)
-          events = FactoryGirl.create_list(:event, 3, company_id: @user.company_id, place_id: place.id, campaign_id: campaign.id)
+          events = FactoryGirl.create_list(:event, 3, company_id: @company.id, place_id: place.id, campaign_id: campaign.id)
 
           # Events on other companies should not be included on the results
           FactoryGirl.create_list(:event, 2, company_id: 9999)
@@ -89,11 +89,11 @@ describe EventsController do
         assigns(:event).errors.count > 0
       end
 
-      it "should assign current_user's company_id to the new user" do
+      it "should assign current_user's company_id to the new event" do
         lambda {
           post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
-        assigns(:event).company_id.should == @user.company_id
+        assigns(:event).company_id.should == @company.id
       end
     end
 
@@ -154,8 +154,8 @@ describe EventsController do
       end
 
       it 'should assign all the team\'s users to the event' do
-        expected_users = FactoryGirl.create_list(:user, 3, company_id: @user.company_id)
-        team = FactoryGirl.create(:team, company_id: @user.company_id)
+        expected_users = FactoryGirl.create_list(:user, 3, company_id: @company.id)
+        team = FactoryGirl.create(:team, company_id: @company.id)
         lambda {
           expected_users.each{|u| team.users  << u }
           post 'add_members', id: event.id, team_id: team.to_param, format: :js
@@ -168,7 +168,7 @@ describe EventsController do
       end
 
       it 'should not assign users to the event if they are already part of the event' do
-        team = FactoryGirl.create(:team, company_id: @user.company_id)
+        team = FactoryGirl.create(:team, company_id: @company.id)
         team.users << @user
         event.users << @user
         lambda {

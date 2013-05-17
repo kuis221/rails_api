@@ -5,7 +5,7 @@
   .form-inputs
     = f.input :title
     = f.input :due_at, input_html: {value: resource.due_at.try(:to_s, :slashes)}, as: :date_picker
-    = f.association :user, label: 'Team Member', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
+    = f.association :user, label: 'Team Member', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_company.users.active.all
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}

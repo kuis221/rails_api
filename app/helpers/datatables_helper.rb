@@ -54,10 +54,10 @@ module DatatablesHelper
         per_page = params[:iDisplayLength]
         current_page = (params[:iDisplayStart].to_i/per_page.to_i rescue 0)+1
         #super.paginate(:page => current_page, :per_page => per_page, :conditions =>  search_conditions, :order => "#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
-        super.where(search_conditions).order("#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
+        super.where(search_conditions).includes(self.class.datatable.includes).order("#{self.class.datatable.column_sort(params[:iSortCol_0])} #{params[:sSortDir_0] || "DESC"}")
       else
         #super.paginate(:page => 1, :per_page => 10)
-        super
+        super.includes(self.class.datatable.includes)
       end
     end
 
@@ -74,7 +74,6 @@ module DatatablesHelper
           end
         end
       end
-      Rails.logger.debug [conditions.join(' OR '), values].flatten
       [conditions.join(' OR '), values].flatten
     end
 
@@ -105,6 +104,11 @@ module DataTable
     def columns(columns=nil)
       @columns = columns if columns
       @columns
+    end
+
+    def includes(includes=nil)
+      @includes = includes if includes
+      @includes
     end
 
     def column(index)

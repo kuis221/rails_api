@@ -2,7 +2,7 @@ module CompanyScoped
   class Callback
     def before_validation(record)
       if record.respond_to?(:company_id) && current_user
-        record.company_id ||= current_user.company_id
+        record.company_id ||= current_company.id
       end
     end
 
@@ -12,6 +12,10 @@ module CompanyScoped
       logger.warn "WARNING: User#current is nil, are you including SentientController on your ApplicationController?" unless User.current
 
       User.current
+    end
+
+    def current_company
+      current_user.current_company
     end
 
     def logger

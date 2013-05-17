@@ -40,7 +40,7 @@ module TeamMembersHelper
         current_company.users.active.includes(:teams)
       end
       def company_teams
-        current_company.teams.active.with_active_users.order('teams.name ASC')
+        current_company.teams.active.with_active_users(current_company).order('teams.name ASC')
       end
       def company_roles
         current_company.roles.active

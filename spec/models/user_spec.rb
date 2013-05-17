@@ -34,6 +34,8 @@
 require 'spec_helper'
 
 describe User do
+  it { should have_many(:company_users) }
+
   it { should validate_presence_of(:first_name) }
   it { should validate_presence_of(:last_name) }
   it { should validate_presence_of(:email) }
@@ -50,24 +52,44 @@ describe User do
   it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
   it { should_not allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
 
+  describe "email uniqness" do
+    before do
+      @user = FactoryGirl.create(:user)
+    end
+    it { should validate_uniqueness_of(:email) }
+  end
 
   describe 'new user creation' do
     it 'should send a password_generation email' do
-      @user = FactoryGirl.build(:user, :password => nil, :password_confirmation => nil)
-      UserMailer.should_receive(:password_generation).with(@user).and_return(double(:deliver => true))
-      @user.save!
+      user = FactoryGirl.build(:unconfirmed_user, :password => nil, :password_confirmation => nil)
+      user.company_users.build({role_id: 1, company: FactoryGirl.build_stubbed(:company)}, without_protection: true)
+      Devise::Mailer.should_receive(:confirmation_instructions).with(user, {}).and_return(double(:deliver => true))
+      user.save
     end
 
-    it 'should generate a reset password token' do
-      @user = FactoryGirl.build(:user, :reset_password_token => nil, :password => nil, :password_confirmation => nil)
-      @user.save!
-      @user.reset_password_token.should_not be_nil
+    it 'should generate a confirmation token' do
+      user = FactoryGirl.build(:unconfirmed_user, :confirmation_token => nil, :password => nil, :password_confirmation => nil)
+      user.company_users.build({role_id: 1, company: FactoryGirl.build_stubbed(:company)}, without_protection: true)
+      user.save!
+      user.confirmation_token.should_not be_nil
+    end
+  end
+
+  describe 'added to a new company' do
+    it 'should send a company invitaion email when the user has a password set and is added to the first company' do
+      company = FactoryGirl.create(:company)
+      user = FactoryGirl.build(:user)
+      user.company_users.build({role_id: 1, company_id: company.id}, without_protection: true)
+      UserMailer.should_receive(:company_invitation).with(user, company).and_return(double(:deliver => true))
+      user.save!
     end
 
-    it 'should NOT generate a reset password token if the a password is provided' do
-      @user = FactoryGirl.build(:user, :password => 'AbcDEF123!', :password_confirmation => 'AbcDEF123!')
-      @user.save!
-      @user.reset_password_token.should be_nil
+    it 'should not send the company invitation\'s email if added to the first company and is not confirmed' do
+      UserMailer.should_not_receive(:company_invitation)
+      user = FactoryGirl.create(:user, confirmed_at: nil)
+      company = FactoryGirl.create(:company)
+      user.company_users << FactoryGirl.build(:company_user, role_id: 1, company_id: company.id)
+      user.reload.companies.count.should == 1
     end
   end
 
@@ -122,4 +144,25 @@ describe User do
       user.state_name.should be_nil
     end
   end
+
+  describe "#deactivate" do
+    it "should deactivate the status of the user on the current company" do
+      User.current = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+      company = User.current.reload.companies.first
+      company = User.current.current_company = company
+      user = FactoryGirl.create(:user, company_id: company.id, active: true)
+      user.deactivate!
+      user.company_users.first.reload.active.should be_false
+    end
+
+    it "should activate the status of the user on the current company" do
+      User.current = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+      company = User.current.reload.companies.first
+      company = User.current.current_company = company
+      user = FactoryGirl.create(:user, company_id: company.id, active: false)
+      user.activate!
+      user.company_users.first.reload.active.should be_true
+    end
+  end
+
 end

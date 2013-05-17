@@ -34,7 +34,7 @@ class Team < ActiveRecord::Base
   scope :active, where(:active => true)
 
   scope :with_users, joins(:users).group('teams.id')
-  scope :with_active_users, joins(:users).where(:users => {:aasm_state => ['active', 'invited']}).group('teams.id')
+  scope :with_active_users, lambda{|companies| joins({:users => :company_users}).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
 
   def activate!
     update_attribute :active, true

@@ -3,8 +3,12 @@ Brandscopic::Application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  devise_for :users
-  ActiveAdmin.routes(self)
+  devise_for :users, :controllers => { :confirmations => "confirmations" }
+
+  devise_scope :user do
+    put '/users/confirmation', to: 'confirmations#update'
+  end
+
 
   resources :activities
 

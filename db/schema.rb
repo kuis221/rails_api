@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130509224657) do
+ActiveRecord::Schema.define(:version => 20130517141646) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -85,6 +85,18 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "company_users", :force => true do |t|
+    t.integer  "company_id"
+    t.integer  "user_id"
+    t.integer  "role_id"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "active",     :default => true
+  end
+
+  add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
+  add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
+
   create_table "documents", :force => true do |t|
     t.string   "name"
     t.string   "file_file_name"
@@ -99,7 +111,7 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -212,17 +224,15 @@ ActiveRecord::Schema.define(:version => 20130509224657) do
     t.string   "unconfirmed_email"
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
-    t.string   "aasm_state"
     t.integer  "role_id"
     t.string   "country",                :limit => 4
     t.string   "state"
     t.string   "city"
-    t.integer  "company_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
+    t.datetime "last_activity_at"
   end
 
-  add_index "users", ["company_id"], :name => "index_users_on_company_id"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["role_id"], :name => "index_users_on_role_id"

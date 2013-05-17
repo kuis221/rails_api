@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Events" do
 
   before do
-    @user = FactoryGirl.create(:user)
+    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
   end
 

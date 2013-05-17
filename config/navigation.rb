@@ -36,7 +36,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :analysis, 'Analysis', '#'
     end
 
-    primary.item :admin, content_tag(:i, '', class: 'icon-wrench'), users_path do |secondary|
+    primary.item :admin, content_tag(:i, '', class: 'icon-wrench'), users_path, if: lambda{ user_signed_in? } do |secondary|
       secondary.item :users, 'User Management', users_path do |tertiary|
         tertiary.item :users, 'Users', users_path, highlights_on: %r(/users)
         tertiary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)

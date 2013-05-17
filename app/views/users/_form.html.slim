@@ -16,9 +16,11 @@
         = f.input :city, required: true
       - if resource.id != current_user.id
         = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-        = f.association :role
 
-      - unless resource.invited?
+        = f.simple_fields_for :company_users do |cf|
+          = cf.input :role_id, as: :select, collection: current_company.roles
+
+      - if resource.confirmed?
         = f.input :password
         = f.input :password_confirmation
 

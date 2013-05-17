@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe TeamsController do
   before(:each) do
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-    sign_in @user
+    @user = sign_in_as_user
   end
 
   describe "GET 'edit'" do

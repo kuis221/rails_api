@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe TasksController do
   before(:each) do
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-    sign_in @user
+    @user = sign_in_as_user
+    @company = @user.companies.first
   end
 
-  let(:event) { FactoryGirl.create(:event, company_id: @user.company_id) }
+  let(:event) { FactoryGirl.create(:event, company_id: @company.id) }
 
   describe "POST 'create'" do
     it "returns http success" do

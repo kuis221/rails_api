@@ -36,63 +36,69 @@ class User < ActiveRecord::Base
   track_who_does_it
 
   include SentientUser
-  include AASM
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :database_authenticatable, :timeoutable,
-         :recoverable, :rememberable, :trackable
+         :recoverable, :rememberable, :trackable, :confirmable
 
-  scoped_to_company
+  has_many :company_users, autosave: true
+  has_many :companies, through: :company_users
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :role_id, presence: true
   validates :email, presence: true
-  validates :company_id, presence: true, numericality: true
 
-  validates :country, presence: true, if: :updating_profile
-  validates :state,   presence: true, if: :updating_profile
-  validates :city,    presence: true, if: :updating_profile
+  with_options if: :updating_profile do |user|
+    user.validates :country, presence: true
+    user.validates :state,   presence: true
+    user.validates :city,    presence: true
+    user.validates :password, presence: true, confirmation: true
+  end
+
+
+  accepts_nested_attributes_for :company_users
+  validates_associated :company_users
 
   validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
   validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
 
-  validates_presence_of     :password, :if => :updating_profile
-  validates_confirmation_of :password, :if => :updating_profile
-  validates_length_of       :password, :within => 8..128, :allow_blank => true
+
+  validates_length_of     :password, :within => 8..128, :allow_blank => true
   validates_format_of     :password, :with  => /[A-Z]/, :allow_blank => true, :message => 'should have at least one upper case letter'
   validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes
   attr_accessible :reset_password_token, :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
-
-  after_create :generate_password, :unless => :password
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy
   has_many :teams, through: :teams_users
 
-  belongs_to :role
+  delegate :role, to: :current_company_user, allow_nil: true
+  delegate :name, :id, to: :role, prefix: true, allow_nil: true
 
-  delegate :name, to: :role, prefix: true, allow_nil: true
+  scope :active, where('confirmed_at is not null')
 
   attr_accessor :updating_profile
 
-  aasm do
-    state :invited, :initial => true
-    state :active
-    state :inactive
+  def active?
+    # TODO: add check to current_company status
+    confirmed? && current_company_user && current_company_user.active?
+  end
 
-    event :activate do
-      transitions :from => [:inactive, :invited], :to => :active
-    end
+  def active_status
+    confirmed? ? 'Active' : 'Invited'
+  end
 
-    event :deactivate do
-      transitions :from => [:active, :invited], :to => :inactive
-    end
+  def activate!
+    current_company_user.update_attribute(:active, true) if current_company_user
+  end
+
+  def deactivate!
+    current_company_user.update_attribute(:active, false) if current_company_user
   end
 
   def full_name
@@ -113,12 +119,33 @@ class User < ActiveRecord::Base
 
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
-    super && active?
+    super && company_users.any?{|cu| cu.active? }
   end
 
-  private
-    def generate_password
-      generate_reset_password_token! if should_generate_reset_token?
-      UserMailer.password_generation(self).deliver
+  # This should be assigned every time the
+  def current_company=(company)
+    @company = company
+    @current_company_user = company_users.select{|cu| cu.company_id == company.id  }.first unless company.nil?
+    @role = @current_company_user.role unless @current_company_user.nil?
+    @company
+  end
+
+  def current_company
+    @company
+  end
+
+  def role
+    @role ||= current_company_user.try(:role)
+  end
+
+  def current_company_user
+    if User.current && User.current.current_company
+      if company_users.loaded?
+        @current_company_user ||= company_users.select{|cu| cu.company_id ==  User.current.current_company.id}.first
+      else
+        @current_company_user ||= company_users.where(company_id: User.current.current_company).first
+      end
+      @current_company_user
     end
+  end
 end
