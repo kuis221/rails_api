@@ -7,12 +7,12 @@
 #  title         :string(255)
 #  due_at        :datetime
 #  user_id       :integer
-#  completed     :boolean
+#  completed     :boolean          default(FALSE)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :integer
 #  updated_by_id :integer
-#  active        :boolean
+#  active        :boolean          default(TRUE)
 #
 
 class Task < ActiveRecord::Base

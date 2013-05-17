@@ -8,7 +8,7 @@
 #  updated_at  :datetime         not null
 #  permissions :text
 #  company_id  :integer
-#  active      :boolean
+#  active      :boolean          default(TRUE)
 #  description :text
 #
 
