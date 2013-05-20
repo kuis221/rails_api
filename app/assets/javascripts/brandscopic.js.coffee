@@ -40,6 +40,20 @@ jQuery ->
 	    false
 
 
+    $(".totop").hide();
+
+    $(window).scroll ->
+      if $(this).scrollTop() > 200
+        $('.totop').slideDown()
+      else
+        $('.totop').slideUp()
+
+    $('.totop a').click (e) ->
+      e.preventDefault()
+      $('body,html').animate {scrollTop: 0}, 500
+
+
+
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return this.optional(element) || /[A-Z]/.test(value);
