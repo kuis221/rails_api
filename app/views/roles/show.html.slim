@@ -2,21 +2,26 @@
   #admin-sub-nav.pull-left
     = render 'admin_navigation'
 
-  .row-fluid
-    .box.span12
-      .box-header
-        h2
-          i.icon-check
-          span.break
-          = resource.name
-      .box-content
-        .row-fluid
-          .span6 = resource.description
-          .span6
-            .pull-right
-              = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
-              = active_inactive_buttons(resource)
+  #resource-details-wrapper
+    #resource-close-details data-spy="affix" data-offset-top="0"
+      a href="#{collection_url}" class="close" &times;
+      = "Viewing Role Details"
 
-        .row-fluid
-          .pull-right
-            = link_to 'Save Changes', '#', {remote: true, class: 'btn btn-primary'}
+    .row-fluid
+      .box.span12
+        .box-header
+          h2
+            i.icon-check
+            span.break
+            = resource.name
+        .box-content
+          .row-fluid
+            .span6 = resource.description
+            .span6
+              .pull-right
+                = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
+                = active_inactive_buttons(resource)
+
+          .row-fluid
+            .pull-right
+              = link_to 'Save Changes', '#', {remote: true, class: 'btn btn-primary'}

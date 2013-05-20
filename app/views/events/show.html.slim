@@ -1,53 +1,58 @@
-.pull-right
-  = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary btn-small', remote: true
-  = "&nbsp;".html_safe
-  = active_inactive_buttons(resource)
-h2 = resource.campaign_name
+#resource-details-wrapper
+  #resource-close-details data-spy="affix" data-offset-top="0"
+    a href="#{collection_url}" class="close" &times;
+    = "Viewing Event Details"
 
-.row-fluid
-  .span6
-    p
-      = event_date_range(resource)
-      br
-        = place_address(resource.place).html_safe if resource.place
+  .pull-right
+    = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary btn-small', remote: true
+    = "&nbsp;".html_safe
+    = active_inactive_buttons(resource)
+  h2 = resource.campaign_name
 
-    h3 Event Team
-    #event-team-members
-      = render 'team_member_list'
-    = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
+  .row-fluid
+    .span6
+      p
+        = event_date_range(resource)
+        br
+          = place_address(resource.place).html_safe if resource.place
 
-  .span6
-    - unless resource.place.nil? or resource.place.latitude.nil?
-      #map-canvas
+      h3 Event Team
+      #event-team-members
+        = render 'team_member_list'
+      = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
 
-.row-fluid
-  .box
-    a href="#tasks-content" data-toggle="collapse"
-      .box-header
-        h2 TASKS
+    .span6
+      - unless resource.place.nil? or resource.place.latitude.nil?
+        #map-canvas
 
-    #tasks-content.collapse.in
-      .box-content
-        .tasks-progress-bar
-          = render partial: 'tasks/progress_bar', locals: {tasks: resource.tasks}
+  .row-fluid
+    .box
+      a href="#tasks-content" data-toggle="collapse"
+        .box-header
+          h2 TASKS
 
-        = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
-        .row-fluid
-          .pull-right
-            = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+      #tasks-content.collapse.in
+        .box-content
+          .tasks-progress-bar
+            = render partial: 'tasks/progress_bar', locals: {tasks: resource.tasks}
 
-.row-fluid
-  .box
-    a href="#documents-content" data-toggle="collapse"
-      .box-header
-        h2 DOCUMENTS
+          = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
+          .row-fluid
+            .pull-right
+              = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
 
-    #documents-content.collapse.in
-      .box-content
-        = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
-        .row-fluid
-          .pull-right
-            = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+  .row-fluid
+    .box
+      a href="#documents-content" data-toggle="collapse"
+        .box-header
+          h2 DOCUMENTS
+
+      #documents-content.collapse.in
+        .box-content
+          = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
+          .row-fluid
+            .pull-right
+              = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
 
 - unless resource.place.nil? or resource.place.latitude.nil?

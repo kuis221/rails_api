@@ -2,32 +2,37 @@
   #admin-sub-nav.pull-left
     = render 'admin_navigation'
 
-  .row-fluid
-    .box.span12
-      h2 = "Details for Team #{@team.name}"
-      .box-header
-        h2
-          i.icon-user
-          span.break
-          = "Team Details"
-      .box-content
-        .span6 = "Team Description: #{@team.description}"
-        .span6
-        	.pull-right = "Total Members: #{@team.users.active.count}"
-        table#team-details.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th Last
-              th First
-              th Level
-              th City
-              th State
-              th Email
-              th Status
-          tbody
+  #resource-details-wrapper
+    #resource-close-details data-spy="affix" data-offset-top="0"
+      a href="#{collection_url}" class="close" &times;
+      = "Viewing Team Details"
 
-        = link_to 'Add', '#', {class: 'btn btn-primary'}
-        = link_to 'Remove', '#', {class: 'btn'}
+    .row-fluid
+      .box.span12
+        h2 = "Details for Team #{@team.name}"
+        .box-header
+          h2
+            i.icon-user
+            span.break
+            = "Team Details"
+        .box-content
+          .span6 = "Team Description: #{@team.description}"
+          .span6
+          	.pull-right = "Total Members: #{@team.users.active.count}"
+          table#team-details.table.table-striped.table-bordered.table-scrolled
+            thead
+              tr
+                th Last
+                th First
+                th Level
+                th City
+                th State
+                th Email
+                th Status
+            tbody
+
+          = link_to 'Add', '#', {class: 'btn btn-primary'}
+          = link_to 'Remove', '#', {class: 'btn'}
 javascript:
   var resourceTable = $('#team-details').dataTable({
     "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
