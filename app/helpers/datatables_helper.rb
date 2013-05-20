@@ -30,7 +30,7 @@ module DatatablesHelper
           value = resource.try(column[:attr].to_sym)
         end
         if value && column[:clickable]
-          view_context.link_to(value, view_context.url_for(parent? ? [parent, resource] : resource), {title: 'View Details'})
+          view_context.link_to(value, view_context.url_for(parent? ? [parent, resource] : resource), {title: 'View Details', class: 'data-resource-details-link'})
         else
           value
         end
