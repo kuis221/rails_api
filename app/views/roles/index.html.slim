@@ -1,36 +1,44 @@
-.row-fluid
-  .box.span12
-    .box-header
-      h2
-        i.icon-user
-        span.break
-        = "Roles"
-    .box-content
-      table#roles-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th Name
-            th Description
-            th Status
-            th
-        tbody
+#content-with-admin-nav
+  #admin-sub-nav.pull-left
+    = render 'admin_navigation'
 
-      .row-fluid
-        .pull-right
-          = link_to 'New Role', new_role_path, {remote: true, class: 'btn btn-primary'}
+  table#roles-list.table.table-striped.table-bordered.table-scrolled
+    thead
+      tr
+        th Name
+        th Description
+        th Status
+        th
+    tbody
+
+  .row-fluid
+    .pull-right
+      = link_to 'New Role', new_role_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
+  var fixedTable = false;
   var rolesTable = $('#roles-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
         "bPaginate": false,
+        "bAutoWidth":false,
         "bProcessing": true,
         "bServerSide": false,
         "sAjaxSource": "#{roles_path(format: :table)}",
         "iDeferLoading": #{@roles.count},
+        "fnServerData": function ( sSource, aoData, fnCallback ){
+          $.getJSON(sSource, aoData, function (json){
+            fnCallback(json);
+            if (!fixedTable){
+              fixedTable = new FixedHeader( rolesTable, {
+                  "offsetTop": 90
+              });
+            }
+          });
+        },
         "aoColumns": [
           null,
           null,
           null,
-          {"sWidth": '50px', 'bSortable': false}
+          {"sWidth": '100px', 'bSortable': false}
         ]
   })

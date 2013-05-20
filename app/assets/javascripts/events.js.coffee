@@ -9,6 +9,12 @@ jQuery ->
     $(this).addClass('active').tab 'show'
     if $(this).attr('href') is '#map-view' and not map
       initializeMap()
+      $('.FixedHeader_Cloned').hide()
+    else
+      $('.FixedHeader_Cloned').show()
+      eventsTable.fnDraw()
+
+
 
   map = null
   markersArray = []

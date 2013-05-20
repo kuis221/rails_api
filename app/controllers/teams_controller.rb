@@ -7,8 +7,8 @@ class TeamsController < InheritedResources::Base
 
   respond_to_datatables do
     columns [
-      {:attr => :name, :column_name => 'teams.name', :value => Proc.new{|team| @controller.view_context.link_to(team.name, @controller.view_context.team_path(team)) }, :searchable => true},
-      {:attr => :users_count, :value => Proc.new{|team| team.users.active.count } },
+      {:attr => :name, :column_name => 'teams.name', :searchable => true},
+      {:attr => :users_count, :value => Proc.new{|team|  team.users.active.count } },
       {:attr => :description, :column_name => 'teams.description', :searchable => true},
       {:attr => :active ,:column_name => 'teams.active',  :value => Proc.new{|team| team.active? ? 'Active' : 'Inactive' } }
     ]

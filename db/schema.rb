@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130516224029) do
+ActiveRecord::Schema.define(:version => 20130518205559) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -45,6 +45,27 @@ ActiveRecord::Schema.define(:version => 20130516224029) do
 
   add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
   add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
+
+  create_table "brand_portfolios", :force => true do |t|
+    t.string   "name"
+    t.boolean  "active"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "brand_portfolios", ["company_id"], :name => "index_brand_portfolios_on_company_id"
+
+  create_table "brand_portfolios_brands", :force => true do |t|
+    t.integer "brand_id"
+    t.integer "brand_portfolio_id"
+  end
+
+  add_index "brand_portfolios_brands", ["brand_id", "brand_portfolio_id"], :name => "brand_portfolio_unique_idx", :unique => true
+  add_index "brand_portfolios_brands", ["brand_id"], :name => "index_brand_portfolios_brands_on_brand_id"
+  add_index "brand_portfolios_brands", ["brand_portfolio_id"], :name => "index_brand_portfolios_brands_on_brand_portfolio_id"
 
   create_table "brands", :force => true do |t|
     t.string   "name"
@@ -115,7 +136,7 @@ ActiveRecord::Schema.define(:version => 20130516224029) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

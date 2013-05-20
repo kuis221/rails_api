@@ -2,8 +2,59 @@
 	a {
 		margin-right: 10px;
 	}
-	.active {
+	#home.active {
 		display: none;
+	}
+}
+
+#resource-index-container {
+	padding-right: 400px;
+	#resource-filter-column {
+		margin-right: -410px;
+		width: 400px;
+	}
+}
+
+#content-with-admin-nav {
+	padding-left: 190px;
+	#admin-sub-nav {
+		margin-left: -180px;
+		width: 180px;
+		float: left;
+	}
+}
+
+// RESOURCE MODALS
+.modal {
+	.modal-body {
+		max-height: 800px;
+	}
+}
+
+table.table {
+	tbody {
+		tr {
+			&:hover td {
+				background-color: #49afcd !important;
+			}
+		}
+	}
+}
+
+table.dataTable{
+	width: 100%;
+	thead {
+		background-color: #fff;
+	}
+}
+
+body.with-fixed-top {
+	padding-top: 92px;
+	header {
+		background: url(/assets/bg.jpg) repeat right top;
+	}
+	.nav-tabs {
+		margin: 0;
 	}
 }
 

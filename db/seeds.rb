@@ -6,4 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-u =  User.create({email: 'admin@brandscopic.com', first_name: 'Admin', last_name: 'Brandscopic', password: 'adminpass', password_confirmation: 'adminpass'}, without_protection: true)
+c = Company.find_or_create_by_name(name: 'Brandscopic')
+r = c.roles.find_or_create_by_name(name: 'Admin')
+u =  User.create({email: 'admin@brandscopic.com', first_name: 'Admin', last_name: 'Brandscopic', password: 'Adminpass12', password_confirmation: 'Adminpass12', aasm_state: 'active', company_id: c.id, role_id: r.id}, without_protection: true)

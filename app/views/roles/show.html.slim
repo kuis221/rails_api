@@ -1,18 +1,22 @@
-.row-fluid
-  .box.span12
-    .box-header
-      h2
-        i.icon-check
-        span.break
-        = "Field Director"
-    .box-content
-      .row-fluid
-        .span6 = "Manages and directly oversees a group of Field Managers"
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
-            = active_inactive_buttons(resource)
+#content-with-admin-nav
+  #admin-sub-nav.pull-left
+    = render 'admin_navigation'
 
-      .row-fluid
-        .pull-right
-          = link_to 'Save Changes', '#', {remote: true, class: 'btn btn-primary'}
+  .row-fluid
+    .box.span12
+      .box-header
+        h2
+          i.icon-check
+          span.break
+          = resource.name
+      .box-content
+        .row-fluid
+          .span6 = resource.description
+          .span6
+            .pull-right
+              = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
+              = active_inactive_buttons(resource)
+
+        .row-fluid
+          .pull-right
+            = link_to 'Save Changes', '#', {remote: true, class: 'btn btn-primary'}

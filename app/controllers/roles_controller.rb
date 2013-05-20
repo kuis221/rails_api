@@ -10,7 +10,7 @@ class RolesController < InheritedResources::Base
     columns [
       {:attr => :name, :column_name => 'roles.name', :searchable => true},
       {:attr => :description, :column_name => 'roles.description', :searchable => true},
-      {:attr => :active ,:column_name => 'roles.active', :value => Proc.new{|role| role.active? ? 'Active' : 'Inactive' } }
+      {:attr => :active ,:column_name => 'roles.active', :value => Proc.new{|role| role.active? ? 'Active' : 'Inactive' }}
     ]
     @editable  = true
     @deactivable = true

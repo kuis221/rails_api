@@ -23,26 +23,31 @@ module DatatablesHelper
       actions = []
       columns = datatable.columns.map do |column|
         value = ''
+        column[:clickable] = true unless column.has_key?(:clickable)
         if column.has_key?(:value) and column[:value]
           value = column[:value].respond_to?(:call) ? column[:value].call(resource) : column[:value]
         else
           value = resource.try(column[:attr].to_sym)
         end
-        value
+        if value && column[:clickable]
+          view_context.link_to(value, view_context.url_for(parent? ? [parent, resource] : resource), {title: 'View Details'})
+        else
+          value
+        end
       end
 
       if datatable.editable
-        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-edit'), view_context.url_for(parent? ? [:edit, parent, resource] : [:edit, resource]), {remote: true, title: 'Edit'})
+        actions.push view_context.link_to('Edit', view_context.url_for(parent? ? [:edit, parent, resource] : [:edit, resource]), {remote: true, title: 'Edit'})
       end
       if datatable.deactivable
         if resource.active?
-          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for(parent? ? [:deactivate, parent, resource] : [:deactivate, resource]), {remote: true, title: 'Deactivate'})
+          actions.push view_context.link_to('Deactivate', view_context.url_for(parent? ? [:deactivate, parent, resource] : [:deactivate, resource]), {remote: true, title: 'Deactivate'})
         else
-          actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-check'), view_context.url_for(parent? ? [:activate, parent, resource] : [:activate, resource]), {remote: true, title: 'Activate'})
+          actions.push view_context.link_to('Activate', view_context.url_for(parent? ? [:activate, parent, resource] : [:activate, resource]), {remote: true, title: 'Activate'})
         end
       end
       if datatable.deletable
-        actions.push view_context.link_to(view_context.content_tag(:i, '',class: 'icon-remove'), view_context.url_for(parent? ? [parent, resource] : [:resource]), {remote: true, title: 'Delete', method: :delete})
+        actions.push view_context.link_to('Delete', view_context.url_for(parent? ? [parent, resource] : [:resource]), {remote: true, title: 'Delete', method: :delete})
       end
 
       columns.push actions.join ' ' unless actions.empty?

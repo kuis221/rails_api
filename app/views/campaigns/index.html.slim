@@ -1,41 +1,49 @@
-.row-fluid
-  .box.span12
-    .box-header
-      h2
-        i.icon-bullhorn
-        span.break
-        = "Campaigns"
-    .box-content
-      table#campaigns-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th Name
-            th Description
-            th First Event
-            th Last Event
-            th Status
-            th
-        tbody
+#content-with-admin-nav
+  #admin-sub-nav.pull-left
+    = render 'admin_navigation'
 
-      .row-fluid
-        .pull-right
-          = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+  table#campaigns-list.table.table-striped.table-bordered.table-scrolled
+    thead
+      tr
+        th Name
+        th Description
+        th First Event
+        th Last Event
+        th Status
+        th
+    tbody
+
+  .row-fluid
+    .pull-right
+      = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
 
 javascript:
+  var fixedTable = false;
   var campaignsTable = $('#campaigns-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
         //"sPaginationType": "bootstrap",
         "bPaginate": false,
+        "bAutoWidth":false,
         "bProcessing": true,
         "bServerSide": false,
         "sAjaxSource": "#{campaigns_path(format: :table)}",
         "iDeferLoading": #{@campaigns.count},
+        "fnServerData": function ( sSource, aoData, fnCallback ){
+          $.getJSON(sSource, aoData, function (json){
+            fnCallback(json);
+            if (!fixedTable){
+              fixedTable = new FixedHeader( campaignsTable, {
+                  "offsetTop": 90
+              });
+            }
+          });
+        },
         "aoColumns": [
           null,
           null,
           null,
           null,
           null,
-          {"sWidth": '50px', 'bSortable': false}
+          {"sWidth": '100px', 'bSortable': false}
         ]
   })

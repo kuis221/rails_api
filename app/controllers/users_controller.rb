@@ -13,15 +13,15 @@ class UsersController < InheritedResources::Base
 
   respond_to_datatables do
     columns [
-      {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true},
-      {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true},
-      {:attr => :city ,:column_name => 'users.city'},
-      {:attr => :state_name ,:column_name => 'users.state'},
-      {:attr => :country_name, :column_name => 'users.country'},
-      {:attr => :email ,:column_name => 'users.email'},
-      {:attr => :role_name ,:column_name => 'roles.name'},
-      {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at'},
-      {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name'}
+      {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true, :clickable => false},
+      {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true, :clickable => false},
+      {:attr => :city ,:column_name => 'users.city', :clickable => false},
+      {:attr => :state_name ,:column_name => 'users.state', :clickable => false},
+      {:attr => :country_name, :column_name => 'users.country', :clickable => false},
+      {:attr => :email ,:column_name => 'users.email', :clickable => false},
+      {:attr => :role_name ,:column_name => 'roles.name', :clickable => false},
+      {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at', :clickable => false},
+      {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name', :clickable => false}
     ]
     @editable  = true
     @deactivable = true

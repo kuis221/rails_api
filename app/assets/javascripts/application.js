@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-migrate-1.2.1
 //= require twitter/bootstrap
 //= require jquery.dataTables.js
 //= require_tree .

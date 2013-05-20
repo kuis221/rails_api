@@ -173,6 +173,7 @@ GEM
     polyamorous (0.5.0)
       activerecord (~> 3.0)
     polyglot (0.3.3)
+    populator (1.0.0)
     quiet_assets (1.0.2)
       railties (>= 3.1, < 5.0)
     rabl (0.8.3)
@@ -308,6 +309,7 @@ DEPENDENCIES
   oj
   paperclip (~> 3.0)
   pg
+  populator
   quiet_assets (>= 1.0.1)
   rabl
   rails (= 3.2.13)

@@ -15,9 +15,11 @@ class Brand < ActiveRecord::Base
 
   attr_accessible :name, :campaigns_ids
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
+
+  has_and_belongs_to_many :brand_portfolios
 
 end

@@ -55,3 +55,16 @@ body {
 		margin-top: 0px;
 	}
 }
+
+
+a {
+  color: #15c;
+  text-decoration: underline;
+  &.btn {
+  	text-decoration: none;
+  }
+}
+
+.nav-tabs>.active>a:hover {
+  cursor: pointer;
+}
