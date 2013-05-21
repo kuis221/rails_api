@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(:version => 20130518205559) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
+  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

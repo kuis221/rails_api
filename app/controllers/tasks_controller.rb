@@ -15,7 +15,7 @@ class TasksController < InheritedResources::Base
 
   respond_to_datatables do
     columns [
-      {:attr => :title, :value => Proc.new{|task| @controller.view_context.link_to(task.title, @controller.view_context.task_comments_path(task), remote: true)}, :searchable => true},
+      {:attr => :title, :value => Proc.new{|task| @controller.view_context.link_to(task.title, @controller.view_context.task_comments_path(task), remote: true, class: 'data-resource-details-link')}, :searchable => true, :clickable => false},
       {:attr => :last_activity, :value => Proc.new{|task| task.updated_at.to_s(:slashes) if task.updated_at }},
       {:attr => :due_at, :value => Proc.new{|task| task.due_at.to_s(:slashes) if task.due_at }},
       {:attr => :user_full_name },

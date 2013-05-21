@@ -1,0 +1,6 @@
+.comment-row
+	.row-fluid
+		= comment.content
+	.row-fluid
+		small.muted = comment.user_full_name + ' | ' + comment.created_at.to_s(:full_friendly)
+br
