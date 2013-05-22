@@ -1,5 +1,5 @@
 class TasksController < InheritedResources::Base
-  belongs_to :event, :users, :optional => true
+  belongs_to :event, :user, :optional => true
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
