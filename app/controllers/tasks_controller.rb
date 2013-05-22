@@ -15,18 +15,6 @@ class TasksController < FilteredController
 
   custom_actions collection: [:progress_bar]
 
-  respond_to_datatables do
-    columns [
-      {:attr => :title, :value => Proc.new{|task| @controller.view_context.link_to(task.title, @controller.view_context.task_comments_path(task), remote: true, class: 'data-resource-details-link')}, :searchable => true, :clickable => false},
-      {:attr => :last_activity, :value => Proc.new{|task| task.updated_at.to_s(:slashes) if task.updated_at }, :clickable => false},
-      {:attr => :due_at, :value => Proc.new{|task| task.due_at.to_s(:slashes) if task.due_at }, :clickable => false},
-      {:attr => :user_full_name, :clickable => false },
-      {:attr => :completed, :value => Proc.new{|task| @controller.view_context.simple_form_for([task.event, task], remote: true) {|f| f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}} }, :clickable => false}
-    ]
-    @editable  = true
-    @deactivable = true
-  end
-
   private
     def collection_to_json
       collection.map{|task| {
@@ -45,7 +33,7 @@ class TasksController < FilteredController
         :complete_form => view_context.simple_form_for([task.event, task], remote: true) {|f| f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}},
         :links => {
             edit: edit_resource_url(task),
-            show: resource_url(task),
+            comments: task_comments_path(task),
             activate: url_for([:activate, parent, task]),
             deactivate: url_for([:deactivate, parent, task])
         }

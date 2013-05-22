@@ -65,7 +65,7 @@ describe TasksController do
 
   describe "GET 'index'" do
     it "returns http success" do
-      get 'index', event_id: event.to_param, format: :table
+      get 'index', event_id: event.to_param, format: :json
       response.should be_success
     end
 
