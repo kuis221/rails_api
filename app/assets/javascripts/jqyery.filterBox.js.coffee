@@ -1,19 +1,35 @@
 $.widget 'nmk.filterBox', {
 	options: {
 		onChange: false,
-		includeCalendars: true
+		includeCalendars: true,
+		includeSearchBox: true
 	},
 	_create: () ->
 		@form = $('<form action="#" method="get">').appendTo(@element);
 		@form.data('serializedData', null)
+
+		if @options.includeSearchBox
+			@_addSearchBox()
+
 		if @options.includeCalendars
 			@_addCalendars()
+
 
 	getFilters: () ->
 		@form.serializeArray()
 
 	describeFilters: () ->
 		description = @_describeDateRange()
+		description += @_describeSearch()
+
+	_addSearchBox: () ->
+		previousValue = '';
+		$('<label for="search-box-filter">Search:</search>').appendTo(@form)
+		@searchInput = $('<input type="text" name="with_text" id="search-box-filter">').appendTo @form
+		@searchInput.keyup =>
+			if previousValue isnt @searchInput.val()
+				previousValue = @searchInput.val()
+				@_filtersChanged()
 
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="by_period[start_date]">').appendTo @form
@@ -23,6 +39,7 @@ $.widget 'nmk.filterBox', {
 			rangeSelect: true,
 			monthsToShow: 2,
 			changeMonth: false,
+			defaultDate: '05/20/2013',
 			onSelect: (dates) =>
 				start_date = @_formatDate(dates[0])
 				@startDateInput.val start_date
@@ -62,6 +79,12 @@ $.widget 'nmk.filterBox', {
 				else
 					description = "took place #{startDateLabel}"
 
+		description
+
+	_describeSearch: () ->
+		description = ''
+		if @searchInput.val()
+			description = " matching \"#{@searchInput.val()}\""
 		description
 
 	_formatDate: (date) ->
