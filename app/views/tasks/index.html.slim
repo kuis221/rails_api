@@ -1,1 +1,13 @@
-h2 Tasks
+.row-fluid
+  .box.span12
+    .row-fluid
+      #resource-index-container.span12
+        .pull-right
+          #resource-filter-column data-spy="affix" data-offset-top="0"
+            = link_to 'Create New Task', new_user_task_path(current_user), {remote: true, class: 'btn btn-primary'}
+            #tasks-list-filters
+
+        .tab-content
+          #list-view.tab-pane.active
+            #tasks-filter-label
+          	= render partial: 'table', locals:{source: tasks_path(by_user: current_user.to_param, format: :table)}

@@ -36,7 +36,7 @@
           .tasks-progress-bar
             = render partial: 'tasks/progress_bar', locals: {tasks: resource.tasks}
 
-          = render partial: 'tasks/table', locals: {event: resource, tasks: resource.tasks}
+          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :table)}
           .row-fluid
             .pull-right
               = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
