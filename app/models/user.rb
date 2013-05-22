@@ -75,6 +75,9 @@ class User < ActiveRecord::Base
   has_many :teams_users, dependent: :destroy
   has_many :teams, through: :teams_users
 
+  # Tasks-Users relationship
+  has_many :tasks
+
   belongs_to :role
 
   delegate :name, to: :role, prefix: true, allow_nil: true
