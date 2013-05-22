@@ -44,6 +44,7 @@
 		this.loading = false;
 		this.doneLoadingInt = null;
 		this.pageCount = 1;
+		this.paused=false;
 		this._init();
 	}
 
@@ -63,7 +64,14 @@
 
 
 	Plugin.prototype.resetPageCount = function() {
-		self.pageCount=1;
+		this.pageCount=1;
+	};
+
+	Plugin.prototype.disableScrolling = function() {
+		this.paused=true;
+	};
+	Plugin.prototype.enableScrolling = function() {
+		this.paused=false;
 	};
 
 	/**
@@ -109,7 +117,7 @@
 			elementBottom = this.element.height() + contentOffset.top,
 			scrollBottom = this.win.scrollTop() + this.win.height() + this.options.bottomBuffer;
 
-      	return (!this.loading && scrollBottom >= elementBottom);
+      	return (!this.paused && !this.loading && scrollBottom >= elementBottom);
 	}
 
 	/*-------------------------------------------- */

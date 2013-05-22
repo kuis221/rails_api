@@ -37,7 +37,7 @@ $.widget 'nmk.tableScroller', {
 
 	buildFixedHeader: ->
 		@info = $('<div>').css({position: 'absolute', 'top':'0', 'left':0, 'z-index': 9999}).appendTo($('body'))
-		@fixedHeader = @element.clone(true, true).appendTo($('body')) #.affix({y: 50})
+		@fixedHeader = @element.clone(true, true).addClass('table-cloned-fixed-header').appendTo($('body')) #.affix({y: 50})
 		@fixedHeader.css {'visibility': 'hidden','margin': '0', 'position':'fixed'}
 		@_synchHeaderWidths()
 		@window.resize =>
@@ -46,6 +46,11 @@ $.widget 'nmk.tableScroller', {
 			@_placeHeaderPosition()
 
 
+	disableScrolling: ->
+		@element.infiniteScrollHelper 'disableScrolling'
+
+	enableScrolling: ->
+		@element.infiniteScrollHelper 'enableScrolling'
 
 	_synchHeaderWidths: ->
 		@_placeHeaderPosition()

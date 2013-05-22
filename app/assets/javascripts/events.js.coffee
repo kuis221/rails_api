@@ -20,9 +20,11 @@ jQuery ->
     $(this).addClass('active').tab 'show'
     if $(this).attr('href') is '#map-view'
       initializeMap()
-      $('.FixedHeader_Cloned').hide()
+      $('.table-cloned-fixed-header').hide()
+      $('table#events-list').tableScroller 'disableScrolling'
     else
-      $('.FixedHeader_Cloned').show()
+      $('.table-cloned-fixed-header').show()
+      $('table#events-list').tableScroller 'enableScrolling'
       eventsTable.fnDraw()
 
 

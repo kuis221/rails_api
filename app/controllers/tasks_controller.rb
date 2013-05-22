@@ -29,6 +29,7 @@ class TasksController < FilteredController
           :email => task.user.try(:email),
           :full_name => task.user.try(:full_name)
         },
+        :active => task.active?,
         :completed => task.completed,
         :complete_form => view_context.simple_form_for([task.event, task], remote: true) {|f| f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}},
         :links => {
