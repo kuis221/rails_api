@@ -1,5 +1,6 @@
 - remote ||= false
-= simple_form_for([@event || @user, resource], remote: remote || false) do |f|
+- @form_modal_class = 'modal-med' if parent and parent.is_a?(Event)
+= simple_form_for([@event || @user, resource], remote: remote || false, :html => {:class => 'form-horizontal' }) do |f|
   = f.error_notification
 
   .form-inputs
@@ -8,11 +9,9 @@
 
     = f.association :user, label: 'Team Member', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
 
-    = render partial: 'events_table'
+    - if parent and !parent.is_a?(Event)
+      = render partial: 'events_table'
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
-
-javascript:
-  $('#team_user_ids').select2();
