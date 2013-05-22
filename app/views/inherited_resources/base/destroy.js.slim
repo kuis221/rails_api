@@ -1,5 +1,5 @@
 |
   var table = #{resource.class.name.pluralize.downcase}Table;
   if (table) {
-    table.fnReloadAjax();
+    table.tableScroller('reloadData');
   }

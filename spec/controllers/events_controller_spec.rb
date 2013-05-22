@@ -23,7 +23,7 @@ describe EventsController do
 
       describe "filters" do
         it "should call the by_period filter" do
-          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').twice { Event }
+          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').at_least(:once) { Event }
           get :index, {by_period: {start_date: '01/02/2012', end_date: '01/03/2012'}}
         end
       end
@@ -44,8 +44,9 @@ describe EventsController do
           FactoryGirl.create_list(:event, 2, company_id: 9999)
           get 'index', format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body.count.should == 3
-          parsed_body.first.tap do |event|
+          parsed_body['total'].should == 3
+          parsed_body['items'].count.should == 3
+          parsed_body['items'].first.tap do |event|
             event.count.should == 12
             event['id'].should == events[0].id
             event['start_date'].should == events[0].start_date

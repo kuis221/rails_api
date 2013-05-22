@@ -53,8 +53,6 @@ jQuery ->
       $('body,html').animate {scrollTop: 0}, 500
 
 
-
-
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return this.optional(element) || /[A-Z]/.test(value);
 	, "Should have at least one upper case letter");

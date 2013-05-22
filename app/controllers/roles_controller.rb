@@ -1,20 +1,13 @@
 class RolesController < InheritedResources::Base
-  load_and_authorize_resource
+  authorize_resource
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
   respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :json, only: [:index]
 
-  respond_to_datatables do
-    columns [
-      {:attr => :name, :column_name => 'roles.name', :searchable => true},
-      {:attr => :description, :column_name => 'roles.description', :searchable => true},
-      {:attr => :active ,:column_name => 'roles.active', :value => Proc.new{|role| role.active? ? 'Active' : 'Inactive' }}
-    ]
-    @editable  = true
-    @deactivable = true
-  end
+  has_scope :with_text
 
   def set_permissions
     if params[:permissions]
@@ -24,4 +17,28 @@ class RolesController < InheritedResources::Base
       end
     end
   end
+
+  protected
+    def collection_to_json
+      collection.map{|role| {
+        :id => role.id,
+        :name => role.name,
+        :description => role.description,
+        :status => role.active? ? 'Active' : 'Inactive',
+        :links => {
+            edit: edit_role_path(role),
+            show: role_path(role),
+            activate: activate_role_path(role),
+            deactivate: deactivate_role_path(role)
+        }
+      }}
+    end
+
+    def sort_options
+      {
+        'name' => { :order => 'roles.name' },
+        'description' => { :order => 'roles.description' },
+        'active' => { :order => 'roles.active' }
+      }
+    end
 end

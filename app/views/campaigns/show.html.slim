@@ -1,33 +1,27 @@
-#content-with-admin-nav
-  #admin-sub-nav.pull-left
-    = render 'admin_navigation'
+#resource-details-wrapper
+  = resource_details_bar("Viewing Campaign Details", collection_path)
 
-  #resource-details-wrapper
-    #resource-close-details data-spy="affix" data-offset-top="0"
-      a href="#{collection_url}" class="close" &times;
-      = "Viewing Campaign Details"
-
-    .row-fluid
-      .span12
-        .box
-          h2 = "Details for #{@campaign.name} Campaign"
-          .box-header
-            h2
-              i.icon-bullhorn
-              span.break
-              = "Campaign Guidelines"
-          .box-content
-            dl.dl-horizontal
-              dt = "Portfolios: "
-              dd = "&nbsp;".html_safe
-              dt = "Places: "
-              dd = "&nbsp;".html_safe
-              dt = "Teams: "
-              dd = @campaign.teams.map(&:name).join(', ')
-              dt = "Date Ranges: "
-              dd = "&nbsp;".html_safe
-              dt = "Date Parts: "
-              dd = "&nbsp;".html_safe
+  .row-fluid
+    .span12
+      .box
+        h2 = "Details for #{@campaign.name} Campaign"
+        .box-header
+          h2
+            i.icon-bullhorn
+            span.break
+            = "Campaign Guidelines"
+        .box-content
+          dl.dl-horizontal
+            dt = "Portfolios: "
+            dd = "&nbsp;".html_safe
+            dt = "Places: "
+            dd = "&nbsp;".html_safe
+            dt = "Teams: "
+            dd = @campaign.teams.map(&:name).join(', ')
+            dt = "Date Ranges: "
+            dd = "&nbsp;".html_safe
+            dt = "Date Parts: "
+            dd = "&nbsp;".html_safe
 
 / #post-event-form-builder.row-fluid
 /   .span9

@@ -1,7 +1,5 @@
 #resource-details-wrapper
-  #resource-close-details data-spy="affix" data-offset-top="0"
-    a href="#{collection_url}" class="close" &times;
-    = "Viewing Event Details"
+  = resource_details_bar("Viewing Event Details", collection_path)
 
   .pull-right
     = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary btn-small', remote: true

@@ -2,51 +2,46 @@
   #admin-sub-nav.pull-left
     = render 'admin_navigation'
 
-  table#teams-list.table.table-striped.table-bordered.table-scrolled
-    thead
-      tr
-        th Teams
-        th Number of Members
-        th Description
-        th Status
-        th
-    tbody
-
-
   .row-fluid
-    .pull-right
-      = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+      table#teams-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th data-sort="name" Teams
+            th Number of Members
+            th data-sort="description"Description
+            th data-sort="status"Status
+            th
+        tbody
+
 
 javascript:
-  var fixedTable = false;
-  var teamsTable = $('#teams-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
-        //"sPaginationType": "bootstrap",
-        "bPaginate": false,
-        "bAutoWidth":false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{teams_path(format: :table)}",
-        "iDeferLoading": #{@teams.count},
-        "fnServerData": function ( sSource, aoData, fnCallback ){
-          $.getJSON(sSource, aoData, function (json){
-            fnCallback(json);
-            if (!fixedTable){
-              fixedTable = new FixedHeader( teamsTable, {
-                  "offsetTop": 90
-              });
-            }
-          });
-        },
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '100px', 'bSortable': false}
-        ]
-  })
-
-  new FixedHeader( teamsTable, {
-    "offsetTop": 90
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      teamsTable.tableScroller('reloadData');
+    }
   });
+  var teamsTable = $('table#teams-list').tableScroller({
+    'source': '#{teams_path(format: :json)}',
+    'buildParams': function(params) {
+      data = $('#collection-list-filters').filterBox('getFilters');
+      $.each(data, function(index, value){
+        params.push(value);
+      });
+      return params
+    },
+    'fixedHeader': true,
+    'rowValues': function(t){
+      return [t.name, t.users_count, t.description, t.status]
+    },
+    'rowId': function(row){
+      return 'team_'+row.id;
+    },
+    'headerOffset': 91,
+  })
