@@ -31,6 +31,8 @@ class Task < ActiveRecord::Base
   validates :user_id, numericality: true, if: :user_id
   validates :event_id, presence: true, numericality: true
 
+  scope :by_user, lambda{|user| where(user_id: user) }
+
   def activate!
     update_attribute :active, true
   end

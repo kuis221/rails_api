@@ -1,0 +1,8 @@
+= simple_form_for([parent, resource], remote: true) do |f|
+  = f.error_notification
+
+  .span5.form-inputs
+  	= f.input :content, label: false, input_html: {rows: 1, class: 'input-xxlarge'}
+
+  .span6
+    = f.button :submit, input_html: {class: 'btn-primary'}

@@ -24,6 +24,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :users do
+    resources :tasks
     member do
       get :deactivate
       get :activate
@@ -67,7 +68,11 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :tasks, only: [] do
+  resources :tasks, only: [:index, :new, :create, :edit] do
+    member do
+      get :deactivate
+      get :activate
+    end
     resources :comments
   end
 

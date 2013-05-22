@@ -2,6 +2,17 @@ jQuery ->
   $(document).delegate ".task-completed-checkbox", "click", ->
     $(@form).submit()
 
+  $(document).delegate '#tasks-list td a.data-resource-details-link', 'click', (e) ->
+    $row = $(this).parents('tr');
+    if $("##{$row.attr('id')}_comments").length
+      $("##{$row.attr('id')}_comments").toggle()
+      e.stopImmediatePropagation()
+
+    else
+      $(this).removeAttr('data-remote')
+
+    e.preventDefault();
+    return false
 
   # EVENTS INDEX
   $('#toggle-events-view a').on 'click', ->

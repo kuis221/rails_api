@@ -1,4 +1,5 @@
-table#tasks-list.table.table-striped.table-bordered
+- event ||= nil
+table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
       th Task
@@ -14,8 +15,9 @@ javascript:
         "sDom": "<'row-fluid'r>t",
         "bPaginate": false,
         "bProcessing": true,
+        "bAutoWidth":false,
         "bServerSide": false,
-        "sAjaxSource": "#{event_tasks_path(event, format: :table)}",
+        "sAjaxSource": "#{source}",
         "aoColumns": [
           null,
           {"sWidth": '90px'},
@@ -24,4 +26,4 @@ javascript:
           {"sWidth": '90px'},
           {"sWidth": '40px', 'bSortable': false}
         ]
-  })
+  });

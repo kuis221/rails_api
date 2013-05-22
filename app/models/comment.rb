@@ -16,9 +16,14 @@ class Comment < ActiveRecord::Base
   track_who_does_it
 
   belongs_to :commentable, :polymorphic => true
+  belongs_to :user, :foreign_key => "created_by_id"
+
+  delegate :full_name, to: :user, prefix: true, allow_nil: true
+
   attr_accessible :content
 
   validates :content, presence: true
-  validates :created_by_id, presence: true, numericality: true
+  validates :commentable_id, presence: true, numericality: true
+  validates :commentable_type, presence: true
 
 end

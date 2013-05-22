@@ -21,7 +21,7 @@ module DatatablesHelper
     end
     def datatable_resource_values(resource)
       actions = []
-      columns = datatable.columns.map do |column|
+      columns = datatable.columns.map.with_index do |column, index|
         value = ''
         column[:clickable] = true unless column.has_key?(:clickable)
         if column.has_key?(:value) and column[:value]
@@ -30,11 +30,14 @@ module DatatablesHelper
           value = resource.try(column[:attr].to_sym)
         end
         if value && column[:clickable]
-          view_context.link_to(value, view_context.url_for(parent? ? [parent, resource] : resource), {title: 'View Details', class: 'data-resource-details-link'})
+          [index, view_context.link_to(value, view_context.url_for(parent? ? [parent, resource] : resource), {title: 'View Details', class: 'data-resource-details-link'})]
         else
-          value
+          [index, value]
         end
       end
+      columns = Hash[*columns.flatten(1)]
+
+      columns['DT_RowId'] = "#{resource.class.name.downcase}_#{resource.id}"
 
       if datatable.editable
         actions.push view_context.link_to('Edit', view_context.url_for(parent? ? [:edit, parent, resource] : [:edit, resource]), {remote: true, title: 'Edit'})
@@ -50,7 +53,7 @@ module DatatablesHelper
         actions.push view_context.link_to('Delete', view_context.url_for(parent? ? [parent, resource] : [:resource]), {remote: true, title: 'Delete', method: :delete})
       end
 
-      columns.push actions.join ' ' unless actions.empty?
+      columns[columns.length-1] = actions.join ' ' unless actions.empty?
       columns
     end
 
