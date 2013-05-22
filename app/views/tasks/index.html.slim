@@ -10,4 +10,4 @@
         .tab-content
           #list-view.tab-pane.active
             #tasks-filter-label
-          	= render partial: 'table', locals:{source: tasks_path(by_user: current_user.to_param, format: :table)}
+          	= render partial: 'table', locals:{source: user_tasks_path(current_user, format: :json)}

@@ -119,10 +119,14 @@ $.widget 'nmk.tableScroller', {
 				$row = $('<tr>', {id: @_rowId(row)})
 				for val in values
 					val = if val? then val else ''
-					if row.links.show?
-						$row.append($('<td>').append($('<a>', {href:row.links.show}).text val))
+					if typeof val == 'string'
+						if row.links.show?
+							$row.append $('<td>').append($('<a>', {href:row.links.show}).html val)
+						else
+							$row.append $('<td>').html(val)
 					else
-						$row.append($('<td>').text val)
+						$row.append $('<td>').append(val)
+
 
 				$row.append actionButtons
 				@element.find('tbody').append $row

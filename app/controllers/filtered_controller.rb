@@ -1,6 +1,8 @@
 class FilteredController < InheritedResources::Base
     helper_method :collection_count
     helper_method :collection_to_json
+    respond_to :json, only: :index
+    before_filter :collection, only: :index
 
     def collection
       get_collection_ivar || begin
@@ -9,7 +11,6 @@ class FilteredController < InheritedResources::Base
         c = controller_filters(c)
         @collection_count_scope = c
         c = c.page(current_page)
-        set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
         set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
       end
     end

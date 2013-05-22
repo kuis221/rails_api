@@ -1,6 +1,5 @@
 class CampaignsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
-  respond_to :json, only: [:index]
 
   include DeactivableHelper
 

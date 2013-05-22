@@ -1,6 +1,5 @@
 class TeamsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
-  respond_to :json, only: [:index]
 
   include DeactivableHelper
 
@@ -14,7 +13,7 @@ class TeamsController < FilteredController
 
   private
     def collection_to_json
-      @teams.map{|team| {
+      collection.map{|team| {
         :id => team.id,
         :name => team.name,
         :description => team.description,

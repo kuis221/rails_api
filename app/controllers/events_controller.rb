@@ -8,7 +8,6 @@ class EventsController < FilteredController
   include DeactivableHelper
 
   respond_to :js, only: [:new, :create, :edit, :update]
-  respond_to :json, only: [:index]
 
   # Scopes for the filter box
   has_scope :by_period, :using => [:start_date, :end_date]
