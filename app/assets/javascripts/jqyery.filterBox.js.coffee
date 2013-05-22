@@ -1,11 +1,15 @@
 $.widget 'nmk.filterBox', {
 	options: {
 		onChange: false,
-		includeCalendars: true,
+		includeCalendars: false,
 		includeSearchBox: true
 	},
 	_create: () ->
-		@form = $('<form action="#" method="get">').appendTo(@element);
+		@element.addClass('filter-box')
+		@form = $('<form action="#" method="get">').appendTo(@element).submit (e)->
+			e.preventDefault()
+			e.stopPropagation()
+			false
 		@form.data('serializedData', null)
 
 		if @options.includeSearchBox
@@ -24,8 +28,7 @@ $.widget 'nmk.filterBox', {
 
 	_addSearchBox: () ->
 		previousValue = '';
-		$('<label for="search-box-filter">Search:</search>').appendTo(@form)
-		@searchInput = $('<input type="text" name="with_text" id="search-box-filter">').appendTo @form
+		@searchInput = $('<input type="text" name="with_text" class="search-query" placeholder="Search" id="search-box-filter">').appendTo @form
 		@searchInput.keyup =>
 			if previousValue isnt @searchInput.val()
 				previousValue = @searchInput.val()

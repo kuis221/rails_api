@@ -10,7 +10,6 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_company
 
-
   protected
     def set_layout
       user_signed_in? ? 'application' : 'empty'
@@ -19,5 +18,4 @@ class ApplicationController < ActionController::Base
     def current_company
       @current_company ||= current_user.try(:company)
     end
-
 end

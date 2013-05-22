@@ -37,6 +37,8 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
 
+  scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }
+
   aasm do
     state :inactive, :initial => true
     state :active

@@ -18,7 +18,7 @@ jQuery ->
   $('#toggle-events-view a').on 'click', ->
     $('#toggle-events-view a').removeClass 'active'
     $(this).addClass('active').tab 'show'
-    if $(this).attr('href') is '#map-view' and not map
+    if $(this).attr('href') is '#map-view'
       initializeMap()
       $('.FixedHeader_Cloned').hide()
     else
@@ -33,11 +33,11 @@ jQuery ->
 
   initializeMap = ->
     mapOptions = {
-      center: new google.maps.LatLng(-34.397, 150.644),
       zoom: 5,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+    if not map
+      map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
     placeMarkers()
 
   $(document).on 'events-list:changed', (e, list) ->
@@ -53,7 +53,7 @@ jQuery ->
       bounds = new google.maps.LatLngBounds()
 
       for event in events
-        if event.place? and event.place.latitude?
+        if event.place? and event.place.latitude? and event.place.latitude != ''
           placeLocation = new google.maps.LatLng(event.place.latitude,event.place.longitude)
           marker = new google.maps.Marker({
             map:map,

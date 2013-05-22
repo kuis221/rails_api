@@ -1,31 +1,18 @@
-class UsersController < InheritedResources::Base
+class UsersController < FilteredController
   skip_before_filter :authenticate_user!, only: [:complete, :update_profile]
   append_before_filter :assert_auth_token_passed, only: :complete
   before_filter :ensure_no_user, only: [:complete, :update_profile]
 
   include DeactivableHelper
 
-  load_and_authorize_resource except: [:complete, :update_profile]
+  load_and_authorize_resource except: [:complete, :update_profile, :index]
 
   respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :json, only: [:index]
+
+  has_scope :with_text
 
   custom_actions :collection => [:complete]
-
-  respond_to_datatables do
-    columns [
-      {:attr => :last_name ,:column_name => 'users.last_name', :searchable => true, :clickable => false},
-      {:attr => :first_name ,:column_name => 'users.first_name', :searchable => true, :clickable => false},
-      {:attr => :city ,:column_name => 'users.city', :clickable => false},
-      {:attr => :state_name ,:column_name => 'users.state', :clickable => false},
-      {:attr => :country_name, :column_name => 'users.country', :clickable => false},
-      {:attr => :email ,:column_name => 'users.email', :clickable => false},
-      {:attr => :role_name ,:column_name => 'roles.name', :clickable => false},
-      {:attr => :last_sign_in_at, :value => Proc.new{|user| user.last_sign_in_at.to_s(:full_friendly) if user.last_sign_in_at }, :column_name => 'users.last_sign_in_at', :clickable => false},
-      {:attr => :aasm_state, :value => Proc.new{|user| user.aasm_state.capitalize }, :column_name => 'teams.name', :clickable => false}
-    ]
-    @editable  = true
-    @deactivable = true
-  end
 
   def dashboard
   end
@@ -79,6 +66,44 @@ class UsersController < InheritedResources::Base
         flash[:notice] = 'You cannot access this page'
         redirect_to root_path
       end
+    end
+
+    def begin_of_association_chain
+      current_company
+    end
+
+    def collection_to_json
+      collection.map{|user| {
+        :id => user.id,
+        :last_name => user.last_name,
+        :first_name => user.first_name,
+        :city => user.city,
+        :state => user.state_name,
+        :country => user.country_name,
+        :email => user.email,
+        :role => user.role_name,
+        :last_sign_in_at => user.last_sign_in_at.try(:to_s,:full_friendly),
+        :status => user.aasm_state.capitalize,
+        :links => {
+            edit: edit_user_path(user),
+            activate: activate_user_path(user),
+            deactivate: deactivate_user_path(user)
+        }
+      }}
+    end
+
+    def sort_options
+      {
+        'last_name' => { :order => 'users.last_name' },
+        'first_name' => { :order => 'users.first_name' },
+        'city' => { :order => 'users.city' },
+        'state' => { :order => 'users.state' },
+        'country' => { :order => 'users.country' },
+        'email' => { :order => 'users.active' },
+        'role' => { :order => 'roles.name' },
+        'last_login' => { :order => 'users.last_sign_in_at' },
+        'status' => { :order => 'users.active' }
+      }
     end
 
     # Check if a reset_password_token is provided in the request

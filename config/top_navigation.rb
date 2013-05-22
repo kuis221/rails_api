@@ -29,12 +29,6 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :home, content_tag(:i, '', class: 'icon-home'), root_path, if: lambda{ user_signed_in? } do |secondary|
-      secondary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r(/$)
-      secondary.item :events, 'Events', events_path, highlights_on: %r(/events)
-      secondary.item :tasks, 'Tasks', '/', highlights_on: %r(/tasks)
-      secondary.item :analysis, 'Analysis', '#'
-    end
 
     primary.item :admin, 'Admin' + " <b class='caret'></b>", users_path, if: lambda{ user_signed_in? }, link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
       secondary.item :users, 'Users', users_path

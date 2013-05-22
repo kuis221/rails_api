@@ -2,48 +2,40 @@
   #admin-sub-nav.pull-left
     = render 'admin_navigation'
 
-  table#campaigns-list.table.table-striped.table-bordered.table-scrolled
-    thead
-      tr
-        th Name
-        th Description
-        th First Event
-        th Last Event
-        th Status
-        th
-    tbody
-
   .row-fluid
-    .pull-right
-      = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+      table#campaigns-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th data-sort="name" Name
+            th data-sort="description" Description
+            th data-sort="first_event" First Event
+            th data-sort="last_event" Last Event
+            th data-sort="status" Status
+            th
+        tbody
+
 
 javascript:
-  var fixedTable = false;
-  var campaignsTable = $('#campaigns-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
-        //"sPaginationType": "bootstrap",
-        "bPaginate": false,
-        "bAutoWidth":false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{campaigns_path(format: :table)}",
-        "iDeferLoading": #{@campaigns.count},
-        "fnServerData": function ( sSource, aoData, fnCallback ){
-          $.getJSON(sSource, aoData, function (json){
-            fnCallback(json);
-            if (!fixedTable){
-              fixedTable = new FixedHeader( campaignsTable, {
-                  "offsetTop": 90
-              });
-            }
-          });
-        },
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '100px', 'bSortable': false}
-        ]
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      campaignsTable.tableScroller('reloadData');
+    }
+  });
+  var campaignsTable = $('table#campaigns-list').tableScroller({
+    'source': '#{campaigns_path(format: :json)}',
+    'fixedHeader': true,
+    'rowValues': function(c){
+      return [c.name, c.description, c.first_event, c.last_event, c.status]
+    },
+    'rowId': function(row){
+      return 'campaign_'+row.id;
+    },
+    'headerOffset': 91,
   })

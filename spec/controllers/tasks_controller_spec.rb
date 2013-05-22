@@ -71,7 +71,7 @@ describe TasksController do
 
     describe "datatable requests" do
       it "responds to .table format" do
-        get 'index', event_id: event.to_param, format: :table
+        get 'index', event_id: event.to_param, format: :json
         response.should be_success
       end
 
@@ -80,12 +80,10 @@ describe TasksController do
 
         # Events on other events should not be included on the results
         FactoryGirl.create_list(:task, 2, event_id: 9999)
-        get 'index', event_id: event.to_param, format: :table
+        get 'index', event_id: event.to_param, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["sEcho"].should be_nil
-        parsed_body["iTotalRecords"].should == 3
-        parsed_body["iTotalDisplayRecords"].should == 3
-        parsed_body["aaData"].count.should == 3
+        parsed_body["total"].should == 3
+        parsed_body["items"].count.should == 3
       end
     end
   end

@@ -49,7 +49,7 @@ class Event < ActiveRecord::Base
   after_validation :delegate_errors
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name, to: :place, prefix: true, allow_nil: true
+  delegate :name,:latitude,:longitude,:formatted_address, to: :place, prefix: true, allow_nil: true
 
   def activate!
     update_attribute :active, true

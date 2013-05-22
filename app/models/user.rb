@@ -82,6 +82,8 @@ class User < ActiveRecord::Base
 
   delegate :name, to: :role, prefix: true, allow_nil: true
 
+  scope :with_text, lambda{|text| where('users.first_name ilike ? or users.last_name ilike ? or users.email ilike ?', "%#{text}%", "%#{text}%", "%#{text}%") }
+
   attr_accessor :updating_profile
 
   aasm do
