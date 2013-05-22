@@ -84,6 +84,7 @@ class UsersController < FilteredController
         :role => user.role_name,
         :last_sign_in_at => user.last_sign_in_at.try(:to_s,:full_friendly),
         :status => user.aasm_state.capitalize,
+        :active => user.active?,
         :links => {
             edit: edit_user_path(user),
             activate: activate_user_path(user),

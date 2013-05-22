@@ -24,6 +24,7 @@ class RolesController < FilteredController
         :name => role.name,
         :description => role.description,
         :status => role.active? ? 'Active' : 'Inactive',
+        :active => role.active?,
         :links => {
             edit: edit_role_path(role),
             show: role_path(role),

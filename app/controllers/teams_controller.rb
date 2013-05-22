@@ -19,6 +19,7 @@ class TeamsController < FilteredController
         :description => team.description,
         :users_count => team.users.active.count,
         :status => team.active? ? 'Active' : 'Inactive',
+        :active => team.active?,
         :links => {
             edit: edit_team_path(team),
             show: team_path(team),

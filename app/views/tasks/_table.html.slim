@@ -15,7 +15,7 @@ javascript:
     'source': '#{source}',
     'fixedHeader': false,
     'rowValues': function(t){
-      return [$('<a>', {href: t.links.comments, 'data-remote': true}).text(t.title), t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+      return [$('<a>', {href: t.links.comments, class: 'data-resource-details-link', 'data-remote': true}).text(t.title), t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
     },
     'rowId': function(row){
       return 'task_'+row.id;
