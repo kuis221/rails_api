@@ -1,10 +1,10 @@
-class TeamsController < InheritedResources::Base
+class TeamsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   respond_to :json, only: [:index]
 
   include DeactivableHelper
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: :index
 
   has_scope :with_text
 

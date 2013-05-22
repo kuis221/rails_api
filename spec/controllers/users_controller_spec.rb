@@ -22,9 +22,9 @@ describe UsersController do
         response.should be_success
       end
 
-      describe "datatable requests" do
+      describe "json requests" do
         it "responds to .table format" do
-          get 'index', format: :table
+          get 'index', format: :json
           response.should be_success
         end
 
@@ -33,12 +33,10 @@ describe UsersController do
 
           # Users on other companies should not be included on the results
           FactoryGirl.create_list(:user, 2, company_id: 9999)
-          get 'index', sEcho: 1, format: :table
+          get 'index', sEcho: 1, format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body["sEcho"].should == 1
-          parsed_body["iTotalRecords"].should == 4
-          parsed_body["iTotalDisplayRecords"].should == 4
-          parsed_body["aaData"].count.should == 4
+          parsed_body["total"].should == 4
+          parsed_body["items"].count.should == 4
         end
       end
     end

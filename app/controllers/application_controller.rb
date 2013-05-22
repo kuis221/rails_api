@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
 
   include DatatablesHelper
   include SentientController
-  include BrandscopicHelper
 
   before_filter :authenticate_user!
 

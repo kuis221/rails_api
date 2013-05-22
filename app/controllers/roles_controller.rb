@@ -1,4 +1,4 @@
-class RolesController < InheritedResources::Base
+class RolesController < FilteredController
   authorize_resource
 
   # This helper provide the methods to activate/deactivate the resource

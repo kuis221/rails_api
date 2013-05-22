@@ -1,4 +1,4 @@
-class UsersController < InheritedResources::Base
+class UsersController < FilteredController
   skip_before_filter :authenticate_user!, only: [:complete, :update_profile]
   append_before_filter :assert_auth_token_passed, only: :complete
   before_filter :ensure_no_user, only: [:complete, :update_profile]

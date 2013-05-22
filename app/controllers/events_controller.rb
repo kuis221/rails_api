@@ -1,5 +1,5 @@
-class EventsController < InheritedResources::Base
-  load_and_authorize_resource
+class EventsController < FilteredController
+  load_and_authorize_resource except: :index
 
   # This helper provide the methods to add/remove team members to the event
   include TeamMembersHelper
