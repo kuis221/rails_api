@@ -1,8 +1,43 @@
-table#tasks-events-list.table.table-striped.table-bordered.table-scrolled
-  thead
-    tr
-      th Start Date
-      th Start Time
-      th Location
-      th Campaign
-  tbody
+#events-list-filters
+#tasks-events-list-wrapper
+  table#tasks-events-list.table.table-striped.table-bordered.table-scrolled
+    thead
+      tr
+        th Start Date
+        th Start Time
+        th Location
+        th Campaign
+    tbody
+
+css:
+  #tasks-events-list-wrapper{
+    height: 250px;
+    overflow: auto;
+  }
+
+javascript:
+  $('#events-list-filters').filterBox({
+    'onChange': function(filterBox){
+      taskEventsTable.tableScroller('reloadData');
+    }
+  });
+
+  var taskEventsTable = $('table#tasks-events-list').tableScroller({
+    'source': '#{events_path(format: :json)}',
+    'buildParams': function(params) {
+      data = $('#events-list-filters').filterBox('getFilters');
+      $.each(data, function(index, value){
+        params.push(value);
+      })
+      return params
+    },
+    'onClick': function(row, item){
+      $('#event-title').val(item.campaign.name + '@' +  item.start_date)
+      $('#task_event_id').val(item.id)
+    },
+    'actionButtons': false,
+    'rowValues': function(e){
+      return [e.start_date, e.start_time, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : '')]
+    },
+    'fixedHeader': false
+  })
