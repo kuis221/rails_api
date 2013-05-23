@@ -55,29 +55,32 @@
 
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
-      var map;
-      var placeLocation = new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude});
-      function initialize() {
-        var mapOptions = {
-          zoom: 13,
-          center: new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude}),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
+    var map;
+    var placeLocation = new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude});
 
-        marker = new google.maps.Marker({
-          map:map,
-          draggable:false,
-          animation: google.maps.Animation.DROP,
-          position: placeLocation
-        });
-      }
+    function initialize() {
+      var mapOptions = {
+        zoom: 13,
+        center: new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude}),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById('map-canvas'),
+          mapOptions);
 
-      google.maps.event.addDomListener(window, 'load', initialize);
+      marker = new google.maps.Marker({
+        map:map,
+        draggable:false,
+        animation: google.maps.Animation.DROP,
+        position: placeLocation
+      });
+    }
 
+    google.maps.event.addDomListener(window, 'load', initialize);
 
+    $(document).bind('tasks:change', function(e){
+      $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
+    });
 
-      $(document).bind('tasks:change', function(e){
-        $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
-      })
+    $(document).on('events:change', function(){
+      window.location.reload(false);
+    })
