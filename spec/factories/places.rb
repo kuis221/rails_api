@@ -3,8 +3,8 @@
 FactoryGirl.define do
   factory :place do
     sequence(:name) {|n| "Place #{n}" }
-    place_id "12313"
-    reference '#$aojnoiweksadk-o19290f0i2ief0'
+    sequence(:place_id)
+    sequence(:reference) {|n| "$aojnoiweksadk-o19290f0i2ief0-#{n}"}
     formatted_address "123 My Street"
     latitude 1.5
     longitude 1.5

@@ -54,6 +54,9 @@ javascript:
     'onItemsChange': function(items) {
       $(document).trigger('events-list:changed',[items]);
     },
+    'rowId': function(row){
+      return 'event_'+row.id;
+    },
     'fixedHeader': true,
     'headerOffset': 91,
   })

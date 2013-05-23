@@ -25,7 +25,7 @@ jQuery ->
     else
       $('.table-cloned-fixed-header').show()
       $('table#events-list').tableScroller 'enableScrolling'
-      eventsTable.fnDraw()
+      eventsTable.tableScroller('redrawTable')
 
 
   map = null
