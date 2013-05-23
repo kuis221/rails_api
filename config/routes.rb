@@ -40,7 +40,9 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
-      get :users
+      match 'members/:member_id' => 'teams#delete_member', via: :delete, as: :delete_member
+      match 'members/new' => 'teams#new_member', via: :get, as: :new_member
+      match 'members' => 'teams#add_members', via: :post, as: :add_member
     end
   end
 

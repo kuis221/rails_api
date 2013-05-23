@@ -4,36 +4,64 @@
 
   .row-fluid
     .box.span12
-      h1= @team.name
-      - if @team.description
-        .team-description
-          = @team.description
+      .row-fluid
+        .span6
+          h1= @team.name
+          - if @team.description
+            .team-description
+              = @team.description
+        .span6
+          .pull-right
+            = link_to 'Edit', edit_team_path(resource), remote: true, class: 'btn btn-primary btn-small'
+            = "&nbsp;".html_safe
+            = active_inactive_buttons(resource)
       .box-header
         h2
           i.icon-user
           span.break
           = "Team Members"
       .box-content
-        table#team-details.table.table-striped.table-bordered.table-scrolled
+        #team-members-list-filter
+        table#team-members.table.table-striped.table-bordered.table-scrolled
           thead
             tr
-              th Last
-              th First
+              th Last Name
+              th First Name
               th Level
               th City
               th State
               th Email
               th Status
+              th.actions
           tbody
+        .row-fluid
+          .pull-right
+            = link_to 'Add Team Member', new_member_team_path(resource), remote: true, class: 'btn btn-primary'
 
-        = link_to 'Add', '#', {class: 'btn btn-primary'}
-        = link_to 'Remove', '#', {class: 'btn'}
 javascript:
-  var resourceTable = $('#team-details').dataTable({
-    "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-    //"sPaginationType": "bootstrap",
-    "bPaginate": false,
-    "bProcessing": true,
-    "bServerSide": false,
-    "sAjaxSource": "#{users_team_path(resource, format: :json)}"
+  $('#team-members-list-filter').filterBox({
+    'onChange': function(filterBox){
+      teamMembersTable.tableScroller('reloadData');
+    }
+  });
+
+  var teamMembersTable = $('table#team-members').tableScroller({
+    'source': '#{users_path(by_teams: resource.to_param, format: :json)}',
+    'buildParams': function(params) {
+      data = $('#collection-list-filters').filterBox('getFilters');
+      $.each(data, function(index, value){
+        params.push(value);
+      });
+      return params
+    },
+    'rowValues': function(u){
+      return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
+    },
+    'rowId': function(row){
+      return 'user_' + row.id;
+    }
+  })
+
+  $(document).on('teams:change', function(){
+    window.location.reload(false);
   })

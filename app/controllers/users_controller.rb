@@ -11,6 +11,7 @@ class UsersController < FilteredController
   respond_to :json, only: [:index]
 
   has_scope :with_text
+  has_scope :by_teams
 
   custom_actions :collection => [:complete]
 

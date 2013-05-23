@@ -1,15 +1,15 @@
 class TeamsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  # This helper provide the methods to add/remove team members to the event
+  include TeamMembersHelper
+
+  # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
   load_and_authorize_resource except: :index
 
   has_scope :with_text
-
-  def users
-    @users = resource.users.active
-  end
 
   private
     def collection_to_json

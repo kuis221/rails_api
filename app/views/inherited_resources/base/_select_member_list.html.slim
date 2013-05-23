@@ -1,8 +1,9 @@
-ul#select-members-tabs.nav.nav-tabs
-  li.active
-    a href="#select-users" data-toggle="tab" Users
-  li
-    a href="#select-teams" data-toggle="tab" Teams
+- if resource.is_a?(Event)
+  ul#select-members-tabs.nav.nav-tabs
+    li.active
+      a href="#select-users" data-toggle="tab" Users
+    li
+      a href="#select-teams" data-toggle="tab" Teams
 
 
 .tab-content
@@ -30,7 +31,7 @@ ul#select-members-tabs.nav.nav-tabs
                 td= user.country_name
                 td= user.email
                 td= user.role_name
-                td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, member_id: user.id), data:{'user-id' => user.id}, remote: true, method: :post
+                td= link_to 'Add', url_for(action: :add_members, member_id: user.id), data:{'user-id' => user.id}, remote: true, method: :post
 
       .span2
         #select-users-list-filters
