@@ -19,5 +19,10 @@
 require 'spec_helper'
 
 describe Document do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:documentable) }
+
+  it { should allow_mass_assignment_of(:name) }
+  it { should allow_mass_assignment_of(:file) }
+
+  it { should validate_presence_of(:name) }
 end
