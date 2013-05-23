@@ -35,8 +35,16 @@ describe TeamsController do
       get("/teams/1/deactivate").should route_to("teams#deactivate", :id => "1")
     end
 
-    it "routes to #users" do
-      get("/teams/1/users").should route_to("teams#users", :id => "1")
+    it "routes to #new_member" do
+      get("/teams/1/members/new").should route_to("teams#new_member", :id => "1")
+    end
+
+    it "routes to #add_member" do
+      post("/teams/1/members").should route_to("teams#add_members", :id => "1")
+    end
+
+    it "routes to #delete_member" do
+      delete("/teams/1/members/2").should route_to("teams#delete_member", :id => "1", :member_id => "2")
     end
 
   end
