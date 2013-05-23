@@ -90,7 +90,7 @@ class UsersController < FilteredController
             edit: edit_user_path(user),
             activate: activate_user_path(user),
             deactivate: deactivate_user_path(user)
-        }
+        }.merge(params.has_key?(:by_teams) && params[:by_teams] ? {delete: delete_member_team_path(params[:by_teams], member_id: user.id)} : {})
       }}
     end
 

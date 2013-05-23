@@ -149,18 +149,18 @@ $.widget 'nmk.tableScroller', {
 				if @options.actionButtons? and @options.actionButtons != false
 					actionButtons = $('<td>');
 					# Edit Button
-					if $.inArray('editable' ,@options.actionButtons) >= 0
+					if $.inArray('editable', @options.actionButtons) >= 0
 						actionButtons.append($('<a>', {'href': row.links.edit,'title':'Edit', 'data-remote': true}).text('Edit'))
 						separator = ' '
 
 					# Remove Button
-					if $.inArray('removable' ,@options.actionButtons) >= 0
+					if $.inArray('deletable', @options.actionButtons) >= 0
 						actionButtons.append(separator)
 						separator = ' '
-						actionButtons.append($('<a>', {'href': row.links.delete,'title':'Remove', 'data-remote': true}).text('Remove'))
+						actionButtons.append($('<a>', {'href': row.links.delete,'title':'Remove', 'data-remote': true, 'data-method': 'delete'}).text('Remove'))
 
 					# Activate/Deactivate Button
-					if $.inArray('activable' ,@options.actionButtons) >= 0
+					if $.inArray('activable', @options.actionButtons) >= 0
 						actionButtons.append(separator)
 						if row.active
 							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true}).text('Deactivate')

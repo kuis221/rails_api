@@ -58,8 +58,9 @@ javascript:
       return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
     },
     'rowId': function(row){
-      return 'user_' + row.id;
-    }
+      return 'team-member-' + row.id;
+    },
+    'actionButtons': ['deletable']
   })
 
   $(document).on('teams:change', function(){
