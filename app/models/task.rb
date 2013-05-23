@@ -20,7 +20,7 @@ class Task < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :user
-  attr_accessible :completed, :due_at, :title, :user_id
+  attr_accessible :completed, :due_at, :title, :user_id, :event_id
   has_many :comments, :as => :commentable
 
   validates_datetime :due_at, allow_nil: true, allow_blank: true

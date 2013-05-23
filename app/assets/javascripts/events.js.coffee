@@ -28,7 +28,6 @@ jQuery ->
       eventsTable.fnDraw()
 
 
-
   map = null
   markersArray = []
   events = null

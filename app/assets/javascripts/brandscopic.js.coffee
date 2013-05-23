@@ -9,6 +9,7 @@ jQuery ->
 		$(this).validate {
 			errorClass: 'help-inline',
 			errorElement: 'span',
+			ignore: '.no-validate',
 			highlight: (element) ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 			,
@@ -30,6 +31,7 @@ jQuery ->
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
+
 
 	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
 		$($(this).data('filter')).dataTable().fnDraw()

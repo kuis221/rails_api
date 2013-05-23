@@ -25,9 +25,9 @@ describe Task do
   it { should allow_mass_assignment_of(:due_at) }
   it { should allow_mass_assignment_of(:title) }
   it { should allow_mass_assignment_of(:user_id) }
+  it { should allow_mass_assignment_of(:event_id) }
 
   it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:event_id) }
   it { should_not allow_mass_assignment_of(:created_at) }
   it { should_not allow_mass_assignment_of(:updated_at) }
 

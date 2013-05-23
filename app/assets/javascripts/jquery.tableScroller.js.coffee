@@ -4,7 +4,10 @@ $.widget 'nmk.tableScroller', {
 		buildParams: null,
 		onItemsChange: null,
 		fixedHeader: false,
-		headerOffset: 0
+		headerOffset: 0,
+		onClick: null,
+		actionButtons: ['editable', 'activable'],
+		includeActionButtons: true
 	},
 	_create: () ->
 		@loadedItems = 0
@@ -12,8 +15,14 @@ $.widget 'nmk.tableScroller', {
 		@window = $(window)  # Cache
 		@element.addClass('tableScroller')
 
-		@element.find('th[data-sort]').addClass('sorting').click (e) =>
+		@element.find('th[data-sort]').addClass('sorting').on 'tableScroller.click', (e) =>
 			@sortBy(e.target)
+
+		if @options.onClick
+			@element.on 'tableScroller.click', 'a', (e) =>
+				e.preventDefault();
+				row = $(e.target).parents('tr')[0]
+				@options.onClick(row, $(row).data('item'))
 
 		@sortBy @element.find('thead th:first-child')[0], false
 
@@ -51,6 +60,15 @@ $.widget 'nmk.tableScroller', {
 
 	enableScrolling: ->
 		@element.infiniteScrollHelper 'enableScrolling'
+
+	destroy: ->
+		@element.infiniteScrollHelper 'destroy'
+		@element.on 'tableScroller.click'
+
+		@element.find('th[data-sort]').removeClass('sorting sorting_asc sorting_desc' ).on 'tableScroller.click'
+
+		if @options.fixedHeader
+			@fixedHeader.remove()
 
 	_synchHeaderWidths: ->
 		@_placeHeaderPosition()
@@ -111,29 +129,46 @@ $.widget 'nmk.tableScroller', {
 			@totalItems = json.total
 			@loadedItems += json.items.length
 			for row in json.items
-				actionButtons = $('<td>')
-					.append($('<a>', {'href': row.links.edit,'title':'Edit', 'data-remote': true}).text('Edit'))
-					.append(' ')
-				if row.active
-					actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true}).text('Deactivate')
-				else
-					actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
 
 				values = @_getRowValues(row)
 
 				$row = $('<tr>', {id: @_rowId(row)})
+				$row.data 'item', row
+
+				link = if @options.onClick? then '#' else row.links.show
 				for val in values
 					val = if val? then val else ''
 					if typeof val == 'string'
-						if row.links.show?
-							$row.append $('<td>').append($('<a>', {href:row.links.show}).html val)
+						if link?
+							$row.append $('<td>').append($('<a>', {href:link}).html val)
 						else
 							$row.append $('<td>').html(val)
 					else
 						$row.append $('<td>').append(val)
 
+				if @options.actionButtons? and @options.actionButtons != false
+					actionButtons = $('<td>');
+					# Edit Button
+					if $.inArray('editable' ,@options.actionButtons) >= 0
+						actionButtons.append($('<a>', {'href': row.links.edit,'title':'Edit', 'data-remote': true}).text('Edit'))
+						separator = ' '
 
-				$row.append actionButtons
+					# Remove Button
+					if $.inArray('removable' ,@options.actionButtons) >= 0
+						actionButtons.append(separator)
+						separator = ' '
+						actionButtons.append($('<a>', {'href': row.links.delete,'title':'Remove', 'data-remote': true}).text('Remove'))
+
+					# Activate/Deactivate Button
+					if $.inArray('activable' ,@options.actionButtons) >= 0
+						actionButtons.append(separator)
+						if row.active
+							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true}).text('Deactivate')
+						else
+							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
+
+					$row.append actionButtons
+
 				@element.find('tbody').append $row
 				@items.push row
 				true

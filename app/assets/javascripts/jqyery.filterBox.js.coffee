@@ -28,15 +28,15 @@ $.widget 'nmk.filterBox', {
 
 	_addSearchBox: () ->
 		previousValue = '';
-		@searchInput = $('<input type="text" name="with_text" class="search-query" placeholder="Search" id="search-box-filter">').appendTo @form
+		@searchInput = $('<input type="text" name="with_text" class="search-query no-validate" placeholder="Search" id="search-box-filter">').appendTo @form
 		@searchInput.keyup =>
 			if previousValue isnt @searchInput.val()
 				previousValue = @searchInput.val()
 				@_filtersChanged()
 
 	_addCalendars: () ->
-		@startDateInput = $('<input type="hidden" name="by_period[start_date]">').appendTo @form
-		@endDateInput = $('<input type="hidden" name="by_period[end_date]">').appendTo @form
+		@startDateInput = $('<input type="hidden" name="by_period[start_date]" class="no-validate">').appendTo @form
+		@endDateInput = $('<input type="hidden" name="by_period[end_date]" class="no-validate">').appendTo @form
 		container = $('<div class="dates-range-filter">').appendTo @element
 		container.datepick {
 			rangeSelect: true,
