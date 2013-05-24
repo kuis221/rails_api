@@ -5,7 +5,7 @@
 
   .form-inputs
     = f.input :title
-    = f.association :user, label: 'Assigned To', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_user.company.users.active.all
+    = f.association :user, label: 'Assigned To', label_method: :full_name, input_html: {class: 'input-large'}, collection: (f.object.event.nil? ?  [] : company_users.active.by_events(f.object.event) )
     = f.input :due_at, input_html: {value: resource.due_at.try(:to_s, :slashes)}, as: :date_picker
 
 
