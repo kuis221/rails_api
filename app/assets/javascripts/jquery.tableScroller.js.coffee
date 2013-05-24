@@ -30,7 +30,7 @@ $.widget 'nmk.tableScroller', {
 
 		@element.infiniteScrollHelper {
 			loadMore: (page) =>
-				if @totalItems > @loadedItems
+				if @totalItems > @loadedItems && @doneLoading
 					@_loadPage(page)
 				else
 					false
@@ -123,6 +123,7 @@ $.widget 'nmk.tableScroller', {
 			@reloadData()
 
 	reloadData: () ->
+		@doneLoading = false
 		@loadedItems = 0
 		@items = []
 		@element.find('tbody').html ''
