@@ -1,11 +1,12 @@
 $.widget 'nmk.tableScroller', {
 	options: {
 		source: null,
-		buildParams: null,
 		onItemsChange: null,
 		fixedHeader: false,
 		headerOffset: 0,
 		onClick: null,
+		onClick: null,
+		filterBox: null,
 		actionButtons: ['editable', 'activable'],
 		includeActionButtons: true
 	},
@@ -15,11 +16,11 @@ $.widget 'nmk.tableScroller', {
 		@window = $(window)  # Cache
 		@element.addClass('tableScroller')
 
-		@element.find('th[data-sort]').addClass('sorting').on 'tableScroller.click', (e) =>
+		@element.find('th[data-sort]').addClass('sorting').on 'click.tableScroller', (e) =>
 			@sortBy(e.target)
 
 		if @options.onClick
-			@element.on 'tableScroller.click', 'a', (e) =>
+			@element.on 'click.tableScroller.', 'a', (e) =>
 				e.preventDefault();
 				row = $(e.target).parents('tr')[0]
 				@options.onClick(row, $(row).data('item'))
@@ -39,12 +40,12 @@ $.widget 'nmk.tableScroller', {
 		}
 
 		if @options.fixedHeader
-			@buildFixedHeader()
+			@_buildFixedHeader()
 
 		@_loadPage(1)
 		@
 
-	buildFixedHeader: ->
+	_buildFixedHeader: ->
 		@info = $('<div>').css({position: 'absolute', 'top':'0', 'left':0, 'z-index': 9999}).appendTo($('body'))
 		@fixedHeader = @element.clone(true, true).addClass('table-cloned-fixed-header').appendTo($('body')) #.affix({y: 50})
 		@fixedHeader.css {'visibility': 'hidden','margin': '0', 'position':'fixed'}
@@ -61,14 +62,24 @@ $.widget 'nmk.tableScroller', {
 	enableScrolling: ->
 		@element.infiniteScrollHelper 'enableScrolling'
 
+	redrawTable: ->
+		@_synchHeaderWidths()
+
 	destroy: ->
 		@element.infiniteScrollHelper 'destroy'
-		@element.on 'tableScroller.click'
+		@element.off 'click.tableScroller'
 
-		@element.find('th[data-sort]').removeClass('sorting sorting_asc sorting_desc' ).on 'tableScroller.click'
+		@element.find('th[data-sort]').removeClass('sorting sorting_asc sorting_desc' ).off 'click.tableScroller'
 
 		if @options.fixedHeader
 			@fixedHeader.remove()
+
+
+	buildParams: (params) ->
+		if @options.filterBox? and $(@options.filterBox).length
+			data = $(@options.filterBox).filterBox('getFilters');
+			params.push(value) for value in data
+		params
 
 	_synchHeaderWidths: ->
 		@_placeHeaderPosition()
@@ -121,11 +132,13 @@ $.widget 'nmk.tableScroller', {
 
 	_loadPage: (page) ->
 		params = [{'name': 'page', 'value': page}, {'name':'sorting','value':@sorting},{'name':'sorting_dir','value':@sorting_dir}]
-		if @options.buildParams
-			params = @options.buildParams(params)
+		params = @buildParams(params)
+
+		if @jqxhr
+			@jqxhr.abort()
 
 		@doneLoading = false
-		$.getJSON @options.source, params,  (json) =>
+		@jqxhr = $.getJSON @options.source, params,  (json) =>
 			@totalItems = json.total
 			@loadedItems += json.items.length
 			for row in json.items

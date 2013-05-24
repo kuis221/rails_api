@@ -6,7 +6,7 @@
           #resource-filter-column data-spy="affix" data-offset-top="0"
             .text-right
               = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
-            #events-list-filters
+            #collection-list-filters
 
         .text-right
           #toggle-events-view.btn-group
@@ -32,7 +32,7 @@
 
 
 javascript:
-  $('#events-list-filters').filterBox({
+  $('#collection-list-filters').filterBox({
     'includeCalendars': true,
     'onChange': function(filterBox){
       eventsTable.tableScroller('reloadData');
@@ -41,18 +41,15 @@ javascript:
 
   var eventsTable = $('table#events-list').tableScroller({
     'source': '#{events_path(format: :json)}',
-    'buildParams': function(params) {
-      data = $('#events-list-filters').filterBox('getFilters');
-      $.each(data, function(index, value){
-        params.push(value);
-      });
-      return params
-    },
+    'filterBox': '#collection-list-filters',
     'rowValues': function(e){
       return [e.start_date, e.start_time, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : ''), e.status]
     },
     'onItemsChange': function(items) {
       $(document).trigger('events-list:changed',[items]);
+    },
+    'rowId': function(row){
+      return 'event_'+row.id;
     },
     'fixedHeader': true,
     'headerOffset': 91,

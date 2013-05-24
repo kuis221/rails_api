@@ -26,15 +26,15 @@ jQuery ->
 
 	attachPluginsToElements()
 
-	$(document).ajaxComplete (e) ->
-		attachPluginsToElements()
+#	$(document).ajaxComplete (e) ->
+#		attachPluginsToElements()
 
-	$(document).on 'submit', "form", validateForm
-	$(document).on 'ajax:before', "form", validateForm
+#	$(document).on 'submit', "form", validateForm
+	#$(document).on 'ajax:before', "form", validateForm
 
 
-	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
-		$($(this).data('filter')).dataTable().fnDraw()
+	# $(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
+	# 	$($(this).data('filter')).dataTable().fnDraw()
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 	    e.preventDefault()

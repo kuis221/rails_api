@@ -1,5 +1,5 @@
-#content-with-admin-nav
-  #admin-sub-nav.pull-left
+#content-with-left-nav
+  #content-left-nav.pull-left
     = render 'admin_navigation'
 
   .row-fluid
@@ -32,13 +32,7 @@ javascript:
     'rowValues': function(r){
       return [r.name, r.description, r.status]
     },
-    'buildParams': function(params) {
-      data = $('#collection-list-filters').filterBox('getFilters');
-      $.each(data, function(index, value){
-        params.push(value);
-      });
-      return params
-    },
+    'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'role_'+row.id;
     },

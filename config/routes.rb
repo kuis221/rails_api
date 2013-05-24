@@ -75,7 +75,11 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :tasks, only: [:index, :new, :create, :edit] do
+  resources :tasks, only: [:new, :create, :edit, :update] do
+    collection do
+      get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
+      get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+    end
     member do
       get :deactivate
       get :activate

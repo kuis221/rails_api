@@ -47,13 +47,7 @@ javascript:
 
   var teamMembersTable = $('table#team-members').tableScroller({
     'source': '#{users_path(by_teams: resource.to_param, format: :json)}',
-    'buildParams': function(params) {
-      data = $('#collection-list-filters').filterBox('getFilters');
-      $.each(data, function(index, value){
-        params.push(value);
-      });
-      return params
-    },
+    'filterBox': '#team-members-list-filter',
     'rowValues': function(u){
       return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
     },

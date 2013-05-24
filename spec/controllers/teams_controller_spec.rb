@@ -21,7 +21,7 @@ describe TeamsController do
     end
 
     describe "json requests" do
-      it "responds to .table format" do
+      it "responds to .json format" do
         get 'index', format: :json
         response.should be_success
       end
@@ -95,5 +95,90 @@ describe TeamsController do
       team.description.should == 'Test Team description'
     end
   end
+
+
+  describe "DELETE 'delete_member'" do
+    let(:team){ FactoryGirl.create(:team) }
+    it "should remove the team member from the team" do
+      team.users << @user
+      lambda{
+        delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        team.reload
+      }.should change(team.users, :count).by(-1)
+    end
+
+    it "should not raise error if the user doesn't belongs to the team" do
+      delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+      team.reload
+      response.should be_success
+      assigns(:team).should == team
+    end
+  end
+
+  describe "GET 'new_member" do
+    let(:team){ FactoryGirl.create(:team, company: @user.company) }
+    it 'correctly assign the team' do
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:team).should == team
+    end
+
+    it 'correctly assign the roles' do
+      roles = FactoryGirl.create_list(:role, 3, company: @user.company, active: true)
+
+      # Create some other roles that should not be included
+      FactoryGirl.create(:role,company: @user.company, active: false) # inactive role
+      FactoryGirl.create(:role,company_id: @user.company_id + 1, active: true) # role from other company
+
+      get 'new_member', id: team.id, format: :js
+      assigns(:roles).should =~ roles
+    end
+
+    it 'correctly assign the users' do
+      users = FactoryGirl.create_list(:user, 3, company: @user.company, aasm_state: 'active')
+      users << @user # the current user should also appear on the list
+
+      # Assign the users to other team
+      other_team = FactoryGirl.create(:team, company: @user.company)
+      users.each {|u| other_team.users << u}
+
+      # Create some other roles that should not be included
+      FactoryGirl.create(:user, company: @user.company, aasm_state: 'invited') # invited user
+      FactoryGirl.create(:user, company: @user.company, aasm_state: 'inactive') # inactive user
+      FactoryGirl.create(:user, company_id: @user.company_id+1, aasm_state: 'active') # user from other company
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:users).should =~ users
+    end
+  end
+
+
+  describe "POST 'add_members" do
+    let(:team){ FactoryGirl.create(:team) }
+    it 'should assign the user to the team' do
+      lambda {
+        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        assigns(:members).should == [@user]
+        team.reload
+      }.should change(team.users, :count).by(1)
+    end
+
+    it 'should not assign users to the team if they are already part of the team' do
+      team = FactoryGirl.create(:team, company_id: @user.company_id)
+      team.users << @user
+      lambda {
+        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        assigns(:members).should =~ [@user]
+        team.reload
+      }.should_not change(team.users, :count)
+    end
+  end
+
 
 end

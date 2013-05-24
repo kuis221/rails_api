@@ -64,12 +64,51 @@ describe TasksController do
   end
 
   describe "GET 'index'" do
-    it "returns http success" do
-      get 'index', event_id: event.to_param, format: :json
-      response.should be_success
+    before(:each) do
+      @team = FactoryGirl.create(:team)
+      @user.teams << @team
     end
 
-    describe "datatable requests" do
+    describe 'for user taks' do
+      it "loads the correct tasks for the user" do
+        tasks = FactoryGirl.create_list(:task, 5, user_id: @user.id)
+        other_user = FactoryGirl.create(:user, company: @user.company)
+
+        # Create some other tasks to other user
+        other_user.teams << @team
+        FactoryGirl.create(:task, user_id: other_user.id)
+
+        get 'index', event_id: event.to_param, scope: 'user', format: :json
+        response.should be_success
+        assigns(:tasks).should =~ tasks
+      end
+    end
+
+    describe 'for user teams' do
+      it "loads the correct tasks assigend to all the users on every team" do
+        tasks = FactoryGirl.create_list(:task, 2, user_id: @user.id)
+        3.times do
+          user = FactoryGirl.create(:user, company: @user.company)
+          team = FactoryGirl.create(:team, company: @user.company)
+          user.teams << team
+          @user.teams << team
+          tasks += FactoryGirl.create_list(:task, 2, user_id: user.id)
+        end
+
+        # Create other tasks assigned to users not included on its teams
+        other_team = FactoryGirl.create(:team, company: @user.company)
+        other_user = FactoryGirl.create(:user, company: @user.company)
+        other_user.teams << other_team
+        FactoryGirl.create(:task, user_id: other_user.id)
+
+        get 'index', event_id: event.to_param, scope: 'teams', format: :json
+        response.should be_success
+
+        assigns(:tasks).should =~ tasks
+      end
+    end
+
+    describe "json requests" do
       it "responds to .table format" do
         get 'index', event_id: event.to_param, format: :json
         response.should be_success

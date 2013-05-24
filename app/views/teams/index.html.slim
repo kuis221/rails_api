@@ -1,5 +1,5 @@
-#content-with-admin-nav
-  #admin-sub-nav.pull-left
+#content-with-left-nav
+  #content-left-nav.pull-left
     = render 'admin_navigation'
 
   .row-fluid
@@ -29,13 +29,7 @@ javascript:
   });
   var teamsTable = $('table#teams-list').tableScroller({
     'source': '#{teams_path(format: :json)}',
-    'buildParams': function(params) {
-      data = $('#collection-list-filters').filterBox('getFilters');
-      $.each(data, function(index, value){
-        params.push(value);
-      });
-      return params
-    },
+    'filterBox': '#events-list-filters',
     'fixedHeader': true,
     'rowValues': function(t){
       return [t.name, t.users_count, t.description, t.status]

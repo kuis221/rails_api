@@ -15,16 +15,17 @@
         = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
         = f.input :city, required: true
       - if resource.id != current_user.id
-        = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-        = f.association :role
+        = f.association :teams, collection: company_teams.active.order('teams.name ASC'), input_html: {class: 'input-large'}
+        = f.association :role, collection: company_roles.active.order('roles.name ASC')
 
       - unless resource.invited?
         = f.input :password
         = f.input :password_confirmation
 
   .form-actions
-    = f.button :submit, input_html: {class: 'btn-primary'}
-    = f.button :button, 'Cancel', class: 'btn-cancel'
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
   $('#user_team_ids').select2();

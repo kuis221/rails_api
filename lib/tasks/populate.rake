@@ -24,8 +24,8 @@ namespace :db do
     task :users => :environment do
 
       emails = User.select('email').map(&:email)
-      role_ids = Role.all.map(&:id)
       Company.all.each do |company|
+        role_ids = Role.scoped_by_company_id.map(&:id)
         User.populate(40) do |user|
           email = nil
           begin

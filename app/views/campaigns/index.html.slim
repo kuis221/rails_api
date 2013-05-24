@@ -1,5 +1,5 @@
-#content-with-admin-nav
-  #admin-sub-nav.pull-left
+#content-with-left-nav
+  #content-left-nav.pull-left
     = render 'admin_navigation'
 
   .row-fluid
@@ -34,6 +34,7 @@ javascript:
     'rowValues': function(c){
       return [c.name, c.description, c.first_event, c.last_event, c.status]
     },
+    'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'campaign_'+row.id;
     },

@@ -31,7 +31,10 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
     primary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r(/$)
     primary.item :events, 'Events', events_path, highlights_on: %r(/events)
-    primary.item :tasks, 'Tasks', tasks_path, highlights_on: %r(/tasks)
+    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r(/tasks) do |secondary|
+      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine)
+      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams)
+    end
     primary.item :analysis, 'Analysis', '#'
   end
 end

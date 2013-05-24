@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   include DatatablesHelper
   include SentientController
+  include CurrentCompanyHelper
 
   before_filter :authenticate_user!
 
@@ -15,7 +16,5 @@ class ApplicationController < ActionController::Base
       user_signed_in? ? 'application' : 'empty'
     end
 
-    def current_company
-      @current_company ||= current_user.try(:company)
-    end
+
 end

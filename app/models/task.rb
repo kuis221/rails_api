@@ -31,7 +31,11 @@ class Task < ActiveRecord::Base
   validates :user_id, numericality: true, if: :user_id
   validates :event_id, presence: true, numericality: true
 
-  scope :by_user, lambda{|user| where(user_id: user) }
+  scope :by_users, lambda{|users| where(user_id: users) }
+  scope :by_teams, lambda{|teams| where(teams_users: {team_id: teams}).joins(:user => :teams_users).group('tasks.id') }
+  scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
+  scope :by_period, lambda{|start_date, end_date| where("due_at >= ? AND due_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
+  scope :with_text, lambda{|text| where('tasks.title ilike ? or tu.first_name ilike ? or tu.last_name ilike ?', "%#{text}%", "%#{text}%", "%#{text}%").joins('LEFT JOIN "users" "tu" ON "tu"."id" = "tasks"."user_id"') }
 
   def activate!
     update_attribute :active, true
