@@ -26,12 +26,24 @@ describe EventsController do
           Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').at_least(:once) { Event }
           get :index, {by_period: {start_date: '01/02/2012', end_date: '01/03/2012'}}
         end
+        it "should call the with_text filter" do
+          Event.should_receive(:with_text).with('abc').at_least(:once) { Event }
+          get :index, {with_text: 'abc'}
+        end
       end
 
       describe "json requests" do
         it "responds to .json format" do
           get 'index', format: :json
           response.should be_success
+        end
+
+        it "returns only 25 rows but indicates the correct number of elements on the total" do
+          FactoryGirl.create_list(:event, 30, company: @user.company)
+          get 'index', page: 1, format: :json
+          parsed_body = JSON.parse(response.body)
+          parsed_body['total'].should == 30
+          parsed_body['items'].count.should == 25
         end
 
         it "returns the correct structure" do

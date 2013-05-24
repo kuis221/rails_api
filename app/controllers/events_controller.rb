@@ -46,11 +46,8 @@ class EventsController < FilteredController
       }}
     end
 
-    def end_of_association_chain
-      current_page = params[:page] || 1
-      @total_objects = super.count
-
-      super.includes([:campaign, :place]).scoped(sorting_options).page(current_page)
+    def controller_filters(c)
+      c.includes([:campaign, :place])
     end
 
     def sort_options

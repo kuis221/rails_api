@@ -80,10 +80,13 @@ class User < ActiveRecord::Base
 
   belongs_to :role
 
+  has_and_belongs_to_many :events
+
   delegate :name, to: :role, prefix: true, allow_nil: true
 
   scope :with_text, lambda{|text| where('users.first_name ilike ? or users.last_name ilike ? or users.email ilike ?', "%#{text}%", "%#{text}%", "%#{text}%") }
   scope :by_teams, lambda{|teams| joins(:teams_users).where(teams_users: {team_id: teams}) }
+  scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
   attr_accessor :updating_profile
 

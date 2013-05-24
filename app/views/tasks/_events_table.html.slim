@@ -26,8 +26,20 @@ javascript:
     'source': '#{events_path(format: :json)}',
     'filterBox': '#events-list-filters',
     'onClick': function(row, item){
-      $('#event-title').val(item.campaign.name + '@' +  item.start_date)
-      $('#task_event_id').val(item.id)
+      $('#event-title').val(item.campaign.name + '@' +  item.start_date);
+      $('#task_event_id').val(item.id);
+      var userSelect = $('#task_user_id');
+      var selectedUser = userSelect.val();
+      $.get('#{users_path(format: :json)}', {by_events: item.id}, function(data){
+        userSelect.empty();
+        for (i=0; i<data.items.length; i++){
+          user = data.items[i];
+          option = $('<option>',{value: user.id}).text(user.full_name).appendTo(userSelect);
+          if (user.id == selectedUser) {
+            option.attr('selected', 'selected');
+          }
+        }
+      })
     },
     'actionButtons': false,
     'rowValues': function(e){

@@ -90,13 +90,16 @@ describe "Events", :js => true do
         page.should have_content('Pablo Baltodano')
         page.should have_content('palinair@gmail.com')
         #find('a.remove-member-btn').click
-        p "$('#event-team-members #team-member-#{user.id.to_s} a').click()"
         page.execute_script("$('#event-team-members #team-member-#{user.id.to_s} a').click()")
       end
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
+    end
+
+    pending "allows to create a new task for the event" do
+
     end
 
   end

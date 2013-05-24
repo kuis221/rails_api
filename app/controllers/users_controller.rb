@@ -12,6 +12,7 @@ class UsersController < FilteredController
 
   has_scope :with_text
   has_scope :by_teams
+  has_scope :by_events
 
   custom_actions :collection => [:complete]
 
@@ -78,6 +79,7 @@ class UsersController < FilteredController
         :id => user.id,
         :last_name => user.last_name,
         :first_name => user.first_name,
+        :full_name => user.full_name,
         :city => user.city,
         :state => user.state_name,
         :country => user.country_name,

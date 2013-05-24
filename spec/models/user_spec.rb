@@ -44,7 +44,6 @@ describe User do
 
   it { should allow_value('guilleva@gmail.com').for(:email) }
 
-
   it { should allow_value("Avalidpassword1").for(:password) }
   it { should allow_value("validPassw0rd").for(:password) }
   it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
@@ -120,6 +119,58 @@ describe User do
     it "should return nil if the user has an invalid state" do
       user = FactoryGirl.build(:user, country: 'US', state: 'XYZ')
       user.state_name.should be_nil
+    end
+  end
+
+  describe "#with_text scope" do
+    it "should return users that match the string on the first_name, last_name or email" do
+      by_name = [
+        FactoryGirl.create(:user, first_name: 'Albino', last_name: 'Fonseca'),
+        FactoryGirl.create(:user, first_name: 'Alfonsina', last_name: 'Barrantes')
+      ]
+      by_email = [
+        FactoryGirl.create(:user, first_name: 'Julio', last_name: 'Perez', email: 'maracana123@company.com')
+      ]
+      User.with_text('fon').all.should =~ by_name
+      User.with_text('maracana').all.should =~ by_email
+    end
+  end
+
+  describe "#by_teams scope" do
+    it "should return users that belongs to the give teams" do
+      users = [
+        FactoryGirl.create(:user),
+        FactoryGirl.create(:user)
+      ]
+      other_users = [
+        FactoryGirl.create(:user)
+      ]
+      team = FactoryGirl.create(:team)
+      other_team = FactoryGirl.create(:team)
+      users.each{|u| team.users << u}
+      other_users.each{|u| other_team.users << u}
+      User.by_teams(team).all.should =~ users
+      User.by_teams(other_team).all.should =~ other_users
+      User.by_teams([team, other_team]).all.should =~ users + other_users
+    end
+  end
+
+  describe "#by_events scope" do
+    it "should return users that assigned to the specific events" do
+      users = [
+        FactoryGirl.create(:user),
+        FactoryGirl.create(:user)
+      ]
+      other_users = [
+        FactoryGirl.create(:user)
+      ]
+      event = FactoryGirl.create(:event)
+      other_event = FactoryGirl.create(:event)
+      users.each{|u| event.users << u}
+      other_users.each{|u| other_event.users << u}
+      User.by_events(event).all.should =~ users
+      User.by_events(other_event).all.should =~ other_users
+      User.by_events([event, other_event]).all.should =~ users + other_users
     end
   end
 end

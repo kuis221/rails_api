@@ -22,6 +22,21 @@ describe UsersController do
         response.should be_success
       end
 
+      describe "filters" do
+        it "should call the with_text filter" do
+          User.should_receive(:with_text).with('abc').at_least(:once) { User }
+          get :index, with_text: 'abc', format: :json
+        end
+        it "should call the by_events filter" do
+          User.should_receive(:by_events).with(123).at_least(:once) { User }
+          get :index, by_events: 123, format: :json
+        end
+        it "should call the by_teams filter" do
+          User.should_receive(:by_teams).with(123).at_least(:once) { User }
+          get :index, by_teams: 123, format: :json
+        end
+      end
+
       describe "json requests" do
         it "responds to .table format" do
           get 'index', format: :json
