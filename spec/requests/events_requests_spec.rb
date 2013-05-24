@@ -98,8 +98,41 @@ describe "Events", :js => true do
       all('#event-team-members .team-member').count.should == 0
     end
 
-    pending "allows to create a new task for the event" do
+    it "allows to create a new task for the event and mark it as completed" do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign))
+      user = FactoryGirl.create(:user, company_id: @user.company_id, first_name: 'Juanito', last_name: 'Bazooka')
+      event.users << @user
+      event.users << user
 
+
+      visit event_path(event)
+
+      click_link 'Create Task'
+      within('form#new_task') do
+        fill_in 'Title', with: 'Pick up the kidz at school'
+        fill_in 'Due at', with: '2013-05-16'
+        select('Juanito Bazooka', :from => 'Assigned To')
+        click_button 'Create Task'
+      end
+
+      within('table#tasks-list') do
+        page.should have_content('Pick up the kidz at school')
+        page.should have_content('Juanito Bazooka')
+        page.should have_content('05/16/2013')
+      end
+
+      # Mark the tasks as completed
+      within('table#tasks-list') do
+        checkbox = find('#task_completed')
+        checkbox['checked'].should be_false
+        checkbox.click
+
+        # refresh tha page to make sure the checkbox remains selected
+        visit event_path(event)
+        save_and_open_page
+
+        find('#task_completed')['checked'].should be_true
+      end
     end
 
   end
