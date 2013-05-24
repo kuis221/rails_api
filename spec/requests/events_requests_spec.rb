@@ -116,6 +116,7 @@ describe "Events", :js => true do
       end
 
       within('table#tasks-list') do
+        page.find('tbody tr')
         page.should have_content('Pick up the kidz at school')
         page.should have_content('Juanito Bazooka')
         page.should have_content('05/16/2013')
@@ -129,7 +130,6 @@ describe "Events", :js => true do
 
         # refresh tha page to make sure the checkbox remains selected
         visit event_path(event)
-        save_and_open_page
 
         find('#task_completed')['checked'].should be_true
       end
