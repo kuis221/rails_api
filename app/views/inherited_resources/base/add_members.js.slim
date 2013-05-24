@@ -1,6 +1,6 @@
 - if resource.is_a?(Event)
   |
-    = $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}')
+    $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
 - elsif resource.is_a?(Team)
   |
     teamMembersTable.tableScroller('reloadData');

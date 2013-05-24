@@ -6,10 +6,15 @@ module TeamMembersHelper
     end
 
     def new_member
-      @users = company_users
       @teams = company_teams
+      @assignable_teams = company_teams.with_active_users.order('teams.name ASC')
       @roles = company_roles
+      @users = company_users
       @users = @users.where(['id not in (?)', resource.users]) unless resource.users.empty?
+
+      Rails.logger.debug "@teams = #{@teams.inspect}"
+      Rails.logger.debug "@roles = #{@roles.inspect}"
+      Rails.logger.debug "@users roles = #{@users.map(&:role_id).inspect}"
     end
 
     def add_members
@@ -37,13 +42,13 @@ module TeamMembersHelper
       end
 
       def company_users
-        current_company.users.active.includes(:teams)
+        current_company.users.active.order('users.last_name ASC')
       end
       def company_teams
-        current_company.teams.active.with_active_users.order('teams.name ASC')
+        current_company.teams.active.order('teams.name ASC')
       end
       def company_roles
-        current_company.roles.active
+        current_company.roles.active.order('roles.name ASC')
       end
   end
 

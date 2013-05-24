@@ -1,11 +1,12 @@
 $.widget 'nmk.tableScroller', {
 	options: {
 		source: null,
-		buildParams: null,
 		onItemsChange: null,
 		fixedHeader: false,
 		headerOffset: 0,
 		onClick: null,
+		onClick: null,
+		filterBox: null,
 		actionButtons: ['editable', 'activable'],
 		includeActionButtons: true
 	},
@@ -73,6 +74,13 @@ $.widget 'nmk.tableScroller', {
 		if @options.fixedHeader
 			@fixedHeader.remove()
 
+
+	buildParams: (params) ->
+		if @options.filterBox? and $(@options.filterBox).length
+			data = $(@options.filterBox).filterBox('getFilters');
+			params.push(value) for value in data
+		params
+
 	_synchHeaderWidths: ->
 		@_placeHeaderPosition()
 		@fixedHeader.css {'width':@element.outerWidth()+'px'}
@@ -124,11 +132,13 @@ $.widget 'nmk.tableScroller', {
 
 	_loadPage: (page) ->
 		params = [{'name': 'page', 'value': page}, {'name':'sorting','value':@sorting},{'name':'sorting_dir','value':@sorting_dir}]
-		if @options.buildParams
-			params = @options.buildParams(params)
+		params = @buildParams(params)
+
+		if @jqxhr
+			@jqxhr.abort()
 
 		@doneLoading = false
-		$.getJSON @options.source, params,  (json) =>
+		@jqxhr = $.getJSON @options.source, params,  (json) =>
 			@totalItems = json.total
 			@loadedItems += json.items.length
 			for row in json.items

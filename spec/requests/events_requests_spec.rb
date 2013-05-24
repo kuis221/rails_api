@@ -16,11 +16,11 @@ def test_sorting(table)
   end
 end
 
-describe "Events" do
+describe "Events", :js => true do
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user)
+    @user = FactoryGirl.create(:user, company: FactoryGirl.create(:company))
     sign_in @user
     Place.any_instance.stub(:fetch_place_data).and_return(true)
   end
@@ -29,7 +29,7 @@ describe "Events" do
     Warden.test_reset!
   end
 
-  describe "/events", :js => true do
+  describe "/events" do
     it "GET index should display a table with the events" do
       events = [
         FactoryGirl.create(:event, start_at: Date.today, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
@@ -63,18 +63,40 @@ describe "Events" do
       test_sorting ("table#events-list")
 
     end
+  end
 
+  describe "/events/:event_id", :js => true do
     it "GET show should display the event details page" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'))
       visit event_path(event)
       page.should have_selector('h2', text: 'Campaign FY2012')
+    end
 
-      # user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano')
-      # click_link 'Add'
-      # within('table#select-users-list') do
+    it "allows to add a member to the event", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'))
+      visit event_path(event)
+      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com')
+      click_link 'Add'
+      find("table#select-users-list tr#user-#{user.id}") # Make sure the lighbox is opened
+      within("table#select-users-list tr#user-#{user.id}") do
+        page.should have_content('Pablo')
+        page.should have_content('Baltodano')
+        #click_link 'Add' For some reason using click_link is not working here
+        page.find('a').trigger('click')
+      end
 
-      # end
+      # Test the user was added to the list of event members and it can be removed
+      within('#event-team-members #team-member-'+user.id.to_s) do
+        page.should have_content('Pablo Baltodano')
+        page.should have_content('palinair@gmail.com')
+        #find('a.remove-member-btn').click
+        p "$('#event-team-members #team-member-#{user.id.to_s} a').click()"
+        page.execute_script("$('#event-team-members #team-member-#{user.id.to_s} a').click()")
+      end
 
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+      all('#event-team-members .team-member').count.should == 0
     end
 
   end

@@ -11,12 +11,21 @@ table#tasks-list.table.table-striped.table-bordered.table-scrolled
   tbody
 
 javascript:
+
+  $('#collection-list-filters').filterBox({
+    'includeCalendars': true,
+    'onChange': function(filterBox){
+      tasksTable.tableScroller('reloadData');
+    }
+  });
+
   var tasksTable = $('table#tasks-list').tableScroller({
     'source': '#{source}',
     'fixedHeader': false,
     'rowValues': function(t){
       return [$('<a>', {href: t.links.comments, class: 'data-resource-details-link', 'data-remote': true}).text(t.title), t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
     },
+    'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'task_'+row.id;
     }

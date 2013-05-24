@@ -1,5 +1,5 @@
 - remote ||= false
-- @form_modal_class = 'modal-med' if parent and parent.is_a?(Event)
+- @form_modal_class = 'modal-med' if parent.is_a?(Event)
 = simple_form_for([@event || @user, resource], remote: remote, :html => {:class => 'form-horizontal' }) do |f|
   = f.error_notification
 
@@ -9,7 +9,7 @@
     = f.input :due_at, input_html: {value: resource.due_at.try(:to_s, :slashes)}, as: :date_picker
 
 
-    - if parent and !parent.is_a?(Event)
+    - unless parent.is_a?(Event)
       .control-group.required
         = f.input :event_id, as: :hidden
         label.required.control-label for="event-title" Event

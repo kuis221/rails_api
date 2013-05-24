@@ -6,7 +6,9 @@ class TasksController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
-  has_scope :by_user
+  has_scope :by_users
+  has_scope :by_period, :using => [:start_date, :end_date]
+  has_scope :with_text
 
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
@@ -39,6 +41,21 @@ class TasksController < FilteredController
             deactivate: url_for([:deactivate, parent, task])
         }
       }}
+    end
+
+    def parent
+      if params[:scope] == 'user'
+        current_user
+      else
+        super
+      end
+    end
+
+    def controller_filters(c)
+      c = c.by_users(current_user) if params[:scope] == 'user'
+      c = c.by_teams(current_user.teams.scoped_by_company_id(current_company)) if params[:scope] == 'teams'
+      #c.by_companies(current_company) # this is done bt
+      c
     end
 
     def sort_options
