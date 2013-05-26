@@ -90,7 +90,14 @@ describe "Events", :js => true do
         page.should have_content('Pablo Baltodano')
         page.should have_content('palinair@gmail.com')
         #find('a.remove-member-btn').click
-        page.execute_script("$('#event-team-members #team-member-#{user.id.to_s} a').click()")
+      end
+
+      # Test removal of the user
+      page.execute_script("$('#event-team-members #team-member-#{user.id.to_s} a').click()")
+      within('.bootbox.modal.confirm-dialog') do
+        page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
+        #find('a.btn-primary').click   # The "OK" button
+        page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
       end
 
       # Refresh the page and make sure the user is not there
@@ -128,11 +135,28 @@ describe "Events", :js => true do
         checkbox['checked'].should be_false
         checkbox.click
 
-        # refresh tha page to make sure the checkbox remains selected
+        # refresh the page to make sure the checkbox remains selected
         visit event_path(event)
 
         find('#task_completed')['checked'].should be_true
       end
+
+      # Delete Juanito Bazooka from the team and make sure that the tasks list
+      # is refreshed and the task unassigned
+      page.execute_script("$('#team-member-#{user.id.to_s} a.remove-member-btn').click()")
+      find('.bootbox.modal.confirm-dialog') # Waits for the dialog to open
+      page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+
+
+      # refresh the page to make that the tasks were unassigned
+      # TODO: the refresh should not be necessary but it looks like that it's not
+      # removing the element from the table automatically in the test
+      visit event_path(event)
+      within('table#tasks-list') do
+        save_and_open_page
+        page.should_not have_content('Juanito Bazooka')
+      end
+
     end
 
   end

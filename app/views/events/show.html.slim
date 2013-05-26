@@ -80,6 +80,9 @@
     $(document).bind('tasks:change', function(e){
       $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
     });
+    $(document).bind('member:delete', function(e){
+      tasksTable.tableScroller('reloadData');
+    });
 
     $(document).on('events:change', function(){
       window.location.reload(false);

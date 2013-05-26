@@ -2,7 +2,14 @@ module TeamMembersHelper
   module InstanceMethods
 
     def delete_member
-      resource.users.delete(team_member) if team_member
+      if team_member
+        user_id = team_member.id
+        if resource.users.delete(team_member)
+          if resource.is_a?(Event)
+            Task.scoped_by_event_id(resource).scoped_by_user_id(user_id).update_all(user_id: nil)
+          end
+        end
+      end
     end
 
     def new_member

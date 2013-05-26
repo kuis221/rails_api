@@ -136,6 +136,17 @@ describe EventsController do
         }.should change(event.users, :count).by(-1)
       end
 
+      it "should unassign any tasks assigned the user" do
+        event.users << @user
+        user_tasks = FactoryGirl.create_list(:task, 3, event: event, user: @user)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, user_id: @user.id+1)
+        delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+
+        user_tasks.each{|t| t.reload.user_id.should be_nil }
+        other_tasks.each{|t| t.reload.user_id.should_not be_nil }
+
+      end
+
       it "should not raise error if the user doesn't belongs to the team" do
         delete 'delete_member', id: event.id, member_id: @user.id, format: :js
         event.reload

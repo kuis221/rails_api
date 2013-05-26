@@ -37,22 +37,24 @@ jQuery ->
 	# 	$($(this).data('filter')).dataTable().fnDraw()
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
-	    e.preventDefault()
-	    resource_modal.modal 'hide'
-	    false
+		e.preventDefault()
+		resource_modal.modal 'hide'
+		false
 
 
-    $(".totop").hide();
 
-    $(window).scroll ->
-      if $(this).scrollTop() > 200
-        $('.totop').slideDown()
-      else
-        $('.totop').slideUp()
 
-    $('.totop a').click (e) ->
-      e.preventDefault()
-      $('body,html').animate {scrollTop: 0}, 500
+	$(".totop").hide();
+
+	$(window).scroll ->
+		if $(this).scrollTop() > 200
+			$('.totop').slideDown()
+		else
+			$('.totop').slideUp()
+
+	$('.totop a').click (e) ->
+	  e.preventDefault()
+	  $('body,html').animate {scrollTop: 0}, 500
 
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
@@ -64,54 +66,72 @@ jQuery ->
 	, "Should have at least one digit");
 
 
+$.rails.allowAction = (element) ->
+	message = element.data('confirm')
+	if !message
+		return true
+
+	if $.rails.fire(element, 'confirm')
+			bootbox.moda
+			bootbox.confirm message, (answer) ->
+				if answer
+					callback = $.rails.fire(element, 'confirm:complete', [answer])
+					if callback
+						oldAllowAction = $.rails.allowAction
+						$.rails.allowAction = -> return true
+						element.trigger('click')
+						$.rails.allowAction = oldAllowAction
+	false
+
+
 
 $.fn.dataTableExt.afnFiltering.push (oSettings, aData, iDataIndex) ->
-    if $("##{oSettings.sTableId}-filters").length
-    	filtersContainer = $("##{oSettings.sTableId}-filters")
-    	row = $(oSettings.aoData[iDataIndex].nTr)
-    	filters = $.map filtersContainer.find('input[type=checkbox]'), (checkbox, i) ->
-    		checkbox.name
+	if $("##{oSettings.sTableId}-filters").length
+		filtersContainer = $("##{oSettings.sTableId}-filters")
+		row = $(oSettings.aoData[iDataIndex].nTr)
+		filters = $.map filtersContainer.find('input[type=checkbox]'), (checkbox, i) ->
+			checkbox.name
 
-    	filters = $.grep filters, (el,index) ->
-    		index == $.inArray(el,filters);
+		filters = $.grep filters, (el,index) ->
+			index == $.inArray(el,filters);
 
-    	filterValues = {}
-    	for filter in filters
-    		filterValues[filter] = $.map filtersContainer.find("input[name=#{filter}][type=checkbox]:checked"),  (checkbox, i) ->
-    			if "#{parseInt(checkbox.value)}" == checkbox.value
-    				return parseInt(checkbox.value)
-    			else
-    				return checkbox.value
+		filterValues = {}
+		for filter in filters
+			filterValues[filter] = $.map filtersContainer.find("input[name=#{filter}][type=checkbox]:checked"),  (checkbox, i) ->
+				if "#{parseInt(checkbox.value)}" == checkbox.value
+					return parseInt(checkbox.value)
+				else
+					return checkbox.value
 
 
-    	for filter in filters
-    		rowValue = row.data("filter-" + filter)
-    		if rowValue.length == 0
-    			rowValue = ['']
-    		else if not (rowValue instanceof Array)
-    			rowValue = [rowValue]
+		for filter in filters
+			rowValue = row.data("filter-" + filter)
+			if rowValue.length == 0
+				rowValue = ['']
+			else if not (rowValue instanceof Array)
+				rowValue = [rowValue]
 
-    		matches = $.grep(rowValue, (el,index) ->
-    			$.inArray(el, filterValues[filter]) >= 0
-    		)
-    		if matches.length == 0
-    			return false
+			matches = $.grep(rowValue, (el,index) ->
+				$.inArray(el, filterValues[filter]) >= 0
+			)
+			if matches.length == 0
+				return false
 
-    	return true
-   	else
-   		return true
+		return true
+	else
+		return true
 
 
 # ---------- Additional functions for data table ----------
 $.fn.dataTableExt.oApi.fnPagingInfo = ( oSettings ) ->
 	return {
-		"iStart":         oSettings._iDisplayStart,
-		"iEnd":           oSettings.fnDisplayEnd(),
-		"iLength":        oSettings._iDisplayLength,
-		"iTotal":         oSettings.fnRecordsTotal(),
+		"iStart":		 oSettings._iDisplayStart,
+		"iEnd":		   oSettings.fnDisplayEnd(),
+		"iLength":		oSettings._iDisplayLength,
+		"iTotal":		 oSettings.fnRecordsTotal(),
 		"iFilteredTotal": oSettings.fnRecordsDisplay(),
-		"iPage":          Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
-		"iTotalPages":    Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+		"iPage":		  Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
+		"iTotalPages":	Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
 	}
 
 $.extend $.fn.dataTableExt.oPagination, {
@@ -185,50 +205,50 @@ $.extend $.fn.dataTableExt.oPagination, {
 }
 
 $.extend $.fn.dataTableExt.oStdClasses, {
-    "sWrapper": "dataTables_wrapper form-inline"
+	"sWrapper": "dataTables_wrapper form-inline"
 }
 
 
 $.fn.dataTableExt.oApi.fnReloadAjax = ( oSettings, sNewSource, fnCallback, bStandingRedraw ) ->
-    if sNewSource isnt undefined && sNewSource isnt null
-        oSettings.sAjaxSource = sNewSource;
+	if sNewSource isnt undefined && sNewSource isnt null
+		oSettings.sAjaxSource = sNewSource;
 
-    # Server-side processing should just call fnDraw
-    if oSettings.oFeatures.bServerSide
-        this.fnDraw()
-        return
+	# Server-side processing should just call fnDraw
+	if oSettings.oFeatures.bServerSide
+		this.fnDraw()
+		return
 
-    this.oApi._fnProcessingDisplay oSettings, true
-    that = this
-    iStart = oSettings._iDisplayStart
-    aData = []
+	this.oApi._fnProcessingDisplay oSettings, true
+	that = this
+	iStart = oSettings._iDisplayStart
+	aData = []
 
-    this.oApi._fnServerParams oSettings, aData
+	this.oApi._fnServerParams oSettings, aData
 
-    oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, (json) ->
-        # Clear the old information from the table
-        that.oApi._fnClearTable oSettings
+	oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, (json) ->
+		# Clear the old information from the table
+		that.oApi._fnClearTable oSettings
 
-        # Got the data - add it to the table
-        aData =  if oSettings.sAjaxDataProp isnt ""  then that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) else json
+		# Got the data - add it to the table
+		aData =  if oSettings.sAjaxDataProp isnt ""  then that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) else json
 
-        i = 0
-        while i < aData.length
-            that.oApi._fnAddData oSettings, aData[i]
-            i++
+		i = 0
+		while i < aData.length
+			that.oApi._fnAddData oSettings, aData[i]
+			i++
 
-        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice()
+		oSettings.aiDisplay = oSettings.aiDisplayMaster.slice()
 
-        that.fnDraw()
+		that.fnDraw()
 
-        if bStandingRedraw is true
-            oSettings._iDisplayStart = iStart
-            that.oApi._fnCalculateEnd oSettings
-            that.fnDraw false
+		if bStandingRedraw is true
+			oSettings._iDisplayStart = iStart
+			that.oApi._fnCalculateEnd oSettings
+			that.fnDraw false
 
-        that.oApi._fnProcessingDisplay oSettings, false
+		that.oApi._fnProcessingDisplay oSettings, false
 
-        # Callback user function - for event handlers etc
-        if typeof fnCallback is 'function' && fnCallback isnt null
-            fnCallback oSettings
-    , oSettings )
+		# Callback user function - for event handlers etc
+		if typeof fnCallback is 'function' && fnCallback isnt null
+			fnCallback oSettings
+	, oSettings )
