@@ -112,7 +112,6 @@ describe "Events", :js => true do
       event.users << @user
       event.users << user
 
-
       visit event_path(event)
 
       click_link 'Create Task'
@@ -120,7 +119,8 @@ describe "Events", :js => true do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '2013-05-16'
         select('Juanito Bazooka', :from => 'Assigned To')
-        click_button 'Create Task'
+        #click_button 'Create Task'
+        page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
       within('table#tasks-list') do
@@ -148,7 +148,6 @@ describe "Events", :js => true do
       find('.bootbox.modal.confirm-dialog') # Waits for the dialog to open
       page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
 
-
       # refresh the page to make that the tasks were unassigned
       # TODO: the refresh should not be necessary but it looks like that it's not
       # removing the element from the table automatically in the test
@@ -156,9 +155,7 @@ describe "Events", :js => true do
       within('table#tasks-list') do
         page.should_not have_content('Juanito Bazooka')
       end
-
     end
-
   end
 
 end
