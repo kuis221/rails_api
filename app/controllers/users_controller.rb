@@ -61,6 +61,12 @@ class UsersController < FilteredController
     end
   end
 
+
+  def select_company
+    session[:current_company_id] = current_user.companies.find(params[:company_id]).id
+    redirect_to root_path
+  end
+
   protected
     def begin_of_association_chain
       current_company

@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :confirmable
 
   has_many :company_users, autosave: true
-  has_many :companies, through: :company_users
+  has_many :companies, through: :company_users, order: 'companies.name ASC'
 
   validates :first_name, presence: true
   validates :last_name, presence: true

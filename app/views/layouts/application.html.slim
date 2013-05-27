@@ -23,10 +23,7 @@ body class="#{controller_name} #{action_name} #{user_signed_in? ? 'with-fixed-to
   header class="#{user_signed_in? ? 'navbar-fixed-top' : ''}" data-spy="#{user_signed_in? ? 'affix' : ''}" data-offset-top="#{user_signed_in? ? 'affix' : ''}"
     .row-fluid
       .pull-left
-        - if current_company
-          h1#company-name= link_to current_company.name, root_path
-        - else
-          h1#company-name= link_to 'Brandscopic', root_path
+          h1#company-name= user_company_dropdown(current_user)
       .pull-right
         - if user_signed_in?
           #top-admin-home-navigation.pull-right

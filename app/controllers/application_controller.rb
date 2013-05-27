@@ -19,7 +19,14 @@ class ApplicationController < ActionController::Base
     end
 
     def current_company
-      @current_company ||= current_user.companies.first
+      @current_company ||= begin
+        current_company_id = session[:current_company_id]
+        if current_company_id
+          current_user.companies.find(current_company_id)
+        else
+          current_user.companies.first
+        end
+      end
     end
 
     def update_user_last_activity
@@ -27,6 +34,6 @@ class ApplicationController < ActionController::Base
     end
 
     def set_user_company
-      current_user.current_company = current_user.companies.first if user_signed_in?
+      current_user.current_company = current_company if user_signed_in?
     end
 end
