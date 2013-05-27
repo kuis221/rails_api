@@ -16,11 +16,14 @@ FactoryGirl.define do
       role_id 1
       active true
       company_id nil
+      company nil
     end
 
     before(:create) do |user, evaluator|
-      if evaluator.company_id and evaluator.role_id
-        user.company_users.build({role_id: evaluator.role_id, company_id: evaluator.company_id, active: evaluator.active}, without_protection: true)
+      company_id = evaluator.company_id
+      company_id = evaluator.company.id unless evaluator.company.nil?
+      if company_id and evaluator.role_id
+        user.company_users.build({role_id: evaluator.role_id, company_id: company_id, active: evaluator.active}, without_protection: true)
       end
     end
 

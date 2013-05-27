@@ -1,15 +1,23 @@
 - remote ||= false
-= simple_form_for([@event, resource], remote: remote || false) do |f|
+- @form_modal_class = 'modal-med' if parent.is_a?(Event)
+= simple_form_for([@event || @user, resource], remote: remote, :html => {:class => 'form-horizontal' }) do |f|
   = f.error_notification
 
   .form-inputs
     = f.input :title
+    = f.association :user, label: 'Assigned To', label_method: :full_name, input_html: {class: 'input-large'}, collection: (f.object.event.nil? ?  [] : company_users.active.by_events(f.object.event) )
     = f.input :due_at, input_html: {value: resource.due_at.try(:to_s, :slashes)}, as: :date_picker
-    = f.association :user, label: 'Team Member', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_company.users.active.all
+
+
+    - unless parent.is_a?(Event)
+      .control-group.required
+        = f.input :event_id, as: :hidden
+        label.required.control-label for="event-title" Event
+        .controls
+          input.string.required type="text" id="event-title" value="#{(f.object.event.nil? ? '' : f.object.event.campaign_name + ' @ ' + f.object.event.start_date)}" readonly="true" placeholder="Select a event from the list"
+
+      = render partial: 'events_table'
 
   .form-actions
-    = f.button :submit, input_html: {class: 'btn-primary'}
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
     = f.button :button, 'Cancel', class: 'btn-cancel'
-
-javascript:
-  $('#team_user_ids').select2();

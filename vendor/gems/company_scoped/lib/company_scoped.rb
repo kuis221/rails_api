@@ -7,7 +7,7 @@ module CompanyScoped
   def scoped_to_company(options = {})
     before_validation CompanyScoped::Callback.new
 
-    if column_names.include?(:company_id)
+    if column_names.include?('company_id')
       belongs_to :company
     end
   end

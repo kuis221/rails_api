@@ -25,8 +25,9 @@
         = f.input :password_confirmation
 
   .form-actions
-    = f.button :submit, input_html: {class: 'btn-primary'}
-    = f.button :button, 'Cancel', class: 'btn-cancel'
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
   $('#user_team_ids').select2();

@@ -21,7 +21,8 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :aasm_state, :team_ids
+  attr_accessible :name, :description, :aasm_state, :team_ids, :brands_list
+  attr_accessor :brands_list
 
   # Required fields
   validates :name, presence: true
@@ -30,8 +31,13 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Teams relationship
   has_and_belongs_to_many :teams, :order => 'name ASC'
 
+  # Campaigns-Brands relationship
+  has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
+
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
+
+  scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }
 
   aasm do
     state :inactive, :initial => true
@@ -53,6 +59,19 @@ class Campaign < ActiveRecord::Base
 
   def last_event
     events.order('start_at').last
+  end
+
+
+  def brands_list=(list)
+    brands_names = list.split(',')
+    brands_names.each do |brand|
+      self.brands.find_or_initialize_by_name(brand)
+    end
+    brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
+  end
+
+  def brands_list
+    brands.map(&:name).join ','
   end
 
 end

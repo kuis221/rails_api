@@ -1,8 +1,10 @@
-ul#select-members-tabs.nav.nav-tabs
-  li.active
-    a href="#select-users" data-toggle="tab" Users
-  li
-    a href="#select-teams" data-toggle="tab" Teams
+- show_teams = resource.is_a?(Event)
+- if show_teams
+  ul#select-members-tabs.nav.nav-tabs
+    li.active
+      a href="#select-users" data-toggle="tab" Users
+    li
+      a href="#select-teams" data-toggle="tab" Teams
 
 
 .tab-content
@@ -22,7 +24,7 @@ ul#select-members-tabs.nav.nav-tabs
               th
           tbody
             - @users.each do |user|
-              tr id="user-#{user.id}" data-filter-role="#{user.role_id}" data-filter-team="#{user.teams.map(&:id)}"
+              tr id="user-#{user.id}" data-filter-role="#{user.role_id}" data-filter-team="#{user.teams.active.map(&:id)}"
                 td= user.first_name
                 td= user.last_name
                 td= user.city
@@ -30,7 +32,7 @@ ul#select-members-tabs.nav.nav-tabs
                 td= user.country_name
                 td= user.email
                 td= user.role_name
-                td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, member_id: user.id), data:{'user-id' => user.id}, remote: true, method: :post
+                td= link_to 'Add', url_for(action: :add_members, member_id: user.id), id: "add-member-btn-#{user.id}" , data:{'user-id' => user.id}, remote: true, method: :post
 
       .span2
         #select-users-list-filters
@@ -49,22 +51,22 @@ ul#select-members-tabs.nav.nav-tabs
               = check_box_tag(:team, '', true, {'data-filter' => '#select-users-list'})
               = "[no team]"
 
-
-  #select-teams.tab-pane
-    table#select-teams-list.table.table-striped.table-bordered.table-scrolled
-      thead
-        tr
-          th Teams
-          th Number of Members
-          th Description
-          th
-      tbody
-        - @teams.each do |team|
-          tr id = "team-#{team.id}"
-            td= team.name
-            td= team.users.active.count
-            td= team.description
-            td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, team_id: team.id), data:{'team-id' => team.id}, remote: true, method: :post
+  - if show_teams
+    #select-teams.tab-pane
+      table#select-teams-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th Teams
+            th Number of Members
+            th Description
+            th
+        tbody
+          - @assignable_teams.each do |team|
+            tr id = "team-#{team.id}"
+              td= team.name
+              td= team.users.active.count
+              td= team.description
+              td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, team_id: team.id), data:{'team-id' => team.id}, remote: true, method: :post
 
 
 javascript:
@@ -87,19 +89,21 @@ javascript:
         }
   })
 
-  window.selectMemberTable = $('#select-teams-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        "bPaginate": false,
-        "bProcessing": true,
-        "aoColumns": [
-          null,
-          null,
-          null,
-          {"sWidth": '30px', 'bSortable': false}
-        ]
-  })
+- if show_teams
+  javascript:
+    window.selectMemberTable = $('#select-teams-list').dataTable({
+          "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+          "bPaginate": false,
+          "bProcessing": true,
+          "aoColumns": [
+            null,
+            null,
+            null,
+            {"sWidth": '30px', 'bSortable': false}
+          ]
+    })
 
-  $('#select-members-tabs a').click(function (e) {
-    e.preventDefault();
-    $(this).tab('show');
-  })
+    $('#select-members-tabs a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    })

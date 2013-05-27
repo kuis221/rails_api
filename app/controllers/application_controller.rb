@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   include DatatablesHelper
   include SentientController
+  include CurrentCompanyHelper
 
   before_filter :authenticate_user!
   before_filter :set_user_company
@@ -11,7 +12,6 @@ class ApplicationController < ActionController::Base
   layout :set_layout
 
   helper_method :current_company
-
 
   protected
     def set_layout
@@ -29,5 +29,4 @@ class ApplicationController < ActionController::Base
     def set_user_company
       current_user.current_company = current_user.companies.first if user_signed_in?
     end
-
 end

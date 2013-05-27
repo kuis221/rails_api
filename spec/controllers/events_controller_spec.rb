@@ -23,8 +23,12 @@ describe EventsController do
 
       describe "filters" do
         it "should call the by_period filter" do
-          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').twice { Event }
+          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').at_least(:once) { Event }
           get :index, {by_period: {start_date: '01/02/2012', end_date: '01/03/2012'}}
+        end
+        it "should call the with_text filter" do
+          Event.should_receive(:with_text).with('abc').at_least(:once) { Event }
+          get :index, {with_text: 'abc'}
         end
       end
 
@@ -32,6 +36,14 @@ describe EventsController do
         it "responds to .json format" do
           get 'index', format: :json
           response.should be_success
+        end
+
+        it "returns only 25 rows but indicates the correct number of elements on the total" do
+          FactoryGirl.create_list(:event, 30, company: @user.current_company)
+          get 'index', page: 1, format: :json
+          parsed_body = JSON.parse(response.body)
+          parsed_body['total'].should == 30
+          parsed_body['items'].count.should == 25
         end
 
         it "returns the correct structure" do
@@ -44,8 +56,9 @@ describe EventsController do
           FactoryGirl.create_list(:event, 2, company_id: 9999)
           get 'index', format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body.count.should == 3
-          parsed_body.first.tap do |event|
+          parsed_body['total'].should == 3
+          parsed_body['items'].count.should == 3
+          parsed_body['items'].first.tap do |event|
             event.count.should == 12
             event['id'].should == events[0].id
             event['start_date'].should == events[0].start_date
@@ -123,6 +136,17 @@ describe EventsController do
         }.should change(event.users, :count).by(-1)
       end
 
+      it "should unassign any tasks assigned the user" do
+        event.users << @user
+        user_tasks = FactoryGirl.create_list(:task, 3, event: event, user: @user)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, user_id: @user.id+1)
+        delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+
+        user_tasks.each{|t| t.reload.user_id.should be_nil }
+        other_tasks.each{|t| t.reload.user_id.should_not be_nil }
+
+      end
+
       it "should not raise error if the user doesn't belongs to the team" do
         delete 'delete_member', id: event.id, member_id: @user.id, format: :js
         event.reload
@@ -133,10 +157,21 @@ describe EventsController do
 
     describe "GET 'new_member" do
       let(:event){ FactoryGirl.create(:event) }
-      it 'should be sucess' do
+      it 'should load all the company\'s users into @users' do
+        FactoryGirl.create(:user, company_id: @company.id+1)
         get 'new_member', id: event.id, format: :js
         response.should be_success
         assigns(:event).should == event
+        assigns(:users).should == [@user]
+      end
+
+      it 'should not load the users that are already assigned ot the event' do
+        another_user = FactoryGirl.create(:user, company_id: @company.id)
+        event.users << @user
+        get 'new_member', id: event.id, format: :js
+        response.should be_success
+        assigns(:event).should == event
+        assigns(:users).should == [another_user]
       end
     end
 

@@ -16,6 +16,8 @@ class Company < ActiveRecord::Base
   has_many :teams
   has_many :campaigns
   has_many :roles
+  has_many :brand_portfolios
+  has_many :events
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
 end

@@ -1,9 +1,144 @@
+#application-content {
+	padding: 0 10px;
+}
+
+#company-name {
+	padding-left: 10px;
+	a {
+		color: #646464;
+		text-decoration: none;
+	}
+}
+
 #top-admin-home-navigation {
 	a {
 		margin-right: 10px;
 	}
-	.active {
+	#home.active {
 		display: none;
+	}
+}
+
+#resource-index-container {
+	padding-right: 400px;
+	#resource-filter-column {
+		padding-left: 5px;
+		margin-right: -410px;
+		width: 400px;
+		input[type="text"] {
+			width: 370px;
+		}
+		input.search-query {
+			width: 355px;
+		}
+	}
+	&.no-calendars {
+		padding-right: 300px;
+		#resource-filter-column {
+			width: 300px;
+			margin-right: -310px;
+			input[type="text"] {
+				width: 280px;
+			}
+			input.search-query {
+				width: 270px;
+			}
+		}
+	}
+}
+
+.filter-box {
+	form {
+		margin: 0;
+	}
+	input[name=with_text] {
+		margin: 5px 0;
+	}
+}
+
+#resource-details-wrapper {
+	padding-top: 45px;
+	#resource-close-details {
+		margin-top: -45px;
+		background-color: #999;
+		color:  #fff;
+		width: 100%;
+		z-index: 200;
+		-webkit-box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.15);
+		-moz-box-shadow:    0px 2px 5px rgba(50, 50, 50, 0.15);
+		box-shadow:         0px 2px 5px rgba(50, 50, 50, 0.15);
+		.close {
+			float: left;
+			margin: -3px 10px 0 10px;
+		}
+		a {
+			display: inline-block;
+			width: 100%;
+			padding: 10px 0;
+			text-decoration: none;
+			color: #fff;
+		}
+	}
+}
+
+#content-with-left-nav {
+	padding-left: 190px;
+	#content-left-nav {
+		margin-left: -180px;
+		width: 180px;
+		float: left;
+	}
+
+	&.events-index {
+		padding-left: 140px;
+		#content-left-nav {
+			margin-left: -130px;
+			width: 130px;
+		}
+	}
+}
+
+// RESOURCE MODALS
+.modal {
+	.modal-body {
+		max-height: 800px;
+	}
+}
+
+table.table {
+	tbody {
+		tr {
+			&:hover td {
+				background-color: #49afcd !important;
+			}
+		}
+	}
+}
+
+table.dataTable, table.tableScroller {
+	width: 100%;
+	table-layout:fixed;
+	thead {
+		background-color: #fff;
+	}
+
+	th.actions {
+		width: 110px;
+	}
+
+	th, td {
+		overflow: hidden;
+		text-overflow: ellipsis
+	}
+}
+
+body.with-fixed-top {
+	padding-top: 92px;
+	header {
+		background: url(/assets/bg.jpg) repeat right top;
+	}
+	.nav-tabs {
+		margin: 0;
 	}
 }
 
@@ -113,6 +248,15 @@ table.table form {
  	.control-group {
 		margin: 0;
 	}
+}
+
+// Comments inside Data Tables
+table.table td.comments-container {
+	background-color: #ffffff !important;
+}
+
+#comment-form-container .form-inputs {
+	margin-left: 0;
 }
 
 // For google places api

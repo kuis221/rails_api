@@ -1,23 +1,39 @@
-class TeamsController < InheritedResources::Base
+class TeamsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  # This helper provide the methods to add/remove team members to the event
+  include TeamMembersHelper
+
+  # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: :index
 
-  respond_to_datatables do
-    columns [
-      {:attr => :name, :column_name => 'teams.name', :value => Proc.new{|team| @controller.view_context.link_to(team.name, @controller.view_context.team_path(team)) }, :searchable => true},
-      {:attr => :users_count, :value => Proc.new{|team| team.users.active.count } },
-      {:attr => :description, :column_name => 'teams.description', :searchable => true},
-      {:attr => :active ,:column_name => 'teams.active',  :value => Proc.new{|team| team.active? ? 'Active' : 'Inactive' } }
-    ]
-    @editable  = true
-    @deactivable = true
-  end
+  has_scope :with_text
 
-  def users
-    @users = resource.users.active
-  end
+  private
+    def collection_to_json
+      collection.map{|team| {
+        :id => team.id,
+        :name => team.name,
+        :description => team.description,
+        :users_count => team.users.active.count,
+        :status => team.active? ? 'Active' : 'Inactive',
+        :active => team.active?,
+        :links => {
+            edit: edit_team_path(team),
+            show: team_path(team),
+            activate: activate_team_path(team),
+            deactivate: deactivate_team_path(team)
+        }
+      }}
+    end
+    def sort_options
+      {
+        'name' => { :order => 'teams.name' },
+        'description' => { :order => 'teams.description' },
+        'active' => { :order => 'users.state' }
+      }
+    end
 
 end

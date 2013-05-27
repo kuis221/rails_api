@@ -1,27 +1,32 @@
-table#tasks-list.table.table-striped.table-bordered
+- event ||= nil
+table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
-      th Task
+      th data-sort="name" Task
       th Last Activity
-      th Due Date
-      th Team member
-      th Completed
-      th
+      th data-sort="due_at" Due Date
+      th data-sort="user_name" Team member
+      th data-sort="completed" Completed
+      th.actions
   tbody
 
 javascript:
-  var tasksTable = $('#tasks-list').dataTable({
-        "sDom": "<'row-fluid'r>t",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{event_tasks_path(event, format: :table)}",
-        "aoColumns": [
-          null,
-          {"sWidth": '90px'},
-          {"sWidth": '90px'},
-          null,
-          {"sWidth": '90px'},
-          {"sWidth": '40px', 'bSortable': false}
-        ]
+
+  $('#collection-list-filters').filterBox({
+    'includeCalendars': true,
+    'onChange': function(filterBox){
+      tasksTable.tableScroller('reloadData');
+    }
+  });
+
+  var tasksTable = $('table#tasks-list').tableScroller({
+    'source': '#{source}',
+    'fixedHeader': false,
+    'rowValues': function(t){
+      return [$('<a>', {href: t.links.comments, class: 'data-resource-details-link', 'data-remote': true}).text(t.title), t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+    },
+    'filterBox': '#collection-list-filters',
+    'rowId': function(row){
+      return 'task_'+row.id;
+    }
   })

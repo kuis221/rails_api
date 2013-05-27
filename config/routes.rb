@@ -18,12 +18,22 @@ Brandscopic::Application.routes.draw do
   get "countries/states"
 
   resources :roles do
+    member do
+      get :deactivate
+      get :activate
+    end
     collection do
       put :set_permissions
     end
   end
 
   resources :users do
+    resources :tasks do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
     member do
       get :deactivate
       get :activate
@@ -34,7 +44,9 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
-      get :users
+      match 'members/:member_id' => 'teams#delete_member', via: :delete, as: :delete_member
+      match 'members/new' => 'teams#new_member', via: :get, as: :new_member
+      match 'members' => 'teams#add_members', via: :post, as: :add_member
     end
   end
 
@@ -47,6 +59,10 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     resources :tasks do
+      member do
+        get :deactivate
+        get :activate
+      end
       collection do
         get :progress_bar
       end
@@ -63,7 +79,15 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :tasks, only: [] do
+  resources :tasks, only: [:new, :create, :edit, :update] do
+    collection do
+      get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
+      get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+    end
+    member do
+      get :deactivate
+      get :activate
+    end
     resources :comments
   end
 

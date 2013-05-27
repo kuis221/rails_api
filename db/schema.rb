@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130517141646) do
+ActiveRecord::Schema.define(:version => 20130518205559) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -45,6 +45,43 @@ ActiveRecord::Schema.define(:version => 20130517141646) do
 
   add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
   add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
+
+  create_table "brand_portfolios", :force => true do |t|
+    t.string   "name"
+    t.boolean  "active"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "brand_portfolios", ["company_id"], :name => "index_brand_portfolios_on_company_id"
+
+  create_table "brand_portfolios_brands", :force => true do |t|
+    t.integer "brand_id"
+    t.integer "brand_portfolio_id"
+  end
+
+  add_index "brand_portfolios_brands", ["brand_id", "brand_portfolio_id"], :name => "brand_portfolio_unique_idx", :unique => true
+  add_index "brand_portfolios_brands", ["brand_id"], :name => "index_brand_portfolios_brands_on_brand_id"
+  add_index "brand_portfolios_brands", ["brand_portfolio_id"], :name => "index_brand_portfolios_brands_on_brand_portfolio_id"
+
+  create_table "brands", :force => true do |t|
+    t.string   "name"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "brands_campaigns", :force => true do |t|
+    t.integer "brand_id"
+    t.integer "campaign_id"
+  end
+
+  add_index "brands_campaigns", ["brand_id"], :name => "index_brands_campaigns_on_brand_id"
+  add_index "brands_campaigns", ["campaign_id"], :name => "index_brands_campaigns_on_campaign_id"
 
   create_table "campaigns", :force => true do |t|
     t.string   "name"
@@ -165,6 +202,7 @@ ActiveRecord::Schema.define(:version => 20130517141646) do
     t.text     "permissions"
     t.integer  "company_id"
     t.boolean  "active",      :default => true
+    t.text     "description"
   end
 
   create_table "tasks", :force => true do |t|
@@ -177,6 +215,7 @@ ActiveRecord::Schema.define(:version => 20130517141646) do
     t.datetime "updated_at",                       :null => false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
+    t.boolean  "active",        :default => true
   end
 
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
@@ -224,7 +263,6 @@ ActiveRecord::Schema.define(:version => 20130517141646) do
     t.string   "unconfirmed_email"
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
-    t.integer  "role_id"
     t.string   "country",                :limit => 4
     t.string   "state"
     t.string   "city"
@@ -235,6 +273,5 @@ ActiveRecord::Schema.define(:version => 20130517141646) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-  add_index "users", ["role_id"], :name => "index_users_on_role_id"
 
 end

@@ -1,0 +1,40 @@
+#content-with-left-nav
+  #content-left-nav.pull-left
+    = render 'admin_navigation'
+
+  .row-fluid
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'New Role', new_role_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+      table#roles-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th data-sort="name" Name
+            th data-sort="description" Description
+            th data-sort="active" Status
+            th.actions
+        tbody
+
+
+javascript:
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      rolesTable.tableScroller('reloadData');
+    }
+  });
+  var rolesTable = $('table#roles-list').tableScroller({
+    'source': '#{roles_path(format: :json)}',
+    'fixedHeader': true,
+    'rowValues': function(r){
+      return [r.name, r.description, r.status]
+    },
+    'filterBox': '#collection-list-filters',
+    'rowId': function(row){
+      return 'role_'+row.id;
+    },
+    'headerOffset': 91,
+  })

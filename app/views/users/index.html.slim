@@ -1,58 +1,46 @@
-.row-fluid
-  .box.span12
-    .box-header
-      h2
-        i.icon-user
-        span.break
-        = "Users"
-    .box-content
+#content-with-left-nav
+  #content-left-nav.pull-left
+    = render 'admin_navigation'
+
+  .row-fluid
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'Invite New User', new_user_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+
       table#users-list.table.table-striped.table-bordered.table-scrolled
         thead
           tr
-            th Last Name
-            th First Name
-            th City
-            th State
-            th Country
-            th Email
-            th Role
-            th Last Activity
-            th Status
-            th
+            th data-sort="last_name" Last Name
+            th data-sort="first_name" First Name
+            th data-sort="city" City
+            th data-sort="state" State
+            th data-sort="country" Country
+            th data-sort="email" Email
+            th data-sort="role" Role
+            th data-sort="last_activity" Last Activity
+            th data-sort="status" Status
+            th.actions
         tbody
 
-      .row-fluid
-        .pull-right
-          = link_to 'Invite New User', new_user_path, {remote: true, class: 'btn btn-primary'}
-
-
-    .box-header
-      h2
-        i.icon-user
-        span.break
-        = "User Groups"
-    #user-groups-table.box-content
-      = render partial: 'roles/list', locals: {roles: roles}
-
 javascript:
-  var usersTable = $('#users-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        //"sPaginationType": "bootstrap",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{users_path(format: :table)}",
-        "iDeferLoading": #{@users.count},
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '200px'},
-          null,
-          {"sWidth": '50px', 'bSortable': false}
-        ]
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      usersTable.tableScroller('reloadData');
+    }
+  });
+  var usersTable = $('table#users-list').tableScroller({
+    'source': '#{users_path(format: :json)}',
+    'filterBox': '#collection-list-filters',
+    'fixedHeader': true,
+    'rowValues': function(u){
+      return [u.last_name, u.first_name, u.city, u.state, u.country, u.email, u.role, u.last_activity_at, u.status]
+    },
+    'rowId': function(row){
+      return 'user_'+row.id;
+    },
+    'headerOffset': 91,
   })

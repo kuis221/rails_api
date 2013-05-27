@@ -7,11 +7,12 @@
 #  title         :string(255)
 #  due_at        :datetime
 #  user_id       :integer
-#  completed     :boolean
+#  completed     :boolean          default(FALSE)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :integer
 #  updated_by_id :integer
+#  active        :boolean          default(TRUE)
 #
 
 require 'spec_helper'
@@ -24,9 +25,9 @@ describe Task do
   it { should allow_mass_assignment_of(:due_at) }
   it { should allow_mass_assignment_of(:title) }
   it { should allow_mass_assignment_of(:user_id) }
+  it { should allow_mass_assignment_of(:event_id) }
 
   it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:event_id) }
   it { should_not allow_mass_assignment_of(:created_at) }
   it { should_not allow_mass_assignment_of(:updated_at) }
 

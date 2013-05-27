@@ -1,40 +1,41 @@
-.row-fluid
-  .box.span12
-    .box-header
-      h2
-        i.icon-user
-        span.break
-        = "Teams"
-    .box-content
+#content-with-left-nav
+  #content-left-nav.pull-left
+    = render 'admin_navigation'
+
+  .row-fluid
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
       table#teams-list.table.table-striped.table-bordered.table-scrolled
         thead
           tr
-            th Teams
+            th data-sort="name" Teams
             th Number of Members
-            th Description
-            th Status
+            th data-sort="description"Description
+            th data-sort="status"Status
             th
         tbody
 
 
-      .row-fluid
-        .pull-right
-          = link_to 'New Team', new_team_path, {remote: true, class: 'btn btn-primary'}
-
 javascript:
-  var teamsTable = $('#teams-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        //"sPaginationType": "bootstrap",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{teams_path(format: :table)}",
-        "iDeferLoading": #{@teams.count},
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '50px', 'bSortable': false}
-        ]
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      teamsTable.tableScroller('reloadData');
+    }
+  });
+  var teamsTable = $('table#teams-list').tableScroller({
+    'source': '#{teams_path(format: :json)}',
+    'filterBox': '#events-list-filters',
+    'fixedHeader': true,
+    'rowValues': function(t){
+      return [t.name, t.users_count, t.description, t.status]
+    },
+    'rowId': function(row){
+      return 'team_'+row.id;
+    },
+    'headerOffset': 91,
   })

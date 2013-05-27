@@ -4,7 +4,7 @@ describe UsersController do
   describe "as registered user" do
     before(:each) do
       @user = sign_in_as_user
-      @company = @user.companies.first
+      @company = @user.current_company
     end
 
     describe "GET 'edit'" do
@@ -22,9 +22,24 @@ describe UsersController do
         response.should be_success
       end
 
-      describe "datatable requests" do
+      describe "filters" do
+        it "should call the with_text filter" do
+          User.should_receive(:with_text).with('abc').at_least(:once) { User }
+          get :index, with_text: 'abc', format: :json
+        end
+        it "should call the by_events filter" do
+          User.should_receive(:by_events).with(123).at_least(:once) { User }
+          get :index, by_events: 123, format: :json
+        end
+        it "should call the by_teams filter" do
+          User.should_receive(:by_teams).with(123).at_least(:once) { User }
+          get :index, by_teams: 123, format: :json
+        end
+      end
+
+      describe "json requests" do
         it "responds to .table format" do
-          get 'index', format: :table
+          get 'index', format: :json
           response.should be_success
         end
 
@@ -33,12 +48,11 @@ describe UsersController do
 
           # Users on other companies should not be included on the results
           FactoryGirl.create_list(:user, 2, company_id: 9999)
-          get 'index', sEcho: 1, format: :table
+          get 'index', sEcho: 1, format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body["sEcho"].should == 1
-          parsed_body["aaData"].count.should == 4
-          parsed_body["iTotalRecords"].should == 4
-          parsed_body["iTotalDisplayRecords"].should == 4
+
+          parsed_body["total"].should == 4
+          parsed_body["items"].count.should == 4
         end
       end
     end

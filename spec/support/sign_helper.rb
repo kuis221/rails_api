@@ -1,21 +1,14 @@
+include Warden::Test::Helpers
+
 module SignHelper
   def sign_in(user)
+
     if user.is_a?(AdminUser)
-      post admin_user_session_path,
-           {
-             :admin_user => {
-               :email    => user.email,
-               :password => user.password
-             }
-           }
+      login_as user, scope: :admin_user
     else
-      post user_session_path,
-           {
-             :user => {
-               :email    => user.email,
-               :password => user.password
-             }
-           }
+      user.confirmed_at = Time.now
+      user.save
+      login_as user, scope: :user, :run_callbacks => false
     end
   end
 end

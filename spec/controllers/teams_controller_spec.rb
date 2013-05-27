@@ -3,6 +3,7 @@ require 'spec_helper'
 describe TeamsController do
   before(:each) do
     @user = sign_in_as_user
+    @company = @user.current_company
   end
 
   describe "GET 'edit'" do
@@ -19,9 +20,9 @@ describe TeamsController do
       response.should be_success
     end
 
-    describe "datatable requests" do
-      it "responds to .table format" do
-        get 'index', format: :table
+    describe "json requests" do
+      it "responds to .json format" do
+        get 'index', format: :json
         response.should be_success
       end
 
@@ -31,12 +32,10 @@ describe TeamsController do
         # Teams on other companies should not be included on the results
         FactoryGirl.create_list(:team, 2, company_id: 9999)
 
-        get 'index', sEcho: 1, format: :table
+        get 'index', format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["sEcho"].should == 1
-        parsed_body["iTotalRecords"].should == 3
-        parsed_body["iTotalDisplayRecords"].should == 3
-        parsed_body["aaData"].count.should == 3
+        parsed_body["total"].should == 3
+        parsed_body["items"].count.should == 3
       end
     end
   end
@@ -96,5 +95,100 @@ describe TeamsController do
       team.description.should == 'Test Team description'
     end
   end
+
+
+  describe "DELETE 'delete_member'" do
+    let(:team){ FactoryGirl.create(:team) }
+    it "should remove the team member from the team" do
+      team.users << @user
+      lambda{
+        delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        team.reload
+      }.should change(team.users, :count).by(-1)
+    end
+
+    it "should not raise error if the user doesn't belongs to the team" do
+      delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+      team.reload
+      response.should be_success
+      assigns(:team).should == team
+    end
+  end
+
+  describe "GET 'new_member" do
+    let(:team){ FactoryGirl.create(:team, company: @company) }
+    it 'correctly assign the team' do
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:team).should == team
+    end
+
+    it 'correctly assign the roles' do
+      roles = FactoryGirl.create_list(:role, 3, company: @company, active: true)
+      roles << @user.role
+
+      # Create some other roles that should not be included
+      FactoryGirl.create(:role,company: @company, active: false) # inactive role
+      FactoryGirl.create(:role,company_id: @company.id + 1, active: true) # role from other company
+
+      get 'new_member', id: team.id, format: :js
+      assigns(:roles).should =~ roles
+    end
+
+    it 'correctly assign the users' do
+      users = FactoryGirl.create_list(:user, 3, company: @company, active: true)
+      users << @user # the current user should also appear on the list
+
+      # Assign the users to other team
+      other_team = FactoryGirl.create(:team, company: @company)
+      users.each {|u| other_team.users << u}
+
+      # Create some other roles that should not be included
+      FactoryGirl.create(:unconfirmed_user, company: @company) # invited user
+      FactoryGirl.create(:user, company: @company, active: false) # inactive user
+      FactoryGirl.create(:user, company_id: @company.id+1, active: true) # user from other company
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:users).should =~ users
+    end
+
+    it 'should not load the users that are already assigned ot the team' do
+      another_user = FactoryGirl.create(:user, company_id: @company.id)
+      team.users << @user
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:team).should == team
+      assigns(:users).should == [another_user]
+    end
+  end
+
+
+  describe "POST 'add_members" do
+    let(:team){ FactoryGirl.create(:team) }
+    it 'should assign the user to the team' do
+      lambda {
+        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        assigns(:members).should == [@user]
+        team.reload
+      }.should change(team.users, :count).by(1)
+    end
+
+    it 'should not assign users to the team if they are already part of the team' do
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      team.users << @user
+      lambda {
+        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:team).should == team
+        assigns(:members).should =~ [@user]
+        team.reload
+      }.should_not change(team.users, :count)
+    end
+  end
+
 
 end

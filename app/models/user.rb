@@ -81,11 +81,20 @@ class User < ActiveRecord::Base
   delegate :name, :id, to: :role, prefix: true, allow_nil: true
 
   scope :active, where('confirmed_at is not null')
+  scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
+
+  # Tasks-Users relationship
+  has_many :tasks
+
+  has_and_belongs_to_many :events
+
+  scope :with_text, lambda{|text| where('users.first_name ilike ? or users.last_name ilike ? or users.email ilike ?', "%#{text}%", "%#{text}%", "%#{text}%") }
+  scope :by_teams, lambda{|teams| joins(:teams_users).where(teams_users: {team_id: teams}) }
+  scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
   attr_accessor :updating_profile
 
   def active?
-    # TODO: add check to current_company status
     confirmed? && current_company_user && current_company_user.active?
   end
 

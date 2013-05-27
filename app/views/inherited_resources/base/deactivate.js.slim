@@ -5,7 +5,7 @@
 - else
   |
     if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined'){
-      #{resource.class.name.pluralize.downcase}Table.fnReloadAjax();
+      #{resource.class.name.pluralize.downcase}Table.tableScroller('reloadData');
     }
   - if resource.active?
     |

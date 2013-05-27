@@ -1,7 +1,11 @@
+- if resource.is_a?(Event)
+  |
+    $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
+- elsif resource.is_a?(Team)
+  |
+    teamMembersTable.tableScroller('reloadData');
 |
-  $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}')
-  var pos;
+
 - @members.each do |member|
   |
-    pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{member.id}')[0]);
-    selectMemberTable.fnDeleteRow(pos);
+    $('table#select-users-list tr#user-#{member.id}').remove();

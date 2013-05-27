@@ -55,3 +55,33 @@ body {
 		margin-top: 0px;
 	}
 }
+
+.totop {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  z-index: 104400;
+  background-color: #006dcc;
+
+  a,  a:visited {
+    display: block;
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    text-decoration:  none;
+  }
+}
+
+a {
+  color: #15c;
+  text-decoration: underline;
+  &.btn {
+  	text-decoration: none;
+  }
+}
+
+.nav-tabs>.active>a:hover {
+  cursor: pointer;
+}

@@ -1,99 +1,56 @@
 .row-fluid
   .box.span12
-    .box-header
-      h2
-        i.icon-calendar
-        span.break
-        = "Events"
-    .box-content
-      .row-fluid
+    .row-fluid
+      #resource-index-container.span12
         .pull-right
-          = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
+          #resource-filter-column data-spy="affix" data-offset-top="0"
+            .text-right
+              = link_to 'Create New Event', new_event_path, {remote: true, class: 'btn btn-primary'}
+            #collection-list-filters
 
-      .row-fluid
-        #events-index-container.span12
-          #events-list-filters.pull-right
+        .text-right
+          #toggle-events-view.btn-group
+            a.btn.active href="#list-view" data-toggle="tab" title="List View" List
+            a.btn href="#map-view" data-toggle="tab" title="Map View" Map
 
-          .text-right
-            #toggle-events-view.btn-group
-              a.btn.active href="#list-view" data-toggle="tab" title="List View"
-                i.icon-list
-              a.btn href="#map-view" data-toggle="tab" title="Map View"
-                i.icon-globe
+        .tab-content
+          #list-view.tab-pane.active
+            #events-filter-label
+            table#events-list.table.table-striped.table-bordered.table-scrolled
+              thead
+                tr
+                  th data-sort="start_at" Start Date
+                  th data-sort="start_time" Start Time
+                  th data-sort="location" Location
+                  th data-sort="campaign" Campaign
+                  th data-sort="status" Status
+                  th
+              tbody
 
-          .tab-content
-            #list-view.tab-pane.active
-              #events-filter-label
-              table#events-list.table.table-striped.table-bordered.table-scrolled
-                thead
-                  tr
-                    th Start Date
-                    th Start Time
-                    th Location
-                    th Campaign
-                    th Status
-                    th
-                tbody
-
-            #map-view.tab-pane
-              #map-canvas.google-map
+          #map-view.tab-pane
+            #map-canvas.google-map
 
 
 javascript:
-  $('#events-list-filters').filterBox({
+  $('#collection-list-filters').filterBox({
+    'includeCalendars': true,
     'onChange': function(filterBox){
-      eventsTable.fnReloadAjax();
+      eventsTable.tableScroller('reloadData');
     }
   });
 
-  var eventsTable = $('#events-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{events_path(format: :json)}",
-        "fnServerParams": function (aoData) {
-          data = $('#events-list-filters').filterBox('getFilters');
-          $.each(data, function(index, value){
-            aoData.push(value);
-          });
-        },
-        "fnServerData": function ( sSource, aoData, fnCallback ){
-          $.getJSON(sSource, aoData, function (json){
-              data = $.map(json, function(event, index){
-                var actionButtons = $('<div>')
-                    .append($('<a>', {'href': event.links.edit, 'class': 'icon-edit','title':'Edit', 'data-remote': true}))
-                    .append(' ');
-                if (event.active){
-                    actionButtons.append($('<a>', {'href': event.links.deactivate, 'class': 'icon-remove', 'title':'Deactivate', 'data-remote': true}))
-                } else{
-                    actionButtons.append($('<a>', {'href': event.links.activate, 'class': 'icon-check', 'title':'Activate', 'data-remote': true}))
-                }
-                return [[
-                    $('<div>').append($('<a>',{'href': event.links.show, 'title':'View Event'}).text(event.start_date)).html(),
-                    $('<div>').append($('<a>',{'href': event.links.show, 'title':'View Event'}).text(event.start_time)).html(),
-                    (event.place ? event.place.name : '' ),
-                    (event.campaign ? event.campaign.name : '' ),
-                    event.status,
-                    actionButtons.html()
-                  ]];
-              });
-              fnCallback({aaData: data});
-              $('#events-filter-label').html(data.length + " events " + $('#events-list-filters').filterBox('describeFilters'))
-
-              $(document).trigger('events-list:changed',[json]);
-          });
-        },
-        "aoColumns": [
-          {"sWidth": '100px'},
-          {"sWidth": '100px'},
-          null,
-          null,
-          {"sWidth": '70px'},
-          {"sWidth": '50px', 'bSortable': false}
-        ],
+  var eventsTable = $('table#events-list').tableScroller({
+    'source': '#{events_path(format: :json)}',
+    'filterBox': '#collection-list-filters',
+    'rowValues': function(e){
+      return [e.start_date, e.start_time, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : ''), e.status]
+    },
+    'onItemsChange': function(items) {
+      $(document).trigger('events-list:changed',[items]);
+    },
+    'rowId': function(row){
+      return 'event_'+row.id;
+    },
+    'fixedHeader': true,
+    'headerOffset': 91,
   })
-
-
-
-

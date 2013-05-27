@@ -1,28 +1,53 @@
 $.widget 'nmk.filterBox', {
 	options: {
 		onChange: false,
-		includeCalendars: true
+		includeCalendars: false,
+		includeSearchBox: true
 	},
 	_create: () ->
-		@form = $('<form action="#" method="get">').appendTo(@element);
+		@element.addClass('filter-box')
+		@form = $('<form action="#" method="get">').appendTo(@element).submit (e)->
+			e.preventDefault()
+			e.stopPropagation()
+			false
 		@form.data('serializedData', null)
+
+		if @options.includeSearchBox
+			@_addSearchBox()
+
 		if @options.includeCalendars
 			@_addCalendars()
+
 
 	getFilters: () ->
 		@form.serializeArray()
 
 	describeFilters: () ->
 		description = @_describeDateRange()
+		description += @_describeSearch()
+
+	_addSearchBox: () ->
+		previousValue = '';
+		@searchInput = $('<input type="text" name="with_text" class="search-query no-validate" placeholder="Search" id="search-box-filter">').appendTo @form
+		@searchInput.keyup =>
+			if @searchTimeout?
+				clearTimeout @searchTimeout
+
+			@searchTimeout = setTimeout =>
+				if previousValue isnt @searchInput.val()
+					previousValue = @searchInput.val()
+					@_filtersChanged()
+			, 300
 
 	_addCalendars: () ->
-		@startDateInput = $('<input type="hidden" name="by_period[start_date]">').appendTo @form
-		@endDateInput = $('<input type="hidden" name="by_period[end_date]">').appendTo @form
+		@startDateInput = $('<input type="hidden" name="by_period[start_date]" class="no-validate">').appendTo @form
+		@endDateInput = $('<input type="hidden" name="by_period[end_date]" class="no-validate">').appendTo @form
 		container = $('<div class="dates-range-filter">').appendTo @element
 		container.datepick {
 			rangeSelect: true,
 			monthsToShow: 2,
 			changeMonth: false,
+			defaultDate: '05/20/2013',
 			onSelect: (dates) =>
 				start_date = @_formatDate(dates[0])
 				@startDateInput.val start_date
@@ -62,6 +87,12 @@ $.widget 'nmk.filterBox', {
 				else
 					description = "took place #{startDateLabel}"
 
+		description
+
+	_describeSearch: () ->
+		description = ''
+		if @searchInput.val()
+			description = " matching \"#{@searchInput.val()}\""
 		description
 
 	_formatDate: (date) ->
