@@ -1,5 +1,7 @@
 Brandscopic::Application.routes.draw do
 
+  get "brands/index"
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -55,6 +57,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :campaigns do
+    resources :brands, only: [:index]
     member do
       get :deactivate
       get :activate

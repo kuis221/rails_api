@@ -100,4 +100,45 @@ describe Event do
     end
 
   end
+
+  describe "brands_list=" do
+    it "should create any non-existing brand into the app" do
+      campaign = FactoryGirl.build(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')
+      expect{
+        campaign.save!
+      }.to change(Brand, :count).by(3)
+      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2','Brand 3']
+    end
+
+    it "should create only the brands that does not exists into the app" do
+      FactoryGirl.create(:brand, name: 'Brand 1')
+      campaign = FactoryGirl.build(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')
+      expect{
+        campaign.save!
+      }.to change(Brand, :count).by(2)
+      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2','Brand 3']
+      Brand.all.map(&:name).should =~ ['Brand 1','Brand 2','Brand 3']
+    end
+
+    it "should remove any other brand from the campaign not in the new list" do
+      campaign = FactoryGirl.create(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')
+      campaign.reload.brands.count.should == 3
+      expect{
+        campaign.brands_list = 'Brand 2,Brand 1'
+        campaign.save!
+      }.to_not change(Brand, :count)
+      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2']
+      Brand.all.map(&:name).should =~ ['Brand 1','Brand 2','Brand 3']
+    end
+  end
+
+  describe "brands_list" do
+    it "should return the brands on a list separated by comma" do
+      campaign = FactoryGirl.create(:campaign)
+      campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 1')
+      campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 2')
+      campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 3')
+      campaign.brands_list.should == 'Brand 1,Brand 2,Brand 3'
+    end
+  end
 end

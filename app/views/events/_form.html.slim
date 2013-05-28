@@ -3,7 +3,7 @@
   = f.error_notification
 
   .form-inputs
-    = f.association :campaign
+    = f.association :campaign, collection: company_campaigns.active
     .row-fluid
       .span6
         = f.error :start_at
@@ -16,6 +16,7 @@
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
+      = f.input :brands_list, input_html: {class: 'input-large'}
       = f.error :place
       = f.input :place_reference, :as => :location, label: 'Location'
       = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_company.users.active.all
@@ -26,31 +27,43 @@
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
-coffee:
-  val = $('#calendar_start_date').text()
-  $('#calendar_start_date').datepicker {
+javascript:
+  val = $('#calendar_start_date').text();
+  $('#calendar_start_date').datepicker({
     altField: '#event_start_date',
     defaultDate: $('#calendar_start_date').data('date')
-  }
+  });
 
-  $('#calendar_end_date').datepicker {
+  $('#calendar_end_date').datepicker({
     altField: '#event_end_date',
     defaultDate: $('#calendar_end_date').data('date')
-  }
+  });
 
   $('#event_user_ids').select2();
+  $('#event_brands_list').select2({tags: #{ raw((resource.campaign.nil? ? [] : resource.campaign.brands.map(&:name)).to_json).html_safe}});
+  $('#event_campaign_id').change(function(){
+    campaign_id = $(this).val();
+    //$('#event_brands_list').datepicker({'tags':[]});
+    if (campaign_id){
+      $('#event_brands_list').select2('destroy');
+      $.getJSON('/campaigns/'+campaign_id+'/brands.json', function(data){
+        $('#event_brands_list').select2('destroy');
+        tags = $.map(data, function(brand){ return brand.name });
+        $('#event_brands_list').select2({tags: tags });
+      })
+    }
+  })
 
+  var input = $('.modal .places-autocomplete')[0];
+  var locationAutocomplete = new google.maps.places.Autocomplete(input);
 
-  input = $('.modal .places-autocomplete')[0]
-  locationAutocomplete = new google.maps.places.Autocomplete(input);
+  google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
+    var place = locationAutocomplete.getPlace();
+    if (!place.geometry) {
+      // Inform the user that the place was not found and return.
+      alert('Place not found');
+      return false;
+    }
 
-
-  google.maps.event.addListener(locationAutocomplete, 'place_changed', () ->
-    place = locationAutocomplete.getPlace()
-    if not place.geometry
-      # Inform the user that the place was not found and return.
-      alert 'Place not found'
-      return
-
-    $($(input).data('hidden')).val "#{place.reference}||#{place.id}"
-  )
+    $($(input).data('hidden')).val(place.reference+'||'+place.id);
+  });

@@ -23,9 +23,13 @@ class Event < ActiveRecord::Base
   has_many :tasks, dependent: :destroy
   has_many :documents, :as => :documentable
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
 
   attr_accessor :place_reference
+  attr_accessor :brands_list
+
+  # Events-Brands relationship
+  has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
   scoped_to_company
 
@@ -70,12 +74,25 @@ class Event < ActiveRecord::Base
     self.place.name if self.place
   end
 
+  def brands_list=(list)
+    brands_names = list.split(',')
+    existing_ids = self.brands.map(&:id)
+    brands_names.each do |brand_name|
+      brand = Brand.find_or_initialize_by_name(brand_name)
+      self.brands << brand unless existing_ids.include?(brand.id)
+    end
+    brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
+  end
+
+  def brands_list
+    brands.map(&:name).join ','
+  end
+
   private
 
     # Copy some errors to the attributes used on the forms so the user
     # can see them
     def delegate_errors
-      Rails.logger.debug "#{self.place.inspect}"
       errors[:start_at].each{|e| errors.add(:start_date, e) }
       errors[:end_at].each{|e| errors.add(:end_date, e) }
       place.errors.full_messages.each{|e| errors.add(:place_reference, e) } if place
@@ -104,4 +121,6 @@ class Event < ActiveRecord::Base
         self.end_time   = self.end_at.to_s(:time_only)   unless self.end_at.blank?
       end
     end
+
+
 end

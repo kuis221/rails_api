@@ -20,6 +20,7 @@ class Ability
         can :manage, Role, :company_id => user.current_company.id
         can :manage, Team, :company_id => user.current_company.id
         can :manage, Event, :company_id => user.current_company.id
+        can :index, Brand
 
         can :create, Task
         can :manage, Task, :event => {:company_id => user.current_company.id}

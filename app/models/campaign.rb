@@ -64,8 +64,10 @@ class Campaign < ActiveRecord::Base
 
   def brands_list=(list)
     brands_names = list.split(',')
-    brands_names.each do |brand|
-      self.brands.find_or_initialize_by_name(brand)
+    existing_ids = self.brands.map(&:id)
+    brands_names.each do |brand_name|
+      brand = Brand.find_or_initialize_by_name(brand_name)
+      self.brands << brand unless existing_ids.include?(brand.id)
     end
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
   end
