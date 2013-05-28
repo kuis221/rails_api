@@ -70,9 +70,6 @@ Brandscopic::Application.routes.draw do
         get :deactivate
         get :activate
       end
-      collection do
-        get :progress_bar
-      end
     end
 
     resources :documents

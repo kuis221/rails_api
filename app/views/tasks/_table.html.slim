@@ -1,15 +1,6 @@
-- event ||= nil
-#tasks-filter-label.row-fluid
-  .span2
-    span.count-unassigned
-    label.unassigned Unassigned
-  .span2
-    span.count-assigned
-    label.assigned Assigned
-  .span2
-    span.count-completed
-    label.completed Completed
+- progress_format ||= 'counter'
 
+.tasks-progress-bar
 table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
@@ -30,6 +21,8 @@ javascript:
     }
   });
 
+  $('.tasks-progress-bar').taskProgressBar({format: '#{progress_format}'})
+
   var tasksTable = $('table#tasks-list').tableScroller({
     'source': '#{source}',
     'fixedHeader': false,
@@ -41,8 +34,6 @@ javascript:
       return 'task_'+row.id;
     },
     'onItemsLoad': function(json){
-      $('#tasks-filter-label .count-unassigned').text(json.unassigned);
-      $('#tasks-filter-label .count-assigned').text(json.assigned);
-      $('#tasks-filter-label .count-completed').text(json.completed);
+      $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed)
     }
   })

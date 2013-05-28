@@ -13,10 +13,6 @@ class TasksController < FilteredController
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
 
-  layout false, only: :progress_bar
-
-  custom_actions collection: [:progress_bar]
-
   private
     def collection_to_json
       collection.map{|task| {
