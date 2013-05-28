@@ -5,7 +5,19 @@
   |
     teamMembersTable.tableScroller('reloadData');
 |
-
 - @members.each do |member|
   |
-    $('table#select-users-list tr#user-#{member.id}').remove();
+    if ($('table#select-users-list tr#user-#{member.id}').length){
+      pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{member.id}')[0]);
+      if (pos!== null){
+        selectMemberTable.fnDeleteRow(pos);
+      };
+    }
+  - if @team_id
+    |
+      if ($('table#select-teams-list tr#team-#{@team_id}').length){
+        pos = selectTeamsTable.fnGetPosition($('table#select-teams-list tr#team-#{@team_id}')[0]);
+        if (pos!== null){
+          selectTeamsTable.fnDeleteRow(pos);
+        };
+      }

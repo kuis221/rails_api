@@ -32,7 +32,7 @@
                 td= user.country_name
                 td= user.email
                 td= user.role_name
-                td= link_to 'Add', url_for(action: :add_members, member_id: user.id), id: "add-member-btn-#{user.id}" , data:{'user-id' => user.id}, remote: true, method: :post
+                td= link_to 'Add', url_for(action: :add_members, member_id: user.id), disable_with: '...', id: "add-member-btn-#{user.id}" , data:{'user-id' => user.id}, remote: true, method: :post
 
       .span2
         #select-users-list-filters
@@ -66,7 +66,7 @@
               td= team.name
               td= team.users.active.count
               td= team.description
-              td= link_to content_tag(:i,'', class: 'icon-plus'), url_for(action: :add_members, team_id: team.id), data:{'team-id' => team.id}, remote: true, method: :post
+              td= link_to 'Add', url_for(action: :add_members, team_id: team.id), disable_with: '...', data:{'team-id' => team.id}, remote: true, method: :post
 
 
 javascript:
@@ -74,6 +74,7 @@ javascript:
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
         "bPaginate": false,
         "bProcessing": true,
+        "bAutoWidth": false,
         "aoColumns": [
           null,
           null,
@@ -91,10 +92,11 @@ javascript:
 
 - if show_teams
   javascript:
-    window.selectMemberTable = $('#select-teams-list').dataTable({
+    selectTeamsTable = $('#select-teams-list').dataTable({
           "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
           "bPaginate": false,
           "bProcessing": true,
+          "bAutoWidth": false,
           "aoColumns": [
             null,
             null,
