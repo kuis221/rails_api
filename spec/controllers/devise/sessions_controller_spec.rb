@@ -7,7 +7,7 @@ describe Devise::SessionsController do
   describe  "#create" do
     describe "an active user" do
       before(:each) do
-        @user = FactoryGirl.create(:user, password: 'Test12345!', password_confirmation: 'Test12345!', aasm_state: 'active')
+        @user = FactoryGirl.create(:user, password: 'Test12345!', password_confirmation: 'Test12345!', company_id: 1)
       end
       it "should be able to login" do
         lambda {
@@ -19,7 +19,7 @@ describe Devise::SessionsController do
 
     describe "an deactivated user" do
       it "should not be able to login" do
-        @user = FactoryGirl.create(:user, password: 'Test12345!', password_confirmation: 'Test12345!', aasm_state: 'inactive')
+        @user = FactoryGirl.create(:user, password: 'Test12345!', password_confirmation: 'Test12345!', company_id: 1, active: false)
         lambda {
           post "create", user: {email: @user.email, password: @user.password}
           @user.reload

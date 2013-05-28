@@ -1,15 +1,25 @@
 Brandscopic::Application.routes.draw do
 
+  get "brands/index"
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  devise_for :users
-  ActiveAdmin.routes(self)
+  devise_for :users, :controllers => { :confirmations => "confirmations" }
+
+  devise_scope :user do
+    put '/users/confirmation', to: 'confirmations#update'
+  end
+
 
   resources :activities
 
+
+
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
+
+  get 'select-company/:company_id', to: 'users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
 
   get "countries/states"
 
@@ -47,6 +57,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :campaigns do
+    resources :brands, only: [:index]
     member do
       get :deactivate
       get :activate
@@ -61,9 +72,6 @@ Brandscopic::Application.routes.draw do
       member do
         get :deactivate
         get :activate
-      end
-      collection do
-        get :progress_bar
       end
     end
 

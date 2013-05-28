@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe CampaignsController do
   before(:each) do
-    @user = FactoryGirl.create(:user)
-    sign_in @user
+    @user = sign_in_as_user
   end
 
   describe "GET 'edit'" do

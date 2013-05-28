@@ -18,7 +18,7 @@ class Role < ActiveRecord::Base
 
   PERMISSIONS = %w{events tasks analysis campaigns users roles other_admin}
 
-  has_many :users
+  has_many :company_users
 
   attr_accessible :name, :description, :permissions
   validates :name, presence: true

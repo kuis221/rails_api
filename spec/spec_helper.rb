@@ -56,3 +56,13 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 end
+
+
+def sign_in_as_user
+  company = FactoryGirl.create(:company)
+  role = FactoryGirl.create(:role)
+  @user = FactoryGirl.create(:user, company_id: company.id, role_id: role.id, active: true)
+  @user.current_company = company
+  sign_in @user.reload
+  @user
+end

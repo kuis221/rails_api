@@ -2,19 +2,22 @@ module TeamMembersHelper
   module InstanceMethods
 
     def delete_member
-      resource.users.delete(member) if member
+      if member
+        user_id = member.id
+        if resource.users.delete(member)
+          if resource.is_a?(Event)
+            Task.scoped_by_event_id(resource).scoped_by_user_id(user_id).update_all(user_id: nil)
+          end
+        end
+      end
     end
 
     def new_member
       @teams = company_teams
-      @assignable_teams = company_teams.with_active_users.order('teams.name ASC')
+      @assignable_teams = company_teams.with_active_users(current_company).order('teams.name ASC')
       @roles = company_roles
       @users = company_users
-      @users = @users.where(['id not in (?)', resource.users]) unless resource.users.empty?
-
-      Rails.logger.debug "@teams = #{@teams.inspect}"
-      Rails.logger.debug "@roles = #{@roles.inspect}"
-      Rails.logger.debug "@users roles = #{@users.map(&:role_id).inspect}"
+      @users = @users.where(['users.id not in (?)', resource.users]) unless resource.users.empty?
     end
 
     def add_members
@@ -42,7 +45,7 @@ module TeamMembersHelper
       end
 
       def company_users
-        current_company.users.active.order('users.last_name ASC')
+        current_company.users.active_in_company(current_company).order('users.last_name ASC')
       end
       def company_teams
         current_company.teams.active.order('teams.name ASC')

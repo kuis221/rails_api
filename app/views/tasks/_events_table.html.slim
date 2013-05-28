@@ -3,10 +3,10 @@
   table#tasks-events-list.table.table-striped.table-bordered.table-scrolled
     thead
       tr
-        th Start Date
-        th Start Time
-        th Location
-        th Campaign
+        th data-sort="start_at" Start Date
+        th data-sort="start_time" Start Time
+        th data-sort="location" Location
+        th data-sort="campaign" Campaign
     tbody
 
 css:
@@ -26,8 +26,20 @@ javascript:
     'source': '#{events_path(format: :json)}',
     'filterBox': '#events-list-filters',
     'onClick': function(row, item){
-      $('#event-title').val(item.campaign.name + '@' +  item.start_date)
-      $('#task_event_id').val(item.id)
+      $('#event-title').val(item.campaign.name + '@' +  item.start_date);
+      $('#task_event_id').val(item.id);
+      var userSelect = $('#task_user_id');
+      var selectedUser = userSelect.val();
+      $.get('#{users_path(format: :json)}', {by_events: item.id}, function(data){
+        userSelect.empty().append('<option></option>');
+        for (i=0; i<data.items.length; i++){
+          user = data.items[i];
+          option = $('<option>',{value: user.id}).text(user.full_name).appendTo(userSelect);
+          if (user.id == selectedUser) {
+            option.attr('selected', 'selected');
+          }
+        }
+      })
     },
     'actionButtons': false,
     'rowValues': function(e){

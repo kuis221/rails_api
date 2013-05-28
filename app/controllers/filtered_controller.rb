@@ -6,11 +6,11 @@ class FilteredController < InheritedResources::Base
 
     def collection
       get_collection_ivar || begin
-        current_page = params[:page] || 1
+        current_page = params[:page] || nil
         c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)
         c = controller_filters(c)
         @collection_count_scope = c
-        c = c.page(current_page)
+        c = c.page(current_page) unless current_page.nil?
         set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
       end
     end

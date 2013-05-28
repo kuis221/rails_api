@@ -13,6 +13,7 @@ class UsersController < FilteredController
   has_scope :with_text
   has_scope :by_teams
   has_scope :by_campaigns
+  has_scope :by_events
 
   custom_actions :collection => [:complete]
 
@@ -61,7 +62,31 @@ class UsersController < FilteredController
     end
   end
 
+
+  def select_company
+    session[:current_company_id] = current_user.companies.find(params[:company_id]).id
+    redirect_to root_path
+  end
+
   protected
+    def begin_of_association_chain
+      current_company
+    end
+
+    def build_resource
+      if params[:user] and params[:user][:email] and @user = User.where(email: params[:user][:email]).first
+        @user.attributes = {company_users_attributes: params[:user][:company_users_attributes]}
+      else
+        @user ||= User.new(params[:user])
+        @user.company_users.build({company_id: current_company.id}, without_protection: true) if @user.company_users.empty?
+      end
+      @user.company_users.each{|cu| cu.company_id = current_company.id if cu.new_record? }
+      @user
+    end
+
+    def roles
+      @roles ||= current_company.roles
+    end
 
     def ensure_no_user
       if signed_in?
@@ -70,22 +95,19 @@ class UsersController < FilteredController
       end
     end
 
-    def begin_of_association_chain
-      current_company
-    end
-
     def collection_to_json
       collection.map{|user| {
         :id => user.id,
         :last_name => user.last_name,
         :first_name => user.first_name,
+        :full_name => user.full_name,
         :city => user.city,
         :state => user.state_name,
         :country => user.country_name,
         :email => user.email,
         :role => user.role_name,
-        :last_sign_in_at => user.last_sign_in_at.try(:to_s,:full_friendly),
-        :status => user.aasm_state.capitalize,
+        :last_activity_at => user.last_activity_at.try(:to_s,:full_friendly),
+        :status => user.active_status,
         :active => user.active?,
         :links => {
             edit: edit_user_path(user),
@@ -112,7 +134,7 @@ class UsersController < FilteredController
         'country' => { :order => 'users.country' },
         'email' => { :order => 'users.active' },
         'role' => { :order => 'roles.name' },
-        'last_login' => { :order => 'users.last_sign_in_at' },
+        'last_activity' => { :order => 'users.last_activity_at' },
         'status' => { :order => 'users.active' }
       }
     end

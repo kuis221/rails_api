@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe RolesController do
   before(:each) do
-    @user = FactoryGirl.create(:user)
-    sign_in @user
+    @user = sign_in_as_user
   end
 
   describe "GET 'edit'" do
@@ -21,7 +20,7 @@ describe RolesController do
     end
 
     describe "datatable requests" do
-      it "responds to .table format" do
+      it "responds to .json format" do
         get 'index', format: :json
         response.should be_success
       end
@@ -30,8 +29,8 @@ describe RolesController do
         FactoryGirl.create_list(:role, 3)
         get 'index', sEcho: 1, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
+        parsed_body["total"].should == 4     # 4 including the current user's role
+        parsed_body["items"].count.should == 4
       end
     end
   end

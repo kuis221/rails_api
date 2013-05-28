@@ -3,12 +3,12 @@ require 'spec_helper'
 describe UsersController do
   describe "as registered user" do
     before(:each) do
-      @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-      sign_in @user
+      @user = sign_in_as_user
+      @company = @user.current_company
     end
 
     describe "GET 'edit'" do
-      let(:user){ FactoryGirl.create(:user) }
+      let(:user){ FactoryGirl.create(:user, company_id: @company.id) }
 
       it "returns http success" do
         get 'edit', id: user.to_param, format: :js
@@ -22,6 +22,21 @@ describe UsersController do
         response.should be_success
       end
 
+      describe "filters" do
+        it "should call the with_text filter" do
+          User.should_receive(:with_text).with('abc').at_least(:once) { User }
+          get :index, with_text: 'abc', format: :json
+        end
+        it "should call the by_events filter" do
+          User.should_receive(:by_events).with(123).at_least(:once) { User }
+          get :index, by_events: 123, format: :json
+        end
+        it "should call the by_teams filter" do
+          User.should_receive(:by_teams).with(123).at_least(:once) { User }
+          get :index, by_teams: 123, format: :json
+        end
+      end
+
       describe "json requests" do
         it "responds to .table format" do
           get 'index', format: :json
@@ -29,12 +44,13 @@ describe UsersController do
         end
 
         it "returns the correct structure" do
-          FactoryGirl.create_list(:user, 3, company_id: @user.company_id)
+          FactoryGirl.create_list(:user, 3, company_id: @company.id)
 
           # Users on other companies should not be included on the results
           FactoryGirl.create_list(:user, 2, company_id: 9999)
           get 'index', sEcho: 1, format: :json
           parsed_body = JSON.parse(response.body)
+
           parsed_body["total"].should == 4
           parsed_body["items"].count.should == 4
         end
@@ -49,7 +65,7 @@ describe UsersController do
 
       it "should not render form_dialog if no errors" do
         lambda {
-          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', role_id: 1}, format: :js
+          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: [{role_id: 1}]}, format: :js
         }.should change(User, :count).by(1)
         response.should be_success
         response.should render_template(:create)
@@ -67,36 +83,75 @@ describe UsersController do
 
       it "should assign current_user's company_id to the new user" do
         lambda {
-          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', role_id: 1}, format: :js
-        }.should change(User, :count).by(1)
-        assigns(:user).company_id.should == @user.company_id
+          lambda {
+            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: [{role_id: 123}]}, format: :js
+          }.should change(User, :count).by(1)
+        }.should change(CompanyUser, :count).by(1)
+        assigns(:user).companies.count.should == 1
+        assigns(:user).companies.first.id.should == @company.id
+        assigns(:user).company_users.first.role_id.should == 123
+      end
+
+
+      it "should require the role_id" do
+        lambda {
+          lambda {
+            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com'}, format: :js
+          }.should_not change(User, :count)
+        }.should_not change(CompanyUser, :count)
+        assigns(:user).company_users.first.errors[:role_id].should == ["can't be blank", "is not a number"]
+      end
+
+      describe "when a user with the same email already exists" do
+        it "should associate the user to the current company" do
+          user = FactoryGirl.create(:user,first_name: 'Tarzan', last_name: 'de la Selva', company_id: 987)
+          lambda{
+            lambda {
+              post 'create', user: {first_name: 'Ignored Name', last_name: 'Ignored Last', email: user.email, company_users_attributes: [{role_id: 1}]}, format: :js
+              assigns(:user).errors.empty?.should be_true
+            }.should_not change(User, :count)
+          }.should change(CompanyUser, :count).by(1)
+          user.reload.first_name.should == 'Tarzan'
+          user.last_name.should == 'de la Selva'
+          user.company_users.count.should == 2
+        end
+
+        it "should not reassign the user to the same company" do
+          user = FactoryGirl.create(:user,first_name: 'Tarzan', last_name: 'de la Selva', company_id: @company.id)
+          lambda {
+            lambda {
+              post 'create', user: {first_name: 'Test', last_name: 'Test', email: user.email, company_users_attributes: [{role_id: 123}]}, format: :js
+            }.should_not change(User, :count)
+          }.should_not change(CompanyUser, :count)
+        end
       end
     end
 
     describe "GET 'deactivate'" do
-      let(:user){ FactoryGirl.create(:user) }
+      let(:user){ FactoryGirl.create(:user, company_id: @company.id, active: true) }
 
       it "deactivates an active user" do
-        user.update_attribute(:aasm_state, 'active')
+        user.reload.company_users.first.active.should be_true
         get 'deactivate', id: user.to_param, format: :js
         response.should be_success
         user.reload.active?.should be_false
+        user.company_users.first.active.should be_false
       end
     end
 
     describe "GET 'activate'" do
-      let(:user){ FactoryGirl.create(:user,aasm_state: 'inactive') }
-
+      let(:user){ FactoryGirl.create(:user, company_id: @company.id, active: false) }
       it "activates an inactive user" do
-        user.active?.should be_false
+        user.reload.company_users.first.active.should be_false
         get 'activate', id: user.to_param, format: :js
         response.should be_success
         user.reload.active?.should be_true
+        user.company_users.first.active.should be_true
       end
     end
 
     describe "PUT 'update'" do
-      let(:user){ FactoryGirl.create(:user) }
+      let(:user){ FactoryGirl.create(:user, company_id: @company.id) }
       it "must update the user data" do
         put 'update', id: user.to_param, user: {first_name: 'Juanito', last_name: 'Perez'}, format: :js
         assigns(:user).should == user
@@ -128,41 +183,6 @@ describe UsersController do
         @user.state.should == 'FL'
         @user.country.should == 'US'
         @user.encrypted_password.should_not == old_password
-      end
-    end
-
-    describe "GET 'complete'" do
-      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
-      it "should redirect to root path with a warning" do
-        get 'complete', auth_token: user.reset_password_token
-        response.should redirect_to(root_path)
-        flash[:notice].should =~ /You cannot access this page/i
-      end
-    end
-  end
-
-  describe "as unregistered user" do
-    describe "GET 'complete'" do
-      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
-      it "should redirect to root path with a warning" do
-        get 'complete', auth_token: user.reset_password_token
-        response.should be_success
-      end
-    end
-
-    describe "PUT 'update_profile'" do
-      let(:user){ FactoryGirl.create(:user, reset_password_token: 'XYZ', aasm_state: 'invited') }
-      it "must update the user attributes" do
-        put 'update_profile', user: {reset_password_token: user.reset_password_token, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123'}
-        assigns(:user).should == user
-        response.should redirect_to(root_path)
-        user.reload
-        user.first_name.should == 'Juanito'
-        user.last_name.should == 'Perez'
-        user.city.should == 'Miami'
-        user.state.should == 'FL'
-        user.country.should == 'US'
-        user.active?.should be_true
       end
     end
   end

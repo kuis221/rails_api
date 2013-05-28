@@ -2,6 +2,7 @@ $.widget 'nmk.tableScroller', {
 	options: {
 		source: null,
 		onItemsChange: null,
+		onItemsLoad: null,
 		fixedHeader: false,
 		headerOffset: 0,
 		onClick: null,
@@ -30,7 +31,7 @@ $.widget 'nmk.tableScroller', {
 
 		@element.infiniteScrollHelper {
 			loadMore: (page) =>
-				if @totalItems > @loadedItems
+				if @totalItems > @loadedItems && @doneLoading
 					@_loadPage(page)
 				else
 					false
@@ -123,6 +124,7 @@ $.widget 'nmk.tableScroller', {
 			@reloadData()
 
 	reloadData: () ->
+		@doneLoading = false
 		@loadedItems = 0
 		@items = []
 		@element.find('tbody').html ''
@@ -139,6 +141,9 @@ $.widget 'nmk.tableScroller', {
 
 		@doneLoading = false
 		@jqxhr = $.getJSON @options.source, params,  (json) =>
+			if @options.onItemsLoad
+				@options.onItemsLoad(json)
+
 			@totalItems = json.total
 			@loadedItems += json.items.length
 			for row in json.items

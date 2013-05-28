@@ -27,5 +27,5 @@ describe Role do
   it { should_not allow_mass_assignment_of(:created_at) }
   it { should_not allow_mass_assignment_of(:updated_at) }
 
-  it { should have_many(:users) }
+  it { should have_many(:company_users) }
 end

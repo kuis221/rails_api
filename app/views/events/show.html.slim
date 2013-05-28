@@ -31,10 +31,8 @@
 
       #tasks-content.collapse.in
         .box-content
-          .tasks-progress-bar
-            = render partial: 'tasks/progress_bar', locals: {tasks: resource.tasks}
 
-          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :json)}
+          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :json), progress_format: 'bar'}
           .row-fluid
             .pull-right
               = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
@@ -77,8 +75,8 @@
 
     google.maps.event.addDomListener(window, 'load', initialize);
 
-    $(document).bind('tasks:change', function(e){
-      $('.tasks-progress-bar').load('#{progress_bar_event_tasks_path(resource)}')
+    $(document).bind('member:delete', function(e){
+      tasksTable.tableScroller('reloadData');
     });
 
     $(document).on('events:change', function(){

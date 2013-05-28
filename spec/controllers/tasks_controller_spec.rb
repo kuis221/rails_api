@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe TasksController do
   before(:each) do
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-    sign_in @user
+    @user = sign_in_as_user
+    @company = @user.current_company
   end
 
-  let(:event) { FactoryGirl.create(:event, company_id: @user.company_id) }
+  let(:event) { FactoryGirl.create(:event, company_id: @company.id) }
 
   describe "POST 'create'" do
     it "returns http success" do
@@ -72,7 +72,7 @@ describe TasksController do
     describe 'for user taks' do
       it "loads the correct tasks for the user" do
         tasks = FactoryGirl.create_list(:task, 5, user_id: @user.id)
-        other_user = FactoryGirl.create(:user, company: @user.company)
+        other_user = FactoryGirl.create(:user, company: @user.current_company)
 
         # Create some other tasks to other user
         other_user.teams << @team
@@ -88,16 +88,16 @@ describe TasksController do
       it "loads the correct tasks assigend to all the users on every team" do
         tasks = FactoryGirl.create_list(:task, 2, user_id: @user.id)
         3.times do
-          user = FactoryGirl.create(:user, company: @user.company)
-          team = FactoryGirl.create(:team, company: @user.company)
+          user = FactoryGirl.create(:user, company: @user.current_company)
+          team = FactoryGirl.create(:team, company: @user.current_company)
           user.teams << team
           @user.teams << team
           tasks += FactoryGirl.create_list(:task, 2, user_id: user.id)
         end
 
         # Create other tasks assigned to users not included on its teams
-        other_team = FactoryGirl.create(:team, company: @user.company)
-        other_user = FactoryGirl.create(:user, company: @user.company)
+        other_team = FactoryGirl.create(:team, company: @user.current_company)
+        other_user = FactoryGirl.create(:user, company: @user.current_company)
         other_user.teams << other_team
         FactoryGirl.create(:task, user_id: other_user.id)
 
@@ -109,20 +109,25 @@ describe TasksController do
     end
 
     describe "json requests" do
-      it "responds to .table format" do
+      it "responds to .json format" do
         get 'index', event_id: event.to_param, format: :json
         response.should be_success
       end
 
       it "returns the correct structure" do
-        FactoryGirl.create_list(:task, 3, event_id: event.id)
+        FactoryGirl.create_list(:task, 2, event_id: event.id)
+        FactoryGirl.create_list(:task, 1, event_id: event.id, user_id: nil)
+        FactoryGirl.create_list(:task, 3, event_id: event.id, user_id: 1, completed: true)
 
         # Events on other events should not be included on the results
         FactoryGirl.create_list(:task, 2, event_id: 9999)
         get 'index', event_id: event.to_param, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
+        parsed_body["total"].should == 6
+        parsed_body["items"].count.should == 6
+        parsed_body["unassigned"].should == 1
+        parsed_body["assigned"].should == 5
+        parsed_body["completed"].should == 3
       end
     end
   end

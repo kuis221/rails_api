@@ -4,6 +4,13 @@ class UserMailer < ActionMailer::Base
   def password_generation(user)
     @user = user
     @url  = complete_profile_url(:auth_token => @user.reset_password_token)
-    mail(:to => user.email, :subject => "Brandscopic Invitation")
+    mail(:to => @user.email, :subject => "Brandscopic Invitation")
+  end
+
+  def company_invitation(user, company)
+    @user = user
+    @company = company
+    @url  = root_url
+    mail(:to => @user.email, :subject => "Brandscopic Invitation")
   end
 end

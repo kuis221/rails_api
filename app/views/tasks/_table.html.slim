@@ -1,4 +1,6 @@
-- event ||= nil
+- progress_format ||= 'counter'
+
+.tasks-progress-bar
 table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
@@ -19,6 +21,8 @@ javascript:
     }
   });
 
+  $('.tasks-progress-bar').taskProgressBar({format: '#{progress_format}'})
+
   var tasksTable = $('table#tasks-list').tableScroller({
     'source': '#{source}',
     'fixedHeader': false,
@@ -28,5 +32,8 @@ javascript:
     'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'task_'+row.id;
+    },
+    'onItemsLoad': function(json){
+      $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed)
     }
   })

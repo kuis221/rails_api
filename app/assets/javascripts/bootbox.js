@@ -158,6 +158,7 @@ var bootbox = window.bootbox || (function(document, $) {
             "class"   : _btnClasses.CONFIRM,
             "callback": confirmCallback
         }], {
+            'classes': 'confirm-dialog',
             // escape key bindings
             "onEscape": cancelCallback
         });

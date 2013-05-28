@@ -13,10 +13,6 @@ class TasksController < FilteredController
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
 
-  layout false, only: :progress_bar
-
-  custom_actions collection: [:progress_bar]
-
   private
     def collection_to_json
       collection.map{|task| {
@@ -54,7 +50,6 @@ class TasksController < FilteredController
     def controller_filters(c)
       c = c.by_users(current_user) if params[:scope] == 'user'
       c = c.by_teams(current_user.teams.scoped_by_company_id(current_company)) if params[:scope] == 'teams'
-      #c.by_companies(current_company) # this is done bt
       c
     end
 

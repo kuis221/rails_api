@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe TeamsController do
   before(:each) do
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id)
-    sign_in @user
+    @user = sign_in_as_user
+    @company = @user.current_company
   end
 
   describe "GET 'edit'" do
@@ -118,7 +118,7 @@ describe TeamsController do
   end
 
   describe "GET 'new_member" do
-    let(:team){ FactoryGirl.create(:team, company: @user.company) }
+    let(:team){ FactoryGirl.create(:team, company: @company) }
     it 'correctly assign the team' do
       get 'new_member', id: team.id, format: :js
       response.should be_success
@@ -126,31 +126,41 @@ describe TeamsController do
     end
 
     it 'correctly assign the roles' do
-      roles = FactoryGirl.create_list(:role, 3, company: @user.company, active: true)
+      roles = FactoryGirl.create_list(:role, 3, company: @company, active: true)
+      roles << @user.role
 
       # Create some other roles that should not be included
-      FactoryGirl.create(:role,company: @user.company, active: false) # inactive role
-      FactoryGirl.create(:role,company_id: @user.company_id + 1, active: true) # role from other company
+      FactoryGirl.create(:role,company: @company, active: false) # inactive role
+      FactoryGirl.create(:role,company_id: @company.id + 1, active: true) # role from other company
 
       get 'new_member', id: team.id, format: :js
       assigns(:roles).should =~ roles
     end
 
     it 'correctly assign the users' do
-      users = FactoryGirl.create_list(:user, 3, company: @user.company, aasm_state: 'active')
+      users = FactoryGirl.create_list(:user, 3, company: @company, active: true)
       users << @user # the current user should also appear on the list
 
       # Assign the users to other team
-      other_team = FactoryGirl.create(:team, company: @user.company)
+      other_team = FactoryGirl.create(:team, company: @company)
       users.each {|u| other_team.users << u}
 
       # Create some other roles that should not be included
-      FactoryGirl.create(:user, company: @user.company, aasm_state: 'invited') # invited user
-      FactoryGirl.create(:user, company: @user.company, aasm_state: 'inactive') # inactive user
-      FactoryGirl.create(:user, company_id: @user.company_id+1, aasm_state: 'active') # user from other company
+      FactoryGirl.create(:unconfirmed_user, company: @company) # invited user
+      FactoryGirl.create(:user, company: @company, active: false) # inactive user
+      FactoryGirl.create(:user, company_id: @company.id+1, active: true) # user from other company
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:users).should =~ users
+    end
+
+    it 'should not load the users that are already assigned ot the team' do
+      another_user = FactoryGirl.create(:user, company_id: @company.id)
+      team.users << @user
+      get 'new_member', id: team.id, format: :js
+      response.should be_success
+      assigns(:team).should == team
+      assigns(:users).should == [another_user]
     end
   end
 
@@ -168,7 +178,7 @@ describe TeamsController do
     end
 
     it 'should not assign users to the team if they are already part of the team' do
-      team = FactoryGirl.create(:team, company_id: @user.company_id)
+      team = FactoryGirl.create(:team, company_id: @company.id)
       team.users << @user
       lambda {
         post 'add_members', id: team.id, member_id: @user.to_param, format: :js

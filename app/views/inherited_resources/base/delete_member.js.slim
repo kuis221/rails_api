@@ -1,3 +1,5 @@
 - if @member
   |
     $("##{resource.class.name.downcase}-member-#{@member.id}").remove()
+    $(document).trigger('tasks:change');
+    $(document).trigger('member:delete');
