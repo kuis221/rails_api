@@ -75,6 +75,11 @@ class User < ActiveRecord::Base
   has_many :teams_users, dependent: :destroy
   has_many :teams, through: :teams_users
 
+  # Campaigns-Users relationship
+  has_many :campaigns_users, dependent: :destroy
+  has_many :campaigns, through: :campaigns_users
+  #has_and_belongs_to_many :campaigns
+
   # Tasks-Users relationship
   has_many :tasks
 
@@ -84,6 +89,7 @@ class User < ActiveRecord::Base
 
   scope :with_text, lambda{|text| where('users.first_name ilike ? or users.last_name ilike ? or users.email ilike ?', "%#{text}%", "%#{text}%", "%#{text}%") }
   scope :by_teams, lambda{|teams| joins(:teams_users).where(teams_users: {team_id: teams}) }
+  scope :by_campaigns, lambda{|campaigns| joins(:campaigns_users).where(campaigns_users: {campaign_id: campaigns}) }
 
   attr_accessor :updating_profile
 

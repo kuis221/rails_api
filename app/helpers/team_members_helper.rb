@@ -2,7 +2,7 @@ module TeamMembersHelper
   module InstanceMethods
 
     def delete_member
-      resource.users.delete(team_member) if team_member
+      resource.users.delete(member) if member
     end
 
     def new_member
@@ -33,9 +33,9 @@ module TeamMembersHelper
     end
 
     private
-      def team_member
+      def member
         begin
-          @team_member = resource.users.find(params[:member_id])
+          @member = resource.users.find(params[:member_id])
         rescue ActiveRecord::RecordNotFound
           nil
         end

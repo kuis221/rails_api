@@ -12,6 +12,7 @@ class UsersController < FilteredController
 
   has_scope :with_text
   has_scope :by_teams
+  has_scope :by_campaigns
 
   custom_actions :collection => [:complete]
 
@@ -89,9 +90,17 @@ class UsersController < FilteredController
         :links => {
             edit: edit_user_path(user),
             activate: activate_user_path(user),
-            deactivate: deactivate_user_path(user)
-        }.merge(params.has_key?(:by_teams) && params[:by_teams] ? {delete: delete_member_team_path(params[:by_teams], member_id: user.id)} : {})
+            deactivate: deactivate_user_path(user),
+            delete: delete_member_path(user)
+        }
       }}
+    end
+
+    def delete_member_path(user)
+      path = nil
+      path = delete_member_team_path(params[:by_teams], member_id: user.id) if params.has_key?(:by_teams) && params[:by_teams]
+      path = delete_member_campaign_path(params[:by_campaigns], member_id: user.id) if params.has_key?(:by_campaigns) && params[:by_campaigns]
+      path
     end
 
     def sort_options

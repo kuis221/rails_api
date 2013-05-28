@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130518205559) do
+ActiveRecord::Schema.define(:version => 20130524205931) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -103,6 +103,14 @@ ActiveRecord::Schema.define(:version => 20130518205559) do
 
   add_index "campaigns_teams", ["campaign_id"], :name => "index_campaigns_teams_on_campaign_id"
   add_index "campaigns_teams", ["team_id"], :name => "index_campaigns_teams_on_team_id"
+
+  create_table "campaigns_users", :force => true do |t|
+    t.integer "campaign_id"
+    t.integer "user_id"
+  end
+
+  add_index "campaigns_users", ["campaign_id"], :name => "index_campaigns_users_on_campaign_id"
+  add_index "campaigns_users", ["user_id"], :name => "index_campaigns_users_on_user_id"
 
   create_table "comments", :force => true do |t|
     t.integer  "commentable_id"

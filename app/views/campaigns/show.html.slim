@@ -2,46 +2,25 @@
   = resource_details_bar("Viewing Campaign Details", collection_path)
 
   .row-fluid
-    .span12
-      .box
-        h2 = "Details for #{@campaign.name} Campaign"
-        .box-header
-          h2
-            i.icon-bullhorn
-            span.break
-            = "Campaign Guidelines"
-        .box-content
-          dl.dl-horizontal
-            dt = "Portfolios: "
-            dd = "&nbsp;".html_safe
-            dt = "Places: "
-            dd = "&nbsp;".html_safe
-            dt = "Teams: "
-            dd = @campaign.teams.map(&:name).join(', ')
-            dt = "Date Ranges: "
-            dd = "&nbsp;".html_safe
-            dt = "Date Parts: "
-            dd = "&nbsp;".html_safe
+    .box.span12
+      .row-fluid
+        .span6
+          h1= @campaign.name
+          - if @campaign.description
+            .team-description
+              = @campaign.description
+        .span6
+          .pull-right
+            = link_to 'Edit', edit_campaign_path(resource), remote: true, class: 'btn btn-primary btn-small'
+            = "&nbsp;".html_safe
+            = active_inactive_buttons(resource)
 
-/ #post-event-form-builder.row-fluid
-/   .span9
-/     .box
-/       .box-header
-/         h2
-/           i.icon-bullhorn
-/           span.break
-/           = "Post Event Form Layout"
-/       .box-content
-/         #droppable
-/           .placeholder Drag widgets here
-/   .span3
-/     .box
-/       .box-content
-/         h2 Widgets
-/         .widget-list
-/           .row-fluid
-/             .span6.draggable.widget-media data-type="media" Attendees
-/             .span6.draggable.widget-attendees data-type="attendees" Competitor Intel
-/           .row-fluid
-/             .span6.draggable.widget-media data-type="media" Media
-/             .span6.draggable.widget-attendees data-type="attendees" Venue Intel
+  .row-fluid
+    .box
+      a href="#staff-content" data-toggle="collapse"
+        .box-header
+          h2 STAFF
+
+      #staff-content.collapse.in
+        .box-content
+          = render 'staff'

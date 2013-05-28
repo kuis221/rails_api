@@ -90,7 +90,6 @@ describe "Events", :js => true do
         page.should have_content('Pablo Baltodano')
         page.should have_content('palinair@gmail.com')
         #find('a.remove-member-btn').click
-        p "$('#event-team-members #team-member-#{user.id.to_s} a').click()"
         page.execute_script("$('#event-team-members #team-member-#{user.id.to_s} a').click()")
       end
 

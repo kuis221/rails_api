@@ -34,6 +34,10 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
+  # Campaigns-Users relationship
+  has_many :campaigns_users
+  has_many :users, through: :campaigns_users, :order => 'last_name ASC'
+
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
 
