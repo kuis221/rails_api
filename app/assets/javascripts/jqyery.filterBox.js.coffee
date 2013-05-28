@@ -2,7 +2,8 @@ $.widget 'nmk.filterBox', {
 	options: {
 		onChange: false,
 		includeCalendars: false,
-		includeSearchBox: true
+		includeSearchBox: true,
+		selectDefaultDate: false
 	},
 	_create: () ->
 		@element.addClass('filter-box')
@@ -47,7 +48,8 @@ $.widget 'nmk.filterBox', {
 			rangeSelect: true,
 			monthsToShow: 2,
 			changeMonth: false,
-			defaultDate: '05/20/2013',
+			defaultDate: 0,
+			selectDefaultDate: @options.selectDefaultDate,
 			onSelect: (dates) =>
 				start_date = @_formatDate(dates[0])
 				@startDateInput.val start_date

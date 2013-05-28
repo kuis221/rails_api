@@ -16,7 +16,7 @@
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
-      = f.input :brands_list, input_html: {class: 'input-large'}
+      = f.input :brands_list, label: 'Brands', input_html: {class: 'input-large'}
       = f.error :place
       = f.input :place_reference, :as => :location, label: 'Location'
       = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: current_company.users.active.all

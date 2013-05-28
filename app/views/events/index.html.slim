@@ -30,12 +30,13 @@
           #map-view.tab-pane
             #map-canvas.google-map
 
-
 javascript:
   $('#collection-list-filters').filterBox({
     'includeCalendars': true,
+    'selectDefaultDate': true,
     'onChange': function(filterBox){
-      eventsTable.tableScroller('reloadData');
+      if (typeof eventsTable != 'undefined')
+        eventsTable.tableScroller('reloadData');
     }
   });
 
