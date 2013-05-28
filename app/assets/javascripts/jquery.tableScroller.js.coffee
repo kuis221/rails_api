@@ -2,6 +2,7 @@ $.widget 'nmk.tableScroller', {
 	options: {
 		source: null,
 		onItemsChange: null,
+		onItemsLoad: null,
 		fixedHeader: false,
 		headerOffset: 0,
 		onClick: null,
@@ -140,6 +141,9 @@ $.widget 'nmk.tableScroller', {
 
 		@doneLoading = false
 		@jqxhr = $.getJSON @options.source, params,  (json) =>
+			if @options.onItemsLoad
+				@options.onItemsLoad(json)
+
 			@totalItems = json.total
 			@loadedItems += json.items.length
 			for row in json.items

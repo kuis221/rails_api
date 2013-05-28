@@ -54,7 +54,6 @@ class TasksController < FilteredController
     def controller_filters(c)
       c = c.by_users(current_user) if params[:scope] == 'user'
       c = c.by_teams(current_user.teams.scoped_by_company_id(current_company)) if params[:scope] == 'teams'
-      #c.by_companies(current_company) # this is done bt
       c
     end
 

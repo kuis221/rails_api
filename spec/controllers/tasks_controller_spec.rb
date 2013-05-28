@@ -109,20 +109,25 @@ describe TasksController do
     end
 
     describe "json requests" do
-      it "responds to .table format" do
+      it "responds to .json format" do
         get 'index', event_id: event.to_param, format: :json
         response.should be_success
       end
 
       it "returns the correct structure" do
-        FactoryGirl.create_list(:task, 3, event_id: event.id)
+        FactoryGirl.create_list(:task, 2, event_id: event.id)
+        FactoryGirl.create_list(:task, 1, event_id: event.id, user_id: nil)
+        FactoryGirl.create_list(:task, 3, event_id: event.id, user_id: 1, completed: true)
 
         # Events on other events should not be included on the results
         FactoryGirl.create_list(:task, 2, event_id: 9999)
         get 'index', event_id: event.to_param, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
+        parsed_body["total"].should == 6
+        parsed_body["items"].count.should == 6
+        parsed_body["unassigned"].should == 1
+        parsed_body["assigned"].should == 5
+        parsed_body["completed"].should == 3
       end
     end
   end

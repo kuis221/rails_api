@@ -1,4 +1,15 @@
 - event ||= nil
+#tasks-filter-label.row-fluid
+  .span2
+    span.count-unassigned
+    label.unassigned Unassigned
+  .span2
+    span.count-assigned
+    label.assigned Assigned
+  .span2
+    span.count-completed
+    label.completed Completed
+
 table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
@@ -28,5 +39,10 @@ javascript:
     'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'task_'+row.id;
+    },
+    'onItemsLoad': function(json){
+      $('#tasks-filter-label .count-unassigned').text(json.unassigned);
+      $('#tasks-filter-label .count-assigned').text(json.assigned);
+      $('#tasks-filter-label .count-completed').text(json.completed);
     }
   })
