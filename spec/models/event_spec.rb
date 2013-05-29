@@ -45,11 +45,11 @@ describe Event do
   it { should validate_presence_of(:end_at) }
 
   describe "end_after_start validation" do
-    subject { Event.new({start_at: DateTime.new(2016,1,20,12,5,0)}, without_protection: true) }
+    subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
 
-    it { should_not allow_value(DateTime.new(2016,1,20,12,0,0)).for(:end_at).with_message("must be on or after 2016-01-20 12:05:00") }
-    it { should allow_value(DateTime.new(2016,1,20,12,5,0)).for(:end_at) }
-    it { should allow_value(DateTime.new(2016,1,20,12,10,0)).for(:end_at) }
+    it { should_not allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be on or after 2016-01-20 12:05:00") }
+    it { should allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
+    it { should allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
   end
 
   describe "#start_at attribute" do
@@ -58,7 +58,7 @@ describe Event do
       event.start_date = '01/20/2012'
       event.start_time = '12:05pm'
       event.valid?
-      event.start_at.should == DateTime.new(2012,1,20,12,5,0)
+      event.start_at.should == Time.zone.local(2012,1,20,12,5,0)
     end
 
     it "should be nil if no start_date and start_time are provided" do
@@ -72,7 +72,7 @@ describe Event do
       event.start_date = '01/20/2012'
       event.start_time = nil
       event.valid?
-      event.start_at.should == DateTime.new(2012,1,20,0,0,0)
+      event.start_at.should == Time.zone.local(2012,1,20,0,0,0)
     end
   end
 
@@ -82,7 +82,7 @@ describe Event do
       event.end_date = '01/20/2012'
       event.end_time = '12:05pm'
       event.valid?
-      event.end_at.should == DateTime.new(2012,1,20,12,5,0)
+      event.end_at.should == Time.zone.local(2012,1,20,12,5,0)
     end
 
     it "should be nil if no end_date and end_time are provided" do
@@ -96,7 +96,7 @@ describe Event do
       event.end_date = '01/20/2012'
       event.end_time = nil
       event.valid?
-      event.end_at.should == DateTime.new(2012,1,20,0,0,0)
+      event.end_at.should == Time.zone.local(2012,1,20,0,0,0)
     end
 
   end
