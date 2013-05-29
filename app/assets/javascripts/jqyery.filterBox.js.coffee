@@ -37,8 +37,9 @@ $.widget 'nmk.filterBox', {
 		optionsCount = options.length
 		while i < 5 and i < optionsCount
 			option = options[i]
-			$list.append(@_buildFilterOption(option, name).change( (e) => @_filtersChanged() ))
-			i++
+			if option.total > 0
+				$list.append(@_buildFilterOption(option, name).change( (e) => @_filtersChanged() ))
+				i++
 		if optionsCount > 5
 			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
@@ -51,7 +52,7 @@ $.widget 'nmk.filterBox', {
 		name = filterWrapper.data('name')
 		items = []
 		for option in filterWrapper.data('options')
-			if filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
+			if option.total > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
 				items.push @_buildFilterOption(option, name).bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
