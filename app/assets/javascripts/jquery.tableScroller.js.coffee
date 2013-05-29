@@ -6,7 +6,6 @@ $.widget 'nmk.tableScroller', {
 		fixedHeader: false,
 		headerOffset: 0,
 		onClick: null,
-		onClick: null,
 		filterBox: null,
 		deactivateMessage: null,
 		actionButtons: ['editable', 'activable'],

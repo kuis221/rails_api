@@ -8,16 +8,15 @@ table#documents-list.table.table-striped.table-bordered.table-scrolled
   tbody
 
 javascript:
-  var documentsTable = $('#documents-list').dataTable({
-        "sDom": "<'row-fluid'r><'scroll-table-wrapper't>",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bServerSide": false,
-        "sAjaxSource": "#{event_documents_path(event, format: :table)}",
-        "aoColumns": [
-          null,
-          null,
-          null,
-          {"sWidth": '40px', 'bSortable': false}
-        ]
+
+  var documentsTable = $('table#documents-list').tableScroller({
+    'source': '#{event_documents_path(event, format: :json)}',
+    'fixedHeader': false,
+    'rowValues': function(t){
+      return [t.name, t.level, t.type]
+    },
+    'rowId': function(row){
+      return 'document_'+row.id;
+    },
+    actionButtons: ['deletable']
   })
