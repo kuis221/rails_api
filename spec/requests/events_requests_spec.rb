@@ -33,8 +33,8 @@ describe "Events", :js => true do
   describe "/events" do
     it "GET index should display a table with the events" do
       events = [
-        FactoryGirl.create(:event, start_at: Date.today, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
-        FactoryGirl.create(:event, start_at: Date.today+1.hour, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: false, place: FactoryGirl.create(:place, name: 'Place 2'))
+        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
+        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: false, place: FactoryGirl.create(:place, name: 'Place 2'))
       ]
       visit events_path
 
