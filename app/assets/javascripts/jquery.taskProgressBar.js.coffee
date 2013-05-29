@@ -40,10 +40,13 @@ $.widget 'nmk.taskProgressBar', {
 
 	_updateBar: (total, unassigned, assigned, completed) ->
 		@element.find('.progress-bar-description').text("#{assigned} of #{total} Tasks Have Been Assigned. #{completed} are Completed.")
-		completed_p = parseInt(100 * completed / total)
-		assigned_p = parseInt(100 * assigned / total)
-		unassigned_p = 100-assigned_p
-		@element.find('.bar-completed').css({width: "#{completed_p}%"}).text("#{completed_p}%")
-		@element.find('.bar-assigned').css({width: "#{assigned_p-completed_p}%"}).text("#{assigned_p}%")
-		@element.find('.bar-unassigned').css({width: "#{unassigned_p}%"}).text("#{unassigned_p}%")
+		if total > 0
+			completed_p = parseInt(100 * completed / total)
+			assigned_p = parseInt(100 * assigned / total)
+			unassigned_p = 100-assigned_p
+			@element.find('.bar-completed').show().css({width: "#{completed_p}%"}).text("#{completed_p}%")
+			@element.find('.bar-assigned').show().css({width: "#{assigned_p-completed_p}%"}).text("#{assigned_p}%")
+			@element.find('.bar-unassigned').show().css({width: "#{unassigned_p}%"}).text("#{unassigned_p}%")
+		else
+			@element.find('.bar-completed, .bar-assigned, .bar-unassigned').hide()
 }

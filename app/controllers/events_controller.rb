@@ -12,6 +12,9 @@ class EventsController < FilteredController
   # Scopes for the filter box
   has_scope :by_period, :using => [:start_date, :end_date]
   has_scope :with_text
+  has_scope :by_campaigns, :type => :array
+
+  helper_method :filters
 
   protected
 
@@ -48,6 +51,12 @@ class EventsController < FilteredController
 
     def controller_filters(c)
       c.includes([:campaign, :place])
+    end
+
+    def filters
+      {
+        :campaigns => company_campaigns.select('campaigns.id, campaigns.name, count(events.id) events_count').joins(:events).order('events_count DESC').group('campaigns.id').map{|c| {id: c.id, name: c.name, total: c.events_count}}
+      }
     end
 
     def sort_options
