@@ -34,6 +34,9 @@
 javascript:
   $('#collection-list-filters').filterBox({
     'includeCalendars': true,
+    'filters': [
+      ['Campaigns', 'by_campaigns' , #{raw(filters[:campaigns].to_json)}]
+    ],
     'onChange': function(filterBox){
       eventsTable.tableScroller('reloadData');
     }

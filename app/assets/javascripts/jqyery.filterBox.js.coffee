@@ -2,7 +2,8 @@ $.widget 'nmk.filterBox', {
 	options: {
 		onChange: false,
 		includeCalendars: false,
-		includeSearchBox: true
+		includeSearchBox: true,
+		filters: []
 	},
 	_create: () ->
 		@element.addClass('filter-box')
@@ -18,6 +19,9 @@ $.widget 'nmk.filterBox', {
 		if @options.includeCalendars
 			@_addCalendars()
 
+		for filter in @options.filters
+			@addFilterSection.apply @, filter
+
 
 	getFilters: () ->
 		@form.serializeArray()
@@ -25,6 +29,62 @@ $.widget 'nmk.filterBox', {
 	describeFilters: () ->
 		description = @_describeDateRange()
 		description += @_describeSearch()
+
+	addFilterSection: (title, name, options) ->
+		$list = $('<ul>')
+		$filter = $('<div class="filter-wrapper">').data('options', options).data('name', name).append($('<h3>').text(title), $list)
+		i = 0
+		optionsCount = options.length
+		while i < 5 and i < optionsCount
+			option = options[i]
+			$list.append(@_buildFilterOption(option, name).change( (e) => @_filtersChanged() ))
+			i++
+		if optionsCount > 5
+			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
+				filterWrapper = $(e.target).parents('div.filter-wrapper')
+				@_showFilterOptions(filterWrapper)
+				false
+			)
+		@form.append($filter)
+
+	_showFilterOptions: (filterWrapper) ->
+		name = filterWrapper.data('name')
+		items = []
+		for option in filterWrapper.data('options')
+			if filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
+				items.push @_buildFilterOption(option, name).bind 'change.filter', (e) =>
+					listItem = $(e.target).parents('li')
+					listItem.unbind 'change.filter'
+					listItem.change (e) => @_filtersChanged()
+					filterWrapper.find('ul').append listItem
+					listItem.effect 'highlight'
+					listItem.trigger 'change'
+
+		container = $('<div class="row-fluid filter-box">')
+		if items.length >= 10
+			itemsPerColumn = Math.ceil(items.length / 2)
+			i = 0
+			while i < items.length
+				if i is itemsPerColumn or i is 0
+					list = $('<ul>')
+					column = $('<div class="span6">').appendTo(container).append(list)
+				list.append items[i]
+				i++
+			list = container
+
+		else
+			list = $('<ul>').append(items).appendTo(container)
+		list.find("input:checkbox").uniform()
+		bootbox.modalClasses = 'modal-med'
+		filterMoreOptions = bootbox.dialog(container,[{
+			    "label" : "Close",
+			    "class" : "btn-primary",
+			    "callback": () ->
+			        filterMoreOptions.modal('hide')
+			}],{'onEscape': true})
+
+	_buildFilterOption: (option, name) ->
+		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{name}[]"}), option.name))
 
 	_addSearchBox: () ->
 		previousValue = '';
@@ -42,7 +102,7 @@ $.widget 'nmk.filterBox', {
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="by_period[start_date]" class="no-validate">').appendTo @form
 		@endDateInput = $('<input type="hidden" name="by_period[end_date]" class="no-validate">').appendTo @form
-		container = $('<div class="dates-range-filter">').appendTo @element
+		container = $('<div class="dates-range-filter">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
 			monthsToShow: 2,
