@@ -56,6 +56,7 @@ class TasksController < FilteredController
     def sort_options
       {
         'title' => { :order => 'tasks.title' },
+        'last_activity' => { :order => 'tasks.updated_at' },
         'due_at' => { :order => 'tasks.due_at' },
         'user_name' => { :order => 'tu.first_name', :joins => 'LEFT JOIN users tu ON tu.id = tasks.user_id' },
         'completed' => { :order => 'tasks.completed' }

@@ -32,9 +32,7 @@ class CampaignsController < FilteredController
       {
         'name' => { :order => 'campaigns.name' },
         'description' => { :order => 'campaigns.description' },
-        'first_event' => { :order => 'campaigns.city' },
-        'last_event' => { :order => 'campaigns.state' },
-        'status' => { :order => 'campaigns.state' }
+        'status' => { :order => 'campaigns.aasm_state' }
       }
     end
 end
