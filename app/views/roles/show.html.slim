@@ -14,7 +14,7 @@
           .span6
             .pull-right
               = link_to 'Edit', edit_role_path(resource), {remote: true, class: 'btn'}
-              = active_inactive_buttons(resource)
+              = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role.  Would you like to continue?")
 
         .row-fluid
           .pull-right

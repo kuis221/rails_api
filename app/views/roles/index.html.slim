@@ -32,6 +32,9 @@ javascript:
     'rowValues': function(r){
       return [r.name, r.description, r.status]
     },
+    'deactivateMessage': function(row){
+      return row.name +' users can no longer login if you deactivate that role. Would you like to continue?'
+    },
     'filterBox': '#collection-list-filters',
     'rowId': function(row){
       return 'role_'+row.id;

@@ -117,7 +117,7 @@ describe "Events", :js => true do
       click_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
-        fill_in 'Due at', with: '2013-05-16'
+        fill_in 'Due at', with: '05/16/2013'
         select('Juanito Bazooka', :from => 'Assigned To')
         #click_button 'Create Task'
         page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")

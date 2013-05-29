@@ -8,6 +8,7 @@ $.widget 'nmk.tableScroller', {
 		onClick: null,
 		onClick: null,
 		filterBox: null,
+		deactivateMessage: null,
 		actionButtons: ['editable', 'activable'],
 		includeActionButtons: true
 	},
@@ -181,7 +182,8 @@ $.widget 'nmk.tableScroller', {
 					if $.inArray('activable', @options.actionButtons) >= 0
 						actionButtons.append(separator)
 						if row.active
-							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true}).text('Deactivate')
+							message = if @options.deactivateMessage? then @options.deactivateMessage(row) else null
+							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message}).text('Deactivate')
 						else
 							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
 
