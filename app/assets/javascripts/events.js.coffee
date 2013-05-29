@@ -83,7 +83,13 @@ jQuery ->
           bounds.extend marker.position
 
       if events.length > 0
+        zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', (event) ->
+            google.maps.event.removeListener(zoomChangeBoundsListener)
+            if (this.getZoom() > 13 && this.initialZoom == true)
+              this.setZoom 13
+              this.initialZoom = false
+        )
+        map.initialZoom = true;
         map.fitBounds bounds
-
 
 
