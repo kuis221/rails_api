@@ -26,23 +26,20 @@ jQuery ->
 
 	attachPluginsToElements()
 
-#	$(document).ajaxComplete (e) ->
-#		attachPluginsToElements()
+	$(document).ajaxComplete (e) ->
+		attachPluginsToElements()
 
-#	$(document).on 'submit', "form", validateForm
-	#$(document).on 'ajax:before', "form", validateForm
+	$(document).on 'submit', "form", validateForm
+	$(document).on 'ajax:before', "form", validateForm
 
 
-	# $(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
-	# 	$($(this).data('filter')).dataTable().fnDraw()
+	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
+		$($(this).data('filter')).dataTable().fnDraw()
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 		e.preventDefault()
 		resource_modal.modal 'hide'
 		false
-
-
-
 
 	$(".totop").hide();
 
@@ -55,7 +52,6 @@ jQuery ->
 	$('.totop a').click (e) ->
 	  e.preventDefault()
 	  $('body,html').animate {scrollTop: 0}, 500
-
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return this.optional(element) || /[A-Z]/.test(value);
@@ -84,7 +80,6 @@ $.rails.allowAction = (element) ->
 	false
 
 
-
 $.fn.dataTableExt.afnFiltering.push (oSettings, aData, iDataIndex) ->
 	if $("##{oSettings.sTableId}-filters").length
 		filtersContainer = $("##{oSettings.sTableId}-filters")
@@ -102,7 +97,6 @@ $.fn.dataTableExt.afnFiltering.push (oSettings, aData, iDataIndex) ->
 					return parseInt(checkbox.value)
 				else
 					return checkbox.value
-
 
 		for filter in filters
 			rowValue = row.data("filter-" + filter)

@@ -31,3 +31,16 @@
 
 javascript:
   $('#user_team_ids').select2();
+
+coffee:
+  $('#user_country').change () ->
+    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+      states = $('#user_state')
+      val = states.val()
+      states.html('<option></option>')
+      if response.states
+        for state in response.states
+          option = $('<option>').val(state.id).html(state.name)
+          if val is state.id
+            option.attr('selected', 'selected')
+          states.append(option)
