@@ -128,6 +128,7 @@ describe TasksController do
         parsed_body["unassigned"].should == 1
         parsed_body["assigned"].should == 5
         parsed_body["completed"].should == 3
+        parsed_body["late"].should == 6
       end
     end
   end

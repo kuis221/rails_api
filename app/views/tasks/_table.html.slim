@@ -34,6 +34,6 @@ javascript:
       return 'task_'+row.id;
     },
     'onItemsLoad': function(json){
-      $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed)
+      $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed, json.late)
     }
   })

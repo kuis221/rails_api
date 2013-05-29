@@ -32,7 +32,7 @@
       #tasks-content.collapse.in
         .box-content
 
-          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :json), progress_format: 'bar'}
+          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :json)}
           .row-fluid
             .pull-right
               = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
