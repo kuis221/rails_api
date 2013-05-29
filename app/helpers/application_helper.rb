@@ -5,7 +5,7 @@ module ApplicationHelper
       (place.name +
       (place.street ? place.street : '') +
       (place.city ? br + place.city + ', ' : '') +
-      place.state +
+      (place.state ? place.state : '') +
       (place.zipcode ? ' ' + place.zipcode : '')).html_safe
     end
   end
