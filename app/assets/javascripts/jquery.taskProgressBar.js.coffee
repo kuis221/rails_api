@@ -8,9 +8,9 @@ $.widget 'nmk.taskProgressBar', {
 		else
 			@_drawBar()
 
-	values: (total, unassigned, assigned, completed) ->
+	values: (total, unassigned, assigned, completed, late) ->
 		if @options.format is 'counter'
-			@_updateCounters(unassigned, assigned, completed)
+			@_updateCounters(unassigned, assigned, completed, late)
 		else
 			@_updateBar(total, unassigned, assigned, completed)
 
@@ -21,6 +21,7 @@ $.widget 'nmk.taskProgressBar', {
 				.append($('<div class="span2">').append($('<span class="count-unassigned">')).append($('<label class="unassigned">Unassigned</label>')))
 				.append($('<div class="span2">').append($('<span class="count-assigned">')).append($('<label class="assigned">Assigned</label>')))
 				.append($('<div class="span2">').append($('<span class="count-completed">')).append($('<label class="completed">Completed</label>')))
+				.append($('<div class="span2">').append($('<span class="count-late">')).append($('<label class="late">Late</label>')))
 		)
 
 	_drawBar: () ->
@@ -33,10 +34,11 @@ $.widget 'nmk.taskProgressBar', {
 			)
 		)
 
-	_updateCounters: (unassigned, assigned, completed) ->
+	_updateCounters: (unassigned, assigned, completed, late) ->
 		@element.find('.count-unassigned').text(unassigned)
 		@element.find('.count-assigned').text(assigned)
 		@element.find('.count-completed').text(completed)
+		@element.find('.count-late').text(late)
 
 	_updateBar: (total, unassigned, assigned, completed) ->
 		@element.find('.progress-bar-description').text("#{assigned} of #{total} Tasks Have Been Assigned. #{completed} are Completed.")

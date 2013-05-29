@@ -128,8 +128,8 @@ describe EventsController do
         response.should be_success
         event.reload
         event.campaign_id.should == 111
-        event.start_at.should == DateTime.parse('2020-05-21 12:00:00')
-        event.end_at.should == DateTime.parse('2020-05-22 13:00:00')
+        event.start_at.should == Time.zone.parse('2020-05-21 12:00:00')
+        event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
       end
     end
 

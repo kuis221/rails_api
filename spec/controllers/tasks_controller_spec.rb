@@ -50,7 +50,7 @@ describe TasksController do
       response.should be_success
       task.reload
       task.title.should == 'New task title'
-      task.due_at.should == DateTime.parse('2013-12-31 00:00:00')
+      task.due_at.should == Time.zone.parse('2013-12-31 00:00:00')
       task.user_id.should == 3
     end
 
@@ -128,6 +128,7 @@ describe TasksController do
         parsed_body["unassigned"].should == 1
         parsed_body["assigned"].should == 5
         parsed_body["completed"].should == 3
+        parsed_body["late"].should == 6
       end
     end
   end
