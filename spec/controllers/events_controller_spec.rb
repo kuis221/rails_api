@@ -156,7 +156,7 @@ describe EventsController do
 
       end
 
-      it "should not raise error if the user doesn't belongs to the team" do
+      it "should not raise error if the user doesn't belongs to the event" do
         delete 'delete_member', id: event.id, member_id: @user.id, format: :js
         event.reload
         response.should be_success
@@ -174,13 +174,30 @@ describe EventsController do
         assigns(:users).should == [@user]
       end
 
-      it 'should not load the users that are already assigned ot the event' do
+      it 'should not load the users that are already assigned to the event' do
         another_user = FactoryGirl.create(:user, company_id: @company.id)
         event.users << @user
         get 'new_member', id: event.id, format: :js
         response.should be_success
         assigns(:event).should == event
         assigns(:users).should == [another_user]
+      end
+
+      it 'should load teams with active users' do
+        team = FactoryGirl.create(:team, company_id: @company.id)
+        team.users << @user
+        get 'new_member', id: event.id, format: :js
+        assigns(:teams).should == [team]
+        assigns(:assignable_teams).should == [team]
+      end
+
+      it 'should not load teams without assignable users' do
+        team = FactoryGirl.create(:team, company_id: @company.id)
+        team.users << @user
+        event.users << @user
+        get 'new_member', id: event.id, format: :js
+        assigns(:teams).should == [team]
+        assigns(:assignable_teams).should == []
       end
     end
 

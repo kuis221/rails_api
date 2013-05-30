@@ -3,6 +3,7 @@ require 'spec_helper'
 describe CampaignsController do
   before(:each) do
     @user = sign_in_as_user
+    @company = @user.current_company
   end
 
   describe "GET 'edit'" do
@@ -104,4 +105,105 @@ describe CampaignsController do
       campaign.description.should == 'Test Campaign description'
     end
   end
+
+
+  describe "DELETE 'delete_member'" do
+    let(:campaign){ FactoryGirl.create(:campaign) }
+    it "should remove the team member from the campaign" do
+      campaign.users << @user
+      lambda{
+        delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        campaign.reload
+      }.should change(campaign.users, :count).by(-1)
+    end
+
+    it "should not raise error if the user doesn't belongs to the campaign" do
+      delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
+      campaign.reload
+      response.should be_success
+      assigns(:campaign).should == campaign
+    end
+  end
+
+  describe "GET 'new_member" do
+    let(:campaign){ FactoryGirl.create(:campaign) }
+    it 'should load all the company\'s users into @users' do
+      FactoryGirl.create(:user, company_id: @company.id+1)
+      get 'new_member', id: campaign.id, format: :js
+      response.should be_success
+      assigns(:campaign).should == campaign
+      assigns(:users).should == [@user]
+    end
+
+    it 'should not load the users that are already assigned ot the campaign' do
+      another_user = FactoryGirl.create(:user, company_id: @company.id)
+      campaign.users << @user
+      get 'new_member', id: campaign.id, format: :js
+      response.should be_success
+      assigns(:campaign).should == campaign
+      assigns(:users).should == [another_user]
+    end
+
+    it 'should load teams with active users' do
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      team.users << @user
+      get 'new_member', id: campaign.id, format: :js
+      assigns(:teams).should == [team]
+      assigns(:assignable_teams).should == [team]
+    end
+
+    it 'should not load teams without assignable users' do
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      team.users << @user
+      campaign.users << @user
+      get 'new_member', id: campaign.id, format: :js
+      assigns(:teams).should == [team]
+      assigns(:assignable_teams).should == []
+    end
+  end
+
+
+  describe "POST 'add_members" do
+    let(:campaign){ FactoryGirl.create(:campaign) }
+
+    it 'should assign the user to the campaign' do
+      lambda {
+        post 'add_members', id: campaign.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        assigns(:members).should == [@user]
+        campaign.reload
+      }.should change(campaign.users, :count).by(1)
+    end
+
+    it 'should assign all the team\'s users to the campaign' do
+      expected_users = FactoryGirl.create_list(:user, 3, company_id: @company.id)
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      lambda {
+        expected_users.each{|u| team.users  << u }
+        post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        assigns(:members).should =~ expected_users
+        campaign.reload
+      }.should change(campaign.users, :count).by(3)
+      campaign.users.should =~ expected_users
+    end
+
+    it 'should not assign users to the campaign if they are already part of the campaign' do
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      team.users << @user
+      campaign.users << @user
+      lambda {
+        post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        assigns(:members).should =~ [@user]
+        campaign.reload
+      }.should_not change(campaign.users, :count)
+    end
+  end
+
 end

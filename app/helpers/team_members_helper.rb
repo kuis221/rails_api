@@ -58,7 +58,7 @@ module TeamMembersHelper
 
       def teams_with_assignable_users
         @teams_with_assignable_users ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do|team|
-          team.users.active.where(['users.id not in (?)', resource.users]).count > 0
+          resource.users.empty? or team.users.active.where(['users.id not in (?)', resource.users]).count > 0
         end
       end
   end
