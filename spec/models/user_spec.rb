@@ -50,6 +50,7 @@ describe User do
   it { should allow_value("validPassw0rd").for(:password) }
   it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
   it { should_not allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
+  it { should validate_confirmation_of(:password) }
 
   describe "email uniqness" do
     before do

@@ -61,6 +61,9 @@ jQuery ->
 		return this.optional(element) || /[0-9]/.test(value);
 	, "Should have at least one digit");
 
+	$.validator.addMethod("matchconfirmation", (value, element) ->
+		return value == $("#user_password").val();
+	, "Doesn't match confirmation");
 
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')

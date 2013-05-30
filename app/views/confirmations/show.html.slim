@@ -10,14 +10,12 @@ h2 Complete your profile
     = f.input :first_name, :autofocus => true
     = f.input :last_name
     = f.input :email
-    = f.input :country, collection: Country.all, required: true
+    = f.input :country, collection: @countries, required: true
     = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
     = f.input :city, required: true
 
-    = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}
-    = f.input :password_confirmation, :label => "Confirm your new password", :required => true
-
-
+    = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
+    = f.input :password_confirmation, :label => "Confirm your new password", :required => true, :input_html => {class: 'matchconfirmation'}
 
   div.form-actions
     = f.button :submit, "Save"
