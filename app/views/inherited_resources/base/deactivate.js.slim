@@ -4,8 +4,8 @@
     bootbox.alert('Unknown error')
 - else
   |
-    if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined'){
-      #{resource.class.name.pluralize.downcase}Table.tableScroller('reloadData');
+    if (typeof #{resource.class.name.pluralize.camelize(:lower)}Table != 'undefined'){
+      #{resource.class.name.pluralize.camelize(:lower)}Table.tableScroller('reloadData');
     }
   - if resource.active?
     |

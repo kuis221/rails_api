@@ -22,4 +22,6 @@ class Brand < ActiveRecord::Base
 
   has_and_belongs_to_many :brand_portfolios
 
+  scope :with_text, lambda{|text| where('brands.name ilike ? ', "%#{text}%") }
+
 end

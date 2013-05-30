@@ -21,14 +21,12 @@
 #  unconfirmed_email      :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  aasm_state             :string(255)
-#  role_id                :integer
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)
-#  company_id             :integer
 #  created_by_id          :integer
 #  updated_by_id          :integer
+#  last_activity_at       :datetime
 #
 
 class User < ActiveRecord::Base

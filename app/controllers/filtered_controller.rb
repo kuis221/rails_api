@@ -25,11 +25,15 @@ class FilteredController < InheritedResources::Base
     end
 
     def sorting_options
-      if params.has_key?(:sorting) && sort_options[params[:sorting]] && params[:sorting_dir]
+      if params.has_key?(:sorting) &&  sort_options[params[:sorting]] && params[:sorting_dir]
         options = sort_options[params[:sorting]].dup
         options[:order] = options[:order] + ' ' + params[:sorting_dir] if sort_options.has_key?(params[:sorting])
         options
       end
+    end
+
+    def sort_options
+      {}
     end
 
     def collection_to_json

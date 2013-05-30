@@ -41,6 +41,7 @@ RSpec.configure do |config|
 
   config.include Capybara::DSL, :type => :request
   config.include SignHelper, :type => :request
+  config.include RequestsHelper, :type => :request
 
 
   Capybara.javascript_driver = :webkit

@@ -40,6 +40,15 @@ describe TeamsController do
     end
   end
 
+  describe "GET 'show'" do
+    let(:team){ FactoryGirl.create(:team) }
+    it "assigns the loads the correct objects and templates" do
+      get 'show', id: team.id
+      assigns(:team).should == team
+      response.should render_template(:show)
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js

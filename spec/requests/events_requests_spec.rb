@@ -61,7 +61,7 @@ describe "Events", :js => true do
         end
       end
 
-      test_sorting ("table#events-list")
+      assert_table_sorting ("table#events-list")
 
     end
   end

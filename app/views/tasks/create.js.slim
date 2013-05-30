@@ -1,0 +1,10 @@
+- render 'settings'
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    if (typeof tasksTable != 'undefined'){
+      tasksTable.tableScroller('reloadData');
+    }
+    $(document).trigger('tasks:change');

@@ -48,7 +48,7 @@ javascript:
       $('#event_brands_list').select2('destroy');
       $.getJSON('/campaigns/'+campaign_id+'/brands.json', function(data){
         $('#event_brands_list').select2('destroy');
-        tags = $.map(data, function(brand){ return brand.name });
+        tags = $.map(data.items, function(brand){ return brand.name });
         $('#event_brands_list').select2({tags: tags });
       })
     }
