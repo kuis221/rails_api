@@ -13,7 +13,6 @@
  *= require "theme/font-awesome.css"
  *= require "theme/font-awesome-ie7.css"
  *= require 'theme/style.css'
- *= require 'theme/style-responsive.css'
 */
 
 body {
@@ -89,3 +88,42 @@ a {
 .modal {
   position: absolute;
 }
+
+
+#resource-close-details {
+  margin-left: -10px;
+}
+
+@media (max-width: 979px) {
+    body.with-fixed-top {
+      padding-top: 92px;
+        .navbar-fixed-top {
+            position: fixed;
+        }
+    }
+}
+
+@media only screen and (max-width: 767px) and (min-width: 480px) {
+  .navbar-fixed-top {
+    margin: 0;
+    .pull-right {
+      width: auto;
+      margin: 0;
+    }
+  }
+  #resource-close-details {
+    margin-left: -30px;
+  }
+}
+
+
+body.with-fixed-top {
+  padding-top: 92px;
+  header {
+    background: url(/assets/bg.jpg) repeat right top;
+  }
+  .nav-tabs {
+    margin: 0;
+  }
+}
+

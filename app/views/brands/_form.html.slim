@@ -1,0 +1,22 @@
+- remote ||= false
+= simple_form_for([parent, resource], remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      .span8
+        = f.input :name
+      .span4
+        = f.button :submit, label: 'Create and Add Brand', class: 'btn-primary'
+
+  .form-actions
+    = f.button :button, 'Back to Brand List', id: 'btn-back-to-brand-list', class: 'btn'
+    = f.button :button, 'Cancel', class: 'btn-cancel'
+
+javascript:
+  $('#btn-back-to-brand-list').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).parents('.modal').modal('hide');
+    selectBrandDialog.modal('show');
+  })

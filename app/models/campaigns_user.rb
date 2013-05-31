@@ -2,9 +2,9 @@
 #
 # Table name: campaigns_users
 #
-#  id           :integer          not null, primary key
-#  campaigns_id :integer
-#  user_id      :integer
+#  id          :integer          not null, primary key
+#  campaign_id :integer
+#  user_id     :integer
 #
 
 class CampaignsUser < ActiveRecord::Base

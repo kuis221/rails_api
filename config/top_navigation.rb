@@ -36,7 +36,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :roles, 'Roles', roles_path, highlights_on: %r(/roles)
       secondary.item :campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)
       secondary.item :areas, 'Areas', '#'
-      secondary.item :brand_portfolios, 'Brand Portfolios', '#'
+      secondary.item :brand_portfolios, 'Brand Portfolios', brand_portfolios_path
       secondary.item :date_ranges, 'Date Ranges', '#'
       secondary.item :day_parts, 'Day Parts', '#'
     end

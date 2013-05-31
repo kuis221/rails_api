@@ -1,0 +1,56 @@
+
+#resource-details-wrapper
+  = resource_details_bar("Viewing brand_portfolio Details", collection_path)
+
+  .row-fluid
+    .box.span12
+      .row-fluid
+        .span6
+          h2= resource.name
+          - if resource.description
+            .brand_portfolio-description
+              = resource.description
+        .span6
+          .pull-right
+            = link_to 'Edit', edit_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary btn-small'
+            = "&nbsp;".html_safe
+            = active_inactive_buttons(resource)
+      .box-header
+        h2
+          i.icon-user
+          span.break
+          = "Brands"
+      .box-content
+        #brand_portfolio-brands-filter
+        table#brand_portfolio-brands.table.table-striped.table-bordered.table-scrolled
+          thead
+            tr
+              th data-sort="name" Name
+              th.actions
+          tbody
+        .row-fluid
+          .pull-right
+            = link_to 'Add Brand', select_brands_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary'
+
+javascript:
+  $('#brand_portfolio-brands-filter').filterBox({
+    'onChange': function(filterBox){
+      brandPortfolioBrandsTable.tableScroller('reloadData');
+    }
+  });
+
+  var brandPortfolioBrandsTable = $('table#brand_portfolio-brands').tableScroller({
+    'source': '#{brand_portfolio_brands_path(resource, format: :json)}',
+    'filterBox': '#brand_portfolio-brands-filter',
+    'rowValues': function(u){
+      return [u.name]
+    },
+    'rowId': function(row){
+      return 'brand_portfolio-brand-' + row.id;
+    },
+    'actionButtons': ['deletable']
+  })
+
+  $(document).on('brand_portfolios:change', function(){
+    window.location.reload(false);
+  })

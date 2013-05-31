@@ -6,7 +6,7 @@
     .box.span12
       .row-fluid
         .span6
-          h1= @team.name
+          h2= @team.name
           - if @team.description
             .team-description
               = @team.description
@@ -25,13 +25,13 @@
         table#team-members.table.table-striped.table-bordered.table-scrolled
           thead
             tr
-              th Last Name
-              th First Name
-              th Level
-              th City
-              th State
-              th Email
-              th Status
+              th data-sort="last_name" Last Name
+              th data-sort="first_name"First Name
+              th data-sort="role" Role
+              th data-sort="city" City
+              th data-sort="state" State
+              th data-sort="email" Email
+              th data-sort="status" Status
               th.actions
           tbody
         .row-fluid

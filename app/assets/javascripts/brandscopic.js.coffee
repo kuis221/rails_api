@@ -33,6 +33,12 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
+	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
+	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
+  		if settings.type == 'POST'
+    		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+
+
 	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
 		$($(this).data('filter')).dataTable().fnDraw()
 

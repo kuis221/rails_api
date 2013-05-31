@@ -21,14 +21,12 @@
 #  unconfirmed_email      :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  aasm_state             :string(255)
-#  role_id                :integer
 #  country                :string(4)
 #  state                  :string(255)
 #  city                   :string(255)
-#  company_id             :integer
 #  created_by_id          :integer
 #  updated_by_id          :integer
+#  last_activity_at       :datetime
 #
 
 class User < ActiveRecord::Base
@@ -70,7 +68,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes
-  attr_accessible :reset_password_token, :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
+  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy

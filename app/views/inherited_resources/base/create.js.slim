@@ -1,10 +1,5 @@
-- render 'settings'
 - if resource.errors.any?
   = render 'form_dialog'
 - else
   |
-    $('.bootbox.modal').modal('hide');
-    if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined'){
-      #{resource.class.name.pluralize.downcase}Table.tableScroller('reloadData');
-    }
-    $(document).trigger('#{resource.class.name.pluralize.downcase}:change');
+    window.location = "#{resource_path}"

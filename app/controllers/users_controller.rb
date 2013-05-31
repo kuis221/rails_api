@@ -132,10 +132,10 @@ class UsersController < FilteredController
         'city' => { :order => 'users.city' },
         'state' => { :order => 'users.state' },
         'country' => { :order => 'users.country' },
-        'email' => { :order => 'users.active' },
-        'role' => { :order => 'roles.name' },
+        'email' => { :order => 'users.email' },
+        'role' => { :order => 'roles.name', :joins => {:company_users => :role}, :conditions => {:company_users => {:company_id => current_company } } },
         'last_activity' => { :order => 'users.last_activity_at' },
-        'status' => { :order => 'users.active' }
+        'status' => { :order => 'company_users.active', :joins => :company_users, :conditions => {:company_users => {:company_id => current_company } } }
       }
     end
 

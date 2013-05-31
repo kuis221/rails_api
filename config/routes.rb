@@ -1,7 +1,5 @@
 Brandscopic::Application.routes.draw do
 
-  get "brands/index"
-
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -11,9 +9,7 @@ Brandscopic::Application.routes.draw do
     put '/users/confirmation', to: 'confirmations#update'
   end
 
-
   resources :activities
-
 
 
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
@@ -97,6 +93,19 @@ Brandscopic::Application.routes.draw do
     end
     resources :comments
   end
+
+  resources :brand_portfolios do
+    resources :brands, only: [:index, :new, :create]
+    member do
+      get :deactivate
+      get :activate
+      match 'brands/:brand_id' => 'brand_portfolios#delete_brand', via: :delete, as: :delete_brand
+      match 'brands/select' => 'brand_portfolios#select_brands', via: :get, as: :select_brands
+      match 'brands' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
+    end
+  end
+
+  resources :brands, only: [:index]
 
   root :to => 'dashboard#index'
 end

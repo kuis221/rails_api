@@ -61,7 +61,7 @@ describe "Events", :js => true do
         end
       end
 
-      test_sorting ("table#events-list")
+      assert_table_sorting ("table#events-list")
 
     end
   end
@@ -79,11 +79,10 @@ describe "Events", :js => true do
       user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company: @user.current_company)
       click_link 'Add'
       find("table#select-users-list tr#user-#{user.id}") # Make sure the lighbox is opened
-      within("table#select-users-list tr#user-#{user.id}") do
+      within object_row(user) do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
-        #click_link 'Add' For some reason using click_link is not working here
-        page.find('a').trigger('click')
+        click_ajax_link('Add')
       end
 
       # Test the user was added to the list of event members and it can be removed
