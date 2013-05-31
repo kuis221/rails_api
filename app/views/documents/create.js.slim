@@ -1,0 +1,6 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('#event-documents').html('#{escape_javascript(render collection)}');
+    resource_modal.modal('hide');

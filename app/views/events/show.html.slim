@@ -1,9 +1,7 @@
 #resource-details-wrapper
-  = resource_details_bar("Viewing Event Details", collection_path)
+  = resource_details_bar("Viewing Event Details. Click to close.", collection_path)
 
   .pull-right
-    = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary btn-small', remote: true
-    = "&nbsp;".html_safe
     = active_inactive_buttons(resource)
   h2 = resource.campaign_name
 
@@ -11,8 +9,10 @@
     .span6
       p
         = event_date_range(resource)
-        br
-          = place_address(resource.place).html_safe if resource.place
+        = place_address(resource.place) if resource.place
+        = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary', remote: true
+
+      br
 
       h3 Event Team
       #event-team-members
@@ -21,7 +21,7 @@
 
     .span6
       - unless resource.place.nil? or resource.place.latitude.nil?
-        #map-canvas
+        #map-canvas.google-map
 
   .row-fluid
     .box
@@ -45,11 +45,11 @@
 
       #documents-content.collapse.in
         .box-content
-          = render partial: 'documents/table', locals: {event: resource, documents: resource.documents}
+          #event-documents
+            = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
           .row-fluid
             .pull-right
               = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
-
 
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
@@ -71,6 +71,18 @@
         animation: google.maps.Animation.DROP,
         position: placeLocation
       });
+
+      var theInfowindow = new google.maps.InfoWindow({
+          content: $('<div>')
+                  .append($('<b>').append('#{escape_javascript(resource.campaign_name)}'))
+                  .append($('<br>')).append('#{escape_javascript(resource.start_at.to_s)}')
+                  .append($('<br>')).append('#{escape_javascript(resource.place_formatted_address)}')
+                  .html()
+      });
+
+      google.maps.event.addListener(marker, 'click', function (){
+        theInfowindow.open(map, this)
+      })
     }
 
     google.maps.event.addDomListener(window, 'load', initialize);
