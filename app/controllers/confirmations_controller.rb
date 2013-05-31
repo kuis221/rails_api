@@ -11,7 +11,6 @@ class ConfirmationsController < Devise::ConfirmationsController
         ["-------------------", ""]
       ] +
       Country.all
-
   end
 
   def update

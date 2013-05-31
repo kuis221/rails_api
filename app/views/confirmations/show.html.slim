@@ -3,9 +3,6 @@ h2 Complete your profile
 = simple_form_for(resource, :url => confirmation_url(resource, :confirmation_token => resource.confirmation_token), :html => { :method => :put }) do |f|
   = f.error_notification
 
-  = f.input :reset_password_token, :as => :hidden
-  = f.full_error :reset_password_token
-
   div.form-inputs
     = f.input :first_name, :autofocus => true
     = f.input :last_name
