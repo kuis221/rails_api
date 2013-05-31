@@ -1,0 +1,28 @@
+#select-brands-list-filter
+#select-brands-table-wrapper
+  table#select-brands-list.table.table-striped.table-bordered.table-scrolled
+    thead
+      tr
+        th data-sort="name" Name
+        th.actions
+    tbody
+
+
+javascript:
+  $('#select-brands-list-filter').filterBox({
+    'onChange': function(filterBox){
+      selectBrandsTable.tableScroller('reloadData');
+    }
+  });
+  var selectBrandsTable = $('table#select-brands-list').tableScroller({
+    'source': '#{brands_path(format: :json)}?not_in_portfolio=#{resource.to_param}',
+    'filterBox': '#select-brands-list-filter',
+    'rowValues': function(row){
+      var link = $('<a>', {'href': '#{add_brand_brand_portfolio_path(resource)}?brand_id='+row.id, 'data-remote': true, 'data-method': 'post'}).text('Add');
+      return [row.name, link];
+    },
+    'rowId': function(row){
+      return 'brand_portfolio-brand-' + row.id;
+    },
+    'actionButtons': false
+  });

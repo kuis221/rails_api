@@ -8,8 +8,7 @@ $.widget 'nmk.tableScroller', {
 		onClick: null,
 		filterBox: null,
 		deactivateMessage: null,
-		actionButtons: ['editable', 'activable'],
-		includeActionButtons: true
+		actionButtons: ['editable', 'activable']
 	},
 	_create: () ->
 		@loadedItems = 0

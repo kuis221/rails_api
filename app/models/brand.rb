@@ -20,8 +20,11 @@ class Brand < ActiveRecord::Base
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
 
-  has_and_belongs_to_many :brand_portfolios
+  has_many :brand_portfolios_brands
+  has_many :brand_portfolios, through: :brand_portfolios_brands
 
   scope :with_text, lambda{|text| where('brands.name ilike ? ', "%#{text}%") }
+
+  scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
 
 end

@@ -4,7 +4,19 @@ class BrandPortfoliosController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  custom_actions member: [:select_brands, :add_brands]
+
   load_and_authorize_resource except: :index
+
+  def select_brands
+  end
+
+  def add_brands
+    @brand = Brand.find(params[:brand_id])
+    unless resource.brand_ids.include?(@brand.id)
+      resource.brands << @brand
+    end
+  end
 
   private
     def collection_to_json
@@ -22,6 +34,7 @@ class BrandPortfoliosController < FilteredController
         }
       }}
     end
+
     def sort_options
       {
         'name' => { :order => 'brand_portfolios.name' },

@@ -40,6 +40,38 @@ describe BrandPortfoliosController do
     end
   end
 
+  describe "GET 'select_brands'" do
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    it "returns http success" do
+      get 'select_brands', id: brand_portfolio.to_param, format: :js
+      response.should be_success
+      assigns(:brand_portfolio).should == brand_portfolio
+    end
+  end
+
+  describe "POST 'add_brands'" do
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    it "should add the brand to the portfolio" do
+      brand = FactoryGirl.create(:brand)
+      expect {
+        post 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
+      }.to change(BrandPortfoliosBrand, :count).by(1)
+      response.should be_success
+      assigns(:brand_portfolio).should == brand_portfolio
+      brand_portfolio.brands.should == [brand]
+    end
+
+    it "should not add duplicated brands to portfolios" do
+      brand = FactoryGirl.create(:brand)
+      brand_portfolio.brands << brand
+      expect {
+        post 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
+      }.to_not change(BrandPortfoliosBrand, :count)
+      response.should be_success
+      assigns(:brand_portfolio).should == brand_portfolio
+      brand_portfolio.reload.brands.should == [brand]
+    end
+  end
 
   describe "GET 'show'" do
     let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }

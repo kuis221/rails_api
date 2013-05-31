@@ -1,5 +1,17 @@
 
+module CapybaraBrandscopicHelpers
+  def click_ajax_link(locator, options={})
+    find(:link, locator, options).trigger('click')
+  end
+
+  def object_row(object)
+    find("tr##{object.class.name.underscore.downcase}-#{object.id}")
+  end
+end
+
+
 module RequestsHelper
+  include CapybaraBrandscopicHelpers
   def assert_table_sorting(table)
     within table do
       count = all('tbody tr').count
@@ -16,4 +28,40 @@ module RequestsHelper
     end
   end
 
+  def visible_modal
+    find('.modal', visible: true)
+  end
+
+  def modal_footer
+    find('.modal .modal-footer')
+  end
+
+
+
+  def ensure_on(path)
+    visit(path) unless current_path == path
+  end
+
+  def login
+    Warden.test_mode!
+    user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    sign_in user
+    user.current_company = user.companies.first
+    user
+  end
+
+end
+
+
+
+module Capybara
+  module Node
+    module Actions
+      include CapybaraBrandscopicHelpers
+    end
+
+    class Element < Base
+      include CapybaraBrandscopicHelpers
+    end
+  end
 end

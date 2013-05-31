@@ -25,12 +25,12 @@
         table#brand_portfolio-brands.table.table-striped.table-bordered.table-scrolled
           thead
             tr
-              th Name
+              th data-sort="name" Name
               th.actions
           tbody
         .row-fluid
           .pull-right
-            = link_to 'Add Brand', '', remote: true, class: 'btn btn-primary'
+            = link_to 'Add Brand', select_brands_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
   $('#brand_portfolio-brands-filter').filterBox({

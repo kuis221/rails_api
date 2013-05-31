@@ -63,7 +63,7 @@ describe "BrandPortfolios", :js => true do
   end
 
   describe "/brand_portfolios/:brand_portfolio_id", :js => true do
-    it "GET show should display the event details page" do
+    it "GET show should display the portfolio details page" do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description')
       visit brand_portfolio_path(portfolio)
       page.should have_selector('h2', text: 'Some Brand Portfolio')
@@ -85,6 +85,8 @@ describe "BrandPortfolios", :js => true do
           find('td:nth-child(2)').should have_content('Remove')
         end
       end
+
+      assert_table_sorting ("table#brand_portfolio-brands")
     end
 
     it 'allows the user to activate/deactivate a portfolio' do
