@@ -18,10 +18,10 @@ $.widget 'nmk.taskProgressBar', {
 	_drawCounters: () ->
 		@element.append(
 			$('<div class="row-fluid task-counter-bar">')
-				.append($('<div class="span2">').append($('<span class="count-unassigned">')).append($('<label class="unassigned">Unassigned</label>')))
-				.append($('<div class="span2">').append($('<span class="count-assigned">')).append($('<label class="assigned">Assigned</label>')))
-				.append($('<div class="span2">').append($('<span class="count-completed">')).append($('<label class="completed">Completed</label>')))
-				.append($('<div class="span2">').append($('<span class="count-late">')).append($('<label class="late">Late</label>')))
+				.append($('<div class="task-counter-item">').append($('<span class="count-unassigned">')).append($('<label class="unassigned">Unassigned</label>')))
+				.append($('<div class="task-counter-item">').append($('<span class="count-assigned">')).append($('<label class="assigned">Assigned</label>')))
+				.append($('<div class="task-counter-item">').append($('<span class="count-completed">')).append($('<label class="completed">Completed</label>')))
+				.append($('<div class="task-counter-item">').append($('<span class="count-late">')).append($('<label class="late">Late</label>')))
 		)
 
 	_drawBar: () ->
