@@ -53,6 +53,15 @@ describe InvitationsController do
         assigns(:user).company_users.first.errors[:role_id].should == ["can't be blank", "is not a number"]
       end
 
+      it "should not send a company invitation email if the user doesnt exist on the app" do
+        UserMailer.should_not_receive(:company_invitation)
+        lambda {
+          lambda {
+            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
+          }.should change(User, :count).by(1)
+        }.should change(CompanyUser, :count).by(1)
+      end
+
       describe "when a user with the same email already exists" do
         it "should associate the user to the current company without updating it's attributes" do
           user = FactoryGirl.create(:user,first_name: 'Tarzan', last_name: 'de la Selva', company_id: 987)
@@ -65,6 +74,12 @@ describe InvitationsController do
           user.reload.first_name.should == 'Tarzan'
           user.last_name.should == 'de la Selva'
           user.company_users.count.should == 2
+        end
+
+        it "should send a company invitation email" do
+          user = FactoryGirl.create(:user, company_id: 987)
+          UserMailer.should_receive(:company_invitation).with(user, @company, @user).and_return(double(deliver: true))
+          post 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         end
 
         it "should not reassign the user to the same company" do

@@ -14,7 +14,9 @@ class InvitationsController < Devise::InvitationsController
   def create
     if params[:user] and params[:user][:email] and self.resource = User.where(email: params[:user][:email]).first
       self.resource.update_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
-      self.resource.save
+      if self.resource.save
+        UserMailer.company_invitation(self.resource, current_company, current_user).deliver
+      end
     else
       self.resource = resource_class.invite!(resource_params, current_inviter)
     end

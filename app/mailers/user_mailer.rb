@@ -1,15 +1,10 @@
 class UserMailer < ActionMailer::Base
   default from: "noreply@brandscopic.com"
 
-  def password_generation(user)
-    @user = user
-    @url  = complete_profile_url(:auth_token => @user.reset_password_token)
-    mail(:to => @user.email, :subject => "Brandscopic Invitation")
-  end
-
-  def company_invitation(user, company)
+  def company_invitation(user, company, inviter)
     @user = user
     @company = company
+    @inviter = inviter
     @url  = root_url
     mail(:to => @user.email, :subject => "Brandscopic Invitation")
   end

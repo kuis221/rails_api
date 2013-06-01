@@ -81,24 +81,6 @@ describe User do
     it { should_not validate_presence_of(:password) }
   end
 
-  describe 'added to a new company' do
-    it 'should send a company invitaion email when the user has a password set and is added to the first company' do
-      company = FactoryGirl.create(:company)
-      user = FactoryGirl.build(:user)
-      user.company_users.build({role_id: 1, company_id: company.id}, without_protection: true)
-      UserMailer.should_receive(:company_invitation).with(user, company).and_return(double(:deliver => true))
-      user.save!
-    end
-
-    it 'should not send the company invitation\'s email if added to the first company and have not accepted the invitation' do
-      UserMailer.should_not_receive(:company_invitation)
-      user = FactoryGirl.create(:invited_user)
-      company = FactoryGirl.create(:company)
-      user.company_users << FactoryGirl.build(:company_user, role_id: 1, company_id: company.id)
-      user.reload.companies.count.should == 1
-    end
-  end
-
   describe "#full_name" do
     let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }
 

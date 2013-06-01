@@ -1,7 +1,10 @@
 = "Hi #{@user.first_name},"
 
-p= "You have been invited to use Brandscopic by #{@company.name}.  Since you're already a user, you can login and use Brandsopic for this company as you normally would."
+p= "#{@inviter.full_name} from #{@company.name} has invited you to use Brandscopic.  Since you're already a user, you can login and use Brandsopic for this company as you normally would."
 
-p= "Kind regards,"
-br
-= "The Brandscpoic Team"
+p
+  | Kind regards,
+  br
+  | The Brandscpoic Team"
+  br
+  = link_to 'www.brandscopic.com', 'http://www.brandscopic.com'

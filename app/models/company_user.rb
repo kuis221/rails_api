@@ -22,12 +22,4 @@ class CompanyUser < ActiveRecord::Base
 
   attr_accessible :role_id, :company_id, as: :admin
 
-  after_create :send_company_invitation_email
-
-  private
-    def send_company_invitation_email
-      if !user.invited_to_sign_up? && user.companies.count > 0
-        UserMailer.company_invitation(user, company).deliver
-      end
-    end
 end
