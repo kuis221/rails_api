@@ -170,12 +170,6 @@ $.widget 'nmk.tableScroller', {
 						actionButtons.append($('<a>', {'href': row.links.edit,'title':'Edit', 'data-remote': true}).text('Edit'))
 						separator = ' '
 
-					# Remove Button
-					if $.inArray('deletable', @options.actionButtons) >= 0
-						actionButtons.append(separator)
-						separator = ' '
-						actionButtons.append($('<a>', {'href': row.links.delete,'title':'Remove', 'data-remote': true, 'data-method': 'delete'}).text('Remove'))
-
 					# Activate/Deactivate Button
 					if $.inArray('activable', @options.actionButtons) >= 0
 						actionButtons.append(separator)
@@ -184,6 +178,18 @@ $.widget 'nmk.tableScroller', {
 							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message}).text('Deactivate')
 						else
 							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
+
+					# Remove Button
+					if $.inArray('deletable', @options.actionButtons) >= 0
+						actionButtons.append(separator)
+						separator = ' '
+						actionButtons.append($('<a>', {'href': row.links.delete,'title':'Remove', 'data-remote': true, 'data-method': 'delete'}).text('Remove'))
+
+					# Comment Button
+					if $.inArray('commentable', @options.actionButtons) >= 0
+						actionButtons.append(separator)
+						separator = ' '
+						actionButtons.append($('<a>', {'href': row.links.comments,'title':'Comment', 'class': 'data-resource-details-link', 'data-remote': true}).text('Comment'))
 
 					$row.append actionButtons
 

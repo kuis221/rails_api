@@ -27,7 +27,7 @@ javascript:
     'source': '#{source}',
     'fixedHeader': false,
     'rowValues': function(t){
-      return [$('<a>', {href: t.links.comments, class: 'data-resource-details-link', 'data-remote': true}).text(t.title), t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+      return [t.title, t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
     },
     'filterBox': '#collection-list-filters',
     'rowId': function(row){
@@ -35,5 +35,6 @@ javascript:
     },
     'onItemsLoad': function(json){
       $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed, json.late)
-    }
+    },
+    'actionButtons': ['editable', 'activable', 'commentable']
   })
