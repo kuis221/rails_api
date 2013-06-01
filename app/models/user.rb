@@ -6,7 +6,7 @@
 #  first_name             :string(255)
 #  last_name              :string(255)
 #  email                  :string(255)      default(""), not null
-#  encrypted_password     :string(255)      default(""), not null
+#  encrypted_password     :string(255)      default("")
 #  reset_password_token   :string(255)
 #  reset_password_sent_at :datetime
 #  remember_created_at    :datetime
@@ -27,6 +27,12 @@
 #  created_by_id          :integer
 #  updated_by_id          :integer
 #  last_activity_at       :datetime
+#  invitation_token       :string(60)
+#  invitation_sent_at     :datetime
+#  invitation_accepted_at :datetime
+#  invitation_limit       :integer
+#  invited_by_id          :integer
+#  invited_by_type        :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -38,8 +44,8 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
-  devise :database_authenticatable, :timeoutable,
-         :recoverable, :rememberable, :trackable, :confirmable
+  devise :invitable, :database_authenticatable, :timeoutable,
+         :recoverable, :rememberable, :trackable
 
   has_many :company_users, autosave: true
   has_many :companies, through: :company_users, order: 'companies.name ASC'
@@ -48,11 +54,12 @@ class User < ActiveRecord::Base
   validates :last_name, presence: true
   validates :email, presence: true
 
-  with_options if: :updating_profile do |user|
+  with_options unless: :inviting_user do |user|
     user.validates :country, presence: true
     user.validates :state,   presence: true
     user.validates :city,    presence: true
-    user.validates :password, presence: true, confirmation: true
+    user.validates :password, presence: true, unless: :encrypted_password
+    user.validates :password, confirmation: true, if: :password
   end
 
   accepts_nested_attributes_for :company_users
@@ -67,8 +74,8 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes
-  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, as: :profile
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes, :inviting_user, as: :admin
+  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy
@@ -81,7 +88,7 @@ class User < ActiveRecord::Base
   delegate :role, to: :current_company_user, allow_nil: true
   delegate :name, :id, to: :role, prefix: true, allow_nil: true
 
-  scope :active, where('confirmed_at is not null')
+  scope :active, where('invitation_accepted_at is not null')
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
 
   # Tasks-Users relationship
@@ -94,14 +101,14 @@ class User < ActiveRecord::Base
   scope :by_campaigns, lambda{|campaigns| joins(:campaigns_users).where(campaigns_users: {campaign_id: campaigns}) }
   scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
-  attr_accessor :updating_profile
+  attr_accessor :inviting_user
 
   def active?
-    confirmed? && current_company_user && current_company_user.active?
+    !invited_to_sign_up? && current_company_user && current_company_user.active?
   end
 
   def active_status
-    confirmed? ? 'Active' : 'Invited'
+    invited_to_sign_up? ? 'Invited' : 'Active'
   end
 
   def activate!
@@ -130,6 +137,7 @@ class User < ActiveRecord::Base
 
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
+    Rails.logger.debug Role.all.inspect
     super && company_users.any?{|cu| cu.active? && cu.role.active?}
   end
 
@@ -158,5 +166,14 @@ class User < ActiveRecord::Base
       end
       @current_company_user
     end
+  end
+
+  class << self
+
+    def inviter_role(inviter)
+      return :admin if inviter.is_a?(User)
+      :default
+    end
+
   end
 end

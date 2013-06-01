@@ -155,7 +155,7 @@ describe TeamsController do
       users.each {|u| other_team.users << u}
 
       # Create some other roles that should not be included
-      FactoryGirl.create(:unconfirmed_user, company: @company) # invited user
+      FactoryGirl.create(:invited_user, company: @company) # invited user
       FactoryGirl.create(:user, company: @company, active: false) # inactive user
       FactoryGirl.create(:user, company_id: @company.id+1, active: true) # user from other company
       get 'new_member', id: team.id, format: :js

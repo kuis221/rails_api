@@ -1,0 +1,12 @@
+p Hi #{@resource.first_name},
+
+p #{@resource.invited_by.full_name} from #{@resource.company_users.last.company.name} has invited you to use Brandscopic. Please click the following link to set your password and complete your profile.
+
+p= link_to 'Accept invitation', accept_invitation_url(@resource, :invitation_token => @resource.invitation_token)
+
+p
+  | Kind regards,
+  br
+  | The Brandscopic Team
+  br
+  | www.brandscopic.com

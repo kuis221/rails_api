@@ -1,0 +1,9 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    if (typeof usersTable != 'undefined'){
+      usersTable.tableScroller('reloadData');
+    }
+    $(document).trigger('users:change');

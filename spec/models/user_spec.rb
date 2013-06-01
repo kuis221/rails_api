@@ -6,7 +6,7 @@
 #  first_name             :string(255)
 #  last_name              :string(255)
 #  email                  :string(255)      default(""), not null
-#  encrypted_password     :string(255)      default(""), not null
+#  encrypted_password     :string(255)      default("")
 #  reset_password_token   :string(255)
 #  reset_password_sent_at :datetime
 #  remember_created_at    :datetime
@@ -27,6 +27,12 @@
 #  created_by_id          :integer
 #  updated_by_id          :integer
 #  last_activity_at       :datetime
+#  invitation_token       :string(60)
+#  invitation_sent_at     :datetime
+#  invitation_accepted_at :datetime
+#  invitation_limit       :integer
+#  invited_by_id          :integer
+#  invited_by_type        :string(255)
 #
 
 require 'spec_helper'
@@ -54,23 +60,25 @@ describe User do
     before do
       @user = FactoryGirl.create(:user)
     end
-    it { should validate_uniqueness_of(:email) }
+    it { should validate_presence_of(:country) }
   end
 
-  describe 'new user creation' do
-    it 'should send a password_generation email' do
-      user = FactoryGirl.build(:unconfirmed_user, :password => nil, :password_confirmation => nil)
-      user.company_users.build({role_id: 1, company: FactoryGirl.build_stubbed(:company)}, without_protection: true)
-      Devise::Mailer.should_receive(:confirmation_instructions).with(user, {}).and_return(double(:deliver => true))
-      user.save
+  describe "validations when inviting user" do
+    context do
+      user = User.new()
+      user.inviting_user = true
+      user
     end
+    it { should validate_presence_of(:country) }
+    it { should validate_presence_of(:state) }
+    it { should validate_presence_of(:city) }
+    it { should_not validate_presence_of(:password) }
+  end
 
-    it 'should generate a confirmation token' do
-      user = FactoryGirl.build(:unconfirmed_user, :confirmation_token => nil, :password => nil, :password_confirmation => nil)
-      user.company_users.build({role_id: 1, company: FactoryGirl.build_stubbed(:company)}, without_protection: true)
-      user.save!
-      user.confirmation_token.should_not be_nil
-    end
+  describe "not validate password if already have one" do
+    context { FactoryGirl.create(:user, password: 'Pfsafaada@@123', password_confirmation: 'Pfsafaada@@123') }
+
+    it { should_not validate_presence_of(:password) }
   end
 
   describe 'added to a new company' do
@@ -82,9 +90,9 @@ describe User do
       user.save!
     end
 
-    it 'should not send the company invitation\'s email if added to the first company and is not confirmed' do
+    it 'should not send the company invitation\'s email if added to the first company and have not accepted the invitation' do
       UserMailer.should_not_receive(:company_invitation)
-      user = FactoryGirl.create(:user, confirmed_at: nil)
+      user = FactoryGirl.create(:invited_user)
       company = FactoryGirl.create(:company)
       user.company_users << FactoryGirl.build(:company_user, role_id: 1, company_id: company.id)
       user.reload.companies.count.should == 1

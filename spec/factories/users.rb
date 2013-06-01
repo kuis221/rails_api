@@ -11,6 +11,7 @@ FactoryGirl.define do
     state 'SJ'
     country 'CR'
     confirmed_at DateTime.now
+    invitation_accepted_at DateTime.now
 
     ignore do
       role_id 1
@@ -27,8 +28,11 @@ FactoryGirl.define do
       end
     end
 
-    factory :unconfirmed_user do
-      confirmed_at nil
+    factory :invited_user do
+      sequence(:invitation_token) {|n| "#{n}EmMBowassEf#{n}GSHyBhEnX#{n}" }
+      association :invited_by, factory: :user
+      invitation_sent_at DateTime.now
+      invitation_accepted_at nil
     end
 
   end

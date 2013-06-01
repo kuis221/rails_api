@@ -20,7 +20,7 @@
         = f.simple_fields_for :company_users do |cf|
           = cf.input :role_id, as: :select, collection: current_company.roles
 
-      - if resource.confirmed?
+      - unless resource.invited_to_sign_up?
         = f.input :password
         = f.input :password_confirmation
 
