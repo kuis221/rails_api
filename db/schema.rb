@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130531195702) do
+ActiveRecord::Schema.define(:version => 20130601192556) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -48,12 +48,12 @@ ActiveRecord::Schema.define(:version => 20130531195702) do
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
-    t.boolean  "active"
+    t.boolean  "active",        :default => true
     t.integer  "company_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
     t.text     "description"
   end
 
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(:version => 20130531195702) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

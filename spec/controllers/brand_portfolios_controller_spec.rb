@@ -95,6 +95,11 @@ describe BrandPortfoliosController do
       response.should be_success
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)
+
+      portfolio = BrandPortfolio.last
+      portfolio.name.should == 'Test brand portfolio'
+      portfolio.description.should == 'Test brand portfolio description'
+      portfolio.active.should be_true
     end
 
     it "should render the form_dialog template if errors" do

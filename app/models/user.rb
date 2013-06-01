@@ -137,7 +137,6 @@ class User < ActiveRecord::Base
 
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
-    Rails.logger.debug Role.all.inspect
     super && company_users.any?{|cu| cu.active? && cu.role.active?}
   end
 
