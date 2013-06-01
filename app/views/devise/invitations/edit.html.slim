@@ -1,0 +1,33 @@
+h2 Complete your profile
+
+= simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put }) do |f|
+  = devise_error_messages!
+  = f.hidden_field :invitation_token
+
+  div.form-inputs
+    = f.input :first_name, :autofocus => true
+    = f.input :last_name
+    = f.input :email
+    = f.input :country, collection: @countries, required: true
+    = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+    = f.input :city, required: true
+
+    = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
+    = f.input :password_confirmation, :label => "Confirm your new password", :required => true, :input_html => {class: 'matchconfirmation'}
+
+  div.form-actions
+    = f.button :submit, "Save", class: 'btn btn-primary'
+
+coffee:
+  $('#user_country').change () ->
+    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+      states = $('#user_state')
+      val = states.val()
+      states.html('<option></option>')
+      if response.states
+        for state in response.states
+          option = $('<option>').val(state.id).html(state.name)
+          if val is state.id
+            option.attr('selected', 'selected')
+          states.append(option)
+  $('#user_country').change();

@@ -20,12 +20,13 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
+  attr_accessible :role_id, :company_id, as: :admin
 
   after_create :send_company_invitation_email
 
   private
     def send_company_invitation_email
-      if user.confirmed? && user.companies.count > 0
+      if !user.invited_to_sign_up? && user.companies.count > 0
         UserMailer.company_invitation(user, company).deliver
       end
     end

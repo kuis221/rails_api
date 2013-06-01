@@ -1,5 +1,6 @@
 
 module CapybaraBrandscopicHelpers
+
   def click_ajax_link(locator, options={})
     find(:link, locator, options).trigger('click')
   end
@@ -11,6 +12,8 @@ end
 
 
 module RequestsHelper
+  extend RSpec::Matchers::DSL
+
   include CapybaraBrandscopicHelpers
   def assert_table_sorting(table)
     within table do
@@ -26,6 +29,11 @@ module RequestsHelper
         new_ids.should =~ ids
       end
     end
+  end
+
+  matcher :have_error do |text|
+    match_for_should { |node| find("span[for=#{node['id']}].help-inline").has_content?(text) }
+    match_for_should_not { |node| find("span[for=#{node['id']}].help-inline").has_no_content?(text) }
   end
 
   def visible_modal

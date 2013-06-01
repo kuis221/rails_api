@@ -7,6 +7,7 @@ gem 'rails', '3.2.13'
 
 gem 'pg'
 gem 'devise'
+gem 'devise_invitable', '~> 1.1.0'
 gem "cancan", ">= 1.6.8"
 gem "rolify", ">= 3.2.0"
 gem "slim", ">= 2.0.0.pre.6"

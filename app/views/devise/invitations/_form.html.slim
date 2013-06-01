@@ -1,0 +1,25 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote || false, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post}) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      .span6
+        = f.input :first_name, input_html: {class: 'input-medium'}, :autofocus => true
+      .span6
+        = f.input :last_name, input_html: {class: 'input-medium'}
+    .row-fluid
+      = f.input :email
+      = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
+
+      = f.simple_fields_for :company_users do |cf|
+        = cf.input :role_id, as: :select, collection: current_company.roles
+
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('#user_team_ids').select2();

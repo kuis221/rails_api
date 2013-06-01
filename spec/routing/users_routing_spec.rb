@@ -8,7 +8,7 @@ describe UsersController do
     end
 
     it "routes to #index.table" do
-      get("/users.table").should route_to("users#index", format: 'table')
+      get("/users.json").should route_to("users#index", format: 'json')
     end
 
     it "routes to #new" do
