@@ -17,6 +17,8 @@ head
     = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=AIzaSyC_4WyZ0ewJ0QSdFd6mnAsCvAttG8iXXQc&libraries=places&sensor=false"
     = csrf_meta_tags
     = yield(:head)
+    = render 'application/tracking/lucky_orange' if Rails.env.production?
+
 
 body class="#{controller_name} #{action_name} #{user_signed_in? ? 'with-fixed-top' : ''}"
 
