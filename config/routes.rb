@@ -101,7 +101,7 @@ Brandscopic::Application.routes.draw do
       get :activate
       match 'brands/:brand_id' => 'brand_portfolios#delete_brand', via: :delete, as: :delete_brand
       match 'brands/select' => 'brand_portfolios#select_brands', via: :get, as: :select_brands
-      match 'brands' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
+      match 'brands/add' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
     end
   end
 

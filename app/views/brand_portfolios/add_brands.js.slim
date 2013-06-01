@@ -1,2 +1,5 @@
 |
   $('tr#brand_portfolio-brand-#{@brand.id}').slideUp('slow');
+  if (typeof brandPortfolioBrandsTable !== 'undefined'){
+    brandPortfolioBrandsTable.tableScroller('reloadData');
+  }
