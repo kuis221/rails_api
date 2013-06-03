@@ -107,8 +107,8 @@ class User < ActiveRecord::Base
     !invited_to_sign_up? && current_company_user && current_company_user.active?
   end
 
-  def active_status
-    invited_to_sign_up? ? 'Invited' : 'Active'
+  def active_status(company_id)
+    invited_to_sign_up? ? 'Invited' : (company_users.select{|cu| cu.company_id == company_id and cu.active? }.any? ? 'Active' : 'Inactive')
   end
 
   def activate!

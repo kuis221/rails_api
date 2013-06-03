@@ -1,5 +1,5 @@
 div.document.clearfix id = "event-document-#{document.id}"
   .pull-left
-    = document.name
+  	= link_to(document_icon(document.file_extension(document.file_file_name)) + document.name, document.download_url)
     br
   = link_to(content_tag(:i,'', class: 'icon-remove'), event_document_path(parent, id: document.to_param), class: 'remove-member-btn', remote: true, method: :delete)

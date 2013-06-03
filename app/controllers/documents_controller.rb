@@ -1,4 +1,6 @@
 class DocumentsController < FilteredController
+  include TeamMembersHelper
+
   respond_to :js, only: [:new, :create, :edit, :update, :show, :destroy]
   belongs_to :event
 

@@ -17,7 +17,7 @@ class TeamsController < FilteredController
         :id => team.id,
         :name => team.name,
         :description => team.description,
-        :users_count => team.users.active.count,
+        :users_count => team.users.active_in_company(current_company).count,
         :status => team.active? ? 'Active' : 'Inactive',
         :active => team.active?,
         :links => {

@@ -27,6 +27,10 @@ class Document < ActiveRecord::Base
 
   validates_attachment_presence :file
 
+  def file_extension(filename)
+    File.extname(filename)[1..-1]
+  end
+
   def download_url(style_name=:original)
     s3 = AWS::S3.new
     @bucket ||= s3.buckets[file.bucket_name]

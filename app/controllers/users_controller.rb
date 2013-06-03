@@ -44,7 +44,7 @@ class UsersController < FilteredController
         :email => user.email,
         :role => user.role_name,
         :last_activity_at => user.last_activity_at.try(:to_s,:full_friendly),
-        :status => user.active_status,
+        :status => user.active_status(current_company.id),
         :active => user.active?,
         :links => {
             edit: edit_user_path(user),

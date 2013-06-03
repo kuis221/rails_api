@@ -2,11 +2,15 @@ module ApplicationHelper
   def place_address(place)
     br = tag(:br)
     content_tag :address do
-      (place.name +
-      (place.street ? br + place.street : '') +
-      (place.city ? br + place.city + ', ' : '') +
-      (place.state ? place.state : '') +
-      (place.zipcode ? ' ' + place.zipcode : '')).html_safe
+      address = Array.new
+      city_parts = []
+      address.push place.name if !place.types.include?('political')
+      address.push place.street unless place.street.strip.empty? || place.name == place.street
+      city_parts.push place.city if place.city
+      city_parts.push place.state if place.state
+      city_parts.push place.zipcode if place.zipcode
+      address.push city_parts.join(', ') unless city_parts.empty?
+      address.compact.join(br).html_safe
     end
   end
 
@@ -14,7 +18,8 @@ module ApplicationHelper
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "0") do
       content_tag(:a, href: url) do
         content_tag(:span, "&times;".html_safe, class: :close) +
-        content_tag(:span, title)
+        content_tag(:span, title) +
+        content_tag(:span, 'Click to close.', class: 'details-bar-pull-right')
       end
     end
   end
