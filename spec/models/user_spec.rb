@@ -75,11 +75,11 @@ describe User do
     it { should_not validate_presence_of(:password) }
   end
 
-  describe "not validate password if already have one" do
-    context { FactoryGirl.create(:user, password: 'Pfsafaada@@123', password_confirmation: 'Pfsafaada@@123') }
+  # describe "not validate password if already have one" do
+  #   context { FactoryGirl.create(:user, password: 'Pfsafaada@@123', password_confirmation: 'Pfsafaada@@123') }
 
-    it { should_not validate_presence_of(:password) }
-  end
+  #   it { should_not validate_presence_of(:password) }
+  # end
 
   describe "#full_name" do
     let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }

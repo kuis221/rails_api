@@ -21,8 +21,8 @@
                 tr
                   th data-sort="start_at" Start Date
                   th data-sort="start_time" Start Time
-                  th data-sort="location" Location
-                  th data-sort="campaign" Campaign
+                  th data-sort="place_name" Location
+                  th data-sort="campaign_name" Campaign
                   th data-sort="status" Status
                   th
               tbody
@@ -34,9 +34,6 @@ javascript:
   $('#collection-list-filters').filterBox({
     'includeCalendars': true,
     'selectDefaultDate': true,
-    'filters': [
-      ['Campaigns', 'by_campaigns' , #{raw(filters[:campaigns].to_json)}]
-    ],
     'onChange': function(filterBox){
       if (typeof eventsTable != 'undefined')
         eventsTable.tableScroller('reloadData');

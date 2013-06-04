@@ -120,6 +120,46 @@ describe "BrandPortfolios", :js => true do
       page.should have_selector('h2', text: 'edited portfolio name')
       page.should have_selector('div.brand_portfolio-description', text: 'edited portfolio description')
     end
+
+    it 'allows the user to add brands to the portfolio' do
+      portfolio = FactoryGirl.create(:brand_portfolio)
+      brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
+      visit brand_portfolio_path(portfolio)
+
+      click_link('Add Brand')
+
+      within("table#select-brands-list") do
+        page.should have_content('Guaro Cacique')
+        click_js_link 'Add'
+      end
+
+
+      # Make sure the new brand was added to the portfolio
+      within('table#brand_portfolio-brands') do
+        within("tbody tr:nth-child(1)") do
+          find('td:nth-child(1)').should have_content('Guaro Cacique')
+          find('td:nth-child(2)').should have_content('Remove')
+        end
+      end
+
+      within visible_modal do
+        click_js_link('Create New Brand')
+      end
+
+      within visible_modal do
+        fill_in('Name', with: 'Ron Centenario')
+        click_button('Create Brand')
+      end
+
+      # Make sure the new brand was added to the portfolio
+      within('table#brand_portfolio-brands') do
+        within("tbody tr:nth-child(2)") do
+          find('td:nth-child(1)').should have_content('Ron Centenario')
+          find('td:nth-child(2)').should have_content('Remove')
+        end
+      end
+
+    end
   end
 
 end

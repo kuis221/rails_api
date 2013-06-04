@@ -1,7 +1,7 @@
 
 module CapybaraBrandscopicHelpers
 
-  def click_ajax_link(locator, options={})
+  def click_js_link(locator, options={})
     find(:link, locator, options).trigger('click')
   end
 
@@ -44,6 +44,10 @@ module RequestsHelper
     find('.modal .modal-footer')
   end
 
+  def close_modal
+    visible_modal.find(:link, 'Close').trigger 'click'
+    page.should_not have_selector('.modal', visible: true)
+  end
 
 
   def ensure_on(path)

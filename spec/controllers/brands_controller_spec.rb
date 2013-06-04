@@ -19,7 +19,7 @@ describe BrandsController do
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
-      parsed_body.count.should == 2
+      parsed_body.count.should == 3
       parsed_body['items'].map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
     end
 
@@ -33,7 +33,7 @@ describe BrandsController do
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
-      parsed_body.count.should == 2
+      parsed_body.count.should == 3
       parsed_body['items'].map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
     end
   end

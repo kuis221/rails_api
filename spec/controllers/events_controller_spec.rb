@@ -21,59 +21,13 @@ describe EventsController do
         response.should be_success
       end
 
-      describe "filters" do
-        it "should call the by_period filter" do
-          Event.should_receive(:by_period).with('01/02/2012', '01/03/2012').at_least(:once) { Event }
-          get :index, {by_period: {start_date: '01/02/2012', end_date: '01/03/2012'}}
-        end
-        it "should call the with_text filter" do
-          Event.should_receive(:with_text).with('abc').at_least(:once) { Event }
-          get :index, {with_text: 'abc'}
-        end
-      end
-
       describe "json requests" do
         it "responds to .json format" do
           get 'index', format: :json
           response.should be_success
-        end
 
-        it "returns only 25 rows but indicates the correct number of elements on the total" do
-          FactoryGirl.create_list(:event, 30, company: @user.current_company)
-          get 'index', page: 1, format: :json
           parsed_body = JSON.parse(response.body)
-          parsed_body['total'].should == 30
-          parsed_body['items'].count.should == 25
-        end
-
-        it "returns the correct structure" do
-          Place.any_instance.stub(:fetch_place_data)
-          place = FactoryGirl.create(:place, latitude: 1.234, longitude: 4.321, formatted_address: '123 My Street')
-          campaign = FactoryGirl.create(:campaign)
-          events = FactoryGirl.create_list(:event, 3, company_id: @company.id, place_id: place.id, campaign_id: campaign.id)
-
-          # Events on other companies should not be included on the results
-          FactoryGirl.create_list(:event, 2, company_id: 9999)
-          get 'index', format: :json
-          parsed_body = JSON.parse(response.body)
-          parsed_body['total'].should == 3
-          parsed_body['items'].count.should == 3
-          parsed_body['items'].first.tap do |event|
-            event.count.should == 12
-            event['id'].should == events[0].id
-            event['start_date'].should == events[0].start_date
-            event['end_date'].should == events[0].end_date
-            event['start_at'].should == events[0].start_at.to_s
-            event['end_at'].should == events[0].end_at.to_s
-            event['active'].should == events[0].active
-            event['status'].should == 'Active'
-            event['place'].should == {'name' => place.name, 'latitude' => 1.234, 'longitude' => 4.321, 'formatted_address' => '123 My Street'}
-            event['campaign'].should == {'name' => campaign.name}
-            event['links']['show'].should == event_path(events[0])
-            event['links']['edit'].should == edit_event_path(events[0])
-            event['links']['activate'].should == activate_event_path(events[0])
-            event['links']['deactivate'].should == deactivate_event_path(events[0])
-          end
+          parsed_body.count.should == 3
         end
       end
     end

@@ -33,6 +33,8 @@ gem "paperclip", "~> 3.0"
 gem "aws-sdk"
 gem 'google_places'
 gem 'validates_timeliness', '~> 3.0'
+gem 'sunspot_rails'
+gem 'progress_bar'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -55,6 +57,7 @@ group :test, :development do
   gem "rspec-rails", "~> 2.0"
   gem 'faker'
   gem 'populator'
+  gem 'sunspot_solr'
 end
 
 group :test do
@@ -64,6 +67,7 @@ group :test do
   gem "email_spec", ">= 1.4.0"
   gem 'shoulda'
   gem 'launchy'
+  gem "sunspot_test"
 end
 
 # To use ActiveModel has_secure_password

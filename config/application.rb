@@ -61,5 +61,7 @@ module Brandscopic
     config.assets.version = '1.0'
 
     config.assets.initialize_on_precompile = false
+
+    config.assets.precompile += %w[admin/active_admin.css admin/active_admin.js]
   end
 end

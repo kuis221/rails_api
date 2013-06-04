@@ -152,7 +152,7 @@ describe "Teams", :js => true do
 
 
       within visible_modal do
-        object_row(user).click_ajax_link('Add')
+        object_row(user).click_js_link('Add')
       end
 
       modal_footer.click_link 'Close'

@@ -37,6 +37,21 @@ class Team < ActiveRecord::Base
   scope :with_active_users, lambda{|companies| joins({:users => :company_users}).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
   scope :with_text, lambda{|text| where('teams.name ilike ? or teams.description ilike ? ', "%#{text}%", "%#{text}%") }
 
+
+  searchable do
+    text :name_txt do
+      name
+    end
+    text :description_txt do
+      description
+    end
+
+    boolean :active
+
+    string :name
+    integer :company_id
+  end
+
   def activate!
     update_attribute :active, true
   end

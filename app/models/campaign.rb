@@ -57,6 +57,22 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  searchable do
+    text :name_txt do
+      name
+    end
+
+    text :description_txt do
+      description
+    end
+
+
+    string :name
+    string :description
+    string :aasm_state
+    integer :company_id
+  end
+
   def first_event
     events.order('start_at').first
   end

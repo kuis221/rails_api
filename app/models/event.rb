@@ -25,13 +25,13 @@ class Event < ActiveRecord::Base
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
 
-  attr_accessor :place_reference
-  attr_accessor :brands_list
-
   # Events-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
   scoped_to_company
+
+  attr_accessor :place_reference
+  attr_accessor :brands_list
 
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :with_text, lambda{|text| where('epj.name ilike ? or ecj.name ilike ?', "%#{text}%", "%#{text}%").joins('LEFT JOIN "campaigns" "ecj" ON "ecj"."id" = "events"."campaign_id" LEFT JOIN "places" "epj" ON "epj"."id" = "events"."place_id"') }
@@ -55,6 +55,51 @@ class Event < ActiveRecord::Base
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address, to: :place, prefix: true, allow_nil: true
+
+
+  searchable do
+    boolean :active
+    time :start_at, :trie => true
+    time :end_at, :trie => true
+    string :status
+    string :start_time
+
+    integer :company_id
+
+    integer :campaign_id
+    string :campaign do
+      campaign_id.to_s + '||' + campaign_name if campaign_id
+    end
+    text :campaign_txt do
+      campaign_name
+    end
+    string :campaign_name
+
+    integer :place_id
+    string :place do
+      place_id.to_s + '||' + place_name if place_id
+    end
+    text :place_txt do
+      place_name
+    end
+    string :place_name
+
+    integer :user_ids, multiple: true do
+      users.map(&:id)
+    end
+
+    string :users, multiple: true, references: User do
+      users.map{|u| u.id.to_s + '||' + u.name}
+    end
+
+    string :brands, multiple: true, references: Brand do
+      brands.map{|b| b.id.to_s + '||' + b.name}
+    end
+
+    string :brand_ids, multiple: true, references: Brand do
+      brands.map(&:id)
+    end
+  end
 
   def activate!
     update_attribute :active, true
@@ -87,6 +132,10 @@ class Event < ActiveRecord::Base
 
   def brands_list
     brands.map(&:name).join ','
+  end
+
+  def status
+    self.active? ? 'Active' : 'Inactive'
   end
 
   private
