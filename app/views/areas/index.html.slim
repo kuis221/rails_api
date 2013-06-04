@@ -1,0 +1,40 @@
+#content-with-left-nav
+  #content-left-nav.pull-left
+    = render 'admin_navigation'
+
+  .row-fluid
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column data-spy="affix" data-offset-top="0"
+          .text-right
+            = link_to 'New Area', new_area_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+      table#areas-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th data-sort="name" Name
+            th data-sort="description" Description
+            th data-sort="status" Status
+            th
+        tbody
+
+javascript:
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      areasTable.tableScroller('reloadData');
+    }
+  });
+
+  var areasTable = $('table#areas-list').tableScroller({
+    'source': '#{areas_path(format: :json)}',
+    'filterBox': '#events-list-filters',
+    'fixedHeader': true,
+    'rowValues': function(t){
+      return [t.name, t.description, t.status]
+    },
+    'rowId': function(row){
+      return 'area_'+row.id;
+    },
+    'headerOffset': 91,
+  })

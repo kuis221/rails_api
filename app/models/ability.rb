@@ -19,6 +19,7 @@ class Ability
         can :manage, Campaign, :company_id => user.current_company.id
         can :manage, Role, :company_id => user.current_company.id
         can :manage, Team, :company_id => user.current_company.id
+        can :manage, Area, :company_id => user.current_company.id
         can :manage, Event, :company_id => user.current_company.id
         can :manage, BrandPortfolio, :company_id => user.current_company.id
         can :index, Brand

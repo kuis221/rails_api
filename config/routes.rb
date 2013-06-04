@@ -11,7 +11,6 @@ Brandscopic::Application.routes.draw do
 
   resources :activities
 
-
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
 
@@ -106,6 +105,13 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :brands, only: [:index]
+
+  resources :areas do
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
 
   root :to => 'dashboard#index'
 end
