@@ -35,8 +35,7 @@ module TeamMembersHelper
         @member_id = params[:member_id]
         member =  company_users.find(params[:member_id])
         unless resource.users.where(id: member.id).first
-          resource.users << member
-          Sunspot.index! [resource]
+          resource.update_attributes(user_ids: [member.id])
         end
       elsif params[:team_id]
         @team_id = params[:team_id]
