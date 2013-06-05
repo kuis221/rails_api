@@ -4,12 +4,14 @@ module ApplicationHelper
     content_tag :address do
       address = Array.new
       city_parts = []
-      address.push place.name if !place.types.include?('political')
+      address.push place.name unless place.name == place.city
       address.push place.street unless place.street.strip.empty? || place.name == place.street
       city_parts.push place.city if place.city
       city_parts.push place.state if place.state
       city_parts.push place.zipcode if place.zipcode
-      address.push city_parts.join(', ') unless city_parts.empty?
+      address.push city_parts.join(', ') unless city_parts.empty? || !place.city
+      address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
+
       address.compact.join(br).html_safe
     end
   end
