@@ -39,7 +39,7 @@ class BrandPortfoliosController < FilteredController
       {
         'name' => { :order => 'brand_portfolios.name' },
         'description' => { :order => 'brand_portfolios.description' },
-        'active' => { :order => 'brand_portfolios.active' }
+        'status' => { :order => 'brand_portfolios.active' }
       }
     end
 end

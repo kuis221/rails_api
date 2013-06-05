@@ -4,16 +4,18 @@ $.widget 'nmk.filterBox', {
 		includeCalendars: false,
 		includeSearchBox: true,
 		selectDefaultDate: false,
-		filters: []
+		filters: null
 	},
 
 	_create: () ->
 		@element.addClass('filter-box')
-		@form = $('<form action="#" method="get">').appendTo(@element).submit (e)->
-			e.preventDefault()
-			e.stopPropagation()
-			false
+		@form = $('<form action="#" method="get">')
+			.appendTo(@element).submit (e)->
+				e.preventDefault()
+				e.stopPropagation()
+				false
 		@form.data('serializedData', null)
+
 
 		if @options.includeSearchBox
 			@_addSearchBox()
@@ -21,39 +23,46 @@ $.widget 'nmk.filterBox', {
 		if @options.includeCalendars
 			@_addCalendars()
 
-		for filter in @options.filters
-			@addFilterSection.apply @, filter
+		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
+		if @options.filters
+			@setFilters(@options.filters)
+
+		@_parseHashQueryString()
+
+		@initialized = true
 
 	getFilters: () ->
 		@form.serializeArray()
 
-	describeFilters: () ->
-		description = @_describeDateRange()
-		description += @_describeSearch()
+	setFilters: (filters) ->
+		@formFilters.html('')
+		for filter in filters
+			if filter.items.length > 0
+				@addFilterSection(filter.label, filter.name, filter.items)
 
-	addFilterSection: (title, name, options) ->
+	addFilterSection: (title, name, items) ->
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('options', options).data('name', name).append($('<h3>').text(title), $list)
+		$filter = $('<div class="filter-wrapper">').data('items', items).data('name', name).append($('<h3>').text(title), $list)
 		i = 0
-		optionsCount = options.length
+		optionsCount = items.length
 		while i < 5 and i < optionsCount
-			option = options[i]
-			if option.total > 0
+			option = items[i]
+			if option.count > 0
 				$list.append(@_buildFilterOption(option, name).change( (e) => @_filtersChanged() ))
-				i++
+			i++
 		if optionsCount > 5
 			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
 				@_showFilterOptions(filterWrapper)
 				false
 			)
-		@form.append($filter)
+		@formFilters.append($filter)
 
 	_showFilterOptions: (filterWrapper) ->
 		name = filterWrapper.data('name')
 		items = []
-		for option in filterWrapper.data('options')
-			if option.total > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
+		for option in filterWrapper.data('items')
+			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
 				items.push @_buildFilterOption(option, name).bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
@@ -79,37 +88,71 @@ $.widget 'nmk.filterBox', {
 		list.find("input:checkbox").uniform()
 		bootbox.modalClasses = 'modal-med'
 		filterMoreOptions = bootbox.dialog(container,[{
-			    "label" : "Close",
-			    "class" : "btn-primary",
-			    "callback": () ->
-			        filterMoreOptions.modal('hide')
+				"label" : "Close",
+				"class" : "btn-primary",
+				"callback": () ->
+					filterMoreOptions.modal('hide')
 			}],{'onEscape': true})
 
 	_buildFilterOption: (option, name) ->
-		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{name}[]"}), option.name))
+		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{name}[]"}), option.label))
 
 	_addSearchBox: () ->
 		previousValue = '';
-		@searchInput = $('<input type="text" name="with_text" class="search-query no-validate" placeholder="Search" id="search-box-filter">').appendTo @form
-		@searchInput.keyup =>
-			if @searchTimeout?
-				clearTimeout @searchTimeout
+		@searchInput = $('<input type="text" name="with_text" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
+			.appendTo(@form)
+			.on 'blur', () =>
+				if @searchHidden.val()
+					@searchInput.hide()
+					@searchLabel.show()
+		@searchInput.bucket_complete {
+			source: @_getAutocompleteResults,
+			select: (event, ui) =>
+				@_autoCompleteItemSelected(ui.item)
+			minLength: 2
+		}
+		@searchHiddenLabel = $('<input type="hidden" name="ql">').appendTo(@form).val('')
+		@searchHidden = $('<input type="hidden" name="q">').appendTo(@form).val('')
+		@searchLabel = $('<div class="search-filter-label">')
+			.append($('<span class="term">'))
+			.append($('<span class="close">').append($('<i class="icon-remove">').click => @_cleanSearchFilter()))
+			.css('width', @searchInput.width()+'px').appendTo(@form).hide()
+			.click =>
+				@searchLabel.hide()
+				@searchInput.show()
+				@searchInput.focus()
 
-			@searchTimeout = setTimeout =>
-				if previousValue isnt @searchInput.val()
-					previousValue = @searchInput.val()
-					@_filtersChanged()
-			, 300
+	_getAutocompleteResults: (request, response) ->
+		params = {q: request.term}
+		$.get "/events/autocomplete", params, (data) ->
+			response data
+		, "json"
+
+	_autoCompleteItemSelected: (item) ->
+		@searchHidden.val "#{item.type},#{item.value}"
+		@searchHiddenLabel.val item.label
+		@searchInput.hide().val ''
+		@searchLabel.show().find('span.term').text item.label
+		@_filtersChanged()
+		false
+
+	_cleanSearchFilter: () ->
+		@searchHidden.val ""
+		@searchHiddenLabel.val ""
+		@searchInput.show().val ""
+		@searchLabel.hide().find('span.term').text ''
+		@_filtersChanged()
+		false
 
 	_addCalendars: () ->
-		@startDateInput = $('<input type="hidden" name="by_period[start_date]" class="no-validate">').appendTo @form
-		@endDateInput = $('<input type="hidden" name="by_period[end_date]" class="no-validate">').appendTo @form
+		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
+		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
 		container = $('<div class="dates-range-filter">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
 			monthsToShow: 2,
 			changeMonth: false,
-			defaultDate: 0,
+			defaultDate: new Date(),
 			selectDefaultDate: @options.selectDefaultDate,
 			onSelect: (dates) =>
 				start_date = @_formatDate(dates[0])
@@ -120,43 +163,10 @@ $.widget 'nmk.filterBox', {
 					end_date = @_formatDate(dates[1])
 					@endDateInput.val end_date
 
-				@_filtersChanged()
+				if @initialized?
+					@_filtersChanged()
 		}
 
-	_describeDateRange: () ->
-		description = ''
-		startDate = @startDateInput.val()
-		endDate = @endDateInput.val()
-		if startDate
-			currentDate = new Date()
-			today = new Date(currentDate.getFullYear(), currentDate.getMonth() , currentDate.getDate(), 0, 0, 0);
-			yesterday = new Date(today.getFullYear(), today.getMonth() , today.getDate()-1, 0, 0, 0);
-			tomorrow = new Date(today.getFullYear(), today.getMonth() , today.getDate()+1, 0, 0, 0);
-			startDateLabel = if startDate == @_formatDate(today) then 'today' else if startDate == @_formatDate(yesterday) then 'yesterday' else if startDate == @_formatDate(tomorrow) then 'tomorrow' else startDate
-			endDateLabel = if endDate == @_formatDate(today) then 'today' else if endDate == @_formatDate(yesterday) then 'yesterday' else if endDate == @_formatDate(tomorrow) then 'tomorrow' else endDate
-
-			if startDate and endDate and (startDate != endDate)
-				if @_parseDate(endDate) < today
-					description = "took place between #{startDateLabel} and #{endDateLabel}"
-				else
-					description = "taking place between #{startDateLabel} and #{endDateLabel}"
-			else if startDate
-				if startDate == startDateLabel
-					startDateLabel = "at #{startDateLabel}"
-				if startDate == @_formatDate(today)
-					description = "taking place today"
-				else if @_parseDate(startDate) > today
-					description = "taking place #{startDateLabel}"
-				else
-					description = "took place #{startDateLabel}"
-
-		description
-
-	_describeSearch: () ->
-		description = ''
-		if @searchInput.val()
-			description = " matching \"#{@searchInput.val()}\""
-		description
 
 	_formatDate: (date) ->
 		"#{date.getMonth() + 1}/#{date.getDate()}/#{date.getFullYear()}"
@@ -168,5 +178,47 @@ $.widget 'nmk.filterBox', {
 	_filtersChanged: () ->
 		if @options.onChange and @form.data('serializedData') != @form.serialize()
 			@form.data('serializedData', @form.serialize())
+			document.location.hash = @form.data('serializedData')
 			@options.onChange(@)
+
+	_parseHashQueryString:  () ->
+		query = window.location.hash.replace(/^#/,"")
+		vars = query.split('&')
+		dates = [new Date()]
+		for qvar in vars
+			pair = qvar.split('=')
+			name = decodeURIComponent(pair[0])
+			value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
+			if @options.includeCalendars and value and name in ['start_date', 'end_date']
+				date = @_parseDate(value)
+				if name is 'start_date' and value
+					dates[0] = date
+				else
+					dates[1] = date
+			else
+				name = name.replace(/([\[\]])/g,'\\$1')
+				if field = @form.find("[name=#{name}]")
+					if field.attr('type') == 'checkbox'
+						console.log('checking checkboxes not implemented yet!!')
+					else
+						field.val(value)
+		@form.find('.dates-range-filter').datepick('setDate', dates)
+		if @searchHidden.val()
+			@searchInput.hide()
+			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
+}
+
+
+
+$.widget "custom.bucket_complete", $.ui.autocomplete, {
+	_renderMenu: ( ul, results ) ->
+		for bucket in results
+			if bucket.value.length > 0
+				ul.append( "<li class='ui-autocomplete-category'>" + bucket.label + "</li>" );
+				for item in bucket.value
+					@_renderItemData ul, item
+	_renderItem: ( ul, item ) ->
+		$( "<li>", {class: item.type})
+			.append( $( "<a>" ).text( item.label ) )
+			.appendTo( ul )
 }

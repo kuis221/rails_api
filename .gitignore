@@ -12,9 +12,12 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/log/*.lck
 /tmp
 .rvmrc
 .vagrant
 Vagrantfile
 config/database.yml
 myrspec
+solr/data/
+solr/pids/

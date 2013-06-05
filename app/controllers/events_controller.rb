@@ -1,5 +1,5 @@
 class EventsController < FilteredController
-  load_and_authorize_resource except: :index
+  load_and_authorize_resource except: [:index, :autocomplete]
 
   # This helper provide the methods to add/remove team members to the event
   include TeamMembersHelper
@@ -9,14 +9,125 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
-  # Scopes for the filter box
-  has_scope :by_period, :using => [:start_date, :end_date]
-  has_scope :with_text
-  has_scope :by_campaigns, :type => :array
+  # Search the events
+  before_filter :search_events, only: :index
 
   helper_method :filters
 
+  def autocomplete
+    buckets = []
+
+    # Search compaigns
+    search = Sunspot.search(Campaign) do
+      keywords(params[:q]) do
+        fields(:name_txt)
+      end
+      with(:company_id, current_company.id)
+    end
+    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+
+    # Search brands
+    search = Sunspot.search(Brand) do
+      keywords(params[:q]) do
+        fields(:name_txt)
+      end
+    end
+    buckets.push(label: "Brands", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search places
+    search = Sunspot.search(Place) do
+      keywords(params[:q]) do
+        fields(:name_txt)
+      end
+    end
+    buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search users
+    search = Sunspot.search(User, Team) do
+      keywords(params[:q]) do
+        fields(:name_txt)
+      end
+      any_of do
+        with :active_company_ids, current_company.id # For the users
+        with :company_id, current_company.id  # For the teams
+      end
+    end
+    buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+
+    render :json => buckets.flatten
+  end
+
   protected
+
+    def search_events
+      # Search events
+      search = Sunspot.search(Event) do
+        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
+        with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+        if params[:start_date].present? and params[:end_date].present?
+          with :start_at, Timeliness.parse(params[:start_date])..Timeliness.parse(params[:end_date])
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date])
+          with :start_at, d.beginning_of_day..d.end_of_day
+        end
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'campaign', 'place'
+            with "#{attribute}_id", value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+        with(:company_id, current_company.id)
+
+        order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1)
+      end
+      @events = search.results
+      @collection_count = search.total
+
+
+      # Get the facets without all the filters
+      if params[:facets] == 'true'
+        search = Sunspot.search(Event) do
+          if params[:start_date].present? and params[:end_date].present?
+            d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+            d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+            with :start_at, d1..d2
+          elsif params[:start_date].present?
+            d = Timeliness.parse(params[:start_date], zone: :current)
+            with :start_at, d.beginning_of_day..d.end_of_day
+          end
+          if params.has_key?(:q) and params[:q].present?
+            (attribute, value) = params[:q].split(',')
+            case attribute
+            when 'campaign', 'place'
+              with "#{attribute}_id", value
+            else
+              with "#{attribute}_ids", value
+            end
+          end
+          with(:company_id, current_company.id)
+          facet :campaign
+          facet :place
+          facet :users
+          facet :brands
+          facet :status
+
+          order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
+          paginate :page => (params[:page] || 1)
+        end
+        @facets = []
+        @facets.push(label: "Places", name: 'place', items: search.facet(:place).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
+        @facets.push(label: "Campaigns", name: 'campaign', items: search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
+        @facets.push(label: "Brands", name: 'brand', items: search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
+        @facets.push(label: "People", name: 'user', items: search.facet(:users).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
+      end
+    end
 
     def begin_of_association_chain
       current_company
@@ -52,23 +163,4 @@ class EventsController < FilteredController
     def controller_filters(c)
       c.includes([:campaign, :place])
     end
-
-    def filters
-      {
-        :campaigns => company_campaigns.select('campaigns.id, campaigns.name, count(events.id) events_count').joins(:events).order('events_count DESC').group('campaigns.id').map{|c| {id: c.id, name: c.name, total: c.events_count}}
-      }
-    end
-
-    def sort_options
-      {
-        'start_at' => { :order => 'events.start_at' },
-        'start_time' => { :order => 'to_char(events.start_at, \'HH24:MI:SS\')' },
-        'location' => { :order => 'places.name' },
-        'campaign' => { :order => 'campaigns.name' },
-        'status' => { :order => 'events.active' }
-      }
-    end
-
-
-
 end

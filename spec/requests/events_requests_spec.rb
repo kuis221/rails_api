@@ -14,12 +14,13 @@ describe "Events", :js => true do
     Warden.test_reset!
   end
 
-  describe "/events" do
+  describe "/events", js: true, search: true  do
     it "GET index should display a table with the events" do
       events = [
         FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
         FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: false, place: FactoryGirl.create(:place, name: 'Place 2'))
       ]
+      Sunspot.commit
       visit events_path
 
       within("table#events-list") do
@@ -43,6 +44,7 @@ describe "Events", :js => true do
           find('td:nth-child(6)').should have_content('Edit')
           find('td:nth-child(6)').should have_content('Activate')
         end
+
       end
 
       assert_table_sorting ("table#events-list")
@@ -66,7 +68,7 @@ describe "Events", :js => true do
       within object_row(user) do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
-        click_ajax_link('Add')
+        click_js_link('Add')
       end
 
       # Test the user was added to the list of event members and it can be removed

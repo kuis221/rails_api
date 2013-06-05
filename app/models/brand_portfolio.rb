@@ -26,6 +26,20 @@ class BrandPortfolio < ActiveRecord::Base
 
   has_and_belongs_to_many :brands
 
+  searchable do
+    text :name_txt do
+      name
+    end
+    text :description_txt do
+      description
+    end
+
+    boolean :active
+
+    string :name
+    integer :company_id
+  end
+
   def activate!
     update_attribute :active, true
   end

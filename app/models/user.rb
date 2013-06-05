@@ -101,6 +101,28 @@ class User < ActiveRecord::Base
   scope :by_campaigns, lambda{|campaigns| joins(:campaigns_users).where(campaigns_users: {campaign_id: campaigns}) }
   scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
+  searchable do
+    text :name_txt do
+      full_name
+    end
+    text :email_txt do
+      email
+    end
+    string :first_name
+    string :last_name
+    string :email
+
+    integer :active_company_ids, :multiple => true, :references => Company do
+      company_users.where(active: true).map(&:company_id)
+    end
+
+    integer :inactive_company_ids, :multiple => true, :references => Company do
+      company_users.where(active: false).map(&:company_id)
+    end
+
+    integer :team_ids, :multiple => true, :references => Team
+  end
+
   attr_accessor :inviting_user
 
   def active?
@@ -122,6 +144,7 @@ class User < ActiveRecord::Base
   def full_name
     "#{first_name} #{last_name}".strip
   end
+  alias_method :name, :full_name
 
   def country_name
     load_country.name rescue nil unless load_country.nil?

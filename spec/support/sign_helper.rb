@@ -6,9 +6,10 @@ module SignHelper
     if user.is_a?(AdminUser)
       login_as user, scope: :admin_user
     else
-      user.confirmed_at = Time.now
+      user.invitation_accepted_at = Time.now
       user.save
       login_as user, scope: :user, :run_callbacks => false
+      User.current = user
     end
   end
 end

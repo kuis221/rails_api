@@ -27,6 +27,7 @@ $.widget 'nmk.tableScroller', {
 
 		@sortBy @element.find('thead th:first-child')[0], false
 
+		@oldParams = []
 
 		@element.infiniteScrollHelper {
 			loadMore: (page) =>
@@ -38,6 +39,9 @@ $.widget 'nmk.tableScroller', {
 			doneLoading: =>
 				@doneLoading
 		}
+
+		#$(window).on 'hashchange', () =>
+
 
 		if @options.fixedHeader
 			@_buildFixedHeader()
@@ -76,9 +80,17 @@ $.widget 'nmk.tableScroller', {
 
 
 	buildParams: (params) ->
+		facets = @oldParams.length == 0 ? true : false
 		if @options.filterBox? and $(@options.filterBox).length
 			data = $(@options.filterBox).filterBox('getFilters');
-			params.push(value) for value in data
+			for param in data
+				if param.name in ['start_date', 'end_date', 'q']
+					for oldParam in @oldParams
+						if oldParam.name == param.name and oldParam.value != param.value
+							facets = true
+				params.push(param)
+		params.push({'name': 'facets', 'value': facets })
+		@oldParams = params
 		params
 
 	_synchHeaderWidths: ->
@@ -132,7 +144,11 @@ $.widget 'nmk.tableScroller', {
 		@
 
 	_loadPage: (page) ->
-		params = [{'name': 'page', 'value': page}, {'name':'sorting','value':@sorting},{'name':'sorting_dir','value':@sorting_dir}]
+		params = [
+			{'name': 'page', 'value': page},
+			{'name':'sorting','value':@sorting},
+			{'name':'sorting_dir','value':@sorting_dir}
+		]
 		params = @buildParams(params)
 
 		if @jqxhr
@@ -141,7 +157,10 @@ $.widget 'nmk.tableScroller', {
 		@doneLoading = false
 		@jqxhr = $.getJSON @options.source, params,  (json) =>
 			if @options.onItemsLoad
-				@options.onItemsLoad(json)
+				@options.onItemsLoad(json, page)
+
+			if @options.filterBox && json.facets
+				$(@options.filterBox).filterBox('setFilters', json.facets)
 
 			@totalItems = json.total
 			@loadedItems += json.items.length
