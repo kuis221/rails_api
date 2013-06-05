@@ -41,6 +41,9 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
 
+  has_many :teamings, :as => :teamable
+  has_many :teams, :through => :teamings
+
   scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }
 
   aasm do

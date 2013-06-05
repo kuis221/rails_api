@@ -18,6 +18,11 @@ class BrandPortfoliosController < FilteredController
     end
   end
 
+  def delete_brand
+    @brand = Brand.find(params[:brand_id])
+    resource.brands.delete(@brand)
+  end
+
   private
     def collection_to_json
       collection.map{|portfolio| {

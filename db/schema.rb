@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130604162831) do
+ActiveRecord::Schema.define(:version => 20130605002901) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -179,7 +179,7 @@ ActiveRecord::Schema.define(:version => 20130604162831) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -251,6 +251,16 @@ ActiveRecord::Schema.define(:version => 20130604162831) do
 
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
   add_index "tasks", ["user_id"], :name => "index_tasks_on_user_id"
+
+  create_table "teamings", :force => true do |t|
+    t.integer "team_id"
+    t.integer "teamable_id"
+    t.string  "teamable_type"
+  end
+
+  add_index "teamings", ["team_id", "teamable_id", "teamable_type"], :name => "index_teamings_on_team_id_and_teamable_id_and_teamable_type", :unique => true
+  add_index "teamings", ["team_id"], :name => "index_teamings_on_team_id"
+  add_index "teamings", ["teamable_id", "teamable_type"], :name => "index_teamings_on_teamable_id_and_teamable_type"
 
   create_table "teams", :force => true do |t|
     t.string   "name"

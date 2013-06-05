@@ -23,7 +23,7 @@ class BrandsController < FilteredController
         :id => brand.id,
         :name => brand.name,
         :links => {
-            delete:'#'
+            delete: (parent? ? delete_brand_brand_portfolio_url(parent, brand) : nil)
         }
       }}
     end

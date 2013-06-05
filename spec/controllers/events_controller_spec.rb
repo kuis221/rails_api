@@ -87,7 +87,7 @@ describe EventsController do
       end
     end
 
-    describe "DELETE 'delete_member'" do
+    describe "DELETE 'delete_member' with a user" do
       let(:event){ FactoryGirl.create(:event) }
       it "should remove the team member from the event" do
         event.users << @user
@@ -112,6 +112,51 @@ describe EventsController do
 
       it "should not raise error if the user doesn't belongs to the event" do
         delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+        event.reload
+        response.should be_success
+        assigns(:event).should == event
+      end
+    end
+
+    describe "DELETE 'delete_member' with a team" do
+      let(:event){ FactoryGirl.create(:event) }
+      let(:team){ FactoryGirl.create(:team) }
+      it "should remove the team from the event" do
+        event.teams << team
+        lambda{
+          delete 'delete_member', id: event.id, team_id: team.id, format: :js
+          response.should be_success
+          assigns(:event).should == event
+          event.reload
+        }.should change(event.teams, :count).by(-1)
+      end
+
+      it "should unassign any tasks assigned the team users" do
+        team.users << @user
+        event.teams << team
+        user_tasks = FactoryGirl.create_list(:task, 3, event: event, user: @user)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, user_id: @user.id+1)
+        delete 'delete_member', id: event.id, team_id: team.id, format: :js
+
+        user_tasks.each{|t| t.reload.user_id.should be_nil }
+        other_tasks.each{|t| t.reload.user_id.should_not be_nil }
+
+      end
+
+      it "should not unassign any tasks assigned the team users if the user is directly assigned to the event" do
+        team.users << @user
+        event.users << @user
+        event.teams << team
+        user_tasks = FactoryGirl.create_list(:task, 3, event: event, user: @user)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, user_id: @user.id+1)
+        delete 'delete_member', id: event.id, team_id: team.id, format: :js
+
+        user_tasks.each{|t| t.reload.user_id.should == @user.id }
+        other_tasks.each{|t| t.reload.user_id.should_not be_nil }
+      end
+
+      it "should not raise error if the team doesn't belongs to the event" do
+        delete 'delete_member', id: event.id, team_id: team.id, format: :js
         event.reload
         response.should be_success
         assigns(:event).should == event
@@ -147,8 +192,6 @@ describe EventsController do
 
       it 'should not load teams without assignable users' do
         team = FactoryGirl.create(:team, company_id: @company.id)
-        team.users << @user
-        event.users << @user
         get 'new_member', id: event.id, format: :js
         assigns(:teams).should == [team]
         assigns(:assignable_teams).should == []
@@ -158,41 +201,47 @@ describe EventsController do
 
     describe "POST 'add_members" do
       let(:event){ FactoryGirl.create(:event) }
+
       it 'should assign the user to the event' do
         lambda {
           post 'add_members', id: event.id, member_id: @user.to_param, format: :js
           response.should be_success
           assigns(:event).should == event
-          assigns(:members).should == [@user]
           event.reload
         }.should change(event.users, :count).by(1)
+        event.users.should == [@user]
       end
 
-      it 'should assign all the team\'s users to the event' do
-        expected_users = FactoryGirl.create_list(:user, 3, company_id: @company.id)
+      it 'should assign all the team to the event' do
         team = FactoryGirl.create(:team, company_id: @company.id)
         lambda {
-          expected_users.each{|u| team.users  << u }
           post 'add_members', id: event.id, team_id: team.to_param, format: :js
           response.should be_success
           assigns(:event).should == event
-          assigns(:members).should =~ expected_users
           event.reload
-        }.should change(event.users, :count).by(3)
-        event.users.should =~ expected_users
+        }.should change(event.teams, :count).by(1)
+        event.teams.should == [team]
       end
 
       it 'should not assign users to the event if they are already part of the event' do
-        team = FactoryGirl.create(:team, company_id: @company.id)
-        team.users << @user
         event.users << @user
+        lambda {
+          post 'add_members', id: event.id, member_id: @user.to_param, format: :js
+          response.should be_success
+          assigns(:event).should == event
+          event.reload
+        }.should_not change(event.users, :count)
+      end
+
+      it 'should not assign teams to the event if they are already part of the event' do
+        team = FactoryGirl.create(:team, company_id: @company.id)
+        event.teams << team
         lambda {
           post 'add_members', id: event.id, team_id: team.to_param, format: :js
           response.should be_success
           assigns(:event).should == event
-          assigns(:members).should =~ [@user]
           event.reload
-        }.should_not change(event.users, :count)
+        }.should_not change(event.teams, :count)
       end
     end
 

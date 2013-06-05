@@ -127,6 +127,27 @@ describe CampaignsController do
     end
   end
 
+  describe "DELETE 'delete_member' with a team" do
+    let(:campaign){ FactoryGirl.create(:campaign) }
+    let(:team){ FactoryGirl.create(:team) }
+    it "should remove the team from the campaign" do
+      campaign.teams << team
+      lambda{
+        delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        campaign.reload
+      }.should change(campaign.teams, :count).by(-1)
+    end
+
+    it "should not raise error if the team doesn't belongs to the campaign" do
+      delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
+      campaign.reload
+      response.should be_success
+      assigns(:campaign).should == campaign
+    end
+  end
+
   describe "GET 'new_member" do
     let(:campaign){ FactoryGirl.create(:campaign) }
     it 'should load all the company\'s users into @users' do
@@ -156,7 +177,6 @@ describe CampaignsController do
 
     it 'should not load teams without assignable users' do
       team = FactoryGirl.create(:team, company_id: @company.id)
-      team.users << @user
       campaign.users << @user
       get 'new_member', id: campaign.id, format: :js
       assigns(:teams).should == [team]
@@ -173,36 +193,42 @@ describe CampaignsController do
         post 'add_members', id: campaign.id, member_id: @user.to_param, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
-        assigns(:members).should == [@user]
         campaign.reload
       }.should change(campaign.users, :count).by(1)
+      campaign.users.should == [@user]
     end
 
     it 'should assign all the team\'s users to the campaign' do
-      expected_users = FactoryGirl.create_list(:user, 3, company_id: @company.id)
       team = FactoryGirl.create(:team, company_id: @company.id)
       lambda {
-        expected_users.each{|u| team.users  << u }
         post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
-        assigns(:members).should =~ expected_users
+        assigns(:team_id).should == team.id.to_s
         campaign.reload
-      }.should change(campaign.users, :count).by(3)
-      campaign.users.should =~ expected_users
+      }.should change(campaign.teams, :count).by(1)
+      campaign.teams.should =~ [team]
     end
 
     it 'should not assign users to the campaign if they are already part of the campaign' do
-      team = FactoryGirl.create(:team, company_id: @company.id)
-      team.users << @user
       campaign.users << @user
+      lambda {
+        post 'add_members', id: campaign.id, member_id: @user.to_param, format: :js
+        response.should be_success
+        assigns(:campaign).should == campaign
+        campaign.reload
+      }.should_not change(campaign.users, :count)
+    end
+
+    it 'should not assign teams to the campaign if they are already part of the campaign' do
+      team = FactoryGirl.create(:team, company_id: @company.id)
+      campaign.teams << team
       lambda {
         post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
-        assigns(:members).should =~ [@user]
         campaign.reload
-      }.should_not change(campaign.users, :count)
+      }.should_not change(campaign.teams, :count)
     end
   end
 

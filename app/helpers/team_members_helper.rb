@@ -1,38 +1,47 @@
 module TeamMembersHelper
   module InstanceMethods
 
+
     def delete_member
       if member
-        user_id = member.id
+        user_id = member
         if resource.users.delete(member)
-          if resource.is_a?(Event)
-            Task.scoped_by_event_id(resource).scoped_by_user_id(user_id).update_all(user_id: nil)
-          end
+          users = user_id
+        end
+      elsif team
+        team_users = team.user_ids
+        if resource.teams.delete(team)
+          assigned_users = resource.user_ids
+          users = team_users - assigned_users
         end
       end
+
+      if resource.is_a?(Event)
+        Task.scoped_by_event_id(resource).scoped_by_user_id(users).update_all(user_id: nil)
+      end
+
     end
 
     def new_member
       @teams = company_teams
-      @assignable_teams = teams_with_assignable_users
       @roles = company_roles
       @users = company_users
       @users = @users.where(['users.id not in (?)', resource.users]) unless resource.users.empty?
     end
 
     def add_members
-      @members = []
-      @team_id = nil
+      @team_id = @member_id = nil
       if params[:member_id]
-        @members = [company_users.find(params[:member_id])]
-      elsif params[:team_id]
-        @team_id = params[:team_id]
-        @members = company_teams.find(params[:team_id]).users.active.all
-      end
-
-      @members.each do |member|
+        @member_id = params[:member_id]
+        member =  company_users.find(params[:member_id])
         unless resource.users.where(id: member.id).first
           resource.users << member
+        end
+      elsif params[:team_id]
+        @team_id = params[:team_id]
+        unless resource.teams.where(id: @team_id).first
+          resource.teamings.build({team: company_teams.find(@team_id)}, without_protection: true)
+          resource.save
         end
       end
     end
@@ -41,6 +50,14 @@ module TeamMembersHelper
       def member
         begin
           @member = resource.users.find(params[:member_id])
+        rescue ActiveRecord::RecordNotFound
+          nil
+        end
+      end
+
+      def team
+        begin
+          @team = resource.teams.find(params[:team_id]) if resource.respond_to?(:teams)
         rescue ActiveRecord::RecordNotFound
           nil
         end
@@ -56,9 +73,9 @@ module TeamMembersHelper
         @company_roles ||= current_company.roles.active.order('roles.name ASC')
       end
 
-      def teams_with_assignable_users
-        @teams_with_assignable_users ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do|team|
-          resource.users.empty? or team.users.active.where(['users.id not in (?)', resource.users]).count > 0
+      def assignable_teams
+        @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
+          !resource.team_ids.include?(team.id)
         end
       end
   end

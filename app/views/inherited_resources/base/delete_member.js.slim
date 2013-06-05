@@ -1,5 +1,10 @@
 - if @member
   |
-    $("##{resource.class.name.downcase}-member-#{@member.id}").remove()
+    $("##{resource.class.name.underscore}-member-#{@member.id}").remove()
+    $(document).trigger('tasks:change');
+    $(document).trigger('member:delete');
+- if @team
+  |
+    $("##{resource.class.name.underscore}-team-#{@team.id}").remove()
     $(document).trigger('tasks:change');
     $(document).trigger('member:delete');

@@ -181,9 +181,9 @@ describe TeamsController do
         post 'add_members', id: team.id, member_id: @user.to_param, format: :js
         response.should be_success
         assigns(:team).should == team
-        assigns(:members).should == [@user]
         team.reload
       }.should change(team.users, :count).by(1)
+      team.users.should == [@user]
     end
 
     it 'should not assign users to the team if they are already part of the team' do
@@ -193,7 +193,6 @@ describe TeamsController do
         post 'add_members', id: team.id, member_id: @user.to_param, format: :js
         response.should be_success
         assigns(:team).should == team
-        assigns(:members).should =~ [@user]
         team.reload
       }.should_not change(team.users, :count)
     end

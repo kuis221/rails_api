@@ -61,7 +61,7 @@
             th Description
             th
         tbody
-          - @assignable_teams.each do |team|
+          - assignable_teams.each do |team|
             tr id = "team-#{team.id}"
               td= team.name
               td= team.users.active.count

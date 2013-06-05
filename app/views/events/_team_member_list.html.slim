@@ -5,3 +5,14 @@
       br
       span.muted= team_member.email
     = link_to(content_tag(:i,'', class: 'icon-remove'),  delete_member_event_path(resource, member_id: team_member.to_param), confirm: "Any tasks that are assigned to #{team_member.full_name} must be reassigned.  Would you like to remove #{team_member.full_name} from the event team?", class: 'remove-member-btn', remote: true, method: :delete)
+
+- resource.teams.each do |team|
+  div.team-member.clearfix id = "event-team-#{team.id}"
+    .pull-left
+      = team.name
+      - team.users.active.each do |team_member|
+        p
+          span.muted== team_member.full_name
+          br
+          span.muted= team_member.email
+    = link_to(content_tag(:i,'', class: 'icon-remove'),  delete_team_event_path(resource, team_id: team.to_param), confirm: "Any tasks that are assigned to any user in #{team.name} must be reassigned.  Would you like to remove #{team.name} from the event team?", class: 'remove-member-btn', remote: true, method: :delete)

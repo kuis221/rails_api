@@ -22,6 +22,9 @@ class Event < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :tasks, dependent: :destroy
   has_many :documents, :as => :documentable
+  has_many :teamable, :as => :documentable
+  has_many :teamings, :as => :teamable
+  has_many :teams, :through => :teamings
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
 
@@ -90,6 +93,14 @@ class Event < ActiveRecord::Base
 
     string :users, multiple: true, references: User do
       users.map{|u| u.id.to_s + '||' + u.name}
+    end
+
+    integer :team_ids, multiple: true do
+      teams.map(&:id)
+    end
+
+    string :teams, multiple: true, references: Team do
+      teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
     string :brands, multiple: true, references: Brand do

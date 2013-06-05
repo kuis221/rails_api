@@ -4,6 +4,7 @@ describe "Teams", :js => true do
   before do
     @user = login
     sign_in @user
+    @company = @user.companies.first
   end
 
   after do
@@ -17,8 +18,8 @@ describe "Teams", :js => true do
         FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: false)
       ]
       # Create a few users for each team
-      teams[0].users << FactoryGirl.create_list(:user, 3)
-      teams[1].users << FactoryGirl.create_list(:user, 2)
+      teams[0].users << FactoryGirl.create_list(:user, 3, company_id: @company.id)
+      teams[1].users << FactoryGirl.create_list(:user, 2, company_id: @company.id)
       visit teams_path
 
       within("table#teams-list") do
