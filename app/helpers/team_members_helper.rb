@@ -36,6 +36,7 @@ module TeamMembersHelper
         member =  company_users.find(params[:member_id])
         unless resource.users.where(id: member.id).first
           resource.users << member
+          Sunspot.index! [resource]
         end
       elsif params[:team_id]
         @team_id = params[:team_id]
