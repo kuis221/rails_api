@@ -2,7 +2,7 @@ class TeamsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
   # This helper provide the methods to add/remove team members to the event
-  include TeamMembersHelper
+  extend TeamMembersHelper
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper

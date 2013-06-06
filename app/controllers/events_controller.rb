@@ -2,7 +2,7 @@ class EventsController < FilteredController
   load_and_authorize_resource except: [:index, :autocomplete]
 
   # This helper provide the methods to add/remove team members to the event
-  include TeamMembersHelper
+  extend TeamMembersHelper
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper

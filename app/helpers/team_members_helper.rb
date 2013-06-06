@@ -1,4 +1,6 @@
 module TeamMembersHelper
+
+
   module InstanceMethods
 
 
@@ -80,7 +82,8 @@ module TeamMembersHelper
       end
   end
 
-  def self.included(receiver)
+  def self.extended(receiver)
     receiver.send(:include,  InstanceMethods)
+    receiver.helper_method :assignable_teams
   end
 end

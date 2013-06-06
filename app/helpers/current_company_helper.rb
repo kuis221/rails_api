@@ -1,7 +1,7 @@
 module CurrentCompanyHelper
 
-  def company_user
-    current_company.roles
+  def company_users
+    current_company.users
   end
 
   def company_roles
