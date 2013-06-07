@@ -2,7 +2,7 @@ class EventsController < FilteredController
   load_and_authorize_resource except: [:index, :autocomplete]
 
   # This helper provide the methods to add/remove team members to the event
-  include TeamMembersHelper
+  extend TeamMembersHelper
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -60,13 +60,14 @@ class EventsController < FilteredController
   end
 
   protected
-
     def search_events
       # Search events
       search = Sunspot.search(Event) do
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
         with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+        with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         if params[:start_date].present? and params[:end_date].present?
           with :start_at, Timeliness.parse(params[:start_date])..Timeliness.parse(params[:end_date])
         elsif params[:start_date].present?
@@ -115,6 +116,7 @@ class EventsController < FilteredController
           facet :campaign
           facet :place
           facet :users
+          facet :teams
           facet :brands
           facet :status
 
@@ -122,10 +124,13 @@ class EventsController < FilteredController
           paginate :page => (params[:page] || 1)
         end
         @facets = []
-        @facets.push(label: "Places", name: 'place', items: search.facet(:place).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
-        @facets.push(label: "Campaigns", name: 'campaign', items: search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
-        @facets.push(label: "Brands", name: 'brand', items: search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
-        @facets.push(label: "People", name: 'user', items: search.facet(:users).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count} })
+        @facets.push(label: "Places", items: search.facet(:place).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :place, count: x.count} })
+        @facets.push(label: "Campaigns", items: search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :campaign, count: x.count} })
+        @facets.push(label: "Brands", items: search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :brand, count: x.count} })
+        users = search.facet(:users).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }
+        teams = search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :team} }
+        people = (users + teams).sort_by { |k| k[:count] }
+        @facets.push(label: "People", items: people )
       end
     end
 

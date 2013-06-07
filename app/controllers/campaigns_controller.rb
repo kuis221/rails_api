@@ -4,7 +4,7 @@ class CampaignsController < FilteredController
   include DeactivableHelper
 
   # This helper provide the methods to add/remove campaigns members to the event
-  include TeamMembersHelper
+  extend TeamMembersHelper
 
   load_and_authorize_resource except: :index
 

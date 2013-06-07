@@ -1,4 +1,6 @@
 module TeamMembersHelper
+
+
   module InstanceMethods
 
 
@@ -35,7 +37,7 @@ module TeamMembersHelper
         @member_id = params[:member_id]
         member =  company_users.find(params[:member_id])
         unless resource.users.where(id: member.id).first
-          resource.users << member
+          resource.update_attributes(user_ids: [member.id])
         end
       elsif params[:team_id]
         @team_id = params[:team_id]
@@ -80,7 +82,8 @@ module TeamMembersHelper
       end
   end
 
-  def self.included(receiver)
+  def self.extended(receiver)
     receiver.send(:include,  InstanceMethods)
+    receiver.helper_method :assignable_teams
   end
 end

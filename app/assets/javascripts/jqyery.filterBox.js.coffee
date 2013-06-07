@@ -48,7 +48,7 @@ $.widget 'nmk.filterBox', {
 		while i < 5 and i < optionsCount
 			option = items[i]
 			if option.count > 0
-				$list.append(@_buildFilterOption(option, name).change( (e) => @_filtersChanged() ))
+				$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
 			i++
 		if optionsCount > 5
 			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
@@ -63,7 +63,7 @@ $.widget 'nmk.filterBox', {
 		items = []
 		for option in filterWrapper.data('items')
 			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
-				items.push @_buildFilterOption(option, name).bind 'change.filter', (e) =>
+				items.push @_buildFilterOption(option).bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
 					listItem.change (e) => @_filtersChanged()
@@ -94,8 +94,8 @@ $.widget 'nmk.filterBox', {
 					filterMoreOptions.modal('hide')
 			}],{'onEscape': true})
 
-	_buildFilterOption: (option, name) ->
-		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{name}[]"}), option.label))
+	_buildFilterOption: (option) ->
+		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]"}), option.label))
 
 	_addSearchBox: () ->
 		previousValue = '';

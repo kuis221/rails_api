@@ -21,7 +21,7 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :aasm_state, :team_ids, :brands_list
+  attr_accessible :name, :description, :aasm_state, :team_ids, :brands_list, :user_ids
   attr_accessor :brands_list
 
   # Required fields
