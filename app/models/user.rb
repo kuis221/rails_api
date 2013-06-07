@@ -146,6 +146,16 @@ class User < ActiveRecord::Base
   end
   alias_method :name, :full_name
 
+  def full_address
+    address = Array.new
+    city_parts = []
+    city_parts.push city unless city.nil?
+    city_parts.push state unless state.nil?
+    address.push city_parts.join(', ') unless city_parts.empty?
+    address.push country_name unless country_name.nil?
+    address.compact.join('<br />').html_safe
+  end
+
   def country_name
     load_country.name rescue nil unless load_country.nil?
   end

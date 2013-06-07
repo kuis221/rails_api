@@ -48,6 +48,7 @@ class UsersController < FilteredController
         :active => user.active?,
         :links => {
             edit: edit_user_path(user),
+            show: user_path(user),
             activate: activate_user_path(user),
             deactivate: deactivate_user_path(user),
             delete: delete_member_path(user)
