@@ -32,7 +32,7 @@ class TeamsController < FilteredController
       {
         'name' => { :order => 'teams.name' },
         'description' => { :order => 'teams.description' },
-        'active' => { :order => 'users.state' }
+        'status' => { :order => 'teams.active' }
       }
     end
 

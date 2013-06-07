@@ -29,7 +29,7 @@ class AreasController < FilteredController
       {
         'name' => { :order => 'areas.name' },
         'description' => { :order => 'areas.description' },
-        'active' => { :order => 'areas.active' }
+        'status' => { :order => 'areas.active' }
       }
     end
 
