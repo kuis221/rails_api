@@ -3,6 +3,7 @@ $.widget 'nmk.filterBox', {
 		onChange: false,
 		includeCalendars: false,
 		includeSearchBox: true,
+		includeAutoComplete: false,
 		selectDefaultDate: false,
 		filters: null
 	},
@@ -19,6 +20,9 @@ $.widget 'nmk.filterBox', {
 
 		if @options.includeSearchBox
 			@_addSearchBox()
+
+		if @options.includeAutoComplete
+			@_addAutocompleteBox()
 
 		if @options.includeCalendars
 			@_addCalendars()
@@ -95,17 +99,30 @@ $.widget 'nmk.filterBox', {
 			}],{'onEscape': true})
 
 	_buildFilterOption: (option) ->
-		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]"}), option.label))
+		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label))
 
 	_addSearchBox: () ->
 		previousValue = '';
-		@searchInput = $('<input type="text" name="with_text" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
+		@searcInput = $('<input type="text" name="t" class="search-query no-validate" placeholder="Search" id="search-box-filter">').appendTo @form
+		@searcInput.keyup =>
+			if @searchTimeout?
+				clearTimeout @searchTimeout
+
+			@searchTimeout = setTimeout =>
+				if previousValue isnt @searcInput.val()
+					previousValue = @searcInput.val()
+					@_filtersChanged()
+			, 300
+
+	_addAutocompleteBox: () ->
+		previousValue = '';
+		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
 			.appendTo(@form)
 			.on 'blur', () =>
 				if @searchHidden.val()
-					@searchInput.hide()
+					@acInput.hide()
 					@searchLabel.show()
-		@searchInput.bucket_complete {
+		@acInput.bucket_complete {
 			source: @_getAutocompleteResults,
 			select: (event, ui) =>
 				@_autoCompleteItemSelected(ui.item)
@@ -116,11 +133,11 @@ $.widget 'nmk.filterBox', {
 		@searchLabel = $('<div class="search-filter-label">')
 			.append($('<span class="term">'))
 			.append($('<span class="close">').append($('<i class="icon-remove">').click => @_cleanSearchFilter()))
-			.css('width', @searchInput.width()+'px').appendTo(@form).hide()
+			.css('width', @acInput.width()+'px').appendTo(@form).hide()
 			.click =>
 				@searchLabel.hide()
-				@searchInput.show()
-				@searchInput.focus()
+				@acInput.show()
+				@acInput.focus()
 
 	_getAutocompleteResults: (request, response) ->
 		params = {q: request.term}
@@ -131,7 +148,7 @@ $.widget 'nmk.filterBox', {
 	_autoCompleteItemSelected: (item) ->
 		@searchHidden.val "#{item.type},#{item.value}"
 		@searchHiddenLabel.val item.label
-		@searchInput.hide().val ''
+		@acInput.hide().val ''
 		@searchLabel.show().find('span.term').text item.label
 		@_filtersChanged()
 		false
@@ -139,7 +156,7 @@ $.widget 'nmk.filterBox', {
 	_cleanSearchFilter: () ->
 		@searchHidden.val ""
 		@searchHiddenLabel.val ""
-		@searchInput.show().val ""
+		@acInput.show().val ""
 		@searchLabel.hide().find('span.term').text ''
 		@_filtersChanged()
 		false
@@ -203,8 +220,8 @@ $.widget 'nmk.filterBox', {
 					else
 						field.val(value)
 		@form.find('.dates-range-filter').datepick('setDate', dates)
-		if @searchHidden.val()
-			@searchInput.hide()
+		if @searchHidden and @searchHidden.val()
+			@acInput.hide()
 			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
 }
 

@@ -36,8 +36,8 @@ module TeamMembersHelper
       if params[:member_id]
         @member_id = params[:member_id]
         member =  company_users.find(params[:member_id])
-        unless resource.users.where(id: member.id).first
-          resource.update_attributes(user_ids: [member.id])
+        unless resource.user_ids.include?(member.id)
+          resource.update_attributes(user_ids: resource.user_ids + [member.id])
         end
       elsif params[:team_id]
         @team_id = params[:team_id]

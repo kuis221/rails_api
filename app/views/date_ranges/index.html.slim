@@ -7,16 +7,14 @@
       .pull-right
         #resource-filter-column
           .text-right
-            = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+            = link_to 'New Date Range', new_resource_path, {remote: true, class: 'btn btn-primary'}
           #collection-list-filters
 
-      table#campaigns-list.table.table-striped.table-bordered.table-scrolled
+      table#date-ranges-list.table.table-striped.table-bordered.table-scrolled
         thead
           tr
             th data-sort="name" Name
             th data-sort="description" Description
-            th First Event
-            th Last Event
             th data-sort="status" Status
             th
         tbody
@@ -25,18 +23,18 @@
 javascript:
   $('#collection-list-filters').filterBox({
     'onChange': function(filterBox){
-      campaignsTable.tableScroller('reloadData');
+      dateRangesTable.tableScroller('reloadData');
     }
   });
-  var campaignsTable = $('table#campaigns-list').tableScroller({
-    'source': '#{campaigns_path(format: :json)}',
-    'fixedHeader': true,
-    'rowValues': function(c){
-      return [c.name, c.description, c.first_event, c.last_event, c.status]
-    },
+  var dateRangesTable = $('table#date-ranges-list').tableScroller({
+    'source': '#{collection_path(format: :json)}',
     'filterBox': '#collection-list-filters',
+    'fixedHeader': true,
+    'rowValues': function(row){
+      return [row.name, row.description, row.status]
+    },
     'rowId': function(row){
-      return 'campaign_'+row.id;
+      return 'date_range_'+row.id;
     },
     'headerOffset': 91,
   })

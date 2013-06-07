@@ -68,6 +68,7 @@ class EventsController < FilteredController
         with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
+        with(:status, params[:status] || 'Active')
         if params[:start_date].present? and params[:end_date].present?
           with :start_at, Timeliness.parse(params[:start_date])..Timeliness.parse(params[:end_date])
         elsif params[:start_date].present?
@@ -120,7 +121,6 @@ class EventsController < FilteredController
           facet :brands
           facet :status
 
-          order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
           paginate :page => (params[:page] || 1)
         end
         @facets = []
@@ -131,6 +131,7 @@ class EventsController < FilteredController
         teams = search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :team} }
         people = (users + teams).sort_by { |k| k[:count] }
         @facets.push(label: "People", items: people )
+        @facets.push(label: "Status", items: search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
       end
     end
 

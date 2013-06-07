@@ -1,0 +1,9 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    if (typeof dateRangeDatesTable != 'undefined'){
+      dateRangeDatesTable.tableScroller('reloadData');
+    }
+    $(document).trigger('date_items:change');

@@ -5,6 +5,17 @@ jQuery ->
 		$('.chosen-enabled').chosen()
 		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
+		$('.toggle-input .btn').click ->
+			$this = $(this);
+			$this.parent().find('.btn').removeClass('btn-success btn-danger active')
+			if $this.hasClass('set-on-btn')
+				$this.addClass('btn-success active')
+			else
+				$this.addClass('btn-danger active')
+
+			$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
+			false
+
 	validateForm = (e) ->
 		$(this).validate {
 			errorClass: 'help-inline',
@@ -35,8 +46,8 @@ jQuery ->
 
 	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
 	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
-  		if settings.type == 'POST'
-    		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+		if settings.type == 'POST'
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 
 
 	$(document).delegate 'input[type=checkbox][data-filter]', 'click', (e) ->
@@ -49,11 +60,39 @@ jQuery ->
 
 	$(".totop").hide();
 
-	$(window).scroll ->
+	# Keep filter Sidebar always visible but make it scroll if it's
+	# taller than the window size
+	$filterSidebar = $('#resource-filter-column')
+	$window = $(window)
+	$window.scroll ->
 		if $(this).scrollTop() > 200
 			$('.totop').slideDown()
 		else
 			$('.totop').slideUp()
+
+	if $filterSidebar.length
+		$filterSidebar.originalTop = $filterSidebar.position().top;
+		$window.bind("scroll resize", () ->
+			sidebarBottom = $filterSidebar.height()+$filterSidebar.originalTop;
+			bottomPosition = $window.scrollTop()+$window.height()
+
+			if sidebarBottom < $window.height()
+				$filterSidebar.css({
+					position: 'fixed',
+					top: "#{$filterSidebar.originalTop}px",
+					bottom: ''
+				})
+			else if  bottomPosition > sidebarBottom
+				$filterSidebar.css({
+					position: 'fixed',
+					bottom: "0",
+					top: ''
+				})
+			else
+				$filterSidebar.css({
+					position: 'static'
+				})
+		).scroll()
 
 	$('.totop a').click (e) ->
 	  e.preventDefault()
