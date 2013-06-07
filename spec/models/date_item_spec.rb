@@ -22,6 +22,8 @@ describe DateItem do
   it { should ensure_inclusion_of(:recurrence_type).in_array(['daily', 'weekly', 'monthly', 'yearly'])}
   it { should_not allow_value(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'hello']).for(:recurrence_days)}
   it { should allow_value(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']).for(:recurrence_days)}
+  it { should allow_value(nil).for(:recurrence_days)}
+  it { should allow_value(['']).for(:recurrence_days)}
 
   it { should allow_mass_assignment_of(:start_date)}
   it { should allow_mass_assignment_of(:end_date)}
