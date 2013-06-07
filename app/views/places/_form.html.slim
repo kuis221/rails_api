@@ -1,0 +1,28 @@
+- remote ||= false
+= simple_form_for([parent, resource], remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      .pull-left
+        = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
+      .pull-right
+        = f.button :submit, 'Add Place', class: 'btn-primary'
+    .row-fluid
+      .pull-right
+        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  var input = $('.modal .places-autocomplete')[0];
+  var locationAutocomplete = new google.maps.places.Autocomplete(input);
+
+  google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
+    var place = locationAutocomplete.getPlace();
+    if (!place.geometry) {
+      // Inform the user that the place was not found and return.
+      alert('Place not found');
+      return false;
+    }
+
+    $($(input).data('hidden')).val(place.reference+'||'+place.id);
+  });

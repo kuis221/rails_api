@@ -21,10 +21,16 @@
 #
 
 class Place < ActiveRecord::Base
+  track_who_does_it
+
   attr_accessible :reference, :place_id
 
   validates :place_id, presence: true, uniqueness: true
   validates :reference, presence: true, uniqueness: true
+
+  # Areas-Places relationship
+  has_many :areas_places
+  has_many :areas, through: :areas_places
 
   before_create :fetch_place_data
 

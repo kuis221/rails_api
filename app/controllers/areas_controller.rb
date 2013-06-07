@@ -4,6 +4,8 @@ class AreasController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  custom_actions member: [:select_places, :add_places]
+
   load_and_authorize_resource except: :index
 
   private

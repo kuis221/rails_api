@@ -4,7 +4,7 @@
 #
 #  id            :integer          not null, primary key
 #  name          :string(255)
-#  active        :boolean
+#  active        :boolean          default(TRUE)
 #  company_id    :integer
 #  created_by_id :integer
 #  updated_by_id :integer

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130605002901) do
+ActiveRecord::Schema.define(:version => 20130605224014) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -58,6 +58,15 @@ ActiveRecord::Schema.define(:version => 20130605002901) do
   end
 
   add_index "areas", ["company_id"], :name => "index_areas_on_company_id"
+
+  create_table "areas_places", :force => true do |t|
+    t.integer "area_id"
+    t.integer "place_id"
+  end
+
+  add_index "areas_places", ["area_id", "place_id"], :name => "index_areas_places_on_area_id_and_place_id", :unique => true
+  add_index "areas_places", ["area_id"], :name => "index_areas_places_on_area_id"
+  add_index "areas_places", ["place_id"], :name => "index_areas_places_on_place_id"
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
@@ -179,7 +188,7 @@ ActiveRecord::Schema.define(:version => 20130605002901) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
+  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

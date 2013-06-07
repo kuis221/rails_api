@@ -23,6 +23,7 @@ class Ability
         can :manage, Event, :company_id => user.current_company.id
         can :manage, BrandPortfolio, :company_id => user.current_company.id
         can :index, Brand
+        can :index, Place
 
         can :create, Task
         can :manage, Task, :event => {:company_id => user.current_company.id}

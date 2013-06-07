@@ -1,0 +1,11 @@
+|
+  bootbox.classes('modal-xlarge');
+  var selectPlaceDialog = bootbox.dialog($('#{escape_javascript(render "select_places")}'), [
+    {
+      "label" : "Close",
+      "class" : "btn",
+      "callback": function() {
+          selectPlaceDialog.modal('hide');
+      }
+    }
+  ],{'onEscape': true})

@@ -24,36 +24,36 @@
         table#places.table.table-striped.table-bordered.table-scrolled
           thead
             tr
-              th data-sort="establishment" Establishment
+              th data-sort="name" Establishment
               th data-sort="address" Address
               th data-sort="city" City
               th data-sort="state" State
               th data-sort="zipcode" ZIP
-              th data-sort="status" Country
+              th data-sort="country" Country
               th.actions
           tbody
         .row-fluid
           .pull-right
-            = link_to 'Add Place', new_member_team_path(resource), remote: true, class: 'btn btn-primary'
+            = link_to 'Add Place', new_area_place_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-  /*$('#places-list-filter').filterBox({
+  $('#places-list-filter').filterBox({
     'onChange': function(filterBox){
       placesTable.tableScroller('reloadData');
     }
   });
 
   var placesTable = $('table#places').tableScroller({
-    'source': '#{users_path(by_teams: resource.to_param, format: :json)}',
+    'source': '#{area_places_path(resource, format: :json)}',
     'filterBox': '#places-list-filter',
-    'rowValues': function(u){
-      return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
+    'rowValues': function(p){
+      return [p.name, p.address, p.city, p.state, p.zipcode, p.country]
     },
     'rowId': function(row){
       return 'place-' + row.id;
     },
     'actionButtons': ['deletable']
-  })*/
+  })
 
   $(document).on('areas:change', function(){
     window.location.reload(false);

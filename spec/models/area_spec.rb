@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: areas
+#
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  company_id    :integer
+#  created_by_id :integer
+#  updated_by_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
 require 'spec_helper'
 
 describe Area do

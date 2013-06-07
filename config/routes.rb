@@ -110,11 +110,14 @@ Brandscopic::Application.routes.draw do
   resources :brands, only: [:index]
 
   resources :areas do
+    resources :places, only: [:index, :new, :create, :destroy]
     member do
       get :deactivate
       get :activate
     end
   end
+
+  resources :places, only: [:index]
 
   root :to => 'dashboard#index'
 end
