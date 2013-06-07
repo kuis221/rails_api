@@ -13,3 +13,17 @@ en:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
       db: '%m/%d/%Y %H:%M:%S'
+
+  recurrence:
+    daily:
+      one: 'day'
+      other: '%{count} days'
+    weekly:
+      one: 'week'
+      other: '%{count} weeks'
+    monthly:
+      one: 'month'
+      other: '%{count} months'
+    yearly:
+      one: 'year'
+      other: '%{count} years'

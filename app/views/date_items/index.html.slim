@@ -1,0 +1,29 @@
+h1 Listing date_items
+
+table
+  tr
+    th Start date
+    th End date
+    th Recurrence
+    th Recurrence type
+    th Recurrence period
+    th Recurrence days
+    th
+    th
+    th
+
+  - @date_items.each do |date_item|
+    tr
+      td= date_item.start_date
+      td= date_item.end_date
+      td= date_item.recurrence
+      td= date_item.recurrence_type
+      td= date_item.recurrence_period
+      td= date_item.recurrence_days
+      td= link_to 'Show', date_item
+      td= link_to 'Edit', edit_date_item_path(date_item)
+      td= link_to 'Destroy', date_item, :confirm => 'Are you sure?', :method => :delete
+
+br
+
+= link_to 'New Date item', new_date_item_path

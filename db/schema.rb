@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130605224014) do
+ActiveRecord::Schema.define(:version => 20130606172043) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -174,6 +174,29 @@ ActiveRecord::Schema.define(:version => 20130605224014) do
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
   add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
 
+  create_table "date_items", :force => true do |t|
+    t.integer  "date_range_id"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.boolean  "recurrence",        :default => false
+    t.string   "recurrence_type"
+    t.integer  "recurrence_period"
+    t.string   "recurrence_days"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  create_table "date_ranges", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.boolean  "active",        :default => true
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
   create_table "documents", :force => true do |t|
     t.string   "name"
     t.string   "file_file_name"
@@ -188,7 +211,7 @@ ActiveRecord::Schema.define(:version => 20130605224014) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

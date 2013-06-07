@@ -1,5 +1,11 @@
 Brandscopic::Application.routes.draw do
 
+  resources :date_items
+
+
+  resources :date_ranges
+
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -104,6 +110,14 @@ Brandscopic::Application.routes.draw do
       match 'brands/:brand_id' => 'brand_portfolios#delete_brand', via: :delete, as: :delete_brand
       match 'brands/select' => 'brand_portfolios#select_brands', via: :get, as: :select_brands
       match 'brands/add' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
+    end
+  end
+
+  resources :date_ranges do
+    resources :date_items, path: 'dates', except: [:show]
+    member do
+      get :deactivate
+      get :activate
     end
   end
 

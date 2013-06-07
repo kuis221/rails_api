@@ -25,6 +25,10 @@ class Ability
         can :index, Brand
         can :index, Place
 
+        can :manage, DateRange, :company_id => user.current_company.id
+        can :manage, DateItem, :date_range => {:company_id => user.current_company.id}
+        can :create, DateItem
+
         can :create, Task
         can :manage, Task, :event => {:company_id => user.current_company.id}
 

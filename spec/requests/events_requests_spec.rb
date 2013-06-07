@@ -18,7 +18,7 @@ describe "Events", :js => true do
     it "GET index should display a table with the events" do
       events = [
         FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
-        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: false, place: FactoryGirl.create(:place, name: 'Place 2'))
+        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'))
       ]
       Sunspot.commit
       visit events_path
@@ -40,7 +40,7 @@ describe "Events", :js => true do
           find('td:nth-child(2)').should have_content(events[1].start_at.to_s(:time_only))
           find('td:nth-child(3)').should have_content(events[1].place_name)
           find('td:nth-child(4)').should have_content(events[1].campaign_name)
-          find('td:nth-child(5)').should have_content('Inactive')
+          find('td:nth-child(5)').should have_content('Active')
           find('td:nth-child(6)').should have_content('Edit')
           find('td:nth-child(6)').should have_content('Activate')
         end

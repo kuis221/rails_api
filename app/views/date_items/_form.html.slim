@@ -1,0 +1,67 @@
+- remote ||= false
+= simple_form_for(resource, url: collection_path, remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      .span6
+        = f.input :start_date, :as => :date_picker, inline: true
+      .span6
+        = f.input :end_date, :as => :date_picker, inline: true
+
+
+    .row-fluid
+      .span12
+        = f.input :recurrence, as: :toggle, wrapper_html: {class: 'form-horizontal'}
+
+    #recurrence-fields.row-fluid style="display: #{(resource.recurrence? ? '' : 'none')}"
+      .span3
+        = f.input :recurrence_type, label: false, as: :radio_buttons, collection: DateItem::RECURRENCE_TYPES.map{|d| [d.capitalize, d] }
+      .span9
+        | Recurrs Every
+        = f.input_field :recurrence_period
+        span.recurrence_type_desc
+          | day(s)
+        | on
+        = f.input :recurrence_days, label: false, as: :check_boxes, collection: Date::DAYNAMES.map{|d| [d, d.downcase] }
+
+  .form-actions
+    = f.button :submit
+
+javascript:
+  $('#calendar_start_date').datepicker({
+    altField: '#date_item_start_date',
+    defaultDate: $('#calendar_start_date').data('date')
+  });
+
+  $('#calendar_end_date').datepicker({
+    altField: '#date_item_end_date',
+    defaultDate: $('#calendar_end_date').data('date')
+  });
+
+  $('#date_item_recurrence').click(function(){
+    $this = $(this);
+    if ($this.val() == 'true') {
+      $('#recurrence-fields').show();
+    } else {
+      $('#recurrence-fields').hide();
+    }
+  })
+
+  updateRecurrenceTypeDescription = function() {
+    var $label = $('.recurrence_type_desc');
+    if ($('#date_item_recurrence_type_daily')[0].checked) {
+      $label.html(' day(s) ');
+    } else if ($('#date_item_recurrence_type_weekly')[0].checked) {
+      $label.html(' week(s) ');
+    } else if ($('#date_item_recurrence_type_monthly')[0].checked) {
+      $label.html(' month(s) ');
+    } else if ($('#date_item_recurrence_type_yearly')[0].checked) {
+      $label.html(' year(s) ');
+    }
+  }
+
+  $('.date_item_recurrence_type input[type=radio]').change(updateRecurrenceTypeDescription);
+
+  updateRecurrenceTypeDescription();
+

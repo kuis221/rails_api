@@ -116,6 +116,7 @@ describe "BrandPortfolios", :js => true do
         click_button 'Update Brand portfolio'
       end
 
+      sleep(1) # Wait on second to avoid a strange error
       find('h2', text: 'edited portfolio name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited portfolio name')
       page.should have_selector('div.brand_portfolio-description', text: 'edited portfolio description')
