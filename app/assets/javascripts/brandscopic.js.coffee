@@ -82,17 +82,20 @@ jQuery ->
 					top: "#{$filterSidebar.originalTop}px",
 					bottom: ''
 				})
+				console.log "IF1: position fixed, top: #{$filterSidebar.originalTop}px, bottom: ''"
 			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+30))
 				$filterSidebar.css({
 					position: 'fixed',
 					bottom: "0px",
 					top: ''
 				})
+				console.log "IF2: position fixed, top: '', bottom: '0px'"
 			else
 				$filterSidebar.css({
 					position: 'static'
 				})
-		).scroll()
+				console.log "IF3: position static"
+		).trigger('scroll')
 
 	$('.totop a').click (e) ->
 	  e.preventDefault()
