@@ -82,10 +82,10 @@ jQuery ->
 					top: "#{$filterSidebar.originalTop}px",
 					bottom: ''
 				})
-			else if  bottomPosition > sidebarBottom
+			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+30))
 				$filterSidebar.css({
 					position: 'fixed',
-					bottom: "0",
+					bottom: "0px",
 					top: ''
 				})
 			else
