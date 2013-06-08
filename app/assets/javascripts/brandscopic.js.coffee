@@ -72,7 +72,7 @@ jQuery ->
 
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
-		$window.bind("scroll resize", () ->
+		$window.bind("scroll resize DOMSubtreeModified", () ->
 			sidebarBottom = $filterSidebar.height()+$filterSidebar.originalTop;
 			bottomPosition = $window.scrollTop()+$window.height()
 
@@ -80,14 +80,14 @@ jQuery ->
 				$filterSidebar.css({
 					position: 'fixed',
 					top: "#{$filterSidebar.originalTop}px",
-					bottom: ''
+					bottom: 'auto'
 				})
 				console.log "IF1: position fixed, top: #{$filterSidebar.originalTop}px, bottom: ''"
-			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+30))
+			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+40))
 				$filterSidebar.css({
 					position: 'fixed',
 					bottom: "0px",
-					top: ''
+					top: 'auto'
 				})
 				console.log "IF2: position fixed, top: '', bottom: '0px'"
 			else
