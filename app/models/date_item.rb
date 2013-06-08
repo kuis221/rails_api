@@ -23,8 +23,8 @@ class DateItem < ActiveRecord::Base
 
   belongs_to :date_range
 
-  validates_date :start_date
-  validates_date :end_date, on_or_after: :start_date, allow_nil: true
+  validates_date :start_date, allow_nil: true, allow_blank: true
+  validates_date :end_date, on_or_after: :start_date, allow_blank: true
 
 
   validates :recurrence_type, :inclusion => { :in => RECURRENCE_TYPES,

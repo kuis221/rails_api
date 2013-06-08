@@ -42,7 +42,7 @@ describe "Events", :js => true do
           find('td:nth-child(4)').should have_content(events[1].campaign_name)
           find('td:nth-child(5)').should have_content('Active')
           find('td:nth-child(6)').should have_content('Edit')
-          find('td:nth-child(6)').should have_content('Activate')
+          find('td:nth-child(6)').should have_content('Deactivate')
         end
 
       end

@@ -1,6 +1,7 @@
 - remote ||= false
 = simple_form_for(resource, url: collection_path, remote: remote || false) do |f|
   = f.error_notification
+  = f.error :base
 
   .form-inputs
     .row-fluid
@@ -31,13 +32,17 @@
 javascript:
   $('#calendar_start_date').datepicker({
     altField: '#date_item_start_date',
-    defaultDate: $('#calendar_start_date').data('date')
+    defaultDate: '',
+    selectDefaultDate: false
   });
 
   $('#calendar_end_date').datepicker({
     altField: '#date_item_end_date',
-    defaultDate: $('#calendar_end_date').data('date')
+    defaultDate: '',
+    selectDefaultDate: false
   });
+  $('#date_item_start_date').val('')
+  $('#date_item_end_date').val('')
 
   $('#date_item_recurrence').click(function(){
     $this = $(this);

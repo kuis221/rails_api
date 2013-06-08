@@ -82,19 +82,16 @@ jQuery ->
 					top: "#{$filterSidebar.originalTop}px",
 					bottom: 'auto'
 				})
-				console.log "IF1: position fixed, top: #{$filterSidebar.originalTop}px, bottom: ''"
 			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+40))
 				$filterSidebar.css({
 					position: 'fixed',
 					bottom: "0px",
 					top: 'auto'
 				})
-				console.log "IF2: position fixed, top: '', bottom: '0px'"
 			else
 				$filterSidebar.css({
 					position: 'static'
 				})
-				console.log "IF3: position static"
 		).trigger('scroll')
 
 	$('.totop a').click (e) ->
