@@ -149,6 +149,51 @@ class Event < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      # TODO: probably this options should be passed by params?
+      options = {include: [:campaign, :place]}
+      solr_search(options) do
+        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
+        with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
+        with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+        with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
+        with(:status, params[:status] || 'Active')
+        with(:company_id, params[:company_id])
+        if params[:start_date].present? and params[:end_date].present?
+          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          with :start_at, d1..d2
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date], zone: :current)
+          with :start_at, d.beginning_of_day..d.end_of_day
+        end
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'campaign', 'place'
+            with "#{attribute}_id", value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        if include_facets
+          facet :campaign
+          facet :place
+          facet :users
+          facet :teams
+          facet :brands
+          facet :status
+        end
+
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
+  end
+
   private
 
     # Copy some errors to the attributes used on the forms so the user

@@ -1,17 +1,25 @@
 class FilteredController < InheritedResources::Base
-    helper_method :collection_count
-    helper_method :collection_to_json
+    helper_method :collection_count, :collection_to_json, :facets, :page, :total_pages
     respond_to :json, only: :index
     before_filter :collection, only: :index
 
     def collection
-      get_collection_ivar || begin
-        current_page = params[:page] || nil
-        c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)
-        c = controller_filters(c)
-        @collection_count_scope = c
-        c = c.page(current_page) unless current_page.nil?
-        set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
+      unless request.format.html?
+        get_collection_ivar || begin
+          if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
+            search = resource_class.do_search(search_params)
+            @collection_count = search.total
+            @total_pages = search.results.total_pages
+            set_collection_ivar(search.results)
+          else
+            current_page = params[:page] || nil
+            c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)
+            c = controller_filters(c)
+            @collection_count_scope = c
+            c = c.page(current_page).per(items_per_page) unless current_page.nil?
+            set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
+          end
+        end
       end
     end
 
@@ -19,6 +27,22 @@ class FilteredController < InheritedResources::Base
       @collection_count ||= @collection_count_scope.count
     end
 
+    def total_pages
+      @total_pages ||= (collection_count.to_f/items_per_page.to_f).ceil
+    end
+
+    def facets
+    end
+
+    def search_params
+      @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
+        p[:company_id] = current_company.id
+      end
+    end
+
+    def items_per_page
+      30
+    end
 
     def controller_filters(c)
       c

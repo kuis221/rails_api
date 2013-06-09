@@ -27,7 +27,7 @@ describe EventsController do
           response.should be_success
 
           parsed_body = JSON.parse(response.body)
-          parsed_body.count.should == 3
+          parsed_body.count.should == 4
         end
       end
     end

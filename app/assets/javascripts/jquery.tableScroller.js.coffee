@@ -29,23 +29,10 @@ $.widget 'nmk.tableScroller', {
 
 		@oldParams = []
 
-		@element.infiniteScrollHelper {
-			loadMore: (page) =>
-				if @totalItems > @loadedItems && @doneLoading
-					@_loadPage(page)
-				else
-					false
-
-			doneLoading: =>
-				@doneLoading
-		}
-
-		#$(window).on 'hashchange', () =>
-
-
 		if @options.fixedHeader
 			@_buildFixedHeader()
 
+		@infiniteScroller = false
 		@_loadPage(1)
 		@
 
@@ -61,16 +48,19 @@ $.widget 'nmk.tableScroller', {
 
 
 	disableScrolling: ->
-		@element.infiniteScrollHelper 'disableScrolling'
+		if @infiniteScroller
+			@element.infiniteScrollHelper 'disableScrolling'
 
 	enableScrolling: ->
-		@element.infiniteScrollHelper 'enableScrolling'
+		if @infiniteScroller
+			@element.infiniteScrollHelper 'enableScrolling'
 
 	redrawTable: ->
 		@_synchHeaderWidths()
 
 	destroy: ->
-		@element.infiniteScrollHelper 'destroy'
+		if @infiniteScroller
+			@element.infiniteScrollHelper 'destroy'
 		@element.off 'click.tableScroller'
 
 		@element.find('th[data-sort]').removeClass('sorting sorting_asc sorting_desc' ).off 'click.tableScroller'
@@ -139,7 +129,8 @@ $.widget 'nmk.tableScroller', {
 		@loadedItems = 0
 		@items = []
 		@element.find('tbody').html ''
-		@element.infiniteScrollHelper 'resetPageCount'
+		if @infiniteScroller
+			@element.infiniteScrollHelper 'resetPageCount'
 		@_loadPage 1
 		@
 
@@ -217,10 +208,27 @@ $.widget 'nmk.tableScroller', {
 				true
 			if @options.fixedHeader
 				@_synchHeaderWidths()
-			@doneLoading = true
-			if @options.onItemsChange
-				@options.onItemsChange(@items)
+			@_pageLoaded(page, json)
 		true
+
+	_pageLoaded: (page, response) ->
+		@doneLoading = true
+		if @options.onItemsChange
+			@options.onItemsChange(@items)
+
+		if page == 1 and response.pages > 1  and !@infiniteScroller
+			@infiniteScroller = @element.infiniteScrollHelper {
+				loadMore: (page) =>
+					if @totalItems > @loadedItems && @doneLoading
+						@_loadPage(page)
+					else
+						false
+
+				doneLoading: =>
+					@doneLoading
+			}
+
+
 
 	_rowId: (row) ->
 		if @options.rowId?

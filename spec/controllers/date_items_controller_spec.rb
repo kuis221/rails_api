@@ -18,7 +18,7 @@ describe DateItemsController do
 
   describe "GET 'index'" do
     it "returns http success" do
-      get 'index', date_range_id: date_range.to_param
+      get 'index', date_range_id: date_range.to_param, format: :json
       response.should be_success
     end
 

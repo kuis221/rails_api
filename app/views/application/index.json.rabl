@@ -8,12 +8,16 @@ node :total do
   collection_count
 end
 
+node :pages do
+  total_pages
+end
+
 node :items do
   collection_to_json
 end
 
-if @facets
+unless params[:facets] != 'true'  or facets.nil?
   node :facets do
-    @facets
+    facets
   end
 end
