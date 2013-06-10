@@ -63,79 +63,22 @@ class EventsController < FilteredController
   end
 
   protected
-    # def search_events
-    #   # Search events
-    #   search = Sunspot.search(Event) do
-    #     with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
-    #     with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
-    #     with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
-    #     with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-    #     with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
-    #     with(:status, params[:status] || 'Active')
-    #     if params[:start_date].present? and params[:end_date].present?
-    #       d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-    #       d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-    #       with :start_at, d1..d2
-    #     elsif params[:start_date].present?
-    #       d = Timeliness.parse(params[:start_date], zone: :current)
-    #       with :start_at, d.beginning_of_day..d.end_of_day
-    #     end
-    #     if params.has_key?(:q) and params[:q].present?
-    #       (attribute, value) = params[:q].split(',')
-    #       case attribute
-    #       when 'campaign', 'place'
-    #         with "#{attribute}_id", value
-    #       else
-    #         with "#{attribute}_ids", value
-    #       end
-    #     end
-    #     with(:company_id, current_company.id)
-
-    #     order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
-    #     paginate :page => (params[:page] || 1)
-    #   end
-    #   @events = search.results
-    #   @collection_count = search.total
-
-
-    #   # Get the facets without all the filters
-    #   if params[:facets] == 'true'
-    #     search = Sunspot.search(Event) do
-    #       if params[:start_date].present? and params[:end_date].present?
-    #         d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-    #         d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-    #         with :start_at, d1..d2
-    #       elsif params[:start_date].present?
-    #         d = Timeliness.parse(params[:start_date], zone: :current)
-    #         with :start_at, d.beginning_of_day..d.end_of_day
-    #       end
-    #       if params.has_key?(:q) and params[:q].present?
-    #         (attribute, value) = params[:q].split(',')
-    #         case attribute
-    #         when 'campaign', 'place'
-    #           with "#{attribute}_id", value
-    #         else
-    #           with "#{attribute}_ids", value
-    #         end
-    #       end
-    #       with(:company_id, current_company.id)
-    #       facet :campaign
-    #       facet :place
-    #       facet :users
-    #       facet :teams
-    #       facet :brands
-    #       facet :status
-
-    #       paginate :page => (params[:page] || 1)
-    #     end
-    #   end
-    # end
 
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :start_date, :end_date, :company_id].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
+
+        # Date Ranges
+        ranges = [
+            {label: 'Today', id: 'today', name: :predefined_date, count: 1},
+            {label: 'This Week', id: 'week', name: :predefined_date, count: 1},
+            {label: 'This Month', id: 'month', name: :predefined_date, count: 1}
+        ]
+        ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
+        f.push(label: "Date Ranges", items: ranges )
+
         f.push(label: "Places", items: facet_search.facet(:place).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :place, count: x.count} })
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :campaign, count: x.count} })
         f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :brand, count: x.count} })
@@ -144,6 +87,7 @@ class EventsController < FilteredController
         people = (users + teams).sort_by { |k| k[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
+
       end
     end
 

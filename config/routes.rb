@@ -114,7 +114,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :date_ranges do
-    resources :date_items, path: 'dates', except: [:show]
+    resources :date_items, path: 'dates', except: [:show, :edit]
     member do
       get :deactivate
       get :activate

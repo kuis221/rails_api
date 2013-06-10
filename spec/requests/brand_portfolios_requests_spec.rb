@@ -153,6 +153,7 @@ describe "BrandPortfolios", :js => true do
       end
 
       # Make sure the new brand was added to the portfolio
+      sleep(1)
       within('table#brand_portfolio-brands') do
         within("tbody tr:nth-child(2)") do
           find('td:nth-child(1)').should have_content('Ron Centenario')
