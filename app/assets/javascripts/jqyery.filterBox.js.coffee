@@ -35,7 +35,7 @@ $.widget 'nmk.filterBox', {
 
 		@_parseHashQueryString()
 
-		$(window).on 'resize', () =>
+		$(window).on 'resize scroll', () =>
 			if @filtersPopup
 				@_positionFiltersOptions()
 
@@ -69,7 +69,7 @@ $.widget 'nmk.filterBox', {
 			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
 
 		if optionsCount > 5
-			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
+			$filter.append($('<a>',{href: '#', class:'more-options-link'}).text('More').click (e) =>
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
 				@_showFilterOptions(filterWrapper)
 				false
@@ -103,11 +103,12 @@ $.widget 'nmk.filterBox', {
 
 		name = filterWrapper.data('name')
 		items = []
-		for option in filterWrapper.data('items')
+		for option in filterWrapper.data('items').slice(1,6)
 			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
 				items.push @_buildFilterOption(option)
 				.bind 'click', (e) =>
 					e.stopPropagation()
+					true
 				.bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
@@ -116,23 +117,32 @@ $.widget 'nmk.filterBox', {
 					listItem.find('.checker').show()
 					listItem.effect 'highlight'
 					listItem.trigger 'change'
+					if @filtersPopup.find('li').length == 0
+						@_closeFilterOptions()
+						filterWrapper.find('.more-options-link').remove()
 
-		@filtersPopup = $('<div class="filter-box more-options-popup">').appendTo $('body')
-		list = $('<ul>').append(items).appendTo @filtersPopup
-		list.find("input:checkbox").uniform()
-		bootbox.modalClasses = 'modal-med'
-		@filtersPopup.data('wrapper', filterWrapper).css {
-			'position': 'fixed',
-			'top': '150px'
-		}
+		if items.length > 0
+			@filtersPopup = $('<div class="filter-box more-options-popup">').insertBefore filterWrapper
+			list = $('<ul>').append(items).appendTo @filtersPopup
+			list.find("input:checkbox").uniform()
+			bootbox.modalClasses = 'modal-med'
+			@filtersPopup.data('wrapper', filterWrapper)
 
-		$(document).on 'click.filterbox', ()  => @_closeFilterOptions()
+			$(document).on 'click.filterbox', ()  => @_closeFilterOptions()
 
-		@_positionFiltersOptions()
+			@_positionFiltersOptions()
 
 	_positionFiltersOptions: () ->
+		reference = @filtersPopup.data('wrapper')
+		maxHeight = $(window).height() - 200
+		@filtersPopup.css({'max-height': $(window).height()-200})
+		if (@filtersPopup.offset().top + @filtersPopup.height() > $(window).scrollTop()+$(window).height())
+			@filtersPopup.css({'position': 'fixed', 'bottom': '0px'})
+		else if $(window).scrollTop()+200 >= @filtersPopup.offset().top
+			@filtersPopup.css({'position': 'fixed', 'top': '200px'})
+
+
 		@filtersPopup.css {
-			'left': @filtersPopup.data('wrapper').offset().left - @filtersPopup.width(),
 			'max-height': ($(window).height()-200) + 'px'
 		}
 
