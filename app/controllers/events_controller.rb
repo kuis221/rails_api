@@ -72,9 +72,9 @@ class EventsController < FilteredController
 
         # Date Ranges
         ranges = [
-            {label: 'Today', id: 'today', name: :predefined_date, count: 1},
-            {label: 'This Week', id: 'week', name: :predefined_date, count: 1},
-            {label: 'This Month', id: 'month', name: :predefined_date, count: 1}
+            {label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1},
+            {label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2},
+            {label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3}
         ]
         ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
         f.push(label: "Date Ranges", items: ranges )
@@ -87,7 +87,6 @@ class EventsController < FilteredController
         people = (users + teams).sort_by { |k| k[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
-
       end
     end
 

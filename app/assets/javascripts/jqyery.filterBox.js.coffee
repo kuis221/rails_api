@@ -55,21 +55,47 @@ $.widget 'nmk.filterBox', {
 
 	addFilterSection: (title, name, items) ->
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('items', items).data('name', name).append($('<h3>').text(title), $list)
+		$filter = $('<div class="filter-wrapper">').data('name', name).append($('<h3>').text(title), $list)
 		i = 0
 		optionsCount = items.length
+		first5 = []
 		while i < 5 and i < optionsCount
 			option = items[i]
 			if option.count > 0
-				$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
+				first5.push option
 			i++
+
+		for option in @_sortOptionsAlpha(first5)
+			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
+
 		if optionsCount > 5
 			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
 				@_showFilterOptions(filterWrapper)
 				false
 			)
+		items = @_sortOptionsAlpha(items);
+		$filter.data('items', items)
 		@formFilters.append($filter)
+
+	_sortOptionsAlpha: (options) ->
+		a = options.sort (a, b) ->
+			if a.ordering? or b.ordering?
+				if not a.ordering
+					return 1
+
+				if not b.ordering
+					return -1
+
+				if a.ordering == b.ordering
+					return 0
+				return  if a.ordering > b.ordering then 1 else -1
+
+			if a.label == b.label
+				return 0
+
+			return if a.label > b.label then 1 else  -1
+		a
 
 	_showFilterOptions: (filterWrapper) ->
 		if @filtersPopup
