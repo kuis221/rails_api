@@ -31,9 +31,18 @@ $.widget 'nmk.filterBox', {
 		if @options.filters
 			@setFilters(@options.filters)
 
+		@filtersPopup = false
+
 		@_parseHashQueryString()
 
+		$(window).on 'resize', () =>
+			if @filtersPopup
+				@_positionFiltersOptions()
+
 		@initialized = true
+
+	destroy: ->
+		@_closeFilterOptions()
 
 	getFilters: () ->
 		@form.serializeArray()
@@ -63,40 +72,48 @@ $.widget 'nmk.filterBox', {
 		@formFilters.append($filter)
 
 	_showFilterOptions: (filterWrapper) ->
+		if @filtersPopup
+			@_closeFilterOptions()
+
 		name = filterWrapper.data('name')
 		items = []
 		for option in filterWrapper.data('items')
 			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
-				items.push @_buildFilterOption(option).bind 'change.filter', (e) =>
+				items.push @_buildFilterOption(option)
+				.bind 'click', (e) =>
+					e.stopPropagation()
+				.bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
 					listItem.change (e) => @_filtersChanged()
 					filterWrapper.find('ul').append listItem
+					listItem.find('.checker').show()
 					listItem.effect 'highlight'
 					listItem.trigger 'change'
 
-		container = $('<div class="row-fluid filter-box">')
-		if items.length >= 10
-			itemsPerColumn = Math.ceil(items.length / 2)
-			i = 0
-			while i < items.length
-				if i is itemsPerColumn or i is 0
-					list = $('<ul>')
-					column = $('<div class="span6">').appendTo(container).append(list)
-				list.append items[i]
-				i++
-			list = container
-
-		else
-			list = $('<ul>').append(items).appendTo(container)
+		@filtersPopup = $('<div class="filter-box more-options-popup">').appendTo $('body')
+		list = $('<ul>').append(items).appendTo @filtersPopup
 		list.find("input:checkbox").uniform()
 		bootbox.modalClasses = 'modal-med'
-		filterMoreOptions = bootbox.dialog(container,[{
-				"label" : "Close",
-				"class" : "btn-primary",
-				"callback": () ->
-					filterMoreOptions.modal('hide')
-			}],{'onEscape': true})
+		@filtersPopup.data('wrapper', filterWrapper).css {
+			'position': 'fixed',
+			'top': '150px'
+		}
+
+		$(document).on 'click.filterbox', ()  => @_closeFilterOptions()
+
+		@_positionFiltersOptions()
+
+	_positionFiltersOptions: () ->
+		@filtersPopup.css {
+			'left': @filtersPopup.data('wrapper').offset().left - @filtersPopup.width(),
+			'max-height': ($(window).height()-200) + 'px'
+		}
+
+	_closeFilterOptions: () ->
+		if @filtersPopup
+			@filtersPopup.remove()
+		$(document).off 'click.filterbox'
 
 	_buildFilterOption: (option) ->
 		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label))
