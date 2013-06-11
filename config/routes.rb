@@ -1,11 +1,5 @@
 Brandscopic::Application.routes.draw do
 
-  resources :date_items
-
-
-  resources :date_ranges
-
-
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -113,14 +107,6 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :date_ranges do
-    resources :date_items, path: 'dates', except: [:show]
-    member do
-      get :deactivate
-      get :activate
-    end
-  end
-
   resources :brands, only: [:index]
 
   resources :areas do
@@ -132,6 +118,22 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :places, only: [:index]
+
+  resources :date_ranges do
+    resources :date_items, path: 'dates', except: [:show]
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
+
+  resources :day_parts do
+    resources :day_items, path: 'days', except: [:show]
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
 
   root :to => 'dashboard#index'
 end

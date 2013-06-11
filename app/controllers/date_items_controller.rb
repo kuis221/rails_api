@@ -17,6 +17,12 @@ class DateItemsController < FilteredController
       }}
     end
 
+    def sort_options
+      {
+        'name' => { :order => 'date_items.start_date' }
+      }
+    end
+
     def build_resource(*args)
       @date ||= super
       @date.recurrence_type ||= 'daily'

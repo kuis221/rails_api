@@ -1,0 +1,40 @@
+#content-with-left-nav
+  #content-left-nav.pull-left
+    = render 'admin_navigation'
+
+  .row-fluid
+    #resource-index-container.no-calendars.span12
+      .pull-right
+        #resource-filter-column
+          .text-right
+            = link_to 'New Day Part', new_resource_path, {remote: true, class: 'btn btn-primary'}
+          #collection-list-filters
+
+      table#day-parts-list.table.table-striped.table-bordered.table-scrolled
+        thead
+          tr
+            th data-sort="name" Name
+            th data-sort="description" Description
+            th data-sort="status" Status
+            th
+        tbody
+
+
+javascript:
+  $('#collection-list-filters').filterBox({
+    'onChange': function(filterBox){
+      dayPartsTable.tableScroller('reloadData');
+    }
+  });
+  var dayPartsTable = $('table#day-parts-list').tableScroller({
+    'source': '#{collection_path(format: :json)}',
+    'filterBox': '#collection-list-filters',
+    'fixedHeader': true,
+    'rowValues': function(row){
+      return [row.name, row.description, row.status]
+    },
+    'rowId': function(row){
+      return 'day_part_'+row.id;
+    },
+    'headerOffset': 91,
+  })

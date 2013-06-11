@@ -38,7 +38,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :areas, 'Areas', areas_path, highlights_on: %r(/areas)
       secondary.item :brand_portfolios, 'Brand Portfolios', brand_portfolios_path
       secondary.item :date_ranges, 'Date Ranges', date_ranges_path
-      secondary.item :day_parts, 'Day Parts', '#'
+      secondary.item :day_parts, 'Day Parts', day_parts_path
     end
 
     primary.item :user_menu, '<i class="icon-user"></i>' + current_user.full_name + " <b class='caret'></b>", '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|

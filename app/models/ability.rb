@@ -29,6 +29,10 @@ class Ability
         can :manage, DateItem, :date_range => {:company_id => user.current_company.id}
         can :create, DateItem
 
+        can :manage, DayPart, :company_id => user.current_company.id
+        can :manage, DayItem, :day_part => {:company_id => user.current_company.id}
+        can :create, DayItem
+
         can :create, Task
         can :manage, Task, :event => {:company_id => user.current_company.id}
 

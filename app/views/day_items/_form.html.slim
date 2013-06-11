@@ -1,0 +1,16 @@
+- remote ||= false
+= simple_form_for(resource, url: collection_path, remote: remote || false) do |f|
+  = f.error_notification
+  = f.error :base
+
+  .form-inputs
+    .row-fluid
+      .pull-left
+        = f.input :start_time, :as => :time_picker, label: 'Start', wrapper_html: {class: 'form-horizontal'}
+      .pull-left
+        = f.input :end_time, :as => :time_picker, label: 'End', wrapper_html: {class: 'form-horizontal'}
+
+      .pull-right.action-buttons
+        = f.button :submit, 'Add', class: 'btn-primary'
+        = "&nbsp;".html_safe
+        = f.button :button, 'Cancel', class: 'btn btn-cancel'

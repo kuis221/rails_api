@@ -1,0 +1,9 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    if (typeof dayitemsTable != 'undefined'){
+      dayitemsTable.tableScroller('reloadData');
+    }
+    $(document).trigger('day_items:change');
