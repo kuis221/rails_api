@@ -120,7 +120,7 @@ Brandscopic::Application.routes.draw do
   resources :places, only: [:index]
 
   resources :date_ranges do
-    resources :date_items, path: 'dates', except: [:show]
+    resources :date_items, path: 'dates', except: [:show, :edit]
     member do
       get :deactivate
       get :activate
@@ -128,7 +128,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :day_parts do
-    resources :day_items, path: 'days', except: [:show]
+    resources :day_items, path: 'days', except: [:show, :edit]
     member do
       get :deactivate
       get :activate

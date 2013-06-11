@@ -31,9 +31,18 @@ $.widget 'nmk.filterBox', {
 		if @options.filters
 			@setFilters(@options.filters)
 
+		@filtersPopup = false
+
 		@_parseHashQueryString()
 
+		$(window).on 'resize scroll', () =>
+			if @filtersPopup
+				@_positionFiltersOptions()
+
 		@initialized = true
+
+	destroy: ->
+		@_closeFilterOptions()
 
 	getFilters: () ->
 		@form.serializeArray()
@@ -46,57 +55,101 @@ $.widget 'nmk.filterBox', {
 
 	addFilterSection: (title, name, items) ->
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('items', items).data('name', name).append($('<h3>').text(title), $list)
+		$filter = $('<div class="filter-wrapper">').data('name', name).append($('<h3>').text(title), $list)
 		i = 0
 		optionsCount = items.length
+		first5 = []
 		while i < 5 and i < optionsCount
 			option = items[i]
 			if option.count > 0
-				$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
+				first5.push option
 			i++
+
+		for option in @_sortOptionsAlpha(first5)
+			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
+
 		if optionsCount > 5
-			$filter.append($('<a>',{href: '#'}).text('More').click (e) =>
+			$filter.append($('<a>',{href: '#', class:'more-options-link'}).text('More').click (e) =>
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
 				@_showFilterOptions(filterWrapper)
 				false
 			)
+		items = @_sortOptionsAlpha(items);
+		$filter.data('items', items)
 		@formFilters.append($filter)
 
+	_sortOptionsAlpha: (options) ->
+		a = options.sort (a, b) ->
+			if a.ordering? or b.ordering?
+				if not a.ordering
+					return 1
+
+				if not b.ordering
+					return -1
+
+				if a.ordering == b.ordering
+					return 0
+				return  if a.ordering > b.ordering then 1 else -1
+
+			if a.label == b.label
+				return 0
+
+			return if a.label > b.label then 1 else  -1
+		a
+
 	_showFilterOptions: (filterWrapper) ->
+		if @filtersPopup
+			@_closeFilterOptions()
+
 		name = filterWrapper.data('name')
 		items = []
-		for option in filterWrapper.data('items')
+		for option in filterWrapper.data('items').slice(1,6)
 			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
-				items.push @_buildFilterOption(option).bind 'change.filter', (e) =>
+				items.push @_buildFilterOption(option)
+				.bind 'click', (e) =>
+					e.stopPropagation()
+					true
+				.bind 'change.filter', (e) =>
 					listItem = $(e.target).parents('li')
 					listItem.unbind 'change.filter'
 					listItem.change (e) => @_filtersChanged()
 					filterWrapper.find('ul').append listItem
+					listItem.find('.checker').show()
 					listItem.effect 'highlight'
 					listItem.trigger 'change'
+					if @filtersPopup.find('li').length == 0
+						@_closeFilterOptions()
+						filterWrapper.find('.more-options-link').remove()
 
-		container = $('<div class="row-fluid filter-box">')
-		if items.length >= 10
-			itemsPerColumn = Math.ceil(items.length / 2)
-			i = 0
-			while i < items.length
-				if i is itemsPerColumn or i is 0
-					list = $('<ul>')
-					column = $('<div class="span6">').appendTo(container).append(list)
-				list.append items[i]
-				i++
-			list = container
+		if items.length > 0
+			@filtersPopup = $('<div class="filter-box more-options-popup">').insertBefore filterWrapper
+			list = $('<ul>').append(items).appendTo @filtersPopup
+			list.find("input:checkbox").uniform()
+			bootbox.modalClasses = 'modal-med'
+			@filtersPopup.data('wrapper', filterWrapper)
 
-		else
-			list = $('<ul>').append(items).appendTo(container)
-		list.find("input:checkbox").uniform()
-		bootbox.modalClasses = 'modal-med'
-		filterMoreOptions = bootbox.dialog(container,[{
-				"label" : "Close",
-				"class" : "btn-primary",
-				"callback": () ->
-					filterMoreOptions.modal('hide')
-			}],{'onEscape': true})
+			$(document).on 'click.filterbox', ()  => @_closeFilterOptions()
+
+			@_positionFiltersOptions()
+
+	_positionFiltersOptions: () ->
+		reference = @filtersPopup.data('wrapper')
+		maxHeight = $(window).height() - 200
+		@filtersPopup.css({'max-height': $(window).height()-200})
+		if (@filtersPopup.offset().top + @filtersPopup.height() > $(window).scrollTop()+$(window).height())
+			@filtersPopup.css({'position': 'fixed', 'bottom': '0px'})
+		else if $(window).scrollTop()+200 >= @filtersPopup.offset().top
+			@filtersPopup.css({'position': 'fixed', 'top': '200px'})
+
+
+		@filtersPopup.css {
+			'max-height': ($(window).height()-200) + 'px'
+		}
+
+	_closeFilterOptions: () ->
+		if @filtersPopup
+			@filtersPopup.remove()
+		$(document).off 'click.filterbox'
 
 	_buildFilterOption: (option) ->
 		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label))

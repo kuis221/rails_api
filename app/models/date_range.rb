@@ -26,6 +26,8 @@ class DateRange < ActiveRecord::Base
 
   has_many :date_items
 
+  scope :active, where(:active => true)
+
   searchable do
     text :name_txt do
       name
@@ -40,6 +42,25 @@ class DateRange < ActiveRecord::Base
     string :description
     string :status
     integer :company_id
+  end
+
+  def search_filters(solr_search_obj)
+    date_items.each do |date|
+      if date.start_date and date.end_date
+        d1 = Timeliness.parse(date.start_date, zone: :current).beginning_of_day
+        d2 = Timeliness.parse(date.end_date, zone: :current).end_of_day
+        solr_search_obj.with :start_at, d1..d2
+      elsif date.start_date
+        d = Timeliness.parse(date.start_date, zone: :current)
+        solr_search_obj.with :start_at, d.beginning_of_day..d.end_of_day
+      end
+
+      if date.recurrence
+        if date.recurrence_days.any?
+          solr_search_obj.with :day_names, date.recurrence_days
+        end
+      end
+    end
   end
 
   def status
