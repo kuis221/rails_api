@@ -8,14 +8,6 @@ describe DateItemsController do
 
   let(:date_range) {FactoryGirl.create(:date_range, company: @company)}
 
-  describe "GET 'edit'" do
-    let(:date_item){ FactoryGirl.create(:date_item) }
-    it "returns http success" do
-      get 'edit', date_range_id: date_range.to_param, id: date_item.to_param, format: :js
-      response.should be_success
-    end
-  end
-
   describe "GET 'index'" do
     it "returns http success" do
       get 'index', date_range_id: date_range.to_param, format: :json
@@ -39,15 +31,6 @@ describe DateItemsController do
         parsed_body["total"].should == 3
         parsed_body["items"].count.should == 3
       end
-    end
-  end
-
-  describe "GET 'show'" do
-    let(:date_item){ FactoryGirl.create(:date_item) }
-    it "assigns the loads the correct objects and templates" do
-      get 'show', date_range_id: date_range.to_param, id: date_item.id
-      assigns(:date_item).should == date_item
-      response.should render_template(:show)
     end
   end
 

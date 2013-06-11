@@ -12,6 +12,6 @@
 
 require 'spec_helper'
 
-describe DayItems do
+describe DayItem do
   pending "add some examples to (or delete) #{__FILE__}"
 end

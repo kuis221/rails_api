@@ -88,7 +88,7 @@ before(:each) do
   describe "PUT 'update'" do
     let(:date_range){ FactoryGirl.create(:date_range, company: @company) }
     it "must update the date_range attributes" do
-      t = FactoryGirl.create(:date_range)
+      t = FactoryGirl.create(:date_range, company: @company)
       put 'update', id: date_range.to_param, date_range: {name: 'Test date_range', description: 'Test date_range description'}
       assigns(:date_range).should == date_range
       response.should redirect_to(date_range_path(date_range))

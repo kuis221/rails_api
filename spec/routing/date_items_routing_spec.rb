@@ -4,31 +4,23 @@ describe DateItemsController do
   describe "routing" do
 
     it "routes to #index" do
-      get("/date_items").should route_to("date_items#index")
+      get("/date_ranges/:range_id/dates").should route_to("date_items#index", :date_range_id => ':range_id')
     end
 
     it "routes to #new" do
-      get("/date_items/new").should route_to("date_items#new")
-    end
-
-    it "routes to #show" do
-      get("/date_items/1").should route_to("date_items#show", :id => "1")
-    end
-
-    it "routes to #edit" do
-      get("/date_items/1/edit").should route_to("date_items#edit", :id => "1")
+      get("/date_ranges/:range_id/dates/new").should route_to("date_items#new", :date_range_id => ':range_id')
     end
 
     it "routes to #create" do
-      post("/date_items").should route_to("date_items#create")
+      post("/date_ranges/:range_id/dates").should route_to("date_items#create", :date_range_id => ':range_id')
     end
 
     it "routes to #update" do
-      put("/date_items/1").should route_to("date_items#update", :id => "1")
+      put("/date_ranges/:range_id/dates/1").should route_to("date_items#update", :id => "1", :date_range_id => ':range_id')
     end
 
     it "routes to #destroy" do
-      delete("/date_items/1").should route_to("date_items#destroy", :id => "1")
+      delete("/date_ranges/:range_id/dates/1").should route_to("date_items#destroy", :id => "1", :date_range_id => ':range_id')
     end
 
   end
