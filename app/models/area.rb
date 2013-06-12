@@ -26,6 +26,18 @@ class Area < ActiveRecord::Base
   # Areas-Places relationship
   has_and_belongs_to_many :places
 
+  searchable do
+    text :name
+
+    text :description
+
+    boolean :active
+
+    string :name
+
+    integer :company_id
+  end
+
   def activate!
     update_attribute :active, true
   end

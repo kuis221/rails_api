@@ -24,19 +24,26 @@
 
 javascript:
   $('#collection-list-filters').filterBox({
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_campaigns_path(format: :json)}',
     'onChange': function(filterBox){
-      campaignsTable.tableScroller('reloadData');
+      if (typeof campaignsTable != 'undefined')
+        campaignsTable.tableScroller('reloadData');
     }
   });
   var campaignsTable = $('table#campaigns-list').tableScroller({
     'source': '#{campaigns_path(format: :json)}',
     'fixedHeader': true,
+    'filterBox': '#collection-list-filters',
     'rowValues': function(c){
       return [c.name, c.description, c.first_event, c.last_event, c.status]
     },
-    'filterBox': '#collection-list-filters',
+    'onItemsChange': function(items) {
+      $(document).trigger('campaigns-list:changed',[items]);
+    },
     'rowId': function(row){
       return 'campaign_'+row.id;
     },
-    'headerOffset': 91,
+    'headerOffset': 91
   })

@@ -4,6 +4,7 @@ $.widget 'nmk.filterBox', {
 		includeCalendars: false,
 		includeSearchBox: true,
 		includeAutoComplete: false,
+		autoCompletePath: '',
 		selectDefaultDate: false,
 		filters: null
 	},
@@ -200,6 +201,7 @@ $.widget 'nmk.filterBox', {
 					@searchLabel.show()
 		@acInput.bucket_complete {
 			source: @_getAutocompleteResults,
+			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
@@ -217,7 +219,7 @@ $.widget 'nmk.filterBox', {
 
 	_getAutocompleteResults: (request, response) ->
 		params = {q: request.term}
-		$.get "/events/autocomplete", params, (data) ->
+		$.get @options.sourcePath, params, (data) ->
 			response data
 		, "json"
 

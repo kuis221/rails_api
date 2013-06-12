@@ -10,6 +10,49 @@ class CampaignsController < FilteredController
 
   has_scope :with_text
 
+  def autocomplete
+    buckets = []
+
+    # Search compaigns
+    search = Sunspot.search(Campaign) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with(:company_id, current_company.id)
+    end
+    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search brands
+    search = Sunspot.search(Brand, BrandPortfolio) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Brands", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search places
+    search = Sunspot.search(Place, Area) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search users
+    search = Sunspot.search(User, Team) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      any_of do
+        with :active_company_ids, current_company.id # For the users
+        with :company_id, current_company.id  # For the teams
+      end
+    end
+    buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
+
   protected
     def collection_to_json
       collection.map{|campaign| {
@@ -28,6 +71,7 @@ class CampaignsController < FilteredController
         }
       }}
     end
+
     def sort_options
       {
         'name' => { :order => 'campaigns.name' },

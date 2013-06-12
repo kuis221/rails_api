@@ -53,6 +53,7 @@ Brandscopic::Application.routes.draw do
 
   resources :campaigns do
     resources :brands, only: [:index]
+    get :autocomplete, on: :collection
     member do
       get :deactivate
       get :activate
