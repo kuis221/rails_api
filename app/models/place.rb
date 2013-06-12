@@ -58,12 +58,12 @@ class Place < ActiveRecord::Base
 
   class << self
     def load_organized
-      places = find(:all).map {|p| {label: p.name, id: p.id, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact} }
+      places = find(:all).map {|p| {label: p.name, id: p.id, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact, count: 1} }
       list = {label: :root, items: [], id: nil}
       places.each do |p|
         add_place_into_parent(p, p[:parents], list)
       end
-      list[:items]
+      simplify_list(list)[:items]
     end
 
     private
@@ -76,6 +76,20 @@ class Place < ActiveRecord::Base
           parent[:items].push p
         else
           add_place_into_parent(p, parents.slice(1..-1), parent)
+        end
+      end
+
+      def simplify_list(parent)
+        if parent.has_key?(:items) and parent[:items]
+          parent[:items].each_with_index do |item, i|
+            parent[:items][i] = simplify_list(item)
+          end
+        end
+
+        if parent.has_key?(:items) and parent[:items].size == 1
+          simplify_list(parent[:items][0])
+        else
+          parent
         end
       end
   end
