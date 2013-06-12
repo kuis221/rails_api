@@ -142,7 +142,7 @@ $.widget 'nmk.filterBox', {
 
 	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
-		if list? and list.items.length
+		if list? and list.items? and list.items.length
 			items = []
 			for option in list.items
 				if (option.count > 0 or (option.items? and option.items.length)) and
@@ -162,8 +162,13 @@ $.widget 'nmk.filterBox', {
 						listItem.find('.checker').show()
 						@_filtersChanged()
 						$checkbox.attr('checked', true)
+						parentList = $(listItem.parents('ul')[0])
 						filterWrapper.find('ul').append listItem
+						if parentList.find('li').length == 0
+							parentList.remove()
 						listItem.effect 'highlight'
+
+
 						if @filtersPopup.find('li').length == 0
 							@_closeFilterOptions()
 							filterWrapper.find('.more-options-link').remove()
