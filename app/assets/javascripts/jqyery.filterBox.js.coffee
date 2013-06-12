@@ -113,7 +113,6 @@ $.widget 'nmk.filterBox', {
 
 		if items? and items.find('li').length > 0
 			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
-			items.find("input:checkbox").uniform()
 			bootbox.modalClasses = 'modal-med'
 			@filtersPopup.data('wrapper', filterWrapper)
 
@@ -149,19 +148,21 @@ $.widget 'nmk.filterBox', {
 				filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
 					$option = @_buildFilterOption(option)
 					items.push $option
-					.bind 'click.filter', (e) =>
+					$option.bind 'click.filter', (e) =>
 						e.stopPropagation()
 						true
-					.bind 'change.filter', (e) =>
-						e.stopPropagation()
+					.find('input[type=checkbox]').bind 'change.filter', (e) =>
+						$checkbox = $(e.target)
 						listItem = $($(e.target).parents('li')[0])
-						listItem.unbind 'change.filter'
+						listItem.find('ul').remove()
+						$checkbox.unbind 'change.filter'
 						listItem.unbind 'click.filter'
-						listItem.change (e) => @_filtersChanged()
-						filterWrapper.find('ul').append listItem
+						$checkbox.change (e) => @_filtersChanged()
 						listItem.find('.checker').show()
+						@_filtersChanged()
+						$checkbox.attr('checked', true)
+						filterWrapper.find('ul').append listItem
 						listItem.effect 'highlight'
-						listItem.trigger 'change'
 						if @filtersPopup.find('li').length == 0
 							@_closeFilterOptions()
 							filterWrapper.find('.more-options-link').remove()

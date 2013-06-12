@@ -61,14 +61,8 @@ class Campaign < ActiveRecord::Base
   end
 
   searchable do
-    text :name_txt do
-      name
-    end
-
-    text :description_txt do
-      description
-    end
-
+    text :name
+    text :description
 
     string :name
     string :description

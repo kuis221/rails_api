@@ -81,13 +81,9 @@ class Place < ActiveRecord::Base
   end
 
   searchable do
-    text :name_txt do
-      name
-    end
+    text :name
 
-    text :formatted_address_txt do
-      formatted_address
-    end
+    text :formatted_address
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, latitude) }
 

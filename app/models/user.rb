@@ -102,12 +102,10 @@ class User < ActiveRecord::Base
   scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
   searchable do
-    text :name_txt do
+    text :name do
       full_name
     end
-    text :email_txt do
-      email
-    end
+
     string :first_name
     string :last_name
     string :email

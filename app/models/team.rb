@@ -39,12 +39,8 @@ class Team < ActiveRecord::Base
 
 
   searchable do
-    text :name_txt do
-      name
-    end
-    text :description_txt do
-      description
-    end
+    text :name
+    text :description
 
     boolean :active
 
