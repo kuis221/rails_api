@@ -40,6 +40,46 @@ class Place < ActiveRecord::Base
     "#{street_number} #{route}".strip
   end
 
+  def country_name
+    load_country.name rescue nil unless load_country.nil?
+  end
+
+  def state_name
+    load_country.states[state]['name'] rescue nil if load_country and state
+  end
+
+  def continent_name
+    load_country.continent if load_country
+  end
+
+  def load_country
+    @the_country ||= Country.new(country) if country
+  end
+
+  class << self
+    def load_organized
+      places = find(:all).map {|p| {label: p.name, id: p.id, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact} }
+      list = {label: :root, items: [], id: nil}
+      places.each do |p|
+        add_place_into_parent(p, p[:parents], list)
+      end
+      list[:items]
+    end
+
+    private
+      def add_place_into_parent(p, parents, list)
+        unless parent = list[:items].select{|p| p[:label] == parents[0]}.shift
+          parent = {label: parents[0], items: [], name: 'place', id: [list[:id], parents[0]].compact.join('/').downcase}
+          list[:items].push parent
+        end
+        if parents.size == 1
+          parent[:items].push p
+        else
+          add_place_into_parent(p, parents.slice(1..-1), parent)
+        end
+      end
+  end
+
   searchable do
     text :name_txt do
       name

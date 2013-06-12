@@ -68,16 +68,49 @@
 		background-color: #fff;
 		margin: 5px 0;
 	}
+
+	.filter-wrapper {
+		li ul {
+			display: none;
+		}
+	}
 	&.more-options-popup {
 		float: left;
-		margin-left: -305px;
-		width:  300px;
-		background-color: #ccc;
-		overflow: auto;
+		margin-left: -207px;
+		overflow: visible;
 		z-index: 1000;
 		position: relative;
 		input[type=checkbox] {
 			display: none;
+		}
+
+		ul {
+			background-color: #eee;
+			border: 1px solid #ccc;
+			width: 200px;
+			position: absolute;
+			left: -202px;
+			top: 0px;
+			display: none;
+
+			li {
+				position: relative;
+				color: #646464;
+			}
+
+			li:hover {
+				background-color: #49afcd;
+				color: #fff;
+				> ul {
+					display: block;
+				}
+			}
+		}
+		> ul {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			display: block;
 		}
 	}
 }

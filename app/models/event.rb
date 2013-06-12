@@ -73,19 +73,23 @@ class Event < ActiveRecord::Base
     string :campaign do
       campaign_id.to_s + '||' + campaign_name if campaign_id
     end
-    text :campaign_txt do
-      campaign_name
-    end
     string :campaign_name
 
     integer :place_id
     string :place do
       place_id.to_s + '||' + place_name if place_id
     end
-    text :place_txt do
-      place_name
-    end
     string :place_name
+    string :location, multiple: true do
+      locations = []
+      unless place.nil?
+        locations.push place.continent_name.downcase if place.continent_name
+        locations.push "#{place.continent_name}/#{place.country_name}".downcase if place.country_name
+        locations.push "#{place.continent_name}/#{place.country_name}/#{place.state_name}".downcase if place.state_name
+        locations.push "#{place.continent_name}/#{place.country_name}/#{place.state_name}/#{place.city}".downcase if place.city
+      end
+      locations
+    end
 
     integer :user_ids, multiple: true do
       users.map(&:id)
@@ -119,7 +123,6 @@ class Event < ActiveRecord::Base
   def activate!
     update_attribute :active, true
   end
-
 
   def deactivate!
     update_attribute :active, false
@@ -162,7 +165,23 @@ class Event < ActiveRecord::Base
       ss = solr_search(options) do
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
-        with(:place_id, params[:place]) if params.has_key?(:place) and params[:place].present?
+        if params.has_key?(:place) and params[:place].present?
+          place_ids = []
+          place_paths = []
+          params[:place].each do |place|
+            if place =~ /^[0-9]+$/
+              place_ids.push place
+            else
+              place_paths.push place
+            end
+          end
+          if place_ids.size > 0
+            with(:place_id, place_ids)
+          end
+          if place_paths.size > 0
+            with(:location, place_paths)
+          end
+        end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:status, params[:status] || 'Active')

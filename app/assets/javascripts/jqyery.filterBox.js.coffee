@@ -50,36 +50,42 @@ $.widget 'nmk.filterBox', {
 	setFilters: (filters) ->
 		@formFilters.html('')
 		for filter in filters
-			if filter.items.length > 0
-				@addFilterSection(filter.label, filter.name, filter.items)
+			if filter.items.length > 0 or (filter.top_items? and filter.top_items.length)
+				@addFilterSection filter
 
-	addFilterSection: (title, name, items) ->
+	addFilterSection: (filter) ->
+		items = filter.items
+		top5 = filter.top_items
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('name', name).append($('<h3>').text(title), $list)
+		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append($('<h3>').text(filter.label), $list)
 		i = 0
-		optionsCount = items.length
-		first5 = []
-		while i < 5 and i < optionsCount
-			option = items[i]
-			if option.count > 0
-				first5.push option
-			i++
+		if not top5
+			optionsCount = items.length
+			top5 = []
+			while i < 5 and i < optionsCount
+				option = items[i]
+				if option.count > 0
+					top5.push option
+				i++
+		else
+			optionsCount = top5.length + items.length
 
-		for option in @_sortOptionsAlpha(first5)
+		for option in @_sortOptionsAlpha(top5)
 			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
 
 		if optionsCount > 5
 			$filter.append($('<a>',{href: '#', class:'more-options-link'}).text('More').click (e) =>
+				e.preventDefault()
 				filterWrapper = $(e.target).parents('div.filter-wrapper')
 				@_showFilterOptions(filterWrapper)
 				false
 			)
 		items = @_sortOptionsAlpha(items);
-		$filter.data('items', items)
+		$filter.data('filter', filter)
 		@formFilters.append($filter)
 
 	_sortOptionsAlpha: (options) ->
-		a = options.sort (a, b) ->
+		options.sort (a, b) ->
 			if a.ordering? or b.ordering?
 				if not a.ordering
 					return 1
@@ -95,36 +101,19 @@ $.widget 'nmk.filterBox', {
 				return 0
 
 			return if a.label > b.label then 1 else  -1
-		a
 
+	# Display the popout list of options after the user clicks
+	# on the "More" button
 	_showFilterOptions: (filterWrapper) ->
 		if @filtersPopup
 			@_closeFilterOptions()
 
-		name = filterWrapper.data('name')
-		items = []
-		for option in filterWrapper.data('items').slice(1,6)
-			if option.count > 0 and filterWrapper.find('input:checkbox[value='+option.id+']').length == 0
-				items.push @_buildFilterOption(option)
-				.bind 'click', (e) =>
-					e.stopPropagation()
-					true
-				.bind 'change.filter', (e) =>
-					listItem = $(e.target).parents('li')
-					listItem.unbind 'change.filter'
-					listItem.change (e) => @_filtersChanged()
-					filterWrapper.find('ul').append listItem
-					listItem.find('.checker').show()
-					listItem.effect 'highlight'
-					listItem.trigger 'change'
-					if @filtersPopup.find('li').length == 0
-						@_closeFilterOptions()
-						filterWrapper.find('.more-options-link').remove()
+		filter = filterWrapper.data('filter')
+		items = @_buildFilterOptionsList(filter, filterWrapper)
 
-		if items.length > 0
-			@filtersPopup = $('<div class="filter-box more-options-popup">').insertBefore filterWrapper
-			list = $('<ul>').append(items).appendTo @filtersPopup
-			list.find("input:checkbox").uniform()
+		if items? and items.find('li').length > 0
+			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
+			items.find("input:checkbox").uniform()
 			bootbox.modalClasses = 'modal-med'
 			@filtersPopup.data('wrapper', filterWrapper)
 
@@ -150,6 +139,39 @@ $.widget 'nmk.filterBox', {
 		if @filtersPopup
 			@filtersPopup.remove()
 		$(document).off 'click.filterbox'
+
+	_buildFilterOptionsList: (list, filterWrapper) ->
+		$list = null
+		if list? and list.items.length
+			items = []
+			for option in list.items
+				if (option.count > 0 or (option.items? and option.items.length)) and
+				filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
+					$option = @_buildFilterOption(option)
+					items.push $option
+					.bind 'click.filter', (e) =>
+						e.stopPropagation()
+						true
+					.bind 'change.filter', (e) =>
+						e.stopPropagation()
+						listItem = $($(e.target).parents('li')[0])
+						listItem.unbind 'change.filter'
+						listItem.unbind 'click.filter'
+						listItem.change (e) => @_filtersChanged()
+						filterWrapper.find('ul').append listItem
+						listItem.find('.checker').show()
+						listItem.effect 'highlight'
+						listItem.trigger 'change'
+						if @filtersPopup.find('li').length == 0
+							@_closeFilterOptions()
+							filterWrapper.find('.more-options-link').remove()
+					if child = @_buildFilterOptionsList(option, filterWrapper)
+						$option.append child
+
+			if items.length > 0
+				$list = $('<ul>').append(items)
+		$list
+
 
 	_buildFilterOption: (option) ->
 		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label))

@@ -13,10 +13,6 @@ class EventsController < FilteredController
 
   helper_method :filters
 
-  def index
-    Rails.logger.debug "Render INDEX"
-  end
-
   def autocomplete
     buckets = []
 
@@ -79,7 +75,8 @@ class EventsController < FilteredController
         ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
         f.push(label: "Date Ranges", items: ranges )
 
-        f.push(label: "Places", items: facet_search.facet(:place).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :place, count: x.count} })
+        places =
+        f.push build_locations_bucket(facet_search.facet(:place).rows)
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :campaign, count: x.count} })
         f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :brand, count: x.count} })
         users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }
@@ -88,6 +85,15 @@ class EventsController < FilteredController
         f.push(label: "People", items: people )
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
       end
+    end
+
+    def build_locations_bucket(facets)
+      first_five = facets.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }.first(5)
+      first_five_ids = first_five.map{|x| x[:id] }
+      locations = {}
+      locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized
+
+      {label: 'Locations', top_items: first_five, items: locations}
     end
 
     def begin_of_association_chain
