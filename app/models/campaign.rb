@@ -68,6 +68,13 @@ class Campaign < ActiveRecord::Base
     string :description
     string :aasm_state
     integer :company_id
+    integer :id
+    integer :place_ids, multiple: true do
+      []
+    end
+    integer :brand_ids, multiple: true
+    integer :user_ids, multiple: true
+    integer :team_ids, multiple: true
   end
 
   def first_event
@@ -77,7 +84,6 @@ class Campaign < ActiveRecord::Base
   def last_event
     events.order('start_at').last
   end
-
 
   def brands_list=(list)
     brands_names = list.split(',')
@@ -91,6 +97,30 @@ class Campaign < ActiveRecord::Base
 
   def brands_list
     brands.map(&:name).join ','
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:company_id, params[:company_id])
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'campaign'
+            with :id, value
+          when 'brandportfolio'
+            with :brand_ids, BrandPortfoliosBrand.where(brand_portfolio_id: value).map(&:brand_id) + [0]
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 
 end
