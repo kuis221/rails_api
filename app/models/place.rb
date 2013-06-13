@@ -63,7 +63,7 @@ class Place < ActiveRecord::Base
       places.each do |p|
         add_place_into_parent(p, p[:parents], list)
       end
-      simplify_list(list)[:items]
+      simplify_list(list[:items])
     end
 
     private
@@ -79,17 +79,18 @@ class Place < ActiveRecord::Base
         end
       end
 
-      def simplify_list(parent)
-        if parent.has_key?(:items) and parent[:items]
-          parent[:items].each_with_index do |item, i|
-            parent[:items][i] = simplify_list(item)
+      def simplify_list(items)
+        if items and items.size == 1
+          if items[0][:items]
+            simplify_list(items[0][:items])
+          else
+            items
           end
-        end
-
-        if parent.has_key?(:items) and parent[:items].size == 1
-          simplify_list(parent[:items][0])
-        else
-          parent
+        elsif items
+          items.each do |item|
+            item[:items] = simplify_list(item[:items])
+          end
+          items
         end
       end
   end
