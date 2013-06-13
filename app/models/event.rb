@@ -183,9 +183,12 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
-        with(:status, params[:status] || 'Active')
+        with(:brand_ids,  params[:brand]) if params.has_key?(:brand) and params[:brand].present?
+        with(:status,     params[:status] || 'Active')
         with(:company_id, params[:company_id])
+
+        with(:place_id, AreasPlace.where(area_id: params[:area]).map(&:place_id) + [0]) if params[:area].present?
+
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
           d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day

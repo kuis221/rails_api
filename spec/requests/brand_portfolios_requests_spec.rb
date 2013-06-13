@@ -42,7 +42,6 @@ describe "BrandPortfolios", :js => true do
       end
 
       assert_table_sorting ("table#brand-portfolios-list")
-
     end
 
     it 'allows the user to create a new portfolio' do
@@ -149,11 +148,10 @@ describe "BrandPortfolios", :js => true do
 
       within visible_modal do
         fill_in('Name', with: 'Ron Centenario')
-        click_button('Create Brand')
+        click_js_button('Create Brand')
       end
 
       # Make sure the new brand was added to the portfolio
-      sleep(1)
       within('table#brand_portfolio-brands') do
         within("tbody tr:nth-child(2)") do
           find('td:nth-child(1)').should have_content('Ron Centenario')

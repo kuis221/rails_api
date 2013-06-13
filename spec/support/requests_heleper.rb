@@ -5,6 +5,10 @@ module CapybaraBrandscopicHelpers
     find(:link, locator, options).trigger('click')
   end
 
+  def click_js_button(locator, options={})
+    find(:button, locator, options).trigger('click')
+  end
+
   def object_row(object)
     find("tr##{object.class.name.underscore.downcase}-#{object.id}")
   end
