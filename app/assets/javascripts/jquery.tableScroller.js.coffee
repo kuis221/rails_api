@@ -25,7 +25,7 @@ $.widget 'nmk.tableScroller', {
 				row = $(e.target).parents('tr')[0]
 				@options.onClick(row, $(row).data('item'))
 
-		@sortBy @element.find('thead th:first-child')[0], false
+		@sortBy @element.find('thead th[data-sort]')[0], false
 
 		@oldParams = []
 

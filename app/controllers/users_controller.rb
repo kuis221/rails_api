@@ -8,11 +8,6 @@ class UsersController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   respond_to :json, only: [:index]
 
-  has_scope :with_text
-  has_scope :by_teams
-  has_scope :by_campaigns
-  has_scope :by_events
-
   custom_actions :collection => [:complete]
 
   def dashboard
@@ -21,6 +16,60 @@ class UsersController < FilteredController
   def select_company
     session[:current_company_id] = current_user.companies.find(params[:company_id]).id
     redirect_to root_path
+  end
+
+  def autocomplete
+    buckets = []
+
+    # Search users
+    search = Sunspot.search(User) do
+      keywords(params[:q]) do
+        fields(:name)
+        fields(:email)
+      end
+      any_of do
+        with :active_company_ids, current_company.id # For the users
+        with :inactive_company_ids, current_company.id # For the users
+      end
+    end
+    buckets.push(label: "Users", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search teams
+    search = Sunspot.search(Team) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with :company_id, current_company.id  # For the teams
+    end
+    buckets.push(label: "Teams", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search roles
+    search = Sunspot.search(Role) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with :company_id, current_company.id  # For the teams
+    end
+    buckets.push(label: "Roles", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search campaigns
+    search = Sunspot.search(Campaign) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with(:company_id, current_company.id)
+    end
+    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    # Search places
+    search = Sunspot.search(Place, Area) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
   end
 
   protected
@@ -58,8 +107,8 @@ class UsersController < FilteredController
 
     def delete_member_path(user)
       path = nil
-      path = delete_member_team_path(params[:by_teams], member_id: user.id) if params.has_key?(:by_teams) && params[:by_teams]
-      path = delete_member_campaign_path(params[:by_campaigns], member_id: user.id) if params.has_key?(:by_campaigns) && params[:by_campaigns]
+      path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]
+      path = delete_member_campaign_path(params[:campaign], member_id: user.id) if params.has_key?(:campaign) && params[:campaign]
       path
     end
 

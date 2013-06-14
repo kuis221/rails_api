@@ -19,7 +19,7 @@
 class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
-  has_and_belongs_to_many :users
+
   has_many :tasks, dependent: :destroy
   has_many :documents, :as => :documentable
   has_many :teamable, :as => :documentable
@@ -27,6 +27,9 @@ class Event < ActiveRecord::Base
   has_many :teams, :through => :teamings
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
+
+  # Events-Users relationship
+  has_and_belongs_to_many :users, :after_add => :reindex_user, :after_remove => :reindex_user
 
   # Events-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
@@ -126,6 +129,10 @@ class Event < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def reindex_user(user)
+    Sunspot.index(user)
   end
 
   def place_reference=(value)

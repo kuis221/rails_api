@@ -28,6 +28,18 @@ class Role < ActiveRecord::Base
   scope :active, where(:active => true)
   scope :with_text, lambda{|text| where('roles.name ilike ? or roles.description ilike ? ', "%#{text}%", "%#{text}%") }
 
+  searchable do
+    text :name
+
+    text :description
+
+    boolean :active
+
+    string :name
+
+    integer :company_id
+  end
+
   def activate!
     update_attribute :active, true
   end

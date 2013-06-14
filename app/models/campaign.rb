@@ -36,7 +36,7 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Users relationship
   has_many :campaigns_users
-  has_many :users, through: :campaigns_users, :order => 'last_name ASC'
+  has_many :users, through: :campaigns_users, :order => 'last_name ASC', :after_add => :reindex_user, :after_remove => :reindex_user
 
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
@@ -97,6 +97,10 @@ class Campaign < ActiveRecord::Base
 
   def brands_list
     brands.map(&:name).join ','
+  end
+
+  def reindex_user(user)
+    Sunspot.index(user)
   end
 
   class << self

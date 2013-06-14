@@ -46,13 +46,13 @@ javascript:
   });
 
   var teamMembersTable = $('table#team-members').tableScroller({
-    'source': '#{users_path(by_teams: resource.to_param, format: :json)}',
+    'source': '#{users_path(team: resource.to_param, format: :json)}',
     'filterBox': '#team-members-list-filter',
     'rowValues': function(u){
       return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
     },
     'rowId': function(row){
-      return 'team-member-' + row.id;
+      return 'team-member-'+row.id;
     },
     'actionButtons': ['deletable']
   })

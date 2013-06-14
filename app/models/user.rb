@@ -102,13 +102,20 @@ class User < ActiveRecord::Base
   scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
 
   searchable do
+    integer :id
+
     text :name do
       full_name
     end
+    text :email
 
     string :first_name
     string :last_name
     string :email
+
+    string :role_ids, :multiple => true do
+      company_users.map{|cu| "#{cu.company_id}-#{cu.role_id}" }
+    end
 
     integer :active_company_ids, :multiple => true, :references => Company do
       company_users.where(active: true).map(&:company_id)
@@ -119,6 +126,7 @@ class User < ActiveRecord::Base
     end
 
     integer :team_ids, :multiple => true, :references => Team
+    integer :campaign_ids, :multiple => true
   end
 
   attr_accessor :inviting_user
@@ -203,6 +211,33 @@ class User < ActiveRecord::Base
     def inviter_role(inviter)
       return :admin if inviter.is_a?(User)
       :default
+    end
+
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        any_of do
+          with(:active_company_ids, params[:company_id]) # For the active users
+          with(:inactive_company_ids, params[:company_id])  # For the inactive users
+        end
+        with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
+        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'user'
+            with :id, value
+          when 'role'
+            with :role_ids, "#{params[:company_id]}-#{value}"
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
     end
 
   end

@@ -1,14 +1,12 @@
 module TeamMembersHelper
 
-
   module InstanceMethods
-
 
     def delete_member
       if member
-        user_id = member
+        user = member.dup
         if resource.users.delete(member)
-          users = user_id
+          users = user.id
         end
       elsif team
         team_users = team.user_ids
@@ -21,7 +19,6 @@ module TeamMembersHelper
       if resource.is_a?(Event)
         Task.scoped_by_event_id(resource).scoped_by_user_id(users).update_all(user_id: nil)
       end
-
     end
 
     def new_member
@@ -42,7 +39,8 @@ module TeamMembersHelper
       elsif params[:team_id]
         @team_id = params[:team_id]
         unless resource.teams.where(id: @team_id).first
-          resource.teamings.build({team: company_teams.find(@team_id)}, without_protection: true)
+          team = company_teams.find(@team_id)
+          resource.teamings.build({team: team}, without_protection: true)
           resource.save
         end
       end

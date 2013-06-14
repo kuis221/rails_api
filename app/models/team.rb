@@ -26,7 +26,7 @@ class Team < ActiveRecord::Base
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy
-  has_many :users, through: :teams_users
+  has_many :users, through: :teams_users, :after_add => :reindex_user, :after_remove => :reindex_user
 
   # Campaigns-Teams relationship
   has_and_belongs_to_many :campaigns
@@ -54,5 +54,9 @@ class Team < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def reindex_user(user)
+    Sunspot.index(user)
   end
 end
