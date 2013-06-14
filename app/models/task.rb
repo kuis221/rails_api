@@ -26,16 +26,31 @@ class Task < ActiveRecord::Base
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
+  delegate :campaign_id, :company_id, to: :event, allow_nil: true
 
   validates :title, presence: true
   validates :user_id, numericality: true, if: :user_id
   validates :event_id, presence: true, numericality: true
 
-  scope :by_users, lambda{|users| where(user_id: users) }
-  scope :by_teams, lambda{|teams| where(user_id: TeamsUser.select('user_id').where(team_id: teams).map(&:user_id)) }
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
-  scope :by_period, lambda{|start_date, end_date| where("due_at >= ? AND due_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
-  scope :with_text, lambda{|text| where('tasks.title ilike ? or tu.first_name ilike ? or tu.last_name ilike ?', "%#{text}%", "%#{text}%", "%#{text}%").joins('LEFT JOIN "users" "tu" ON "tu"."id" = "tasks"."user_id"') }
+
+  searchable do
+    text :title
+    string :title
+
+    integer :user_id
+    integer :user_id
+    integer :company_id
+    integer :campaign_id
+    time :due_at
+
+    string :status, multiple: true do
+      status = []
+      status.push active? ? 'Active' : 'Inactive'
+      status.push completed? ? 'Completed' : 'Incomplete'
+      status
+    end
+  end
 
   def activate!
     update_attribute :active, true
@@ -43,5 +58,37 @@ class Task < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:company_id, params[:company_id])
+        with :user_id, params[:user_id] if params.has_key?(:user_id)
+
+        # Handles the cases from the autocomplete
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'campaign'
+            with :campaign_id, value
+          end
+        end
+
+        if params[:start_date].present? and params[:end_date].present?
+          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          with :due_at, d1..d2
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date], zone: :current)
+          with :due_at, d.beginning_of_day..d.end_of_day
+        end
+
+        order_by(params[:sorting] || :due_at, params[:sorting_dir] || :asc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 end

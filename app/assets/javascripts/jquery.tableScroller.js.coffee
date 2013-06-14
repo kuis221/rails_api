@@ -5,6 +5,7 @@ $.widget 'nmk.tableScroller', {
 		onItemsLoad: null,
 		fixedHeader: false,
 		headerOffset: 0,
+		facets: true,
 		onClick: null,
 		filterBox: null,
 		deactivateMessage: null,
@@ -68,18 +69,18 @@ $.widget 'nmk.tableScroller', {
 		if @options.fixedHeader
 			@fixedHeader.remove()
 
-
 	buildParams: (params) ->
-		facets = @oldParams.length == 0 ? true : false
-		if @options.filterBox? and $(@options.filterBox).length
-			data = $(@options.filterBox).filterBox('getFilters');
-			for param in data
-				if param.name in ['start_date', 'end_date', 'q']
-					for oldParam in @oldParams
-						if oldParam.name == param.name and oldParam.value != param.value
-							facets = true
-				params.push(param)
-		params.push({'name': 'facets', 'value': facets })
+		if @options.facets
+			facets = @oldParams.length == 0 ? true : false
+			if @options.filterBox? and $(@options.filterBox).length
+				data = $(@options.filterBox).filterBox('getFilters');
+				for param in data
+					if param.name in ['start_date', 'end_date', 'q']
+						for oldParam in @oldParams
+							if oldParam.name == param.name and oldParam.value != param.value
+								facets = true
+					params.push(param)
+			params.push({'name': 'facets', 'value': facets })
 		@oldParams = params
 		params
 

@@ -24,7 +24,10 @@ javascript:
 
   var taskEventsTable = $('table#tasks-events-list').tableScroller({
     'source': '#{events_path(format: :json)}',
-    'filterBox': '#events-list-filters',
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'facets': false,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'onClick': function(row, item){
       $('#event-title').val(item.campaign.name + '@' +  item.start_date);
       $('#task_event_id').val(item.id);

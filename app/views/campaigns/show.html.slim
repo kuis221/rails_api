@@ -24,3 +24,8 @@
       #staff-content.collapse.in
         .box-content
           = render 'staff'
+
+javascript:
+  $(document).on('campaigns:change', function(){
+    window.location.reload(false);
+  })

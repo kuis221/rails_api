@@ -54,11 +54,11 @@ class User < ActiveRecord::Base
   validates :last_name, presence: true
   validates :email, presence: true
 
-  with_options unless: :inviting_user do |user|
+  with_options unless: :inviting_user_or_invited?  do |user|
     user.validates :country, presence: true
     user.validates :state,   presence: true
     user.validates :city,    presence: true
-    user.validates :password, presence: true, unless: :encrypted_password
+    user.validates :password, presence: true, if: :should_require_password?
     user.validates :password, confirmation: true, if: :password
   end
 
@@ -74,8 +74,8 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes, :inviting_user, as: :admin
-  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes, :inviting_user, :filling_profile, as: :admin
+  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, :accepting_invitation
 
   # Teams-Users relationship
   has_many :teams_users, dependent: :destroy
@@ -130,6 +130,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :inviting_user
+  attr_accessor :accepting_invitation
 
   def active?
     !invited_to_sign_up? && current_company_user && current_company_user.active?
@@ -204,6 +205,15 @@ class User < ActiveRecord::Base
       end
       @current_company_user
     end
+  end
+
+
+  def inviting_user_or_invited?
+    inviting_user or (invited_to_sign_up? and !accepting_invitation)
+  end
+
+  def should_require_password?
+    accepting_invitation
   end
 
   class << self

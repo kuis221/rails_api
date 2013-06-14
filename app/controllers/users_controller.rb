@@ -81,6 +81,14 @@ class UsersController < FilteredController
       @roles ||= current_company.roles
     end
 
+    def as_role
+      { as: :admin }
+    end
+
+    def role_given?
+      current_user.id != resource.id
+    end
+
     def collection_to_json
       collection.map{|user| {
         :id => user.id,

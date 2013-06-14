@@ -6,12 +6,24 @@ class TasksController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
-  has_scope :by_users
-  has_scope :by_period, :using => [:start_date, :end_date]
-  has_scope :with_text
-
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
+
+  def autocomplete
+    buckets = []
+
+    # Search compaigns
+    search = Sunspot.search(Campaign) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with(:company_id, current_company.id)
+      with(:aasm_state, ['active'])
+    end
+    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
 
   private
     def collection_to_json
@@ -47,20 +59,10 @@ class TasksController < FilteredController
       end
     end
 
-    def controller_filters(c)
-      c = c.by_users(current_user) if params[:scope] == 'user'
-      c = c.by_teams(current_user.teams.scoped_by_company_id(current_company)) if params[:scope] == 'teams'
-      c
+    def search_params
+      super
+      @search_params[:user_id] = current_user.id if params[:scope] == 'user'
+      @search_params[:user_id] = TeamsUser.select('user_id').where(team_id: current_user.teams.scoped_by_company_id(current_company)).map(&:user_id).uniq if params[:scope] == 'teams'
+      @search_params
     end
-
-    def sort_options
-      {
-        'title' => { :order => 'tasks.title' },
-        'last_activity' => { :order => 'tasks.updated_at' },
-        'due_at' => { :order => 'tasks.due_at' },
-        'user_name' => { :order => 'tu.first_name', :joins => 'LEFT JOIN users tu ON tu.id = tasks.user_id' },
-        'completed' => { :order => 'tasks.completed' }
-      }
-    end
-
 end

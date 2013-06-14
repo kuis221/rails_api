@@ -12,7 +12,7 @@
       = f.input :email
       - if resource.id == current_user.id
         = f.input :country, collection: Country.all, required: true
-        = f.input :state, collection: (resource.country ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
         = f.input :city, required: true
       - if resource.id != current_user.id
         = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}

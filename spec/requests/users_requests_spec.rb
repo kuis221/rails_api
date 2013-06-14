@@ -44,6 +44,59 @@ describe "Users", :js => true do
       end
     end
 
+
+    describe "/users/:user_id", :js => true do
+      it "GET show should display the user details page" do
+        role = FactoryGirl.create(:role, name: 'TestRole')
+        user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+        visit user_path(user)
+        page.should have_selector('h2', text: 'Pedro Navaja')
+        page.should have_selector('div.user-role', text: 'TestRole')
+      end
+
+      it 'allows the user to activate/deactivate a user' do
+        role = FactoryGirl.create(:role, name: 'TestRole')
+        user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+        visit user_path(user)
+
+        within('.active-deactive-toggle') do
+          page.should have_selector('a.btn-success.active', text: 'Active')
+          page.should have_selector('a', text: 'Inactive')
+          page.should_not have_selector('a.btn-danger', text: 'Inactive')
+
+          click_link('Inactive')
+          page.should have_selector('a.btn-danger.active', text: 'Inactive')
+          page.should have_selector('a', text: 'Active')
+          page.should_not have_selector('a.btn-success', text: 'Active')
+        end
+      end
+
+      it 'allows the user to edit the user' do
+        role = FactoryGirl.create(:role, name: 'TestRole')
+        other_role = FactoryGirl.create(:role, name: 'Another Role')
+        user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
+        visit user_path(user)
+
+        click_link('Edit')
+
+        within("form#edit_user_#{user.id}") do
+          fill_in 'First name', with: 'Pedro'
+          fill_in 'Last name', with: 'Navaja'
+          fill_in 'Email', with: 'pedro@navaja.com'
+          select 'Another Role', from: 'Role'
+          fill_in 'Password', with: 'Pedrito123'
+          fill_in 'Password confirmation', with: 'Pedrito123'
+          click_js_button 'Update User'
+        end
+
+        sleep(1)
+        find('h2', text: 'Pedro Navaja') # Wait for the page to reload
+        page.should have_selector('h2', text: 'Pedro Navaja')
+        page.should have_selector('div.user-role', text: 'Another Role')
+      end
+
+    end
+
   end
 
 

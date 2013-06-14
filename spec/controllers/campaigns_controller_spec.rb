@@ -27,11 +27,12 @@ describe CampaignsController do
       end
 
       it "returns the correct structure" do
-        FactoryGirl.create_list(:campaign, 3)
         get 'index', sEcho: 1, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
+        parsed_body["total"].should == 0
+        parsed_body["items"].should == []
+        parsed_body["pages"].should == 1
+        parsed_body["page"].should == 1
       end
     end
   end

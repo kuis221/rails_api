@@ -60,26 +60,43 @@ describe User do
     before do
       @user = FactoryGirl.create(:user)
     end
-    it { should validate_presence_of(:country) }
+    it { should validate_uniqueness_of(:email) }
   end
 
   describe "validations when inviting user" do
     context do
-      user = User.new()
-      user.inviting_user = true
-      user
+      before { subject.inviting_user = true }
+      it { should_not validate_presence_of(:country) }
+      it { should_not validate_presence_of(:state) }
+      it { should_not validate_presence_of(:city) }
+      it { should_not validate_presence_of(:password) }
     end
-    it { should validate_presence_of(:country) }
-    it { should validate_presence_of(:state) }
-    it { should validate_presence_of(:city) }
-    it { should_not validate_presence_of(:password) }
   end
 
-  # describe "not validate password if already have one" do
-  #   context { FactoryGirl.create(:user, password: 'Pfsafaada@@123', password_confirmation: 'Pfsafaada@@123') }
+  describe "validations when accepting an invitation" do
+    context do
+      before do
+        subject.invitation_accepted_at = nil
+        subject.accepting_invitation = true
+      end
+      it { should validate_presence_of(:country) }
+      it { should validate_presence_of(:state) }
+      it { should validate_presence_of(:city) }
+      it { should validate_presence_of(:password) }
+    end
+  end
 
-  #   it { should_not validate_presence_of(:password) }
-  # end
+  describe "validations when editing a user" do
+    context do
+      before do
+        subject.invitation_accepted_at = Time.now
+      end
+      it { should validate_presence_of(:country) }
+      it { should validate_presence_of(:state) }
+      it { should validate_presence_of(:city) }
+      it { should_not validate_presence_of(:password) }
+    end
+  end
 
   describe "#full_name" do
     let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }
