@@ -113,6 +113,7 @@ Brandscopic::Application.routes.draw do
   resources :brands, only: [:index]
 
   resources :areas do
+    get :autocomplete, on: :collection
     resources :places, only: [:index, :new, :create, :destroy]
     member do
       get :deactivate

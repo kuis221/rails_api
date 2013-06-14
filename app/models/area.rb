@@ -27,13 +27,15 @@ class Area < ActiveRecord::Base
   has_and_belongs_to_many :places
 
   searchable do
-    text :name
+    integer :id
 
+    text :name
     text :description
 
-    boolean :active
-
     string :name
+    string :description
+
+    boolean :active
 
     integer :company_id
   end
@@ -67,5 +69,25 @@ class Area < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:company_id, params[:company_id])
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'area'
+            with :id, value
+          end
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 end

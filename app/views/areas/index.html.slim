@@ -15,26 +15,33 @@
           tr
             th data-sort="name" Name
             th data-sort="description" Description
-            th data-sort="status" Status
+            th data-sort="active" Status
             th
         tbody
 
 javascript:
   $('#collection-list-filters').filterBox({
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_areas_path(format: :json)}',
     'onChange': function(filterBox){
-      areasTable.tableScroller('reloadData');
+      if (typeof areasTable != 'undefined')
+        areasTable.tableScroller('reloadData');
     }
   });
 
   var areasTable = $('table#areas-list').tableScroller({
     'source': '#{areas_path(format: :json)}',
-    'filterBox': '#events-list-filters',
     'fixedHeader': true,
+    'filterBox': '#collection-list-filters',
     'rowValues': function(t){
       return [t.name, t.description, t.status]
+    },
+    'onItemsChange': function(items) {
+      $(document).trigger('areas-list:changed',[items]);
     },
     'rowId': function(row){
       return 'area_'+row.id;
     },
-    'headerOffset': 91,
+    'headerOffset': 91
   })

@@ -8,6 +8,20 @@ class AreasController < FilteredController
 
   load_and_authorize_resource except: :index
 
+  def autocomplete
+    buckets = []
+
+    # Search places
+    search = Sunspot.search(Area) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Areas", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
+
   private
     def collection_to_json
       collection.map{|area| {
@@ -23,14 +37,6 @@ class AreasController < FilteredController
             deactivate: deactivate_area_path(area)
         }
       }}
-    end
-
-    def sort_options
-      {
-        'name' => { :order => 'areas.name' },
-        'description' => { :order => 'areas.description' },
-        'status' => { :order => 'areas.active' }
-      }
     end
 
 end
