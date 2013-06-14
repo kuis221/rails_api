@@ -93,7 +93,7 @@ class EventsController < FilteredController
       first_five = facets.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }.first(5)
       first_five_ids = first_five.map{|x| x[:id] }
       locations = {}
-      locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized
+      locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)
 
       {label: 'Locations', top_items: first_five, items: locations}
     end

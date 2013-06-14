@@ -134,6 +134,7 @@ describe "Teams", :js => true do
         click_button 'Update Team'
       end
 
+      sleep(1)
       find('h2', text: 'edited team name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited team name')
       page.should have_selector('div.team-description', text: 'edited team description')

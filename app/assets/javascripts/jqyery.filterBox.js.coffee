@@ -143,12 +143,14 @@ $.widget 'nmk.filterBox', {
 	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
 		if list? and list.items? and list.items.length
-			items = []
+			items = {}
 			for option in list.items
 				if (option.count > 0 or (option.items? and option.items.length)) and
 				filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
 					$option = @_buildFilterOption(option)
-					items.push $option
+					group = if option.group then option.group else '__default__'
+					items[group] ||= []
+					items[group].push $option
 					$option.bind 'click.filter', (e) =>
 						e.stopPropagation()
 						true
@@ -175,8 +177,12 @@ $.widget 'nmk.filterBox', {
 					if child = @_buildFilterOptionsList(option, filterWrapper)
 						$option.append child
 
-			if items.length > 0
-				$list = $('<ul>').append(items)
+			$list = $('<ul>')
+			for group, children of items
+				if children.length > 0
+					if group isnt '__default__'
+						$list.append $('<li class="options-list-group">').text(group)
+					$list.append children
 		$list
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130610195840) do
+ActiveRecord::Schema.define(:version => 20130613160421) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -259,8 +259,8 @@ ActiveRecord::Schema.define(:version => 20130610195840) do
 
   create_table "places", :force => true do |t|
     t.string   "name"
-    t.string   "reference",         :limit => 400
-    t.string   "place_id",          :limit => 100
+    t.string   "reference",              :limit => 400
+    t.string   "place_id",               :limit => 100
     t.string   "types"
     t.string   "formatted_address"
     t.float    "latitude"
@@ -271,8 +271,10 @@ ActiveRecord::Schema.define(:version => 20130610195840) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "administrative_level_1"
+    t.string   "administrative_level_2"
   end
 
   add_index "places", ["reference"], :name => "index_places_on_reference"
