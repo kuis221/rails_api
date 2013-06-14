@@ -4,7 +4,7 @@
 table#tasks-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
-      th data-sort="name" Task
+      th data-sort="title" Task
       th data-sort="last_activity" Last Activity
       th data-sort="due_at" Due Date
       th data-sort="user_name" Team member
@@ -16,6 +16,9 @@ javascript:
 
   $('#collection-list-filters').filterBox({
     'includeCalendars': true,
+    'includeAutoComplete': true,
+    'includeSearchBox': false,
+    'autoCompletePath': '#{autocomplete_tasks_path(format: :json)}',
     'onChange': function(filterBox){
       tasksTable.tableScroller('reloadData');
     }

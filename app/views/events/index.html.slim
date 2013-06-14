@@ -36,6 +36,7 @@ javascript:
     'selectDefaultDate': true,
     'includeSearchBox': false,
     'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'onChange': function(filterBox){
       if (typeof eventsTable != 'undefined')
         eventsTable.tableScroller('reloadData');

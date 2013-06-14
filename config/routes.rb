@@ -87,6 +87,7 @@ Brandscopic::Application.routes.draw do
 
   resources :tasks, only: [:new, :create, :edit, :update] do
     collection do
+      get :autocomplete
       get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
       get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
     end
