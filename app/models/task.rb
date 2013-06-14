@@ -39,7 +39,7 @@ class Task < ActiveRecord::Base
     string :title
 
     integer :user_id
-    integer :user_id
+    integer :event_id
     integer :company_id
     integer :campaign_id
     time :due_at
@@ -67,6 +67,7 @@ class Task < ActiveRecord::Base
 
         with(:company_id, params[:company_id])
         with :user_id, params[:user_id] if params.has_key?(:user_id)
+        with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
 
         # Handles the cases from the autocomplete
         if params.has_key?(:q) and params[:q].present?
