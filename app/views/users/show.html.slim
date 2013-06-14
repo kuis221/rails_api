@@ -17,3 +17,8 @@
             = link_to 'Edit', edit_user_path(resource), remote: true, class: 'btn btn-primary btn-small'
             = "&nbsp;".html_safe
             = active_inactive_buttons(resource)
+
+javascript:
+  $(document).on('users:change', function(){
+    window.location.reload(false);
+  })

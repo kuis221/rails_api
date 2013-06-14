@@ -85,6 +85,7 @@ describe UsersController do
       it "must update the user data" do
         put 'update', id: user.to_param, user: {first_name: 'Juanito', last_name: 'Perez'}, format: :js
         assigns(:user).should == user
+
         response.should be_success
         user.reload
         user.first_name.should == 'Juanito'
@@ -113,6 +114,37 @@ describe UsersController do
         @user.state.should == 'FL'
         @user.country.should == 'US'
         @user.encrypted_password.should_not == old_password
+      end
+
+
+      it "user have to enter the countr/state and city information when editing his profifle" do
+        old_password = @user.encrypted_password
+        put 'update', id: @user.to_param, user: {first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', city: '', state: '', country: '', password: 'Juanito123', password_confirmation: 'Juanito123'}, format: :js
+        assigns(:user).should == @user
+        response.should be_success
+
+        assigns(:user).errors.count.should > 0
+        assigns(:user).errors[:country].should == ["can't be blank"]
+        assigns(:user).errors[:state].should == ["can't be blank"]
+        assigns(:user).errors[:city].should == ["can't be blank"]
+      end
+
+      it "allows admin to update teams and role" do
+        team = FactoryGirl.create(:team, company: @company)
+        role = FactoryGirl.create(:role, company: @company)
+        put 'update', id: user.to_param, user: {first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com',  password: 'Juanito123', password_confirmation: 'Juanito123', team_ids: [team.id], company_users_attributes: {"0"=>{role_id: role.id, id: user.company_users.first.id}}}, format: :js
+
+        user.reload.company_users.first.role_id.should == role.id
+        user.teams.should == [team]
+      end
+
+      it "allows admin to update invited users" do
+        invited_user = FactoryGirl.create(:invited_user, company_id: @company.id )
+        team = FactoryGirl.create(:team, company: @company)
+        role = FactoryGirl.create(:role, company: @company)
+        put 'update', id: invited_user.to_param, user: {first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', team_ids: [team.id], company_users_attributes: {"0"=>{role_id: role.id, id: invited_user.company_users.first.id}}}, format: :js
+        invited_user.reload.company_users.first.role_id.should == role.id
+        invited_user.teams.should == [team]
       end
     end
   end

@@ -104,7 +104,7 @@ describe InvitationsController do
     describe "PUT 'update'" do
       let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
       it "must update the user attributes" do
-        put 'update', user: {first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
         response.should redirect_to(root_path)
         user.reload
         user.first_name.should == 'Juanito'
@@ -115,6 +115,22 @@ describe InvitationsController do
         user.invitation_token.should be_nil
         user.invitation_accepted_at.to_date.should == Date.today
         flash[:notice].should == 'Your password was set successfully. You are now signed in.'
+      end
+
+      it "must require the user location attributes" do
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: '', state: '', country: '', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
+        user.reload
+        assigns(:user).errors.count.should > 0
+        assigns(:user).errors[:country].should == ["can't be blank"]
+        assigns(:user).errors[:state].should == ["can't be blank"]
+        assigns(:user).errors[:city].should == ["can't be blank"]
+      end
+
+      it "must require the password" do
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: '', password_confirmation: '', invitation_token: user.invitation_token}
+        user.reload
+        assigns(:user).errors.count.should > 0
+        assigns(:user).errors[:password].should == ["can't be blank"]
       end
     end
   end
