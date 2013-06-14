@@ -22,21 +22,6 @@ describe UsersController do
         response.should be_success
       end
 
-      describe "filters" do
-        it "should call the with_text filter" do
-          User.should_receive(:with_text).with('abc').at_least(:once) { User }
-          get :index, with_text: 'abc', format: :json
-        end
-        it "should call the by_events filter" do
-          User.should_receive(:by_events).with(123).at_least(:once) { User }
-          get :index, by_events: 123, format: :json
-        end
-        it "should call the by_teams filter" do
-          User.should_receive(:by_teams).with(123).at_least(:once) { User }
-          get :index, by_teams: 123, format: :json
-        end
-      end
-
       describe "json requests" do
         it "responds to .table format" do
           get 'index', format: :json
@@ -44,15 +29,12 @@ describe UsersController do
         end
 
         it "returns the correct structure" do
-          FactoryGirl.create_list(:user, 3, company_id: @company.id)
-
-          # Users on other companies should not be included on the results
-          FactoryGirl.create_list(:user, 2, company_id: 9999)
           get 'index', sEcho: 1, format: :json
           parsed_body = JSON.parse(response.body)
-
-          parsed_body["total"].should == 4
-          parsed_body["items"].count.should == 4
+          parsed_body["total"].should == 0
+          parsed_body["items"].should == []
+          parsed_body["pages"].should == 1
+          parsed_body["page"].should == 1
         end
       end
     end

@@ -207,7 +207,6 @@ class User < ActiveRecord::Base
     end
   end
 
-
   def inviting_user_or_invited?
     inviting_user or (invited_to_sign_up? and !accepting_invitation)
   end

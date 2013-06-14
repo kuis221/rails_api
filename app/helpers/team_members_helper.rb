@@ -15,10 +15,6 @@ module TeamMembersHelper
           users = team_users - assigned_users
         end
       end
-
-      if resource.is_a?(Event)
-        Task.scoped_by_event_id(resource).scoped_by_user_id(users).update_all(user_id: nil)
-      end
     end
 
     def new_member

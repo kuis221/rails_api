@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Teams", :js => true do
+describe "Teams", js: true, search: true do
   before do
     @user = login
     sign_in @user
