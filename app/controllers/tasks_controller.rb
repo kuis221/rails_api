@@ -6,8 +6,12 @@ class TasksController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
+  has_scope :by_users
+
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
+
+  helper_method :assignable_users
 
   def autocomplete
     buckets = []
@@ -23,6 +27,16 @@ class TasksController < FilteredController
     buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 
     render :json => buckets.flatten
+  end
+
+  def assignable_users
+    users = []
+    unless resource.event.nil?
+      users =  company_users.active.by_events(resource.event)
+      users += company_users.active.by_teams(resource.event.teams)
+      users.uniq!
+    end
+    users.sort{|a,b| a.name <=> b.name}
   end
 
   private
