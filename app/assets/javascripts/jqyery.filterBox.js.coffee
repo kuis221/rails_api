@@ -5,6 +5,7 @@ $.widget 'nmk.filterBox', {
 		includeSearchBox: true,
 		includeAutoComplete: false,
 		autoCompletePath: '',
+		defaultParams: {},
 		selectDefaultDate: false,
 		filters: null
 	},
@@ -36,6 +37,8 @@ $.widget 'nmk.filterBox', {
 
 		@_parseHashQueryString()
 
+		@defaultParams = @options.defaultParams
+
 		$(window).on 'resize scroll', () =>
 			if @filtersPopup
 				@_positionFiltersOptions()
@@ -46,7 +49,11 @@ $.widget 'nmk.filterBox', {
 		@_closeFilterOptions()
 
 	getFilters: () ->
-		@form.serializeArray()
+		p = @form.serializeArray()
+		for param in @defaultParams
+			p.push param
+		@defaultParams = []
+		p
 
 	setFilters: (filters) ->
 		@formFilters.html('')

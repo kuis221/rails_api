@@ -125,6 +125,7 @@ Brandscopic::Application.routes.draw do
   resources :places, only: [:index]
 
   resources :date_ranges do
+    get :autocomplete, on: :collection
     resources :date_items, path: 'dates', except: [:show, :edit]
     member do
       get :deactivate

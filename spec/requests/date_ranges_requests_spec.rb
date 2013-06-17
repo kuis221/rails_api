@@ -18,7 +18,7 @@ describe "DateRanges", search: true, js: true do
     it "GET index should display a table with the date_ranges" do
       date_ranges = [
         FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true),
-        FactoryGirl.create(:date_range, company: @company, name: 'Weekends', description: 'Saturday and Sunday', active: false)
+        FactoryGirl.create(:date_range, company: @company, name: 'Weekends', description: 'Saturday and Sunday', active: true)
       ]
       Sunspot.commit
       visit date_ranges_path
@@ -36,9 +36,9 @@ describe "DateRanges", search: true, js: true do
         within("tbody tr:nth-child(2)") do
           find('td:nth-child(1)').should have_content('Weekends')
           find('td:nth-child(2)').should have_content('Saturday and Sunday')
-          find('td:nth-child(3)').should have_content('Inactive')
+          find('td:nth-child(3)').should have_content('Active')
           find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Activate')
+          find('td:nth-child(4)').should have_content('Deactivate')
         end
       end
 

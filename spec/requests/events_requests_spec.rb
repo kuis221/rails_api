@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Events", :js => true do
+describe "Events", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -62,10 +62,14 @@ describe "Events", :js => true do
 
     it "allows to add a member to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'))
+      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
       visit event_path(event)
-      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company: @user.current_company)
+
       click_link 'Add'
-      find("table#select-users-list tr#user-#{user.id}") # Make sure the lighbox is opened
+      find("table#select-users-list tr#user-#{company_user.id}") # Make sure the lighbox is opened
       within object_row(user) do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
@@ -73,14 +77,14 @@ describe "Events", :js => true do
       end
 
       # Test the user was added to the list of event members and it can be removed
-      within('#event-team-members #event-member-'+user.id.to_s) do
+      within('#event-team-members #event-member-'+company_user.id.to_s) do
         page.should have_content('Pablo Baltodano')
         page.should have_content('palinair@gmail.com')
         #find('a.remove-member-btn').click
       end
 
       # Test removal of the user
-      page.execute_script("$('#event-team-members #event-member-#{user.id.to_s} a').click()")
+      page.execute_script("$('#event-team-members #event-member-#{company_user.id.to_s} a').click()")
       within('.bootbox.modal.confirm-dialog') do
         page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
@@ -97,6 +101,7 @@ describe "Events", :js => true do
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
       event.users << @company_user
       event.users << user.company_users.first
+      Sunspot.commit
 
       visit event_path(event)
 
