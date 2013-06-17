@@ -22,22 +22,29 @@
 
 javascript:
   $('#collection-list-filters').filterBox({
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_roles_path(format: :json)}',
     'onChange': function(filterBox){
-      rolesTable.tableScroller('reloadData');
+      if (typeof rolesTable != 'undefined')
+        rolesTable.tableScroller('reloadData');
     }
   });
   var rolesTable = $('table#roles-list').tableScroller({
     'source': '#{roles_path(format: :json)}',
     'fixedHeader': true,
+    'filterBox': '#collection-list-filters',
     'rowValues': function(r){
       return [r.name, r.description, r.status]
     },
     'deactivateMessage': function(row){
       return row.name +' users can no longer login if you deactivate that role. Would you like to continue?'
     },
-    'filterBox': '#collection-list-filters',
+    'onItemsChange': function(items) {
+      $(document).trigger('roles-list:changed', [items]);
+    },
     'rowId': function(row){
       return 'role_'+row.id;
     },
-    'headerOffset': 91,
+    'headerOffset': 91
   })

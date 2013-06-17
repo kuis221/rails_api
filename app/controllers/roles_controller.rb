@@ -1,10 +1,10 @@
 class RolesController < FilteredController
+  respond_to :js, only: [:new, :create, :edit, :update]
+
   authorize_resource
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
-
-  respond_to :js, only: [:new, :create, :edit, :update]
 
   has_scope :with_text
 
@@ -15,6 +15,20 @@ class RolesController < FilteredController
         group.save
       end
     end
+  end
+
+  def autocomplete
+    buckets = []
+
+    # Search roles
+    search = Sunspot.search(Role) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Roles", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
   end
 
   protected
@@ -32,13 +46,5 @@ class RolesController < FilteredController
             deactivate: deactivate_role_path(role)
         }
       }}
-    end
-
-    def sort_options
-      {
-        'name' => { :order => 'roles.name' },
-        'description' => { :order => 'roles.description' },
-        'active' => { :order => 'roles.active' }
-      }
     end
 end

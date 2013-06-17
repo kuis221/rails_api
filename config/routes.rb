@@ -19,6 +19,7 @@ Brandscopic::Application.routes.draw do
   get "countries/states"
 
   resources :roles do
+    get :autocomplete, on: :collection
     member do
       get :deactivate
       get :activate
