@@ -6,6 +6,20 @@ class DayPartsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  def autocomplete
+    buckets = []
+
+    # Search day parts
+    search = Sunspot.search(DayPart) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Day Parts", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
+
   protected
     def collection_to_json
       collection.map{|day_part| {

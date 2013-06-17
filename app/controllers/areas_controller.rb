@@ -11,7 +11,7 @@ class AreasController < FilteredController
   def autocomplete
     buckets = []
 
-    # Search places
+    # Search areas
     search = Sunspot.search(Area) do
       keywords(params[:q]) do
         fields(:name)

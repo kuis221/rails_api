@@ -132,6 +132,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :day_parts do
+    get :autocomplete, on: :collection
     resources :day_items, path: 'days', except: [:show, :edit]
     member do
       get :deactivate

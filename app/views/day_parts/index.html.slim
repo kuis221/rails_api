@@ -22,19 +22,27 @@
 
 javascript:
   $('#collection-list-filters').filterBox({
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_day_parts_path(format: :json)}',
     'onChange': function(filterBox){
-      dayPartsTable.tableScroller('reloadData');
+      if (typeof dayPartsTable != 'undefined')
+        dayPartsTable.tableScroller('reloadData');
     }
   });
+
   var dayPartsTable = $('table#day-parts-list').tableScroller({
     'source': '#{collection_path(format: :json)}',
-    'filterBox': '#collection-list-filters',
     'fixedHeader': true,
+    'filterBox': '#collection-list-filters',
     'rowValues': function(row){
       return [row.name, row.description, row.status]
+    },
+    'onItemsChange': function(items) {
+      $(document).trigger('day-parts-list:changed', [items]);
     },
     'rowId': function(row){
       return 'day_part_'+row.id;
     },
-    'headerOffset': 91,
+    'headerOffset': 91
   })
