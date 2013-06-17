@@ -151,7 +151,6 @@ describe "Teams", js: true, search: true do
       visit team_path(team)
 
       within('table#team-members') do
-        save_and_open_page
         page.should_not have_content('Fulanito')
       end
 
