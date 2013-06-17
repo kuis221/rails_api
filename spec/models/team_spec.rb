@@ -16,6 +16,10 @@
 require 'spec_helper'
 
 describe Team do
+  it { should belong_to(:company) }
+  it { should have_many(:memberships) }
+  it { should have_many(:users).through(:memberships) }
+
   it { should validate_presence_of(:name) }
 
   it { should allow_mass_assignment_of(:name) }

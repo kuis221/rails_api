@@ -18,8 +18,8 @@ describe "Teams", js: true, search: true do
         FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: false)
       ]
       # Create a few users for each team
-      teams[0].users << FactoryGirl.create_list(:user, 3, company_id: @company.id)
-      teams[1].users << FactoryGirl.create_list(:user, 2, company_id: @company.id)
+      teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
+      teams[1].users << FactoryGirl.create_list(:company_user, 2, company_id: @company.id)
       visit teams_path
 
       within("table#teams-list") do
@@ -79,7 +79,8 @@ describe "Teams", js: true, search: true do
         FactoryGirl.create(:user, first_name: 'First1', last_name: 'Last1', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com'),
         FactoryGirl.create(:user, first_name: 'First2', last_name: 'Last2', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Staff').id, city: 'Brooklyn', state:'NY', country:'US', email: 'user2@example.com')
       ]
-      team.users << users
+      users.each{|u| team.users << u.company_users }
+      Sunspot.commit
       visit team_path(team)
       within('table#team-members') do
         within("tbody tr:nth-child(1)") do
@@ -109,6 +110,7 @@ describe "Teams", js: true, search: true do
 
     it 'allows the user to activate/deactivate a team' do
       team = FactoryGirl.create(:team, active: true)
+      Sunspot.commit
       visit team_path(team)
       within('.active-deactive-toggle') do
         page.should have_selector('a.btn-success.active', text: 'Active')
@@ -124,6 +126,7 @@ describe "Teams", js: true, search: true do
 
     it 'allows the user to edit the team' do
       team = FactoryGirl.create(:team)
+      Sunspot.commit
       visit team_path(team)
 
       click_link('Edit')
@@ -144,10 +147,11 @@ describe "Teams", js: true, search: true do
     it 'allows the user to add the users to the team' do
       team = FactoryGirl.create(:team)
       user = FactoryGirl.create(:user, first_name: 'Fulanito', last_name: 'DeTal', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @user.current_company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com')
-
+      Sunspot.commit
       visit team_path(team)
 
       within('table#team-members') do
+        save_and_open_page
         page.should_not have_content('Fulanito')
       end
 

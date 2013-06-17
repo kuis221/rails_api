@@ -30,8 +30,8 @@ SimpleNavigation::Configuration.run do |navigation|
   # navigation.auto_highlight = false
   navigation.items do |primary|
 
-    primary.item :admin, 'Admin' + " <b class='caret'></b>", users_path, if: lambda{ user_signed_in? }, link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
-      secondary.item :users, 'Users', users_path
+    primary.item :admin, 'Admin' + " <b class='caret'></b>", company_users_path, if: lambda{ user_signed_in? }, link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
+      secondary.item :users, 'Users', company_users_path
       secondary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)
       secondary.item :roles, 'Roles', roles_path, highlights_on: %r(/roles)
       secondary.item :campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)
@@ -42,7 +42,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :user_menu, '<i class="icon-user"></i>' + current_user.full_name + " <b class='caret'></b>", '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|
-      secondary.item :users, 'Edit Profile',  edit_user_path(current_user), link: {remote: true}
+      secondary.item :users, 'Edit Profile',  edit_company_user_path(current_company_user), link: {remote: true}
       secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete}
     end
   end

@@ -6,6 +6,7 @@ describe "Events", :js => true do
     Warden.test_mode!
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
+    @company_user = @user.current_company_user
     sign_in @user
     Place.any_instance.stub(:fetch_place_data).and_return(true)
   end
@@ -94,8 +95,8 @@ describe "Events", :js => true do
     it "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign))
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
-      event.users << @user
-      event.users << user
+      event.users << @company_user
+      event.users << user.company_users.first
 
       visit event_path(event)
 

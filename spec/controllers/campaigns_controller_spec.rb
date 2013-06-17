@@ -4,6 +4,7 @@ describe CampaignsController do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
+    @company_user = @user.current_company_user
   end
 
   describe "GET 'edit'" do
@@ -72,6 +73,15 @@ describe CampaignsController do
     end
   end
 
+  describe "GET 'show'" do
+    let(:campaign){ FactoryGirl.create(:campaign) }
+    it "assigns the loads the correct objects and templates" do
+      get 'show', id: campaign.id
+      assigns(:campaign).should == campaign
+      response.should render_template(:show)
+    end
+  end
+
   describe "GET 'deactivate'" do
     let(:campaign){ FactoryGirl.create(:campaign) }
 
@@ -111,7 +121,7 @@ describe CampaignsController do
   describe "DELETE 'delete_member'" do
     let(:campaign){ FactoryGirl.create(:campaign) }
     it "should remove the team member from the campaign" do
-      campaign.users << @user
+      campaign.users << @company_user
       lambda{
         delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
         response.should be_success
@@ -156,12 +166,12 @@ describe CampaignsController do
       get 'new_member', id: campaign.id, format: :js
       response.should be_success
       assigns(:campaign).should == campaign
-      assigns(:users).should == [@user]
+      assigns(:users).should == [@company_user]
     end
 
     it 'should not load the users that are already assigned ot the campaign' do
-      another_user = FactoryGirl.create(:user, company_id: @company.id)
-      campaign.users << @user
+      another_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       response.should be_success
       assigns(:campaign).should == campaign
@@ -170,7 +180,7 @@ describe CampaignsController do
 
     it 'should load teams with active users' do
       team = FactoryGirl.create(:team, company_id: @company.id)
-      team.users << @user
+      team.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       assigns(:teams).should == [team]
       assigns(:assignable_teams).should == [team]
@@ -178,7 +188,7 @@ describe CampaignsController do
 
     it 'should not load teams without assignable users' do
       team = FactoryGirl.create(:team, company_id: @company.id)
-      campaign.users << @user
+      campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       assigns(:teams).should == [team]
       assigns(:assignable_teams).should == []
@@ -191,12 +201,12 @@ describe CampaignsController do
 
     it 'should assign the user to the campaign' do
       lambda {
-        post 'add_members', id: campaign.id, member_id: @user.to_param, format: :js
+        post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
         campaign.reload
       }.should change(campaign.users, :count).by(1)
-      campaign.users.should == [@user]
+      campaign.users.should == [@company_user]
     end
 
     it 'should assign all the team\'s users to the campaign' do
@@ -212,9 +222,9 @@ describe CampaignsController do
     end
 
     it 'should not assign users to the campaign if they are already part of the campaign' do
-      campaign.users << @user
+      campaign.users << @company_user
       lambda {
-        post 'add_members', id: campaign.id, member_id: @user.to_param, format: :js
+        post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
         campaign.reload

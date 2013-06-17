@@ -2,25 +2,25 @@
 #
 # Table name: tasks
 #
-#  id            :integer          not null, primary key
-#  event_id      :integer
-#  title         :string(255)
-#  due_at        :datetime
-#  user_id       :integer
-#  completed     :boolean          default(FALSE)
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  created_by_id :integer
-#  updated_by_id :integer
-#  active        :boolean          default(TRUE)
+#  id              :integer          not null, primary key
+#  event_id        :integer
+#  title           :string(255)
+#  due_at          :datetime
+#  completed       :boolean          default(FALSE)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  created_by_id   :integer
+#  updated_by_id   :integer
+#  active          :boolean          default(TRUE)
+#  company_user_id :integer
 #
 
 class Task < ActiveRecord::Base
   track_who_does_it
 
   belongs_to :event
-  belongs_to :user
-  attr_accessible :completed, :due_at, :title, :user_id, :event_id
+  belongs_to :company_user
+  attr_accessible :completed, :due_at, :title, :company_user_id, :event_id
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
   validates_datetime :due_at, allow_nil: true, allow_blank: true
@@ -29,7 +29,7 @@ class Task < ActiveRecord::Base
   delegate :campaign_id, :company_id, to: :event, allow_nil: true
 
   validates :title, presence: true
-  validates :user_id, numericality: true, if: :user_id
+  validates :company_user_id, numericality: true, if: :company_user_id
   validates :event_id, presence: true, numericality: true
 
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
@@ -38,7 +38,7 @@ class Task < ActiveRecord::Base
     text :title
     string :title
 
-    integer :user_id
+    integer :company_user_id
     integer :event_id
     integer :company_id
     integer :campaign_id
@@ -66,7 +66,7 @@ class Task < ActiveRecord::Base
       ss = solr_search do
 
         with(:company_id, params[:company_id])
-        with :user_id, params[:user_id] if params.has_key?(:user_id)
+        with :company_user_id, params[:company_user_id] if params.has_key?(:company_user_id)
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
 
         # Handles the cases from the autocomplete

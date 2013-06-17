@@ -47,11 +47,11 @@ class TasksController < FilteredController
         :last_activity => task.updated_at.try(:to_s,:slashes),
         :due_at => task.due_at.try(:to_s, :slashes),
         :user => {
-          :id => task.user.try(:id),
-          :first_name => task.user.try(:first_name),
-          :last_name => task.user.try(:last_name),
-          :email => task.user.try(:email),
-          :full_name => task.user.try(:full_name)
+          :id => task.company_user.try(:id),
+          :first_name => task.company_user.try(:first_name),
+          :last_name => task.company_user.try(:last_name),
+          :email => task.company_user.try(:email),
+          :full_name => task.company_user.try(:full_name)
         },
         :active => task.active?,
         :completed => task.completed,
@@ -67,7 +67,7 @@ class TasksController < FilteredController
 
     def parent
       if params[:scope] == 'user'
-        current_user
+        current_company_user
       else
         super
       end
@@ -75,8 +75,8 @@ class TasksController < FilteredController
 
     def search_params
       super
-      @search_params[:user_id] = current_user.id if params[:scope] == 'user'
-      @search_params[:user_id] = TeamsUser.select('user_id').where(team_id: current_user.teams.scoped_by_company_id(current_company)).map(&:user_id).uniq if params[:scope] == 'teams'
+      @search_params[:user_id] = current_company_user.id if params[:scope] == 'user'
+      @search_params[:user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq if params[:scope] == 'teams'
       @search_params
     end
 end

@@ -12,7 +12,6 @@ class Ability
         # Basic permissions check, all users can manage resources within
         # they same company
 
-        can :manage, User
         can :manage, CompanyUser
         #can :manage, User, {:company_users => {:company_id => user.current_company.id}}
 

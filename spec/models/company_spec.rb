@@ -11,7 +11,7 @@
 require 'spec_helper'
 
 describe Company do
-  it { should have_many(:users) }
+  it { should have_many(:company_users) }
   it { should have_many(:teams) }
   it { should have_many(:campaigns) }
   it { should have_many(:roles) }

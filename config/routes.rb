@@ -14,7 +14,7 @@ Brandscopic::Application.routes.draw do
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
 
-  get 'select-company/:company_id', to: 'users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
+  get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
 
   get "countries/states"
 
@@ -28,7 +28,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :users do
+  resources :company_users, path: 'users' do
     get :autocomplete, on: :collection
     resources :tasks do
       member do

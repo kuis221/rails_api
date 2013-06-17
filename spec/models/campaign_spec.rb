@@ -16,10 +16,21 @@
 require 'spec_helper'
 
 describe Campaign do
+  it { should belong_to(:company) }
+  it { should have_many(:memberships) }
+  it { should have_many(:users).through(:memberships) }
+
   it { should validate_presence_of(:name) }
 
   it { should allow_mass_assignment_of(:name) }
   it { should allow_mass_assignment_of(:description) }
+  it { should_not allow_mass_assignment_of(:id) }
+  it { should_not allow_mass_assignment_of(:aasm_state) }
+  it { should_not allow_mass_assignment_of(:created_by_id) }
+  it { should_not allow_mass_assignment_of(:updated_by_id) }
+  it { should_not allow_mass_assignment_of(:created_at) }
+  it { should_not allow_mass_assignment_of(:updated_at) }
+  it { should_not allow_mass_assignment_of(:company_id) }
 
   describe "Get first and last events for a campaign" do
     describe "#first_event" do

@@ -62,8 +62,7 @@ class User < ActiveRecord::Base
     user.validates :password, confirmation: true, if: :password
   end
 
-  accepts_nested_attributes_for :company_users
-  validates_associated :company_users
+  #validates_associated :company_users
 
   validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
   validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
@@ -74,18 +73,11 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :team_ids, :role_id, :company_users_attributes, :inviting_user, :filling_profile, as: :admin
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
   attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, :accepting_invitation
 
-  # Teams-Users relationship
-  has_many :teams_users, dependent: :destroy
-  has_many :teams, through: :teams_users
+  accepts_nested_attributes_for :company_users, allow_destroy: false
 
-  # Campaigns-Users relationship
-  has_many :campaigns_users, dependent: :destroy
-  has_many :campaigns, through: :campaigns_users
-
-  delegate :role, to: :current_company_user, allow_nil: true
   delegate :name, :id, to: :role, prefix: true, allow_nil: true
 
   scope :active, where('invitation_accepted_at is not null')
@@ -96,57 +88,8 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :events
 
-  scope :with_text, lambda{|text| where('users.first_name ilike ? or users.last_name ilike ? or users.email ilike ?', "%#{text}%", "%#{text}%", "%#{text}%") }
-  scope :by_teams, lambda{|teams| joins(:teams_users).where(teams_users: {team_id: teams}) }
-  scope :by_campaigns, lambda{|campaigns| joins(:campaigns_users).where(campaigns_users: {campaign_id: campaigns}) }
-  scope :by_events, lambda{|events| joins(:events).where(events: {id: events}) }
-
-  searchable do
-    integer :id
-
-    text :name do
-      full_name
-    end
-    text :email
-
-    string :first_name
-    string :last_name
-    string :email
-
-    string :role_ids, :multiple => true do
-      company_users.map{|cu| "#{cu.company_id}-#{cu.role_id}" }
-    end
-
-    integer :active_company_ids, :multiple => true, :references => Company do
-      company_users.where(active: true).map(&:company_id)
-    end
-
-    integer :inactive_company_ids, :multiple => true, :references => Company do
-      company_users.where(active: false).map(&:company_id)
-    end
-
-    integer :team_ids, :multiple => true, :references => Team
-    integer :campaign_ids, :multiple => true
-  end
-
   attr_accessor :inviting_user
   attr_accessor :accepting_invitation
-
-  def active?
-    !invited_to_sign_up? && current_company_user && current_company_user.active?
-  end
-
-  def active_status(company_id)
-    invited_to_sign_up? ? 'Invited' : (company_users.select{|cu| cu.company_id == company_id and cu.active? }.any? ? 'Active' : 'Inactive')
-  end
-
-  def activate!
-    current_company_user.update_attribute(:active, true) if current_company_user
-  end
-
-  def deactivate!
-    current_company_user.update_attribute(:active, false) if current_company_user
-  end
 
   def full_name
     "#{first_name} #{last_name}".strip
@@ -197,13 +140,14 @@ class User < ActiveRecord::Base
   end
 
   def current_company_user
-    if User.current && User.current.current_company
-      if company_users.loaded?
-        @current_company_user ||= company_users.select{|cu| cu.company_id ==  User.current.current_company.id}.first
-      else
-        @current_company_user ||= company_users.where(company_id: User.current.current_company).first
+    @current_company_user ||= begin
+      if User.current && User.current.current_company
+        if company_users.loaded?
+          company_users.select{|cu| cu.company_id ==  User.current.current_company.id}.first
+        else
+          company_users.where(company_id: User.current.current_company).first
+        end
       end
-      @current_company_user
     end
   end
 
@@ -222,32 +166,6 @@ class User < ActiveRecord::Base
       :default
     end
 
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      ss = solr_search do
-
-        any_of do
-          with(:active_company_ids, params[:company_id]) # For the active users
-          with(:inactive_company_ids, params[:company_id])  # For the inactive users
-        end
-        with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
-        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
-        if params.has_key?(:q) and params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'user'
-            with :id, value
-          when 'role'
-            with :role_ids, "#{params[:company_id]}-#{value}"
-          else
-            with "#{attribute}_ids", value
-          end
-        end
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
-      end
-    end
 
   end
 end

@@ -5,20 +5,20 @@
     .box.span12
       .row-fluid
         .span6
-          h2= "#{@user.first_name} #{@user.last_name}"
-          - if @user.role
+          h2= "#{resource.first_name} #{resource.last_name}"
+          - if resource.role
             .user-role
-              = @user.role.name
-          - if @user.full_address
+              = resource.role.name
+          - if resource.full_address
             .user-address
-              = @user.full_address
+              = resource.full_address
         .span6
           .pull-right
-            = link_to 'Edit', edit_user_path(resource), remote: true, class: 'btn btn-primary btn-small'
+            = link_to 'Edit', edit_company_user_path(resource), remote: true, class: 'btn btn-primary btn-small'
             = "&nbsp;".html_safe
             = active_inactive_buttons(resource)
 
 javascript:
-  $(document).on('users:change', function(){
+  $(document).on('company_users:change', function(){
     window.location.reload(false);
   })

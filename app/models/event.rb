@@ -29,7 +29,8 @@ class Event < ActiveRecord::Base
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
 
   # Events-Users relationship
-  has_and_belongs_to_many :users, :after_remove => :after_remove_member
+  has_many :memberships, :as => :memberable
+  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
   # Events-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
@@ -138,9 +139,9 @@ class Event < ActiveRecord::Base
       users = [member]
     end
 
-    task_ids = Task.select('tasks.id').scoped_by_event_id(self).scoped_by_user_id(users).map(&:id)
+    task_ids = Task.select('tasks.id').scoped_by_event_id(self).scoped_by_company_user_id(users).map(&:id)
     tasks = Task.scoped_by_id(task_ids)
-    tasks.update_all(user_id: nil)
+    tasks.update_all(company_user_id: nil)
     Sunspot.index(tasks)
   end
 

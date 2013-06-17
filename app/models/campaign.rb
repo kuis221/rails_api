@@ -21,26 +21,25 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :aasm_state, :team_ids, :brands_list, :user_ids
+  attr_accessible :name, :description, :team_ids, :brands_list, :user_ids
   attr_accessor :brands_list
 
   # Required fields
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
-  # Campaigns-Teams relationship
-  has_and_belongs_to_many :teams, :order => 'name ASC'
-
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
   # Campaigns-Users relationship
-  has_many :campaigns_users
-  has_many :users, through: :campaigns_users, :order => 'last_name ASC', :after_add => :reindex_user, :after_remove => :reindex_user
+  has_many :memberships, :as => :memberable
+  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
+                   :after_add => :reindex_user, :after_remove => :reindex_user
 
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
 
+  # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings
 

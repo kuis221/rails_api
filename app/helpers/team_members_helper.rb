@@ -60,7 +60,7 @@ module TeamMembersHelper
       end
 
       def company_users
-        @company_users ||= User.active_in_company(current_company).order('users.last_name ASC')
+        @company_users ||= CompanyUser.active.scoped_by_company_id(current_company).includes(:user).where('users.invitation_accepted_at is not null').order('users.last_name ASC')
       end
       def company_teams
         @company_teams ||= current_company.teams.active.order('teams.name ASC')

@@ -30,14 +30,14 @@ javascript:
   $('#collection-list-filters').filterBox({
     'includeSearchBox': false,
     'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_users_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_company_users_path(format: :json)}',
     'onChange': function(filterBox){
       if (typeof usersTable != 'undefined')
         usersTable.tableScroller('reloadData');
     }
   });
   var usersTable = $('table#users-list').tableScroller({
-    'source': '#{users_path(format: :json)}',
+    'source': '#{company_users_path(format: :json)}',
     'fixedHeader': true,
     'filterBox': '#collection-list-filters',
     'rowValues': function(u){

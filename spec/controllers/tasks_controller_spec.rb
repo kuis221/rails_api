@@ -4,6 +4,7 @@ describe TasksController do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
+    @company_user = @user.current_company_user
   end
 
   let(:event) { FactoryGirl.create(:event, company_id: @company.id) }
@@ -16,7 +17,7 @@ describe TasksController do
 
     it "should not render form_dialog if no errors" do
       lambda {
-        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', user_id: @user.to_param}, format: :js
+        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
       }.should change(Task, :count).by(1)
       response.should be_success
       response.should render_template(:create)
@@ -34,7 +35,7 @@ describe TasksController do
 
     it "should assign the correct event id" do
       lambda {
-        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', user_id: @user.to_param}, format: :js
+        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
       }.should change(Task, :count).by(1)
       assigns(:event).should == event
       assigns(:task).event_id.should == event.id
@@ -45,13 +46,13 @@ describe TasksController do
   describe "PUT 'update'" do
     let(:task){ FactoryGirl.create(:task) }
     it "must update the task attributes" do
-      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', user_id: 3}, format: :js
+      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: 3}, format: :js
       assigns(:task).should == task
       response.should be_success
       task.reload
       task.title.should == 'New task title'
       task.due_at.should == Time.zone.parse('2013-12-31 00:00:00')
-      task.user_id.should == 3
+      task.company_user_id.should == 3
     end
 
     it "must update the task completed attribute" do
@@ -66,7 +67,19 @@ describe TasksController do
   describe "GET 'index'" do
     before(:each) do
       @team = FactoryGirl.create(:team)
-      @user.teams << @team
+      @company_user.teams << @team
+    end
+
+    describe "html requests" do
+      it 'should be sucess' do
+        get 'index', scope: 'user'
+        response.should be_success
+      end
+
+      it 'should be sucess' do
+        get 'index', scope: 'teams'
+        response.should be_success
+      end
     end
 
     describe "json requests" do

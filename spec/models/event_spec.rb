@@ -19,8 +19,10 @@
 require 'spec_helper'
 
 describe Event do
+  it { should belong_to(:company) }
   it { should belong_to(:campaign) }
-  it { should have_and_belong_to_many(:users) }
+  it { should have_many(:memberships) }
+  it { should have_many(:users).through(:memberships) }
   it { should have_many(:tasks) }
 
   it { should allow_mass_assignment_of(:end_date) }

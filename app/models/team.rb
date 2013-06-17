@@ -25,16 +25,14 @@ class Team < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
 
   # Teams-Users relationship
-  has_many :teams_users, dependent: :destroy
-  has_many :users, through: :teams_users, :after_add => :reindex_user, :after_remove => :reindex_user
-
-  # Campaigns-Teams relationship
-  has_and_belongs_to_many :campaigns
+  has_many :memberships, :as => :memberable
+  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
+                   :after_add => :reindex_user, :after_remove => :reindex_user
 
   scope :active, where(:active => true)
 
   scope :with_users, joins(:users).group('teams.id')
-  scope :with_active_users, lambda{|companies| joins({:users => :company_users}).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
+  scope :with_active_users, lambda{|companies| joins(:users).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
   scope :with_text, lambda{|text| where('teams.name ilike ? or teams.description ilike ? ', "%#{text}%", "%#{text}%") }
 
 

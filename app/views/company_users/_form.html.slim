@@ -1,0 +1,48 @@
+- remote ||= false
+- submit_label = resource.new_record? ? 'Create User' : 'Update User'
+- submit_label = 'Save Profile' if resource.id == current_company_user.id
+= simple_form_for(resource, remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.simple_fields_for :user do |uf|
+      .row-fluid
+        .span6
+          = uf.input :first_name, input_html: {class: 'input-medium'}, :autofocus => true
+        .span6
+          = uf.input :last_name, input_html: {class: 'input-medium'}
+      .row-fluid
+        = uf.input :email
+        - if resource.id == current_company_user.id
+          = uf.input :country, collection: Country.all, required: true
+          = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+          = uf.input :city, required: true
+        - if resource.id != current_company_user.id
+          = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
+
+          = f.input :role_id, as: :select, collection: current_company.roles
+
+        - unless resource.invited_to_sign_up?
+          = uf.input :password
+          = uf.input :password_confirmation
+
+  .form-actions
+    = f.button :submit, submit_label, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('#user_team_ids').select2();
+
+coffee:
+  $('#user_country').change () ->
+    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+      states = $('#user_state')
+      val = states.val()
+      states.html('<option></option>')
+      if response.states
+        for state in response.states
+          option = $('<option>').val(state.id).html(state.name)
+          if val is state.id
+            option.attr('selected', 'selected')
+          states.append(option)

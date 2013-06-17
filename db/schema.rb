@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130613160421) do
+ActiveRecord::Schema.define(:version => 20130614210455) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -136,14 +136,6 @@ ActiveRecord::Schema.define(:version => 20130613160421) do
   add_index "campaigns_teams", ["campaign_id"], :name => "index_campaigns_teams_on_campaign_id"
   add_index "campaigns_teams", ["team_id"], :name => "index_campaigns_teams_on_team_id"
 
-  create_table "campaigns_users", :force => true do |t|
-    t.integer "campaign_id"
-    t.integer "user_id"
-  end
-
-  add_index "campaigns_users", ["campaign_id"], :name => "index_campaigns_users_on_campaign_id"
-  add_index "campaigns_users", ["user_id"], :name => "index_campaigns_users_on_user_id"
-
   create_table "comments", :force => true do |t|
     t.integer  "commentable_id"
     t.string   "commentable_type"
@@ -230,7 +222,7 @@ ActiveRecord::Schema.define(:version => 20130613160421) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -249,13 +241,16 @@ ActiveRecord::Schema.define(:version => 20130613160421) do
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
-  create_table "events_users", :force => true do |t|
-    t.integer "event_id"
-    t.integer "user_id"
+  create_table "memberships", :force => true do |t|
+    t.integer  "company_user_id"
+    t.integer  "memberable_id"
+    t.string   "memberable_type"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
-  add_index "events_users", ["event_id"], :name => "index_events_users_on_event_id"
-  add_index "events_users", ["user_id"], :name => "index_events_users_on_user_id"
+  add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
+  add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
 
   create_table "places", :force => true do |t|
     t.string   "name"
@@ -293,17 +288,17 @@ ActiveRecord::Schema.define(:version => 20130613160421) do
     t.integer  "event_id"
     t.string   "title"
     t.datetime "due_at"
-    t.integer  "user_id"
-    t.boolean  "completed",     :default => false
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.boolean  "completed",       :default => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.boolean  "active",        :default => true
+    t.boolean  "active",          :default => true
+    t.integer  "company_user_id"
   end
 
+  add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
-  add_index "tasks", ["user_id"], :name => "index_tasks_on_user_id"
 
   create_table "teamings", :force => true do |t|
     t.integer "team_id"
@@ -327,16 +322,6 @@ ActiveRecord::Schema.define(:version => 20130613160421) do
   end
 
   add_index "teams", ["company_id"], :name => "index_teams_on_company_id"
-
-  create_table "teams_users", :force => true do |t|
-    t.integer  "team_id"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "teams_users", ["team_id"], :name => "index_teams_users_on_team_id"
-  add_index "teams_users", ["user_id"], :name => "index_teams_users_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "first_name"

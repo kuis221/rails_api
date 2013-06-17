@@ -1,22 +1,12 @@
-class UsersController < FilteredController
-  skip_before_filter :authenticate_user!, only: [:complete, :update_profile]
-
+class CompanyUsersController < FilteredController
   include DeactivableHelper
 
-  load_and_authorize_resource except: [:complete, :update_profile, :index]
+  load_and_authorize_resource except: [:index]
 
   respond_to :js, only: [:new, :create, :edit, :update]
   respond_to :json, only: [:index]
 
   custom_actions :collection => [:complete]
-
-  def dashboard
-  end
-
-  def select_company
-    session[:current_company_id] = current_user.companies.find(params[:company_id]).id
-    redirect_to root_path
-  end
 
   def autocomplete
     buckets = []
@@ -72,10 +62,17 @@ class UsersController < FilteredController
     render :json => buckets.flatten
   end
 
-  protected
-    def begin_of_association_chain
-      current_company
+  def select_company
+    begin
+      company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      session[:current_company_id] = company.company_id
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = "You are not allowed login into this company"
     end
+    redirect_to root_path
+  end
+
+  protected
 
     def roles
       @roles ||= current_company.roles
@@ -86,7 +83,7 @@ class UsersController < FilteredController
     end
 
     def role_given?
-      current_user.id != resource.id
+      current_user.id != resource.user_id
     end
 
     def collection_to_json
@@ -101,13 +98,13 @@ class UsersController < FilteredController
         :email => user.email,
         :role => user.role_name,
         :last_activity_at => user.last_activity_at.try(:to_s,:full_friendly),
-        :status => user.active_status(current_company.id),
+        :status => user.active_status,
         :active => user.active?,
         :links => {
-            edit: edit_user_path(user),
-            show: user_path(user),
-            activate: activate_user_path(user),
-            deactivate: deactivate_user_path(user),
+            edit: edit_company_user_path(user),
+            show: company_user_path(user),
+            activate: activate_company_user_path(user),
+            deactivate: deactivate_company_user_path(user),
             delete: delete_member_path(user)
         }
       }}
@@ -120,17 +117,4 @@ class UsersController < FilteredController
       path
     end
 
-    def sort_options
-      {
-        'last_name' => { :order => 'users.last_name' },
-        'first_name' => { :order => 'users.first_name' },
-        'city' => { :order => 'users.city' },
-        'state' => { :order => 'users.state' },
-        'country' => { :order => 'users.country' },
-        'email' => { :order => 'users.email' },
-        'role' => { :order => 'roles.name', :joins => {:company_users => :role}, :conditions => {:company_users => {:company_id => current_company } } },
-        'last_activity' => { :order => 'users.last_activity_at' },
-        'status' => { :order => 'company_users.active', :joins => :company_users, :conditions => {:company_users => {:company_id => current_company } } }
-      }
-    end
 end

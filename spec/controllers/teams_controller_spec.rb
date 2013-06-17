@@ -4,6 +4,7 @@ describe TeamsController do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
+    @company_user = @user.current_company_user
   end
 
   describe "GET 'edit'" do
@@ -109,9 +110,9 @@ describe TeamsController do
   describe "DELETE 'delete_member'" do
     let(:team){ FactoryGirl.create(:team) }
     it "should remove the team member from the team" do
-      team.users << @user
+      team.users << @company_user
       lambda{
-        delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+        delete 'delete_member', id: team.id, member_id: @company_user.id, format: :js
         response.should be_success
         assigns(:team).should == team
         team.reload
@@ -119,7 +120,7 @@ describe TeamsController do
     end
 
     it "should not raise error if the user doesn't belongs to the team" do
-      delete 'delete_member', id: team.id, member_id: @user.id, format: :js
+      delete 'delete_member', id: team.id, member_id: @company_user.id, format: :js
       team.reload
       response.should be_success
       assigns(:team).should == team
@@ -132,6 +133,7 @@ describe TeamsController do
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:team).should == team
+      assigns(:users).should == [@company_user]
     end
 
     it 'correctly assign the roles' do
@@ -147,25 +149,25 @@ describe TeamsController do
     end
 
     it 'correctly assign the users' do
-      users = FactoryGirl.create_list(:user, 3, company: @company, active: true)
-      users << @user # the current user should also appear on the list
+      users = FactoryGirl.create_list(:company_user, 3, company: @company, active: true)
+      users << @company_user # the current user should also appear on the list
 
       # Assign the users to other team
       other_team = FactoryGirl.create(:team, company: @company)
       users.each {|u| other_team.users << u}
 
-      # Create some other roles that should not be included
+      # Create some other users that should not be included
       FactoryGirl.create(:invited_user, company: @company) # invited user
-      FactoryGirl.create(:user, company: @company, active: false) # inactive user
-      FactoryGirl.create(:user, company_id: @company.id+1, active: true) # user from other company
+      FactoryGirl.create(:company_user, company: @company, active: false) # inactive user
+      FactoryGirl.create(:company_user, company_id: @company.id+1, active: true) # user from other company
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:users).should =~ users
     end
 
     it 'should not load the users that are already assigned ot the team' do
-      another_user = FactoryGirl.create(:user, company_id: @company.id)
-      team.users << @user
+      another_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      team.users << @company_user
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:team).should == team
@@ -183,14 +185,14 @@ describe TeamsController do
         assigns(:team).should == team
         team.reload
       }.should change(team.users, :count).by(1)
-      team.users.should == [@user]
+      team.users.should == [@company_user]
     end
 
     it 'should not assign users to the team if they are already part of the team' do
       team = FactoryGirl.create(:team, company_id: @company.id)
-      team.users << @user
+      team.users << @company_user
       lambda {
-        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        post 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
         response.should be_success
         assigns(:team).should == team
         team.reload

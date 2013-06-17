@@ -9,11 +9,6 @@ describe InvitationsController do
     end
 
     describe "POST 'create'" do
-      it "returns http success" do
-        post 'create', user: {}, format: :js
-        response.should be_success
-      end
-
       it "should not render form_dialog if no errors" do
         lambda {
           post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 1}}}, format: :js
