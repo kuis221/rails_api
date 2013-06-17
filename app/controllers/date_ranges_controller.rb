@@ -6,7 +6,34 @@ class DateRangesController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+
+  def autocomplete
+    buckets = []
+
+    # Search compaigns
+    search = Sunspot.search(DateRange) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+      with(:company_id, current_company.id)
+    end
+    buckets.push(label: "Date Ranges", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
+
+
   protected
+
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we used for the facets search
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:company_id].include?(k.to_sym)})
+        facet_search = resource_class.do_search(facet_params, true)
+        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
+      end
+    end
+
     def collection_to_json
       collection.map{|range| {
         :id => range.id,
@@ -22,31 +49,5 @@ class DateRangesController < FilteredController
             delete: date_range_path(range),
         }
       }}
-    end
-
-    def collection
-      @date_ranges ||= begin
-        # Search date ranges
-        search = Sunspot.search(DateRange) do
-          with(:company_id, current_company.id)
-
-          order_by(params[:sorting] || :name , params[:sorting_dir] || :desc)
-          paginate :page => (params[:page] || 1)
-        end
-        @date_ranges = search.results
-        @collection_count = search.total
-
-
-        # Get the facets without all the filters
-        if params[:facets] == 'true'
-          search = Sunspot.search(DateRange) do
-            with(:company_id, current_company.id)
-            facet :status
-          end
-          @facets = []
-          @facets.push(label: "Status", items: search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
-        end
-        @date_ranges
-      end
     end
 end

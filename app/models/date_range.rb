@@ -29,12 +29,9 @@ class DateRange < ActiveRecord::Base
   scope :active, where(:active => true)
 
   searchable do
-    text :name_txt do
-      name
-    end
-    text :description_txt do
-      description
-    end
+    integer :id
+    text :name
+    text :description
 
     boolean :active
 
@@ -73,5 +70,30 @@ class DateRange < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+
+      ss = solr_search do
+        with(:status,     params[:status]) unless params[:status].nil? || params[:status].empty?
+        with(:company_id, params[:company_id])
+
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          if attribute == 'daterange'
+            with :id, value
+          end
+        end
+
+        if include_facets
+          facet :status
+        end
+
+        order_by(params[:sorting] || :name , params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 end

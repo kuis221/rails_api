@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Areas", :js => true do
+describe "Areas", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -20,6 +20,7 @@ describe "Areas", :js => true do
         FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true),
         FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: false)
       ]
+      Sunspot.commit
       visit areas_path
 
       within("table#areas-list") do
