@@ -27,15 +27,12 @@ describe BrandPortfoliosController do
       end
 
       it "returns the correct structure" do
-        FactoryGirl.create_list(:brand_portfolio, 3)
-
-        # brand_portfolios on other companies should not be included on the results
-        FactoryGirl.create_list(:brand_portfolio, 2, company_id: 9999)
-
         get 'index', format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
+        parsed_body["total"].should == 0
+        parsed_body["items"].should == []
+        parsed_body["pages"].should == 1
+        parsed_body["page"].should == 1
       end
     end
   end

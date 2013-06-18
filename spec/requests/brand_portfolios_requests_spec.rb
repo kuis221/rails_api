@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "BrandPortfolios", :js => true do
+describe "BrandPortfolios", js: true, search: true do
 
   before do
     Warden.test_mode!
