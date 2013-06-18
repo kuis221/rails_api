@@ -18,7 +18,7 @@ javascript:
     'includeCalendars': true,
     'includeAutoComplete': true,
     'includeSearchBox': false,
-    'autoCompletePath': '#{autocomplete_tasks_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_tasks_path(scope: params[:scope] ,format: :json)}',
     'onChange': function(filterBox){
       tasksTable.tableScroller('reloadData');
     }

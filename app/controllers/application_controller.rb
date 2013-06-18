@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     end
 
     def update_user_last_activity
-      current_user.update_column(:last_activity_at, DateTime.now) if user_signed_in?
+      current_user.update_column(:last_activity_at, DateTime.now) if user_signed_in? && request.format.html?
     end
 
     def set_user_company

@@ -162,8 +162,9 @@ class User < ActiveRecord::Base
   end
 
   def reindex_related
-    self.tasks.includes({:company_user => :user}).each do |t|
-      t.solr_index
+    if first_name_changed? or last_name_changed?
+      Sunspot.index self.tasks.includes([{:company_user => :user}, :event]).all
+      Sunspot.commit
     end
   end
 

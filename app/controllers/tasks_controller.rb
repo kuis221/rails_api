@@ -16,6 +16,17 @@ class TasksController < FilteredController
   def autocomplete
     buckets = []
 
+    # Search tasks
+    search = Sunspot.search(Task) do
+      keywords(params[:q]) do
+        fields(:title)
+      end
+      with(:company_id, current_company.id)
+      with(:status, ['Active', 'Completed', 'Incompleted'])
+    end
+    buckets.push(label: "Tasks", value: search.results.first(5).map{|x| {label: x.title, value: x.id, type: x.class.name.downcase} })
+
+
     # Search compaigns
     search = Sunspot.search(Campaign) do
       keywords(params[:q]) do
@@ -25,6 +36,20 @@ class TasksController < FilteredController
       with(:aasm_state, ['active'])
     end
     buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+
+    if params[:scope] == 'teams'
+      # Search users
+      search = Sunspot.search(CompanyUser, Team) do
+        keywords(params[:q]) do
+          fields(:name)
+        end
+        any_of do
+          with :company_id, current_company.id  # For the teams
+        end
+      end
+      buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+    end
 
     render :json => buckets.flatten
   end

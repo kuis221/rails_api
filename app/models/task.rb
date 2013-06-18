@@ -84,8 +84,14 @@ class Task < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
+          when 'task'
+            with :id, value
           when 'campaign'
             with :campaign_id, value
+          when 'companyuser'
+            with :company_user_id, value
+          when 'team'
+            with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: value}).map(&:id)
           end
         end
 
