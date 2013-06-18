@@ -10,7 +10,7 @@ gem 'devise'
 gem 'devise_invitable', '~> 1.1.0'
 gem "cancan", ">= 1.6.8"
 gem "rolify", ">= 3.2.0"
-gem "slim", ">= 2.0.0.pre.6"
+gem "slim"
 gem "slim-rails"
 gem "annotate", ">=2.5.0",  :group => :development
 gem "quiet_assets", ">= 1.0.1", :group => :development
