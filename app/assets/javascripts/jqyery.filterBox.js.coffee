@@ -265,11 +265,14 @@ $.widget 'nmk.filterBox', {
 		false
 
 	_cleanSearchFilter: () ->
-		@searchHidden.val ""
-		@searchHiddenLabel.val ""
-		@acInput.show().val ""
+		if @searchHidden
+			@searchHidden.val ""
+			@searchHiddenLabel.val ""
+			@acInput.show().val ""
+			@searchLabel.hide().find('span.term').text ''
+
 		@_cleanUpFacets()
-		@searchLabel.hide().find('span.term').text ''
+
 		false
 
 	_addCalendars: () ->
