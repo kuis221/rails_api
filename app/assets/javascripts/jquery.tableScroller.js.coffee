@@ -158,11 +158,11 @@ $.widget 'nmk.tableScroller', {
 				link = if @options.onClick? then '#' else row.links.show
 				for val in values
 					val = if val? then val else ''
-					if typeof val == 'string'
+					if typeof val == 'string' or typeof val == 'number'
+						cell = $('<td>').html(val)
 						if link?
-							$row.append $('<td>').append($('<a>', {href:link}).html val)
-						else
-							$row.append $('<td>').html(val)
+							cell.addClass('has_link').html('').append($('<a>', {href:link}).html val)
+						$row.append cell
 					else
 						$row.append $('<td>').append(val)
 

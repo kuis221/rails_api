@@ -199,7 +199,18 @@ table.dataTable, table.tableScroller {
 
 	th, td {
 		overflow: hidden;
-		text-overflow: ellipsis
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	td.has_link {
+		padding: 0;
+		a {
+			padding: 8px;
+			display: block;
+			text-decoration: none;
+			color: #646464;
+		}
 	}
 }
 
