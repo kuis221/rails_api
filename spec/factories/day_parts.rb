@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :day_part do
-    name "MyString"
-    description "MyText"
+    sequence(:name) {|n| "Day Part #{n}"}
+    description "Some Day Part description"
     active false
     created_by_id 1
     updated_by_id 1

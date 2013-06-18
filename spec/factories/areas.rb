@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :area do
-    name "MyString"
-    description "MyText"
+    sequence(:name) {|n| "Area #{n}" }
+    description "Area description"
     active true
     created_by_id 1
     updated_by_id 1

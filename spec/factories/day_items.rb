@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :day_item, :class => 'DayItems' do
-    day_part ""
-    start_time "MyString"
-    end_time "MyString"
+    start_time "8:00 AM"
+    end_time "5:00 PM"
+    day_part_id 1
   end
 end

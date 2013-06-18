@@ -26,11 +26,12 @@ describe RolesController do
       end
 
       it "returns the correct structure" do
-        FactoryGirl.create_list(:role, 3)
         get 'index', sEcho: 1, format: :json
         parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 4     # 4 including the current user's role
-        parsed_body["items"].count.should == 4
+        parsed_body["total"].should == 0
+        parsed_body["items"].should == []
+        parsed_body["pages"].should == 1
+        parsed_body["page"].should == 1
       end
     end
   end
