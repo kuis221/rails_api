@@ -22,7 +22,6 @@ class Event < ActiveRecord::Base
 
   has_many :tasks, dependent: :destroy
   has_many :documents, :as => :documentable
-  has_many :teamable, :as => :documentable
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
 

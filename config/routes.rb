@@ -45,6 +45,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :teams do
+    get :autocomplete, on: :collection
     member do
       get :deactivate
       get :activate

@@ -29,21 +29,30 @@ class Team < ActiveRecord::Base
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
                    :after_add => :reindex_user, :after_remove => :reindex_user
 
+  has_many :teamings
+  has_many :campaigns, through: :teamings, :source => :teamable, :source_type => 'Campaign'
+
   scope :active, where(:active => true)
 
   scope :with_users, joins(:users).group('teams.id')
   scope :with_active_users, lambda{|companies| joins(:users).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
   scope :with_text, lambda{|text| where('teams.name ilike ? or teams.description ilike ? ', "%#{text}%", "%#{text}%") }
 
-
   searchable do
+    integer :id
+
     text :name
     text :description
 
+    string :name
+    string :description
+
     boolean :active
 
-    string :name
     integer :company_id
+
+    integer :user_ids, multiple: true
+    integer :campaign_ids, multiple: true
   end
 
   def activate!
@@ -56,5 +65,29 @@ class Team < ActiveRecord::Base
 
   def reindex_user(user)
     Sunspot.index(user)
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:company_id, params[:company_id])
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'team'
+            with :id, value
+          when 'companyuser'
+            with :user_ids, value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 end
