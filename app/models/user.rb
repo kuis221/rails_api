@@ -84,9 +84,11 @@ class User < ActiveRecord::Base
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
 
   # Tasks-Users relationship
-  has_many :tasks
+  has_many :tasks, through: :company_users
 
-  has_and_belongs_to_many :events
+  has_many :events, through: :company_users
+
+  after_save :reindex_related
 
   attr_accessor :inviting_user
   attr_accessor :accepting_invitation
@@ -157,6 +159,12 @@ class User < ActiveRecord::Base
 
   def should_require_password?
     accepting_invitation
+  end
+
+  def reindex_related
+    self.tasks.includes({:company_user => :user}).each do |t|
+      t.solr_index
+    end
   end
 
   class << self

@@ -44,7 +44,7 @@ class TasksController < FilteredController
       collection.map{|task| {
         :id => task.id,
         :title => task.title,
-        :last_activity => task.updated_at.try(:to_s,:slashes),
+        :last_activity => task.last_activity.try(:to_s,:slashes),
         :due_at => task.due_at.try(:to_s, :slashes),
         :user => {
           :id => task.company_user.try(:id),
@@ -76,7 +76,7 @@ class TasksController < FilteredController
     def search_params
       super
       @search_params[:company_user_id] = current_company_user.id if params[:scope] == 'user'
-      @search_params[:company_user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq if params[:scope] == 'teams'
+      @search_params[:company_user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
       @search_params
     end
 end
