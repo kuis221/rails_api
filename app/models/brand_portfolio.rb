@@ -27,13 +27,19 @@ class BrandPortfolio < ActiveRecord::Base
   has_and_belongs_to_many :brands
 
   searchable do
+    integer :id
+
     text :name
     text :description
 
+    string :name
+    string :description
+
     boolean :active
 
-    string :name
     integer :company_id
+
+    integer :brand_ids, multiple: true
   end
 
   def activate!
@@ -42,5 +48,27 @@ class BrandPortfolio < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:company_id, params[:company_id])
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'brandportfolio'
+            with :id, value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 end

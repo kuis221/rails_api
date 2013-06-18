@@ -8,6 +8,20 @@ class BrandPortfoliosController < FilteredController
 
   load_and_authorize_resource except: :index
 
+  def autocomplete
+    buckets = []
+
+    # Search brands
+    search = Sunspot.search(Brand, BrandPortfolio) do
+      keywords(params[:q]) do
+        fields(:name)
+      end
+    end
+    buckets.push(label: "Brands", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+    render :json => buckets.flatten
+  end
+
   def select_brands
   end
 
@@ -15,12 +29,14 @@ class BrandPortfoliosController < FilteredController
     @brand = Brand.find(params[:brand_id])
     unless resource.brand_ids.include?(@brand.id)
       resource.brands << @brand
+      resource.solr_index
     end
   end
 
   def delete_brand
     @brand = Brand.find(params[:brand_id])
     resource.brands.delete(@brand)
+    resource.solr_index
   end
 
   private

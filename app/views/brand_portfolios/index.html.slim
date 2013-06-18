@@ -15,26 +15,34 @@
           tr
             th data-sort="name" Name
             th data-sort="description" Description
-            th data-sort="status" Status
+            th data-sort="active" Status
             th
         tbody
 
 
 javascript:
   $('#collection-list-filters').filterBox({
+    'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_brand_portfolios_path(format: :json)}',
     'onChange': function(filterBox){
-      brandPortfoliosTable.tableScroller('reloadData');
+      if (typeof brandPortfoliosTable != 'undefined')
+        brandPortfoliosTable.tableScroller('reloadData');
     }
   });
+
   var brandPortfoliosTable = $('table#brand-portfolios-list').tableScroller({
     'source': '#{collection_path(format: :json)}',
-    'filterBox': '#ollection-list-filters',
     'fixedHeader': true,
+    'filterBox': '#collection-list-filters',
     'rowValues': function(row){
       return [row.name, row.description, row.status]
+    },
+    'onItemsChange': function(items) {
+      $(document).trigger('brand-portfolios-list:changed', [items]);
     },
     'rowId': function(row){
       return 'brand_portfolio_'+row.id;
     },
-    'headerOffset': 91,
+    'headerOffset': 91
   })

@@ -101,6 +101,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :brand_portfolios do
+    get :autocomplete, on: :collection
     resources :brands, only: [:index, :new, :create]
     member do
       get :deactivate
