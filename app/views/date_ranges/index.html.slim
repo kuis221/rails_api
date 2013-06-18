@@ -24,7 +24,7 @@ javascript:
   $('#collection-list-filters').filterBox({
     'includeSearchBox': false,
     'includeAutoComplete': true,
-    'defaultParams': [{name: 'status', value: ['Active']}],
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
     'autoCompletePath': '#{autocomplete_date_ranges_path(format: :json)}',
     'onChange': function(filterBox){
       dateRangesTable.tableScroller('reloadData');

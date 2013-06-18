@@ -28,8 +28,6 @@ $.widget 'nmk.tableScroller', {
 
 		@sortBy @element.find('thead th[data-sort]')[0], false
 
-		@oldParams = []
-
 		if @options.fixedHeader
 			@_buildFixedHeader()
 
@@ -71,17 +69,11 @@ $.widget 'nmk.tableScroller', {
 
 	buildParams: (params) ->
 		if @options.facets
-			facets = @oldParams.length == 0 ? true : false
 			if @options.filterBox? and $(@options.filterBox).length
 				data = $(@options.filterBox).filterBox('getFilters');
 				for param in data
-					if param.name in ['start_date', 'end_date', 'q']
-						for oldParam in @oldParams
-							if oldParam.name == param.name and oldParam.value != param.value
-								facets = true
+
 					params.push(param)
-			params.push({'name': 'facets', 'value': facets })
-		@oldParams = params
 		params
 
 	_synchHeaderWidths: ->
@@ -147,7 +139,7 @@ $.widget 'nmk.tableScroller', {
 			@jqxhr.abort()
 
 		@doneLoading = false
-		@jqxhr = $.getJSON @options.source, params,  (json) =>
+		@jqxhr = $.getJSON @options.source, params, (json) =>
 			if @options.onItemsLoad
 				@options.onItemsLoad(json, page)
 

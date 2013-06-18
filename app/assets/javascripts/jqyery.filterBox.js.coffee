@@ -5,7 +5,7 @@ $.widget 'nmk.filterBox', {
 		includeSearchBox: true,
 		includeAutoComplete: false,
 		autoCompletePath: '',
-		defaultParams: {},
+		defaultParams: [],
 		selectDefaultDate: false,
 		filters: null
 	},
@@ -35,9 +35,17 @@ $.widget 'nmk.filterBox', {
 
 		@filtersPopup = false
 
-		@_parseHashQueryString()
-
 		@defaultParams = @options.defaultParams
+		@_parseQueryString()
+		@loadFacets = true
+		firstTime = true
+		$(window).on 'popstate', =>
+			if firstTime
+				firstTime = false
+			else
+				@_cleanUpFacets()
+				@_parseQueryString()
+				@_filtersChanged(false)
 
 		$(window).on 'resize scroll', () =>
 			if @filtersPopup
@@ -53,6 +61,9 @@ $.widget 'nmk.filterBox', {
 		for param in @defaultParams
 			p.push param
 		@defaultParams = []
+		if @loadFacets
+			p.push {'name': 'facets', 'value': true}
+			@loadFacets=false
 		p
 
 	setFilters: (filters) ->
@@ -70,9 +81,9 @@ $.widget 'nmk.filterBox', {
 		if not top5
 			optionsCount = items.length
 			top5 = []
-			while i < 5 and i < optionsCount
+			while i < optionsCount
 				option = items[i]
-				if option.count > 0
+				if option.count > 0 and (i < 5 or option.selected)
 					top5.push option
 				i++
 		else
@@ -177,7 +188,6 @@ $.widget 'nmk.filterBox', {
 							parentList.remove()
 						listItem.effect 'highlight'
 
-
 						if @filtersPopup.find('li').length == 0
 							@_closeFilterOptions()
 							filterWrapper.find('.more-options-link').remove()
@@ -221,6 +231,7 @@ $.widget 'nmk.filterBox', {
 			source: @_getAutocompleteResults,
 			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
+				@_cleanUpFacets()
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
@@ -228,7 +239,11 @@ $.widget 'nmk.filterBox', {
 		@searchHidden = $('<input type="hidden" name="q">').appendTo(@form).val('')
 		@searchLabel = $('<div class="search-filter-label">')
 			.append($('<span class="term">'))
-			.append($('<span class="close">').append($('<i class="icon-remove">').click => @_cleanSearchFilter()))
+			.append($('<span class="close">').append(
+				$('<i class="icon-remove">').click =>
+					@_cleanSearchFilter()
+					@_filtersChanged()
+				))
 			.css('width', @acInput.width()+'px').appendTo(@form).hide()
 			.click =>
 				@searchLabel.hide()
@@ -253,8 +268,8 @@ $.widget 'nmk.filterBox', {
 		@searchHidden.val ""
 		@searchHiddenLabel.val ""
 		@acInput.show().val ""
+		@_cleanUpFacets()
 		@searchLabel.hide().find('span.term').text ''
-		@_filtersChanged()
 		false
 
 	_addCalendars: () ->
@@ -276,7 +291,8 @@ $.widget 'nmk.filterBox', {
 					end_date = @_formatDate(dates[1])
 					@endDateInput.val end_date
 
-				if @initialized?
+				if @initialized == true
+					@_cleanUpFacets()
 					@_filtersChanged()
 		}
 
@@ -288,37 +304,52 @@ $.widget 'nmk.filterBox', {
 		parts = date.split('/')
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
-	_filtersChanged: () ->
+	_filtersChanged: (updateState=true) ->
 		if @options.onChange and @form.data('serializedData') != @form.serialize()
 			@form.data('serializedData', @form.serialize())
-			document.location.hash = @form.data('serializedData')
+			if updateState
+				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
 			@options.onChange(@)
 
-	_parseHashQueryString:  () ->
-		query = window.location.hash.replace(/^#/,"")
-		vars = query.split('&')
-		dates = [new Date()]
-		for qvar in vars
-			pair = qvar.split('=')
-			name = decodeURIComponent(pair[0])
-			value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
-			if @options.includeCalendars and value and name in ['start_date', 'end_date']
-				date = @_parseDate(value)
-				if name is 'start_date' and value
-					dates[0] = date
-				else
-					dates[1] = date
-			else
-				name = name.replace(/([\[\]])/g,'\\$1')
-				if field = @form.find("[name=#{name}]")
-					if field.attr('type') == 'checkbox'
-						console.log('checking checkboxes not implemented yet!!')
+	_parseQueryString: () ->
+		@initialized = false
+		@_cleanSearchFilter()
+		query = window.location.search.replace(/^\?/,"")
+		if query != ''
+			vars = query.split('&')
+			dates = [new Date()]
+			if vars.length > 0
+				@defaultParams = [{'name': 'facets', 'value': true}]
+			for qvar in vars
+				pair = qvar.split('=')
+				name = decodeURIComponent(pair[0])
+				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
+				if @options.includeCalendars and value and name in ['start_date', 'end_date']
+					date = @_parseDate(value)
+					if name is 'start_date' and value
+						dates[0] = date
 					else
-						field.val(value)
-		@form.find('.dates-range-filter').datepick('setDate', dates)
+						dates[1] = date
+				else
+					field = @form.find("[name=\"#{name}\"]")
+					if field.length
+						if field.attr('type') == 'checkbox'
+							console.log('checking checkboxes not implemented yet!!')
+						else
+							field.val(value)
+					else
+						@defaultParams.push {'name': name, 'value': value}
+			@form.find('.dates-range-filter').datepick('setDate', dates)
 		if @searchHidden and @searchHidden.val()
 			@acInput.hide()
 			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
+
+		@initialized = true
+
+	_cleanUpFacets: () ->
+		@loadFacets = true
+		@formFilters.html('')
+		@form.data('serializedData','')
 }
 
 
