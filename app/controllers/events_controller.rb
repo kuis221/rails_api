@@ -45,12 +45,11 @@ class EventsController < FilteredController
     buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 
     # Search users
-    search = Sunspot.search(User, Team) do
+    search = Sunspot.search(CompanyUser, Team) do
       keywords(params[:q]) do
         fields(:name)
       end
       any_of do
-        with :active_company_ids, current_company.id # For the users
         with :company_id, current_company.id  # For the teams
       end
     end
@@ -70,26 +69,27 @@ class EventsController < FilteredController
 
         # Date Ranges
         ranges = [
-            {label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1},
-            {label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2},
-            {label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3}
+            build_facet_item({label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1}),
+            build_facet_item({label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2}),
+            build_facet_item({label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3})
         ]
         ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
         f.push(label: "Date Ranges", items: ranges )
 
         f.push build_locations_bucket(facet_search.facet(:place).rows)
-        f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :campaign, count: x.count} })
-        f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, name: :brand, count: x.count} })
-        users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }
-        teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :team} }
-        people = (users + teams).sort_by { |k| k[:count] }
+        f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
+        users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
+        teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
+        people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
-        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| {label: x.value, id: x.value, name: :status, selected: (x.value =='Active'), count: x.count} })
+        Rails.logger.debug "\n\n\n\n"+facet_search.facet(:status).rows.inspect
+        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
     end
 
     def build_locations_bucket(facets)
-      first_five = facets.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :user} }.first(5)
+      first_five = facets.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :place} }.first(5)
       first_five_ids = first_five.map{|x| x[:id] }
       locations = {}
       locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)

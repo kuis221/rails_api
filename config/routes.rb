@@ -31,6 +31,7 @@ Brandscopic::Application.routes.draw do
 
   resources :company_users, path: 'users' do
     get :autocomplete, on: :collection
+    get :event, via: :get, on: :collection # List of users by event
     resources :tasks do
       member do
         get :deactivate

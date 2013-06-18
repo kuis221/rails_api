@@ -1,6 +1,8 @@
 class CompanyUsersController < FilteredController
   include DeactivableHelper
 
+
+  before_filter :load_users_for_event, only: :event
   load_and_authorize_resource except: [:index]
 
   respond_to :js, only: [:new, :create, :edit, :update]
@@ -62,6 +64,10 @@ class CompanyUsersController < FilteredController
     render :json => buckets.flatten
   end
 
+  def event
+    render :index
+  end
+
   def select_company
     begin
       company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
@@ -115,6 +121,12 @@ class CompanyUsersController < FilteredController
       path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]
       path = delete_member_campaign_path(params[:campaign], member_id: user.id) if params.has_key?(:campaign) && params[:campaign]
       path
+    end
+
+    def load_users_for_event
+      @users = CompanyUser.scoped_by_company_id(current_company).active.joins(:events).where(events: {id: params[:event_id]})
+      @collection_count_scope = @users
+      set_collection_ivar @users
     end
 
 end

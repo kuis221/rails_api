@@ -39,14 +39,11 @@ class CampaignsController < FilteredController
     buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 
     # Search users
-    search = Sunspot.search(User, Team) do
+    search = Sunspot.search(CompanyUser, Team) do
       keywords(params[:q]) do
         fields(:name)
       end
-      any_of do
-        with :active_company_ids, current_company.id # For the users
-        with :company_id, current_company.id  # For the teams
-      end
+      with :company_id, current_company.id  # For the teams
     end
     buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 

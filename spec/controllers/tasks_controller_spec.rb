@@ -43,6 +43,16 @@ describe TasksController do
     end
   end
 
+  describe "GET 'edit'" do
+    let(:task) { FactoryGirl.create(:task, event_id: event.id, company_user: @company_user) }
+    it "returns http success" do
+      get 'edit', company_user_id: @company_user.to_param, id: task.to_param, format: :js
+      response.should be_success
+      assigns(:company_user).should == @company_user
+      assigns(:task).should == task
+    end
+  end
+
   describe "PUT 'update'" do
     let(:task){ FactoryGirl.create(:task) }
     it "must update the task attributes" do

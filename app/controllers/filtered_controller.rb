@@ -32,6 +32,12 @@ class FilteredController < InheritedResources::Base
     end
 
     def facets
+      @facets ||= []
+    end
+
+    def build_facet_item(options)
+      options[:selected] ||= params.has_key?(options[:name]) && ((params[options[:name]].is_a?(Array) and params[options[:name]].include?(options[:id])) || (params[options[:name]] == options[:id]))
+      options
     end
 
     def search_params

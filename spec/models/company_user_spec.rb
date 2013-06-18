@@ -17,6 +17,7 @@ describe CompanyUser do
   it { should belong_to(:user) }
   it { should belong_to(:company) }
   it { should belong_to(:role) }
+  it { should have_many(:tasks) }
   it { should have_many(:memberships) }
   it { should have_many(:teams).through(:memberships) }
   it { should have_many(:campaigns).through(:memberships) }
