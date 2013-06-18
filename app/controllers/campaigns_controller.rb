@@ -71,12 +71,4 @@ class CampaignsController < FilteredController
         }
       }}
     end
-
-    def sort_options
-      {
-        'name' => { :order => 'campaigns.name' },
-        'description' => { :order => 'campaigns.description' },
-        'status' => { :order => 'campaigns.aasm_state' }
-      }
-    end
 end
