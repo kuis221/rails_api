@@ -6,7 +6,7 @@ describe "Events", js: true, search: true do
     Warden.test_mode!
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
-    @company_user = @user.current_company_user
+    @company_user = @user.company_users.first
     sign_in @user
     Place.any_instance.stub(:fetch_place_data).and_return(true)
   end

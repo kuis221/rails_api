@@ -43,6 +43,13 @@ class Task < ActiveRecord::Base
     integer :company_id
     integer :campaign_id
     time :due_at
+    time :last_activity
+
+    string :user_name do
+      company_user.try(:full_name)
+    end
+
+    boolean :completed
 
     string :status, multiple: true do
       status = []
@@ -58,6 +65,10 @@ class Task < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def last_activity
+    self.updated_at
   end
 
   class << self

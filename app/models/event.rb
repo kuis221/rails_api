@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
 
     integer :campaign_id
     string :campaign do
-      campaign_id.to_s + '||' + campaign_name if campaign_id
+      campaign_id.to_s + '||' + campaign_name.to_s if campaign_id
     end
     string :campaign_name
 
