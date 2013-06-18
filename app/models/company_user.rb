@@ -16,6 +16,7 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :user
   belongs_to :company
   belongs_to :role
+  has_many :tasks
 
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}

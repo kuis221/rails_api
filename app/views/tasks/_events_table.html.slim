@@ -16,12 +16,6 @@ css:
   }
 
 javascript:
-  $('#events-list-filters').filterBox({
-    'onChange': function(filterBox){
-      taskEventsTable.tableScroller('reloadData');
-    }
-  });
-
   var taskEventsTable = $('table#tasks-events-list').tableScroller({
     'source': '#{events_path(format: :json)}',
     'includeSearchBox': false,
@@ -31,9 +25,9 @@ javascript:
     'onClick': function(row, item){
       $('#event-title').val(item.campaign.name + '@' +  item.start_date);
       $('#task_event_id').val(item.id);
-      var userSelect = $('#task_user_id');
+      var userSelect = $('#task_company_user_id');
       var selectedUser = userSelect.val();
-      $.get('#{users_path(format: :json)}', {by_events: item.id}, function(data){
+      $.get('#{event_company_users_path(format: :json)}', {event_id: item.id}, function(data){
         userSelect.empty().append('<option></option>');
         for (i=0; i<data.items.length; i++){
           user = data.items[i];

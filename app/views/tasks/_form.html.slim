@@ -14,7 +14,7 @@
         = f.input :event_id, as: :hidden
         label.required.control-label for="event-title" Event
         .controls
-          input.string.required type="text" id="event-title" value="#{(f.object.event.nil? ? '' : f.object.event.campaign_name + ' @ ' + f.object.event.start_date)}" readonly="true" placeholder="Select a event from the list"
+          input.string.required type="text" id="event-title" value="#{(f.object.event.nil? ? '' : "#{f.object.event.campaign_name}@#{f.object.event.start_date}")}" readonly="true" placeholder="Select a event from the list"
 
       = render partial: 'events_table'
 

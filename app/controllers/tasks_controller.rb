@@ -1,5 +1,5 @@
 class TasksController < FilteredController
-  belongs_to :event, :user, :optional => true
+  belongs_to :event, :company_user, :optional => true
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -75,8 +75,8 @@ class TasksController < FilteredController
 
     def search_params
       super
-      @search_params[:user_id] = current_company_user.id if params[:scope] == 'user'
-      @search_params[:user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq if params[:scope] == 'teams'
+      @search_params[:company_user_id] = current_company_user.id if params[:scope] == 'user'
+      @search_params[:company_user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq if params[:scope] == 'teams'
       @search_params
     end
 end
