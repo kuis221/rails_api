@@ -173,8 +173,12 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:status,     params[:status] || 'Active')
+        with(:status,     params[:status]) if params.has_key?(:status) and params[:status].present?
         with(:company_id, params[:company_id])
+
+        if params.has_key?(:brand) and params[:brand].present?
+          with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
+        end
 
         with(:place_id, AreasPlace.where(area_id: params[:area]).map(&:place_id) + [0]) if params[:area].present?
 
@@ -189,6 +193,8 @@ class Event < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
+          when 'brand'
+            with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
           when 'campaign', 'place'
             with "#{attribute}_id", value
           else

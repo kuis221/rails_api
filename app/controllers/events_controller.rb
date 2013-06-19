@@ -78,6 +78,7 @@ class EventsController < FilteredController
 
         f.push build_locations_bucket(facet_search.facet(:place).rows)
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push build_brands_bucket(facet_search.facet(:campaign).rows)
         #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
         users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
         teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
@@ -94,6 +95,17 @@ class EventsController < FilteredController
       locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)
 
       {label: 'Locations', top_items: first_five, items: locations}
+    end
+
+    def build_brands_bucket(campaings)
+      campaigns_counts = Hash[campaings.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
+      brands = {}
+      Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
+        campaing_brands = Hash[campaign.brands.map{|b| [b.id, {label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]}] }]
+        brands.merge!(campaing_brands){|k,a1,a2|  a1.merge({count: (a1[:count] + a2[:count])}) }
+      end
+      brands = brands.values.sort{|a, b| b[:count] <=> a[:count] }
+      {label: 'Brands', items: brands}
     end
 
     def begin_of_association_chain
