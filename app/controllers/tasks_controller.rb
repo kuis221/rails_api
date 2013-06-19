@@ -16,6 +16,17 @@ class TasksController < FilteredController
   def autocomplete
     buckets = []
 
+    # Search tasks
+    search = Sunspot.search(Task) do
+      keywords(params[:q]) do
+        fields(:title)
+      end
+      with(:company_id, current_company.id)
+      with(:status, ['Active', 'Completed', 'Incompleted'])
+    end
+    buckets.push(label: "Tasks", value: search.results.first(5).map{|x| {label: x.title, value: x.id, type: x.class.name.downcase} })
+
+
     # Search compaigns
     search = Sunspot.search(Campaign) do
       keywords(params[:q]) do
@@ -25,6 +36,20 @@ class TasksController < FilteredController
       with(:aasm_state, ['active'])
     end
     buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+
+
+    if params[:scope] == 'teams'
+      # Search users
+      search = Sunspot.search(CompanyUser, Team) do
+        keywords(params[:q]) do
+          fields(:name)
+        end
+        any_of do
+          with :company_id, current_company.id  # For the teams
+        end
+      end
+      buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+    end
 
     render :json => buckets.flatten
   end
@@ -40,6 +65,17 @@ class TasksController < FilteredController
   end
 
   private
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we use for the facets search
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :start_date, :end_date, :company_user_id, :company_id].include?(k.to_sym)})
+        facet_search = resource_class.do_search(facet_params, true)
+
+        f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+      end
+    end
+
     def collection_to_json
       collection.map{|task| {
         :id => task.id,

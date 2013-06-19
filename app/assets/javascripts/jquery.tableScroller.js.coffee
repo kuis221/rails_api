@@ -5,6 +5,7 @@ $.widget 'nmk.tableScroller', {
 		onItemsLoad: null,
 		fixedHeader: false,
 		headerOffset: 0,
+		defaultSort: null,
 		facets: true,
 		onClick: null,
 		filterBox: null,
@@ -26,7 +27,10 @@ $.widget 'nmk.tableScroller', {
 				row = $(e.target).parents('tr')[0]
 				@options.onClick(row, $(row).data('item'))
 
-		@sortBy @element.find('thead th[data-sort]')[0], false
+		if @options.defaultSort
+			@sortBy @element.find('thead th[data-sort="'+@options.defaultSort+'"]')[0], false
+		else
+			@sortBy @element.find('thead th[data-sort]')[0], false
 
 		if @options.fixedHeader
 			@_buildFixedHeader()
@@ -157,7 +161,7 @@ $.widget 'nmk.tableScroller', {
 
 				link = if @options.onClick? then '#' else row.links.show
 				for val in values
-					val = if val? then val else ''
+					val = if val? and val isnt '' then val else '&nbsp;'
 					if typeof val == 'string' or typeof val == 'number'
 						cell = $('<td>').html(val)
 						if link?
@@ -178,9 +182,9 @@ $.widget 'nmk.tableScroller', {
 						actionButtons.append(separator)
 						if row.active
 							message = if @options.deactivateMessage? then @options.deactivateMessage(row) else null
-							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message}).text('Deactivate')
+							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message, class:'toggle-active-button'}).text('Deactivate')
 						else
-							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
+							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true, class:'toggle-active-button'}).text('Activate')
 
 					# Remove Button
 					if $.inArray('deletable', @options.actionButtons) >= 0

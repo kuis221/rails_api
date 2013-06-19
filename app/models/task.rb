@@ -26,7 +26,7 @@ class Task < ActiveRecord::Base
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
-  delegate :campaign_id, :company_id, to: :event, allow_nil: true
+  delegate :campaign_id, :campaign_name, :company_id, to: :event, allow_nil: true
 
   validates :title, presence: true
   validates :company_user_id, numericality: true, if: :company_user_id
@@ -35,14 +35,20 @@ class Task < ActiveRecord::Base
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
 
   searchable do
+    integer :id
     text :title
     string :title
 
     integer :company_user_id
     integer :event_id
     integer :company_id
+
     integer :campaign_id
-    time :due_at
+    string :campaign do
+      campaign_id.to_s + '||' + campaign_name.to_s if campaign_id
+    end
+
+    time :due_at, :trie => true
     time :last_activity
 
     string :user_name do
@@ -77,6 +83,8 @@ class Task < ActiveRecord::Base
       ss = solr_search do
 
         with(:company_id, params[:company_id])
+        with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status]
         with :company_user_id, params[:company_user_id] if params.has_key?(:company_user_id)
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
 
@@ -84,8 +92,14 @@ class Task < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
+          when 'task'
+            with :id, value
           when 'campaign'
             with :campaign_id, value
+          when 'companyuser'
+            with :company_user_id, value
+          when 'team'
+            with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: value}).map(&:id)
           end
         end
 
@@ -96,6 +110,11 @@ class Task < ActiveRecord::Base
         elsif params[:start_date].present?
           d = Timeliness.parse(params[:start_date], zone: :current)
           with :due_at, d.beginning_of_day..d.end_of_day
+        end
+
+        if include_facets
+          facet :campaign
+          facet :status
         end
 
         order_by(params[:sorting] || :due_at, params[:sorting_dir] || :asc)

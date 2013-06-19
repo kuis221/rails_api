@@ -59,14 +59,6 @@ describe EventsController do
         assigns(:event).company_id.should == @company.id
       end
 
-      it "should assign the brands to the new event" do
-        expect {
-          expect {
-            post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm', brands_list: 'Brand 1,Brand 2,Brand 3'}, format: :js
-          }.to change(Brand, :count).by(3)
-        }.to change(Event, :count).by(1)
-        assigns(:event).brands.count.should == 3
-      end
     end
 
 

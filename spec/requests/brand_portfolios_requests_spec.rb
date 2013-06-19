@@ -20,6 +20,7 @@ describe "BrandPortfolios", js: true, search: true do
         FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true),
         FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false)
       ]
+      Sunspot.commit
       visit brand_portfolios_path
 
       within("table#brand-portfolios-list") do

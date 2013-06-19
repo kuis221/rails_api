@@ -16,7 +16,6 @@
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
-      = f.input :brands_list, label: 'Brands', input_html: {class: 'input-large'}
       = f.error :place
       = f.input :place_reference, :as => :location, label: 'Location'
       = f.association :users, label: 'Staff', label_method: :full_name, input_html: {class: 'input-large'}, collection: company_users.active.all
@@ -40,19 +39,6 @@ javascript:
   });
 
   $('#event_user_ids').select2();
-  $('#event_brands_list').select2({tags: #{ raw((resource.campaign.nil? ? [] : resource.campaign.brands.map(&:name)).to_json).html_safe}});
-  $('#event_campaign_id').change(function(){
-    campaign_id = $(this).val();
-    //$('#event_brands_list').datepicker({'tags':[]});
-    if (campaign_id){
-      $('#event_brands_list').select2('destroy');
-      $.getJSON('/campaigns/'+campaign_id+'/brands.json', function(data){
-        $('#event_brands_list').select2('destroy');
-        tags = $.map(data.items, function(brand){ return brand.name });
-        $('#event_brands_list').select2({tags: tags });
-      })
-    }
-  })
 
   var input = $('.modal .places-autocomplete')[0];
   var locationAutocomplete = new google.maps.places.Autocomplete(input);

@@ -67,7 +67,6 @@ describe "Tasks", js: true, search: true do
       visit my_teams_tasks_path
 
       within("table#tasks-list") do
-        save_and_open_page
         # First Row
         within("tbody tr:nth-child(1)") do
           find('td:nth-child(1)').should have_content('Team task 1')
@@ -91,5 +90,4 @@ describe "Tasks", js: true, search: true do
       assert_table_sorting ("table#tasks-list")
     end
   end
-
 end
