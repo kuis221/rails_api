@@ -65,15 +65,29 @@ class Campaign < ActiveRecord::Base
 
     string :name
     string :description
-    string :aasm_state
+    string :status
+
     integer :company_id
     integer :id
     integer :place_ids, multiple: true do
       []
     end
+
+    integer :user_ids, multiple: true do
+      users.map(&:id)
+    end
+    string :users, multiple: true, references: User do
+      users.map{|u| u.id.to_s + '||' + u.name}
+    end
+
+    integer :team_ids, multiple: true do
+      teams.map(&:id)
+    end
+    string :teams, multiple: true, references: Team do
+      teams.map{|t| t.id.to_s + '||' + t.name}
+    end
+
     integer :brand_ids, multiple: true
-    integer :user_ids, multiple: true
-    integer :team_ids, multiple: true
   end
 
   def first_event
@@ -98,6 +112,10 @@ class Campaign < ActiveRecord::Base
     brands.map(&:name).join ','
   end
 
+  def status
+    self.active? ? 'Active' : 'Inactive'
+  end
+
   def reindex_user(user)
     Sunspot.index(user)
   end
@@ -106,8 +124,10 @@ class Campaign < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       ss = solr_search do
-
         with(:company_id, params[:company_id])
+        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -118,6 +138,12 @@ class Campaign < ActiveRecord::Base
           else
             with "#{attribute}_ids", value
           end
+        end
+
+        if include_facets
+          facet :users
+          facet :teams
+          facet :status
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
