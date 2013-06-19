@@ -1,4 +1,5 @@
 - progress_format ||= 'counter'
+- sort_by ||= 'title'
 
 .tasks-progress-bar
 table#tasks-list.table.table-striped.table-bordered.table-scrolled
@@ -29,6 +30,7 @@ javascript:
   var tasksTable = $('table#tasks-list').tableScroller({
     'source': '#{source}',
     'fixedHeader': false,
+    'defaultSort': '#{sort_by}',
     'rowValues': function(t){
       return [t.title, t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
     },
