@@ -182,9 +182,9 @@ $.widget 'nmk.tableScroller', {
 						actionButtons.append(separator)
 						if row.active
 							message = if @options.deactivateMessage? then @options.deactivateMessage(row) else null
-							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message}).text('Deactivate')
+							actionButtons.append $('<a>', {'href': row.links.deactivate, 'title':'Deactivate', 'data-remote': true, 'data-confirm': message, class:'toggle-active-button'}).text('Deactivate')
 						else
-							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true}).text('Activate')
+							actionButtons.append $('<a>', {'href': row.links.activate, 'title':'Activate', 'data-remote': true, class:'toggle-active-button'}).text('Activate')
 
 					# Remove Button
 					if $.inArray('deletable', @options.actionButtons) >= 0
