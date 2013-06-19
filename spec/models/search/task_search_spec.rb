@@ -46,6 +46,9 @@ describe Task, search: true do
     # Search for a campaign's tasks
     Task.do_search(company_id: 1, q: "campaign,#{campaign.id}").results.should =~ user_tasks
     Task.do_search(company_id: 1, q: "campaign,#{campaign2.id}").results.should =~ user2_tasks
+    Task.do_search(company_id: 1, campaign: campaign.id).results.should =~ user_tasks
+    Task.do_search(company_id: 1, campaign: campaign2.id).results.should =~ user2_tasks
+    Task.do_search(company_id: 1, campaign: [campaign.id, campaign2.id]).results.should =~ user_tasks + user2_tasks
 
     # Search for a given task
     task = user_tasks.first
