@@ -25,19 +25,15 @@ class Event < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :brands_list
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
 
   # Events-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  # Events-Brands relationship
-  has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
-
   scoped_to_company
 
   attr_accessor :place_reference
-  attr_accessor :brands_list
 
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :with_text, lambda{|text| where('epj.name ilike ? or ecj.name ilike ?', "%#{text}%", "%#{text}%").joins('LEFT JOIN "campaigns" "ecj" ON "ecj"."id" = "events"."campaign_id" LEFT JOIN "places" "epj" ON "epj"."id" = "events"."place_id"') }
@@ -110,14 +106,6 @@ class Event < ActiveRecord::Base
       teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
-    string :brands, multiple: true, references: Brand do
-      brands.map{|b| b.id.to_s + '||' + b.name}
-    end
-
-    string :brand_ids, multiple: true, references: Brand do
-      brands.map(&:id)
-    end
-
     string :day_names, multiple: true do
       (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
     end
@@ -155,20 +143,6 @@ class Event < ActiveRecord::Base
     self.place.name if self.place
   end
 
-  def brands_list=(list)
-    brands_names = list.split(',')
-    existing_ids = self.brands.map(&:id)
-    brands_names.each do |brand_name|
-      brand = Brand.find_or_initialize_by_name(brand_name)
-      self.brands << brand unless existing_ids.include?(brand.id)
-    end
-    brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
-  end
-
-  def brands_list
-    brands.map(&:name).join ','
-  end
-
   def status
     self.active? ? 'Active' : 'Inactive'
   end
@@ -199,7 +173,6 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:brand_ids,  params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:status,     params[:status] || 'Active')
         with(:company_id, params[:company_id])
 
@@ -247,7 +220,6 @@ class Event < ActiveRecord::Base
           facet :place
           facet :users
           facet :teams
-          facet :brands
           facet :status
         end
 
