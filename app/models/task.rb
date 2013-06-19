@@ -35,6 +35,7 @@ class Task < ActiveRecord::Base
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
 
   searchable do
+    integer :id
     text :title
     string :title
 

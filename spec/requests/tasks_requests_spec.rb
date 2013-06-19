@@ -90,5 +90,4 @@ describe "Tasks", js: true, search: true do
       assert_table_sorting ("table#tasks-list")
     end
   end
-
 end
