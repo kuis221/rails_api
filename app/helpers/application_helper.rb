@@ -7,7 +7,7 @@ module ApplicationHelper
       address = Array.new
       city_parts = []
       address.push place.name unless place.name == place.city
-      address.push place.street unless place.street.strip.empty? || place.name == place.street
+      address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
       city_parts.push place.city if place.city
       city_parts.push place.state if place.state
       city_parts.push place.zipcode if place.zipcode
