@@ -79,7 +79,7 @@ class Place < ActiveRecord::Base
   class << self
     def load_organized(company_id)
       places = find(:all)
-      list = {label: :root, items: [], id: nil}
+      list = {label: :root, items: [], id: nil, path: nil}
 
       Area.joins(:places).where(places: {id: places.map(&:id)}, company_id: company_id).each do |area|
         item = {label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'}
@@ -88,7 +88,7 @@ class Place < ActiveRecord::Base
 
       groups = ['Continents', 'Countries', 'States', 'Cities']
       places.each do |p|
-        item = {label: p.name, id: p.id, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact, count: 1}
+        item = {label: p.name, id: p.id, name: :place, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact, count: 1}
         item[:group] = groups[item[:parents].size-1]
         add_place_into_parent(item, item[:parents], list)
       end
@@ -96,11 +96,16 @@ class Place < ActiveRecord::Base
       simplify_list list[:items]
     end
 
+    def encode_location(path)
+      path = path.compact.join('/') if path.is_a?(Array)
+      Digest::MD5.hexdigest(path.downcase)
+    end
+
     private
       def add_place_into_parent(p, parents, list)
         parent = list[:items].select{|p| p[:label] == parents[0]}.shift if list.has_key?(:items)
         unless parent
-          parent = {label: parents[0], items: [], name: 'place', id: [list[:id], parents[0]].compact.join('/').downcase}
+          parent = {label: parents[0], items: [], name: 'place', id: encode_location([list[:path], parents[0]]), path: [list[:path], parents[0]].compact.join('/')}
           list[:items].push parent
         end
         if parents.size == 1

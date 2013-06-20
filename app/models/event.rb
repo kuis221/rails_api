@@ -82,10 +82,10 @@ class Event < ActiveRecord::Base
     string :location, multiple: true do
       locations = []
       unless place.nil?
-        locations.push place.continent_name.downcase if place.continent_name
-        locations.push "#{place.continent_name}/#{place.country_name}".downcase if place.country_name
-        locations.push "#{place.continent_name}/#{place.country_name}/#{place.state_name}".downcase if place.state_name
-        locations.push "#{place.continent_name}/#{place.country_name}/#{place.state_name}/#{place.city}".downcase if place.city
+        locations.push Place.encode_location(place.continent_name) if place.continent_name
+        locations.push Place.encode_location([place.continent_name, place.country_name]) if place.country_name
+        locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
+        locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
       end
       locations
     end
