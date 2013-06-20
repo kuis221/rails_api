@@ -22,7 +22,7 @@ class EventsController < FilteredController
         fields(:name)
       end
       with(:company_id, current_company.id)
-      with(:aasm_state, ['active'])
+      with(:status, ['Active'])
     end
     buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 
