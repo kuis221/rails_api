@@ -69,6 +69,7 @@ class Campaign < ActiveRecord::Base
 
     integer :company_id
     integer :id
+
     integer :place_ids, multiple: true do
       []
     end
@@ -87,7 +88,12 @@ class Campaign < ActiveRecord::Base
       teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
-    integer :brand_ids, multiple: true
+    integer :brand_ids, multiple: true do
+      brands.map(&:id)
+    end
+    string :brands, multiple: true, references: Brand do
+      brands.map{|t| t.id.to_s + '||' + t.name}
+    end
   end
 
   def first_event
@@ -127,7 +133,9 @@ class Campaign < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
+        with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -143,6 +151,7 @@ class Campaign < ActiveRecord::Base
         if include_facets
           facet :users
           facet :teams
+          facet :brands
           facet :status
         end
 
