@@ -21,7 +21,7 @@ module TeamMembersHelper
       @teams = company_teams
       @roles = company_roles
       @users = company_users
-      @users = @users.where(['users.id not in (?)', resource.users]) unless resource.users.empty?
+      @users = @users.where(['company_users.id not in (?)', resource.users]) unless resource.users.empty?
     end
 
     def add_members
