@@ -14,15 +14,12 @@ class CompanyUsersController < FilteredController
     buckets = []
 
     # Search users
-    search = Sunspot.search(User) do
+    search = Sunspot.search(CompanyUser) do
       keywords(params[:q]) do
         fields(:name)
         fields(:email)
       end
-      any_of do
-        with :active_company_ids, current_company.id # For the users
-        with :inactive_company_ids, current_company.id # For the users
-      end
+      with :company_id, current_company.id # For the users
     end
     buckets.push(label: "Users", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 

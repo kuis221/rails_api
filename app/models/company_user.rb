@@ -59,7 +59,7 @@ class CompanyUser < ActiveRecord::Base
     string :email
     string :city
     string :state
-    string :state
+    string :country
 
     integer :role_id
     string :role_name
@@ -103,10 +103,10 @@ class CompanyUser < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
-          when 'user'
+          when 'companyuser'
             with :id, value
           when 'role'
-            with :role_ids, "#{params[:company_id]}-#{value}"
+            with "#{attribute}_id", value
           else
             with "#{attribute}_ids", value
           end
