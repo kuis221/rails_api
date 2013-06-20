@@ -67,5 +67,32 @@ describe Place do
       place.route.should == 'Calle Melancolia'
 
     end
+
+    it "should find out the correct state name if the API doesn't provide it" do
+      place = Place.new(reference: 'YXZ', place_id: '123')
+      api_client = double(:google_places_client)
+      place.should_receive(:client).and_return(api_client)
+      api_client.should_receive(:spot).with('YXZ').and_return(double(:spot, {
+          name: 'Shark\'s Cove',
+          lat: '12.345678',
+          lng: '-87.654321',
+          formatted_address: '123 Mi Casa, Costa Rica',
+          types: [1, 2, 3],
+          address_components: [
+            {'types' => ['country'],'short_name' => 'US', 'long_name' => 'United States'},
+            {'types' => ['administrative_area_level_1'],'short_name' => 'CA', 'long_name' => 'CA'},
+            {'types' => ['locality'],'short_name' => 'Manhattan Beach', 'long_name' => 'Manhattan Beach'},
+            {'types' => ['postal_code'],'short_name' => '12345', 'long_name' => '12345'},
+            {'types' => ['street_number'],'short_name' => '7', 'long_name' => '7'},
+            {'types' => ['route'],'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia'}
+          ]
+        }))
+      place.save
+      place.reload
+      place.name.should == 'Shark\'s Cove'
+      place.state.should == 'California'
+      place.administrative_level_1.should == 'CA'
+      place.administrative_level_2.should == nil
+    end
   end
 end

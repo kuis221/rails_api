@@ -156,6 +156,11 @@ class Place < ActiveRecord::Base
             self.route = component['long_name']
           end
         end
+
+        # Sometimes the API doesn't provide the state's long_name
+        if self.country == 'US' && self.state =~ /^[A-Z]{1,2}$/
+          self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
+        end
       end
     end
 
