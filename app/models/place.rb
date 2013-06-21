@@ -82,17 +82,17 @@ class Place < ActiveRecord::Base
       list = {label: :root, items: [], id: nil, path: nil}
 
       Area.joins(:places).where(places: {id: places.map(&:id)}, company_id: company_id).each do |area|
-        item = {label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'}
-        add_place_into_parent(item, area.common_denominators, list)
+        p  = create_structure(list, area.common_denominators)
+        p[:items] ||= []
+        p[:items].push({label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'})
       end
 
-      groups = ['Continents', 'Countries', 'States', 'Cities']
       places.each do |p|
-        item = {label: p.name, id: p.id, name: :place, parents: [p.continent_name, p.country_name, p.state_name, p.city].compact, count: 1}
-        item[:group] = groups[item[:parents].size-1]
-        add_place_into_parent(item, item[:parents], list)
+        parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
+        create_structure(list, parents)
       end
 
+      list[:items]
       simplify_list list[:items]
     end
 
@@ -102,17 +102,20 @@ class Place < ActiveRecord::Base
     end
 
     private
-      def add_place_into_parent(p, parents, list)
-        parent = list[:items].select{|p| p[:label] == parents[0]}.shift if list.has_key?(:items)
-        unless parent
-          parent = {label: parents[0], items: [], name: 'place', id: encode_location([list[:path], parents[0]]), path: [list[:path], parents[0]].compact.join('/')}
-          list[:items].push parent
+      def create_structure(list, parents)
+        groups = ['Continents', 'Countries', 'States', 'Cities']
+        p = list
+        i = 1
+        parents.each do |label|
+          if p[:items].nil? || (c = p[:items].select{|i| i[:label] == label}.first).nil?
+            c = {id: encode_location(parents[0..i-1]), label: label, group: groups[i-1], items: nil, count: 1}
+            p[:items] ||= []
+            p[:items].push c
+          end
+          i += 1
+          p = c
         end
-        if parents.size == 1
-          parent[:items].push p
-        else
-          add_place_into_parent(p, parents.slice(1..-1), parent) if parents.size > 1
-        end
+        p
       end
 
       def simplify_list(items)

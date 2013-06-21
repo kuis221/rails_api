@@ -43,6 +43,7 @@ class Event < ActiveRecord::Base
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
+  validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
 
