@@ -20,7 +20,7 @@ head
     = render 'application/tracking/lucky_orange' if Rails.env.production?
 
 
-body class="#{controller_name} #{action_name} #{user_signed_in? ? 'with-fixed-top' : ''}"
+body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
 
   header class="#{user_signed_in? ? 'navbar-fixed-top' : ''}" data-spy="#{user_signed_in? ? 'affix' : ''}" data-offset-top="#{user_signed_in? ? 'affix' : ''}"
     .row-fluid

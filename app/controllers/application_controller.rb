@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   layout :set_layout
 
-  helper_method :current_company
+  helper_method :current_company, :custom_body_class
 
   protected
     def set_layout
@@ -40,5 +40,9 @@ class ApplicationController < ActionController::Base
     # Overwriting the sign_out redirect path method
     def after_sign_out_path_for(resource_or_scope)
       new_user_session_path
+    end
+
+    def custom_body_class
+      @custom_body_class ||= ''
     end
 end

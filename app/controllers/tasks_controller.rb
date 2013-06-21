@@ -13,6 +13,8 @@ class TasksController < FilteredController
 
   helper_method :assignable_users
 
+  before_filter :set_body_class, only: :index
+
   def autocomplete
     buckets = []
 
@@ -114,5 +116,9 @@ class TasksController < FilteredController
       @search_params[:company_user_id] = current_company_user.id if params[:scope] == 'user'
       @search_params[:company_user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
       @search_params
+    end
+
+    def set_body_class
+      @custom_body_class = params[:scope]
     end
 end
