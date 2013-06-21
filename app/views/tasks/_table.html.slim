@@ -8,7 +8,8 @@ table#tasks-list.table.table-striped.table-bordered.table-scrolled
       th data-sort="title" Task
       th data-sort="last_activity" Last Activity
       th data-sort="due_at" Due Date
-      th data-sort="user_name" Team member
+      - if params[:scope] != 'user'
+        th data-sort="user_name" Team member
       th data-sort="completed" Completed
       th.actions
   tbody
@@ -32,7 +33,12 @@ javascript:
     'fixedHeader': false,
     'defaultSort': '#{sort_by}',
     'rowValues': function(t){
-      return [t.title, t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+      scope = "#{params[:scope]}"
+      if (scope != 'user'){
+        return [t.title, t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+      } else {
+        return [t.title, t.last_activity, t.due_at, $('<div>').html(t.complete_form)]
+      }
     },
     'filterBox': '#collection-list-filters',
     'rowId': function(row){

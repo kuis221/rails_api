@@ -28,18 +28,16 @@ describe "Tasks", js: true, search: true do
         # First Row
         within("tbody tr:nth-child(1)") do
           find('td:nth-child(1)').should have_content('Bring beers to the party')
-          find('td:nth-child(4)').should have_content(@user.full_name)
-          find('td:nth-child(6)').should have_content('Edit')
-          find('td:nth-child(6)').should have_content('Deactivate')
-          find('td:nth-child(6)').should have_content('Comment')
+          find('td:nth-child(5)').should have_content('Edit')
+          find('td:nth-child(5)').should have_content('Deactivate')
+          find('td:nth-child(5)').should have_content('Comment')
         end
         # Second Row
         within("tbody tr:nth-child(2)") do
           find('td:nth-child(1)').should have_content('Pick up kidz at school')
-          find('td:nth-child(4)').should have_content(@user.full_name)
-          find('td:nth-child(6)').should have_content('Edit')
-          find('td:nth-child(6)').should have_content('Deactivate')
-          find('td:nth-child(6)').should have_content('Comment')
+          find('td:nth-child(5)').should have_content('Edit')
+          find('td:nth-child(5)').should have_content('Deactivate')
+          find('td:nth-child(5)').should have_content('Comment')
         end
 
       end
