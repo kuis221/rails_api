@@ -108,7 +108,7 @@ class Place < ActiveRecord::Base
         i = 1
         parents.each do |label|
           if p[:items].nil? || (c = p[:items].select{|i| i[:label] == label}.first).nil?
-            c = {id: encode_location(parents[0..i-1]), label: label, group: groups[i-1], items: nil, count: 1}
+            c = {id: encode_location(parents[0..i-1]), name: :place, label: label, group: groups[i-1], items: nil, count: 1}
             p[:items] ||= []
             p[:items].push c
           end
