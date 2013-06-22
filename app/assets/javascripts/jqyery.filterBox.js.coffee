@@ -92,16 +92,21 @@ $.widget 'nmk.filterBox', {
 		for option in @_sortOptionsAlpha(top5)
 			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
 
-		if optionsCount > 5
-			$filter.append($('<a>',{href: '#', class:'more-options-link'}).text('More').click (e) =>
-				e.preventDefault()
-				filterWrapper = $(e.target).parents('div.filter-wrapper')
-				@_showFilterOptions(filterWrapper)
-				false
-			)
-		items = @_sortOptionsAlpha(items);
-		$filter.data('filter', filter)
 		@formFilters.append($filter)
+		if optionsCount > 5
+			$ul = $('<ul class="sf-menu sf-vertical">')
+			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More').click (e)=>
+				if not $ul.hasClass('sf-js-enabled')
+					list = @_buildFilterOptionsList(filter, $filter)
+					$ul.find('li').append(list)
+					$trigger.superfish({cssArrows: false, disableHI: true})
+					$trigger.superfish('show')
+				false
+			$('<div>').append($ul.append($('<li>').append($trigger))).insertAfter($filter)
+
+			$filter
+		items = @_sortOptionsAlpha(items)
+		$filter.data('filter', filter)
 
 	_sortOptionsAlpha: (options) ->
 		options.sort (a, b) ->
@@ -188,9 +193,9 @@ $.widget 'nmk.filterBox', {
 							parentList.remove()
 						listItem.effect 'highlight'
 
-						if @filtersPopup.find('li').length == 0
-							@_closeFilterOptions()
-							filterWrapper.find('.more-options-link').remove()
+						# if @filtersPopup.find('li').length == 0
+						# 	@_closeFilterOptions()
+						# 	filterWrapper.find('.more-options-link').remove()
 					if child = @_buildFilterOptionsList(option, filterWrapper)
 						$option.append child
 

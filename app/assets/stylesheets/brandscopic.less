@@ -74,51 +74,13 @@
 			display: none;
 		}
 	}
-	&.more-options-popup {
-		float: left;
-		margin-left: -207px;
-		overflow: visible;
+	.sf-menu {
 		z-index: 1000;
-		position: relative;
 		input[type=checkbox] {
 			display: none;
 		}
-
-		ul {
-			background-color: #eee;
-			border: 1px solid #ccc;
-			width: 200px;
-			position: absolute;
-			left: -202px;
-			top: 0px;
-			display: none;
-
-			li {
-				position: relative;
-				color: #646464;
-				padding: 5px 0;
-			}
-
-			li:hover {
-				background-color: #49afcd;
-				color: #fff;
-				> ul {
-					display: block;
-				}
-			}
-			li.options-list-group {
-				background-color: #999;
-				color: #fff;
-				&:hover {
-					background-color: #999;
-				}
-			}
-		}
-		> ul {
-			position: absolute;
-			left: 0px;
-			top: 0px;
-			display: block;
+		.options-list-group{
+			font-weight: bold;
 		}
 	}
 }

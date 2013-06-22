@@ -166,11 +166,13 @@ class Event < ActiveRecord::Base
               place_paths.push place
             end
           end
-          if place_ids.size > 0
-            with(:place_id, place_ids)
-          end
-          if place_paths.size > 0
-            with(:location, place_paths)
+          any_of do
+            if place_ids.size > 0
+              with(:place_id, place_ids)
+            end
+            if place_paths.size > 0
+              with(:location, place_paths)
+            end
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
