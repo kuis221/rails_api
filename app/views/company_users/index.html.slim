@@ -1,30 +1,26 @@
-#content-with-left-nav
-  #content-left-nav.pull-left
-    = render 'admin_navigation'
-
-  .row-fluid
-    #resource-index-container.no-calendars.span12
-      .pull-right
-        #resource-filter-column
-          .text-right
-            = link_to 'Invite New User', new_user_invitation_path, {remote: true, class: 'btn btn-primary'}
-          #collection-list-filters
+.row-fluid
+  #resource-index-container.no-calendars.span12
+    .pull-right
+      #resource-filter-column
+        .text-right
+          = link_to 'Invite New User', new_user_invitation_path, {remote: true, class: 'btn btn-primary'}
+        #collection-list-filters
 
 
-      table#users-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th data-sort="last_name" Last Name
-            th data-sort="first_name" First Name
-            th data-sort="city" City
-            th data-sort="state" State
-            th data-sort="country" Country
-            th data-sort="email" Email
-            th data-sort="role" Role
-            th data-sort="last_activity" Last Activity
-            th data-sort="status" Status
-            th.actions
-        tbody
+    table#users-list.table.table-striped.table-bordered.table-scrolled
+      thead
+        tr
+          th data-sort="last_name" Last Name
+          th data-sort="first_name" First Name
+          th data-sort="city" City
+          th data-sort="state" State
+          th data-sort="country" Country
+          th data-sort="email" Email
+          th data-sort="role" Role
+          th data-sort="last_activity" Last Activity
+          th data-sort="status" Status
+          th.actions
+      tbody
 
 javascript:
   $('#collection-list-filters').filterBox({
