@@ -60,8 +60,14 @@ class CompanyUser < ActiveRecord::Base
     string :city
     string :state
     string :country
+    string :name do
+      full_name
+    end
 
     integer :role_id
+    string :role do
+      role_id.to_s + '||' + role_name.to_s if role_id
+    end
     string :role_name
 
     boolean :active
@@ -100,6 +106,7 @@ class CompanyUser < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
+        with(:role_id, params[:role]) if params.has_key?(:role) and params[:role].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -110,6 +117,10 @@ class CompanyUser < ActiveRecord::Base
           else
             with "#{attribute}_ids", value
           end
+        end
+
+        if include_facets
+          facet :role
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)

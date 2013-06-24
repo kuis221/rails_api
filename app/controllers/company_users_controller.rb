@@ -89,6 +89,15 @@ class CompanyUsersController < FilteredController
       current_user.id != resource.user_id
     end
 
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we use for the facets search
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
+        facet_search = resource_class.do_search(facet_params, true)
+        f.push(label: "Roles", items: facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) } )
+      end
+    end
+
     def collection_to_json
       collection.map{|user| {
         :id => user.id,
