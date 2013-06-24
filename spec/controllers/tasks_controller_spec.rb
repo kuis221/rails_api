@@ -54,7 +54,7 @@ describe TasksController do
   end
 
   describe "PUT 'update'" do
-    let(:task){ FactoryGirl.create(:task) }
+    let(:task){ FactoryGirl.create(:task, event_id: event.id) }
     it "must update the task attributes" do
       put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: 3}, format: :js
       assigns(:task).should == task

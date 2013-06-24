@@ -6,6 +6,7 @@ describe "Users", :js => true do
     Warden.test_mode!
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company, name: 'ABC inc.').id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
+    @company_user = @user.company_users.first
     sign_in @user
     Place.any_instance.stub(:fetch_place_data).and_return(true)
   end
@@ -47,9 +48,10 @@ describe "Users", :js => true do
 
     describe "/users/:user_id", :js => true do
       it "GET show should display the user details page" do
-        role = FactoryGirl.create(:role, name: 'TestRole')
+        role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
-        visit company_user_path(user)
+        company_user = user.company_users.first
+        visit company_user_path(company_user)
         page.should have_selector('h2', text: 'Pedro Navaja')
         page.should have_selector('div.user-role', text: 'TestRole')
       end
@@ -57,7 +59,8 @@ describe "Users", :js => true do
       it 'allows the user to activate/deactivate a user' do
         role = FactoryGirl.create(:role, name: 'TestRole')
         user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
-        visit company_user_path(user)
+        company_user = user.company_users.first
+        visit company_user_path(company_user)
 
         within('.active-deactive-toggle') do
           page.should have_selector('a.btn-success.active', text: 'Active')
@@ -72,14 +75,15 @@ describe "Users", :js => true do
       end
 
       it 'allows the user to edit the user' do
-        role = FactoryGirl.create(:role, name: 'TestRole')
-        other_role = FactoryGirl.create(:role, name: 'Another Role')
+        role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
+        other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
         user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
-        visit company_user_path(user.company_users.first)
+        company_user = user.company_users.first
+        visit company_user_path(company_user)
 
         click_link('Edit')
 
-        within("form#edit_company_user_#{user.id}") do
+        within("form#edit_company_user_#{company_user.id}") do
           fill_in 'First name', with: 'Pedro'
           fill_in 'Last name', with: 'Navaja'
           fill_in 'Email', with: 'pedro@navaja.com'
@@ -89,7 +93,6 @@ describe "Users", :js => true do
           click_js_button 'Update User'
         end
 
-        sleep(1)
         find('h2', text: 'Pedro Navaja') # Wait for the page to reload
         page.should have_selector('h2', text: 'Pedro Navaja')
         page.should have_selector('div.user-role', text: 'Another Role')
@@ -99,14 +102,15 @@ describe "Users", :js => true do
 
     describe "edit profile" do
       it 'allows the user to edit his profile' do
-        role = FactoryGirl.create(:role, name: 'TestRole')
-        other_role = FactoryGirl.create(:role, name: 'Another Role')
+        role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
+        other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
         user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
-        visit company_user_path(user)
+        company_user = user.company_users.first
+        visit company_user_path(company_user)
 
         click_link('Edit')
 
-        within("form#edit_company_user_#{user.id}") do
+        within("form#edit_company_user_#{company_user.id}") do
           fill_in 'First name', with: 'Pedro'
           fill_in 'Last name', with: 'Navaja'
           fill_in 'Email', with: 'pedro@navaja.com'
@@ -116,7 +120,6 @@ describe "Users", :js => true do
           click_js_button 'Update User'
         end
 
-        sleep(1)
         find('h2', text: 'Pedro Navaja') # Wait for the page to reload
         page.should have_selector('h2', text: 'Pedro Navaja')
         page.should have_selector('div.user-role', text: 'Another Role')

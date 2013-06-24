@@ -18,8 +18,8 @@ describe "Events", js: true, search: true do
   describe "/events", js: true, search: true  do
     it "GET index should display a table with the events" do
       events = [
-        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1')),
-        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'))
+        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
+        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]
       Sunspot.commit
       visit events_path
@@ -55,14 +55,14 @@ describe "Events", js: true, search: true do
 
   describe "/events/:event_id", :js => true do
     it "GET show should display the event details page" do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'))
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
       page.should have_selector('h2', text: 'Campaign FY2012')
     end
 
     it "allows to add a member to the event", :js => true do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'))
-      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id)
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
       company_user = user.company_users.first
       Sunspot.commit
 
@@ -70,7 +70,7 @@ describe "Events", js: true, search: true do
 
       click_link 'Add'
       find("table#select-users-list tr#user-#{company_user.id}") # Make sure the lighbox is opened
-      within object_row(user) do
+      within "table#select-users-list tr#user-#{company_user.id}" do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
         click_js_link('Add')
@@ -97,8 +97,9 @@ describe "Events", js: true, search: true do
     end
 
     it "allows to create a new task for the event and mark it as completed" do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign))
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
+      company_user = user.company_users.first
       event.users << @company_user
       event.users << user.company_users.first
       Sunspot.commit
@@ -135,7 +136,7 @@ describe "Events", js: true, search: true do
 
       # Delete Juanito Bazooka from the team and make sure that the tasks list
       # is refreshed and the task unassigned
-      page.execute_script("$('#event-member-#{user.id.to_s} a.remove-member-btn').click()")
+      page.execute_script("$('#event-member-#{company_user.id.to_s} a.remove-member-btn').click()")
       find('.bootbox.modal.confirm-dialog') # Waits for the dialog to open
       page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
 

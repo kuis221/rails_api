@@ -17,8 +17,8 @@ describe "BrandPortfolios", js: true, search: true do
   describe "/brand_portfolios" do
     it "GET index should display a table with the portfolios" do
       portfolios = [
-        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true),
-        FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false)
+        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
+        FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false, company: @company)
       ]
       Sunspot.commit
       visit brand_portfolios_path
@@ -64,14 +64,14 @@ describe "BrandPortfolios", js: true, search: true do
 
   describe "/brand_portfolios/:brand_portfolio_id", :js => true do
     it "GET show should display the portfolio details page" do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description')
+      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       visit brand_portfolio_path(portfolio)
       page.should have_selector('h2', text: 'Some Brand Portfolio')
       page.should have_selector('div.brand_portfolio-description', text: 'a portfolio description')
     end
 
     it 'diplays a table of brands within the brand portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description')
+      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       brands = [FactoryGirl.create(:brand, name: 'Brand 1'), FactoryGirl.create(:brand, name: 'Brand 2')]
       brands.map {|b| portfolio.brands << b }
       visit brand_portfolio_path(portfolio)
@@ -90,7 +90,7 @@ describe "BrandPortfolios", js: true, search: true do
     end
 
     it 'allows the user to activate/deactivate a portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true)
+      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
       within('.active-deactive-toggle') do
         page.should have_selector('a.btn-success.active', text: 'Active')
@@ -105,7 +105,7 @@ describe "BrandPortfolios", js: true, search: true do
     end
 
     it 'allows the user to edit the portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio)
+      portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       visit brand_portfolio_path(portfolio)
 
       click_link('Edit')
@@ -123,7 +123,7 @@ describe "BrandPortfolios", js: true, search: true do
     end
 
     it 'allows the user to add brands to the portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio)
+      portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 

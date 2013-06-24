@@ -4,6 +4,6 @@ FactoryGirl.define do
   factory :company_user do
     company_id 1
     association :user
-    role_id 1
+    role { FactoryGirl.create(:role, company_id: company_id) }
   end
 end

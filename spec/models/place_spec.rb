@@ -185,7 +185,7 @@ describe Place do
       fake_collection.stubs(:where).returns([
         double(Area, id: 1, name: 'Area of California', common_denominators: ['North America', 'United States', 'California']),
       ])
-      Place.stubs(:find).returns([
+      Place.should_receive(:find).and_return([
         double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
         double(Place, id: 5, state_name: 'Nevada', city: 'Las Vegas', country_name: 'United States', continent_name: 'North America'),
         double(Place, id: 5, state_name: 'San Jose', city: 'Curridabat', country_name: 'Costa Rica', continent_name: 'South America')

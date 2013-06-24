@@ -14,7 +14,7 @@ FactoryGirl.define do
     invitation_accepted_at DateTime.now
 
     ignore do
-      role_id 1
+      role_id nil
       active true
       company_id nil
       company nil
@@ -23,8 +23,10 @@ FactoryGirl.define do
     before(:create) do |user, evaluator|
       company_id = evaluator.company_id
       company_id = evaluator.company.id unless evaluator.company.nil?
-      if company_id and evaluator.role_id
-        user.company_users.build({role_id: evaluator.role_id, company_id: company_id, active: evaluator.active}, without_protection: true)
+      role_id = evaluator.role_id
+      role_id ||= FactoryGirl.create(:role, company_id: company_id).id unless company_id.nil? || role_id.present?
+      if company_id and role_id
+        user.company_users.build({role_id: role_id, company_id: company_id, active: evaluator.active}, without_protection: true)
       end
     end
 

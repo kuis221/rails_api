@@ -7,7 +7,7 @@ describe BrandPortfoliosController do
   end
 
   describe "GET 'edit'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "returns http success" do
       get 'edit', id: brand_portfolio.to_param, format: :js
       response.should be_success
@@ -38,7 +38,7 @@ describe BrandPortfoliosController do
   end
 
   describe "GET 'select_brands'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "returns http success" do
       get 'select_brands', id: brand_portfolio.to_param, format: :js
       response.should be_success
@@ -47,7 +47,7 @@ describe BrandPortfoliosController do
   end
 
   describe "POST 'add_brands'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "should add the brand to the portfolio" do
       brand = FactoryGirl.create(:brand)
       expect {
@@ -71,7 +71,7 @@ describe BrandPortfoliosController do
   end
 
   describe "GET 'show'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "assigns the loads the correct objects and templates" do
       get 'show', id: brand_portfolio.id
       assigns(:brand_portfolio).should == brand_portfolio
@@ -110,7 +110,7 @@ describe BrandPortfoliosController do
   end
 
   describe "GET 'deactivate'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
 
     it "deactivates an active brand_portfolio" do
       brand_portfolio.update_attribute(:active, true)
@@ -128,7 +128,7 @@ describe BrandPortfoliosController do
   end
 
   describe "PUT 'update'" do
-    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio) }
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "must update the brand_portfolio attributes" do
       t = FactoryGirl.create(:brand_portfolio)
       put 'update', id: brand_portfolio.to_param, brand_portfolio: {name: 'Test brand_portfolio', description: 'Test brand_portfolio description'}

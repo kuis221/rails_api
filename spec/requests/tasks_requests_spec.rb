@@ -18,8 +18,8 @@ describe "Tasks", js: true, search: true do
   describe "/tasks/mine"  do
     it "GET index should display a table with the events" do
       tasks = [
-        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user , active: true, event: FactoryGirl.create(:event)),
-        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user , active: true, event: FactoryGirl.create(:event))
+        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user , active: true, event: FactoryGirl.create(:event, company: @company)),
+        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user , active: true, event: FactoryGirl.create(:event, company: @company))
       ]
       Sunspot.commit
       visit mine_tasks_path
@@ -48,18 +48,18 @@ describe "Tasks", js: true, search: true do
 
   describe "/tasks/my_teams"  do
     it "GET index should display a table with the events" do
-      team1 = FactoryGirl.create(:team)
-      team2 = FactoryGirl.create(:team)
+      team1 = FactoryGirl.create(:team, company: @company)
+      team2 = FactoryGirl.create(:team, company: @company)
       @company_user.update_attributes({:team_ids => [team1.id, team2.id]}, without_protection: true)
 
 
-      user_task = FactoryGirl.create(:task, title: 'User task', company_user: @company_user , active: true, event: FactoryGirl.create(:event)),
-      company_user1 = FactoryGirl.create(:company_user, team_ids:[team1.id])
-      company_user2 = FactoryGirl.create(:company_user, team_ids:[team2.id])
+      user_task = FactoryGirl.create(:task, title: 'User task', company_user: @company_user , active: true, event: FactoryGirl.create(:event, company: @company)),
+      company_user1 = FactoryGirl.create(:company_user, team_ids:[team1.id], company: @company)
+      company_user2 = FactoryGirl.create(:company_user, team_ids:[team2.id], company: @company)
 
       team_tasks = [
-        FactoryGirl.create(:task, title: 'Team task 1', company_user: company_user1 , active: true, event: FactoryGirl.create(:event)),
-        FactoryGirl.create(:task, title: 'Team task 2', company_user: company_user2 , active: true, event: FactoryGirl.create(:event))
+        FactoryGirl.create(:task, title: 'Team task 1', company_user: company_user1 , active: true, event: FactoryGirl.create(:event, company: @company)),
+        FactoryGirl.create(:task, title: 'Team task 2', company_user: company_user2 , active: true, event: FactoryGirl.create(:event, company: @company))
       ]
       Sunspot.commit
       visit my_teams_tasks_path

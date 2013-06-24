@@ -142,7 +142,8 @@ describe CompanyUsersController do
 
     describe "GET 'select_company'" do
       it 'should update the session with the selected company_id' do
-        another_company_id = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company), user: @user).id
+        another_company_id = FactoryGirl.create(:company).id
+        FactoryGirl.create(:company_user, company_id: another_company_id, user: @user, role_id: another_company_id).id
         get 'select_company', company_id: another_company_id
         session[:current_company_id].should == another_company_id
         response.should redirect_to root_path

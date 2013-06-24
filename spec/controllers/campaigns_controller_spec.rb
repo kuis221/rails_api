@@ -7,8 +7,9 @@ describe CampaignsController do
     @company_user = @user.current_company_user
   end
 
+  let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+
   describe "GET 'edit'" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
     it "returns http success" do
       get 'edit', id: campaign.to_param, format: :js
       response.should be_success
@@ -74,7 +75,6 @@ describe CampaignsController do
   end
 
   describe "GET 'show'" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
     it "assigns the loads the correct objects and templates" do
       get 'show', id: campaign.id
       assigns(:campaign).should == campaign
@@ -83,7 +83,6 @@ describe CampaignsController do
   end
 
   describe "GET 'deactivate'" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
 
     it "deactivates an active campaign" do
       campaign.update_attribute(:aasm_state, 'active')
@@ -94,7 +93,7 @@ describe CampaignsController do
   end
 
   describe "GET 'activate'" do
-    let(:campaign){ FactoryGirl.create(:campaign,aasm_state: 'inactive') }
+    let(:campaign){ FactoryGirl.create(:campaign, company: @company, aasm_state: 'inactive') }
 
     it "activates an inactive campaign" do
       campaign.active?.should be_false
@@ -105,9 +104,8 @@ describe CampaignsController do
   end
 
   describe "PUT 'update'" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
     it "must update the campaign attributes" do
-      t = FactoryGirl.create(:campaign)
+      t = FactoryGirl.create(:campaign, company: @company)
       put 'update', id: campaign.to_param, campaign: {name: 'Test Campaign', description: 'Test Campaign description'}
       assigns(:campaign).should == campaign
       response.should redirect_to(campaign_path(campaign))
@@ -119,11 +117,10 @@ describe CampaignsController do
 
 
   describe "DELETE 'delete_member'" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
     it "should remove the team member from the campaign" do
       campaign.users << @company_user
       lambda{
-        delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
+        delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
         response.should be_success
         assigns(:campaign).should == campaign
         campaign.reload
@@ -139,8 +136,7 @@ describe CampaignsController do
   end
 
   describe "DELETE 'delete_member' with a team" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
-    let(:team){ FactoryGirl.create(:team) }
+    let(:team){ FactoryGirl.create(:team, company: @company) }
     it "should remove the team from the campaign" do
       campaign.teams << team
       lambda{
@@ -160,7 +156,6 @@ describe CampaignsController do
   end
 
   describe "GET 'new_member" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
     it 'should load all the company\'s users into @users' do
       FactoryGirl.create(:user, company_id: @company.id+1)
       get 'new_member', id: campaign.id, format: :js
@@ -170,7 +165,7 @@ describe CampaignsController do
     end
 
     it 'should not load the users that are already assigned ot the campaign' do
-      another_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
       campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       response.should be_success
@@ -197,7 +192,6 @@ describe CampaignsController do
 
 
   describe "POST 'add_members" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
 
     it 'should assign the user to the campaign' do
       lambda {

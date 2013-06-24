@@ -122,14 +122,24 @@ describe "DateRanges", search: true, js: true do
       page.should have_selector('div.date_range-description', text: 'edited date range description')
     end
 
-    it 'allows the user to add date items to the date range' do
+    it 'allows the user to add and remove date items to the date range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
 
       click_link('Add Date')
 
-      pending "Finish this test"
+      within visible_modal do
+        find("#calendar_start_date").click_js_link '25'
+        find("#calendar_end_date").click_js_link '26'
+        click_js_button "Create Date item"
+      end
+
+      within("#date_range-dates") do
+        click_js_link('Remove')
+        sleep(1)
+        page.should_not have_content('Remove')
+      end
 
     end
   end

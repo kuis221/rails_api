@@ -17,8 +17,8 @@ describe "Areas", js: true, search: true do
   describe "/areas" do
     it "GET index should display a table with the areas" do
       areas = [
-        FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true),
-        FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: false)
+        FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
+        FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: false, company: @company)
       ]
       Sunspot.commit
       visit areas_path

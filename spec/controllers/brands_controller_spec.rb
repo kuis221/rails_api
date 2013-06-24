@@ -29,7 +29,7 @@ describe BrandsController do
       campaign.brands << FactoryGirl.create(:brand, name: 'Brand 871')
       FactoryGirl.create(:brand, name: 'Brand 789')
 
-      get 'index', brand_portfolio_id: campaign.id, format: :json
+      get 'index', brand_portfolio_id: brand_portfolio.id, format: :json
 
       response.should be_success
       parsed_body = JSON.parse(response.body)

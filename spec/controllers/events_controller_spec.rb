@@ -9,7 +9,7 @@ describe EventsController do
     end
 
     describe "GET 'edit'" do
-      let(:event){ FactoryGirl.create(:event) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
       it "returns http success" do
         get 'edit', id: event.to_param, format: :js
         response.should be_success
@@ -45,6 +45,7 @@ describe EventsController do
 
       it "should return the users in the People Bucket" do
         user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+        company_user = user.company_users.first
         Sunspot.commit
 
         get 'autocomplete', q: 'gu'
@@ -52,7 +53,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"Guillermo Vargas", "value"=>user.id, "type"=>"companyuser"}]
+        people_bucket['value'].should == [{"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
       end
 
       it "should return the teams in the People Bucket" do
@@ -70,6 +71,7 @@ describe EventsController do
       it "should return the teams and users in the People Bucket" do
         team = FactoryGirl.create(:team, name: 'Valladolid', company_id: @company.id)
         user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+        company_user = user.company_users.first
         Sunspot.commit
 
         get 'autocomplete', q: 'va'
@@ -77,7 +79,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"Valladolid", "value"=>team.id, "type"=>"team"}, {"label"=>"Guillermo Vargas", "value"=>user.id, "type"=>"companyuser"}]
+        people_bucket['value'].should == [{"label"=>"Valladolid", "value"=>team.id, "type"=>"team"}, {"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
       end
 
       it "should return the campaigns in the Campaigns Bucket" do
@@ -148,7 +150,7 @@ describe EventsController do
 
 
     describe "PUT 'update'" do
-      let(:event){ FactoryGirl.create(:event) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
       it "must update the user attributes" do
         put 'update', id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         assigns(:event).should == event
@@ -161,11 +163,11 @@ describe EventsController do
     end
 
     describe "DELETE 'delete_member' with a user" do
-      let(:event){ FactoryGirl.create(:event) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
       it "should remove the team member from the event" do
         event.users << @company_user
         lambda{
-          delete 'delete_member', id: event.id, member_id: @user.id, format: :js
+          delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
           response.should be_success
           assigns(:event).should == event
           event.reload
@@ -191,8 +193,8 @@ describe EventsController do
     end
 
     describe "DELETE 'delete_member' with a team" do
-      let(:event){ FactoryGirl.create(:event) }
-      let(:team){ FactoryGirl.create(:team) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
+      let(:team){ FactoryGirl.create(:team, company: @company) }
       it "should remove the team from the event" do
         event.teams << team
         lambda{
@@ -236,7 +238,7 @@ describe EventsController do
     end
 
     describe "GET 'new_member" do
-      let(:event){ FactoryGirl.create(:event) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
       it 'should load all the company\'s users into @users' do
         FactoryGirl.create(:user, company_id: @company.id+1)
         get 'new_member', id: event.id, format: :js
@@ -246,7 +248,7 @@ describe EventsController do
       end
 
       it 'should not load the users that are already assigned to the event' do
-        another_user = FactoryGirl.create(:company_user, company_id: @company.id)
+        another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
         event.users << @company_user
         get 'new_member', id: event.id, format: :js
         response.should be_success
@@ -272,7 +274,7 @@ describe EventsController do
 
 
     describe "POST 'add_members" do
-      let(:event){ FactoryGirl.create(:event) }
+      let(:event){ FactoryGirl.create(:event, company: @company) }
 
       it 'should assign the user to the event' do
         lambda {
@@ -319,7 +321,7 @@ describe EventsController do
 
     describe "GET 'activate'" do
       it "should activate an inactive event" do
-        event = FactoryGirl.create(:event, active: false)
+        event = FactoryGirl.create(:event, active: false, company: @company)
         lambda {
           get 'activate', id: event.to_param, format: :js
           response.should be_success
@@ -330,7 +332,7 @@ describe EventsController do
 
     describe "GET 'deactivate'" do
       it "should deactivate an active event" do
-        event = FactoryGirl.create(:event, active: true)
+        event = FactoryGirl.create(:event, active: true, company: @company)
         lambda {
           get 'deactivate', id: event.to_param, format: :js
           response.should be_success

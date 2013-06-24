@@ -7,8 +7,9 @@ describe TeamsController do
     @company_user = @user.current_company_user
   end
 
+  let(:team){ FactoryGirl.create(:team, company: @company) }
+
   describe "GET 'edit'" do
-    let(:team){ FactoryGirl.create(:team) }
     it "returns http success" do
       get 'edit', id: team.to_param, format: :js
       response.should be_success
@@ -39,7 +40,6 @@ describe TeamsController do
   end
 
   describe "GET 'show'" do
-    let(:team){ FactoryGirl.create(:team) }
     it "assigns the loads the correct objects and templates" do
       get 'show', id: team.id
       assigns(:team).should == team
@@ -73,7 +73,6 @@ describe TeamsController do
   end
 
   describe "GET 'deactivate'" do
-    let(:team){ FactoryGirl.create(:team) }
 
     it "deactivates an active team" do
       team.update_attribute(:active, true)
@@ -91,7 +90,6 @@ describe TeamsController do
   end
 
   describe "PUT 'update'" do
-    let(:team){ FactoryGirl.create(:team) }
     it "must update the team attributes" do
       t = FactoryGirl.create(:team)
       put 'update', id: team.to_param, team: {name: 'Test Team', description: 'Test Team description'}
@@ -105,7 +103,6 @@ describe TeamsController do
 
 
   describe "DELETE 'delete_member'" do
-    let(:team){ FactoryGirl.create(:team) }
     it "should remove the team member from the team" do
       team.users << @company_user
       lambda{
@@ -125,7 +122,6 @@ describe TeamsController do
   end
 
   describe "GET 'new_member" do
-    let(:team){ FactoryGirl.create(:team, company: @company) }
     it 'correctly assign the team' do
       get 'new_member', id: team.id, format: :js
       response.should be_success
@@ -146,7 +142,7 @@ describe TeamsController do
     end
 
     it 'correctly assign the users' do
-      users = FactoryGirl.create_list(:company_user, 3, company: @company, active: true)
+      users = FactoryGirl.create_list(:company_user, 3, company: @company, role_id: @company_user.role_id, active: true)
       users << @company_user # the current user should also appear on the list
 
       # Assign the users to other team
@@ -154,16 +150,16 @@ describe TeamsController do
       users.each {|u| other_team.users << u}
 
       # Create some other users that should not be included
-      FactoryGirl.create(:invited_user, company: @company) # invited user
-      FactoryGirl.create(:company_user, company: @company, active: false) # inactive user
-      FactoryGirl.create(:company_user, company_id: @company.id+1, active: true) # user from other company
+      FactoryGirl.create(:invited_user, company: @company, role_id: @company_user.role_id) # invited user
+      FactoryGirl.create(:company_user, company: @company, role_id: @company_user.role_id, active: false) # inactive user
+      FactoryGirl.create(:company_user, company_id: @company.id+1, role_id: @company_user.role_id, active: true) # user from other company
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:users).should =~ users
     end
 
     it 'should not load the users that are already assigned ot the team' do
-      another_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
       team.users << @company_user
       get 'new_member', id: team.id, format: :js
       response.should be_success
@@ -174,10 +170,9 @@ describe TeamsController do
 
 
   describe "POST 'add_members" do
-    let(:team){ FactoryGirl.create(:team) }
     it 'should assign the user to the team' do
       lambda {
-        post 'add_members', id: team.id, member_id: @user.to_param, format: :js
+        post 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
         response.should be_success
         assigns(:team).should == team
         team.reload
@@ -186,7 +181,6 @@ describe TeamsController do
     end
 
     it 'should not assign users to the team if they are already part of the team' do
-      team = FactoryGirl.create(:team, company_id: @company.id)
       team.users << @company_user
       lambda {
         post 'add_members', id: team.id, member_id: @company_user.to_param, format: :js

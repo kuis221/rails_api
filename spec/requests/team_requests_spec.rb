@@ -14,8 +14,8 @@ describe "Teams", js: true, search: true do
   describe "/teams" do
     it "GET index should display a table with the teams" do
       teams = [
-        FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true),
-        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: false)
+        FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
+        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: false, company_id: @company.id)
       ]
       # Create a few users for each team
       teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
@@ -67,14 +67,14 @@ describe "Teams", js: true, search: true do
 
   describe "/teams/:team_id", :js => true do
     it "GET show should display the team details page" do
-      team = FactoryGirl.create(:team, name: 'Some Team Name', description: 'a team description')
+      team = FactoryGirl.create(:team, name: 'Some Team Name', description: 'a team description', company_id: @user.current_company.id)
       visit team_path(team)
       page.should have_selector('h2', text: 'Some Team Name')
       page.should have_selector('div.team-description', text: 'a team description')
     end
 
     it 'diplays a table of users within the team details page' do
-      team = FactoryGirl.create(:team)
+      team = FactoryGirl.create(:team, company_id: @user.current_company.id)
       users = [
         FactoryGirl.create(:user, first_name: 'First1', last_name: 'Last1', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com'),
         FactoryGirl.create(:user, first_name: 'First2', last_name: 'Last2', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Staff').id, city: 'Brooklyn', state:'NY', country:'US', email: 'user2@example.com')
@@ -109,9 +109,11 @@ describe "Teams", js: true, search: true do
     end
 
     it 'allows the user to activate/deactivate a team' do
-      team = FactoryGirl.create(:team, active: true)
+      team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
+      team.reload
       Sunspot.commit
       visit team_path(team)
+      team.reload
       within('.active-deactive-toggle') do
         page.should have_selector('a.btn-success.active', text: 'Active')
         page.should have_selector('a', text: 'Inactive')
@@ -125,7 +127,7 @@ describe "Teams", js: true, search: true do
     end
 
     it 'allows the user to edit the team' do
-      team = FactoryGirl.create(:team)
+      team = FactoryGirl.create(:team, company_id: @company.id)
       Sunspot.commit
       visit team_path(team)
 
@@ -145,8 +147,9 @@ describe "Teams", js: true, search: true do
 
 
     it 'allows the user to add the users to the team' do
-      team = FactoryGirl.create(:team)
+      team = FactoryGirl.create(:team, company_id: @user.current_company.id)
       user = FactoryGirl.create(:user, first_name: 'Fulanito', last_name: 'DeTal', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @user.current_company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com')
+      company_user = user.company_users.first
       Sunspot.commit
       visit team_path(team)
 
@@ -158,7 +161,7 @@ describe "Teams", js: true, search: true do
 
 
       within visible_modal do
-        object_row(user).click_js_link('Add')
+        find("tr#user-#{company_user.id}").click_js_link('Add')
       end
 
       modal_footer.click_link 'Close'

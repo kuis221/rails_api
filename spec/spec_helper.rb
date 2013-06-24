@@ -25,7 +25,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.render_views
 
@@ -48,25 +48,33 @@ RSpec.configure do |config|
   Capybara.javascript_driver = :webkit
   Capybara.default_wait_time = 5
 
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
-  end
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
-
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
+
+  Devise.stretches = 1
+  Rails.logger.level = 4
 end
 
 
 def sign_in_as_user
   company = FactoryGirl.create(:company)
-  role = FactoryGirl.create(:role)
+  role = FactoryGirl.create(:role, company: company)
   @user = FactoryGirl.create(:user, company_id: company.id, role_id: role.id, active: true)
   @user.current_company = company
   sign_in @user.reload
+  User.current = @user
   @user
 end
+
+
+class ActiveRecord::Base
+  mattr_accessor :shared_connection
+  @@shared_connection = nil
+
+  def self.connection
+    @@shared_connection || retrieve_connection
+  end
+end
+
+# Forces all threads to share the same connection. This works on
+# Capybara because it starts the web server in a thread.
+ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection#

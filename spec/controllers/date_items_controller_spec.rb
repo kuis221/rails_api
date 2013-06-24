@@ -68,7 +68,7 @@ describe DateItemsController do
   end
 
   describe "PUT 'update'" do
-    let(:date_item){ FactoryGirl.create(:date_item) }
+    let(:date_item){ FactoryGirl.create(:date_item, date_range_id: date_range.id) }
     it "must update the date_item attributes" do
       t = FactoryGirl.create(:date_item)
       put 'update', date_range_id: date_range.to_param, id: date_item.to_param, date_item: {start_date: '01/23/2013', end_date: '01/24/2013'}, format: :js
