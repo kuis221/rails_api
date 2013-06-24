@@ -49,7 +49,7 @@
             = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
           .row-fluid
             .pull-right
-              = link_to 'Upload New Document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+              = link_to 'Upload a document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
