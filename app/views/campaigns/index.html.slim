@@ -1,25 +1,21 @@
-#content-with-left-nav
-  #content-left-nav.pull-left
-    = render 'admin_navigation'
+.row-fluid
+  #resource-index-container.no-calendars.span12
+    .pull-right
+      #resource-filter-column
+        .text-right
+          = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+        #collection-list-filters
 
-  .row-fluid
-    #resource-index-container.no-calendars.span12
-      .pull-right
-        #resource-filter-column
-          .text-right
-            = link_to 'New Campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
-          #collection-list-filters
-
-      table#campaigns-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th data-sort="name" Name
-            th data-sort="description" Description
-            th First Event
-            th Last Event
-            th data-sort="aasm_state" Status
-            th
-        tbody
+    table#campaigns-list.table.table-striped.table-bordered.table-scrolled
+      thead
+        tr
+          th data-sort="name" Name
+          th data-sort="description" Description
+          th First Event
+          th Last Event
+          th data-sort="aasm_state" Status
+          th
+      tbody
 
 
 javascript:
