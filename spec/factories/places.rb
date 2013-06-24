@@ -12,5 +12,6 @@ FactoryGirl.define do
     city "New York City"
     state "NY"
     country "US"
+    do_not_connect_to_api true
   end
 end

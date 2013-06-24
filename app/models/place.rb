@@ -33,6 +33,7 @@ class Place < ActiveRecord::Base
   has_many :areas_places
   has_many :areas, through: :areas_places
 
+  attr_accessor :do_not_connect_to_api
   before_create :fetch_place_data
 
   serialize :types
@@ -141,7 +142,7 @@ class Place < ActiveRecord::Base
   private
 
     def fetch_place_data
-      if reference
+      if reference && !do_not_connect_to_api
         spot = client.spot(reference)
         self.name = spot.name
         self.latitude = spot.lat
