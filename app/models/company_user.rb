@@ -77,7 +77,15 @@ class CompanyUser < ActiveRecord::Base
     end
 
     integer :team_ids, :multiple => true, :references => Team
-    integer :campaign_ids, :multiple => true, :references => Campaign
+    #integer :campaign_ids, :multiple => true, :references => Campaign
+
+    integer :campaign_ids, multiple: true do
+      campaigns.map(&:id)
+    end
+
+    string :campaigns, multiple: true, references: Campaign do
+      campaigns.map{|c| c.id.to_s + '||' + c.name}
+    end
   end
 
   accepts_nested_attributes_for :user, allow_destroy: false, update_only: true
@@ -121,6 +129,7 @@ class CompanyUser < ActiveRecord::Base
 
         if include_facets
           facet :role
+          facet :campaigns
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
