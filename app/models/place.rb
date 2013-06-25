@@ -71,6 +71,10 @@ class Place < ActiveRecord::Base
     @the_country ||= Country.new(country) if country
   end
 
+  def name_with_location
+    [self.name, self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')
+  end
+
   def update_info_from_api
     fetch_place_data
     save
