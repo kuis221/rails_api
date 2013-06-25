@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
-  devise :invitable, :database_authenticatable, :timeoutable,
+  devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :trackable
 
   has_many :company_users, autosave: true
