@@ -94,10 +94,10 @@ describe ApplicationHelper do
     it "should return the number of hours rounded to the lower number" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 59))
-          helper.comment_date(comment).should == "1 hour ago"
+          helper.comment_date(comment).should == "about an hour ago"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 22))
-          helper.comment_date(comment).should == "1 hour ago"
+          helper.comment_date(comment).should == "about an hour ago"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 9, 0))
           helper.comment_date(comment).should == "3 hours ago"
