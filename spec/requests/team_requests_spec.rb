@@ -50,7 +50,7 @@ describe "Teams", js: true, search: true do
     it 'allows the user to create a new team' do
       visit teams_path
 
-      click_link('New Team')
+      click_link('Create a team')
 
       within("form#new_team") do
         fill_in 'Name', with: 'new team name'

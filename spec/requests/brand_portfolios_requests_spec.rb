@@ -48,7 +48,7 @@ describe "BrandPortfolios", js: true, search: true do
     it 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_link('New Brand Portfolio')
+      click_link('Create a brand portfolio')
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'

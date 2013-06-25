@@ -49,7 +49,7 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to create a new date_range' do
       visit date_ranges_path
 
-      click_link('New Date Range')
+      click_link('Create a date range')
 
       within("form#new_date_range") do
         fill_in 'Name', with: 'new date range name'

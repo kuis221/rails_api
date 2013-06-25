@@ -24,7 +24,7 @@ describe DateItemsController do
         FactoryGirl.create_list(:date_item, 3, date_range: date_range)
 
         # date_items on other companies should not be included on the results
-        FactoryGirl.create_list(:date_item, 2, date_range_id: 2)
+        FactoryGirl.create_list(:date_item, 2, date_range_id: date_range.id + 2)
 
         get 'index', date_range_id: date_range.to_param, format: :json
         parsed_body = JSON.parse(response.body)
