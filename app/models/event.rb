@@ -154,8 +154,12 @@ class Event < ActiveRecord::Base
       # TODO: probably this options should be passed by params?
       options = {include: [:campaign, :place]}
       ss = solr_search(options) do
-        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
-        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
+        if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
+          any_of do
+            with(:user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
+            with(:team_ids, params[:team]) if params.has_key?(:team) && params[:team].present?
+          end
+        end
         if params.has_key?(:place) and params[:place].present?
           place_ids = []
           place_paths = []

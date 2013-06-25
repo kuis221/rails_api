@@ -73,14 +73,14 @@ describe "Users", :js => true do
         end
       end
 
-      it 'allows the user to edit the user' do
+      it 'allows the user to edit another user' do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
         user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
         visit company_user_path(company_user)
 
-        click_link('Edit')
+        click_js_link('Edit')
 
         within("form#edit_company_user_#{company_user.id}") do
           fill_in 'First name', with: 'Pedro'
@@ -103,25 +103,21 @@ describe "Users", :js => true do
       it 'allows the user to edit his profile' do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
-        user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
-        company_user = user.company_users.first
-        visit company_user_path(company_user)
+        visit root_path
 
-        click_link('Edit')
+        find('li#user_menu').click_js_link(@user.full_name).click_link('Edit Profile')
 
-        within("form#edit_company_user_#{company_user.id}") do
+        within("form#edit_company_user_#{@company_user.id}") do
           fill_in 'First name', with: 'Pedro'
           fill_in 'Last name', with: 'Navaja'
           fill_in 'Email', with: 'pedro@navaja.com'
-          select 'Another Role', from: 'Role'
+          select  'Costa Rica', from: 'Country'
+          select  'Cartago', from: 'State'
+          fill_in 'City', with: 'Tres Rios'
           fill_in 'Password', with: 'Pedrito123'
           fill_in 'Password confirmation', with: 'Pedrito123'
-          click_js_button 'Update User'
+          click_js_button 'Save Profile'
         end
-
-        find('h2', text: 'Pedro Navaja') # Wait for the page to reload
-        page.should have_selector('h2', text: 'Pedro Navaja')
-        page.should have_selector('div.user-role', text: 'Another Role')
       end
     end
 

@@ -33,6 +33,7 @@ body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed
             = render_navigation context: :top, expand_all: true, nav_class: 'nav-pills'
     .row-fluid
       = render_navigation renderer: :bootstrap, nav_class: 'nav-tabs'
+    = yield :details_bar
 
   .container-fluid
     .row-fluid
@@ -41,7 +42,7 @@ body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed
           .tab-pane.active
             .row-fluid
               .span12
-                #application-content
+                #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
                   = render 'layouts/messages'
 
                   = yield

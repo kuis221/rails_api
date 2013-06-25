@@ -61,6 +61,7 @@ group :test, :development do
   gem 'faker'
   gem 'populator'
   gem 'sunspot_solr'
+  gem 'timecop'
 end
 
 group :test do
