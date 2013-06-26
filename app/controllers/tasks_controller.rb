@@ -3,6 +3,7 @@ class TasksController < FilteredController
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
+  include ApplicationHelper
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
@@ -84,6 +85,8 @@ class TasksController < FilteredController
         :title => task.title,
         :last_activity => task.last_activity.try(:to_s,:slashes),
         :due_at => task.due_at.try(:to_s, :slashes),
+        :formatted_due_at => format_date(task.due_at),
+        :formatted_last_activity => format_date(task.last_activity),
         :user => {
           :id => task.company_user.try(:id),
           :first_name => task.company_user.try(:first_name),

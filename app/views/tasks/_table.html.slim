@@ -35,9 +35,9 @@ javascript:
     'rowValues': function(t){
       scope = "#{params[:scope]}"
       if (scope != 'user'){
-        return [t.title, t.last_activity, t.due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
+        return [t.title, t.formatted_last_activity, t.formatted_due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
       } else {
-        return [t.title, t.last_activity, t.due_at, $('<div>').html(t.complete_form)]
+        return [t.title, t.formatted_last_activity, t.formatted_due_at, $('<div>').html(t.complete_form)]
       }
     },
     'filterBox': '#collection-list-filters',

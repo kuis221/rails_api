@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_user_company
   after_filter :update_user_last_activity
 
+  before_filter :remember_return_path, only: :show
+
   layout :set_layout
 
   helper_method :current_company, :custom_body_class
@@ -44,5 +46,11 @@ class ApplicationController < ActionController::Base
 
     def custom_body_class
       @custom_body_class ||= ''
+    end
+
+    def remember_return_path
+      if params.has_key?(:return) and params[:return]
+        session["return_path"] = Base64.decode64(params.has_key?(:return)) rescue nil
+      end
     end
 end

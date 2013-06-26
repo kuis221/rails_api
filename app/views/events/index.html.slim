@@ -19,8 +19,7 @@
             table#events-list.table.table-striped.table-bordered.table-scrolled
               thead
                 tr
-                  th data-sort="start_at" Start Date
-                  th data-sort="start_time" Start Time
+                  th data-sort="start_at" Date
                   th data-sort="place_name" Location
                   th data-sort="campaign_name" Campaign
                   th data-sort="status" Status
@@ -48,7 +47,7 @@ javascript:
     'source': '#{events_path(format: :json)}',
     'filterBox': '#collection-list-filters',
     'rowValues': function(e){
-      return [e.start_date, e.start_time, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : ''), e.status]
+      return [e.formatted_date, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : ''), e.status]
     },
     'onItemsChange': function(items) {
       $(document).trigger('events-list:changed',[items]);
