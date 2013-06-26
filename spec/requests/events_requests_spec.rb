@@ -26,7 +26,7 @@ describe "Events", js: true, search: true do
       within("table#events-list") do
         # First Row
         within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%a %b %d'))
+          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%^a %b %d'))
           find('td:nth-child(1)').should have_content(events[0].start_at.strftime('10:00 AM - 11:00 PM'))
           find('td:nth-child(2)').should have_content(events[0].place_name)
           find('td:nth-child(3)').should have_content(events[0].campaign_name)
@@ -36,8 +36,8 @@ describe "Events", js: true, search: true do
         end
         # Second Row
         within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%a %b %d at 11:00 AM'))
-          find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%a %b %d at 12:00 PM'))
+          find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%^a %b %d at 11:00 AM'))
+          find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%^a %b %d at 12:00 PM'))
           find('td:nth-child(2)').should have_content(events[1].place_name)
           find('td:nth-child(3)').should have_content(events[1].campaign_name)
           find('td:nth-child(4)').should have_content('Active')
@@ -112,11 +112,10 @@ describe "Events", js: true, search: true do
         page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
-      within('table#tasks-list') do
-        page.find('tbody tr')
+      within('table#tasks-list tbody tr') do
         page.should have_content('Pick up the kidz at school')
         page.should have_content('Juanito Bazooka')
-        page.should have_content('05/16/2013')
+        page.should have_content('THU May 16')
       end
 
       # Mark the tasks as completed
