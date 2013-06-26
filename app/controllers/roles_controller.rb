@@ -32,6 +32,17 @@ class RolesController < FilteredController
   end
 
   protected
+
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we use for the facets search
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
+        facet_search = resource_class.do_search(facet_params, true)
+
+        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+      end
+    end
+
     def collection_to_json
       collection.map{|role| {
         :id => role.id,
