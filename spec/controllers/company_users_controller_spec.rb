@@ -150,16 +150,16 @@ describe CompanyUsersController do
       end
 
       it 'should NOT update the session with a invalid company_id' do
-        get 'select_company', company_id: 99
-        session[:current_company_id].should_not == 99
+        get 'select_company', company_id: 9999
+        session[:current_company_id].should_not == 9999
         flash[:error].should == "You are not allowed login into this company"
         response.should redirect_to root_path
       end
 
       it 'should NOT update the session with a company_id if the user is not active on it' do
-        another_company_id = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company), user: @user, active: false).id
-        get 'select_company', company_id: 99
-        session[:current_company_id].should_not == 99
+        another_company_id = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company), user: @user, active: false).company_id
+        get 'select_company', company_id: another_company_id
+        session[:current_company_id].should_not == another_company_id
         flash[:error].should == "You are not allowed login into this company"
         response.should redirect_to root_path
       end

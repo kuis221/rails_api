@@ -44,6 +44,13 @@ RSpec.configure do |config|
   config.include SignHelper, :type => :request
   config.include RequestsHelper, :type => :request
 
+  config.before(:all) do
+    DeferredGarbageCollection.start
+  end
+  config.after(:all) do
+    DeferredGarbageCollection.reconsider
+  end
+
 
   Capybara.javascript_driver = :webkit
   Capybara.default_wait_time = 5

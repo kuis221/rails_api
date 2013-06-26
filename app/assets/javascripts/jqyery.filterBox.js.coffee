@@ -286,10 +286,20 @@ $.widget 'nmk.filterBox', {
 		container = $('<div class="dates-range-filter">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
-			monthsToShow: 2,
+			monthsToShow: 1,
 			changeMonth: false,
 			defaultDate: new Date(),
 			selectDefaultDate: @options.selectDefaultDate,
+			prevText: '<',
+			nextText: '>',
+			showOtherMonths: true,
+			selectOtherMonths: true,
+			renderer: $.extend(
+						{}, $.datepick.defaultRenderer,
+						{picker: '<div class="datepick">' +
+								'<div class="datepick-nav">{link:prev}{link:next}</div>{months}' +
+								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
+								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
 				start_date = @_formatDate(dates[0])
 				@startDateInput.val start_date

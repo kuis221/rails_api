@@ -18,6 +18,23 @@
             = "&nbsp;".html_safe
             = active_inactive_buttons(resource)
 
+
+  .row-fluid
+    .box
+      a href="#tasks-content" data-toggle="collapse"
+        .box-header
+          h2 CAMPAIGNS
+
+      #tasks-content.collapse.in
+        .box-content
+          = simple_form_for(resource, html: { id: 'company_user_campaigns_form'}) do |f|
+            = f.association :campaigns, as: :check_boxes, label: false, wrapper_html: {class: 'checkbox-columns'}, collection: assignable_campaigns
+
+            .row-fluid
+              .pull-right
+                = f.button :submit, 'Save Campaigns', class: 'btn-primary'
+
+
 javascript:
   $(document).on('company_users:change', function(){
     window.location.reload(false);

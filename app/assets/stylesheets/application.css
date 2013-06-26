@@ -10,7 +10,7 @@
  *
  *= require_self
  *= require bootstrap_and_overrides
- *= require 'fullcalendar'
- *= require 'fullcalendar-custom'
+ *= require 'jquery.datepick.css'
+ *= require 'brandscopic.datepick.css'
  *= require_directory .
  */

@@ -14,6 +14,7 @@ head
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
+    = javascript_tag '$.fx.off = true;'  if Rails.env.test?
     = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=AIzaSyC_4WyZ0ewJ0QSdFd6mnAsCvAttG8iXXQc&libraries=places&sensor=false"
     = csrf_meta_tags
     = yield(:head)
@@ -32,6 +33,7 @@ body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed
             = render_navigation context: :top, expand_all: true, nav_class: 'nav-pills'
     .row-fluid
       = render_navigation renderer: :bootstrap, nav_class: 'nav-tabs'
+    = yield :details_bar
 
   .container-fluid
     .row-fluid
@@ -40,7 +42,7 @@ body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed
           .tab-pane.active
             .row-fluid
               .span12
-                #application-content
+                #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
                   = render 'layouts/messages'
 
                   = yield

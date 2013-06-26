@@ -8,6 +8,8 @@ class CompanyUsersController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   respond_to :json, only: [:index]
 
+  helper_method :assignable_campaigns
+
   custom_actions :collection => [:complete]
 
   def autocomplete
@@ -73,6 +75,20 @@ class CompanyUsersController < FilteredController
       flash[:error] = "You are not allowed login into this company"
     end
     redirect_to root_path
+  end
+
+  def assignable_campaigns
+    current_company.campaigns.active.order('campaigns.name asc')
+  end
+
+  def update
+    update! do |success, failure|
+      success.js {
+        if resource.user.id == current_user.id
+          sign_in resource.user, :bypass => true
+        end
+      }
+    end
   end
 
   protected

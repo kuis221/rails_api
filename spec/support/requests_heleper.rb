@@ -3,10 +3,12 @@ module CapybaraBrandscopicHelpers
 
   def click_js_link(locator, options={})
     find(:link, locator, options).trigger('click')
+    self
   end
 
   def click_js_button(locator, options={})
     find(:button, locator, options).trigger('click')
+    self
   end
 
   def object_row(object)

@@ -19,12 +19,34 @@ module ApplicationHelper
   end
 
   def resource_details_bar(title, url)
-    content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "0") do
-      link_to(:back) do
-        content_tag(:span, "&times;".html_safe, class: :close) +
-        content_tag(:span, title) +
-        content_tag(:span, 'Click to close.', class: 'details-bar-pull-right')
+    content_for :details_bar do
+      content_tag(:div, id: 'resource-close-details') do
+        link_to(:back) do
+          content_tag(:span, "&times;".html_safe, class: :close) +
+          content_tag(:span, title) +
+          content_tag(:span, 'Click to close.', class: 'details-bar-pull-right')
+        end
       end
+    end
+  end
+
+  def comment_date(comment)
+    if comment.created_at  <= 4.days.ago.end_of_day
+      comment.created_at.strftime('%B %d at %l:%M %P')
+    elsif comment.created_at  <= 2.days.ago.end_of_day
+      comment.created_at.strftime('%A at %l:%M %P')
+    elsif comment.created_at <= (Time.zone.now - 24.hours)
+      comment.created_at.strftime('Yesterday at %l:%M %P')
+    elsif comment.created_at <= (Time.zone.now - 1.hours)
+      hours = ((Time.zone.now - comment.created_at)  / 3600).to_i
+      if hours == 1
+        'about an hour ago'
+      else
+        comment.created_at.strftime("#{pluralize(hours, 'hour')} ago")
+      end
+    elsif comment.created_at > (Time.zone.now - 1.hours) and comment.created_at < Time.zone.now
+      minutes = ((Time.zone.now - comment.created_at)  / 60).to_i
+      comment.created_at.strftime("about #{pluralize(minutes, 'minute')} ago")
     end
   end
 

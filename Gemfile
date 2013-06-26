@@ -61,10 +61,12 @@ group :test, :development do
   gem 'faker'
   gem 'populator'
   gem 'sunspot_solr'
+  gem 'timecop'
 end
 
 group :test do
   gem "capybara"
+  gem "rspec-mocks"
   gem "capybara-webkit"
   gem "email_spec", ">= 1.4.0"
   gem 'shoulda'

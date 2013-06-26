@@ -3,6 +3,8 @@
 
 en:
   activerecord:
+    models:
+      company_user: "User"
     attributes:
       activity:
         start_date_date: "Start date"

@@ -52,4 +52,73 @@ describe ApplicationHelper do
       assert_dom_equal "<address>Beverly Hills, California, 90210</address>", helper.place_address(place)
     end
   end
+
+
+  describe "#comment_date" do
+    it "should return the full date when it's older than 4 days" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 22, 11, 59))
+          helper.comment_date(comment).should == "July 22 at 11:59 am"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 19, 11, 59))
+          helper.comment_date(comment).should == "July 19 at 11:59 am"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 06, 19, 11, 59))
+          helper.comment_date(comment).should == "June 19 at 11:59 am"
+      end
+    end
+
+    it "should return the day of the week if the comment is older than yesterday but newer than 4 days" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 23, 00, 00))
+          helper.comment_date(comment).should == "Tuesday at 12:00 am"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 16, 40))
+          helper.comment_date(comment).should == "Wednesday at  4:40 pm"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 23, 59))
+          helper.comment_date(comment).should == "Wednesday at 11:59 pm"
+      end
+    end
+
+    it "should return 'Yesterday' plus the time if the date is older than 24 horus" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 11, 59))
+          helper.comment_date(comment).should == "Yesterday at 11:59 am"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 00, 0))
+          helper.comment_date(comment).should == "Yesterday at 12:00 am"
+      end
+    end
+
+    it "should return the number of hours rounded to the lower number" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 59))
+          helper.comment_date(comment).should == "about an hour ago"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 22))
+          helper.comment_date(comment).should == "about an hour ago"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 9, 0))
+          helper.comment_date(comment).should == "3 hours ago"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 12, 01))
+          helper.comment_date(comment).should == "23 hours ago"
+      end
+    end
+
+    it "should return the number of minutes" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 59))
+          helper.comment_date(comment).should == "about 1 minute ago"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 30))
+          helper.comment_date(comment).should == "about 30 minutes ago"
+
+          comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 01))
+          helper.comment_date(comment).should == "about 59 minutes ago"
+      end
+    end
+
+  end
 end

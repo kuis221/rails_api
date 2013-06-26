@@ -22,7 +22,7 @@ class CompanyUser < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
   validates_associated :user
 
-  attr_accessible :user_attributes, :role_id, :company_id, :team_ids, as: :admin
+  attr_accessible :user_attributes, :role_id, :company_id, :team_ids, :campaign_ids, as: :admin
   attr_accessible :user_attributes
 
   has_many :memberships
