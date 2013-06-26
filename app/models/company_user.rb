@@ -76,8 +76,15 @@ class CompanyUser < ActiveRecord::Base
       active_status
     end
 
-    integer :team_ids, :multiple => true, :references => Team
-    #integer :campaign_ids, :multiple => true, :references => Campaign
+    integer :team_ids, multiple: true do
+      teams.map(&:id)
+    end
+
+    string :teams, multiple: true, references: Team do
+      teams.map{|t| t.id.to_s + '||' + t.name}
+    end
+
+    # integer :team_ids, :multiple => true, :references => Team
 
     integer :campaign_ids, multiple: true do
       campaigns.map(&:id)
@@ -129,6 +136,7 @@ class CompanyUser < ActiveRecord::Base
 
         if include_facets
           facet :role
+          facet :teams
           facet :campaigns
         end
 
