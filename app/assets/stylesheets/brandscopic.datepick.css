@@ -47,6 +47,13 @@
 	font-size: 90%;
 	font-weight: bold;
 }
+.datepick-nav {
+	position: relative;
+	height: 0;
+}
+.datepick-nav .datepick-cmd {
+	width: 30px;
+}
 .datepick-ctrl {
 	background-color: #fee6e3;
 }
@@ -154,6 +161,8 @@ button.datepick-cmd {
 .datepick-month td {
 	background-color: #eee;
 	border: 1px solid #aaa;
+	padding: 2px;
+	border: none;
 }
 .datepick-month td.datepick-week * {
 	background-color: #e0e0e0;
@@ -167,6 +176,7 @@ button.datepick-cmd {
 	background-color: #eee;
 	color: #000;
 	text-decoration: none;
+	border-radius: 3px;
 }
 .datepick-month span {
 	display: block;

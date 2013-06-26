@@ -1735,6 +1735,40 @@ $.extend(Datepicker.prototype, {
 		}
 		// Add datepicker behaviour
 		var self = this;
+
+		if (inst.options.rangeSelect){
+			picker.find(inst.options.renderer.daySelector + ' a').
+				droppable({
+				  tolerance: "pointer",
+				  drop: function(event, ui) {
+				  	self._update(target);
+					self._updateInput(target);
+				  },
+				  over: function(event, ui) {
+				  	var startA = ui.draggable[0];
+				  	var endA = this;
+					var date1 = self._retrieveDatePlugin(target, startA);
+					var date2 = self._retrieveDatePlugin(target, endA);
+					if (date1 > date2){ // Swap values
+						date2 = [date1, date1 = date2][0];
+						endA = [startA, startA = endA][0];
+					}
+					if (inst.selectedDates[0] != date1|| inst.selectedDates[1] != date2 ){
+						inst.selectedDates = [date1, date2];
+						var insideRange = false;
+						picker.find(inst.options.renderer.daySelector + ' a').each(function(index, element){
+							if (startA == element) { insideRange = true; }
+							if (insideRange) { $(element).addClass('datepick-selected'); }
+							else { $(element).removeClass('datepick-selected'); }
+							if (endA == element) { insideRange = false; }
+
+						})
+					}
+					true
+				  }
+				}).
+				draggable({ 'containment': "table", "helper": function(){ return $('<div>'); } });
+		}
 		picker.find(inst.options.renderer.daySelector + ' a').hover(
 				function() { $(this).addClass(inst.options.renderer.highlightedClass); },
 				function() {
