@@ -122,6 +122,7 @@ class CompanyUser < ActiveRecord::Base
         with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
         with(:role_id, params[:role]) if params.has_key?(:role) and params[:role].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -138,6 +139,7 @@ class CompanyUser < ActiveRecord::Base
           facet :role
           facet :teams
           facet :campaigns
+          facet :status
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
