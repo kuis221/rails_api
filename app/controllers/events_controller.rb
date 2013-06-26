@@ -8,6 +8,7 @@ class EventsController < FilteredController
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
+  include ApplicationHelper
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
@@ -117,6 +118,7 @@ class EventsController < FilteredController
         :id => event.id,
         :start_date => event.start_date,
         :start_time => event.start_time,
+        :formatted_date => format_date_range(event.start_at, event.end_at),
         :end_date => event.end_date,
         :end_time => event.end_time,
         :active=> event.active,

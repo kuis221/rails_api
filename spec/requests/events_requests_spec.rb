@@ -17,8 +17,8 @@ describe "Events", js: true, search: true do
   describe "/events", js: true, search: true  do
     it "GET index should display a table with the events" do
       events = [
-        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
-        FactoryGirl.create(:event, start_date: Date.today.to_s, campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
+        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.today.to_s, start_time: '10:00am', end_time: '11:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
+        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.tomorrow.to_s, start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]
       Sunspot.commit
       visit events_path
@@ -26,29 +26,27 @@ describe "Events", js: true, search: true do
       within("table#events-list") do
         # First Row
         within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(events[0].start_date.to_s)
-          find('td:nth-child(2)').should have_content(events[0].start_at.to_s(:time_only))
-          find('td:nth-child(3)').should have_content(events[0].place_name)
-          find('td:nth-child(4)').should have_content(events[0].campaign_name)
-          find('td:nth-child(5)').should have_content('Active')
-          find('td:nth-child(6)').should have_content('Edit')
-          find('td:nth-child(6)').should have_content('Deactivate')
+          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%a %b %d'))
+          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('10:00 AM - 11:00 PM'))
+          find('td:nth-child(2)').should have_content(events[0].place_name)
+          find('td:nth-child(3)').should have_content(events[0].campaign_name)
+          find('td:nth-child(4)').should have_content('Active')
+          find('td:nth-child(5)').should have_content('Edit')
+          find('td:nth-child(5)').should have_content('Deactivate')
         end
         # Second Row
         within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(events[1].start_date.to_s)
-          find('td:nth-child(2)').should have_content(events[1].start_at.to_s(:time_only))
-          find('td:nth-child(3)').should have_content(events[1].place_name)
-          find('td:nth-child(4)').should have_content(events[1].campaign_name)
-          find('td:nth-child(5)').should have_content('Active')
-          find('td:nth-child(6)').should have_content('Edit')
-          find('td:nth-child(6)').should have_content('Deactivate')
+          find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%a %b %d at 11:00 AM'))
+          find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%a %b %d at 12:00 PM'))
+          find('td:nth-child(2)').should have_content(events[1].place_name)
+          find('td:nth-child(3)').should have_content(events[1].campaign_name)
+          find('td:nth-child(4)').should have_content('Active')
+          find('td:nth-child(5)').should have_content('Edit')
+          find('td:nth-child(5)').should have_content('Deactivate')
         end
-
       end
 
       assert_table_sorting ("table#events-list")
-
     end
   end
 

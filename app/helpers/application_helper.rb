@@ -50,6 +50,16 @@ module ApplicationHelper
     end
   end
 
+  def format_date_range(start_at, end_at)
+    if start_at.to_date != end_at.to_date
+      start_at.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span> <span class="time_part">at %l:%M %p</span><br />').html_safe +
+      end_at.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span> <span class="time_part">at %l:%M %p</span>').html_safe
+    else
+      start_at.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span><br />').html_safe +
+      "<span class=\"time_part\">#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}</span>".html_safe
+    end
+  end
+
   def user_company_dropdown(user)
     if user.companies.size == 1
       link_to user.companies.first.name, root_path, class: 'current-company-title'
