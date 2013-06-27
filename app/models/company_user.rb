@@ -84,8 +84,6 @@ class CompanyUser < ActiveRecord::Base
       teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
-    # integer :team_ids, :multiple => true, :references => Team
-
     integer :campaign_ids, multiple: true do
       campaigns.map(&:id)
     end

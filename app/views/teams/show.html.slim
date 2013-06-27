@@ -48,6 +48,7 @@ javascript:
   var teamMembersTable = $('table#team-members').tableScroller({
     'source': '#{company_users_path(team: resource.to_param, format: :json)}',
     'filterBox': '#team-members-list-filter',
+    'facets': false,
     'rowValues': function(u){
       return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
     },
