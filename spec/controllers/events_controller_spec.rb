@@ -209,7 +209,7 @@ describe EventsController do
         team.users << @company_user
         event.teams << team
         user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
-        other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user_id: @user.id+1)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user_id: @company_user.id+1)
         delete 'delete_member', id: event.id, team_id: team.id, format: :js
 
         user_tasks.each{|t| t.reload.company_user_id.should be_nil }
@@ -222,7 +222,7 @@ describe EventsController do
         event.users << @company_user
         event.teams << team
         user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
-        other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user_id: @user.id+1)
+        other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user_id: @company_user.id+1)
         delete 'delete_member', id: event.id, team_id: team.id, format: :js
 
         user_tasks.each{|t| t.reload.company_user_id.should == @company_user.id }
