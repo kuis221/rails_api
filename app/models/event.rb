@@ -167,7 +167,10 @@ class Event < ActiveRecord::Base
             if place =~ /^[0-9]+$/
               place_ids.push place
             else
-              place_paths.push place
+              # The location comes BASE64 encoded as a pair "id||name"
+              # The ID is a md5 encoded string that is indexed on Solr
+              (id, name) = Base64.decode64(place).split('||')
+              place_paths.push id
             end
           end
           any_of do

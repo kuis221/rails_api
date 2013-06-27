@@ -8,11 +8,12 @@ class EventsController < FilteredController
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
+  include EventsHelper
   include ApplicationHelper
 
-  respond_to :js, only: [:new, :create, :edit, :update]
+  helper_method :describe_filters
 
-  helper_method :filters
+  respond_to :js, only: [:new, :create, :edit, :update]
 
   def autocomplete
     buckets = []
@@ -55,7 +56,6 @@ class EventsController < FilteredController
       end
     end
     buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
 
     render :json => buckets.flatten
   end

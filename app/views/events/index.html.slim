@@ -52,6 +52,11 @@ javascript:
     'onItemsChange': function(items) {
       $(document).trigger('events-list:changed',[items]);
     },
+    'onItemsLoad': function(json, page) {
+      if (typeof json.description != 'undefined'){
+        $('#events-filter-label').html(json.description)
+      }
+    },
     'rowId': function(row){
       return 'event_'+row.id;
     },

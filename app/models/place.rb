@@ -21,6 +21,7 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #
+require "base64"
 
 class Place < ActiveRecord::Base
 
@@ -113,7 +114,8 @@ class Place < ActiveRecord::Base
         i = 1
         parents.each do |label|
           if p[:items].nil? || (c = p[:items].select{|i| i[:label] == label}.first).nil?
-            c = {id: encode_location(parents[0..i-1]), name: :place, label: label, group: groups[i-1], items: nil, count: 1}
+            location_id = Base64.strict_encode64(encode_location(parents[0..i-1]) + '||' + label)
+            c = {id: location_id, name: :place, label: label, group: groups[i-1], items: nil, count: 1}
             p[:items] ||= []
             p[:items].push c
           end
