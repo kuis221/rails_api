@@ -34,6 +34,7 @@ class BrandPortfolio < ActiveRecord::Base
 
     string :name
     string :description
+    string :status
 
     boolean :active
 
@@ -66,6 +67,7 @@ class BrandPortfolio < ActiveRecord::Base
 
         with(:company_id, params[:company_id])
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -78,6 +80,7 @@ class BrandPortfolio < ActiveRecord::Base
 
         if include_facets
           facet :brands
+          facet :status
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
