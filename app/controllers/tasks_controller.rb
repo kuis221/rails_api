@@ -41,7 +41,7 @@ class TasksController < FilteredController
     buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
 
 
-    if params[:scope] == 'teams'
+    if is_my_teams_view?
       # Search users
       search = Sunspot.search(CompanyUser, Team) do
         keywords(params[:q]) do
@@ -76,6 +76,19 @@ class TasksController < FilteredController
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+
+        if is_my_teams_view?
+          users_count = Hash[facet_search.facet(:company_user_id).rows.map{|x| [x.value, x.count]}]
+          users = current_company.company_users.includes(:user).where(id: facet_search.facet(:company_user_id).rows.map{|x| x.value})
+          users = users.map{|x|  build_facet_item({label: x.full_name, id: x.id, name: :user, count: users_count[x.id]}) }
+          teams = company_teams.joins(:users).where(company_users: {id: users_count.keys}).group('teams.id')
+          teams = teams.map do |team|
+            user_ids = team.user_ids
+            build_facet_item({label: team.name, id: team.id, name: :team, count: user_ids.map{|id| users_count.has_key?(id) ? users_count[id] : 0 }.sum})
+          end
+          people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
+          f.push(label: "Staff", items: people)
+        end
       end
     end
 
@@ -115,13 +128,25 @@ class TasksController < FilteredController
     end
 
     def search_params
-      super
-      @search_params[:company_user_id] = current_company_user.id if params[:scope] == 'user'
-      @search_params[:company_user_id] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
-      @search_params
+      @search_params ||= begin
+        super
+        unless @search_params.has_key?(:user) && !@search_params[:user].empty?
+          @search_params[:user] = current_company_user.id if params[:scope] == 'user'
+          @search_params[:user] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
+        end
+        @search_params
+      end
     end
 
     def set_body_class
       @custom_body_class = params[:scope]
+    end
+
+    def is_my_teams_view?
+      params[:scope] == 'teams'
+    end
+
+    def is_my_tasks_view?
+      params[:scope] == 'user'
     end
 end

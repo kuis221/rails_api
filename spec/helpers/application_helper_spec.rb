@@ -122,6 +122,16 @@ describe ApplicationHelper do
 
   end
 
+  describe "#format_date" do
+    it "should return nil if date is nil" do
+      helper.format_date(nil).should be_nil
+    end
+
+    it "should return nil if date is nil" do
+      assert_dom_equal '<span class="week_day">Fri</span> <span class="month_day">Jul 26</span>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
+    end
+  end
+
 
   describe "#format_date_range" do
     it "should return both dates" do

@@ -74,6 +74,8 @@ class Campaign < ActiveRecord::Base
       []
     end
 
+    string :aasm_state
+
     integer :user_ids, multiple: true do
       users.map(&:id)
     end

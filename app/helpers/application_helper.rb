@@ -55,7 +55,7 @@ module ApplicationHelper
   end
 
   def format_date(the_date)
-    the_date.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span>').html_safe
+    the_date.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span>').html_safe unless the_date.nil?
   end
 
   def format_date_range(start_at, end_at)

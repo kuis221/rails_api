@@ -164,9 +164,9 @@ describe Place do
       structure = Place.load_organized(1)
 
       structure.map{|i| i[:label]}.should =~ ['North America', 'South America']
-      structure.map{|i| i[:id]}.should =~ ['460491fc520f4dbfcff22d1a45f6b056', 'b1ff5f512f0f5b19520398bffc732a6b']
+      structure.map{|i| i[:id]}.should =~ ["NDYwNDkxZmM1MjBmNGRiZmNmZjIyZDFhNDVmNmIwNTZ8fE5vcnRoIEFtZXJpY2E=", "YjFmZjVmNTEyZjBmNWIxOTUyMDM5OGJmZmM3MzJhNmJ8fFNvdXRoIEFtZXJpY2E="]
       structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [["California", "Nevada"], ["Curridabat"]]
-      structure.map{|i| i[:items].map{|j| j[:id] }}.should =~ [["e6694f45ba1b5e30c99e64ae676c2240", "3bc5221485119b3a1b2258177b4750d2"], ["928056370adfd02431b2d6ed87a5890a"]]
+      structure.map{|i| i[:items].map{|j| j[:id] }}.should =~ [["OTI4MDU2MzcwYWRmZDAyNDMxYjJkNmVkODdhNTg5MGF8fEN1cnJpZGFiYXQ="], ["ZTY2OTRmNDViYTFiNWUzMGM5OWU2NGFlNjc2YzIyNDB8fENhbGlmb3JuaWE=", "M2JjNTIyMTQ4NTExOWIzYTFiMjI1ODE3N2I0NzUwZDJ8fE5ldmFkYQ=="]]
     end
 
     it "should return only the area" do

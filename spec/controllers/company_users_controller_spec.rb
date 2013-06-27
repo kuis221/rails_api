@@ -30,10 +30,75 @@ describe CompanyUsersController do
         end
 
         it "returns the correct structure" do
-          get 'index', sEcho: 1, format: :json
+          get 'index', format: :json
           parsed_body = JSON.parse(response.body)
           parsed_body["total"].should == 0
           parsed_body["items"].should == []
+          parsed_body["pages"].should == 1
+          parsed_body["page"].should == 1
+        end
+      end
+    end
+
+    describe "GET 'event'" do
+      let(:event) { FactoryGirl.create(:event, company: @company) }
+
+      describe "json requests" do
+        it "responds to .table format" do
+          get 'event', event_id: event.id, format: :json
+          response.should be_success
+        end
+
+        it "returns all the users associated with the event" do
+          users = FactoryGirl.create_list(:user, 3, company_id: @company.id, role_id: @company_user.role_id)
+          event.users << users.map(&:company_users).flatten
+
+          get 'event', event_id: event.id, format: :json
+          parsed_body = JSON.parse(response.body)
+          parsed_body["items"].size.should == 3
+          parsed_body["total"].should == 3
+          parsed_body["items"].map{|u| u['id']}.should =~ users.map(&:company_users).flatten.map(&:id)
+          parsed_body["pages"].should == 1
+          parsed_body["page"].should == 1
+        end
+
+        it "returns all the users associated with the teams associated with the event" do
+          users = FactoryGirl.create_list(:user, 3, company_id: @company.id, role_id: @company_user.role_id)
+          team = FactoryGirl.create(:team, company_id: @company.id)
+          team.users << users.map(&:company_users).flatten
+          event.teams << team
+
+          get 'event', event_id: event.id, format: :json
+          parsed_body = JSON.parse(response.body)
+          parsed_body["items"].size.should == 3
+          parsed_body["total"].should == 3
+          parsed_body["items"].map{|u| u['id']}.should =~ users.map(&:company_users).flatten.map(&:id)
+          parsed_body["pages"].should == 1
+          parsed_body["page"].should == 1
+        end
+
+        it "returns all the users from the teams associated with the event together with the users associated with the event" do
+
+          other_users = FactoryGirl.create_list(:user, 3, company_id: @company.id, role_id: @company_user.role_id)
+          team_users = FactoryGirl.create_list(:user, 3, company_id: @company.id, role_id: @company_user.role_id)
+          team = FactoryGirl.create(:team, company_id: @company.id)
+          team.users << team_users.map(&:company_users).flatten
+
+          # Add some users to other team not associated with the event
+          other_team_users = FactoryGirl.create_list(:user, 2, company_id: @company.id, role_id: @company_user.role_id)
+          other_team = FactoryGirl.create(:team, company_id: @company.id)
+          other_team.users << other_team_users.map(&:company_users).flatten
+
+          # Associate the team and users with the event
+          event.teams << team
+          event.users << team_users.first.company_users
+          event.users << other_users.map(&:company_users).flatten
+
+          get 'event', event_id: event.id, format: :json
+          parsed_body = JSON.parse(response.body)
+          parsed_body["items"].size.should == 6
+          parsed_body["total"].should == 6
+          parsed_body["items"].map{|u| u['id']}.should =~ (team_users + other_users).map(&:company_users).flatten.map(&:id)
           parsed_body["pages"].should == 1
           parsed_body["page"].should == 1
         end

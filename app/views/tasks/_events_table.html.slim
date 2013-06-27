@@ -3,8 +3,7 @@
   table#tasks-events-list.table.table-striped.table-bordered.table-scrolled
     thead
       tr
-        th data-sort="start_at" Start Date
-        th data-sort="start_time" Start Time
+        th data-sort="start_at" Event Date
         th data-sort="location" Location
         th data-sort="campaign" Campaign
     tbody
@@ -40,7 +39,7 @@ javascript:
     },
     'actionButtons': false,
     'rowValues': function(e){
-      return [e.start_date, e.start_time, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : '')]
+      return [e.formatted_date, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : '')]
     },
     'fixedHeader': false
   })
