@@ -149,7 +149,11 @@ class CompanyUsersController < FilteredController
     end
 
     def load_users_for_event
-      @users = CompanyUser.scoped_by_company_id(current_company).active.joins(:events).where(events: {id: params[:event_id]})
+      event = current_company.events.find(params[:event_id])
+      # INNER JOIN "memberships" ON "memberships"."company_user_id" = "company_users"."id" AND "memberships"."memberable_type" = 'Event' INNER JOIN "events" ON "events"."id" = "memberships"."memberable_id"
+      teams = CompanyUser.scoped_by_company_id(current_company).active.joins(:teams).where(active: true, teams: {id: event.team_ids})
+      users = CompanyUser.scoped_by_company_id(current_company).active.joins(:events).where(active: true, events: {id: event.id})
+      @users = CompanyUser.from("(#{teams.to_sql} UNION #{users.to_sql}) AS company_users ")
       @collection_count_scope = @users
       set_collection_ivar @users
     end

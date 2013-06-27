@@ -58,7 +58,7 @@ describe "Tasks", js: true, search: true do
 
       team_tasks = [
         FactoryGirl.create(:task, title: 'Team task 1', company_user: company_user1 , active: true, event: FactoryGirl.create(:event, company: @company)),
-        FactoryGirl.create(:task, title: 'Team task 2', company_user: company_user2 , active: true, event: FactoryGirl.create(:event, company: @company))
+        FactoryGirl.create(:task, title: 'Team task 2', company_user: company_user2 , active: true, due_at: nil, event: FactoryGirl.create(:event, company: @company))
       ]
       Sunspot.commit
       visit my_teams_tasks_path
