@@ -79,7 +79,7 @@ describe "Teams", js: true, search: true do
         FactoryGirl.create(:user, first_name: 'First1', last_name: 'Last1', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com'),
         FactoryGirl.create(:user, first_name: 'First2', last_name: 'Last2', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Staff').id, city: 'Brooklyn', state:'NY', country:'US', email: 'user2@example.com')
       ]
-      users.each{|u| team.users << u.company_users }
+      users.each{|u| u.company_users.each {|cu |team.users << cu.reload } }
       Sunspot.commit
       visit team_path(team)
       within('table#team-members') do
