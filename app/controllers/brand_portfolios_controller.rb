@@ -40,12 +40,22 @@ class BrandPortfoliosController < FilteredController
   end
 
   private
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we use for the facets search
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
+        facet_search = resource_class.do_search(facet_params, true)
+
+        f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) } )
+      end
+    end
+
     def collection_to_json
       collection.map{|portfolio| {
         :id => portfolio.id,
         :name => portfolio.name,
         :description => portfolio.description,
-        :status => portfolio.active? ? 'Active' : 'Inactive',
+        :status => portfolio.status,
         :active => portfolio.active?,
         :links => {
             edit: edit_brand_portfolio_path(portfolio),
@@ -54,13 +64,5 @@ class BrandPortfoliosController < FilteredController
             deactivate: deactivate_brand_portfolio_path(portfolio)
         }
       }}
-    end
-
-    def sort_options
-      {
-        'name' => { :order => 'brand_portfolios.name' },
-        'description' => { :order => 'brand_portfolios.description' },
-        'status' => { :order => 'brand_portfolios.active' }
-      }
     end
 end
