@@ -5,6 +5,7 @@ FactoryGirl.define do
     sequence(:name) {|n| "Date Range #{n}"}
     description "Some Date Range description"
     active false
+    company_id 1
     created_by_id 1
     updated_by_id 1
   end
