@@ -34,6 +34,7 @@ class DayPart < ActiveRecord::Base
 
     string :name
     string :description
+    string :status
 
     boolean :active
 
@@ -57,12 +58,17 @@ class DayPart < ActiveRecord::Base
     def do_search(params, include_facets=false)
       ss = solr_search do
         with(:company_id, params[:company_id])
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'daypart'
             with :id, value
           end
+        end
+
+        if include_facets
+          facet :status
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
