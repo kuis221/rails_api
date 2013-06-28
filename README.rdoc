@@ -5,39 +5,72 @@
 == Getting Started
 
 1. At the command prompt, clone the project:
-       git clone git@github.com:cjaskot/brandscopic.git
+
+        git clone git@github.com:cjaskot/brandscopic.git
 
 2. Change directory to <tt>brandscopic</tt> and start the web server:
-       cd brandscopic
+
+        cd brandscopic
+
+4. Create a database.yml file inside the config folder with the following content:
+
+        development:
+          adapter: postgresql
+          database: brandscopic_dev
+          encoding: unicode
+          username: guille
+          password:
+          server: 127.0.0.1
+
+        # Warning: The database defined as "test" will be erased and
+        # re-generated from your development database when you run "rake".
+        # Do not set this db to the same as development or production.
+        test:
+          adapter: postgresql
+          database: brandscopic_test
+          encoding: unicode
+          username: guille
+          password:
+          server: 127.0.0.1
+          min_messages: WARNING
 
 3. Make sure you have QT installed or run this (on Mac OSx):
-       brew install
-       brew install qt
+
+        brew install
+        brew install qt
 
 4. Install the required gems:
-       bundle install
+
+        bundle install
 
 5. Run the local Solr server
-       rake sunspot:solr:start
+
+        rake sunspot:solr:start
 
 6. Create the database and run the migrations:
-       rake db:create db:migrate && rake db:seed
+
+        rake db:create db:migrate && rake db:seed
 
 7. Run the tests to make sure everything works (optional)
-       rake
+
+        rake
 
 8. Load some test data into the app
-       rake db:populate:all
+
+        rake db:populate:all
 
 9. Reindex the date we just created
-       rake sunspot:reindex
+
+        rake sunspot:reindex
 
 10. Start the local server
-       rails s
+
+        rails s
 
 11. Go to http://localhost:3000/ and you should be able to login using:
-       Email: admin@brandscopic.com
-       Password: Adminpass12
+
+        Email: admin@brandscopic.com
+        Password: Adminpass12
 
 
 == Rebuilding the Solr index

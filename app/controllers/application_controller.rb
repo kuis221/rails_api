@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
         current_company_id = session[:current_company_id]
         company = nil
         if current_company_id
-          company = current_user.companies.find(current_company_id)
+          company = current_user.companies.find(current_company_id) rescue nil
         else
           company = current_user.current_company
         end
