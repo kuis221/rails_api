@@ -13,7 +13,7 @@
 
       = f.simple_fields_for :company_users do |cf|
         = cf.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-        = cf.input :role_id, as: :select, collection: current_company.roles
+        = cf.input :role_id, as: :select, collection: current_company.roles.active
 
 
   .form-actions

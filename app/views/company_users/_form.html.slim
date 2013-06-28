@@ -20,7 +20,7 @@
         - if resource.id != current_company_user.id
           = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
 
-          = f.input :role_id, as: :select, collection: current_company.roles
+          = f.input :role_id, as: :select, collection: current_company.roles.active
 
         - unless resource.invited_to_sign_up?
           = uf.input :password
