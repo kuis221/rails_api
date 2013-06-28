@@ -18,7 +18,7 @@ describe "BrandPortfolios", js: true, search: true do
       it "should display a table with the portfolios" do
         portfolios = [
           FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
-          FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false, company: @company)
+          FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: @company)
         ]
         Sunspot.commit
         visit brand_portfolios_path
@@ -36,9 +36,9 @@ describe "BrandPortfolios", js: true, search: true do
           within("tbody tr:nth-child(2)") do
             find('td:nth-child(1)').should have_content(portfolios[1].name)
             find('td:nth-child(2)').should have_content(portfolios[1].description)
-            find('td:nth-child(3)').should have_content('Inactive')
+            find('td:nth-child(3)').should have_content('Active')
             find('td:nth-child(4)').should have_content('Edit')
-            find('td:nth-child(4)').should have_content('Activate')
+            find('td:nth-child(4)').should have_content('Deactivate')
           end
         end
 

@@ -17,7 +17,7 @@ describe "Areas", js: true, search: true do
     it "GET index should display a table with the areas" do
       areas = [
         FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
-        FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: false, company: @company)
+        FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: @company)
       ]
       Sunspot.commit
       visit areas_path
@@ -35,9 +35,9 @@ describe "Areas", js: true, search: true do
         within("tbody tr:nth-child(2)") do
           find('td:nth-child(1)').should have_content(areas[1].name)
           find('td:nth-child(2)').should have_content(areas[1].description)
-          find('td:nth-child(3)').should have_content('Inactive')
+          find('td:nth-child(3)').should have_content('Active')
           find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Activate')
+          find('td:nth-child(4)').should have_content('Deactivate')
         end
       end
 
