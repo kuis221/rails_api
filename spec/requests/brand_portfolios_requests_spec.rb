@@ -14,34 +14,54 @@ describe "BrandPortfolios", js: true, search: true do
   end
 
   describe "/brand_portfolios" do
-    it "GET index should display a table with the portfolios" do
-      portfolios = [
-        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
-        FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false, company: @company)
-      ]
-      Sunspot.commit
-      visit brand_portfolios_path
+    describe "GET index" do
+      it "should display a table with the portfolios" do
+        portfolios = [
+          FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
+          FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: false, company: @company)
+        ]
+        Sunspot.commit
+        visit brand_portfolios_path
 
-      within("table#brand-portfolios-list") do
-        # First Row
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(portfolios[0].name)
-          find('td:nth-child(2)').should have_content(portfolios[0].description)
-          find('td:nth-child(3)').should have_content('Active')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Deactivate')
+        within("table#brand-portfolios-list") do
+          # First Row
+          within("tbody tr:nth-child(1)") do
+            find('td:nth-child(1)').should have_content(portfolios[0].name)
+            find('td:nth-child(2)').should have_content(portfolios[0].description)
+            find('td:nth-child(3)').should have_content('Active')
+            find('td:nth-child(4)').should have_content('Edit')
+            find('td:nth-child(4)').should have_content('Deactivate')
+          end
+          # Second Row
+          within("tbody tr:nth-child(2)") do
+            find('td:nth-child(1)').should have_content(portfolios[1].name)
+            find('td:nth-child(2)').should have_content(portfolios[1].description)
+            find('td:nth-child(3)').should have_content('Inactive')
+            find('td:nth-child(4)').should have_content('Edit')
+            find('td:nth-child(4)').should have_content('Activate')
+          end
         end
-        # Second Row
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(portfolios[1].name)
-          find('td:nth-child(2)').should have_content(portfolios[1].description)
-          find('td:nth-child(3)').should have_content('Inactive')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Activate')
+
+        assert_table_sorting ("table#brand-portfolios-list")
+      end
+
+      it "should allow user to activate/deactivate events" do
+        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
+        Sunspot.commit
+        visit brand_portfolios_path
+
+        within("table#brand-portfolios-list") do
+          # First Row
+          within("tbody tr:nth-child(1)") do
+            click_js_link('Deactivate')
+            page.should have_selector('a', text: 'Activate')
+
+            click_js_link('Activate')
+            page.should have_selector('a', text: 'Deactivate')
+          end
         end
       end
 
-      assert_table_sorting ("table#brand-portfolios-list")
     end
 
     it 'allows the user to create a new portfolio' do

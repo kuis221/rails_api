@@ -15,39 +15,61 @@ describe "Events", js: true, search: true do
   end
 
   describe "/events", js: true, search: true  do
-    it "GET index should display a table with the events" do
-      events = [
+    describe "GET index" do
+      let(:events){[
         FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.today.to_s, start_time: '10:00am', end_time: '11:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.tomorrow.to_s, start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
-      ]
-      Sunspot.commit
-      visit events_path
+      ]}
+      it "should display a table with the events" do
+        events.size  # make sure users are created before
+        Sunspot.commit
+        visit events_path
 
-      within("table#events-list") do
-        # First Row
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%^a %b %d'))
-          find('td:nth-child(1)').should have_content(events[0].start_at.strftime('10:00 AM - 11:00 PM'))
-          find('td:nth-child(2)').should have_content(events[0].place_name)
-          find('td:nth-child(3)').should have_content(events[0].campaign_name)
-          find('td:nth-child(4)').should have_content('Active')
-          find('td:nth-child(5)').should have_content('Edit')
-          find('td:nth-child(5)').should have_content('Deactivate')
+        within("table#events-list") do
+          # First Row
+          within("tbody tr:nth-child(1)") do
+            find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%^a %b %d'))
+            find('td:nth-child(1)').should have_content(events[0].start_at.strftime('10:00 AM - 11:00 PM'))
+            find('td:nth-child(2)').should have_content(events[0].place_name)
+            find('td:nth-child(3)').should have_content(events[0].campaign_name)
+            find('td:nth-child(4)').should have_content('Active')
+            find('td:nth-child(5)').should have_content('Edit')
+            find('td:nth-child(5)').should have_content('Deactivate')
+          end
+          # Second Row
+          within("tbody tr:nth-child(2)") do
+            find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%^a %b %d at 11:00 AM'))
+            find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%^a %b %d at 12:00 PM'))
+            find('td:nth-child(2)').should have_content(events[1].place_name)
+            find('td:nth-child(3)').should have_content(events[1].campaign_name)
+            find('td:nth-child(4)').should have_content('Active')
+            find('td:nth-child(5)').should have_content('Edit')
+            find('td:nth-child(5)').should have_content('Deactivate')
+          end
         end
-        # Second Row
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%^a %b %d at 11:00 AM'))
-          find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%^a %b %d at 12:00 PM'))
-          find('td:nth-child(2)').should have_content(events[1].place_name)
-          find('td:nth-child(3)').should have_content(events[1].campaign_name)
-          find('td:nth-child(4)').should have_content('Active')
-          find('td:nth-child(5)').should have_content('Edit')
-          find('td:nth-child(5)').should have_content('Deactivate')
-        end
+
+        assert_table_sorting ("table#events-list")
       end
 
-      assert_table_sorting ("table#events-list")
+      it "should allow user to activate/deactivate events" do
+        events.size  # make sure users are created before
+        Sunspot.commit
+        visit events_path
+
+        within("table#events-list") do
+          # First Row
+          within("tbody tr:nth-child(1)") do
+            click_js_link('Deactivate')
+            page.should have_selector('a', text: 'Activate')
+
+            click_js_link('Activate')
+            page.should have_selector('a', text: 'Deactivate')
+          end
+        end
+
+      end
     end
+
   end
 
   describe "/events/:event_id", :js => true do
@@ -55,6 +77,21 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
       page.should have_selector('h2', text: 'Campaign FY2012')
+    end
+
+    it 'allows the user to activate/deactivate a event' do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
+      visit event_path(event)
+      within('.active-deactive-toggle') do
+        page.should have_selector('a.btn-success.active', text: 'Active')
+        page.should have_selector('a', text: 'Inactive')
+        page.should_not have_selector('a.btn-danger', text: 'Inactive')
+
+        click_link('Inactive')
+        page.should have_selector('a.btn-danger.active', text: 'Inactive')
+        page.should have_selector('a', text: 'Active')
+        page.should_not have_selector('a.btn-success', text: 'Active')
+      end
     end
 
     it "allows to add a member to the event", :js => true do

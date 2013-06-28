@@ -58,7 +58,7 @@ RSpec.configure do |config|
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 
   Devise.stretches = 1
-  Rails.logger.level = 4
+  #Rails.logger.level = 4
 end
 
 

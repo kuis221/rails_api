@@ -3,7 +3,7 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    if (typeof usersTable != 'undefined'){
-      usersTable.tableScroller('reloadData');
+    if (typeof companyUsersTable != 'undefined'){
+      companyUsersTable.tableScroller('reloadData');
     }
     $(document).trigger('users:change');
