@@ -34,14 +34,14 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
-                   :after_add => :reindex_user, :after_remove => :reindex_user
+                   :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   # Campaigns-Events relationship
   has_many :events, :order => 'start_at ASC'
 
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
-  has_many :teams, :through => :teamings
+  has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }
 
@@ -124,8 +124,8 @@ class Campaign < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
-  def reindex_user(user)
-    Sunspot.index(user)
+  def reindex_associated_resource(resource)
+    Sunspot.index(resource)
   end
 
   class << self

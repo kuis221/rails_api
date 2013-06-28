@@ -36,8 +36,8 @@ module TeamMembersHelper
         @team_id = params[:team_id]
         unless resource.teams.where(id: @team_id).first
           team = company_teams.find(@team_id)
-          resource.teamings.build({team: team}, without_protection: true)
-          resource.save
+          resource.teams << team
+          resource.solr_index
         end
       end
     end

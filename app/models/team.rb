@@ -53,7 +53,13 @@ class Team < ActiveRecord::Base
     integer :company_id
 
     integer :user_ids, multiple: true
-    integer :campaign_ids, multiple: true
+
+    integer :campaign_ids, multiple: true do
+      campaigns.map(&:id)
+    end
+    string :campaigns, multiple: true, references: Campaign do
+      campaigns.map{|c| c.id.to_s + '||' + c.name}
+    end
   end
 
   def activate!
@@ -78,6 +84,7 @@ class Team < ActiveRecord::Base
       ss = solr_search do
 
         with(:company_id, params[:company_id])
+        with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
@@ -92,6 +99,7 @@ class Team < ActiveRecord::Base
         end
 
         if include_facets
+          facet :campaigns
           facet :status
         end
 
