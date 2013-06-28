@@ -19,7 +19,6 @@ describe DateRange do
   it { should belong_to(:company) }
   it { should have_many(:date_items) }
 
-  it { should validate_presence_of(:company_id) }
   it { should validate_presence_of(:name) }
 
   it { should allow_mass_assignment_of(:name) }

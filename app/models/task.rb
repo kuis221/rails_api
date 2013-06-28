@@ -61,6 +61,7 @@ class Task < ActiveRecord::Base
       status = []
       status.push active? ? 'Active' : 'Inactive'
       status.push completed? ? 'Completed' : 'Incomplete'
+      status.push assigned? ? 'Assigned' : 'Unassigned'
       status
     end
   end
@@ -71,6 +72,10 @@ class Task < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def assigned?
+    self.company_user_id.present?
   end
 
   def last_activity
@@ -103,6 +108,10 @@ class Task < ActiveRecord::Base
           when 'team'
             with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: value}).map(&:id)
           end
+        end
+
+        if params[:late]
+          with(:due_at).less_than(Time.zone.now)
         end
 
         if params[:start_date].present? and params[:end_date].present?

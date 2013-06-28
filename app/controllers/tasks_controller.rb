@@ -12,7 +12,7 @@ class TasksController < FilteredController
   load_and_authorize_resource :event
   load_and_authorize_resource through: :event
 
-  helper_method :assignable_users
+  helper_method :assignable_users, :status_counters
 
   before_filter :set_body_class, only: :index
 
@@ -71,8 +71,7 @@ class TasksController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :start_date, :end_date, :company_user_id, :company_id].include?(k.to_sym)})
-        facet_search = resource_class.do_search(facet_params, true)
+
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
@@ -90,6 +89,36 @@ class TasksController < FilteredController
           f.push(label: "Staff", items: people)
         end
       end
+    end
+
+    def status_counters
+      @status_counters ||= Hash.new.tap do |counters|
+        counters['unassigned'] = 0
+        counters['completed'] = 0
+        counters['assigned'] = 0
+        counters['late'] = count_late_events
+        facet_search.facet(:status).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:status).nil?
+      end
+      @status_counters
+    end
+
+    def facet_search
+      @facet_search ||= begin
+        p = HashWithIndifferentAccess.new(facet_params)
+        resource_class.do_search(p, true)
+      end
+    end
+
+    def count_late_events
+      @count_late_events ||= begin
+        count_params = HashWithIndifferentAccess.new(facet_params.merge({start_date: nil, end_date: nil, late: true}))
+        search = resource_class.do_search(count_params, true)
+        search.total
+      end
+    end
+
+    def facet_params
+      search_params.select{|k, v| [:q, :start_date, :end_date, :user, :company_id, :event_id].include?(k.to_sym)}
     end
 
     def collection_to_json

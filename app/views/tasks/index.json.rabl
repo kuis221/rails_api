@@ -1,18 +1,20 @@
 object false
 extends "application/index"
 
-node :unassigned do
- 0
-end
+if params[:page].nil? || params[:page] == '1'
+  node :unassigned do
+    status_counters['unassigned']
+  end
 
-node :completed do
-  0
-end
+  node :completed do
+    status_counters['completed']
+  end
 
-node :assigned do
-  0
-end
+  node :assigned do
+    status_counters['assigned']
+  end
 
-node :late do
-  0
+  node :late do
+    status_counters['late']
+  end
 end
