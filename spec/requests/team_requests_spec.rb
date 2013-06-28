@@ -110,6 +110,21 @@ describe "Teams", js: true, search: true do
 
     it 'allows the user to activate/deactivate a team' do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
+      visit team_path(team)
+      within('.active-deactive-toggle') do
+        page.should have_selector('a.btn-success.active', text: 'Active')
+        page.should have_selector('a', text: 'Inactive')
+        page.should_not have_selector('a.btn-danger', text: 'Inactive')
+
+        click_link('Inactive')
+        page.should have_selector('a.btn-danger.active', text: 'Inactive')
+        page.should have_selector('a', text: 'Active')
+        page.should_not have_selector('a.btn-success', text: 'Active')
+      end
+    end
+
+    it 'allows the user to activate/deactivate a team' do
+      team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       team.reload
       Sunspot.commit
       visit team_path(team)

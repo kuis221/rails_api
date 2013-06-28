@@ -57,7 +57,7 @@ describe "Users", :js => true do
 
       it 'allows the user to activate/deactivate a user' do
         role = FactoryGirl.create(:role, name: 'TestRole')
-        user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+        user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
         visit company_user_path(company_user)
 
