@@ -1,11 +1,19 @@
 namespace :db do
   namespace :populate do
-    task :all => ['db:populate:companies', 'db:populate:roles', 'db:populate:users','db:populate:brands','db:populate:campaigns','db:populate:events']
+    task :all => ['db:populate:companies', 'db:populate:places', 'db:populate:roles', 'db:populate:teams', 'db:populate:users','db:populate:brands','db:populate:campaigns','db:populate:events']
 
 
-    desc 'Add 10 companies'
+    desc 'Add sample places to DB'
+    task :places => :environment do
+      YAML.load_file(File.join(Rails.root,'lib','assets','places.yml')).each do |record|
+          params = record[1].reject{|k, v| k == 'id'}.merge({do_not_connect_to_api: true})
+          Place.create(params, without_protection: true)
+      end
+    end
+
+    desc 'Add 2 companies'
     task :companies => :environment do
-      Company.populate(10) do |company|
+      Company.populate(2) do |company|
         company.name = Faker::Company.name
       end
     end
@@ -25,7 +33,7 @@ namespace :db do
 
       emails = User.select('email').map(&:email)
       Company.all.each do |company|
-        role_ids = Role.scoped_by_company_id.map(&:id)
+        role_ids = Role.scoped_by_company_id(company.id).map(&:id)
         User.populate(40) do |user|
           email = nil
           begin
@@ -36,15 +44,37 @@ namespace :db do
           user.first_name = Faker::Name.first_name
           user.last_name = Faker::Name.last_name
           user.email = Faker::Internet.email([user.first_name, user.last_name].join(' '))
-          user.role_id = role_ids.sample
-          user.company_id = company.id
           user.city = Faker::Address.city
-          user.country = Country.all.sample[1]
+          user.country = 'US'
           user.state = Country.find_country_by_alpha2(user.country).states.keys.sample
-          user.company_id = company.id
-          user.aasm_state = ['active', 'active', 'active', 'invited', 'inactive', 'active']
           user.encrypted_password = '$2a$10$/cMvcJN5c.AHCpkunKYvue5a5bGwxHYWftv3VT/ZJBKk874.MLvLS' # =>>> 'Test1234'
-          user.confirmed_at (user.aasm_state == 'invited' ? nil : DateTime.now)
+          user.confirmed_at DateTime.now
+
+          CompanyUser.populate(1) do |cu|
+            cu.role_id = role_ids.sample
+            cu.company_id = company.id
+            cu.user_id = user.id
+            cu.active = [true, true, true, false, true, false, true, true]
+          end
+        end
+
+        all_users = company.company_users.all.shuffle
+        company.teams.each do |team|
+          team.users = all_users.sample(Random.rand(11))
+        end
+      end
+    end
+
+    desc 'Add teams'
+    task :teams => :environment do
+      team_names = YAML.load_file(File.join(Rails.root,'lib','assets','teams.yml'))
+      Company.all.each do |company|
+        names = team_names.shuffle
+        Team.populate(6) do |team|
+          team.name = names.pop(5)
+          team.description = Faker::Lorem.paragraph
+          team.company_id =  company.id
+          team.active = [true, true, true, false, true, false, true, true]
         end
       end
     end
@@ -82,14 +112,29 @@ namespace :db do
 
     desc 'Create test events on each campaign'
     task :events => :environment do
-      Campaign.all.each do |campaign|
-        Event.populate(rand(10..20)) do |event|
-          event.start_at = rand(0..10).send([:weeks,:days,:months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
-          event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)
-          event.active = true
-          event.campaign_id = campaign.id
-          event.company_id = campaign.company_id
+      places = Place.all.map(&:id)
+      Company.all.each do |company|
+        user_ids = company.company_users.active.map(&:id)
+        team_ids = company.teams.active.map(&:id)
+        Campaign.scoped_by_company_id(company.id).all.each do |campaign|
+          Event.populate(rand(10..20)) do |event|
+            event.start_at = rand(0..10).send([:weeks,:days,:months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
+            event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)
+            event.active = true
+            event.campaign_id = campaign.id
+            event.company_id = company.id
+            event.place_id = places
+          end
+          campaign.events.each do |event|
+            if event.user_ids.size == 0
+              event.user_ids = user_ids.sample(Random.rand(5))
+              event.team_ids = team_ids.sample(Random.rand(2))
+              event.save
+            end
+          end
         end
+
+
       end
     end
 
