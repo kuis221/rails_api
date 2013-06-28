@@ -29,10 +29,13 @@
 8. Load some test data into the app
        rake db:populate:all
 
-9. Start the local server
+9. Reindex the date we just created
+       rake sunspot:reindex
+
+10. Start the local server
        rails s
 
-9. Go to http://localhost:3000/ and you should be able to login using:
+11. Go to http://localhost:3000/ and you should be able to login using:
        Email: admin@brandscopic.com
        Password: Adminpass12
 
