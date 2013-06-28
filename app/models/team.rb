@@ -46,6 +46,7 @@ class Team < ActiveRecord::Base
 
     string :name
     string :description
+    string :status
 
     boolean :active
 
@@ -63,6 +64,10 @@ class Team < ActiveRecord::Base
     update_attribute :active, false
   end
 
+  def status
+    self.active? ? 'Active' : 'Inactive'
+  end
+
   def reindex_user(user)
     Sunspot.index(user)
   end
@@ -73,6 +78,7 @@ class Team < ActiveRecord::Base
       ss = solr_search do
 
         with(:company_id, params[:company_id])
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -83,6 +89,10 @@ class Team < ActiveRecord::Base
           else
             with "#{attribute}_ids", value
           end
+        end
+
+        if include_facets
+          facet :status
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)

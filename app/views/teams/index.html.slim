@@ -22,6 +22,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_teams_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       if (typeof teamsTable != 'undefined')
         teamsTable.tableScroller('reloadData');
