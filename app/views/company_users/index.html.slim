@@ -27,12 +27,13 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_company_users_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
-      if (typeof usersTable != 'undefined')
-        usersTable.tableScroller('reloadData');
+      if (typeof companyUsersTable != 'undefined')
+        companyUsersTable.tableScroller('reloadData');
     }
   });
-  var usersTable = $('table#users-list').tableScroller({
+  var companyUsersTable = $('table#users-list').tableScroller({
     'source': '#{company_users_path(format: :json)}',
     'fixedHeader': true,
     'filterBox': '#collection-list-filters',

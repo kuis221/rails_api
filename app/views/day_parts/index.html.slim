@@ -21,6 +21,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_day_parts_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       if (typeof dayPartsTable != 'undefined')
         dayPartsTable.tableScroller('reloadData');

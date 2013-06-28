@@ -20,6 +20,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_areas_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       if (typeof areasTable != 'undefined')
         areasTable.tableScroller('reloadData');
