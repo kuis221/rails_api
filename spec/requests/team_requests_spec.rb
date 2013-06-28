@@ -15,7 +15,7 @@ describe "Teams", js: true, search: true do
     it "GET index should display a table with the teams" do
       teams = [
         FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
-        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: false, company_id: @company.id)
+        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: true, company_id: @company.id)
       ]
       # Create a few users for each team
       teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
@@ -37,9 +37,9 @@ describe "Teams", js: true, search: true do
           find('td:nth-child(1)').should have_content('San Francisco Team')
           find('td:nth-child(2)').should have_content('2')
           find('td:nth-child(3)').should have_content('the guys from SF')
-          find('td:nth-child(4)').should have_content('Inactive')
+          find('td:nth-child(4)').should have_content('Active')
           find('td:nth-child(5)').should have_content('Edit')
-          find('td:nth-child(5)').should have_content('Activate')
+          find('td:nth-child(5)').should have_content('Deactivate')
         end
       end
 
