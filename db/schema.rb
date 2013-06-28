@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619202306) do
+ActiveRecord::Schema.define(:version => 20130628163426) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -213,7 +213,7 @@ ActiveRecord::Schema.define(:version => 20130619202306) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -345,6 +345,7 @@ ActiveRecord::Schema.define(:version => 20130619202306) do
     t.integer  "invitation_limit"
     t.integer  "invited_by_id"
     t.string   "invited_by_type"
+    t.integer  "current_company_id"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

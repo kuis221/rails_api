@@ -49,6 +49,7 @@ class User < ActiveRecord::Base
 
   has_many :company_users, autosave: true
   has_many :companies, through: :company_users, order: 'companies.name ASC'
+  belongs_to :current_company, class_name: 'Company'
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -123,18 +124,6 @@ class User < ActiveRecord::Base
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
     super && company_users.any?{|cu| cu.active? && cu.role.active?}
-  end
-
-  # This should be assigned every time the
-  def current_company=(company)
-    @company = company
-    @current_company_user = company_users.select{|cu| cu.company_id == company.id  }.first unless company.nil?
-    @role = @current_company_user.role unless @current_company_user.nil?
-    @company
-  end
-
-  def current_company
-    @company
   end
 
   def role

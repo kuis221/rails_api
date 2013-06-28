@@ -70,6 +70,8 @@ class CompanyUsersController < FilteredController
   def select_company
     begin
       company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      current_user.current_company = company.company
+      current_user.save
       session[:current_company_id] = company.company_id
     rescue ActiveRecord::RecordNotFound
       flash[:error] = "You are not allowed login into this company"

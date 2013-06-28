@@ -23,11 +23,14 @@ class ApplicationController < ActionController::Base
     def current_company
       @current_company ||= begin
         current_company_id = session[:current_company_id]
+        company = nil
         if current_company_id
-          current_user.companies.find(current_company_id)
+          company = current_user.companies.find(current_company_id)
         else
-          current_user.companies.first
+          company = current_user.current_company
         end
+        company ||= current_user.companies.first
+        company
       end
     end
 

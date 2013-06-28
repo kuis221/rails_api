@@ -10,7 +10,7 @@ describe "Users", :js => true do
     sign_in @user
   end
 
-  describe "user with multiple companies", :js => true  do
+  describe "user with multiple companies", :js => true do
     it "can switch between companies" do
       another_company = FactoryGirl.create(:company, name: 'Tres Patitos S.A.')
 
@@ -43,7 +43,6 @@ describe "Users", :js => true do
         page.should_not have_content('Tres Patitos S.A.')
       end
     end
-
 
     describe "/users/:user_id", :js => true do
       it "GET show should display the user details page" do

@@ -65,8 +65,7 @@ end
 def sign_in_as_user
   company = FactoryGirl.create(:company)
   role = FactoryGirl.create(:role, company: company)
-  @user = FactoryGirl.create(:user, company_id: company.id, role_id: role.id, active: true)
-  @user.current_company = company
+  @user = FactoryGirl.create(:user, company_id: company.id, current_company: company, role_id: role.id, active: true)
   sign_in @user.reload
   User.current = @user
   @user
