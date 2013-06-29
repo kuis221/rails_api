@@ -19,11 +19,21 @@
     .box
       a href="#staff-content" data-toggle="collapse"
         .box-header
-          h2 STAFF
+          h2 USERS
 
       #staff-content.collapse.in
         .box-content
-          = render 'staff'
+          = render 'users'
+
+  .row-fluid
+    .box
+      a href="#staff-content" data-toggle="collapse"
+        .box-header
+          h2 TEAMS
+
+      #staff-content.collapse.in
+        .box-content
+          = render 'teams'
 
 javascript:
   $(document).on('campaigns:change', function(){
