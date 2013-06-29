@@ -1,0 +1,5644 @@
+---
+places_001:
+  id: '1'
+  name: Miami Beach
+  reference: CoQBcwAAAF0XT4b3PbZFPm0otGnq1Pw40H6DNzQq913fRR_ENimZWyxq0NMlqOcIgh6ooN4vDhQxjXBSoQwjrUGgdGuMx1gVoqqhuZcYvFJ2KrQCcrFAkNsdUZHmW3lMFBMC86tlFmVsoUTgJMVcrzlmL58H3p2HBfwwHRL1AoBU2XESO-3nEhD2TzjnFwdelUHg3NTRkaPzGhScKTSG5DMHEt16EntvzRmlR5KLJg
+  place_id: 316beed087d79e522e1df83659cfc6e172d08ac2
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Miami Beach, FL, USA
+  latitude: '25.790654'
+  longitude: '-80.1300455'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-05-20 20:51:14.472284'
+  updated_at: '2013-06-13 16:53:48.089961'
+  administrative_level_1: FL
+  administrative_level_2: Miami-Dade
+places_002:
+  id: '2'
+  name: Tampa Bay
+  reference: CnRoAAAALRwJBj5ApWhQ98vnn7I5pN79FqK5gETXSrP2bAd15TOnUQpJPytz_7M8nf4VMio0oS3lvVpLRe4BtGzvdqaDOzIyGUpQDrIhbnymmtQTVAFOyvOM-b0om2zVvxVVcvw-HI9aexCT2B1SdoGI7trHwhIQRGfXyJqpk6DSQHnY58oLsRoU9lTMNAbMhJuwAq2RBKdx1nRda38
+  place_id: 79dba46606a979815a1040b60b7b8e7ead7d023b
+  types: |
+    ---
+    - natural_feature
+    - establishment
+  formatted_address: Tampa Bay, Florida, USA
+  latitude: '27.702871'
+  longitude: '-82.5834947'
+  street_number: 
+  route: 
+  zipcode: 
+  city: 
+  state: Florida
+  country: US
+  created_at: '2013-05-20 20:51:43.727749'
+  updated_at: '2013-06-13 16:53:49.030455'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_003:
+  id: '3'
+  name: Orlando International Airport
+  reference: CoQBcwAAAIo1gBbUcFrj_1av0YbfQcWVD131F4GZHHajezesykqi3UuIy-0WIJ9eYAu_y5gd3FPyAW9Zd6IXGqvO__UDxEFWC19LSDhqlyEHP6ZRip9YYE824DCvyEq0mwgDFEwyKvyCeO9oXei3KjG1cl3Wey0z0clGugNh9qovkpxyXArYEhAUSdn7eaQK3hiflfy4IsBsGhQt5tshTunlelZN7J1hNE0oamQ5Kw
+  place_id: 22fedee969d718bc3d64425b89574e52d13f12e2
+  types: |
+    ---
+    - airport
+    - transit_station
+    - establishment
+  formatted_address: 1 Jeff Fuqua Blvd, Orlando, FL, United States
+  latitude: '28.431639'
+  longitude: '-81.308286'
+  street_number: '1'
+  route: Jeff Fuqua Blvd
+  zipcode: '32827'
+  city: Orlando
+  state: FL
+  country: US
+  created_at: '2013-05-20 20:52:07.492817'
+  updated_at: '2013-06-13 16:53:49.590499'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_004:
+  id: '4'
+  name: Walt Disney World Resort
+  reference: CnRuAAAAReDWh_j3QhBBW033wduQxbRG5wnOfcG9HBfQFkfYy6CkPqZsFKJ07JFcQTtpuUvbl135gr4hQmoAVHJPzypZIde7E9zMQfG0EJsCttOTox8N2CY8kVwDERs8f9KhiWiNdVUz4qhR3V2bNR1sgqmEDhIQNL234ATdQ_AKgTAGN6JRtBoUwCDV7OATtPIb90yhuDBvsKx4n0Y
+  place_id: f879b451340b8676f7d643ee25331b931a2cab49
+  types: |
+    ---
+    - lodging
+    - amusement_park
+    - establishment
+  formatted_address: Lake Buena Vista, FL, United States
+  latitude: '28.381642'
+  longitude: '-81.56376'
+  street_number: 
+  route: 
+  zipcode: '32830'
+  city: Lake Buena Vista
+  state: FL
+  country: US
+  created_at: '2013-05-20 20:53:23.573462'
+  updated_at: '2013-06-13 16:53:50.121461'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_005:
+  id: '5'
+  name: Wisconsin Dells
+  reference: CoQBdwAAAPy99pYAOG8chiUGOI2yLNYHLwcLiq6pKyl_JjCQHvKb_k_qtBzXlL97dhA7i2xFbwuomj_HiufLyEBWNeaslslkFZru8ahsa_qfBTP9LjDtZjLlpyB4w0RAu-zwPyvg2wbhNiuA1xKD9GVaninJNePI-S--vt8CrW9ePLmx3YUZEhCpHDoBdEnqxxOKzL1P21LGGhQ4Z8JRtMXj36fy9ELlZjH8ytjJBQ
+  place_id: f98e3faa60dfbea35676030c0928c6ad90cc93a2
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Wisconsin Dells, WI, USA
+  latitude: '43.6274794'
+  longitude: '-89.7709579'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Wisconsin Dells
+  state: Wisconsin
+  country: US
+  created_at: '2013-05-20 22:15:54.287583'
+  updated_at: '2013-06-13 16:53:50.627035'
+  administrative_level_1: WI
+  administrative_level_2: Columbia
+places_006:
+  id: '6'
+  name: Casablanca
+  reference: CoQBcgAAAFknrsc15KC4NGgpG-jo86EHWqz9edwlILNokpLUGziTyfY0G_8sBnE4Nd776-c3guZAGjQrhHJqfxKZw8tOXYgdMVN6nLgIs_FESfUVYlu8sIiYAR00ktzE1ue-pLwCT8hLTWg3GO5rIqRjC9ud_pRQsw-bMgBfmE_kaECeNXTTEhAoovA_jlOlPxhpQZUsr0WFGhS-6O3KMMmI05r-wBh3jMLZA3gtdg
+  place_id: 6cd01983c90a110e76191e27392a6f46cac15076
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Casablanca, Morocco
+  latitude: '33.5333333'
+  longitude: '-7.5833333'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Casablanca
+  state: Greater Casablanca
+  country: MA
+  created_at: '2013-05-21 03:35:14.523925'
+  updated_at: '2013-06-13 16:53:51.132893'
+  administrative_level_1: Greater Casablanca
+  administrative_level_2: Ain Sebaa-Hay Mohammedi
+places_007:
+  id: '7'
+  name: Kansas City
+  reference: CoQBcwAAAIYn1V3ExlCt2WK68Q_PenCNp243Pq2QBeuKDLgkXKSeBRQ4chQQrbC6YQFLgZhXO-EFW446qTSObdgWtiRw4P2lEnQwBw6_7IJS0l4ugQkpHu2p_5YHMtd_SraIker7V-BzEDsjGKhtvCLtzmyiQppnSBvwaP-_CxypGgYu7tXUEhBsCTq1g3-Qut7YL-FntQbYGhSAjgET0pt0DIwHTzB2Q5XXiujsbA
+  place_id: 7098c8a649bdd2c8dcce4c9465c56684f83c92ab
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Kansas City, MO, USA
+  latitude: '39.0997265'
+  longitude: '-94.5785667'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Kansas City
+  state: Missouri
+  country: US
+  created_at: '2013-05-21 03:41:35.708454'
+  updated_at: '2013-06-13 16:53:51.618455'
+  administrative_level_1: MO
+  administrative_level_2: Jackson
+places_008:
+  id: '8'
+  name: Hwy 6
+  reference: CoQBeQAAAMmSabE7nLGwpRb2Ss35B8Yj-fE8nhmfs1967F_G4Q7fL1injmkquf0PBEmwmnnc0UhtiPJulcU22Odw5vclEV80JYQlJBwdigm_xVcnLI6cuXlFhhaBpFpVGoY1maSd5hfm-TR4s1DU2Dt-3bDzFJMlDPgPgQhuO-BWm3tP2kP7EhCpSN6Ul3AzLTVR-CN0m9ToGhRm4xi6TBwy5cA-eK80J2QfyZLcTw
+  place_id: dbed017def1683647c373c4c1cfb41cad6efa399
+  types: |
+    ---
+    - route
+  formatted_address: Hwy 6, Sugar Land, TX, USA
+  latitude: '29.5856855'
+  longitude: '-95.5901322'
+  street_number: 
+  route: Hwy 6
+  zipcode: 
+  city: Sugar Land
+  state: Texas
+  country: US
+  created_at: '2013-05-21 03:42:49.732733'
+  updated_at: '2013-06-13 16:53:52.091723'
+  administrative_level_1: TX
+  administrative_level_2: Fort Bend
+places_009:
+  id: '9'
+  name: Wisconsin Ave NW
+  reference: CpQBiQAAAMCyIuROUbluAeawJ6us3aeSaLunsSwkvt2Vim12RgX-YtbdxQJYOsqVIcvOmeHG-E1xZ8wVGGZ6oZSkKGo_Kc5raawpARPe1v5pQekHGGdXSCWD1aHfW04oerYEoerhayahPWTp3mZIa44zyjnLjhRTlRLmVLntlYABrNgzBshQeNZwVhgO3QQxJZmauABYlRIQxqMeijeLhoVN_YmJNB0dMRoURmH_O5JtnRDBto28jnWqe4_9gdA
+  place_id: 621dd5b2cc79265f395d592d7658340ba4f8b113
+  types: |
+    ---
+    - route
+  formatted_address: Wisconsin Ave NW, Bethesda, MD 20815, USA
+  latitude: '38.961499'
+  longitude: '-77.0859609'
+  street_number: 
+  route: Wisconsin Ave NW
+  zipcode: '20815'
+  city: Bethesda
+  state: Maryland
+  country: US
+  created_at: '2013-05-21 03:44:12.657223'
+  updated_at: '2013-06-13 16:53:52.579406'
+  administrative_level_1: MD
+  administrative_level_2: Montgomery
+places_010:
+  id: '10'
+  name: Costa Rica
+  reference: CnRpAAAAhRUFKY8A-MH19aRmIlRYqITGmoHwqS-BcQAglOfRtGPZbNLMeN2MYC11fwKm-PMmLVlz5moXZQBQy2UM2ABYYdXe_QyMSyiN-8BQ12X5TY1NpF9TIvfYcdeYIp9X-MEpBDEnjlW1jpP-XDk6YHS8fRIQQF_E4yfv5kaNS8JtxVkj3hoUOYx2mAZlK-78-omZ3_v9mpvl56M
+  place_id: 47727b64b4f96c287bcec5709992b1b83e636726
+  types: |
+    ---
+    - country
+    - political
+  formatted_address: Costa Rica
+  latitude: '9.748917'
+  longitude: '-83.753428'
+  street_number: 
+  route: 
+  zipcode: 
+  city: 
+  state: 
+  country: CR
+  created_at: '2013-05-28 21:43:45.729639'
+  updated_at: '2013-06-13 16:53:53.076824'
+  administrative_level_1: 
+  administrative_level_2: 
+places_011:
+  id: '11'
+  name: Nicaragua
+  reference: CnRoAAAAIcKc-A7vDvqr9ABnpTfd9avwCQJrAc8NXAO56tYVCenYKyu5UyDbXWkIHtGEZN3a9QVneGArKvNTd2et9TaCgbsG3WGi6mQ2ydM-zTG0FsutB265PXjhht-SlTB_ueSl3cx4ynSttNRELFXZ0cPsQBIQYhX9TqtRr_WQZZCMEd2ndhoU9EAiAgj8m0cxhRLOhPAX-LmOBTc
+  place_id: be093707d221487153e5b924132fb03bb0b7cbdb
+  types: |
+    ---
+    - country
+    - political
+  formatted_address: Nicaragua
+  latitude: '12.865416'
+  longitude: '-85.207229'
+  street_number: 
+  route: 
+  zipcode: 
+  city: 
+  state: 
+  country: NI
+  created_at: '2013-05-29 21:46:23.359079'
+  updated_at: '2013-06-13 16:53:53.555874'
+  administrative_level_1: 
+  administrative_level_2: 
+places_012:
+  id: '13'
+  name: Las Vegas Strip
+  reference: CoQBdwAAANbTB-ZkhcXS7g0oY6lPmE_F0lWisw6dyZJW4mdIPPQprXsR3eL9KQINCml72FsCKC2JM1k_g0WedEMB7WNC_Znyuz6E86RnjIEL3NKBzhmbKNQNjAdxuy0vEXSTWhGDGlte4l32MNm3ZLElqvkJbiQNBegXdBW37XnOZmHYhjupEhD6gDyX5WvNZVTEHVbsGiJeGhR-phZk_FMokw6ahmI061fQKZWOFw
+  place_id: b659fda58a754efe28597dbc2367a262e3ffd2db
+  types: |
+    ---
+    - colloquial_area
+    - political
+  formatted_address: Las Vegas Strip, NV, USA
+  latitude: '36.1147065'
+  longitude: '-115.1728484'
+  street_number: 
+  route: 
+  zipcode: 
+  city: 
+  state: Nevada
+  country: US
+  created_at: '2013-06-11 01:31:23.925183'
+  updated_at: '2013-06-13 16:53:54.505653'
+  administrative_level_1: NV
+  administrative_level_2: Clark
+places_013:
+  id: '14'
+  name: Nevada
+  reference: CnRqAAAANGWC3wleDL_NrBRO3ET8ls-_fAefh0ITDlXUZcij4h5_PkJaZ7M5mJCqT1mzF87nZBvx0JuqQ0oUQhWqEul6xmCeVzD24moGRxry_DDcYbSMi9iRqF0nV1ys5fqdpOhSV5Zy8RyAWDbTA_Gr6ohOtRIQj4HsnxPEPbkYKjo5xyCDQxoUVl8US_5VLI-I2DxjCdWY3xXEN_8
+  place_id: 36b8caad0eae7ca92fb11cfbce97f7fbb362b170
+  types: |
+    ---
+    - administrative_area_level_1
+    - political
+  formatted_address: Nevada, USA
+  latitude: '38.8026097'
+  longitude: '-116.419389'
+  street_number: 
+  route: 
+  zipcode: 
+  city: 
+  state: Nevada
+  country: US
+  created_at: '2013-06-11 02:29:18.54381'
+  updated_at: '2013-06-13 16:53:54.983307'
+  administrative_level_1: NV
+  administrative_level_2: 
+places_014:
+  id: '15'
+  name: Toronto
+  reference: CoQBcgAAAOoXeBNfl4hxA9G-zgm0g0DV8z0FFZNP_LVDvtNFLn9V8BSOPsgARUU1Iq9NiwOBWhpwMNztjZh2CbCKPWBikkbwimvPMsS1cRQq7mMO6rwKgd9G97HhocX3dtebTMTThiIXFIf3VNnV6WCjIjNnWLaVNdBwI4oiGWWHQTtB3BglEhBFkMMRRR8m4FJA1rqbBfnCGhTDqnGz8yKqJDfnEOpwaMAeAMOZiA
+  place_id: 9cdc0b86ce6052ab269593184e7762372e698584
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Toronto, ON, Canada
+  latitude: '43.653226'
+  longitude: '-79.3831843'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Toronto
+  state: Ontario
+  country: CA
+  created_at: '2013-06-11 02:38:42.211192'
+  updated_at: '2013-06-13 16:53:55.492485'
+  administrative_level_1: 'ON'
+  administrative_level_2: Toronto Division
+places_015:
+  id: '16'
+  name: San Jose
+  reference: CnRwAAAAPS1Zw79Yjson4qla5HQExTkx6KYg7XV6yia448gFObB_or2MEdXBLl-sN7m44SNr93UenlDzyf5MkKwHn81zrzayJtcXXV4dlodVfDKABt9fRcz-83T5i_T0VRmLNa4s9zvi9GxttvTAFk8ASJLGghIQc2YlIHoeOz7Q5uLKgPTW_BoUJ2i58jlhMMawfchfK71LhUXb20E
+  place_id: c00d0e6ed23a5a6b418841457b33c47430a93a4c
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: San Jose, CA, USA
+  latitude: '37.3393857'
+  longitude: '-121.8949555'
+  street_number: 
+  route: 
+  zipcode: 
+  city: San Jose
+  state: California
+  country: US
+  created_at: '2013-06-11 05:24:06.351132'
+  updated_at: '2013-06-13 16:53:55.97616'
+  administrative_level_1: CA
+  administrative_level_2: Santa Clara
+places_016:
+  id: '17'
+  name: Michigan Ave
+  reference: CoQBfQAAAOTLOwxxj_GdneMgIN9OKitm67jOnx7zkZ3WrGOjsV5tQ0g5EQ2F5W1P7Kz6F3JqcdR3TOmqSgrOhlYFmNO02KLWbf7xajw6gncHCyoaa1cF6ZR44GDDO-BW_6DS9keQvEjmYE2r8GZfjtB2RUxllOFYiYmKeyZYJc5KtVSpsGw8EhBjD2yV7F8fCteRB1ViTxtLGhQJmmXiSMFztxUep-TKzHqR5Ig3ug
+  place_id: 7afa0eeee1602dfd41e7d442c3af04c57dac9d23
+  types: |
+    ---
+    - route
+  formatted_address: Michigan Ave, Detroit, MI, USA
+  latitude: '42.331156'
+  longitude: '-83.1023532'
+  street_number: 
+  route: Michigan Ave
+  zipcode: 
+  city: Detroit
+  state: Michigan
+  country: US
+  created_at: '2013-06-11 05:24:26.418143'
+  updated_at: '2013-06-13 16:53:56.469965'
+  administrative_level_1: MI
+  administrative_level_2: Wayne
+places_017:
+  id: '18'
+  name: Quebec
+  reference: CoQBdgAAAOVneYnKelqp2oSMFdZ4Z5URKPYBs6CGD-9wmLwIP0TtKuoocROeUgzBdxaPK6Oqe4TJlNIsIAuCrilDsmbJ22hxreLsBD0tbM0tlYeAkMXI_D3JvpeoQFfZvNmUpfYPJJoNvazGwIQs5kgqgXZKn5gmdX8IISVKtK2yPiKbn2QQEhCTNcobvvvUcpWOFkioKNFqGhS-cHq__cuC-_o_ga078I7vLdCzlg
+  place_id: 5bc45bc67cc84457363a52a5fd916e2f4c2e52cf
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Quebec City, QC, Canada
+  latitude: '46.8032826'
+  longitude: '-71.242796'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Quebec
+  state: Quebec
+  country: CA
+  created_at: '2013-06-11 15:26:49.826187'
+  updated_at: '2013-06-13 16:53:56.956871'
+  administrative_level_1: QC
+  administrative_level_2: Communauté-Urbaine-de-Québec
+places_018:
+  id: '19'
+  name: Montreal
+  reference: CoQBcwAAABWzD9WGjHcmYpdR2Z9Oi72q8rzp68Yuk-K_aR_Px0sAcAg9dRzL4X6rv5HTu3bOySwCqF5ZU3t_OnV3RwTZomPIApAtdvOeIBpwJluLKqDGfenzcM-9f3jHlwZntHZ8VzhdwKB061Yo-rbPgcWtemg1h_-b5NB6TF03qbFkKeTZEhDFWCpDDp8Szdrs9_lBQMagGhQnnIHEu2U0G0Q2-EncOhjreLcuKw
+  place_id: 64f76606728b9536f3b6f03703a296affd47ca6c
+  types: |
+    ---
+    - locality
+    - political
+  formatted_address: Montreal, QC, Canada
+  latitude: '45.5086699'
+  longitude: '-73.5539925'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Montreal
+  state: Quebec
+  country: CA
+  created_at: '2013-06-11 15:27:00.944649'
+  updated_at: '2013-06-13 16:53:57.438653'
+  administrative_level_1: QC
+  administrative_level_2: Montreal
+places_019:
+  id: '20'
+  name: 13th arrondissement of Paris
+  reference: CpQBiwAAAJmfyfPCgrwGduKGxi8PdmE4Ne7ip-OirAQyPiilzSo-B5AeH15zsmv4vwZqFP7x9RscDMGCaMhiQPvYoRKl2PVMh2xizAfHFx2BbdFnp8b90uaOQ_N61dvgCaRzzXJq2u4R_QfHZyINO_wHB1wBVWFXNbOa20oHe_2GqqG526uJflIMgKh6IgIyWUKv8EhtLhIQ9-vQtupTG-AWyqEntNsc_xoU45z8YDOPQqwEWi7mLEZdGaC5ww4
+  place_id: 97839cdf53574bead8b09c2d2c58874131f5814f
+  types: |
+    ---
+    - sublocality
+    - political
+  formatted_address: 13th arrondissement of Paris, Paris, France
+  latitude: '48.8322222'
+  longitude: '2.3555556'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Paris
+  state: Île-de-France
+  country: FR
+  created_at: '2013-06-12 14:52:54.648959'
+  updated_at: '2013-06-13 16:53:57.92913'
+  administrative_level_1: IdF
+  administrative_level_2: '75'
+places_020:
+  id: '21'
+  name: Monton St
+  reference: CoQBeAAAAIPA9Dpy2kT_oGWjtJ8XGzD3Q3qVWcW_c1IHVEBvPx4Zq4IOtmE7boYUSxQERU9Nwgxd8BQhRIa94h3UL3JROyLyu98tIg_uDPrzzPHqSYAbPyu2lvLuprAUt8DALADTqdK4jg6Rird4HIpBrmBz8iFWj1y88czA6o07-cG7K1WxEhAyW0F9h5R9do4NuiiJnx_kGhTxb6I4f48N9fun08mkoSXptIYMLA
+  place_id: 85d4fa7122256fb0cf167e1d7e787e06a72eeccc
+  types: |
+    ---
+    - route
+  formatted_address: Monton St, Manchester, Greater Manchester M14, UK
+  latitude: '53.4571291'
+  longitude: '-2.2369854'
+  street_number: 
+  route: Monton St
+  zipcode: M14
+  city: Manchester
+  state: 
+  country: GB
+  created_at: '2013-06-19 19:53:29.201461'
+  updated_at: '2013-06-19 19:53:29.201461'
+  administrative_level_1: 
+  administrative_level_2: Gt Man
+places_021:
+  id: '22'
+  name: Shark's Cove
+  reference: CnRiAAAAY9AUHzh-kt_TViMxoFsk3xNDXwmvXbxKQHTjclfOfP-4cCzqqRUnTvBqCI4Ar1A1lZxzpdhZZZHa1Nks-qOGFCHzR1Bcj93QQmS7EehfXZRz1bH7XBTkgbroJkeNLyMkHwGheF9Ygz7QU5gWAYgfGRIQs5IJogkrKZoDlignxXCvmBoUZ82GLFpm5hmpikpiLLWCsQjUK1s
+  place_id: 7f264abf24a9a0341ecba7593c4446cb6f013cab
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 309 Manhattan Beach Boulevard, Manhattan Beach, CA, United States
+  latitude: '33.885374'
+  longitude: '-118.409475'
+  street_number: '309'
+  route: Manhattan Beach Boulevard
+  zipcode: '90266'
+  city: Manhattan Beach
+  state: California
+  country: US
+  created_at: '2013-06-20 00:01:51.961417'
+  updated_at: '2013-06-20 00:05:21.659327'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_022:
+  id: '23'
+  name: The Cafe
+  reference: CnRnAAAAWFt_MgUAhq6zjKemV96I5KLd1aQb-v2-eSnWyP9JPyd2rEE78pdOSHGcyMLxS-EuvfTRtZ1IkjMxaM1lIJNibiPtE64e7MpiS38TFAvehIVhFKGxkc1ZwMLEvgoGGcO1eF9eOCchf_K2Xh0BofUNVBIQNHrgTrlx0Saa3UO1cLh2BBoUEB4YGgaA78-q7qDoNI_gQtxDLlc
+  place_id: 724436d18d5d86fd982bb73234f3629326c6aed6
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 2369 Market Street, San Francisco, CA, United States
+  latitude: '37.762969'
+  longitude: '-122.434352'
+  street_number: '2369'
+  route: Market Street
+  zipcode: '94114'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 19:59:32.803448'
+  updated_at: '2013-06-20 19:59:32.803448'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_023:
+  id: '24'
+  name: Two Bucks North Olmsted
+  reference: CoQBdgAAACfn8OPO5lylg9o8uYePCdUf-IuDLht6riTTyQxco36rxXA_VlfSmiEaP3Dfm6XNqvBMhy9mUnjnfWAY_m79dJIQsBWUhpTy4eZKQYr5g0AUKPay4tQNIVV6zK0FPeZrL9j-0bBWUfSbdeOeCplWjofiBknMnIoMJuByv5cytjfdEhD5RCx4YjyuwXy8kd0vX36DGhQahWRf7MjADet8lvRx6BdEYKddmg
+  place_id: 9d6a81e453b9669f6a43c4a798ebca9c39c0bbb3
+  types: |
+    ---
+    - establishment
+  formatted_address: 24108 Lorain Road, North Olmsted, OH, United States
+  latitude: '41.430197'
+  longitude: '-81.889853'
+  street_number: '24108'
+  route: Lorain Road
+  zipcode: '44070'
+  city: North Olmsted
+  state: Ohio
+  country: US
+  created_at: '2013-06-20 19:59:35.461261'
+  updated_at: '2013-06-20 19:59:35.461261'
+  administrative_level_1: OH
+  administrative_level_2: Cuyahoga
+places_024:
+  id: '25'
+  name: Jumping Turtle Bar & Grill
+  reference: CoQBdwAAAEUaskp074YwfWSCiE9HbO9dVtxBwKsb3I77WoSWAcJV6Vd9fsp5q9s00lRvtDmMTkUp9TuBHM-0zcqAbVZb6mxZs3d514icuDJEFey7DzJ-wi5tJ9DAmcna5FEqFMujqy0x17H0cAzyAGcPKjIH2FR0Upu-AGSWavegkw-DHpobEhApH5BxSo5iYY8V9rHwm7hdGhRd9M-Hh8V-zeYYgoCRXEDAIF7rng
+  place_id: 7216e92bf8c7fd84e6aaa510a46db5fd449ac7ef
+  types: |
+    ---
+    - establishment
+  formatted_address: 1660 Capalina Road, San Marcos, CA, United States
+  latitude: '33.151578'
+  longitude: '-117.196351'
+  street_number: '1660'
+  route: Capalina Road
+  zipcode: '92069'
+  city: San Marcos
+  state: California
+  country: US
+  created_at: '2013-06-20 19:59:36.874997'
+  updated_at: '2013-06-20 19:59:36.874997'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_025:
+  id: '26'
+  name: Mother Lode
+  reference: CnRqAAAAcsfzK8j12ASrW_H_NaZ8aiUO71oNZSRdJoPB39tOlJW21AAN48xtVCAwI4G5VrGKWTlNM9ysa1_ICyT9AZpXP14jhlZDWO1WvB9U6YC1ETDjGuLHVeKUBV9Zku0nh9ePil3OsKb18BvCD4uHY5EuJxIQ4uyFar8HcqU-ETlGDeh3ARoUe0Bw7K7Bhn4FcXHnJDrjkZpwkzc
+  place_id: b4efe8d8a7f2bda6a602093e33b20968a8893b6a
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 8944 Santa Monica Boulevard, West Hollywood, CA, United States
+  latitude: '34.083915'
+  longitude: '-118.385188'
+  street_number: '8944'
+  route: Santa Monica Boulevard
+  zipcode: '90069'
+  city: West Hollywood
+  state: California
+  country: US
+  created_at: '2013-06-20 19:59:38.280833'
+  updated_at: '2013-06-20 19:59:38.280833'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_026:
+  id: '27'
+  name: Jerry Remy's
+  reference: CnRqAAAASbIt_qHU28Q2IQDUpWH1rWbHEAzRV_DngQAYNek8qsgQvzY04SQUOob33ed0t2C0B8IFuNbDVG6vZq1T9XdnuJrMt_kymxrikWx5MZnygOm-sqXvAtJwO5cx30cLW2MRllX_DI69DrGSddfvYH5GQRIQVTmqOOop0MjFjYBCeZprSRoUycup5IOORKkhsu3cfGVFgT5Wg94
+  place_id: c9838f40c1a8463c8dc70e4dec0c1031a6dffb92
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1265 Boylston Street, Boston, MA, United States
+  latitude: '42.345198'
+  longitude: '-71.096308'
+  street_number: '1265'
+  route: Boylston Street
+  zipcode: '02215'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 19:59:40.002191'
+  updated_at: '2013-06-20 19:59:40.002191'
+  administrative_level_1: MA
+  administrative_level_2: Suffolk
+places_027:
+  id: '28'
+  name: Wild Bills Sports Saloon
+  reference: CoQBdgAAAKj_5ssI9gcaUXLARcbmQQB7-4-k1kxAVjk6VRuGHj5oxVk2Sy0Szses1_VxRC2m1Omc8JiLBojD1YJkMloK2I3epOCBSFx2PWQxePoc3xf389_F_xJ6sd6Opg0G5_xZXk4xQ4QIWyD1AJoNT_dK0ViPpXob5W6_p3b6f7m94EwdEhAzn0u6XTyv4FFqtGanZft-GhQHLTRMx4v_WkYPb5gZ4qZajpFuxg
+  place_id: bfde8e3bf5f1cf077660d06989396f498190fdbe
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 546 Commons Drive, Woodbury, MN, United States
+  latitude: '44.940422'
+  longitude: '-92.93262'
+  street_number: '546'
+  route: Commons Drive
+  zipcode: '55125'
+  city: Woodbury
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 19:59:41.982304'
+  updated_at: '2013-06-20 19:59:41.982304'
+  administrative_level_1: MN
+  administrative_level_2: Washington
+places_028:
+  id: '29'
+  name: The Silver Fox
+  reference: CnRrAAAAe8cf79CYuxqXXM-qUA29N1Kx9cL448uzCPDqNsEb7DmIdGu5LWZSiUDnWKclRHXpqM5tAenPURWAAZzEVEYy-jKMa2f0LuXS-Tmlixjfabja_nwOpcR-tEYqhIsu0cS0QCaRy0vInBS99ZZg51uGAhIQXV-VHJFr84fxR5B4BG7mWhoUt5gmS-FGBxmGxKF8LGY9kyqs53M
+  place_id: 1efd4f3a0ba1604909b0b3ed75d7bdb1f97117b0
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 411 Redondo Avenue, Long Beach, California, United States
+  latitude: '33.772005'
+  longitude: '-118.152621'
+  street_number: '411'
+  route: Redondo Avenue
+  zipcode: '90814'
+  city: Long Beach
+  state: California
+  country: US
+  created_at: '2013-06-20 19:59:43.4122'
+  updated_at: '2013-06-20 19:59:43.4122'
+  administrative_level_1: California
+  administrative_level_2: Los Angeles
+places_029:
+  id: '30'
+  name: Catacombs Bar
+  reference: CnRsAAAAj_qAVAZNoza33mBEfN2iff1Q0xm9-cxEWPChymlO-ifZXzGAMaxbxWRCNsmyytN5m8N-EGd4dcqPB21MRxd2-9BGihd2t9vzbf8y2FtBG9gepmhnWdKeyi4jB220emUJ5HMaZVD2xwAtl0mzKyGLjxIQJwGDI4eZDVUs1-8ShImwRBoU4vmY7UhCf75QycHBRr0OReHXBHM
+  place_id: 1be7a24005c7b709912969a0262f41d4b64c8226
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2115 13th Street, Boulder, CO, United States
+  latitude: '40.019441'
+  longitude: '-105.279269'
+  street_number: '2115'
+  route: 13th Street
+  zipcode: '80302'
+  city: Boulder
+  state: Colorado
+  country: US
+  created_at: '2013-06-20 19:59:44.913673'
+  updated_at: '2013-06-20 19:59:44.913673'
+  administrative_level_1: CO
+  administrative_level_2: 
+places_030:
+  id: '31'
+  name: Trophy Room
+  reference: CnRoAAAADA418D2QCNVadbbYoG1NDJFSecMq9mm7cQXkhC0TsaI-v8U6XQArQ0kt8MursopQYpp3zy-CoXGA3oZMCp_KqYNt9YHcm0GRSBfeNvMeso5c4J4XNOJksTyoG_HCL1oYXUcKvzrdgcN2N-u9fuu-phIQSgviqBM8f-DbhHiw-ZcwJhoUckigAs8KupaY3udls15QVbiJB9U
+  place_id: e5113e6f8a84e55bbeb639e18dc6496f3a03725d
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2714 McKinney Avenue, Dallas, TX, United States
+  latitude: '32.797992'
+  longitude: '-96.801167'
+  street_number: '2714'
+  route: McKinney Avenue
+  zipcode: '75204'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 19:59:46.176924'
+  updated_at: '2013-06-20 19:59:46.176924'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_031:
+  id: '32'
+  name: Boneyard
+  reference: CnRnAAAAN4lwrdUwNyyApz9dCIXg_kKLV35gnwg6Ds41eKClJXKTKzvPTAZ9pw0fLuBjVoyMyfYOJPEuznOOF6IL101wcMUb_bCNWkfqZtSEKDY0ojd0vFOwkzk_SziawSjAB2POu8CofSORgCDZ6-FM6F1PGRIQusrBnisP7lWiGp2EiRQzAxoUxTqylhhyOhDGC5T7veqLQ9DqeJk
+  place_id: 50f49183f6060746a3cb9c176c1bdc87d7649ba0
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1823 East 7th Avenue, Tampa, FL, United States
+  latitude: '27.960181'
+  longitude: '-82.43836'
+  street_number: '1823'
+  route: East 7th Avenue
+  zipcode: '33605'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 19:59:47.782153'
+  updated_at: '2013-06-20 19:59:47.782153'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_032:
+  id: '33'
+  name: Waves
+  reference: CnRjAAAAgZGywdyi-hfDC0a563ER6lfgTo0dUIaATwA5BFslF2hktOwie48J4ERzC_XkzfGitOl8AH3ygSLiYFAleI8vOk92r1R3vUP859GqI8CAtOGcRWR1dcQGW5APQUzmaW7tIvaqKDAhI9Fsorrm6wKaehIQlWnexRDK9scBvMj_Dp4OSBoU57cRzE971etUnQTmXzTxX4V0OVg
+  place_id: a07f7b519b49067dd8600db5e20b74f2c5c9d52f
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 24223 Jefferson Avenue, Saint Clair Shores, MI, United States
+  latitude: '42.469851'
+  longitude: '-82.888423'
+  street_number: '24223'
+  route: Jefferson Avenue
+  zipcode: '48080'
+  city: Saint Clair Shores
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 19:59:49.166264'
+  updated_at: '2013-06-20 19:59:49.166264'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_033:
+  id: '34'
+  name: Vinnie's Bar & Grill
+  reference: CoQBcQAAAOBkdFq9YPyHppjWJ15cEZQek1HlbIc_RDZSOIfILvARch3lLBKkZHbbm21zMHfcsiPOnwRAEMRcP1gz2uO5rDrrRj7Ttb_KJxMLskXmI_seJOa7zJrKfl2_pQSmjg0Gfnc46C-XW9zgPnsYpURUK8okJ3RNuN0LGO34xmz8na3QEhCW6him6FG2Jr7Zsyr3Pbp9GhROuwFC89hN3QkYyJLK5Yt8XPirGw
+  place_id: 672dc61da14bb7bec81bf5d69cbabf7994a56c18
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2045 Mount Diablo Street, Concord, CA, United States
+  latitude: '37.977851'
+  longitude: '-122.035154'
+  street_number: '2045'
+  route: Mount Diablo Street
+  zipcode: '94520'
+  city: Concord
+  state: California
+  country: US
+  created_at: '2013-06-20 20:00:20.565555'
+  updated_at: '2013-06-20 20:00:20.565555'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_034:
+  id: '35'
+  name: Showboat Saloon
+  reference: CnRtAAAAkeK6SH532rM6CPcCkvnDjtl6Tg04Gu3s389toDJqQmcHFaShUlpqcgMibnux6jmMtSSaRHIV67mwSZzSxgh4lqYSccDaxNU_ipfUeLBmX_85M4jn1MXjIedsfltilBUD0zx1wK-XA6QtAOlhSpg7yRIQh1sdaDptZ5jqZ6nmqnMzeRoUiqJ5rGBNv1flxnQ8VJTHj8XyVpI
+  place_id: 366dea6afc69b4bbf59acbe4f7caaf70cb40ea95
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 24 Broadway, Wisconsin Dells, WI, United States
+  latitude: '43.627594'
+  longitude: '-89.77736'
+  street_number: '24'
+  route: Broadway
+  zipcode: '53965'
+  city: Wisconsin Dells
+  state: Wisconsin
+  country: US
+  created_at: '2013-06-20 20:00:23.745235'
+  updated_at: '2013-06-20 20:00:23.745235'
+  administrative_level_1: WI
+  administrative_level_2: 
+places_035:
+  id: '36'
+  name: Muldoon's
+  reference: CnRnAAAAIOZbZkK6qs-nhWZAldNEW2Ae7ugKClIF94N7PSRhtSUNGEG7ujEdq4Hx91qh4T7LYf8RV0CjGJc6te5ySQdAQeFCNmrvBJc4oWCKHbwRPBhlbxdAHrtMkJwLAH3uwoJRo2V4VppQiT0k2scDfcE3kRIQScUxCOApLjoSpQuEcslirhoUBvlYgXqMSs4jprd2Vit3x0rCakg
+  place_id: 56f60c53be231f7a5e979dd8861b7d01164e7c8c
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3982 West Auburn Road, Rochester Hills, MI, United States
+  latitude: '42.634332'
+  longitude: '-83.209068'
+  street_number: '3982'
+  route: West Auburn Road
+  zipcode: '48309'
+  city: Rochester Hills
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:00:26.07252'
+  updated_at: '2013-06-20 20:00:26.07252'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_036:
+  id: '37'
+  name: Hendoc's Pub
+  reference: CnRrAAAAWrX0YC92NzMC2XPonIN0GIWcIWetHFugJYT0_XKBx_i8XWaXkQ_EdzRd0K04nernsFmuX5JRsBu7G_ElbzfX0owhYIoM3zmi9_brCa5lPB26wYwf4JMUB0qfLzxynRDQF-M4MKgUj5hZWiSN9SyxLBIQo4dmb21RwAPIxLRPD3dFHBoUrqm6L2s4m6YqLcIybsA0HRDbq5M
+  place_id: 80a786489fc380e234de14a0c3434eb9996c7dbc
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2375 North High Street, Columbus, OH, United States
+  latitude: '40.01071'
+  longitude: '-83.010457'
+  street_number: '2375'
+  route: North High Street
+  zipcode: '43202'
+  city: Columbus
+  state: Ohio
+  country: US
+  created_at: '2013-06-20 20:00:27.550816'
+  updated_at: '2013-06-20 20:00:27.550816'
+  administrative_level_1: OH
+  administrative_level_2: Franklin
+places_037:
+  id: '38'
+  name: Old Millstream Inn
+  reference: CoQBcQAAABsZ3mGo_zyQ7qQpoatqxpaGumgigcyHTgSR3S8Xzh55zxLAPiC0htsw6hgJe1aYPID77cCfJq7YYmAi96I57DPHJcQh_UIVfwXHRudHl0G0IQvpNdMWnRsxUvppWON1lzlgJ8xrFmvteUwa5aP8mIZQh6bnJoRod5uZ0rJVeCP9EhAkfAReGGjTdBd2ibgAF-C6GhRuSIudDXAZRdCCyFG-YRt5Szc-MQ
+  place_id: e11b02460ee0b606806f545d5da3df9ee4ed6a1a
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 912 South Main Street, St. Charles, Missouri, United States
+  latitude: '38.774491'
+  longitude: '-90.484445'
+  street_number: '912'
+  route: South Main Street
+  zipcode: '63301'
+  city: St. Charles
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:00:29.756803'
+  updated_at: '2013-06-20 20:00:29.756803'
+  administrative_level_1: Missouri
+  administrative_level_2: St. Charles
+places_038:
+  id: '39'
+  name: Merkle's Bar & Grill
+  reference: CoQBcgAAACuODjAyGCGbRLx7qQo5ojtiP-_EoFtm-UCtNXGXO6jGZKBXgWST_g6LHyyL4uUEaaKPJTnmslMueSnduwG6iM4CjGgT5xukQU6Hbf2a2nV5MpQ-l7O0i9EkcvD_KhQWETlc8z7fGnw14VxuJnS-M7ZvIiEALVx4sjSPMzUdpFu0EhD45svydNGz2NaQrz0fgCgqGhQgYO_GKd5uiPHr6NyJ-Vbkcgd0wQ
+  place_id: 507170db1fc4c4a3190ad091fe7facb4478b966c
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3516 North Clark Street, Chicago, IL, United States
+  latitude: '41.94598'
+  longitude: '-87.655757'
+  street_number: '3516'
+  route: North Clark Street
+  zipcode: '60657'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:00:31.327815'
+  updated_at: '2013-06-20 20:00:31.327815'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_039:
+  id: '40'
+  name: Will Call Miami
+  reference: CnRsAAAACDtLEnfrL1uFMJUhgxxiEHJBoKWVy4pc15CG91ZDOVnknju7ZWf3MqPhnrXZsTvdBbiFQGXr84MhZvuq4MXclYg6IknenGdL7v90LJ4T0yPUY3WLzm5W7t3yrreAalAJoZC8eCvqO-L3Hteu8euY2RIQlBk1ePcGFDSu3P1UT7NX1hoU5s8AX00Sy_df-2RO236h2MxN4GE
+  place_id: 3729954955fb93211a4275880e689ba55db88587
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 700 Northeast 2nd Avenue, Miami, FL, United States
+  latitude: '25.781138'
+  longitude: '-80.190619'
+  street_number: '700'
+  route: Northeast 2nd Avenue
+  zipcode: '33132'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:00:34.870423'
+  updated_at: '2013-06-20 20:00:34.870423'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_040:
+  id: '41'
+  name: Roadhouse 66 Sports Bar and Grill
+  reference: CoQBfwAAAM0Mf0XZLNtp4vI00PES2xBU1Bvb0V4Lj5y0wkmpCYtt869127tZ20WQCXtU8dTOF8NKUP3m0RiLNU5X653uU3GCwho6a1lFEqAU9Nz87qGZywDftEiEZW3gLdWj38uSq24qc3yiLnR4kikJeGnYAdOlQnztZxpIbejwUKwY-g6JEhAbmRXVc-svqPc86XSjuaTHGhQvUQUET0dDf41k1BXkU8SMS6ThzQ
+  place_id: c7e42472e3b0e74e150f488d57b89b30f68af6a7
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3330 North Clark Street, Chicago, IL, United States
+  latitude: '41.942494'
+  longitude: '-87.652884'
+  street_number: '3330'
+  route: North Clark Street
+  zipcode: '60657'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:00:36.752511'
+  updated_at: '2013-06-20 20:00:36.752511'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_041:
+  id: '42'
+  name: Geisha Room
+  reference: CnRoAAAAvLkTt1bbxxjmOfCCACSEInTwHsYae2akezdoR0vZB4e3J7wtSoI4YPxRTmYdcvYhdEqumxEJ3kjp-6p1rNwGFsXohIPzgry4O9Q0MCdvIczhfE0XfrpYuR8vzVZLpJ1d_g-_CJ168LvU5JmU3NCYAxIQvf3eCFYh9hMm94boeEdYMBoUk0BhJ0WIkECy6IpR6eJSKBn6dj8
+  place_id: 56e1e266792f270dfb29e83078bff2bdf80a8ae8
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 422 Congress Avenue, Austin, TX, United States
+  latitude: '30.267022'
+  longitude: '-97.743383'
+  street_number: '422'
+  route: Congress Avenue
+  zipcode: '78701'
+  city: Austin
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:00:39.028274'
+  updated_at: '2013-06-20 20:00:39.028274'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_042:
+  id: '43'
+  name: Tin Lizzie
+  reference: CnRnAAAA4jpVvXBI9UG9Irn-L0Nti1H1naYk-6Q2eUiecHKcdW9O16A0MP9PomYm8OxjUMl3BZEdGaJkvvBSfIhsU7_Ai087IpZ-Avdnei3Dj3dgCnJ6V3Iww9Xk5D6wyShVHFYdeQe6Bz7z00bJuG6LeZT6BBIQ6IpZCMVfqvVXtT3Jw_28MxoUfXg3NnqUhdoKGtqEe2o4o25iT4w
+  place_id: 4c6a619ae7850cf57aa6e26108fa4ab7df0f2b4c
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2483 North Clark Street, Chicago, IL, United States
+  latitude: '41.927719'
+  longitude: '-87.641615'
+  street_number: '2483'
+  route: North Clark Street
+  zipcode: '60614'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:00:40.702375'
+  updated_at: '2013-06-20 20:00:40.702375'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_043:
+  id: '44'
+  name: J. BLACK'S Feel Good Kitchen & Lounge
+  reference: CpQBgwAAABxz85z5Lm9OzWLUnF7LUZH3TS3E-b3kr-gCb1MHrH9925cGsJI-T8y3oLrzH70KePoWKmlOu5Un7JFDX2sbg1pIzD-4D-1ptN901IVr7_x8Wm1ZXLuHXwoDcNDImwvgXOiYx5Fau6_lKIs241ypqioN0ZI_oIMsGstp4U5291hbHRemhyqbnJcmgvuYCyPV8xIQj1Pn7E7N66WwaPm1gcvnWBoUGval4ujDWzDR3eA_kImZn5UV7Hg
+  place_id: ff52790aa8f06ce063a9541a1d10b59c1a95566a
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 2409 North Henderson Avenue, Dallas, TX, United States
+  latitude: '32.815136'
+  longitude: '-96.778924'
+  street_number: '2409'
+  route: North Henderson Avenue
+  zipcode: '75206'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:00:42.479088'
+  updated_at: '2013-06-20 20:00:42.479088'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_044:
+  id: '45'
+  name: Cooter Browns Saloon
+  reference: CoQBcgAAAIUoPAEa0FkOWDKVGW04aVhjV3Onfx-AeVCoJNIrWMK6uqHcoiFsTU3VTytrr2N1RsqHH90hEAB0YrcmvD8xuCJ9ltiOxV6gsmFau6Q0Nu2X4oQIFXOr3l0oo_OzxTUILWanJnsMeiheFJEzEsQ2tT6rnNxlJZ_-TrMIiAIrWMSpEhAnC1DOKE1IF6dTBfmMk2U-GhSxhaXCM317jY8KtbshOK4DodxMmw
+  place_id: 28cbbde5121f6ae3b8f83dcc9996920d09cda152
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1881 Bandera Road, San Antonio, TX, United States
+  latitude: '29.555337'
+  longitude: '-98.670009'
+  street_number: '1881'
+  route: Bandera Road
+  zipcode: '78023'
+  city: San Antonio
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:00:44.325271'
+  updated_at: '2013-06-20 20:00:44.325271'
+  administrative_level_1: TX
+  administrative_level_2: Bexar
+places_045:
+  id: '46'
+  name: Malarkey's Irish Pub
+  reference: CoQBcgAAAA6ifjJGdZO7IwD2NfUeBbgGOZHWX6rTNQztfk_Sy_NHr4D6sXm9KdYdEElcu4S60-Oed9syNq1l1DhVAkdri_5ydY9oyr2bs6G2v-WournvJpJZPW-1xF20rGxzMpibwtOtpqw2khy-sy7n1omNnqeYPtOz1WBfrAGe29A-SIX3EhDFSjWgJ2ib9fRGp_BF8dBnGhRVKa42vjV8129o420hsEgjYkQg0w
+  place_id: 4abcd2292627ed20c0a828fdf23532f301054e9b
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 35750 Warren Road, Westland, MI, United States
+  latitude: '42.33912'
+  longitude: '-83.395492'
+  street_number: '35750'
+  route: Warren Road
+  zipcode: '48185'
+  city: Westland
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:00:45.969733'
+  updated_at: '2013-06-20 20:00:45.969733'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_046:
+  id: '47'
+  name: Nodding Donkey
+  reference: CnRsAAAAnOY904yIYU5CGVgPHORHi_eb1kH9vdeoY8_Kd99GxBlNGkWvH9wYQvv9mzNuneQumgmAzheyj5WchVsxkPLqkNnrbwAHdgY3mXH-JXbsdG_JHXJXWKMRZMASJN3MM-tEqjyyFguPqhhVZ4YGPZlTKRIQUocyNf-cv_nM-Bh3Q_qyHhoUPku860LPV0tCrci_e7k4cPxF8sQ
+  place_id: 11deb5d1c73f6d1b31ba699efdb9fc80b7636817
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2900 Thomas Avenue, Dallas, TX, United States
+  latitude: '32.796573'
+  longitude: '-96.796812'
+  street_number: '2900'
+  route: Thomas Avenue
+  zipcode: '75204'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:00:47.428013'
+  updated_at: '2013-06-20 20:00:47.428013'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_047:
+  id: '48'
+  name: Charles Village Pub & Patio
+  reference: CoQBeQAAAGiLGqn86RfgJs85YrzLipvtRbl9gBPxiuhOe0FMfx2ju9uYtIB03Ntz_uFvykC7uj4zztzDT3P0ks5jDIPnBfelkZRCYk487gZPsPm4f3R8AAE5auGr2ldo8pBxcQmijp4jHZJRGtQJQUuP5s_yr3ZFOoMHPRZhhaot0xvririLEhA_5k3DamL58YEQkNCJc1nEGhTX5BwKNGcUDiJ_-0WaAPHX-m2-SQ
+  place_id: e6047a742ee95d5e1dcf800777524fe93b3d59fb
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 19 West Pennsylvania Avenue, Towson, MD, United States
+  latitude: '39.400541'
+  longitude: '-76.603856'
+  street_number: '19'
+  route: West Pennsylvania Avenue
+  zipcode: '21204'
+  city: Towson
+  state: Maryland
+  country: US
+  created_at: '2013-06-20 20:00:48.858406'
+  updated_at: '2013-06-20 20:00:48.858406'
+  administrative_level_1: MD
+  administrative_level_2: 
+places_048:
+  id: '49'
+  name: Steam Pub
+  reference: CnRnAAAAALrzLZAJrGsLbARt9DnJZ6MOyD8Myhl920dot7giT8HW646rmX2J4Jk3ptPC3TYBnc_kWpGQUCvzqPm0Chq8H9jtb1NjBHv4UhgWBP9YTUjEjOm24ZhfirIcXaodgmXxFMYgYQt7rztT5mXVTrRnBxIQT0_TkQ7VnbzuHicy2C71hBoU_XeKLOHuhHg_fMtW8ti2eO8rD5U
+  place_id: f7b90faa23362fea325dc9ed6cbd19750552ad79
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 606 2nd Street Pike, Southampton, PA, United States
+  latitude: '40.171577'
+  longitude: '-75.044954'
+  street_number: '606'
+  route: 2nd Street Pike
+  zipcode: '18966'
+  city: Southampton
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:00:50.574472'
+  updated_at: '2013-06-20 20:00:50.574472'
+  administrative_level_1: PA
+  administrative_level_2: Bucks
+places_049:
+  id: '50'
+  name: The Pepper Lounge
+  reference: CnRvAAAAfz0QPEawRsi6ugzkCYE3qIyOM60CW192AHsKkJvGoWDeUGLfeLZN21c3GiGoG8Mq4I35HvsnYR7D768OQzh8rBiO-aRtmbk3vftX0yF9bAk8o1ZtxLPq_6gXe2HDQmkt8P1NyaiOXotLxYSTmr-vNhIQ927JblPubGGa0vGTYoIRtBoUNdl_75xKzKrr5mwWrM7m2RdPuyc
+  place_id: fae1c6338326c2254ee095f682b91f370b33a96d
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 2005 Locust Street, St. Louis, MO, United States
+  latitude: '38.633106'
+  longitude: '-90.208418'
+  street_number: '2005'
+  route: Locust Street
+  zipcode: '63103'
+  city: St. Louis
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:00:52.007931'
+  updated_at: '2013-06-20 20:00:52.007931'
+  administrative_level_1: MO
+  administrative_level_2: 
+places_050:
+  id: '51'
+  name: Wild Bill's Sports Saloon
+  reference: CoQBdgAAAHE3QG0xxb1XW26OmZeewGiSrekV_0zedVxRIol_kZ_39t4gbGHMpbSxuC2Z63j7bYclT-ZZJyJBcNPZjvSTDkO66rrfudI2TTxO7LzPezIqtPcq0PmFwhcFqboE8tt1yOycj8dgUmeAfFIf9q-qxY_597LVC4KsmA7TMSadoAV7EhBTOg2v20DMnHqRLiFoTQQhGhRuIYE0yJzMahUFoN2dqbl-gjVkMA
+  place_id: 602627f6c365ec77a3b6d88932cd5895591954ea
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 10950 Club West Parkway Northeast, Blaine, MN, United States
+  latitude: '45.169396'
+  longitude: '-93.231287'
+  street_number: '10950'
+  route: Club West Parkway Northeast
+  zipcode: '55449'
+  city: Blaine
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:00:53.427517'
+  updated_at: '2013-06-20 20:00:53.427517'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_051:
+  id: '52'
+  name: The Castle
+  reference: CnRoAAAAcOIUWtY0H_8OcuhIpC27Vw_CGyWAT14slmOpQ8E5QOv6HHT117o4ZR390xa6LwBrr16Ask-FL9qnyEQHTDeSFzelIBmDFdLTopvR3m7PfIa7vtXXIxNYB0TnzAfAxEP6x6fXkx8u3atvwNmJGvr2hhIQjVPvLuF__Z1BqwjJVmf5hhoU8ugsopxPeKYmD-t1CEyV1dFxdrg
+  place_id: 77575b105f63485c514f8bfd9aad7483e5a590a9
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 2004 North 16th Street, Tampa, FL, United States
+  latitude: '27.961976'
+  longitude: '-82.441776'
+  street_number: '2004'
+  route: North 16th Street
+  zipcode: '33605'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:00:54.785729'
+  updated_at: '2013-06-20 20:00:54.785729'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_052:
+  id: '53'
+  name: Embassy Suites Atlanta - Buckhead
+  reference: CoQBgAAAADEPX38UM6U3prMVklbCL4dWcSEcfVgHPWU-NCtqRbf_pl9nIJlvocGvhmJJv5YUaKTYQB1qrMzbOS79LKBGvgMJMwaAj3Y4Skn86T5hIElBqVzwBl2yPSXEtYPMzeNqlK6s-1NklFX8hiBXgCAF8rl_CRYlTE9XRmXgqglFh8baEhBjdT9ZKHJj6ShHQbvdDvbWGhTULPpcvUMXg3Nlviu13SD7ifSvWg
+  place_id: 7b0e1faea6dc7c5697de110e82fadb541831ed4d
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 3285 Peachtree Road Northeast, Atlanta, GA, United States
+  latitude: '33.84474'
+  longitude: '-84.3688'
+  street_number: '3285'
+  route: Peachtree Road Northeast
+  zipcode: '30305'
+  city: Atlanta
+  state: Georgia
+  country: US
+  created_at: '2013-06-20 20:00:56.198143'
+  updated_at: '2013-06-20 20:00:56.198143'
+  administrative_level_1: GA
+  administrative_level_2: Fulton
+places_053:
+  id: '54'
+  name: Berlin
+  reference: CnRjAAAAQcFJ4eR7zMiGAXHUI6k6d9S250nDiXDzquwB6KBktQDmTKjoSPBIYd17Mv_EbZcyF4Nq7QWDBeW8lmqRvO7e3cX4H-Nvn30vyd2WfQ3sGYkMQq13PUkeGR26oxvH3Qcf7Oj9VPlS7EH2zF2Ilz2cGxIQW_-WIMh2DrtS5uiDFq7eSBoUWObqI_1LHCvCgucbKZPkMHMguNI
+  place_id: f640c3db691dbed67f6da3f140bf051833d1f4f7
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 954 West Belmont Avenue, Chicago, IL, United States
+  latitude: '41.940005'
+  longitude: '-87.653718'
+  street_number: '954'
+  route: West Belmont Avenue
+  zipcode: '60657'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:00:57.552478'
+  updated_at: '2013-06-20 20:00:57.552478'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_054:
+  id: '55'
+  name: Martini Ranch
+  reference: CnRrAAAAP4LrCEyXTwObcTceJA8CSS0cQ_jqh24CVJyaCbcetH9WqkYI1Q-tf2X9svFI8JE0lDCDPYa0RsjRkAB8-0u9qJtUhbW8-tfrd-wp1Y_gDzU3C7kExj067Y0ks6umBshi-2-9AjndlMd_EQIEJXbTWRIQceF3Gv44qwnpDnVbDesf5BoUQ-Yx6s4CxTufQUF7NnUuiacSyDc
+  place_id: a210888f6a8649589efcc156d90730e1cfd1bc78
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 4904 West Avenue, San Antonio, TX, United States
+  latitude: '29.511488'
+  longitude: '-98.525855'
+  street_number: '4904'
+  route: West Avenue
+  zipcode: '78213'
+  city: San Antonio
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:00:59.171864'
+  updated_at: '2013-06-20 20:00:59.171864'
+  administrative_level_1: TX
+  administrative_level_2: Bexar
+places_055:
+  id: '56'
+  name: The Pour House
+  reference: CoQBdQAAAJ2RuUFosKISe7eqmsPZoSGnsV2SneK51HP-6ks86U6F9ck9b7ifNLk3QE3USnjAXpnYRHDlhj5MOQA5R2-UC6L5El5TM_mBz2mUMb3k2Jz2FSTXoEhvt-TgwlebiV0m6pptBFuw5EP5Dh37rwUWksXdtnOHikU8938UarobRIafEhBVdwkQnITZ3L2JauymFtwQGhSQ51jKAv-pGaC3G83TswkbAFjumg
+  place_id: 557be917a1e3aa6bcccea3fa35647454d38f1b9f
+  types: |
+    ---
+    - point_of_interest
+    - bar
+    - establishment
+  formatted_address: The Pour House, 2725 W 7th St, Fort Worth, TX 76107, USA
+  latitude: '32.7509588'
+  longitude: '-97.3553224'
+  street_number: '2725'
+  route: W 7th St
+  zipcode: '76107'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:00.515018'
+  updated_at: '2013-06-20 20:01:00.515018'
+  administrative_level_1: TX
+  administrative_level_2: Tarrant
+places_056:
+  id: '57'
+  name: Baloos
+  reference: CnRkAAAANER86HpZmG6rVX6ODWqyCFQEXQW611BpERXQ5WwVfFDdlX_RazQF-Hwe2Uy8pvf6XYeUzBhzQ7YEoQdeJ51zxTP44wgx49oWww1bFqyi-oEOPi5-_iAgGF5ZjbKpZ01r-1rtilzhLMIEnPSMDnTSjBIQARddcLF7MQjQGS7N3XrTBxoULHyjHzW-u3adPIGGQXXqII7bPA0
+  place_id: d0c3d58475ee90096b277ac7d7de30e9217a86e3
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1900 South 77 Sunshine Strip, Harlingen, TX, United States
+  latitude: '26.173822'
+  longitude: '-97.674794'
+  street_number: '1900'
+  route: South 77 Sunshine Strip
+  zipcode: '78550'
+  city: Harlingen
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:01.809869'
+  updated_at: '2013-06-20 20:01:01.809869'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_057:
+  id: '58'
+  name: The Den Bar & Grill
+  reference: CoQBcQAAALaYTsxMi5Mb18h6FUIbm1vvRHVHg596uwx9HIQUJC5d7nyhxQSLrb3d_2zn4lf-u2uE55-ToLLCyWNZiMQFihhriJsK1Nqsem3_weWCgHDkUTBG7wSQrvkODHr-9jjdcVe5MwnQP2oBy_BXl36yUgmYU1FulYEQiJR6nUHTnDfnEhB5nxAb4rZYe5r8jI3cOpiiGhRbOyrmkF0WD1wfuw9isHmD-skK1g
+  place_id: 8098c775a11e9c72713b25e24a636608cbe4982f
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2710 McKinney Avenue, Dallas, TX, United States
+  latitude: '32.797776'
+  longitude: '-96.801136'
+  street_number: '2710'
+  route: McKinney Avenue
+  zipcode: '75204'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:03.246659'
+  updated_at: '2013-06-20 20:01:03.246659'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_058:
+  id: '59'
+  name: Baru Urbano
+  reference: CnRqAAAAuHohKb8aDjmflpC8xCqDsEvh7vpKTjJnyhxYBdZ3ABrtteZI7pFYVCpJl5XE108nD43qrU1GONmqwOwy7fvZtQEM4WYQGkifW46G-aZLYWak9cIH7WKwObRvkoR4kSIEBBEjveNpbVTZs7mBscjsZRIQRyIQE5X62fAhHEf3R6mKLxoUhsR35yRGA9mvsxemANRvVNTTp8c
+  place_id: fbea622a7d1359acb92f54b7be3c8190dba0216d
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1001 South Miami Avenue, Miami, FL, United States
+  latitude: '25.764313'
+  longitude: '-80.192767'
+  street_number: '1001'
+  route: South Miami Avenue
+  zipcode: '33131'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:01:04.823926'
+  updated_at: '2013-06-20 20:01:04.823926'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_059:
+  id: '60'
+  name: Fry Street Tavern
+  reference: CnRuAAAAw8DxKw5Yynif06udTQWmTDaoCD8hCjHWRmWkXRWuJH9-flHH1_hksfCpbvIRi8UYlM6H0qvTCX9S2pxPi0FHzXFxDixbpFgcGm4Ju3BCdk2sx0J8srkbH_kTlQHfXENyyKhB58HKj8ZbMRZHXAExiRIQ67IlrpZ6CmGc0Ri2r5WlJxoU-3VZMRwcKsQff0W3CzR5CFG0SSw
+  place_id: 8e6d65d565abb5e37bff5e2353b87822ed5c2415
+  types: |
+    ---
+    - establishment
+  formatted_address: 121 Avenue A, Denton, TX, United States
+  latitude: '33.213909'
+  longitude: '-97.146093'
+  street_number: '121'
+  route: Avenue A
+  zipcode: '76201'
+  city: Denton
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:06.179522'
+  updated_at: '2013-06-20 20:01:06.179522'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_060:
+  id: '61'
+  name: Red Square Bar
+  reference: CnRrAAAA4zNgiwM98hgeEumhMQRuf5jrn2S4TOVGj-zsdcYs8OGj4XYIM3ghxxqiUMcPa2dXc3fhdNFGjJv79m1BfReCHKXyD_sxB1cjhBDae3DJ_pkG3bQ3ZqRH0-IAtO6DrwdkHvmc5gIMQrI7Kw-_nOwMpBIQeH1lTYKVIm1EaGlvX6-pyRoUGYZO6dOptdaOLKHJ4-fC7kllx0Y
+  place_id: 16e92f42816176b010482fea45be8d9fa1f6e9ef
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 11851 Bandera Road, Helotes, TX, United States
+  latitude: '29.553826'
+  longitude: '-98.669884'
+  street_number: '11851'
+  route: Bandera Road
+  zipcode: '78023'
+  city: Helotes
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:08.851215'
+  updated_at: '2013-06-20 20:01:08.851215'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_061:
+  id: '62'
+  name: Bar 9
+  reference: CnRiAAAAhASgcamjG7qYe9W1AAY237zsKoQ1HfoEneuT7vx5RSbIyiqOC3ZTwLm9MLR4xww6OMkbqDIRS9tFmvUFwndFGR7dKvhnfE8Aog__6e0UDhdNAKf3Q19cxvADLNaYnBiLyikKg5tgjVdBjGCmeh6yHxIQ8D4BQX-xZp5GGzknNfW9choUce82ATzgWxhhwKpXLQwMS1Bkei8
+  place_id: 10930b602fac6c8ce4348377411323d2e617d845
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 900 Houston Street, Fort Worth, TX, United States
+  latitude: '32.751507'
+  longitude: '-97.33034'
+  street_number: '900'
+  route: Houston Street
+  zipcode: '76102'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:10.326511'
+  updated_at: '2013-06-20 20:01:10.326511'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_062:
+  id: '63'
+  name: tenOak
+  reference: CnRjAAAAyzGnSTNv48AM2fGa2RVzBJAsXo8FNQ3nUa-FSXezyl3-z7Pn612tSv5kh1S61hxB1qwmddRQjIo2BU5pB0nIJReSYUix6tXD3FXd5XMfjUqo8fN5AtVHmWJubSe7k04RJiuZpX7jOS51IFzz7IrMyBIQocW6uObXiC5I3eMj4ElhdBoUhkIxGO3l2gInHkn7rnex5PrZ9yU
+  place_id: fbb6d9f4ce48215d0d463ce8210ed885fe74cdb0
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 409 Colorado Street, Austin, TX, United States
+  latitude: '30.267101'
+  longitude: '-97.7445'
+  street_number: '409'
+  route: Colorado Street
+  zipcode: '78701'
+  city: Austin
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:11.813474'
+  updated_at: '2013-06-20 20:01:11.813474'
+  administrative_level_1: TX
+  administrative_level_2: Travis
+places_063:
+  id: '64'
+  name: The Dirty Shame
+  reference: CnRsAAAAkieCLd5CIy5wvbPfdFWjD_GETuW63eRrZ5MgMo62iMWlwQ4wWBlmb5UCBpSwmbVxmUcrNzR5JObIktU_U4dSBdOpsQR3nP0EJasC8jZ4DrX1m16BtSi3dKrmowBTMsd8sAoxgZz5RuXH1hmD72r1chIQ2NKtrj_Z1iNRkBFmU9iYRxoUGj_Rufk_pzxwNO-WqzxlAxt_D1U
+  place_id: 8e6bb60bdd9e8ce0b903c097af69dc50cc780cce
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1929 East 7th Avenue, Tampa, FL, United States
+  latitude: '27.960166'
+  longitude: '-82.436883'
+  street_number: '1929'
+  route: East 7th Avenue
+  zipcode: '33605'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:01:13.208617'
+  updated_at: '2013-06-20 20:01:13.208617'
+  administrative_level_1: FL
+  administrative_level_2: Hillsborough
+places_064:
+  id: '65'
+  name: The Passenger
+  reference: CnRrAAAA4YsOa9fkQzwiwVfkcDUx4IXmeRCEnFO_BqoYHQxKgdybXcvtyM352tLv2Y-oQ0BJmOWHUd2IQCfpOy-ygb82iyTayrNPPMUspbouTW05WY-FsToOt5AWi_9UhlHaDlHkX1UcSuIO9rUr0UPGQA53ahIQc3FYmy99MLakwm0pkrpnlRoUtF-Sf7ZE6PEWepHU5SHIGB-8LrQ
+  place_id: 8695fba807b7c1a7f83c0aeac784eced338829ba
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 1021 7th Street Northwest, Washington, DC, United States
+  latitude: '38.903688'
+  longitude: '-77.021781'
+  street_number: '1021'
+  route: 7th Street Northwest
+  zipcode: '20001'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:01:14.735171'
+  updated_at: '2013-06-20 20:01:14.735171'
+  administrative_level_1: DC
+  administrative_level_2: District of Columbia
+places_065:
+  id: '66'
+  name: Maya Day and Nightclub
+  reference: CoQBcwAAAPDJkLhd6b5crGEtN5AyN1g8W0GgkZESjdd8LLCZjnwdNPzhRUzlY5X0381Db5DBEY-Ap_UvgLSc-UhYcwsKsa6pYCyZYOz8G9yT-v3Ki48Ry7mv2diRj77BlG0E5BXQL91GmhzwKTylPZ9fidtf9RjHydtZ1rj3XQTDmGpf0fmwEhBAFE6xXcAbeipsbXSYG4PCGhQGf_T_8-EaAJNzgvDwtWop-XdRBQ
+  place_id: 4341f4282682d28f659b940eb0e7e04774b9a0ae
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 7333 East Indian Plaza, Scottsdale, Arizona, United States
+  latitude: '33.501312'
+  longitude: '-111.922964'
+  street_number: '7333'
+  route: East Indian Plaza
+  zipcode: '85251'
+  city: Scottsdale
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:01:16.068337'
+  updated_at: '2013-06-20 20:01:16.068337'
+  administrative_level_1: Arizona
+  administrative_level_2: 
+places_066:
+  id: '67'
+  name: Kildare's Manayunk
+  reference: CnRwAAAAtqHzob-apR7atm7IUWwL5PtndoMfsTISovlUrrVxwYUEUumIHJW0AP18cpjNr3ElmK-3JJkNAP9HsMyQezI5rFr7avjzgyUoZJPGNwuIQvP7DseNpvVAOCMuhOSvCnaM5rFXJ8v__svAPcOMPWS-tBIQwvSk6pfrbwqfGsa1y0iG2hoUL64IfmiCOuOgn2IAa6lf0oReKsE
+  place_id: 2e066a7813ab3517e685c1a5809f2fe679eb5255
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 4417 Main Street, Philadelphia, PA, United States
+  latitude: '40.026405'
+  longitude: '-75.225238'
+  street_number: '4417'
+  route: Main Street
+  zipcode: '19127'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:01:17.489343'
+  updated_at: '2013-06-20 20:01:17.489343'
+  administrative_level_1: PA
+  administrative_level_2: Philadelphia
+places_067:
+  id: '68'
+  name: North Shore Beach Club
+  reference: CoQBdQAAAFSQEIh7CsZnnZgbFGhNU1RTcYLK0oqD4rGGYqeWzQ-VI5yb0Bw_rH5_l5fSyM2ecrabAr4jRJ7oewHkKexiVaXgk947mBkgG8SZGyR1JifW_bayshFOs2pzKT5RRbGaC0R227iqagbv24N8n6EXhnv4qsP93v1cbGCuNVp3iONlEhBHj2_XEQV8am6o2HNBM-PkGhRTyHtnYaqQTWw6OWpMyObWD9noTA
+  place_id: cd0957bed6bd4584a9e5efdef8208aab26a389b7
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 1031 Germantown Avenue, Philadelphia, PA, United States
+  latitude: '39.966328'
+  longitude: '-75.138502'
+  street_number: '1031'
+  route: Germantown Avenue
+  zipcode: '19123'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:01:20.426212'
+  updated_at: '2013-06-20 20:01:20.426212'
+  administrative_level_1: PA
+  administrative_level_2: 
+places_068:
+  id: '69'
+  name: Hotel Palomar Chicago
+  reference: CoQBcgAAAGq6qBC22KRvOah0opxPfDRwV1fiBgUkrP5qdvu5tRNahztcGjNNiz7Tt-kQVi22Y6vtcq-LVERe0rpGWj-5soTciHMDg06eiIq3jVf3X3LyTTjX4eXSdiSB667AVCRZmsJqyQRcleKOxkYr1xVCBt2yRxA88qmzqxY-XbNUHMghEhDsC4cGuyb0AUlElWs6HFcJGhQoa1uhJodD0vaDQF2Z_eXGYdjUBw
+  place_id: 7bbf7cf723d4f5404aacd1b03f9d245e8d6eabbe
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 505 North State Street, Chicago, IL, United States
+  latitude: '41.891037'
+  longitude: '-87.627923'
+  street_number: '505'
+  route: North State Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:22.616588'
+  updated_at: '2013-06-20 20:01:22.616588'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_069:
+  id: '70'
+  name: Longman & Eagle
+  reference: CnRtAAAAZEgyXfHP33eOHZAhoUy4-_Q0JARDIxgGdkxFLCzCl6_ulNJNdAo1ES3R3d5R5YJSeF-qmj_dQz30QRNctREkGmO31HcsF835Bc3q7vfF4TnVBCtf6MUQ8rW2FK8wwNa7Q5s7STjc6obvNuiuVtW62BIQ1x_L5ZyULFBUK6-cUc_vRBoUHwc_7DLr-EmYn0JAjCYhVWjwIbw
+  place_id: dcb716915d5cbd4cac1203385fda38eeb5f46c8f
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2657 North Kedzie Avenue, Chicago, IL, United States
+  latitude: '41.930098'
+  longitude: '-87.707082'
+  street_number: '2657'
+  route: North Kedzie Avenue
+  zipcode: '60647'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:25.406415'
+  updated_at: '2013-06-20 20:01:25.406415'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_070:
+  id: '71'
+  name: Castaways
+  reference: CnRmAAAArNVX3frj3wjg8AuNEZGf6G5SXlcrN7uvvXrhPvu0tDci7or0jFXqwPrmRIsS1K2Rbuj0z_EW8CAnAK8u-thC4rJsyQo7C4FY5w0uov4XIE0HXHFlQGSq3UYdHi8DswG6k836cPNM5nBveSo2E-_gIxIQyg935dTCOe0rEzrfut3RJhoUFeevp_fnXw2ltj4CMo-yBsUfu3U
+  place_id: 437e5c1d421bbaf39d3aa8e29e8523a9614d0676
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1603 North Lake Shore Drive, Chicago, IL, United States
+  latitude: '41.913403'
+  longitude: '-87.62433'
+  street_number: '1603'
+  route: North Lake Shore Drive
+  zipcode: '60614'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:26.96796'
+  updated_at: '2013-06-20 20:01:26.96796'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_071:
+  id: '72'
+  name: Westheimer
+  reference: CpQBigAAADiL1BpQom-AvxIXAfn3EjCciEtZMWeN4-xFouFwkP0sxmzH-F0CMjQFFZ9k97u8F-4Qfjjz77p69KwEJrtrLbX8Ih1y8YND3FH6aFEWA6a1phFNQzIMfazCnsFTmCuT02QFRs1w3Ok5aOn70DDMwzm2u_g-uZx7hRaEHuuzf5GNucEfn2tCDuudgSj6Dq1ZOBIQLEiEA9ZzfuaXlfV_qGrMMRoUfd7I-Z8euWAjjIyqeXn5p06a758
+  place_id: 58893b3d7b9c7a21a13938b0976f82081d9535a3
+  types: |
+    ---
+    - route
+  formatted_address: Westheimer, Houston, TX 77027, USA
+  latitude: '29.7417386'
+  longitude: '-95.4501325'
+  street_number: 
+  route: Westheimer
+  zipcode: '77027'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:28.360844'
+  updated_at: '2013-06-20 20:01:28.360844'
+  administrative_level_1: TX
+  administrative_level_2: Harris
+places_072:
+  id: '73'
+  name: Total Wine & More
+  reference: CnRuAAAAC6aPjVVPqyEmR88cfzPZg19Xcv4uU9KoiAQ8Fe8DUR5LNBFA-JbVc7eiAMkVNycPeNWrGKf248Wj14FwFilPYaw47R2Yek7c1aiFf6uzR7k9kl6VS-5wWkWFZEIzzRM8hO_QotJgbi2OGjs1_gFg2hIQMOrIkVPrtZb0iAgJONCEkBoU4jLh9XnjuEz0JZ05RP-MqHa9MKg
+  place_id: 59dc1ff7073484bd33f421761b9b1000e81e0fb1
+  types: |
+    ---
+    - liquor_store
+    - food
+    - store
+    - establishment
+  formatted_address: 1416 North Litchfield Road, Goodyear, AZ, United States
+  latitude: '33.462531'
+  longitude: '-112.358342'
+  street_number: '1416'
+  route: North Litchfield Road
+  zipcode: '85395'
+  city: Goodyear
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:01:30.569719'
+  updated_at: '2013-06-20 20:01:30.569719'
+  administrative_level_1: AZ
+  administrative_level_2: 
+places_073:
+  id: '74'
+  name: Carriage House
+  reference: CnRsAAAAe4qdLWehjUUzvCyZo4ln0PoGdOci1S9LQ2p7W0jcDRg4X5k9XgyXmcM1BFiVrfuGZg2H9T8la-8FRq7DbLLqNxS8eOLNx_cZ4uwply8ZKqyQ9PZcZFDQVR1Di5gyYmwMZrqqyZrI2XjMt8TYIlZP1xIQPFRLixyGZc0IbHz15xEJDRoUgVcdtVUN2JiN9wJ6tj7lebMQQ0o
+  place_id: 8b4bf5645df63272cb1e7d0a350af08760550d02
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1700 West Division Street, Chicago, IL, United States
+  latitude: '41.90344'
+  longitude: '-87.670514'
+  street_number: '1700'
+  route: West Division Street
+  zipcode: '60622'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:31.945068'
+  updated_at: '2013-06-20 20:01:31.945068'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_074:
+  id: '75'
+  name: Castle Pine North Wine & Spirits
+  reference: CoQBfwAAAK7pgxRKrPeQ4f3ASm1ns9Fqi43rfMuktMlV4rq6dPDwgO5a6nytdRVBsBHuG8JHYW6bSo_cmem_9qYm3T2-oYueEzA8UBlc_p9xuCZfwAkjXlF31qrElaIJz7n5a9KRzfRcd65QSNqdCFgB9DwoIkQiOEBK8yJdOnwOUrHfN8lLEhCX7hinGgMAFONWJogask6zGhQHbys99p6KrMY7zvQ-gzj8G6s3EA
+  place_id: 94ac918af7a595721625c9cbb7e2abe5337cd002
+  types: |
+    ---
+    - liquor_store
+    - food
+    - store
+    - establishment
+  formatted_address: 7280 Lagae Road, Castle Rock, CO, United States
+  latitude: '39.4685'
+  longitude: '-104.880891'
+  street_number: '7280'
+  route: Lagae Road
+  zipcode: '80108'
+  city: Castle Rock
+  state: Colorado
+  country: US
+  created_at: '2013-06-20 20:01:33.329355'
+  updated_at: '2013-06-20 20:01:33.329355'
+  administrative_level_1: CO
+  administrative_level_2: 
+places_075:
+  id: '76'
+  name: Del Frisco's Double Eagle Steak House
+  reference: CpQBgwAAANhQ68zTGD_hNS-PdI5WMWNfj5H5QewNfmlJda4CAinuqXpzZA0z4tN40v_m9tj90mJLw-dmhg8G8zeFV0Y8SRl01SzgCccaGlig9Px5WAmkGKvBJ7llfOCS4xGfMZefSql6Lpk7Je6j0dNdmnTsgOmkMzBCsOaE-n2lqGKX0wgR3w7T337-eS1HDAmixT4ZZhIQZb0SkjmMQe04LEAnt1a33BoU_soA5agb6mh_3YNLSgyA0K34UEw
+  place_id: 5d546ea980ed4ecd0308669c3db45334e7ed745d
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 5061 Westheimer Road, Houston, TX, United States
+  latitude: '29.740018'
+  longitude: '-95.463816'
+  street_number: '5061'
+  route: Westheimer Road
+  zipcode: '77056'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:34.948639'
+  updated_at: '2013-06-20 20:01:34.948639'
+  administrative_level_1: TX
+  administrative_level_2: Harris
+places_076:
+  id: '77'
+  name: D & L Liquors
+  reference: CnRqAAAAdibMMYaTI3pPC8_GKdfUNbOEOJomJ75-XqGR9hUXGqXIkdOLAAN-kWHVSSUkehuf4BeBY-sB6xqzNM2UJTLvNQ9wOuTOuUE62ot2ho6EHjo9ANm3KHvsOtwJveudjxurRDLosvN8HtIt7b23aB_gDhIQdi04Pam8s-da-zmL0RRPJhoUQoehqHvFXxYSn3SvEDMIiZPhIvk
+  place_id: dd3c8aa95f8c43977a9fb874ba0115bea9e936e3
+  types: |
+    ---
+    - liquor_store
+    - food
+    - store
+    - establishment
+  formatted_address: 850 Lexington Street, Waltham, MA, United States
+  latitude: '42.404262'
+  longitude: '-71.234201'
+  street_number: '850'
+  route: Lexington Street
+  zipcode: '02452'
+  city: Waltham
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:01:36.381905'
+  updated_at: '2013-06-20 20:01:36.381905'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_077:
+  id: '78'
+  name: Spec's Wine, Spirits and Finer Foods
+  reference: CpQBgwAAAIueOjlD3G6RyfMYiJTi3UyofNK3flZG8biqD4Ohm3Do1FG1zYubg-5Jfzrnh2TlOJDThnv6u4uFakURQBLxoLGLHCIi4mzXZ7FU78UTSXIbclR20Y0z5NoowRfd1vxtu0DGnGH-dEZNyzO8iPJ67tp4rnh7EivErK-6eHkv4SXkYSyVjJrAj8Fy0NLNxkJULhIQ2gRrF3glBGmCofPZoZQdARoUV6nkLRe49BFAOlquGulY1DwZTp4
+  place_id: 048149e6e765d35f3ea8dd06e9ba55dd4dd69018
+  types: |
+    ---
+    - liquor_store
+    - food
+    - store
+    - establishment
+  formatted_address: 1729 South Texas Avenue, College Station, TX, United States
+  latitude: '30.616563'
+  longitude: '-96.318076'
+  street_number: '1729'
+  route: South Texas Avenue
+  zipcode: '77840'
+  city: College Station
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:37.742993'
+  updated_at: '2013-06-20 20:01:37.742993'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_078:
+  id: '79'
+  name: Hunter & Wayne Liquor Store
+  reference: CoQBeQAAAK4Txg3Ubb9FESP5ghHP7kbBz_6ortvdCNseg8FjxlYXxaNakhrX6UrwuTysrEClEdJQIYhWgLeFx9_I9jM5nWrrl7b2HNOPK4nlq6W9UH5yZU3AylESN2ji4MJDgFD11wfp8NxxvVmIqpTQn8t3VIvoCzW5YsuKU7xutRmBIlU8EhARU9IediujqFgr-QMgksqfGhQniLMzQOC7Oq8M21UD3Qgte9ai8w
+  place_id: 1109bf1439fb6ff530294546832f958fc7291bb5
+  types: |
+    ---
+    - liquor_store
+    - store
+    - establishment
+  formatted_address: 35201 Hunter Avenue, Westland, MI, United States
+  latitude: '42.331294'
+  longitude: '-83.387109'
+  street_number: '35201'
+  route: Hunter Avenue
+  zipcode: '48185'
+  city: Westland
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:01:39.691475'
+  updated_at: '2013-06-20 20:01:39.691475'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_079:
+  id: '80'
+  name: Clock Bar
+  reference: CnRoAAAAVcLoCREZRRF0a8q7u3mVwoD8S7jY7UfDJkljkK_RpCVZCAVfeIf-3mdnmIpuH46cdA3wpkOot9GgmsZq17n2rRA7S8lQWgAFrhK0V80oA88lZfzVYnEBRCkFyehDW6EsiLJ5Pi47Lor5otcZwN6sYBIQorrP062BmIP7jKIjuepAuhoUM7jooT-jzlIrDOZ_p9EJfsl6LaM
+  place_id: aa3242bf0d0165a7a0794a86d23521515123eaf2
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 335 Powell Street, San Francisco, CA, United States
+  latitude: '37.787727'
+  longitude: '-122.408523'
+  street_number: '335'
+  route: Powell Street
+  zipcode: '94102'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 20:01:41.460535'
+  updated_at: '2013-06-20 20:01:41.460535'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_080:
+  id: '81'
+  name: Ruth Eckerd Hall
+  reference: CoQBeAAAAPJrI9a1n_4WREkDUewwNUHJJUpDvAbNyW_iHwMcIJtDZqikmS0252-LkK3sIXhQCmKW9MitId8bbknQsJDmhvWRpzBy2Lfpw3ZHJzs1RtPkA-MiIq369MIpJU-5WVRlPq0tGOEy27DsWw559TPoCVBPzNL5KLYegNpFrxwhabjZEhCDE5LQFVFyke4ig-zLUjwzGhRBRfPcqPJrN60jLFj_fr0LCDtYyA
+  place_id: b0234d44b6f4e54ccb75b9c5e1c47c7f260c7f3e
+  types: |
+    ---
+    - point_of_interest
+    - establishment
+  formatted_address: Ruth Eckerd Hall, 1111 N McMullen Booth Rd, Clearwater, FL 33759,
+    USA
+  latitude: '27.976034'
+  longitude: '-82.704689'
+  street_number: '1111'
+  route: N McMullen Booth Rd
+  zipcode: '33759'
+  city: Clearwater
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:01:43.399181'
+  updated_at: '2013-06-20 20:01:43.399181'
+  administrative_level_1: FL
+  administrative_level_2: Pinellas
+places_081:
+  id: '82'
+  name: Bub City
+  reference: CnRmAAAA6zJ1JJw4Nsn1HLjPBN6G5C4VQ-ssNN8rXxN5DFJgQ4P8yLVmO61HLNJAgJmx3tzKYU3MXg-5hN7mVcJToyyG-2RgW5HqMCAzGocqKz7abPvjiqafPr9SSDs3THzB5gC5PW2a_JHoWAc-qijjJ8tNfxIQCLDeORQz5ioAcdaBMgIFzhoU6mfSowJHtVaXsUNGcVQpJu8eyA4
+  place_id: 5962706adcf25d73b2775f2124313621cd8a0b95
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 435 North Clark Street, Chicago, IL, United States
+  latitude: '41.890352'
+  longitude: '-87.630948'
+  street_number: '435'
+  route: North Clark Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:45.18995'
+  updated_at: '2013-06-20 20:01:45.18995'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_082:
+  id: '83'
+  name: Twin Palms Pasadena
+  reference: CnRwAAAA1ZV09FgiaMLp0uqXqoaLeunupcXFa87VwrML6cFz_NbdGngqPhi0Ay_sV6GF13c_fcoXFRHbqErtEYtXAIC7WjKcMn9zBdUg91fYvfc1uR2HyIxJnXAaSZLj4TBrJzhsOfeW0UUNXZsyP0bF31amkRIQQPKeLuvucK6H_lRD8zEGfhoUmEnoTnWNDQ36BCCmphfzYlq8vRQ
+  place_id: abe5d094505fb3a90d47f85b791165c5c5097d8d
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 101 West Green Street, Pasadena, CA, United States
+  latitude: '34.144596'
+  longitude: '-118.152404'
+  street_number: '101'
+  route: West Green Street
+  zipcode: '91105'
+  city: Pasadena
+  state: California
+  country: US
+  created_at: '2013-06-20 20:01:46.78026'
+  updated_at: '2013-06-20 20:01:46.78026'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_083:
+  id: '84'
+  name: Nick & Sam's
+  reference: CnRqAAAAxH1n70aLPjxw1ahCQb0YyIc7H-mpWqwGDoWq8TZ_Z2ue2eYsTGXGCLldbeqg3n4qGdtLN_89ASx5PepJiou59MzeGOn5zeNznqYEEkS7fzqFVhakGbO2j-4uEvgINAi_RSGC4T7PoGT0YFqmFibMKRIQq9U2EV5zk4jIUZrStmSnSBoUBKBRTJzjidF_o3CnG15VcwOa9CE
+  place_id: 18ee885a4b088431fc1abcdc30cb63f6205b44e4
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3008 Maple Avenue, Dallas, TX, United States
+  latitude: '32.798445'
+  longitude: '-96.807712'
+  street_number: '3008'
+  route: Maple Avenue
+  zipcode: '75201'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:48.689651'
+  updated_at: '2013-06-20 20:01:48.689651'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_084:
+  id: '85'
+  name: Flannery's Irish Pub
+  reference: CoQBcQAAAIyjEHr1ZNt8k9Xz3-BqZZ6N_t7jqRO3QhW3e21ANCuW4grbiVvIYk2116vroLGU2Dvv28SpAfbHdSNQKVL30lWCEFkuaZW3o-N_muBwpbVmhsvirZIvzMPD_JSnZvFcjO16TjymoxfDR6dqVC20A3FekwEThYPlko475qwInpkiEhBVHSziVsiFZe5yUQUGXBj3GhQ2piZHta6IdvvWb1ijzeFibCfyuw
+  place_id: bf807b2092c9eb9b0bb2a351adc91655a95a03a1
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1324 Washington Avenue, St. Louis, MO, United States
+  latitude: '38.632188'
+  longitude: '-90.199251'
+  street_number: '1324'
+  route: Washington Avenue
+  zipcode: '63103'
+  city: St. Louis
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:01:50.223501'
+  updated_at: '2013-06-20 20:01:50.223501'
+  administrative_level_1: MO
+  administrative_level_2: 
+places_085:
+  id: '86'
+  name: Chelio's Pub & Grill
+  reference: CoQBcgAAABiABKWSRTlF0jsamHK8vcQ0ulCsf0OMsrizGoZR9XKhMOxuioGLDEW39BmLmQs9tJPpfj6DtyzdsAKcP2Kk8qiUEl4bMzGc437wkcHmftuzvTw-fSZGPmx01TvEhZIz6JxERoDz1L3hpGFRv8gLcKslfM8b8BBi9MAQeSRP0B0EEhAloLWyVGQ7xTp_Nro-FgRTGhRkn-fOw6Bqk7CN0LUyPcqz71zApw
+  place_id: 002d03c5629530b0cbed64d232c65de033f38d68
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1996 South Kirk Road, Geneva, IL, United States
+  latitude: '41.872667'
+  longitude: '-88.27977'
+  street_number: '1996'
+  route: South Kirk Road
+  zipcode: '60134'
+  city: Geneva
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:52.066021'
+  updated_at: '2013-06-20 20:01:52.066021'
+  administrative_level_1: IL
+  administrative_level_2: Kane
+places_086:
+  id: '87'
+  name: HACIENDA SAN MIGUEL
+  reference: CoQBcgAAAAoIB9DSYLrhFMLRmPv2RB35LXWQTRIQ33Pvh6H-Ur1ikAkvgfB2686fa07keKhB0RuSZcRxgX0pecuDEDlV21LMUR5_DYB9fpBXksKjfiyQY4XCdlD5XyxvfALTnpJSfvRc3uun4mcsi_KIi_SqqQ758AgnVrKnMb15-4mxpgwfEhDd66cwtHuL0SVBw4aqPsuwGhTcYawtVeSIyimg4ZpPA0zHZ7fSYQ
+  place_id: 9bba91a82e49d3ff5e5962cd39da72f68ddbbbb3
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2948 Crockett Street, Fort Woth, TX, United States
+  latitude: '32.750287'
+  longitude: '-97.359493'
+  street_number: '2948'
+  route: Crockett Street
+  zipcode: '76107'
+  city: Fort Woth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:01:54.503551'
+  updated_at: '2013-06-20 20:01:54.503551'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_087:
+  id: '88'
+  name: Seven Grand
+  reference: CnRpAAAAmKUe8qPYAOH8w-x1TrHluSONQ72gbO6s0UcNVkulCP7aqLFpn0qEdGU9MFHjY00OEVbff6kiCMVR0GMDpK6DILmLT_jJleK9dy9RshPd3RuSemQay_jZ7HDgU_e9mILPY3vjs1FAhnXTIASX8gbmfRIQx99LCAD5oqvi26hAHpOkyRoU-m5FlKPOiZm_l17FwNS87p985Ew
+  place_id: 185b64eb576d1f11c2c2ddb4128042fc743cb157
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: '515 West 7th Street #2, Los Angeles, CA, United States'
+  latitude: '34.046986'
+  longitude: '-118.25595'
+  street_number: '515'
+  route: West 7th Street
+  zipcode: '90014'
+  city: Los Angeles
+  state: California
+  country: US
+  created_at: '2013-06-20 20:01:56.131211'
+  updated_at: '2013-06-20 20:01:56.131211'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_088:
+  id: '89'
+  name: Crest Hill Lanes
+  reference: CnRuAAAAsukBBAMdbpCQDd8sbz6rPEf4ON8eJHB4YE8DXara50gg_cRr8D2sNJiuxSIGElsOhr9BbhbrOKfUXspQqFlbvymiHT2zoG-KZKRTQatVsdHp09-61Cs1BlKroEgvtZYXUg75KVo_APW92MK_ieJHZRIQl__bhy9oqlQM-xlu5ihFiRoUVRedPQEfRawxVWw_MeteJV0UQEM
+  place_id: 238509fefbe8372047bf66c1af2b8aeae1cb03de
+  types: |
+    ---
+    - bowling_alley
+    - establishment
+  formatted_address: 905 Theodore Street, Crest Hill, IL, United States
+  latitude: '41.552597'
+  longitude: '-88.105513'
+  street_number: '905'
+  route: Theodore Street
+  zipcode: '60403'
+  city: Crest Hill
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:58.361895'
+  updated_at: '2013-06-20 20:01:58.361895'
+  administrative_level_1: IL
+  administrative_level_2: Will
+places_089:
+  id: '90'
+  name: Potter's Place
+  reference: CnRrAAAAyI29ZEshqudKTDFNlsEUreZHUv88aUNW1ejEkKnv3B9rirMCtdwrQkUgjUV34lthjiVr5qjWNgRcTFqegwffp76GrQUwgg7UgsaQSBi7YsryBl90TRBC-PMU8cpEMpGQfAmxDZUjozvDJB9UBlA3fhIQGk9S94H_YdT80xFatZb-mhoUpmb_JFu5coFg_NfzM-teiUNjWR0
+  place_id: 64fddd706fa97fe2dff13763a2aead34f7e8ddcd
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 29 West Jefferson Avenue, Naperville, IL, United States
+  latitude: '41.773156'
+  longitude: '-88.14902'
+  street_number: '29'
+  route: West Jefferson Avenue
+  zipcode: '60540'
+  city: Naperville
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:01:59.857602'
+  updated_at: '2013-06-20 20:01:59.857602'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_090:
+  id: '91'
+  name: Love & War In Texas
+  reference: CoQBcQAAADPMLLpX5tb_1tW_rq4SdsdzfXdkQKNIUy1lNIGM9XWEuK1fbq1I1Wn_rES4l1527yq0pF-rGTmTR6M5poTRhsW4Ikdm8ybFiU6bf-eVkacc_8_M6FBYO6z9kWZ3sRbQdCEOqb8GLvyzUauF0hZiGAeV99EjoH4x3TQWoIBiKh07EhDhL4k0B8X5Xk35v6ePxGzZGhS9S_MqRTGCNXr3-4WXQUdbSOTBoQ
+  place_id: b1c4efa30269b4190f140fe49b120a1f3e5c5652
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2505 East Grapevine Mills Circle, Grapevine, TX, United States
+  latitude: '32.964697'
+  longitude: '-97.039007'
+  street_number: '2505'
+  route: East Grapevine Mills Circle
+  zipcode: '76051'
+  city: Grapevine
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:02:01.669898'
+  updated_at: '2013-06-20 20:02:01.669898'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_091:
+  id: '92'
+  name: Brit's Pub
+  reference: CnRpAAAAqVAgclKrv3pRMPe8NOIxMv4NAN3imiZ_zbIfWCjc03DQmWsBaKZWRfB9p8ID9jkFpAQn1_vgttTl2P6QIYP-97-Fn6zvt0aFnM1eTiVA2MdHGJWT3sEfYefGK5TCvwSU3qbBHfqJWC1mykW2NEh-BRIQlxEK-hQF5LAB2ujCEZXjVBoU7LwARTahnzho5OsZmdDqPmptSH0
+  place_id: 1fa8d559901714fcef91a9e8e1d661c2e292e591
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1110 Nicollet Mall, Minneapolis, MN, United States
+  latitude: '44.972716'
+  longitude: '-93.27595'
+  street_number: '1110'
+  route: Nicollet Mall
+  zipcode: '55403'
+  city: Minneapolis
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:02:03.066626'
+  updated_at: '2013-06-20 20:02:03.066626'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_092:
+  id: '93'
+  name: The Vig Uptown
+  reference: CnRrAAAAjkJYwPK9ikt-mM77mLLEjjrgT1jFl3zyMJ2Jmll26tbleSZepuvvajLIfM4WvWWMXvwH2FM8QIDTHFMWE_nve8BgZqhbMp1d4P6Txn_1qL9-Is2l5F1N2I6bW3Wd_HfAbaJJ2VUmpYrOm7_CgrMkoRIQBfqaQbjiHYWtMuoHq_jCmBoUGlOBiP0R7Aqvt7SefEp6RKL8BYc
+  place_id: 18c5e5a9f4619ce9d9a80c093ccfacae8acfc36f
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 6015 North 16th Street, Phoenix, AZ, United States
+  latitude: '33.52433'
+  longitude: '-112.047351'
+  street_number: '6015'
+  route: North 16th Street
+  zipcode: '85014'
+  city: Phoenix
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:02:04.45879'
+  updated_at: '2013-06-20 20:02:04.45879'
+  administrative_level_1: AZ
+  administrative_level_2: 
+places_093:
+  id: '94'
+  name: Hooters of Bayside
+  reference: CnRvAAAAo5j4PfmrxERuDzqrzVJsa6Ff_cubxUq7WcooR-nzKqbU8AzN8Tg9coPL0Rb9O9sNDYBZnWF5a4izKjf1pbZYklzV6XVZmNv5kYjIgGH0-oS0CQZfiA-LkBmjB0YifBFqoCQk180mxMknvoD1xA7k7RIQwAZxzHzLjPoJHRAipr8n7RoU2Z5pmqAuoB04WUWH-xGvSyENdFo
+  place_id: ff0ce56f667e6397ea3b260ee9428f2256f0c9c5
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: '401 Biscayne Boulevard #225, Miami, FL, United States'
+  latitude: '25.778501'
+  longitude: '-80.186473'
+  street_number: '401'
+  route: Biscayne Boulevard
+  zipcode: '33132'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:02:06.877315'
+  updated_at: '2013-06-20 20:02:06.877315'
+  administrative_level_1: FL
+  administrative_level_2: Miami-Dade
+places_094:
+  id: '95'
+  name: Brü Craft & Wurst
+  reference: CnRvAAAA0xtyKiUjiarnTi8rQnPQBQve0aJ1yyeeriVQ5Q7y4VHxbcMqA9TgohXcUGcXpMQFMKNanHV8iyO69ihRWetX1UGrhqIIlMePDo8a9wkiCLpKB59m5k9sxrZ5QCK5Fmb-TW7dlezGBOwoKzHpDEkWARIQ-_f-wdGuqG606vQPPXCz9BoUmUhu3E7nIuDyNqig55uuLN9pQ3o
+  place_id: aa11180afd2e9b9f7b88562f89dea261e854a36c
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1316 Chestnut Street, Philadelphia, PA, United States
+  latitude: '39.950605'
+  longitude: '-75.162466'
+  street_number: '1316'
+  route: Chestnut Street
+  zipcode: '19107'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:02:08.279215'
+  updated_at: '2013-06-20 20:02:08.279215'
+  administrative_level_1: PA
+  administrative_level_2: Philadelphia
+places_095:
+  id: '96'
+  name: Delta Bowl
+  reference: CnRnAAAAlGbAY_34tSHU8nLn39RcAyWLznjdQ2GI7zAwMzEB-vvSAloZqTGeQktJnEXfg1KmPoljkZwmTsxirl_b8BPXT75LN9bsE8VQKxJZFWT9N8zytCiekDb8EB0-XpyWf4XU6Ldt-mpbVk3z06mgj-BrQxIQIrfEpWmrocsGuHavPaqUVRoUjaCBkBNkslHoYZNG7xit8EMUiVc
+  place_id: 4c58a60ab304ac9d92f6357200dd5531a7f0e724
+  types: |
+    ---
+    - store
+    - night_club
+    - bowling_alley
+    - bar
+    - establishment
+  formatted_address: 3300 Delta Fair Boulevard, Antioch, CA, United States
+  latitude: '38.003463'
+  longitude: '-121.840264'
+  street_number: '3300'
+  route: Delta Fair Boulevard
+  zipcode: '94509'
+  city: Antioch
+  state: California
+  country: US
+  created_at: '2013-06-20 20:02:10.133046'
+  updated_at: '2013-06-20 20:02:10.133046'
+  administrative_level_1: CA
+  administrative_level_2: Contra Costa
+places_096:
+  id: '97'
+  name: Celts Pub
+  reference: CnRoAAAA6gq43wShtVI2A919R1YLzfobfNnxxJmUPCIo9LkpAJUqP1txVJwhry2JgkR6nDo446xqhlWk1KL-RQteC_clO4EKaAU6OzdZuLpgO_PMvGSdotFDQ45h-qLinr3g4fDk0TsPOMa2LC-tNRbg73n05xIQSxKh2H667H0sdxWG00L70hoUpKjeQluVGKKaej1MwvRPeNgQ0Zo
+  place_id: 8c72372d856d349a955b04d85c32d78809f73fa2
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 200 3rd Street, Farmington, MN, United States
+  latitude: '44.641269'
+  longitude: '-93.145436'
+  street_number: '200'
+  route: 3rd Street
+  zipcode: '55024'
+  city: Farmington
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:02:11.899345'
+  updated_at: '2013-06-20 20:02:11.899345'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_097:
+  id: '98'
+  name: The Dive Inn
+  reference: CnRqAAAA23_ir6JXSKQqyBgXBbmaCVv3dTv1-ZB6SF912ybpDDxNODOYFcr1B5V7_d0vNnUp5hh306OVf6I_jJfmrdUhwDhe8ngVYdPmGF2OoqWl5BSggTBh8H1ThdmBFrnk5wM0u8ibwkf5sWr4b_lXam4mmBIQor1lT0Eni-7onelk61IRVhoUj2MZxtQHu_kiH-eixqee22VFP40
+  place_id: 45a8370da5968f29fed43e4ca6e2a8ac2652e27f
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1380 South Broadway, Denver, CO, United States
+  latitude: '39.691494'
+  longitude: '-104.987087'
+  street_number: '1380'
+  route: South Broadway
+  zipcode: '80210'
+  city: Denver
+  state: Colorado
+  country: US
+  created_at: '2013-06-20 20:15:46.722933'
+  updated_at: '2013-06-20 20:15:46.722933'
+  administrative_level_1: CO
+  administrative_level_2: Denver
+places_098:
+  id: '99'
+  name: Mercadito Chicago
+  reference: CnRuAAAAe4shIVj8JNV0JfSzzxUwNfU-qq5QqwQrWruX-kHlGkzGd7ZVugXVO2fsAmhpNe1XJXmmx9FIIygc4Hm3qPrWjdJgLhJ9Z3AawWjSr9DC7BFZa0DbejEbaBAWJZ3zy1rkoorUNXru5sZkwfmaba_vdxIQ9tt_TtQvZ5RPwFLXrYIrBhoUrq2tYNGe725s4AKUB4TN5vc2zb0
+  place_id: c02dac6de77e9917e0b89bdbe800a65c3a271fb4
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 108 West Kinzie Street, Chicago, IL, United States
+  latitude: '41.889206'
+  longitude: '-87.631578'
+  street_number: '108'
+  route: West Kinzie Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:15:48.355248'
+  updated_at: '2013-06-20 20:15:48.355248'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_099:
+  id: '100'
+  name: Griff's Landing
+  reference: CnRsAAAARs_ab1cKkqydax292q2CE45Pl7bGIm7TnMCaGr4kBDeuSw02NLeJ7YmTqsvdggehG70pM1cmfU7AUxJ6PRR9K2y1nHP6KGY7ak-Iy32K1Wgl40Dv9bphR_Xwkv9DrhSBA8c_PpxDmahpVMgGLGV9VRIQRNYz7qLB6LGQSMmHge5dShoUCFIsCdqsh0BClZxwqBy4ieThCoc
+  place_id: dcb3cbda93e03bd1afca2d3ad1ddda9dcc4a8f81
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 43 South Market Street, Frederick, MD, United States
+  latitude: '39.413158'
+  longitude: '-77.411217'
+  street_number: '43'
+  route: South Market Street
+  zipcode: '21701'
+  city: Frederick
+  state: Maryland
+  country: US
+  created_at: '2013-06-20 20:15:49.705115'
+  updated_at: '2013-06-20 20:15:49.705115'
+  administrative_level_1: MD
+  administrative_level_2: 
+places_100:
+  id: '101'
+  name: Jack Patrick's Bar & Grill
+  reference: CoQBeQAAAKkxnhRWv8EGGIPTEP2jo8TcRgS665VuMtM6WiHPXt4mgrbopjQVbugvtIo5o4UC6g4WebToazKMeX9y8545nm4c6CHini-6ckU54yFOjafYxs_YgtNdKjVD-2pXYjlQFp1-kq7sPTtQmpoZW2jq8PsC3ueeH5agFQ48CyxbqXJBEhCGxI8p21ZOlydd7gpxwdDpGhRbVl8cl9sKUP9Dtoz80r3BclWqHA
+  place_id: bb1dd2838da486099b1b6c1d01fb7fe6a497a556
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1000 Olive Street, St. Louis, MO, United States
+  latitude: '38.629103'
+  longitude: '-90.194817'
+  street_number: '1000'
+  route: Olive Street
+  zipcode: '63101'
+  city: St. Louis
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:15:51.214276'
+  updated_at: '2013-06-20 20:15:51.214276'
+  administrative_level_1: MO
+  administrative_level_2: 
+places_101:
+  id: '102'
+  name: Magnolia Lounge
+  reference: CnRuAAAAwLupFG-C6CWGbomKF8pWx6cZc4Cf_V8qfx2fFumayGb0k5emGkFMNXEFGhYuzbj9qI39Af6MlqIR0vdeE9K5ctOUv39OCcX4NhevOpuXfb6Tdw2FlH4f03zKoA0xpys5DxzB4vaZuFsA5-YeqVieBBIQ1lNHbojSCUS_Xi9UEXJu8RoUWRdwMoFO5ZzHgwPZZFEzFDDb9wc
+  place_id: 3f48294bdb8e126836646f4a5b1f2be56ab0d656
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 492 South Lake Avenue, Pasadena, CA, United States
+  latitude: '34.137367'
+  longitude: '-118.131964'
+  street_number: 
+  route: 
+  zipcode: '91101'
+  city: Pasadena
+  state: California
+  country: US
+  created_at: '2013-06-20 20:15:52.695425'
+  updated_at: '2013-06-20 20:15:52.695425'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_102:
+  id: '103'
+  name: Roger's Roost
+  reference: CnRrAAAAYWbjvk_iPyTpblyaSU_2Cq3S9pckg7dkDYigSvlL7fSDgtmw_wpuXzCUUcQRGrEh8gnPogZjV4Z8NCKbeRMnnB9YdKTCxH2Cwc4se0wasshPRItTAM1Gwb73kAZamD-TxagvnGtOC3RCHmh8WHf0sRIQ1DDo4nuZSDMrtbeWYekvbRoUXwKQQaj00ppv5dkvWB245iiFtYw
+  place_id: 36a9808e66d5e008890cb6b1328323d373b46e81
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 33626 Schoenherr Road, Sterling Heights, MI, United States
+  latitude: '42.542771'
+  longitude: '-82.987919'
+  street_number: '33626'
+  route: Schoenherr Road
+  zipcode: '48312'
+  city: Sterling Heights
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:15:56.174678'
+  updated_at: '2013-06-20 20:15:56.174678'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_103:
+  id: '104'
+  name: Granada Bowl
+  reference: CnRqAAAANBvtMGpCG2PgUejZpnfXHZe7PJTy_fStgosJ1-fveEpG3h0ClIMEtVlXj_5aBy8_XPyi27wWfQ09dBpRZOZy1VmuF3TaZqXr6HQhUn-9tHkMF4lWNWl6nwRc6rHoUW4lkpknjLuQoBl8NPJKMS1fbxIQkzzYHYafCloOmNSmdtKOChoUBYB6jyJEeWZvt7QhJNJfcbSY8l4
+  place_id: add7641ef08b916a2154aca2dfa56715b92752fc
+  types: |
+    ---
+    - bowling_alley
+    - establishment
+  formatted_address: 1620 Railroad Avenue, Livermore, CA, United States
+  latitude: '37.681918'
+  longitude: '-121.776274'
+  street_number: '1620'
+  route: Railroad Avenue
+  zipcode: '94550'
+  city: Livermore
+  state: California
+  country: US
+  created_at: '2013-06-20 20:15:57.687709'
+  updated_at: '2013-06-20 20:15:57.687709'
+  administrative_level_1: CA
+  administrative_level_2: Alameda
+places_104:
+  id: '105'
+  name: Tabu Lounge & Sports Bar
+  reference: CoQBdwAAAAeofvHV9e0pUVOwjWLjgKmol4hg93wCV0KgEDpwiwwC5nMY7AFvHKARkGGMBXjBR1XRmEdbVbV1aP4MfuZciG9sqFDm_5U3kNxWn-Rbk_KL1E9mzAxXTh-rMWeXLNMbArbjoxdnhIqyRpNVJm2m12qmXy_Gsc2xEHhVYkvfWsmNEhC3WxB1eiR44rdxJcC-L68GGhTYmCSNPzCKgDRonked76ZYGLMInQ
+  place_id: 16ebd7d1f4d0e29187ada8311f05703d3907e02c
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 200 South 12th Street, Philadelphia, PA, United States
+  latitude: '39.948466'
+  longitude: '-75.160709'
+  street_number: '200'
+  route: South 12th Street
+  zipcode: '19107'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:16:00.195568'
+  updated_at: '2013-06-20 20:16:00.195568'
+  administrative_level_1: PA
+  administrative_level_2: 
+places_105:
+  id: '106'
+  name: Club Paragon
+  reference: CnRrAAAAW0n6tH6PfCiExYY-9bNwT4m6jPMeW6TCjzsIV3yjUWYAryjVFOV8P72T16AcHmChnkPfuywIK5dpT6Pegrllp-3o-SihQPr_DOpL2llhee3oWYepOINHBSpPOioLboCagvMNlcnYEhXkfUpfzr8qrhIQkOe8oDh7K8me7Z7dyR0UmRoUUO6KJdp8E_0PIwGN7wa92hVQHWg
+  place_id: 83ca61bf78c8d39233be68731b5b80efa41016e9
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 3578 South 108th Street, Milwaukee, WI, United States
+  latitude: '42.978872'
+  longitude: '-88.047147'
+  street_number: '3578'
+  route: South 108th Street
+  zipcode: '53228'
+  city: Milwaukee
+  state: Wisconsin
+  country: US
+  created_at: '2013-06-20 20:16:01.687699'
+  updated_at: '2013-06-20 20:16:01.687699'
+  administrative_level_1: WI
+  administrative_level_2: 
+places_106:
+  id: '107'
+  name: Bokamper's Sports Bar and Grill
+  reference: CoQBfgAAALE22LaGUHD5_50tNJ6ZR5Vvezv47VJ-cCLJWg-qgkY-kf9CdwaUB5uLdXHfnlHf_vdx4IdpfQhNY2B-6an5JfKyPgCh-egIfcUAYNC4pBPQLUKyf-KRCHgj-g4lyMHje8F5ei8o9VljhI_S7yIHX9RyNfbIs7gHIa1EJlzWdetcEhDatStegwHkHBX1NDlz3fD8GhTMWwpNo4uy4ZJ1JQJiFIm28kzKuA
+  place_id: 4f316233b87168c3a10d18f00ea186a40418ad5f
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1280 South Pine Island Road, Plantation, FL, United States
+  latitude: '26.107883'
+  longitude: '-80.262139'
+  street_number: '1280'
+  route: South Pine Island Road
+  zipcode: '33324'
+  city: Plantation
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:16:03.196317'
+  updated_at: '2013-06-20 20:16:03.196317'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_107:
+  id: '108'
+  name: Delano Hotel
+  reference: CnRqAAAAobtz0z83-pUwg_Eu7XdWkjHuLNRePiYIkkKWSWOpLCjkFPAPyJwQFeT-Nuqz4WXNIYCnz5Q1hrihkoYzKi1WbyjtggH9eB6jGRaRcDr_S8oASg7XM-sqI1diisPATdfX91MpIRXN8ZC4zygw3kYmbhIQ4hmK_dkCCVnLPSz7oNLB6hoU7HEoNkXZpUVzxx2zSQCvzitDmq0
+  place_id: 53b5beae4c957a8438c018fa1fadf197d6ca5f56
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 1685 Collins Avenue, Miami Beach, FL, United States
+  latitude: '25.792099'
+  longitude: '-80.129314'
+  street_number: '1685'
+  route: Collins Avenue
+  zipcode: '33139'
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:16:04.632566'
+  updated_at: '2013-06-20 20:16:04.632566'
+  administrative_level_1: FL
+  administrative_level_2: Miami-Dade
+places_108:
+  id: '109'
+  name: Eighteenth Cocktail Bar
+  reference: CoQBdgAAAO-OIZgy_ySynO6y8lajkNY2VMfYbVVuE-kmW8CGurST7j3Dbbh4-zEOdovH3taMOP74x9X3RHTemTprIXE_8PinSc-1G5ovAnZ_KJEDZ6goTHc7y0TF6xcWyLHhJpcQkF3crbLyc4-0dmJzdQfpHFfdt0rew8weyRkk04Ykg_BFEhAhP-CGbUr4_eVmi9aXdlvoGhQv9jH58ev31VgdYfUyGsO8GkCFLg
+  place_id: 1a434e4232f80e141556861dd35caae2c1a2d853
+  types: |
+    ---
+    - establishment
+  formatted_address: 2511 Bissonnet Street, Houston, TX, United States
+  latitude: '29.725401'
+  longitude: '-95.41738'
+  street_number: '2511'
+  route: Bissonnet Street
+  zipcode: '77005'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:06.064029'
+  updated_at: '2013-06-20 20:16:06.064029'
+  administrative_level_1: TX
+  administrative_level_2: Harris
+places_109:
+  id: '233'
+  name: Silver Lining
+  reference: CnRqAAAAW9mQHeStMHQVDoUuHlM1eN7ed9sp_H07Pb_ppXQZAQPvqhteXIeirwt0FiXwsCLTvz5WxxFofHLPMf-SrKlyqhaJ4LU8m7eLrj12IelNd6OQK6C5EK3fF7Oq1lb_ejcdKu6C1K0wGHumHvOrMkpV2RIQayV_MOsW4zTN53P2lPEqDhoUG-nfN-7iNAXyzx3FI-JiEHW2p3A
+  place_id: d6fef620d687046c2627f9b13c6d50ea45bae6ef
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 75 Murray Street, New York, NY, United States
+  latitude: '40.71474'
+  longitude: '-74.010678'
+  street_number: '75'
+  route: Murray Street
+  zipcode: '10007'
+  city: New York
+  state: New York
+  country: US
+  created_at: '2013-06-20 20:19:47.208094'
+  updated_at: '2013-06-20 20:19:47.208094'
+  administrative_level_1: NY
+  administrative_level_2: New York
+places_110:
+  id: '110'
+  name: Machine Nightclub
+  reference: CnRuAAAArhpRZ7uVc5oz-TILVqcGCiGw1KNjPgEL78nx9_cL6AKCLWDh-uKh2QU2pqXPcgRwvN9IsLpEix_IzThFeOc1c99ftZ7O69RWtQwrWJX1QN8DXFjgNUmn43R2UTa2ojKi0AzY69Q1K7VfgD7rbGXmihIQvy8UvfGFUXwMIDwvuIn8tRoUTq2h0dJhAFV1dy5FJLSZmzKou7g
+  place_id: 08558796a4689e21901eba54a71b8164ecd5feec
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 1254 Boylston Street, Boston, MA, United States
+  latitude: '42.344952'
+  longitude: '-71.095887'
+  street_number: '1254'
+  route: Boylston Street
+  zipcode: '02215'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:16:07.393646'
+  updated_at: '2013-06-20 20:16:07.393646'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_111:
+  id: '111'
+  name: Fred's Place
+  reference: CnRpAAAAehW3NDbKuQrGaVle9CQpy6E7iwROOJeQp2IOj8F-8wQvc0rwJO07zws7lkavWZn9FY-hrECKEqH3JeMGJ7m_WYvow1iDPSXhWpTis90_o-worY2rjOb2jjsqvV1D_nc3dL6inQuhwykF_P8kf3xovBIQbGJHQA8Jo01a2yawkUo0cRoUKz62P72XjpAEwTusc7B1h7NG864
+  place_id: cc1a17a7757fee00781194298903c9347ccd9265
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2534 Old Middlefield Way, Mountain View, CA, United States
+  latitude: '37.41555'
+  longitude: '-122.100951'
+  street_number: '2534'
+  route: Old Middlefield Way
+  zipcode: '94043'
+  city: Mountain View
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:08.718327'
+  updated_at: '2013-06-20 20:16:08.718327'
+  administrative_level_1: CA
+  administrative_level_2: Santa Clara
+places_112:
+  id: '112'
+  name: The Happy Ending Bar and Restaurant
+  reference: CpQBgQAAAGupMh7vP9Tx8zkthnslChi_a5jUGlNe-9PqcNq4tqwzzIFEaraGnq2DnkZyzAYPAoEQt6gAlc0v_3Snk61jl1CxOZXgTVRzsFt5GNG3cN9p01252IdNz8EMqzmZEanUvicZWfYXHVUS_3dacS_FzlxUsSrQRXaKRTg0bCtnFQVePaypuYV1UJSWXbjKdD4VGhIQZU2m_myHWBBwNuQyctw72xoUFX7xv_br5bDmAjiODi7C9UOGKeE
+  place_id: 450f508531db66a1990c1b5e0c8c2506c54a3b7c
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 7038 West Sunset Boulevard, Hollywood, CA, United States
+  latitude: '34.097783'
+  longitude: '-118.342712'
+  street_number: '7038'
+  route: West Sunset Boulevard
+  zipcode: '90028'
+  city: 
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:10.198258'
+  updated_at: '2013-06-20 20:16:10.198258'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_113:
+  id: '113'
+  name: Mallie's Sports Grill & Bar
+  reference: CoQBeQAAAMqv_eY86x2fEWPR0SRCmcp3An2U4IJD8yvR1Sn9sQAZ-sVR_OFblTX8lt0ulNtqrivdKjf-zaEQ7alFyY1XuFKV8mSFbtrYj7pCFb16tkxTyXX4sY0iFYfdIqC4bJPt3NLEcenmYTeCR1FMtNUmUmAqSlxIgp-o9XB6iu1StiKhEhArQPAP6FOb2OwxRLNmcZBNGhQN0GiJOXmuMpX03u4OmplJlSFmNQ
+  place_id: 8d9c5b053d2f7bfcd08b28cab219321f2c7b99a5
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 19400 Northline Road, Southgate, MI, United States
+  latitude: '42.213391'
+  longitude: '-83.228507'
+  street_number: '19400'
+  route: Northline Road
+  zipcode: '48195'
+  city: Southgate
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:16:11.582237'
+  updated_at: '2013-06-20 20:16:11.582237'
+  administrative_level_1: MI
+  administrative_level_2: Wayne
+places_114:
+  id: '114'
+  name: Barcadia Bar & Grill
+  reference: CoQBcgAAAAM77D8I2GFLiMZmnAFGAMgZkXlCQM4UavJQXo1hX-puykZ6PGXOpxGI81bVmL1BlVidQTx1Ub0kqXnszOibm4yQ9MtsmsgeIOxKFtDFHdmrGTvEldp68H-X_I4o1M18slFcbBWRYQgpOY5AW-cdh2sTRofucTBogho-iuoPhm3KEhCmEkfB80JJNoASAGWkWMoDGhRX8Tal_ShyN7lMo2vnufl3DUhm4w
+  place_id: fd8345f9b20da8effafcb77a4ad64e37dacada6d
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 816 Matisse Drive, Fort Worth, TX, United States
+  latitude: '32.750616'
+  longitude: '-97.351182'
+  street_number: '816'
+  route: Matisse Drive
+  zipcode: '76107'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:13.049998'
+  updated_at: '2013-06-20 20:16:13.049998'
+  administrative_level_1: TX
+  administrative_level_2: Tarrant
+places_115:
+  id: '115'
+  name: Ojos Locos
+  reference: CnRoAAAAHFU8OvKRd_inNUVv0tbUYq8mGwQjHbWZkVlmWZn6mJQYXZLWtloUxp7UJHBKOUOE_bDCKfpIwuWMiLf40_sG6AHUwoj0ESJq6S-qXE8grkqcOhzVlrP5BJDUlDrPmM4cguEURB--Rnuf7-OLT-APrhIQ4yO6dD1ejxKQTXgX-hPZWRoUspk0gZ3oyd7pz-A17xs5s9qNkFA
+  place_id: db7bc160b830295afd547697b4418c8ae7e6b17a
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 515 Houston St., Fort Worth, TX, United States
+  latitude: '32.75364'
+  longitude: '-97.331613'
+  street_number: 
+  route: 
+  zipcode: '76102'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:14.40394'
+  updated_at: '2013-06-20 20:16:14.40394'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_116:
+  id: '116'
+  name: The Vig
+  reference: CnRkAAAAt5TGC8ZpS4dshm8rS4lsLamDpG8m1Q-dq-XPsHHHa62A9guohJHvc2aDblUnR1XQ-CXreuD-xHszbVJW7XrmaadaC8-qOaJ4_c-Z3iVjMppevwcIMAF3Dg7kAWcGjQOOge9WFArYKupf68XQMz7aBhIQEN-5MUF0q1h1y3PvYlRmVRoUPOKYelSVZg509jq7qE-49GT6gPM
+  place_id: 6c382e896a8d34cee2b02f242468931ca1f6afe8
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 4041 North 40th Street, Phoenix, AZ, United States
+  latitude: '33.494496'
+  longitude: '-111.9951'
+  street_number: '4041'
+  route: North 40th Street
+  zipcode: '85018'
+  city: Phoenix
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:16:15.85972'
+  updated_at: '2013-06-20 20:16:15.85972'
+  administrative_level_1: AZ
+  administrative_level_2: 
+places_117:
+  id: '117'
+  name: Tolbert's Restaurant
+  reference: CoQBcQAAAE23B_-Xxrh2qXgWP6j7DBO0kO-HexKT05J_tncNzKMxek7vx4Uo8xSDL4_RvtEgp7KhqtFIhdj1F0thBLM_SGrBjMYXYdNUuragZnH_HNlChUDnNXHjQsmljcM0VpC7f4XOkY_P-sbw8TxICJR8CVywRByVUdkWE97bY5DLKFToEhDdDBogWnd7enqL5HJsK-aoGhQyRllILgB7QqDFqwbiChXHRlHZmA
+  place_id: cc284a3acfcd74657ef79d0546bb303efe52a529
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 423 South Main Street, Grapevine, TX, United States
+  latitude: '32.936896'
+  longitude: '-97.078256'
+  street_number: '423'
+  route: South Main Street
+  zipcode: '76051'
+  city: Grapevine
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:17.356476'
+  updated_at: '2013-06-20 20:16:17.356476'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_118:
+  id: '118'
+  name: La Tequilera Del Patron
+  reference: CoQBdgAAAMDpaeX8WdlKMyII_MrcXSnMiPQpvA0Vjo2SLcbaPnl5MC7O0SVXItboV20pghsfwr474FaW2dfelLM9VyyKVUlYnUvLDPdaibcFOOIh5PVjf8MonSGMBGa8x9pk_cJ8HcM1AFmxCPXIj9zpMVtlNKo0bo0S5N38J6kA79BD3HzFEhCEa6QX6u4tCqRuLrkX-OiNGhRYjYj43-JAThHpdkJjz6H8Uz4PeQ
+  place_id: 78b6353b758cbb35f12348bcd903678cd1a3c7ce
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 17776 Blanco Road, San Antonio, TX, United States
+  latitude: '29.603764'
+  longitude: '-98.507455'
+  street_number: '17776'
+  route: Blanco Road
+  zipcode: '78232'
+  city: San Antonio
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:19.521088'
+  updated_at: '2013-06-20 20:16:19.521088'
+  administrative_level_1: TX
+  administrative_level_2: Bexar
+places_119:
+  id: '119'
+  name: Lantern
+  reference: CnRmAAAAZ6lBH-OsYhFGod4Pvv-E8Jp7ReQzYC6xN8zEQ7gthlJWXTnIbnrpM0JaYPwR7KXE8gmmt2ZjQnzbX9OLVUp7FDx-6gpxihO5ze6F0tAOvoGG9MCZzbmp_SbRsKKFh23H-4keV58LPxri45DkB7suKxIQ8gJAW1mlPTn6YoN7AvApExoU5ZAmVtx1xkQ0a7iAaNsp1vZacEQ
+  place_id: 75aebbb4ffb7ff0ddde005caa46b177355050e06
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: '8 Chicago Avenue #1, Naperville, IL, United States'
+  latitude: '41.771403'
+  longitude: '-88.148243'
+  street_number: '8'
+  route: Chicago Avenue
+  zipcode: '60540'
+  city: Naperville
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:16:20.939589'
+  updated_at: '2013-06-20 20:16:20.939589'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_120:
+  id: '120'
+  name: Del Rio Lanes
+  reference: CnRsAAAADjw7KwLWZcrF7kx6ry13QvdhuQbfN_-M3eQaSz_07TOdeuwoqrTjRdsq_JU6QoV05NcVASwplQujwqWHq6FrkrIz0uQXEObGoKLo8bMXqXWyJ3rhycWRilzZ4OmKbvFZvMjV8zu5Mvc3wi7j2CpLMhIQ8BQWHnlliS1Mcq3PzcDT7hoUrLw7hW9ub-iI1vWr1uZ0FGYoAZ0
+  place_id: 77f02e8e89a2b9afdd38c7da91d27819d17773b1
+  types: |
+    ---
+    - bowling_alley
+    - establishment
+  formatted_address: 7502 Florence Avenue, Downey, CA, United States
+  latitude: '33.957401'
+  longitude: '-118.139041'
+  street_number: '7502'
+  route: Florence Avenue
+  zipcode: '90240'
+  city: Downey
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:22.40014'
+  updated_at: '2013-06-20 20:16:22.40014'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_121:
+  id: '121'
+  name: Royal Oak Bar and Grill
+  reference: CoQBdQAAAFofwwbyzl_9PRm_MoBr1t2-ZISunzjxQAlgMhDsLf0m53NIInwoX959SqfLrK8yzHJqUP38IJnymXBW9Q8lZaKTBF55u8K8oyLBF2cNsq-NJJmV-xaGJhEDxjWkSKfmzIwToh53X0UNqtE0bMMI9H6lmZ0kOcyatoQR4l9SxWbpEhAa6YZeSqbs7mYVjp8JlrkGGhTY4S7BHTrNPJSurH2sUld0_2Ttxg
+  place_id: f742771d199e483bc81b84820ec4741b276fd980
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1318 Westheimer Road, Houston, TX, United States
+  latitude: '29.743972'
+  longitude: '-95.395334'
+  street_number: '1318'
+  route: Westheimer Road
+  zipcode: '77006'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:23.99885'
+  updated_at: '2013-06-20 20:16:23.99885'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_122:
+  id: '122'
+  name: Turf Valley
+  reference: CnRpAAAAHiOvDCJ5t4qlEgQLOLxeH5ncgCp9AkM6s7sY9e_ndRO80LZIVXgO3GknjoT872OOAXgnGYk_UMxz89lETqiqFq4WCdQjPG6wedOq7PKG72z3ohdbypOYLUL4EzYM63YHH9mhSJHh45d44lAS7NlSYhIQI3Y2KZYuDBjI4LrndoAPuxoUZ7rlRhDA2So4WV5oCptaeAd9RAY
+  place_id: 6d789d2768b088b2eb1f9bda3887fb8f96acc393
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 2700 Turf Valley Rd, Ellicott City, MD, United States
+  latitude: '39.297013'
+  longitude: '-76.892273'
+  street_number: '2700'
+  route: Turf Valley Rd
+  zipcode: '21042'
+  city: Ellicott City
+  state: Maryland
+  country: US
+  created_at: '2013-06-20 20:16:25.584084'
+  updated_at: '2013-06-20 20:16:25.584084'
+  administrative_level_1: MD
+  administrative_level_2: 
+places_123:
+  id: '123'
+  name: Blue Moose Lodge
+  reference: CnRuAAAAbMjSsAhSRtMLyiacf73aAJ7fvkZoYL2Rw1tlF3XAFdDSu8Ee-N5mWdUMB93w7S72EwjzY3PTx8ocKCCky-xdE1wFbeSiEQmOwEnWVPBJWPqdKMTDjqbqIEHjHdwsWLCQKus-86zvyjopxYKjRHEI1BIQHjF2xC2RgkwVwSaHXI1HFBoUrlCB6jiVENPjT9ZgVTlwQHvtWTk
+  place_id: 391bd56b7478b928593bb04118b3e5d3e933d5c5
+  types: |
+    ---
+    - bar
+    - lodging
+    - establishment
+  formatted_address: Suite C, 5306 Washington Avenue, Houston, TX, United States
+  latitude: '29.77072'
+  longitude: '-95.414726'
+  street_number: '5306'
+  route: Washington Avenue
+  zipcode: '77007'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:27.156702'
+  updated_at: '2013-06-20 20:16:27.156702'
+  administrative_level_1: TX
+  administrative_level_2: Harris
+places_124:
+  id: '124'
+  name: Meddlesome Moth
+  reference: CnRtAAAAEDKhbYkSyrmvGmUC0uc3tjFx_GA6QnOunwoV5_xjvO9wA3hOhX6iVQOGl--ZQ_AmtMRcp8gfzkbY8oV9bx21lAftiMGueeNKEKLELRd4Fjt_FpZrJ1i5gQQLkT_dHiwztRRpuliUmdsGKA3ikr1s1RIQ9qqSP-SG_beDuL3Hg84grhoUM_1S8wEjAIE2rmi3AcIoImOZcDU
+  place_id: f71a3de10066952e6908181db065266f415366e8
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1621 Oak Lawn Avenue, Dallas, TX, United States
+  latitude: '32.797019'
+  longitude: '-96.820116'
+  street_number: '1621'
+  route: Oak Lawn Avenue
+  zipcode: '75207'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:28.672092'
+  updated_at: '2013-06-20 20:16:28.672092'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_125:
+  id: '125'
+  name: Diller Room
+  reference: CnRpAAAAK2nQtmSqdh5T32gzKtNkRAtkEKLeRsXgXcBKulD5vs0daiFxpQvhtPlYGXYBJXQsFOLxJr48nCYCVU_u2SFQqSUM6Nc1zbYwn0951pFpNJNkVLq0w6KrjltAGS5r9EHrs04XbD-e1EaqxGZd827SwRIQgSpSK-y1NpYtF2KxkQOavhoUw9gGA5YG072h4ufeKRC5VpCF9EQ
+  place_id: a2c21943ffdb648d24d470e41e8ed601c1cc9908
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1224 1st Avenue, Seattle, WA, United States
+  latitude: '47.606817'
+  longitude: '-122.337917'
+  street_number: '1224'
+  route: 1st Avenue
+  zipcode: '98101'
+  city: Seattle
+  state: Washington
+  country: US
+  created_at: '2013-06-20 20:16:30.047362'
+  updated_at: '2013-06-20 20:16:30.047362'
+  administrative_level_1: WA
+  administrative_level_2: 
+places_126:
+  id: '126'
+  name: Jamboozies Sports Bar & Grill
+  reference: CoQBfAAAABFNI2mZb_lA4NMRz5m9cGt30D5HsvgOGDn_x51a00mT-fO5GIWcpLApf66CWxF-IISOlXomC3DflKdew1L9vxEpRK3Hkz2aOmocYdOAJjep0c_RCJ046ZeESlaoUrPBDcNVsc8hm4pc1GQ6MUwSbwF4eW3Zs86azabWIQN8Tg1sEhCjwyMhksAsVlBuIB9tZbCvGhRSgHXEfLQRTFsXx19i8Qr07liqxg
+  place_id: a68c5b73028bb6b9aa1d28a045d7522dd3330c09
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 42066 Van Dyke Avenue, Sterling Heights, MI, United States
+  latitude: '42.602424'
+  longitude: '-83.03'
+  street_number: '42066'
+  route: Van Dyke Avenue
+  zipcode: '48314'
+  city: Sterling Heights
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:16:31.53065'
+  updated_at: '2013-06-20 20:16:31.53065'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_127:
+  id: '127'
+  name: Dan's Irish Sports Bar
+  reference: CoQBdAAAAKj9PA_PfTFcAnSkzhMDKB4e5-hjoTV0jHg55vx_eie52jjCzC5C9Z_5GrM01afw_q5-qlnYDOldd2QH-MXFmMwfRoTEVizfIHouO0hxE6TO72yabPTsv0r9Zm0V6Y-hopuegzqAXYFzQnFSLJ2JhLRVTpY5LAuqrbzm31RtxvTnEhBKogpV6LRYutcJnWz7Zem4GhQlGXPWs6Tjo-czVusyxTxEFjM1OA
+  place_id: 20204398845fb6eebc38fa1c2d8701a4dcc062c8
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1524 Civic Drive, Walnut Creek, CA, United States
+  latitude: '37.901682'
+  longitude: '-122.062406'
+  street_number: '1524'
+  route: Civic Drive
+  zipcode: '94596'
+  city: Walnut Creek
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:32.959965'
+  updated_at: '2013-06-20 20:16:32.959965'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_128:
+  id: '128'
+  name: Mc Teague's Saloon
+  reference: CnRwAAAA2oN-keSDuYFKC1wtN0DbtSZyRprrNq5fTDziRd7RwqmI8QuwkiuX3H_j3OSVI7tzAIHXBARA2ev4Ngxj2uWnt29fOHvmDASSZphoW1wqalt6jRXkjgEOvmzTbDGKyOpBbwetFY66jwXfwhWBXdR9gxIQtW1Ck1hcbWu03om9c4_T0hoUtRWGwxT-5yuNdEO5nlQksNGfYHs
+  place_id: 1e0219e161bd490a8da4c2369b33fac27cb8e03b
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1237 Polk Street, San Francisco, CA, United States
+  latitude: '37.788373'
+  longitude: '-122.420362'
+  street_number: '1237'
+  route: Polk Street
+  zipcode: '94109'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:34.778827'
+  updated_at: '2013-06-20 20:16:34.778827'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_129:
+  id: '129'
+  name: Celts Irish Pub & Grill
+  reference: CoQBdQAAABDVyD_ptZq0OxZkdpEjAzedOQesd-WbVTOxLPIU-LpINvqfeO4zxVFea67LrelbW8hzYzXK_6HvcOlhCTCwLeIaLTDDQ1gckqNy0NRQ-u5dTPuoVNOA2eEYWjQPA7RjuEfQ2MMAX1iqTpbomHyn7StFFi6DyrHHbIw182A6LkV_EhA29hfReEL-RG-tWqVMRdwKGhSRe00gjlUHnQ-UaPAwFCv17X3nqg
+  place_id: 639dfcfc34b3709013fc4b20f8981f0476728cdd
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 14506 South Robert Trail, Rosemount, MN, United States
+  latitude: '44.738781'
+  longitude: '-93.125959'
+  street_number: '14506'
+  route: South Robert Trail
+  zipcode: '55068'
+  city: Rosemount
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:16:36.228524'
+  updated_at: '2013-06-20 20:16:36.228524'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_130:
+  id: '130'
+  name: Town Danceboutique
+  reference: CnRvAAAAAXkvbHQcNUs22zX2xpHXEKBTUhHp9ze8r08K-5wr_ILcyJVrNjQ0WUzNEEGxzg_lbCuaFxOJeMUZXIUS5EE-Zi9VP1aepIRxyCP5fYAdHOaIQ1a7XndryijvdIc69V_JIgYXgz4a-tYFbjC40bAbjBIQjfkymHsWIs67l9V8Dt7A-RoUHaifuhQPdhJxyzK0HVTf4BK9Je4
+  place_id: dcd192ad6f1018a64bcf0c866934827fd93212ff
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 2009 8th Street Northwest, Washington, DC, United States
+  latitude: '38.91719'
+  longitude: '-77.022683'
+  street_number: '2009'
+  route: 8th Street Northwest
+  zipcode: '20001'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:16:37.673179'
+  updated_at: '2013-06-20 20:16:37.673179'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_131:
+  id: '131'
+  name: Uptown Grille
+  reference: CnRrAAAAh3QzPndkji_k3eMYZD2SUFmOrtr7CsqRYFBCmBlr63kws-Is9UgUlUdyY2fM-ZKULW9byX1tLm1Y5DvED8bQACVWG9IRlh9h3lSdls493I_fH39V0nwLPE76WUky0JbotIfD-jijqHGuT6kJppYK6BIQDXrk0jujRrEcrVthP6rpshoUcM50Hz1BmssIgIFIDJqz0uIiQls
+  place_id: dfbc6ad4624d721764872d97b49499cf1a991d99
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3100 East West Maple Road, Commerce Township, MI, United States
+  latitude: '42.54275'
+  longitude: '-83.441706'
+  street_number: '3100'
+  route: East West Maple Road
+  zipcode: '48390'
+  city: Commerce Township
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:16:39.151427'
+  updated_at: '2013-06-20 20:16:39.151427'
+  administrative_level_1: MI
+  administrative_level_2: Oakland
+places_132:
+  id: '132'
+  name: Llywelyn's Pub
+  reference: CnRtAAAAzLJXX03M_7vpEfCrvZeHAgvR3RaZuO011ZNyedmtFTpzqIrxb9vUb8reAs9TcICYrh2ZOepnK4k17jCyzrXp50KKzn5LZaRpY306wGzY57SaRFimL0tOXWdaNHXQlIoVYo9jqPPSqndxcKyQkS-m7RIQLyNKF97-Xohex4-b40l_YxoUYrfi941ZRopjZvao3IDA3KY80FE
+  place_id: 0e6bc5e7432acd9fc9dd8175f95928cf72cc360c
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2490 Taylor Road, Wildwood, MO, United States
+  latitude: '38.580052'
+  longitude: '-90.626918'
+  street_number: '2490'
+  route: Taylor Road
+  zipcode: '63040'
+  city: Wildwood
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:16:40.693847'
+  updated_at: '2013-06-20 20:16:40.693847'
+  administrative_level_1: MO
+  administrative_level_2: St. Louis
+places_133:
+  id: '133'
+  name: Shenanigan's Irish Pub & Grill
+  reference: CoQBfAAAAIL84qCgj99Eh0tHp-JiCbdjN5xypCAERqubhR9uVFc-aJ7QHxbbi_0dSq9TgOWeJi_fhsfpQpiwijTYLhw61G2F6hd_-Md2ZNJ6IYtuRAjVDXi19ANXKNjlqK4miF0qzTxy8GLjFxCjJ0XWocG5tmqr6VgQKeePloQ8YSNRYrYNEhC4IGXrp7f-ggL8l1gTe8zcGhRNt4M3aq_oqP8nr1UgisTiKHYxbw
+  place_id: 41f7331da15a5483826016058ec162ada564d362
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2451 Pablo Kisel Boulevard, Brownsville, TX, United States
+  latitude: '25.95907'
+  longitude: '-97.506194'
+  street_number: '2451'
+  route: Pablo Kisel Boulevard
+  zipcode: '78526'
+  city: Brownsville
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:42.154222'
+  updated_at: '2013-06-20 20:16:42.154222'
+  administrative_level_1: TX
+  administrative_level_2: Cameron
+places_134:
+  id: '134'
+  name: M Lounge
+  reference: CnRnAAAASl_no8VUw-qJHCsfD1jnarwzKXVyGztgq1iSYnySpJD9fJitPJCYWfsE-nyIZWC65TRKmG2CC_2pY3AdKiANQlrB4GWGPxJnRoU8y51ObcuH3OST9Mzz2gtGUlNHcevIQgiTSW9vtGxTFyMdxLmhYhIQTia0kr8mLDrOLFzMrF729RoU49h3o9dmM4AWZl4zzUVmokZ-kcY
+  place_id: 0cdc2fbcf8eb04e07d44f5024f540bbf07b0b985
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 835 Foch Street, Fort Worth, TX, United States
+  latitude: '32.750214'
+  longitude: '-97.356323'
+  street_number: 
+  route: 
+  zipcode: '76107'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:43.550012'
+  updated_at: '2013-06-20 20:16:43.550012'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_135:
+  id: '135'
+  name: Sky Fox Lounge
+  reference: CnRrAAAA_wItsSx36ZBOi5Nx_9LhGlUr6meTAyf0u6USnPKlsDxuBBLGZLoqh83ptEpoCE87PifmrZ3qFh7PcSW2bNkfogytXSIsMku77WSB_VB-eNlzRLZY486UpgRX_F8MgEagPfjqtKAxhdN9QEVhmnTDiRIQNsvt7MVCGTu-tGnLDcaTRBoUq9TFDSzIKbIXlNDZMjPcszm1GDw
+  place_id: c22a6b1b19880e1f2c9f012281fa47000ac22c50
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 345 S Garey Ave, Pomona, CA, United States
+  latitude: '34.056459'
+  longitude: '-117.750405'
+  street_number: '345'
+  route: S Garey Ave
+  zipcode: '91766'
+  city: Pomona
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:44.876209'
+  updated_at: '2013-06-20 20:16:44.876209'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_136:
+  id: '136'
+  name: Three Sheets Dallas
+  reference: CoQBcQAAADst_AXOtSD8dTVIgDFAtpj2UWXWVnzjW8QRo_kcrGyM_aDyhiYV1yBhS4yKK8Inv1e2Xc0fGjDDY1Uo1sVTc4Qs216FqP-ueYo2dgHbVxiN43C-t3yv7zRko24X1eYewLW2ZcPMaxFbxVLsvc2jsnqF2ehzeuMpgbHh4KELNkV2EhAR1hQoPGK_XPfke0BxkGIHGhQu_VoFaV5gLZc48WV_rBpkfFa0pQ
+  place_id: 951658e3b4d08fc8c2e1bb86c30d21ab662820a6
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 3113 Ross Avenue, Dallas, TX, United States
+  latitude: '32.79387'
+  longitude: '-96.791179'
+  street_number: '3113'
+  route: Ross Avenue
+  zipcode: '75204'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:16:46.398964'
+  updated_at: '2013-06-20 20:16:46.398964'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_137:
+  id: '137'
+  name: Eleven Nightclub
+  reference: CnRtAAAAZsHCU4eA0ONLvSLHbpDwQxhIJOs17NLO0A5ZN4DvlaTqfQoOHfyGuT6KMmW-aIozI2u_xZGHs3zHm6QSGA5ny1dd5uajxx0T07LNIX3x-GyiL8MdRk6Y-Ciin231CGPLEReSZ4K5ncf18y6EZk9ZghIQe8gw0iJl95Tx4F4n_21lMRoUpQOhNl2ymplkXUBCjUIZw4xYKnU
+  place_id: 204ebc183ee9645600125d112b4599421e7a2c82
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 8811 Santa Monica Boulevard, West Hollywood, CA, United States
+  latitude: '34.085742'
+  longitude: '-118.383422'
+  street_number: '8811'
+  route: Santa Monica Boulevard
+  zipcode: '90069'
+  city: West Hollywood
+  state: California
+  country: US
+  created_at: '2013-06-20 20:16:47.838564'
+  updated_at: '2013-06-20 20:16:47.838564'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_138:
+  id: '138'
+  name: The Horseshoe Lounge
+  reference: CoQBcgAAAJAUiGnsfEuctiILMbzoHcQ-p8CPSXVSb9FCHQZ9SFG7dm234UlEiEEQQDIwuEtTzBu9LqjLoH6Cy9J7jB8B7--eR4AoKd8rP9Uom8d4M9OCSI2lyixrvb9xBxsPAR3NZ4tVBY2tbUp0QMG16HuQ8DvMw5vnUcwGfpLWdyRw0tzyEhAUQwvx9eUjx2OGKOiiGxaMGhRVimCaQBS_YRE8Cbv2021y2wfZUg
+  place_id: 1b4aed0647904d322c732efb13a8b01535d5a170
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 414 East 20th Avenue, Denver, CO, United States
+  latitude: '39.74744'
+  longitude: '-104.981974'
+  street_number: '414'
+  route: East 20th Avenue
+  zipcode: '80205'
+  city: Denver
+  state: Colorado
+  country: US
+  created_at: '2013-06-20 20:16:49.253442'
+  updated_at: '2013-06-20 20:16:49.253442'
+  administrative_level_1: CO
+  administrative_level_2: 
+places_139:
+  id: '139'
+  name: Edgar's Pub
+  reference: CnRoAAAACBT5IZtVmrHhUPWdXFwicDWLiz4pxDjs7gCXnWkItSmmr6LCHkEd3efdq8jGnbJ68ATLhwpmKhszkWIjwT2hCA6AiD25KPl1bArvRRuvJqGJsamOa6z5S2Wei_z2lwrC8GAP3kUe0ZGDNmqwJjVjvBIQtb-JREzt7MyQeIvqx19zvhoUn-8WQ_ET32h-lZmZIU2x5MrMOU0
+  place_id: 07ff879363408d74e942de732d130fabd9ab4d43
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 153 Sea Girt Avenue, Manasquan, NJ, United States
+  latitude: '40.129489'
+  longitude: '-74.041896'
+  street_number: '153'
+  route: Sea Girt Avenue
+  zipcode: 08736
+  city: Manasquan
+  state: New Jersey
+  country: US
+  created_at: '2013-06-20 20:16:50.828116'
+  updated_at: '2013-06-20 20:16:50.828116'
+  administrative_level_1: NJ
+  administrative_level_2: 
+places_140:
+  id: '140'
+  name: CONGAS NIGHT CLUB & MELODIAS TABERNA
+  reference: CpQBgQAAACvYYtmbGAvjwHUC-l-o-XXji2Yrh3153skDklR4bsmnubZP_lqFeUPZgId1cB4Y2y_S8iM3DZGGOMtWEmNdBksZXRNvkXi8hytXjU9W5vd02aOXjJ3_W58AAEeyt4BaIRMV1E1Fly83EuDjc-zL_29YP07HoY8x7E_Qo5ahzMQo774oXrUJcjRlTTZAZggjchIQQWBiEKqumVgiSBczwPGF-hoU-n6s6-oMHQhinbDTY5OJuk6YghY
+  place_id: 63cbc2cefeea307a0a52a3d808b08bbdeb71247b
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 2079 North University Drive, Sunrise, FL, United States
+  latitude: '26.151365'
+  longitude: '-80.257264'
+  street_number: '2079'
+  route: North University Drive
+  zipcode: '33322'
+  city: Sunrise
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:16:52.194877'
+  updated_at: '2013-06-20 20:16:52.194877'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_141:
+  id: '141'
+  name: Miller's Ale House Inc
+  reference: CoQBdAAAAOSiFPL_IPxXZEaTeuVZ9DGfWyzZ8Jse_hYwYX2fLvLi4imM4BabBGRUqvBdyIeOWmcx5iyr2Yr0iPdCbPJUFEKP1ZHWQ71yDN_A0gwftGiJxgkJDb1j7lOhHyDSH9w3zjEdj0MZQXwSeGmYs-_b-BohWnG1_Ewdx6JHzmFhVmgAEhCVsmu5aEeHMRKTHBGGrMkIGhQoyqWwiXSpSdre5H-oPf-babyXNQ
+  place_id: 225b6ab5311e7feb5ccede1edc12c9d3f55c9d0b
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 11625 North Kendall Drive, Miami, FL, United States
+  latitude: '25.687903'
+  longitude: '-80.380454'
+  street_number: '11625'
+  route: North Kendall Drive
+  zipcode: '33176'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:16:53.963567'
+  updated_at: '2013-06-20 20:16:53.963567'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_142:
+  id: '142'
+  name: Fiola
+  reference: CnRjAAAALgJH1Kq5ZqPqR9B5u-I4KC1hOS3AUgULwzbFscaFVDzUGl9VNN-x4TLr8UEno64A6nUmBU0BD1R_kW6V46vt3b9q6sags-iQBBy6RenwUN5RAARdgODDSpjAS_F98sZU9udjEagyZvZC0nNUMWOH6xIQkJFAqFby9dXNGvDJlZtfZxoUnrqkcr_bBjtvQdI_zAfxwM1dYNc
+  place_id: 5bd5f21ffb81c6c63ddcd0aa406638e07f5560f3
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 601 Pennsylvania Avenue Northwest, Washington, DC, United States
+  latitude: '38.894008'
+  longitude: '-77.020826'
+  street_number: '601'
+  route: Pennsylvania Avenue Northwest
+  zipcode: '20004'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:16:55.57468'
+  updated_at: '2013-06-20 20:16:55.57468'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_143:
+  id: '143'
+  name: The Dubliner
+  reference: CnRqAAAAbd4uDGjjWeZ3TdRTxTwws6IAmXNsRSGNCEiHvMLtYm77z_TXMDNrsfuMQtW76TKHImb7xmedrYJfuOuXizRnfaq2tbniBotdMlzCISUlBVZy7VA5op6NfqMXQimlu7Djk6ZD4wAhLMOyenOx39ZV1xIQTZlSXN693VUMruQNFL7gNRoUaey9aXhisYupO8cP3QFiEYVvhSo
+  place_id: cfc7dfbe5b293507d55b6bac2ec2a0715ac36d56
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1025 Washington Avenue, St. Louis, MO, United States
+  latitude: '38.631449'
+  longitude: '-90.194721'
+  street_number: '1025'
+  route: Washington Avenue
+  zipcode: '63101'
+  city: St. Louis
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:16:57.576269'
+  updated_at: '2013-06-20 20:16:57.576269'
+  administrative_level_1: MO
+  administrative_level_2: 
+places_144:
+  id: '144'
+  name: Kilroys Bar & Grill
+  reference: CoQBcQAAAOG3lLE6CGyrAMJwpF1MvTIu6tEqv6-xsCs2u-ajWDs-5eDsJdeGZgQce5z1yps_3jorTm15wfzLyEstSDPt4et6VfZGjmF8mx4EuJhfyMEMfHmmxUpGGBKE5ZStFat_It3X-nsoU6k9UiF3DJChfdR3J5mBTfUvT136s_LWMzcFEhBHB0m0v9vS1lZthuk3g4PQGhRh5PMHpmfhra7JShs57ka4wCz81Q
+  place_id: 5427c9415d883536f3bffded0de7202aebc71414
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 201 South Meridian Street, Indianapolis, IN, United States
+  latitude: '39.764092'
+  longitude: '-86.158039'
+  street_number: '201'
+  route: South Meridian Street
+  zipcode: '46225'
+  city: Indianapolis
+  state: Indiana
+  country: US
+  created_at: '2013-06-20 20:16:59.19151'
+  updated_at: '2013-06-20 20:16:59.19151'
+  administrative_level_1: IN
+  administrative_level_2: Marion
+places_145:
+  id: '145'
+  name: The Grand Nightclub
+  reference: CoQBcQAAAAhJ31tggABtqxeAVkv7-Yjx6cx8B-d4FsQWDN2g-KSp7qUiAMKSiHi9CLzCEKkeGIMFVfiZ_6S_JxxiruU9wrUxFTTrUB0zJDZDNKTQihtvAXl_LsVdJaeaAKwzmBc-fFctoVXE25OSf8ZQvYMe1YxdhQTDMtE01pfpqc3OJOIxEhD3OT9IHtg29YGWfUWJiNf7GhQTk-7nv6ims-QEpVp1lc0BINFgQg
+  place_id: 18e74c4aa201e64722d8414f3166d180244d8aa9
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 520 4th Street, San Francisco, CA, United States
+  latitude: '37.779169'
+  longitude: '-122.397787'
+  street_number: '520'
+  route: 4th Street
+  zipcode: '94107'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:00.691162'
+  updated_at: '2013-06-20 20:17:00.691162'
+  administrative_level_1: CA
+  administrative_level_2: San Francisco
+places_146:
+  id: '146'
+  name: The Righteous Room
+  reference: CnRvAAAAQouXqCNDVeHDKw0LYQuyDYW4AuYrXMsv4aJUvk-T1yMfWQaCEw2Mav71S5Rsy4c9QmA5zqhyhgyeuRyKDY9KHEfMBZE1lXhnhkaBCHhQiZ3ThVXKT26Z6uwISHG7E65tT_LHFc1F3wb-jvmWoh_5_RIQJvsqCBneriN7lWuZpFseJBoUy3Fl6eKvEhhnM9IWCG0k1bd6bMA
+  place_id: c943e1c695f5ecced55bcf248a9434e7246e1c99
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 641 Walnut Street, Cincinnati, OH, United States
+  latitude: '39.103696'
+  longitude: '-84.512056'
+  street_number: '641'
+  route: Walnut Street
+  zipcode: '45202'
+  city: Cincinnati
+  state: Ohio
+  country: US
+  created_at: '2013-06-20 20:17:02.43905'
+  updated_at: '2013-06-20 20:17:02.43905'
+  administrative_level_1: OH
+  administrative_level_2: Hamilton
+places_147:
+  id: '147'
+  name: Vasilio's Restaurant
+  reference: CoQBcgAAABm7Ly3nyOYLbFzcehmU7zE5WPTufZVmwI4Xz3tZJisHE37Y0W4CxVS7RtFDEkWJDH2S-4cAUbB77-lv0MJJA2VH6nAHYy-g4y2YzoEQSebIhaH2g2EsycwRLA-vrsnY4sSISSTU9P4p_vZM3t7YK1hjKu8H9ykiBhpMPaDtaCZIEhC7_CqmT2yXg47P9h-SywT_GhSwg5z-wBykHPZ-v2EMcdaGzzmtvg
+  place_id: abdb472797558cc0976a40944a54c41c6c8d97ad
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 7931 Firestone Boulevard, Downey, CA, United States
+  latitude: '33.943585'
+  longitude: '-118.139129'
+  street_number: '7931'
+  route: Firestone Boulevard
+  zipcode: '90241'
+  city: Downey
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:04.825054'
+  updated_at: '2013-06-20 20:17:04.825054'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_148:
+  id: '148'
+  name: Lucky Lou's
+  reference: CnRqAAAABLlzJ9JeJUk7Fkb3moZ3zHBanIdyRVlsDPABRPate4yzHR6o_rdOmcLRnIrvjoQV1cLX2ipIuFz-NIjH-XJIOKipHSVAQwuJkaJs7ku9K1INhMaBF3R4RrRJIa5udrdxnBqN8o7J7W4wrCaJUFL_kRIQg-lBU2oXldC7OxdkML81BBoUOPxcdcE22g_YOp7HdwNcL1dZhyE
+  place_id: d261e871c701014b2c099429bfc90c63592833e1
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1207 West Hickory Street, Denton, TX, United States
+  latitude: '33.214451'
+  longitude: '-97.145438'
+  street_number: '1207'
+  route: West Hickory Street
+  zipcode: '76201'
+  city: Denton
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:06.525508'
+  updated_at: '2013-06-20 20:17:06.525508'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_149:
+  id: '149'
+  name: Court's Lounge
+  reference: CnRsAAAAgn64V-3qGLfjp1aDpp0p1Wco3bT9VEr-H3On2IeqaloLQQcLtqMAhRBhbdouaK8Wm9Ll5n_Jk3PzWtqYwh5nnJja7yfRgkLOBYI58SHGY53v4W8_slfJqw2vfxrz8cIg-IDoYgssbqASaJtS4aTH9RIQEmHohBq57Nm1smc8oEgughoUX2z1RUXH8wtyzOleZsSIpyvRGVc
+  place_id: 1b586c256e9a99d1bcd61ae9ad4f4ea60cbb1df3
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2425 South Bascom Avenue, Campbell, CA, United States
+  latitude: '37.278644'
+  longitude: '-121.932175'
+  street_number: '2425'
+  route: South Bascom Avenue
+  zipcode: '95008'
+  city: Campbell
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:08.017738'
+  updated_at: '2013-06-20 20:17:08.017738'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_150:
+  id: '150'
+  name: VALANNI
+  reference: CnRmAAAAeVctxigmvURnedo3Zm0HlS2TQngty1fDSDpsVBPA_WJzLBg8FccLwhu-3qP8ljDhoScq8-d9LMk5_lKc29mCC8-ogjzucDlxcljk2eA__BDiGgBbcEQnj6slRiuGXmE8EcXfzaBUq-jxff83qaXc4xIQgQrO3by4k_77_t6-QNdsUxoU6ky0ojxAegctvOXCPNm-4l3mO1s
+  place_id: a5a1979bf46aa3498ed02438233bb691d58100bc
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1229 Spruce Street, Philadelphia, PA, United States
+  latitude: '39.946857'
+  longitude: '-75.162217'
+  street_number: '1229'
+  route: Spruce Street
+  zipcode: '19107'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:17:09.428562'
+  updated_at: '2013-06-20 20:17:09.428562'
+  administrative_level_1: PA
+  administrative_level_2: Philadelphia
+places_151:
+  id: '151'
+  name: Radio Bar South Beach
+  reference: CoQBcwAAAMRTpFsAMRiSzGY6TYhJ7e4fp71AI1jWxmPz5Ld_PI9xJrdlTUIihksUqmnzYYmIicN0FgqOXjwSMjqKxje_1tvy9IAvbsht0i2-66UyWw01fQ1zeo7eB5txgZDfGqaEQX1cTJRAk6dNIls89jgpyYAtu449Q33T9u6NQ_AXHW-2EhDyxIAVlfntSx1yv6ZetpRtGhSo5_aLUbvxox9ciJ86x1Lfz-TBnw
+  place_id: 6c323cabe0ebcaa334029a35ff656e2a3141262a
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 814 1st Street, Miami Beach, FL, United States
+  latitude: '25.769786'
+  longitude: '-80.136315'
+  street_number: '814'
+  route: 1st Street
+  zipcode: '33139'
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:17:11.339049'
+  updated_at: '2013-06-20 20:17:11.339049'
+  administrative_level_1: FL
+  administrative_level_2: Miami-Dade
+places_152:
+  id: '152'
+  name: Doucet Saloon
+  reference: CnRsAAAATe7I5624i-6BadyDu2CpWSkEM-NQapWTCTyvcNBc4PDTab1lrdDEi2-v3TzFVN5d-Vf5HNGVhHGfRptOaDv4jTb55qGjmxjNBnFiZDQW1GC_4XIoZhx9vIhUMpvJVxiy593Nt6PyJwcd4RxLSRlb4RIQjDqRK1zRvSYvQZdFBCpi_hoUKv-goAAvSwZrNfdExyHuhg5XNFI
+  place_id: 3347ded8d294b1304abfd3ef445254a585878274
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 20710 Rutledge Road, Castro Valley, CA, United States
+  latitude: '37.69433'
+  longitude: '-122.084965'
+  street_number: '20710'
+  route: Rutledge Road
+  zipcode: '94546'
+  city: Castro Valley
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:12.706636'
+  updated_at: '2013-06-20 20:17:12.706636'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_153:
+  id: '153'
+  name: Rich's
+  reference: CnRjAAAAUUaUw3aKNzzQESZTGhJ9yT2f4hzaRbAiBJharvm5Bhh3sHBZDXa7p5AlAWRxvxXubD57M_XXji_ysEvfgnHTieZbQUTZeNLKClYC2oQvJKcppas8V8Io09AzgDqOY4KlMsZYxWUqxdpbK9srfjRwaBIQaZnRmnZQ3ZSGK8QoUHpY7BoUyCUvuyS_DntDInKlLJSausLBFow
+  place_id: dbe0898aed7cfe90968790bfeed5ce5dd669213f
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 1051 University Avenue, San Diego, CA, United States
+  latitude: '32.748248'
+  longitude: '-117.154044'
+  street_number: '1051'
+  route: University Avenue
+  zipcode: '92103'
+  city: San Diego
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:14.212883'
+  updated_at: '2013-06-20 20:17:14.212883'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_154:
+  id: '154'
+  name: Pepper Social Grill & Lounge
+  reference: CoQBewAAAKVFtIHK5anNJFf_xrTMCeMfKWB_U9d3RgXsNAUYanuOJVYhH8qJyCbBsCO2UG8_SBqAxJnsx4Y-CaBEjgX_CHfroqriL3poiJVQbpmFqg8sHABm5g0TbJWMyTDWRc6ASMKb4emXJBDCmOLxpghsejuN0yh0cwYPbpsebyoDrayvEhBSbFql8S7wY8F62oQodBZxGhRss3U7nrg9XF4x17sDZSswwT1YLg
+  place_id: 5dae4f766891968fd8242c03128e0cad3c993697
+  types: |
+    ---
+    - establishment
+  formatted_address: 18322 Sonterra Place, San Antonio, TX, United States
+  latitude: '29.610774'
+  longitude: '-98.498416'
+  street_number: '18322'
+  route: Sonterra Place
+  zipcode: '78258'
+  city: San Antonio
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:15.571215'
+  updated_at: '2013-06-20 20:17:15.571215'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_155:
+  id: '155'
+  name: Dragonfly At Hotel Zaza
+  reference: CoQBfwAAALNT45-nXq3Qp1CioLW90FyUWE57n6GArLzOzIA2oTQRrLpSBsG9LUZlsoH7ePJcKSDlc3o0xmfOlCzOVE0CKt4hyD44oqLLylsyfvHdj8BTZUfEKpDczXiyco1qxS6Hay5llrl_3mk_ix99nn3kBl3xMPWBZaRtOuUtaL8VPiEdEhAnrDMk9kZNxqc7uFLpmy-eGhRwobRHfhdPSO9mh30Cn81T0Abw3A
+  place_id: 0a947a2aea5ee07aa14104bb3e3139c9bf282c35
+  types: |
+    ---
+    - point_of_interest
+    - restaurant
+    - food
+    - establishment
+  formatted_address: Dragonfly At Hotel Zaza, 2332 Leonard St, Dallas, TX 75201, USA
+  latitude: '32.7942149'
+  longitude: '-96.8014574'
+  street_number: '2332'
+  route: Leonard St
+  zipcode: '75201'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:16.975908'
+  updated_at: '2013-06-20 20:17:16.975908'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_156:
+  id: '156'
+  name: Willhoite's Restaurant
+  reference: CoQBdAAAAGkDVpz7OE4eL5TPVkme08Z-FnIrY3y_48pW1vTW1c7Y-TujiUQ8I8XoK4oCNJi9WLABYE9dQLRK1wlXXT1eKV-BQO7Ky4qzNjDOIV-OEZ0Jjvue5sajLWvcw0ISUQmo5WzUxxqmolOPrXtfrRIKQesvumoTPLtjNw3jR8HDvUusEhBUrrc601epHS2PBqg_kLDbGhS_Y7uyhtk0j7753Xm4CGVVMA5X_Q
+  place_id: 69373e3f99130be41e53f11d84c3eff5874d51ef
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 432 South Main Street, Grapevine, TX, United States
+  latitude: '32.936536'
+  longitude: '-97.078513'
+  street_number: '432'
+  route: South Main Street
+  zipcode: '76051'
+  city: Grapevine
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:18.362518'
+  updated_at: '2013-06-20 20:17:18.362518'
+  administrative_level_1: TX
+  administrative_level_2: Tarrant
+places_157:
+  id: '157'
+  name: Bougainvillea's
+  reference: CnRuAAAAIz9ZaJxaiCEvk9qOrq-hJ55BsKQTZJpatvVz_vuVQRnd3Oao6ioV3YL12X-YZb3oRB-2ENzjct4F6EiKvRLgln2-J7STi6MHjrlhBnaQgJidW5vQBhpoQJpg4yVP_7zTtsqbOPvez2crlYTOsWj25BIQJEe1xj8V2b615LR9RmKtURoUDDjq2dw3fk1ct81_ti5qCbkdEzY
+  place_id: c1db8e651281b8ec033e01ef4aefedc97af14976
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 7221 Southwest 58th Avenue, South Miami, FL, United States
+  latitude: '25.703768'
+  longitude: '-80.287275'
+  street_number: '7221'
+  route: Southwest 58th Avenue
+  zipcode: '33143'
+  city: South Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:17:20.809364'
+  updated_at: '2013-06-20 20:17:20.809364'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_158:
+  id: '158'
+  name: Keystone Lanes
+  reference: CnRsAAAAQqmiJ7Ne0l19FjE6XLXVamnN5IhOmSQeuZi16i_SMSR4xpBcWiW6x5-zYbqIMmoh07rditzrfopYQQPVXqFwnMnbGsZDNr--X7OchBZKy5IEMemWSX-yluJLnB2RjgvyufAm_tX0tFzBiZnl1CfxORIQ71dUHn4eLiGIG8kwHeULABoUG1F943TIcmaO62VUPn1oAG5Z6BI
+  place_id: 4d31a2fa92b94d6f261caa4c27f512d11d2f0024
+  types: |
+    ---
+    - night_club
+    - bowling_alley
+    - bar
+    - establishment
+  formatted_address: 11459 Imperial Highway, Norwalk, CA, United States
+  latitude: '33.91804'
+  longitude: '-118.088905'
+  street_number: '11459'
+  route: Imperial Highway
+  zipcode: '90650'
+  city: Norwalk
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:22.173995'
+  updated_at: '2013-06-20 20:17:22.173995'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_159:
+  id: '159'
+  name: BS West
+  reference: CnRkAAAAPgZ3EErNvpQQ3dooiiH5x4iEL6UxPJWRwRdBAKKCUv7EfjhOpWkkJ15r-f64UQbNOTo8vLOqDdwehiQOXKDLw7-0TFW6fjCuIMGaZBKjk4C1ee-7PNtmQGongVKUzxS7wS00IqtvvrAjjiDlpLunqxIQ4-K1xJ6Yf3Sk5Oe3MAquixoUI6gjDGoWrW0yfAdhlugo7eWzZzI
+  place_id: 94d2c4ee953cb158a1a61282ca587d85bf650aa8
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 7125 East 5th Avenue, Scottsdale, AZ, United States
+  latitude: '33.49796'
+  longitude: '-111.927349'
+  street_number: '7125'
+  route: East 5th Avenue
+  zipcode: '85251'
+  city: Scottsdale
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:17:23.751471'
+  updated_at: '2013-06-20 20:17:23.751471'
+  administrative_level_1: AZ
+  administrative_level_2: Maricopa
+places_160:
+  id: '160'
+  name: Liquor Lyle's
+  reference: CnRqAAAAz4FZZVViF6R9M4xNyT31isspEJ3fulxKM76xc6bxxc8iEUud8fZ9r5B-bHWCBHoUVbyr6NFbA6h2GKY0538GKYLQVKHLgkSkpbGEvil8nUJYKJEiDlkMg_B-ohHN_GzhHXuaBIX9PLnpJRbUz2RBbRIQL_LUN0RiaqD45DhOa3AOLxoUHfxzUbECs4voSj84w3nu8luqqHI
+  place_id: d3b66fade7987714cf5c1ff4149e1d3384b241e2
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2021 Hennepin Avenue, Minneapolis, MN, United States
+  latitude: '44.962149'
+  longitude: '-93.291652'
+  street_number: '2021'
+  route: Hennepin Avenue
+  zipcode: '55405'
+  city: Minneapolis
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:17:25.48719'
+  updated_at: '2013-06-20 20:17:25.48719'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_161:
+  id: '161'
+  name: Poag Mahones
+  reference: CnRqAAAA4BKiOOO6Nj9WOkXpq5wGsFBHTIQAt3yboafsKEBe1RKvmTBEuKrFpd-oCUgT5GYUL5XEmvkLa98DUOXZ8Xr0w7i8OwmmZ851cM0jQLNS7XAdpoZ15MdJVc18EYl_rdw0U7w9dv99ScOMeBpXWyRBYhIQlne2Cnlc_4lnCbqVT-ASwhoUcuZv2A13N33_HpmTpvUrM125loY
+  place_id: 60ddcec80ceab3f85a065f270f121ff5a3dc6267
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 700 Carroll Street, Fort Worth, TX, United States
+  latitude: '32.751838'
+  longitude: '-97.354822'
+  street_number: '700'
+  route: Carroll Street
+  zipcode: '76107'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:27.435279'
+  updated_at: '2013-06-20 20:17:27.435279'
+  administrative_level_1: TX
+  administrative_level_2: Tarrant
+places_162:
+  id: '162'
+  name: ULTIMATE CHIMNEY SWEEP. INC
+  reference: CoQBeQAAAJjHTLPbfkcbX_sNhBDWba4tnWo_Di1zOoDMuAh5I3PU0JIV_UNcVm9qt3_T0okUh-JXq66684RGyswNFzNnhHw4m8om50375Rkfv-kmpmoKeMqWTRGV1pfshnKWJvjvvjGIiBqYZejxdbhdQ3AvdCtToFIB71o56cefj-UNGrqiEhD40-GMFA-_o6VbPss8WPevGhRVbZylTXreRC-MER4XsY4jLeih5A
+  place_id: 489c3a2f8108309735e8f6107a26d999b2c1e3a0
+  types: |
+    ---
+    - establishment
+  formatted_address: Bellingham, MA, United States
+  latitude: '42.086764'
+  longitude: '-71.474505'
+  street_number: 
+  route: 
+  zipcode: 
+  city: Bellingham
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:17:29.712276'
+  updated_at: '2013-06-20 20:17:29.712276'
+  administrative_level_1: MA
+  administrative_level_2: Norfolk
+places_163:
+  id: '163'
+  name: Jimmy's Grill
+  reference: CnRsAAAAecXFNHx6csEeTSOwkGgA7_VJ0rrN0gTnTLAxDyJObkERhFLB0YUNCZEvrMMH18-yqWYN3eq354bTu_hS6BfGPzE80DqEXXD9h7evUwm9YWi9PybbacZ_lC3nm5smJ2ngpEYlklY1mMWqvbcxVxPArRIQh7wtaQFveO3_q7Q6aBZpBBoUBVeT9i5jxTwMUvVCWO4JuJvvVNc
+  place_id: c1fb68fa1e4c025b00ddef16b345973e4e0efa87
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 245 South Washington Street, Naperville, IL, United States
+  latitude: '41.771678'
+  longitude: '-88.148134'
+  street_number: '245'
+  route: South Washington Street
+  zipcode: '60540'
+  city: Naperville
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:17:31.249495'
+  updated_at: '2013-06-20 20:17:31.249495'
+  administrative_level_1: IL
+  administrative_level_2: DuPage
+places_164:
+  id: '164'
+  name: G Bar
+  reference: CnRkAAAAUZxUZrb8chnYCudPwgHWRT0pidfRFcL5VIAjrdrm_uJVP7bXFhcX6o_G_P_IX0jYqEaJdL7bFNRmU2-8xJii-rexXxfRh_4_L8wM6PZxXPc7Aqyqt-XKK5j5OYWkABu3rfiT0LuAUJHOrTvRHor91RIQYtiB5QqorcPzwdGVtU6CrhoUGafc0-B9ZX9wpTwSDrx52ZtCBfM
+  place_id: 85e2eb93788739cacc189629744de15d2ef1fa69
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 1401 East 7th Avenue, Tampa, FL, United States
+  latitude: '27.9602'
+  longitude: '-82.444041'
+  street_number: '1401'
+  route: East 7th Avenue
+  zipcode: '33605'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:17:32.760416'
+  updated_at: '2013-06-20 20:17:32.760416'
+  administrative_level_1: FL
+  administrative_level_2: Hillsborough
+places_165:
+  id: '165'
+  name: The Harp Irish Pub
+  reference: CnRwAAAAe8oAimOicNNHlJjITzWf54mEczFq7kDAZka_MQ3v0w7ZhAI8AfmWFl1bedTGEtGeyTlJW2_0OxZMxrgD0qYPWUQyE_3ncxbdw83cuH724MP0BKV-gbChknqXvIRIWumcb_jixTHorS9KlkVAfSyQGhIQB6EJsezpauwfWyuEO-HTPxoUMs4QCCOam0WdgG-_tbMg01OvW9k
+  place_id: edf945c01be8df6c7e4e8a8dfabd2733cbe8620d
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 113 East Juneau Avenue, Milwaukee, WI, United States
+  latitude: '43.045557'
+  longitude: '-87.912781'
+  street_number: '113'
+  route: East Juneau Avenue
+  zipcode: '53202'
+  city: Milwaukee
+  state: Wisconsin
+  country: US
+  created_at: '2013-06-20 20:17:34.090918'
+  updated_at: '2013-06-20 20:17:34.090918'
+  administrative_level_1: WI
+  administrative_level_2: 
+places_166:
+  id: '166'
+  name: Front Row sports bar
+  reference: CoQBcgAAAOZyykjkZguXlP33NmA62md_pH0lE7DlSgL9pDXIBlBPR78kACycmmTp8vxzHuL42Mjhu5AKo9QqyqtWkmGIDbtuoRVmCdxbGXIXK_jp0blDTIbdxjE1leZz_qn4xWVHKD2cBgdQH79ufXwu34nRws83flbjRHG9UkVUVDo5yVemEhD1F4UHFQeb_xdUhpDjvcKDGhRdXnkGquOEhHLH9MKN74VY0dE7JA
+  place_id: d3813e773a6c1880089bf0378c6fd8dfe362b9f4
+  types: |
+    ---
+    - establishment
+  formatted_address: 19364 Eureka Road, Southgate, MI, United States
+  latitude: '42.199159'
+  longitude: '-83.22778'
+  street_number: '19364'
+  route: Eureka Road
+  zipcode: '48193'
+  city: Southgate
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:17:37.222159'
+  updated_at: '2013-06-20 20:17:37.222159'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_167:
+  id: '167'
+  name: DNA Lounge
+  reference: CnRnAAAAVcdFk17M_zVZypoQmsKHTfqIgoj_msAIIw6qM0L2_YvFsUnRf3JY35-L15CabiHXtAYWOO3thr4AkoORDWbfGHIRDbotFoHgmteVff72vorRVqiBdyilc2oMvjoQTJZSqQA_6fPcQ7CTG-m_K6jS7hIQ9GoAaad1fyLddOFEmxqF1hoU2lJxW6cQXfG2Kr0PtUMaykxX9vY
+  place_id: ea6ff166f8491ff9efed520ae1c49ed97e93675a
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 375 Eleventh St., San Francisco, CA, United States
+  latitude: '37.770987'
+  longitude: '-122.412732'
+  street_number: '375'
+  route: Eleventh St.
+  zipcode: '94103'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:38.680083'
+  updated_at: '2013-06-20 20:17:38.680083'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_168:
+  id: '168'
+  name: Tiki Tom's
+  reference: CnRoAAAAMJfl0mgBwMNVYRlL-XEqzVBLTwYf4BTunLVPzP3yLGKwZrFohnRDigXbBgdBzlrGl2rpZofbIb3JvCtVfhki-karYu6BSxVwszQcZX6u2Wo15e0khviGIMIBcXc35ir2qnciGnyjpEy8gbcKp1z89BIQgAcfUOKJyWB8RavPdlm0nBoUrl5MCfC2r0wBBOfMJmjYbjStYY4
+  place_id: c71c96aaffb1cecffc9a4cea746200838bebd7f8
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: Olympic Boulevard, Walnut Creek, CA, United States
+  latitude: '37.896136'
+  longitude: '-122.060682'
+  street_number: 
+  route: Olympic Boulevard
+  zipcode: '94596'
+  city: Walnut Creek
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:40.055137'
+  updated_at: '2013-06-20 20:17:40.055137'
+  administrative_level_1: CA
+  administrative_level_2: Contra Costa
+places_169:
+  id: '169'
+  name: Neon's
+  reference: CnRkAAAAoAsDOri7JV2_ez6zH__q172q0lV2YU5Yp9DTsC9hIGlF7L7cosJQIzroQ-WHGcpvMxRpgbqrkFAuD-AP6DDCWa9vfWe7lUiR2DfwPhIVaQSoVs3SkBbkKvxJ9MXjuzcDRnqsjXYCEJMp8Oh-UG2cQhIQOZrCKr9zGoWtab1JQirdZRoULPjbJOgHr3uevd3AkzTODPIhF58
+  place_id: ff387336850abc1babcc2fa27a3662330ce1f276
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 208 East 12th Street, Cincinnati, OH, United States
+  latitude: '39.1093'
+  longitude: '-84.511165'
+  street_number: '208'
+  route: East 12th Street
+  zipcode: '45202'
+  city: Cincinnati
+  state: Ohio
+  country: US
+  created_at: '2013-06-20 20:17:43.342682'
+  updated_at: '2013-06-20 20:17:43.342682'
+  administrative_level_1: OH
+  administrative_level_2: 
+places_170:
+  id: '170'
+  name: JoJo's Restaurant & Tap House
+  reference: CoQBfAAAABkWY5NRbZJak60Ii7UmDWHKqQagP5Hl3ZneohtTAA5if8wmrull9xF7fMn4-9-hHmrl5IPHPD8g6UZvGHqRVXZeHuKFgVyRocJdyRxLyN88O-NhsIKljCPw0AMU5-9Jg_LtBiNUHRFecu6ljlEanPhP_l1DUHYEWzFx76FLxRt2EhCiakBpXs13pnA6XQ1mS_3XGhSpzVW2OjZYe4WRGcKoCu1iuxz9TA
+  place_id: 020c977921d75913175ad5346998a3c28b2d801d
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 16 East Patrick Street, Frederick, MD, United States
+  latitude: '39.414041'
+  longitude: '-77.410506'
+  street_number: '16'
+  route: East Patrick Street
+  zipcode: '21701'
+  city: Frederick
+  state: Maryland
+  country: US
+  created_at: '2013-06-20 20:17:45.149811'
+  updated_at: '2013-06-20 20:17:45.149811'
+  administrative_level_1: MD
+  administrative_level_2: 
+places_171:
+  id: '171'
+  name: Oak Cliff Social Club Bishop Arts District
+  reference: CpQBiAAAAGMLiMLeizWTJOPZ0bsMquPUhWgwRC0n_y0qliwD4eia4zzuoH7yWJDU-In7ifMoWuSdnQimevX0tOg7sBEXEfJb5PKFDcw-u0vI31WNemhXi_Glx7ixxZYwNcOX5rUXf_bpoL4ARX_sh7DrpjV8MParSp1Al6yqJnBV8CJq15sMqUolmKcscTX8YczsyR88aBIQP_aFrYThKCjEf-uCIFgzghoUQomxi5oBYeg8rz_CsPx3AsR4fUE
+  place_id: 8645fe8d8cd10998fbd0c03e225ca53a325e94bf
+  types: |
+    ---
+    - establishment
+  formatted_address: 238 West Davis Street, Dallas, TX, United States
+  latitude: '32.749317'
+  longitude: '-96.826142'
+  street_number: '238'
+  route: West Davis Street
+  zipcode: '75208'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:47.687621'
+  updated_at: '2013-06-20 20:17:47.687621'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_172:
+  id: '172'
+  name: Chatterbox
+  reference: CnRoAAAAQj21oCrhzfMmHMXXgFOYCKgUwtSL05y_wBhq-XnN_yMy0kJRXj6bUc2BgRKZHSjCeMRgyh-xSKNo2n5bu19bGCKD7hleJPFSx4yWAljJp5IghEUYf53Rde3IVJeza-CxNEx4JFVezkj6Ch5i8b7rShIQ_e5Bqt_cJJ3Z2mafI9cenxoUONy3XGMHFVNJLZjAbM3MEVHhQGo
+  place_id: 7916c93c1c7b22de56bd5e85163dfb2a3a850d06
+  types: |
+    ---
+    - night_club
+    - establishment
+  formatted_address: 943 North Citrus Avenue, Covina, CA, United States
+  latitude: '34.096698'
+  longitude: '-117.890639'
+  street_number: '943'
+  route: North Citrus Avenue
+  zipcode: '91722'
+  city: Covina
+  state: California
+  country: US
+  created_at: '2013-06-20 20:17:49.026274'
+  updated_at: '2013-06-20 20:17:49.026274'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_173:
+  id: '173'
+  name: Riprocks
+  reference: CnRnAAAATpx8E_RUppfb6jzgnLqLOH_WOQEoJokyve2OBmRKiY8FOR38fgnDjn2V6aAtQi8a3boZPBKH10pei2PoXAexU_6zkHBtZZCfl6cv7-Viyxf6hl6GJKJ0xzgqV4YEdszJLRhIs_JEdHOba8TVXmDj8hIQtxXE2oCQSVF0_i-DmasFWBoUBeo1LnZv-xLYSh_3p3VnrvdMecA
+  place_id: 26edb2be5ad36a026e03add00c1571affa77ef7f
+  types: |
+    ---
+    - establishment
+  formatted_address: 1211 West Hickory Street, Denton, TX, United States
+  latitude: '33.214534'
+  longitude: '-97.145615'
+  street_number: '1211'
+  route: West Hickory Street
+  zipcode: '76201'
+  city: Denton
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:51.156988'
+  updated_at: '2013-06-20 20:17:51.156988'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_174:
+  id: '174'
+  name: Celts Pub
+  reference: CnRoAAAADSIgTz8XwJpHz6cpCAAHp4jr3wZ8FYvvwUsr2gvmJcK_74y8aQRNYkQF0MOJoZ-aS6LevV5BoN0lTns48aGRvkvBZg_7rC130IndtkmD8g9fEjQVyKv5efGLJtTCE_edSwvPI80c4EZRpdjwvi6xghIQ5CPe7cpemqqR4BO1sIGTZRoU-FKTwrCq4TSvKU31wqux0yeOwds
+  place_id: 28490dd4d76a1cf056169b12a72e1399f7d20b5f
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 6559 Concord Boulevard, Inver Grove Hts, MN, United States
+  latitude: '44.854099'
+  longitude: '-93.019979'
+  street_number: '6559'
+  route: Concord Boulevard
+  zipcode: '55076'
+  city: Inver Grove Hts
+  state: Minnesota
+  country: US
+  created_at: '2013-06-20 20:17:52.725977'
+  updated_at: '2013-06-20 20:17:52.725977'
+  administrative_level_1: MN
+  administrative_level_2: 
+places_175:
+  id: '175'
+  name: Harpo's Chesterfield
+  reference: CoQBcwAAAB2SU2HaFhh6Xtu1ib2lnKGyVpICXBP_x259BCqQyBrzbh34f7P3cokwlbXnRQfg4uOHuFPif4CsnFf9gNKrhAS4uSvi2AaZ-fUqSh6uccs1h7LcxgCDJjU6AjCnsGcaA8nVrA58qUeV6pu37GEUXC_V0tTBQFCyj8f4m1XSSZhxEhAcIvn19JUCq2EOJbmMO0MbGhSBVpKjJXErdcKHXDC9msLHLswrZg
+  place_id: aa1dded8d20747f89d8d71285bca835a7879c7ed
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 136 Hilltown Village Center, Chesterfield, MO, United States
+  latitude: '38.659535'
+  longitude: '-90.551516'
+  street_number: '136'
+  route: Hilltown Village Center
+  zipcode: '63017'
+  city: Chesterfield
+  state: Missouri
+  country: US
+  created_at: '2013-06-20 20:17:54.279066'
+  updated_at: '2013-06-20 20:17:54.279066'
+  administrative_level_1: MO
+  administrative_level_2: 
+places_176:
+  id: '176'
+  name: Houston Street Bar & Patio
+  reference: CoQBeAAAANZlGND3nY9FLRVlm6VOwHMgZGEqdYHRTmj7s3PcQxwS_0Wzq7gL9RGqUfJ4GwdKVrM5j8Gsmp1yRjbFl6-Gc5r14oHz5TwmBJ1HPvcuv4y1IztiPMmQ8844dy4Ocsxp6iNy1KR3Rc7D1KYfYqS8yx6fMvteTcpvTw_TV6-zkOsnEhAYxTM2_S3P97zhGndBCOCoGhRT8lGB_MTLFLo7n672dbnu0fnV4w
+  place_id: 03c4c1959bffb2d43f0f202551e27c61b27ec1e5
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 902 Houston Street, Fort Worth, TX, United States
+  latitude: '32.751481'
+  longitude: '-97.330323'
+  street_number: '902'
+  route: Houston Street
+  zipcode: '76102'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:17:55.8971'
+  updated_at: '2013-06-20 20:17:55.8971'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_177:
+  id: '177'
+  name: Untitled
+  reference: CnRmAAAAfh07kQxxMT2dGQc00zM__CfGpP9hZ0hNRDnmHlTQkYUAjWJJnqzXFTg83mOhQ-ik0J-KjWTpTmm-3kG1yJQB0ouadHnPk1dVdOdKKdd0vlngK31vKkyR6qt2lbP1FKgZFG7EgVPudCDJtZUBCfzTShIQPJKAieirJJTbWBXE0M7tYRoUZh6dnQwMqZBS6xtuNlOtVH55K0Q
+  place_id: ff186758031128bc82e3ea364a9f5dfd9235b7a0
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 111 West Kinzie Street, Chicago, IL, United States
+  latitude: '41.88904'
+  longitude: '-87.631486'
+  street_number: '111'
+  route: West Kinzie Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:17:57.234486'
+  updated_at: '2013-06-20 20:17:57.234486'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_178:
+  id: '178'
+  name: Chances Grill
+  reference: CnRrAAAACIsaJFlb8D8K_Jr8BTWz-xEIW7R7jdukOi81_O3Gtmp1_g3wrrCNVYw_pFwfHEWmZgfPRERwPPGn5GkuDzdk_dcs7H79ufYOw1JgeioieZQ9lA-wYaJbVUuS616ZOlo7o7wUiP-QREUR7IbrYbYFNBIQ8CsuiHbx-F5CbbR1tWl5CxoU4E3pXiCeV8_dIXKxn9pzaRwQkdQ
+  place_id: cee3ab366da63f3128a6c3449f4c44e9a711e000
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1320 15th Street, Denver, CO, United States
+  latitude: '39.748612'
+  longitude: '-104.999279'
+  street_number: '1320'
+  route: 15th Street
+  zipcode: '80202'
+  city: Denver
+  state: Colorado
+  country: US
+  created_at: '2013-06-20 20:17:58.906674'
+  updated_at: '2013-06-20 20:17:58.906674'
+  administrative_level_1: CO
+  administrative_level_2: Denver
+places_179:
+  id: '179'
+  name: Candleroom
+  reference: CnRoAAAAnqr4iVzj4ou3RLqupi6lDAjDLXYYK1oo5cpr-flEHxESBxbN2uZLm7xhZOZhmhqVEY6NpyMdPnt0MsE0VFQSCyI8XGErpMnrCrJT6AvEM567qBl2m3myoiqoJLDKpVwuCoGFP9OWmOOv4XEbH0mDAxIQk91-_o-W83KNkpL1bxsjgBoUVnI7VK32AlcR20uQgaRG2W82AVk
+  place_id: 06c74aba6070ec17399fdf332b1645e8380ddfdc
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 5039 Willis Avenue, Dallas, TX, United States
+  latitude: '32.820316'
+  longitude: '-96.785524'
+  street_number: '5039'
+  route: Willis Avenue
+  zipcode: '75206'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:18:00.238959'
+  updated_at: '2013-06-20 20:18:00.238959'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_180:
+  id: '180'
+  name: The Dirty Bird Lounge
+  reference: CoQBcwAAAFlwNLP1CjS3uSuiIUr2G6EPcoRf2GcnKexrUXx8h0e1VqYHPXtkh2ooWQbLCR_-uUgVC3rwTm6-hMAF9Lak8MMznaepLgGJ_7OKePFoOY1MkG_gWs5iI-_UJKMINRO6CyzRSUva47ht_Pcegpy6L7ye4Q6_G6RtBO6eM2HEvIuiEhCwEqLfuxMrhmyp7SAiWW_OGhRX1MLCX7eQ8FXmsAIOYXdoNuYVKQ
+  place_id: 83a576b3e4224a89f3a09004ddc0508567d36b29
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 29308 Mission Boulevard, Hayward, CA, United States
+  latitude: '37.632751'
+  longitude: '-122.050199'
+  street_number: '29308'
+  route: Mission Boulevard
+  zipcode: '94544'
+  city: Hayward
+  state: California
+  country: US
+  created_at: '2013-06-20 20:18:01.851413'
+  updated_at: '2013-06-20 20:18:01.851413'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_181:
+  id: '181'
+  name: Dooleys Tavern Clawson
+  reference: CoQBdAAAAGtlYxKtvvFM8D26jrgmB8llN9UdwEdVjY5vmxoYi0dfOazvpJziyArHAF4lSi13S9tUAjMsRW0E2-y03GfewkPdC4lRkuQV73a3wAwdPKnEssd7L_6P9p9JuKuZiddrNlJDvUjYadXSKzFm0DFRKeq7E1AEpJ74ioTWUU6zEncyEhDoewaMiPJwtklgaoENdX9UGhRgopKkBXTY1XKOhjwOrhjBMBFRrg
+  place_id: dd74e966ce8c88101f312db9ccd392b9c92aab96
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 27 East Fourteen Mile Road, Clawson, MI, United States
+  latitude: '42.533638'
+  longitude: '-83.145498'
+  street_number: '27'
+  route: East Fourteen Mile Road
+  zipcode: '48017'
+  city: Clawson
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:18:04.344032'
+  updated_at: '2013-06-20 20:18:04.344032'
+  administrative_level_1: MI
+  administrative_level_2: Oakland
+places_182:
+  id: '182'
+  name: Churchill's Pub
+  reference: CnRtAAAAdE27j8Ok8a_VB9KMLA9ynfjawvhTZnKL6vyoR85YgKTrKyTarZleXLLcH1GyjS6mOf4FQDmOEbXOfDEQGu30BAQTziz3bzSBukUx22vLlGgt9okpzHm6VHhnZ93Wv6tnBlgNBzgZLEWlbh39-VhucRIQ-TXUMyBmgMLZGQv3sTImdRoUzLYqPVVBATNza5QuBF9gDpVQKj0
+  place_id: ccc4ceed0117f87016b7e5f68309179849c9d3af
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 5501 Northeast 2nd Avenue, Miami, FL, United States
+  latitude: '25.826187'
+  longitude: '-80.19178'
+  street_number: '5501'
+  route: Northeast 2nd Avenue
+  zipcode: '33137'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:05.757278'
+  updated_at: '2013-06-20 20:18:05.757278'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_183:
+  id: '183'
+  name: Honey Pot
+  reference: CnRoAAAA_J5KA4McD77Tn_vFKZXqz84tvCpsz2aa8a8MBXqCmxIUvjnpUeCrQSlDU734FhsfypDsSGRJpNNxQl5gez1WQ72RpZdFjq6EszjJPKr8LoMVc3P8drkYNEePHx-yrRotTlWU24R174D2wZIuupkPcxIQ4ocxZd5bvbwElqkq6EMexhoUwVvKICcrD9wRE5S45Gx1VivgupI
+  place_id: ea3ea6ae31a56a8283f8f584697e4b284099b62e
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 1507 East 7th Avenue, Tampa, FL, United States
+  latitude: '27.9602'
+  longitude: '-82.442503'
+  street_number: '1507'
+  route: East 7th Avenue
+  zipcode: '33605'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:07.264545'
+  updated_at: '2013-06-20 20:18:07.264545'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_184:
+  id: '184'
+  name: The Wet Bar
+  reference: CnRqAAAAV6P7HIK4RiIVbkN4yc4HAxh_vm8q1fF0GNCdKESO6ZUxVgYqi6yTshR4HbpUPKtxYc1E87rXc03FPc_IaRJDH_Y62NgVnMka7J4v9wf89nBVE4cJAhgDolt7HIIaLaPx2T5JeufNDLHraIoBWZKLgRIQMuwCXoSB0EHU6W_FyhVOshoUbHCLfRm0BuFfW6wrFSBdQowvYdA
+  place_id: a70b23dacd893c0d8216d9c932f8d2021a35b450
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 8832 Imperial Highway, Downey, CA, United States
+  latitude: '33.917053'
+  longitude: '-118.138986'
+  street_number: '8832'
+  route: Imperial Highway
+  zipcode: '90242'
+  city: Downey
+  state: California
+  country: US
+  created_at: '2013-06-20 20:18:09.652465'
+  updated_at: '2013-06-20 20:18:09.652465'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_185:
+  id: '185'
+  name: Pasco County Veteran Services
+  reference: CpQBhQAAAPHRlwDnFIJgm_HG9u0RGB6aS4Jaw0g0z1Z_5RVkuzJcnJ8qENgGl1UA4pGYZ_RULg6ff7z8L3HUcvjPG7W9Hnnlb2qdqCKFB3cP90q95klxaRDje0gg789XLgpaPaw88uZk9dgUNzq5ETDTThG8-qAfAHjTbRDFDYTDA_0Dgdi4Lnb_j8rsfCnuU3xPSKfeihIQbFby3drQdR0YQdLiF6OOYBoUr9cFF3bUM8Ia9kgyk5kdX_9LJ9g
+  place_id: 48f443bf27a80981ac46a5812fd8fdd0d37bcd16
+  types: |
+    ---
+    - point_of_interest
+    - establishment
+  formatted_address: Pasco County Veteran Services, 13853 15th St, Dade City, FL 33525,
+    USA
+  latitude: '28.359886'
+  longitude: '-82.198201'
+  street_number: '13853'
+  route: 15th St
+  zipcode: '33525'
+  city: Dade City
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:12.536375'
+  updated_at: '2013-06-20 20:18:12.536375'
+  administrative_level_1: FL
+  administrative_level_2: Pasco
+places_186:
+  id: '186'
+  name: Clyde Common
+  reference: CnRqAAAA5IcFkh-HEufjCkxKoHKYSnbhHG57g3cHglMO3CH-tCTHycK5mUNBsiVJXR0T77resC8KCXcwPHmKRul6YagCfVWxxTtY8kH03789zXZKJIuD7CLBC1L-g80EIZpaVyb6J9vwakE9_W-h_whsqlOgmBIQ3wVGuKuhQFRstbJ9R5IDPxoUTyaHG5MbkbQ1GEm4bML8fnfUxW4
+  place_id: edd6c201a8835828a6c3b937eec6d4aec1541f52
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1014 Southwest Stark Street, Portland, OR, United States
+  latitude: '45.522043'
+  longitude: '-122.681436'
+  street_number: '1014'
+  route: Southwest Stark Street
+  zipcode: '97205'
+  city: Portland
+  state: Oregon
+  country: US
+  created_at: '2013-06-20 20:18:14.246415'
+  updated_at: '2013-06-20 20:18:14.246415'
+  administrative_level_1: OR
+  administrative_level_2: Multnomah
+places_187:
+  id: '187'
+  name: Hard Rock Hotel San Diego
+  reference: CoQBeAAAADQ6gFAOKY0xdczgoV6vaOyiETXCjuQ8Fg37SDB3hXWw4Fw_VKELPE4rZ0Q3zlsbz6hFRupgRLxAW5wSoi5GRjBndJZWk2z7QeAQzhwZBiqS88LSZkWJRrY-Q62Nyb--K3YnhInlIAXk9TCPKRx5xa3vIhjAMQjfWijam9tKO9dnEhCnp7alPLH1AgW3xMrbgy_iGhS5loB2fw4bMmgyaI08NAkfCa8OHg
+  place_id: cf259dafd3e3f4f79f0209290804e0d536d1b774
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 207 5th Avenue, San Diego, CA, United States
+  latitude: '32.707466'
+  longitude: '-117.159719'
+  street_number: '207'
+  route: 5th Avenue
+  zipcode: '92101'
+  city: San Diego
+  state: California
+  country: US
+  created_at: '2013-06-20 20:18:15.747703'
+  updated_at: '2013-06-20 20:18:15.747703'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_188:
+  id: '188'
+  name: Kappy's Fine Wine & Spirits
+  reference: CoQBeAAAAIG-RxMMtI18akxQDjh_Mq1_OE7nIZk4AmpkeHXYcX8sbTHsJRC4zEOvfkIpb8CMS0l25b-_t3NeB4NjVOYuhNMZe8_QiXr-9BpPNJ74GImoPHznHvpNId3MffrBXQ-07PtVqnR7oQWYIX3TtvJBYT7qZYBlq1FswZUOs3PYZs7AEhAfsbUaQ0RaqwFYoD9oCXhiGhT-FwOtg2hH4WyhM8UvkTp1coBf_Q
+  place_id: 0d49b22dc090bf41bd4723e846a84ef37474cd81
+  types: |
+    ---
+    - liquor_store
+    - food
+    - store
+    - establishment
+  formatted_address: 325 Bennett Highway, Malden, MA, United States
+  latitude: '42.443962'
+  longitude: '-71.02542'
+  street_number: '325'
+  route: Bennett Highway
+  zipcode: 02148
+  city: Malden
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:18:17.216473'
+  updated_at: '2013-06-20 20:18:17.216473'
+  administrative_level_1: MA
+  administrative_level_2: Middlesex
+places_189:
+  id: '189'
+  name: DrumBAR Chicago
+  reference: CnRtAAAA_tqg2vHYGD5zCAfmvX1KIBqaAg8dd4Gjq7zKJxnb3saIKgrdg1E-RF9yrK0E8jKCTha3Z8BwdrME54JQqY_ZU_O2PrOkXLwrEWiiKMLC7V-EU97BGZI-4sTh4ImEJNmDXTNtVXetPpF-4YL6YI0NdRIQX2zVV_b-QH0yOA_h5M6SIxoUdKZzN8euAvN58bsAwtlWT4K0Dwc
+  place_id: 2ef47529726b4390343d1bdf996fb97b1d75d7c2
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 201 East Delaware Place, Chicago, IL, United States
+  latitude: '41.899126'
+  longitude: '-87.62177'
+  street_number: '201'
+  route: East Delaware Place
+  zipcode: '60611'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:18.84338'
+  updated_at: '2013-06-20 20:18:18.84338'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_190:
+  id: '190'
+  name: Hogan's Beach
+  reference: CnRrAAAAz7qmDWdcd7j30TaKb6AP--szTppjkbFlnXKKVhmS2YzxFzZjSkLQgZLKuqdqNTLFqPnf2sRo2dqKOJORksfg5ZSKdaKKFzI4I6je5T-C6zOCCpW4zhXGIMGxZLJKOY8DOBEeCn5HT7Qmyc9q-Oml3RIQcE-LuMbRL_y57NIKrFxCNRoUQQViwybNeyMdBeZKIpwOXBhFqII
+  place_id: 589615cfa23319a045ffd29f87600dc1911c5501
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 7700 West Courtney Campbell Causeway, Tampa, FL, United States
+  latitude: '27.967072'
+  longitude: '-82.570296'
+  street_number: '7700'
+  route: West Courtney Campbell Causeway
+  zipcode: '33607'
+  city: Tampa
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:21.431483'
+  updated_at: '2013-06-20 20:18:21.431483'
+  administrative_level_1: FL
+  administrative_level_2: Hillsborough
+places_191:
+  id: '191'
+  name: The Dallas Eagle
+  reference: CnRvAAAA448u7ghA_Un15-Ltu_BCvEtU4sd69_ImJFKP_MA4yfwC_qI0RUTVlMIsOXTtrJjk2X7F5L8BPdK4Zl7sA3e3CqBla0QEKpqJ4B59sJdUGvAlRlwdhXVlhFxekOaFUDgg1T1C_lc4Oq1WRbxvbL58pRIQ-zLhECHyRxdjwx-T0lHT4hoU5Kl01uQgZiP8NTzFlg7FnbYlgvk
+  place_id: b78b1633dd816332594dbfa2b8792cc528a8dc92
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 5740 Maple Avenue, Dallas, TX, United States
+  latitude: '32.822047'
+  longitude: '-96.837139'
+  street_number: '5740'
+  route: Maple Avenue
+  zipcode: '75235'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:18:22.814955'
+  updated_at: '2013-06-20 20:18:22.814955'
+  administrative_level_1: TX
+  administrative_level_2: Dallas
+places_192:
+  id: '192'
+  name: Max Sports Grille
+  reference: CnRvAAAAFEatM16n3uq1kx4r0UN4GgNBHkRCd5Gn8fsrVd_mh3Gei_NjEdr7ZcHvn_tMwhuiieISH9p2hD7b0KySBooFYoCTv-f9PnO4tJmQLmnzHlB-PaPYVJa5cuNNcHVJ9DRVrwdTsGANhGre3Camr8vRjhIQuH1PTPrIoJa7UGpYtRkXXxoUcAkx56xg4njQ_UWs3IuZdLfAFYQ
+  place_id: 3a4146dbc0017eb1c06a70439a06b0e50141cd77
+  types: |
+    ---
+    - establishment
+  formatted_address: 7134 East Thomas Road, Scottsdale, AZ, United States
+  latitude: '33.480482'
+  longitude: '-111.927986'
+  street_number: '7134'
+  route: East Thomas Road
+  zipcode: '85251'
+  city: Scottsdale
+  state: Arizona
+  country: US
+  created_at: '2013-06-20 20:18:24.570841'
+  updated_at: '2013-06-20 20:18:24.570841'
+  administrative_level_1: AZ
+  administrative_level_2: Maricopa
+places_193:
+  id: '193'
+  name: Fat Face Fenner's Fishack
+  reference: CoQBdgAAAEq2Vzcbwbf4aRP_WwSK_jLRigcu7v2Kbm3oLs6tAhrtUGlwQp4OPY7_UnID3shaNM6skOfYjVfw4IUbQu_e4i6oFQu4NOT_PaFNfOFwkgnPZZ4LsTfpRoTeavMItzVbvwzXiGzibNhyv8ST5jOVFYaWxShGzhAoWdy_sqaDe6-nEhBjKBzFVmxdFvr_BH1ozwXyGhTKeyHlLul7tNqmDiwJXSwFp42LMg
+  place_id: 2fc4174711f843bd1dbc4462ccc056d1057ef33f
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 53 Pier Avenue, Hermosa Beach, CA, United States
+  latitude: '33.862185'
+  longitude: '-118.400911'
+  street_number: '53'
+  route: Pier Avenue
+  zipcode: '90254'
+  city: Hermosa Beach
+  state: California
+  country: US
+  created_at: '2013-06-20 20:18:26.780333'
+  updated_at: '2013-06-20 20:18:26.780333'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_194:
+  id: '194'
+  name: Blanchard's Liquors
+  reference: CoQBcQAAAHbXzvrpH4E8KkLTE1VO-w8qtzNp9vnJpoG7V1Q00RlgBYMLSAFBpuXE-a_JW7bScy7A17aEh_MhMGSQTnWUiBVSKHD-d0x0aqZn0EEOy-m0fDMqxDfyS50hd1pH7nTaQN-B32KTfI8Ha2XFMyrbYbKX0CnJ-IwEAgXgKtpOwuGwEhC9VBZYObeEOnxk_D6OZMmzGhTsNZ_UI4d3qTPOmdo4_Dmno0o0Kw
+  place_id: 3d76a00c8d7b78454023e2b08319cb658e0df1af
+  types: |
+    ---
+    - liquor_store
+    - store
+    - establishment
+  formatted_address: 286 American Legion Highway, Revere, MA, United States
+  latitude: '42.417186'
+  longitude: '-71.003187'
+  street_number: '286'
+  route: American Legion Highway
+  zipcode: '02151'
+  city: Revere
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:18:29.734693'
+  updated_at: '2013-06-20 20:18:29.734693'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_195:
+  id: '195'
+  name: Clevelander Hotel
+  reference: CnRvAAAAg4uygPMRAVZm27tVzmrY7RRxtXlmBYxuoKgmxQwgMZyi0KzJnAum3TGSrczjftrXlQ3FUBKhHvyPM1g0H1lS-rBnmBCHW_BltM2cB5pE8EEatpQMzZb7y_8csSmOkl9zIL6p48QLRFy-77Ex5x3hRxIQPliopo_7vL-Zm5nrozRfnRoU7WLM262qDj8Qk-Tp9vQ3ru9skO4
+  place_id: bbd4d071935d8f047faacd8c4d0ffa19be656be2
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 1020 Ocean Drive, Miami Beach, FL, United States
+  latitude: '25.780663'
+  longitude: '-80.130743'
+  street_number: '1020'
+  route: Ocean Drive
+  zipcode: '33139'
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:31.262291'
+  updated_at: '2013-06-20 20:18:31.262291'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_196:
+  id: '196'
+  name: The Hawthorne
+  reference: CnRrAAAAUPE4hw-6INlyeEpVATpcBGceMy2_4zAT7bRpl2At8nLPuP-1VQJ6OpjYO1gnQWTtQ9954P_2WpCJoSDcnEwPzz_6aPFHb7cs0JuSUAi8tQLekzagjsQujbD4dIz_mBxqyJEinC941lsXLH6XX-HBPhIQYCvMjq0tVLQh4QPSchhL6hoUU51Ku6pEmMBwQsjEIodiccEm76o
+  place_id: 66a627ea654180ae0a8c0786b9e6d3bcaa67d156
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 500 A Commonwealth Avenue, Boston, MA, United States
+  latitude: '42.348529'
+  longitude: '-71.095545'
+  street_number: 500 A
+  route: Commonwealth Avenue
+  zipcode: '02215'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:18:35.820545'
+  updated_at: '2013-06-20 20:18:35.820545'
+  administrative_level_1: MA
+  administrative_level_2: Suffolk
+places_197:
+  id: '197'
+  name: Island Creek Oyster Bar
+  reference: CoQBdgAAANOB6I_Hbg-dKGO7MiJqcj7vMtwHrZYWIVWeIPQop8uW21-k3_K6_2Ip-qdZJYSwEmlU83aVlMYEhvAO55MgwTuw3N9d0JvgFWX8pQlQG-T7qv7pM7_aO0X567VB-eMXUm41gV02eqjijBy2Q50faFN1DAuZHfOAmxDjmdhPqqa7EhBEY32SlaZXdWxrzcKoa_8fGhQ4r54AQVqaLNSM5sZRkSVfAqtByA
+  place_id: 76b7909b9da5c71e445ec0c83cff535a001d9c1d
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 500 Commonwealth Avenue, Boston, MA, United States
+  latitude: '42.348774'
+  longitude: '-71.094994'
+  street_number: '500'
+  route: Commonwealth Avenue
+  zipcode: '02215'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:18:39.219476'
+  updated_at: '2013-06-20 20:18:39.219476'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_198:
+  id: '198'
+  name: Tavernita
+  reference: CnRnAAAAl5fWGslSQflMr2v9Au0eWxloBzL22dd9UaOX83irCWSARweaT2q-70IFMeM6tX6ly__qcGvzeXUssNbS3vzUJdVXk0NlSyq922jBJJ5IdVIFe5MS-z5_SwZsqpGC2j7AGrNOnT3WaYdI7Szif8vZnBIQAMwDKnj47yNZ2Lu-TekSSxoUo2e7rPk9J57aiLKmfc-5CZmpfSw
+  place_id: 130780e06d6ba5a59f86fdd475e8384e0e6ba346
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 151 West Erie Street, Chicago, IL, United States
+  latitude: '41.893886'
+  longitude: '-87.633042'
+  street_number: '151'
+  route: West Erie Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:40.762686'
+  updated_at: '2013-06-20 20:18:40.762686'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_199:
+  id: '199'
+  name: Eastern Standard
+  reference: CnRuAAAAeqGAG93_RogfmhB5T6Ym05ay6MtuJ7-brIxSXTL2kCGyJedJTXqYZoUVhTPQs7soc152EII356uIDZM7Zt2z5jbvA0viVvvyxTqao9Bj0p2z5e28TkWMPx2LrYEmoewwqXYUAUVdLuovgwV7EIL-qhIQi8m3WVXva0cSXBo5RJTQQBoUs-eLyYgmZniFH2Th3Wk-janflBE
+  place_id: 0f22e65e9197d4093a78d8b70cb95edd821f329d
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 528 Commonwealth Avenue, Boston, MA, United States
+  latitude: '42.348565'
+  longitude: '-71.096133'
+  street_number: '528'
+  route: Commonwealth Avenue
+  zipcode: '02215'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:18:42.182254'
+  updated_at: '2013-06-20 20:18:42.182254'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_200:
+  id: '200'
+  name: Bar Deville
+  reference: CnRoAAAAsaeHRpaUb3iDnWHdThUlftg0sKIAd2zckDLMgBKPosgsLOwGgFMGfA3cfI2PgzKFRq9wwi9leYn1-QcdfKd88vOKnlkOi3DjTtVfWvEcKRcay8tt3O6gyiJnMMkXloQawS1BIPM9KOLPqNBvAwt1OxIQUNThnhtaoQQqiqcUs18HlhoUfA8gc05lzPLaPHYx7UdiILVbye8
+  place_id: e5f72aae59ba1d1eaa0e2fca64b3d0fa8c815d64
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 701 North Damen Avenue, Chicago, IL, United States
+  latitude: '41.894186'
+  longitude: '-87.676867'
+  street_number: '701'
+  route: North Damen Avenue
+  zipcode: '60622'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:45.899341'
+  updated_at: '2013-06-20 20:18:45.899341'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_201:
+  id: '201'
+  name: Holiday Inn Express Chicago - Magnificent Mile
+  reference: CpQBiwAAANjTAXR3rI6yHBeWS3HZskjTukZAe-31mD3p0iYOMF7gE6kINWFtNvAsybD8vUIvfazMHWfXTfwFhmzHFMrjFHVkwGhO2IzXMkQUyRr82FcsT6SBcfrKqNsDV-BDk4Oq7jcFhxnUmFJmHr6RwuumavV3iBjC62ZRqRla9TBogFkNkcJKbVx1fqph-3rOCN2KaBIQERmQMSvVjC08bb3sQ204UxoU4wIXXGAxYUAG2-InBlGeol55HFA
+  place_id: fda2bfe538171e30603aee00bf659a48990373b3
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 640 North Wabash Avenue, Chicago, IL, United States
+  latitude: '41.893529'
+  longitude: '-87.627094'
+  street_number: '640'
+  route: North Wabash Avenue
+  zipcode: '60611'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:47.453978'
+  updated_at: '2013-06-20 20:18:47.453978'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_202:
+  id: '202'
+  name: Hank's Oyster Bar
+  reference: CnRvAAAA7O_FmibmCt5nimLRg3K_zbKxCppB2N6tZDuE-DBb7ARCvvErkxs1Nfhctc-0yNV0T19VyZJuf4nQ_33n8_8vG7URNkHqfRcnnhVkGAGcl0pmgsLwB2YslFrsjofhxxaCruXoVXQDaDhxh0Gt3uJC3hIQgmS80jkXG1TOuejfOVd11RoUdKkTGZ9vGVCB1JxE2w1eQg4f1mM
+  place_id: 5a7f90ad2eea696916af6c7aa7feea7c39904295
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 633 Pennsylvania Avenue Southeast, Washington, DC, United States
+  latitude: '38.884865'
+  longitude: '-76.997277'
+  street_number: '633'
+  route: Pennsylvania Avenue Southeast
+  zipcode: '20003'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:18:49.128909'
+  updated_at: '2013-06-20 20:18:49.128909'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_203:
+  id: '203'
+  name: The Graham Georgetown
+  reference: CoQBcwAAACagNSjBAXUeFqyi3A5OMj4B68e8ej9V5qF5zzeazAo3TNrvL_TQjchnkP0XGsh0MztS6DVrQwq6-rinanEUs2Yk9-4Jqa-A_EZZvOERMDKkP8oQluSxRrshLqS-jbWNEdFlLX3p1Bi9XhhcB_9kEQHFu921_LKGAiTpOIYXtyJ1EhAW10hBQ7Z_Qw6DXRF6Ut-QGhQch3rAk_imyAOpY7B-qfCH-WGc5A
+  place_id: b2036d3db2fb04b24b4f6a5d3646cdf2ff05b088
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 1075 Thomas Jefferson Street Northwest, Washington, DC, United
+    States
+  latitude: '38.904731'
+  longitude: '-77.060048'
+  street_number: '1075'
+  route: Thomas Jefferson Street Northwest
+  zipcode: '20007'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:18:50.596609'
+  updated_at: '2013-06-20 20:18:50.596609'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_204:
+  id: '204'
+  name: 10 North
+  reference: CnRmAAAAmSmW4BrlE50YUTe5XJpP6LYV2pgKT7rzSzwYqb7cDBb7Cp8I84Z45ClK4keh15wzbtE99K6ms36Naqkp7TKQl5jMu7pkSVp4j-bJYo7J53op6o66WTxtRILxvg6MoJhacTUbL2xEFWvSRiQ5D7cm8RIQvSCSX4lSM9xb0O9vQpRk3xoU_jZ9yzWwYJXHkTASAQF5mG8fuuI
+  place_id: d5e06f1ff736b3c247d32cf8001c5a02a5ac81ec
+  types: |
+    ---
+    - establishment
+  formatted_address: 24555 Novi Road, Novi, MI, United States
+  latitude: '42.46873'
+  longitude: '-83.476608'
+  street_number: '24555'
+  route: Novi Road
+  zipcode: '48375'
+  city: Novi
+  state: Michigan
+  country: US
+  created_at: '2013-06-20 20:18:52.094789'
+  updated_at: '2013-06-20 20:18:52.094789'
+  administrative_level_1: MI
+  administrative_level_2: 
+places_205:
+  id: '205'
+  name: dana hotel and spa
+  reference: CnRvAAAAJ0uADsWvdX4hgdWEp-dslGQAjjq4mz_uqtan8STcv_ULb7s_5ugXb02KrtaBdwjJDuFBDki_AEaekc2ME1Gf5-AUXY65EqOP3c0PNeqmvXj5tOcVIgPszX9L9E61oEip6l1UQ228zY1gMqBAJFimmxIQ0V66mHywsdLV3mZedbLaPRoUod2bkGdIeQxU0BItMzGXuTYueu8
+  place_id: 2543b92bfc9d4a71610731e6c3f61ecb1d8b8175
+  types: |
+    ---
+    - lodging
+    - spa
+    - establishment
+  formatted_address: 660 North State Street, Chicago, IL, United States
+  latitude: '41.894317'
+  longitude: '-87.628376'
+  street_number: '660'
+  route: North State Street
+  zipcode: '60654'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:54.442455'
+  updated_at: '2013-06-20 20:18:54.442455'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_206:
+  id: '206'
+  name: Prime Italian
+  reference: CnRsAAAA4L4JfMANxrN_5Qb_ha8vmo0QqVbPLgAdedsK0s04iGbBvUeL_J1hKYuJ6AZNhQSPgOizVvgQ6Ee1WQZICJqLcU4GX3XCPX2mY9X5wScVnimsGZyCBL6xP2t8HwQrHdog1FVJFqGoigiU6O3an3yhYRIQT-ascOowE5vm0kky86EsyBoULq-cswh-jTvc5qNsUoR1Rgv1sE4
+  place_id: ed97a1300d2b3165b6c0ac699b597c39eb1f750a
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 101 Ocean Drive, Miami Beach, FL, United States
+  latitude: '25.769787'
+  longitude: '-80.132898'
+  street_number: '101'
+  route: Ocean Drive
+  zipcode: '33139'
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:56.130633'
+  updated_at: '2013-06-20 20:18:56.130633'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_207:
+  id: '207'
+  name: Output Lounge & Sports Bar
+  reference: CoQBdwAAADiHl52dsE_yh--8Dzj4RY5g1KwoGtzUwLxSf6q8qwcnQVgPxYxiluY5TyroMMlJopUNgFPFDtMJHv2EfgBgGCX_akxdvY5EQmFo1I_X3gvirIkaElnIsP4BSpQ061OhCLKhKBdpuyDcJsNGl5dHt5s6KN4iRMRIgkUmLEDEj1ysEhAqw4NpqGrlmSavzYbUV5--GhTSx39nnIwH9dMqvu5KaaJJuv2N9Q
+  place_id: c04285b2f54eecf18fd13a20a83502d8bbe01c39
+  types: |
+    ---
+    - night_club
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1758 West Grand Avenue, Chicago, IL, United States
+  latitude: '41.890986'
+  longitude: '-87.671877'
+  street_number: '1758'
+  route: West Grand Avenue
+  zipcode: '60622'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:18:57.953111'
+  updated_at: '2013-06-20 20:18:57.953111'
+  administrative_level_1: IL
+  administrative_level_2: 
+places_208:
+  id: '208'
+  name: OAK TAVERN
+  reference: CnRoAAAACln0UdZRAQl7n6vJrSbinkBdwh_AYcp8VlIU5a3voaWH-ZrIcH7uRgyFJUFRRHRnlaL5QiSYsPHmei7hCu7yJyHFUlrfpxkHx1ii_ZMXlm2oYtNIboN_yyX6s5QPZS_l51t-33BlAid1zODEerhKnRIQTps6V1ZpHZrmaYMERfyGLBoU2YCN1GI6xnNFwuty0wVCV7ApziE
+  place_id: c8e864f35075390c4b3393e176bfd7d88e6c4b53
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 35 Northeast 40th Street, Miami, FL, United States
+  latitude: '25.813282'
+  longitude: '-80.194587'
+  street_number: '35'
+  route: Northeast 40th Street
+  zipcode: '33137'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:18:59.279727'
+  updated_at: '2013-06-20 20:18:59.279727'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_209:
+  id: '209'
+  name: ROOF on theWit
+  reference: CoQBdQAAAHbf0YnwOx2Wc8EkqEKgo1jRQTlcNMPtn6RugdezJ-E83eDOFz8zgf6Jft5v7UVQF8IGnQax8WTD6-BemYlbqdS8hCrlU22bzKRSpZbIQ5GIZdnbA385XKxucB6nHMPYlOM63lJ_JH6j12FAhxRYgkOyC4kpj7Qp8v4PMzZi4ZaYEhDvMrxOi58noXUVSIdIwrpTGhTamWibuJ99nxqM8FCi2UjrQytlVw
+  place_id: 69caba6e29071b7900e8138dd2322daa9d4eb7b0
+  types: |
+    ---
+    - point_of_interest
+    - bar
+    - establishment
+  formatted_address: ROOF on theWit, 201 N State St, Chicago, Illinois 60601, USA
+  latitude: '41.8860367'
+  longitude: '-87.6276886'
+  street_number: '201'
+  route: N State St
+  zipcode: '60601'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:19:00.727334'
+  updated_at: '2013-06-20 20:19:00.727334'
+  administrative_level_1: Illinois
+  administrative_level_2: Cook
+places_210:
+  id: '210'
+  name: The Bossanova Ballroom
+  reference: CoQBcwAAAKhq2j7LhVaq1uT8csZ4YUG__NpnB-4_0Udn2EGezFKKAc41tHqmJcyYozHZQK7l5qHKwUAV3oIHSe0b2CaYOPSIZZYQyOgTKsyVXqP7ArSUD7ksb5mRYzYD_gielo9FA996vbPSNGEQBWamWpXvlhBpQZP6a5ioXdGDRyqeH22YEhCJS5_SOWLvsi9sH8SCATBWGhRq_kjkH_dSpXu16jgeSdNKSc9SlA
+  place_id: de01fa3920beb8db564129f61dc3ba22bd439c29
+  types: |
+    ---
+    - establishment
+  formatted_address: 722 East Burnside Street, Portland, OR, United States
+  latitude: '45.522844'
+  longitude: '-122.657956'
+  street_number: '722'
+  route: East Burnside Street
+  zipcode: '97214'
+  city: Portland
+  state: Oregon
+  country: US
+  created_at: '2013-06-20 20:19:02.178204'
+  updated_at: '2013-06-20 20:19:02.178204'
+  administrative_level_1: OR
+  administrative_level_2: 
+places_211:
+  id: '211'
+  name: BRÜ HAUS
+  reference: CnRmAAAATNmU5RAlq0F5YIxTnNZFSid0tFfblj21uP2TosbkpgFOwYMzgiS50d4H19iallYREsuiy4K10sB3_LvPNo8Eu8PATiGcprzELZwb2cNB68FdMildWi_JFLgzFhQebOkQSslzbXYd04NaEMf_H2lkJRIQIoLvXID-ul3cKvYRu0-OSBoUTIEgM-LrW-lyNAAPBDHUtcO_6WA
+  place_id: be270c5ce3b91321c26d3251336730abff6392dd
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 11831 Wilshire Boulevard, Los Angeles, CA, United States
+  latitude: '34.047768'
+  longitude: '-118.463538'
+  street_number: '11831'
+  route: Wilshire Boulevard
+  zipcode: '90025'
+  city: Los Angeles
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:03.826359'
+  updated_at: '2013-06-20 20:19:03.826359'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_212:
+  id: '212'
+  name: Graffiato
+  reference: CnRmAAAAwIicrTAItE3exIs56BXjcm1BEXxydxew_7rZts0hIOOwi2_88LwH5SevgUWKJnSbUyeK04LC5T39dh7I4-H3p56YQRrTC50QjLi9LDieLCLYtwHNslXzNSCjozjBkCil0MOCDYOmYD9Bfn5ewUstNhIQEgeABrOk-xpqhjGL7yOeGRoUSdpz6T0njrUpOjvzElF3SP91JKw
+  place_id: c25618c6791074181f2d02d3278884178aaf066e
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 707 6th Street Northwest, Washington, DC, United States
+  latitude: '38.898672'
+  longitude: '-77.019742'
+  street_number: '707'
+  route: 6th Street Northwest
+  zipcode: '20001'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:05.418388'
+  updated_at: '2013-06-20 20:19:05.418388'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_213:
+  id: '213'
+  name: Toro Restaurant
+  reference: CnRuAAAAuWCv2P4mIvY1Hu-eQBp7IR8VwhTqOqxedm2kf0sZEjPPoFAgV7QDm3U6z4kK294Q2Qoibkxz93YFSHPs8_nu6OzLtbdWZLZfrAJ-sjQysPCJF7o5hMMKMQwHqIPfhHl6xmT4KFD1s3EF3MK2GHevJxIQ6mmA44SfpmCbWChIvVDrfRoUjkGyTgZ1Xl5RDfphlBtAGYCQRLQ
+  place_id: 6fe86277846afb2741b09e0e2cae5b71c8bb2b98
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1704 Washington Street, Boston, Massachusetts, United States
+  latitude: '42.337024'
+  longitude: '-71.075959'
+  street_number: '1704'
+  route: Washington Street
+  zipcode: 02118
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:19:07.161661'
+  updated_at: '2013-06-20 20:19:07.161661'
+  administrative_level_1: Massachusetts
+  administrative_level_2: Suffolk
+places_214:
+  id: '214'
+  name: The Dram
+  reference: CnRmAAAAPGCZPjeulYmMZ9yfkhVx7k1I2XN7hvCNXM0Qd5xoSxWjqitDNk35lK37m8uRi1a9IiKHwe9noiFeEWBlXrtLQdsu_ieCfoQA4y7byYDh2D_vb0AbtGz-QTu1l5uS_aWqTaTwJABjKOQuC35dBj3IXhIQBNVovtA58mpU1GRWpX4X1hoUcdcCwZYvNkVhY9gQBwmmLRPR1ck
+  place_id: 10a21a9fcb9f65fc32b4cca456b6bd1dc6e2db8a
+  types: |
+    ---
+    - establishment
+  formatted_address: 2918 North Henderson Avenue, Dallas, TX, United States
+  latitude: '32.820581'
+  longitude: '-96.784835'
+  street_number: '2918'
+  route: North Henderson Avenue
+  zipcode: '75206'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:19:08.593233'
+  updated_at: '2013-06-20 20:19:08.593233'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_215:
+  id: '215'
+  name: Founding Farmers
+  reference: CnRvAAAA-tQjU4SYTLXLWHgvoZHhtSXnap_PsOnXVMAZpsSpnHCsXJt83k9abC_Ax6Wq4jt2hJdjdRmeVaOwzg_Q3KG9iOROinLCtvVVFJGEbbrkcabolSdFmEFxMt5pUbDYEnbr5T9olGt-iQ4J46hmDDycJhIQFL_Wns-dPleWvX2L8xWj1xoUzv72mgxvrXDFOlVeBgjnDVesBHI
+  place_id: 5a4d05c77924c28434321589acdeefacbfee8c9f
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1924 Pennsylvania Avenue NW, Washington, DC, United States
+  latitude: '38.900354'
+  longitude: '-77.044506'
+  street_number: '1924'
+  route: Pennsylvania Avenue NW
+  zipcode: '20006'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:11.020988'
+  updated_at: '2013-06-20 20:19:11.020988'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_216:
+  id: '216'
+  name: Pearl Dive Oyster Palace
+  reference: CoQBdgAAAOMihVp7HxDMJl7gF8xdpwkvyyP4AgBY-VTqXCXAJhpn23EV5BmTyg0802j_wQZVu6rUV3pgoIe09dgfVvVCCoRdgkTYspJ5qyFzwMjYgqFKGf6rdSZbWL9msQocBDUdO_kJEJwgjXxOIuD2ejwygy5W3K_sNBmoqN4tAb0C3xBaEhBzjkVx0aX2tIkbMtbpuDisGhRFij3nprvZBOZOX-xqkhcS6Weflw
+  place_id: dcee2860a933e5ed893f338497513396b7cbb138
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1612 14th Street Northwest, Washington, DC, United States
+  latitude: '38.911632'
+  longitude: '-77.03203'
+  street_number: '1612'
+  route: 14th Street Northwest
+  zipcode: '20009'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:13.227421'
+  updated_at: '2013-06-20 20:19:13.227421'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_217:
+  id: '217'
+  name: Grace
+  reference: CnRjAAAAPk2nBfVLF-ClREeoKp7K19vtA19mAIcBVrnPEwvg_7w1dHtMrjotqZmiIGqiZDUxZIu7gI2oth9l-KLkz-CHhpbpZ72Wq_UHB_S2pbuG7m-rtq6vSa2yQdS7WESlO9sGwUxZPLjtIMbDm9tijUtlZBIQSPGQFH2rY4zzuvBgH8s30xoU8ePLtLJsJcLCLmJaeOXar-kYT3k
+  place_id: f2a0a6380bde90400d7bf88e6d8f73c417c2701b
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 777 Main Street, Fort Worth, TX, United States
+  latitude: '32.753164'
+  longitude: '-97.329748'
+  street_number: '777'
+  route: Main Street
+  zipcode: '76102'
+  city: Fort Worth
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:19:14.687903'
+  updated_at: '2013-06-20 20:19:14.687903'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_218:
+  id: '218'
+  name: Bolsa
+  reference: CnRjAAAAxRR0suyPpVUYjaConiAm9O1fxTRrj95q5DpqCDvhWs3RH5w_ahfgKiz1WJ5gP1T50jXXKQ17RnyM6pkmS7SHf5jYwTCv41q62dmHpRWfwbygOgmtyIfszEXgz_VyReqJ1RkVjKixwXWuoncRJG2CzRIQ4jxUDqToqvGG9UdMAh8EpRoUvMuCd3xDpDzoG2Ba66FZI_Jfvns
+  place_id: 69a49df3369da90e5beec13fa5a1371349b6e085
+  types: |
+    ---
+    - cafe
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 614 West Davis Street, Dallas, TX, United States
+  latitude: '32.749387'
+  longitude: '-96.831983'
+  street_number: '614'
+  route: West Davis Street
+  zipcode: '75208'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:19:16.255'
+  updated_at: '2013-06-20 20:19:16.255'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_219:
+  id: '219'
+  name: Swine Southern Table & Bar
+  reference: CoQBdwAAAIuzPraPfc9cYCs9imJXZdB7SQprk4ka2kLthbCDDgOmbw9oIsjczOR-uqLDcX7cJ-5PYpATiqiXkrHcdfA-H9kq4tArRRKTDXGj5WXbdGtVsCnlE5XyTQ6KGlwsUlPQ5A4QKHCxo3nH5rvGsfTAIgHev-DvmwYCkKC4RaYduBdpEhByrdPAucO5Yyp1MUim-2-VGhStmwCXcRrQcG1RYR8XDWOXx4cqNA
+  place_id: d5e21d5f17f13439497386b56d38e01d6c63325d
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2415 Ponce De Leon Boulevard, Coral Gables, FL, United States
+  latitude: '25.748994'
+  longitude: '-80.25846'
+  street_number: '2415'
+  route: Ponce De Leon Boulevard
+  zipcode: '33134'
+  city: Coral Gables
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:19:17.873299'
+  updated_at: '2013-06-20 20:19:17.873299'
+  administrative_level_1: FL
+  administrative_level_2: Miami-Dade
+places_220:
+  id: '220'
+  name: 1435 P St NW
+  reference: CpQBkAAAAOoSNGfY2F2rnMpf7P-jDhCS5ghhJZ8YzySaTJwUvKO0-uc50g8y23OQpy-vqBo4-KlgoSMyCJMHFIQkvNxWD06N4vlbdBZozLqRsdoFi1tdBkUIoZa2tRXZmnIF6HeT3DN4SomwcWi5ozZQbPdrfpZQTVwQ__iTEQ70m9Zkcidn-TfAlcjy3JK7lN1KZbgz3xIQVe8MoR4z82YEizJP73QcQhoUw1CLbp1FuQswCuXBpcsVGqt5Vco
+  place_id: b4d11d30a0b65d8532338eb019545cf82cf1ba05
+  types: |
+    ---
+    - street_address
+  formatted_address: 1435 P St NW, Washington, DC 20005, USA
+  latitude: '38.909906'
+  longitude: '-77.033371'
+  street_number: '1435'
+  route: P St NW
+  zipcode: '20005'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:19.475263'
+  updated_at: '2013-06-20 20:19:19.475263'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_221:
+  id: '221'
+  name: jm Curley
+  reference: CnRmAAAAOomhDTPGUJRSNWcMTtfq9_x9g3q_tR9OZqsR8R0cFARdxgiicDRJ3oRJZovkIpsIyig1I0QOtvlCwNTYZfgcsKQ9pU63DXkV7QC9ACu67zwTi2GtseayuTh33sksolNTBcRtMhcoUmtbh8t9BtY1thIQqqffjlmkX8mO3jfMmef15BoU4jy8iPx9mr1WQzdeOnGAMQa-Ps0
+  place_id: 888645f5204c31c3fe826b6c500289406770d8c3
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 21 Temple Place, Boston, MA, United States
+  latitude: '42.355264'
+  longitude: '-71.062319'
+  street_number: '21'
+  route: Temple Place
+  zipcode: '02111'
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:19:20.799107'
+  updated_at: '2013-06-20 20:19:20.799107'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_222:
+  id: '222'
+  name: Aviary
+  reference: CnRjAAAAz4tNPSRtKplrGB9ni2KUcQCrmpiue9v8l2qzWfCyMVDL1Yk0xCrGvgmobTCcvqFrlM6dZmS8sPeIFxMmcszJwMh-eeVS-6nI-uBoDPl3R1wpNrYzlUUKw5xVR59AgMDo5ZDO_7C6jv-oENDl2Y1mFhIQCklrIjecW2L1Q-liRjCbtRoUGQzFzNZaeTROErzgV-y9UC7GIIU
+  place_id: a777cc94fcab3a53399b2d75b178d3c3f1aa0012
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 955 West Fulton Market, Chicago, IL, United States
+  latitude: '41.886636'
+  longitude: '-87.651793'
+  street_number: '955'
+  route: West Fulton Market
+  zipcode: '60607'
+  city: Chicago
+  state: Illinois
+  country: US
+  created_at: '2013-06-20 20:19:22.18465'
+  updated_at: '2013-06-20 20:19:22.18465'
+  administrative_level_1: IL
+  administrative_level_2: Cook
+places_223:
+  id: '223'
+  name: Hotel Madera, a Kimpton Hotel
+  reference: CoQBegAAAECGjytyoQ5LeNjk-zqqRdFhxRA0By1K1KfQZqPlMQcIJBNtb-e7-c3TzVyGf7WC3GPElXNzyJeGjepZlQKTVQGkYDUTzZ-hS0o6qcxdFvrlLLBXnEgdYXOF8vATnrew-4kcsFuqbYgJhbwcQLy6EBiDsPJsC7wRZCT34GBaN7ZSEhCFkoKXdKe3IAQNJTECxSf6GhTniwbS5wp9H-sco9Qu4kuXcuSO7Q
+  place_id: e314bcccaf1c7321e0f44b73b57e5310e8de7cbd
+  types: |
+    ---
+    - lodging
+    - establishment
+  formatted_address: 1310 New Hampshire Avenue Northwest, Washington, District of
+    Columbia, United States
+  latitude: '38.907641'
+  longitude: '-77.045566'
+  street_number: '1310'
+  route: New Hampshire Avenue Northwest
+  zipcode: '20036'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:23.764588'
+  updated_at: '2013-06-20 20:19:23.764588'
+  administrative_level_1: District of Columbia
+  administrative_level_2: 
+places_224:
+  id: '224'
+  name: Paradise
+  reference: CnRnAAAAp1rbcxG9PzGzggIKdwKxEi6wUNNpiYgsdF36jRdk1jYxXdbreLmrkOiy8Cn6gboaYrD3nVUUr0j_4srL_uaqLHwl3gs5Wh_81nhC2zp2aVZXQ3xoeO9Z-OPvy6QEpuUWwWPKfVxGe6sh_hcx4_La-xIQhY3bWAhXAIzOow6gr3k0HxoURKeAD2KQwCtyLHVXu3X6cm8rg24
+  place_id: 0bead7e795f2b662033d3cce76ece659be4c5c79
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 180 Massachusetts Avenue, Cambridge, MA, United States
+  latitude: '42.360867'
+  longitude: '-71.096344'
+  street_number: '180'
+  route: Massachusetts Avenue
+  zipcode: 02139
+  city: Cambridge
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:19:25.23075'
+  updated_at: '2013-06-20 20:19:25.23075'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_225:
+  id: '225'
+  name: Westwood Brewing Co
+  reference: CoQBcQAAAKkR_UlbcUaB1de4ovNHrTpvM7Z08SshyduaUYuCs5vDTRuW5U4Za1VmtGsw1yjPQPc-ukEyy_4agJP1x_mNJIu24FDHbXeuut7tOnhu7qQqtJqXbCsUEYB2bFHz0DLgVgRxxVlUL8Nxe2E5lqGztulaV4QRJrHBZNJD_af8b3bCEhAivulWoL-1w7Nf4slASr-6GhRSJ9Pph3nJ6n8ia8o_KTOjwIWiqg
+  place_id: 94ccb3d9533a3be30e0473cfce53c9395b36ea95
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1097 Glendon Avenue, Los Angeles, CA, United States
+  latitude: '34.060918'
+  longitude: '-118.444538'
+  street_number: '1097'
+  route: Glendon Avenue
+  zipcode: '90024'
+  city: Los Angeles
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:27.615078'
+  updated_at: '2013-06-20 20:19:27.615078'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_226:
+  id: '226'
+  name: Silvertone Bar & Grill
+  reference: CoQBcwAAAFWKdqec8Ys92ZZMJEs4kVqM_ZNlK7RjSrj8-H5q9rXxnS4nC_iovD-AFR0_VVGQnknQEylOaDlH5W5p8-Iv4zz6lZo4mEH75XsR9ZdrfMQbqeIxSDb_PjID7_-fK5ejdz6hfFMWO0nzZ0S4w8Sg_wVn6n9lutXwIuegvtQ8E6cNEhA0AGVrH8UDWRZm_NqH00WqGhQ-hYtTqRl_uA_X2oB7QK0Ht7o6AQ
+  place_id: ee500cfbc42bc500febd167c0fb3e2a90f474a8a
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 69 Bromfield Street, Boston, MA, United States
+  latitude: '42.357077'
+  longitude: '-71.060893'
+  street_number: '69'
+  route: Bromfield Street
+  zipcode: 02108
+  city: Boston
+  state: Massachusetts
+  country: US
+  created_at: '2013-06-20 20:19:29.89935'
+  updated_at: '2013-06-20 20:19:29.89935'
+  administrative_level_1: MA
+  administrative_level_2: 
+places_227:
+  id: '227'
+  name: Wando's
+  reference: CnRmAAAANvpudfYalYRy7rDreZWyCO56gTeyS3QDQIf4pMz53fsAeeB4HZ0slX5HyLKXtV6FPecq5X-s7dXYkWdkSKBOJULN7vBKvSYYTCnsRHYzpCNWtwtOOPoT70MDrqPIOWKLdwUOHJKmc4lxYTBPHI3cChIQ3Wjpc20AM_WDJifEs6k5PxoU9cGDM7ag-Ff8tkDhv7xwetDjjDc
+  place_id: 8e8f078ef6b744cc7b879b601f7fac720016aec2
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 602 University Avenue, Madison, WI, United States
+  latitude: '43.073307'
+  longitude: '-89.395954'
+  street_number: '602'
+  route: University Avenue
+  zipcode: '53715'
+  city: Madison
+  state: Wisconsin
+  country: US
+  created_at: '2013-06-20 20:19:31.377626'
+  updated_at: '2013-06-20 20:19:31.377626'
+  administrative_level_1: WI
+  administrative_level_2: 
+places_228:
+  id: '228'
+  name: Eastbound Bar & Grill
+  reference: CoQBdAAAAL_kYzptDITBOp0xwLsbptlDs-U88_tpJ4XtBOQIMxWJ7NeobViH5hEklBko2jeOQgfVN7J5Ral_bfHyhHIGGEgNmTKREi_rBUJP2SUUNVTEfQQVzfNgRpsYdC38279YQdVKZjQOOuvNmqIt7_4uSC9z17fB8jefTvwmph9yVVgZEhABPvBvw9QvzVccys6nUFn3GhSlx4-pY6opGdJfgPTEjIpjuqeKlw
+  place_id: d9c88e3859b3c83f36adc42a98bdbff23b747752
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 10053 Maine Avenue, Lakeside, CA, United States
+  latitude: '32.861315'
+  longitude: '-116.921996'
+  street_number: '10053'
+  route: Maine Avenue
+  zipcode: '92040'
+  city: Lakeside
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:34.032153'
+  updated_at: '2013-06-20 20:19:34.032153'
+  administrative_level_1: CA
+  administrative_level_2: San Diego
+places_229:
+  id: '229'
+  name: The Ramp
+  reference: CnRnAAAAtDkGZC3jDrT_GapHM2gU85u0pOf40YTdKG_zC5ZCoZOl8JLnSzSJfpf5ngGA4xqTDKHjYliUVL86ge3X7eXtiUkdOyh_B272cir_bU7eTtcTlViksAaRTmXjpirMDMmKFiwINDODZrDFTXykMwSdKxIQqYuAOxWHO63-11InuGUxMRoUXR9m33StVS3chMYzRQxSLKigcqs
+  place_id: 4d6dbfd4d119796b1a3093df040ae77d35f77ce0
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 855 Terry A Francois Boulevard, San Francisco, CA, United States
+  latitude: '37.764241'
+  longitude: '-122.387709'
+  street_number: '855'
+  route: Terry A Francois Boulevard
+  zipcode: '94107'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:37.939785'
+  updated_at: '2013-06-20 20:19:37.939785'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_230:
+  id: '230'
+  name: Al Biernat's
+  reference: CnRqAAAAGUno_NHONKXBFMXa1p-vYOtZZvgzl2ZYDxrwGwSX74ZsVj7P2VIuvy0VFaXHNNTKAZcvrK8Sp7eP24-UwDDgxPvIFFWKjhiu8jx8qXR43vz2W0pNZ0-RMuF-jdI49GBPEAcd6Id7fCUrienSM6UaxhIQciNFa9wjz0Mon1FGz0ZsGhoUK3eepVZoOYqc78L-t0X7FUL67N4
+  place_id: b4605861359cc7fb9bfbaabd0fce811c3fe9f9e8
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 4217 Oak Lawn Avenue, Dallas, TX, United States
+  latitude: '32.820316'
+  longitude: '-96.802501'
+  street_number: '4217'
+  route: Oak Lawn Avenue
+  zipcode: '75219'
+  city: Dallas
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:19:41.135048'
+  updated_at: '2013-06-20 20:19:41.135048'
+  administrative_level_1: TX
+  administrative_level_2: 
+places_231:
+  id: '231'
+  name: Outpost Sports Bar & Grill
+  reference: CoQBeAAAANTLZtlxS5r0JRccrsSOxFZiUXJuKwP10WDL2V7xEbshfwGt63ys_GOoa7J6cxOrIKYAOLDtsPsYTEFaE1JZgEGQ3LaUkglR-NZ7isE-HhoIhhnL01COsExXcqQD3i4FzeWR6DveYcSl9MemqKY2mf-5nP3AdvV2raU9RCW5N7pNEhBIY6dr7091HnrFUWA5aFShGhQUmxifhMUVx82dRq6jI3lJLaDjSg
+  place_id: 02f408ba37f10c75a95ea0223cb2cb79689ae2d6
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 2251 San Ramon Valley Boulevard, San Ramon, CA, United States
+  latitude: '37.779618'
+  longitude: '-121.978022'
+  street_number: '2251'
+  route: San Ramon Valley Boulevard
+  zipcode: '94583'
+  city: San Ramon
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:42.852063'
+  updated_at: '2013-06-20 20:19:42.852063'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_232:
+  id: '232'
+  name: Lincoln Restaurant
+  reference: CoQBcQAAAI_KkgrFzirMky8oZClsoV4StB4qv3BkzW0dPeY_M1oS_0aHTbAEmO9rH7TIUYPQ7l6e8p8sl-LvgmTWvPsWaaSbODZGsLdE57K7qRetJkAbkGMgX27ynkQFx2WLEX9vTg1ZNJr0gPBgg278zcitCelIeFaUpGxZcSVKpfZS_crEEhDV4EAkbqS8okeRA3fRxkTfGhRsdgidRgAfqoxFeNq3KVaxnn9Jiw
+  place_id: ead9d8d3d7b8b7f7c15caed29a915fc1ac5669ff
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1110 Vermont Avenue Northwest, Washington, DC, United States
+  latitude: '38.904376'
+  longitude: '-77.032918'
+  street_number: '1110'
+  route: Vermont Avenue Northwest
+  zipcode: '20005'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:45.108001'
+  updated_at: '2013-06-20 20:19:45.108001'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_233:
+  id: '234'
+  name: Daikaya Ramen
+  reference: CnRsAAAAxC1dGRMd9ID6aHPnhEwmC2fjpFwgfoPWSIYWUGY4PQUcLmOZWGhr7JfITDrLeiEDjQf12ANslkT3xkW1KP8oK3XWQPEg_RNSKswbH8rKrUV3MqryAAgTAOvuu5DIDqjbixn0DxW6tfDeE41SuyZn0xIQsUVVJ-qIC-RJOAMpBO3qHBoUGPotDR2D4iV4WIu7p0vOHvTkED0
+  place_id: 82e200c2f7239df772ecbc12ed1a2afd06c7f87b
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 705 6th Street Northwest, Washington, DC, United States
+  latitude: '38.898603'
+  longitude: '-77.019739'
+  street_number: '705'
+  route: 6th Street Northwest
+  zipcode: '20001'
+  city: Washington
+  state: District of Columbia
+  country: US
+  created_at: '2013-06-20 20:19:48.66753'
+  updated_at: '2013-06-20 20:19:48.66753'
+  administrative_level_1: DC
+  administrative_level_2: 
+places_234:
+  id: '235'
+  name: Establishment
+  reference: CnRrAAAADD7rGWoeykIXSfs26gKRL0cUkvV510A-cPfrSQOkG3Eso8Gor-BzBFNdQyWeLav2qPQiyXaxSv9sm0EvYqoXG1Tl5XORT2O0LfSCVBlQeORvFWQP93Rs1H9sh6IQ9HTpaa3fQkYLpWRs8ANXxugHdhIQf8TCQ2GA7uqB5JB1yqa4nRoUE2G2HQdJSAE4RD-sDI2Q21T5-po
+  place_id: d62d94c76bb9916eef94e7862c0dea2bfcd2aa15
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1332 Hermosa Avenue, Hermosa Beach, CA, United States
+  latitude: '33.863406'
+  longitude: '-118.400153'
+  street_number: '1332'
+  route: Hermosa Avenue
+  zipcode: '90254'
+  city: Hermosa Beach
+  state: California
+  country: US
+  created_at: '2013-06-20 20:19:50.902667'
+  updated_at: '2013-06-20 20:19:50.902667'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_235:
+  id: '236'
+  name: Shooters On the Water
+  reference: CoQBcgAAABJhJTjBop_usyIz8qRJZEMJBWV2COP0Smlh9cuZxfXP7h2ouAK5gUCizSodhqnPhc68fCcx2KUmKU2A3HwWrZJCfQSLJ0k2HvKJVwH1znYUKoTKKsBCn2D5_iioCrA4bASCVC5bIVk1MYBwLskrod4iMQD6vf9tB-aePebkLrv8EhB3PeKx4PEepmhiF7_SYx8LGhRieJQvjIEkaLi7qCprTcdyUV250Q
+  place_id: 6edc2f98f10c2d0137ecc4c135db3760605df971
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1148 Main Avenue, Cleveland, OH, United States
+  latitude: '41.498325'
+  longitude: '-81.707135'
+  street_number: '1148'
+  route: Main Avenue
+  zipcode: '44113'
+  city: Cleveland
+  state: Ohio
+  country: US
+  created_at: '2013-06-20 20:19:54.167665'
+  updated_at: '2013-06-20 20:19:54.167665'
+  administrative_level_1: OH
+  administrative_level_2: 
+places_236:
+  id: '237'
+  name: VU Rooftop Bar
+  reference: CnRrAAAAznAWM1rFjpP8SyW2X7ZA6x5hN8d-qNyaGYdu3J09f-BJqRYzHUevjdxtVGhuNQDIj5IuQl6oJQezPuItiCypE6v_MyVEfyGyBtHbH1iLQ5q5Go7cfcwnvn4CgJz9Hd7ssptAVZZ72QNhGOug1VhbsxIQ1VXfjgl-S-zD0bDDnKECnRoUbM8AWq4uThlmXodvXd2SYXZ4OaY
+  place_id: 7bf4ee44143c173e5c82b2b52378fb307c1d256f
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 17 W 32nd St, New York, United States
+  latitude: '40.74772'
+  longitude: '-73.986579'
+  street_number: '17'
+  route: W 32nd St
+  zipcode: '10001'
+  city: New York
+  state: New York
+  country: US
+  created_at: '2013-06-20 20:19:56.351592'
+  updated_at: '2013-06-20 20:19:56.351592'
+  administrative_level_1: New York
+  administrative_level_2: New York
+places_237:
+  id: '238'
+  name: Strip House
+  reference: CnRpAAAAMoohu5WTbpnmcUB2Vbz8dJbm4w7I8c2yxTMVpPedzh1PuS7sU7tQ4RJmHP4wzLeSBniALAog7aFvdkV5xbBJH3qiH8UdzkIl8Ahc-vMlHzqlpGfmKHNdb2LgikzhztBEf934hDjWCFZrPpSQYhRHQRIQJJBC0gDyKC6mKNtT8pZgLRoUwjSdKLGrdmzFpmPOjnlswlZBEUY
+  place_id: 2caa7f9865d4698f3a0d876143b9d9f47973fbcf
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 3667 South Las Vegas Boulevard, Las Vegas, NV, United States
+  latitude: '36.1096'
+  longitude: '-115.172571'
+  street_number: '3667'
+  route: South Las Vegas Boulevard
+  zipcode: '89109'
+  city: Las Vegas
+  state: Nevada
+  country: US
+  created_at: '2013-06-20 20:19:57.727189'
+  updated_at: '2013-06-20 20:19:57.727189'
+  administrative_level_1: NV
+  administrative_level_2: 
+places_238:
+  id: '239'
+  name: Nobu
+  reference: CnRiAAAAIOfGHQa_xBWvdOwGPpfJyjAaFzHgu-Ep1yjV6loDACB6mfdqyKDkFjvdc0SVW4941XQ_RyQ-mWdd-URcF0b3UhUUCydOIIly3IElnfq-u7El8gdh8wdo51ARTj1O2UTPZM5RKfeDuwhkLCAbrINKLBIQRSz1Zy4NviMk8HRyjQ0MwRoUADhPxsYdXbM3XYrDKGqsitt0v6c
+  place_id: a8b69ef0e968a60c1a36279e073c73457f0f1969
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1901 Collins Avenue, Miami, FL, United States
+  latitude: '25.794856'
+  longitude: '-80.128304'
+  street_number: '1901'
+  route: Collins Avenue
+  zipcode: '33139'
+  city: Miami
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:19:59.487953'
+  updated_at: '2013-06-20 20:19:59.487953'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_239:
+  id: '240'
+  name: Dogwood Houston
+  reference: CnRsAAAAFYRREHpmRu3qoXEVdUBQ1UBfAAIRi-5AfkovDmpm-shTKZGVdXDV9UKi6zAt2m_95pyG0skKEdy9uA0gQKf-MBAMfmRSmwewh7XPXkCLpNP6Ej1Zcl1434GwZgsshegMANkl1svC75JrTAn2cQUtRxIQairDmOOOdHrX36rITDCvThoUVe58qL9whlgPrRQOd_m-0aJoNEg
+  place_id: 8693961faeb170eebfe36e8ac5e6fe13319f7b11
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 2403 Bagby St, Houston, Texas, United States
+  latitude: '29.749496'
+  longitude: '-95.37829'
+  street_number: '2403'
+  route: Bagby St
+  zipcode: '77006'
+  city: Houston
+  state: Texas
+  country: US
+  created_at: '2013-06-20 20:20:00.819866'
+  updated_at: '2013-06-20 20:20:00.819866'
+  administrative_level_1: Texas
+  administrative_level_2: Harris
+places_240:
+  id: '241'
+  name: Papillon Bistro & Bar
+  reference: CoQBdAAAANOpB7Qv0MpXyUnGFNQyIVhauYuy8IZmccl70bb-XsewoiAVf3AcZcwfLlnQPgAwiNWIQLMtbXYg1tJgeX24XDROiTKiYOpHHttvbOf1V1E0lYFZ2iJfgskFbIHIy0jj-1Rg707g5UJrSmjJ-h7HIMwp-h7vBf0eEjBCBLYOYZ1gEhDEpb8qP16Fb3GKggQssKIyGhQEztJaiZJf-Qy01Q1ZLQIRfWbFvQ
+  place_id: 51748e5df8a94a90f26f3441c9a2590dbc87b7dd
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 22 East 54th Street, New York, NY, United States
+  latitude: '40.760469'
+  longitude: '-73.97433'
+  street_number: '22'
+  route: East 54th Street
+  zipcode: '10022'
+  city: New York
+  state: New York
+  country: US
+  created_at: '2013-06-20 20:20:02.248403'
+  updated_at: '2013-06-20 20:20:02.248403'
+  administrative_level_1: NY
+  administrative_level_2: 
+places_241:
+  id: '242'
+  name: Sapphire Manayunk
+  reference: CnRuAAAArpCNben-ig04cd9c_MFt3SVZBLItCgBzjHQn5Cfb0RXhgjyL_QzI8qT-ZFokyqhB2F-0xdzKxzvn_ExMKOJpBlOa9uDYJOYt6Oqirj8m792-BrcSvTVWcI_2wYEs65qos7IL56FVD48ZaeUYJR5SjhIQHBetHfDvrnoou_iTR7cdxhoUbHHo5_oO53ytNkPauUZDkJhBMts
+  place_id: 94f52406ad89d2d9fef4ca7102e0ecde9edc930d
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 4141 Main Street, Philadelphia, PA, United States
+  latitude: '40.02296'
+  longitude: '-75.219119'
+  street_number: '4141'
+  route: Main Street
+  zipcode: '19127'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:20:03.704926'
+  updated_at: '2013-06-20 20:20:03.704926'
+  administrative_level_1: PA
+  administrative_level_2: 
+places_242:
+  id: '243'
+  name: Paradise
+  reference: CnRmAAAAmYCHkqNRz9Jb73y8iJNVEglFqalQ5FHB5ppiNmKiCWaC1irA_obC8gHbJFJpqieilo_xgwstoiaTuYYPhqgaPmB6XgzYkmsvuNZI7QhWatBXi-swfnam_AC7xyLA94BXlVIi5z69_FRda5O3wdZT8xIQdk_vhUBRsOhNeynaEudivBoURcWxoaJTmxD3tSkLPoi6NJWGZAQ
+  place_id: 9e670a2f4f45b315a2cdb2a66ebd0cde52b38acc
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1800 East Broadway, Long Beach, CA, United States
+  latitude: '33.767389'
+  longitude: '-118.169538'
+  street_number: '1800'
+  route: East Broadway
+  zipcode: '90802'
+  city: Long Beach
+  state: California
+  country: US
+  created_at: '2013-06-20 20:20:05.554386'
+  updated_at: '2013-06-20 20:20:05.554386'
+  administrative_level_1: CA
+  administrative_level_2: Los Angeles
+places_243:
+  id: '244'
+  name: Vango Lounge & Skybar
+  reference: CoQBdAAAAEgvDxZBLop-jsONBL2vwtoDcmPyYViFHtUIN6Wk8ylZ_XQOyENfET-79qPKnL-_EcvqnvbDxVvjOp54IwjXaGywPRDLMsnrDYIb2L_vefZ09Xu-yH7ZNvO1X9BKH4DasCtUQQKR5mKUC8fS5X1kT026TOeGk1gQjB6y0QCD8N1GEhB-Q5vKisyVo2BhKWAPa5NnGhSLLoi0SGRil_jA-kdfjNYBK0B2Jw
+  place_id: ca1aa0e6010999aea3d2f842903c20c1295deef0
+  types: |
+    ---
+    - night_club
+    - bar
+    - establishment
+  formatted_address: 116 South 18th Street, Philadelphia, PA, United States
+  latitude: '39.951226'
+  longitude: '-75.170528'
+  street_number: '116'
+  route: South 18th Street
+  zipcode: '19103'
+  city: Philadelphia
+  state: Pennsylvania
+  country: US
+  created_at: '2013-06-20 20:20:06.942104'
+  updated_at: '2013-06-20 20:20:06.942104'
+  administrative_level_1: PA
+  administrative_level_2: Philadelphia
+places_244:
+  id: '245'
+  name: Khong River House
+  reference: CnRwAAAAGwI2xOsYdQoz21OLtA3zfkdK4YJ9M10GKHJLwDEQzRW6S8Oq-An8pfw9t5o8sQsPrsW108qRBsfF3eTgFedZUsH4OKZcp6yPgsfVbHem0qeKb4kqCRiH5ITRcc0X4bf0fhZd8El0F0U_oygXixwzchIQ9hZ4DCHGJXRdGgBP2qX8CRoUGG0suSz2sMHJ-mrKEwQHu7SPM2Q
+  place_id: ed4fb6d0acc915dcb86f363bafab5ea6e2d746c6
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 1661 Meridian Avenue, Miami Beach, FL, United States
+  latitude: '25.791921'
+  longitude: '-80.136462'
+  street_number: '1661'
+  route: Meridian Avenue
+  zipcode: '33139'
+  city: Miami Beach
+  state: Florida
+  country: US
+  created_at: '2013-06-20 20:20:08.322171'
+  updated_at: '2013-06-20 20:20:08.322171'
+  administrative_level_1: FL
+  administrative_level_2: 
+places_245:
+  id: '246'
+  name: Venice Whaler Inc
+  reference: CnRwAAAAvGI_UMM6bjYS6-iFwKKi4bjW6h7OLMhm5CTFPwIGbiigZvGxXVXtE3ru4x4NFaJFYEd7Dozzgrk48eseKU6FLJ1gYr543b-QzxQZYBIC56tP4H8sUKYMWYiRHCWcx0rCV67IVDHgjM6c0oEbub1o2hIQp6fGyhunBRcquX0YhHRf0xoUdKZWa5VLfcUdiNeHduhogIczk2I
+  place_id: c3e46d33d7361b9a21e38984656f9cb8bede07e5
+  types: |
+    ---
+    - bar
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 10 West Washington Boulevard, Venice, CA, United States
+  latitude: '33.979'
+  longitude: '-118.466617'
+  street_number: '10'
+  route: West Washington Boulevard
+  zipcode: '90292'
+  city: 
+  state: California
+  country: US
+  created_at: '2013-06-20 20:20:10.723093'
+  updated_at: '2013-06-20 20:20:10.723093'
+  administrative_level_1: CA
+  administrative_level_2: 
+places_246:
+  id: '12'
+  name: La Cabaña Mexican Restaurant
+  reference: CoQBcgAAAGJgygISR76UQudcSb8ca_sp4LbpdpHK8LmHUEDoqbqIKo--t8FfJTofuCNaOZsIYT5at40GXUzWYHgqqP9MNR5SypUlIsGs9X2byXbl0cdeO8QW0NPoZdfgZ23t0BLS-Cqvg12R9oi4-5FLCi-21MGBH_STNGasPjseL-eYuxG9EhBIZ37UL_B5n1htk7QLlc6HGhTwpzZPvx0A_1eO-JooYOrFhJ50xQ
+  place_id: c09e3db37e6f7f8ef9acf800d557c2d7f8767adc
+  types: |
+    ---
+    - restaurant
+    - food
+    - establishment
+  formatted_address: 526 South Martin Luther King Boulevard, Las Vegas, NV, United
+    States
+  latitude: '36.16572'
+  longitude: '-115.161004'
+  street_number: '526'
+  route: South Martin Luther King Boulevard
+  zipcode: '89106'
+  city: Las Vegas
+  state: Nevada
+  country: US
+  created_at: '2013-06-04 15:36:24.368528'
+  updated_at: '2013-06-20 22:52:04.426252'
+  administrative_level_1: NV
+  administrative_level_2: 
+places_247:
+  id: '247'
+  name: Bar None
+  reference: CmReAAAAhqlMZ-0JyHjZgj9TNOV41Kqj-wxFwiM5sTKm6DCXYoKtWjskVmF9npUEzkhNJDncLHXObDOlDcoodkFRzbyy_-xczL6jYL2ma7zyvEAIFM4E9XyZc0Ma1w31t74mjc7REhDiEAEOesu2si1rqwrP0xRFGhRYcbzcrydYlNJgsK3nWxErOoAWNA
+  place_id: 040f5d2924b10b0c8a40177052d50c0a6548e270
+  types: |
+    ---
+    - bar
+    - establishment
+  formatted_address: 1980 Union Street, San Francisco, CA, United States
+  latitude: '37.79764'
+  longitude: '-122.431913'
+  street_number: '1980'
+  route: Union Street
+  zipcode: '94123'
+  city: San Francisco
+  state: California
+  country: US
+  created_at: '2013-06-28 18:15:41.049287'
+  updated_at: '2013-06-28 18:15:41.049287'
+  administrative_level_1: CA
+  administrative_level_2: San Francisco

@@ -22,9 +22,6 @@
           password:
           server: 127.0.0.1
 
-        # Warning: The database defined as "test" will be erased and
-        # re-generated from your development database when you run "rake".
-        # Do not set this db to the same as development or production.
         test:
           adapter: postgresql
           database: brandscopic_test
@@ -43,31 +40,36 @@
 
         bundle install
 
-5. Run the local Solr server
+5. Create the local database
+
+        rake db:create db:migrate
+
+
+6. Run the local Solr server
 
         rake sunspot:solr:start
 
-6. Create the database and run the migrations:
+7. Insert the initial data
 
-        rake db:create db:migrate && rake db:seed
+        rake db:seed
 
-7. Run the tests to make sure everything works (optional)
+8. Run the tests to make sure everything works (optional)
 
         rake
 
-8. Load some test data into the app
+9. Load some test data into the app
 
         rake db:populate:all
 
-9. Reindex the date we just created
+10. Reindex the data we just created
 
         rake sunspot:reindex
 
-10. Start the local server
+11. Start the local server
 
         rails s
 
-11. Go to http://localhost:3000/ and you should be able to login using:
+12. Go to http://localhost:3000/ and you should be able to login using:
 
         Email: admin@brandscopic.com
         Password: Adminpass12
