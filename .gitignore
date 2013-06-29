@@ -21,3 +21,4 @@ config/database.yml
 myrspec
 solr/data/
 solr/pids/
+.DS_Store
