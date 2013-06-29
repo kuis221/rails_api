@@ -126,6 +126,16 @@ class User < ActiveRecord::Base
     super && company_users.any?{|cu| cu.active? && cu.role.active?}
   end
 
+  def inactive_message
+    if company_users.any?{|cu| cu.role.active?}
+      super
+    elsif company_users.any?{|cu| cu.active?}
+      :invalid
+    else
+      super
+    end
+  end
+
   def role
     @role ||= current_company_user.try(:role)
   end
