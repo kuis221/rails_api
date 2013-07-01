@@ -23,7 +23,7 @@ head
 
 body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
 
-  header class="#{user_signed_in? ? 'navbar-fixed-top' : ''}" data-spy="#{user_signed_in? ? 'affix' : ''}" data-offset-top="#{user_signed_in? ? 'affix' : ''}"
+  header class="navbar-fixed-top"
     .row-fluid
       .pull-left
           h1#company-name= user_company_dropdown(current_user)

@@ -1,11 +1,31 @@
+/*-- COLOR PALETTE --*/
+@app: #ececec;
+@header:#363636;
+@user_menu:#c0c0c0;
+@brand:#989898;
+@text:#666666;
+
 #application-content {
 	padding: 0 10px;
+}
+
+a{
+	color:@user_menu;
+}
+
+body{
+	background-color: @app;
+	color:@text;
+}
+
+header{
+	background-color: @header;
 }
 
 #company-name {
 	padding-left: 10px;
 	a {
-		color: #646464;
+		color: @brand;
 		text-decoration: none;
 	}
 }
