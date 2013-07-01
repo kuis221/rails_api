@@ -23,12 +23,15 @@ module EventsHelper
       description = ''
       start_date = params.has_key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
       end_date = params.has_key?(:end_date) &&  params[:end_date] != '' ? params[:end_date] : false
+      start_date_d = end_date_d = nil
+      start_date_d = Timeliness.parse(start_date).to_date if start_date
+      end_date_d = Timeliness.parse(end_date).to_date if end_date
       unless start_date.nil? or end_date.nil?
         today = Date.today
         yesterday = Date.yesterday
         tomorrow = Date.tomorrow
-        start_date_label = (start_date == today.to_s(:slashes) ?  'today' : (start_date == yesterday.to_s(:slashes) ? 'yesterday' : (start_date == tomorrow.to_s(:slashes) ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d') ))) if start_date
-        end_date_label = (end_date == today.to_s(:slashes) ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date == tomorrow.to_s(:slashes) ? 'tomorrow' : Timeliness.parse(end_date).strftime('%B %d')))) if end_date
+        start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d') ))) if start_date
+        end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date == tomorrow.to_s(:slashes) ? 'tomorrow' : Timeliness.parse(end_date).strftime('%B %d')))) if end_date
 
         if start_date and end_date and (start_date != end_date)
           if Timeliness.parse(end_date) < today
@@ -37,14 +40,13 @@ module EventsHelper
             description = "taking place from #{start_date_label} to #{end_date_label}"
           end
         elsif start_date
-          if start_date == start_date_label
-            start_date_label = "at #{start_date_label}"
-          end
-          if start_date == today.to_s(:slashes)
+          if start_date_d == today
             description = "taking place today"
-          elsif Timeliness.parse(start_date) > today
+          elsif start_date_d >= today
+            start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
             description = "taking place #{start_date_label}"
           else
+            start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
             description = "took place #{start_date_label}"
           end
         end

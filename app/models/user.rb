@@ -26,13 +26,13 @@
 #  city                   :string(255)
 #  created_by_id          :integer
 #  updated_by_id          :integer
-#  last_activity_at       :datetime
 #  invitation_token       :string(60)
 #  invitation_sent_at     :datetime
 #  invitation_accepted_at :datetime
 #  invitation_limit       :integer
 #  invited_by_id          :integer
 #  invited_by_type        :string(255)
+#  current_company_id     :integer
 #
 
 class User < ActiveRecord::Base
@@ -124,6 +124,16 @@ class User < ActiveRecord::Base
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
     super && company_users.any?{|cu| cu.active? && cu.role.active?}
+  end
+
+  def inactive_message
+    if company_users.any?{|cu| cu.role.active?}
+      super
+    elsif company_users.any?{|cu| cu.active?}
+      :invalid
+    else
+      super
+    end
   end
 
   def role

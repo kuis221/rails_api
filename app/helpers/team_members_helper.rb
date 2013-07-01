@@ -11,6 +11,7 @@ module TeamMembersHelper
       elsif team
         team_users = team.user_ids
         if resource.teams.delete(team)
+          resource.solr_index
           assigned_users = resource.user_ids
           users = team_users - assigned_users
         end
