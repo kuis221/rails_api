@@ -128,7 +128,7 @@ class EventsController < FilteredController
             :name => event.place_name || '',
             :latitude => event.place_latitude || '',
             :longitude => event.place_longitude || '',
-            :formatted_address => event.place_formatted_address || ''
+            :formatted_address => place_address(event.place) || ''
         },
         :campaign => { :name => event.campaign_name },
         :status => event.active? ? 'Active' : 'Inactive',
