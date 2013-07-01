@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130628163426) do
+ActiveRecord::Schema.define(:version => 20130701153805) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -149,9 +149,10 @@ ActiveRecord::Schema.define(:version => 20130628163426) do
     t.integer  "company_id"
     t.integer  "user_id"
     t.integer  "role_id"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
-    t.boolean  "active",     :default => true
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.boolean  "active",           :default => true
+    t.datetime "last_activity_at"
   end
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
@@ -338,7 +339,6 @@ ActiveRecord::Schema.define(:version => 20130628163426) do
     t.string   "city"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "last_activity_at"
     t.string   "invitation_token",       :limit => 60
     t.datetime "invitation_sent_at"
     t.datetime "invitation_accepted_at"

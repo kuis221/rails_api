@@ -78,12 +78,14 @@ describe InvitationsController do
         end
 
         it "should not reassign the user to the same company" do
-          user = FactoryGirl.create(:user,first_name: 'Tarzan', last_name: 'de la Selva', company_id: @company.id)
+          user = FactoryGirl.create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
           lambda {
             lambda {
-              post 'create', user: {first_name: 'Test', last_name: 'Test', email: user.email, company_users_attributes: {"0" => {role_id: 123}}}, format: :js
+              post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'existingemail4321@gmail.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
             }.should_not change(User, :count)
           }.should_not change(CompanyUser, :count)
+          assigns(:user).company_users.size.should == 1
+          assigns(:user).errors[:email].should == ["This user with the email address existingemail4321@gmail.com already exists. Email addresses must be unique."]
         end
       end
     end

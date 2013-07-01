@@ -68,8 +68,15 @@ class TeamsController < FilteredController
             edit: edit_team_path(team),
             show: team_path(team),
             activate: activate_team_path(team),
-            deactivate: deactivate_team_path(team)
+            deactivate: deactivate_team_path(team),
+            delete: delete_member_path(team)
         }
       }}
+    end
+
+    def delete_member_path(team)
+      path = nil
+      path = delete_team_campaign_path(params[:campaign], team_id: team.id) if params.has_key?(:campaign) && params[:campaign].present?
+      path
     end
 end

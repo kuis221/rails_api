@@ -1,0 +1,32 @@
+- campaign ||= nil
+table#teams-list.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th data-sort="name" Teams
+      th data-sort="description" Description
+      th.actions
+  tbody
+.row-fluid
+  .pull-right
+    = link_to 'Add Staff Members', new_member_campaign_path(resource), remote: true, class: 'btn btn-primary'
+
+javascript:
+  $('#collection-list-filters').filterBox({
+    'includeCalendars': true,
+    'onChange': function(filterBox){
+      staffMembersTable.tableScroller('reloadData');
+    }
+  });
+
+  var teamMembersTable = $('table#teams-list').tableScroller({
+    'source': '#{teams_path(campaign: resource.to_param, format: :json)}',
+    'fixedHeader': false,
+    'rowValues': function(t){
+      return [t.name, t.description]
+    },
+    'rowId': function(row){
+      return 'campaign-team-'+row.id;
+    },
+    'filterBox': '#collection-list-filters',
+    'actionButtons': ['deletable']
+  })

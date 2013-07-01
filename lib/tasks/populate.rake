@@ -101,11 +101,27 @@ namespace :db do
         "#{@brands.sample} #{@suffixes.sample}"
       end
       Company.all.each do |company|
+        user_ids = company.company_users.map(&:id)
+        team_ids = company.teams.map(&:id)
         Campaign.populate(30) do |campaign|
           campaign.name = build_campaign_name
           campaign.description = Faker::Lorem.paragraphs
           campaign.aasm_state = ['active', 'closed','active','active','inactive','active','active']
           campaign.company_id = company.id
+
+          tmp_list = user_ids.shuffle
+          Membership.populate(Random.rand(5)) do |membership|
+            membership.company_user_id = tmp_list.pop
+            membership.memberable_id = campaign.id
+            membership.memberable_type = 'Campaign'
+          end
+
+          tmp_list = team_ids.shuffle
+          Teaming.populate(Random.rand(team_ids.size)) do |teaming|
+            teaming.team_id = tmp_list.pop
+            teaming.teamable_id = campaign.id
+            teaming.teamable_type = 'Campaign'
+          end
         end
       end
     end
@@ -127,14 +143,19 @@ namespace :db do
           end
           campaign.events.each do |event|
             if event.user_ids.size == 0
-              event.user_ids = user_ids.sample(Random.rand(5))
+              users = user_ids.sample(Random.rand(5))
+              event.user_ids = users
               event.team_ids = team_ids.sample(Random.rand(2))
-              event.save
+
+              Task.populate(Random.rand(5)) do |task|
+                task.company_user_id = (users+[nil, nil]).sample
+                task.completed = [true, false]
+                task.title = Faker::Lorem.sentence(4 + Random.rand(6))
+                task.id = event.id
+              end
             end
           end
         end
-
-
       end
     end
 

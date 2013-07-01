@@ -2,13 +2,14 @@
 #
 # Table name: company_users
 #
-#  id         :integer          not null, primary key
-#  company_id :integer
-#  user_id    :integer
-#  role_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  active     :boolean          default(TRUE)
+#  id               :integer          not null, primary key
+#  company_id       :integer
+#  user_id          :integer
+#  role_id          :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  active           :boolean          default(TRUE)
+#  last_activity_at :datetime
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -36,7 +37,7 @@ class CompanyUser < ActiveRecord::Base
   # Campaigns-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
-  delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :last_activity_at, :invited_to_sign_up?, to: :user
+  delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :country_name, :state_name, to: :user
   delegate :name, to: :role, prefix: true
 

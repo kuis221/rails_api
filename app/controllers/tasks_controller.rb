@@ -162,6 +162,7 @@ class TasksController < FilteredController
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
           @search_params[:user] = current_company_user.id if params[:scope] == 'user'
           @search_params[:user] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
+          @search_params[:user] = [0] if params[:scope] == 'teams' && @search_params[:user].empty?
         end
         @search_params
       end
