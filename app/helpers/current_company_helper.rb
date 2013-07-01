@@ -13,7 +13,7 @@ module CurrentCompanyHelper
   end
 
   def company_campaigns
-    current_company.campaigns
+    current_company.campaigns.order('name')
   end
 
   def current_company
