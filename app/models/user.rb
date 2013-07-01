@@ -174,6 +174,19 @@ class User < ActiveRecord::Base
       :default
     end
 
-
+    # Attempt to find a user by its email. If a record is found, send new
+    # password instructions to it. If user is not found, returns a new user
+    # with an email not found error.
+    # Attributes must contain the user's email
+    def send_reset_password_instructions(attributes={})
+      recoverable = User.joins(:company_users => :role).where(company_users: {active: true}, roles:{active: true}).where(["lower(users.email) = ?", attributes[:email].downcase]).first
+      if recoverable.nil?
+        recoverable = User.new(attributes)
+        recoverable.errors.add(:base, :reset_email_not_found)
+      else
+        recoverable.send_reset_password_instructions if recoverable.persisted?
+      end
+      recoverable
+    end
   end
 end
