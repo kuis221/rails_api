@@ -85,12 +85,12 @@ class EventsController < FilteredController
         teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
         people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
-        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+        f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end
 
     def build_locations_bucket(facets)
-      first_five = facets.map{|x| id, name = x.value.split('||'); {label: name, id: id, count: x.count, name: :place} }.first(5)
+      first_five = facets.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :place}) }.first(5)
       first_five_ids = first_five.map{|x| x[:id] }
       locations = {}
       locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)
