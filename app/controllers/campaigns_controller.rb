@@ -73,7 +73,7 @@ class CampaignsController < FilteredController
         :description => campaign.description,
         :first_event => campaign.first_event.try(:start_date),
         :last_event => campaign.last_event.try(:start_date),
-        :status => campaign.active? ? 'Active' : 'Inactive',
+        :status => campaign.status,
         :active => campaign.active?,
         :links => {
             edit: edit_campaign_path(campaign),

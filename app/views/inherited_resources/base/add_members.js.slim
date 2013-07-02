@@ -5,8 +5,12 @@
   |
     teamMembersTable.tableScroller('reloadData');
 - elsif resource.is_a?(Campaign)
-  |
-    staffMembersTable.tableScroller('reloadData');
+  - if @member_id
+    |
+      staffMembersTable.tableScroller('reloadData');
+  - if @team_id
+    |
+      teamMembersTable.tableScroller('reloadData');
 |
 - if @member_id
   |
