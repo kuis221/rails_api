@@ -8,5 +8,5 @@
 
 c = Company.find_or_create_by_name(name: 'Brandscopic')
 r = c.roles.find_or_create_by_name(name: 'Admin')
-u =  User.create({email: 'admin@brandscopic.com', first_name: 'Admin', last_name: 'Brandscopic', password: 'Adminpass12', password_confirmation: 'Adminpass12', country: 'US', state: 'CA', city: 'San Francisco'}, without_protection: true)
+u =  User.create({email: 'admin@brandscopic.com', first_name: 'Admin', last_name: 'Brandscopic', password: 'Adminpass12', password_confirmation: 'Adminpass12', country: 'US', state: 'CA', city: 'San Francisco', invitation_accepted_at: Time.now, confirmed_at: Time.now, invitation_token: nil}, without_protection: true)
 CompanyUser.create({active: true, user_id: u.id, company_id: c.id, role_id: r.id}, without_protection: true)

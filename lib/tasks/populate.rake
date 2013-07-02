@@ -48,7 +48,9 @@ namespace :db do
           user.country = 'US'
           user.state = Country.find_country_by_alpha2(user.country).states.keys.sample
           user.encrypted_password = '$2a$10$/cMvcJN5c.AHCpkunKYvue5a5bGwxHYWftv3VT/ZJBKk874.MLvLS' # =>>> 'Test1234'
-          user.confirmed_at DateTime.now
+          user.confirmed_at  = [DateTime.now, DateTime.now, DateTime.now, DateTime.now, nil, DateTime.now]
+          user.invitation_accepted_at = user.confirmed_at
+          user.invitation_token = user.invitation_accepted_at.present? ? nil : Faker::Lorem.characters(30)
 
           CompanyUser.populate(1) do |cu|
             cu.role_id = role_ids.sample
