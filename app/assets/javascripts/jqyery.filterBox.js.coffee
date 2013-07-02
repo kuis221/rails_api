@@ -6,8 +6,7 @@ $.widget 'nmk.filterBox', {
 		includeAutoComplete: false,
 		autoCompletePath: '',
 		defaultParams: [],
-		selectDefaultDate: false,
-		filters: null
+		selectDefaultDate: false
 	},
 
 	_create: () ->
@@ -366,6 +365,8 @@ $.widget 'nmk.filterBox', {
 
 	_cleanUpFacets: () ->
 		@loadFacets = true
+		if @defaultParams.length == 0
+			@defaultParams = $.map(@formFilters.find('input[name="status[]"]:checked'), (checkbox, index) -> {'name': 'status[]', 'value': checkbox.value})
 		@formFilters.html('')
 		@form.data('serializedData','')
 }
