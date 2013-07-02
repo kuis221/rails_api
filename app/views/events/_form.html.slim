@@ -15,7 +15,7 @@
 
     .row-fluid
       = f.error :place
-      = f.input :place_reference, :as => :location, label: 'Location', input_html: {display_value: @event.place_name_with_location, class: 'input-xlarge'}
+      = f.input :place_reference, :as => :location, label: 'Location', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'

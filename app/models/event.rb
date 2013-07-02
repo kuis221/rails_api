@@ -134,14 +134,11 @@ class Event < ActiveRecord::Base
   end
 
   def place_reference=(value)
-    if value and value != self.place_reference and !value.nil? and !value.empty?
+    @place_reference = value
+    if value and value.present?
       reference, place_id = value.split('||')
       self.place = Place.find_or_initialize_by_place_id(place_id, {reference: reference}) if value
     end
-  end
-
-  def place_reference
-    self.place.name if self.place
   end
 
   def status
