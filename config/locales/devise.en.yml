@@ -57,3 +57,4 @@ en:
       not_saved:
         one: "1 error prohibited this %{resource} from being saved:"
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      reset_email_not_found: "We couldn't find that email address.  Please check that you spelled it correctly and try again."

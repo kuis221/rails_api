@@ -76,7 +76,7 @@
           content: $('<div>')
                   .append($('<b>').append('#{escape_javascript(resource.campaign_name)}'))
                   .append($('<br>')).append('#{escape_javascript(resource.start_at.to_s)}')
-                  .append($('<br>')).append('#{escape_javascript(resource.place_formatted_address)}')
+                  .append($('<br>')).append('#{escape_javascript(place_address(resource.place))}')
                   .html()
       });
 

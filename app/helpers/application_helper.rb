@@ -2,8 +2,7 @@ require "base64"
 
 module ApplicationHelper
   def place_address(place)
-    br = tag(:br)
-    content_tag :address do
+    if !place.nil?
       address = Array.new
       city_parts = []
       address.push place.name unless place.name == place.city
@@ -14,7 +13,7 @@ module ApplicationHelper
       address.push city_parts.join(', ') unless city_parts.empty? || !place.city
       address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
 
-      address.compact.join(br).html_safe
+      "<address>#{address.compact.join('<br />')}</address>".html_safe
     end
   end
 

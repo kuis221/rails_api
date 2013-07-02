@@ -18,6 +18,7 @@
 .vagrant
 Vagrantfile
 config/database.yml
+config/initializers/config_local.rb
 myrspec
 solr/data/
 solr/pids/
