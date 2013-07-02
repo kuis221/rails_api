@@ -146,11 +146,15 @@ namespace :db do
               users = user_ids.sample(Random.rand(5))
               event.user_ids = users
               event.team_ids = team_ids.sample(Random.rand(2))
+              users += company.company_users.joins(:teams).where(teams: {id: event.team_ids} ).map(&:id)
 
               Task.populate(Random.rand(5)) do |task|
+                task.event_id = event.id
                 task.company_user_id = (users+[nil, nil]).sample
                 task.completed = [true, false]
+                task.due_at = Date.today + (Random.rand(7)*[1, -1].sample).days
                 task.title = Faker::Lorem.sentence(4 + Random.rand(6))
+                task.active = [true, true, false, true, true]
                 task.id = event.id
               end
             end
