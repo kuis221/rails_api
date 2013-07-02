@@ -1,9 +1,18 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+
 /*-- COLOR PALETTE --*/
-@app: #ececec;
-@header:#363636;
-@user_menu:#c0c0c0;
+@app_bg: #ececec;
 @brand:#989898;
+@grey_three:#7a7a7a;
+@header:#363636;
+@sidebar:#4f4f4f;
 @text:#666666;
+@user_menu:#c0c0c0;
+
+/*-- FONT FAMILY STYLES --*/
+@baseFontFamily:'Lato', sans-serif;
+
+/*-- GENERAL STYLES --*/
 
 #application-content {
 	padding: 0 10px;
@@ -12,20 +21,62 @@
 a{
 	color:@user_menu;
 }
-
 body{
-	background-color: @app;
+	background-color: @app_bg;
 	color:@text;
+	font-family: @baseFontFamily;
+	padding-top: 41px;
 }
-
+.container-fluid{
+	padding: 0;
+}
 header{
 	background-color: @header;
+	height: 41px;
 }
 
+h1, h2, h3{
+	line-height: 0;
+}
+.nav{
+	margin-bottom: 0;
+}
+.nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus {
+	color: #ffffff;
+	background-color:red;
+	border-color: red;
+}
+.nav .dropdown-toggle .caret {
+	border-top-color: @user_menu;
+	border-bottom-color: @user_menu;
+	margin-top: 6px;
+}
+.nav .dropdown-toggle:hover,
+.nav .dropdown-toggle:focus {
+	background-color: red;
+	border-radius: 0;
+	color: white;
+}
+.nav-stacked{
+	margin-top:20px;
+	li a{
+		color:@grey_three;
+		height: 45px;
+	}
+	li a:hover{
+		background-color: @app_bg;
+	}
+}
+.sidebar{
+	background-color: @sidebar;
+	text-align: center;
+}
 #company-name {
-	padding-left: 10px;
+	padding: 5px 0 0 25px;
 	a {
 		color: @brand;
+		font-size: 24px;
+		font-weight: 400;
 		text-decoration: none;
 	}
 }
@@ -242,7 +293,6 @@ table.dataTable, table.tableScroller {
 		margin-left: -430px;
 	}
 }
-
 .bar-unassigned {
 	font-size: 12px;
 	text-align: center;
@@ -374,6 +424,7 @@ span.week_day {
     column-gap: 20px;
 }
 
+/*-- MEDIA QUERIES --*/
 
 @media (max-width: 979px) {
 	.checkbox-columns {
