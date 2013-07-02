@@ -35,18 +35,17 @@ body class="#{controller_name} #{action_name} #{custom_body_class} #{user_signed
 
   .container-fluid
     .row-fluid
-      div.span12
-        .span2.sidebar.pull-left
-          = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
-        .span10.pull-right
-          .tab-content
-            .tab-pane.active
-              .row-fluid
-                .span12
-                  #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
-                    = render 'layouts/messages'
+      .span2.sidebar.pull-left
+        = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
+      .span10.pull-right
+        .tab-content
+          .tab-pane.active
+            .row-fluid
+              .span12
+                #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
+                  = render 'layouts/messages'
 
-                    = yield
+                  = yield
 
   span class="totop"
     a href="#"
