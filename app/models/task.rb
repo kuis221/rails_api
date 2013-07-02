@@ -85,7 +85,7 @@ class Task < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      ss = solr_search({include: [{:company_user => :user}, :event]}) do
 
         with(:company_id, params[:company_id])
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
