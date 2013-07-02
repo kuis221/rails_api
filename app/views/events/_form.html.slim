@@ -6,13 +6,11 @@
     = f.association :campaign, collection: company_campaigns.active
     .row-fluid
       .span6
-        = f.error :start_at
         = f.input :start_date, :as => :date_picker
         = f.input :start_time, :as => :time_picker, inline: true
 
       .span6
         = f.input :end_date, :as => :date_picker
-        = f.error :end_at
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
@@ -35,8 +33,6 @@ javascript:
     altField: '#event_end_date',
     defaultDate: $('#calendar_end_date').data('date')
   });
-
-  $('#event_user_ids').select2();
 
   var input = $('.modal .places-autocomplete')[0];
   var locationAutocomplete = new google.maps.places.Autocomplete(input);
