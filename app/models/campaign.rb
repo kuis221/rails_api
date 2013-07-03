@@ -121,7 +121,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def status
-    self.active? ? 'Active' : 'Inactive'
+    self.aasm_state.capitalize
   end
 
   def reindex_associated_resource(resource)

@@ -7,9 +7,6 @@
       = f.input :name
 
     .row-fluid
-      = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-
-    .row-fluid
       = f.input :brands_list, input_html: {class: 'input-large'}
 
     .row-fluid
@@ -20,5 +17,4 @@
     = f.button :button, 'Cancel', class: 'btn-cancel'
 
 javascript:
-  $('#campaign_team_ids').select2();
   $('#campaign_brands_list').select2({tags: #{ raw(Brand.all.map(&:name).to_json).html_safe}});

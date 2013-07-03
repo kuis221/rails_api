@@ -74,8 +74,8 @@ class TasksController < FilteredController
 
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
-        f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
-
+        #f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+        f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
         if is_my_teams_view?
           users_count = Hash[facet_search.facet(:company_user_id).rows.map{|x| [x.value, x.count]}]
           users = current_company.company_users.includes(:user).where(id: facet_search.facet(:company_user_id).rows.map{|x| x.value})
@@ -111,7 +111,7 @@ class TasksController < FilteredController
 
     def count_late_events
       @count_late_events ||= begin
-        count_params = HashWithIndifferentAccess.new(facet_params.merge({start_date: nil, end_date: nil, late: true}))
+        count_params = HashWithIndifferentAccess.new(facet_params.merge({late: true}))
         search = resource_class.do_search(count_params, true)
         search.total
       end

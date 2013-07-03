@@ -6,18 +6,16 @@
     = f.association :campaign, collection: company_campaigns.active
     .row-fluid
       .span6
-        = f.error :start_at
         = f.input :start_date, :as => :date_picker
         = f.input :start_time, :as => :time_picker, inline: true
 
       .span6
         = f.input :end_date, :as => :date_picker
-        = f.error :end_at
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
       = f.error :place
-      = f.input :place_reference, :as => :location, label: 'Location', input_html: {display_value: @event.place_name_with_location, class: 'input-xlarge'}
+      = f.input :place_reference, :as => :location, label: 'Location', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
@@ -35,8 +33,6 @@ javascript:
     altField: '#event_end_date',
     defaultDate: $('#calendar_end_date').data('date')
   });
-
-  $('#event_user_ids').select2();
 
   var input = $('.modal .places-autocomplete')[0];
   var locationAutocomplete = new google.maps.places.Autocomplete(input);
