@@ -70,7 +70,8 @@ jQuery ->
                       .append($('<b>').append(if event.campaign? then event.campaign.name else ''))
                       .append($('<br>')).append(event.start_at)
                       .append($('<br>')).append(if event.place? then event.place.formatted_address else '')
-                      .append($('<br>')).append($('<a>', {'href': event.links.show}).text('View Details')).html()
+                      .append($('<br>')).append($('<a>', {'href': event.links.show}).text('View Details'))
+                      .append('\xA0\xA0').append($('<a>', {'href': event.links.edit, 'data-remote': true}).text('Edit Event')).html()
           }
 
           google.maps.event.addListener marker, 'click', () ->
