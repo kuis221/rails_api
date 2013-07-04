@@ -32,8 +32,8 @@ describe Task, search: true do
     Task.do_search(company_id: 1, q: "team,#{team2.id}").results.should =~ user2_tasks
 
     # Search for a specific user's tasks
-    Task.do_search(company_id: 1, q: "companyuser,#{user.id}").results.should =~ user_tasks
-    Task.do_search(company_id: 1, q: "companyuser,#{user2.id}").results.should =~ user2_tasks
+    Task.do_search(company_id: 1, q: "company_user,#{user.id}").results.should =~ user_tasks
+    Task.do_search(company_id: 1, q: "company_user,#{user2.id}").results.should =~ user2_tasks
     Task.do_search(company_id: 1, user: user.id).results.should =~ user_tasks
     Task.do_search(company_id: 1, user: user2.id).results.should =~ user2_tasks
     Task.do_search(company_id: 1, user: [user.id,user2.id]).results.should =~ user_tasks + user2_tasks

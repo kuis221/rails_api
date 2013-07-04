@@ -91,7 +91,7 @@ class Event < ActiveRecord::Base
       locations
     end
 
-    integer :user_ids, multiple: true do
+    integer :company_user_ids, multiple: true do
       users.map(&:id)
     end
 
@@ -201,7 +201,9 @@ class Event < ActiveRecord::Base
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'brand'
-            with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
+            campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
+            campaigns = '-1' if campaigns.empty?
+            with "campaign_id", campaigns
           when 'campaign', 'place'
             with "#{attribute}_id", value
           else

@@ -50,7 +50,7 @@ class CompanyUser < ActiveRecord::Base
     integer :id
     integer :company_id
 
-    text :name do
+    text :name, stored: true do
       full_name
     end
     text :email
