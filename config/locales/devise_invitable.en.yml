@@ -2,7 +2,7 @@ en:
   devise:
     invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'
-      invitation_token_invalid: 'The invitation token provided is not valid!'
+      invitation_token_invalid: "It looks like you've already completed your profile. Sign in using the form below or <a href=\"%{reset_pass_url}\">click here</a> to reset your password."
       updated: 'Your password was set successfully. You are now signed in.'
       no_invitations_remaining: "No invitations remaining"
       invitation_removed: 'Your invitation was removed.'
