@@ -184,6 +184,7 @@ class User < ActiveRecord::Base
         recoverable = User.new(attributes)
         recoverable.errors.add(:base, :reset_email_not_found)
       else
+        recoverable = User.find(recoverable.id)
         recoverable.send_reset_password_instructions if recoverable.persisted?
       end
       recoverable
