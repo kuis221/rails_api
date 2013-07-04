@@ -72,7 +72,11 @@ jQuery ->
 
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
+		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
+			if $filterSidebar.positioning
+				return true
+			$filterSidebar.positioning = true
 			sidebarBottom = $filterSidebar.height()+$filterSidebar.originalTop;
 			bottomPosition = $window.scrollTop()+$window.height()
 
@@ -92,6 +96,8 @@ jQuery ->
 				$filterSidebar.css({
 					position: 'static'
 				})
+			$filterSidebar.positioning = false
+			true
 		).trigger('scroll')
 
 	$('.totop a').click (e) ->

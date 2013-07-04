@@ -12,10 +12,12 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def create
-    if params[:user] and params[:user][:email] and self.resource = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first
-      if self.resource.company_users.select{|cu| cu.company_id == current_company.id}.size > 0
+    if params[:user] and params[:user][:email] and invited_user = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first
+      if invited_user.company_users.select{|cu| cu.company_id == current_company.id}.size > 0
+        self.resource = User.new(resource_params, as: :admin)
         self.resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
       else
+        self.resource = invited_user
         self.resource.update_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
         if self.resource.save and self.resource.errors.empty?
           UserMailer.company_invitation(self.resource, current_company, current_user).deliver

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe "Confirmations", :js => true do
+describe "Invitations", :js => true do
   before do
     Warden.test_mode!
     @user = FactoryGirl.create(:invited_user,

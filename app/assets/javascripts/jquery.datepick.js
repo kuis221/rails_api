@@ -1636,6 +1636,28 @@ $.extend(Datepicker.prototype, {
 			new Date(parseInt(elem.className.replace(/^.*dp(-?\d+).*$/, '$1'), 10))));
 	},
 
+	_highlightDates: function (inst, target, elem1, elem2) {
+		if (typeof elem2 == 'undefined'){
+			elem2 = elem1;
+		}
+		var date1 = this._retrieveDatePlugin(target, elem1);
+		var date2 = this._retrieveDatePlugin(target, elem2);
+		if (date1 > date2){ // Swap values
+			date2 = [date1, date1 = date2][0];
+			elem2 = [elem1, elem1 = elem2][0];
+		}
+		if (inst.selectedDates[0] != date1|| inst.selectedDates[1] != date2 ){
+			inst.selectedDates = [date1, date2];
+			var insideRange = false;
+			target.picker.find(inst.options.renderer.daySelector + ' a').each(function(index, element){
+				if (elem1 == element) { insideRange = true; }
+				if (insideRange) { $(element).addClass('datepick-selected'); }
+				else { $(element).removeClass('datepick-selected'); }
+				if (elem2 == element) { insideRange = false; }
+			})
+		}
+	},
+
 	/* Select a date for this datepicker.
 	   @param  target  (element) the control to examine
 	   @param  elem    (element) the selected datepicker element */
@@ -1658,9 +1680,18 @@ $.extend(Datepicker.prototype, {
 			}
 			else if (inst.options.rangeSelect) {
 				if (inst.pickingRange) {
-					inst.selectedDates[1] = date;
+					if (inst.selectedDates[0] > date){ // Swap values
+						inst.selectedDates[1] = inst.selectedDates[0];
+						inst.selectedDates[0] = date;
+						inst.selectedDatesElements[1] = inst.selectedDatesElements[0];
+						inst.selectedDatesElements[0] = elem;
+					} else {
+						inst.selectedDates[1] = date;
+						inst.selectedDatesElements[1] = elem;
+					}
 				}
 				else {
+					inst.selectedDatesElements = [elem, elem]
 					inst.selectedDates = [date, date];
 				}
 				inst.pickingRange = !inst.pickingRange;
@@ -1672,7 +1703,8 @@ $.extend(Datepicker.prototype, {
 			this._updateInput(target);
 			if (inst.inline || inst.pickingRange || inst.selectedDates.length <
 					(inst.options.multiSelect || (inst.options.rangeSelect ? 2 : 1))) {
-				this._update(target);
+				//this._update(target);
+				this._highlightDates(inst, target, inst.selectedDatesElements[0], inst.selectedDatesElements[1]);
 			}
 			else {
 				this._hidePlugin(target);
@@ -1726,6 +1758,7 @@ $.extend(Datepicker.prototype, {
 				inst.options.renderer.commandLinkClass);
 		}
 		picker = $(picker);
+		target.picker = picker;
 		if (monthsToShow[1] > 1) {
 			var count = 0;
 			$(inst.options.renderer.monthSelector, picker).each(function() {
@@ -1741,29 +1774,12 @@ $.extend(Datepicker.prototype, {
 				droppable({
 				  tolerance: "pointer",
 				  drop: function(event, ui) {
-				  	self._update(target);
 					self._updateInput(target);
 				  },
 				  over: function(event, ui) {
 				  	var startA = ui.draggable[0];
 				  	var endA = this;
-					var date1 = self._retrieveDatePlugin(target, startA);
-					var date2 = self._retrieveDatePlugin(target, endA);
-					if (date1 > date2){ // Swap values
-						date2 = [date1, date1 = date2][0];
-						endA = [startA, startA = endA][0];
-					}
-					if (inst.selectedDates[0] != date1|| inst.selectedDates[1] != date2 ){
-						inst.selectedDates = [date1, date2];
-						var insideRange = false;
-						picker.find(inst.options.renderer.daySelector + ' a').each(function(index, element){
-							if (startA == element) { insideRange = true; }
-							if (insideRange) { $(element).addClass('datepick-selected'); }
-							else { $(element).removeClass('datepick-selected'); }
-							if (endA == element) { insideRange = false; }
-
-						})
-					}
+					self._highlightDates(inst, target, startA, endA);
 					true
 				  }
 				}).
