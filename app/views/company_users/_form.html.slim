@@ -14,9 +14,10 @@
       .row-fluid
         = uf.input :email
         - if resource.id == current_company_user.id
-          = uf.input :country, collection: Country.all, required: true
+          = uf.input :country, required: true
           = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
           = uf.input :city, required: true
+          = uf.input :time_zone, required: true
         - if resource.id != current_company_user.id
           = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
 
@@ -31,13 +32,16 @@
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
-javascript:
-  $('#user_team_ids').select2();
+- unless resource.time_zone.present?
+  javascript:
+    $('#company_user_user_attributes_time_zone').set_timezone({'mappings':#{ActiveSupport::TimeZone::MAPPING.invert.to_json.html_safe}});
 
 coffee:
-  $('#user_country').change () ->
+  $('#user_team_ids').select2()
+
+  $('#company_user_user_attributes_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
-      states = $('#user_state')
+      states = $('#company_user_user_attributes_state')
       val = states.val()
       states.html('<option></option>')
       if response.states
@@ -46,3 +50,4 @@ coffee:
           if val is state.id
             option.attr('selected', 'selected')
           states.append(option)
+

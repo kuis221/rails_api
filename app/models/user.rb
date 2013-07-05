@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
-  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, :accepting_invitation
+  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, :accepting_invitation, :time_zone
 
   accepts_nested_attributes_for :company_users, allow_destroy: false
 

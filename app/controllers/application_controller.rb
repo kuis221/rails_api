@@ -11,6 +11,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_user_company
   after_filter :update_user_last_activity
 
+  before_filter :set_timezone
+
   before_filter :remember_return_path, only: :show
 
   layout :set_layout
@@ -51,6 +53,15 @@ class ApplicationController < ActionController::Base
 
     def custom_body_class
       @custom_body_class ||= ''
+    end
+
+    def set_timezone
+      if current_user.present? and current_user.time_zone.present?
+        Time.zone = current_user.time_zone
+        Rails.logger.debug "\n\n\n\nSETTTING USER TIMEZONE TO: #{Time.zone}\n\n\n"
+      else
+        Time.zone = Brandscopic::Application.config.time_zone
+      end
     end
 
     def remember_return_path

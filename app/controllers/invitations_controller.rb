@@ -6,7 +6,8 @@ class InvitationsController < Devise::InvitationsController
 
     if resource.country.nil? || resource.country.empty?
       location_info = Geocoder.search(request.remote_ip)
-      if location = location_info.first
+      if location = location_info.first and location.country != 'Reserved'
+        Rails.logger.debug location.inspect
         country = Country.new(location.country_code)
         unless country.nil?
           resource.country = location.country_code
@@ -21,13 +22,6 @@ class InvitationsController < Devise::InvitationsController
         end
       end
     end
-
-    # All countries with US at the begining
-    @countries = [
-        [].tap{|arr| c= Country.find_country_by_name('United States'); arr.push c.name; arr.push c.alpha2},
-        ["-------------------", ""]
-      ] +
-      Country.all
   end
 
   def create
