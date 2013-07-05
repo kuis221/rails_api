@@ -56,15 +56,15 @@ describe CompanyUsersController, search: true do
     end
 
     it "should return the roles in the Roles Bucket" do
-      role = FactoryGirl.create(:role, name: 'SuperAdmin', company: @company)
+      role = FactoryGirl.create(:role, name: 'Campaing Staff', company: @company)
       Sunspot.commit
 
-      get 'autocomplete', q: 'admin'
+      get 'autocomplete', q: 'staff'
       response.should be_success
 
       buckets = JSON.parse(response.body)
       places_bucket = buckets.select{|b| b['label'] == 'Roles'}.first
-      places_bucket['value'].should == [{"label"=>"Super<i>Admin</i>", "value"=>role.id.to_s, "type"=>"role"}]
+      places_bucket['value'].should == [{"label"=>"Campaing <i>Staff</i>", "value"=>role.id.to_s, "type"=>"role"}]
     end
 
     it "should return the places in the Places Bucket" do
