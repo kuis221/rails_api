@@ -1,11 +1,11 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:400,700);
 @font-face {
-	font-family: 'sidebar';
-	src:url('/assets/font/sidebar.eot');
-	src:url('/assets/font/sidebar.eot?#iefix') format('embedded-opentype'),
-		url('/assets/font/sidebar.woff') format('woff'),
-		url('/assets/font/sidebar.ttf') format('truetype'),
-		url('/assets/font/sidebar.svg#icomoon') format('svg');
+	font-family: 'menu';
+	src:url('/assets/font/menu.eot');
+	src:url('/assets/font/menu.eot?#iefix') format('embedded-opentype'),
+		url('/assets/font/menu.woff') format('woff'),
+		url('/assets/font/menu.ttf') format('truetype'),
+		url('/assets/font/menu.svg#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -15,7 +15,7 @@
 @brand:#989898;
 @grey_three:#7a7a7a;
 @header:#363636;
-@sidebar:#4f4f4f;
+@menu:#4f4f4f;
 @text:#666666;
 @user_menu:#c0c0c0;
 
@@ -28,7 +28,7 @@
 	bottom:8px;
 	content: "\e004";
   	display: block;
-	font-family: 'sidebar';
+	font-family: 'menu';
 	font-size: 28px;
 	padding-top:25px;
   	position: relative;
@@ -41,7 +41,7 @@
 	bottom:8px;
 	content: "\e003";
   	display: block;
-	font-family: 'sidebar';
+	font-family: 'menu';
 	font-size: 28px;
 	padding-top:25px;
   	position: relative;
@@ -54,7 +54,7 @@
 	bottom:8px;
 	content: "\e002";
   	display: block;
-	font-family: 'sidebar';
+	font-family: 'menu';
 	font-size: 28px;
 	left:3px;
 	padding-top:25px;
@@ -68,7 +68,7 @@
 	bottom:8px;
 	content: "\e001";
   	display: block;
-	font-family: 'sidebar';
+	font-family: 'menu';
 	font-size: 28px;
 	left:3px;
 	padding-top:25px;
@@ -86,7 +86,7 @@ a{
 	color:@user_menu;
 }
 body{
-	background-color: @app_bg;
+	background: @app_bg url('bg.png') repeat-y left; 
 	color:@text;
 	font-family: @baseFontFamily;
 	padding-top: 41px;
@@ -105,17 +105,13 @@ h1, h2, h3{
 .white-bg{
 	background-color: white;
 }
-.main{
-padding: 10px 0px 10px 120px;
-margin: 0;
-background-color: green;
-}
+
 .nav{
 	margin-bottom: 0;
 }
 .nav .dropdown-toggle:hover,
 .nav .dropdown-toggle:focus {
-	background-color: @sidebar;
+	background-color: @menu;
 	border-radius: 0;
 	color: @user_menu;
 	height: 19px;
@@ -123,7 +119,7 @@ background-color: green;
 	padding-top: 14px;
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
-	background-color: @sidebar;
+	background-color: @menu;
 	border-radius: 0;
 	color: @user_menu;
 	height: 19px;
@@ -156,18 +152,38 @@ background-color: green;
 		background-color: @app_bg;
 	}
 }
-.span1{
-	&.sidebar{
-		background-color: @sidebar;
-		text-align: center;
-		text-transform: uppercase;
-		width:110px;
-		.dropdown-toggle:hover{
-			height: 75px;
-			padding-top:0;
-    	}
+.menu{
+	background-color: @menu;
+	float: left;
+	text-align: center;
+	text-transform: uppercase;
+	width:110px;
+	.dropdown-toggle:hover{
+		height: 75px;
+		padding-top:0;
 	}
 }
+.container{
+	min-height: 300px;
+	padding: 10px 0px 10px 120px;
+	width: auto;
+}
+.main{
+	background-color: white;
+	box-sizing: border-box;
+	height: 500px;  
+	margin-right: 220px;
+	padding-right: 20px;
+}
+.sidebar{
+	background:white;
+	float:right;
+	height: 500px;
+	min-height: 300px;
+	padding-left: 10px;
+	width:200px;
+}
+
 #company-name {
 	padding: 5px 0 0 25px;
 	a {
