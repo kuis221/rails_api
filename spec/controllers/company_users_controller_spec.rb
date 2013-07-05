@@ -17,7 +17,7 @@ describe CompanyUsersController do
       end
     end
 
-    describe "GET 'index'" do
+    describe "GET 'index'", search: false do
       it "returns http success" do
         get 'index'
         response.should be_success

@@ -38,6 +38,7 @@ gem 'validates_timeliness', '~> 3.0'
 gem 'sunspot_rails'
 gem 'progress_bar'
 gem 'unicorn'
+gem "geocoder"
 
 # Gems used only for assets and not required
 # in production environments by default.
