@@ -1,0 +1,9 @@
+HOST=http://brandscopic.herokuapp.com
+$(HOST)/events.html
+$(HOST)/events.json?page=1&sorting=start_at&sorting_dir=asc&ac=&ql=&q=&start_date=7%2F2%2F2013&end_date=&status%5B%5D=Active&facets=true
+$(HOST)/tasks/mine.html
+$(HOST)/tasks/mine.json?page=1&sorting=title&sorting_dir=asc&ac=&ql=&q=&start_date=&end_date=&status%5B%5D=Active&facets=true
+$(HOST)/tasks/my_teams.html
+$(HOST)/tasks/my_teams.json?page=1&sorting=title&sorting_dir=asc&ac=&ql=&q=&start_date=&end_date=&status%5B%5D=Active&facets=true
+$(HOST)/users.html
+$(HOST)/users.json?page=1&sorting=last_name&sorting_dir=asc&ac=&ql=&q=&status%5B%5D=Active&facets=true
