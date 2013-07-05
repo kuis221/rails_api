@@ -148,6 +148,26 @@ h1, h2, h3{
 		color:@grey_three;
 		height: 75px;
 	}
+	li a:after{
+		content: ".";
+  		display: block;
+  		line-height: 10px;
+  		position: relative;
+		background-color: @menu;
+		-webkit-border-top-right-radius: 7px;
+		-moz-border-radius-topright: 7px;
+		border-top-right-radius: 7px;
+	}
+	li a:before{
+		content: ".";
+  		display: block;
+  		line-height: 0px;
+  		position: relative;
+		background-color: @menu;
+		-webkit-border-bottom-right-radius: 7px;
+		-moz-border-radius-bottomright: 7px;
+		border-bottom-right-radius: 7px;
+	}
 	li a:hover{
 		background-color: @app_bg;
 	}
@@ -191,8 +211,22 @@ h1, h2, h3{
 	width:210px;
 }
 .box{
-	border:red;
-	width:100%;
+	border:1px solid @brand;
+	height: auto;
+	padding: 0;
+	ul{
+		margin:0;
+		padding: 0;
+	}
+	li{
+		border-bottom:1px solid @brand;
+		display: block;
+		height: 80px;
+		list-style: none;
+	}
+	li:last-child{
+		border:0;
+	}
 }
 
 input.search-query {
