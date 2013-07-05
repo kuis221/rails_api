@@ -50,7 +50,7 @@ class CompanyUser < ActiveRecord::Base
     integer :id
     integer :company_id
 
-    text :name do
+    text :name, stored: true do
       full_name
     end
     text :email
@@ -125,7 +125,7 @@ class CompanyUser < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
-          when 'companyuser'
+          when 'company_user'
             with :id, value
           when 'role'
             with "#{attribute}_id", value

@@ -16,47 +16,12 @@ class EventsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
   def autocomplete
-    buckets = []
-
-    # Search compaigns
-    search = Sunspot.search(Campaign) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with(:company_id, current_company.id)
-      with(:status, ['Active'])
-    end
-    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-
-    # Search brands
-    search = Sunspot.search(Brand, BrandPortfolio) do
-      keywords(params[:q]) do
-        fields(:name )
-      end
-      with(:active, true)
-    end
-    buckets.push(label: "Brands", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search places
-    search = Sunspot.search(Place) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search users
-    search = Sunspot.search(CompanyUser, Team) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      any_of do
-        with :company_id, current_company.id  # For the teams
-      end
-    end
-    buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      campaigns: [Campaign],
+      brands: [Brand, BrandPortfolio],
+      places: [Place],
+      people: [CompanyUser, Team]
+    })
     render :json => buckets.flatten
   end
 

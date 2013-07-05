@@ -31,7 +31,7 @@ class Role < ActiveRecord::Base
   searchable do
     integer :id
 
-    text :name
+    text :name, stored: true
     text :description
 
     string :name

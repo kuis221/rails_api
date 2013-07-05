@@ -60,7 +60,7 @@ class Campaign < ActiveRecord::Base
   end
 
   searchable do
-    text :name
+    text :name, stored: true
     text :description
 
     string :name

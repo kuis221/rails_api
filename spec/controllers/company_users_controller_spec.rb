@@ -17,7 +17,7 @@ describe CompanyUsersController do
       end
     end
 
-    describe "GET 'index'" do
+    describe "GET 'index'", search: false do
       it "returns http success" do
         get 'index'
         response.should be_success
@@ -37,6 +37,81 @@ describe CompanyUsersController do
           parsed_body["pages"].should == 1
           parsed_body["page"].should == 1
         end
+      end
+    end
+
+
+    describe "GET 'autocomplete'", search: true do
+      it "should return the correct buckets in the right order" do
+        Sunspot.commit
+        get 'autocomplete'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        buckets.map{|b| b['label']}.should == ['Users','Teams', 'Roles', 'Campaigns', 'Places']
+      end
+
+      it "should return the users in the User Bucket" do
+        user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+        company_user = user.company_users.first
+        Sunspot.commit
+
+        get 'autocomplete', q: 'gu'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        people_bucket = buckets.select{|b| b['label'] == 'Users'}.first
+        people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+      end
+
+
+      it "should return the teams in the Teams Bucket" do
+        team = FactoryGirl.create(:team, name: 'Spurs', company_id: @company.id)
+        Sunspot.commit
+
+        get 'autocomplete', q: 'sp'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        people_bucket = buckets.select{|b| b['label'] == 'Teams'}.first
+        people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+      end
+
+      it "should return the campaigns in the Campaigns Bucket" do
+        campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: @company.id)
+        Sunspot.commit
+
+        get 'autocomplete', q: 'cac'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
+        campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+      end
+
+      it "should return the roles in the Roles Bucket" do
+        role = FactoryGirl.create(:role, name: 'SuperAdmin', company: @company)
+        Sunspot.commit
+
+        get 'autocomplete', q: 'admin'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        places_bucket = buckets.select{|b| b['label'] == 'Roles'}.first
+        places_bucket['value'].should == [{"label"=>"Super<i>Admin</i>", "value"=>role.id.to_s, "type"=>"role"}]
+      end
+
+      it "should return the places in the Places Bucket" do
+        Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+        place = FactoryGirl.create(:place, name: 'Motel Paraiso')
+        Sunspot.commit
+
+        get 'autocomplete', q: 'mot'
+        response.should be_success
+
+        buckets = JSON.parse(response.body)
+        places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
+        places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>place.id.to_s, "type"=>"place"}]
       end
     end
 
@@ -208,7 +283,7 @@ describe CompanyUsersController do
     describe "GET 'select_company'" do
       it 'should update the session with the selected company_id' do
         another_company_id = FactoryGirl.create(:company).id
-        FactoryGirl.create(:company_user, company_id: another_company_id, user: @user, role_id: another_company_id).id
+        FactoryGirl.create(:company_user, company_id: another_company_id, user: @user, role_id: FactoryGirl.create(:role, company_id: another_company_id).id).id
         get 'select_company', company_id: another_company_id
         session[:current_company_id].should == another_company_id
         response.should redirect_to root_path

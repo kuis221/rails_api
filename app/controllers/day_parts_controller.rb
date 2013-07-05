@@ -7,16 +7,9 @@ class DayPartsController < FilteredController
   include DeactivableHelper
 
   def autocomplete
-    buckets = []
-
-    # Search day parts
-    search = Sunspot.search(DayPart) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Day Parts", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      day_parts: [DayPart]
+    })
     render :json => buckets.flatten
   end
 

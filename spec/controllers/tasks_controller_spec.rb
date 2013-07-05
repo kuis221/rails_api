@@ -197,7 +197,7 @@ describe TasksController do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
+      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
     end
 
     it "should return the teams in the People Bucket" do
@@ -209,7 +209,7 @@ describe TasksController do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"Spurs", "value"=>team.id, "type"=>"team"}]
+      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value"=>team.id.to_s, "type"=>"team"}]
     end
 
     it "should return the teams and users in the People Bucket" do
@@ -223,7 +223,7 @@ describe TasksController do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"Valladolid", "value"=>team.id, "type"=>"team"}, {"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
+      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
     end
 
     it "should return the campaigns in the Campaigns Bucket" do
@@ -235,7 +235,7 @@ describe TasksController do
 
       buckets = JSON.parse(response.body)
       campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-      campaigns_bucket['value'].should == [{"label"=>"Cacique para todos", "value"=>campaign.id, "type"=>"campaign"}]
+      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
     end
 
 
@@ -248,7 +248,7 @@ describe TasksController do
 
       buckets = JSON.parse(response.body)
       tasks_bucket = buckets.select{|b| b['label'] == 'Tasks'}.first
-      tasks_bucket['value'].should == [{"label"=>"Bring the beers", "value"=>task.id, "type"=>"task"}]
+      tasks_bucket['value'].should == [{"label"=>"<i>Bri</i>ng the beers", "value"=>task.id.to_s, "type"=>"task"}]
     end
   end
 

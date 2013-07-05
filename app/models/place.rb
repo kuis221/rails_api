@@ -41,11 +41,20 @@ class Place < ActiveRecord::Base
   serialize :types
 
   searchable do
-    text :name
+    text :name, stored: true
 
     text :formatted_address
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, latitude) }
+
+    integer :company_id do
+      -1
+    end
+
+    string :status do
+      'Active'
+    end
+
 
     string :name
     string :country

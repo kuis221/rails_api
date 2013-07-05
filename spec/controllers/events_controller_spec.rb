@@ -53,7 +53,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
+        people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
       end
 
       it "should return the teams in the People Bucket" do
@@ -65,7 +65,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"Spurs", "value"=>team.id, "type"=>"team"}]
+        people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
       end
 
       it "should return the teams and users in the People Bucket" do
@@ -79,7 +79,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"Valladolid", "value"=>team.id, "type"=>"team"}, {"label"=>"Guillermo Vargas", "value"=>company_user.id, "type"=>"companyuser"}]
+        people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
       end
 
       it "should return the campaigns in the Campaigns Bucket" do
@@ -91,7 +91,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-        campaigns_bucket['value'].should == [{"label"=>"Cacique para todos", "value"=>campaign.id, "type"=>"campaign"}]
+        campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
       end
 
       it "should return the brands in the Brands Bucket" do
@@ -103,7 +103,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-        brands_bucket['value'].should == [{"label"=>"Cacique", "value"=>brand.id, "type"=>"brand"}]
+        brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
       end
 
       it "should return the places in the Places Bucket" do
@@ -116,7 +116,7 @@ describe EventsController do
 
         buckets = JSON.parse(response.body)
         places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
-        places_bucket['value'].should == [{"label"=>"Motel Paraiso", "value"=>place.id, "type"=>"place"}]
+        places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>place.id.to_s, "type"=>"place"}]
       end
     end
 

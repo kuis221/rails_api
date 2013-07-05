@@ -30,7 +30,7 @@ class DateRange < ActiveRecord::Base
 
   searchable do
     integer :id
-    text :name
+    text :name, stored: true
     text :description
 
     boolean :active
@@ -82,7 +82,7 @@ class DateRange < ActiveRecord::Base
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
-          if attribute == 'daterange'
+          if attribute == 'date_range'
             with :id, value
           end
         end

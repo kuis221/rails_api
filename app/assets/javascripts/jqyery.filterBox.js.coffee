@@ -262,9 +262,10 @@ $.widget 'nmk.filterBox', {
 
 	_autoCompleteItemSelected: (item) ->
 		@searchHidden.val "#{item.type},#{item.value}"
-		@searchHiddenLabel.val item.label
+		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
+		@searchHiddenLabel.val cleanedLabel
 		@acInput.hide().val ''
-		@searchLabel.show().find('span.term').text item.label
+		@searchLabel.show().find('span.term').html cleanedLabel
 		@_filtersChanged()
 		false
 
@@ -382,6 +383,6 @@ $.widget "custom.bucket_complete", $.ui.autocomplete, {
 					@_renderItemData ul, item
 	_renderItem: ( ul, item ) ->
 		$( "<li>", {class: item.type})
-			.append( $( "<a>" ).text( item.label ) )
+			.append( $( "<a>" ).html( item.label ) )
 			.appendTo( ul )
 }
