@@ -18,16 +18,9 @@ class RolesController < FilteredController
   end
 
   def autocomplete
-    buckets = []
-
-    # Search roles
-    search = Sunspot.search(Role) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Roles", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      roles: [Role]
+    })
     render :json => buckets.flatten
   end
 

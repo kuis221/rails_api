@@ -36,6 +36,7 @@ describe "AdminPages" do
           attributes = test_object.attributes
           #user should have password, generated with #attributes_for
           attributes.merge!(FactoryGirl.attributes_for(:admin_user)) if path == 'admin_user'
+          attributes.merge!({admin_email: "testemail@brandscopic.com"}) if path == 'company'
           attributes.reject!{|a| !test_object.class.accessible_attributes.include?(a) }
 
           post send("admin_#{path.pluralize}_path"),
@@ -60,7 +61,7 @@ describe "AdminPages" do
           updated_object = assigns(path)
           response.should redirect_to(:action => :show, :id => updated_object)
           attributes.each do |k,v|
-            updated_object[k].should == v unless [:password, :password_confirmation].include?(k)
+            updated_object[k].should == v unless [:password, :password_confirmation, :admin_email].include?(k)
           end
         end
 

@@ -12,34 +12,11 @@ class TeamsController < FilteredController
   has_scope :with_text
 
   def autocomplete
-    buckets = []
-
-    # Search teams
-    search = Sunspot.search(Team) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with :company_id, current_company.id
-    end
-    buckets.push(label: "Teams", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search users
-    search = Sunspot.search(CompanyUser) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with :company_id, current_company.id
-    end
-    buckets.push(label: "Users", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search campaigns
-    search = Sunspot.search(Campaign) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with(:company_id, current_company.id)
-    end
-    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+    buckets = autocomplete_buckets({
+      teams: [Team],
+      users: [CompanyUser],
+      campaigns: [Campaign]
+    })
 
     render :json => buckets.flatten
   end

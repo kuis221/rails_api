@@ -124,6 +124,7 @@ GEM
     fattr (2.2.1)
     formtastic (2.2.1)
       actionpack (>= 3.0)
+    geocoder (1.1.8)
     google_places (0.12.0)
       httparty
     has_scope (0.5.1)
@@ -332,6 +333,7 @@ DEPENDENCIES
   email_spec (>= 1.4.0)
   factory_girl_rails (~> 4.0)
   faker
+  geocoder
   google_places
   has_scope
   inherited_resources

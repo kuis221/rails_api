@@ -3,12 +3,25 @@ class InvitationsController < Devise::InvitationsController
     unless resource.errors.empty?
       respond_with_navigational(resource.errors, :status => :unprocessable_entity){ render :new }
     end
-    # All countries with US at the begining
-    @countries = [
-        [].tap{|arr| c= Country.find_country_by_name('United States'); arr.push c.name; arr.push c.alpha2},
-        ["-------------------", ""]
-      ] +
-      Country.all
+
+    if resource.country.nil? || resource.country.empty?
+      location_info = Geocoder.search(request.remote_ip)
+      if location = location_info.first and location.country != 'Reserved'
+        Rails.logger.debug location.inspect
+        country = Country.new(location.country_code)
+        unless country.nil?
+          resource.country = location.country_code
+          country_states = country.states
+          if country_states.has_key?(location.state_code)
+            resource.state = location.state_code
+          else
+            # Try to find a state by name
+            resource.state = country_states.select{|k, v| v['name'] == location.state}.map{|k, v| k}.first
+          end
+          resource.city = location.city
+        end
+      end
+    end
   end
 
   def create
@@ -25,6 +38,14 @@ class InvitationsController < Devise::InvitationsController
       end
     else
       self.resource = resource_class.invite!(resource_params, current_inviter)
+    end
+  end
+
+  def resource_from_invitation_token
+    unless params[:invitation_token] && self.resource = resource_class.to_adapter.find_first(params.slice(:invitation_token))
+      set_flash_message(:alert, :invitation_token_invalid, :reset_pass_url => new_password_path(resource_name))
+      flash[:alert] = flash[:alert].html_safe
+      redirect_to after_sign_out_path_for(resource_name)
     end
   end
 

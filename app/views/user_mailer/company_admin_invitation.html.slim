@@ -1,0 +1,14 @@
+p Hi #{@user.first_name},
+
+p Welcome to Brandscopic! Please click on the link below to set your password and complete your profile.
+
+p= link_to 'Accept invitation', accept_invitation_url(@user, :invitation_token => @user.invitation_token)
+
+p Afterward you can set up your organization, create campaigns and start executing events.
+
+p
+  | Kind regards,
+  br
+  | The Brandscopic Team
+  br
+  | www.brandscopic.com

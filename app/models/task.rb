@@ -36,7 +36,9 @@ class Task < ActiveRecord::Base
 
   searchable do
     integer :id
-    text :title
+    text :name, stored: true do
+      title
+    end
     string :title
 
     integer :company_user_id, references: CompanyUser
@@ -56,8 +58,11 @@ class Task < ActiveRecord::Base
     end
 
     boolean :completed
+    string :status do
+      active? ? 'Active' : 'Inactive'
+    end
 
-    string :status, multiple: true do
+    string :statusm, multiple: true do
       status = []
       status.push active? ? 'Active' : 'Inactive'
       status.push completed? ? 'Completed' : 'Incomplete'
@@ -103,10 +108,10 @@ class Task < ActiveRecord::Base
             with :id, value
           when 'campaign'
             with :campaign_id, value
-          when 'companyuser'
+          when 'company_user'
             with :company_user_id, value
           when 'team'
-            with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: value}).map(&:id)
+            with :company_user_id, CompanyUser.select('company_users.id').joins(:teams).where(teams: {id: value}).map(&:id)
           end
         end
 
@@ -125,7 +130,7 @@ class Task < ActiveRecord::Base
 
         if include_facets
           facet :campaign
-          facet :status
+          facet :statusm
           facet :company_user_id
         end
 

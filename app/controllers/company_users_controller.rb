@@ -13,52 +13,13 @@ class CompanyUsersController < FilteredController
   custom_actions :collection => [:complete]
 
   def autocomplete
-    buckets = []
-
-    # Search users
-    search = Sunspot.search(CompanyUser) do
-      keywords(params[:q]) do
-        fields(:name)
-        fields(:email)
-      end
-      with :company_id, current_company.id # For the users
-    end
-    buckets.push(label: "Users", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search teams
-    search = Sunspot.search(Team) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with :company_id, current_company.id  # For the teams
-    end
-    buckets.push(label: "Teams", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search roles
-    search = Sunspot.search(Role) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with :company_id, current_company.id  # For the teams
-    end
-    buckets.push(label: "Roles", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search campaigns
-    search = Sunspot.search(Campaign) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with(:company_id, current_company.id)
-    end
-    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-    # Search places
-    search = Sunspot.search(Place, Area) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Places", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
+    buckets = autocomplete_buckets({
+      users: [CompanyUser],
+      teams: [Team],
+      roles: [Role],
+      campaigns: [Campaign],
+      places: [Place]
+    })
 
     render :json => buckets.flatten
   end

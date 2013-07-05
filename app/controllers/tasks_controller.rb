@@ -17,42 +17,10 @@ class TasksController < FilteredController
   before_filter :set_body_class, only: :index
 
   def autocomplete
-    buckets = []
-
-    # Search tasks
-    search = Sunspot.search(Task) do
-      keywords(params[:q]) do
-        fields(:title)
-      end
-      with(:company_id, current_company.id)
-      with(:status, ['Active', 'Completed', 'Incompleted'])
-    end
-    buckets.push(label: "Tasks", value: search.results.first(5).map{|x| {label: x.title, value: x.id, type: x.class.name.downcase} })
-
-
-    # Search compaigns
-    search = Sunspot.search(Campaign) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with(:company_id, current_company.id)
-      with(:aasm_state, ['active'])
-    end
-    buckets.push(label: "Campaigns", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
-
-    if is_my_teams_view?
-      # Search users
-      search = Sunspot.search(CompanyUser, Team) do
-        keywords(params[:q]) do
-          fields(:name)
-        end
-        any_of do
-          with :company_id, current_company.id  # For the teams
-        end
-      end
-      buckets.push(label: "People", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-    end
+    buckets = autocomplete_buckets({
+      tasks: [Task],
+      campaigns: [Campaign]
+    }.merge(is_my_teams_view? ? {people: [CompanyUser, Team]} : {}))
 
     render :json => buckets.flatten
   end
@@ -97,7 +65,7 @@ class TasksController < FilteredController
         counters['completed'] = 0
         counters['assigned'] = 0
         counters['late'] = count_late_events
-        facet_search.facet(:status).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:status).nil?
+        facet_search.facet(:statusm).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:statusm).nil?
       end
       @status_counters
     end

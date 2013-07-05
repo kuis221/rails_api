@@ -4,8 +4,8 @@ describe "Events", js: true, search: true do
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
+    @company = FactoryGirl.create(:company)
+    @user = FactoryGirl.create(:user, company: @company, role_id: FactoryGirl.create(:role, company: @company).id)
     @company_user = @user.company_users.first
     sign_in @user
   end

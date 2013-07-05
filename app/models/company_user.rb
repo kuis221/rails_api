@@ -37,7 +37,7 @@ class CompanyUser < ActiveRecord::Base
   # Campaigns-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
-  delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :invited_to_sign_up?, to: :user
+  delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :time_zone, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :country_name, :state_name, to: :user
   delegate :name, to: :role, prefix: true
 
@@ -50,7 +50,7 @@ class CompanyUser < ActiveRecord::Base
     integer :id
     integer :company_id
 
-    text :name do
+    text :name, stored: true do
       full_name
     end
     text :email
@@ -125,7 +125,7 @@ class CompanyUser < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
-          when 'companyuser'
+          when 'company_user'
             with :id, value
           when 'role'
             with "#{attribute}_id", value

@@ -9,16 +9,9 @@ class AreasController < FilteredController
   load_and_authorize_resource except: :index
 
   def autocomplete
-    buckets = []
-
-    # Search areas
-    search = Sunspot.search(Area) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Areas", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      areas: [Area]
+    })
     render :json => buckets.flatten
   end
 

@@ -8,17 +8,9 @@ class DateRangesController < FilteredController
 
 
   def autocomplete
-    buckets = []
-
-    # Search compaigns
-    search = Sunspot.search(DateRange) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-      with(:company_id, current_company.id)
-    end
-    buckets.push(label: "Date Ranges", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      date_ranges: [DateRange]
+    })
     render :json => buckets.flatten
   end
 

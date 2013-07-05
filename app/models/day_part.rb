@@ -29,7 +29,7 @@ class DayPart < ActiveRecord::Base
   searchable do
     integer :id
 
-    text :name
+    text :name, stored: true
     text :description
 
     string :name
@@ -62,7 +62,7 @@ class DayPart < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
-          when 'daypart'
+          when 'day_part'
             with :id, value
           end
         end

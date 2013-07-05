@@ -9,16 +9,9 @@ class BrandPortfoliosController < FilteredController
   load_and_authorize_resource except: :index
 
   def autocomplete
-    buckets = []
-
-    # Search brands
-    search = Sunspot.search(Brand, BrandPortfolio) do
-      keywords(params[:q]) do
-        fields(:name)
-      end
-    end
-    buckets.push(label: "Brands", value: search.results.first(5).map{|x| {label: x.name, value: x.id, type: x.class.name.downcase} })
-
+    buckets = autocomplete_buckets({
+      brands: [Brand, BrandPortfolio]
+    })
     render :json => buckets.flatten
   end
 
