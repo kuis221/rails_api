@@ -8,4 +8,17 @@ class UserMailer < ActionMailer::Base
     @url  = root_url
     mail(:to => @user.email, :subject => "Brandscopic Invitation")
   end
+
+  def company_admin_invitation(user)
+    @user = user
+    @url  = root_url
+    mail(:to => @user.email, :subject => "Brandscopic Invitation")
+  end
+
+  def company_existing_admin_invitation(user, company)
+    @user = user
+    @company = company
+    @url  = root_url
+    mail(:to => @user.email, :subject => "Brandscopic Invitation")
+  end
 end
