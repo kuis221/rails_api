@@ -66,7 +66,7 @@ class FilteredController < InheritedResources::Base
 
       # Sort by scoring if we are grouping multiple clasess into one bucket
       results = results.sort { |a, b| b.score <=> a.score }.first(5) if klasess.size > 1
-      {label: bucket_name.to_s.capitalize, value: get_bucket_results(results)}
+      {label: bucket_name.to_s.gsub(/[_]+/, ' ').capitalize, value: get_bucket_results(results)}
     end
 
     def get_bucket_results(results)
