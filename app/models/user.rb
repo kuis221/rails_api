@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :invitable, :database_authenticatable,
-         :recoverable, :rememberable, :trackable
+         :recoverable, :rememberable, :trackable, :confirmable
 
   has_many :company_users, autosave: true
   has_many :companies, through: :company_users, order: 'companies.name ASC'
