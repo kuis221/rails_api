@@ -149,25 +149,31 @@ h1, h2, h3{
 		height: 75px;
 	}
 	li a:after{
+		background-color: @menu;
+		color:@menu;
 		content: ".";
   		display: block;
   		line-height: 10px;
   		position: relative;
-		background-color: @menu;
+  		top:4px;
 		-webkit-border-top-right-radius: 7px;
+		-webkit-border-bottom-right-radius: 7px;
 		-moz-border-radius-topright: 7px;
+		-moz-border-radius-bottomright: 7px;
 		border-top-right-radius: 7px;
+		border-bottom-right-radius: 7px;
 	}
-	li a:before{
+	/*li a:before{
 		content: ".";
   		display: block;
-  		line-height: 0px;
   		position: relative;
-		background-color: @menu;
+  		line-height: 9px;
+  		top:4px;
+		background-color: red;
 		-webkit-border-bottom-right-radius: 7px;
 		-moz-border-radius-bottomright: 7px;
 		border-bottom-right-radius: 7px;
-	}
+	}*/
 	li a:hover{
 		background-color: @app_bg;
 	}
@@ -191,8 +197,7 @@ h1, h2, h3{
 }
 .main{
 	background-color: white;
-	box-sizing: border-box;
-	height: 500px;  
+	box-sizing: border-box; 
 	margin-right: 240px;
 	padding: 13px 10px 10px 10px;
 	-webkit-border-radius: 7px;
@@ -202,7 +207,6 @@ h1, h2, h3{
 .sidebar{
 	background:white;
 	float:right;
-	height: 500px;
 	min-height: 300px;
 	padding:13px 10px 10px 10px;
 	-webkit-border-radius: 6px;
