@@ -13,6 +13,8 @@
 /*-- COLOR PALETTE --*/
 @app_bg: #ececec;
 @brand:#989898;
+@buttons:#de4d43;
+@buttons-hover:#cc4137;
 @grey_one:#dfdfdf;
 @grey_three:#7a7a7a;
 @header:#363636;
@@ -91,6 +93,24 @@ body{
 	color:@text;
 	font-family: @baseFontFamily;
 	padding-top: 41px;
+}
+.btn{
+	line-height: 28px;
+}
+.btn-primary{
+	background-color: @buttons;
+	background-image:none;
+	border: 0;
+	color: white;
+	font-size: 14px;
+	height: 35px;
+	line-height: 33px;
+	padding: 0;
+	text-shadow:none;
+	width: 90px;
+}
+.btn-primary:hover{
+	background-color: @buttons-hover;
 }
 .container-fluid{
 	padding: 0;
@@ -223,7 +243,7 @@ h1, h2, h3{
  	border:1px solid @user_menu;
  	color: @brand;
  	font-size: 11px;
-    margin: 40px 0 0 0;
+    margin: 60px 0 0 0;
     padding: 0;
     a{
     	color: @brand;
