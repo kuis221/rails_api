@@ -28,74 +28,109 @@
 /*-- GENERAL STYLES --*/
 
 #analysis a:before {
-	bottom:8px;
 	content: "\e004";
-  	display: block;
-	font-family: 'menu';
+  	display: block;	
+  	font-family: 'menu';
 	font-size: 28px;
-	padding-top:25px;
+	left:3px;
+	padding-bottom:5px;
   	position: relative;
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;	
 }
 #dashboard a:before {
-	bottom:8px;
 	content: "\e003";
-  	display: block;
-	font-family: 'menu';
-	font-size: 28px;
-	padding-top:25px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-#events a:before {
-	bottom:8px;
-	content: "\e002";
-  	display: block;
-	font-family: 'menu';
+  	display: block;	
+  	font-family: 'menu';
 	font-size: 28px;
 	left:3px;
-	padding-top:25px;
+	padding-bottom:5px;
   	position: relative;
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;	
+}
+#events a:before{
+	content: "\e002";
+  	display: block;	
+  	font-family: 'menu';
+	font-size: 28px;
+	left:3px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;	
 }
 #tasks a:before {
-	bottom:8px;
 	content: "\e001";
-  	display: block;
-	font-family: 'menu';
+  	display: block;	
+  	font-family: 'menu';
 	font-size: 28px;
 	left:3px;
-	padding-top:25px;
+	padding-bottom:5px;
   	position: relative;
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;	
 }
+#analysis, #dashboard, #events, #tasks {
+	a:hover{
+	background-color: @grey_three;
+	color:@user_menu;
+	}
+	a:hover:before{
+		color: @user_menu;
+	}
+	a:active{
+		background-color: @app_bg;
+		color:@grey_three;
+	}
+	a:active:before{
+		color:@grey_three;
+	}
+}
+
 #application-content {
 	padding: 0 10px;
 }
 
 a{
-	color:@user_menu;
+	color:@text;
+}
+a.more-options-link{
+	margin-left:20px;
+}
+a.more-options-link:after{
+	content: "\25BC";
+  	display: inline-block;	
+  	font-family: 'menu';
+	font-size: 10px;
+	left:5px;
+  	position: relative;
 }
 body{
-	background: @app_bg url('bg.png') repeat-y left; 
 	color:@text;
 	font-family: @baseFontFamily;
 	padding-top: 41px;
 }
+body.empty-layout{
+	background: @app_bg;
+}
+body.app-layout{
+	background: @app_bg url('bg.png') repeat-y left; 
+}
+
 .btn{
 	line-height: 28px;
+}
+.btn.active{
+	background-image: none;
 }
 .btn-primary{
 	background-color: @buttons;
@@ -116,8 +151,11 @@ body{
 	padding: 0;
 }
 footer{
-	height: 40px;
-	margin-left: 80px;
+	bottom: 0;
+	color: @brand;
+	font-weight: normal;
+	height: 35px;
+	margin: 30px 0 0 80px;
 	padding-top: 10px;
 	text-align: center;
 }
@@ -129,10 +167,13 @@ header{
 h1, h2, h3{
 	line-height: 0;
 }
-.white-bg{
-	background-color: white;
+.icon-chevron-up{
+	margin-right: 15px;
 }
 
+li.dropdown a{
+	color:@user_menu;
+}
 .nav{
 	margin-bottom: 0;
 }
@@ -173,36 +214,41 @@ h1, h2, h3{
 .nav-stacked{
 	li a{
 		color:@grey_three;
-		height: 75px;
+		padding: 25px 0 15px 0;
+		height:50px;
 	}
-	li a:after{
+	li a:active:after{
 		background-color: @menu;
 		color:@menu;
 		content: ".";
   		display: block;
   		line-height: 10px;
   		position: relative;
-  		top:4px;
+  		top:15px;
 		-webkit-border-top-right-radius: 7px;
-		-webkit-border-bottom-right-radius: 7px;
 		-moz-border-radius-topright: 7px;
-		-moz-border-radius-bottomright: 7px;
 		border-top-right-radius: 7px;
-		border-bottom-right-radius: 7px;
 	}
-	/*li a:before{
-		content: ".";
-  		display: block;
-  		position: relative;
-  		line-height: 9px;
-  		top:4px;
-		background-color: red;
-		-webkit-border-bottom-right-radius: 7px;
-		-moz-border-radius-bottomright: 7px;
-		border-bottom-right-radius: 7px;
-	}*/
-	li a:hover{
-		background-color: @app_bg;
+}
+.filter-wrapper{
+	font-size: 13px;
+	margin: 35px 0 0 0;
+	h3{
+		font-size: 15px;
+		font-weight: bold;
+		margin-bottom: 25px;
+		text-transform: uppercase;
+	}
+	label{
+		line-height: 20px;
+		padding-right: 15px;
+	}
+	.checker{
+		display: inline-block;
+		float:left;
+		position: relative;
+		top: -3px;
+		width:20px;
 	}
 }
 .menu{
@@ -213,8 +259,8 @@ h1, h2, h3{
 	text-transform: uppercase;
 	width:80px;
 	.dropdown-toggle:hover{
-		height: 75px;
-		padding-top:0;
+		height: 50px;
+		padding:25px 0 15px 0;
 	}
 }
 .container{
@@ -240,9 +286,6 @@ h1, h2, h3{
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	width:210px;
-	li label{
-		display: inline-block;
-	}
 }
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
