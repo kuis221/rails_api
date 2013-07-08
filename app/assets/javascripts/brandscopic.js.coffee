@@ -101,7 +101,8 @@ jQuery ->
 				$filterSidebar.css({
 					position: 'fixed',
 					bottom: "0px",
-					top: 'auto'
+					top: 'auto',
+          right: "10px"
 				})
 			else
 				$filterSidebar.css({
