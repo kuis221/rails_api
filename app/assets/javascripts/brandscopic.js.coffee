@@ -60,6 +60,17 @@ jQuery ->
 
 	$(".totop").hide();
 
+	# TimeZone change detection methods
+	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
+		browserTimeZone = $window.get_timezone()
+		if browserTimeZone? and browserTimeZone != ''
+			if userTimeZone != browserTimeZone && browserTimeZone != lastDetectedTimeZone
+				askForTimeZoneChange(browserTimeZone)
+
+	askForTimeZoneChange = (browserTimeZone) ->
+		$.get('/users/time_zone_change.js', {time_zone: browserTimeZone})
+
+
 	# Keep filter Sidebar always visible but make it scroll if it's
 	# taller than the window size
 	$filterSidebar = $('#resource-filter-column')
