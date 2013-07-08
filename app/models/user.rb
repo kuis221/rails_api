@@ -33,6 +33,8 @@
 #  invited_by_id          :integer
 #  invited_by_type        :string(255)
 #  current_company_id     :integer
+#  time_zone              :string(255)
+#  detected_time_zone     :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -54,11 +56,13 @@ class User < ActiveRecord::Base
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
+  validates :detected_time_zone, allow_nil: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
 
   with_options unless: :inviting_user_or_invited?  do |user|
     user.validates :country, presence: true
     user.validates :state,   presence: true
     user.validates :city,    presence: true
+    user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
     user.validates :password, presence: true, if: :should_require_password?
     user.validates :password, confirmation: true, if: :password
   end

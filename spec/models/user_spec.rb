@@ -33,6 +33,8 @@
 #  invited_by_id          :integer
 #  invited_by_type        :string(255)
 #  current_company_id     :integer
+#  time_zone              :string(255)
+#  detected_time_zone     :string(255)
 #
 
 require 'spec_helper'
@@ -56,6 +58,7 @@ describe User do
   it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
   it { should_not allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
   it { should validate_confirmation_of(:password) }
+  it { should_not validate_presence_of(:detected_time_zone) }
 
   describe "email uniqness" do
     before do
@@ -70,6 +73,7 @@ describe User do
       it { should_not validate_presence_of(:country) }
       it { should_not validate_presence_of(:state) }
       it { should_not validate_presence_of(:city) }
+      it { should_not validate_presence_of(:time_zone) }
       it { should_not validate_presence_of(:password) }
     end
   end
@@ -83,6 +87,7 @@ describe User do
       it { should validate_presence_of(:country) }
       it { should validate_presence_of(:state) }
       it { should validate_presence_of(:city) }
+      it { should validate_presence_of(:time_zone) }
       it { should validate_presence_of(:password) }
     end
   end
@@ -95,6 +100,7 @@ describe User do
       it { should validate_presence_of(:country) }
       it { should validate_presence_of(:state) }
       it { should validate_presence_of(:city) }
+      it { should validate_presence_of(:time_zone) }
       it { should_not validate_presence_of(:password) }
     end
   end
