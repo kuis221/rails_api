@@ -42,9 +42,9 @@ class EventsController < FilteredController
         ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
         f.push(label: "Date Ranges", items: ranges )
 
-        f.push build_locations_bucket(facet_search.facet(:place).rows)
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_brands_bucket(facet_search.facet(:campaign).rows)
+        f.push build_locations_bucket(facet_search.facet(:place).rows)
         #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
         users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
         teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
@@ -96,7 +96,7 @@ class EventsController < FilteredController
             :formatted_address => place_address(event.place) || ''
         },
         :campaign => { :name => event.campaign_name },
-        :status => event.active? ? 'Active' : 'Inactive',
+        :status => event.status,
         :links => {
             edit: edit_event_path(event),
             show: event_path(event),
