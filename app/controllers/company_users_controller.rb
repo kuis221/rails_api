@@ -5,12 +5,12 @@ class CompanyUsersController < FilteredController
   before_filter :load_users_for_event, only: :event
   load_and_authorize_resource except: [:index]
 
-  respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
   respond_to :json, only: [:index]
 
   helper_method :assignable_campaigns
 
-  custom_actions :collection => [:complete]
+  custom_actions collection: [:complete, :time_zone_change]
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -22,6 +22,11 @@ class CompanyUsersController < FilteredController
     })
 
     render :json => buckets.flatten
+  end
+
+  def time_zone_change
+    Rails.logger.debug "detected_time_zone == #{params[:time_zone]}"
+    current_user.update_column(:detected_time_zone, params[:time_zone])
   end
 
   def event
@@ -74,8 +79,8 @@ class CompanyUsersController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
         f.push(label: "Roles", items: facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) } )
-        f.push(label: "Teams", items: facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) })
         f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) })
+        f.push(label: "Teams", items: facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) })
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
     end

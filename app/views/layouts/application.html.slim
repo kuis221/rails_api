@@ -19,6 +19,10 @@ head
     = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=AIzaSyC_4WyZ0ewJ0QSdFd6mnAsCvAttG8iXXQc&libraries=places&sensor=false"
     = csrf_meta_tags
     = yield(:head)
+    javascript:
+      $(document).ready(function(){
+        checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.try(:html_safe))}', '#{escape_javascript(current_user.detected_time_zone.try(:html_safe))}');
+      })
     = render 'application/tracking/lucky_orange' if Rails.env.production?
 
 

@@ -1,8 +1,9 @@
 <p>Hi <%= @resource.first_name %>,</p>
 
-<p>You have been invited to the Brandscopic app. Please click the link below to sign in and fill our your profile.</p>
+<p>You can confirm your account email through the link below:</p>
 
-<p><%= link_to 'Sign in to your profile', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
+<p><%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
 
 <p>Kind regards,<br/>
-The Brandscopic Team</p>
+The Brandscopic Team<br/>
+<%= link_to 'www.brandscopic.com', 'http://www.brandscopic.com' %></p>

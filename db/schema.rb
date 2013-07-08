@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130705163717) do
+ActiveRecord::Schema.define(:version => 20130705220239) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(:version => 20130705163717) do
     t.string   "invited_by_type"
     t.integer  "current_company_id"
     t.string   "time_zone"
+    t.string   "detected_time_zone"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

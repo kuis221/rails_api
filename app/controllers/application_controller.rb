@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
 
   skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  include DatatablesHelper
   include SentientController
   include CurrentCompanyHelper
 
@@ -58,7 +57,6 @@ class ApplicationController < ActionController::Base
     def set_timezone
       if current_user.present? and current_user.time_zone.present?
         Time.zone = current_user.time_zone
-        Rails.logger.debug "\n\n\n\nSETTTING USER TIMEZONE TO: #{Time.zone}\n\n\n"
       else
         Time.zone = Brandscopic::Application.config.time_zone
       end
