@@ -21,7 +21,7 @@ head
     = yield(:head)
     javascript:
       $(document).ready(function(){
-        checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.html_safe)}', '#{escape_javascript(current_user.detected_time_zone.html_safe)}');
+        checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.try(:html_safe))}', '#{escape_javascript(current_user.detected_time_zone.try(:html_safe))}');
       })
     = render 'application/tracking/lucky_orange' if Rails.env.production?
 
