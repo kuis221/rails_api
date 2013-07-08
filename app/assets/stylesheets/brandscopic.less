@@ -105,18 +105,34 @@ a{
 }
 .datepick-nav{
 	float: right;
-	width: 50px;
+	margin-right:15px;
+	width: 34px;
 }
-.datepick-nav, .datepick-cmd{
-	width:5px;
+.datepick-nav .datepick-cmd{
+	width: 15px;
+}
+.datepick-cmd-prev:after{
+	content: "\25C4";
+  	display: block;	
+	font-size: 13px;
+  	position: relative;
+  	right: 4px;
+  	top:-19px;
+}
+.datepick-cmd-next:after{
+	content: "\25BA";
+  	display: block;	
+	font-size: 13px;
+	left: 4px;
+  	position: relative;
+  	top:-19px;
 }
 a.datepick-cmd{
-	background-color: none;
 	color: white;
 	margin-top: 12px;
 }
 a.datepick-cmd:hover{
-	background-color: none;
+	background-color: @brand;
 }
 a.more-options-link{
 	margin-left:20px;
