@@ -128,18 +128,18 @@ describe ApplicationHelper do
     end
 
     it "should return nil if date is nil" do
-      assert_dom_equal '<span class="week_day">Fri</span> <span class="month_day">Jul 26</span>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
+      assert_dom_equal 'FRI <b>Jul 26</b>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
     end
   end
 
 
   describe "#format_date_range" do
     it "should return both dates" do
-      assert_dom_equal '<span class="week_day">Fri</span> <span class="month_day">Jul 26</span> <span class="time_part">at 10:59 AM</span><br /><span class="week_day">Sat</span> <span class="month_day">Jul 27</span> <span class="time_part">at  3:00 AM</span>', helper.format_date_range(Time.zone.local(2013, 07, 26, 10, 59), Time.zone.local(2013, 07, 27, 3, 0))
+      assert_dom_equal 'FRI <b>Jul 26</b> at 10:59 AM<br />SAT <b>Jul 27</b> at  3:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 10, 59), Time.zone.local(2013, 07, 27, 3, 0))
     end
 
     it "should one date and both hours if the end day is the same as the start day" do
-      assert_dom_equal '<span class="week_day">Fri</span> <span class="month_day">Jul 26</span><br /><span class="time_part">3:00 AM - 9:00 AM</span>', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
+      assert_dom_equal 'FRI <b>Jul 26</b><br />3:00 AM - 9:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
     end
   end
 end

@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def format_date_with_time(the_date)
-    the_date.strftime('%^a <b>%b %d</b> <span class="time_part">at %l:%M %p</span>').html_safe
+    the_date.strftime('%^a <b>%b %d</b> at %l:%M %p').html_safe
   end
 
   def format_date(the_date)
