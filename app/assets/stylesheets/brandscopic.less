@@ -103,19 +103,39 @@
 a{
 	color:@text;
 }
-	a.edit:after{
-		background-color: none;
-		color: @app_bg; 
-		content: "\e009"; 
-		font-family: 'icons';
-		font-size: 15px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		top:2px;
-		-webkit-font-smoothing: antialiased;
-	}
+a.edit:after{
+	background-color: none;
+	color: @app_bg; 
+	content: "\e009"; 
+	font-family: 'icons';
+	font-size: 15px;
+	position: relative;
+	speak:none;
+	text-align: center;
+	text-shadow:none;
+	top:2px;
+	-webkit-font-smoothing: antialiased;
+}
+/*-- Alert Messages -- */
+.alert{
+	border: red;
+	text-shadow:none;
+	-webkit-border-radius: 8px;
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-top-right-radius: 0px;
+	-moz-border-radius: 8px;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-topright: 0px;
+	border-radius: 8px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+} 
+.alert-danger, .alert-error{
+	background-color: @buttons;
+	color: white;
+}
+
+/*-- Datepick Sidebar -- */
 .datepick-nav{
 	float: right;
 	margin-right:15px;
@@ -160,13 +180,13 @@ a.more-options-link:after{
 body{
 	color:@text;
 	font-family: @baseFontFamily;
-	padding-top: 41px;
 }
 body.empty-layout{
 	background: @app_bg;
 }
 body.app-layout{
 	background: @app_bg url('bg.png') repeat-y left; 
+	padding-top: 41px;
 }
 
 .btn{
@@ -235,11 +255,8 @@ body.app-layout{
 	border: 0;
 	color: white;
 	font-size: 14px;
-	height: 35px;
-	line-height: 33px;
-	padding: 0;
+	padding: 8px 17px;
 	text-shadow:none;
-	width: 90px;
 }
 .btn-primary:hover{
 	background-color: @buttons-hover;
@@ -261,7 +278,10 @@ header{
 }
 
 h1, h2, h3{
+	font-family: 'Lato', sans-serif;
+	font-weight: normal;
 	line-height: 0;
+	margin-top: 0;
 }
 .icon-chevron-up{
 	margin-right: 15px;
@@ -459,11 +479,11 @@ textarea::-webkit-input-placeholder {
 }
 
 #company-name {
-	padding: 5px 0 0 25px;
+	font-size: 24px;
+	font-weight: 400;
+	padding: 20px 0 0 25px;
 	a {
 		color: @brand;
-		font-size: 24px;
-		font-weight: 400;
 		text-decoration: none;
 	}
 }
