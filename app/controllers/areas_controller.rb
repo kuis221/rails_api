@@ -6,8 +6,6 @@ class AreasController < FilteredController
 
   custom_actions member: [:select_places, :add_places]
 
-  load_and_authorize_resource except: :index
-
   def autocomplete
     buckets = autocomplete_buckets({
       areas: [Area]

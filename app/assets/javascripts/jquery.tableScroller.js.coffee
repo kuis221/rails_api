@@ -23,7 +23,7 @@ $.widget 'nmk.tableScroller', {
 
 		if @options.onClick
 			@element.on 'click.tableScroller.', 'a', (e) =>
-				e.preventDefault();
+				e.preventDefault()
 				row = $(e.target).parents('tr')[0]
 				@options.onClick(row, $(row).data('item'))
 
@@ -32,8 +32,8 @@ $.widget 'nmk.tableScroller', {
 		else
 			@sortBy @element.find('thead th[data-sort]')[0], false
 
-		if @options.fixedHeader
-			@_buildFixedHeader()
+		# if @options.fixedHeader
+		# 	@_buildFixedHeader()
 
 		@infiniteScroller = false
 		@_loadPage(1)

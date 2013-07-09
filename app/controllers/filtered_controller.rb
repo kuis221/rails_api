@@ -1,11 +1,23 @@
 class FilteredController < InheritedResources::Base
-    helper_method :collection_count, :collection_to_json, :facets, :page, :total_pages
-    respond_to :json, only: :index
-    before_filter :collection, only: :index
+  helper_method :collection_count, :collection_to_json, :facets, :page, :total_pages
+  respond_to :json, only: :index
+
+  load_and_authorize_resource except: [:index, :items, :filters, :autocomplete]
+
+  custom_actions collection: [:filters, :items]
+
+  def filters
+  end
+
+  def items
+    render layout: false
+  end
+
+  protected
 
     def collection
-      unless request.format.html?
-        get_collection_ivar || begin
+      get_collection_ivar || begin
+        if action_name != 'index' || request.format.json?
           if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
             search = resource_class.do_search(search_params)
             @collection_count = search.total
@@ -24,6 +36,8 @@ class FilteredController < InheritedResources::Base
     end
 
     def collection_count
+      collection
+      Rails.logger.debug "@collection_count ==> #{@collection_count.inspect}"
       @collection_count ||= @collection_count_scope.count
     end
 

@@ -1,0 +1,8 @@
+li
+  a href="#{event_path(event)}"
+    span= format_date_range(event.start_at, event.end_at)
+    span
+      =
+      b= event.campaign_name
+      br>/
+      = place_address(event.place)

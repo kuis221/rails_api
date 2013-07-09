@@ -26,7 +26,6 @@ class Role < ActiveRecord::Base
   serialize :permissions
 
   scope :active, where(:active => true)
-  scope :with_text, lambda{|text| where('roles.name ilike ? or roles.description ilike ? ', "%#{text}%", "%#{text}%") }
 
   searchable do
     integer :id

@@ -1,12 +1,8 @@
 class RolesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
-  authorize_resource
-
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
-
-  has_scope :with_text
 
   def set_permissions
     if params[:permissions]

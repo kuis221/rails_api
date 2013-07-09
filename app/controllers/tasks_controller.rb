@@ -9,9 +9,6 @@ class TasksController < FilteredController
 
   has_scope :by_users
 
-  load_and_authorize_resource :event
-  load_and_authorize_resource through: :event
-
   helper_method :assignable_users, :status_counters
 
   before_filter :set_body_class, only: :index

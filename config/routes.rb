@@ -9,14 +9,15 @@ Brandscopic::Application.routes.draw do
     put '/users/confirmation', to: 'confirmations#update'
   end
 
-  resources :activities
-
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
 
   get "countries/states"
+
+  get ":controller/filters", format: :json, as: :filters
+  get ":controller/items", format: :html, as: :items
 
   resources :roles do
     get :autocomplete, on: :collection

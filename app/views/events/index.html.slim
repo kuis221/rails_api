@@ -14,57 +14,9 @@
   .tab-content
     #list-view.tab-pane.active
       #events-filter-label
-      table#events-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th data-sort="start_at" Date
-            th data-sort="place_name" Location
-            th data-sort="campaign_name" Campaign
-            th data-sort="status" Status
-            th
-        tbody
       .link-list
-        ul
-          li
-            a href="#"
-              span
-                | SAT
-                b JUN 7
-                br>/
-                | 1:00-2:00 PM
-              span
-                b Jameson MBN FY13
-                br>/
-                | Bar none
-                br>/
-                | Union Street, San francisco CA 94123
-              span
-          li
-            a href="#"
-              span
-                | SAT
-                b JUN 7
-                br>/
-                | 1:00-2:00 PM
-              span
-                b Jameson MBN FY13
-                br>/
-                | Bar none
-                br>/
-                | Union Street, San francisco CA 94123
-          li
-            a href="#"
-              span
-                | SAT
-                b JUN 7
-                br>/
-                | 1:00-2:00 PM
-              span
-                b Jameson MBN FY13
-                br>/
-                | Bar none
-                br>/
-                | Union Street, San francisco CA 94123
+        ul#events-list
+
 
     #map-view.tab-pane
       #map-canvas.google-map
@@ -72,7 +24,12 @@
 
 
 javascript:
-  $('#collection-list-filters').filterBox({
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_path(controller: :events)}',
+    'filtersUrl': '#{filters_path(controller: :events)}',
+    'listContainer' : '#events-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'asc',
     'includeCalendars': true,
     'selectDefaultDate': true,
     'includeSearchBox': false,
@@ -84,24 +41,3 @@ javascript:
         eventsTable.tableScroller('reloadData');
     }
   });
-
-  var eventsTable = $('table#events-list').tableScroller({
-    'source': '#{events_path(format: :json)}',
-    'filterBox': '#collection-list-filters',
-    'rowValues': function(e){
-      return [e.formatted_date, (e.place ? e.place.name : ''), (e.campaign ? e.campaign.name : ''), e.status]
-    },
-    'onItemsChange': function(items) {
-      $(document).trigger('events-list:changed',[items]);
-    },
-    'onItemsLoad': function(json, page) {
-      if (typeof json.description != 'undefined'){
-        $('#events-filter-label').html(json.description)
-      }
-    },
-    'rowId': function(row){
-      return 'event_'+row.id;
-    },
-    'fixedHeader': true,
-    'headerOffset': 91,
-  })
