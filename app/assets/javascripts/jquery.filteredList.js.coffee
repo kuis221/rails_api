@@ -66,11 +66,11 @@ $.widget 'nmk.filteredList', {
 
 	disableScrolling: ->
 		if @infiniteScroller
-			@element.infiniteScrollHelper 'disableScrolling'
+			@listContainer.infiniteScrollHelper 'disableScrolling'
 
 	enableScrolling: ->
 		if @infiniteScroller
-			@element.infiniteScrollHelper 'enableScrolling'
+			@listContainer.infiniteScrollHelper 'enableScrolling'
 
 
 	_loadFilters: ->

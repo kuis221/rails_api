@@ -22,13 +22,12 @@ jQuery ->
     if $(this).attr('href') is '#map-view'
       mapIsVisible = true
       initializeMap()
-      $('.table-cloned-fixed-header').hide()
-      $('table#events-list').tableScroller 'disableScrolling'
+      $('.table-cloned-fixed-header').hide()  
+      $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
     else
       mapIsVisible = false
       $('.table-cloned-fixed-header').show()
-      $('table#events-list').tableScroller 'enableScrolling'
-      eventsTable.tableScroller('redrawTable')
+      $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
 
 
   map = null
