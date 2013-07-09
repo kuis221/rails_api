@@ -37,7 +37,6 @@ class FilteredController < InheritedResources::Base
 
     def collection_count
       collection
-      Rails.logger.debug "@collection_count ==> #{@collection_count.inspect}"
       @collection_count ||= @collection_count_scope.count
     end
 

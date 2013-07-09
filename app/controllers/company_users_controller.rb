@@ -25,7 +25,6 @@ class CompanyUsersController < FilteredController
   end
 
   def time_zone_change
-    Rails.logger.debug "detected_time_zone == #{params[:time_zone]}"
     current_user.update_column(:detected_time_zone, params[:time_zone])
   end
 
