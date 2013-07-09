@@ -1,8 +1,19 @@
-object false
-extends "application/index"
+collection @events, :root => false, :object_root => false
 
-if params[:page] == '1'
-  node :description do
-   describe_filters
-  end
+
+attribute :id, :start_date, :start_at, :end_at, :end_date, :active
+
+child :campaign do
+	attribute :id, :name
+end
+
+child :place do
+	attribute :id, :name, :latitude, :longitude, :formatted_address
+end
+
+node :links do |event|
+	{
+		show: event_path(event),
+		show: edit_event_path(event),
+	}
 end

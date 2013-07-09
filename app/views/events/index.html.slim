@@ -37,7 +37,6 @@ javascript:
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
-      if (typeof eventsTable != 'undefined')
-        eventsTable.tableScroller('reloadData');
+      $(document).trigger('events-filter:changed')
     }
   });

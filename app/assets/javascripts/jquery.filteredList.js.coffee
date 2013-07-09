@@ -343,8 +343,8 @@ $.widget 'nmk.filteredList', {
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
 
-		if @options.onChange
-			@options.onChange(@)
+			if @options.onChange
+				@options.onChange(@)
 
 	buildParams: (params=[]) ->
 		data = @getFilters()
