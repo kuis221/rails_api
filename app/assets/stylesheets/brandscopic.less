@@ -103,6 +103,19 @@
 a{
 	color:@text;
 }
+	a.edit:after{
+		background-color: none;
+		color: @app_bg; 
+		content: "\e009"; 
+		font-family: 'icons';
+		font-size: 15px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
 .datepick-nav{
 	float: right;
 	margin-right:15px;
@@ -160,9 +173,21 @@ body.app-layout{
 	background-color: @user_menu;
 	background-image: none;
 	border: 0;
-	height: 35px;
-	padding: 0;
-	width:45px;
+	padding: 8px 17px;
+	&.download:after{
+		color: @app_bg; 
+		content: "\e009"; 
+		font-family: 'icons';
+		font-size: 15px;
+		padding-left: 6px;
+		padding-right: 6px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
 	&.list:after{
 		color: @app_bg; 
 		content: "\e008"; 
@@ -172,22 +197,25 @@ body.app-layout{
 		speak:none;
 		text-align: center;
 		text-shadow:none;
-		top:8px;
+		top:2px;
 		-webkit-font-smoothing: antialiased;
 	}
 	&.map:after{
 		color: @app_bg; 
 		content: "\e007"; 
 		font-family: 'icons';
-		font-size: 14px;
+		font-size: 15px;
 		left: 2px;
 		position: relative;
 		speak:none;
 		text-align: center;
 		text-shadow:none;
-		top:8px;
+		top:2px;
 		-webkit-font-smoothing: antialiased;
 	}
+}
+.btn-group{
+	margin-left: 40px;
 }
 
 .btn:hover{
@@ -220,7 +248,6 @@ body.app-layout{
 	padding: 0;
 }
 footer{
-	bottom: 0;
 	color: @brand;
 	font-weight: normal;
 	height: 35px;
@@ -310,14 +337,16 @@ li.dropdown a{
 	}
 	label{
 		line-height: 20px;
-		padding-right: 15px;
+		padding: 0 15px 0 20px;
 	}
 	.checker{
 		display: inline-block;
 		float:left;
-		position: relative;
-		top: -3px;
-		width:20px;
+		margin:-3px 0 0 -20px;
+		span{
+			display: inline-block;
+			text-indent: 0;
+		}
 	}
 }
 .menu{
