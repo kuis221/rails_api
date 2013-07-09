@@ -103,19 +103,7 @@
 a{
 	color:@text;
 }
-a.edit:after{
-	background-color: none;
-	color: @app_bg; 
-	content: "\e009"; 
-	font-family: 'icons';
-	font-size: 15px;
-	position: relative;
-	speak:none;
-	text-align: center;
-	text-shadow:none;
-	top:2px;
-	-webkit-font-smoothing: antialiased;
-}
+
 /*-- Alert Messages -- */
 .alert{
 	border: red;
@@ -412,17 +400,9 @@ li.dropdown a{
  	font-size: 11px;
     margin: 60px 0 0 0;
     padding: 0;
-    a{
-    	color: @brand;
-  		display: block;
-  		height: 60px;
-      	padding: 25px;
-  		text-decoration: none;
-	}
-	a:hover{
-		background:@grey_one;
-		color: @text;
-	}
+    a:hover{
+    	text-decoration: none;
+    }
 	b{
 		font-size: 16px;
 		font-weight: normal;
@@ -437,6 +417,17 @@ li.dropdown a{
     	border-bottom:1px solid @user_menu;
     	list-style:none;
     	margin: 0;
+    	padding: 18px 0 18px 35px;
+    	a{
+    		color:white;
+    	}
+	}
+    li:hover{
+    	background:@grey_one;
+		color: @text;
+		a{
+			color:@text;
+		}
     }
     li:last-child{
 		border:0;
@@ -445,6 +436,33 @@ li.dropdown a{
 		display: inline-block;
 		margin-right: 90px;
 		vertical-align: top;
+		&.links{
+			float: right;
+			margin: 18px 20px 0 0;
+		}
+	}
+	a.edit:after{
+		content: "\e00c"; 
+		font-family: 'icons';
+		font-size: 18px;
+		margin-right: 10px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
+	a.active:after{ 
+		content: "\e00b"; 
+		font-family: 'icons';
+		font-size: 18px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:1px;
+		-webkit-font-smoothing: antialiased;
 	}
 }
 
