@@ -1,9 +1,7 @@
 class CompanyUsersController < FilteredController
   include DeactivableHelper
 
-
   before_filter :load_users_for_event, only: :event
-  load_and_authorize_resource except: [:index]
 
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
   respond_to :json, only: [:index]
