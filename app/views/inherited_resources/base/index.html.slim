@@ -2,7 +2,7 @@
   #collection-list-filters
   a.btn.btn-primary Save
 .main
-  = link_to t("buttons.new.#{resource_class.name.downcase}"), url_for(controller: controller_name, action: :new), {remote: true, class: 'btn btn-primary'}
+  = link_to t("buttons.new.#{resource_class.name.underscore.downcase}"), url_for(controller: controller_name, action: :new), {remote: true, class: 'btn btn-primary'}
   .link-list
     ul id="#{controller_name}-list"
 
