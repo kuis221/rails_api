@@ -31,24 +31,6 @@ class TeamsController < FilteredController
       end
     end
 
-    def collection_to_json
-      collection.map{|team| {
-        :id => team.id,
-        :name => team.name,
-        :description => team.description,
-        :users_count => team.users.active.count,
-        :status => team.status,
-        :active => team.active?,
-        :links => {
-            edit: edit_team_path(team),
-            show: team_path(team),
-            activate: activate_team_path(team),
-            deactivate: deactivate_team_path(team),
-            delete: delete_member_path(team)
-        }
-      }}
-    end
-
     def delete_member_path(team)
       path = nil
       path = delete_team_campaign_path(params[:campaign], team_id: team.id) if params.has_key?(:campaign) && params[:campaign].present?

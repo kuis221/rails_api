@@ -33,22 +33,4 @@ class CampaignsController < FilteredController
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
     end
-
-    def collection_to_json
-      collection.map{|campaign| {
-        :id => campaign.id,
-        :name => campaign.name,
-        :description => campaign.description,
-        :first_event => campaign.first_event.try(:start_date),
-        :last_event => campaign.last_event.try(:start_date),
-        :status => campaign.status,
-        :active => campaign.active?,
-        :links => {
-            edit: edit_campaign_path(campaign),
-            show: campaign_path(campaign),
-            activate: activate_campaign_path(campaign),
-            deactivate: deactivate_campaign_path(campaign)
-        }
-      }}
-    end
 end

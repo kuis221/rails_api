@@ -5,15 +5,6 @@ class DateItemsController < FilteredController
   authorize_resource
 
   protected
-    def collection_to_json
-      collection.map{|date| {
-        :id => date.id,
-        :name => date.label,
-        :links => {
-            delete: date_range_date_item_path(parent, date)
-        }
-      }}
-    end
 
     def sort_options
       {

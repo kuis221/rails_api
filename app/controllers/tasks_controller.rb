@@ -86,33 +86,6 @@ class TasksController < FilteredController
       search_params.select{|k, v| [:q, :start_date, :end_date, :user, :company_id, :event_id].include?(k.to_sym)}
     end
 
-    def collection_to_json
-      collection.map{|task| {
-        :id => task.id,
-        :title => task.title,
-        :last_activity => task.last_activity.try(:to_s,:slashes),
-        :due_at => task.due_at.try(:to_s, :slashes),
-        :formatted_due_at => format_date(task.due_at),
-        :formatted_last_activity => format_date(task.last_activity),
-        :user => {
-          :id => task.company_user.try(:id),
-          :first_name => task.company_user.try(:first_name),
-          :last_name => task.company_user.try(:last_name),
-          :email => task.company_user.try(:email),
-          :full_name => task.company_user.try(:full_name)
-        },
-        :active => task.active?,
-        :completed => task.completed,
-        :complete_form => view_context.simple_form_for([task.event, task], remote: true) {|f| f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}},
-        :links => {
-            edit: edit_resource_url(task),
-            comments: task_comments_path(task),
-            activate: url_for([:activate, parent, task]),
-            deactivate: url_for([:deactivate, parent, task])
-        }
-      }}
-    end
-
     def parent
       if params[:scope] == 'user'
         current_company_user

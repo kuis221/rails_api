@@ -82,30 +82,6 @@ class CompanyUsersController < FilteredController
       end
     end
 
-    def collection_to_json
-      collection.map{|user| {
-        :id => user.id,
-        :last_name => user.last_name,
-        :first_name => user.first_name,
-        :full_name => user.full_name,
-        :city => user.city,
-        :state => user.state_name,
-        :country => user.country_name,
-        :email => user.email,
-        :role => user.role_name,
-        :last_activity_at => user.last_activity_at.try(:to_s,:full_friendly),
-        :status => user.active_status,
-        :active => user.active?,
-        :links => {
-            edit: edit_company_user_path(user),
-            show: company_user_path(user),
-            activate: activate_company_user_path(user),
-            deactivate: deactivate_company_user_path(user),
-            delete: delete_member_path(user)
-        }
-      }}
-    end
-
     def delete_member_path(user)
       path = nil
       path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]

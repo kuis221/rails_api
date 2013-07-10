@@ -41,20 +41,4 @@ class BrandPortfoliosController < FilteredController
         f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end
-
-    def collection_to_json
-      collection.map{|portfolio| {
-        :id => portfolio.id,
-        :name => portfolio.name,
-        :description => portfolio.description,
-        :status => portfolio.status,
-        :active => portfolio.active?,
-        :links => {
-            edit: edit_brand_portfolio_path(portfolio),
-            show: brand_portfolio_path(portfolio),
-            activate: activate_brand_portfolio_path(portfolio),
-            deactivate: deactivate_brand_portfolio_path(portfolio)
-        }
-      }}
-    end
 end
