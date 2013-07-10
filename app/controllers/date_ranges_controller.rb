@@ -1,8 +1,6 @@
 class DateRangesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
-  authorize_resource
-
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
@@ -25,22 +23,5 @@ class DateRangesController < FilteredController
 
         f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
-    end
-
-    def collection_to_json
-      collection.map{|range| {
-        :id => range.id,
-        :name => range.name,
-        :description => range.description,
-        :status => range.status,
-        :active => range.active?,
-        :links => {
-            edit: edit_date_range_path(range),
-            show: date_range_path(range),
-            activate: activate_date_range_path(range),
-            deactivate: deactivate_date_range_path(range),
-            delete: date_range_path(range),
-        }
-      }}
     end
 end
