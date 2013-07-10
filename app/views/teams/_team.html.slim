@@ -1,0 +1,8 @@
+li
+  a href="#{team_path(team)}"
+    span
+      b= team.name
+      br>/
+      = team.description
+    span
+      = "#{team.users.active.count} members"
