@@ -13,12 +13,14 @@ javascript:
     'sorting': 'due_at',
     'sorting_dir': 'asc',
     'includeCalendars': true,
-    'selectDefaultDate': true,
+    'selectDefaultDate': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onItemsLoad': function(response, page){
-      $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'))
+      if (response.find('div[data-content="counters"]').length > 0){
+        $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'))
+      }
     }
   });
