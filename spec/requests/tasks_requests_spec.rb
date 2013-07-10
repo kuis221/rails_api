@@ -41,7 +41,6 @@ describe "Tasks", js: true, search: true do
 
       end
 
-      assert_table_sorting ("table#tasks-list")
     end
   end
 
@@ -84,7 +83,6 @@ describe "Tasks", js: true, search: true do
         page.should_not have_content('User task')
       end
 
-      assert_table_sorting ("table#tasks-list")
     end
   end
 end

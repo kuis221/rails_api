@@ -12,7 +12,7 @@ describe "Teams", js: true, search: true do
   end
 
   describe "/teams" do
-    it "GET index should display a table with the teams" do
+    it "GET index should display a list with the teams" do
       teams = [
         FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
         FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: true, company_id: @company.id)
@@ -22,28 +22,20 @@ describe "Teams", js: true, search: true do
       teams[1].users << FactoryGirl.create_list(:company_user, 2, company_id: @company.id)
       visit teams_path
 
-      within("table#teams-list") do
+      within("ul#teams-list") do
         # First Row
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content('Costa Rica Team')
-          find('td:nth-child(2)').should have_content('3')
-          find('td:nth-child(3)').should have_content('el grupo de ticos')
-          find('td:nth-child(4)').should have_content('Active')
-          find('td:nth-child(5)').should have_content('Edit')
-          find('td:nth-child(5)').should have_content('Deactivate')
+        within("li:nth-child(1)") do
+          page.should have_content('Costa Rica Team')
+          page.should have_content('3 members')
+          page.should have_content('el grupo de ticos')
         end
         # Second Row
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content('San Francisco Team')
-          find('td:nth-child(2)').should have_content('2')
-          find('td:nth-child(3)').should have_content('the guys from SF')
-          find('td:nth-child(4)').should have_content('Active')
-          find('td:nth-child(5)').should have_content('Edit')
-          find('td:nth-child(5)').should have_content('Deactivate')
+        within("li:nth-child(2)") do
+          page.should have_content('San Francisco Team')
+          page.should have_content('2 members')
+          page.should have_content('the guys from SF')
         end
       end
-
-      assert_table_sorting ("table#teams-list")
 
     end
 
@@ -73,7 +65,7 @@ describe "Teams", js: true, search: true do
       page.should have_selector('div.team-description', text: 'a team description')
     end
 
-    it 'diplays a table of users within the team details page' do
+    it 'diplays a list of users within the team details page' do
       team = FactoryGirl.create(:team, company_id: @user.current_company.id)
       users = [
         FactoryGirl.create(:user, first_name: 'First1', last_name: 'Last1', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com'),
@@ -105,7 +97,6 @@ describe "Teams", js: true, search: true do
         end
       end
 
-      assert_table_sorting ("table#team-members")
     end
 
     it 'allows the user to activate/deactivate a team' do

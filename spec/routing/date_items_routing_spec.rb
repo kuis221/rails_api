@@ -3,10 +3,6 @@ require "spec_helper"
 describe DateItemsController do
   describe "routing" do
 
-    it "routes to #index" do
-      get("/date_ranges/:range_id/dates").should route_to("date_items#index", :date_range_id => ':range_id')
-    end
-
     it "routes to #new" do
       get("/date_ranges/:range_id/dates/new").should route_to("date_items#new", :date_range_id => ':range_id')
     end

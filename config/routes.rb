@@ -77,7 +77,8 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     get :autocomplete, on: :collection
-    resources :tasks do
+    get :tasks, on: :member
+    resources :tasks, only: [:create, :new] do
       member do
         get :deactivate
         get :activate
@@ -111,13 +112,14 @@ Brandscopic::Application.routes.draw do
 
   resources :brand_portfolios do
     get :autocomplete, on: :collection
-    resources :brands, only: [:index, :new, :create]
+    resources :brands, only: [:new, :create]
     member do
       get :deactivate
       get :activate
       match 'brands/:brand_id' => 'brand_portfolios#delete_brand', via: :delete, as: :delete_brand
       match 'brands/select' => 'brand_portfolios#select_brands', via: :get, as: :select_brands
       match 'brands/add' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
+      match 'brands' => 'brand_portfolios#brands', via: :get, as: :brands
     end
   end
 
@@ -136,7 +138,7 @@ Brandscopic::Application.routes.draw do
 
   resources :date_ranges do
     get :autocomplete, on: :collection
-    resources :date_items, path: 'dates', except: [:show, :edit]
+    resources :date_items, path: 'dates', except: [:index, :show, :edit]
     member do
       get :deactivate
       get :activate
@@ -145,7 +147,7 @@ Brandscopic::Application.routes.draw do
 
   resources :day_parts do
     get :autocomplete, on: :collection
-    resources :day_items, path: 'days', except: [:show, :edit]
+    resources :day_items, path: 'days', except: [:index, :show, :edit]
     member do
       get :deactivate
       get :activate

@@ -12,6 +12,9 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  custom_actions member: [:tasks]
+  layout false, only: :tasks
+
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],

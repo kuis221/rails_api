@@ -23,36 +23,29 @@ describe "BrandPortfolios", js: true, search: true do
         Sunspot.commit
         visit brand_portfolios_path
 
-        within("table#brand-portfolios-list") do
+        within("ul#brand_portfolios-list") do
           # First Row
-          within("tbody tr:nth-child(1)") do
-            find('td:nth-child(1)').should have_content(portfolios[0].name)
-            find('td:nth-child(2)').should have_content(portfolios[0].description)
-            find('td:nth-child(3)').should have_content('Active')
-            find('td:nth-child(4)').should have_content('Edit')
-            find('td:nth-child(4)').should have_content('Deactivate')
+          within("li:nth-child(1)") do
+            page.should have_content(portfolios[0].name)
+            page.should have_content(portfolios[0].description)
           end
           # Second Row
-          within("tbody tr:nth-child(2)") do
-            find('td:nth-child(1)').should have_content(portfolios[1].name)
-            find('td:nth-child(2)').should have_content(portfolios[1].description)
-            find('td:nth-child(3)').should have_content('Active')
-            find('td:nth-child(4)').should have_content('Edit')
-            find('td:nth-child(4)').should have_content('Deactivate')
+          within("li:nth-child(2)") do
+            page.should have_content(portfolios[1].name)
+            page.should have_content(portfolios[1].description)
           end
         end
 
-        assert_table_sorting ("table#brand-portfolios-list")
       end
 
-      it "should allow user to activate/deactivate events" do
+      it "should allow user to activate/deactivate brand portfolios" do
         FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
 
-        within("table#brand-portfolios-list") do
+        within("ul#brand_portfolios-list") do
           # First Row
-          within("tbody tr:nth-child(1)") do
+          within("li:nth-child(1)") do
             click_js_link('Deactivate')
             page.should have_selector('a', text: 'Activate')
 
@@ -105,7 +98,6 @@ describe "BrandPortfolios", js: true, search: true do
         end
       end
 
-      assert_table_sorting ("table#brand_portfolio-brands")
     end
 
     it 'allows the user to activate/deactivate a portfolio' do
@@ -152,7 +144,6 @@ describe "BrandPortfolios", js: true, search: true do
         page.should have_content('Guaro Cacique')
         click_js_link 'Add'
       end
-
 
       # Make sure the new brand was added to the portfolio
       within('table#brand_portfolio-brands') do

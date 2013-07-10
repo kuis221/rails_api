@@ -1,16 +1,11 @@
 class DateItemsController < FilteredController
   belongs_to :date_range
-  respond_to :js, only: [:new, :create, :edit, :update, :destroy]
+  respond_to :js, only: [:new, :create, :update, :destroy]
+  actions :all, :except => [:show, :edit, :index]
 
   authorize_resource
 
   protected
-
-    def sort_options
-      {
-        'name' => { :order => 'date_items.start_date' }
-      }
-    end
 
     def build_resource(*args)
       @date ||= super

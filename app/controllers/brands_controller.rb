@@ -15,11 +15,4 @@ class BrandsController < FilteredController
       end
     end
   end
-
-  private
-    def sort_options
-      {
-        'name' => { :order => 'brands.name' }
-      }
-    end
 end

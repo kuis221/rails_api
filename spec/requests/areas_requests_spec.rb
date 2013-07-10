@@ -41,7 +41,6 @@ describe "Areas", js: true, search: true do
         end
       end
 
-      assert_table_sorting ("table#areas-list")
     end
   end
 

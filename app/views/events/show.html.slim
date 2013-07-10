@@ -30,9 +30,8 @@
           h2 TASKS
 
       #tasks-content.collapse.in
-        .box-content
-
-          = render partial: 'tasks/table', locals: {source: event_tasks_path(resource, format: :json), sort_by: 'due_at'}
+        #event-tasks-container.box-content
+          = render partial: 'tasks', locals: {tasks: resource.tasks}
           .row-fluid
             .pull-right
               = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
@@ -118,4 +117,7 @@
 
     $(document).on('events:change', function(){
       window.location.reload(false);
+    })
+    $(document).on('tasks:change', function(){
+      $('#event-tasks-container').load('#{tasks_event_path(resource)}')
     })

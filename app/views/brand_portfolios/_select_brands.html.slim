@@ -1,28 +1,23 @@
-#select-brands-list-filter
 #select-brands-table-wrapper
-  table#select-brands-list.table.table-striped.table-bordered.table-scrolled
+  table#select-brands-list.table.table-striped.table-bordered.table-scrolled.data
     thead
       tr
         th data-sort="name" Name
         th.actions
     tbody
-
+      - Brand.not_in_portfolio(resource.id).each do |brand|
+        tr id="brand-#{brand.id}"
+          td= brand.name
+          td= link_to 'Add', add_brand_brand_portfolio_path(resource, brand_id: brand.id), remote: true, method: :post, disable_with: '...'
 
 javascript:
-  $('#select-brands-list-filter').filterBox({
-    'onChange': function(filterBox){
-      selectBrandsTable.tableScroller('reloadData');
-    }
-  });
-  var selectBrandsTable = $('table#select-brands-list').tableScroller({
-    'source': '#{brands_path(format: :json)}?not_in_portfolio=#{resource.to_param}',
-    'filterBox': '#select-brands-list-filter',
-    'rowValues': function(row){
-      var link = $('<a>', {'href': '#{add_brand_brand_portfolio_path(resource)}?brand_id='+row.id, 'data-remote': true, 'data-method': 'post'}).text('Add');
-      return [row.name, link];
-    },
-    'rowId': function(row){
-      return 'brand_portfolio-brand-' + row.id;
-    },
-    'actionButtons': false
+  selectBrandsTable = $('#select-brands-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "aoColumns": [
+          null,
+          {"sWidth": '30px', 'bSortable': false}
+        ]
   });

@@ -19,21 +19,12 @@ describe BrandPortfoliosController do
       get 'index'
       response.should be_success
     end
+  end
 
-    describe "json requests" do
-      it "responds to .json format" do
-        get 'index', format: :json
-        response.should be_success
-      end
-
-      it "returns the correct structure" do
-        get 'index', format: :json
-        parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 0
-        parsed_body["items"].should == []
-        parsed_body["pages"].should == 1
-        parsed_body["page"].should == 1
-      end
+  describe "GET 'items'" do
+    it "returns the correct structure" do
+      get 'items'
+      response.should be_success
     end
   end
 

@@ -28,23 +28,19 @@
               th data-sort="name" Name
               th.actions
           tbody
+            - resource.day_items.each do |day_item|
+              tr
+                td= day_item.label
+                td= link_to "Remove", day_part_day_item_path(resource, day_item), method: :delete
+
         .row-fluid
           .pull-right
             = link_to 'Add Time', new_day_part_day_item_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-
-  var dayitemsTable = $('table#day-part-days').tableScroller({
-    'source': '#{day_part_day_items_path(resource, format: :json)}',
-    'rowValues': function(t){
-      return [t.name]
-    },
-    'rowId': function(row){
-      return 'day-part-day-' + row.id;
-    },
-    'actionButtons': ['deletable']
-  })
-
   $(document).on('day_parts:change', function(){
+    window.location.reload(false);
+  })
+  $(document).on('day_items:change', function(){
     window.location.reload(false);
   })

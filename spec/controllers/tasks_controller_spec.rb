@@ -74,6 +74,18 @@ describe TasksController do
     end
   end
 
+  describe "GET 'items'" do
+    it "return http sucess for user tasks" do
+      get 'items', scope: 'user'
+      response.should be_success
+    end
+
+    it "return http sucess for user teams" do
+      get 'items', scope: 'teams'
+      response.should be_success
+    end
+  end
+
   describe "GET 'index'" do
     before(:each) do
       @team = FactoryGirl.create(:team)
@@ -91,82 +103,7 @@ describe TasksController do
         response.should be_success
       end
     end
-
-    describe "json requests" do
-      it "responds to .json format" do
-        get 'index', event_id: event.to_param, format: :json
-        response.should be_success
-      end
-
-      it "returns the correct structure" do
-        get 'index', event_id: event.to_param, format: :json
-        parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 0
-        parsed_body["items"].count.should == 0
-        parsed_body["unassigned"].should == 0
-        parsed_body["assigned"].should == 0
-        parsed_body["completed"].should == 0
-        parsed_body["late"].should == 0
-      end
-    end
-
-    describe "counters", search: true do
-      describe "within an event" do
-        it "should return the correct number of completed tasks" do
-          FactoryGirl.create_list(:completed_task, 3, event: event)
-
-          #Create some other tasks
-          FactoryGirl.create(:uncompleted_task, event: event)
-          FactoryGirl.create_list(:completed_task, 2, event_id: event.id+1)
-          Sunspot.commit
-
-          get 'index', event_id: event.to_param, format: :json
-          parsed_body = JSON.parse(response.body)
-          parsed_body['completed'].should == 3
-        end
-
-        it "should return the correct number of assigned tasks" do
-          FactoryGirl.create_list(:assigned_task, 3, event: event)
-
-          #Create some other tasks
-          FactoryGirl.create(:unassigned_task, event: event)
-          FactoryGirl.create_list(:assigned_task, 2, event_id: event.id+1)
-          Sunspot.commit
-
-          get 'index', event_id: event.to_param, format: :json
-          parsed_body = JSON.parse(response.body)
-          parsed_body['assigned'].should == 3
-        end
-
-        it "should return the correct number of unassigned tasks" do
-          FactoryGirl.create_list(:unassigned_task, 3, event: event)
-
-          #Create some other tasks
-          FactoryGirl.create(:assigned_task, event: event)
-          FactoryGirl.create_list(:unassigned_task, 2, event_id: event.id+1)
-          Sunspot.commit
-
-          get 'index', event_id: event.to_param, format: :json
-          parsed_body = JSON.parse(response.body)
-          parsed_body['unassigned'].should == 3
-        end
-
-        it "should return the correct number of late tasks" do
-          FactoryGirl.create_list(:late_task, 3, event: event)
-
-          #Create some other tasks
-          FactoryGirl.create(:future_task, event: event)
-          FactoryGirl.create_list(:late_task, 2, event_id: event.id+1)
-          Sunspot.commit
-
-          get 'index', event_id: event.to_param, format: :json
-          parsed_body = JSON.parse(response.body)
-          parsed_body['late'].should == 3
-        end
-      end
-    end
   end
-
 
   describe "GET 'show'" do
     let(:task) { FactoryGirl.create(:task, event_id: event.id) }

@@ -19,8 +19,8 @@ describe BrandsController do
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
-      parsed_body.count.should == 4
-      parsed_body['items'].map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
+      parsed_body.count.should == 2
+      parsed_body.map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
     end
 
     it "returns the brands associated to a brand portfolio" do
@@ -33,8 +33,8 @@ describe BrandsController do
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
-      parsed_body.count.should == 4
-      parsed_body['items'].map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
+      parsed_body.count.should == 2
+      parsed_body.map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
     end
   end
 

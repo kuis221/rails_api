@@ -8,32 +8,6 @@ describe DayItemsController do
 
   let(:day_part) {FactoryGirl.create(:day_part, company: @company)}
 
-  describe "GET 'index'" do
-    it "returns http success" do
-      get 'index', day_part_id: day_part.to_param, format: :json
-      response.should be_success
-    end
-
-    describe "json requests" do
-      it "responds to .json format" do
-        get 'index', day_part_id: day_part.to_param, format: :json
-        response.should be_success
-      end
-
-      it "returns the correct structure" do
-        FactoryGirl.create_list(:day_item, 3, day_part: day_part)
-
-        # date_items on other companies should not be included on the results
-        FactoryGirl.create_list(:day_item, 2, day_part_id: day_part.id + 2)
-
-        get 'index', day_part_id: day_part.to_param, format: :json
-        parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 3
-        parsed_body["items"].count.should == 3
-      end
-    end
-  end
-
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', day_part_id: day_part.to_param, format: :js

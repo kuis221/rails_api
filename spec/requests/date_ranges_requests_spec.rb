@@ -42,8 +42,6 @@ describe "DateRanges", search: true, js: true do
         end
       end
 
-      assert_table_sorting ("table#date-ranges-list")
-
     end
 
     it 'allows the user to create a new date_range' do
@@ -87,7 +85,6 @@ describe "DateRanges", search: true, js: true do
         end
       end
 
-      assert_table_sorting ("table#date_range-dates")
     end
 
     it 'allows the user to activate/deactivate a date range' do

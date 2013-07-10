@@ -20,21 +20,12 @@ describe AreasController do
       get 'index'
       response.should be_success
     end
+  end
 
-    describe "datatable requests" do
-      it "responds to .json format" do
-        get 'index', format: :json
-        response.should be_success
-      end
-
-      it "returns the correct structure" do
-        get 'index', sEcho: 1, format: :json
-        parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 0
-        parsed_body["items"].should == []
-        parsed_body["pages"].should == 1
-        parsed_body["page"].should == 1
-      end
+  describe "GET 'items'" do
+    it "returns http success" do
+      get 'items'
+      response.should be_success
     end
   end
 
