@@ -1,8 +1,6 @@
 class CompanyUsersController < FilteredController
   include DeactivableHelper
 
-  before_filter :load_users_for_event, only: :event
-
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
   respond_to :json, only: [:index]
 
@@ -24,10 +22,6 @@ class CompanyUsersController < FilteredController
 
   def time_zone_change
     current_user.update_column(:detected_time_zone, params[:time_zone])
-  end
-
-  def event
-    render :index
   end
 
   def select_company
@@ -87,16 +81,6 @@ class CompanyUsersController < FilteredController
       path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]
       path = delete_member_campaign_path(params[:campaign], member_id: user.id) if params.has_key?(:campaign) && params[:campaign]
       path
-    end
-
-    def load_users_for_event
-      event = current_company.events.find(params[:event_id])
-      # INNER JOIN "memberships" ON "memberships"."company_user_id" = "company_users"."id" AND "memberships"."memberable_type" = 'Event' INNER JOIN "events" ON "events"."id" = "memberships"."memberable_id"
-      teams = CompanyUser.scoped_by_company_id(current_company).active.joins(:teams).where(active: true, teams: {id: event.team_ids})
-      users = CompanyUser.scoped_by_company_id(current_company).active.joins(:events).where(active: true, events: {id: event.id})
-      @users = CompanyUser.from("(#{teams.to_sql} UNION #{users.to_sql}) AS company_users ")
-      @collection_count_scope = @users
-      set_collection_ivar @users
     end
 
 end
