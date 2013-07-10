@@ -29,3 +29,11 @@ en:
     yearly:
       one: 'year'
       other: '%{count} years'
+
+  buttons:
+    new:
+      team: "Create a team"
+      campaign: "Create a campaign"
+      role: "Create a role"
+      area: "Create an area"
+      brand_portfolio: "Create a brand porfolio"
