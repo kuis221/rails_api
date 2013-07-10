@@ -381,7 +381,7 @@ $.widget 'nmk.filteredList', {
 			$response = $('<div>').append(response)
 			$items = $response.find('div[data-content="items"]')
 			if @options.onItemsLoad
-				@options.onItemsLoad(response, page)
+				@options.onItemsLoad($response, page)
 
 			@listContainer.append($items.html())
 

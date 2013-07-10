@@ -1,0 +1,6 @@
+div data-content="items" data-total="#{collection_count}" data-pages="#{total_pages}" data-page="#{params[:page] || 1}"
+  = render collection
+
+- if params[:page].nil? || params[:page] == '1'
+  div data-content="counters"
+    = render 'counters'

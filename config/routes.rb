@@ -16,6 +16,10 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
+  # This copule of routes are for tasks for tasks
+  get ":controller/:scope/filters", format: :json, as: :filters
+  get ":controller/:scope/items", format: :html, as: :items
+
   get ":controller/filters", format: :json, as: :filters
   get ":controller/items", format: :html, as: :items
 

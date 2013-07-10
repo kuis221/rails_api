@@ -1,14 +1,9 @@
-#content-with-left-nav.events-index
-  #content-left-nav.pull-left
-    div data-spy="affix" data-offset="0"
-      = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-pills nav-stacked')
+= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+.tab-content
+  .sidebar#resource-filter-column
+    #collection-list-filters
+    a.btn.btn-primary Save
 
-  .row-fluid
-    #resource-index-container.span12
-      .pull-right
-        #resource-filter-column
-          #collection-list-filters
-
-      .tab-content
+  .main
         #list-view.tab-pane.active
-        	= render partial: 'table', locals:{source: url_for(format: :json)}
+        	= render partial: 'table', locals: {source: url_for(action: :items)}
