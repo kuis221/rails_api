@@ -1,46 +1,22 @@
-.row-fluid
-  #resource-index-container.no-calendars.span12
-    .pull-right
-      #resource-filter-column
-        .text-right
-          = link_to 'Create a campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
-        #collection-list-filters
-
-    table#campaigns-list.table.table-striped.table-bordered.table-scrolled
-      thead
-        tr
-          th data-sort="name" Name
-          th data-sort="description" Description
-          th First Event
-          th Last Event
-          th data-sort="aasm_state" Status
-          th
-      tbody
+.sidebar#resource-filter-column
+  #collection-list-filters
+  a.btn.btn-primary Save
+.main
+  = link_to 'Create a campaign', new_campaign_path, {remote: true, class: 'btn btn-primary'}
+  .link-list
+    ul#campaigns-list
 
 
 javascript:
-  $('#collection-list-filters').filterBox({
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_path(controller: :campaigns)}',
+    'filtersUrl': '#{filters_path(controller: :campaigns)}',
+    'listContainer' : '#campaigns-list',
+    'sorting': 'name',
+    'sorting_dir': 'asc',
+    'includeCalendars': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_campaigns_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'onChange': function(filterBox){
-      if (typeof campaignsTable != 'undefined')
-        campaignsTable.tableScroller('reloadData');
-    }
+    'defaultParams': [{name: 'status[]', value: 'Active'}]
   });
-  var campaignsTable = $('table#campaigns-list').tableScroller({
-    'source': '#{campaigns_path(format: :json)}',
-    'fixedHeader': true,
-    'filterBox': '#collection-list-filters',
-    'rowValues': function(c){
-      return [c.name, c.description, c.first_event, c.last_event, c.status]
-    },
-    'onItemsChange': function(items) {
-      $(document).trigger('campaigns-list:changed',[items]);
-    },
-    'rowId': function(row){
-      return 'campaign_'+row.id;
-    },
-    'headerOffset': 91
-  })
