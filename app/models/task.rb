@@ -25,7 +25,7 @@ class Task < ActiveRecord::Base
 
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
-  delegate :full_name, to: :user, prefix: true, allow_nil: true
+  delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
   delegate :campaign_id, :campaign_name, :company_id, to: :event, allow_nil: true
 
   validates :title, presence: true

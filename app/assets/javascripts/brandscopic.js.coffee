@@ -90,17 +90,19 @@ jQuery ->
 			$filterSidebar.positioning = true
 			sidebarBottom = $filterSidebar.height()+$filterSidebar.originalTop;
 			bottomPosition = $window.scrollTop()+$window.height()
+			footerHeight = $('footer').outerHeight()
 
 			if sidebarBottom < $window.height()
 				$filterSidebar.css({
 					position: 'fixed',
 					top: "#{$filterSidebar.originalTop}px",
+					right: "10px",
 					bottom: 'auto'
 				})
-			else if  bottomPosition > sidebarBottom and ($(document).height()> (sidebarBottom+40))
+			else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
 				$filterSidebar.css({
 					position: 'fixed',
-					bottom: "0px",
+					bottom: footerHeight+"px",
 					top: 'auto',
 					right: "10px"
 				})

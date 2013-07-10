@@ -1,7 +1,4 @@
 class EventsController < FilteredController
-  load_and_authorize_resource except: [:index, :autocomplete]
-  skip_authorize_resource  only: [:index]
-  skip_load_resource  only: [:index]
 
   # This helper provide the methods to add/remove team members to the event
   extend TeamMembersHelper

@@ -7,7 +7,6 @@ class InvitationsController < Devise::InvitationsController
     if resource.country.nil? || resource.country.empty?
       location_info = Geocoder.search(request.remote_ip)
       if location = location_info.first and location.country != 'Reserved'
-        Rails.logger.debug location.inspect
         country = Country.new(location.country_code)
         unless country.nil?
           resource.country = location.country_code

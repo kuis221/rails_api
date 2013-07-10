@@ -2,7 +2,7 @@ jQuery ->
   $(document).delegate ".task-completed-checkbox", "click", ->
     $(@form).submit()
 
-  $(document).delegate '#tasks-list td a.data-resource-details-link', 'click', (e) ->
+  $(document).delegate '#tasks-list a.data-resource-details-link', 'click', (e) ->
     $row = $(this).parents('tr');
     if $("##{$row.attr('id')}_comments").length
       $("##{$row.attr('id')}_comments").toggle()
@@ -14,18 +14,20 @@ jQuery ->
     e.preventDefault();
     return false
 
+  mapIsVisible = false
   # EVENTS INDEX
   $('#toggle-events-view a').on 'click', ->
     $('#toggle-events-view a').removeClass 'active'
     $(this).addClass('active').tab 'show'
     if $(this).attr('href') is '#map-view'
+      mapIsVisible = true
       initializeMap()
-      $('.table-cloned-fixed-header').hide()
-      $('table#events-list').tableScroller 'disableScrolling'
+      $('.table-cloned-fixed-header').hide()  
+      $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
     else
+      mapIsVisible = false
       $('.table-cloned-fixed-header').show()
-      $('table#events-list').tableScroller 'enableScrolling'
-      eventsTable.tableScroller('redrawTable')
+      $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
 
 
   map = null
@@ -33,64 +35,70 @@ jQuery ->
   events = null
 
   initializeMap = ->
-    mapOptions = {
-      zoom: 5,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
     if not map
+      mapOptions = {
+        zoom: 5,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+    else
+      google.maps.event.trigger map, 'resize'
     placeMarkers()
 
-  $(document).on 'events-list:changed', (e, list) ->
-    events = list
-    placeMarkers()
+  $(document).on 'events-filter:changed', (e) ->
+    if mapIsVisible
+      placeMarkers()
 
 
   placeMarkers = ->
-    if map
-      for marker in markersArray
-        marker.setMap null
+    params = $('#collection-list-filters').filteredList('getFilters');
+    params.push {name: 'per_page', value: '200'}
+    $.getJSON '/events.json', params, (events) ->
 
-      bounds = new google.maps.LatLngBounds()
+      if map
+        for marker in markersArray
+          marker.setMap null
 
-      for event in events
-        if event.place? and event.place.latitude? and event.place.latitude != ''
-          placeLocation = new google.maps.LatLng(event.place.latitude,event.place.longitude)
-          marker = new google.maps.Marker({
-            map:map,
-            draggable:false,
-            title: event.place.name,
-            animation: google.maps.Animation.DROP,
-            position: placeLocation
-          })
-          markersArray.push marker
+        bounds = new google.maps.LatLngBounds()
 
-          marker.theInfowindow = new google.maps.InfoWindow {
-              content: $('<div>')
-                      .append($('<b>').append(if event.campaign? then event.campaign.name else ''))
-                      .append($('<br>')).append(event.start_at)
-                      .append($('<br>')).append(if event.place? then event.place.formatted_address else '')
-                      .append($('<br>')).append($('<a>', {'href': event.links.show}).text('View Details'))
-                      .append('\xA0\xA0').append($('<a>', {'href': event.links.edit, 'data-remote': true}).text('Edit Event')).html()
-          }
+        for event in events
+          if event.place? and event.place.latitude? and event.place.latitude != ''
+            placeLocation = new google.maps.LatLng(event.place.latitude,event.place.longitude)
+            marker = new google.maps.Marker({
+              map:map,
+              draggable:false,
+              title: event.place.name,
+              animation: google.maps.Animation.DROP,
+              position: placeLocation
+            })
+            markersArray.push marker
 
-          google.maps.event.addListener marker, 'click', () ->
-            for marker in markersArray
-              marker.theInfowindow.close()
+            marker.theInfowindow = new google.maps.InfoWindow {
+                content: $('<div>')
+                        .append($('<b>').append(if event.campaign? then event.campaign.name else ''))
+                        .append($('<br>')).append(event.start_at)
+                        .append($('<br>')).append(if event.place? then event.place.formatted_address else '')
+                        .append($('<br>')).append($('<a>', {'href': event.links.show}).text('View Details'))
+                        .append('\xA0\xA0').append($('<a>', {'href': event.links.edit, 'data-remote': true}).text('Edit Event')).html()
+            }
 
-            this.theInfowindow.open map, this
+            google.maps.event.addListener marker, 'click', () ->
+              for marker in markersArray
+                marker.theInfowindow.close()
 
-          # Automatically center/zoom the map according to the markers :)
-          bounds.extend marker.position
+              this.theInfowindow.open map, this
 
-      if events.length > 0
-        zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', (event) ->
-            google.maps.event.removeListener(zoomChangeBoundsListener)
-            if (this.getZoom() > 13 && this.initialZoom == true)
-              this.setZoom 13
-              this.initialZoom = false
-        )
-        map.initialZoom = true;
-        map.fitBounds bounds
+            # Automatically center/zoom the map according to the markers :)
+            bounds.extend marker.position
+
+        if events.length > 0
+          zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', (event) ->
+              google.maps.event.removeListener(zoomChangeBoundsListener)
+              if (this.getZoom() > 13 && this.initialZoom == true)
+                this.setZoom 13
+                this.initialZoom = false
+          )
+          map.initialZoom = true;
+          map.fitBounds bounds
 
 

@@ -1,8 +1,6 @@
 class DayPartsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
-  authorize_resource
-
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 

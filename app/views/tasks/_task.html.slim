@@ -1,1 +1,10 @@
-h2= task.title
+li
+  a href="#"
+    span
+      b= task.title
+      br
+      = task.campaign_name
+    span
+      = format_date(task.due_at)
+      br
+      = task.user_full_name

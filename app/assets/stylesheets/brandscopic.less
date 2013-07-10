@@ -29,7 +29,7 @@
 
 #analysis a:before {
 	content: "\e004";
-  	display: block;	
+  	display: block;
   	font-family: 'icons';
 	font-size: 28px;
 	left:3px;
@@ -38,11 +38,11 @@
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;	
+	-webkit-font-smoothing: antialiased;
 }
 #dashboard a:before {
 	content: "\e003";
-  	display: block;	
+  	display: block;
   	font-family: 'icons';
 	font-size: 28px;
 	left:3px;
@@ -51,11 +51,11 @@
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;	
+	-webkit-font-smoothing: antialiased;
 }
 #events a:before{
 	content: "\e002";
-  	display: block;	
+  	display: block;
   	font-family: 'icons';
 	font-size: 28px;
 	left:3px;
@@ -64,11 +64,11 @@
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;	
+	-webkit-font-smoothing: antialiased;
 }
 #tasks a:before {
 	content: "\e001";
-  	display: block;	
+  	display: block;
   	font-family: 'icons';
 	font-size: 28px;
 	left:3px;
@@ -77,7 +77,7 @@
 	speak: none;
 	text-align: center;
   	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;	
+	-webkit-font-smoothing: antialiased;
 }
 #analysis, #dashboard, #events, #tasks {
 	a:hover{
@@ -124,6 +124,19 @@ a{
 }
 
 /*-- Datepick Sidebar -- */
+	a.edit:after{
+		background-color: none;
+		color: @app_bg;
+		content: "\e009";
+		font-family: 'icons';
+		font-size: 15px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
 .datepick-nav{
 	float: right;
 	margin-right:15px;
@@ -134,7 +147,7 @@ a{
 }
 .datepick-cmd-prev:after{
 	content: "\25C4";
-  	display: block;	
+  	display: block;
 	font-size: 13px;
   	position: relative;
   	right: 4px;
@@ -142,7 +155,7 @@ a{
 }
 .datepick-cmd-next:after{
 	content: "\25BA";
-  	display: block;	
+  	display: block;
 	font-size: 13px;
 	left: 4px;
   	position: relative;
@@ -160,7 +173,7 @@ a.more-options-link{
 }
 a.more-options-link:after{
 	content: "\25BC";
-  	display: inline-block;	
+  	display: inline-block;
 	font-size: 10px;
 	left:5px;
   	position: relative;
@@ -183,8 +196,8 @@ body.app-layout{
 	border: 0;
 	padding: 8px 17px;
 	&.download:after{
-		color: @app_bg; 
-		content: "\e009"; 
+		color: @app_bg;
+		content: "\e009";
 		font-family: 'icons';
 		font-size: 15px;
 		padding-left: 6px;
@@ -197,8 +210,8 @@ body.app-layout{
 		-webkit-font-smoothing: antialiased;
 	}
 	&.list:after{
-		color: @app_bg; 
-		content: "\e008"; 
+		color: @app_bg;
+		content: "\e008";
 		font-family: 'icons';
 		font-size: 14px;
 		position: relative;
@@ -209,8 +222,8 @@ body.app-layout{
 		-webkit-font-smoothing: antialiased;
 	}
 	&.map:after{
-		color: @app_bg; 
-		content: "\e007"; 
+		color: @app_bg;
+		content: "\e007";
 		font-family: 'icons';
 		font-size: 15px;
 		left: 2px;
@@ -310,7 +323,7 @@ li.dropdown a{
 }
 .nav li.dropdown.open .caret, .nav li.dropdown.open.active .caret, .nav li.dropdown.open a:hover .caret, .nav li.dropdown.open a:focus .caret{
 	border-top-color: @user_menu;
-	border-bottom-color: @user_menu;	
+	border-bottom-color: @user_menu;
 }
 .nav-pills>li>a {
 	padding-top: 12px;
@@ -376,7 +389,7 @@ li.dropdown a{
 }
 .main{
 	background-color: white;
-	box-sizing: border-box; 
+	box-sizing: border-box;
 	margin-right: 240px;
 	padding: 13px 10px 10px 10px;
 	-webkit-border-radius: 7px;
@@ -725,6 +738,12 @@ table.dataTable, table.tableScroller {
 	float: left;
 }
 
+body.events.index {
+	#map-canvas {
+		height: 400px;
+	}
+}
+
 body.events.show {
 	#map-canvas {
         margin: 0;
@@ -817,7 +836,7 @@ table.table td.comments-container {
 }
 .datepick-month-header{
 	background-color:@brand;
-	color: white; 
+	color: white;
 	font-weight: normal;
 	height:28px;
 	padding: 12px 0 0 15px;
@@ -877,10 +896,25 @@ table{
 	}
 }
 
-/*  dates/times */
-span.week_day {
-	text-transform:uppercase;
+/* back to top link */
+.totop {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 104400;
+  background-color: #006dcc;
+
+  a,  a:visited {
+    display: block;
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    text-decoration:  none;
+  }
 }
+
 
 
 .checkbox-columns {

@@ -50,11 +50,11 @@ module ApplicationHelper
   end
 
   def format_date_with_time(the_date)
-    the_date.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span> <span class="time_part">at %l:%M %p</span>').html_safe
+    the_date.strftime('%^a <b>%b %d</b> at %l:%M %p').html_safe
   end
 
   def format_date(the_date)
-    the_date.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span>').html_safe unless the_date.nil?
+    the_date.strftime('%^a <b>%b %d</b>').html_safe unless the_date.nil?
   end
 
   def format_date_range(start_at, end_at)
@@ -63,8 +63,8 @@ module ApplicationHelper
       '<br />'.html_safe +
       format_date_with_time(end_at)
     else
-      start_at.strftime('<span class="week_day">%a</span> <span class="month_day">%b %d</span><br />').html_safe +
-      "<span class=\"time_part\">#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}</span>".html_safe
+      start_at.strftime('%^a <b>%b %d</b><br />').html_safe +
+      "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
     end
   end
 

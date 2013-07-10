@@ -1,0 +1,12 @@
+li
+  a href="#{company_user_path(company_user)}"
+    span
+      b= company_user.full_name
+      br>/
+      = company_user.email
+      br>/
+      = company_user.role_name
+    span
+      = [company_user.city, company_user.state, company_user.country_name].join(', ')
+      br>/
+      = format_date(company_user.last_activity_at)

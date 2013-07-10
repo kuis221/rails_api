@@ -2,51 +2,25 @@
 - sort_by ||= 'title'
 
 .tasks-progress-bar
-table#tasks-list.table.table-striped.table-bordered.table-scrolled
-  thead
-    tr
-      th data-sort="title" Task
-      th data-sort="last_activity" Last Activity
-      th data-sort="due_at" Due Date
-      - if params[:scope] != 'user'
-        th data-sort="user_name" Team member
-      th data-sort="completed" Completed
-      th.actions
-  tbody
+.link-list
+  ul#tasks-list
 
 javascript:
-
-  $('#collection-list-filters').filterBox({
+  $('#collection-list-filters').filteredList({
+    'source': '#{source}',
+    'filtersUrl': '#{url_for(action: :filters)}',
+    'listContainer' : '#tasks-list',
+    'sorting': 'due_at',
+    'sorting_dir': 'asc',
     'includeCalendars': true,
-    'includeAutoComplete': true,
+    'selectDefaultDate': false,
     'includeSearchBox': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'autoCompletePath': '#{autocomplete_tasks_path(scope: params[:scope] ,format: :json)}',
-    'onChange': function(filterBox){
-      tasksTable.tableScroller('reloadData');
+    'onItemsLoad': function(response, page){
+      if (response.find('div[data-content="counters"]').length > 0){
+        $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'))
+      }
     }
   });
-
-  $('.tasks-progress-bar').taskProgressBar({format: '#{progress_format}'})
-
-  var tasksTable = $('table#tasks-list').tableScroller({
-    'source': '#{source}',
-    'fixedHeader': false,
-    'defaultSort': '#{sort_by}',
-    'rowValues': function(t){
-      scope = "#{params[:scope]}"
-      if (scope != 'user'){
-        return [t.title, t.formatted_last_activity, t.formatted_due_at, (t.user? t.user.full_name : ''), $('<div>').html(t.complete_form)]
-      } else {
-        return [t.title, t.formatted_last_activity, t.formatted_due_at, $('<div>').html(t.complete_form)]
-      }
-    },
-    'filterBox': '#collection-list-filters',
-    'rowId': function(row){
-      return 'task_'+row.id;
-    },
-    'onItemsLoad': function(json){
-      $('.tasks-progress-bar').taskProgressBar('values', json.total, json.unassigned, json.assigned, json.completed, json.late)
-    },
-    'actionButtons': ['editable', 'activable', 'commentable']
-  })

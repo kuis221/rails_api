@@ -7,8 +7,6 @@ class TeamsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  load_and_authorize_resource except: :index
-
   has_scope :with_text
 
   def autocomplete

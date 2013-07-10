@@ -6,8 +6,6 @@ class BrandPortfoliosController < FilteredController
 
   custom_actions member: [:select_brands, :add_brands]
 
-  load_and_authorize_resource except: :index
-
   def autocomplete
     buckets = autocomplete_buckets({
       brands: [Brand, BrandPortfolio]
