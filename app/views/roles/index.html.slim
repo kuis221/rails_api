@@ -1,48 +1,22 @@
-
-.row-fluid
-  #resource-index-container.no-calendars.span12
-    .pull-right
-      #resource-filter-column
-        .text-right
-          = link_to 'Create a role', new_role_path, {remote: true, class: 'btn btn-primary'}
-        #collection-list-filters
-
-    table#roles-list.table.table-striped.table-bordered.table-scrolled
-      thead
-        tr
-          th data-sort="name" Name
-          th data-sort="description" Description
-          th data-sort="active" Status
-          th.actions
-      tbody
+.sidebar#resource-filter-column
+  #collection-list-filters
+  a.btn.btn-primary Save
+.main
+  = link_to 'Create a role', new_team_path, {remote: true, class: 'btn btn-primary'}
+  .link-list
+    ul#roles-list
 
 
 javascript:
-  $('#collection-list-filters').filterBox({
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_path(controller: :roles)}',
+    'filtersUrl': '#{filters_path(controller: :roles)}',
+    'listContainer' : '#roles-list',
+    'sorting': 'name',
+    'sorting_dir': 'asc',
+    'includeCalendars': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_roles_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'onChange': function(filterBox){
-      if (typeof rolesTable != 'undefined')
-        rolesTable.tableScroller('reloadData');
-    }
+    'defaultParams': [{name: 'status[]', value: 'Active'}]
   });
-  var rolesTable = $('table#roles-list').tableScroller({
-    'source': '#{roles_path(format: :json)}',
-    'fixedHeader': true,
-    'filterBox': '#collection-list-filters',
-    'rowValues': function(r){
-      return [r.name, r.description, r.status]
-    },
-    'deactivateMessage': function(row){
-      return row.name +' users can no longer login if you deactivate that role. Would you like to continue?'
-    },
-    'onItemsChange': function(items) {
-      $(document).trigger('roles-list:changed', [items]);
-    },
-    'rowId': function(row){
-      return 'role_'+row.id;
-    },
-    'headerOffset': 91
-  })
