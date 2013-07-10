@@ -2,9 +2,10 @@ jQuery ->
   $(document).delegate ".task-completed-checkbox", "click", ->
     $(@form).submit()
 
-  $(document).delegate '#tasks-list a.data-resource-details-link', 'click', (e) ->
-    $row = $(this).parents('tr');
-    if $("##{$row.attr('id')}_comments").length
+  $(document).delegate 'a.load-comments-link', 'click', (e) ->
+    debugger
+    $row = $(this).parents('li');
+    if $("##{$row.attr('id')}_comments").length > 0
       $("##{$row.attr('id')}_comments").toggle()
       e.stopImmediatePropagation()
 

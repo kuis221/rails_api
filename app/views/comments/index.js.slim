@@ -1,2 +1,2 @@
 |
-	$('<tr id="task_#{parent.id}_comments">').append($('<td>', {class: 'comments-container', colspan: 6}).html('#{escape_javascript(render('comments_list'))}')).insertAfter($('tr#task_#{parent.id}'));
+	$('<div id="task_#{parent.id}_comments" class="task-comments">').append($('<td>', {class: 'comments-container', colspan: 6}).html('#{escape_javascript(render('comments_list'))}')).appendTo($('li#task_#{parent.id}'));

@@ -1,10 +1,11 @@
-li
-  a href="#"
-    span
-      b= task.title
-      br
-      = task.campaign_name
-    span
-      = format_date(task.due_at)
-      br
-      = task.user_full_name
+li id="task_#{task.id}"
+  span
+    b= task.title
+    br
+    = task.campaign_name
+  span
+    = format_date(task.due_at)
+    br
+    = task.user_full_name
+    br
+    = link_to 'Comments', task_comments_path(task), remote: true, class: 'load-comments-link'
