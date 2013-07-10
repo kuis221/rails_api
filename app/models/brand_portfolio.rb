@@ -19,12 +19,17 @@ class BrandPortfolio < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description
+  attr_accessible :name, :description, :campaigns_ids
 
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true
 
+  # Campaigns-Brands Portfolios relationship
+  has_and_belongs_to_many :campaigns
+
   has_and_belongs_to_many :brands
+
+  scope :active, where(:active => true)
 
   searchable do
     integer :id

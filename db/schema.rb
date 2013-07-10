@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130705220239) do
+ActiveRecord::Schema.define(:version => 20130708193303) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -89,6 +89,14 @@ ActiveRecord::Schema.define(:version => 20130705220239) do
   add_index "brand_portfolios_brands", ["brand_id", "brand_portfolio_id"], :name => "brand_portfolio_unique_idx", :unique => true
   add_index "brand_portfolios_brands", ["brand_id"], :name => "index_brand_portfolios_brands_on_brand_id"
   add_index "brand_portfolios_brands", ["brand_portfolio_id"], :name => "index_brand_portfolios_brands_on_brand_portfolio_id"
+
+  create_table "brand_portfolios_campaigns", :force => true do |t|
+    t.integer "brand_portfolio_id"
+    t.integer "campaign_id"
+  end
+
+  add_index "brand_portfolios_campaigns", ["brand_portfolio_id"], :name => "index_brand_portfolios_campaigns_on_brand_portfolio_id"
+  add_index "brand_portfolios_campaigns", ["campaign_id"], :name => "index_brand_portfolios_campaigns_on_campaign_id"
 
   create_table "brands", :force => true do |t|
     t.string   "name"

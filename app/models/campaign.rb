@@ -21,7 +21,7 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :team_ids, :brands_list, :user_ids
+  attr_accessible :name, :description, :team_ids, :brands_list, :brand_portfolio_ids, :user_ids
   attr_accessor :brands_list
 
   # Required fields
@@ -30,6 +30,9 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
+
+  # Campaigns-Brand Portfolios relationship
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
 
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
