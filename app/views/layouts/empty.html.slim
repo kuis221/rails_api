@@ -17,8 +17,6 @@ head
     = csrf_meta_tags
     = yield(:head)
 body class="empty-layout #{controller_name} #{action_name}"
-  header class="bar-fixed-top"
-    h1#company-name= Brandscopic
 
 
   - sub_nav = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-list')

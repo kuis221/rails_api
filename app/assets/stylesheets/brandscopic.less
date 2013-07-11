@@ -103,6 +103,12 @@
 a{
 	color:@text;
 }
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input{
+	background-color: @grey_one !important;
+	border: @grey_one;
+	height: 33px;
+	width: 260px;
+}
 
 /*-- Alert Messages -- */
 .alert{
@@ -239,7 +245,14 @@ body{
 	font-family: @baseFontFamily;
 }
 body.empty-layout{
-	background: @app_bg;
+	background: @text;
+	color: @brand;
+	a{
+		color:@brand;
+	}
+	h2{
+		color:white;
+	}
 }
 body.app-layout{
 	background: @app_bg url('bg.png') repeat-y left; 
@@ -321,6 +334,33 @@ body.app-layout{
 .container-fluid{
 	padding: 0;
 }
+/*-- Login styles --*/
+.login_box{
+	background-color: @menu;
+	height: 360px;
+	margin: 100px auto 0 auto !important;
+	padding: 20px;
+	text-align: center;
+	width:402px;
+	.brand{
+		background-color: red;
+		height:auto;
+	}
+	.controls{
+		margin:0 auto 0 auto !important;
+		padding: 0;
+	}
+	label{
+		display: none;
+	}
+}
+.form-actions{
+	background-color: @menu;
+	border:0;
+	margin: 0;
+	padding: 0;
+}
+
 footer{
 	color: @brand;
 	font-weight: normal;
@@ -492,7 +532,7 @@ li.dropdown a{
     	padding: 30px 0 10px 35px;
 	}
     li:hover{
-    	background:@user_menu;
+    	background:@grey_one;
 		color: @text;
     }
     li:last-child{
