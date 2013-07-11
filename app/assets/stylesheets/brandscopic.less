@@ -124,19 +124,19 @@ a{
 }
 
 /*-- Datepick Sidebar -- */
-	a.edit:after{
-		background-color: none;
-		color: @app_bg;
-		content: "\e009";
-		font-family: 'icons';
-		font-size: 15px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		top:2px;
-		-webkit-font-smoothing: antialiased;
-	}
+a.edit:after{
+	background-color: none;
+	color: @app_bg;
+	content: "\e009";
+	font-family: 'icons';
+	font-size: 15px;
+	position: relative;
+	speak:none;
+	text-align: center;
+	text-shadow:none;
+	top:2px;
+	-webkit-font-smoothing: antialiased;
+}
 .datepick-nav{
 	float: right;
 	margin-right:15px;
@@ -168,6 +168,62 @@ a.datepick-cmd{
 a.datepick-cmd:hover{
 	background-color: @brand;
 }
+// Events Calendar picker
+.datepick{
+	background-color: white;
+	border: 0;
+	margin-bottom: 30px;
+}
+.datepick-month{
+	border: 0;
+	width: 208px;
+	table{
+		border: 1px solid @user_menu;
+	}
+	thead{
+		border-bottom: 0;
+		tr{
+			border: 0;
+		}
+	}
+	th{
+		background-color: white;
+		border: 0;
+		color:@grey_three;
+		font-size: 12px;
+		font-weight: bold;
+		padding-top: 5px;
+	}
+	a{
+		color:@menu;
+		font-size: 12px;
+	}
+}
+.datepick-month td .datepick-selected {
+	background-color: @brand !important;
+}
+.datepick-month td, .datepick-month a, .datepick-weekend {
+	background-color: white !important;
+}
+.datepick-month-header{
+	background-color:@brand;
+	color: white;
+	font-weight: normal;
+	height:28px;
+	padding: 12px 0 0 15px;
+	text-align: left;
+	width: 193px;
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-topright: 6px;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+table{
+	border: 0;
+}
+
 a.more-options-link{
 	margin-left:20px;
 }
@@ -810,47 +866,6 @@ table.table td.comments-container {
 	img {
 		max-width: none;
 	}
-}
-
-// Events Calendar picker
-.datepick{
-	background-color: white;
-	border: 0;
-	margin-bottom: 30px;
-}
-.datepick-month{
-	border: 0;
-	width: 208px;
-	table{
-		border: 1px solid @user_menu;
-	}
-	a{
-		color:@menu;
-	}
-}
-.datepick-month td .datepick-selected {
-	background-color: @brand !important;
-}
-.datepick-month td, .datepick-month a, .datepick-weekend {
-	background-color: white !important;
-}
-.datepick-month-header{
-	background-color:@brand;
-	color: white;
-	font-weight: normal;
-	height:28px;
-	padding: 12px 0 0 15px;
-	text-align: left;
-	width: 193px;
-	-webkit-border-top-left-radius: 6px;
-	-webkit-border-top-right-radius: 6px;
-	-moz-border-radius-topleft: 6px;
-	-moz-border-radius-topright: 6px;
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-}
-table{
-	border: 0;
 }
 
 // Simple Form
