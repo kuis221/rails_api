@@ -10,6 +10,9 @@
       = f.input :brands_list, input_html: {class: 'input-large'}
 
     .row-fluid
+      = f.association :brand_portfolios, input_html: {class: 'input-large', multiple: true, collection: current_company.brand_portfolios.active}
+
+    .row-fluid
       = f.input :description, :input_html => {:rows => 6}
 
   .form-actions
@@ -18,4 +21,5 @@
     = f.button :button, 'Cancel', class: 'btn-cancel'
 
 javascript:
-  $('#campaign_brands_list').select2({tags: #{ raw(Brand.all.map(&:name).to_json).html_safe}});
+  $('#campaign_brands_list').select2({tags: #{raw(Brand.all.map(&:name).to_json).html_safe}});
+  $('#campaign_brand_portfolio_ids').select2();

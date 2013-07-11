@@ -21,7 +21,7 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :team_ids, :brands_list, :user_ids
+  attr_accessible :name, :description, :team_ids, :brands_list, :brand_portfolio_ids, :user_ids
   attr_accessor :brands_list
 
   # Required fields
@@ -30,6 +30,9 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
+
+  # Campaigns-Brand Portfolios relationship
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
 
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
@@ -96,6 +99,13 @@ class Campaign < ActiveRecord::Base
     string :brands, multiple: true, references: Brand do
       brands.map{|t| t.id.to_s + '||' + t.name}
     end
+
+    integer :brand_portfolio_ids, multiple: true do
+      brand_portfolios.map(&:id)
+    end
+    string :brand_portfolios, multiple: true, references: BrandPortfolio do
+      brand_portfolios.map{|t| t.id.to_s + '||' + t.name}
+    end
   end
 
   def first_event
@@ -136,6 +146,7 @@ class Campaign < ActiveRecord::Base
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
+        with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
 
         if params.has_key?(:q) and params[:q].present?
@@ -143,8 +154,6 @@ class Campaign < ActiveRecord::Base
           case attribute
           when 'campaign'
             with :id, value
-          when 'brandportfolio'
-            with :brand_ids, BrandPortfoliosBrand.where(brand_portfolio_id: value).map(&:brand_id) + [0]
           else
             with "#{attribute}_ids", value
           end
@@ -154,6 +163,7 @@ class Campaign < ActiveRecord::Base
           facet :users
           facet :teams
           facet :brands
+          facet :brand_portfolios
           facet :status
         end
 
