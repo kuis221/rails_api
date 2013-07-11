@@ -447,6 +447,7 @@ li.dropdown a{
 }
 .nav-pills>li>a {
 	padding-top: 12px;
+	margin-right: 0;
 }
 .nav-stacked{
 	li a{
@@ -502,6 +503,10 @@ li.dropdown a{
 		height: 50px;
 		padding:25px 0 15px 0;
 	}
+}
+.dropdown-menu{
+	background-color: @menu;
+	box-shadow: none;
 }
 .container{
 	min-height: 300px;
@@ -639,9 +644,6 @@ textarea::-webkit-input-placeholder {
 }
 
 #top-admin-home-navigation {
-	a {
-		margin-right: 10px;
-	}
 	#home.active {
 		display: none;
 	}
