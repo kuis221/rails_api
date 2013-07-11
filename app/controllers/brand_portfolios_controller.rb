@@ -1,5 +1,5 @@
 class BrandPortfoliosController < FilteredController
-  respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :js, only: [:new, :create, :edit, :update, :brands, :delete_brand]
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -40,21 +40,5 @@ class BrandPortfoliosController < FilteredController
         f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) } )
         f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
-    end
-
-    def collection_to_json
-      collection.map{|portfolio| {
-        :id => portfolio.id,
-        :name => portfolio.name,
-        :description => portfolio.description,
-        :status => portfolio.status,
-        :active => portfolio.active?,
-        :links => {
-            edit: edit_brand_portfolio_path(portfolio),
-            show: brand_portfolio_path(portfolio),
-            activate: activate_brand_portfolio_path(portfolio),
-            deactivate: deactivate_brand_portfolio_path(portfolio)
-        }
-      }}
     end
 end

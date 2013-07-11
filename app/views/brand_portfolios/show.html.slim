@@ -22,35 +22,16 @@
           = "Brands"
       .box-content
         #brand_portfolio-brands-filter
-        table#brand_portfolio-brands.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th data-sort="name" Name
-              th.actions
-          tbody
+        = render partial: 'brands', locals: { brands: resource.brands }
         .row-fluid
           .pull-right
             = link_to 'Add Brand', select_brands_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-  $('#brand_portfolio-brands-filter').filterBox({
-    'onChange': function(filterBox){
-      brandPortfolioBrandsTable.tableScroller('reloadData');
-    }
-  });
-
-  var brandPortfolioBrandsTable = $('table#brand_portfolio-brands').tableScroller({
-    'source': '#{brand_portfolio_brands_path(resource, format: :json)}',
-    'filterBox': '#brand_portfolio-brands-filter',
-    'rowValues': function(u){
-      return [u.name]
-    },
-    'rowId': function(row){
-      return 'brand_portfolio-brand-' + row.id;
-    },
-    'actionButtons': ['deletable']
-  })
-
   $(document).on('brand_portfolios:change', function(){
     window.location.reload(false);
+  })
+
+  $(document).on('brands:change', function(){
+    $.get('#{brands_brand_portfolio_path(resource, format: :js)}');
   })

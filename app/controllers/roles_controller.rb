@@ -31,20 +31,4 @@ class RolesController < FilteredController
         f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end
-
-    def collection_to_json
-      collection.map{|role| {
-        :id => role.id,
-        :name => role.name,
-        :description => role.description,
-        :status => role.status,
-        :active => role.active?,
-        :links => {
-            edit: edit_role_path(role),
-            show: role_path(role),
-            activate: activate_role_path(role),
-            deactivate: deactivate_role_path(role)
-        }
-      }}
-    end
 end

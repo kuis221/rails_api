@@ -12,6 +12,9 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  custom_actions member: [:tasks]
+  layout false, only: :tasks
+
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
@@ -73,34 +76,6 @@ class EventsController < FilteredController
 
     def begin_of_association_chain
       current_company
-    end
-
-    def collection_to_json
-      collection.map{|event| {
-        :id => event.id,
-        :start_date => event.start_date,
-        :start_time => event.start_time,
-        :formatted_date => format_date_range(event.start_at, event.end_at),
-        :end_date => event.end_date,
-        :end_time => event.end_time,
-        :active=> event.active,
-        :start_at => event.start_at.to_s,
-        :end_at => event.end_at.to_s,
-        :place => {
-            :name => event.place_name || '',
-            :latitude => event.place_latitude || '',
-            :longitude => event.place_longitude || '',
-            :formatted_address => place_address(event.place) || ''
-        },
-        :campaign => { :name => event.campaign_name },
-        :status => event.status,
-        :links => {
-            edit: edit_event_path(event),
-            show: event_path(event),
-            activate: activate_event_path(event),
-            deactivate: deactivate_event_path(event)
-        }
-      }}
     end
 
     def controller_filters(c)

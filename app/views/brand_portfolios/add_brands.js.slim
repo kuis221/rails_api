@@ -1,5 +1,8 @@
 |
-  $('tr#brand_portfolio-brand-#{@brand.id}').slideUp('slow');
-  if (typeof brandPortfolioBrandsTable !== 'undefined'){
-    brandPortfolioBrandsTable.tableScroller('reloadData');
+  $(document).trigger('brands:change');
+  if ($('table#select-brands-list tr#brand-#{@brand.id}').length){
+    pos = selectBrandsTable.fnGetPosition($('table#select-brands-list tr#brand-#{@brand.id}')[0]);
+    if (pos!== null){
+      selectBrandsTable.fnDeleteRow(pos);
+    };
   }

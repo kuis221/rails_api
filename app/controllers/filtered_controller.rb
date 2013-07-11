@@ -1,5 +1,5 @@
 class FilteredController < InheritedResources::Base
-  helper_method :collection_count, :collection_to_json, :facets, :page, :total_pages
+  helper_method :collection_count, :facets, :page, :total_pages
   respond_to :json, only: :index
 
   load_and_authorize_resource except: [:index, :items, :filters, :autocomplete]
@@ -115,9 +115,5 @@ class FilteredController < InheritedResources::Base
 
     def sort_options
       {}
-    end
-
-    def collection_to_json
-      []
     end
 end

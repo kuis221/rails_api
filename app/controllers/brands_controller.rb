@@ -15,22 +15,4 @@ class BrandsController < FilteredController
       end
     end
   end
-
-  private
-
-    def collection_to_json
-      collection.map{|brand| {
-        :id => brand.id,
-        :name => brand.name,
-        :links => {
-            delete: (parent? ? delete_brand_brand_portfolio_url(parent, brand) : nil)
-        }
-      }}
-    end
-
-    def sort_options
-      {
-        'name' => { :order => 'brands.name' }
-      }
-    end
 end

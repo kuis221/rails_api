@@ -1,8 +1,6 @@
 class CompanyUsersController < FilteredController
   include DeactivableHelper
 
-  before_filter :load_users_for_event, only: :event
-
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
   respond_to :json, only: [:index]
 
@@ -24,10 +22,6 @@ class CompanyUsersController < FilteredController
 
   def time_zone_change
     current_user.update_column(:detected_time_zone, params[:time_zone])
-  end
-
-  def event
-    render :index
   end
 
   def select_company
@@ -82,45 +76,11 @@ class CompanyUsersController < FilteredController
       end
     end
 
-    def collection_to_json
-      collection.map{|user| {
-        :id => user.id,
-        :last_name => user.last_name,
-        :first_name => user.first_name,
-        :full_name => user.full_name,
-        :city => user.city,
-        :state => user.state_name,
-        :country => user.country_name,
-        :email => user.email,
-        :role => user.role_name,
-        :last_activity_at => user.last_activity_at.try(:to_s,:full_friendly),
-        :status => user.active_status,
-        :active => user.active?,
-        :links => {
-            edit: edit_company_user_path(user),
-            show: company_user_path(user),
-            activate: activate_company_user_path(user),
-            deactivate: deactivate_company_user_path(user),
-            delete: delete_member_path(user)
-        }
-      }}
-    end
-
     def delete_member_path(user)
       path = nil
       path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]
       path = delete_member_campaign_path(params[:campaign], member_id: user.id) if params.has_key?(:campaign) && params[:campaign]
       path
-    end
-
-    def load_users_for_event
-      event = current_company.events.find(params[:event_id])
-      # INNER JOIN "memberships" ON "memberships"."company_user_id" = "company_users"."id" AND "memberships"."memberable_type" = 'Event' INNER JOIN "events" ON "events"."id" = "memberships"."memberable_id"
-      teams = CompanyUser.scoped_by_company_id(current_company).active.joins(:teams).where(active: true, teams: {id: event.team_ids})
-      users = CompanyUser.scoped_by_company_id(current_company).active.joins(:events).where(active: true, events: {id: event.id})
-      @users = CompanyUser.from("(#{teams.to_sql} UNION #{users.to_sql}) AS company_users ")
-      @collection_count_scope = @users
-      set_collection_ivar @users
     end
 
 end

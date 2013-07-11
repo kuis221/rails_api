@@ -24,21 +24,4 @@ class AreasController < FilteredController
         f.push(label: "Status", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end
-
-    def collection_to_json
-      collection.map{|area| {
-        :id => area.id,
-        :name => area.name,
-        :description => area.description,
-        :status => area.status,
-        :active => area.active?,
-        :links => {
-            edit: edit_area_path(area),
-            show: area_path(area),
-            activate: activate_area_path(area),
-            deactivate: deactivate_area_path(area)
-        }
-      }}
-    end
-
 end

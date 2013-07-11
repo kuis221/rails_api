@@ -3,10 +3,11 @@ require 'spec_helper'
 describe RolesController do
   before(:each) do
     @user = sign_in_as_user
+    @company = @user.current_company
   end
 
   describe "GET 'edit'" do
-    let(:role){ FactoryGirl.create(:role) }
+    let(:role){ FactoryGirl.create(:role, company: @company) }
     it "returns http success" do
       get 'edit', id: role.to_param, format: :js
       response.should be_success
@@ -18,21 +19,12 @@ describe RolesController do
       get 'index'
       response.should be_success
     end
+  end
 
-    describe "datatable requests" do
-      it "responds to .json format" do
-        get 'index', format: :json
-        response.should be_success
-      end
-
-      it "returns the correct structure" do
-        get 'index', sEcho: 1, format: :json
-        parsed_body = JSON.parse(response.body)
-        parsed_body["total"].should == 0
-        parsed_body["items"].should == []
-        parsed_body["pages"].should == 1
-        parsed_body["page"].should == 1
-      end
+  describe "GET 'items'" do
+    it "responds to .json format" do
+      get 'items'
+      response.should be_success
     end
   end
 
@@ -72,7 +64,7 @@ describe RolesController do
   end
 
   describe "GET 'deactivate'" do
-    let(:role){ FactoryGirl.create(:role) }
+    let(:role){ FactoryGirl.create(:role, company: @company) }
 
     it "deactivates an active role" do
       role.update_attribute(:active, true)
@@ -83,7 +75,7 @@ describe RolesController do
   end
 
   describe "GET 'activate'" do
-    let(:role){ FactoryGirl.create(:role, active: false) }
+    let(:role){ FactoryGirl.create(:role, company: @company, active: false) }
 
     it "activates an inactive `role" do
       role.active?.should be_false
@@ -94,7 +86,7 @@ describe RolesController do
   end
 
   describe "PUT 'update'" do
-    let(:role){ FactoryGirl.create(:role) }
+    let(:role){ FactoryGirl.create(:role, company: @company) }
     it "must update the role attributes" do
       put 'update', id: role.to_param, role: {name: 'New Role Name', description: 'New description for Role'}
       assigns(:role).should == role

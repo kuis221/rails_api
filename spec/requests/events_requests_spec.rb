@@ -17,7 +17,7 @@ describe "Events", js: true, search: true do
   describe "/events", js: true, search: true  do
     describe "GET index" do
       let(:events){[
-        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.today.to_s, start_time: '10:00am', end_time: '11:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
+        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.today.to_s, start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.tomorrow.to_s, start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
       it "should display a table with the events" do
@@ -25,30 +25,24 @@ describe "Events", js: true, search: true do
         Sunspot.commit
         visit events_path
 
-        within("table#events-list") do
+        within("ul#events-list") do
           # First Row
-          within("tbody tr:nth-child(1)") do
-            find('td:nth-child(1)').should have_content(events[0].start_at.strftime('%^a %b %d'))
-            find('td:nth-child(1)').should have_content(events[0].start_at.strftime('10:00 AM - 11:00 PM'))
-            find('td:nth-child(2)').should have_content(events[0].place_name)
-            find('td:nth-child(3)').should have_content(events[0].campaign_name)
-            find('td:nth-child(4)').should have_content('Active')
-            find('td:nth-child(5)').should have_content('Edit')
-            find('td:nth-child(5)').should have_content('Deactivate')
+          within("li:nth-child(1)") do
+            save_and_open_page
+            page.should have_content(events[0].start_at.strftime('%^a %b %d'))
+            page.should have_content('11:00 AM - 12:00 PM')
+            page.should have_content(events[0].place_name)
+            page.should have_content(events[0].campaign_name)
           end
           # Second Row
-          within("tbody tr:nth-child(2)") do
-            find('td:nth-child(1)').should have_content(events[1].start_at.strftime('%^a %b %d at 11:00 AM'))
-            find('td:nth-child(1)').should have_content(events[1].end_at.strftime('%^a %b %d at 12:00 PM'))
-            find('td:nth-child(2)').should have_content(events[1].place_name)
-            find('td:nth-child(3)').should have_content(events[1].campaign_name)
-            find('td:nth-child(4)').should have_content('Active')
-            find('td:nth-child(5)').should have_content('Edit')
-            find('td:nth-child(5)').should have_content('Deactivate')
+          within("li:nth-child(2)") do
+            page.should have_content(events[1].start_at.strftime('%^a %b %d at 12:00 PM'))
+            page.should have_content(events[1].end_at.strftime('%^a %b %d at 1:00 PM'))
+            page.should have_content(events[1].place_name)
+            page.should have_content(events[1].campaign_name)
           end
         end
 
-        assert_table_sorting ("table#events-list")
       end
 
       it "should allow user to activate/deactivate events" do
@@ -56,9 +50,9 @@ describe "Events", js: true, search: true do
         Sunspot.commit
         visit events_path
 
-        within("table#events-list") do
+        within("ul#events-list") do
           # First Row
-          within("tbody tr:nth-child(1)") do
+          within("li:nth-child(1)") do
             click_js_link('Deactivate')
             page.should have_selector('a', text: 'Activate')
 

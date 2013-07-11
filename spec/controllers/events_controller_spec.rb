@@ -21,18 +21,14 @@ describe EventsController do
         get 'index'
         response.should be_success
       end
-
-      describe "json requests" do
-        it "responds to .json format" do
-          get 'index', format: :json
-          response.should be_success
-
-          parsed_body = JSON.parse(response.body)
-          parsed_body.count.should == 4
-        end
-      end
     end
 
+    describe "GET 'items'" do
+      it "returns http success" do
+        get 'items'
+        response.should be_success
+      end
+    end
 
     describe "POST 'create'" do
       it "should not render form_dialog if no errors" do

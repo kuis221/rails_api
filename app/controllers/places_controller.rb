@@ -20,20 +20,6 @@ class PlacesController < FilteredController
   end
 
   private
-    def collection_to_json
-      collection.map{|place| {
-        :id => place.id,
-        :name => place.name,
-        :address => place.formatted_address,
-        :city => place.city,
-        :state => place.state,
-        :zipcode => place.zipcode,
-        :country => place.country,
-        :links => {
-            delete: (parent? ? area_place_url(parent, place) : nil)
-        }
-      }}
-    end
 
     def sort_options
       {
