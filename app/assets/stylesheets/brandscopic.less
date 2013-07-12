@@ -140,7 +140,7 @@ input[type="color"],
 	border-radius: 8px;
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
-} 
+}
 .alert-danger, .alert-error{
 	background-color: @buttons;
 	color: white;
@@ -274,7 +274,7 @@ body.empty-layout{
 	}
 }
 body.app-layout{
-	background: @app_bg url('bg.png') repeat-y left; 
+	background: @app_bg url('bg.png') repeat-y left;
 	padding-top: 41px;
 }
 
@@ -460,19 +460,33 @@ li.dropdown a{
 		color:@grey_three;
 		padding: 25px 0 15px 0;
 		height:50px;
-	}
-	li a:active:after{
-		background-color: @menu;
-		color:@menu;
-		content: ".";
-  		display: block;
-  		line-height: 10px;
-  		position: relative;
-  		top:15px;
-		-webkit-border-top-right-radius: 7px;
-		-moz-border-radius-topright: 7px;
-		border-top-right-radius: 7px;
-	}
+  }
+  li{
+    position: relative;
+    &.active{
+      background-color: @app_bg;
+      &:after, &:before{
+        background-color: @menu;
+        content: "\00a0";
+        display: block;
+        line-height: 10px;
+        position: absolute;
+        width: 100%;
+      }
+      &:after{
+        bottom:0px;
+        -webkit-border-top-right-radius: 7px;
+        -moz-border-radius-topright: 7px;
+        border-top-right-radius: 7px;
+      }
+      &:before{
+        top:0px;
+        -webkit-border-bottom-right-radius: 7px;
+        -moz-border-radius-bottomright: 7px;
+        border-bottom-right-radius: 7px;
+      }
+    }
+  }
 }
 .filter-wrapper{
 	font-size: 13px;
@@ -583,7 +597,7 @@ li.dropdown a{
 		}
 	}
 	a.edit:after{
-		content: "\e00c"; 
+		content: "\e00c";
 		font-family: 'icons';
 		font-size: 18px;
 		margin-right: 10px;
@@ -594,8 +608,8 @@ li.dropdown a{
 		top:2px;
 		-webkit-font-smoothing: antialiased;
 	}
-	a.active:after{ 
-		content: "\e00b"; 
+	a.active:after{
+		content: "\e00b";
 		font-family: 'icons';
 		font-size: 18px;
 		position: relative;
