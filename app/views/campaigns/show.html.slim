@@ -35,7 +35,22 @@
         .box-content
           = render 'teams'
 
+  .row-fluid
+    .box
+      a href="#kpi-content" data-toggle="collapse"
+        .box-header
+          h2 KPIs
+
+      #team-content.collapse.in
+        #campaign-kpis.box-content
+          = render 'kpis'
+
+
 javascript:
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
+  })
+
+  $(document).on('kpis:change', function(){
+    $('#campaign-kpis').load('#{kpis_campaign_path(resource)}')
   })

@@ -1,0 +1,34 @@
+- campaign ||= nil
+table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th.actions
+      th data-sort="name" KPI
+      th data-sort="description" Description
+      th data-sort="" Goal
+  tbody
+    - Kpi.all.each do |kpi|
+      tr id="campaign-kpi-#{kpi.id}"
+        td
+        td= kpi.name
+        td= kpi.description
+        td
+
+.row-fluid
+  .pull-right
+    = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary'
+
+javascript:
+  kpisTable = $('#campaign-kpis-list').dataTable({
+        "sDom": "<'row-fluid'r>t",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "bDestroy": true,
+        "aoColumns": [
+          null,
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  });
