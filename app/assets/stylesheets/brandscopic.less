@@ -220,6 +220,8 @@ a.datepick-cmd:hover{
 	a{
 		color:@menu;
 		font-size: 12px;
+		opacity:0.8;
+		filter:alpha(opacity=80); /* For IE8 and earlier */
 	}
 }
 .datepick-month td .datepick-selected {
@@ -482,9 +484,9 @@ li.dropdown a{
 		text-transform: uppercase;
 	}
 	label{
-		letter-spacing: -1px;
+		letter-spacing: -0.5px;
 		line-height: 20px;
-		padding: 0 15px 0 20px;
+		padding: 0 15px 0 30px;
 	}
 	.checker{
 		display: inline-block;
