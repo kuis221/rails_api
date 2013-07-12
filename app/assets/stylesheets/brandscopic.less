@@ -186,7 +186,7 @@ a.edit:after{
 }
 a.datepick-cmd{
 	color: white;
-	margin-top: 12px;
+	margin-top: 9px;
 }
 a.datepick-cmd:hover{
 	background-color: @brand;
@@ -202,6 +202,7 @@ a.datepick-cmd:hover{
 	width: 208px;
 	table{
 		border: 1px solid @user_menu;
+		height: 180px;
 	}
 	thead{
 		border-bottom: 0;
@@ -234,8 +235,8 @@ a.datepick-cmd:hover{
 	background-color:@brand;
 	color: white;
 	font-weight: normal;
-	height:28px;
-	padding: 12px 0 0 15px;
+	height:25px;
+	padding: 10px 0 0 15px;
 	text-align: left;
 	width: 193px;
 	-webkit-border-top-left-radius: 6px;
@@ -282,7 +283,7 @@ body.app-layout{
 	background-color: @user_menu;
 	background-image: none;
 	border: 0;
-	padding: 8px 17px;
+	padding: 7px 17px;
 	&.download:after{
 		color: @app_bg;
 		content: "\e009";
@@ -518,13 +519,13 @@ li.dropdown a{
 	h3{
 		font-size: 14px;
 		font-weight: bold;
-		margin-bottom: 25px;
+		margin-bottom: 15px;
 		text-transform: uppercase;
 	}
 	label{
 		letter-spacing: -0.5px;
 		line-height: 20px;
-		padding: 0 15px 0 30px;
+		padding: 0 15px 0 20px;
 	}
 	.checker{
 		display: inline-block;
@@ -586,6 +587,9 @@ li.dropdown a{
  	font-size: 11px;
     margin: 30px 0 0 0;
     padding: 0;
+    address{
+    	margin-bottom: 0;
+    }
     a:hover{
     	color: @text;
     	text-decoration: none;
@@ -605,7 +609,7 @@ li.dropdown a{
     	color:@brand;
     	list-style:none;
     	margin: 0;
-    	padding: 30px 0 10px 35px;
+    	padding: 13px 0 11px 35px;
 	}
     li:hover{
     	background:@grey_one;
@@ -616,8 +620,10 @@ li.dropdown a{
 	}
 	span{
 		display: inline-block;
-		margin-right: 90px;
 		vertical-align: top;
+		&.date{
+			width: 200px;
+		}
 		&.links{
 			float: right;
 			margin: 18px 20px 0 0;
@@ -654,8 +660,8 @@ input.search-query {
   box-shadow: none;
   color: white;
   font-family: @baseFontFamily;
-  height:28px;
-  margin-bottom: 17px;
+  height:27px;
+  margin-bottom: 10px;
   padding-right: 8px;
   padding-right: 8px \9;
   padding-left: 8px;
