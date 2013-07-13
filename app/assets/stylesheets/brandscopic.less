@@ -136,6 +136,7 @@ input[type="color"],
 	background-color: @grey_one !important;
 	border: @grey_one;
 	height: 33px;
+	margin-bottom: 0;
 	width: 260px;
 }
 
@@ -297,6 +298,7 @@ body.app-layout{
 	background-image: none;
 	border: 0;
 	padding: 7px 17px;
+	text-shadow:none;
 	&.download:after{
 		color: @app_bg;
 		content: "\e00b";
@@ -359,7 +361,7 @@ body.app-layout{
 	box-shadow: none;
 	color: white;
 	font-size: 14px;
-	padding: 8px 25px;
+	padding: 7px 25px;
 	text-shadow:none;
 }
 .btn-primary:hover{
@@ -375,6 +377,21 @@ body.app-layout{
 	padding: 20px 20px 40px 20px;
 	text-align: center;
 	width:402px;
+	input{
+		margin-bottom: 10px;
+	}
+	input:-moz-placeholder,
+	textarea:-moz-placeholder {
+	  color: @grey_three;
+	}
+	input:-ms-input-placeholder,
+	textarea:-ms-input-placeholder {
+	  color: @grey_three;
+	}
+	input::-webkit-input-placeholder,
+	textarea::-webkit-input-placeholder {
+	  color: @grey_three;
+	}
 	.brand{
 		background-image: url('brand.svg');
 		margin: 0 auto 40px auto;
@@ -383,22 +400,31 @@ body.app-layout{
 	}
 	.btn-primary{
 		box-shadow: none;
-		height: 40px;
-		width: 270px;
+		height: 42px;
+		margin-bottom: 15px;
+		padding: 0;
+		width: 272px;
 	}
 	.controls{
 		margin:0 auto 0 auto !important;
 		padding: 0;
+	}
+	.control-group{
+		margin: 0px;
 	}
 	label{
 		display: none;
 	}
 }
 .form-actions{
-	background-color: @menu;
+	background-color: white;
 	border:0;
 	margin: 0;
 	padding: 0;
+}
+
+form{
+	margin: 0;
 }
 
 footer{
