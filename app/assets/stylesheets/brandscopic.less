@@ -122,7 +122,6 @@ input[type="color"],
 .uneditable-input {
 	background-color: @grey_one !important;
 	border: @grey_one;
-	color: @grey_three !important;
 	height: 33px;
 	width: 260px;
 }
@@ -251,7 +250,8 @@ table{
 }
 
 a.more-options-link{
-	margin-left:20px;
+	font-size: 13px;
+	margin-left:25px;
 }
 a.more-options-link:after{
 	content: "\25BC";
@@ -389,7 +389,7 @@ body.app-layout{
 }
 
 footer{
-	color: @brand;
+	color: @user_menu;
 	font-weight: normal;
 	height: 35px;
 	margin: 30px 0 0 80px;
@@ -657,7 +657,10 @@ li.dropdown a{
 }
 
 input.search-query {
-  background-color: @brand;
+  background-color: @brand !important;
+  background-image: url('search.svg');
+  background-position: center right;
+  background-repeat: no-repeat;
   border:@brand;
   box-shadow: none;
   color: white;
@@ -675,6 +678,7 @@ input.search-query {
   width:193px;
 }
 input.search-query:focus{
+	background-image: none;
 	border: none;
 	box-shadow: none;
 }
