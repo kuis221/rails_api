@@ -28,7 +28,7 @@
 /*-- GENERAL STYLES --*/
 
 #analysis a:before {
-	content: "\e004";
+	content: "\e00e";
   	display: block;
   	font-family: 'icons';
 	font-size: 28px;
@@ -41,7 +41,7 @@
 	-webkit-font-smoothing: antialiased;
 }
 #dashboard a:before {
-	content: "\e003";
+	content: "\e00c";
   	display: block;
   	font-family: 'icons';
 	font-size: 28px;
@@ -54,7 +54,7 @@
 	-webkit-font-smoothing: antialiased;
 }
 #events a:before{
-	content: "\e002";
+	content: "\e00a";
   	display: block;
   	font-family: 'icons';
 	font-size: 28px;
@@ -67,7 +67,7 @@
 	-webkit-font-smoothing: antialiased;
 }
 #tasks a:before {
-	content: "\e001";
+	content: "\e009";
   	display: block;
   	font-family: 'icons';
 	font-size: 28px;
@@ -79,7 +79,20 @@
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
 }
-#analysis, #dashboard, #events, #tasks {
+#research a:before {
+	content: "\e005";
+  	display: block;
+  	font-family: 'icons';
+	font-size: 28px;
+	left:3px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+}
+#analysis, #dashboard, #events, #tasks, #research {
 	a:hover{
 	background-color: @grey_three;
 	color:@user_menu;
@@ -286,7 +299,7 @@ body.app-layout{
 	padding: 7px 17px;
 	&.download:after{
 		color: @app_bg;
-		content: "\e009";
+		content: "\e00b";
 		font-family: 'icons';
 		font-size: 15px;
 		padding-left: 6px;
@@ -312,7 +325,7 @@ body.app-layout{
 	}
 	&.map:after{
 		color: @app_bg;
-		content: "\e007";
+		content: "\e001";
 		font-family: 'icons';
 		font-size: 15px;
 		left: 2px;
@@ -474,6 +487,35 @@ li.dropdown a{
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
 	background-image:none;
+}
+li.dropdown#admin{
+	.dropdown-toggle:before{
+	content: "\e007";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 16px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	}
+}
+li.dropdown#user_menu{
+	.dropdown-toggle:before{
+	content: "\e000";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 16px;
+	right:6px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	}
 }
 .nav-pills>li>a {
 	padding-top: 12px;
