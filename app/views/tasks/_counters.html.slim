@@ -1,3 +1,5 @@
+.pull-left
+  = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary'}
 .task-counter-bar.pull-right
   .task-counter-item.unassigned
     span.count-unassigned= status_counters['unassigned']
