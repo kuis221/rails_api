@@ -5,8 +5,6 @@
 	border: 1px solid #aaa;
     border-radius: 0.25em;
     -moz-border-radius: 0.25em;
-    -webkit-border-radius: 0.25em;
-	font-size: 90%;
 }
 .datepick-rtl {
 	direction: rtl;
@@ -187,6 +185,7 @@ button.datepick-cmd {
 }
 .datepick-month td .datepick-other-month {
 	background-color: #fff;
+	color: red;
 }
 .datepick-month td .datepick-weekend {
 	background-color: #ddd;

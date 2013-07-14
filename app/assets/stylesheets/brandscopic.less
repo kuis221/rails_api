@@ -212,6 +212,9 @@ a.datepick-cmd:hover{
 	border: 0;
 	margin-bottom: 30px;
 }
+.datepick-month td .datepick-other-month {
+	color:@user_menu;
+}
 .datepick-month{
 	border: 0;
 	width: 208px;
@@ -239,9 +242,19 @@ a.datepick-cmd:hover{
 		opacity:0.8;
 		filter:alpha(opacity=80); /* For IE8 and earlier */
 	}
+	a:hover{
+			display: block;
+	width: 100%;
+	padding: 0.125em 0em;
+	background-color: @grey_one !important;
+	color: @text;
+	text-decoration: none;
+	border-radius: 3px;
+	}
 }
 .datepick-month td .datepick-selected {
 	background-color: @brand !important;
+	color: white;
 }
 .datepick-month td, .datepick-month a, .datepick-weekend {
 	background-color: white !important;
