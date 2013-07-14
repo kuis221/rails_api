@@ -71,7 +71,7 @@ function Datepicker() {
 		renderer: this.defaultRenderer, // The rendering templates
 		prevText: '&lt;Prev', // Text for the previous month command
 		prevStatus: 'Show the previous month', // Status text for the previous month command
-		prevJumpText: '&lt;&lt;', // Text for the previous year command
+		prevJumpText: 'x', // Text for the previous year command
 		prevJumpStatus: 'Show the previous year', // Status text for the previous year command
 		nextText: 'Next&gt;', // Text for the next month command
 		nextStatus: 'Show the next month', // Status text for the next month command

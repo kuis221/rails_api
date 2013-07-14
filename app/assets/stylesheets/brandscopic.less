@@ -182,17 +182,19 @@ a.edit:after{
 	width: 15px;
 }
 .datepick-cmd-prev:after{
-	content: "\25C4";
+	content: "\e003";
   	display: block;
-	font-size: 13px;
+  	font-family: 'icons';
+	font-size: 10px;
   	position: relative;
-  	right: 4px;
+  	right: 2px;
   	top:-19px;
 }
 .datepick-cmd-next:after{
-	content: "\25BA";
+	content: "\e002";
   	display: block;
-	font-size: 13px;
+  	font-family: 'icons';
+	font-size: 10px;
 	left: 4px;
   	position: relative;
   	top:-19px;
@@ -249,6 +251,7 @@ a.datepick-cmd:hover{
 	color: white;
 	font-weight: normal;
 	height:25px;
+	line-height: 19px;
 	padding: 10px 0 0 15px;
 	text-align: left;
 	width: 193px;
@@ -268,11 +271,13 @@ a.more-options-link{
 	margin-left:25px;
 }
 a.more-options-link:after{
-	content: "\25BC";
+	content: "\e004";
   	display: inline-block;
-	font-size: 10px;
+  	font-family: "icons";
+	font-size: 12px;
 	left:5px;
   	position: relative;
+ 	top:4px;
 }
 body{
 	color:@text;
