@@ -169,6 +169,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.7.3)
     multi_xml (0.5.3)
+    nested_form (0.3.2)
     newrelic_rpm (3.6.1.88)
     nokogiri (1.5.9)
     oj (2.0.10)
@@ -341,6 +342,7 @@ DEPENDENCIES
   launchy
   less-rails (>= 2.2.6)
   meta_search (>= 1.1.0.pre)
+  nested_form
   newrelic_rpm
   oj
   paperclip (~> 3.0)

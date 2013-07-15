@@ -15,4 +15,5 @@
 //= require jquery-migrate-1.2.1
 //= require twitter/bootstrap
 //= require jquery.dataTables.js
+//= require jquery_nested_form
 //= require_directory .

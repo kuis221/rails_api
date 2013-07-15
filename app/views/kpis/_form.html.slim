@@ -1,5 +1,5 @@
 - remote ||= false
-= simple_form_for([parent, resource], remote: remote || false) do |f|
+= simple_nested_form_for([parent, resource], remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs
@@ -7,13 +7,20 @@
       = f.input :name
 
     .row-fluid
+      = f.input :description, :input_html => {:rows => 1}
+
+    .row-fluid
       = f.input :kpi_type, input_html: {class: 'input-large'}, collection: Kpi::TYPE_OPTIONS.keys.map{|d| [d.capitalize, d]}
+
+    #kpisegment-fields.row-fluid style="display: none"
+      = f.fields_for :kpis_segments do |kf|
+        = kf.text_field :text
+        = kf.link_to_remove "Remove"
+
+      p= f.link_to_add "Add a segment", :kpis_segments
 
     .row-fluid
       = f.input :capture_mechanism, as: :select, input_html: {class: 'input-large'}, collection: []
-
-    .row-fluid
-      = f.input :description, :input_html => {:rows => 6}
 
   .form-actions
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
@@ -33,6 +40,15 @@ javascript:
               value: options[i],
               text: options[i]
           }));
+        }
+
+        switch (optionSelected) {
+            case 'number':
+              $('#kpisegment-fields').hide();
+              break;
+            case 'count' || 'percentage':
+              $('#kpisegment-fields').show();
+              break;
         }
       }
     });
