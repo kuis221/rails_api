@@ -29,10 +29,8 @@ AdminUser.create!(:email => 'admin@brandscopic.com', :password => 'AdminPazBC', 
 
 c = Company.find_or_create_by_name(name: 'Brandscopic', admin_email: 'admin@brandscopic.com')
 u = User.find_by_email('admin@brandscopic.com')
-u.password = 'Adminpass12'
-u.password_confirmation = 'Adminpass12'
-u.save!
-u.confirm!
+u.update_attributes({password: 'Adminpass12', password_confirmation: 'Adminpass12', country: 'US', state: 'CA', city: 'San Francisco', invitation_accepted_at: Time.now, confirmed_at: Time.now, invitation_token: nil, time_zone: 'Pacific Time (US & Canada)'}, without_protection: true)
+# u.update_column(:encrypted_password, '$2a$10$zm71ctU0VNxKhHflsfPpNeEeMRMV3d/A71o382VYJpWv92Vorvr7W')
 #r = c.roles.find_or_create_by_name(name: 'Admin')
 #u =  User.create({email: 'admin@brandscopic.com', first_name: 'Admin', last_name: 'Brandscopic', password: 'Adminpass12', password_confirmation: 'Adminpass12', country: 'US', state: 'CA', city: 'San Francisco', invitation_accepted_at: Time.now, confirmed_at: Time.now, invitation_token: nil, time_zone: 'Pacific Time (US & Canada)'}, without_protection: true)
 #cu = CompanyUser.create({active: true, user_id: u.id, company_id: c.id, role_id: r.id}, without_protection: true)
