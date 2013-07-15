@@ -182,26 +182,37 @@ a.edit:after{
 	width: 15px;
 }
 .datepick-cmd-prev:after{
+	color: white;
 	content: "\e003";
   	display: block;
   	font-family: 'icons';
-	font-size: 10px;
-  	position: relative;
-  	right: 2px;
-  	top:-19px;
+	font-size: 9px;
+	left: 0;
+  	position: absolute;
+  	speak:none;
+  	text-indent: 0;
+  	top:1px;
+  	-webkit-font-smoothing: antialiased;
 }
 .datepick-cmd-next:after{
+	color: white;
 	content: "\e002";
   	display: block;
   	font-family: 'icons';
-	font-size: 10px;
-	left: 4px;
-  	position: relative;
-  	top:-19px;
+	font-size: 9px;
+	left: 6px;
+  	position: absolute;
+  	speak:none;
+  	text-indent: 0;
+  	top:1px;
+  	-webkit-font-smoothing: antialiased;
 }
 a.datepick-cmd{
-	color: white;
-	margin-top: 9px;
+	display: inline-block;
+	margin-top: 8px;
+	overflow: hidden;
+	position:relative;
+	text-indent: 200%;
 }
 a.datepick-cmd:hover{
 	background-color: @brand;
@@ -264,7 +275,7 @@ a.datepick-cmd:hover{
 	color: white;
 	font-weight: normal;
 	height:25px;
-	line-height: 19px;
+	line-height: 16px;
 	padding: 10px 0 0 15px;
 	text-align: left;
 	width: 193px;
@@ -851,9 +862,13 @@ textarea::-webkit-input-placeholder {
 			font-weight: bold;
 		}
 	}
-
-
 }
+/*
+position:relative;
+display: inline-block;
+text-indent: 200%;
+overflow: hidden;
+*/
 
 .tab-content{
 	width: 100%;
