@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715153308) do
+ActiveRecord::Schema.define(:version => 20130715151824) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -274,8 +274,8 @@ ActiveRecord::Schema.define(:version => 20130715153308) do
     t.integer  "updated_by_id"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
-    t.string   "module",            :default => "custom", :null => false
     t.string   "slug"
+    t.string   "module",            :default => "custom", :null => false
   end
 
   add_index "kpis", ["company_id", "slug"], :name => "index_kpis_on_company_id_and_slug", :unique => true
