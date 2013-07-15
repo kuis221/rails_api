@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130712233955) do
+ActiveRecord::Schema.define(:version => 20130715151824) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -262,14 +262,14 @@ ActiveRecord::Schema.define(:version => 20130712233955) do
     t.string   "module",            :default => "custom", :null => false
   end
 
-  create_table "kpisegments", :force => true do |t|
+  create_table "kpis_segments", :force => true do |t|
     t.integer  "kpi_id"
     t.string   "text"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
 
-  add_index "kpisegments", ["kpi_id"], :name => "index_kpisegments_on_kpi_id"
+  add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"
