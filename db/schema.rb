@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130708193303) do
+ActiveRecord::Schema.define(:version => 20130715151824) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -114,6 +114,21 @@ ActiveRecord::Schema.define(:version => 20130708193303) do
   add_index "brands_campaigns", ["brand_id"], :name => "index_brands_campaigns_on_brand_id"
   add_index "brands_campaigns", ["campaign_id"], :name => "index_brands_campaigns_on_campaign_id"
 
+  create_table "campaign_form_fields", :force => true do |t|
+    t.integer  "campaign_id"
+    t.integer  "kpi_id"
+    t.integer  "ordering"
+    t.string   "name"
+    t.string   "type"
+    t.text     "options"
+    t.integer  "section_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "campaign_form_fields", ["campaign_id"], :name => "index_campaign_form_fields_on_campaign_id"
+  add_index "campaign_form_fields", ["kpi_id"], :name => "index_campaign_form_fields_on_kpi_id"
+
   create_table "campaigns", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -126,6 +141,14 @@ ActiveRecord::Schema.define(:version => 20130708193303) do
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
+
+  create_table "campaigns_kpis", :force => true do |t|
+    t.integer "campaign_id"
+    t.integer "kpi_id"
+  end
+
+  add_index "campaigns_kpis", ["campaign_id"], :name => "index_campaigns_kpis_on_campaign_id"
+  add_index "campaigns_kpis", ["kpi_id"], :name => "index_campaigns_kpis_on_kpi_id"
 
   create_table "campaigns_teams", :force => true do |t|
     t.integer "campaign_id"
@@ -240,6 +263,32 @@ ActiveRecord::Schema.define(:version => 20130708193303) do
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
+
+  create_table "kpis", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "kpi_type"
+    t.string   "capture_mechanism"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
+    t.string   "slug"
+    t.string   "module",            :default => "custom", :null => false
+  end
+
+  add_index "kpis", ["company_id", "slug"], :name => "index_kpis_on_company_id_and_slug", :unique => true
+  add_index "kpis", ["slug"], :name => "index_kpis_on_slug"
+
+  create_table "kpis_segments", :force => true do |t|
+    t.integer  "kpi_id"
+    t.string   "text"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"

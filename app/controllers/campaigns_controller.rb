@@ -6,6 +6,13 @@ class CampaignsController < FilteredController
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
 
+<<<<<<< HEAD
+=======
+  layout false, only: :kpis
+
+  load_and_authorize_resource except: :index
+
+>>>>>>> 3140877dc146d5db85103f2d981d7d44fcc8d087
   has_scope :with_text
 
   def autocomplete
