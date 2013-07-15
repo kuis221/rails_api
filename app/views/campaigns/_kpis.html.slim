@@ -7,7 +7,7 @@ table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
       th data-sort="description" Description
       th data-sort="" Goal
   tbody
-    - Kpi.all.each do |kpi|
+    - Kpi.global_and_custom(current_company).each do |kpi|
       tr id="campaign-kpi-#{kpi.id}"
         td
         td= kpi.name
