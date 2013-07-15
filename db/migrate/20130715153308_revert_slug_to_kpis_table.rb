@@ -1,10 +1,8 @@
 class RevertSlugToKpisTable < ActiveRecord::Migration
   def down
-    add_column :kpis, :slug, :string
+    remove_index :kpis, :slug
+    remove_index :kpis, [:company_id, :slug], unique: true
 
-    add_index :kpis, :slug
-    add_index :kpis, [:company_id, :slug], unique: true
-
-    Kpi.find_each(&:save)
+    remove_column :kpis, :slug, :string
   end
 end
