@@ -16,4 +16,6 @@
 //= require twitter/bootstrap
 //= require jquery.dataTables.js
 //= require jquery_nested_form
+//= require form_builder.js
+//= require_directory ./form_builder
 //= require_directory .
