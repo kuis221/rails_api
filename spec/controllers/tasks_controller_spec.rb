@@ -104,14 +104,4 @@ describe TasksController do
       end
     end
   end
-
-  describe "GET 'show'" do
-    let(:task) { FactoryGirl.create(:task, event_id: event.id) }
-    it "returns http success" do
-      get 'show', event_id: event.to_param, id: task.to_param, format: :js
-      response.should be_success
-      assigns(:event).should == event
-      assigns(:task).should == task
-    end
-  end
 end

@@ -6,14 +6,19 @@ class CampaignsController < FilteredController
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
 
-<<<<<<< HEAD
-=======
   layout false, only: :kpis
 
-  load_and_authorize_resource except: :index
-
->>>>>>> 3140877dc146d5db85103f2d981d7d44fcc8d087
-  has_scope :with_text
+  def update_post_event_form
+    fields = params[:fields].dup
+    fields.each do |id, field|
+      field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
+    end
+    ActiveRecord::Base.transaction do
+      resource.form_fields_attributes = params[:fields]
+      resource.save
+    end
+    render text: resource.errors.inspect
+  end
 
   def autocomplete
     buckets = autocomplete_buckets({

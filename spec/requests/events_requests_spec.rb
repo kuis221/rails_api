@@ -28,7 +28,6 @@ describe "Events", js: true, search: true do
         within("ul#events-list") do
           # First Row
           within("li:nth-child(1)") do
-            save_and_open_page
             page.should have_content(events[0].start_at.strftime('%^a %b %d'))
             page.should have_content('11:00 AM - 12:00 PM')
             page.should have_content(events[0].place_name)

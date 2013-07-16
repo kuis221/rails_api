@@ -7,9 +7,9 @@ ConsumerReachModule = $.extend {}, FormModule, {
 
 	_renderFormFields: () ->
 		$('<div class="module-fields">').append(
-			new FormBuilder.TextField({label: 'Impressions', kpi: 'impressions'}),
-			new FormBuilder.TextField({label: '# Consumer interactions', kpi: 'interactions'}),
-			new FormBuilder.TextField({label: 'Consumer Sampled', kpi: 'samples'})
+			new FormBuilder.NumberField({label: 'Impressions', kpi: 'impressions', capture_mechanism: 'integer'}),
+			new FormBuilder.NumberField({label: '# Consumer interactions', kpi: 'interactions', capture_mechanism: 'integer'}),
+			new FormBuilder.NumberField({label: 'Consumer Sampled', kpi: 'samples', capture_mechanism: 'integer'})
 		)
 }
 
