@@ -9,3 +9,5 @@ li id="task_#{task.id}"
     = task.user_full_name
     br
     = link_to 'Comments', task_comments_path(task), remote: true, class: 'load-comments-link'
+    = simple_form_for task, remote: true do |f| 
+        = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}

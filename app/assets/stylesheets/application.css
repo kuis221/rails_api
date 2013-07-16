@@ -9,9 +9,13 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
+ *= require 'jquery-ui-1.10.3.custom'
  *= require twitter-bootstrap-static/bootstrap
  *= require bootstrap_and_overrides
  *= require 'jquery.datepick.css'
  *= require 'brandscopic.datepick.css'
  *= require 'brandscopic.less'
+ *= require 'date_ranges.less'
+ *= require 'day_parts.less'
+ *= require 'campaigns.less'
  */
