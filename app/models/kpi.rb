@@ -12,6 +12,8 @@
 #  updated_by_id     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  slug              :string(255)
+#  module            :string(255)      default("custom"), not null
 #
 
 class Kpi < ActiveRecord::Base
@@ -31,7 +33,7 @@ class Kpi < ActiveRecord::Base
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, numericality: true, allow_nil: true
 
-  validates :kpi_type, :inclusion => {:in => TYPE_OPTIONS.keys + ['promo_hours', 'photos', 'videos'],
+  validates :kpi_type, :inclusion => {:in => TYPE_OPTIONS.keys + ['promo_hours', 'events_count', 'photos', 'videos'],
     :message => "%{value} is not valid"}
 
   # Campaigns-KPIs relationship

@@ -12,6 +12,18 @@ class CampaignsController < FilteredController
 
   has_scope :with_text
 
+  def update_post_event_form
+    fields = params[:fields].dup
+    fields.each do |id, field|
+      field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
+    end
+    ActiveRecord::Base.transaction do
+      resource.form_fields_attributes = params[:fields]
+      resource.save
+    end
+    render text: resource.errors.inspect
+  end
+
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],

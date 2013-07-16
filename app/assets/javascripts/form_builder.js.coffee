@@ -2,7 +2,8 @@ window.FormBuilder = {
 	modules: [],
 
 	init: (options) ->
-		@fieldsContainer = $('#fields');
+		@options = options
+		@fieldsContainer = $('#fields')
 		@fieldAttrbituesContainer = $('#attributes')
 		@formWrapper = $('#form-wrapper')
 
@@ -42,11 +43,10 @@ window.FormBuilder = {
 			@renderModules response.modules, @fieldsContainer
 
 	saveForm:() ->
-		$.map $('div.field', @formWrapper), (fieldDiv, index) =>
-			$(fieldDiv).data('field').saveAttributes()
-
-
-
+		data = $.map $('div.field', @formWrapper), (fieldDiv, index) =>
+			$.extend({ordering: index}, $(fieldDiv).data('field').getSaveAttributes())
+		$.post @options.saveUrl, {fields: data}, (response) =>
+			alert 'posted'
 
 
 	registerModule: (module) ->
@@ -111,15 +111,17 @@ window.FormModule = {
 
 window.FormBuilder.TextField = (options) ->
 	@options = $.extend({
-		label: 'textField',
+		label: 'Text Field',
 		predefined_value: '',
 		kpi: '',
+		id: null,
+		remove: null,
 		type: 'text',
 	}, options)
 
 	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
 		$('<label class="control-label">').text(@options.label),
-		$('<div class="controls">').append $('<input type="text" value="'+@options.predefined_value+'">')
+		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
 
 	@field.data('field', @)
@@ -128,7 +130,10 @@ window.FormBuilder.TextField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label)
+				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.label = input.val()
+						@field.find('.control-label').text @options.label
 			],
 
 			$('<div class="control-group">').append [
@@ -145,11 +150,67 @@ window.FormBuilder.TextField = (options) ->
 			]).val(@options.predefined_value)
 		]
 
-	@saveAttributes = () ->
-		{prueba: true}
+	@getSaveAttributes = () ->
+		{name: @options.label, field_type: @options.type, kpi_id: @options.kpi, options: {capture_mechanism: 'integer', predefined_value: @options.predefined_value}}
 
 	@field
 
+
+window.FormBuilder.NumberField = (options) ->
+	@options = $.extend({
+		label: 'Number Field',
+		predefined_value: '',
+		capture_mechanism: '',
+		kpi: '',
+		id: null,
+		remove: null,
+		type: 'number',
+	}, options)
+
+	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
+		$('<label class="control-label">').text(@options.label),
+		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
+	]
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.label = input.val()
+						@field.find('.control-label').text @options.label
+			],
+
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Type'),
+				$('<div class="controls">').append $('<select name="type">').append([
+					$('<option value="text">Text</option>'),
+					$('<option value="number">Number</option>')
+				]).val(@options.type)
+			],
+
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Capture Mechanism'),
+				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
+					$('<option value="integer">Whole Number</option>'),
+					$('<option value="decimal">Decimal</option>')
+					$('<option value="money">Money</option>')
+				]).val(@options.capture_mechanism)
+			],
+
+			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Predefined Value'),
+				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.predefined_value+'">')
+			]).val(@options.predefined_value)
+		]
+
+	@getSaveAttributes = () ->
+		{name: @options.label, field_type: @options.type, kpi_id: @options.kpi, options: {capture_mechanism: 'integer', predefined_value: @options.predefined_value}}
+
+	@field
 
 
 window.FormBuilder.ParagraphField = (options) ->
