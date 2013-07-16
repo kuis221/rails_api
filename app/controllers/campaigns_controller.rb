@@ -8,10 +8,6 @@ class CampaignsController < FilteredController
 
   layout false, only: :kpis
 
-  load_and_authorize_resource except: :index
-
-  has_scope :with_text
-
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
