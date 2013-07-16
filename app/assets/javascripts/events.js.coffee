@@ -3,7 +3,6 @@ jQuery ->
     $(@form).submit()
 
   $(document).delegate 'a.load-comments-link', 'click', (e) ->
-    debugger
     $row = $(this).parents('li');
     if $("##{$row.attr('id')}_comments").length > 0
       $("##{$row.attr('id')}_comments").toggle()

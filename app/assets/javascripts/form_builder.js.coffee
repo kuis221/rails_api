@@ -42,6 +42,13 @@ window.FormBuilder = {
 		$.getJSON options.url, (response) =>
 			@renderModules response.modules, @fieldsContainer
 
+			for field in response.fields
+				debugger
+				if field.module? and @modules[field.module]
+					@formWrapper.append(@modules[field.module].element)
+
+			@formWrapper.sortable( "refresh" );
+
 	saveForm:() ->
 		data = $.map $('div.field', @formWrapper), (fieldDiv, index) =>
 			$.extend({ordering: index}, $(fieldDiv).data('field').getSaveAttributes())
@@ -88,15 +95,15 @@ window.FormModule = {
 		)
 
 	render: () ->
-		module = $('<div class="module module-'+@id+'">')
+		@element = $('<div class="module module-'+@id+'">')
 			.append(
 				$('<div class="icon-view">')
 					.append($('<i>',{class: "icon-#{@icon}"}))
 					.append($('<label>').text(@label))
 			)
 			.append(@_formView())
-		module.sortable({items: '.field'})
-		module
+		@element.sortable({items: '.field'})
+		@element
 
 	_formView:() ->
 		$('<div class="form-view">').append(
