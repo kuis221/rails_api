@@ -12,6 +12,8 @@
 #  updated_by_id     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  slug              :string(255)
+#  module            :string(255)      default("custom"), not null
 #
 
 require 'spec_helper'

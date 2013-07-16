@@ -7,15 +7,19 @@
 #  kpi_id      :integer
 #  ordering    :integer
 #  name        :string(255)
-#  type        :string(255)
+#  field_type  :string(255)
 #  options     :text
 #  section_id  :integer
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
 
-require 'spec_helper'
+class CampaignFormField < ActiveRecord::Base
+  belongs_to :campaign
+  belongs_to :kpi
+  attr_accessible :name, :options, :ordering, :section_id, :field_type, :kpi_id
 
-describe CampaignFormFields do
-  pending "add some examples to (or delete) #{__FILE__}"
+  serialize :options
+
+  delegate :slug, :name, :module, to: :kpi, allow_nil: true, prefix: true
 end
