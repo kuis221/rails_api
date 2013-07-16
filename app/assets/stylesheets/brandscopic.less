@@ -163,7 +163,7 @@ input[type="color"],
 a.edit:after{
 	background-color: none;
 	color: @app_bg;
-	content: "\e009";
+	content: "\e006";
 	font-family: 'icons';
 	font-size: 15px;
 	position: relative;
@@ -764,7 +764,7 @@ label{
 		}
 	}
 	a.edit:after{
-		content: "\e00c";
+		content: "\e006";
 		font-family: 'icons';
 		font-size: 18px;
 		margin-right: 10px;
@@ -1153,6 +1153,40 @@ table.table td.comments-container {
   color: #A0A0A0;
 }
 
+.tasks{
+	a.edit:after{
+		color: @brand ;
+		content: "\e006";
+		font-family: 'icons';
+		font-size: 18px;
+		margin-left: 12px;
+		position: relative;
+		speak:none;
+		text-align: right;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
+	a.edit:hover:after{
+		color: @grey_three;
+	}
+	a.disable:after{
+		color: @brand ;
+		content: "\e011";
+		font-family: 'icons';
+		font-size: 18px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
+	a.disable:hover:after{
+		color: @grey_three;
+	}
+}
+
 .task-counter-bar{
 	margin: 15px 0 15px 0;
 }
@@ -1177,10 +1211,11 @@ table.table td.comments-container {
 }
 
 .load-comments-link:before{
+	color: @brand;
 	content: "\e010";
   	display: inline-block;
   	font-family: 'icons';
-	font-size: 20px;
+	font-size: 18px;
 	left:3px;
 	padding-bottom:5px;
   	position: relative;
@@ -1188,6 +1223,9 @@ table.table td.comments-container {
 	text-align: center;
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
+}
+.load-comments-link:hover:before{
+	color: @grey_three;
 }
 
 .ui-autocomplete {
