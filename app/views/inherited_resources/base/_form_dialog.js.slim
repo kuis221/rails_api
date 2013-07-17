@@ -5,11 +5,6 @@
     bootbox.classes('#{@form_modal_class} #{resource.class.name.downcase}_modal');
     container = $('<div id="resource-form-modal">'+content+'</div>');
     resource_modal = bootbox.dialog(container,[],{'onEscape': true, animate: (!$.fx.off)});
-    resource_modal.css({
-        'margin-top': function () {
-          return window.pageYOffset;
-        }
-    });
   } else {
     container.html(content);
   }
