@@ -1,7 +1,7 @@
 object false
 
 node :fields do
-	@campaign.form_fields.includes(:kpi).map{|f| {id: f.id, kpi_id: f.kpi_id, kpi_slug: f.kpi_slug, module: f.kpi_module, ordering: f.ordering, name: f.name, type: f.field_type, options: f.options, section_id: f.section_id}}
+	@campaign.form_fields.includes({kpi: :kpis_segments}).map{|f| {id: f.id, kpi_id: f.kpi_id, kpi_slug: f.kpi_slug, module: f.kpi_module, segments: (f.kpi.present? ? f.kpi.kpis_segments.map(&:text): []), ordering: f.ordering, name: f.name, type: f.field_type, options: f.options, section_id: f.section_id}}
 end
 
 node :modules do
