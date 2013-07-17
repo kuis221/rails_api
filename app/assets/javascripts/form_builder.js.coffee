@@ -6,15 +6,28 @@ window.FormBuilder = {
 		@fieldsContainer = $('#fields')
 		@fieldAttrbituesContainer = $('#attributes')
 		@formWrapper = $('#form-wrapper')
+		@modulesList = $('<div>').appendTo @fieldsContainer
+		@genericFieldsList = $('<div>').appendTo @fieldsContainer
 
-		@formWrapper.sortable({
-			cancel: '.field, .empty-form-legend ',
-			receive: ( event, ui ) =>
-				ui.item
-		})
+		@formWrapper.sortable {
+			cancel: '.module .field, .empty-form-legend ',
+			update: ( event, ui ) ->
+				if not ui.item.data('field')
+					ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
 
-		#@renderModules @fieldsContainer
-		@_loadForm(options)
+		}
+
+		# Add generic fields
+		@genericFieldsList.append new FormBuilder.TextField({})
+		@genericFieldsList.append new FormBuilder.ParagraphField({})
+
+		@_loadForm options
+
+		@genericFieldsList.find('.field').draggable {
+			connectToSortable: "#form-wrapper",
+			helper: 'clone',
+			revert: true
+		}
 
 		$('#form-field-tabs a').click (e) ->
 		 	e.preventDefault()
@@ -54,6 +67,8 @@ window.FormBuilder = {
 					@formWrapper.append @modules['comments'].element
 					@modules['comments'].clearFields()
 					@modules['comments'].addField @buildField(field)
+				else
+					@formWrapper.append @buildField(field)
 
 				
 
@@ -78,7 +93,6 @@ window.FormBuilder = {
 		@modules[module.id] = module
 
 	renderModules: (enabledModules, container) ->
-		@modulesList = $('<div>').appendTo container
 		# for enabledModule, moduleFields of enabledModules
 		# 	module = @modules[enabledModule]
 		# 	if module?
@@ -158,7 +172,7 @@ window.FormBuilder.TextField = (options) ->
 		@options.capture_mechanism = options.options.capture_mechanism
 		@options.predefined_value = options.options.predefined_value
 
-	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
+	@field =  $('<div class="field control-group" data-class="TextField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
@@ -217,7 +231,7 @@ window.FormBuilder.NumberField = (options) ->
 		@options.capture_mechanism = options.options.capture_mechanism
 		@options.predefined_value = options.options.predefined_value
 
-	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
+	@field =  $('<div class="field control-group" data-class="NumberField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
@@ -262,13 +276,13 @@ window.FormBuilder.NumberField = (options) ->
 
 window.FormBuilder.ParagraphField = (options) ->
 	@options = $.extend({
-		label: 'Paragraph',
+		name: 'Paragraph',
 		predefined_value: '',
 		type: 'textarea',
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
-		$('<label class="control-label">').text(@options.label),
+	@field =  $('<div class="field control-group" data-class="ParagraphField">').append [
+		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
 	]
 
@@ -278,9 +292,15 @@ window.FormBuilder.ParagraphField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.label+'">')
+				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			]
 		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'textarea', kpi_id: @options.kpi_id, options: {}}
 
 	@field
 
@@ -290,7 +310,7 @@ window.FormBuilder.PhotosField = (options) ->
 		name: 'Select a file'
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
+	@field =  $('<div class="field control-group" data-class="PhotosField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<input type="file">')
 	]
@@ -318,7 +338,7 @@ window.FormBuilder.VideosField = (options) ->
 		name: 'Select a file'
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
+	@field =  $('<div class="field control-group" data-class="VideosField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<input type="file">')
 	]
@@ -350,7 +370,7 @@ window.FormBuilder.CountField = (options) ->
 		segments: []
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
+	@field =  $('<div class="field control-group" data-class="CountField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">')
 	]
@@ -409,7 +429,7 @@ window.FormBuilder.CommentsField = (options) ->
 		type: 'comments',
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
+	@field =  $('<div class="field control-group" data-class="CommentsField">').append [
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
 	]

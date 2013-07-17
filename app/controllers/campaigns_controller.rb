@@ -14,7 +14,7 @@ class CampaignsController < FilteredController
       field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
     end
     ActiveRecord::Base.transaction do
-      resource.form_fields_attributes = params[:fields]
+      resource.form_fields_attributes = fields
       resource.save
     end
     render text: resource.errors.inspect
