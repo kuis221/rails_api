@@ -1,0 +1,12 @@
+- if resource.errors.any?
+  |
+    bootbox.alert('Unknown error')
+- else
+	- if action_name == 'activate_kpi'
+	  |
+	    $('#activate-btn-#{@kpi.id}').addClass('active btn-success');
+	    $('#deactivate-btn-#{@kpi.id}').removeClass('active').removeClass('btn-danger');
+	- else
+	  |
+	    $('#activate-btn-#{@kpi.id}').removeClass('active').removeClass('btn-success');
+	    $('#deactivate-btn-#{@kpi.id}').addClass('active btn-danger');

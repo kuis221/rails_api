@@ -45,4 +45,9 @@ class Kpi < ActiveRecord::Base
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company) }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
 
+  searchable do
+    text :name, stored: true
+    string :name
+    integer :company_id
+  end
 end
