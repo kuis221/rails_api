@@ -7,8 +7,10 @@ PhotosModule = $.extend {}, FormModule, {
 
 	_renderFormFields: () ->
 		[
-			$('<div><i class="icon-picture"></i><i class="icon-picture"></i><i class="icon-picture"></i></div>')
-			new FormBuilder.FileUploadField({label: 'Select a Photo'})
+			$('<div><i class="icon-picture"></i><i class="icon-picture"></i><i class="icon-picture"></i></div>'),
+			$('<div class="module-fields">').append(
+				new FormBuilder.PhotosField({name: 'Select a Photo', kpi_id: 'photos'})
+			)
 		]
 
 }

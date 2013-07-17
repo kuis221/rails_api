@@ -87,6 +87,14 @@ class Task < ActiveRecord::Base
     self.updated_at
   end
 
+  def statuses
+    status = []
+    status.push active? ? 'Active' : 'Inactive'
+    status.push completed? ? 'Completed' : 'Incomplete'
+    status.push assigned? ? 'Assigned' : 'Unassigned'
+    status
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

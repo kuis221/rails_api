@@ -24,8 +24,8 @@ class Kpi < ActiveRecord::Base
 
   scoped_to_company
 
-  TYPE_OPTIONS = {"number" => ["integer", "decimal", "money"],
-                  "count" => ["radio", "dropdown", "checkbox"],
+  TYPE_OPTIONS = {"number"     => ["integer", "decimal", "currency"],
+                  "count"      => ["radio", "dropdown", "checkbox"],
                   "percentage" => ["integer", "decimal"]}
 
   attr_accessible :name, :description, :kpi_type, :capture_mechanism, :kpis_segments_attributes
