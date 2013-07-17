@@ -30,6 +30,32 @@ class CampaignsController < FilteredController
     render :json => buckets.flatten
   end
 
+  def find_similar_kpi
+    search = Sunspot.search(Kpi) do
+      keywords(params[:name]) do
+        fields(:name)
+      end
+      with(:company_id, [-1, current_company.id])
+    end
+    render json: search.results
+  end
+
+  def activate_kpi
+    @kpi = Kpi.find(params[:kpi_id])
+    resource.kpis << @kpi unless campaign_has_kpi?(@kpi)
+    render :toggle
+  end
+
+  def deactivate_kpi
+    @kpi = Kpi.find(params[:kpi_id])
+    resource.kpis.delete @kpi
+    render :toggle
+  end
+
+  def campaign_has_kpi?(kpi)
+    resource.kpis.include?(kpi)
+  end
+
   protected
     def facets
       @facets ||= Array.new.tap do |f|

@@ -47,7 +47,7 @@ class Campaign < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   # Campaigns-KPIs relationship
-  has_and_belongs_to_many :kpis
+  has_and_belongs_to_many :kpis, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
   accepts_nested_attributes_for :form_fields

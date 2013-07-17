@@ -5,6 +5,8 @@
   .form-inputs
     .row-fluid
       = f.input :name
+      #similar-kpi-message style="display: none"
+        span id="duplicated-name"
 
     .row-fluid
       = f.input :description, :input_html => {:rows => 1}
@@ -46,9 +48,22 @@ javascript:
             case 'number':
               $('#kpisegment-fields').hide();
               break;
-            case 'count' || 'percentage':
+            case 'count':
+            case 'percentage':
               $('#kpisegment-fields').show();
               break;
         }
+      }
+    });
+
+    $('#kpi_name').focusout(function(){
+      $('#similar-kpi-message').hide();
+      if (name = $(this).val()) {
+        $.post('#{find_similar_kpi_campaign_path(parent)}', {name: name}, function(data){
+          if (!jQuery.isEmptyObject(data)) {
+            $('#similar-kpi-message').text('There may be a duplicated called ' + data[0].name);
+            $('#similar-kpi-message').show();
+          }
+        });
       }
     });
