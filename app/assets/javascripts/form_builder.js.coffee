@@ -376,7 +376,10 @@ window.FormBuilder.CountField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">')
+				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			],
 
 			$('<div class="control-group">').append [
@@ -416,7 +419,10 @@ window.FormBuilder.CommentsField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">')
+				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			]
 		]
 
