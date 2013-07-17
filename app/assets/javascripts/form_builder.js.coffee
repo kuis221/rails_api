@@ -345,6 +345,7 @@ window.FormBuilder.CountField = (options) ->
 	@options = $.extend({
 		name: 'Option Field',
 		predefined_value: '',
+		capture_mechanism: 'dropdown',
 		type: 'count',
 		segments: []
 	}, options)
@@ -360,10 +361,10 @@ window.FormBuilder.CountField = (options) ->
 				$('<select>').append $.map(@options.segments, (segment, index) => $("<option>#{segment}</option>"))
 			)
 		else if @options.capture_mechanism is 'radio'
-			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=radio />#{segment}</label>"))
+			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=radio name=\"#{@options.name}\" readonly=readonly />#{segment}</label>"))
 
 		else if @options.capture_mechanism is 'checkbox'
-			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=checkbox />#{segment}</label>"))
+			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=checkbox readonly=readonly />#{segment}</label>"))
 
 		true
 
@@ -396,7 +397,7 @@ window.FormBuilder.CountField = (options) ->
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: {}}
+		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism}}
 
 	@field
 
