@@ -41,6 +41,30 @@ jQuery ->
         mapTypeId: google.maps.MapTypeId.ROADMAP
       }
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+
+      styles = [
+        {
+          stylers: [
+            { hue: "#00ffe6" },
+            { saturation: -20 }
+          ]
+        },{
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [
+            { lightness: 100 },
+            { visibility: "simplified" }
+          ]
+        },{
+          featureType: "road",
+          elementType: "labels",
+          stylers: [
+            { visibility: "off" }
+          ]
+        }
+      ]
+
+      map.setOptions {styles: styles}
     else
       google.maps.event.trigger map, 'resize'
     placeMarkers()

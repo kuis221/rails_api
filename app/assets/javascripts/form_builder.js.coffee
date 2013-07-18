@@ -395,7 +395,7 @@ window.FormBuilder.CountField = (options) ->
 	@renderInput()
 
 
-	@field.data('field', @)
+	@field.data 'field', @
 
 	@attributesForm = () ->
 		[
@@ -425,6 +425,58 @@ window.FormBuilder.CountField = (options) ->
 
 	@field
 
+
+window.FormBuilder.PercentageField = (options) ->
+	@options = $.extend({
+		name: 'Option Field',
+		predefined_value: '',
+		capture_mechanism: 'integer',
+		type: 'percentage',
+		segments: []
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="PercentageField">').append [
+		$('<label class="control-label">').text(@options.name),
+		$('<div class="controls">')
+	]
+
+	@renderInput = () ->
+		@field.find('.controls').html('')
+			.append($.map(@options.segments, (segment, index) => $("<label><div class=\"input-append\"><input type=text value=\"0\" class=\"input-micro\" name=\"#{@options.name}\" readonly=readonly /><span class=\"add-on\">%</span></div> #{segment}</label>")))
+			.append($("<label><div class=\"input-append\"><input type=text value=\"0\" class=\"input-micro\" name=\"#{@options.name}\" readonly=readonly /><span class=\"add-on\">%</span></div> Total</label>"))
+
+		true
+
+	@renderInput()
+
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
+			],
+
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Capture Mechanism'),
+				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
+					$('<option value="integer">Whole Number</option>'),
+					$('<option value="decimal">Decimal</option>')
+				]).val(@options.capture_mechanism).on 'change', (e) =>
+						input = $(e.target)
+						@options.capture_mechanism = input.val()
+			],
+		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'percentage', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism}}
+
+	@field
 
 window.FormBuilder.CommentsField = (options) ->
 	@options = $.extend({
