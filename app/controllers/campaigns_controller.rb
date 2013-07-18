@@ -14,10 +14,15 @@ class CampaignsController < FilteredController
       field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
     end
     ActiveRecord::Base.transaction do
+      field_ids = fields.map{|index, f| f['id'].try(:to_i)}.compact
+      resource.form_fields.each do |f|
+        f.mark_for_destruction unless field_ids.include?(f.id)
+      end
       resource.form_fields_attributes = fields
       resource.save
+      Rails.logger.debug "#{field_ids.inspect}"
     end
-    render text: resource.errors.inspect
+    render text: 'OK'
   end
 
   def autocomplete

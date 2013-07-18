@@ -19,7 +19,7 @@ window.FormBuilder = {
 
 		# Add generic fields
 		@genericFieldsList.append new FormBuilder.TextField({})
-		@genericFieldsList.append new FormBuilder.ParagraphField({})
+		@genericFieldsList.append new FormBuilder.TextareaField({})
 
 		@_loadForm options
 
@@ -45,6 +45,8 @@ window.FormBuilder = {
 		@formWrapper.on 'click', '.delete-module', (e) =>
 			module = $($(e.target).parents('.module')[0])
 			module.appendTo @modulesList
+		@formWrapper.on 'click', '.delete-field', (e) =>
+			$(e.target).parents('.field').remove()
 
 		$('#save-post-event-form').click (e) =>
 			@saveForm()
@@ -173,6 +175,7 @@ window.FormBuilder.TextField = (options) ->
 		@options.predefined_value = options.options.predefined_value
 
 	@field =  $('<div class="field control-group" data-class="TextField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
@@ -274,14 +277,15 @@ window.FormBuilder.NumberField = (options) ->
 	@field
 
 
-window.FormBuilder.ParagraphField = (options) ->
+window.FormBuilder.TextareaField = (options) ->
 	@options = $.extend({
 		name: 'Paragraph',
 		predefined_value: '',
 		type: 'textarea',
 	}, options)
 
-	@field =  $('<div class="field control-group" data-class="ParagraphField">').append [
+	@field =  $('<div class="field control-group" data-class="TextareaField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
 	]

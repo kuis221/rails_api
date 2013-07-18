@@ -1,5 +1,4 @@
 #post-event-form-builder {
-	position: relative;
 	background-color: #fff;
 	border: 1px solid #ccc;
 	width: 850px;
@@ -22,10 +21,9 @@
 	}
 
 	.fields-sidebar {
-		position: absolute;
+		display: inline-block;
 		width: 300px;
-		top: 10px;
-		bottom: 0px;
+		float: left;
 
 		.tab-content {
 			border: 1px solid #ccc;
@@ -56,10 +54,10 @@
 	}
 
 	#form-wrapper {
-		float: left;
-		margin-left: 310px;
+		display: inline-block;
 		width: 500px;
 		min-height: 500px;
+		margin-left: 15px;
 
 		div.empty-form-legend {
 			display: none;

@@ -117,7 +117,10 @@
 
     $(document).on('events:change', function(){
       window.location.reload(false);
-    })
+    });
     $(document).on('tasks:change', function(){
       $('#event-tasks-container').load('#{tasks_event_path(resource)}')
-    })
+    });
+    $(document).on('members:change', function(){
+      $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
+    });
