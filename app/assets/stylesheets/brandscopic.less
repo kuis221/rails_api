@@ -726,11 +726,13 @@ label{
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @user_menu;
- 	clear:both;
  	color: @brand;
+ 	float: left;
  	font-size: 11px;
     margin: 14px 0 0 0;
     padding: 0;
+    position: relative;
+    width:100%;
     address{
     	margin-bottom: 0;
     }
@@ -795,6 +797,42 @@ label{
 		text-shadow:none;
 		top:1px;
 		-webkit-font-smoothing: antialiased;
+	}
+	.checker{
+		background-color: @user_menu;
+		display: inline-block;
+		float:left;
+		height: 20px;
+		margin:1px 5px 0 -32px;
+		padding: 0;
+		width:20px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		span.checked{
+			background-color: @brand;
+			display: block;
+			height: 20px;
+			margin: 0;
+			padding:0;
+			width: 20px;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+		span.checked:after{
+			color: white;
+			content: "\e00f";
+			font-family: 'icons';
+			font-size: 14px;
+			left:3px;
+			position: relative;
+			top:-3px;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
 }
 
@@ -1212,46 +1250,10 @@ table.table td.comments-container {
 		font-weight: 400px;
 		letter-spacing: -0.5px;
 		line-height: 28px;
-		padding: 0 15px 0 30px;
 	}
-}
-
-.link-list{
-	.checker{
-		background-color: @user_menu;
-		display: inline-block;
-		float:left;
-		height: 20px;
-		margin:1px 5px 0 -32px;
-		padding: 0;
-		width:20px;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
-		span.checked{
-			background-color: @brand;
-			display: block;
-			height: 20px;
-			margin: 0;
-			padding:0;
-			width: 20px;
-			-webkit-border-radius: 5px;
-			-moz-border-radius: 5px;
-			border-radius: 5px;
-		}
-		span.checked:after{
-			color: white;
-			content: "\e00f";
-			font-family: 'icons';
-			font-size: 14px;
-			left:3px;
-			position: relative;
-			top:-3px;
-			speak:none;
-			text-align: center;
-			text-shadow:none;
-			-webkit-font-smoothing: antialiased;
-		}
+	.main{
+		-webkit-border-radius: 0px 7px 7px 7px;
+        border-radius: 0px 7px 7px 7px;	
 	}
 }
 
