@@ -43,6 +43,14 @@ module TeamMembersHelper
       end
     end
 
+    def members
+      render layout: false
+    end
+
+    def teams
+      render layout: false
+    end
+
     private
       def member
         begin

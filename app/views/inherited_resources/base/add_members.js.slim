@@ -1,19 +1,6 @@
-- if resource.is_a?(Event)
-  |
-    $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
-- elsif resource.is_a?(Team)
-  |
-    teamMembersTable.tableScroller('reloadData');
-- elsif resource.is_a?(Campaign)
-  - if @member_id
-    |
-      staffMembersTable.tableScroller('reloadData');
-  - if @team_id
-    |
-      teamMembersTable.tableScroller('reloadData');
-|
 - if @member_id
   |
+    $(document).trigger('members:change');
     if ($('table#select-users-list tr#user-#{@member_id}').length){
       pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{@member_id}')[0]);
       if (pos!== null){
@@ -22,6 +9,7 @@
     }
 - if @team_id
   |
+    $(document).trigger('teams:change');
     if ($('table#select-teams-list tr#team-#{@team_id}').length){
       pos = selectTeamsTable.fnGetPosition($('table#select-teams-list tr#team-#{@team_id}')[0]);
       if (pos!== null){
