@@ -14,7 +14,7 @@ table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
           div.btn-group.active-deactive-toggle
             = link_to 'On', activate_kpi_campaign_path(resource.id, kpi.id), remote: true, method: :post, id: "activate-btn-#{kpi.id}", class: "btn btn-small set-on-btn"+(kpi_ids.include?(kpi.id) ? " btn-success active" : "")
             = link_to 'Off', deactivate_kpi_campaign_path(resource.id, kpi.id), remote: true,  method: :post, id: "deactivate-btn-#{kpi.id}", class: "btn btn-small set-off-btn"+(kpi_ids.include?(kpi.id) ? "" : " btn-danger active")
-        td= kpi.name
+        td= link_to kpi.name, edit_campaign_kpi_path(resource, kpi.id), remote: true
         td= kpi.description
         td
 

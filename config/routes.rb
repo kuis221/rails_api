@@ -64,7 +64,7 @@ Brandscopic::Application.routes.draw do
 
   resources :campaigns do
     resources :brands, only: [:index]
-    resources :kpis, only: [:new, :create]
+    resources :kpis, only: [:new, :create, :edit, :update]
     get :autocomplete, on: :collection
     member do
       get :post_event_form

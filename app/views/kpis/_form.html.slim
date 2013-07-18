@@ -12,7 +12,7 @@
       = f.input :description, :input_html => {:rows => 1}
 
     .row-fluid
-      = f.input :kpi_type, input_html: {class: 'input-large'}, collection: Kpi::TYPE_OPTIONS.keys.map{|d| [d.capitalize, d]}
+      = f.input :kpi_type, input_html: {class: 'input-large'}, collection: Kpi::TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
 
     #kpisegment-fields.row-fluid style="display: none"
       = f.fields_for :kpis_segments do |kf|
@@ -22,7 +22,7 @@
       p= f.link_to_add "Add a segment", :kpis_segments
 
     .row-fluid
-      = f.input :capture_mechanism, as: :select, input_html: {class: 'input-large'}, collection: []
+      = f.input :capture_mechanism, as: :select, input_html: {class: 'input-large'}, collection: resource.kpi_type.blank? ? [] : Kpi::TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}
 
   .form-actions
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
@@ -31,35 +31,33 @@
 
 javascript:
     var captureOptions = #{Kpi::TYPE_OPTIONS.to_json.html_safe}
-    $('#kpi_kpi_type').change(function(){
-      var capture = $('#kpi_capture_mechanism');
+
+    $(document).ready(function() {
+      kpiType = $('#kpi_kpi_type').val();
+      toggleSegments(kpiType);
+    });
+
+    $('#kpi_kpi_type').change(function() {
+      capture = $('#kpi_capture_mechanism');
       capture.empty();
-      var optionSelected = this.value;
-      if (optionSelected) {
-        options = captureOptions[optionSelected];
+      selectedOption = this.value;
+      if (selectedOption) {
+        options = captureOptions[selectedOption];
         for(var i = 0; i < options.length; i++) {
           capture.append($("<option/>", {
               value: options[i],
-              text: options[i]
+              text: capitalize(options[i])
           }));
         }
 
-        switch (optionSelected) {
-            case 'number':
-              $('#kpisegment-fields').hide();
-              break;
-            case 'count':
-            case 'percentage':
-              $('#kpisegment-fields').show();
-              break;
-        }
+        toggleSegments(selectedOption);
       }
     });
 
-    $('#kpi_name').focusout(function(){
+    $('#kpi_name').focusout(function() {
       $('#similar-kpi-message').hide();
       if (name = $(this).val()) {
-        $.post('#{find_similar_kpi_campaign_path(parent)}', {name: name}, function(data){
+        $.post('#{find_similar_kpi_campaign_path(parent)}', {name: name}, function(data) {
           if (!jQuery.isEmptyObject(data)) {
             $('#similar-kpi-message').text('There may be a duplicated called ' + data[0].name);
             $('#similar-kpi-message').show();
@@ -67,3 +65,21 @@ javascript:
         });
       }
     });
+
+    function toggleSegments(option) {
+      if (option) {
+        switch (option) {
+          case 'number':
+            $('#kpisegment-fields').hide();
+            break;
+          case 'count':
+          case 'percentage':
+            $('#kpisegment-fields').show();
+            break;
+        }
+      }
+    }
+
+    function capitalize(text) {
+      return text.substr(0,1).toUpperCase() + text.substr(1);
+    }
