@@ -88,7 +88,7 @@ jQuery ->
 			if $filterSidebar.positioning
 				return true
 			$filterSidebar.positioning = true
-			sidebarBottom = $filterSidebar.height()+$filterSidebar.originalTop;
+			sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
 			bottomPosition = $window.scrollTop()+$window.height()
 			footerHeight = $('footer').outerHeight()
 

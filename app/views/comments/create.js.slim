@@ -1,6 +1,6 @@
 - if resource.errors.empty?
 	|
-		$("#task_#{parent.id}_comments td").html('#{escape_javascript(render('comments_list'))}')
+		$("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
 - else
 	= resource.errors.inspect
 	|

@@ -8,7 +8,9 @@ VideosModule = $.extend {}, FormModule, {
 	_renderFormFields: () ->
 		[
 			$('<div><i class="icon-facetime-video"></i><i class="icon-facetime-video"></i><i class="icon-facetime-video"></i></div>'),
-			new FormBuilder.FileUploadField({label: 'Select a Video'})
+			$('<div class="module-fields">').append(
+				new FormBuilder.VideosField({label: 'Select a Video', kpi_id: 'videos'})
+			)
 		]
 
 }

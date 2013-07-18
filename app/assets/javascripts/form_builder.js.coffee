@@ -6,15 +6,28 @@ window.FormBuilder = {
 		@fieldsContainer = $('#fields')
 		@fieldAttrbituesContainer = $('#attributes')
 		@formWrapper = $('#form-wrapper')
+		@modulesList = $('<div>').appendTo @fieldsContainer
+		@genericFieldsList = $('<div>').appendTo @fieldsContainer
 
-		@formWrapper.sortable({
-			cancel: '.field, .empty-form-legend ',
-			receive: ( event, ui ) =>
-				ui.item
-		})
+		@formWrapper.sortable {
+			cancel: '.module .field, .empty-form-legend ',
+			update: ( event, ui ) ->
+				if not ui.item.data('field')
+					ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
 
-		#@renderModules @fieldsContainer
-		@_loadForm(options)
+		}
+
+		# Add generic fields
+		@genericFieldsList.append new FormBuilder.TextField({})
+		@genericFieldsList.append new FormBuilder.TextareaField({})
+
+		@_loadForm options
+
+		@genericFieldsList.find('.field').draggable {
+			connectToSortable: "#form-wrapper",
+			helper: 'clone',
+			revert: true
+		}
 
 		$('#form-field-tabs a').click (e) ->
 		 	e.preventDefault()
@@ -32,6 +45,8 @@ window.FormBuilder = {
 		@formWrapper.on 'click', '.delete-module', (e) =>
 			module = $($(e.target).parents('.module')[0])
 			module.appendTo @modulesList
+		@formWrapper.on 'click', '.delete-field', (e) =>
+			$(e.target).parents('.field').remove()
 
 		$('#save-post-event-form').click (e) =>
 			@saveForm()
@@ -43,24 +58,43 @@ window.FormBuilder = {
 			@renderModules response.modules, @fieldsContainer
 
 			for field in response.fields
-				debugger
 				if field.module? and @modules[field.module]
-					@formWrapper.append(@modules[field.module].element)
+					if !@modules[field.module]._loaded
+						@modules[field.module]._loaded = true
+						@formWrapper.append @modules[field.module].element
+						@modules[field.module].clearFields()
+					@modules[field.module].addField @buildField(field)
+				else if field.type is 'comments'
+					@modules['comments']._loaded = true
+					@formWrapper.append @modules['comments'].element
+					@modules['comments'].clearFields()
+					@modules['comments'].addField @buildField(field)
+				else
+					@formWrapper.append @buildField(field)
 
-			@formWrapper.sortable( "refresh" );
+				
 
-	saveForm:() ->
+
+			@formWrapper.sortable "refresh"
+
+	buildField: (options) ->
+		className = options.type;
+		className = 'FormBuilder.' + className.charAt(0).toUpperCase() + className.substring(1).toLowerCase() + 'Field'
+		eval "var field = new #{className}(options)"
+		field
+
+
+	saveForm: () ->
 		data = $.map $('div.field', @formWrapper), (fieldDiv, index) =>
-			$.extend({ordering: index}, $(fieldDiv).data('field').getSaveAttributes())
+			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
 		$.post @options.saveUrl, {fields: data}, (response) =>
-			alert 'posted'
+			alert response
 
 
 	registerModule: (module) ->
 		@modules[module.id] = module
 
 	renderModules: (enabledModules, container) ->
-		@modulesList = $('<div>').appendTo container
 		# for enabledModule, moduleFields of enabledModules
 		# 	module = @modules[enabledModule]
 		# 	if module?
@@ -101,8 +135,9 @@ window.FormModule = {
 					.append($('<i>',{class: "icon-#{@icon}"}))
 					.append($('<label>').text(@label))
 			)
-			.append(@_formView())
-		@element.sortable({items: '.field'})
+			.append @_formView()
+
+		@element.sortable {items: '.field'}
 		@element
 
 	_formView:() ->
@@ -112,22 +147,36 @@ window.FormModule = {
 		).append(@_renderFormFields())
 
 	draggableHelper: () ->
-		$('<div class="draggable-helper">').append(@_formView())
+		$('<div class="draggable-helper">').append @_formView()
+
+
+	clearFields: () ->
+		@element.find('.module-fields').html ''
+
+	addField: (field) ->
+		@element.find('.module-fields').append field
+
 }
 
 
 window.FormBuilder.TextField = (options) ->
 	@options = $.extend({
-		label: 'Text Field',
+		name: 'Text Field',
 		predefined_value: '',
-		kpi: '',
+		kpi_id: null,
 		id: null,
+		capture_mechanism: 'text',
 		remove: null,
 		type: 'text',
 	}, options)
 
-	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
-		$('<label class="control-label">').text(@options.label),
+	if options.options?
+		@options.capture_mechanism = options.options.capture_mechanism
+		@options.predefined_value = options.options.predefined_value
+
+	@field =  $('<div class="field control-group" data-class="TextField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
+		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
 
@@ -137,45 +186,56 @@ window.FormBuilder.TextField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label).on 'keyup', (e) =>
+				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
-						@options.label = input.val()
-						@field.find('.control-label').text @options.label
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			],
 
 			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Field Type'),
-				$('<div class="controls">').append $('<select name="type">').append([
+				$('<label class="control-label">').text('Capture Mechanism'),
+				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="text">Text</option>'),
-					$('<option value="number">Number</option>')
-				]).val(@options.type)
+					$('<option value="integer">Number</option>'),
+					$('<option value="decimal">Decimal</option>')
+					$('<option value="currency">Money</option>')
+				]).val(@options.capture_mechanism).on 'change', (e) =>
+						input = $(e.target)
+						@options.capture_mechanism = input.val()
 			],
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
 				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.predefined_value+'">')
-			]).val(@options.predefined_value)
+			]).val(@options.predefined_value).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.predefined_value = input.val()
+						@field.find('input').val @options.predefined_value
 		]
 
 	@getSaveAttributes = () ->
-		{name: @options.label, field_type: @options.type, kpi_id: @options.kpi, options: {capture_mechanism: 'integer', predefined_value: @options.predefined_value}}
+		{id: @options.id, name: @options.name, field_type: 'text', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism, predefined_value: @options.predefined_value}}
 
 	@field
 
 
 window.FormBuilder.NumberField = (options) ->
 	@options = $.extend({
-		label: 'Number Field',
+		name: 'Number Field',
 		predefined_value: '',
 		capture_mechanism: '',
-		kpi: '',
+		kpi_id: null,
 		id: null,
 		remove: null,
 		type: 'number',
 	}, options)
 
-	@field =  $('<div class="field control-group" data-kpi="'+@options.kpi+'">').append [
-		$('<label class="control-label">').text(@options.label),
+	if options.options?
+		@options.capture_mechanism = options.options.capture_mechanism
+		@options.predefined_value = options.options.predefined_value
+
+	@field =  $('<div class="field control-group" data-class="NumberField">').append [
+		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
 
@@ -185,18 +245,10 @@ window.FormBuilder.NumberField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label).on 'keyup', (e) =>
+				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
-						@options.label = input.val()
-						@field.find('.control-label').text @options.label
-			],
-
-			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Type'),
-				$('<div class="controls">').append $('<select name="type">').append([
-					$('<option value="text">Text</option>'),
-					$('<option value="number">Number</option>')
-				]).val(@options.type)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			],
 
 			$('<div class="control-group">').append [
@@ -204,31 +256,37 @@ window.FormBuilder.NumberField = (options) ->
 				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="integer">Whole Number</option>'),
 					$('<option value="decimal">Decimal</option>')
-					$('<option value="money">Money</option>')
-				]).val(@options.capture_mechanism)
+					$('<option value="currency">Money</option>')
+				]).val(@options.capture_mechanism).on 'change', (e) =>
+						input = $(e.target)
+						@options.capture_mechanism = input.val()
 			],
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
 				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.predefined_value+'">')
-			]).val(@options.predefined_value)
+			]).val(@options.predefined_value).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.predefined_value = input.val()
+						@field.find('input').val @options.predefined_value
 		]
 
 	@getSaveAttributes = () ->
-		{name: @options.label, field_type: @options.type, kpi_id: @options.kpi, options: {capture_mechanism: 'integer', predefined_value: @options.predefined_value}}
+		{id: @options.id, name: @options.name, field_type: @options.type, kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism, predefined_value: @options.predefined_value}}
 
 	@field
 
 
-window.FormBuilder.ParagraphField = (options) ->
+window.FormBuilder.TextareaField = (options) ->
 	@options = $.extend({
-		label: 'Paragraph',
+		name: 'Paragraph',
 		predefined_value: '',
 		type: 'textarea',
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
-		$('<label class="control-label">').text(@options.label),
+	@field =  $('<div class="field control-group" data-class="TextareaField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
+		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
 	]
 
@@ -238,20 +296,26 @@ window.FormBuilder.ParagraphField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.label+'">')
+				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			]
 		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'textarea', kpi_id: @options.kpi_id, options: {}}
 
 	@field
 
 
-window.FormBuilder.FileUploadField = (options) ->
+window.FormBuilder.PhotosField = (options) ->
 	@options = $.extend({
-		label: 'Select a file'
+		name: 'Select a file'
 	}, options)
 
-	@field =  $('<div class="field control-group">').append [
-		$('<label class="control-label">').text(@options.label),
+	@field =  $('<div class="field control-group" data-class="PhotosField">').append [
+		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<input type="file">')
 	]
 
@@ -261,8 +325,133 @@ window.FormBuilder.FileUploadField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.label)
+				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
 			]
 		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'photos', kpi_id: @options.kpi_id, options: {}}
+
+	@field
+
+window.FormBuilder.VideosField = (options) ->
+	@options = $.extend({
+		name: 'Select a file'
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="VideosField">').append [
+		$('<label class="control-label">').text(@options.name),
+		$('<div class="controls">').append $('<input type="file">')
+	]
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
+			]
+		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'videos', kpi_id: @options.kpi_id, options: {}}
+
+	@field
+
+window.FormBuilder.CountField = (options) ->
+	@options = $.extend({
+		name: 'Option Field',
+		predefined_value: '',
+		capture_mechanism: 'dropdown',
+		type: 'count',
+		segments: []
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="CountField">').append [
+		$('<label class="control-label">').text(@options.name),
+		$('<div class="controls">')
+	]
+
+	@renderInput = () ->
+		if @options.capture_mechanism is 'dropdown'
+			@field.find('.controls').html('').append(
+				$('<select>').append $.map(@options.segments, (segment, index) => $("<option>#{segment}</option>"))
+			)
+		else if @options.capture_mechanism is 'radio'
+			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=radio name=\"#{@options.name}\" readonly=readonly />#{segment}</label>"))
+
+		else if @options.capture_mechanism is 'checkbox'
+			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=checkbox readonly=readonly />#{segment}</label>"))
+
+		true
+
+	@renderInput()
+
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
+			],
+
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Capture Mechanism'),
+				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
+					$('<option value="radio">Radio</option>'),
+					$('<option value="dropdown">DropDown</option>')
+					$('<option value="checkbox">Checkbox</option>')
+				]).val(@options.capture_mechanism).on 'change', (e) =>
+						input = $(e.target)
+						@options.capture_mechanism = input.val()
+						@renderInput()
+			],
+		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism}}
+
+	@field
+
+
+window.FormBuilder.CommentsField = (options) ->
+	@options = $.extend({
+		name: 'Your Comment',
+		predefined_value: '',
+		type: 'comments',
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="CommentsField">').append [
+		$('<label class="control-label">').text(@options.name),
+		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
+	]
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
+			]
+		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'comments', kpi_id: @options.kpi_id, options: {}}
 
 	@field

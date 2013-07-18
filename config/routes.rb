@@ -64,7 +64,7 @@ Brandscopic::Application.routes.draw do
 
   resources :campaigns do
     resources :brands, only: [:index]
-    resources :kpis, only: [:new, :create]
+    resources :kpis, only: [:new, :create, :edit, :update]
     get :autocomplete, on: :collection
     member do
       get :post_event_form
@@ -72,10 +72,15 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :kpis
+      post :find_similar_kpi
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'campaigns#new_member', via: :get, as: :new_member
       match 'members' => 'campaigns#add_members', via: :post, as: :add_member
+      match 'members' => 'campaigns#members', via: :get, as: :members
+      match 'teams' => 'campaigns#teams', via: :get, as: :teams
+      match 'kpis/:kpi_id/activate' => 'campaigns#activate_kpi', via: :post, as: :activate_kpi
+      match 'kpis/:kpi_id/deactivate' => 'campaigns#deactivate_kpi', via: :post, as: :deactivate_kpi
     end
   end
 

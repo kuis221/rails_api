@@ -6,7 +6,9 @@ CommentsModule = $.extend {}, FormModule, {
 	icon: 'comments',
 
 	_renderFormFields: () ->
-		new FormBuilder.ParagraphField({label: 'Your Comment'})
+		$('<div class="module-fields">').append(
+			new FormBuilder.CommentsField({label: 'Your Comment', kpi_id: ''})
+		)
 }
 
 FormBuilder.registerModule CommentsModule

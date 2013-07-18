@@ -14,10 +14,15 @@ class CampaignsController < FilteredController
       field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
     end
     ActiveRecord::Base.transaction do
-      resource.form_fields_attributes = params[:fields]
+      field_ids = fields.map{|index, f| f['id'].try(:to_i)}.compact
+      resource.form_fields.each do |f|
+        f.mark_for_destruction unless field_ids.include?(f.id)
+      end
+      resource.form_fields_attributes = fields
       resource.save
+      Rails.logger.debug "#{field_ids.inspect}"
     end
-    render text: resource.errors.inspect
+    render text: 'OK'
   end
 
   def autocomplete
@@ -28,6 +33,32 @@ class CampaignsController < FilteredController
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
+  end
+
+  def find_similar_kpi
+    search = Sunspot.search(Kpi) do
+      keywords(params[:name]) do
+        fields(:name)
+      end
+      with(:company_id, [-1, current_company.id])
+    end
+    render json: search.results
+  end
+
+  def activate_kpi
+    @kpi = Kpi.find(params[:kpi_id])
+    resource.kpis << @kpi unless campaign_has_kpi?(@kpi)
+    render :toggle
+  end
+
+  def deactivate_kpi
+    @kpi = Kpi.find(params[:kpi_id])
+    resource.kpis.delete @kpi
+    render :toggle
+  end
+
+  def campaign_has_kpi?(kpi)
+    resource.kpis.include?(kpi)
   end
 
   protected

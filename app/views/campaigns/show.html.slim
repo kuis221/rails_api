@@ -22,7 +22,7 @@
           h2 USERS
 
       #staff-content.collapse.in
-        .box-content
+        #users-container.box-content
           = render 'users'
 
   .row-fluid
@@ -32,7 +32,7 @@
           h2 TEAMS
 
       #team-content.collapse.in
-        .box-content
+        #teams-container.box-content
           = render 'teams'
 
   .row-fluid
@@ -58,11 +58,20 @@
 javascript:
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
-  })
+  });
 
   $(document).on('kpis:change', function(){
     $('#campaign-kpis').load('#{kpis_campaign_path(resource)}')
-  })
+  });
+
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
-  })
+  });
+
+  $(document).on('members:change member:delete', function(){
+    $('#users-container').load('#{members_campaign_path(resource)}');
+  });
+
+  $(document).on('teams:change team:delete', function(){
+    $('#teams-container').load('#{teams_campaign_path(resource)}');
+  });

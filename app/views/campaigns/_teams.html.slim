@@ -6,27 +6,25 @@ table#teams-list.table.table-striped.table-bordered.table-scrolled
       th data-sort="description" Description
       th.actions
   tbody
+    - resource.teams.each do |team|
+      tr
+        td= team.name
+        td= team.description
+        td= link_to 'Delete', delete_team_campaign_path(resource, team.id), remote: true, method: :Delete
 .row-fluid
   .pull-right
     = link_to 'Add Staff Members', new_member_campaign_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-  $('#collection-list-filters').filterBox({
-    'includeCalendars': true,
-    'onChange': function(filterBox){
-      teamMembersTable.tableScroller('reloadData');
-    }
+  brandsTable = $('#teams-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "bDestroy": true,
+        "aoColumns": [
+          null,
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
   });
-
-  var teamMembersTable = $('table#teams-list').tableScroller({
-    'source': '#{teams_path(campaign: resource.to_param, format: :json)}',
-    'fixedHeader': false,
-    'rowValues': function(t){
-      return [t.name, t.description]
-    },
-    'rowId': function(row){
-      return 'campaign-team-'+row.id;
-    },
-    'filterBox': '#collection-list-filters',
-    'actionButtons': ['deletable']
-  })

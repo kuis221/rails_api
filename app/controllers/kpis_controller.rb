@@ -1,6 +1,6 @@
 class KpisController < FilteredController
   belongs_to :campaign
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :edit, :update]
 
   def create
     create! do |success, failure|

@@ -24,8 +24,8 @@ class Kpi < ActiveRecord::Base
 
   scoped_to_company
 
-  TYPE_OPTIONS = {"number" => ["integer", "decimal", "money"],
-                  "count" => ["radio", "dropdown", "checkbox"],
+  TYPE_OPTIONS = {"number"     => ["integer", "decimal", "currency"],
+                  "count"      => ["radio", "dropdown", "checkbox"],
                   "percentage" => ["integer", "decimal"]}
 
   attr_accessible :name, :description, :kpi_type, :capture_mechanism, :kpis_segments_attributes
@@ -46,5 +46,19 @@ class Kpi < ActiveRecord::Base
 
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company) }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
+
+  after_save :delete_segments
+
+  searchable do
+    text :name, stored: true
+    string :name
+    integer :company_id
+  end
+
+  def delete_segments
+    if self.kpi_type == 'number'
+      self.kpis_segments.delete_all
+    end
+  end
 
 end
