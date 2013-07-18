@@ -117,13 +117,18 @@ $.widget 'nmk.filteredList', {
 		@formFilters.append($filter)
 		if optionsCount > 5
 			$ul = $('<ul class="sf-menu sf-vertical">')
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More').click (e)=>
-				if not $ul.hasClass('sf-js-enabled')
-					list = @_buildFilterOptionsList(filter, $filter)
-					$ul.find('li').append(list)
-					$trigger.superfish({cssArrows: false, disableHI: true})
-					$trigger.superfish('show')
-				false
+			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
+				.on 'click', (e) => 
+					false
+				.on 'mouseover.firstime', (e)=>
+					$(e.target).off('mouseover.firstime')
+					if not $ul.hasClass('sf-js-enabled')
+						list = @_buildFilterOptionsList(filter, $filter)
+						$ul.find('li').append(list)
+						$trigger.superfish({cssArrows: false, disableHI: true})
+						$trigger.superfish('show')
+					false
+				.on ''
 			$('<div>').append($ul.append($('<li>').append($trigger))).insertAfter($filter)
 
 			$filter
