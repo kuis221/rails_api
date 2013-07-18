@@ -116,6 +116,10 @@
 a{
 	color:@text;
 }
+
+input{
+	font-family: @baseFontFamily;
+}
 select,
 textarea,
 input[type="text"],
@@ -135,6 +139,7 @@ input[type="color"],
 .uneditable-input {
 	background-color: @grey_one !important;
 	border: @grey_one;
+	font-size: 13px;
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
@@ -431,6 +436,8 @@ body.app-layout{
 		height:65px;
 	}
 	.btn-primary{
+		font-family: @baseFontFamily;
+		font-size: 15px;
 		box-shadow: none;
 		height: 42px;
 		margin-bottom: 15px;
