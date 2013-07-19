@@ -1,28 +1,12 @@
 - remote ||= false
-= simple_nested_form_for([parent, resource], remote: remote || false) do |f|
+= simple_nested_form_for([@campaign, resource], remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs
-    .row-fluid
-      = f.input :name
-      #similar-kpi-message style="display: none"
-        span id="duplicated-name"
-
-    .row-fluid
-      = f.input :description, :input_html => {:rows => 1}
-
-    .row-fluid
-      = f.input :kpi_type, input_html: {class: 'input-large'}, collection: Kpi::TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
-
-    #kpisegment-fields.row-fluid style="display: none"
-      = f.fields_for :kpis_segments do |kf|
-        = kf.text_field :text
-        = kf.link_to_remove "Remove"
-
-      p= f.link_to_add "Add a segment", :kpis_segments
-
-    .row-fluid
-      = f.input :capture_mechanism, as: :select, input_html: {class: 'input-large'}, collection: resource.kpi_type.blank? ? [] : Kpi::TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}
+    - if resource.out_of_the_box?
+        = render partial: 'out_box', locals: { f: f }
+    - else
+        = render partial: 'custom', locals: { f: f }
 
   .form-actions
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
@@ -30,11 +14,11 @@
     = f.button :button, 'Cancel', class: 'btn-cancel'
 
 javascript:
-    var captureOptions = #{Kpi::TYPE_OPTIONS.to_json.html_safe}
+    var captureOptions = #{Kpi::CUSTOM_TYPE_OPTIONS.to_json.html_safe}
 
     $(document).ready(function() {
       kpiType = $('#kpi_kpi_type').val();
-      toggleSegments(kpiType);
+      toggleSegmentsGoals(kpiType);
     });
 
     $('#kpi_kpi_type').change(function() {
@@ -50,14 +34,14 @@ javascript:
           }));
         }
 
-        toggleSegments(selectedOption);
+        toggleSegmentsGoals(selectedOption);
       }
     });
 
     $('#kpi_name').focusout(function() {
       $('#similar-kpi-message').hide();
       if (name = $(this).val()) {
-        $.post('#{find_similar_kpi_campaign_path(parent)}', {name: name}, function(data) {
+        $.post('#{find_similar_kpi_campaign_path(@campaign)}', {name: name}, function(data) {
           if (!jQuery.isEmptyObject(data)) {
             $('#similar-kpi-message').text('There may be a duplicated called ' + data[0].name);
             $('#similar-kpi-message').show();
@@ -66,14 +50,20 @@ javascript:
       }
     });
 
-    function toggleSegments(option) {
+    function toggleSegmentsGoals(option) {
       if (option) {
         switch (option) {
           case 'number':
+          case 'events_count':
+          case 'photos':
+          case 'promo_hours':
+          case 'videos':
             $('#kpisegment-fields').hide();
+            $('#kpigoal-fields').show();
             break;
           case 'count':
           case 'percentage':
+            $('#kpigoal-fields').hide();
             $('#kpisegment-fields').show();
             break;
         }
