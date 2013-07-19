@@ -1,4 +1,4 @@
-li id="task_#{task.id}"
+li id="task_#{task.id}" class="completed"
   span
     = simple_form_for task, remote: true do |f| 
         = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}

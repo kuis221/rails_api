@@ -12,14 +12,17 @@
 
 /*-- COLOR PALETTE --*/
 @app_bg: #ececec;
+@assigned: #d6d64b;
 @brand:#989898;
 @buttons:#de4d43;
 @buttons-hover:#cc4137;
+@completed: #90bf43;
 @grey_one:#dfdfdf;
 @grey_three:#7a7a7a;
 @header:#363636;
 @menu:#4f4f4f;
 @text:#666666;
+@unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
 
 /*-- FONT FAMILY STYLES --*/
@@ -762,6 +765,20 @@ label{
     ul{
   		padding: 0;
   		margin:0;
+  		&#tasks-list{
+  			li.assigned{
+  				border-left: 5px solid @assigned;
+  			}
+  			li.completed{
+  				border-left: 5px solid @completed;
+  			}
+  			li.late{
+  				border-left: 5px solid @buttons;
+  			}
+  			li.unassigned{
+  				border-left: 5px solid @unassigned;
+  			}
+  		}
     }
     li{
     	border-bottom:1px solid @user_menu;
