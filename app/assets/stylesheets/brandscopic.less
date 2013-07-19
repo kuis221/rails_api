@@ -741,7 +741,7 @@ label{
  	border:1px solid @user_menu;
  	color: @brand;
  	float: left;
- 	font-size: 11px;
+ 	font-size: 12px;
     margin: 14px 0 0 0;
     padding: 0;
     position: relative;
@@ -789,6 +789,9 @@ label{
 		}
 		&.pull-right{
 			margin-top: 10px;
+		}
+		&.tasks-date{
+			margin-right: 30px;
 		}
 	}
 	a.edit:after{
@@ -1195,6 +1198,9 @@ table.table form {
 table.table td.comments-container {
 	background-color: #ffffff !important;
 }
+.task-comments{
+	vertical-align: top;
+}
 
 #comment-form-container .form-inputs {
 	float: left;
@@ -1203,7 +1209,7 @@ table.table td.comments-container {
 
 #comment-form-container{
 	display: inline-block;
-	margin: 25px 0 5px 0;
+	margin: 15px 0 5px 12px;
 	position: relative;
 	.control-group{
 		display: inline-block;
@@ -1213,7 +1219,8 @@ table.table td.comments-container {
 		border:1px solid @user_menu;
 		color: @user_menu;
 		display: inline-block;
-		margin-right: 15px;
+		height: 60px;
+		margin: 0px 15px 0 0;
 		width: 490px;
 	}
 	input{
@@ -1230,6 +1237,19 @@ table.table td.comments-container {
 	input::-webkit-input-placeholder,
 	textarea::-webkit-input-placeholder {
 	  color: @user_menu;
+	}
+	input[type="submit"].btn {
+		color: white;
+	}
+}
+// Comments List
+.comment-row{
+	margin: 24px 0 0 32px;
+	p{
+		font-size: 12px;
+	}
+	.user{
+		font-size: 14px;
 	}
 }
 
@@ -1249,6 +1269,8 @@ table.table td.comments-container {
   font-size: 12px;
   color: #A0A0A0;
 }
+
+// TASKS STYLES
 
 .tasks{
 	a.edit:after{
@@ -1299,10 +1321,13 @@ table.table td.comments-container {
 		-webkit-border-radius: 0px 7px 7px 7px;
         border-radius: 0px 7px 7px 7px;	
 	}
+	.span.date{
+		margin-right: 15px;
+	}
 }
 
 .task-counter-bar{
-	margin: 15px 0 15px 0;
+	margin: 15px 0 15px 10px;
 }
 
 .task-counter-item {
@@ -1330,11 +1355,11 @@ table.table td.comments-container {
   	display: inline-block;
   	font-family: 'icons';
 	font-size: 17px;
-	left:3px;
 	padding-bottom:5px;
   	position: relative;
 	speak: none;
 	text-align: center;
+	top:2px;
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
 }

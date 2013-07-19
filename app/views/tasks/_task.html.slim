@@ -6,9 +6,10 @@ li id="task_#{task.id}"
     b= task.title
     br
     = task.campaign_name
-  span
-    = format_date(task.due_at)
+
   span.pull-right
+    span.tasks-date
+      = format_date(task.due_at)
     = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
     a.edit
     a.disable
