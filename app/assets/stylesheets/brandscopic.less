@@ -710,9 +710,33 @@ label{
 		padding:25px 0 15px 0;
 	}
 }
-.dropdown-menu{
+li#admin{
+	ul.dropdown-menu{
 	background-color: @menu;
 	box-shadow: none;
+	margin-top: 12px;
+	min-width: 148px;
+	left: -107px;
+	}
+}
+li#user_menu{
+	ul.dropdown-menu{
+	background-color: @menu;
+	box-shadow: none;
+	margin-top: 12px;
+	min-width: 148px;
+	left: -30px;
+	}
+}
+.dropdown-menu:before{
+	position: absolute;
+	top: -8px;
+	left: 114px;
+	display: inline-block;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid @menu;
+	border-left: 10px solid transparent;
+	content: '';
 }
 .container{
 	min-height: 300px;
