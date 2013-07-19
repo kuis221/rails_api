@@ -1,6 +1,5 @@
 .comment-row
-	.row-fluid
+	.user = comment.user_full_name + ' | ' + comment_date(comment)
+	p
 		= comment.content
-	.row-fluid
-		small.muted = comment.user_full_name + ' | ' + comment_date(comment)
 br

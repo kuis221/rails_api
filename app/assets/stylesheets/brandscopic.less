@@ -12,14 +12,17 @@
 
 /*-- COLOR PALETTE --*/
 @app_bg: #ececec;
+@assigned: #d6d64b;
 @brand:#989898;
 @buttons:#de4d43;
 @buttons-hover:#cc4137;
+@completed: #90bf43;
 @grey_one:#dfdfdf;
 @grey_three:#7a7a7a;
 @header:#363636;
 @menu:#4f4f4f;
 @text:#666666;
+@unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
 
 /*-- FONT FAMILY STYLES --*/
@@ -116,6 +119,10 @@
 a{
 	color:@text;
 }
+
+input{
+	font-family: @baseFontFamily;
+}
 select,
 textarea,
 input[type="text"],
@@ -135,6 +142,7 @@ input[type="color"],
 .uneditable-input {
 	background-color: @grey_one !important;
 	border: @grey_one;
+	font-size: 13px;
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
@@ -175,7 +183,7 @@ input[type="color"],
 a.edit:after{
 	background-color: none;
 	color: @app_bg;
-	content: "\e009";
+	content: "\e006";
 	font-family: 'icons';
 	font-size: 15px;
 	position: relative;
@@ -304,7 +312,7 @@ table{
 
 a.more-options-link{
 	font-size: 13px;
-	margin-left:25px;
+	margin-left:30px;
 }
 a.more-options-link:after{
 	content: "\e004";
@@ -318,6 +326,7 @@ a.more-options-link:after{
 body{
 	color:@text;
 	font-family: @baseFontFamily;
+	font-size: 13px;
 }
 body.empty-layout{
 	background: @text;
@@ -443,6 +452,8 @@ body.app-layout{
 		height:65px;
 	}
 	.btn-primary{
+		font-family: @baseFontFamily;
+		font-size: 15px;
 		box-shadow: none;
 		height: 42px;
 		margin-bottom: 15px;
@@ -645,14 +656,14 @@ label{
 		font-weight: 400px;
 		letter-spacing: -0.5px;
 		line-height: 28px;
-		padding: 0 15px 0 25px;
+		padding: 0 15px 0 30px;
 	}
 	.checker{
 		background-color: @user_menu;
 		display: inline-block;
 		float:left;
 		height: 20px;
-		margin:1px 9px 0 -24px;
+		margin:1px 5px 0 -32px;
 		padding: 0;
 		width:20px;
 		-webkit-border-radius: 5px;
@@ -676,7 +687,7 @@ label{
 			font-size: 14px;
 			left:3px;
 			position: relative;
-			top:-32px;
+			top:-31px;
 			speak:none;
 			text-align: center;
 			text-shadow:none;
@@ -727,14 +738,17 @@ label{
 	border-radius: 6px;
 	width:210px;
 }
+
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @user_menu;
- 	clear:both;
  	color: @brand;
- 	font-size: 11px;
+ 	float: left;
+ 	font-size: 12px;
     margin: 14px 0 0 0;
     padding: 0;
+    position: relative;
+    width:99.8%;
     address{
     	margin-bottom: 0;
     }
@@ -751,13 +765,27 @@ label{
     ul{
   		padding: 0;
   		margin:0;
+  		&#tasks-list{
+  			li.assigned{
+  				border-left: 5px solid @assigned;
+  			}
+  			li.completed{
+  				border-left: 5px solid @completed;
+  			}
+  			li.late{
+  				border-left: 5px solid @buttons;
+  			}
+  			li.unassigned{
+  				border-left: 5px solid @unassigned;
+  			}
+  		}
     }
     li{
     	border-bottom:1px solid @user_menu;
     	color:@brand;
     	list-style:none;
     	margin: 0;
-    	padding: 13px 0 11px 35px;
+    	padding: 13px 15px 11px 35px;
 	}
     li:hover{
     	background:@grey_one;
@@ -776,9 +804,15 @@ label{
 			float: right;
 			margin: 18px 20px 0 0;
 		}
+		&.pull-right{
+			margin-top: 10px;
+		}
+		&.tasks-date{
+			margin-right: 30px;
+		}
 	}
 	a.edit:after{
-		content: "\e00c";
+		content: "\e006";
 		font-family: 'icons';
 		font-size: 18px;
 		margin-right: 10px;
@@ -799,6 +833,42 @@ label{
 		text-shadow:none;
 		top:1px;
 		-webkit-font-smoothing: antialiased;
+	}
+	.checker{
+		background-color: @user_menu;
+		display: inline-block;
+		float:left;
+		height: 20px;
+		margin:10px 25px 0 -32px;
+		padding: 0;
+		width:20px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		span.checked{
+			background-color: @brand;
+			display: block;
+			height: 20px;
+			margin: 0 15px 0 0;
+			padding:0;
+			width: 20px;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+		span.checked:after{
+			color: white;
+			content: "\e00f";
+			font-family: 'icons';
+			font-size: 14px;
+			left:3px;
+			position: relative;
+			top:-3px;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
 }
 
@@ -1145,9 +1215,61 @@ table.table form {
 table.table td.comments-container {
 	background-color: #ffffff !important;
 }
+.task-comments{
+	vertical-align: top;
+}
 
 #comment-form-container .form-inputs {
+	float: left;
 	margin-left: 0;
+}
+
+#comment-form-container{
+	display: inline-block;
+	margin: 20px 0 5px 12px;
+	position: relative;
+	.control-group{
+		display: inline-block;
+		width:80%;
+	}
+	textarea{
+		background-color: white !important;
+		border:1px solid @user_menu;
+		color: @user_menu;
+		display: inline-block;
+		min-height: 75px;
+		margin: 0px 15px 0 0;
+		-webkit-border-radius: 7px;	
+    	border-radius: 7px;
+	}
+	input{
+		display:inline-block;
+	}
+	input:-moz-placeholder,
+	textarea:-moz-placeholder {
+	  color: @user_menu;
+	}
+	input:-ms-input-placeholder,
+	textarea:-ms-input-placeholder {
+	  color: @user_menu;
+	}
+	input::-webkit-input-placeholder,
+	textarea::-webkit-input-placeholder {
+	  color: @user_menu;
+	}
+	input[type="submit"].btn {
+		color: white;
+	}
+}
+// Comments List
+.comment-row{
+	margin: 24px 0 0 32px;
+	p{
+		font-size: 12px;
+	}
+	.user{
+		font-size: 14px;
+	}
 }
 
 // For google places api
@@ -1167,6 +1289,66 @@ table.table td.comments-container {
   color: #A0A0A0;
 }
 
+// TASKS STYLES
+
+.tasks{
+	a.edit:after{
+		color: @brand ;
+		content: "\e006";
+		font-family: 'icons';
+		font-size: 17px;
+		margin-left: 11px;
+		position: relative;
+		speak:none;
+		text-align: right;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
+	a.edit:hover:after{
+		color: @grey_three;
+	}
+	a.disable:after{
+		color: @brand ;
+		content: "\e011";
+		font-family: 'icons';
+		font-size: 17px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:2px;
+		-webkit-font-smoothing: antialiased;
+	}
+	a.disable:hover:after{
+		color: @grey_three;
+	}
+	b{
+		color:@menu;
+		font-size: 15px;
+	}
+	input[type="checkbox"]{
+		visibility: hidden;
+	}
+	label{
+		font-size: 13px;
+		font-weight: 400px;
+		letter-spacing: -0.5px;
+		line-height: 28px;
+	}
+	.main{
+		-webkit-border-radius: 0px 7px 7px 7px;
+        border-radius: 0px 7px 7px 7px;	
+	}
+	.span.date{
+		margin-right: 15px;
+	}
+}
+
+.task-counter-bar{
+	margin: 15px 0 15px 10px;
+}
+
 .task-counter-item {
 	font-size: 30px;
 	font-weight: 300;
@@ -1182,8 +1364,26 @@ table.table td.comments-container {
 
 .tasks-progress-bar{
 	.btn.btn-primary{
-		margin-top: 20px;
+		margin-top: 35px;
 	}
+}
+
+.load-comments-link:before{
+	color: @brand;
+	content: "\e010";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 17px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+	top:2px;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+}
+.load-comments-link:hover:before{
+	color: @grey_three;
 }
 
 .ui-autocomplete {
