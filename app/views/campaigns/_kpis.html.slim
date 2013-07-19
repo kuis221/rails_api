@@ -1,5 +1,4 @@
 - campaign ||= nil
-- kpi_ids = @campaign.kpi_ids
 table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
   thead
     tr
@@ -12,8 +11,8 @@ table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
       tr id="campaign-kpi-#{kpi.id}"
         td
           div.btn-group.active-deactive-toggle
-            = link_to 'On', activate_kpi_campaign_path(resource.id, kpi.id), remote: true, method: :post, id: "activate-btn-#{kpi.id}", class: "btn btn-small set-on-btn"+(kpi_ids.include?(kpi.id) ? " btn-success active" : "")
-            = link_to 'Off', deactivate_kpi_campaign_path(resource.id, kpi.id), remote: true,  method: :post, id: "deactivate-btn-#{kpi.id}", class: "btn btn-small set-off-btn"+(kpi_ids.include?(kpi.id) ? "" : " btn-danger active")
+            = link_to 'On', '#', id: "toggle-kpi-on-#{kpi.id}", class: "btn btn-small set-kpi-on-btn", 'data-kpi-id' => kpi.id
+            = link_to 'Off', '#', id: "toggle-kpi-off-#{kpi.id}", class: "btn btn-small set-kpi-off-btn btn-danger active", 'data-kpi-id' => kpi.id
         td= link_to kpi.name, edit_campaign_kpi_path(resource, kpi.id), remote: true
         td= kpi.description
         td
@@ -36,3 +35,24 @@ javascript:
           {"sWidth": '50px', 'bSortable': false}
         ]
   });
+
+
+  $('.set-kpi-off-btn').click(function(e){
+    FormBuilder.deactivateKpi($(this).data('kpi-id'));
+    return false;
+  });
+  $('.set-kpi-on-btn').click(function(e){
+    FormBuilder.activateKpi($(this).data('kpi-id'));
+    return false;
+  });
+
+  $(document).on('form-builder:kpi-added', function(e, kpi_id){
+    $('a#toggle-kpi-on-'+ kpi_id).addClass('btn-success active');
+    $('a#toggle-kpi-off-'+ kpi_id).removeClass('btn-danger active');
+    return false;
+  })
+  $(document).on('form-builder:kpi-removed', function(e, kpi_id){
+    $('a#toggle-kpi-on-'+ kpi_id).removeClass('btn-success active');
+    $('a#toggle-kpi-off-'+ kpi_id).addClass('btn-danger active');
+    return false;
+  })

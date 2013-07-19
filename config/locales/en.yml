@@ -37,3 +37,14 @@ en:
       role: "Create a role"
       area: "Create an area"
       brand_portfolio: "Create a brand portfolio"
+
+  form_builder:
+    modules:
+      custom: "Custom"
+      consumer_reach: "Consumer Reach"
+      demographics: "Demographics"
+      expenses: "Expenses"
+      surveys: "Surveys"
+      competitive_analysis: "Competive Analysis"
+      photos: "Photos"
+      videos: "Videos"

@@ -53,6 +53,7 @@ class Campaign < ActiveRecord::Base
   has_many :goals
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+
   accepts_nested_attributes_for :form_fields
 
   scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }

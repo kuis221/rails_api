@@ -71,6 +71,10 @@ class Task < ActiveRecord::Base
     end
   end
 
+  def late?
+    due_at < Time.now
+  end
+
   def activate!
     update_attribute :active, true
   end
@@ -92,6 +96,7 @@ class Task < ActiveRecord::Base
     status.push active? ? 'Active' : 'Inactive'
     status.push completed? ? 'Completed' : 'Incomplete'
     status.push assigned? ? 'Assigned' : 'Unassigned'
+    status.push 'Late' if late?
     status
   end
 

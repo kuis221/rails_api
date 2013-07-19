@@ -1,4 +1,4 @@
-li
+li id="event_#{event.id}"
   a href="#{event_path(event)}"
     span.date= format_date_range(event.start_at, event.end_at)
     span
@@ -6,3 +6,7 @@ li
       b= event.campaign_name
       br>/
       = place_address(event.place)
+    span.pull-right
+      = link_to '', edit_event_path(event), remote: true, class: 'edit'
+      = link_to '', deactivate_event_path(event), remote: true, class: 'disable' if event.active?
+      = link_to '', activate_event_path(event), remote: true, class: 'enable' unless event.active?

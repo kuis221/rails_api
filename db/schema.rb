@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20130718220032) do
+=======
+ActiveRecord::Schema.define(:version => 20130719005345) do
+>>>>>>> f7a28ea1a63a7a1ae112e26ec4cd8c1dae24c157
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -142,14 +146,6 @@ ActiveRecord::Schema.define(:version => 20130718220032) do
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
-
-  create_table "campaigns_kpis", :force => true do |t|
-    t.integer "campaign_id"
-    t.integer "kpi_id"
-  end
-
-  add_index "campaigns_kpis", ["campaign_id"], :name => "index_campaigns_kpis_on_campaign_id"
-  add_index "campaigns_kpis", ["kpi_id"], :name => "index_campaigns_kpis_on_kpi_id"
 
   create_table "campaigns_teams", :force => true do |t|
     t.integer "campaign_id"

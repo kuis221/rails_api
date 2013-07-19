@@ -1,13 +1,16 @@
-li id="task_#{task.id}"
+li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
+  span
+    = simple_form_for task, remote: true do |f| 
+        = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
   span
     b= task.title
     br
     = task.campaign_name
-  span
-    = format_date(task.due_at)
-    br
-    = task.user_full_name
-    br
-    = link_to 'Comments', task_comments_path(task), remote: true, class: 'load-comments-link'
-    = simple_form_for task, remote: true do |f| 
-        = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
+
+  span.pull-right
+    span.tasks-date
+      = format_date(task.due_at)
+    = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
+    = link_to '', edit_task_path(task), remote: true, class: 'edit'
+    = link_to '', deactivate_task_path(task), remote: true, class: 'disable' if task.active?
+    = link_to '', activate_task_path(task), remote: true, class: 'enable' unless task.active?
