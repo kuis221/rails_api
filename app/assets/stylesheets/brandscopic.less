@@ -721,11 +721,29 @@ li#admin{
 }
 li#user_menu{
 	ul.dropdown-menu{
-	background-color: @menu;
-	box-shadow: none;
-	margin-top: 12px;
-	min-width: 148px;
-	left: -30px;
+		background-color: @menu;
+		box-shadow: none;
+		margin-top: 12px;
+		min-width: 148px;
+		left: -30px;
+		li#users:last-child{
+			a:after{
+			color: @user_menu;
+			content: "\e013";
+			font-family: 'icons';
+			font-size: 14px;
+			left:58px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:1px;
+			-webkit-font-smoothing: antialiased;
+			}
+			a:hover:after{
+			color: white;
+		    }
+		}
 	}
 }
 .dropdown-menu:before{
