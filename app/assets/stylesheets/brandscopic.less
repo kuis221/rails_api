@@ -1226,19 +1226,21 @@ table.table td.comments-container {
 
 #comment-form-container{
 	display: inline-block;
-	margin: 15px 0 5px 12px;
+	margin: 0 0 5px 12px;
 	position: relative;
 	.control-group{
 		display: inline-block;
+		width:80%;
 	}
 	textarea{
 		background-color: white !important;
 		border:1px solid @user_menu;
 		color: @user_menu;
 		display: inline-block;
-		height: 60px;
+		min-height: 75px;
 		margin: 0px 15px 0 0;
-		width: 490px;
+		-webkit-border-radius: 7px;	
+    	border-radius: 7px;
 	}
 	input{
 		display:inline-block;
