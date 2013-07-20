@@ -30,74 +30,38 @@
 
 /*-- GENERAL STYLES --*/
 
-#analysis a:before {
-	content: "\e00e";
+#analysis a:before, #dashboard a:before, #events a:before, #research a:before, #tasks a:before {
   	display: block;
   	font-family: 'icons';
-	font-size: 28px;
-	left:3px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-#dashboard a:before {
-	content: "\e00c";
-  	display: block;
-  	font-family: 'icons';
-	font-size: 28px;
-	left:3px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-#events a:before{
-	content: "\e00a";
-  	display: block;
-  	font-family: 'icons';
-	font-size: 28px;
-	left:3px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-#tasks a:before {
-	content: "\e009";
-  	display: block;
-  	font-family: 'icons';
-	font-size: 28px;
-	left:3px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-#research a:before {
-	content: "\e005";
-  	display: block;
-  	font-family: 'icons';
-	font-size: 28px;
+	font-size: 27px;
 	left:2px;
 	padding-bottom:5px;
   	position: relative;
 	speak: none;
 	text-align: center;
+	top:-3px;
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
 }
+
+#analysis a:before{
+	content: "\e00e";
+}
+#dashboard a:before {
+	content: "\e00c";
+}
+#events a:before{
+	content: "\e00a";
+}
+#tasks a:before {
+	content: "\e009";
+}
+#research a:before {
+	content: "\e005";
+}
 #analysis, #dashboard, #events, #tasks, #research {
 	a:hover{
-	background-color: @grey_three;
+	background-color: @text;
 	color:@user_menu;
 	}
 	a:hover:before{
@@ -274,13 +238,13 @@ a.datepick-cmd:hover{
 		filter:alpha(opacity=80); /* For IE8 and earlier */
 	}
 	a:hover{
-			display: block;
-	width: 100%;
-	padding: 0.125em 0em;
-	background-color: @grey_one !important;
-	color: @text;
-	text-decoration: none;
-	border-radius: 3px;
+		display: block;
+		width: 100%;
+		padding: 0.125em 0em;
+		background-color: @grey_one !important;
+		color: @text;
+		text-decoration: none;
+		border-radius: 3px;
 	}
 }
 .datepick-month td .datepick-selected {
@@ -327,6 +291,7 @@ body{
 	color:@text;
 	font-family: @baseFontFamily;
 	font-size: 13px;
+	font-weight: 400;
 }
 body.empty-layout{
 	background: @text;
@@ -606,13 +571,16 @@ li.dropdown#user_menu{
 	li a{
 		color:@grey_three;
 		font-weight: bold;
-		padding: 25px 0 15px 0;
+		padding: 30px 0 20px 0;
 		height:50px;
   }
   li{
     position: relative;
     &.active{
       background-color: @app_bg;
+      &:first-child:before{
+      	content:"";
+      }
       &:after, &:before{
         background-color: @menu;
         content: "\00a0";
@@ -960,9 +928,8 @@ textarea::-webkit-input-placeholder {
 }
 
 #company-name {
-	font-size: 24px;
-	font-weight: 400;
-	padding: 20px 0 0 25px;
+	font-size: 22px;
+	padding: 21px 0 0 25px;
 	a {
 		color: @brand;
 		text-decoration: none;
