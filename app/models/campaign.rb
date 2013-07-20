@@ -49,7 +49,11 @@ class Campaign < ActiveRecord::Base
   # Campaigns-KPIs relationship
   has_and_belongs_to_many :kpis, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
+  # Campaigns-Goals relationship
+  has_many :goals
+
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+
   accepts_nested_attributes_for :form_fields
 
   scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }

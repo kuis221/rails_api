@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130716143153) do
+<<<<<<< HEAD
+ActiveRecord::Schema.define(:version => 20130718220032) do
+=======
+ActiveRecord::Schema.define(:version => 20130719005345) do
+>>>>>>> f7a28ea1a63a7a1ae112e26ec4cd8c1dae24c157
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -122,8 +126,9 @@ ActiveRecord::Schema.define(:version => 20130716143153) do
     t.string   "field_type"
     t.text     "options"
     t.integer  "section_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.string   "capture_mechanism"
   end
 
   add_index "campaign_form_fields", ["campaign_id"], :name => "index_campaign_form_fields_on_campaign_id"
@@ -141,14 +146,6 @@ ActiveRecord::Schema.define(:version => 20130716143153) do
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
-
-  create_table "campaigns_kpis", :force => true do |t|
-    t.integer "campaign_id"
-    t.integer "kpi_id"
-  end
-
-  add_index "campaigns_kpis", ["campaign_id"], :name => "index_campaigns_kpis_on_campaign_id"
-  add_index "campaigns_kpis", ["kpi_id"], :name => "index_campaigns_kpis_on_kpi_id"
 
   create_table "campaigns_teams", :force => true do |t|
     t.integer "campaign_id"
@@ -245,7 +242,7 @@ ActiveRecord::Schema.define(:version => 20130716143153) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
+  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -264,6 +261,19 @@ ActiveRecord::Schema.define(:version => 20130716143153) do
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
+  create_table "goals", :force => true do |t|
+    t.integer  "campaign_id"
+    t.integer  "kpi_id"
+    t.integer  "kpis_segment_id"
+    t.decimal  "value"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "goals", ["campaign_id"], :name => "index_goals_on_campaign_id"
+  add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
+  add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
+
   create_table "kpis", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -274,8 +284,8 @@ ActiveRecord::Schema.define(:version => 20130716143153) do
     t.integer  "updated_by_id"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
-    t.string   "slug"
     t.string   "module",            :default => "custom", :null => false
+    t.string   "slug"
   end
 
   add_index "kpis", ["company_id", "slug"], :name => "index_kpis_on_company_id_and_slug", :unique => true

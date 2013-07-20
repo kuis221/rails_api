@@ -7,6 +7,7 @@ window.FormBuilder = {
 		@fieldAttrbituesContainer = $('#attributes')
 		@formWrapper = $('#form-wrapper')
 		@modulesList = $('<div>').appendTo @fieldsContainer
+		@customKpisList = $('<div>').appendTo @fieldsContainer
 		@genericFieldsList = $('<div>').appendTo @fieldsContainer
 
 		@formWrapper.sortable {
@@ -14,10 +15,19 @@ window.FormBuilder = {
 			update: ( event, ui ) ->
 				if not ui.item.data('field')
 					ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
-
+			receive: ( event, ui ) ->
+				if ui.item.hasClass('field')
+					field = ui.item.data('field')
+					if field.options.kpi_id?
+						$(document).trigger 'form-builder:kpi-added', [field.options.kpi_id]
+				else if ui.item.hasClass('module')
+					for element in ui.item.find('.field')
+						field = $(element).data('field')
+						if field.options.kpi_id?
+							$(document).trigger 'form-builder:kpi-added', [field.options.kpi_id]
 		}
 
-		# Add generic fields
+		# Add generic fields to the fields picker
 		@genericFieldsList.append new FormBuilder.TextField({})
 		@genericFieldsList.append new FormBuilder.TextareaField({})
 
@@ -43,10 +53,31 @@ window.FormBuilder = {
 			false
 
 		@formWrapper.on 'click', '.delete-module', (e) =>
-			module = $($(e.target).parents('.module')[0])
-			module.appendTo @modulesList
+			bootbox.confirm "Deleting the module will deactivate all the KPIs associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
+				if result
+					module = $($(e.target).parents('.module')[0])
+					@removeModule module
+
 		@formWrapper.on 'click', '.delete-field', (e) =>
-			$(e.target).parents('.field').remove()
+			e.stopPropagation()
+			e.preventDefault()
+			element = $(e.target).parents('.field')
+			field = element.data('field')
+			if field.options.kpi_id? 
+				bootbox.confirm "Deleting this fiel will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
+					if result
+						module = element.parents('.module')
+						element.remove()
+						$(document).trigger 'form-builder:kpi-removed', [field.options.kpi_id]
+
+						# Remove the module if this was the last field on it
+						if module.length == 1 && module.find('.field').length == 0
+							@removeModule(module)
+			else
+				element.remove()
+
+			false
+				
 
 		$('#save-post-event-form').click (e) =>
 			@saveForm()
@@ -55,27 +86,33 @@ window.FormBuilder = {
 
 	_loadForm: (options) ->
 		$.getJSON options.url, (response) =>
-			@renderModules response.modules, @fieldsContainer
+			@kpis = response.kpis
+			@renderModules @fieldsContainer
 
 			for field in response.fields
-				if field.module? and @modules[field.module]
-					if !@modules[field.module]._loaded
-						@modules[field.module]._loaded = true
-						@formWrapper.append @modules[field.module].element
-						@modules[field.module].clearFields()
-					@modules[field.module].addField @buildField(field)
-				else if field.type is 'comments'
-					@modules['comments']._loaded = true
-					@formWrapper.append @modules['comments'].element
-					@modules['comments'].clearFields()
-					@modules['comments'].addField @buildField(field)
-				else
-					@formWrapper.append @buildField(field)
+				@_addFieldToForm field
 
-				
+	_addFieldToForm: (field) ->
+		if field.module? and @modules[field.module]
+			if !@modules[field.module]._loaded
+				@modules[field.module]._loaded = true
+				@formWrapper.append @modules[field.module].element
+				@modules[field.module].clearFields()
+			@modules[field.module].addField @buildField(field)
+		else if field.type is 'comments'
+			@modules['comments']._loaded = true
+			@formWrapper.append @modules['comments'].element
+			@modules['comments'].clearFields()
+			@modules['comments'].addField @buildField(field)
+		else
+			@formWrapper.append @buildField(field)
 
+		if field.kpi_id?
+			$(document).trigger 'form-builder:kpi-added', [field.kpi_id]
 
-			@formWrapper.sortable "refresh"
+		@formWrapper.sortable "refresh"
+
+		field
 
 	buildField: (options) ->
 		className = options.type;
@@ -83,6 +120,38 @@ window.FormBuilder = {
 		eval "var field = new #{className}(options)"
 		field
 
+	deactivateKpi: (kpi_id) ->
+		if field = FormBuilder._findFieldByKpi(kpi_id)
+			$(field).remove()
+			$(document).trigger 'form-builder:kpi-removed', [kpi_id]
+
+	activateKpi: (kpi_id) ->
+		kpis  = $.grep(@kpis, (kpi, index) ->  kpi.id == kpi_id )
+		if kpis.length > 0
+			kpi = kpis[0]
+			@_addFieldToForm @_kpiToField(kpi)
+	
+	removeModule: (module) ->
+		module.appendTo @modulesList
+		for element in module.find('.field')
+			field = $(element).data('field')
+			if field.options.kpi_id?
+				$(document).trigger 'form-builder:kpi-removed', [field.options.kpi_id]
+
+		moduleObject = module.data('module')
+		moduleObject.clearFields()
+		for kpi in @kpis
+			if kpi.module == moduleObject.id
+				moduleObject.addField @buildField(@_kpiToField(kpi))
+
+
+	_findFieldByKpi: (kpi_id) ->
+		$.grep @formWrapper.find('.field'), (element, index) =>
+			field = $(element).data('field')
+			field.options.kpi_id == kpi_id
+
+	_kpiToField: (kpi) ->
+		{module: kpi.module, type: kpi.type, kpi_id: kpi.id, name: kpi.name, segments: kpi.segments}
 
 	saveForm: () ->
 		data = $.map $('div.field', @formWrapper), (fieldDiv, index) =>
@@ -91,16 +160,23 @@ window.FormBuilder = {
 			alert response
 
 
-	registerModule: (module) ->
-		@modules[module.id] = module
+	renderModules: (container) ->
+		@modules = {comments: $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})}
 
-	renderModules: (enabledModules, container) ->
-		# for enabledModule, moduleFields of enabledModules
-		# 	module = @modules[enabledModule]
-		# 	if module?
-		# 		@modules.container.append module.render().data('field', module)
-		for moduleName, module of @modules
-			@modulesList.append module.render().data('field', module)
+		# Build the modules list
+		for kpi in @kpis
+			if kpi.module? and kpi.module != ''
+				field_options = @_kpiToField(kpi)
+				if kpi.module != 'custom'
+					if not @modules[kpi.module]?
+						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
+						@modulesList.append module.render().data('field', module)
+				else
+					module = @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
+					@customKpisList.append module.render().data('field', module)
+				@modules[kpi.module].addField @buildField(field_options)
+
+		@modulesList.append @modules['comments'].render().data('field', module)
 
 		@modulesList.sortable({
 			connectWith: "#form-wrapper",
@@ -108,6 +184,7 @@ window.FormBuilder = {
 			helper: ( event, element ) ->
 				$(element).data('field').draggableHelper().css({width: '400px'})
 		}).disableSelection()
+
 
 		@
 
@@ -123,10 +200,20 @@ window.FormModule = {
 	icon: 'circle-blank',
 	label: 'Default',
 
+	id: '',
+
+	_fields: [],
+
+	element: null,
+
 	_renderFormFields: () ->
-		$('<div class="module-fields">').append(
-			new FormBuilder.TextField({label: @label})
-		)
+		wrapper = $('<div class="module-fields">')
+		for field in @_fields
+			wrapper.append field
+		wrapper
+
+	addField: (field) ->
+		@_fields.push field
 
 	render: () ->
 		@element = $('<div class="module module-'+@id+'">')
@@ -138,6 +225,7 @@ window.FormModule = {
 			.append @_formView()
 
 		@element.sortable {items: '.field'}
+		@element.data 'module', @
 		@element
 
 	_formView:() ->
@@ -151,10 +239,13 @@ window.FormModule = {
 
 
 	clearFields: () ->
+		@_fields = []
 		@element.find('.module-fields').html ''
+		@
 
 	addField: (field) ->
 		@element.find('.module-fields').append field
+		@
 
 }
 
@@ -235,6 +326,7 @@ window.FormBuilder.NumberField = (options) ->
 		@options.predefined_value = options.options.predefined_value
 
 	@field =  $('<div class="field control-group" data-class="NumberField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
 	]
