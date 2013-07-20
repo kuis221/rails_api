@@ -22,7 +22,7 @@ class CampaignFormField < ActiveRecord::Base
 
   serialize :options
 
-  validates :campaign_id, numericality: true, presence: true
+  validates :campaign_id, numericality: true, allow_nil: true
   validates :kpi_id, numericality: true, allow_nil: true
   validates :section_id, numericality: true, allow_nil: true
   validates :ordering, numericality: true, presence: true
@@ -30,6 +30,6 @@ class CampaignFormField < ActiveRecord::Base
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
   # For field - sections relationship
-  has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC'
+  has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
   accepts_nested_attributes_for :fields
 end
