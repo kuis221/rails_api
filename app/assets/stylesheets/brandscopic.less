@@ -52,6 +52,7 @@
 }
 #events a:before{
 	content: "\e00a";
+	left: 3px;
 }
 #tasks a:before {
 	content: "\e009";
@@ -63,6 +64,13 @@
 	a:hover{
 	background-color: @text;
 	color:@user_menu;
+	}
+	a.active:hover{
+		background-color: @app_bg;
+		color:@grey_three;
+		&:before{
+			color:@grey_three;
+		}
 	}
 	a:hover:before{
 		color: @user_menu;
@@ -571,8 +579,8 @@ li.dropdown#user_menu{
 	li a{
 		color:@grey_three;
 		font-weight: bold;
-		padding: 30px 0 20px 0;
-		height:50px;
+		padding: 30px 0 22px 0;
+		height:45px;
   }
   li{
     position: relative;
