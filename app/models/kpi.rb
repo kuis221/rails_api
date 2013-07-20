@@ -12,15 +12,11 @@
 #  updated_by_id     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  slug              :string(255)
 #  module            :string(255)      default("custom"), not null
 #
 
 class Kpi < ActiveRecord::Base
   track_who_does_it
-
-  extend FriendlyId
-  friendly_id :name, use: :scoped, scope: :company_id
 
   scoped_to_company
 
