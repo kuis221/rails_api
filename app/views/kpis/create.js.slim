@@ -5,3 +5,4 @@
   |
     $('.bootbox.modal').modal('hide');
     $(document).trigger('kpis:change');
+    $(document).trigger('kpis:create', [#{Rabl::Renderer.new('kpis/kpi', @kpi, :view_path => 'app/views', :format => 'json').render.html_safe}]);

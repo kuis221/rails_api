@@ -7,7 +7,7 @@ window.FormBuilder = {
 		@fieldAttrbituesContainer = $('#attributes')
 		@formWrapper = $('#form-wrapper')
 		@modulesList = $('<div>').appendTo @fieldsContainer
-		@customKpisList = $('<div>').appendTo @fieldsContainer
+		@customKpisList = $('<div id="custom-kpi-list">').appendTo @fieldsContainer
 		@genericFieldsList = $('<div>').appendTo @fieldsContainer
 
 		@formWrapper.sortable {
@@ -32,6 +32,12 @@ window.FormBuilder = {
 		@genericFieldsList.append new FormBuilder.TextField({})
 		@genericFieldsList.append new FormBuilder.TextareaField({})
 		@genericFieldsList.append new FormBuilder.SectionField({})
+
+
+		$(document).on 'kpis:create', (e, kpi) =>
+			#field_options = @_kpiToField(kpi)
+			#@customKpisList.append @buildField(field_options)
+			@_addFieldToForm @_kpiToField(kpi)
 
 		@_loadForm options
 
@@ -74,13 +80,15 @@ window.FormBuilder = {
 			if field.options.kpi_id? 
 				bootbox.confirm "Deleting this fiel will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
 					if result
-						module = element.closest('.module')
-						element.remove()
+						if field.options.module == 'custom'
+							element.appendTo @customKpisList
+						else
+							module = element.closest('.module')
+							element.remove()
+							# Remove the module if this was the last field on it
+							if module.length == 1 && module.find('.field').length == 0
+								@removeModule(module)
 						$(document).trigger 'form-builder:kpi-removed', [field.options.kpi_id]
-
-						# Remove the module if this was the last field on it
-						if module.length == 1 && module.find('.field').length == 0
-							@removeModule(module)
 			else
 				element.remove()
 
@@ -107,6 +115,11 @@ window.FormBuilder = {
 				@formWrapper.append @modules[field.module].element
 				@modules[field.module].clearFields()
 			@modules[field.module].addField @buildField(field)
+		else if field.module? and field.module is 'custom'
+			fields = $.grep @customKpisList.find('.field'), (aField, index) =>
+				$(aField).data('field').options.kpi_id is field.kpi_id
+			f.remove() for f in fields
+			@formWrapper.append @buildField(field)
 		else if field.type is 'comments'
 			@modules['comments']._loaded = true
 			@formWrapper.append @modules['comments'].element
@@ -179,10 +192,11 @@ window.FormBuilder = {
 					if not @modules[kpi.module]?
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 						@modulesList.append module.render().data('field', module)
+					@modules[kpi.module].addField @buildField(field_options)
 				else
-					module = @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
-					@customKpisList.append module.render().data('field', module)
-				@modules[kpi.module].addField @buildField(field_options)
+					# @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
+					@customKpisList.append @buildField(field_options)
+				
 
 		@modulesList.append @modules['comments'].render().data('field', module)
 
@@ -193,6 +207,10 @@ window.FormBuilder = {
 				$(element).data('field').draggableHelper().css({width: '400px'})
 		}).disableSelection()
 
+		@customKpisList.sortable({
+			connectWith: "#form-wrapper",
+			items: '> div'
+		}).disableSelection()
 
 		@
 
@@ -590,6 +608,7 @@ window.FormBuilder.PercentageField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="PercentageField">').append [
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">')
 	]
