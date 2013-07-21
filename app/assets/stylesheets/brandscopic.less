@@ -804,31 +804,64 @@ li#user_menu{
     	list-style:none;
     	margin: 0;
     	padding: 13px 15px 11px 35px;
-		a.edit:after{
+    	&:last-child{
+    		border:0;
+    	}
+    	a:first-child{
+    		line-height: 30px;
+    	}
+		.edit:after{
 			color: white;
 			content: "\e006";
 			font-family: 'icons';
 			font-size: 18px;
-			margin-right: 10px;
+			margin-left: 10px;
 			position: relative;
 			speak:none;
 			text-align: center;
 			text-shadow:none;
 			top:2px;
 		}
+		.disable:after{
+			color: white;
+			content: "\e011";
+			font-family: 'icons';
+			font-size: 18px;
+			margin-left: 10px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:2px;
+		}
+		.load-comments-link:after{
+			color: white;
+			content: "\e010";
+			font-family: 'icons';
+			font-size: 18px;
+			margin-left: 10px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:3px;
+		}
 		&:hover{
-			a.edit:after{
-				color:red;
+			background-color: @grey_one;
+			a:hover:after{
+				color: @grey_three;
+			}
+			.edit:after, .disable:after, .load-comments-link:after{
+				color:@brand;
 			}
 		}
-	}
-    li:last-child{
-		border:0;
 	}
 	span{
 		display: inline-block;
 		vertical-align: top;
 		&.date{
+			line-height: 26px;
+			padding-top: 2px;
 			width: 200px;
 		}
 		&.links{
@@ -1299,37 +1332,6 @@ table.table td.comments-container {
 // TASKS STYLES
 
 .tasks{
-	a.edit:after{
-		color: @brand ;
-		content: "\e006";
-		font-family: 'icons';
-		font-size: 17px;
-		margin-left: 11px;
-		position: relative;
-		speak:none;
-		text-align: right;
-		text-shadow:none;
-		top:2px;
-		-webkit-font-smoothing: antialiased;
-	}
-	a.edit:hover:after{
-		color: @grey_three;
-	}
-	a.disable:after{
-		color: @brand ;
-		content: "\e011";
-		font-family: 'icons';
-		font-size: 17px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		top:2px;
-		-webkit-font-smoothing: antialiased;
-	}
-	a.disable:hover:after{
-		color: @grey_three;
-	}
 	b{
 		color:@menu;
 		font-size: 15px;
@@ -1342,7 +1344,7 @@ table.table td.comments-container {
         border-radius: 0px 7px 7px 7px;	
 	}
 	.span.date{
-		margin-right: 15px;
+		line-height: 27px;
 	}
 }
 
@@ -1367,24 +1369,6 @@ table.table td.comments-container {
 	.btn.btn-primary{
 		margin-top: 35px;
 	}
-}
-
-.load-comments-link:before{
-	color: @brand;
-	content: "\e010";
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 17px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-	top:2px;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-}
-.load-comments-link:hover:before{
-	color: @grey_three;
 }
 
 .ui-autocomplete {
