@@ -11,11 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20130718220032) do
-=======
-ActiveRecord::Schema.define(:version => 20130719005345) do
->>>>>>> f7a28ea1a63a7a1ae112e26ec4cd8c1dae24c157
+ActiveRecord::Schema.define(:version => 20130720022239) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -242,7 +238,7 @@ ActiveRecord::Schema.define(:version => 20130719005345) do
     t.datetime "updated_at",        :null => false
   end
 
-  add_index "documents", ["documentable_id"], :name => "index_documents_on_documentable_id"
+  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
@@ -285,11 +281,7 @@ ActiveRecord::Schema.define(:version => 20130719005345) do
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
     t.string   "module",            :default => "custom", :null => false
-    t.string   "slug"
   end
-
-  add_index "kpis", ["company_id", "slug"], :name => "index_kpis_on_company_id_and_slug", :unique => true
-  add_index "kpis", ["slug"], :name => "index_kpis_on_slug"
 
   create_table "kpis_segments", :force => true do |t|
     t.integer  "kpi_id"

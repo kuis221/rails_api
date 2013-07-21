@@ -9,19 +9,11 @@ class CampaignsController < FilteredController
   layout false, only: :kpis
 
   def update_post_event_form
-    fields = params[:fields].dup
-    fields.each do |id, field|
-      field['kpi_id'] = Kpi.find(field['kpi_id']).id if field['kpi_id'] =~ /[a-z]/i
-    end
-    ActiveRecord::Base.transaction do
-      field_ids = fields.map{|index, f| f['id'].try(:to_i)}.compact
-      resource.form_fields.each do |f|
-        f.mark_for_destruction unless field_ids.include?(f.id)
-      end
-      resource.form_fields_attributes = fields
-      resource.save
-      Rails.logger.debug "#{field_ids.inspect}"
-    end
+    # Mark for destruction the fields that are not on the params
+    field_ids = extract_fields_ids(params[:fields])
+    mark_fields_for_destruction(resource.form_fields, field_ids)
+    resource.form_fields_attributes = params[:fields]
+    resource.save
     render text: 'OK'
   end
 
@@ -50,6 +42,17 @@ class CampaignsController < FilteredController
   end
 
   protected
+
+    def mark_fields_for_destruction(fields, field_ids)
+      fields.each do |f|
+        f.mark_for_destruction unless field_ids.include?(f.id)
+        mark_fields_for_destruction f.fields, field_ids if f.field_type == 'section'
+      end
+    end
+
+    def extract_fields_ids(fields)
+      fields.map{|index, f| [f['id'].try(:to_i)] + extract_fields_ids(f['fields_attributes'] || []) }.flatten.compact
+    end
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search

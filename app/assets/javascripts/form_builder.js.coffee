@@ -12,6 +12,7 @@ window.FormBuilder = {
 
 		@formWrapper.sortable {
 			cancel: '.module .field, .empty-form-legend ',
+			connectWith: '.section-fields',
 			update: ( event, ui ) ->
 				if not ui.item.data('field')
 					ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
@@ -30,10 +31,17 @@ window.FormBuilder = {
 		# Add generic fields to the fields picker
 		@genericFieldsList.append new FormBuilder.TextField({})
 		@genericFieldsList.append new FormBuilder.TextareaField({})
+		@genericFieldsList.append new FormBuilder.SectionField({})
 
 		@_loadForm options
 
 		@genericFieldsList.find('.field').draggable {
+			connectToSortable: "#form-wrapper, .section-fields",
+			helper: 'clone',
+			revert: true
+		}
+
+		@genericFieldsList.find('.section').draggable {
 			connectToSortable: "#form-wrapper",
 			helper: 'clone',
 			revert: true
@@ -43,30 +51,30 @@ window.FormBuilder = {
 		 	e.preventDefault()
 			$(this).tab 'show'
 
-		@formWrapper.on 'click', '.field', (e) =>
+		@formWrapper.on 'click', '.field, .section', (e) =>
 			e.preventDefault()
 			e.stopPropagation()
 			$field = $(e.target)
-			if not $field.hasClass('field')
-				$field = $($field.parents('.field')[0])
+			if not $field.hasClass('field') and not $field.hasClass('section')
+				$field = $($field.closest('.field, .section')[0])
 			@_showFieldAttributes $field
 			false
 
 		@formWrapper.on 'click', '.delete-module', (e) =>
 			bootbox.confirm "Deleting the module will deactivate all the KPIs associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
 				if result
-					module = $($(e.target).parents('.module')[0])
+					module = $($(e.target).closest('.module')[0])
 					@removeModule module
 
 		@formWrapper.on 'click', '.delete-field', (e) =>
 			e.stopPropagation()
 			e.preventDefault()
-			element = $(e.target).parents('.field')
+			element = $(e.target).closest('.field')
 			field = element.data('field')
 			if field.options.kpi_id? 
 				bootbox.confirm "Deleting this fiel will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
 					if result
-						module = element.parents('.module')
+						module = element.closest('.module')
 						element.remove()
 						$(document).trigger 'form-builder:kpi-removed', [field.options.kpi_id]
 
@@ -154,7 +162,7 @@ window.FormBuilder = {
 		{module: kpi.module, type: kpi.type, kpi_id: kpi.id, name: kpi.name, segments: kpi.segments}
 
 	saveForm: () ->
-		data = $.map $('div.field', @formWrapper), (fieldDiv, index) =>
+		data = $.map $('> div.field, > div.section, .module div.field', @formWrapper), (fieldDiv, index) =>
 			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
 		$.post @options.saveUrl, {fields: data}, (response) =>
 			alert response
@@ -306,6 +314,60 @@ window.FormBuilder.TextField = (options) ->
 
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'text', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism, predefined_value: @options.predefined_value}}
+
+	@field
+
+
+window.FormBuilder.SectionField = (options) ->
+	@options = $.extend({
+		name: 'Section',
+		predefined_value: '',
+		kpi_id: null,
+		id: null,
+		capture_mechanism: '',
+		remove: null,
+		type: 'section',
+		fields: []
+	}, options)
+
+	if options.options?
+		@options.capture_mechanism = options.options.capture_mechanism
+		@options.predefined_value  = options.options.predefined_value
+
+	@field =  $('<div class="section" data-class="SectionField">').append $('<fieldset>').append([
+		$('<legend>').html(@options.name),
+		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
+		@fields = $('<div class="section-fields">').append($('<div class="empty-form-legend">This section is empty.</div>'))
+	])
+
+	for field in @options.fields
+		@fields.append FormBuilder.buildField(field)
+
+	@field.find('.section-fields').sortable({
+		update: ( event, ui ) ->
+			if not ui.item.data('field')
+				ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
+	})
+
+	@field.data 'field', @
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Section name'),
+				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('legend').text @options.name
+			]
+		]
+
+	@_getFieldsAttributes = () ->
+		$.map @field.find('div.field'), (fieldDiv, index) =>
+			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'section', kpi_id: null, options: {}, fields_attributes: @_getFieldsAttributes()}
 
 	@field
 
