@@ -2,9 +2,11 @@
   #collection-list-filters
   a.btn.btn-primary Save
 .main
-  = link_to 'Invite a user', new_user_invitation_path, {remote: true, class: 'btn btn-primary'}
-  .link-list
-    ul#users-list
+  .pull-left
+    = link_to 'Invite a user', new_user_invitation_path, {remote: true, class: 'btn btn-primary'}
+  .tab-content
+    .link-list
+      ul#users-list
 
 
 javascript:
