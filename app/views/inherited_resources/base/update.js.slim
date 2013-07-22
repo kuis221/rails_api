@@ -4,7 +4,5 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    if (typeof #{resource.class.name.pluralize.camelize(:lower)}Table != 'undefined'){
-      #{resource.class.name.pluralize.camelize(:lower)}Table.tableScroller('reloadData');
-    }
+    $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
     $(document).trigger('#{resource.class.name.pluralize.underscore}:change');
