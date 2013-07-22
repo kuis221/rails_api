@@ -1112,6 +1112,7 @@ overflow: hidden;
 	min-width: 620px;
 	.modal-body {
 		max-height: 800px;
+		overflow: hidden;
 		padding: 25px 30px;
 		select,
 		textarea,
@@ -1123,21 +1124,27 @@ overflow: hidden;
 			font-family: @baseFontFamily;
 			height: 30px;
 			margin-bottom: 0;
-			width: 110px;
+			width: 100px;
 				&.input-micro{width:40px;}
 				&.input-mini{width:60px;}
 				&.input-small{width:90px;}
 				&.input-medium{width:150px;}
 				&.input-large{width:210px;}
 				&.input-xlarge{width:270px;}
-				&.input-xxlarge{width:490px;}
+				&.input-xxlarge{width:540px;}
 		}
 		.control-group{
 			display: inline-block;
 			margin-right: 14px;
 		}
+		.form-actions{
+			margin-top: 25px;
+		}
 		h3{
-			margin-bottom: 30px;
+			font-size: 22px;
+			font-weight: bold;
+			line-height: 23px;
+			margin-bottom: 22px;
 		}
 		label{
 			color: @brand;
@@ -1148,8 +1155,9 @@ overflow: hidden;
 			margin: 0;
 			padding: 0;
 			position: relative;
+			width: 44%;
 			&:first-child{
-				margin-right: 14px;
+				margin-right: 65px;
 			}
 			.control-group:last-child{
 				margin: 0;
@@ -1159,6 +1167,23 @@ overflow: hidden;
 			background-color: pink;
 		}
 	}
+}
+// DATEPICKER MODALS
+.ui-widget-header{
+	background:@brand;
+	border:@brand;
+}
+
+.ui-corner-all{
+	-webkit-border-radius: 7px 7px 0px 0px;
+	border-radius: 7px 7px 0px 0px;
+}
+
+.ui-datepicker .ui-datepicker-title{
+	font-size: 14px;
+	font-weight: normal;
+	margin: 0 9px;
+	text-align: left;
 }
 
 #event-campaign-id{
