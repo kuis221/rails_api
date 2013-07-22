@@ -10,9 +10,10 @@ table#campaign-kpis-list.table.table-striped.table-bordered.table-scrolled
     - Kpi.global_and_custom(current_company).each do |kpi|
       tr id="campaign-kpi-#{kpi.id}"
         td
-          div.btn-group.active-deactive-toggle
-            = link_to 'On', '#', id: "toggle-kpi-on-#{kpi.id}", class: "btn btn-small set-kpi-on-btn", 'data-kpi-id' => kpi.id
-            = link_to 'Off', '#', id: "toggle-kpi-off-#{kpi.id}", class: "btn btn-small set-kpi-off-btn btn-danger active", 'data-kpi-id' => kpi.id
+          - if kpi.module.present? and kpi.module != ''
+            div.btn-group.active-deactive-toggle
+              = link_to 'On', '#', id: "toggle-kpi-on-#{kpi.id}", class: "btn btn-small set-kpi-on-btn", 'data-kpi-id' => kpi.id
+              = link_to 'Off', '#', id: "toggle-kpi-off-#{kpi.id}", class: "btn btn-small set-kpi-off-btn btn-danger active", 'data-kpi-id' => kpi.id
         td= link_to kpi.name, edit_campaign_kpi_path(resource, kpi.id), remote: true
         td= kpi.description
         td
@@ -37,11 +38,11 @@ javascript:
   });
 
 
-  $('.set-kpi-off-btn').click(function(e){
+  $(document).delegate('.set-kpi-off-btn', 'click', function(e){
     FormBuilder.deactivateKpi($(this).data('kpi-id'));
     return false;
   });
-  $('.set-kpi-on-btn').click(function(e){
+  $(document).delegate('.set-kpi-on-btn', 'click', function(e){
     FormBuilder.activateKpi($(this).data('kpi-id'));
     return false;
   });

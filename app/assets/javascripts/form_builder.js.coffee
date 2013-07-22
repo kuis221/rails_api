@@ -35,9 +35,8 @@ window.FormBuilder = {
 
 
 		$(document).on 'kpis:create', (e, kpi) =>
-			#field_options = @_kpiToField(kpi)
-			#@customKpisList.append @buildField(field_options)
 			@_addFieldToForm @_kpiToField(kpi)
+			@kpis.push kpi
 
 		@_loadForm options
 
@@ -213,6 +212,10 @@ window.FormBuilder = {
 		}).disableSelection()
 
 		@
+
+	formFields: () ->
+		$.map @formWrapper.find('.field'), (element, index) =>
+			$(element).data('field')
 
 	_showFieldAttributes: (field) ->
 		@formWrapper.find('.selected').removeClass('selected')

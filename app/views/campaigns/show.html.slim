@@ -61,7 +61,14 @@ javascript:
   });
 
   $(document).on('kpis:change', function(){
-    $('#campaign-kpis').load('#{kpis_campaign_path(resource)}')
+    $('#campaign-kpis').load('#{kpis_campaign_path(resource)}', function(){
+      $.each(FormBuilder.formFields(), function(index, field){
+        if (field.options.kpi_id){
+          $('a#toggle-kpi-on-'+ field.options.kpi_id).addClass('btn-success active');
+          $('a#toggle-kpi-off-'+ field.options.kpi_id).removeClass('btn-danger active');
+        }
+      });
+    })
   });
 
   $(document).on('campaigns:change', function(){
