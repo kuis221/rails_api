@@ -118,13 +118,6 @@ input[type="color"],
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
-	&.input-micro{width:40px;}
-	&.input-mini{width:60px;}
-	&.input-small{width:90px;}
-	&.input-medium{width:150px;}
-	&.input-large{width:210px;}
-	&.input-xlarge{width:270px;}
-	&.input-xxlarge{width:530px;}
 }
 
 input[type="email"]:focus, input[type="password"]:focus, select:focus{
@@ -1116,6 +1109,7 @@ overflow: hidden;
 
 // RESOURCE MODALS
 .modal {
+	min-width: 620px;
 	.modal-body {
 		max-height: 800px;
 		padding: 25px 30px;
@@ -1129,11 +1123,18 @@ overflow: hidden;
 			font-family: @baseFontFamily;
 			height: 30px;
 			margin-bottom: 0;
-			width: 120px;
+			width: 110px;
+				&.input-micro{width:40px;}
+				&.input-mini{width:60px;}
+				&.input-small{width:90px;}
+				&.input-medium{width:150px;}
+				&.input-large{width:210px;}
+				&.input-xlarge{width:270px;}
+				&.input-xxlarge{width:490px;}
 		}
 		.control-group{
 			display: inline-block;
-			margin-right: 10px;
+			margin-right: 14px;
 		}
 		h3{
 			margin-bottom: 30px;
@@ -1141,6 +1142,18 @@ overflow: hidden;
 		label{
 			color: @brand;
 			font-size: 11px;
+		}
+		.span6{
+			display: inline-block;
+			margin: 0;
+			padding: 0;
+			position: relative;
+			&:first-child{
+				margin-right: 14px;
+			}
+			.control-group:last-child{
+				margin: 0;
+			}
 		}
 		.ui-datepicker-header{
 			background-color: pink;
@@ -1226,7 +1239,7 @@ table.dataTable, table.tableScroller {
 	background-repeat: repeat-x;
 }
 
-.modal {
+/*.modal {
 	&.modal-xlarge {
 		width: 900px;
 		margin-left: -450px;
@@ -1247,7 +1260,7 @@ table.dataTable, table.tableScroller {
 		width: 200px;
 		margin-left: -430px;
 	}
-}
+}*/
 .bar-unassigned {
 	font-size: 12px;
 	text-align: center;
