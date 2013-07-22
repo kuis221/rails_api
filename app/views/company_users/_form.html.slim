@@ -19,7 +19,7 @@
           = uf.input :city, required: true
           = uf.input :time_zone, required: true
         - if resource.id != current_company_user.id
-          = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
+          = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large chosen-enabled'}
 
           = f.input :role_id, as: :select, collection: current_company.roles.active
 
