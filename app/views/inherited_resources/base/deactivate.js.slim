@@ -4,9 +4,7 @@
     bootbox.alert('Unknown error')
 - else
   |
-    if (typeof #{resource.class.name.pluralize.camelize(:lower)}Table != 'undefined'){
-      #{resource.class.name.pluralize.camelize(:lower)}Table.find("##{resource_class}_#{resource.id} .toggle-active-button").attr('href', '#{resource.active? ? url_for(action: 'deactivate') : url_for(action: 'activate')}').text('#{resource.active? ? 'Deactivate' : 'Activate'}');
-    };
+    $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
   - if resource.active?
     |
       $('.activate-#{resource_class}-btn').addClass('active btn-success');

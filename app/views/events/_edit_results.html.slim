@@ -1,0 +1,3 @@
+= simple_form_for(resource, remote: true) do |f|
+  - resource.campaign.form_fields.each do |field|
+    = f.input field.id.to_s, {as: field.field_type}.merge(field.field_options)

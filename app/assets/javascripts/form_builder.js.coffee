@@ -282,23 +282,22 @@ window.FormModule = {
 window.FormBuilder.TextField = (options) ->
 	@options = $.extend({
 		name: 'Text Field',
-		predefined_value: '',
 		kpi_id: null,
 		id: null,
-		capture_mechanism: 'text',
 		remove: null,
 		type: 'text',
+		options: {capture_mechanism: 'text', predefined_value: ''}
 	}, options)
-
-	if options.options?
-		@options.capture_mechanism = options.options.capture_mechanism
-		@options.predefined_value = options.options.predefined_value
 
 	@field =  $('<div class="field control-group" data-class="TextField">').append [
 		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
+		$('<div class="controls">').append($('<input type="text" value="'+@options.options.predefined_value+'" readonly="readonly">'))
 	]
+
+	@options.options ||= {}
+	@options.options.capture_mechanism ||= ''
+	@options.options.predefined_value ||= ''
 
 	@field.data('field', @)
 
@@ -321,20 +320,26 @@ window.FormBuilder.TextField = (options) ->
 					$('<option value="currency">Money</option>')
 				]).val(@options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
-						@options.capture_mechanism = input.val()
+						@options.options.capture_mechanism = input.val()
 			],
 
 			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Required'),
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+			]).on 'change', (e) =>
+						@options.options.required = e.target.checked
+
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
-				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.predefined_value+'">')
+				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.options.predefined_value+'">')
 			]).val(@options.predefined_value).on 'keyup', (e) =>
 						input = $(e.target)
-						@options.predefined_value = input.val()
-						@field.find('input').val @options.predefined_value
+						@options.options.predefined_value = input.val()
+						@field.find('input').val @options.options.predefined_value
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'text', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism, predefined_value: @options.predefined_value}}
+		{id: @options.id, name: @options.name, field_type: 'text', kpi_id: @options.kpi_id, options: @options.options}
 
 	@field
 
@@ -342,18 +347,13 @@ window.FormBuilder.TextField = (options) ->
 window.FormBuilder.SectionField = (options) ->
 	@options = $.extend({
 		name: 'Section',
-		predefined_value: '',
 		kpi_id: null,
 		id: null,
-		capture_mechanism: '',
 		remove: null,
 		type: 'section',
-		fields: []
+		fields: [],
+		options: {}
 	}, options)
-
-	if options.options?
-		@options.capture_mechanism = options.options.capture_mechanism
-		@options.predefined_value  = options.options.predefined_value
 
 	@field =  $('<div class="section" data-class="SectionField">').append $('<fieldset>').append([
 		$('<legend>').html(@options.name),
@@ -402,16 +402,17 @@ window.FormBuilder.NumberField = (options) ->
 		id: null,
 		remove: null,
 		type: 'number',
+		options: {capture_mechanism: '', predefined_value: ''}
 	}, options)
 
-	if options.options?
-		@options.capture_mechanism = options.options.capture_mechanism
-		@options.predefined_value = options.options.predefined_value
+	@options.options ||= {}
+	@options.options.capture_mechanism ||= ''
+	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="NumberField">').append [
 		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append($('<input type="text" value="'+@options.predefined_value+'" readonly="readonly">'))
+		$('<div class="controls">').append($('<input type="text" value="'+@options.options.predefined_value+'" readonly="readonly">'))
 	]
 
 	@field.data('field', @)
@@ -432,18 +433,24 @@ window.FormBuilder.NumberField = (options) ->
 					$('<option value="integer">Whole Number</option>'),
 					$('<option value="decimal">Decimal</option>')
 					$('<option value="currency">Money</option>')
-				]).val(@options.capture_mechanism).on 'change', (e) =>
+				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
-						@options.capture_mechanism = input.val()
+						@options.options.capture_mechanism = input.val()
 			],
 
 			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Required'),
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+			]).on 'change', (e) =>
+						@options.options.required = e.target.checked
+
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
-				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.predefined_value+'">')
+				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.options.predefined_value+'">')
 			]).val(@options.predefined_value).on 'keyup', (e) =>
 						input = $(e.target)
-						@options.predefined_value = input.val()
-						@field.find('input').val @options.predefined_value
+						@options.options.predefined_value = input.val()
+						@field.find('input').val @options.options.predefined_value
 		]
 
 	@getSaveAttributes = () ->
@@ -455,14 +462,17 @@ window.FormBuilder.NumberField = (options) ->
 window.FormBuilder.TextareaField = (options) ->
 	@options = $.extend({
 		name: 'Paragraph',
-		predefined_value: '',
+		options: {predefined_value: ''},
 		type: 'textarea',
 	}, options)
+
+	@options.options ||= {}
+	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="TextareaField">').append [
 		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
+		$('<div class="controls">').append $('<textarea>').val(@options.options.predefined_value)
 	]
 
 	@field.data('field', @)
@@ -475,11 +485,17 @@ window.FormBuilder.TextareaField = (options) ->
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			]
+			],
+
+			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Required'),
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+			]).on 'change', (e) =>
+						@options.options.required = e.target.checked
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'textarea', kpi_id: @options.kpi_id, options: {}}
+		{id: @options.id, name: @options.name, field_type: 'textarea', kpi_id: @options.kpi_id, options: @options.options}
 
 	@field
 
@@ -543,11 +559,13 @@ window.FormBuilder.VideosField = (options) ->
 window.FormBuilder.CountField = (options) ->
 	@options = $.extend({
 		name: 'Option Field',
-		predefined_value: '',
-		capture_mechanism: 'dropdown',
+		options: {capture_mechanism: 'dropdown'},
 		type: 'count',
 		segments: []
 	}, options)
+
+	@options.options ||= {}
+	@options.options.capture_mechanism ||= 'dropdown'
 
 	@field =  $('<div class="field control-group" data-class="CountField">').append [
 		$('<label class="control-label">').text(@options.name),
@@ -588,15 +606,22 @@ window.FormBuilder.CountField = (options) ->
 					$('<option value="radio">Radio</option>'),
 					$('<option value="dropdown">DropDown</option>')
 					$('<option value="checkbox">Checkbox</option>')
-				]).val(@options.capture_mechanism).on 'change', (e) =>
+				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.capture_mechanism = input.val()
 						@renderInput()
 			],
+
+			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Required'),
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+			]).on 'change', (e) =>
+						@options.options.required = e.target.checked
+
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism}}
+		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: @options.options}
 
 	@field
 
@@ -609,6 +634,10 @@ window.FormBuilder.PercentageField = (options) ->
 		type: 'percentage',
 		segments: []
 	}, options)
+
+	@options.options ||= {}
+	@options.options.capture_mechanism ||= 'integer'
+	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="PercentageField">').append [
 		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
@@ -647,10 +676,16 @@ window.FormBuilder.PercentageField = (options) ->
 						input = $(e.target)
 						@options.capture_mechanism = input.val()
 			],
+
+			$('<div class="control-group">').append([
+				$('<label class="control-label">').text('Required'),
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+			]).on 'change', (e) =>
+						@options.options.required = e.target.checked
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'percentage', kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism}}
+		{id: @options.id, name: @options.name, field_type: 'percentage', kpi_id: @options.kpi_id, options: @options.options}
 
 	@field
 
@@ -660,6 +695,9 @@ window.FormBuilder.CommentsField = (options) ->
 		predefined_value: '',
 		type: 'comments',
 	}, options)
+
+	@options.options ||= {}
+	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="CommentsField">').append [
 		$('<label class="control-label">').text(@options.name),
