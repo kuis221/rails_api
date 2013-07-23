@@ -26,6 +26,8 @@ class Kpi < ActiveRecord::Base
 
   OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos']
 
+  GOAL_ONLY_TYPE_OPTIONS = OUT_BOX_TYPE_OPTIONS + ['number']
+
   COMPLETE_TYPE_OPTIONS = CUSTOM_TYPE_OPTIONS.keys + OUT_BOX_TYPE_OPTIONS
 
   attr_accessible :name, :description, :kpi_type, :capture_mechanism, :kpis_segments_attributes, :goals_attributes
@@ -44,10 +46,10 @@ class Kpi < ActiveRecord::Base
   # KPIs-Goals relationship
   has_many :goals
 
-  accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
   accepts_nested_attributes_for :goals
 
-  scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company) }
+  scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
 
   after_save :sync_segments_and_goals
@@ -63,11 +65,12 @@ class Kpi < ActiveRecord::Base
   end
 
   def sync_segments_and_goals
-    only_goal_types = OUT_BOX_TYPE_OPTIONS + ['number']
-    if only_goal_types.include?(self.kpi_type)
-      self.kpis_segments.delete_all
-    else
-      self.goals.where(kpis_segment_id: nil).delete_all
+    if !self.out_of_the_box?
+      if GOAL_ONLY_TYPE_OPTIONS.include?(self.kpi_type)
+        self.kpis_segments.delete_all
+      else
+        self.goals.where(kpis_segment_id: nil).delete_all
+      end
     end
   end
 

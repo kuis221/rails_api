@@ -4,7 +4,7 @@
 
   .form-inputs
     h3 New event
-    = f.association :campaign, collection: company_campaigns.active
+    = f.association :campaign, collection: company_campaigns.active, input_html: {class: 'chosen-enabled'}
 
     .row-fluid
       .span6
