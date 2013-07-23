@@ -671,6 +671,9 @@ label{
 		-webkit-border-radius: 5px;
 		-moz-border-radius: 5px;
 		border-radius: 5px;
+		&:hover{
+			background-color:@brand;
+		}
 		span.checked{
 			background-color: @brand;
 			display: block;
@@ -794,7 +797,12 @@ li#user_menu{
     position: relative;
     width:99.8%;
     address{
+    	line-height: 21px;
     	margin-bottom: 0;
+    	width: 250px;
+    	br{
+    		display: none;
+    	}
     }
     a:hover{
     	color: @text;
@@ -851,7 +859,7 @@ li#user_menu{
     	min-height: 100px;
     	list-style:none;
     	margin: 0;
-      position: relative;
+        position: relative;
     	&:last-child{
     		border:0;
     	}
@@ -921,6 +929,9 @@ li#user_menu{
 			.edit:after, .enable:after, .disable:after, .load-comments-link:after{
 				color:@brand;
 			}
+			.checker, span.checked{
+				background-color: @brand;
+			}
 		}
 	}
 	span{
@@ -936,11 +947,11 @@ li#user_menu{
 			margin: 18px 20px 0 0;
 		}
 		&.pull-right{
-      display: block;
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      margin-top: -17px;
+	       display: block;
+	       position: absolute;
+	       right: 15px;
+	       top: 40%;
+	       margin-top: -17px;
 		}
 		&.tasks-date{
 			margin-right: 30px;
