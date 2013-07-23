@@ -824,6 +824,27 @@ li#user_menu{
   			}
   		}
     }
+    ul#tasks-list{
+    	li{
+    		min-height:70px;
+    		span{
+    			&:first-child{
+    			margin:15px 0 0 30px;
+    			}
+    			&:last-child{
+    				margin: 0;
+    			}
+    			&.title{
+    				position: relative;
+    				margin-top: 14px;
+    			}
+    			&.pull-right{
+    				position: relative;
+    				margin-top:12px;
+    			}
+    		}
+    	}
+    }
     li{
     	border-bottom:1px solid @user_menu;
     	color:@brand;
@@ -854,7 +875,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:2px;
+			top:13px;
 		}
 		.enable:after{
 			color: white;
@@ -866,7 +887,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:2px;
+			top:13px;
 		}
 		.disable:after{
 			color: white;
@@ -878,7 +899,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:2px;
+			top:13px;
 		}
 		.load-comments-link:after{
 			color: white;
@@ -890,7 +911,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:3px;
+			top:14px;
 		}
 		&:hover{
 			background-color: @grey_one;
@@ -1386,6 +1407,10 @@ table.table td.comments-container {
 	background-color: #ffffff !important;
 }
 .task-comments{
+	border-top: 1px solid @brand;
+	margin-top: 14px;
+	opacity:0.6;
+	filter:alpha(opacity=60); /* For IE8 and earlier */
 	vertical-align: top;
 }
 
@@ -1396,7 +1421,7 @@ table.table td.comments-container {
 
 #comment-form-container{
 	display: inline-block;
-	margin: 20px 0 5px 12px;
+	margin: 20px 0 5px 45px;
 	position: relative;
 	.control-group{
 		display: inline-block;
@@ -1411,6 +1436,9 @@ table.table td.comments-container {
 		margin: 0px 15px 0 0;
 		-webkit-border-radius: 7px;
     	border-radius: 7px;
+    	&:focus{
+    		box-shadow:none;
+    	}
 	}
 	input{
 		display:inline-block;
@@ -1433,9 +1461,10 @@ table.table td.comments-container {
 }
 // Comments List
 .comment-row{
-	margin: 24px 0 0 32px;
+	margin: 20px 0 0 62px;
 	p{
 		font-size: 12px;
+		margin-bottom: 0;
 	}
 	.user{
 		font-size: 14px;
@@ -1460,15 +1489,12 @@ table.table td.comments-container {
 }
 
 // TASKS STYLES
-
 .tasks{
 	b{
 		color:@menu;
 		font-size: 15px;
 	}
-	.link-list li{
-		height: auto;
-	}
+
 	input[type="checkbox"]{
 		visibility: hidden;
 	}
