@@ -856,6 +856,18 @@ li#user_menu{
 			text-shadow:none;
 			top:2px;
 		}
+		.enable:after{
+			color: white;
+			content: "\e00d";
+			font-family: 'icons';
+			font-size: 18px;
+			margin-left: 10px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:2px;
+		}
 		.disable:after{
 			color: white;
 			content: "\e011";
@@ -885,7 +897,7 @@ li#user_menu{
 			a:hover:after{
 				color: @grey_three;
 			}
-			.edit:after, .disable:after, .load-comments-link:after{
+			.edit:after, .enable:after, .disable:after, .load-comments-link:after{
 				color:@brand;
 			}
 		}
