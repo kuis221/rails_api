@@ -661,7 +661,7 @@ label{
 		padding: 0 15px 0 30px;
 	}
 	.checker{
-		background-color: @user_menu;
+		background-color: @grey_one;
 		display: inline-block;
 		float:left;
 		height: 20px;
@@ -671,9 +671,6 @@ label{
 		-webkit-border-radius: 5px;
 		-moz-border-radius: 5px;
 		border-radius: 5px;
-		&:hover{
-			background-color:@brand;
-		}
 		span.checked{
 			background-color: @brand;
 			display: block;
@@ -929,8 +926,11 @@ li#user_menu{
 			.edit:after, .enable:after, .disable:after, .load-comments-link:after{
 				color:@brand;
 			}
-			.checker, span.checked{
-				background-color: @brand;
+			.checker{
+				background-color: @user_menu;
+			}
+			span.checked{
+				background-color: @brand
 			}
 		}
 	}
@@ -963,7 +963,7 @@ li#user_menu{
     }
   }
 	.checker{
-		background-color: @user_menu;
+		background-color: @grey_one;
 		display: inline-block;
 		float:left;
 		height: 20px;
