@@ -318,7 +318,7 @@ window.FormBuilder.TextField = (options) ->
 					$('<option value="integer">Number</option>'),
 					$('<option value="decimal">Decimal</option>')
 					$('<option value="currency">Money</option>')
-				]).val(@options.capture_mechanism).on 'change', (e) =>
+				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.options.capture_mechanism = input.val()
 			],
