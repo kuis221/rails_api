@@ -2,13 +2,13 @@
 #
 # Table name: goals
 #
-#  id          :integer          not null, primary key
-#  campaign_id :integer
-#  kpi_id      :integer
-#  segment_id  :integer
-#  value       :decimal(, )
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id              :integer          not null, primary key
+#  campaign_id     :integer
+#  kpi_id          :integer
+#  kpis_segment_id :integer
+#  value           :decimal(, )
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 
 class Goal < ActiveRecord::Base

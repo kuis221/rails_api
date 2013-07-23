@@ -50,6 +50,21 @@
             .pull-right
               = link_to 'Upload a document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
+
+  .row-fluid
+    .box
+      a href="#documents-content" data-toggle="collapse"
+        .box-header
+          h2 RESULTS
+
+      #documents-content.collapse.in
+        .box-content
+          .pull-right
+            = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
+          #event-results
+            | Results are displayed here
+
+
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
     var map;

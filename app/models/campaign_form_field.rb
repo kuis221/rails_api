@@ -2,17 +2,16 @@
 #
 # Table name: campaign_form_fields
 #
-#  id                :integer          not null, primary key
-#  campaign_id       :integer
-#  kpi_id            :integer
-#  ordering          :integer
-#  name              :string(255)
-#  field_type        :string(255)
-#  options           :text
-#  section_id        :integer
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  capture_mechanism :string(255)
+#  id          :integer          not null, primary key
+#  campaign_id :integer
+#  kpi_id      :integer
+#  ordering    :integer
+#  name        :string(255)
+#  field_type  :string(255)
+#  options     :text
+#  section_id  :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
 #
 
 class CampaignFormField < ActiveRecord::Base
@@ -32,4 +31,59 @@ class CampaignFormField < ActiveRecord::Base
   # For field - sections relationship
   has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
   accepts_nested_attributes_for :fields
+
+  def field_options(result)
+    options = {as: simple_form_field_type, capture_mechanism: self.capture_mechanism, label: self.name, options: self.options, required: is_required?, input_html: {class: field_validation_classes(result)}}
+    unless result.kpis_segment_id.nil?
+      options.merge!(label: result.kpis_segment.text)
+      options[:input_html].merge!('data-segment-field-id' => self.id)
+    end
+    options
+  end
+
+  def capture_mechanism
+    options.try(:[], :capture_mechanism)
+  end
+
+
+  def simple_form_field_type
+    case field_type
+    when 'text', 'number', 'percentage'
+      :string
+    when 'textarea'
+      :text
+    else
+      field_type.to_s
+    end
+  end
+
+  def is_segmented?
+    ['percentage', 'count'].include? field_type
+  end
+
+  def is_section?
+    'section' == field_type
+  end
+
+  def is_required?
+    options.try(:[], :required) == 'true'
+  end
+
+  def is_numeric?
+    (['number', 'percentage', 'count'].include?(field_type)) ||
+    (field_type == 'text' && ['integer', 'decimal', 'currency'].include?(capture_mechanism) )
+  end
+
+  def is_decimal?
+    (['text', 'percentage'].include?('text') && ['decimal', 'currency'].include?(capture_mechanism))
+  end
+
+  def field_validation_classes(result)
+    validation_classes = []
+    validation_classes.push 'number' if is_numeric?
+    validation_classes.push 'integer' if is_numeric? && !is_decimal?
+    validation_classes.push 'decimal' if is_decimal?
+    validation_classes.push 'segment-field' unless result.kpis_segment_id.nil?
+    validation_classes.join ' '
+  end
 end

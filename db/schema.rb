@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130720022239) do
+ActiveRecord::Schema.define(:version => 20130723024222) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -122,9 +122,8 @@ ActiveRecord::Schema.define(:version => 20130720022239) do
     t.string   "field_type"
     t.text     "options"
     t.integer  "section_id"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.string   "capture_mechanism"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   add_index "campaign_form_fields", ["campaign_id"], :name => "index_campaign_form_fields_on_campaign_id"
@@ -239,6 +238,16 @@ ActiveRecord::Schema.define(:version => 20130720022239) do
   end
 
   add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
+
+  create_table "event_results", :force => true do |t|
+    t.integer  "form_field_id"
+    t.integer  "event_id"
+    t.integer  "kpis_segment_id"
+    t.text     "value"
+    t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+  end
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

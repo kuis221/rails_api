@@ -85,6 +85,8 @@ Brandscopic::Application.routes.draw do
   resources :events do
     get :autocomplete, on: :collection
     get :tasks, on: :member
+    get :edit_results, on: :member
+    put :save_results, on: :member
     resources :tasks, only: [:create, :new] do
       member do
         get :deactivate
@@ -93,6 +95,7 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
+    resources :comments, only: [:create, :index]
 
     member do
       get :deactivate
@@ -114,7 +117,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
     end
-    resources :comments
+    resources :comments, only: [:create, :index]
   end
 
   resources :brand_portfolios do
