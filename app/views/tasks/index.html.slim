@@ -5,6 +5,8 @@
 
 .main
   .tab-content
+    .pull-right
+      = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary tasks'}
 	#list-view.tab-pane.active
 	= render partial: 'table', locals: {source: url_for(action: :items)}
 
