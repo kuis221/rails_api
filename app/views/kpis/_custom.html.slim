@@ -20,7 +20,7 @@
   p= f.link_to_add "Add a segment", :kpis_segments
 
 #kpigoal-fields.row-fluid style="display: none"
-  = f.fields_for :goals, Goal.find_or_initialize_by_kpi_id_and_campaign_id(resource.id, @campaign.id), wrapper: false do |gf|
+  = f.fields_for :goals, resource.new_record? ? Goal.new : Goal.find_or_initialize_by_kpi_id_and_campaign_id(resource.id, @campaign.id), wrapper: false do |gf|
     = gf.hidden_field :campaign_id, value: @campaign.id
     = gf.hidden_field :kpi_id, value: resource.id
     = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}

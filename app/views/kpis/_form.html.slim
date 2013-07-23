@@ -4,11 +4,11 @@
 
   .form-inputs
     - if resource.out_of_the_box?
-        = render partial: 'out_box', locals: { f: f }
+      = render partial: 'out_box', locals: { f: f }
     - else
-        = render partial: 'custom', locals: { f: f }
+      = render partial: 'custom', locals: { f: f }
 
-  .form-actions
+  .form-actions.pull-right
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'
