@@ -358,10 +358,6 @@ $.widget 'nmk.filteredList', {
 		params
 
 	reloadData: () ->
-		@doneLoading = false
-		@element.find('tbody').html ''
-		if @infiniteScroller
-			@element.infiniteScrollHelper 'resetPageCount'
 		@_loadPage 1
 		@
 
@@ -380,9 +376,11 @@ $.widget 'nmk.filteredList', {
 		if page is 1
 			if @infiniteScroller
 				@element.infiniteScrollHelper 'resetPageCount'
-			@listContainer.html('')
+			@listContainer.html ''
+		@listContainer.append $('<li class="loading-spinner">');
 
 		@jqxhr = $.get @options.source, params, (response) =>
+			@listContainer.find('.loading-spinner').remove();
 			$response = $('<div>').append(response)
 			$items = $response.find('div[data-content="items"]')
 			if @options.onItemsLoad
