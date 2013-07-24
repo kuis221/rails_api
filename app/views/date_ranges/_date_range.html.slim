@@ -1,6 +1,10 @@
-li
+li id="date_range_#{date_range.id}"
   a href="#{date_range_path(date_range)}"
     span
       b= date_range.name
       br>/
       = date_range.description
+  span.pull-right
+    = link_to '', edit_date_range_path(date_range), remote: true, class: 'edit'
+    = link_to '', deactivate_date_range_path(date_range), remote: true, class: 'disable' if date_range.active?
+    = link_to '', activate_date_range_path(date_range), remote: true, class: 'enable' unless date_range.active?

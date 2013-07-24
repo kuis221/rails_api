@@ -4,6 +4,6 @@
   |
     $('.bootbox.modal').modal('hide');
     if (typeof dateitemsTable != 'undefined'){
-      dateitemsTable.tableScroller('reloadData');
+      dateitemsTable.fnDestroy();
     }
-    $(document).trigger('date_items:change');
+    $('table#date_range-dates').replaceWith('#{escape_javascript(render partial: 'date_ranges/date_items', locals: { resource: parent, date_items: parent.date_items })}');

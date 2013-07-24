@@ -1,0 +1,23 @@
+table#date_range-dates.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th data-sort="name" Name
+      th.actions
+  tbody
+    - date_items.each do |date_item|
+      tr id="date_item-#{date_item.id}"
+        td= date_item.label
+        td= link_to 'Remove', date_range_date_item_path(resource, date_item), method: :delete, remote: true
+
+javascript:
+  dateitemsTable = $('#date_range-dates').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "bDestroy": true,
+        "aoColumns": [
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  });
