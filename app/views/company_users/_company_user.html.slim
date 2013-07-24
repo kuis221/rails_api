@@ -1,4 +1,4 @@
-li
+li id="company_user_#{company_user.id}"
   a href="#{company_user_path(company_user)}"
     span
       b= company_user.full_name
@@ -10,3 +10,7 @@ li
       = [company_user.city, company_user.state, company_user.country_name].join(', ')
       br>/
       = format_date(company_user.last_activity_at)
+  span.pull-right
+    = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit'
+    = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
+    = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active?

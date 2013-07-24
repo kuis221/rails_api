@@ -1,7 +1,7 @@
 class DateItemsController < FilteredController
   belongs_to :date_range
-  respond_to :js, only: [:new, :create, :update, :destroy]
-  actions :all, :except => [:show, :edit, :index]
+  respond_to :js, only: [:new, :create, :destroy]
+  actions :new, :create, :destroy
 
   authorize_resource
 

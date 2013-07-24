@@ -10,9 +10,9 @@ class EventsController < FilteredController
 
   helper_method :describe_filters
 
-  respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results]
 
-  custom_actions member: [:tasks]
+  custom_actions member: [:tasks, :edit_results]
   layout false, only: :tasks
 
   def autocomplete
@@ -23,6 +23,12 @@ class EventsController < FilteredController
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
+  end
+
+  def save_results
+    update! do |success, failure|
+      success.js { render 'edit_results' }
+    end
   end
 
   protected

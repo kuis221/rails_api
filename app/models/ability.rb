@@ -24,8 +24,8 @@ class Ability
         can :manage, Area, :company_id => user.current_company.id
         can :manage, Event, :company_id => user.current_company.id
         can :manage, BrandPortfolio, :company_id => user.current_company.id
-        can :create, Brand
-        can :index, Place
+        can [:index, :create], Brand
+        can [:index, :create, :destroy], Place
 
         can :manage, DateRange, :company_id => user.current_company.id
         can :manage, DateItem, :date_range => {:company_id => user.current_company.id}
@@ -38,6 +38,7 @@ class Ability
         can :create, Task
         can :manage, Task, :event => {:company_id => user.current_company.id}
 
+        can :manage, AttachedAsset
         can :manage, Document
       end
     end

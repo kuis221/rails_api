@@ -22,16 +22,7 @@
           = "Times"
 
       .box-content
-        table#day-part-days.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th data-sort="name" Name
-              th.actions
-          tbody
-            - resource.day_items.each do |day_item|
-              tr
-                td= day_item.label
-                td= link_to "Remove", day_part_day_item_path(resource, day_item), method: :delete
+        = render partial: 'day_items', locals: { day_items: resource.day_items }
 
         .row-fluid
           .pull-right

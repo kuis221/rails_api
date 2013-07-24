@@ -31,7 +31,7 @@ module ApplicationHelper
 
   def comment_date(comment)
     if comment.created_at  <= 4.days.ago.end_of_day
-      comment.created_at.strftime('%B %d at %l:%M %P')
+      comment.created_at.strftime('%B %e at %l:%M %P')
     elsif comment.created_at  <= 2.days.ago.end_of_day
       comment.created_at.strftime('%A at %l:%M %P')
     elsif comment.created_at <= (Time.zone.now - 24.hours)
@@ -50,11 +50,11 @@ module ApplicationHelper
   end
 
   def format_date_with_time(the_date)
-    the_date.strftime('%^a <b>%b %d</b> at %l:%M %p').html_safe
+    the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe
   end
 
   def format_date(the_date)
-    the_date.strftime('%^a <b>%b %d</b>').html_safe unless the_date.nil?
+    the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
   end
 
   def format_date_range(start_at, end_at)
@@ -63,7 +63,7 @@ module ApplicationHelper
       '<br />'.html_safe +
       format_date_with_time(end_at)
     else
-      start_at.strftime('%^a <b>%b %d</b><br />').html_safe +
+      start_at.strftime('%^a <b>%b %e</b><br />').html_safe +
       "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
     end
   end

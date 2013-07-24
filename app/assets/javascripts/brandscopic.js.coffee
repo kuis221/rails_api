@@ -126,6 +126,14 @@ jQuery ->
 		return this.optional(element) || /[0-9]/.test(value);
 	, "Should have at least one digit");
 
+	$.validator.addMethod("integer", (value, element) ->
+		return this.optional(element) || /^[0-9]+$/.test(value);
+	, "Please enter an integer number");
+
+	$.validator.addMethod("segment-total", (value, element) ->
+		return (this.optional(element) && (value == '0' || value == '')) || value == '100';
+	, "The sum of the segments should be 100%");
+
 	$.validator.addMethod("matchconfirmation", (value, element) ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");

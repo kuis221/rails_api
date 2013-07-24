@@ -286,7 +286,7 @@ window.FormBuilder.TextField = (options) ->
 		id: null,
 		remove: null,
 		type: 'text',
-		options: {capture_mechanism: 'text', predefined_value: ''}
+		options: {capture_mechanism: 'text', predefined_value: '', required: 'false'}
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="TextField">').append [
@@ -318,14 +318,14 @@ window.FormBuilder.TextField = (options) ->
 					$('<option value="integer">Number</option>'),
 					$('<option value="decimal">Decimal</option>')
 					$('<option value="currency">Money</option>')
-				]).val(@options.capture_mechanism).on 'change', (e) =>
+				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.options.capture_mechanism = input.val()
 			],
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -402,7 +402,7 @@ window.FormBuilder.NumberField = (options) ->
 		id: null,
 		remove: null,
 		type: 'number',
-		options: {capture_mechanism: '', predefined_value: ''}
+		options: {capture_mechanism: '', predefined_value: '', required: 'false'}
 	}, options)
 
 	@options.options ||= {}
@@ -440,7 +440,7 @@ window.FormBuilder.NumberField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -462,7 +462,7 @@ window.FormBuilder.NumberField = (options) ->
 window.FormBuilder.TextareaField = (options) ->
 	@options = $.extend({
 		name: 'Paragraph',
-		options: {predefined_value: ''},
+		options: {predefined_value: '', required: 'false'},
 		type: 'textarea',
 	}, options)
 
@@ -489,7 +489,7 @@ window.FormBuilder.TextareaField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 		]
@@ -614,7 +614,7 @@ window.FormBuilder.CountField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -679,7 +679,7 @@ window.FormBuilder.PercentageField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required? then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 		]

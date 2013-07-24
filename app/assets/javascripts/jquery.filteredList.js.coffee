@@ -61,7 +61,7 @@ $.widget 'nmk.filteredList', {
 	destroy: ->
 		@_closeFilterOptions()
 		if @infiniteScroller
-			@element.infiniteScrollHelper 'destroy'
+			@listContainer.infiniteScrollHelper 'destroy'
 
 
 	disableScrolling: ->
@@ -358,10 +358,6 @@ $.widget 'nmk.filteredList', {
 		params
 
 	reloadData: () ->
-		@doneLoading = false
-		@element.find('tbody').html ''
-		if @infiniteScroller
-			@element.infiniteScrollHelper 'resetPageCount'
 		@_loadPage 1
 		@
 
@@ -379,10 +375,12 @@ $.widget 'nmk.filteredList', {
 		@doneLoading = false
 		if page is 1
 			if @infiniteScroller
-				@element.infiniteScrollHelper 'resetPageCount'
-			@listContainer.html('')
+				@listContainer.infiniteScrollHelper 'resetPageCount'
+			@listContainer.html ''
+		@listContainer.append $('<li class="loading-spinner">');
 
 		@jqxhr = $.get @options.source, params, (response) =>
+			@listContainer.find('.loading-spinner').remove();
 			$response = $('<div>').append(response)
 			$items = $response.find('div[data-content="items"]')
 			if @options.onItemsLoad
@@ -399,18 +397,20 @@ $.widget 'nmk.filteredList', {
 		if @options.onItemsChange
 			@options.onItemsChange(response)
 
-		if page == 1 and response.data('pages') > 1  and !@infiniteScroller
+		if page == 1
 			totalPages = response.data('pages')
-			@infiniteScroller = @listContainer.infiniteScrollHelper {
-				loadMore: (page) =>
-					if page <= totalPages && @doneLoading
-						@_loadPage(page)
-					else
-						false
 
-				doneLoading: =>
-					@doneLoading
-			}
+			if totalPages > 1  and !@infiniteScroller
+				@infiniteScroller = @listContainer.infiniteScrollHelper {
+					loadMore: (page) =>
+						if page <= totalPages && @doneLoading
+							@_loadPage(page)
+						else
+							false
+
+					doneLoading: =>
+						@doneLoading
+				}
 
 	_parseQueryString: () ->
 		@initialized = false

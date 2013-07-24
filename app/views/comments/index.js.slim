@@ -1,2 +1,2 @@
 |
-	$('<div id="task_#{parent.id}_comments" class="task-comments">').html('#{escape_javascript(render('comments_list'))}').appendTo($('li#task_#{parent.id}'));
+	$('<div id="task_#{parent.id}_comments" class="task-comments">').html('#{escape_javascript(render(partial: 'comments_list', locals: {comments: collection}))}').appendTo($('li#task_#{parent.id}'));

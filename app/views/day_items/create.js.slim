@@ -4,6 +4,6 @@
   |
     $('.bootbox.modal').modal('hide');
     if (typeof dayitemsTable != 'undefined'){
-      dayitemsTable.tableScroller('reloadData');
+      dayitemsTable.fnDestroy();
     }
-    $(document).trigger('day_items:change');
+    $('table#day-part-days').replaceWith('#{escape_javascript(render partial: 'day_parts/day_items', locals: { resource: parent, day_items: parent.day_items })}');

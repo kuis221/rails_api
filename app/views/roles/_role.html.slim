@@ -1,6 +1,10 @@
-li
+li id="role_#{role.id}"
   a href="#{role_path(role)}"
     span
       b= role.name
       br>/
       = role.description
+  span.pull-right
+    = link_to '', edit_role_path(role), remote: true, class: 'edit'
+    = link_to '', deactivate_role_path(role), remote: true, class: 'disable' if role.active?
+    = link_to '', activate_role_path(role), remote: true, class: 'enable' unless role.active?

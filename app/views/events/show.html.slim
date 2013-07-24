@@ -50,6 +50,25 @@
             .pull-right
               = link_to 'Upload a document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
+  .row-fluid
+    .box
+      a href="#results-content" data-toggle="collapse"
+        .box-header
+          h2 RESULTS
+
+      #results-content.collapse.in
+        .box-content
+          .pull-right
+            = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
+          #event-photos
+            = render resource.photos, :locals => { parent: resource }
+          .row-fluid
+            .pull-right
+              = simple_form_for(resource, html: {multipart: true}) do |f|
+                = f.simple_fields_for :photos, resource.photos.build do |aa|
+                  = file_field_tag('event_photos_file', multiple: true, name: "event[photos_attributes][][file]")
+                = f.submit 'Upload Photos'
+
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
     var map;

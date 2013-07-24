@@ -1,23 +1,23 @@
 base: &base
-  access_key_id: AKIAIIGAIZKQFFQDIXZA
-  secret_access_key: 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
+  access_key_id: AKIAIJKNKE7VZNMLW3VQ
+  secret_access_key: 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
   #  distribution_domain: XXXX.cloudfront.net
   options:
     use_ssl: true
     persistent: false
 
 production:
-  bucket_name: vzwireless
+  bucket_name: brandscopic-dev
   <<: *base
 
 staging:
-  bucket_name: vzwireless
+  bucket_name: brandscopic-dev
   <<: *base
 
 development:
-  bucket_name: vzwireless
+  bucket_name: brandscopic-dev
   <<: *base
 
 test:
-  bucket_name: vzwireless
+  bucket_name: brandscopic-dev
   <<: *base

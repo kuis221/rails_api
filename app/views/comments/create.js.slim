@@ -1,7 +1,9 @@
 - if resource.errors.empty?
-	|
-		$("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
+  - if parent.is_a?(Event)
+    | $('.event-comments-list').html('#{escape_javascript(render(parent.comments))}');
+    | $('#event_comments_attributes_0_content').val('');
+  - else
+    | $("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
 - else
-	= resource.errors.inspect
-	|
-		$('#comment-form-container').html('#{escape_javascript(render('form'))}')
+  = resource.errors.inspect
+  | $('#comment-form-container').html('#{escape_javascript(render('form'))}')

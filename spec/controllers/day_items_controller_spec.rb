@@ -37,18 +37,4 @@ describe DayItemsController do
       assigns(:day_item).errors.count > 0
     end
   end
-
-  describe "PUT 'update'" do
-    let(:day_item){ FactoryGirl.create(:day_item, day_part_id: day_part.id) }
-    it "must update the day_item attributes" do
-      t = FactoryGirl.create(:day_item)
-      put 'update', day_part_id: day_part.to_param, id: day_item.to_param, day_item: {start_time: '7:00 AM', end_time: '4:00 PM'}, format: :js
-      assigns(:day_item).should == day_item
-      response.should be_success
-      response.should render_template('update')
-      day_item.reload
-      day_item.start_time.to_s(:time_only).should == ' 7:00 AM'
-      day_item.end_time.to_s(:time_only).should == ' 4:00 PM'
-    end
-  end
 end
