@@ -1,6 +1,10 @@
-li
+li id="brand_portfolio_#{brand_portfolio.id}"
   a href="#{brand_portfolio_path(brand_portfolio)}"
     span
       b= brand_portfolio.name
       br>/
       = brand_portfolio.description
+  span.pull-right
+    = link_to '', edit_brand_portfolio_path(brand_portfolio), remote: true, class: 'edit'
+    = link_to '', deactivate_brand_portfolio_path(brand_portfolio), remote: true, class: 'disable' if brand_portfolio.active?
+    = link_to '', activate_brand_portfolio_path(brand_portfolio), remote: true, class: 'enable' unless brand_portfolio.active?

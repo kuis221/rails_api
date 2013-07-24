@@ -1,4 +1,4 @@
-li
+li id="team_#{team.id}"
   a href="#{team_path(team)}"
     span
       b= team.name
@@ -6,3 +6,7 @@ li
       = team.description
     span
       = "#{team.users.active.count} members"
+  span.pull-right
+    = link_to '', edit_team_path(team), remote: true, class: 'edit'
+    = link_to '', deactivate_team_path(team), remote: true, class: 'disable' if team.active?
+    = link_to '', activate_team_path(team), remote: true, class: 'enable' unless team.active?
