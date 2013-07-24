@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130720022239) do
+ActiveRecord::Schema.define(:version => 20130723155334) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -67,6 +67,22 @@ ActiveRecord::Schema.define(:version => 20130720022239) do
   add_index "areas_places", ["area_id", "place_id"], :name => "index_areas_places_on_area_id_and_place_id", :unique => true
   add_index "areas_places", ["area_id"], :name => "index_areas_places_on_area_id"
   add_index "areas_places", ["place_id"], :name => "index_areas_places_on_place_id"
+
+  create_table "attached_assets", :force => true do |t|
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.string   "asset_type"
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
@@ -226,19 +242,11 @@ ActiveRecord::Schema.define(:version => 20130720022239) do
 
   create_table "documents", :force => true do |t|
     t.string   "name"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.integer  "documentable_id"
-    t.string   "documentable_type"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
-
-  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

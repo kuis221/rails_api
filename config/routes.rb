@@ -93,6 +93,7 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
+    resources :photos, only: :create
 
     member do
       get :deactivate

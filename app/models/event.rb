@@ -21,11 +21,14 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, dependent: :destroy
-  has_many :documents, :as => :documentable
+  has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable
+  has_many :documents
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :photos_attributes
+
+  accepts_nested_attributes_for :photos
 
   # Events-Users relationship
   has_many :memberships, :as => :memberable

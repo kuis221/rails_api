@@ -1,10 +1,12 @@
 - remote ||= false
-= simple_form_for([@event, resource], html: { :multipart => true }, remote: remote || false) do |f|
+- resource.build_attached_asset unless resource.attached_asset.present?
+= simple_nested_form_for([@event, resource], html: { :multipart => true }, remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs
     = f.input :name
-    = f.input :file, required: true
+    = f.simple_fields_for :attached_asset do |aa|
+      = aa.input :file, required: true
 
   .form-actions
     = f.button :submit, input_html: {class: 'btn-primary'}
