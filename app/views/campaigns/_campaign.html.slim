@@ -1,6 +1,10 @@
-li
+li id="campaign_#{campaign.id}"
   a href="#{campaign_path(campaign)}"
     span
       b= campaign.name
       br>/
       = campaign.description
+  span.pull-right
+    = link_to '', edit_campaign_path(campaign), remote: true, class: 'edit'
+    = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable' if campaign.active?
+    = link_to '', activate_campaign_path(campaign), remote: true, class: 'enable' unless campaign.active?

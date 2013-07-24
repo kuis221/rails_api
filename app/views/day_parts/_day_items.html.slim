@@ -1,0 +1,23 @@
+table#day-part-days.table.table-striped.table-bordered.table-scrolled
+  thead
+    tr
+      th data-sort="name" Name
+      th.actions
+  tbody
+    - day_items.each do |day_item|
+      tr id="day_item-#{day_item.id}"
+        td= day_item.label
+        td= link_to "Remove", day_part_day_item_path(resource, day_item), method: :delete, remote: true
+
+javascript:
+  dayitemsTable = $('#day-part-days').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "bDestroy": true,
+        "aoColumns": [
+          null,
+          {"sWidth": '50px', 'bSortable': false}
+        ]
+  });

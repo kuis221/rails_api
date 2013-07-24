@@ -1,4 +1,3 @@
-
 #resource-details-wrapper
   = resource_details_bar("Viewing Date Range Details", collection_path)
 
@@ -23,27 +22,14 @@
           = "Dates"
 
       .box-content
-        table#date_range-dates.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th data-sort="name" Name
-              th.actions
-          tbody
+        = render partial: 'date_items', locals: { date_items: resource.date_items }
         .row-fluid
           .pull-right
             = link_to 'Add Date', new_date_range_date_item_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-
-  var dateitemsTable = $('table#date_range-dates').tableScroller({
-    'source': '#{date_range_date_items_path(resource, format: :json)}',
-    'rowValues': function(u){
-      return [u.name]
-    },
-    'rowId': function(row){
-      return 'date_range-date-' + row.id;
-    },
-    'actionButtons': ['deletable']
+  $(document).on('date_ranges:change', function(){
+    window.location.reload(false);
   })
 
   $(document).on('date_ranges:change', function(){

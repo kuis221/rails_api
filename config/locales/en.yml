@@ -37,6 +37,8 @@ en:
       role: "Create a role"
       area: "Create an area"
       brand_portfolio: "Create a brand portfolio"
+      date_range: "Create a date range"
+      day_part: "Create a day part"
 
   form_builder:
     modules:

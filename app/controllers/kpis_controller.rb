@@ -1,5 +1,5 @@
 class KpisController < FilteredController
-  before_filter :load_campaign, only: [:new, :edit]
+  before_filter :load_campaign, only: [:new, :update, :edit, :create]
   respond_to :js, only: [:new, :create, :edit, :update]
 
   def load_campaign

@@ -1,0 +1,27 @@
+- @rendered_modules ||= {}
+- results ||= resource.results_for(fields)
+- current_module ||= ''
+= f.simple_fields_for :results, results do |ff|
+  - field = ff.object.form_field
+  - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
+    - @rendered_modules[field.kpi.module] = true 
+    fieldset
+      legend=t "form_builder.modules.#{field.kpi.module}"
+      = render partial: 'result_fields', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
+  - elsif field.is_section?
+    fieldset
+      legend= field.name
+      = render partial: 'result_fields', locals: {fields: field.fields, f: f}
+  - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
+    b= field.name
+    = render partial: 'result_fields', locals: {results: resource.segments_results_for(field), f: f}
+    .control-group
+      = f.label :total, for: "total_#{field.id}"
+      .controls
+        = text_field_tag "total_#{field.id}", "0", {'data-segment-field-id' => field.id, id: "total_#{field.id}", :class => "segment-total #{field.is_required? ? 'required' : 'optional'}", :readonly => 'readonly'}
+  - elsif ['photos', 'videos', 'comments'].include?(field.field_type)
+    = render partial: field.field_type, locals: {f: f}
+  - elsif field.kpi_id.nil? || [current_module, 'custom'].include?(field.kpi.module)
+    = ff.hidden_field :form_field_id
+    = ff.hidden_field :kpis_segment_id
+    = ff.input :value, field.field_options(ff.object)

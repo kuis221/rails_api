@@ -18,17 +18,4 @@ class PlacesController < FilteredController
     @place = Place.find(params[:id])
     parent.places.delete(@place)
   end
-
-  private
-
-    def sort_options
-      {
-        'name' => { :order => 'places.name' },
-        'address' => { :order => 'places.formatted_address' },
-        'city' => { :order => 'places.city' },
-        'state' => { :order => 'places.state' },
-        'zipcode' => { :order => 'places.zipcode' },
-        'country' => { :order => 'places.country' }
-      }
-    end
 end

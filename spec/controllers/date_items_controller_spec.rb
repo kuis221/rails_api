@@ -40,18 +40,4 @@ describe DateItemsController do
       assigns(:date_item).errors.count > 0
     end
   end
-
-  describe "PUT 'update'" do
-    let(:date_item){ FactoryGirl.create(:date_item, date_range_id: date_range.id) }
-    it "must update the date_item attributes" do
-      t = FactoryGirl.create(:date_item)
-      put 'update', date_range_id: date_range.to_param, id: date_item.to_param, date_item: {start_date: '01/23/2013', end_date: '01/24/2013'}, format: :js
-      assigns(:date_item).should == date_item
-      response.should be_success
-      response.should render_template('update')
-      date_item.reload
-      date_item.start_date.should == Date.new(2013,01,23)
-      date_item.end_date.should == Date.new(2013,01,24)
-    end
-  end
 end

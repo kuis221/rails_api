@@ -12,7 +12,7 @@
         .span6
           .pull-right
             = link_to 'Edit', edit_area_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            = "&nbsp;".html_safe
+            | &nbsp;
             = active_inactive_buttons(resource)
       .box-header
         h2
@@ -20,41 +20,13 @@
           span.break
           = "Places"
       .box-content
-        #places-list-filter
-        table#places.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th data-sort="name" Establishment
-              th data-sort="address" Address
-              th data-sort="city" City
-              th data-sort="state" State
-              th data-sort="zipcode" ZIP
-              th data-sort="country" Country
-              th.actions
-          tbody
+        = render partial: 'places', locals: { places: resource.places }
+
         .row-fluid
           .pull-right
             = link_to 'Add Place', new_area_place_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-  $('#places-list-filter').filterBox({
-    'onChange': function(filterBox){
-      placesTable.tableScroller('reloadData');
-    }
-  });
-
-  var placesTable = $('table#places').tableScroller({
-    'source': '#{area_places_path(resource, format: :json)}',
-    'filterBox': '#places-list-filter',
-    'rowValues': function(p){
-      return [p.name, p.address, p.city, p.state, p.zipcode, p.country]
-    },
-    'rowId': function(row){
-      return 'place-' + row.id;
-    },
-    'actionButtons': ['deletable']
-  })
-
   $(document).on('areas:change', function(){
     window.location.reload(false);
   })

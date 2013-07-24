@@ -25,6 +25,9 @@ class Event < ActiveRecord::Base
   has_many :documents
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
+  has_many :results, class_name: 'EventResult'
+
+  has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :photos_attributes
 
@@ -33,6 +36,10 @@ class Event < ActiveRecord::Base
   # Events-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
+
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes
+
+  accepts_nested_attributes_for :results, :comments
 
   scoped_to_company
 
@@ -146,6 +153,25 @@ class Event < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def results_for(fields)
+    fields.map do |field|
+      result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id})
+      result.form_field = field
+      result
+    end
+  end
+
+  def segments_results_for(field)
+    if field.kpi.present?
+      field.kpi.kpis_segments.map do |segment|
+        result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id})
+        result.form_field = field
+        result.kpis_segment = segment
+        result
+      end
+    end
   end
 
   class << self

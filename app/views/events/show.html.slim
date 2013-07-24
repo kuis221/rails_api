@@ -58,6 +58,8 @@
 
       #results-content.collapse.in
         .box-content
+          .pull-right
+            = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
           #event-photos
             = render resource.photos, :locals => { parent: resource }
           .row-fluid

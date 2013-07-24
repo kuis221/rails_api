@@ -1,3 +1,14 @@
-= simple_form_for(resource, remote: true) do |f|
-  - resource.campaign.form_fields.each do |field|
-    = f.input field.id.to_s, {as: field.field_type}.merge(field.field_options)
+= simple_form_for(resource, url: save_results_event_path(resource), remote: true) do |f|
+  = render partial: 'result_fields', locals: {fields: resource.campaign.form_fields.includes(:kpi), f: f}
+
+  = f.submit "Save Results", class: 'btn btn-primary', disable_with: 'Please wait...'
+
+javascript:
+  $('.segment-field').keyup(function(e){
+    total = 0;
+    $.map($('[data-segment-field-id="'+$(this).data('segment-field-id')+'"].segment-field'), function(element, index){
+      total += parseInt($(element).val())
+    });
+    $('[data-segment-field-id="'+$(this).data('segment-field-id')+'"].segment-total').val(total)
+  })
+  $('.segment-field').keyup();

@@ -9,15 +9,15 @@
     .row-fluid
       .span6
         = f.input :start_date, :as => :date_picker
-        = f.input :end_date, :as => :date_picker
+        = f.input :start_time, :as => :time_picker, inline: true
 
       .span6
-        = f.input :start_time, :as => :time_picker, inline: true
+        = f.input :end_date, :as => :date_picker
         = f.input :end_time, :as => :time_picker
 
     .row-fluid
       = f.error :place
-      = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xlarge'}
+      = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xxlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
