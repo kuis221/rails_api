@@ -148,7 +148,7 @@ Brandscopic::Application.routes.draw do
 
   resources :date_ranges do
     get :autocomplete, on: :collection
-    resources :date_items, path: 'dates', except: [:index, :show, :edit]
+    resources :date_items, path: 'dates', only: [:new, :create, :destroy]
     member do
       get :deactivate
       get :activate
@@ -157,7 +157,7 @@ Brandscopic::Application.routes.draw do
 
   resources :day_parts do
     get :autocomplete, on: :collection
-    resources :day_items, path: 'days', except: [:index, :show, :edit]
+    resources :day_items, path: 'days', only: [:new, :create, :destroy]
     member do
       get :deactivate
       get :activate
