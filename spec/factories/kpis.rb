@@ -2,10 +2,9 @@
 
 FactoryGirl.define do
   factory :kpi do
-    name "MyString"
+    sequence(:name){|n|  "Kpi #{n}"}
     description "MyText"
-    type ""
-    capture "MyString"
-    active false
+    kpi_type "number"
+    capture_mechanism "integer"
   end
 end
