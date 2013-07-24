@@ -5,6 +5,7 @@
   |
     $('.bootbox.modal').modal('hide');
     if (typeof placesTable != 'undefined'){
-      placesTable.tableScroller('reloadData');
+      placesTable.fnDestroy();
     }
+    $('table#places').replaceWith('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: { resource: parent, places: parent.places })}');
     $(document).trigger('places:change');
