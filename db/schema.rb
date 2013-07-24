@@ -245,11 +245,10 @@ ActiveRecord::Schema.define(:version => 20130723155334) do
     t.integer  "updated_by_id"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.integer  "event_id"
   end
 
-<<<<<<< HEAD
-=======
-  add_index "documents", ["documentable_type", "documentable_id"], :name => "index_documents_on_documentable_type_and_documentable_id"
+  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
 
   create_table "event_results", :force => true do |t|
     t.integer  "form_field_id"
@@ -261,7 +260,6 @@ ActiveRecord::Schema.define(:version => 20130723155334) do
     t.datetime "updated_at",                                                      :null => false
   end
 
->>>>>>> 3e5ff4336f4e45b44cb3a77d7bb17868317f03e8
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
     t.integer  "company_id"
