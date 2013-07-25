@@ -37,7 +37,7 @@ class AttachedAsset < ActiveRecord::Base
     @bucket.objects[file.s3_object(style_name).key].url_for(:read,
       :secure => true,
       :expires => 24*3600, # 24 hours
-      :response_content_disposition => "attachment; filename='#{file_file_name}'").to_s
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
   end
 
   private

@@ -1393,7 +1393,8 @@ body.events.show {
         margin: 0;
         padding: 0;
         height: 300px;
-    }
+  }
+
 	.team-member, .document {
 		width: 300px;
 		padding: 5px 0;
@@ -1409,8 +1410,52 @@ body.events.show {
 			}
 		}
 	}
+
 	address {
 		margin-bottom: 5px;
+	}
+
+	#event-photos {
+		.photo-container {
+			position: relative;
+			ul.photo-toolbar {
+				margin: 4px;
+				padding: 0;
+				position: absolute;
+				top: 0;
+				right: 0;
+				list-style-type: none;
+				background-color: #fff;
+				display: none;
+				li {
+					display: inline;
+					a {
+						float: left;
+						cursor: pointer;
+						text-decoration: none;
+						opacity: 0.6;
+						&:hover {
+							opacity: 1.0;
+						}
+					}
+
+					.photo-download-link, .photo-deactivate-link {
+						font-size: 20px;
+						margin: 0 2px;
+					}
+				}
+			}
+
+			&:hover {
+				ul.photo-toolbar {
+					display: block;
+				}
+			}
+
+			.transparent {
+				opacity: 0.6;
+			}
+		}
 	}
 }
 

@@ -58,10 +58,12 @@
 
       #results-content.collapse.in
         .box-content
-          .pull-right
-            = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
+          .row-fluid
+            .pull-right
+              = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
           #event-photos
-            = render resource.photos, :locals => { parent: resource }
+            ul.thumbnails
+              = render resource.photos, :locals => { parent: resource }
           .row-fluid
             .pull-right
               = simple_form_for(resource, html: {multipart: true}) do |f|
