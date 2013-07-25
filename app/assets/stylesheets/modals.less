@@ -228,7 +228,11 @@
 }
 
 .ui-timepicker-list{
+	border: 1px solid red;
+	-webkit-border-radius: 6px !important;
+	border-radius: 6px !important;
 	box-shadow: none;
+	top: 260px !important;
 	width:112px !important;
 }
 
@@ -239,6 +243,11 @@
 	font-size: 10px;
 	font-weight: normal;
 	text-align: center;
+	&:hover{
+		background:@grey_one !important;
+		-webkit-border-radius: 3px;
+    	border-radius: 3px;
+	}
 }
 .ui-state-disabled, .ui-widget-content .ui-state-disabled{
 	color: @user_menu;
