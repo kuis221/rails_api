@@ -1,0 +1,8 @@
+li id="place_#{place.id}"
+  a href="#{place_path(place)}"
+    span
+      b= place.name
+      br>/
+      = place.formatted_address
+    span
+      = "XX Events"

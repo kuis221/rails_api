@@ -24,9 +24,16 @@ jQuery ->
 			highlight: (element) ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 			,
+			errorPlacement: (error, element) ->
+				label = element.closest(".control-group").find("label.control-label")
+				if label.length > 0
+					error.insertAfter label 
+				else
+					error.insertAfter element 
+
 			success: (element) ->
 				element
-					.addClass('valid')
+					.addClass('valid').text('OK!')
 					.closest('.control-group').removeClass('error')
 		}
 
@@ -58,7 +65,7 @@ jQuery ->
 		resource_modal.modal 'hide'
 		false
 
-	$(".totop").hide();
+	$(".totop").hide()
 
 	# TimeZone change detection methods
 	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
