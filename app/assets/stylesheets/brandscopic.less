@@ -398,9 +398,13 @@ body.app-layout{
 	font-size: 14px;
 	padding: 7px 25px;
 	text-shadow:none;
-}
-.btn-primary:hover{
-	background-color: @buttons-hover;
+    &:hover{
+		background-color: @buttons-hover;
+    }
+    &:active{
+    	background-color: @buttons-hover;
+    	box-shadow: none;
+    }
 }
 .container-fluid{
 	padding: 0;
@@ -458,6 +462,9 @@ body.app-layout{
 	border:0;
 	margin: 0;
 	padding: 0;
+	.btn-primary{
+		margin-right: 8px;
+	}
 }
 
 form{
