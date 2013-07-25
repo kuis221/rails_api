@@ -29,9 +29,7 @@ class Event < ActiveRecord::Base
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :photos_attributes
-
-  accepts_nested_attributes_for :photos
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
 
   # Events-Users relationship
   has_many :memberships, :as => :memberable

@@ -1,4 +1,4 @@
 - if resource.new_record?
   | alert("Failed to upload photo: #{ j resource.errors.full_messages.join(', ').html_safe }");
 - else
-  | $("#event-photos ul").append("#{ j render(resource) }");
+  | $("#event-photos > ul.thumbnails").append("#{ j render(resource) }");
