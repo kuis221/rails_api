@@ -92,6 +92,19 @@ class Place < ActiveRecord::Base
     save
   end
 
+  def reviews
+    spot.reviews
+  end
+
+  # First try to find photos in the app from events then, if there no enough photos in the app,
+  # search for photos from Google Places API
+  def photos
+    search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
+    list_photos = search.results
+    list_photos = spot.photos if list_photos.empty?
+    list_photos
+  end
+
   class << self
     def load_organized(company_id)
       places = find(:all)
@@ -151,11 +164,29 @@ class Place < ActiveRecord::Base
       end
   end
 
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+
+        with(:types, params[:types]) if params.has_key?(:types) and params[:types].present?
+
+        if include_facets
+          facet :campaigns
+          facet :status
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
+  end
+
   private
 
     def fetch_place_data
       if reference && !do_not_connect_to_api
-        spot = client.spot(reference)
         self.name = spot.name
         self.latitude = spot.lat
         self.longitude = spot.lng
@@ -187,6 +218,10 @@ class Place < ActiveRecord::Base
           self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
         end
       end
+    end
+
+    def spot
+      @spot ||= client.spot(reference)
     end
 
     def client

@@ -29,23 +29,36 @@ module ApplicationHelper
     end
   end
 
+  def rating_stars(rating)
+    (rating.times.map do
+      content_tag(:i, '', {:class => 'icon-star'})
+    end +
+    (5-rating).times.map do
+      content_tag(:i, '', {:class => 'icon-star-empty'})
+    end).join.html_safe
+  end
+
   def comment_date(comment)
-    if comment.created_at  <= 4.days.ago.end_of_day
-      comment.created_at.strftime('%B %e at %l:%M %P')
-    elsif comment.created_at  <= 2.days.ago.end_of_day
-      comment.created_at.strftime('%A at %l:%M %P')
-    elsif comment.created_at <= (Time.zone.now - 24.hours)
-      comment.created_at.strftime('Yesterday at %l:%M %P')
-    elsif comment.created_at <= (Time.zone.now - 1.hours)
-      hours = ((Time.zone.now - comment.created_at)  / 3600).to_i
+    time_ago_in_words(comment.created_at)
+  end
+
+  def time_ago_in_words(the_date)
+    if the_date  <= 4.days.ago.end_of_day
+      the_date.strftime('%B %e at %l:%M %P')
+    elsif the_date  <= 2.days.ago.end_of_day
+      the_date.strftime('%A at %l:%M %P')
+    elsif the_date <= (Time.zone.now - 24.hours)
+      the_date.strftime('Yesterday at %l:%M %P')
+    elsif the_date <= (Time.zone.now - 1.hours)
+      hours = ((Time.zone.now - the_date)  / 3600).to_i
       if hours == 1
         'about an hour ago'
       else
-        comment.created_at.strftime("#{pluralize(hours, 'hour')} ago")
+        the_date.strftime("#{pluralize(hours, 'hour')} ago")
       end
-    elsif comment.created_at > (Time.zone.now - 1.hours) and comment.created_at < Time.zone.now
-      minutes = ((Time.zone.now - comment.created_at)  / 60).to_i
-      comment.created_at.strftime("about #{pluralize(minutes, 'minute')} ago")
+    elsif the_date > (Time.zone.now - 1.hours) and the_date < Time.zone.now
+      minutes = ((Time.zone.now - the_date)  / 60).to_i
+      the_date.strftime("about #{pluralize(minutes, 'minute')} ago")
     end
   end
 

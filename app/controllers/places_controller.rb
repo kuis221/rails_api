@@ -1,5 +1,5 @@
 class PlacesController < FilteredController
-  actions :index, :new, :create
+  actions :index, :new, :create, :show
   belongs_to :area, optional: true
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
@@ -18,4 +18,16 @@ class PlacesController < FilteredController
     @place = Place.find(params[:id])
     parent.places.delete(@place)
   end
+
+
+  private
+    def search_params
+      @search_params ||= begin
+        super
+        unless @search_params.has_key?(:types) && !@search_params[:types].empty?
+          @search_params[:types] = %w(establishment)
+        end
+        @search_params
+      end
+    end
 end

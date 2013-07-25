@@ -27,6 +27,31 @@ class AttachedAsset < ActiveRecord::Base
 
   validates_attachment_presence :file
 
+  searchable do
+    latlon(:location) do
+      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event'
+    end
+
+    integer :place_id do
+      attachable.place_id if attachable_type == 'Event'
+    end
+
+    string :campaign_name do
+      attachable.campaign_name if attachable_type == 'Event'
+    end
+
+    string :location, multiple: true do
+      attachable.locations_for_index if attachable_type == 'Event'
+    end
+
+    string :file_file_name
+    integer :file_file_size
+    string :asset_type
+    string :attachable_type
+    integer :attachable_id
+    time :created_at
+  end
+
   def activate!
     update_attribute :active, true
   end
@@ -46,6 +71,18 @@ class AttachedAsset < ActiveRecord::Base
       :secure => true,
       :expires => 24*3600, # 24 hours
       :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+  end
+
+  class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      solr_search do
+        with(:place_id,     params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
+
+        order_by(params[:sorting] || :created_at , params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
   end
 
   private

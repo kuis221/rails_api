@@ -24,7 +24,7 @@ Brandscopic::Application.routes.draw do
   get ":controller/items", format: :html, as: :items
 
   scope "/research" do
-    resources :places, only: [:index, :show]
+    resources :places, path: 'venues', only: [:index, :show]
   end
 
   resources :roles do
@@ -147,14 +147,14 @@ Brandscopic::Application.routes.draw do
 
   resources :areas do
     get :autocomplete, on: :collection
-    resources :places, only: [:index, :new, :create, :destroy]
+    resources :places, only: [:new, :create, :destroy]
     member do
       get :deactivate
       get :activate
     end
   end
 
-  resources :places, only: [:index]
+  #resources :places, only: [:index]
 
   resources :date_ranges do
     get :autocomplete, on: :collection
