@@ -99,7 +99,12 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
-    resources :photos, only: :create
+    resources :photos, only: :create do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
     resources :comments, only: [:create, :index]
 
     member do

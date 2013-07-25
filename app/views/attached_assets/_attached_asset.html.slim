@@ -1,6 +1,9 @@
-li.span2 id="asset-#{attached_asset.id}"
+li.span2 id="attached_asset_#{attached_asset.id}"
 	div.photo-container.thumbnail
 		ul.photo-toolbar.transparent
 			li= link_to '', attached_asset.download_url, class: 'icon-download photo-download-link'
-			li= link_to '', '#', remote: true, class: 'icon-remove-circle photo-deactivate-link'
+			- if attached_asset.active?
+				li= link_to '', deactivate_event_photo_path(parent, attached_asset), remote: true, class: 'icon-remove-circle photo-deactivate-link'
+			- else
+				li= link_to '', activate_event_photo_path(parent, attached_asset), remote: true, class: 'icon-ok-circle photo-deactivate-link'
 		= image_tag(attached_asset.file.url(:small))

@@ -27,6 +27,14 @@ class AttachedAsset < ActiveRecord::Base
 
   validates_attachment_presence :file
 
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
+
   def file_extension(filename)
     File.extname(filename)[1..-1]
   end

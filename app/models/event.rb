@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, dependent: :destroy
-  has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable
+  has_many :photos, conditions: {asset_type: :photo}, order: "created_at DESC", class_name: 'AttachedAsset', :as => :attachable
   has_many :documents
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
