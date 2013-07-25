@@ -14,6 +14,30 @@ jQuery ->
     e.preventDefault();
     return false
 
+  $('#event-photos-upl-form').fileupload
+    dataType: "script"
+    add: (e, data) ->
+      types = /(\.|\/)(gif|jpe?g|png)$/i
+      file = data.files[0]
+      if types.test(file.type) || types.test(file.name)
+        data.context = $(tmpl("template-upload", file))
+        $('#event-photos-upl-form').append(data.context)
+        data.submit()
+      else
+        bootbox.alert("#{file.name} is not a gif, jpeg, or png image file")
+    progress: (e, data) ->
+      if data.context
+        if not data.context.moved?
+          $(data.context).appendTo('#upload-progress-list')
+          data.context.moved = true
+        progress = parseInt(data.loaded / data.total * 100, 10)
+        data.context.find('.bar').css('width', progress + '%')
+        if progress >= 99
+          window.setTimeout(() -> 
+            data.context.slideUp(600, () => $(this).remove())
+          1000)
+
+
   mapIsVisible = false
   # EVENTS INDEX
   $('#toggle-events-view a').on 'click', ->

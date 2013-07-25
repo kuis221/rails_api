@@ -23,6 +23,10 @@ Brandscopic::Application.routes.draw do
   get ":controller/filters", format: :json, as: :filters
   get ":controller/items", format: :html, as: :items
 
+  scope "/research" do
+    resources :places, only: [:index, :show]
+  end
+
   resources :roles do
     get :autocomplete, on: :collection
     member do
@@ -95,7 +99,12 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
-    resources :photos, only: :create
+    resources :photos, only: :create do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
     resources :comments, only: [:create, :index]
 
     member do

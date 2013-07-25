@@ -35,7 +35,9 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine)
       secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams)
     end
-    primary.item :research, 'Research', '#'
+    primary.item :research, 'Research', '#', highlights_on: %r(/research) do |secondary|
+      secondary
+    end
     primary.item :analysis, 'Analysis', '#'
   end
 end

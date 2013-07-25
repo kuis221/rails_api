@@ -1126,10 +1126,9 @@ overflow: hidden;
 }
 
 #resource-close-details {
-	margin-bottom: -40px;
+	margin: -2px 0 0 80px;
 	background-color: #999;
 	color:  #fff;
-	width: 100%;
 	z-index: 200;
 	-webkit-box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.15);
 	-moz-box-shadow:    0px 2px 5px rgba(50, 50, 50, 0.15);
@@ -1290,7 +1289,8 @@ body.events.show {
         margin: 0;
         padding: 0;
         height: 300px;
-    }
+  }
+
 	.team-member, .document {
 		width: 300px;
 		padding: 5px 0;
@@ -1306,8 +1306,52 @@ body.events.show {
 			}
 		}
 	}
+
 	address {
 		margin-bottom: 5px;
+	}
+
+	#event-photos {
+		.photo-container {
+			position: relative;
+			ul.photo-toolbar {
+				margin: 4px;
+				padding: 0;
+				position: absolute;
+				top: 0;
+				right: 0;
+				list-style-type: none;
+				background-color: #fff;
+				display: none;
+				li {
+					display: inline;
+					a {
+						float: left;
+						cursor: pointer;
+						text-decoration: none;
+						opacity: 0.6;
+						&:hover {
+							opacity: 1.0;
+						}
+					}
+
+					.photo-download-link, .photo-deactivate-link {
+						font-size: 20px;
+						margin: 0 2px;
+					}
+				}
+			}
+
+			&:hover {
+				ul.photo-toolbar {
+					display: block;
+				}
+			}
+
+			.transparent {
+				opacity: 0.6;
+			}
+		}
 	}
 }
 
@@ -1522,6 +1566,11 @@ table.table td.comments-container {
   }
 }
 
+#upload-progress-list {
+	position: fixed;
+	bottom: 0px;
+	right: 10px;
+}
 
 
 .checkbox-columns {

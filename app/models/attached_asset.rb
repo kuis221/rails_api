@@ -23,7 +23,17 @@ class AttachedAsset < ActiveRecord::Base
   has_attached_file :file, PAPERCLIP_SETTINGS
   attr_accessible :file, :asset_type
 
+  before_post_process :image?
+
   validates_attachment_presence :file
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 
   def file_extension(filename)
     File.extname(filename)[1..-1]
@@ -35,6 +45,12 @@ class AttachedAsset < ActiveRecord::Base
     @bucket.objects[file.s3_object(style_name).key].url_for(:read,
       :secure => true,
       :expires => 24*3600, # 24 hours
-      :response_content_disposition => "attachment; filename='#{file_file_name}'").to_s
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
   end
+
+  private
+    def image?
+      !(file_content_type =~ /^image.*/).nil?
+    end
+
 end

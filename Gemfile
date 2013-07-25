@@ -52,6 +52,7 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
   gem "less-rails", ">= 2.2.6"
+  gem 'jquery-fileupload-rails'
 end
 
 gem 'jquery-rails'
