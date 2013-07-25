@@ -10,7 +10,8 @@ doctype html
 | <!--[if (gte IE 9)|!(IE)]<!--> <html> <!--<![endif]-->
 head
   meta name="viewport" content="width=device-width, initial-scale=1.0"
-  meta name="robots" content="noindex"
+  meta name="robots" content
+  ="noindex"
   title= content_for?(:title) ? yield(:title) : "Brandscopic"
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
     = stylesheet_link_tag "application", :media => "all"

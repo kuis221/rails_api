@@ -1000,17 +1000,6 @@ li#user_menu{
 	}
 }
 
-ul {
-	li.loading-spinner {
-		display: block;
-		background:  #fff url(/assets/loading.gif) center center no-repeat;
-		height: 30px;
-		&:hover {
-			background-color: #fff !important;
-		}
-	}
-}
-
 .search-filter-label,
 input.search-query {
   background-color: @brand !important;
@@ -1210,7 +1199,15 @@ overflow: hidden;
 		}
 		.control-group{
 			display: inline-block;
-			margin-right: 14px;
+			margin-right: 15px;
+		}
+		.controls{
+			input[type="text"]{
+				&#event_start_date, &#event_end_date{
+					background: url('calendar.svg') no-repeat left !important;
+					text-align: right;
+				}
+			}
 		}
 		.form-actions{
 			margin-top: 25px;
@@ -1225,15 +1222,19 @@ overflow: hidden;
 			color: @brand;
 			font-size: 11px;
 		}
+		.to{
+			float: left;
+			padding-top: 30px;
+			position: relative;
+			text-align: center;
+			width: 65px;
+		}
 		.span6{
 			display: inline-block;
 			margin: 0;
 			padding: 0;
 			position: relative;
 			width: 44%;
-			&:first-child{
-				margin-right: 65px;
-			}
 			.control-group:last-child{
 				margin: 0;
 			}
@@ -1252,16 +1253,46 @@ overflow: hidden;
 	box-shadow: none !important;
 	height: 37px !important;
 	width:232px;
+	span{
+		line-height: 38px;
+	}
+}
+.chzn-container .chzn-results{
+	padding: 0 !important;
+	width: 238px;
+	li:hover{
+		background: @brand !important;
+	}
+}
+
+.chzn-container-single .chzn-drop{
+	box-shadow:none;
+	width: 240px !important;
 }
 // DATEPICKER MODALS
+
+.ui-widget{
+	font-family: @baseFontFamily;
+	width: 190px;
+}
 .ui-widget-header{
 	background:@brand;
 	border:@brand;
 }
 
 .ui-corner-all{
-	-webkit-border-radius: 7px 7px 0px 0px;
-	border-radius: 7px 7px 0px 0px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	border-radius: 5px 5px 0px 0px;
+}
+
+#ui-datepicker-div{
+	margin-top: 15px !important;
+	padding: 0 !important;
+}
+
+.ui-timepicker-list{
+	box-shadow: none;
+	width:112px !important;
 }
 
 .ui-datepicker .ui-datepicker-title{
@@ -1271,13 +1302,18 @@ overflow: hidden;
 	text-align: left;
 }
 .ui-state-default, .ui-widget-content .ui-state-default{
-	background-color: white;
+	background: white !important;
 	border: 0;
+	color: @brand;
+	font-size: 10px;
+	text-align: center;
+}
+.ui-state-disabled, .ui-widget-content .ui-state-disabled{
+	color: @user_menu;
 }
 
 #event-campaign-id{
 	background-color: red;
-	font-family: @baseFontFamily;
 }
 
 table.table {
