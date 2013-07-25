@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require 'jquery-ui-1.10.3.custom'
+ *= require 'uniform.default.css'
  *= require twitter-bootstrap-static/bootstrap
  *= require bootstrap_and_overrides
  *= require 'jquery.datepick.css'
@@ -23,5 +24,4 @@
  *= require 'superfish-vertical.css'
  *= require 'select2.css'
  *= require 'chosen.css'
- *= require 'uniform.default.css'
  */

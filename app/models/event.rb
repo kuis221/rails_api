@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, dependent: :destroy
-  has_many :photos, conditions: {asset_type: :photo}, order: "created_at DESC", class_name: 'AttachedAsset', :as => :attachable
+  has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :documents
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
@@ -64,6 +64,8 @@ class Event < ActiveRecord::Base
   before_validation :parse_start_end
   after_validation :delegate_errors
 
+  after_save :reindex_associated
+
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
 
@@ -88,15 +90,9 @@ class Event < ActiveRecord::Base
       place_id.to_s + '||' + place_name if place_id
     end
     string :place_name
+
     string :location, multiple: true do
-      locations = []
-      unless place.nil?
-        locations.push Place.encode_location(place.continent_name) if place.continent_name
-        locations.push Place.encode_location([place.continent_name, place.country_name]) if place.country_name
-        locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
-        locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
-      end
-      locations
+      locations_for_index
     end
 
     integer :company_user_ids, multiple: true do
@@ -128,19 +124,6 @@ class Event < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def after_remove_member(member)
-    if member.is_a? Team
-      users = member.user_ids - self.user_ids
-    else
-      users = [member]
-    end
-
-    task_ids = Task.select('tasks.id').scoped_by_event_id(self).scoped_by_company_user_id(users).map(&:id)
-    tasks = Task.scoped_by_id(task_ids)
-    tasks.update_all(company_user_id: nil)
-    Sunspot.index(tasks)
-  end
-
   def place_reference=(value)
     @place_reference = value
     if value and value.present?
@@ -170,6 +153,17 @@ class Event < ActiveRecord::Base
         result
       end
     end
+  end
+
+  def locations_for_index
+    locations = []
+    unless place.nil?
+      locations.push Place.encode_location(place.continent_name) if place.continent_name
+      locations.push Place.encode_location([place.continent_name, place.country_name]) if place.country_name
+      locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
+      locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
+    end
+    locations
   end
 
   class << self
@@ -305,5 +299,24 @@ class Event < ActiveRecord::Base
       end
     end
 
+
+    def after_remove_member(member)
+      if member.is_a? Team
+        users = member.user_ids - self.user_ids
+      else
+        users = [member]
+      end
+
+      task_ids = Task.select('tasks.id').scoped_by_event_id(self).scoped_by_company_user_id(users).map(&:id)
+      tasks = Task.scoped_by_id(task_ids)
+      tasks.update_all(company_user_id: nil)
+      Sunspot.index(tasks)
+    end
+
+    def reindex_associated
+      if place_id_changed?
+        Sunspot.index(photos)
+      end
+    end
 
 end
