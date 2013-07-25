@@ -58,18 +58,8 @@
 
       #results-content.collapse.in
         .box-content
-          .row-fluid
-            .pull-right
-              = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
-          #event-photos
-            ul.thumbnails
-              = render resource.photos, :locals => { parent: resource }
-          .row-fluid
-            .pull-right
-              = simple_form_for(resource, html: {multipart: true}) do |f|
-                = f.simple_fields_for :photos, resource.photos.build do |aa|
-                  = file_field_tag('event_photos_file', multiple: true, name: "event[photos_attributes][][file]")
-                = f.submit 'Upload Photos'
+          #event-results
+            = render 'show_results'
 
 - unless resource.place.nil? or resource.place.latitude.nil?
   javascript:

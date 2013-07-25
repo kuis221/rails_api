@@ -1,0 +1,15 @@
+#event-photos
+  ul.thumbnails
+    = render resource.photos, :locals => { parent: resource }
+.row-fluid
+  .pull-right
+    = simple_form_for([resource, resource.photos.build], url: event_photos_path(resource), html: {multipart: true, id: 'event-photos-upl-form'}) do |f|
+        = file_field_tag('event_photos_file', multiple: true, name: "photo[file]")
+#upload-progress-list
+|
+  <script id="template-upload" type="text/x-tmpl">
+    <div class="upload-progres-container">
+      {%=o.name%}
+      <div class="progress"><div class="bar" style="width: 0%"></div></div>
+    </div>
+  </script>

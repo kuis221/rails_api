@@ -17,4 +17,6 @@
 //= require jquery.dataTables.js
 //= require jquery_nested_form
 //= require form_builder.js
+//= require jquery-fileupload/basic
+//= require jquery-fileupload/vendor/tmpl
 //= require_directory .

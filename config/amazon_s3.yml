@@ -7,11 +7,11 @@ base: &base
     persistent: false
 
 production:
-  bucket_name: brandscopic-dev
+  bucket_name: brandscopic-prod
   <<: *base
 
 staging:
-  bucket_name: brandscopic-dev
+  bucket_name: brandscopic-stage
   <<: *base
 
 development:
