@@ -23,6 +23,8 @@ class AttachedAsset < ActiveRecord::Base
   has_attached_file :file, PAPERCLIP_SETTINGS
   attr_accessible :file, :asset_type
 
+  before_post_process :image?
+
   validates_attachment_presence :file
 
   def file_extension(filename)
@@ -37,4 +39,10 @@ class AttachedAsset < ActiveRecord::Base
       :expires => 24*3600, # 24 hours
       :response_content_disposition => "attachment; filename='#{file_file_name}'").to_s
   end
+
+  private
+    def image?
+      !(file_content_type =~ /^image.*/).nil?
+    end
+
 end
