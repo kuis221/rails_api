@@ -3,7 +3,7 @@
 
  PAPERCLIP_SETTINGS = {
   :styles => {
-    :small => "200x200!",
+    :small => "200x200#",
     :medium => "400x400",
     :large => "800x800"
   },
