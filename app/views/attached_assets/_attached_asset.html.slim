@@ -1,9 +1,9 @@
 li.span2 id="attached_asset_#{attached_asset.id}"
-	div.photo-container.thumbnail
-		ul.photo-toolbar.transparent
+	div.thumbnail-container.thumbnail
+		ul.thumbnail-toolbar.transparent
 			li= link_to '', attached_asset.download_url, class: 'icon-download photo-download-link'
 			- if attached_asset.active?
 				li= link_to '', deactivate_event_photo_path(parent, attached_asset), remote: true, class: 'icon-remove-circle photo-deactivate-link'
 			- else
 				li= link_to '', activate_event_photo_path(parent, attached_asset), remote: true, class: 'icon-ok-circle photo-deactivate-link'
-		= image_tag(attached_asset.file.url(:small))
+		= link_to image_tag(attached_asset.file.url(:small)), attached_asset.file.url(:medium), rel: 'gallery-'+parent.class.name.underscore.downcase+'-'+resource.id.to_s, class: 'fancybox'
