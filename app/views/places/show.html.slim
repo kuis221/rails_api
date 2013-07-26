@@ -1,31 +1,33 @@
 #resource-details-wrapper
   = resource_details_bar("Viewing Venue Details", collection_path)
 
+  #place-map-canvas.google-map
   .row-fluid
-    .box.span12
-      #place-map-canvas.google-map
-      .row-fluid
-        .span6
-          h2= resource.name
-          = resource.formatted_address
+    .span8
+      h4= resource.name
+      = resource.formatted_phone_number
+      br>/
+      = resource.formatted_address
+    .span4
+      | safasdfasdfasdfasd
 
-      ul.thumbnails
-        - resource.photos.each do |photo|
-          li.span2
-            div.photo-container.thumbnail
-              - if photo.is_a?(AttachedAsset)
-                = image_tag photo.file.url(:small)
-              - else
-                = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+  ul.thumbnails
+    - resource.photos.each do |photo|
+      li.span2
+        div.photo-container.thumbnail
+          - if photo.is_a?(AttachedAsset)
+            = image_tag photo.file.url(:small)
+          - else
+            = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 
-      h3 Reviews
-      - resource.reviews.each do |review|
-        .venue-review
-          .review-author-name= review.author_name
-          .review-rating= rating_stars(review.rating)
-          .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
-          .review-text= review.text
+  h3 Reviews
+  - resource.reviews.each do |review|
+    .venue-review
+      .review-author-name= review.author_name
+      .review-rating= rating_stars(review.rating)
+      .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+      .review-text= review.text
 
 
 - unless resource.nil? or resource.latitude.nil?
