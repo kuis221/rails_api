@@ -63,6 +63,7 @@
 		}
 		.controls{
 			input[type="text"]{
+				color: @text !important;
 				&#event_start_date, &#event_end_date{
 					background: url('calendar.svg') no-repeat left !important;
 					text-align: right;
@@ -71,6 +72,13 @@
 		}
 		.form-actions{
 			margin-top: 25px;
+			.btn-primary{
+				margin-right: 8px;
+			}
+			.btn-primary, .btn-cancel{
+				height: 40px;
+				width: 154px;
+			}
 		}
 		h3{
 			font-size: 22px;
@@ -103,17 +111,14 @@
 }
 
 // CHZN STYLES
-.chzn-container-active .chzn-single{
-	background:white !important;
-	border: 1px solid @brand !important;
-	box-shadow: none !important;
-	outline:0;
-}
+
 .chzn-container-single .chzn-single{
 	background:white !important;
-	border: 1px solid @brand !important;
+	border: 1px solid @user_menu !important;
 	box-shadow: none !important;
+	color: @text !important;
 	height: 37px !important;
+	outline:0;
 	width:232px;
 	span{
 		line-height: 38px;
@@ -135,7 +140,7 @@
 
 .chzn-container-single{
 	.chzn-drop{
-		border: 1px solid @brand !important;
+		border: 1px solid @user_menu !important;
 		-webkit-border-radius: 6px !important;
 	    border-radius: 6px !important;
 		box-shadow:none;
@@ -168,11 +173,12 @@
 }
 
 .ui-corner-all{
-	-webkit-border-radius: 6px 6px 0px 0px;
-	border-radius: 6px 6px 0px 0px;
+	-webkit-border-radius: 6px 6px 0px 0px !important;
+	border-radius: 6px 6px 0px 0px !important;
 }
 
 .ui-datepicker{
+	border:1px solid @user_menu;
 	a{
 		color: red;
 	}
@@ -204,7 +210,6 @@
 }
 
 #ui-datepicker-div{
-	border: 1px solid @brand !important;
 	margin-top: 15px !important;
 	padding: 0 !important;
 }
@@ -223,22 +228,31 @@
   	-webkit-font-smoothing: antialiased;
 }
 
-.ui-datepicker-other-month{
-	color: red;
-}
-
 .ui-timepicker-list{
-	border: 1px solid red;
+	border: 1px solid @user_menu;
 	-webkit-border-radius: 6px !important;
 	border-radius: 6px !important;
 	box-shadow: none;
 	top: 260px !important;
 	width:112px !important;
+	li{
+		color: @text;
+		&:hover{
+			background-color: @brand !important;
+			color: white !important;
+		}
+		&.ui-timepicker-selected{
+			background-color: @brand !important;
+			color: white !important;
+		}
+	}
 }
+
+
 
 .ui-state-default, .ui-widget-content .ui-state-default{
 	background: white !important;
-	border: 0;
+	border:0;
 	color: @brand;
 	font-size: 10px;
 	font-weight: normal;
