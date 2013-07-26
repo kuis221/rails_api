@@ -39,7 +39,7 @@
 
 /*-- GENERAL STYLES --*/
 
-#analysis a:before, #dashboard a:before, #events a:before, #research a:before, #tasks a:before {
+#analysis a:before, #dashboard a:before, #events a:before, #research a:before, #tasks a:before, #results a:before {
   	display: block;
   	font-family: 'icons';
 	font-size: 27px;
@@ -60,7 +60,7 @@
 	content: "\e00c";
 }
 #events a:before{
-	content: "\e00a";
+	content: "\e015";
 	left: 3px;
 }
 #tasks a:before {
@@ -69,7 +69,10 @@
 #research a:before {
 	content: "\e005";
 }
-#analysis, #dashboard, #events, #tasks, #research {
+#results a:before {
+	content: "\e014";
+}
+#analysis, #dashboard, #events, #tasks, #research, #results {
 	a:hover{
 	background-color: @text;
 	color:@user_menu;

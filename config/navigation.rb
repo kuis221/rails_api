@@ -38,6 +38,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :research, 'Research', places_path, highlights_on: %r(/research) do |secondary|
       secondary.item :venues, 'Venues', places_path, highlights_on: %r(/research/venues)
     end
+    primary.item :results, 'Results', '#'
     primary.item :analysis, 'Analysis', '#'
   end
 end
