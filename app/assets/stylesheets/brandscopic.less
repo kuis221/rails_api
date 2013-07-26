@@ -472,12 +472,17 @@ form{
 }
 
 footer{
-	color: @user_menu;
-	font-weight: normal;
 	height: 35px;
 	margin: 30px 0 0 80px;
 	padding-top: 10px;
 	text-align: center;
+	a{
+		color: @user_menu;
+		font-weight: normal;
+		&:hover{
+			color: @user_menu;
+		}
+	}
 }
 header{
 	background-color: @header;
@@ -1561,19 +1566,40 @@ table.table td.comments-container {
 /* back to top link */
 .totop {
   background-color: @header;
+  color: @user_menu;
+  font-size: 12px;
+  padding-top: 4px;
   position: fixed;
   bottom: 0px;
+  height: 30px;
+  margin-right: 10px;
   right: 0px;
+  text-align: center;
+  width: 36px;
   z-index: 104400;
+  -webkit-border-radius: 6px 6px 0px 0px;
+  border-radius: 6px 6px 0px 0px;
 
   a,  a:visited {
     display: block;
-    width: 30px;
-    height: 30px;
-    color: #fff;
     text-align: center;
-    line-height: 30px;
+    line-height: 5px;
     text-decoration:  none;
+  }
+
+  a:before{
+  	color: @user_menu;
+	content: "\e012";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 14px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+	top: 1px;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
   }
 }
 
