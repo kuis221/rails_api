@@ -1,14 +1,14 @@
 li id="company_user_#{company_user.id}"
   a href="#{company_user_path(company_user)}"
-    span
+    span.user_name
       b= company_user.full_name
       br>/
-      = company_user.email
-      br>/
       = company_user.role_name
-    span
+    span.user_city
       = [company_user.city, company_user.state, company_user.country_name].join(', ')
-      br>/
+    span.user_mail
+      = company_user.email
+    span.user_date
       = format_date(company_user.last_activity_at)
   span.pull-right
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit'
