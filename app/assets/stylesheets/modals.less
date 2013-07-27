@@ -60,6 +60,9 @@
 		.control-group{
 			display: inline-block;
 			margin-right: 15px;
+			label{
+				margin-bottom: 2px;
+			}
 		}
 		.controls{
 			input[type="text"]{
@@ -116,18 +119,6 @@
 
 // CHZN STYLES
 
-.chzn-container-single .chzn-single{
-	background:white !important;
-	border: 1px solid @user_menu !important;
-	box-shadow: none !important;
-	color: @text !important;
-	height: 37px !important;
-	outline:0;
-	width:232px;
-	span{
-		line-height: 38px;
-	}
-}
 .chzn-container .chzn-results{
 	padding: 0 !important;
 	width: 238px;
@@ -143,6 +134,18 @@
 }
 
 .chzn-container-single{
+	.chzn-single{
+		background:white !important;
+		border: 1px solid @user_menu !important;
+		box-shadow: none !important;
+		color: @text !important;
+		height: 37px !important;
+		outline:0;
+		width:232px;
+		span{
+			line-height: 36px;
+		}
+	}
 	.chzn-drop{
 		border: 1px solid @user_menu !important;
 		-webkit-border-radius: 6px !important;
@@ -270,3 +273,21 @@
 .ui-state-disabled, .ui-widget-content .ui-state-disabled{
 	color: @user_menu;
 }
+
+// ERROR 
+.control-group.error{
+	.control-label{
+		color:@brand;
+		display: inline-block;
+	}
+    .help-inline {
+    	color:@buttons;
+		font-size: 11px;
+		margin-bottom: 2px;
+	}
+	select, textarea, input[type="text"].error{
+	border: 1px solid pink;
+
+}
+}
+
