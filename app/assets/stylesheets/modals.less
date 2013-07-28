@@ -20,7 +20,28 @@
 //MODALS
 
 .modal {
-	min-width: 620px;
+	&.modal-med{
+		width: 460px;
+		.modal-body{
+			.control-group{
+				&.task_title{
+					margin: 0 0 15px 0;
+					width: 400px;
+				}
+				&.task_company_user{
+					margin: 0;
+					width: 250px;
+				}
+				&.task_due_at{
+					margin-left: 33px;
+					width: 100px;
+				}
+			}
+		}
+	}
+	&.modal-large{
+		min-width: 620px;
+	}
 	.modal-body {
 		max-height: 800px;
 		overflow: hidden;
@@ -41,7 +62,7 @@
 				&.input-small{width:90px;}
 				&.input-medium{width:150px;}
 				&.input-large{width:210px;}
-				&.input-xlarge{width:270px;}
+				&.input-xlarge{width:385px;}
 				&.input-xxlarge{width:540px;
 			}
 		}
@@ -57,9 +78,15 @@
 		textarea::-webkit-input-placeholder {
 		  color: @grey_three;
 		}
+		.chosen-campaign{
+			.control-group{
+				width: 300px;
+			}
+		}
 		.control-group{
 			display: inline-block;
-			margin-right: 15px;
+			margin-right: 17px;
+			width: 120px;
 			label{
 				margin-bottom: 2px;
 			}
@@ -93,6 +120,7 @@
 				}
 			}
 		}
+		// FORM ACTIONS
 		.form-actions{
 			margin-top: 25px;
 			.btn-primary{
@@ -101,6 +129,19 @@
 			.btn-primary, .btn-cancel{
 				height: 40px;
 				width: 154px;
+			}
+		}
+		.form-horizontal{
+			.controls{
+				margin: 0;
+			}
+			.control-label{
+				text-align: left;
+				width: 70px;
+			}
+			.form-actions{
+				margin-top: 10px;
+				padding:0;
 			}
 		}
 		h3{
@@ -115,17 +156,16 @@
 		}
 		.to{
 			float: left;
-			padding-top: 30px;
-			position: relative;
+			padding: 32px 7px 0 0;
 			text-align: center;
-			width: 65px;
+			width: 37px;
 		}
 		.span6{
 			display: inline-block;
 			margin: 0;
 			padding: 0;
 			position: relative;
-			width: 44%;
+			width: 46%;
 			.control-group:last-child{
 				margin: 0;
 			}
@@ -157,7 +197,7 @@
 		color: @text !important;
 		height: 37px !important;
 		outline:0;
-		width:232px;
+		width:240px;
 		span{
 			line-height: 36px;
 		}
