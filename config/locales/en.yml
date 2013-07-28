@@ -32,13 +32,13 @@ en:
 
   buttons:
     new:
-      team: "Create a team"
-      campaign: "Create a campaign"
-      role: "Create a role"
-      area: "Create an area"
-      brand_portfolio: "Create a brand portfolio"
-      date_range: "Create a date range"
-      day_part: "Create a day part"
+      team: "New Team"
+      campaign: "New campaign"
+      role: "New Role"
+      area: "New Area"
+      brand_portfolio: "New Brand portfolio"
+      date_range: "New Date range"
+      day_part: "New Day part"
 
   form_builder:
     modules:
