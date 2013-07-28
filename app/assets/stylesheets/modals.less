@@ -31,10 +31,22 @@
 				&.task_company_user{
 					margin: 0;
 					width: 250px;
+					.chzn-drop{
+						box-shadow: none;
+						width: 250px !important;
+					}
+					.chzn-results{
+						width: 248px !important;
+					}
 				}
 				&.task_due_at{
-					margin-left: 33px;
-					width: 100px;
+					margin-left: 23px;
+					width: 110px;
+					input[type="text"]{
+						background: url('calendar.svg') no-repeat left !important;
+						text-align: right;
+						width: 110px;
+					}
 				}
 			}
 		}
