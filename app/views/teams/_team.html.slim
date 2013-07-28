@@ -4,8 +4,10 @@ li id="team_#{team.id}"
       b= team.name
       br>/
       = team.description
-    span
-      = "#{team.users.active.count} members"
+    span.members
+      b= team.users.active.count
+      br>/ 
+      | Members
   span.pull-right
     = link_to '', edit_team_path(team), remote: true, class: 'edit'
     = link_to '', deactivate_team_path(team), remote: true, class: 'disable' if team.active?

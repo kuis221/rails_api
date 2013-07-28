@@ -4,6 +4,14 @@ li id="campaign_#{campaign.id}"
       b= campaign.name
       br>/
       = campaign.description
+    span.first
+      = format_date campaign.created_at
+      br>/
+      | First event
+    span.last
+      = format_date campaign.updated_at
+      br>/
+      | Last event
   span.pull-right
     = link_to '', edit_campaign_path(campaign), remote: true, class: 'edit'
     = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable' if campaign.active?

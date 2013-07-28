@@ -5,7 +5,7 @@
 	src:url('/assets/font/icons.eot?#iefix') format('embedded-opentype'),
 		url('/assets/font/icons.woff') format('woff'),
 		url('/assets/font/icons.ttf') format('truetype'),
-		url('/assets/font/icons.svg#icomoon') format('svg');
+		url('/assets/font/icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -873,26 +873,55 @@ li#user_menu{
     }
     ul#users-list{
     	span{
-    		&.user_name{
-    			line-height: 16px;
-    			margin: 13px 20px 0 0;
-    			width: 25%;
-    		}
-    		&.user_city{
-    			line-height: 16px;
-    			margin: 13px 20px 0 0;
-    			width: 25%;
-    		}
-    		&.user_mail{
-    			line-height: 16px;
+    		line-height: 16px;
+    		&.user_name, &.user_city, &.user_mail{
     			margin: 13px 20px 0 0;
     			width: 25%;
     		}
     		&.user_date{
-    			line-height: 16px;
     			margin: 13px 0 0 0;
     			width: 10%;
     		}
+    	}
+    }
+    ul#teams-list{
+    	span{
+    		line-height: 16px;
+    		&:first-child{
+    			margin-right: 100px;
+    			width:50%;
+    		}
+    		&.members{
+    			width: 15%;
+    		}
+    	}
+    }
+    ul#roles-list{
+    	span{
+    		line-height: 16px;
+    		&:first-child{
+    			margin-top: 13px;
+    		}
+    	}
+    }
+    ul#campaigns-list, ul#areas-list, ul#brand_portfolios-list{
+    	span{
+    		line-height: 16px;
+    		&:first-child{
+    			margin-right: 120px;
+    			width: 50%;
+    		}
+    		&.first{
+    			margin-right: 60px;
+    		}
+    		&.first, &.last{
+    			margin-top: 15px;
+    		}
+    	}
+    }
+    ul#day_parts-list{
+    	span{
+    		line-height: 16px;
     	}
     }
     li{
