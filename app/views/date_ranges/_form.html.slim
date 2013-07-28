@@ -3,8 +3,9 @@
   = f.error_notification
 
   .form-inputs
-    = f.input :name
-    = f.input :description, :input_html => {:rows => 6}
+    h3 New date range
+    = f.input :name, :input_html => {class: 'input-xxlarge'}
+    = f.input :description, :input_html => {:rows => 6, class: 'input-xxlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'

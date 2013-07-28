@@ -566,7 +566,7 @@ li.dropdown a{
 	border-radius: 0;
 	color: @user_menu;
 	height: 19px;
-	margin: 0 10px 0 0;
+	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
 .nav-pills>.active>a:hover{
@@ -574,7 +574,7 @@ li.dropdown a{
 	border-radius: 0;
 	color: @user_menu;
 	height: 19px;
-	margin: 0 10px 0 0;
+	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
@@ -1466,8 +1466,11 @@ table.table td.comments-container {
 
 #comment-form-container{
 	display: inline-block;
-	margin: 20px 0 5px 45px;
+	margin: 20px 0 5px 44px;
 	position: relative;
+	.btn{
+		background-color: @user_menu;
+	}
 	.control-group{
 		display: inline-block;
 		width:80%;
@@ -1479,6 +1482,7 @@ table.table td.comments-container {
 		display: inline-block;
 		min-height: 75px;
 		margin: 0px 15px 0 0;
+		padding: 10px 0 0 10px;
 		-webkit-border-radius: 7px;
     	border-radius: 7px;
     	&:focus{
@@ -1507,12 +1511,18 @@ table.table td.comments-container {
 // Comments List
 .comment-row{
 	margin: 20px 0 0 62px;
+	color:@text;
+    			width: 60%;
 	p{
 		font-size: 12px;
-		margin-bottom: 0;
+		margin: 5px 0 0 0;
 	}
 	.user{
 		font-size: 14px;
+	}
+	.date{
+		color: @brand;
+		font-size: 11px;
 	}
 }
 

@@ -1,5 +1,6 @@
 .comment-row
-	.user = comment.user_full_name + ' | ' + comment_date(comment)
+	.user = comment.user_full_name 
+	.date = comment_date(comment)
 	p
 		= comment.content
 br

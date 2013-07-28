@@ -5,6 +5,7 @@
   = f.error_notification
 
   .form-inputs
+    h3 Edit user
     = f.simple_fields_for :user do |uf|
       .row-fluid
         .span6
@@ -14,9 +15,9 @@
       .row-fluid
         = uf.input :email
         - if resource.id == current_company_user.id
-          = uf.input :country, required: true
-          = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
           = uf.input :city, required: true
+          = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+          = uf.input :country, required: true
           = uf.input :time_zone, required: true
         - if resource.id != current_company_user.id
           = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large chosen-enabled'}
