@@ -875,25 +875,44 @@ li#user_menu{
     ul#users-list{
     	span{
     		line-height: 16px;
-    		&.user_name, &.user_city, &.user_mail{
+    		&.user_name, &.user_city{
     			margin: 13px 20px 0 0;
+    			width: 20%;
+    		}
+    		&.user_city{
+    			line-height: 18px;
+    		}
+    		&.user_name{
+    			b{
+    				font-size: 16px;
+    			}
+    		}
+    		&.user_mail{
+    			margin: 16px 35px 0 0;
     			width: 25%;
     		}
     		&.user_date{
     			margin: 13px 0 0 0;
-    			width: 10%;
+    			width: 16%;
     		}
     	}
     }
     ul#teams-list{
     	span{
     		line-height: 16px;
+    		b{
+    			font-size: 16px;
+    		}
     		&:first-child{
     			margin-right: 100px;
     			width:50%;
     		}
     		&.members{
+    			margin: 10px 0 0 0;
     			width: 15%;
+    			b{
+    				font-size: 16px;
+    			}
     		}
     	}
     }
@@ -923,7 +942,7 @@ li#user_menu{
     li{
     	border-bottom:1px solid @borders;
     	color:@brand;
-    	min-height: 83px;
+    	height: 83px;
     	list-style:none;
     	margin: 0;
         position: relative;
@@ -1568,7 +1587,7 @@ table.table td.comments-container {
 }
 
 .task-counter-bar{
-	margin: 15px 0 15px 10px;
+	margin: 15px 0 0 10px;
 }
 
 .task-counter-item {
