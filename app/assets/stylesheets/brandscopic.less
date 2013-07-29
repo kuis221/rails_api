@@ -892,7 +892,7 @@ li#user_menu{
     			width: 25%;
     		}
     		&.user_date{
-    			margin: 13px 0 0 0;
+    			margin: 16px 0 0 0;
     			width: 16%;
     		}
     	}
@@ -904,7 +904,7 @@ li#user_menu{
     			font-size: 16px;
     		}
     		&:first-child{
-    			margin-right: 100px;
+    			margin: 10px 100px 0 0;
     			width:50%;
     		}
     		&.members{
@@ -928,14 +928,14 @@ li#user_menu{
     	span{
     		line-height: 16px;
     		&:first-child{
-    			margin-right: 120px;
+    			margin: 10px 120px 0 0;
     			width: 50%;
     		}
     		&.first{
     			margin-right: 60px;
     		}
     		&.first, &.last{
-    			margin-top: 15px;
+    			margin-top: 10px;
     		}
     	}
     }
@@ -1087,7 +1087,16 @@ li#user_menu{
 		}
 	}
 }
-
+ul{
+  	li.loading-spinner{
+  		display:block;
+  		background: #fff url(assets/loading.gif) center center no-repeat;
+  		height: 30px;
+  		&:hover{
+  			background-color: #fff !important;
+  		}
+  	}
+}
 .search-filter-label,
 input.search-query {
   background-color: @brand !important;
