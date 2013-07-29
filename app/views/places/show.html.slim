@@ -24,10 +24,15 @@
   h3 Reviews
   - resource.reviews.each do |review|
     .venue-review
-      .review-author-name= review.author_name
-      .review-rating= rating_stars(review.rating)
-      .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
-      .review-text= review.text
+      - unless review.is_a?(Comment)
+        .review-author-name= review.author_name
+        .review-rating= rating_stars(review.rating)
+        .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+        .review-text= review.text
+      - else
+        .review-author-name= review.user_full_name
+        .review-date= time_ago_in_words(review.created_at)
+        .review-text= review.content
 
 
 - unless resource.nil? or resource.latitude.nil?
