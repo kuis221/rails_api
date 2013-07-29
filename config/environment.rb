@@ -4,7 +4,6 @@ require File.expand_path('../application', __FILE__)
 # Initialize the rails application
 Brandscopic::Application.initialize!
 
-
 ActionMailer::Base.smtp_settings = {
   :address        => 'smtp.sendgrid.net',
   :port           => '587',
@@ -15,4 +14,3 @@ ActionMailer::Base.smtp_settings = {
   :enable_starttls_auto => true
 }
 
-GOOGLE_API_KEY='AIzaSyDlvj3cfC0KZNKRCZwtdvd8Acp_kjXIjkQ'
