@@ -28,8 +28,8 @@ class AttachedAsset < ActiveRecord::Base
   validates_attachment_presence :file
 
   searchable do
-    latlon(:location) do
-      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event'
+    integer :company_id do
+      attachable.company_id if attachable.present?
     end
 
     integer :place_id do
@@ -38,6 +38,10 @@ class AttachedAsset < ActiveRecord::Base
 
     string :campaign_name do
       attachable.campaign_name if attachable_type == 'Event'
+    end
+
+    latlon(:location) do
+      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event'
     end
 
     string :location, multiple: true do
@@ -60,6 +64,10 @@ class AttachedAsset < ActiveRecord::Base
     update_attribute :active, false
   end
 
+  def status
+    self.active? ? 'Active' : 'Inactive'
+  end
+
   def file_extension(filename)
     File.extname(filename)[1..-1]
   end
@@ -77,9 +85,9 @@ class AttachedAsset < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       solr_search do
-        with(:place_id,     params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
-
-        order_by(params[:sorting] || :created_at , params[:sorting_dir] || :desc)
+        with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
+        with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
+        order_by(params[:sorting] || :created_at, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end

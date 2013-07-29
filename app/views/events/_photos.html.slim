@@ -1,6 +1,6 @@
-#event-photos
+.photo-list
   ul.thumbnails
-    = render partial: 'attached_assets/attached_asset', collection: resource.photos, :locals => { parent: resource }
+    = render partial: 'photos/photo', collection: resource.photos
 .row-fluid
   .pull-right
     = simple_form_for([resource, resource.photos.build], url: event_photos_path(resource), html: {multipart: true, id: 'event-photos-upl-form'}) do |f|
