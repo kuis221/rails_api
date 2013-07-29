@@ -92,8 +92,12 @@ class Place < ActiveRecord::Base
     save
   end
 
+  # First try to find comments in the app from events, then if there no enough comments in the app,
+  # search for reviews from Google Places API
   def reviews
-    spot.reviews
+    list_reviews = Comment.for_places(self).limit(5).all
+    list_reviews += spot.reviews if list_reviews.length < 5
+    list_reviews.slice(0, 5)
   end
 
   def price_level
@@ -108,7 +112,7 @@ class Place < ActiveRecord::Base
     spot.opening_hours
   end
 
-  # First try to find photos in the app from events then, if there no enough photos in the app,
+  # First try to find photos in the app from events, then if there no enough photos in the app,
   # search for photos from Google Places API
   def photos
     search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
