@@ -5,11 +5,16 @@ li id="company_user_#{company_user.id}"
       br>/
       = company_user.role_name
     span.user_city
-      = [company_user.city, company_user.state, company_user.country_name].join(', ')
+      = [company_user.city, company_user.state].join(', ')
+      br>/
+      = [company_user.country_name].join(', ')
     span.user_mail
       = company_user.email
-    span.user_date
-      = format_date(company_user.last_activity_at)
+    - unless company_user.last_activity_at.nil?
+      span.user_date
+        = format_date_with_time(company_user.last_activity_at)
+        br>/
+        | Last activity
   span.pull-right
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit'
     = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
