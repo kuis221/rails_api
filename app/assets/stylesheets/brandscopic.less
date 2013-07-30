@@ -234,6 +234,9 @@ a.datepick-cmd:hover{
 	width: 208px;
 	table{
 		border: 1px solid @user_menu;
+		display: block;
+		padding: 5px 8px 7px 8px;
+		width: auto;
 	}
 	thead{
 		border-bottom: 0;
@@ -250,16 +253,27 @@ a.datepick-cmd:hover{
 		font-weight: bold;
 		padding-top: 5px;
 	}
+	td{
+		padding: 2px 4px;
+	}
 	a{
 		color:@menu;
 		font-size: 12px;
 		opacity:0.8;
+		padding: 1px 2px;
 		filter:alpha(opacity=80); /* For IE8 and earlier */
+		&.datepick-today{
+			color: @grey_three;
+			font-size: 12px;
+			font-weight: bold;
+			opacity:1;
+			background-color: white !important;
+		}
 	}
 	a:hover{
 		display: block;
 		width: 100%;
-		padding: 0.125em 0em;
+		padding: 1px 2px;
 		background-color: @grey_one !important;
 		color: @text;
 		text-decoration: none;
