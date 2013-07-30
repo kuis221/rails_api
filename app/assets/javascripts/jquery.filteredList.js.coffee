@@ -378,7 +378,6 @@ $.widget 'nmk.filteredList', {
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 			@listContainer.html ''
 		@listContainer.append $('<li class="loading-spinner">');
-    console.log('spinner!');
 
 		@jqxhr = $.get @options.source, params, (response) =>
 			@listContainer.find('.loading-spinner').remove();
