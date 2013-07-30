@@ -2,8 +2,8 @@ li id="day_part_#{day_part.id}"
   a href="#{day_part_path(day_part)}"
     span
       b= day_part.name
-      br>/
-      = day_part.description
+      span.description
+        = day_part.description
   span.pull-right
     = link_to '', edit_day_part_path(day_part), remote: true, class: 'edit'
     = link_to '', deactivate_day_part_path(day_part), remote: true, class: 'disable' if day_part.active?

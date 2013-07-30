@@ -9,6 +9,12 @@
       = resource.formatted_phone_number
       br>/
       = resource.formatted_address
+      - if resource.website
+        br>/
+        = place_website(resource.website)
+      br>/
+      = resource.price_level.times.map{ '$' }.join
+
     - if place_events.size > 0
       .span4
         .text-right

@@ -2,8 +2,8 @@ li id="area_#{area.id}"
   a href="#{area_path(area)}"
     span
       b= area.name
-      br>/
-      = area.description
+      span.description
+        = area.description
   span.pull-right
     = link_to '', edit_area_path(area), remote: true, class: 'edit'
     = link_to '', deactivate_area_path(area), remote: true, class: 'disable' if area.active?
