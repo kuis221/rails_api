@@ -21,6 +21,7 @@ class Document < ActiveRecord::Base
   attr_accessible :name, :attached_asset_attributes
 
   delegate :file_file_name, :download_url, :file_extension, to: :attached_asset
+  delegate :company_id, to: :event
 
   validates :name, presence: true
 end

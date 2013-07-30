@@ -1,31 +1,54 @@
 #resource-details-wrapper
   = resource_details_bar("Viewing Venue Details", collection_path)
 
+  #place-map-canvas.google-map
+  h4= resource.name
+
   .row-fluid
-    .box.span12
-      #place-map-canvas.google-map
-      .row-fluid
-        .span6
-          h2= resource.name
-          = resource.formatted_address
+    .span8
+      = resource.formatted_phone_number
+      br>/
+      = resource.formatted_address
+    - if place_events.size > 0
+      .span4
+        .text-right
+          = pluralize(place_events.size, 'Event')
+          br>/
+          = pluralize(Event.scoped_by_company_id(current_company).total_promo_hours_for_places(resource), 'Promo Hour')
+          br>/
+          = pluralize(EventResult.scoped_by_company_id(current_company).impressions_for_places(resource), 'Impressions')
+          br>/
+          = EventResult.scoped_by_company_id(current_company).consumers_interactions_for_places(resource)
+          = " Influenced"
+          br>/
+          = EventResult.scoped_by_company_id(current_company).consumers_sampled_for_places(resource)
+          = " Sampled"
+          br>/
+          = EventResult.scoped_by_company_id(current_company).spent_for_places(resource)
+          = " Spent"
 
-      ul.thumbnails
-        - resource.photos.each do |photo|
-          li.span2
-            div.photo-container.thumbnail
-              - if photo.is_a?(AttachedAsset)
-                = image_tag photo.file.url(:small)
-              - else
-                = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+  ul.thumbnails
+    - resource.photos.each do |photo|
+      li.span2
+        div.photo-container.thumbnail
+          - if photo.is_a?(AttachedAsset)
+            = image_tag photo.file.url(:small)
+          - else
+            = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 
-      h3 Reviews
-      - resource.reviews.each do |review|
-        .venue-review
-          .review-author-name= review.author_name
-          .review-rating= rating_stars(review.rating)
-          .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
-          .review-text= review.text
+  h3 Reviews
+  - resource.reviews.each do |review|
+    .venue-review
+      - unless review.is_a?(Comment)
+        .review-author-name= review.author_name
+        .review-rating= rating_stars(review.rating)
+        .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+        .review-text= review.text
+      - else
+        .review-author-name= review.user_full_name
+        .review-date= time_ago_in_words(review.created_at)
+        .review-text= review.content
 
 
 - unless resource.nil? or resource.latitude.nil?

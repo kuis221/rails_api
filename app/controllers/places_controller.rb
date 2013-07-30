@@ -4,6 +4,8 @@ class PlacesController < FilteredController
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
 
+  helper_method :place_events
+
 
   def create
     reference_value = params[:place][:reference]
@@ -29,5 +31,9 @@ class PlacesController < FilteredController
         end
         @search_params
       end
+    end
+
+    def place_events
+      @place_events ||= resource.events.scoped_by_company_id(current_company).all
     end
 end

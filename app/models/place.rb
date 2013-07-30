@@ -34,6 +34,7 @@ class Place < ActiveRecord::Base
   # Areas-Places relationship
   has_many :areas_places
   has_many :areas, through: :areas_places
+  has_many :events
 
   attr_accessor :do_not_connect_to_api
   before_create :fetch_place_data
@@ -92,17 +93,33 @@ class Place < ActiveRecord::Base
     save
   end
 
+  # First try to find comments in the app from events, then if there no enough comments in the app,
+  # search for reviews from Google Places API
   def reviews
-    spot.reviews
+    list_reviews = Comment.for_places(self).limit(5).all
+    list_reviews += spot.reviews if list_reviews.length < 5
+    list_reviews.slice(0, 5)
   end
 
-  # First try to find photos in the app from events then, if there no enough photos in the app,
+  def price_level
+    spot.price_level
+  end
+
+  def formatted_phone_number
+    spot.formatted_phone_number
+  end
+
+  def opening_hours
+    spot.opening_hours
+  end
+
+  # First try to find photos in the app from events, then if there no enough photos in the app,
   # search for photos from Google Places API
   def photos
     search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
     list_photos = search.results
-    list_photos = spot.photos if list_photos.empty?
-    list_photos
+    list_photos += spot.photos if list_photos.length < 10
+    list_photos.slice(0, 10)
   end
 
   class << self

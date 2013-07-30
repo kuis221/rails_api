@@ -12,7 +12,7 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results]
 
-  custom_actions member: [:tasks, :edit_results]
+  custom_actions member: [:tasks, :edit_results, :save_results]
   layout false, only: :tasks
 
   def autocomplete
@@ -26,9 +26,7 @@ class EventsController < FilteredController
   end
 
   def save_results
-    update! do |success, failure|
-      success.js { render 'edit_results' }
-    end
+    update!
   end
 
   protected

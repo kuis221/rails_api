@@ -26,4 +26,5 @@ class Comment < ActiveRecord::Base
   validates :commentable_id, presence: true, numericality: true
   validates :commentable_type, presence: true
 
+  scope :for_places, lambda{|places| joins('INNER JOIN events e ON e.id = commentable_id and commentable_type=\'Event\'').where(['e.place_id in (?)', places]) }
 end

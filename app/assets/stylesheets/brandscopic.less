@@ -1097,7 +1097,7 @@ li#user_menu{
 ul{
   	li.loading-spinner{
   		display:block;
-  		background: #fff url(assets/loading.gif) center center no-repeat;
+  		background: #fff url(/assets/loading.gif) center center no-repeat;
   		height: 30px;
   		&:hover{
   			background-color: #fff !important;
@@ -1413,51 +1413,51 @@ body.events.show {
 	address {
 		margin-bottom: 5px;
 	}
+}
 
-	#event-photos {
-		.thumbnail-container {
-			position: relative;
+//Photos
+.photo-list {
+	.thumbnail-container {
+		position: relative;
+		ul.thumbnail-toolbar {
+			margin: 4px;
+			padding: 0;
+			position: absolute;
+			top: 0;
+			right: 0;
+			list-style-type: none;
+			background-color: #fff;
+			display: none;
+			li {
+				display: inline;
+				a {
+					float: left;
+					cursor: pointer;
+					text-decoration: none;
+					opacity: 0.6;
+					&:hover {
+						opacity: 1.0;
+					}
+				}
+
+				.photo-download-link, .photo-deactivate-link {
+					font-size: 20px;
+					margin: 0 2px;
+				}
+			}
+		}
+
+		&:hover {
 			ul.thumbnail-toolbar {
-				margin: 4px;
-				padding: 0;
-				position: absolute;
-				top: 0;
-				right: 0;
-				list-style-type: none;
-				background-color: #fff;
-				display: none;
-				li {
-					display: inline;
-					a {
-						float: left;
-						cursor: pointer;
-						text-decoration: none;
-						opacity: 0.6;
-						&:hover {
-							opacity: 1.0;
-						}
-					}
-
-					.photo-download-link, .photo-deactivate-link {
-						font-size: 20px;
-						margin: 0 2px;
-					}
-				}
+				display: block;
 			}
+		}
 
-			&:hover {
-				ul.thumbnail-toolbar {
-					display: block;
-				}
-			}
-
-			.transparent {
-				opacity: 0.6;
-			}
+		.transparent {
+			opacity: 0.6;
 		}
 	}
 }
-
 
 #post-event-form-builder {
 	#droppable {
@@ -1571,10 +1571,6 @@ table.table td.comments-container {
 	img {
 		max-width: none;
 	}
-}
-
-#place-map-canvas {
-	height: 500px;
 }
 
 // Simple Form

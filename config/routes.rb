@@ -27,6 +27,16 @@ Brandscopic::Application.routes.draw do
     resources :places, path: 'venues', only: [:index, :show]
   end
 
+  scope "results" do
+    resources :photos, only: [:index] do
+      get :autocomplete, on: :collection
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+  end
+
   resources :roles do
     get :autocomplete, on: :collection
     member do
@@ -99,12 +109,7 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
-    resources :photos, only: :create do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :photos, only: :create
     resources :comments, only: [:create, :index]
 
     member do

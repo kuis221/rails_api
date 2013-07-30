@@ -118,7 +118,7 @@ $.widget 'nmk.filteredList', {
 		if optionsCount > 5
 			$ul = $('<ul class="sf-menu sf-vertical">')
 			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
-				.on 'click', (e) => 
+				.on 'click', (e) =>
 					false
 				.on 'mouseover.firstime', (e)=>
 					$(e.target).off('mouseover.firstime')
@@ -378,6 +378,7 @@ $.widget 'nmk.filteredList', {
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 			@listContainer.html ''
 		@listContainer.append $('<li class="loading-spinner">');
+    console.log('spinner!');
 
 		@jqxhr = $.get @options.source, params, (response) =>
 			@listContainer.find('.loading-spinner').remove();
