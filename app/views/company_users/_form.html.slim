@@ -7,26 +7,28 @@
   .form-inputs
     h3 Edit user
     = f.simple_fields_for :user do |uf|
-      .row-fluid
+      .row-fluid.users
         .span6
-          = uf.input :first_name, input_html: {class: 'input-medium'}, :autofocus => true
+          = uf.input :first_name, input_html: {class: 'input-large'}, :autofocus => true
         .span6
-          = uf.input :last_name, input_html: {class: 'input-medium'}
-      .row-fluid
-        = uf.input :email
+          = uf.input :last_name, input_html: {class: 'input-large'}
+      .row-fluid.users-teams-roles
+        - if resource.id != current_company_user.id
+          = f.input :teams, collection: Team.active.all, input_html: {class: 'input-large chosen-enabled'}
+      .row-fluid.users
+        = uf.input :email, input_html: {class: 'input-xxlarge'}
+      .row-fluid.users-teams-roles
+        = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
         - if resource.id == current_company_user.id
           = uf.input :city, required: true
           = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
           = uf.input :country, required: true
           = uf.input :time_zone, required: true
-        - if resource.id != current_company_user.id
-          = f.association :teams, collection: Team.active.all, input_html: {class: 'input-large chosen-enabled'}
-
-          = f.input :role_id, as: :select, collection: current_company.roles.active
-
+      .row-fluid.users
         - unless resource.invited_to_sign_up?
-          = uf.input :password
-          = uf.input :password_confirmation
+          = uf.input :password, input_html: {class: 'input-xxlarge'}
+      .row-fluid.users
+          = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
 
   .form-actions
     = f.button :submit, submit_label, class: 'btn btn-primary', disable_with: 'Please wait...'

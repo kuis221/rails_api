@@ -71,8 +71,8 @@
 				}
 			}
 			.users{
-				margin-bottom: 10px;
 				.span6{
+					margin-bottom: 8px;
 					.control-group{
 						width: 250px !important;
 					}
@@ -92,8 +92,17 @@
 					margin-right: 0;
 					width: 590px !important;
 				}
-				.chzn-container-single .chzn-single{
-					width: 544px !important;
+				.chzn-container-single{
+					.chzn-single{
+						width: 544px !important;
+					}
+					.chzn-drop{
+						box-shadow: none;
+						width: 554px !important;
+					}
+					.chzn-results{
+						width: 552px !important;
+					}
 				}
 			}
 	    }
@@ -103,7 +112,7 @@
 		overflow: hidden;
 		padding: 25px 30px;
 		select,
-		input[type="text"], input[type="email"]{
+		input[type="text"], input[type="email"], input[type="password"]{
 			background-color: white !important;
 			background-image: none !important;
 			border: 1px solid @user_menu;
@@ -421,5 +430,6 @@
 .valid{
 	color: @valid;
 	font-size: 11px;
+	margin-bottom: 2px;
 }
 
