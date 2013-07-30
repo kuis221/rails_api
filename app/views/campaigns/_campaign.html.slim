@@ -5,11 +5,11 @@ li id="campaign_#{campaign.id}"
       span.description
         = campaign.description
     span.first
-      = format_date campaign.created_at
+      = format_date campaign.first_event.try(:start_at)
       br>/
       | First event
     span.last
-      = format_date campaign.updated_at
+      = format_date campaign.last_event.try(:start_at)
       br>/
       | Last event
   span.pull-right
