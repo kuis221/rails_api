@@ -807,8 +807,8 @@ li#user_menu{
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @borders;
+ 	clear: both;
  	color: @brand;
- 	float: left;
  	font-size: 12px;
     margin: 14px 0 0 0;
     padding: 0;
@@ -888,7 +888,7 @@ li#user_menu{
     			}
     		}
     		&.user_mail{
-    			margin: 16px 35px 0 0;
+    			margin: 15px 35px 0 0;
     			width: 25%;
     		}
     		&.user_date{
@@ -904,11 +904,11 @@ li#user_menu{
     			font-size: 16px;
     		}
     		&:first-child{
-    			margin: 10px 100px 0 0;
+    			margin: 13px 100px 0 0;
     			width:50%;
     		}
     		&.members{
-    			margin: 10px 0 0 0;
+    			margin: 15px 0 0 0;
     			width: 15%;
     			b{
     				font-size: 16px;
@@ -921,6 +921,7 @@ li#user_menu{
     		line-height: 16px;
     		&:first-child{
     			margin-top: 13px;
+    			width: 50%;
     		}
     	}
     }
@@ -942,12 +943,18 @@ li#user_menu{
     li{
     	border-bottom:1px solid @borders;
     	color:@brand;
-    	height: 83px;
+    	min-height: 83px;
     	list-style:none;
     	margin: 0;
         position: relative;
     	&:last-child{
     		border:0;
+    	}
+    	.description{
+    		display: block;
+    		overflow: hidden;
+    		text-overflow:ellipsis;
+    		white-space: nowrap;
     	}
       &>a{
         display: block;
@@ -1596,7 +1603,7 @@ table.table td.comments-container {
 }
 
 .task-counter-bar{
-	margin: 15px 0 0 10px;
+	margin: 10px 0 12px 10px;
 }
 
 .task-counter-item {
@@ -1707,6 +1714,13 @@ table.table td.comments-container {
     -webkit-column-gap: 20px;
     column-count: 4;
     column-gap: 20px;
+}
+
+.sf-vertical ul{
+	background: white !important;
+	box-shadow: none !important;
+	left:0 !important;
+	top:20px !important;
 }
 
 /*-- MEDIA QUERIES --*/

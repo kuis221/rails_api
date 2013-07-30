@@ -2,8 +2,8 @@ li id="campaign_#{campaign.id}"
   a href="#{campaign_path(campaign)}"
     span
       b= campaign.name
-      br>/
-      = campaign.description
+      span.description
+        = campaign.description
     span.first
       = format_date campaign.created_at
       br>/
