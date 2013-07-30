@@ -4,18 +4,18 @@
 
   .form-inputs
     h3 Invite user
-    .row-fluid
+    .row-fluid.users
       .span6
-        = f.input :first_name, input_html: {class: 'input-medium'}, :autofocus => true
+        = f.input :first_name, input_html: {class: 'input-large'}, :autofocus => true
       .span6
-        = f.input :last_name, input_html: {class: 'input-medium'}
-    .row-fluid
-      = f.input :email
-
+        = f.input :last_name, input_html: {class: 'input-large'}
+    .row-fluid.users-teams-roles
       = f.simple_fields_for :company_users do |cf|
-        = cf.association :teams, collection: Team.active.all, input_html: {class: 'input-large'}
-        = cf.input :role_id, as: :select, collection: current_company.roles.active
-
+        = cf.input :teams, collection: Team.active.all, input_html: {class: 'chosen-enabled'}
+        br>/
+        = cf.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'chosen-enabled'}
+    .row-fluid
+      = f.input :email, input_html: {class: 'input-xxlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'

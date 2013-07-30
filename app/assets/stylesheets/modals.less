@@ -13,6 +13,7 @@
 @text:#666666;
 @unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
+@valid: #90bf43;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -24,6 +25,16 @@
 		width: 460px;
 		.modal-body{
 			.control-group{
+				label{
+					display: inline-block;
+				}
+				&.date_range_name, 
+				&.date_range_description,
+				&.team_name, &.role_name, &.area_name, &.brand_portfolio_name, &.day_part_name,
+				{
+					display:block;
+					width: 400px;
+				}
 				&.task_title{
 					margin: 0 0 15px 0;
 					width: 400px;
@@ -53,14 +64,46 @@
 	}
 	&.modal-large{
 		min-width: 620px;
-	}
+		.modal-body{
+			.control-group{
+				label{
+					display: inline-block;
+				}
+			}
+			.users{
+				margin-bottom: 10px;
+				.span6{
+					.control-group{
+						width: 250px !important;
+					}
+					&:first-child{
+						margin-right: 34px !important;
+					}
+				}
+				input[type="text"]{
+					&.input-large{
+						margin-right: 20px;
+						width:250px !important;
+				    }
+			    }
+			}
+			.users-teams-roles{
+				.control-group{
+					margin-right: 0;
+					width: 590px !important;
+				}
+				.chzn-container-single .chzn-single{
+					width: 544px !important;
+				}
+			}
+	    }
+    }
 	.modal-body {
 		max-height: 800px;
 		overflow: hidden;
 		padding: 25px 30px;
 		select,
-		textarea,
-		input[type="text"]{
+		input[type="text"], input[type="email"]{
 			background-color: white !important;
 			background-image: none !important;
 			border: 1px solid @user_menu;
@@ -77,6 +120,24 @@
 				&.input-xlarge{width:385px;}
 				&.input-xxlarge{width:540px;
 			}
+		}
+		textarea{
+			background-color: white !important;
+			background-image: none !important;
+			border: 1px solid @user_menu;
+			box-shadow: none;
+			font-family: @baseFontFamily;
+			height: 78px;
+			margin-bottom: 0;
+			padding-top: 9px;
+			width: 100px;
+				&.input-large{width:210px;}
+				&.input-xlarge{width:385px;}
+				&.input-xxlarge{width:540px;}
+				&.valid{
+					color: @text;
+					font-size: 13px;
+				}
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
@@ -189,7 +250,7 @@
 
 .chzn-container .chzn-results{
 	padding: 0 !important;
-	width: 238px;
+	width: 245px;
 	li{
 		&:hover{
 			background: @brand !important;
@@ -220,7 +281,7 @@
 	    border-radius: 6px !important;
 		box-shadow:none;
 		margin-top: 3px !important;
-		width: 242px !important;
+		width: 249px !important;
 	}
 	.chzn-search input{
 		border:0 !important;
@@ -353,9 +414,12 @@
 		font-size: 11px;
 		margin-bottom: 2px;
 	}
-	select, textarea, input[type="text"].error{
-	border: 1px solid pink;
-
 }
+
+// VALID
+
+.valid{
+	color: @valid;
+	font-size: 11px;
 }
 

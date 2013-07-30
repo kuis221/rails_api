@@ -4,8 +4,8 @@
 
   .form-inputs
     h3 New brand portfolio
-    = f.input :name
-    = f.input :description, :input_html => {:rows => 6}
+    = f.input :name, :input_html => {class: 'input-xlarge'}
+    = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn-primary'
