@@ -102,11 +102,15 @@ class Place < ActiveRecord::Base
   end
 
   def price_level
-    spot.price_level
+    spot.price_level.to_i rescue 0
   end
 
   def formatted_phone_number
     spot.formatted_phone_number
+  end
+
+  def website
+    spot.website
   end
 
   def opening_hours
