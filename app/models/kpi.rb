@@ -74,4 +74,22 @@ class Kpi < ActiveRecord::Base
     end
   end
 
+  class << self
+    def impressions
+      where(company_id: nil).find_by_name_and_module('Impressions', 'consumer_reach')
+    end
+
+    def interactions
+      where(company_id: nil).find_by_name_and_module('Interactions', 'consumer_reach')
+    end
+
+    def samples
+      where(company_id: nil).find_by_name_and_module('Samples', 'consumer_reach')
+    end
+
+    def cost
+      where(company_id: nil).find_by_name_and_module('Cost', 'expenses')
+    end
+  end
+
 end

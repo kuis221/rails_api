@@ -34,6 +34,7 @@ class Place < ActiveRecord::Base
   # Areas-Places relationship
   has_many :areas_places
   has_many :areas, through: :areas_places
+  has_many :events
 
   attr_accessor :do_not_connect_to_api
   before_create :fetch_place_data

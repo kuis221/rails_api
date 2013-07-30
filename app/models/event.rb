@@ -64,6 +64,7 @@ class Event < ActiveRecord::Base
   before_validation :parse_start_end
   after_validation :delegate_errors
 
+  before_save :set_promo_hours
   after_save :reindex_associated
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
@@ -263,6 +264,10 @@ class Event < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def total_promo_hours_for_places(places)
+      where(place_id: places).sum(:promo_hours)
+    end
   end
 
   private
@@ -317,6 +322,10 @@ class Event < ActiveRecord::Base
       if place_id_changed?
         Sunspot.index(photos)
       end
+    end
+
+    def set_promo_hours
+      self.promo_hours = (end_at - start_at) / 3600
     end
 
 end

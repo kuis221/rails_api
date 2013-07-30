@@ -2,14 +2,30 @@
   = resource_details_bar("Viewing Venue Details", collection_path)
 
   #place-map-canvas.google-map
+  h4= resource.name
+
   .row-fluid
     .span8
-      h4= resource.name
       = resource.formatted_phone_number
       br>/
       = resource.formatted_address
-    .span4
-      | safasdfasdfasdfasd
+    - if place_events.size > 0
+      .span4
+        .text-right
+          = pluralize(place_events.size, 'Event')
+          br>/
+          = pluralize(Event.scoped_by_company_id(current_company).total_promo_hours_for_places(resource), 'Promo Hour')
+          br>/
+          = pluralize(EventResult.scoped_by_company_id(current_company).impressions_for_places(resource), 'Impressions')
+          br>/
+          = EventResult.scoped_by_company_id(current_company).consumers_interactions_for_places(resource)
+          = " Influenced"
+          br>/
+          = EventResult.scoped_by_company_id(current_company).consumers_sampled_for_places(resource)
+          = " Sampled"
+          br>/
+          = EventResult.scoped_by_company_id(current_company).spent_for_places(resource)
+          = " Spent"
 
   ul.thumbnails
     - resource.photos.each do |photo|

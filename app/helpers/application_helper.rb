@@ -63,7 +63,7 @@ module ApplicationHelper
   end
 
   def format_date_with_time(the_date)
-    the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe
+    the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
   end
 
   def format_date(the_date)
