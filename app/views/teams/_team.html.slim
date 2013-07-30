@@ -2,8 +2,8 @@ li id="team_#{team.id}"
   a href="#{team_path(team)}"
     span
       b= team.name
-      br>/
-      = team.description
+      span.description
+        = team.description
     span.members
       b= team.users.active.count
       br>/ 
