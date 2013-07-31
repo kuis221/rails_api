@@ -5,6 +5,9 @@
 - else
   |
     $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
+  - if resource.asset_type == 'photo'
+    |
+      $('#photo-details-toolbar').replaceWith('#{escape_javascript(render(partial: 'photos/photo_info', locals: {photo: resource}))}');
   - if resource.active?
     |
       $('.activate-#{resource_class}-btn').addClass('active btn-success');

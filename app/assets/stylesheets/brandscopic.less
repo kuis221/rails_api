@@ -1481,6 +1481,43 @@ body.events.show {
 	}
 }
 
+.fancybox-overlay {
+	.fancybox-title {
+		position: absolute;
+		z-index: 99999;
+		bottom: 0px;
+		height: 42px;
+		background-color: rgba(0, 0, 0, 0.85);
+		width: 100%;
+		color: #fff;
+		padding: 0px;
+		display: none;
+
+		.photo-download-link, .photo-deactivate-link {
+			font-size: 20px;
+			margin: 0px 2px;
+		}
+
+		.campaign-name, .photo-location {
+			padding: 0px 5px;
+		}
+
+		a {
+			text-decoration: none;
+			opacity: 0.6;
+			&:hover {
+				opacity: 1.0;
+			}
+		}
+	}
+
+	.fancybox-wrap:hover {
+		.fancybox-title {
+			display: block;
+		}
+	}
+}
+
 #post-event-form-builder {
 	#droppable {
 		min-height: 100px;

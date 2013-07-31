@@ -38,7 +38,9 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :research, 'Research', places_path, highlights_on: %r(/research) do |secondary|
       secondary.item :venues, 'Venues', places_path, highlights_on: %r(/research/venues)
     end
-    primary.item :results, 'Results', '#'
+    primary.item :results, 'Results', photos_path, highlights_on: %r(/results) do |secondary|
+      secondary.item :photos, 'Photos', photos_path, highlights_on: %r(/results/photos)
+    end
     primary.item :analysis, 'Analysis', '#'
   end
 end

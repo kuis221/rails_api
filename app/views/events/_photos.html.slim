@@ -16,5 +16,13 @@
 
 javascript:
   $(".fancybox").fancybox({
-    padding : 0
+    padding : 0,
+    helpers : {
+      title: {
+        type: 'inside'
+      }
+    },
+    beforeLoad: function() {
+      this.title = $(this.element).attr('caption');
+    }
   });
