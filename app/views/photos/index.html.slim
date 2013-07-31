@@ -18,8 +18,7 @@ javascript:
     'includeCalendars': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
-    'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}]
+    'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}'
   });
 
   $(".fancybox").fancybox({
