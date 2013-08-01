@@ -14,6 +14,7 @@
 #  updated_by_id     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  active            :boolean          default(TRUE)
 #
 
 class AttachedAsset < ActiveRecord::Base
@@ -28,6 +29,19 @@ class AttachedAsset < ActiveRecord::Base
   validates_attachment_presence :file
 
   searchable do
+    string :status
+    string :asset_type
+    string :attachable_type
+
+    string :file_file_name
+    integer :file_file_size
+
+    integer :attachable_id
+
+    time :created_at
+
+    boolean :active
+
     integer :company_id do
       attachable.company_id if attachable.present?
     end
@@ -38,6 +52,9 @@ class AttachedAsset < ActiveRecord::Base
 
     integer :campaign_id do
       attachable.campaign_id if attachable_type == 'Event'
+    end
+    string :campaign do
+      attachable.campaign_id.to_s + '||' + attachable.campaign_name.to_s if attachable_type == 'Event' && attachable.campaign_id
     end
     string :campaign_name do
       attachable.campaign_name if attachable_type == 'Event'
@@ -50,13 +67,6 @@ class AttachedAsset < ActiveRecord::Base
     string :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
-
-    string :file_file_name
-    integer :file_file_size
-    string :asset_type
-    string :attachable_type
-    integer :attachable_id
-    time :created_at
   end
 
   def activate!
@@ -89,8 +99,10 @@ class AttachedAsset < ActiveRecord::Base
     def do_search(params, include_facets=false)
       solr_search do
         with(:company_id, params[:company_id])
+        with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
@@ -104,6 +116,11 @@ class AttachedAsset < ActiveRecord::Base
           else
             with "#{attribute}_ids", value
           end
+        end
+
+        if include_facets
+          facet :campaign
+          facet :status
         end
 
         order_by(params[:sorting] || :created_at, params[:sorting_dir] || :desc)
