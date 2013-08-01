@@ -12,9 +12,9 @@
           = uf.input :first_name, input_html: {class: 'input-large'}, :autofocus => true
         .span6
           = uf.input :last_name, input_html: {class: 'input-large'}
-      .row-fluid.users-teams-roles
-        - if resource.id != current_company_user.id
-          = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-large chosen-enabled'}
+      - if resource.id != current_company_user.id
+        .row-fluid.users
+            = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-xxlarge chosen-enabled'}
       .row-fluid.users
         = uf.input :email, input_html: {class: 'input-xxlarge'}
       .row-fluid.users-teams-roles
