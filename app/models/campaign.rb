@@ -89,7 +89,7 @@ class Campaign < ActiveRecord::Base
 
     string :aasm_state
 
-    integer :user_ids, multiple: true do
+    integer :company_user_ids, multiple: true do
       users.map(&:id)
     end
     string :users, multiple: true, references: User do

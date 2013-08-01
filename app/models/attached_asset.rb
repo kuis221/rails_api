@@ -36,6 +36,9 @@ class AttachedAsset < ActiveRecord::Base
       attachable.place_id if attachable_type == 'Event'
     end
 
+    integer :campaign_id do
+      attachable.campaign_id if attachable_type == 'Event'
+    end
     string :campaign_name do
       attachable.campaign_name if attachable_type == 'Event'
     end
@@ -85,8 +88,24 @@ class AttachedAsset < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       solr_search do
+        with(:company_id, params[:company_id])
         with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
+
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'brand'
+            campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
+            campaigns = '-1' if campaigns.empty?
+            with "campaign_id", campaigns
+          when 'campaign', 'place'
+            with "#{attribute}_id", value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
         order_by(params[:sorting] || :created_at, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end

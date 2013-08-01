@@ -9,6 +9,15 @@ class PhotosController < FilteredController
 
   skip_load_and_authorize_resource
 
+  def autocomplete
+    buckets = autocomplete_buckets({
+      campaigns: [Campaign],
+      brands: [Brand, BrandPortfolio],
+      places: [Place]
+    })
+    render :json => buckets.flatten
+  end
+
   private
 
     def search_params
