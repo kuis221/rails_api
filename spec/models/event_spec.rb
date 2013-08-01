@@ -14,6 +14,7 @@
 #  updated_at    :datetime         not null
 #  active        :boolean          default(TRUE)
 #  place_id      :integer
+#  promo_hours   :decimal(6, 2)    default(0.0)
 #
 
 require 'spec_helper'
