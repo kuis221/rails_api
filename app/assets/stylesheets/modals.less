@@ -117,7 +117,6 @@
 		max-height: 800px;
 		overflow: hidden;
 		padding: 25px 30px;
-		select,
 		input[type="text"], input[type="email"], input[type="password"]{
 			background-color: white !important;
 			background-image: none !important;
@@ -263,16 +262,48 @@
 
 // CHZN STYLES
 
-.chzn-container .chzn-results{
-	padding: 0 !important;
-	width: 245px;
-	li{
-		&:hover{
-			background: @brand !important;
+.chzn-container{
+	&.chzn-results{
+		padding: 0 !important;
+		width: 245px;
+		li{
+			&:hover{
+				background: @brand !important;
+			}
+			&.highlighted {
+				background: @brand !important;
+				background-image: none !important;
+			}
 		}
-		&.highlighted {
-			background: @brand !important;
-			background-image: none !important;
+	}
+	&.chzn-choices{
+		background: white !important;
+		border: 1px solid @user_menu;
+	}
+}
+
+.chzn-container-active{
+	.chzn-choices{
+		border:1px solid @user_menu !important;
+		box-shadow: none !important;
+	}
+}
+
+.chzn-container-multi{
+	.chzn-choices{
+		background-image: none !important;
+		height: 40px !important;
+		padding-top: 5px !important;
+		width: 555px !important;
+		-webkit-border-radius: 4px !important;
+		-moz-border-radius: 4px !important;
+		border-radius: 4px !important;	
+		li.search-choice{
+			color:@text !important;
+			background:none !important;
+			border:0 !important;
+			box-shadow: none !important;
+			line-height: 16px !important;
 		}
 	}
 }
