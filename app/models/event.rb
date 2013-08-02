@@ -176,7 +176,7 @@ class Event < ActiveRecord::Base
       ss = solr_search(options) do
         if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
           any_of do
-            with(:user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
+            with(:company_user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
             with(:team_ids, params[:team]) if params.has_key?(:team) && params[:team].present?
           end
         end
