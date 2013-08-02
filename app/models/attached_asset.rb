@@ -103,6 +103,9 @@ class AttachedAsset < ActiveRecord::Base
         with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+        if params.has_key?(:brand) and params[:brand].present?
+          with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
+        end
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')

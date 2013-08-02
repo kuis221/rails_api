@@ -23,4 +23,3 @@
 
 javascript:
   $('#campaign_brands_list').select2({tags: #{raw(Brand.all.map(&:name).to_json).html_safe}});
-  $('#campaign_brand_portfolio_ids').select2();
