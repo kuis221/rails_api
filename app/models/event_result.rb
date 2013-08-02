@@ -25,16 +25,16 @@ class EventResult < ActiveRecord::Base
 
   class << self
     def impressions_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.impressions}).sum(:scalar_value).round
+      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.impressions}, events: {place_id: places}).sum(:scalar_value).round
     end
     def consumers_interactions_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}).sum(:scalar_value).round
+      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}, events: {place_id: places}).sum(:scalar_value).round
     end
     def consumers_sampled_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}).sum(:scalar_value).round
+      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}, events: {place_id: places}).sum(:scalar_value).round
     end
     def spent_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}).sum(:scalar_value).round
+      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}, events: {place_id: places}).sum(:scalar_value).round
     end
   end
 

@@ -2,12 +2,14 @@ $.widget 'nmk.filteredList', {
 	options: {
 		source: false,
 		filtersUrl: false,
+		autoLoad: true,
 		filters: false,
 		onChange: false,
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
 		defaultParams: [],
+		customFilters: [],
 		selectDefaultDate: false
 	},
 
@@ -19,6 +21,8 @@ $.widget 'nmk.filteredList', {
 				e.stopPropagation()
 				false
 		@form.data('serializedData', null)
+
+		@nextpagetoken  = false
 
 
 		if @options.includeAutoComplete
@@ -52,7 +56,10 @@ $.widget 'nmk.filteredList', {
 				@_positionFiltersOptions()
 
 		@infiniteScroller = false
-		@_loadPage(1)
+
+		if @options.autoLoad
+			@_loadPage(1)
+		
 		@_loadFilters()
 
 		@defaultParams = []
@@ -83,6 +90,9 @@ $.widget 'nmk.filteredList', {
 		for param in @defaultParams
 			p.push param
 
+		for param in @options.customFilters
+			p.push param
+
 		if @loadFacets
 			p.push {'name': 'facets', 'value': true}
 			@loadFacets=false
@@ -91,8 +101,45 @@ $.widget 'nmk.filteredList', {
 	setFilters: (filters) ->
 		@formFilters.html('')
 		for filter in filters
-			if filter.items.length > 0 or (filter.top_items? and filter.top_items.length)
+			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
+			else if filter.max? and filter.min?
+				@addSlider filter
+
+
+	addSlider: (filter) ->
+		$slider = $('<div class="slider-range">')
+		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
+			$('<span class="slider-label">').text(filter.label), 
+			$('<span class="slider-range-desc">').text(filter.min + ' - ' + filter.max ), 
+			$slider,
+			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
+			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
+		)
+		$slider.slider({
+			range: true,
+			min: filter.min,
+			max: filter.max,
+			values: [ filter.min, filter.max ],
+			slide: ( event, ui ) =>
+				$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text(  ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
+				$filter.find('input.min').val(ui.values[ 0 ])
+				$filter.find('input.max').val(ui.values[ 1 ])
+			change: ( event, ui ) =>
+				@_filtersChanged()
+		});
+		@formFilters.append($filter)
+
+
+	addCustomFilter: (name, value, reload=true) ->
+		@options.customFilters.push {'name': name, 'value': value}
+		if reload
+			@_filtersChanged()
+		@
+
+	cleanCustomFilters: (name, value) ->
+		@options.customFilters = []
+		@
 
 	addFilterSection: (filter) ->
 		items = filter.items
@@ -112,7 +159,7 @@ $.widget 'nmk.filteredList', {
 			optionsCount = top5.length + items.length
 
 		for option in @_sortOptionsAlpha(top5)
-			$list.append(@_buildFilterOption(option).change( (e) => @_filtersChanged() ))
+			$list.append @_buildFilterOption(option).change( (e) => @_filtersChanged() )
 
 		@formFilters.append($filter)
 		if optionsCount > 5
@@ -340,10 +387,12 @@ $.widget 'nmk.filteredList', {
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
 	_filtersChanged: (updateState=true) ->
+		@nextpagetoken = false
 		if @options.source
 			@reloadData
-		if @form.data('serializedData') != @form.serialize()
-			@form.data('serializedData', @form.serialize())
+		data = @_serializeFilters()
+		if @form.data('serializedData') != data
+			@form.data('serializedData', data)
 			@_loadPage(1)
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
@@ -351,13 +400,23 @@ $.widget 'nmk.filteredList', {
 			if @options.onChange
 				@options.onChange(@)
 
+	_serializeFilters: () ->
+		data = @form.serialize()
+		for filter in @options.customFilters
+			data += "&#{filter.name}=#{escape(filter.value)}"
+		data.replace(/^&/,"")
+
 	buildParams: (params=[]) ->
-		data = @getFilters()
-		for param in data
-			params.push(param)
+		if @nextpagetoken 
+			params = [{name: 'page', value: @nextpagetoken }]
+		else
+			data = @getFilters()
+			for param in data
+				params.push(param)
 		params
 
 	reloadData: () ->
+		@nextpagetoken = false
 		@_loadPage 1
 		@
 
@@ -397,13 +456,14 @@ $.widget 'nmk.filteredList', {
 		if @options.onItemsChange
 			@options.onItemsChange(response)
 
+		@nextpagetoken = response.data('next-page-token')
 		if page == 1
 			totalPages = response.data('pages')
 
-			if totalPages > 1  and !@infiniteScroller
+			if (totalPages > 1 || @nextpagetoken)  and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
-						if page <= totalPages && @doneLoading
+						if (page <= totalPages || @nextpagetoken) && @doneLoading
 							@_loadPage(page)
 						else
 							false

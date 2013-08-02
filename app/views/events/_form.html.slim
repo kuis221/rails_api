@@ -45,8 +45,6 @@ javascript:
   google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
     var place = locationAutocomplete.getPlace();
     if (!place.geometry) {
-      // Inform the user that the place was not found and return.
-      alert('Place not found');
       return false;
     }
 
