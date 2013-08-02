@@ -69,6 +69,11 @@
 				label{
 					display: inline-block;
 				}
+				&.user_email{
+					display: inline-block;
+					margin: 0;
+					width: 558px;
+				}
 			}
 			.users{
 				.span6{
@@ -287,13 +292,17 @@
 		border:1px solid @user_menu !important;
 		box-shadow: none !important;
 	}
+		.chzn-drop{
+		width: 555px;
+	}
 }
 
 .chzn-container-multi{
 	.chzn-choices{
 		background-image: none !important;
+		border:1px solid @user_menu !important;
 		height: 40px !important;
-		padding-top: 5px !important;
+		padding-top: 6px !important;
 		width: 555px !important;
 		-webkit-border-radius: 4px !important;
 		-moz-border-radius: 4px !important;
@@ -304,6 +313,21 @@
 			border:0 !important;
 			box-shadow: none !important;
 			line-height: 16px !important;
+		}
+	}
+	.chzn-drop{
+		border: 1px solid @user_menu !important;
+		box-shadow: none !important;
+		top:45px !important;
+		width: 555px !important;
+		-webkit-border-radius: 4px !important;
+		-moz-border-radius: 4px !important;
+		border-radius: 4px !important;	
+		ul.chzn-results{
+			li.highlighted{
+				background-image: none;
+				background-color: @brand;
+			}
 		}
 	}
 }
@@ -327,7 +351,14 @@
 	    border-radius: 6px !important;
 		box-shadow:none;
 		margin-top: 3px !important;
-		width: 249px !important;
+		width: 260px !important;
+		ul.chzn-results{
+			padding: 0;
+			li.highlighted{
+				background-color: @brand;
+				background-image: none;
+			}
+		}
 	}
 	.chzn-search input{
 		border:0 !important;
