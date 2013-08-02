@@ -27,8 +27,20 @@ class PhotosController < FilteredController
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push build_brands_bucket(facet_search.facet(:campaign).rows)
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
+    end
+
+    def build_brands_bucket(campaings)
+      campaigns_counts = Hash[campaings.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
+      brands = {}
+      Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
+        campaing_brands = Hash[campaign.brands.map{|b| [b.id, {label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]}] }]
+        brands.merge!(campaing_brands){|k,a1,a2|  a1.merge({count: (a1[:count] + a2[:count])}) }
+      end
+      brands = brands.values.sort{|a, b| b[:count] <=> a[:count] }
+      {label: 'Brands', items: brands}
     end
 
     def search_params
