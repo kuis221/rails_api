@@ -5,8 +5,10 @@
 
 .main
   .tab-content
-		.photo-list
-		  ul.thumbnails id="#{controller_name}-list"
+  #list-view.tab-pane.active
+    #photos-filter-label
+    .photo-list
+      ul.thumbnails id="#{controller_name}-list"
 
 javascript:
   $('#collection-list-filters').filteredList({
@@ -20,7 +22,12 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}]
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'onItemsLoad': function(response, page){
+      if (response.find('div[data-content="filters-description"]').length > 0){
+        $('#photos-filter-label').html(response.find('div[data-content="filters-description"]'))
+      }
+    }
   });
 
   $(".fancybox").fancybox({
