@@ -38,9 +38,15 @@ class AttachedAsset < ActiveRecord::Base
 
     integer :attachable_id
 
-    time :created_at
-
     boolean :active
+
+    time :created_at
+    time :start_at, :trie => true do
+      attachable.start_at if attachable_type == 'Event'
+    end
+    time :end_at, :trie => true do
+      attachable.end_at if attachable_type == 'Event'
+    end
 
     integer :company_id do
       attachable.company_id if attachable.present?
@@ -105,6 +111,14 @@ class AttachedAsset < ActiveRecord::Base
     def do_search(params, include_facets=false)
       solr_search do
         with(:company_id, params[:company_id])
+        if params[:start_date].present? and params[:end_date].present?
+          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          with :start_at, d1..d2
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date], zone: :current)
+          with :start_at, d.beginning_of_day..d.end_of_day
+        end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
