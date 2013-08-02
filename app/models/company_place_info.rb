@@ -78,9 +78,14 @@ class CompanyPlaceInfo < ActiveRecord::Base
     self.new(id: id)
   end
 
-  def self.load_all()
-    Event.where('place_id is not null').all.map{|e| self.new(id: "#{e.place_id}-#{e.company_id}") }
+  def self.count
+    Place.select('count(DISTINCT(places.id, company_id)) as places_count').joins(:events).first.places_count.to_i
   end
+
+  def self.load_all()
+    place_scope.map{|p| self.new(id: "#{p.id}-#{p.company_id}")}
+  end
+
 
   def self.all(options)
     places_ids = Hash[options[:conditions]['id'].map{|id| id.split('-') }]
@@ -91,6 +96,12 @@ class CompanyPlaceInfo < ActiveRecord::Base
       pi.place_id = p.id
       pi
     }
+  end
+
+  def self.find_in_batches(options = {})
+    place_scope.find_in_batches(options) do |group|
+      yield group.map{|p| self.new(id: "#{p.id}-#{p.company_id}")}
+    end
   end
 
   def self.do_search(params, include_facets=false)
@@ -126,5 +137,10 @@ class CompanyPlaceInfo < ActiveRecord::Base
       paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
     end
   end
+
+  private
+    def self.place_scope
+      Place.select('DISTINCT events.company_id, places.id').joins(:events)
+    end
 
 end
