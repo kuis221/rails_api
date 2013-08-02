@@ -58,17 +58,19 @@ javascript:
   $(document).ready(function(){
     query = window.location.search.replace(/^\?/,"")
     if (query != '') {
-      var loc = decodeURIComponent(query.replace(/.*location=([^&]+).*/,'$1'))
-      var locname = decodeURIComponent(query.replace(/.*loc_name=([^&]+).*/,'$1'))
-      var term = decodeURIComponent(query.replace(/.*&q=([^&]*).*/,'$1'))
-      if ( loc ) {
-        $('#place-search-location').val(locname);
-        $('#place-search-location').data('location',loc);
-        $('#place-search-term').val(term);
-        $filters = $('#collection-list-filters');
-        $filters.filteredList('addCustomFilter', 'loc_name', locname, false);
-        $filters.filteredList('addCustomFilter', 'location', loc, false);
-        $filters.filteredList('addCustomFilter', 'q', term, true);
+      if (query.match(/location=([^&]+)/)){
+        var loc = decodeURIComponent(query.replace(/.*location=([^&]+).*/,'$1'))
+        var locname = decodeURIComponent(query.replace(/.*loc_name=([^&]+).*/,'$1'))
+        var term = decodeURIComponent(query.replace(/.*&q=([^&]*).*/,'$1'))
+        if ( loc ) {
+          $('#place-search-location').val(locname);
+          $('#place-search-location').data('location',loc);
+          $('#place-search-term').val(term);
+          $filters = $('#collection-list-filters');
+          $filters.filteredList('addCustomFilter', 'loc_name', locname, false);
+          $filters.filteredList('addCustomFilter', 'location', loc, false);
+          $filters.filteredList('addCustomFilter', 'q', term, true);
+        }
       }
     }
 
