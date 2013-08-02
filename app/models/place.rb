@@ -162,6 +162,27 @@ class Place < ActiveRecord::Base
       end
     end
 
+    def locations_for_index(place)
+      locations = []
+      unless place.nil?
+        locations.push encode_location(place.continent_name) if place.continent_name
+        locations.push encode_location([place.continent_name, place.country_name]) if place.country_name
+        locations.push encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
+        locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
+      end
+      locations
+    end
+
+    def location_for_index(place)
+      unless place.nil?
+        return encode_location([place.continent_name, place.country_name, place.state_name, place.city])+'||'+place.city if  place.state_name && place.city
+        return encode_location([place.continent_name, place.country_name, place.state_name])+'||'+place.state_name if place.state_name
+        return encode_location([place.continent_name, place.country_name])+'||'+place.country_name if place.country_name
+        return encode_location(place.continent_name)+'||'+place.continent_name if place.continent_name
+      end
+    end
+
+
     private
       def create_structure(list, parents)
         groups = ['Continents', 'Countries', 'States', 'Cities']
@@ -219,6 +240,7 @@ class Place < ActiveRecord::Base
 
     def fetch_place_data
       if reference && !do_not_connect_to_api
+        Rails.logger.debug spot.inspect
         self.name = spot.name
         self.latitude = spot.lat
         self.longitude = spot.lng

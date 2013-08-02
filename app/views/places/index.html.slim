@@ -51,6 +51,7 @@ javascript:
       $filters.filteredList('addCustomFilter', 'loc_name', $('#place-search-location').val(), false);
       $filters.filteredList('addCustomFilter', 'location', loc, false);
       $filters.filteredList('addCustomFilter', 'q', term, true);
+      $filters.filteredList('reloadFilters');
     }
     return false;
   });
@@ -73,7 +74,6 @@ javascript:
         }
       }
     }
-
   })
 
   $('#collection-list-filters').filteredList({

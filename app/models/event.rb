@@ -89,9 +89,9 @@ class Event < ActiveRecord::Base
 
     integer :place_id
     string :place do
-      place_id.to_s + '||' + place_name if place_id
+      Place.location_for_index(place) if place_id
     end
-    string :place_name
+    #string :place_name
 
     string :location, multiple: true do
       locations_for_index
@@ -158,14 +158,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    locations = []
-    unless place.nil?
-      locations.push Place.encode_location(place.continent_name) if place.continent_name
-      locations.push Place.encode_location([place.continent_name, place.country_name]) if place.country_name
-      locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
-      locations.push Place.encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
-    end
-    locations
+    Place.locations_for_index(place)
   end
 
   class << self
@@ -176,30 +169,20 @@ class Event < ActiveRecord::Base
       ss = solr_search(options) do
         if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
           any_of do
-            with(:user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
+            with(:company_user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
             with(:team_ids, params[:team]) if params.has_key?(:team) && params[:team].present?
           end
         end
         if params.has_key?(:place) and params[:place].present?
-          place_ids = []
           place_paths = []
           params[:place].each do |place|
-            if place =~ /^[0-9]+$/
-              place_ids.push place
-            else
-              # The location comes BASE64 encoded as a pair "id||name"
-              # The ID is a md5 encoded string that is indexed on Solr
-              (id, name) = Base64.decode64(place).split('||')
-              place_paths.push id
-            end
+            # The location comes BASE64 encoded as a pair "id||name"
+            # The ID is a md5 encoded string that is indexed on Solr
+            (id, name) = Base64.decode64(place).split('||')
+            place_paths.push id
           end
-          any_of do
-            if place_ids.size > 0
-              with(:place_id, place_ids)
-            end
-            if place_paths.size > 0
-              with(:location, place_paths)
-            end
+          if place_paths.size > 0
+            with(:location, place_paths)
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
@@ -207,7 +190,7 @@ class Event < ActiveRecord::Base
         with(:company_id, params[:company_id])
 
         if params.has_key?(:brand) and params[:brand].present?
-          with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
+          with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
         with(:place_id, AreasPlace.where(area_id: params[:area]).map(&:place_id) + [0]) if params[:area].present?
@@ -298,13 +281,14 @@ class Event < ActiveRecord::Base
         self.start_time ||= '12:00 PM'
         self.end_time ||= '01:00 PM'
       else
-        self.start_date = self.start_at.to_s(:slashes)   unless self.start_at.blank?
-        self.start_time = self.start_at.to_s(:time_only) unless self.start_at.blank?
-        self.end_date   = self.end_at.to_s(:slashes)     unless self.end_at.blank?
-        self.end_time   = self.end_at.to_s(:time_only)   unless self.end_at.blank?
+        if has_attribute?(:start_at) # this if is to allow custom selects on the Event module
+          self.start_date = self.start_at.to_s(:slashes)   unless self.start_at.blank?
+          self.start_time = self.start_at.to_s(:time_only) unless self.start_at.blank?
+          self.end_date   = self.end_at.to_s(:slashes)     unless self.end_at.blank?
+          self.end_time   = self.end_at.to_s(:time_only)   unless self.end_at.blank?
+        end
       end
     end
-
 
     def after_remove_member(member)
       if member.is_a? Team

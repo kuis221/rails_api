@@ -35,5 +35,10 @@ javascript:
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('events-filter:changed')
+    },
+    'onItemsLoad': function(response, page){
+      if (response.find('div[data-content="filters-description"]').length > 0){
+        $('#events-filter-label').html(response.find('div[data-content="filters-description"]'))
+      }
     }
   });

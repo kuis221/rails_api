@@ -56,7 +56,7 @@ class AttachedAsset < ActiveRecord::Base
       attachable.place_id if attachable_type == 'Event'
     end
     string :place do
-      attachable.place_id.to_s + '||' + attachable.place_name if attachable_type == 'Event' && attachable.place_id
+      Place.location_for_index(attachable.place) if attachable_type == 'Event' && attachable.place_id
     end
     string :place_name do
       attachable.place_name if attachable_type == 'Event'
@@ -127,25 +127,15 @@ class AttachedAsset < ActiveRecord::Base
           with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
         if params.has_key?(:place) and params[:place].present?
-          place_ids = []
           place_paths = []
           params[:place].each do |place|
-            if place =~ /^[0-9]+$/
-              place_ids.push place
-            else
-              # The location comes BASE64 encoded as a pair "id||name"
-              # The ID is a md5 encoded string that is indexed on Solr
-              (id, name) = Base64.decode64(place).split('||')
-              place_paths.push id
-            end
+            # The location comes BASE64 encoded as a pair "id||name"
+            # The ID is a md5 encoded string that is indexed on Solr
+            (id, name) = Base64.decode64(place).split('||')
+            place_paths.push id
           end
-          any_of do
-            if place_ids.size > 0
-              with(:place_id, place_ids)
-            end
-            if place_paths.size > 0
-              with(:location, place_paths)
-            end
+          if place_paths.size > 0
+            with(:location, place_paths)
           end
         end
 
