@@ -124,6 +124,8 @@ class CompanyPlaceInfo < ActiveRecord::Base
       [:events, :promo_hours, :impressions, :interactions, :samples, :spent].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
+        elsif params[param].present? && params[param][:min].present?
+          with(param.to_sym).greater_than(params[param][:min])
         end
       end
 

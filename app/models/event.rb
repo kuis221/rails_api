@@ -305,7 +305,6 @@ class Event < ActiveRecord::Base
       end
     end
 
-
     def after_remove_member(member)
       if member.is_a? Team
         users = member.user_ids - self.user_ids

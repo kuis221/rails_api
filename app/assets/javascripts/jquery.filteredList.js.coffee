@@ -47,7 +47,7 @@ $.widget 'nmk.filteredList', {
 			if firstTime
 				firstTime = false
 			else
-				@_reloadFilters()
+				@reloadFilters()
 				@_parseQueryString()
 				@_filtersChanged(false)
 
@@ -108,10 +108,12 @@ $.widget 'nmk.filteredList', {
 
 
 	addSlider: (filter) ->
+		min_value = if filter.selected_min? then filter.selected_min else filter.min
+		max_value = if filter.selected_max? then filter.selected_max else filter.max
 		$slider = $('<div class="slider-range">')
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label), 
-			$('<span class="slider-range-desc">').text(filter.min + ' - ' + filter.max ), 
+			$('<span class="slider-range-desc">').text(min_value + ' - ' + max_value ), 
 			$slider,
 			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
@@ -120,9 +122,9 @@ $.widget 'nmk.filteredList', {
 			range: true,
 			min: filter.min,
 			max: filter.max,
-			values: [ filter.min, filter.max ],
+			values: [ min_value, max_value ],
 			slide: ( event, ui ) =>
-				$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text(  ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
+				$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text( ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
 				$filter.find('input.min').val(ui.values[ 0 ])
 				$filter.find('input.max').val(ui.values[ 1 ])
 			change: ( event, ui ) =>
@@ -298,7 +300,7 @@ $.widget 'nmk.filteredList', {
 			source: @_getAutocompleteResults,
 			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
-				@_reloadFilters()
+				@reloadFilters()
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
@@ -340,7 +342,7 @@ $.widget 'nmk.filteredList', {
 			@searchLabel.hide().find('span.term').text ''
 
 		if @initialized
-			@_reloadFilters()
+			@reloadFilters()
 
 		false
 
@@ -374,7 +376,7 @@ $.widget 'nmk.filteredList', {
 					@endDateInput.val end_date
 
 				if @initialized == true
-					@_reloadFilters()
+					@reloadFilters()
 					@_filtersChanged()
 		}
 
@@ -505,7 +507,7 @@ $.widget 'nmk.filteredList', {
 
 		@initialized = true
 
-	_reloadFilters: () ->
+	reloadFilters: () ->
 		@loadFacets = true
 		if @defaultParams.length == 0
 			@defaultParams = $.map(@formFilters.find('input[name="status[]"]:checked'), (checkbox, index) -> {'name': 'status[]', 'value': checkbox.value})

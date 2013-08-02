@@ -219,6 +219,7 @@ class Place < ActiveRecord::Base
 
     def fetch_place_data
       if reference && !do_not_connect_to_api
+        Rails.logger.debug spot.inspect
         self.name = spot.name
         self.latitude = spot.lat
         self.longitude = spot.lng
