@@ -1,21 +1,92 @@
+#places-search-form-box.form-horizontal
+  .row-fluid
+    .span5
+      .control-group
+        label class="control-label" for="place-search-term"= "I'm looking for"
+        .controls
+          input type="text" name="q" placeholder="bars, lounges, Bar None" id="place-search-term"
+    .span7
+      .control-group
+        label class="control-label" for="location" Near
+        .controls
+          input.required type="text" name="location" placeholder="address, city or zip code" id="place-search-location"
+          button#places-search-btn.btn.btn-primary Search
+
 .sidebar#resource-filter-column
   #collection-list-filters
   a.btn.btn-primary Save
 .main
   .tab-content
     .link-list
-      ul id="#{controller_name}-list"
+      ul#places-list
 
 
 javascript:
+  var input = $('#place-search-location')[0];
+
+  var options = {
+    types: ['political']
+  };
+  var locationAutocomplete = new google.maps.places.Autocomplete(input);
+
+  google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
+    var place = locationAutocomplete.getPlace();
+    if (!place.geometry) {
+      return false;
+    }
+
+    $('#place-search-location').data('location', place.geometry.location.lat() + ',' + place.geometry.location.lng());
+  });
+
+  $('#places-search-btn').click(function(e){
+    e.preventDefault();
+    var term = $('#place-search-term').val()
+    var loc = $('#place-search-location').data('location')
+    var $filters = $('#collection-list-filters');
+    if (!loc) {
+      alert('Please enter a location');
+    } else {
+      $('#place-search-location').closest('.control-group').removeClass('error');
+      $filters.filteredList('cleanCustomFilters');
+      $filters.filteredList('addCustomFilter', 'loc_name', $('#place-search-location').val(), false);
+      $filters.filteredList('addCustomFilter', 'location', loc, false);
+      $filters.filteredList('addCustomFilter', 'q', term, true);
+    }
+    return false;
+  });
+
+  $(document).ready(function(){
+    query = window.location.search.replace(/^\?/,"")
+    if (query != '') {
+      if (query.match(/location=([^&]+)/)){
+        var loc = decodeURIComponent(query.replace(/.*location=([^&]+).*/,'$1'))
+        var locname = decodeURIComponent(query.replace(/.*loc_name=([^&]+).*/,'$1'))
+        var term = decodeURIComponent(query.replace(/.*&q=([^&]*).*/,'$1'))
+        if ( loc ) {
+          $('#place-search-location').val(locname);
+          $('#place-search-location').data('location',loc);
+          $('#place-search-term').val(term);
+          $filters = $('#collection-list-filters');
+          $filters.filteredList('addCustomFilter', 'loc_name', locname, false);
+          $filters.filteredList('addCustomFilter', 'location', loc, false);
+          $filters.filteredList('addCustomFilter', 'q', term, true);
+        }
+      }
+    }
+
+  })
+
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: controller_name)}',
-    'filtersUrl': '#{filters_path(controller: controller_name)}',
-    'listContainer' : '##{controller_name}-list',
+    'source': '#{items_path(controller: :places)}',
+    'filtersUrl': '#{filters_path(controller: :places)}',
+    'listContainer' : '#places-list',
     'sorting': 'name',
     'sorting_dir': 'asc',
     'includeCalendars': false,
-    'includeSearchBox': false,
     'includeAutoComplete': false,
-    'defaultParams': [{name: 'status[]', value: 'Active'}]
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'onChange': function(filterBox){
+      $(document).trigger('events-filter:changed')
+    }
   });

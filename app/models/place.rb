@@ -46,7 +46,7 @@ class Place < ActiveRecord::Base
 
     text :formatted_address
 
-    latlon(:location) { Sunspot::Util::Coordinates.new(latitude, latitude) }
+    latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
 
     integer :company_id do
       -1
@@ -55,7 +55,6 @@ class Place < ActiveRecord::Base
     string :status do
       'Active'
     end
-
 
     string :name
     string :country
@@ -96,7 +95,10 @@ class Place < ActiveRecord::Base
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
   def reviews
-    list_reviews = Comment.for_places(self).limit(5).all
+    list_reviews = []
+    if persisted?
+      list_reviews = Comment.for_places(self).limit(5).all
+    end
     list_reviews += spot.reviews if list_reviews.length < 5
     list_reviews.slice(0, 5)
   end
@@ -120,8 +122,11 @@ class Place < ActiveRecord::Base
   # First try to find photos in the app from events, then if there no enough photos in the app,
   # search for photos from Google Places API
   def photos
-    search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
-    list_photos = search.results
+    list_photos = []
+    if persisted?
+      search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      list_photos = search.results
+    end
     list_photos += spot.photos if list_photos.length < 10
     list_photos.slice(0, 10)
   end
@@ -149,6 +154,12 @@ class Place < ActiveRecord::Base
     def encode_location(path)
       path = path.compact.join('/') if path.is_a?(Array)
       Digest::MD5.hexdigest(path.downcase)
+    end
+
+    def load_by_place_id(place_id, reference)
+      Place.find_or_initialize_by_place_id(place_id: place_id, reference: reference) do |p|
+        p.send(:fetch_place_data)
+      end
     end
 
     private

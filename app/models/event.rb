@@ -322,7 +322,10 @@ class Event < ActiveRecord::Base
     def reindex_associated
       if place_id_changed?
         Sunspot.index(photos)
+        Sunspot.index(place)
+        Sunspot.index(CompanyPlaceInfo.new(id:"#{place_id_was}-#{self.company_id}")) if place_id_was.present?
       end
+      Sunspot.index(CompanyPlaceInfo.new(id:"#{place_id}-#{self.company_id}"))
     end
 
     def set_promo_hours

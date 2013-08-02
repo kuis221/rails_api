@@ -21,7 +21,6 @@
     #map-view.tab-pane
       #map-canvas.google-map
 
-
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{items_path(controller: :events)}',
@@ -38,5 +37,3 @@ javascript:
       $(document).trigger('events-filter:changed')
     }
   });
-
-

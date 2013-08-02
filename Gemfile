@@ -36,6 +36,7 @@ gem "aws-sdk"
 gem 'google_places'
 gem 'validates_timeliness', '~> 3.0'
 gem 'sunspot_rails'
+gem 'sunspot_stats'
 gem 'progress_bar'
 gem 'unicorn'
 gem "geocoder"
