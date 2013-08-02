@@ -1,5 +1,5 @@
 class PlacesController < FilteredController
-  actions :index, :new, :create, :show
+  #actions :index, :new, :create, :show
   belongs_to :area, optional: true
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
@@ -83,6 +83,9 @@ class PlacesController < FilteredController
         f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:events][:min] )
         f.push(label: "Price", items: prices )
 
+        f.push build_locations_bucket(facet_search.facet(:place).rows)
+        f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push build_brands_bucket(facet_search.facet(:campaigns).rows)
       end
     end
 

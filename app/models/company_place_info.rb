@@ -49,6 +49,22 @@ class CompanyPlaceInfo < ActiveRecord::Base
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
 
+    string :locations, multiple: true do
+      Place.locations_for_index(place)
+    end
+
+    string :place do
+      Place.location_for_index(place)
+    end
+
+    string :campaigns, multiple: true do
+      campaigns.map{|c| c.id.to_s + '||' + c.name.to_s}
+    end
+
+    integer :campaign_ids, multiple: true do
+      campaigns.map(&:id)
+    end
+
     integer :events, :stored => true  do
       Event.where(company_id: company_id, place_id: place_id).count
     end
@@ -121,6 +137,25 @@ class CompanyPlaceInfo < ActiveRecord::Base
         end
       end
 
+      with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+
+      if params.has_key?(:brand) and params[:brand].present?
+        with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
+      end
+
+      if params.has_key?(:place) and params[:place].present?
+        place_paths = []
+        params[:place].each do |place|
+          # The location comes BASE64 encoded as a pair "id||name"
+          # The ID is a md5 encoded string that is indexed on Solr
+          (id, name) = Base64.decode64(place).split('||')
+          place_paths.push id
+        end
+        if place_paths.size > 0
+          with(:locations, place_paths)
+        end
+      end
+
       [:events, :promo_hours, :impressions, :interactions, :samples, :spent].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
@@ -136,6 +171,11 @@ class CompanyPlaceInfo < ActiveRecord::Base
       stat(:samples, :type => "max")
       stat(:spent, :type => "max")
 
+      if include_facets
+        facet :place
+        facet :campaigns
+      end
+
       paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
     end
   end
@@ -143,6 +183,10 @@ class CompanyPlaceInfo < ActiveRecord::Base
   private
     def self.place_scope
       Place.select('DISTINCT events.company_id, places.id').joins(:events)
+    end
+
+    def campaigns
+      @campaigns ||= Campaign.select('DISTINCT campaigns.id, campaigns.name').joins(:events).where(events: {place_id: place_id}, company_id: company_id)
     end
 
 end
