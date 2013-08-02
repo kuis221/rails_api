@@ -49,6 +49,12 @@ class AttachedAsset < ActiveRecord::Base
     integer :place_id do
       attachable.place_id if attachable_type == 'Event'
     end
+    string :place do
+      attachable.place_id.to_s + '||' + attachable.place_name if attachable_type == 'Event' && attachable.place_id
+    end
+    string :place_name do
+      attachable.place_name if attachable_type == 'Event'
+    end
 
     integer :campaign_id do
       attachable.campaign_id if attachable_type == 'Event'
@@ -106,6 +112,28 @@ class AttachedAsset < ActiveRecord::Base
         if params.has_key?(:brand) and params[:brand].present?
           with "campaign_id", Campaign.select('campaigns.id').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
+        if params.has_key?(:place) and params[:place].present?
+          place_ids = []
+          place_paths = []
+          params[:place].each do |place|
+            if place =~ /^[0-9]+$/
+              place_ids.push place
+            else
+              # The location comes BASE64 encoded as a pair "id||name"
+              # The ID is a md5 encoded string that is indexed on Solr
+              (id, name) = Base64.decode64(place).split('||')
+              place_paths.push id
+            end
+          end
+          any_of do
+            if place_ids.size > 0
+              with(:place_id, place_ids)
+            end
+            if place_paths.size > 0
+              with(:location, place_paths)
+            end
+          end
+        end
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
@@ -123,6 +151,7 @@ class AttachedAsset < ActiveRecord::Base
 
         if include_facets
           facet :campaign
+          facet :place
           facet :status
         end
 

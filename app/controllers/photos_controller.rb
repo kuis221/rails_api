@@ -28,6 +28,7 @@ class PhotosController < FilteredController
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_brands_bucket(facet_search.facet(:campaign).rows)
+        f.push build_locations_bucket(facet_search.facet(:place).rows)
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
     end
@@ -41,6 +42,15 @@ class PhotosController < FilteredController
       end
       brands = brands.values.sort{|a, b| b[:count] <=> a[:count] }
       {label: 'Brands', items: brands}
+    end
+
+    def build_locations_bucket(facets)
+      first_five = facets.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :place}) }.first(5)
+      first_five_ids = first_five.map{|x| x[:id] }
+      locations = {}
+      locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)
+
+      {label: 'Locations', top_items: first_five, items: locations}
     end
 
     def search_params
