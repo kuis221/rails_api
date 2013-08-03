@@ -42,6 +42,7 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
     .row-fluid
       .menu
         = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
+      = yield :alerts
       .container
             .tab-content
               .tab-pane.active
