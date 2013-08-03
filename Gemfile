@@ -37,10 +37,12 @@ gem 'google_places'
 gem 'validates_timeliness', '~> 3.0'
 gem 'sunspot_rails'
 gem 'sunspot_stats'
+gem "sunspot-queue"
 gem 'progress_bar'
 gem 'unicorn'
 gem "geocoder"
 gem "nested_form"
+gem 'delayed_job_active_record'
 
 # Gems used only for assets and not required
 # in production environments by default.

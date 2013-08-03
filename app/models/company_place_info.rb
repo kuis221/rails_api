@@ -90,7 +90,15 @@ class CompanyPlaceInfo < ActiveRecord::Base
     (self.place_id, self.company_id) = self.id.split('-')
   end
 
+  def persisted?
+    self.id.present?
+  end
+
   def self.load(id)
+    self.new(id: id)
+  end
+
+  def self.find(id)
     self.new(id: id)
   end
 

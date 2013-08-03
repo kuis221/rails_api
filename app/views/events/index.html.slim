@@ -1,7 +1,16 @@
+- content_for :alerts
+  div class="alert collection-list-description"
+    a.close data-dismiss="alert" x
+    .filter-label
+
+
 .sidebar#resource-filter-column
   #collection-list-filters
   a.btn.btn-primary Save
 .main
+
+
+
   .pull-left
     = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary'}
 
@@ -13,7 +22,6 @@
 
   .tab-content
     #list-view.tab-pane.active
-      #events-filter-label
       .link-list
         ul#events-list
 
@@ -38,7 +46,7 @@ javascript:
     },
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="filters-description"]').length > 0){
-        $('#events-filter-label').html(response.find('div[data-content="filters-description"]'))
+        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
       }
     }
   });

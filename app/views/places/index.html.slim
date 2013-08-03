@@ -22,12 +22,7 @@
 
 
 javascript:
-  var input = $('#place-search-location')[0];
-
-  var options = {
-    types: ['political']
-  };
-  var locationAutocomplete = new google.maps.places.Autocomplete(input);
+  var locationAutocomplete = new google.maps.places.Autocomplete($('#place-search-location')[0], {types: ['(cities)']});
 
   google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
     var place = locationAutocomplete.getPlace();
@@ -55,6 +50,13 @@ javascript:
     }
     return false;
   });
+
+  $('#place-search-term, #place-search-location').keyup(function(e){
+    var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
+    if (charCode == 13){
+      $('#places-search-btn').click();
+    }
+  })
 
   $(document).ready(function(){
     query = window.location.search.replace(/^\?/,"")

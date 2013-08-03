@@ -1,3 +1,8 @@
+- content_for :alerts
+  div class="alert collection-list-description"
+    a.close data-dismiss="alert" x
+    .filter-label
+
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
 .sidebar#resource-filter-column
   #collection-list-filters
@@ -6,7 +11,6 @@
 .main
   .tab-content
   #list-view.tab-pane.active
-    #photos-filter-label
     .photo-list
       ul.thumbnails id="#{controller_name}-list"
 
@@ -25,7 +29,7 @@ javascript:
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="filters-description"]').length > 0){
-        $('#photos-filter-label').html(response.find('div[data-content="filters-description"]'))
+        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
       }
     }
   });
