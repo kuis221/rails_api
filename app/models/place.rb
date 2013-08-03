@@ -92,6 +92,10 @@ class Place < ActiveRecord::Base
     save
   end
 
+  def score
+    CompanyPlaceInfo.do_search({location: "#{latitude},#{longitude}", radius: 5})
+  end
+
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
   def reviews
@@ -240,7 +244,6 @@ class Place < ActiveRecord::Base
 
     def fetch_place_data
       if reference && !do_not_connect_to_api
-        Rails.logger.debug spot.inspect
         self.name = spot.name
         self.latitude = spot.lat
         self.longitude = spot.lng
