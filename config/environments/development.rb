@@ -40,9 +40,11 @@ Brandscopic::Application.configure do
   #Paperclip options
   Paperclip.options[:command_path] = "/usr/local/bin"
 
-  config.logger = Logger.new(STDOUT)
-  config.logger.level = Logger.const_get(
-    ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'
-  )
+  unless $rails_rake_task
+    config.logger = Logger.new(STDOUT)
+    config.logger.level = Logger.const_get(
+      ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'
+    )
+  end
 
 end
