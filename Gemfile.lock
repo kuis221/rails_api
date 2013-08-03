@@ -210,6 +210,7 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack-timeout (0.0.4)
     rails (3.2.13)
       actionmailer (= 3.2.13)
       actionpack (= 3.2.13)
@@ -366,6 +367,7 @@ DEPENDENCIES
   progress_bar
   quiet_assets (>= 1.0.1)
   rabl
+  rack-timeout
   rails (= 3.2.13)
   rolify (>= 3.2.0)
   rspec
