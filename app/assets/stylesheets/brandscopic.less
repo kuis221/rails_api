@@ -1573,6 +1573,39 @@ body.events.show {
 	}
 }
 
+// VENUES
+
+.places{	
+	&.index #places-search-form-box{
+		height: auto;
+		padding: 15px !important;
+	}
+	.form-horizontal{
+		.control-group{
+			margin: 0;
+		}
+	}
+	input[type="text"]#place-search-term, #place-search-location{
+		background-color: white !important;
+		background-image: url('search.svg');
+		background-position: center right;
+		background-repeat: no-repeat;
+		border: 1px solid @user_menu;
+		box-shadow: none;
+		padding: 2px 15px;
+		-webkit-border-radius: 18px;
+    	border-radius: 20px;
+	}
+	input:-moz-placeholder {
+	  color: @user_menu;
+	}
+	input:-ms-input-placeholder {
+	  color: @user_menu;
+	}
+	input::-webkit-input-placeholder {
+	  color: @user_menu;
+	}
+}
 
 // Forms inside Data Tables
 table.table form {
