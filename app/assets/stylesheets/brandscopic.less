@@ -1720,8 +1720,42 @@ table.table td.comments-container {
 		border:0;
 		padding: 0;
 		img{
-					-webkit-border-radius: 8px;
-    	border-radius: 8px;
+			-webkit-border-radius: 8px;
+    		border-radius: 8px;
+		}
+	}
+	.photo-list .thumbnail-container ul.thumbnail-toolbar{
+		background-color: #252525;
+		height: 35px;
+		margin: 0;
+		top:145px;
+		width: 100%;
+		-webkit-border-radius: 0px 0px 8px 8px;
+        border-radius: 0px 0px 8px 8px;
+        .photo-desactivate-link:after{
+        	  	color: @user_menu;
+	content: "\e012";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 14px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+	top: 1px;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+
+        }
+	}
+	ul{
+		&.thumbnails{
+			li{
+				&.span2{
+					display:inline-block;
+					width:180px;
+				}
+			}
 		}
 	}
 }
