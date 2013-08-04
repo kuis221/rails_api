@@ -24,7 +24,7 @@ Brandscopic::Application.routes.draw do
   get ":controller/items", format: :html, as: :items
 
   scope "/research" do
-    resources :places, path: 'venues', only: [:index, :show]
+    resources :venues, only: [:index, :show]
   end
 
   scope "results" do

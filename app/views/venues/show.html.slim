@@ -2,7 +2,7 @@
   .tab-content
     = resource_details_bar("Viewing Venue Details", collection_path)
 
-    #place-map-canvas.google-map
+    #venue-map-canvas.google-map
     h4= resource.name
 
     .row-fluid
@@ -16,22 +16,22 @@
         br>/
         = resource.price_level.times.map{ '$' }.join
 
-      - if place_events.size > 0
+      - if resource.persisted? && resource.events > 0
         .span4
           .text-right
-            = pluralize(place_events.size, 'Event')
+            = pluralize(resource.events, 'Event')
             br>/
-            = pluralize(Event.scoped_by_company_id(current_company).total_promo_hours_for_places(resource), 'Promo Hour')
+            = pluralize(resource.promo_hours, 'Promo Hour')
             br>/
-            = pluralize(EventResult.scoped_by_company_id(current_company).impressions_for_places(resource), 'Impressions')
+            = pluralize(resource.impressions, 'Impressions')
             br>/
-            = EventResult.scoped_by_company_id(current_company).consumers_interactions_for_places(resource)
+            = resource.interactions
             = " Influenced"
             br>/
-            = EventResult.scoped_by_company_id(current_company).consumers_sampled_for_places(resource)
+            = resource.sampled
             = " Sampled"
             br>/
-            = EventResult.scoped_by_company_id(current_company).spent_for_places(resource)
+            = resource.spent
             = " Spent"
 
     ul.thumbnails
@@ -61,18 +61,18 @@
 - unless resource.nil? or resource.latitude.nil?
   javascript:
     var map;
-    var placeLocation = new google.maps.LatLng(#{resource.latitude}, #{resource.longitude});
+    var venueLocation = new google.maps.LatLng(#{resource.latitude}, #{resource.longitude});
 
     $(document).ready(function() {
       $(this).scrollTop(400);
       var mapOptions = {
         zoom: 13,
-        center: placeLocation,
+        center: venueLocation,
         scrollwheel: false,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
 
-      map = new google.maps.Map(document.getElementById('place-map-canvas'),
+      map = new google.maps.Map(document.getElementById('venue-map-canvas'),
           mapOptions);
 
       var styles = [
@@ -103,7 +103,7 @@
         map:map,
         draggable:false,
         animation: google.maps.Animation.DROP,
-        position: placeLocation
+        position: venueLocation
       });
 
       var theInfowindow = new google.maps.InfoWindow({

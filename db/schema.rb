@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130802232700) do
+ActiveRecord::Schema.define(:version => 20130803230950) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -451,5 +451,24 @@ ActiveRecord::Schema.define(:version => 20130802232700) do
   add_index "users", ["invitation_token"], :name => "index_users_on_invitation_token", :unique => true
   add_index "users", ["invited_by_id"], :name => "index_users_on_invited_by_id"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "venues", :force => true do |t|
+    t.integer  "company_id"
+    t.integer  "place_id"
+    t.integer  "events"
+    t.decimal  "promo_hours",     :precision => 8,  :scale => 2, :default => 0.0
+    t.integer  "impressions"
+    t.integer  "interactions"
+    t.integer  "sampled"
+    t.decimal  "spent",           :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "score"
+    t.decimal  "avg_impressions", :precision => 8,  :scale => 2, :default => 0.0
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+  end
+
+  add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
+  add_index "venues", ["company_id"], :name => "index_venues_on_company_id"
+  add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
 
 end

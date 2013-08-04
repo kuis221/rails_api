@@ -305,12 +305,18 @@ class Event < ActiveRecord::Base
 
     def reindex_associated
       if place_id_changed?
-        Sunspot.index(photos)
+        reindex_photos
         Sunspot.index(place)
-        Sunspot.index(CompanyPlaceInfo.new(id:"#{place_id_was}-#{self.company_id}")) if place_id_was.present?
+        Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was).delay.compute_stats if place_id_was.present?
       end
-      Sunspot.index(CompanyPlaceInfo.new(id:"#{place_id}-#{self.company_id}"))
+      venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+      venue.delay.compute_stats
     end
+
+    def reindex_photos
+      Sunspot.index(photos)
+    end
+    handle_asynchronously :reindex_photos
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600

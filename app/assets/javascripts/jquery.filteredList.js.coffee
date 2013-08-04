@@ -354,7 +354,7 @@ $.widget 'nmk.filteredList', {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
-			defaultDate: new Date(),
+			defaultDate: (if @options.selectDefaultDate then new Date() else null),
 			selectDefaultDate: @options.selectDefaultDate,
 			prevText: '<',
 			nextText: '>',

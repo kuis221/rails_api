@@ -73,7 +73,7 @@ class AttachedAsset < ActiveRecord::Base
     end
 
     latlon(:location) do
-      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event'
+      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event' && attachable.place_id
     end
 
     string :location, multiple: true do

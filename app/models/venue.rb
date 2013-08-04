@@ -1,29 +1,33 @@
-# This is a dummy class used only to index places data per company
-class CompanyPlaceInfo < ActiveRecord::Base
-  def self.columns() @columns ||= []; end
+# == Schema Information
+#
+# Table name: venues
+#
+#  id              :integer          not null, primary key
+#  company_id      :integer
+#  place_id        :integer
+#  events          :integer
+#  promo_hours     :decimal(8, 2)    default(0.0)
+#  impressions     :integer
+#  interactions    :integer
+#  sampled         :integer
+#  spent           :decimal(10, 2)   default(0.0)
+#  score           :integer
+#  avg_impressions :decimal(8, 2)    default(0.0)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
 
-  def self.column(name, sql_type = nil, default = nil, null = true)
-    columns << ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default, sql_type.to_s, null)
-  end
+require 'normdist'
 
-  PLACE_TYPES_SYMS = {
-    'bar' => ['bar', 'bars'],
-    'night_club' => ['night club', 'night clubs'],
-    'restaurant' => ['restaurant', 'restaurants', 'rests'],
-    'food' => ['food'],
-  }
-
-  attr_accessible :id
-  attr_accessor :events, :promo_hours, :impressions, :interactions, :samples, :spent
-
-  delegate :name, :types, :formatted_address, :reference, :latitude, :longitude, to: :place
-
-  column :id, :string
-  column :place_id, :integer
-  column :company_id, :integer
-
-  belongs_to :place
+class Venue < ActiveRecord::Base
   belongs_to :company
+  belongs_to :place
+
+  include Normdist
+
+  attr_accessible :place_id, :company_id
+
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :zipcode, :reference, :latitude, :longitude, to: :place
 
   searchable do
     integer :place_id
@@ -65,68 +69,60 @@ class CompanyPlaceInfo < ActiveRecord::Base
       campaigns.map(&:id)
     end
 
-    integer :events, :stored => true  do
-      Event.where(company_id: company_id, place_id: place_id).count
+    integer :events, :stored => true
+    double :promo_hours, :stored => true
+    integer :impressions, :stored => true
+    integer :interactions, :stored => true
+    integer :sampled, :stored => true
+    double :spent, :stored => true
+    double :avg_impressions, :stored => true
+  end
+
+
+  def compute_stats
+    self.events = Event.where(company_id: company_id, place_id: place_id).count
+    self.promo_hours = Event.where(company_id: company_id).total_promo_hours_for_places(place_id)
+
+    results = EventResult.scoped_by_place_id_and_company_id(place_id, company_id)
+    self.impressions = results.impressions.sum(:scalar_value).round
+    self.interactions = results.consumers_interactions.sum(:scalar_value).round
+    self.sampled = results.consumers_sampled.sum(:scalar_value).round
+    self.spent = results.spent.sum(:scalar_value).round
+
+    self.avg_impressions = 0
+    self.avg_impressions = self.impressions/self.events if self.events > 0
+
+    compute_score
+
+    save
+  end
+
+  def compute_score
+    search = Venue.solr_search do
+      with(:company_id, company_id)
+      with(:location).in_radius(latitude, longitude, 5)
+      with(:avg_impressions).greater_than(0)
+
+      stat(:avg_impressions, :type => "stddev")
+      stat(:avg_impressions, :type => "mean")
     end
-    double :promo_hours, :stored => true do
-      Event.total_promo_hours_for_places(place_id)
-    end
-    double :impressions, :stored => true do
-      EventResult.impressions_for_places(place_id)
-    end
-    double :interactions, :stored => true do
-      EventResult.consumers_interactions_for_places(place_id)
-    end
-    double :samples, :stored => true do
-      EventResult.consumers_sampled_for_places(place_id)
-    end
-    double :spent, :stored => true do
-      EventResult.spent_for_places(place_id)
-    end
-  end
+    self.score = nil
+    unless search.stat_response['stats_fields']["avg_impressions_es"].nil?
+      mean = search.stat_response['stats_fields']["avg_impressions_es"]['mean']
+      stddev = search.stat_response['stats_fields']["avg_impressions_es"]['stddev']
 
-  after_initialize :split_id
-  def split_id
-    (self.place_id, self.company_id) = self.id.split('-')
-  end
-
-  def persisted?
-    self.id.present?
-  end
-
-  def self.load(id)
-    self.new(id: id)
-  end
-
-  def self.find(id)
-    self.new(id: id)
-  end
-
-  def self.count
-    Place.select('count(DISTINCT(places.id, company_id)) as places_count').joins(:events).first.places_count.to_i
-  end
-
-  def self.load_all()
-    place_scope.map{|p| self.new(id: "#{p.id}-#{p.company_id}")}
-  end
-
-
-  def self.all(options)
-    places_ids = Hash[options[:conditions]['id'].map{|id| id.split('-') }]
-    Place.all(conditions: {id: places_ids.keys}).map{|p|
-      pi = self.new({id: "#{p.id}-#{places_ids[p.id.to_s]}"})
-      pi.place = p
-      pi.company_id = places_ids[p.id.to_s]
-      pi.place_id = p.id
-      pi
-    }
-  end
-
-  def self.find_in_batches(options = {})
-    place_scope.find_in_batches(options) do |group|
-      yield group.map{|p| self.new(id: "#{p.id}-#{p.company_id}")}
+      self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
     end
   end
+
+  def photos
+    place.photos(company_id)
+  end
+
+  def reviews
+    place.reviews(company_id)
+  end
+
 
   def self.do_search(params, include_facets=false)
     ss = solr_search do
@@ -134,8 +130,9 @@ class CompanyPlaceInfo < ActiveRecord::Base
       with(:company_id, params[:company_id]) if params.has_key?(:company_id) and params[:company_id].present?
 
       if params[:location].present?
+        radius = params.has_key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
-        with(:location).in_radius(lat, lng, 50)
+        with(:location).in_radius(lat, lng, radius)
       end
 
       if params[:q].present?
@@ -176,7 +173,7 @@ class CompanyPlaceInfo < ActiveRecord::Base
       stat(:promo_hours, :type => "max")
       stat(:impressions, :type => "max")
       stat(:interactions, :type => "max")
-      stat(:samples, :type => "max")
+      stat(:sampled, :type => "max")
       stat(:spent, :type => "max")
 
       if include_facets
@@ -188,13 +185,9 @@ class CompanyPlaceInfo < ActiveRecord::Base
     end
   end
 
-  private
-    def self.place_scope
-      Place.select('DISTINCT events.company_id, places.id').joins(:events)
-    end
 
+  private
     def campaigns
       @campaigns ||= Campaign.select('DISTINCT campaigns.id, campaigns.name').joins(:events).where(events: {place_id: place_id}, company_id: company_id)
     end
-
 end

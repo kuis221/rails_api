@@ -92,16 +92,12 @@ class Place < ActiveRecord::Base
     save
   end
 
-  def score
-    CompanyPlaceInfo.do_search({location: "#{latitude},#{longitude}", radius: 5})
-  end
-
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
-  def reviews
+  def reviews(company_id)
     list_reviews = []
     if persisted?
-      list_reviews = Comment.for_places(self).limit(5).all
+      list_reviews = Comment.for_places(self, company_id).limit(5).all
     end
     list_reviews += spot.reviews if list_reviews.length < 5
     list_reviews.slice(0, 5)
@@ -125,10 +121,10 @@ class Place < ActiveRecord::Base
 
   # First try to find photos in the app from events, then if there no enough photos in the app,
   # search for photos from Google Places API
-  def photos
+  def photos(company_id)
     list_photos = []
     if persisted?
-      search = AttachedAsset.do_search(place_id: self.id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      search = AttachedAsset.do_search(place_id: self.id, company_id: company_id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
     list_photos += spot.photos if list_photos.length < 10
@@ -244,6 +240,7 @@ class Place < ActiveRecord::Base
 
     def fetch_place_data
       if reference && !do_not_connect_to_api
+        Rails.logger.debug spot.inspect
         self.name = spot.name
         self.latitude = spot.lat
         self.longitude = spot.lng

@@ -1,0 +1,20 @@
+- if venue.is_a?(Venue)
+  li id="venue_#{venue.id}"
+    a href="#{venue_path(venue.id)}"
+      span
+        b= venue.name
+        br>/
+        = venue.formatted_address
+      span
+        = "#{venue.events} Events"
+        br>/
+        = "#{venue.promo_hours} Promo Hours"
+        br>/
+        = "$#{venue.spent} Spent"
+- else
+  li id="venue_#{venue.id}"
+    a href="#{venue_path(venue.id, ref: venue.reference)}"
+      span
+        b= venue.name
+        br>/
+        = venue.vicinity

@@ -22,22 +22,11 @@ class EventResult < ActiveRecord::Base
   before_save :set_scalar_value
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
-
-  class << self
-    def impressions_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.impressions}, events: {place_id: places}).sum(:scalar_value).round
-    end
-    def consumers_interactions_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}, events: {place_id: places}).sum(:scalar_value).round
-    end
-    def consumers_sampled_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}, events: {place_id: places}).sum(:scalar_value).round
-    end
-    def spent_for_places(places)
-      joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}, events: {place_id: places}).sum(:scalar_value).round
-    end
-  end
-
+  scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
+  scope :impressions, lambda{ joins(:form_field).where(campaign_form_fields:{kpi_id: Kpi.impressions}) }
+  scope :consumers_interactions, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}) }
+  scope :consumers_sampled, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}) }
+  scope :spent, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}) }
 
   private
     def set_scalar_value
