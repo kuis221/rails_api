@@ -1,11 +1,14 @@
 .login_box
-	.brand 
+	h2 Reset password
+	p
+	  | Enter your email and we'll send you
+	  br instructions to help you reset your password
     = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f|
       - devise_error_messages!
 
       div.form
         = f.email_field :email, :autofocus => true, :placeholder => 'E-mail'
 
-        = f.submit "Send me reset password instructions", class: 'btn btn-primary'
+        = f.submit "Reset", class: 'btn btn-primary'
 
     = render "devise/shared/links"
