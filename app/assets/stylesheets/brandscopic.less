@@ -160,16 +160,31 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	color: white;
 	font-size: 16px;
 	height: 37px;
+	line-height: 23px;
 	margin-left:90px;
 	padding: 13px 0 0 21px;
 	position: relative;
 	width: 90%;
 	-webkit-border-radius: 0px 0px 8px 8px;
-       border-radius: 0px 0px 8px 8px;
+     border-radius: 0px 0px 8px 8px;
 
     .close {
-    	right: 10px;
-    	color: #fff;
+    	opacity: 1;
+    	right: 25px;
+    	text-shadow:none;
+    	&:after{
+			color: white;
+			content: "\e019";
+		  	display: block;
+		  	font-family: 'icons';
+			font-size: 12px;
+			left: 0;
+		  	position: absolute;
+		  	speak:none;
+		  	text-indent: 0;
+		  	top:4px;
+		  	-webkit-font-smoothing: antialiased;
+  		}
     }
 }
 
