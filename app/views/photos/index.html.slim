@@ -1,6 +1,6 @@
 - content_for :alerts
   div class="alert collection-list-description"
-    a.close data-dismiss="alert" x
+    a.close data-dismiss="alert" 
     .filter-label
 
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
@@ -10,9 +10,9 @@
 
 .main
   .tab-content
-  #list-view.tab-pane.active
-    .photo-list
-      ul.thumbnails id="#{controller_name}-list"
+    #list-view.tab-pane.active
+      .photo-list
+        ul.thumbnails id="#{controller_name}-list"
 
 javascript:
   $('#collection-list-filters').filteredList({

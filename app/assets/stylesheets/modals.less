@@ -413,7 +413,9 @@
 	td{
 		&.ui-datepicker-today{
 			a{
+				color:@grey_three;
 				font-weight: bold !important;
+				opacity: 1;
 			}
 		}
 	}
@@ -473,6 +475,17 @@
 	}
 }
 
+.ui-datepicker-calendar{
+	.ui-datepicker-other-month{
+		.ui-state-default, .ui-widget-content .ui-state-default{
+			color: @user_menu!important;
+			&:hover{
+				color: @menu !important;
+			}
+		}
+	}
+}
+
 #ui-datepicker-div{
 	margin-top: 15px !important;
 	padding: 0 !important;
@@ -518,9 +531,10 @@
 .ui-state-default, .ui-widget-content .ui-state-default{
 	background: white !important;
 	border:0;
-	color: @brand;
+	color: @menu;
 	font-size: 10px;
 	font-weight: normal;
+	opacity: 0.8;
 	text-align: center;
 	&:hover{
 		background:@grey_one !important;
