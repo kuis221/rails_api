@@ -161,7 +161,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	font-size: 16px;
 	height: 37px;
 	line-height: 23px;
-	margin-left:90px;
+	margin:0 0 0 90px;
 	padding: 13px 0 0 21px;
 	position: relative;
 	width: 90%;
@@ -1718,14 +1718,19 @@ table.table td.comments-container {
 	}
 	.thumbnail{
 		border:0;
+		box-shadow: none;
 		padding: 0;
 		img{
 			-webkit-border-radius: 8px;
     		border-radius: 8px;
 		}
 	}
+	.photo-list{
+		margin-top: 40px;
+	}
 	.photo-list .thumbnail-container ul.thumbnail-toolbar{
 		background-color: rgba(0, 0, 0, 0.6);
+		float:right !important;
 		height: 35px;
 		margin: 0;
 		top:145px;
@@ -1736,18 +1741,49 @@ table.table td.comments-container {
         	color: white;
         	opacity: 1 !important;
         	&.icon-download:before{
-        	  	color: @user_menu;
-	content: "\e00b" !important;
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 14px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-	top: 1px;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+        	  	color: @grey_one;
+				content: "\e00b" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 13px;
+				left:127px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        	}
+        	&.icon-remove-circle:before{
+        	  	color: @grey_one;
+				content: "\e011" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 13px;
+				left:135px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        	}
+        	&.icon-ok-circle:before{
+        	  	color: @grey_one;
+				content: "\e00d" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 13px;
+				left:135px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
         	}
         }
 	}
