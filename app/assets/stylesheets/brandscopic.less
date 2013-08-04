@@ -1725,16 +1725,19 @@ table.table td.comments-container {
 		}
 	}
 	.photo-list .thumbnail-container ul.thumbnail-toolbar{
-		background-color: #252525;
+		background-color: rgba(0, 0, 0, 0.6);
 		height: 35px;
 		margin: 0;
 		top:145px;
 		width: 100%;
 		-webkit-border-radius: 0px 0px 8px 8px;
         border-radius: 0px 0px 8px 8px;
-        .photo-desactivate-link:after{
+        li a{
+        	color: white;
+        	opacity: 1 !important;
+        	&.icon-download:before{
         	  	color: @user_menu;
-	content: "\e012";
+	content: "\e00b" !important;
   	display: inline-block;
   	font-family: 'icons';
 	font-size: 14px;
@@ -1745,7 +1748,7 @@ table.table td.comments-container {
 	top: 1px;
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
-
+        	}
         }
 	}
 	ul{
