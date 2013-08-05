@@ -21,7 +21,11 @@ class AttachedAsset < ActiveRecord::Base
   track_who_does_it
 
   belongs_to :attachable, :polymorphic => true
-  has_attached_file :file, PAPERCLIP_SETTINGS
+  has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
+    :small => "200x200#",
+    :medium => "400x400",
+    :large => "800x800"
+  }})
   attr_accessible :file, :asset_type
 
   before_post_process :image?
