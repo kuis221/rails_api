@@ -44,7 +44,7 @@ class Venue < ActiveRecord::Base
       end
     end
 
-    string :types
+    string :types, multiple: true
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
 
