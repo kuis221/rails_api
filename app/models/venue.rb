@@ -2,19 +2,21 @@
 #
 # Table name: venues
 #
-#  id              :integer          not null, primary key
-#  company_id      :integer
-#  place_id        :integer
-#  events          :integer
-#  promo_hours     :decimal(8, 2)    default(0.0)
-#  impressions     :integer
-#  interactions    :integer
-#  sampled         :integer
-#  spent           :decimal(10, 2)   default(0.0)
-#  score           :integer
-#  avg_impressions :decimal(8, 2)    default(0.0)
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id                   :integer          not null, primary key
+#  company_id           :integer
+#  place_id             :integer
+#  events               :integer
+#  promo_hours          :decimal(8, 2)    default(0.0)
+#  impressions          :integer
+#  interactions         :integer
+#  sampled              :integer
+#  spent                :decimal(10, 2)   default(0.0)
+#  score                :integer
+#  avg_impressions      :decimal(8, 2)    default(0.0)
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  avg_impressions_hour :decimal(6, 2)    default(0.0)
+#  avg_impressions_cost :decimal(8, 2)    default(0.0)
 #
 
 require 'normdist'
@@ -36,14 +38,7 @@ class Venue < ActiveRecord::Base
     text :name
     text :types do
       begin
-        types = place.types
-        types.map do |type|
-          if PLACE_TYPES_SYMS.has_key?(type)
-            PLACE_TYPES_SYMS[type]
-          else
-            [type]
-          end
-        end.flatten.join ' '
+        place.types.join ' '
       rescue
         ''
       end
@@ -76,6 +71,8 @@ class Venue < ActiveRecord::Base
     integer :sampled, :stored => true
     double :spent, :stored => true
     double :avg_impressions, :stored => true
+    double :avg_impressions_hour, :stored => true
+    double :avg_impressions_cost, :stored => true
   end
 
 
@@ -90,7 +87,11 @@ class Venue < ActiveRecord::Base
     self.spent = results.spent.sum(:scalar_value).round
 
     self.avg_impressions = 0
+    self.avg_impressions_hour = 0
+    self.avg_impressions_cost = 0
     self.avg_impressions = self.impressions/self.events if self.events > 0
+    self.avg_impressions_hour = self.impressions/self.promo_hours if self.promo_hours > 0
+    self.avg_impressions_cost = self.spent/self.impressions if self.impressions > 0
 
     compute_score
 
@@ -101,6 +102,7 @@ class Venue < ActiveRecord::Base
     search = Venue.solr_search do
       with(:company_id, company_id)
       with(:location).in_radius(latitude, longitude, 5)
+      with(:types, types_without_establishment )
       with(:avg_impressions).greater_than(0)
 
       stat(:avg_impressions, :type => "stddev")
@@ -113,6 +115,7 @@ class Venue < ActiveRecord::Base
 
       self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
     end
+    self.score
   end
 
   def photos
@@ -121,6 +124,14 @@ class Venue < ActiveRecord::Base
 
   def reviews
     place.reviews(company_id)
+  end
+
+  def types_without_establishment
+    if place.types.is_a?(Array)
+      place.types - ['establishment']
+    else
+      []
+    end
   end
 
 

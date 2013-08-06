@@ -50,3 +50,9 @@ en:
       competitive_analysis: "Competive Analysis"
       photos: "Photos"
       videos: "Videos"
+
+  venue_types:
+    bar: "Bar"
+    night_club: "Night Club"
+    restaurant: "Restaurant"
+    food: "Food"

@@ -11,7 +11,7 @@
       = f.input :brands_list, input_html: {class: 'input-large'}
 
     .row-fluid
-      = f.association :brand_portfolios, input_html: {class: 'input-large chosen-enabled', multiple: true, collection: current_company.brand_portfolios.active}
+      = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-large chosen-enabled', multiple: true}
 
     .row-fluid
       = f.input :description, :input_html => {:rows => 6}
