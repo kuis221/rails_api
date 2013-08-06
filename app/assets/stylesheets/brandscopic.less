@@ -1575,7 +1575,7 @@ body.events.show {
 
 // VENUES
 
-.places{
+.venues {
 	&.index #places-search-form-box{
 		height: auto;
 		padding: 15px !important;
@@ -1585,7 +1585,7 @@ body.events.show {
 			margin: 0;
 		}
 	}
-	input[type="text"]#place-search-term, #place-search-location{
+	input[type="text"]#venue-search-term, #venue-search-location{
 		background-color: white !important;
 		background-image: url('search.svg');
 		background-position: center right;
@@ -1605,27 +1605,27 @@ body.events.show {
 	input::-webkit-input-placeholder {
 	  color: @user_menu;
 	}
-}
 
-body.venues.show {
-	.add-area-venue {
-		font-size: 20px;
-		text-decoration: none;
-	}
-
-	.area {
-		width: 300px;
-		padding: 5px 0;
-		.pull-left {
-			margin-right: 10px;
-		}
-		.remove-area-btn {
-			display: none;
+	&.show {
+		.add-area-venue {
+			font-size: 20px;
 			text-decoration: none;
 		}
-		&:hover {
+
+		.area {
+			width: 300px;
+			padding: 5px 0;
+			.pull-left {
+				margin-right: 10px;
+			}
 			.remove-area-btn {
-				display: block;
+				display: none;
+				text-decoration: none;
+			}
+			&:hover {
+				.remove-area-btn {
+					display: block;
+				}
 			}
 		}
 	}

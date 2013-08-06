@@ -1,69 +1,113 @@
 .main
-  .tab-content
-    = resource_details_bar("Viewing Venue Details", collection_path)
+  = resource_details_bar("Viewing Venue Details", collection_path)
 
-    #venue-map-canvas.google-map
-    h4= resource.name
+  #venue-map-canvas.google-map
+  h4= resource.name
 
-    .row-fluid
-      .span8
-        = resource.formatted_phone_number
-        br>/
-        = resource.formatted_address
-        - if resource.website
-          br>/
-          = place_website(resource.website)
-        br>/
-        = resource.price_level.times.map{ '$' }.join
-
-      - if resource.persisted? && resource.events > 0
-        .span4
-          .text-right
-            = pluralize(resource.events, 'Event')
-            br>/
-            = pluralize(resource.promo_hours, 'Promo Hour')
-            br>/
-            = pluralize(resource.impressions, 'Impressions')
-            br>/
-            = resource.interactions
-            = " Influenced"
-            br>/
-            = resource.sampled
-            = " Sampled"
-            br>/
-            = resource.spent
-            = " Spent"
+  .row-fluid
+    = resource.formatted_phone_number
+    br>/
+    = resource.formatted_address
+    - if resource.website
+      br>/
+      = place_website(resource.website)
+    br>/
+    = resource.price_level.times.map{ '$' }.join
+    = " "
+    = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
     h4 Areas
     = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
     #venue-areas.row-fluid
       = render partial: 'areas', locals: {areas: resource.place.areas}
 
-    ul.thumbnails
-      - resource.photos.each do |photo|
-        li.span2
-          div.photo-container.thumbnail
-            - if photo.is_a?(AttachedAsset)
-              = image_tag photo.file.url(:small)
-            - else
-              = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+  - if resource.persisted? && resource.events > 0
+    .venue-overall
+      .row-fluid
+        .span6
+          #venue-score
+            span= resource.score
+            | Venue Score
+          #venue-score-narrative
+            = venue_score_narrative(resource)
+
+        .span6
+          #overall-venue-stats.text-right
+            span= resource.events
+            = (resource.events == 1 ? " Event" : " Events")
+            br>/
+            span= resource.promo_hours
+            = (resource.promo_hours == 1 ? " Promo Hour" : " Promo Hours")
+            br>/
+            span= resource.impressions
+            = (resource.impressions == 1 ? " Impression" : " Impressions")
+            br>/
+            span= resource.interactions
+            = " Influenced"
+            br>/
+            span= resource.sampled
+            = " Sampled"
+            br>/
+            span= resource.spent.round
+            = " Spent"
+            br>/
+            span= resource.avg_impressions.round
+            = " Impressions/Event"
+            br>/
+            span= resource.avg_impressions_hour.round
+            = " Impressions/Promo Hour"
+            br>/
+            span= '$' + resource.avg_impressions_cost.round.to_s
+            = " Cost/Impression"
+
+  p &nbsp;
+  p &nbsp;
+
+  .row-fluid
+    .span6
+      .row-fluid
+        .span6
+          | 55 %
+          br>/
+          | Male
+        .span6
+          | 45 %
+          br>/
+          | Female
+      .row-fluid
+        #overall-age-graph
+    .span6
+      #overall-ethnicity-graph
+
+  p &nbsp;
+  p &nbsp;
+
+  h3 Gallery
+  ul.thumbnails
+    - resource.photos.each do |photo|
+      li.span2
+        div.photo-container.thumbnail
+          - if photo.is_a?(AttachedAsset)
+            = image_tag photo.file.url(:small)
+          - else
+            = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 
-    h3 Reviews
-    - resource.reviews.each do |review|
-      .venue-review
-        - unless review.is_a?(Comment)
-          .review-author-name= review.author_name
-          .review-rating= rating_stars(review.rating)
-          .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
-          .review-text= review.text
-        - else
-          .review-author-name= review.user_full_name
-          .review-date= time_ago_in_words(review.created_at)
-          .review-text= review.content
+  h3 Reviews
+  - resource.reviews.each do |review|
+    .venue-review
+      - unless review.is_a?(Comment)
+        .review-author-name= review.author_name
+        .review-rating= rating_stars(review.rating)
+        .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+        .review-text= review.text
+      - else
+        .review-author-name= review.user_full_name
+        .review-date= time_ago_in_words(review.created_at)
+        .review-text= review.content
 
 
-- unless resource.nil? or resource.latitude.nil?
+- unless resource.latitude.nil?
   javascript:
     var map;
     var venueLocation = new google.maps.LatLng(#{resource.latitude}, #{resource.longitude});
@@ -122,6 +166,110 @@
         theInfowindow.open(map, this)
       })
     });
+
+- if resource.persisted?
+  javascript:
+    $('#overall-age-graph').highcharts({
+        chart: { type: 'bar' },
+        title: { text: null },
+        colors: ['#DFDFDF','#3E9CCF'],
+        xAxis: {
+            categories: ['18-20', '21-24', '25-34', '35-44', '45-54', '45-54', '55-64', '65+'],
+            title: {
+                enabled: false
+            },
+            labels: {
+              style: {color: '#3E9CCF'}
+            },
+            tickLength: 0,
+            lineWidth: 0
+        },
+        tooltip: {enabled: false},
+        yAxis: {
+            max: 100,
+            labels: { enabled: false },
+            title: {text: false},
+            gridLineColor: 'transparent',
+            enabled: false
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: false
+                }
+            },
+            series: {
+                stacking: 'percent',
+                enableMouseTracking: false,
+                pointPadding: 0,
+                groupPadding: 0,
+                borderWidth: 0,
+                pointPadding: 0,
+                pointWidth: 15,
+                dataLabels: {
+                    color: '#3E9CCF'
+                }
+            }
+        },
+        legend: { enabled: false },
+        credits: { enabled: false },
+        series: [{
+            name: 'Fill in',
+            data: [100-9, 100-16, 100-56, 100-12, 100-6, 100-1, 100-0],
+
+        },{
+            name: 'Values',
+            data: [9, 16, 56, 12, 6, 1, 0],
+            dataLabels: {
+                    enabled: true,
+                    format: '{y}%',
+                    color: '#3E9CCF',
+                    align: 'right',
+                    x: 30,
+                    y: -2,
+                    style: { color: '#3E9CCF' }
+                }
+
+        }]
+    });
+
+    $('#overall-ethnicity-graph').highcharts({
+            colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
+            chart: {
+                type: 'pie'
+            },
+            title: { text: null },
+            credits: { enabled: false },
+            yAxis: {
+                title: { text: null }
+            },
+            plotOptions: {
+                pie: {
+                    shadow: false
+                },
+                series: {
+                  enableMouseTracking: false,
+                }
+            },
+            tooltip: {
+                enabled: false
+            },
+            series: [{
+                name: 'Browsers',
+                data: [["Asian",5],["Hispanic",15],["African American",25],["White",55]],
+                size: '60%',
+                innerSize: '30%',
+                distance: -10,
+                dataLabels: {
+                    crop: false,
+                    formatter: function() {
+                        // display only if larger than 1
+                        return '<span style="font-size:15px;">'+ this.y +'%' +'</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
+                    },
+                    color: '#3E9CCF'
+                }
+            }]
+        });
 
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');
