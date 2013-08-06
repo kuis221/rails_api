@@ -1,0 +1,6 @@
+- areas.each do |area|
+  div.area.clearfix id= "area-#{area.id}"
+    .pull-left
+      = area.name
+    .pull-right
+      = link_to(content_tag(:i,'', class: 'icon-remove'), delete_area_venue_path(resource, area_id: area.id), class: 'remove-area-btn', remote: true, method: :delete)

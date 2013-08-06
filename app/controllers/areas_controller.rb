@@ -1,6 +1,8 @@
 class AreasController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  belongs_to :place, optional: true
+
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
@@ -11,6 +13,15 @@ class AreasController < FilteredController
       areas: [Area]
     })
     render :json => buckets.flatten
+  end
+
+  def create
+    create! do |success, failure|
+      success.js do
+        parent.areas << resource if parent? and parent
+        render :create
+      end
+    end
   end
 
   private

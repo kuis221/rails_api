@@ -34,6 +34,11 @@
             = resource.spent
             = " Spent"
 
+    h4 Areas
+    = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+    #venue-areas.row-fluid
+      = render partial: 'areas', locals: {areas: resource.place.areas}
+
     ul.thumbnails
       - resource.photos.each do |photo|
         li.span2
@@ -116,4 +121,8 @@
       google.maps.event.addListener(marker, 'click', function (){
         theInfowindow.open(map, this)
       })
+    });
+
+    $(document).on('areas:change', function(){
+      $.get('#{areas_venue_path(resource, format: :js)}');
     });

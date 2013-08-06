@@ -16,7 +16,7 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
-  # This copule of routes are for tasks for tasks
+  # This couple of routes are for tasks
   get ":controller/:scope/filters", format: :json, as: :filters
   get ":controller/:scope/items", format: :html, as: :items
 
@@ -24,7 +24,14 @@ Brandscopic::Application.routes.draw do
   get ":controller/items", format: :html, as: :items
 
   scope "/research" do
-    resources :venues, only: [:index, :show]
+    resources :venues, only: [:index, :show] do
+      member do
+        match 'areas/:area_id' => 'venues#delete_area', via: :delete, as: :delete_area
+        match 'areas/select' => 'venues#select_areas', via: :get, as: :select_areas
+        match 'areas/add' => 'venues#add_areas', via: :post, as: :add_area
+        match 'areas' => 'venues#areas', via: :get, as: :areas
+      end
+    end
   end
 
   scope "results" do
@@ -159,7 +166,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  #resources :places, only: [:index]
+  resources :places, only: [] do
+    resources :areas, only: [:new, :create]
+  end
 
   resources :date_ranges do
     get :autocomplete, on: :collection

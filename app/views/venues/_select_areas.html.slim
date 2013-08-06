@@ -1,0 +1,24 @@
+#select-areas-table-wrapper
+  table#select-areas-list.table.table-striped.table-bordered.table-scrolled.data
+    thead
+      tr
+        th data-sort="name" Name
+        th.actions
+    tbody
+      - Area.not_in_venue(resource.place_id).each do |area|
+        tr id="area-#{area.id}"
+          td= area.name
+          td= link_to 'Add', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, disable_with: '...'
+
+javascript:
+  selectAreasTable = $('#select-areas-list').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
+        "bPaginate": false,
+        "bProcessing": true,
+        "bAutoWidth": false,
+        "bDestroy": true,
+        "aoColumns": [
+          null,
+          {"sWidth": '30px', 'bSortable': false}
+        ]
+  });

@@ -1,0 +1,8 @@
+|
+  $(document).trigger('areas:change');
+  if ($('table#select-areas-list tr#area-#{@area.id}').length){
+    pos = selectAreasTable.fnGetPosition($('table#select-areas-list tr#area-#{@area.id}')[0]);
+    if (pos!== null){
+      selectAreasTable.fnDeleteRow(pos);
+    };
+  }
