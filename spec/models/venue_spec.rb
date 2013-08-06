@@ -2,19 +2,21 @@
 #
 # Table name: venues
 #
-#  id              :integer          not null, primary key
-#  company_id      :integer
-#  place_id        :integer
-#  events          :integer
-#  promo_hours     :decimal(8, 2)    default(0.0)
-#  impressions     :integer
-#  interactions    :integer
-#  sampled         :integer
-#  spent           :decimal(10, 2)   default(0.0)
-#  score           :integer
-#  avg_impressions :decimal(8, 2)    default(0.0)
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id                   :integer          not null, primary key
+#  company_id           :integer
+#  place_id             :integer
+#  events               :integer
+#  promo_hours          :decimal(8, 2)    default(0.0)
+#  impressions          :integer
+#  interactions         :integer
+#  sampled              :integer
+#  spent                :decimal(10, 2)   default(0.0)
+#  score                :integer
+#  avg_impressions      :decimal(8, 2)    default(0.0)
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  avg_impressions_hour :decimal(6, 2)    default(0.0)
+#  avg_impressions_cost :decimal(8, 2)    default(0.0)
 #
 
 require 'spec_helper'

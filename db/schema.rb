@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130803230950) do
+ActiveRecord::Schema.define(:version => 20130805173213) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -456,15 +456,17 @@ ActiveRecord::Schema.define(:version => 20130803230950) do
     t.integer  "company_id"
     t.integer  "place_id"
     t.integer  "events"
-    t.decimal  "promo_hours",     :precision => 8,  :scale => 2, :default => 0.0
+    t.decimal  "promo_hours",          :precision => 8,  :scale => 2, :default => 0.0
     t.integer  "impressions"
     t.integer  "interactions"
     t.integer  "sampled"
-    t.decimal  "spent",           :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "spent",                :precision => 10, :scale => 2, :default => 0.0
     t.integer  "score"
-    t.decimal  "avg_impressions", :precision => 8,  :scale => 2, :default => 0.0
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
+    t.decimal  "avg_impressions",      :precision => 8,  :scale => 2, :default => 0.0
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
+    t.decimal  "avg_impressions_hour", :precision => 6,  :scale => 2, :default => 0.0
+    t.decimal  "avg_impressions_cost", :precision => 8,  :scale => 2, :default => 0.0
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
