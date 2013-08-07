@@ -1,8 +1,13 @@
 .main
   = resource_details_bar("Viewing Venue Details", collection_path)
 
-  #venue-map-canvas.google-map
-  h4= resource.name
+  - unless resource.latitude.nil?
+    #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
+          b= resource.name
+          br>/
+          = place_address(resource.is_a?(Venue) ? resource.place : resource)
+
+  h2= resource.name
 
   .row-fluid
     = resource.formatted_phone_number
@@ -114,69 +119,11 @@
         .review-date= time_ago_in_words(review.created_at)
         .review-text= review.content
 
-
-- unless resource.latitude.nil?
-  javascript:
-    var map;
-    var venueLocation = new google.maps.LatLng(#{resource.latitude}, #{resource.longitude});
-
-    $(document).ready(function() {
-      $(this).scrollTop(400);
-      var mapOptions = {
-        zoom: 13,
-        center: venueLocation,
-        scrollwheel: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      map = new google.maps.Map(document.getElementById('venue-map-canvas'),
-          mapOptions);
-
-      var styles = [
-        {
-          stylers: [
-            { hue: "#00ffe6" },
-            { saturation: -20 }
-          ]
-        },{
-          featureType: "road",
-          elementType: "geometry",
-          stylers: [
-            { lightness: 100 },
-            { visibility: "simplified" }
-          ]
-        },{
-          featureType: "road",
-          elementType: "labels",
-          stylers: [
-            { visibility: "off" }
-          ]
-        }
-      ];
-
-      map.setOptions({styles: styles});
-
-      marker = new google.maps.Marker({
-        map:map,
-        draggable:false,
-        animation: google.maps.Animation.DROP,
-        position: venueLocation
-      });
-
-      var theInfowindow = new google.maps.InfoWindow({
-          content: $('<div>')
-                  .append($('<b>').append('#{escape_javascript(resource.name)}'))
-                  .append($('<br>')).append('#{escape_javascript(place_address(resource))}')
-                  .html()
-      });
-
-      google.maps.event.addListener(marker, 'click', function (){
-        theInfowindow.open(map, this)
-      })
-    });
-
 - if resource.persisted?
   javascript:
+    $(document).ready(function() {
+      $(this).scrollTop(400);
+    });
     $('#overall-age-graph').highcharts({
         chart: { type: 'bar' },
         title: { text: null },

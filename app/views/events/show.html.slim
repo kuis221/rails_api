@@ -1,5 +1,13 @@
-#resource-details-wrapper
+.main
   = resource_details_bar("Viewing Event Details.", collection_path)
+
+  - unless resource.place.nil? or resource.place.latitude.nil?
+    #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+        b= resource.campaign_name
+        br>/
+        = resource.start_at.to_s
+        br>/
+        = place_address(resource.place)
 
   .pull-right
     = active_inactive_buttons(resource)
@@ -18,10 +26,6 @@
       #event-team-members
         = render 'team_member_list'
       = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
-
-    .span6
-      - unless resource.place.nil? or resource.place.latitude.nil?
-        #map-canvas.google-map
 
   .row-fluid
     .box
@@ -61,66 +65,10 @@
           #event-results
             = render 'show_results'
 
-- unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
-    var map;
-    var placeLocation = new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude});
-
-    function initialize() {
-      var mapOptions = {
-        zoom: 13,
-        center: placeLocation,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      map = new google.maps.Map(document.getElementById('map-canvas'),
-          mapOptions);
-
-      var styles = [
-        {
-          stylers: [
-            { hue: "#00ffe6" },
-            { saturation: -20 }
-          ]
-        },{
-          featureType: "road",
-          elementType: "geometry",
-          stylers: [
-            { lightness: 100 },
-            { visibility: "simplified" }
-          ]
-        },{
-          featureType: "road",
-          elementType: "labels",
-          stylers: [
-            { visibility: "off" }
-          ]
-        }
-      ];
-
-      map.setOptions({styles: styles});
-
-      marker = new google.maps.Marker({
-        map:map,
-        draggable:false,
-        animation: google.maps.Animation.DROP,
-        position: placeLocation
-      });
-
-      var theInfowindow = new google.maps.InfoWindow({
-          content: $('<div>')
-                  .append($('<b>').append('#{escape_javascript(resource.campaign_name)}'))
-                  .append($('<br>')).append('#{escape_javascript(resource.start_at.to_s)}')
-                  .append($('<br>')).append('#{escape_javascript(place_address(resource.place))}')
-                  .html()
-      });
-
-      google.maps.event.addListener(marker, 'click', function (){
-        theInfowindow.open(map, this)
-      })
-    }
-
-    google.maps.event.addDomListener(window, 'load', initialize);
+    $(document).ready(function() {
+      $(this).scrollTop(400);
+    });
 
     $(document).bind('member:delete', function(e){
       tasksTable.tableScroller('reloadData');

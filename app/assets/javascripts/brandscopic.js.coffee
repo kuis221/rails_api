@@ -152,6 +152,60 @@ jQuery ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");
 
+
+	$('.google-map[data-latitude]').each (index, container) ->
+		$container = $(container)
+		content = $container.html()
+		placeLocation = new google.maps.LatLng($container.data('latitude'), $container.data('longitude'));
+
+		mapOptions = {
+			zoom: 13,
+			center: placeLocation,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+
+		map = new google.maps.Map(container, mapOptions)
+
+		styles = [
+			{
+				stylers: [
+					{ hue: "#00ffe6" },
+					{ saturation: -20 }
+				]
+			},{
+				featureType: "road",
+				elementType: "geometry",
+				stylers: [
+					{ lightness: 100 },
+					{ visibility: "simplified" }
+				]
+			},{
+				featureType: "road",
+				elementType: "labels",
+				stylers: [
+					{ visibility: "off" }
+				]
+			}
+		]
+
+		map.setOptions {styles: styles}
+
+		marker = new google.maps.Marker({
+			map:map,
+			draggable:false,
+			animation: google.maps.Animation.DROP,
+			position: placeLocation
+		})
+
+		theInfowindow = new google.maps.InfoWindow({
+			content: content
+		});
+
+		google.maps.event.addListener marker, 'click',  ->
+			theInfowindow.open(map, this)
+
+
+# Hack to use bootsbox confirm dialog
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')
 	if !message
