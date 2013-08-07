@@ -105,6 +105,10 @@ a{
   outline: 0;
 }
 
+.tab-content{
+	overflow-x:hidden;
+}
+
 input{
 	font-family: @baseFontFamily;
 }
@@ -1002,6 +1006,22 @@ li#user_menu{
     		}
     	}
     }
+    ul#venues-list{
+    	li{
+    		a{
+    			&:first-child{
+    				line-height: 20px;
+    			}
+    		}
+    		.venue_adress{
+    			display: block;
+	    		overflow: hidden;
+	    		text-overflow:ellipsis;
+	    		white-space: nowrap;
+    		}
+    	}
+
+    }
     li{
     	border-bottom:1px solid @borders;
     	color:@brand;
@@ -1523,6 +1543,7 @@ body.events.show {
 
 .fancybox-overlay {
 	.fancybox-title {
+		font-family: @baseFontFamily;
 		position: absolute;
 		z-index: 99999;
 		bottom: 0px;
@@ -1531,11 +1552,16 @@ body.events.show {
 		width: 100%;
 		color: #fff;
 		padding: 0px;
-		display: none;
+		display: visible;
 
 		.photo-download-link, .photo-deactivate-link {
 			font-size: 20px;
 			margin: 0px 2px;
+		}
+
+		.fancybox-inner, .fancybox-image{
+			height: 300px !important;
+			width: 500px !important;
 		}
 
 		.campaign-name, .photo-location {
@@ -1613,17 +1639,30 @@ body.events.show {
 	}
 	.filter-wrapper{
 		margin: 10px 0 35px 0;
+		.slider-label{
+			margin-left: 3px;
+		}
+	}
+	a:focus{
+		outline:0 !important;
 	}
 	.ui-widget-content{
 		background: @grey_one;
 		-webkit-border-radius: 10px !important;
     	border-radius: 10px !important;
-    	margin: 5px 0 0 5px;
+    	margin: 5px 0 0 4px;
     	width: 95%;
+	}
+	.ui-slider{
+		.ui-slider-range{
+			-webkit-border-radius: 10px !important;
+    		border-radius: 10px !important;
+		}
 	}
 	.ui-state-default, .ui-widget-content .ui-state-default{
 		background: @grey_three !important;
 		font-size: 14px !important;
+		margin-left: -8px;
 		opacity: 1 !important;
 		top: -3px;
 		-webkit-border-radius: 10px !important;
