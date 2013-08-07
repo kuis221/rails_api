@@ -16,12 +16,11 @@
   .row-fluid
     .span6
       p
-        = event_date_range(resource)
+        = format_date_range(resource.start_at, resource.end_at)
         = place_address(resource.place) if resource.place
         = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary', remote: true
 
-      br
-
+    .span6
       h3 Event Team
       #event-team-members
         = render 'team_member_list'
@@ -33,12 +32,14 @@
         .box-header
           h2 TASKS
 
-      #tasks-content.collapse.in
-        #event-tasks-container.box-content
-          = render partial: 'tasks', locals: {tasks: resource.tasks}
-          .row-fluid
-            .pull-right
-              = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+      .pull-left
+        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+      #event-tasks-counters.pull-right
+        = render partial: 'tasks_counters', locals: {tasks: resource.tasks}
+
+      #event-tasks-container
+        = render partial: 'tasks', locals: {tasks: resource.tasks}
+
 
   .row-fluid
     .box
@@ -78,8 +79,10 @@
       window.location.reload(false);
     });
     $(document).on('tasks:change', function(){
-      $('#event-tasks-container').load('#{tasks_event_path(resource)}')
-    });
-    $(document).on('members:change', function(){
-      $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
+      $.get('#{tasks_event_path(resource)}', function(response){
+        $response = $('<div>').append(response);
+        $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+        $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
+      })
+     
     });

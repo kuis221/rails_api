@@ -1,1 +1,5 @@
-= render partial: 'tasks', locals: {tasks: resource.tasks}
+div data-content="tasks"
+  = render partial: 'tasks', locals: {tasks: resource.tasks}
+
+div data-content="counters"
+  = render partial: 'tasks_counters', locals: {tasks: resource.tasks}
