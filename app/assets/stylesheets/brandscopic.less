@@ -250,6 +250,47 @@ a.datepick-cmd{
 a.datepick-cmd:hover{
 	background-color: @brand;
 }
+
+.checker{
+	background-color: @grey_one;
+	display: inline-block;
+	float:left;
+	height: 20px;
+	margin:10px 0 0 0;
+	padding: 0;
+	width:20px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	span.checked{
+		background-color: @brand;
+		display: block;
+		height: 20px;
+		margin: 0 15px 0 0;
+		padding:0;
+		width: 20px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+	}
+	span.checked:after{
+		color: white;
+		content: "\e00f";
+		font-family: 'icons';
+		font-size: 14px;
+		left:3px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		-webkit-font-smoothing: antialiased;
+	}
+	input[type=checkbox]{
+		visibility: hidden;
+	}
+}
+
+
 // Events Calendar picker
 .datepick{
 	background-color: white;
@@ -737,39 +778,13 @@ label{
 		padding: 0 15px 0 30px;
 	}
 	.checker{
-		background-color: @grey_one;
-		display: inline-block;
-		float:left;
-		height: 20px;
 		margin:1px 5px 0 -30px;
-		padding: 0;
-		width:20px;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
 		span.checked{
 			background-color: @brand;
-			display: block;
-			height: 20px;
 			margin: 0;
-			padding:0;
-			width: 20px;
-			-webkit-border-radius: 5px;
-			-moz-border-radius: 5px;
-			border-radius: 5px;
 		}
 		span.checked:after{
-			color: white;
-			content: "\e00f";
-			font-family: 'icons';
-			font-size: 14px;
-			left:3px;
-			position: relative;
 			top:-22px;
-			speak:none;
-			text-align: center;
-			text-shadow:none;
-			-webkit-font-smoothing: antialiased;
 		}
 	}
 }
@@ -1140,41 +1155,6 @@ li#user_menu{
 	      padding: 13px 15px 11px 35px;
 	    }
   	}
-	.checker{
-		background-color: @grey_one;
-		display: inline-block;
-		float:left;
-		height: 20px;
-		margin:10px 0 0 0;
-		padding: 0;
-		width:20px;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
-		span.checked{
-			background-color: @brand;
-			display: block;
-			height: 20px;
-			margin: 0 15px 0 0;
-			padding:0;
-			width: 20px;
-			-webkit-border-radius: 5px;
-			-moz-border-radius: 5px;
-			border-radius: 5px;
-		}
-		span.checked:after{
-			color: white;
-			content: "\e00f";
-			font-family: 'icons';
-			font-size: 14px;
-			left:3px;
-			position: relative;
-			speak:none;
-			text-align: center;
-			text-shadow:none;
-			-webkit-font-smoothing: antialiased;
-		}
-	}
 }
 ul{
   	li.loading-spinner{
