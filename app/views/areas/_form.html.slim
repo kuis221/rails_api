@@ -1,5 +1,5 @@
 - remote ||= false
-= simple_form_for(@area, remote: remote || false) do |f|
+= simple_form_for([parent, @area], remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs

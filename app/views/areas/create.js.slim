@@ -1,0 +1,9 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- elsif parent.is_a?(Place)
+  |
+    $('.bootbox.modal').modal('hide');
+    $(document).trigger('areas:change');
+- else
+  |
+    window.location = "#{resource_path}"

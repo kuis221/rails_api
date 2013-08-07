@@ -26,6 +26,8 @@ class Area < ActiveRecord::Base
   # Areas-Places relationship
   has_and_belongs_to_many :places
 
+  scope :not_in_venue, lambda{|place| where("areas.id not in (#{AreasPlace.select('area_id').scoped_by_place_id(place).to_sql})") }
+
   searchable do
     integer :id
 

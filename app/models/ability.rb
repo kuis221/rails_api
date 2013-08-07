@@ -26,7 +26,7 @@ class Ability
         can :manage, BrandPortfolio, :company_id => user.current_company.id
         can [:index, :create], Brand
         can [:index, :create, :destroy, :show], Place
-        can [:index, :show], Venue
+        can [:index, :show, :areas, :select_areas, :add_areas, :delete_area], Venue
 
         can :manage, DateRange, :company_id => user.current_company.id
         can :manage, DateItem, :date_range => {:company_id => user.current_company.id}

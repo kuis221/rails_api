@@ -1575,7 +1575,7 @@ body.events.show {
 
 // VENUES
 
-.venues{	
+.venues {
 	&.index #places-search-form-box{
 		height: auto;
 		padding: 15px !important;
@@ -1604,6 +1604,30 @@ body.events.show {
 	}
 	input::-webkit-input-placeholder {
 	  color: @user_menu;
+	}
+
+	&.show {
+		.add-area-venue {
+			font-size: 20px;
+			text-decoration: none;
+		}
+
+		.area {
+			width: 300px;
+			padding: 5px 0;
+			.pull-left {
+				margin-right: 10px;
+			}
+			.remove-area-btn {
+				display: none;
+				text-decoration: none;
+			}
+			&:hover {
+				.remove-area-btn {
+					display: block;
+				}
+			}
+		}
 	}
 }
 

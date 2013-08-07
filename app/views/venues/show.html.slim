@@ -16,6 +16,10 @@
     = " "
     = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
+    h4 Areas
+    = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+    #venue-areas.row-fluid
+      = render partial: 'areas', locals: {areas: resource.place.areas}
 
   - if resource.persisted? && resource.events > 0
     .venue-overall
@@ -75,11 +79,8 @@
     .span6
       #overall-ethnicity-graph
 
-
-
   p &nbsp;
   p &nbsp;
-
 
   h3 Gallery
   ul.thumbnails
@@ -104,7 +105,6 @@
         .review-author-name= review.user_full_name
         .review-date= time_ago_in_words(review.created_at)
         .review-text= review.content
-
 
 
 - unless resource.latitude.nil?
@@ -166,7 +166,6 @@
         theInfowindow.open(map, this)
       })
     });
-
 
 - if resource.persisted?
   javascript:
@@ -271,3 +270,7 @@
                 }
             }]
         });
+
+    $(document).on('areas:change', function(){
+      $.get('#{areas_venue_path(resource, format: :js)}');
+    });

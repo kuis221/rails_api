@@ -3,6 +3,8 @@ class VenuesController < FilteredController
 
   helper_method :place_events
 
+  custom_actions member: [:select_areas, :add_areas]
+
   def collection
     @places ||= begin
       search = Venue.do_search(search_params)
@@ -24,6 +26,21 @@ class VenuesController < FilteredController
       set_collection_ivar(places)
     end
     @places
+  end
+
+  def select_areas
+  end
+
+  def add_areas
+    @area = Area.find(params[:area_id])
+    unless resource.place.area_ids.include?(@area.id)
+      resource.place.areas << @area
+    end
+  end
+
+  def delete_area
+    @area = Area.find(params[:area_id])
+    resource.place.areas.delete(@area)
   end
 
   protected
