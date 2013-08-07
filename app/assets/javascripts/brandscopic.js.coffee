@@ -161,6 +161,7 @@ jQuery ->
 		mapOptions = {
 			zoom: 13,
 			center: placeLocation,
+			scrollwheel: false,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 
