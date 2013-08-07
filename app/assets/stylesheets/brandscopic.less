@@ -105,6 +105,10 @@ a{
   outline: 0;
 }
 
+.tab-content{
+	overflow-x:hidden;
+}
+
 input{
 	font-family: @baseFontFamily;
 }
@@ -1002,6 +1006,22 @@ li#user_menu{
     		}
     	}
     }
+    ul#venues-list{
+    	li{
+    		a{
+    			&:first-child{
+    				line-height: 20px;
+    			}
+    		}
+    		.venue_adress{
+    			display: block;
+	    		overflow: hidden;
+	    		text-overflow:ellipsis;
+	    		white-space: nowrap;
+    		}
+    	}
+
+    }
     li{
     	border-bottom:1px solid @borders;
     	color:@brand;
@@ -1523,6 +1543,7 @@ body.events.show {
 
 .fancybox-overlay {
 	.fancybox-title {
+		font-family: @baseFontFamily;
 		position: absolute;
 		z-index: 99999;
 		bottom: 0px;
@@ -1531,11 +1552,16 @@ body.events.show {
 		width: 100%;
 		color: #fff;
 		padding: 0px;
-		display: none;
+		display: visible;
 
 		.photo-download-link, .photo-deactivate-link {
 			font-size: 20px;
 			margin: 0px 2px;
+		}
+
+		.fancybox-inner, .fancybox-image{
+			height: 300px !important;
+			width: 500px !important;
 		}
 
 		.campaign-name, .photo-location {
@@ -1579,21 +1605,27 @@ body.events.show {
 	&.index #places-search-form-box{
 		height: auto;
 		padding: 15px !important;
+		button{
+			float:right;
+		}
 	}
 	.form-horizontal{
 		.control-group{
 			margin: 0;
 		}
+		.control-label{
+			margin-top: 5px;
+		}
 	}
 	input[type="text"]#venue-search-term, #venue-search-location{
 		background-color: white !important;
-		background-image: url('search.svg');
+		background-image: url('search2.svg');
 		background-position: center right;
 		background-repeat: no-repeat;
 		border: 1px solid @user_menu;
 		box-shadow: none;
 		padding: 2px 15px;
-		-webkit-border-radius: 18px;
+		-webkit-border-radius: 20px;
     	border-radius: 20px;
 	}
 	input:-moz-placeholder {
@@ -1628,6 +1660,41 @@ body.events.show {
 				}
 			}
 		}
+	}
+
+	.filter-wrapper{
+		margin: 10px 0 35px 0;
+		.slider-label{
+			margin-left: 3px;
+		}
+	}
+	a:focus{
+		outline:0 !important;
+	}
+	.ui-widget-content{
+		background: @grey_one;
+		-webkit-border-radius: 10px !important;
+    	border-radius: 10px !important;
+    	margin: 5px 0 0 4px;
+    	width: 95%;
+	}
+	.ui-slider{
+		.ui-slider-range{
+			-webkit-border-radius: 10px !important;
+    		border-radius: 10px !important;
+		}
+	}
+	.ui-state-default, .ui-widget-content .ui-state-default{
+		background: @grey_three !important;
+		font-size: 14px !important;
+		margin-left: -8px;
+		opacity: 1 !important;
+		top: -3px;
+		-webkit-border-radius: 10px !important;
+    	border-radius: 10px !important;
+    	&:hover{
+    		background: @grey_three !important;
+    	}
 	}
 }
 
@@ -1781,7 +1848,7 @@ table.table td.comments-container {
 	}
 }
 
-// PHOTOS PLACES
+// PHOTOS
 .photos{
 	.main{
 		-webkit-border-radius: 0px 7px 7px 7px;
@@ -1794,17 +1861,28 @@ table.table td.comments-container {
 		img{
 			-webkit-border-radius: 8px;
     		border-radius: 8px;
+    		height: 120px;
 		}
 	}
 	.photo-list{
-		margin-top: 40px;
+		margin: 40px 0 0 0;
+		ul{
+			margin: 0 -3% 0 -3%;
+			overflow: auto;
+		}
+		li{
+			margin: 0 3% 6% 3%;
+			&:first-child{
+				margin: 0 3% 6% 3%;
+			}
+		}
 	}
 	.photo-list .thumbnail-container ul.thumbnail-toolbar{
 		background-color: rgba(0, 0, 0, 0.6);
 		float:right !important;
 		height: 35px;
 		margin: 0;
-		top:145px;
+		top:85px;
 		width: 100%;
 		-webkit-border-radius: 0px 0px 8px 8px;
         border-radius: 0px 0px 8px 8px;

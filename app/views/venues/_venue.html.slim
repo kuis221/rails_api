@@ -4,13 +4,19 @@
       span
         b= venue.name
         br>/
-        = venue.formatted_address
-      span
-        = "#{venue.events} Events"
+        p 
+        | Night Club
         br>/
-        = "#{venue.promo_hours} Promo Hours"
+        .venue_adress 
+          = venue.formatted_address
+      span.n_events
+        = "#{venue.events}"
         br>/
-        = "$#{venue.spent} Spent"
+        = "Events"
+      span.hours
+        = "#{venue.promo_hours}"
+        br>/
+        = "Hours"
 - else
   li id="venue_#{venue.id}"
     a href="#{venue_path(venue.id, ref: venue.reference)}"
