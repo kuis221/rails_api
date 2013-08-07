@@ -7,6 +7,7 @@ namespace :db do
     task :places => :environment do
       YAML.load_file(File.join(Rails.root,'lib','assets','places.yml')).each do |record|
           params = record[1].reject{|k, v| k == 'id'}.merge({do_not_connect_to_api: true})
+          params['types'] = YAML.load(params['types']) rescue []
           Place.create(params, without_protection: true)
       end
     end
