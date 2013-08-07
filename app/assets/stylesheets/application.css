@@ -21,7 +21,6 @@
  *= require 'date_ranges.less'
  *= require 'day_parts.less'
  *= require 'campaigns.less'
- *= require 'venues.less'
  *= require 'superfish.css'
  *= require 'superfish-vertical.css'
  *= require 'select2.css'

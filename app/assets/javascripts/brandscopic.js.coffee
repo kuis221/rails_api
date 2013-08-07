@@ -51,6 +51,13 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
+	$('[data-sparkline]').each (index, elm) ->
+		$elm = $(elm)
+		values = $elm.data('values').split(",")
+		console.log((values.length * 3)+'px')
+		$elm.sparkline values, { type: $elm.data('sparkline'), barWidth: 1, barSpacing: 1, barColor: '#3E9CCF', height: '20px' }
+
+
 	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
 	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
 		if settings.type == 'POST'

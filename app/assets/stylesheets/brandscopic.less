@@ -1602,14 +1602,38 @@ body.events.show {
 // VENUES
 
 .venues {
-	&.index #places-search-form-box{
-		height: auto;
-		padding: 15px !important;
-		button{
-			float:right;
+	&.index {
+		#venues-search-form-box {
+			border-radius: 6px;
+			background-color: #fff;
+			margin-bottom: 10px;
+			padding: 10px;
+			label.control-label {
+				width: auto;
+				margin-right: 10px;
+			}
+			.controls {
+				margin-left: 0;
+			}
+			button {
+				margin-left: 10px;
+			}
+		}
+
+		.slider-range-desc {
+			float: right;
+		}
+	
+		#places-search-form-box{
+			height: auto;
+			padding: 15px !important;
+			button{
+				float:right;
+			}
 		}
 	}
-	.form-horizontal{
+	
+	.form-horizontal {
 		.control-group{
 			margin: 0;
 		}
@@ -1659,6 +1683,41 @@ body.events.show {
 					display: block;
 				}
 			}
+		}
+
+		#venue-map-canvas {
+			height: 500px;
+		}
+
+		#overall-venue-stats {
+			line-height: 30px;
+			font-size: 11px;
+			text-transform: uppercase;
+			span {
+				font-weight: bold;
+				font-size: 15px;
+				color: #3E9CCF;
+			}
+			.sparkline {
+				margin-left: 5px;
+			}
+		}
+
+		#venue-score {
+			span {
+				font-size: 40px;
+				margin-bottom: 10px;
+				display: block;
+				clear: both;
+			}
+		}
+
+		#overall-age-graph {
+			height: 300px;
+		}
+
+		#overall-ethnicity-graph {
+			height: 350px;
 		}
 	}
 
