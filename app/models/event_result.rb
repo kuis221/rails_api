@@ -27,6 +27,9 @@ class EventResult < ActiveRecord::Base
   scope :consumers_interactions, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}) }
   scope :consumers_sampled, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}) }
   scope :spent, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}) }
+  scope :gender, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.gender}) }
+  scope :age, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.age}) }
+  scope :ethnicity, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.ethnicity}) }
 
   private
     def set_scalar_value

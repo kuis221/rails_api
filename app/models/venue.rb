@@ -134,6 +134,18 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  def overall_graphs_data
+    return @overall_graphs_data if @overall_graphs_data
+
+    results_scope = EventResult.scoped_by_place_id_and_company_id(place_id, company_id)
+    @overall_graphs_data = {}
+    [:age, :gender, :ethnicity].each do |kpi|
+      results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
+      segments = Kpi.send(kpi).kpis_segments
+      @overall_graphs_data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+    end
+    @overall_graphs_data
+  end
 
   def self.do_search(params, include_facets=false)
     ss = solr_search do

@@ -8,7 +8,7 @@ module PlacesHelper
       types = venue.types_without_establishment.map{|t| t("venue_types.#{t}").downcase.pluralize }
       "#{venue.name} has earned a Venue Score of #{venue.score} and has performed #{score_calification_for(venue.score)} other #{types.join('/')} in the area.  Specifically, #{venue.name} yields a(n) #{avg_impressions_hour_performance_for(venue)} number of impressions per promo hour.  In addition, the cost per impression is #{avg_impressions_cost_performance_for(venue)} other #{types.join('/')} in the area.
 
-      <p>Attendess at previous events have predominantly been [predominant age] year old [predominant race/ethnicity] [predominant gender].".html_safe
+      <p>Attendess at previous events have predominantly been #{predominant(:age, venue)} year old #{predominant(:ethnicity, venue)} #{predominant(:gender, venue)}.".html_safe
     end
   end
 
@@ -21,6 +21,10 @@ module PlacesHelper
       else
         'poorly relative to'
       end
+    end
+
+    def predominant(kpi, venue)
+      venue.overall_graphs_data[kpi].max_by{|k,v| v}[0]
     end
 
     def avg_impressions_cost_performance_for(venue)

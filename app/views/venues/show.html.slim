@@ -16,10 +16,11 @@
     = " "
     = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
-    h4 Areas
-    = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
-    #venue-areas.row-fluid
-      = render partial: 'areas', locals: {areas: resource.place.areas}
+    - if resource.persisted?
+      h4 Areas
+      = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+      #venue-areas.row-fluid
+        = render partial: 'areas', locals: {areas: resource.place.areas}
 
   - if resource.persisted? && resource.events > 0
     .venue-overall
@@ -60,24 +61,26 @@
             span= '$' + resource.avg_impressions_cost.round.to_s
             = " Cost/Impression"
 
-  p &nbsp;
-  p &nbsp;
 
-  .row-fluid
-    .span6
-      .row-fluid
-        .span6
-          | 55 %
-          br>/
-          | Male
-        .span6
-          | 45 %
-          br>/
-          | Female
-      .row-fluid
-        #overall-age-graph
-    .span6
-      #overall-ethnicity-graph
+  - if resource.persisted?
+    p &nbsp;
+    p &nbsp;
+
+    .row-fluid
+      .span6
+        .row-fluid
+          .span6
+            = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
+            br>/
+            | Male
+          .span6
+            = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
+            br>/
+            | Female
+        .row-fluid
+          #overall-age-graph
+      .span6
+        #overall-ethnicity-graph
 
   p &nbsp;
   p &nbsp;
@@ -174,7 +177,7 @@
         title: { text: null },
         colors: ['#DFDFDF','#3E9CCF'],
         xAxis: {
-            categories: ['18-20', '21-24', '25-34', '35-44', '45-54', '45-54', '55-64', '65+'],
+            categories: #{resource.overall_graphs_data[:age].keys.to_json.html_safe},
             title: {
                 enabled: false
             },
@@ -215,11 +218,11 @@
         credits: { enabled: false },
         series: [{
             name: 'Fill in',
-            data: [100-9, 100-16, 100-56, 100-12, 100-6, 100-1, 100-0],
+            data: #{resource.overall_graphs_data[:age].values.map{|v|(100-v).round}.to_json.html_safe},
 
         },{
             name: 'Values',
-            data: [9, 16, 56, 12, 6, 1, 0],
+            data: #{resource.overall_graphs_data[:age].values.map(&:round).to_json.html_safe},
             dataLabels: {
                     enabled: true,
                     format: '{y}%',
@@ -233,43 +236,45 @@
         }]
     });
 
-    $('#overall-ethnicity-graph').highcharts({
-            colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
-            chart: {
-                type: 'pie'
-            },
-            title: { text: null },
-            credits: { enabled: false },
-            yAxis: {
-                title: { text: null }
-            },
-            plotOptions: {
-                pie: {
-                    shadow: false
-                },
-                series: {
-                  enableMouseTracking: false,
-                }
-            },
-            tooltip: {
-                enabled: false
-            },
-            series: [{
-                name: 'Browsers',
-                data: [["Asian",5],["Hispanic",15],["African American",25],["White",55]],
-                size: '60%',
-                innerSize: '30%',
-                distance: -10,
-                dataLabels: {
-                    crop: false,
-                    formatter: function() {
-                        // display only if larger than 1
-                        return '<span style="font-size:15px;">'+ this.y +'%' +'</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
-                    },
-                    color: '#3E9CCF'
-                }
-            }]
+    if (#{resource.overall_graphs_data[:ethnicity].values.max} > 0) {
+        $('#overall-ethnicity-graph').highcharts({
+              colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
+              chart: {
+                  type: 'pie'
+              },
+              title: { text: null },
+              credits: { enabled: false },
+              yAxis: {
+                  title: { text: null }
+              },
+              plotOptions: {
+                  pie: {
+                      shadow: false
+                  },
+                  series: {
+                    enableMouseTracking: false,
+                  }
+              },
+              tooltip: {
+                  enabled: false
+              },
+              series: [{
+                  name: 'Ethnicity',
+                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k, v.round]}.to_json.html_safe},
+                  size: '60%',
+                  innerSize: '30%',
+                  distance: -10,
+                  dataLabels: {
+                      crop: false,
+                      formatter: function() {
+                          // display only if larger than 1
+                          return '<span style="font-size:15px;">'+ this.y +'%' +'</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
+                      },
+                      color: '#3E9CCF'
+                  }
+              }]
         });
+    }
 
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');

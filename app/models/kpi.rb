@@ -41,7 +41,7 @@ class Kpi < ActiveRecord::Base
   has_and_belongs_to_many :campaigns
 
   # KPIs-Segments relationship
-  has_many :kpis_segments, dependent: :destroy
+  has_many :kpis_segments, dependent: :destroy, order: :id
 
   # KPIs-Goals relationship
   has_many :goals
@@ -89,6 +89,18 @@ class Kpi < ActiveRecord::Base
 
     def cost
       where(company_id: nil).find_by_name_and_module('Cost', 'expenses')
+    end
+
+    def gender
+      where(company_id: nil).find_by_name_and_module('Gender', 'demographics')
+    end
+
+    def age
+      where(company_id: nil).find_by_name_and_module('Age', 'demographics')
+    end
+
+    def ethnicity
+      where(company_id: nil).find_by_name_and_module('Ethnicity/Race', 'demographics')
     end
   end
 
