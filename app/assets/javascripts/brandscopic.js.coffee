@@ -51,6 +51,13 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
+	$('[data-sparkline]').each (index, elm) ->
+		$elm = $(elm)
+		values = $elm.data('values').split(",")
+		console.log((values.length * 3)+'px')
+		$elm.sparkline values, { type: $elm.data('sparkline'), barWidth: 1, barSpacing: 1, barColor: '#3E9CCF', height: '20px' }
+
+
 	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
 	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
 		if settings.type == 'POST'
@@ -145,6 +152,61 @@ jQuery ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");
 
+
+	$('.google-map[data-latitude]').each (index, container) ->
+		$container = $(container)
+		content = $container.html()
+		placeLocation = new google.maps.LatLng($container.data('latitude'), $container.data('longitude'));
+
+		mapOptions = {
+			zoom: 13,
+			center: placeLocation,
+			scrollwheel: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+
+		map = new google.maps.Map(container, mapOptions)
+
+		styles = [
+			{
+				stylers: [
+					{ hue: "#00ffe6" },
+					{ saturation: -20 }
+				]
+			},{
+				featureType: "road",
+				elementType: "geometry",
+				stylers: [
+					{ lightness: 100 },
+					{ visibility: "simplified" }
+				]
+			},{
+				featureType: "road",
+				elementType: "labels",
+				stylers: [
+					{ visibility: "off" }
+				]
+			}
+		]
+
+		map.setOptions {styles: styles}
+
+		marker = new google.maps.Marker({
+			map:map,
+			draggable:false,
+			animation: google.maps.Animation.DROP,
+			position: placeLocation
+		})
+
+		theInfowindow = new google.maps.InfoWindow({
+			content: content
+		});
+
+		google.maps.event.addListener marker, 'click',  ->
+			theInfowindow.open(map, this)
+
+
+# Hack to use bootsbox confirm dialog
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')
 	if !message

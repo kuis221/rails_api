@@ -1,0 +1,13 @@
+.task-counter-bar.pull-left
+  .task-counter-item.unassigned
+    span.count-unassigned= tasks.select{|t| !t.assigned? }.count
+    label.unassigned Unassigned
+  .task-counter-item.assigned
+    span.count-assigned= tasks.select{|t| t.assigned? }.count
+    label.assigned Assigned
+  .task-counter-item.completed
+    span.count-completed= tasks.select{|t| t.completed? }.count
+    label.completed Completed
+  .task-counter-item.late
+    span.count-late= tasks.select{|t| t.late? }.count
+    label.late Late

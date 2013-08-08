@@ -1,5 +1,13 @@
-#resource-details-wrapper
+.main
   = resource_details_bar("Viewing Event Details.", collection_path)
+
+  - unless resource.place.nil? or resource.place.latitude.nil?
+    #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+        b= resource.campaign_name
+        br>/
+        = resource.start_at.to_s
+        br>/
+        = place_address(resource.place)
 
   .pull-right
     = active_inactive_buttons(resource)
@@ -8,20 +16,21 @@
   .row-fluid
     .span6
       p
-        = event_date_range(resource)
+        = format_date_range(resource.start_at, resource.end_at)
         = place_address(resource.place) if resource.place
         = link_to 'Edit', edit_event_path(resource), class: 'btn btn-primary', remote: true
 
-      br
-
+    .span6
       h3 Event Team
       #event-team-members
         = render 'team_member_list'
       = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
 
-    .span6
-      - unless resource.place.nil? or resource.place.latitude.nil?
-        #map-canvas.google-map
+
+  - if resource.end_at.to_date < Date.today
+    = render 'show_results'
+  - elsif resource.end_at.to_date >= Date.today && resource.start_at.to_date <= Date.today
+    = render 'edit_results'
 
   .row-fluid
     .box
@@ -29,12 +38,14 @@
         .box-header
           h2 TASKS
 
-      #tasks-content.collapse.in
-        #event-tasks-container.box-content
-          = render partial: 'tasks', locals: {tasks: resource.tasks}
-          .row-fluid
-            .pull-right
-              = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+      .pull-left
+        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
+      #event-tasks-counters.pull-right
+        = render partial: 'tasks_counters', locals: {tasks: resource.tasks}
+
+      #event-tasks-container
+        = render partial: 'tasks', locals: {tasks: resource.tasks}
+
 
   .row-fluid
     .box
@@ -48,79 +59,12 @@
             = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
           .row-fluid
             .pull-right
-              = link_to 'Upload a document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+              = link_to 'Upload', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
-  .row-fluid
-    .box
-      a href="#results-content" data-toggle="collapse"
-        .box-header
-          h2 RESULTS
-
-      #results-content.collapse.in
-        .box-content
-          #event-results
-            = render 'show_results'
-
-- unless resource.place.nil? or resource.place.latitude.nil?
   javascript:
-    var map;
-    var placeLocation = new google.maps.LatLng(#{resource.place.latitude}, #{resource.place.longitude});
-
-    function initialize() {
-      var mapOptions = {
-        zoom: 13,
-        center: placeLocation,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      map = new google.maps.Map(document.getElementById('map-canvas'),
-          mapOptions);
-
-      var styles = [
-        {
-          stylers: [
-            { hue: "#00ffe6" },
-            { saturation: -20 }
-          ]
-        },{
-          featureType: "road",
-          elementType: "geometry",
-          stylers: [
-            { lightness: 100 },
-            { visibility: "simplified" }
-          ]
-        },{
-          featureType: "road",
-          elementType: "labels",
-          stylers: [
-            { visibility: "off" }
-          ]
-        }
-      ];
-
-      map.setOptions({styles: styles});
-
-      marker = new google.maps.Marker({
-        map:map,
-        draggable:false,
-        animation: google.maps.Animation.DROP,
-        position: placeLocation
-      });
-
-      var theInfowindow = new google.maps.InfoWindow({
-          content: $('<div>')
-                  .append($('<b>').append('#{escape_javascript(resource.campaign_name)}'))
-                  .append($('<br>')).append('#{escape_javascript(resource.start_at.to_s)}')
-                  .append($('<br>')).append('#{escape_javascript(place_address(resource.place))}')
-                  .html()
-      });
-
-      google.maps.event.addListener(marker, 'click', function (){
-        theInfowindow.open(map, this)
-      })
-    }
-
-    google.maps.event.addDomListener(window, 'load', initialize);
+    $(document).ready(function() {
+      $(this).scrollTop(400);
+    });
 
     $(document).bind('member:delete', function(e){
       tasksTable.tableScroller('reloadData');
@@ -130,8 +74,10 @@
       window.location.reload(false);
     });
     $(document).on('tasks:change', function(){
-      $('#event-tasks-container').load('#{tasks_event_path(resource)}')
-    });
-    $(document).on('members:change', function(){
-      $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
+      $.get('#{tasks_event_path(resource)}', function(response){
+        $response = $('<div>').append(response);
+        $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+        $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
+      })
+     
     });

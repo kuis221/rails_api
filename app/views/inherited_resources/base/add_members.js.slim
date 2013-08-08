@@ -5,8 +5,8 @@
       pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{@member_id}')[0]);
       if (pos!== null){
         selectMemberTable.fnDeleteRow(pos);
-      };
-    }
+      }
+    };
 - if @team_id
   |
     $(document).trigger('teams:change');
@@ -14,5 +14,7 @@
       pos = selectTeamsTable.fnGetPosition($('table#select-teams-list tr#team-#{@team_id}')[0]);
       if (pos!== null){
         selectTeamsTable.fnDeleteRow(pos);
-      };
-    }
+      }
+    };
+
+= render 'add_memmber'

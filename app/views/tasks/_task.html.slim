@@ -1,3 +1,4 @@
+- show_user ||= false
 li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
   span
     = simple_form_for task, remote: true do |f| 
@@ -10,6 +11,9 @@ li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
   span.pull-right
     span.tasks-date
       = format_date(task.due_at)
+    - if show_user
+      br>/
+      = task.user_full_name
     = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
     = link_to '', edit_task_path(task), remote: true, class: 'edit'
     = link_to '', deactivate_task_path(task), remote: true, class: 'disable' if task.active?
