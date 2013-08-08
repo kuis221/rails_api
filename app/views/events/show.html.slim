@@ -26,6 +26,12 @@
         = render 'team_member_list'
       = link_to "Add", new_member_event_path(resource), remote: true, class: 'btn btn-primary'
 
+
+  - if resource.end_at.to_date < Date.today
+    = render 'show_results'
+  - elsif resource.end_at.to_date >= Date.today && resource.start_at.to_date <= Date.today
+    = render 'edit_results'
+
   .row-fluid
     .box
       a href="#tasks-content" data-toggle="collapse"
@@ -53,18 +59,7 @@
             = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
           .row-fluid
             .pull-right
-              = link_to 'Upload a document', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
-
-  .row-fluid
-    .box
-      a href="#results-content" data-toggle="collapse"
-        .box-header
-          h2 RESULTS
-
-      #results-content.collapse.in
-        .box-content
-          #event-results
-            = render 'show_results'
+              = link_to 'Upload', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
 
   javascript:
     $(document).ready(function() {
