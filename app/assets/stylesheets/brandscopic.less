@@ -1533,6 +1533,55 @@ body.events.show {
 		color: #fff;
 		padding: 0px;
 		display: visible;
+		&.fancybox-title-inside-wrap{
+			background-color: rgba(0, 0, 0, 0.75);
+			height: 75px;
+			text-align: left;
+			.campaign-name{
+				font-size: 16px;
+				padding: 17px 0 0 25px;
+			}
+			.photo-location{
+				font-size: 11px;
+				padding: 0 0 25px 25px;
+			}
+			a{
+				opacity:1;
+				&.icon-download:before{
+        	  	color: @grey_one;
+				content: "\e00b" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 18px;
+				right:45px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 30px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+				}
+			&.icon-remove-circle:before{
+        	  	color: @grey_one;
+				content: "\e011" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 18px;
+				right:25px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 30px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        		}
+			}
+			#photo-details-toolbar{
+
+			}
+		}
 
 		.photo-download-link, .photo-deactivate-link {
 			font-size: 20px;
