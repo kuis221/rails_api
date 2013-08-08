@@ -35,6 +35,7 @@ Brandscopic::Application.routes.draw do
   end
 
   scope "results" do
+    resources :event_data, only: [:index]
     resources :photos, only: [:index] do
       get :autocomplete, on: :collection
       member do

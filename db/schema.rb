@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130805173213) do
+ActiveRecord::Schema.define(:version => 20130808154705) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -266,6 +266,25 @@ ActiveRecord::Schema.define(:version => 20130805173213) do
   end
 
   add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
+
+  create_table "event_data", :force => true do |t|
+    t.integer  "event_id"
+    t.integer  "impressions",                                              :default => 0
+    t.integer  "interactions",                                             :default => 0
+    t.integer  "samples",                                                  :default => 0
+    t.decimal  "gender_female",             :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "gender_male",               :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "ethnicity_asian",           :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "ethnicity_black",           :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "ethnicity_hispanic",        :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "ethnicity_native_american", :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "ethnicity_white",           :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "cost",                      :precision => 10, :scale => 2, :default => 0.0
+    t.datetime "created_at",                                                                :null => false
+    t.datetime "updated_at",                                                                :null => false
+  end
+
+  add_index "event_data", ["event_id"], :name => "index_event_data_on_event_id"
 
   create_table "event_results", :force => true do |t|
     t.integer  "form_field_id"
