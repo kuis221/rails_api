@@ -23,8 +23,7 @@ class AttachedAsset < ActiveRecord::Base
   belongs_to :attachable, :polymorphic => true
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
     :small => "180x120#",
-    :medium => "400x400",
-    :large => "800x800"
+    :medium => "600x500"
   }})
   attr_accessible :file, :asset_type
 
