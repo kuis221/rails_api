@@ -8,6 +8,8 @@
     #list-view.tab-pane.active
       .link-list
         ul#event-data-list
+          li.placeholder
+            | Select any filter to see results
 
 javascript:
   $('#collection-list-filters').filteredList({
@@ -16,6 +18,7 @@ javascript:
     'listContainer' : '#event-data-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
+    'autoLoad': false,
     'includeCalendars': true,
     'selectDefaultDate': false,
     'includeAutoComplete': true,

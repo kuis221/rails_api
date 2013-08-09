@@ -23,7 +23,7 @@ class EventData < ActiveRecord::Base
   belongs_to :event
   attr_accessible :cost, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, :gender_female, :gender_male, :impressions, :interactions, :samples
 
-  def save_data
+  def update_data
     results = EventResult.scoped_by_event_id(event_id)
     self.impressions = results.impressions.sum(:scalar_value).round
     self.interactions = results.consumers_interactions.sum(:scalar_value).round

@@ -28,7 +28,7 @@ class Event < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
   has_many :event_expenses, inverse_of: :event
-  has_one :event_data
+  has_one :event_data, autosave: true
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
@@ -312,13 +312,16 @@ class Event < ActiveRecord::Base
 
     def save_event_data
       if @refresh_event_data
-        build_event_data unless event_data.present?
-        event_data.save_data
+        event_data.delay.update_data
       end
     end
 
     def check_results_changed
-      @refresh_event_data = results.any?{|r| r.changed?}
+      @refresh_event_data = false
+      if results.any?{|r| r.changed?}
+        build_event_data unless event_data.present?
+        @refresh_event_data = true
+      end
       true
     end
 
