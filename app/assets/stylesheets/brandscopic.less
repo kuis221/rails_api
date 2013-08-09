@@ -22,9 +22,11 @@
 @grey_three:#7a7a7a;
 @header:#363636;
 @menu:#4f4f4f;
+@stars:#cfc53e;
 @text:#666666;
 @unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
+@venues_blue:#3e9ccf;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -1659,7 +1661,6 @@ body.events.show {
 				margin-left: 10px;
 			}
 		}
-
 		.slider-range-desc {
 			float: right;
 		}
@@ -1670,6 +1671,23 @@ body.events.show {
 			button{
 				float:right;
 			}
+		}
+	}
+
+	#venue-map-canvas{
+		border:1px solid @user_menu;
+		display:block;
+		height: 150px;
+		margin: 30px 0 30px 0;
+	}
+
+	i{
+		&.icon-star{
+			color: @stars;
+		}
+		&.icon-star-empty:before{
+			color:@user_menu;
+			content: "\f005";
 		}
 	}
 
@@ -1700,6 +1718,45 @@ body.events.show {
 	}
 	input::-webkit-input-placeholder {
 	  color: @user_menu;
+	}
+
+	.span6{
+		.female{
+			color: @venues_blue;
+			&:before{
+				content: "\e01b" !important;
+			  	display: inline-block;
+			  	float: left;
+			  	font-family: 'icons';
+				font-size: 75px;
+				padding-bottom:5px;
+			  	position: relative;
+			  	right: 35px;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;				
+			}
+		}
+		.male{
+			color: @venues_blue;
+			&:before{
+				content: "\e01a" !important;
+			  	display: inline-block;
+			  	float: left;
+			  	font-family: 'icons';
+				font-size: 75px;
+				padding-bottom:5px;
+			  	position: relative;
+			  	right: 35px;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
 	}
 
 	&.show {

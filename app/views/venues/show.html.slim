@@ -1,5 +1,5 @@
 .row-fluid
-  = resource_details_bar("Viewing Venue Details", collection_path)
+  = resource_details_bar("You are viewing venue details. Click to close.", collection_path)
   .venues_box
     - unless resource.latitude.nil?
       #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
@@ -79,11 +79,11 @@
     .row-fluid
       .span6
         .row-fluid
-          .span6
+          .span6.male
             = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
             br>/
             | Male
-          .span6
+          .span6.female
             = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
             br>/
             | Female
@@ -95,7 +95,7 @@
   p &nbsp;
   p &nbsp;
 .venues_box
-  h3 Gallery
+  h3 GALLERY
   ul.thumbnails
     - resource.photos.each do |photo|
       li.span2
@@ -106,7 +106,7 @@
             = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 .venues_box
-  h3 Reviews
+  h3 COMMENTS
   - resource.reviews.each do |review|
     .venue-review
       - unless review.is_a?(Comment)
