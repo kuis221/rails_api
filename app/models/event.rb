@@ -67,7 +67,7 @@ class Event < ActiveRecord::Base
   before_validation :parse_start_end
   after_validation :delegate_errors
 
-  before_save :set_promo_hours
+  before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated, :save_event_data
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
@@ -117,6 +117,10 @@ class Event < ActiveRecord::Base
 
     string :day_names, multiple: true do
       (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
+    end
+
+    boolean :has_event_data do
+      results.count > 0
     end
   end
 
@@ -190,6 +194,7 @@ class Event < ActiveRecord::Base
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:status,     params[:status]) if params.has_key?(:status) and params[:status].present?
         with(:company_id, params[:company_id])
+        with(:has_event_data, true) if params[:with_event_data_only].present?
 
         if params.has_key?(:brand) and params[:brand].present?
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
@@ -306,8 +311,15 @@ class Event < ActiveRecord::Base
     end
 
     def save_event_data
-      data = EventData.find_or_create_by_event_id(id)
-      data.save_data
+      if @refresh_event_data
+        build_event_data unless event_data.present?
+        event_data.save_data
+      end
+    end
+
+    def check_results_changed
+      @refresh_event_data = results.any?{|r| r.changed?}
+      true
     end
 
     def reindex_associated
