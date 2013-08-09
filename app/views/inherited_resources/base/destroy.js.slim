@@ -1,8 +1,10 @@
 |
-
-  var table = #{resource.class.name.pluralize.downcase}Table;
-  if (table) {
-    pos = table.fnGetPosition($('tr##{resource.class.name.underscore}-#{resource.id}')[0]);
-    table.fnDeleteRow(pos);
-  };
+  if (typeof #{resource.class.name.pluralize.downcase}Table != 'undefined') {
+    var table = #{resource.class.name.pluralize.downcase}Table;
+    if (table) {
+      pos = table.fnGetPosition($('tr##{resource.class.name.underscore}-#{resource.id}')[0]);
+      table.fnDeleteRow(pos);
+    };
+  }
   $('##{resource.class.name.underscore}-#{resource.id}').remove();
+  $('##{resource.class.name.underscore}_#{resource.id}').remove();

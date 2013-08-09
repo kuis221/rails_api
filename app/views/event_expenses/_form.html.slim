@@ -1,0 +1,32 @@
+= simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'event_expense_form' }, remote: true ) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :name
+    = f.input :amount
+    = f.input :file, required: false
+
+  .form-actions
+    = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('#event_expense_file').fileupload({
+    dataType: 'script',
+    autoUpload: false,
+    limitMultiFileUploads: 1,
+    add: function (e, data) {
+      data.context = $(this.form).find('#submit-expense-btn').off('click.upload').on('click.upload',function () {
+          data.submit();
+      })
+    },
+    submit: function (e, data) {
+      // The example input, doesn't have to be part of the upload form:
+      $.rails.disableFormElements($(this.form))
+      data.formData = $("input[type=text], input[type=hidden], input[type=number]", this.form).serializeArray()
+    },
+    done: function (e, data) {
+      $.rails.enableFormElements($(this.form))
+    }
+  });

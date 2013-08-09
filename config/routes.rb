@@ -118,6 +118,7 @@ Brandscopic::Application.routes.draw do
     resources :documents
     resources :photos, only: :create
     resources :comments, only: [:create, :index]
+    resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
     member do
       get :deactivate

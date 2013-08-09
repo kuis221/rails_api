@@ -16,7 +16,7 @@ javascript:
   $("#new_document").submit(function() {
     if ($(this).valid()){
       $.ajax(this.action+'.js', {
-          ajaxData: $(":text, :hidden", this).serializeArray(),
+          ajaxData: $("input[type=text], input[type=hidden], input[type=number]", this).serializeArray(),
           files: $(":file", this),
           iframe: true,
           processData: false

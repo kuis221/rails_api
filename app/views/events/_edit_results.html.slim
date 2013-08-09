@@ -1,7 +1,8 @@
-= simple_form_for(resource, url: save_results_event_path(resource), remote: true) do |f|
-  = render partial: 'result_fields', locals: {fields: resource.campaign.form_fields.includes(:kpi), f: f}
+#event-results-form
+  = simple_form_for(resource, url: save_results_event_path(resource), remote: true) do |f|
+    = render partial: 'result_fields', locals: {fields: resource.campaign.form_fields.includes(:kpi), f: f}
 
-  = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
 
 javascript:
   $('#save-event-results').click(function(){
@@ -14,6 +15,14 @@ javascript:
         total += parseInt($(element).val())
       }
     });
-    $('[data-segment-field-id="'+$(this).data('segment-field-id')+'"].segment-total').val(total).keyup()
+    $('#progress-bar-field-'+ $(this).data('segment-field-id')).data('total',total).progressbar( "value", total );
   })
+  $('.percentage-progress-bar').progressbar({
+      change: function(event, ui) {
+        $(this).find('label').text( $(this).data( "total" ) + "%" );
+      }
+  });
   $('.segment-field').keyup();
+
+  $('#event-results-form').stickem({offset: 90})
+  

@@ -15,14 +15,26 @@
         = render partial: 'result_fields', locals: {fields: field.fields, f: f}
     - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
       b= field.name
-      = render partial: 'result_fields', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
-      .control-group
-        = f.label :total, for: "total_#{field.id}"
-        .controls
-          = text_field_tag "total_#{field.id}", "0", {'data-segment-field-id' => field.id, id: "total_#{field.id}", :class => "segment-total #{field.is_required? ? 'required' : 'optional'}", :readonly => 'readonly'}
+      .stickem-container.row-fluid
+        .span4
+          = render partial: 'result_fields', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
+        .span6
+          .stickem
+            = field.kpi.description if field.kpi_id
+            div.percentage-progress-bar id="progress-bar-field-#{field.id}"
+              label 0%
+    - elsif ['expenses'].include?(current_module)
+      = render partial: current_module, locals: {f: f}
     - elsif ['photos', 'videos', 'comments'].include?(field.field_type)
       = render partial: field.field_type, locals: {f: f}
     - elsif field.kpi_id.nil? || (current_module == field.kpi.module)
       = ff.hidden_field :form_field_id
       = ff.hidden_field :kpis_segment_id
-      = ff.input :value, field.field_options(ff.object)
+      - if ff.object.kpis_segment_id.nil?
+        .row-fluid
+          .span4
+            = ff.input :value, field.field_options(ff.object)
+          .span6
+            = field.kpi.description if field.kpi_id
+      - else
+        = ff.input :value, field.field_options(ff.object)

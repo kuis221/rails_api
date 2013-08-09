@@ -27,6 +27,7 @@ class Event < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
+  has_many :event_expenses, inverse_of: :event
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
