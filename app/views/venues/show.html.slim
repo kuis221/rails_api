@@ -7,25 +7,25 @@
             br>/
             = place_address(resource.is_a?(Venue) ? resource.place : resource)
 
-  h2= resource.name
+    h2= resource.name
 
-  .row-fluid
-    = resource.formatted_phone_number
-    br>/
-    = resource.formatted_address
-    - if resource.website
+    .row-fluid
+      = resource.formatted_phone_number
       br>/
-      = place_website(resource.website)
-    br>/
-    = resource.price_level.times.map{ '$' }.join
-    = " "
-    = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+      = resource.formatted_address
+      - if resource.website
+        br>/
+        = place_website(resource.website)
+      br>/
+      = resource.price_level.times.map{ '$' }.join
+      = " "
+      = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
-    - if resource.persisted?
-      h4 Areas
-      = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
-      #venue-areas.row-fluid
-        = render partial: 'areas', locals: {areas: resource.place.areas}
+      - if resource.persisted?
+        h4 Areas
+        = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+        #venue-areas.row-fluid
+          = render partial: 'areas', locals: {areas: resource.place.areas}
 .venues_box
   - if resource.persisted? && resource.events > 0
     .venue-overall
@@ -94,7 +94,7 @@
 
   p &nbsp;
   p &nbsp;
-
+.venues_box
   h3 Gallery
   ul.thumbnails
     - resource.photos.each do |photo|
@@ -105,7 +105,7 @@
           - else
             = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
-
+.venues_box
   h3 Reviews
   - resource.reviews.each do |review|
     .venue-review

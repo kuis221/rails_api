@@ -1660,6 +1660,10 @@ body.events.show {
 			}
 		}
 
+		.slider-range-desc {
+			float: right;
+		}
+
 		#places-search-form-box{
 			height: auto;
 			padding: 15px !important;
@@ -1755,6 +1759,9 @@ body.events.show {
 
 	.filter-wrapper{
 		margin: 10px 0 35px 0;
+		.slider-label{
+			margin-left: 3px;
+		}
 	}
 	a:focus{
 		outline:0 !important;
@@ -1765,6 +1772,12 @@ body.events.show {
     	border-radius: 10px !important;
     	margin: 5px 0 0 4px;
     	width: 95%;
+	}
+	.ui-slider{
+		.ui-slider-range{
+			-webkit-border-radius: 10px !important;
+    		border-radius: 10px !important;
+		}
 	}
 	.ui-state-default, .ui-widget-content .ui-state-default{
 		background: @grey_three !important;
@@ -1778,16 +1791,19 @@ body.events.show {
     		background: @grey_three !important;
     	}
 	}
+	#resource-close-details{
+		margin: 0 !important;
+		-webkit-border-radius: 7px 7px 0px 0px;
+        border-radius: 7px 7px 0px 0px;
+	}
 	.venues_box{
 		background-color: white;
 		box-sizing: border-box;
+		margin-bottom: 10px;
 		padding: 13px 10px 10px 10px;
 		-webkit-border-radius: 7px;
 		-moz-border-radius: 7px;
 		border-radius: 7px;
-		#resource-close-details{
-			margin: 68px 10px 0 90px !important;
-		}
 	}
 }
 
