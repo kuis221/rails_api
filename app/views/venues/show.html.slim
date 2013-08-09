@@ -33,7 +33,7 @@
         .span6
           #venue-score
             span= resource.score
-            | Venue Score
+            | VENUE SCORE
           #venue-score-narrative
             = venue_score_narrative(resource)
 
@@ -80,13 +80,15 @@
       .span6
         .row-fluid
           .span6.male
-            = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
+            .percent
+              = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
             br>/
-            | Male
+            | MALE
           .span6.female
-            = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
+            .percent
+              = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
             br>/
-            | Female
+            | FEMALE
         .row-fluid
           #overall-age-graph
       .span6
@@ -94,6 +96,8 @@
 
   p &nbsp;
   p &nbsp;
+.venues_box
+  h3 TRENDS BY DAY OF WEEK
 .venues_box
   h3 GALLERY
   ul.thumbnails

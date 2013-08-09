@@ -1681,6 +1681,14 @@ body.events.show {
 		margin: 30px 0 30px 0;
 	}
 
+	a{
+		color: @venues_blue;
+		text-decoration: underline;
+		&.icon-plus-sign{
+			color: @brand;
+		}
+	}
+
 	i{
 		&.icon-star{
 			color: @stars;
@@ -1723,36 +1731,43 @@ body.events.show {
 	.span6{
 		.female{
 			color: @venues_blue;
+			.percent{
+				font-size: 40px;
+			}
 			&:before{
+				bottom: 17px;
 				content: "\e01b" !important;
 			  	display: inline-block;
 			  	float: left;
 			  	font-family: 'icons';
-				font-size: 75px;
+				font-size: 90px;
 				padding-bottom:5px;
 			  	position: relative;
-			  	right: 35px;
+			  	right: 15px;
 				speak: none;
 				text-align: center;
-				top: 10px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;				
 			}
 		}
 		.male{
 			color: @venues_blue;
+			padding-left: 60px;
+			.percent{
+				font-size: 40px;
+			}
 			&:before{
+				bottom: 17px;
 				content: "\e01a" !important;
 			  	display: inline-block;
 			  	float: left;
 			  	font-family: 'icons';
-				font-size: 75px;
+				font-size: 90px;
 				padding-bottom:5px;
 			  	position: relative;
-			  	right: 35px;
+			  	right: 15px;
 				speak: none;
 				text-align: center;
-				top: 10px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
 			}
@@ -1857,10 +1872,14 @@ body.events.show {
 		background-color: white;
 		box-sizing: border-box;
 		margin-bottom: 10px;
-		padding: 13px 10px 10px 10px;
+		padding: 30px 27px;
 		-webkit-border-radius: 7px;
 		-moz-border-radius: 7px;
 		border-radius: 7px;
+		h3{
+			font-size: 16px;
+			margin-bottom: 30px;
+		}
 	}
 }
 
