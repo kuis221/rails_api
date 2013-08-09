@@ -113,23 +113,34 @@ $.widget 'nmk.filteredList', {
 		$slider = $('<div class="slider-range">')
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label), 
-			$('<span class="slider-range-desc">').text(min_value + ' - ' + max_value ), 
 			$slider,
 			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
-		$slider.slider({
-			range: true,
-			min: filter.min,
-			max: filter.max,
-			values: [ min_value, max_value ],
-			slide: ( event, ui ) =>
-				$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text( ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
-				$filter.find('input.min').val(ui.values[ 0 ])
-				$filter.find('input.max').val(ui.values[ 1 ])
-			change: ( event, ui ) =>
-				@_filtersChanged()
-		});
+		# $slider.slider({
+		# 	range: true,
+		# 	min: filter.min,
+		# 	max: filter.max,
+		# 	values: [ min_value, max_value ],
+		# 	slide: ( event, ui ) =>
+		# 		$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text( ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
+		# 		$filter.find('input.min').val(ui.values[ 0 ])
+		# 		$filter.find('input.max').val(ui.values[ 1 ])
+		# 	change: ( event, ui ) =>
+		# 		@_filtersChanged()
+		# });
+
+		$slider.rangeSlider({
+			bounds: {min: filter.min, max: filter.max},
+			defaultValues:{ min: min_value, max: max_value }
+			arrows: false
+		}).on "userValuesChanged", (e, data) =>
+			$filter.find('input.min').val Math.round(data.values.min)
+			$filter.find('input.max').val Math.round(data.values.max)
+			@_filtersChanged()
+			console.log("Something moved. min: " + Math.round(data.values.min) + " max: " + Math.round(data.values.max));
+		
+
 		@formFilters.append($filter)
 
 
