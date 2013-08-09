@@ -1,11 +1,11 @@
-.main
+.row-fluid
   = resource_details_bar("Viewing Venue Details", collection_path)
-
-  - unless resource.latitude.nil?
-    #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
-          b= resource.name
-          br>/
-          = place_address(resource.is_a?(Venue) ? resource.place : resource)
+  .venues_box
+    - unless resource.latitude.nil?
+      #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
+            b= resource.name
+            br>/
+            = place_address(resource.is_a?(Venue) ? resource.place : resource)
 
   h2= resource.name
 
@@ -26,7 +26,7 @@
       = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
       #venue-areas.row-fluid
         = render partial: 'areas', locals: {areas: resource.place.areas}
-
+.venues_box
   - if resource.persisted? && resource.events > 0
     .venue-overall
       .row-fluid
