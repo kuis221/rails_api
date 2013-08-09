@@ -1,6 +1,6 @@
 - content_for :alerts
   div class="alert collection-list-description"
-    a.close data-dismiss="alert" 
+    a.close data-dismiss="alert"
     .filter-label
 
 
@@ -37,7 +37,7 @@ javascript:
     'sorting': 'start_at',
     'sorting_dir': 'asc',
     'includeCalendars': true,
-    'selectDefaultDate': true,
+    'selectDefaultDate': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],

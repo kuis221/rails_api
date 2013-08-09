@@ -28,6 +28,7 @@ class Event < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
   has_many :event_expenses, inverse_of: :event
+  has_one :event_data
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
@@ -67,7 +68,7 @@ class Event < ActiveRecord::Base
   after_validation :delegate_errors
 
   before_save :set_promo_hours
-  after_save :reindex_associated
+  after_save :reindex_associated, :save_event_data
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
@@ -302,6 +303,11 @@ class Event < ActiveRecord::Base
       tasks = Task.scoped_by_id(task_ids)
       tasks.update_all(company_user_id: nil)
       Sunspot.index(tasks)
+    end
+
+    def save_event_data
+      data = EventData.find_or_create_by_event_id(id)
+      data.save_data
     end
 
     def reindex_associated

@@ -1662,7 +1662,7 @@ body.events.show {
 		.slider-range-desc {
 			float: right;
 		}
-	
+
 		#places-search-form-box{
 			height: auto;
 			padding: 15px !important;
@@ -1671,7 +1671,7 @@ body.events.show {
 			}
 		}
 	}
-	
+
 	.form-horizontal {
 		.control-group{
 			margin: 0;
@@ -1792,11 +1792,23 @@ body.events.show {
 	}
 }
 
+// EVENT DATA
+
+.event_data {
+	&.index {
+		.event-data-column {
+			margin-right: 3px;
+			&.center-aligned {
+				text-align: center;
+			}
+		}
+	}
+}
+
 // Maps on venue and event details
 #venue-map-canvas {
 	height: 500px;
 }
-
 
 // Forms inside Data Tables
 table.table form {
