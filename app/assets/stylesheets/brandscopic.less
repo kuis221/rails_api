@@ -1307,25 +1307,37 @@ overflow: hidden;
 }
 
 #resource-close-details {
-	margin: -2px 0 0 80px;
-	background-color: #999;
+	background-color: @menu;
 	color:  #fff;
+	margin: 10px 0 0 0;
 	z-index: 200;
-	-webkit-box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.15);
-	-moz-box-shadow:    0px 2px 5px rgba(50, 50, 50, 0.15);
-	box-shadow:         0px 2px 5px rgba(50, 50, 50, 0.15);
+	-webkit-border-radius: 7px 7px 0px 0px;
+    border-radius: 7px 7px 0px 0px;
 	.close {
-		float: left;
-		margin: -3px 10px 0 10px;
+		opacity: 1;
+		position: relative;
+		&:after{
+			color: @grey_one;
+			content: "\e019";
+			display: block;
+			font-family: 'icons';
+			font-size: 12px;
+			position: absolute;
+			right: 10px;
+			speak: none;
+			text-indent: 0;
+			top: 1px;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
-	.details-bar-pull-right {
-		float: right;
+	.details-bar-pull-left {
+		float: left;
 		margin: 0 10px 0 10px;
 	}
 	a {
 		display: inline-block;
-		width: 100%;
-		padding: 10px 0;
+		width: 99%;
+		padding: 10px 0 5px 10px;
 		text-decoration: none;
 		color: #fff;
 	}
@@ -1678,24 +1690,36 @@ body.events.show {
 		border:1px solid @user_menu;
 		display:block;
 		height: 150px;
-		margin: 30px 0 30px 0;
+		margin: 0 0 30px 0;
 	}
 
-	a{
+	#venue-score{
 		color: @venues_blue;
-		text-decoration: underline;
-		&.icon-plus-sign{
-			color: @brand;
-		}
 	}
 
-	i{
-		&.icon-star{
-			color: @stars;
+	.venue-review{
+		margin-top: 20px;
+		width: 50%;
+		i{
+			font-size: 16px;
+			&.icon-star{
+				color: @stars;
+			}
+			&.icon-star-empty:before{
+				color:@user_menu;
+				content: "\f005";
+			}
 		}
-		&.icon-star-empty:before{
-			color:@user_menu;
-			content: "\f005";
+		.review-author-name{
+			margin-bottom: 5px;
+		}
+		.review-date{
+			color:  @brand;
+			font-size: 11px;
+			margin-bottom: 15px;
+		}
+		.review-text{
+			font-size: 11px;
 		}
 	}
 
@@ -1872,11 +1896,6 @@ body.events.show {
     		background: @grey_three !important;
     	}
 	}
-	#resource-close-details{
-		margin: 0 !important;
-		-webkit-border-radius: 7px 7px 0px 0px;
-        border-radius: 7px 7px 0px 0px;
-	}
 	.venues_box{
 		background-color: white;
 		box-sizing: border-box;
@@ -1885,6 +1904,13 @@ body.events.show {
 		-webkit-border-radius: 7px;
 		-moz-border-radius: 7px;
 		border-radius: 7px;
+		a{
+			color: @venues_blue;
+			text-decoration: underline;
+			&.icon-plus-sign{
+				color: @brand;
+			}
+		}
 		h3{
 			font-size: 16px;
 			margin-bottom: 30px;
