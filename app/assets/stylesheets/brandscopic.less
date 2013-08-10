@@ -1796,10 +1796,16 @@ body.events.show {
 
 .event_data {
 	&.index {
-		.event-data-column {
-			margin-right: 3px;
-			&.center-aligned {
-				text-align: center;
+		.event-data-totals {
+			span {
+				display: inline-block;
+				vertical-align: top;
+			}
+			.event-data-column, .event-data-totals-column {
+				margin-right: 3px;
+				&.center-aligned {
+					text-align: center;
+				}
 			}
 		}
 	}
@@ -2185,7 +2191,7 @@ table.table td.comments-container {
 }
 
 
-// Progressbar on event results 
+// Progressbar on event results
 .percentage-progress-bar {
 	position: relative;
 	label {
@@ -2201,13 +2207,13 @@ table.table td.comments-container {
 .stickem-container {
 	position: relative;
 }
- 
+
 .stickit {
 	margin-left: 0px;
 	position: fixed;
 	top: 0px;
 }
- 
+
 .stickit-end {
 	bottom: 0;
 	position: absolute;
