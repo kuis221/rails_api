@@ -81,6 +81,7 @@ class Event < ActiveRecord::Base
     string :status
     string :start_time
 
+    integer :id, stored: true
     integer :company_id
 
     integer :campaign_id
