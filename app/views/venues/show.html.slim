@@ -79,16 +79,14 @@
     .row-fluid
       .span6
         .row-fluid
-          .span6.male
+          .span4.male
             .percent
               = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
-            br>/
-            | MALE
-          .span6.female
+            .gender MALE
+          .span4.female
             .percent
               = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
-            br>/
-            | FEMALE
+            .gender FEMALE
         .row-fluid
           #overall-age-graph
       .span6

@@ -1731,45 +1731,54 @@ body.events.show {
 	.span6{
 		.female{
 			color: @venues_blue;
+			display: inline-block;
+			margin: 0 0 30px 60px;
+			.gender{
+				font-size: 20px;
+			}
 			.percent{
 				font-size: 40px;
+				padding-bottom: 15px;
 			}
 			&:before{
-				bottom: 17px;
+				bottom:-23px;
 				content: "\e01b" !important;
 			  	display: inline-block;
-			  	float: left;
 			  	font-family: 'icons';
 				font-size: 90px;
 				padding-bottom:5px;
 			  	position: relative;
-			  	right: 15px;
+			  	right: 60px;
 				speak: none;
 				text-align: center;
 			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;				
+				-webkit-font-smoothing: antialiased;					
 			}
 		}
 		.male{
 			color: @venues_blue;
-			padding-left: 60px;
+			display: inline-block;
+			margin: 0 0 30px 80px;
+			.gender{
+				font-size: 20px;
+			}
 			.percent{
 				font-size: 40px;
+				padding-bottom: 15px;
 			}
 			&:before{
-				bottom: 17px;
+				bottom: -23px;
 				content: "\e01a" !important;
 			  	display: inline-block;
-			  	float: left;
 			  	font-family: 'icons';
 				font-size: 90px;
 				padding-bottom:5px;
 			  	position: relative;
-			  	right: 15px;
+			  	right: 50px;
 				speak: none;
 				text-align: center;
 			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
+				-webkit-font-smoothing: antialiased;	
 			}
 		}
 	}
