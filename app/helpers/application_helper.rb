@@ -20,9 +20,8 @@ module ApplicationHelper
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details') do
       link_to(:back) do
-        content_tag(:span, "&times;".html_safe, class: :close) +
-        content_tag(:span, title) +
-        content_tag(:span, 'Click to close.', class: 'details-bar-pull-right')
+        content_tag(:span, title, class: 'details-bar-pull-left') +
+        content_tag(:span, " ".html_safe, class: :close) 
       end
     end
   end

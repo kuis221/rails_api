@@ -1,39 +1,39 @@
-.main
-  = resource_details_bar("Viewing Venue Details", collection_path)
+.row-fluid
+  = resource_details_bar("You are viewing venue details. Click to close.", collection_path)
+  .venues_box
+    - unless resource.latitude.nil?
+      #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
+            b= resource.name
+            br>/
+            = place_address(resource.is_a?(Venue) ? resource.place : resource)
 
-  - unless resource.latitude.nil?
-    #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
-          b= resource.name
-          br>/
-          = place_address(resource.is_a?(Venue) ? resource.place : resource)
+    h2= resource.name
 
-  h2= resource.name
-
-  .row-fluid
-    = resource.formatted_phone_number
-    br>/
-    = resource.formatted_address
-    - if resource.website
+    .row-fluid
+      = resource.formatted_phone_number
       br>/
-      = place_website(resource.website)
-    br>/
-    = resource.price_level.times.map{ '$' }.join
-    = " "
-    = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+      = resource.formatted_address
+      - if resource.website
+        br>/
+        = place_website(resource.website)
+      br>/
+      = resource.price_level.times.map{ '$' }.join
+      = " "
+      = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
-    - if resource.persisted?
-      h4 Areas
-      = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
-      #venue-areas.row-fluid
-        = render partial: 'areas', locals: {areas: resource.place.areas}
-
+      - if resource.persisted?
+        h4 Areas
+        = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+        #venue-areas.row-fluid
+          = render partial: 'areas', locals: {areas: resource.place.areas}
+.venues_box
   - if resource.persisted? && resource.events > 0
     .venue-overall
       .row-fluid
         .span6
           #venue-score
             span= resource.score
-            | Venue Score
+            | VENUE SCORE
           #venue-score-narrative
             = venue_score_narrative(resource)
 
@@ -79,14 +79,14 @@
     .row-fluid
       .span6
         .row-fluid
-          .span6
-            = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
-            br>/
-            | Male
-          .span6
-            = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
-            br>/
-            | Female
+          .span4.male
+            .percent
+              = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
+            .gender MALE
+          .span4.female
+            .percent
+              = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
+            .gender FEMALE
         .row-fluid
           #overall-age-graph
       .span6
@@ -94,8 +94,10 @@
 
   p &nbsp;
   p &nbsp;
-
-  h3 Gallery
+.venues_box
+  h3 TRENDS BY DAY OF WEEK
+.venues_box
+  h3 GALLERY
   ul.thumbnails
     - resource.photos.each do |photo|
       - if photo.is_a?(AttachedAsset)
@@ -106,8 +108,8 @@
             a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
               = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
-
-  h3 Reviews
+.venues_box
+  h3 COMMENTS
   - resource.reviews.each do |review|
     .venue-review
       - unless review.is_a?(Comment)

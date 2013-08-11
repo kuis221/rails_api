@@ -22,9 +22,11 @@
 @grey_three:#7a7a7a;
 @header:#363636;
 @menu:#4f4f4f;
+@stars:#cfc53e;
 @text:#666666;
 @unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
+@venues_blue:#3e9ccf;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -190,6 +192,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		  	-webkit-font-smoothing: antialiased;
   		}
     }
+
 }
 
 /*-- Datepick Sidebar -- */
@@ -1304,25 +1307,37 @@ overflow: hidden;
 }
 
 #resource-close-details {
-	margin: -2px 0 0 80px;
-	background-color: #999;
+	background-color: @menu;
 	color:  #fff;
+	margin: 10px 0 0 0;
 	z-index: 200;
-	-webkit-box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.15);
-	-moz-box-shadow:    0px 2px 5px rgba(50, 50, 50, 0.15);
-	box-shadow:         0px 2px 5px rgba(50, 50, 50, 0.15);
+	-webkit-border-radius: 7px 7px 0px 0px;
+    border-radius: 7px 7px 0px 0px;
 	.close {
-		float: left;
-		margin: -3px 10px 0 10px;
+		opacity: 1;
+		position: relative;
+		&:after{
+			color: @grey_one;
+			content: "\e019";
+			display: block;
+			font-family: 'icons';
+			font-size: 12px;
+			position: absolute;
+			right: 10px;
+			speak: none;
+			text-indent: 0;
+			top: 1px;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
-	.details-bar-pull-right {
-		float: right;
+	.details-bar-pull-left {
+		float: left;
 		margin: 0 10px 0 10px;
 	}
 	a {
 		display: inline-block;
-		width: 100%;
-		padding: 10px 0;
+		width: 99%;
+		padding: 10px 0 5px 10px;
 		text-decoration: none;
 		color: #fff;
 	}
@@ -1658,6 +1673,9 @@ body.events.show {
 				margin-left: 10px;
 			}
 		}
+		.slider-range-desc {
+			float: right;
+		}
 
 		#places-search-form-box{
 			height: auto;
@@ -1665,6 +1683,43 @@ body.events.show {
 			button{
 				float:right;
 			}
+		}
+	}
+
+	#venue-map-canvas{
+		border:1px solid @user_menu;
+		display:block;
+		height: 150px;
+		margin: 0 0 30px 0;
+	}
+
+	#venue-score{
+		color: @venues_blue;
+	}
+
+	.venue-review{
+		margin-top: 20px;
+		width: 50%;
+		i{
+			font-size: 16px;
+			&.icon-star{
+				color: @stars;
+			}
+			&.icon-star-empty:before{
+				color:@user_menu;
+				content: "\f005";
+			}
+		}
+		.review-author-name{
+			margin-bottom: 5px;
+		}
+		.review-date{
+			color:  @brand;
+			font-size: 11px;
+			margin-bottom: 15px;
+		}
+		.review-text{
+			font-size: 11px;
 		}
 	}
 
@@ -1695,6 +1750,61 @@ body.events.show {
 	}
 	input::-webkit-input-placeholder {
 	  color: @user_menu;
+	}
+
+	.span6{
+		.female{
+			color: @venues_blue;
+			display: inline-block;
+			margin: 0 0 30px 60px;
+			.gender{
+				font-size: 20px;
+			}
+			.percent{
+				font-size: 40px;
+				padding-bottom: 15px;
+			}
+			&:before{
+				bottom:-23px;
+				content: "\e01b" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 90px;
+				padding-bottom:5px;
+			  	position: relative;
+			  	right: 60px;
+				speak: none;
+				text-align: center;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;					
+			}
+		}
+		.male{
+			color: @venues_blue;
+			display: inline-block;
+			margin: 0 0 30px 80px;
+			.gender{
+				font-size: 20px;
+			}
+			.percent{
+				font-size: 40px;
+				padding-bottom: 15px;
+			}
+			&:before{
+				bottom: -23px;
+				content: "\e01a" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 90px;
+				padding-bottom:5px;
+			  	position: relative;
+			  	right: 50px;
+				speak: none;
+				text-align: center;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;	
+			}
+		}
 	}
 
 	&.show {
@@ -1754,6 +1864,9 @@ body.events.show {
 
 	.filter-wrapper{
 		margin: 10px 0 35px 0;
+		.slider-label{
+			margin-left: 3px;
+		}
 	}
 	a:focus{
 		outline:0 !important;
@@ -1764,6 +1877,12 @@ body.events.show {
     	border-radius: 10px !important;
     	margin: 5px 0 0 4px;
     	width: 95%;
+	}
+	.ui-slider{
+		.ui-slider-range{
+			-webkit-border-radius: 10px !important;
+    		border-radius: 10px !important;
+		}
 	}
 	.ui-state-default, .ui-widget-content .ui-state-default{
 		background: @grey_three !important;
@@ -1776,6 +1895,26 @@ body.events.show {
     	&:hover{
     		background: @grey_three !important;
     	}
+	}
+	.venues_box{
+		background-color: white;
+		box-sizing: border-box;
+		margin-bottom: 10px;
+		padding: 30px 27px;
+		-webkit-border-radius: 7px;
+		-moz-border-radius: 7px;
+		border-radius: 7px;
+		a{
+			color: @venues_blue;
+			text-decoration: underline;
+			&.icon-plus-sign{
+				color: @brand;
+			}
+		}
+		h3{
+			font-size: 16px;
+			margin-bottom: 30px;
+		}
 	}
 }
 
