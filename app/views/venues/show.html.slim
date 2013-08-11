@@ -10,9 +10,9 @@
     h2= resource.name
 
     .row-fluid
-      = resource.formatted_phone_number
-      br>/
       = resource.formatted_address
+      br>/
+      = resource.formatted_phone_number
       - if resource.website
         br>/
         = place_website(resource.website)
@@ -22,7 +22,6 @@
       = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
       - if resource.persisted?
-        h4 Areas
         = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
         #venue-areas.row-fluid
           = render partial: 'areas', locals: {areas: resource.place.areas}
