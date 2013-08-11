@@ -1,4 +1,5 @@
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+
 .sidebar#resource-filter-column
   #collection-list-filters
   a.btn.btn-primary Save
@@ -6,6 +7,7 @@
 .main
   .tab-content
     #list-view.tab-pane.active
+      .collection-list-horizontal-scroll
       .link-list
         ul#event-data-list
           li.placeholder
@@ -14,8 +16,8 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{items_path(controller: :event_data)}',
-    'filtersUrl': '#{filters_path(controller: :events)}',
-    'listContainer' : '#event-data-list',
+    'filtersUrl': '#{filters_path(controller: :events, with_event_data_only: true)}',
+    'listContainer': '#event-data-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
     'autoLoad': false,
@@ -26,5 +28,10 @@ javascript:
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('event-data-filter:changed')
+    },
+    'onItemsLoad': function(response, page){
+      if (response.find('div[data-content="totals-results"]').length > 0){
+        $('.collection-list-horizontal-scroll').html(response.find('div[data-content="totals-results"]'))
+      }
     }
   });
