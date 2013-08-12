@@ -21,7 +21,7 @@ module ApplicationHelper
     content_tag(:div, id: 'resource-close-details') do
       link_to(:back) do
         content_tag(:span, title, class: 'details-bar-pull-left') +
-        content_tag(:span, " ".html_safe, class: :close) 
+        content_tag(:span, " ".html_safe, class: :close)
       end
     end
   end
@@ -40,22 +40,24 @@ module ApplicationHelper
   end
 
   def time_ago_in_words(the_date)
-    if the_date  <= 4.days.ago.end_of_day
-      the_date.strftime('%B %e at %l:%M %P')
-    elsif the_date  <= 2.days.ago.end_of_day
-      the_date.strftime('%A at %l:%M %P')
-    elsif the_date <= (Time.zone.now - 24.hours)
-      the_date.strftime('Yesterday at %l:%M %P')
-    elsif the_date <= (Time.zone.now - 1.hours)
-      hours = ((Time.zone.now - the_date)  / 3600).to_i
-      if hours == 1
-        'about an hour ago'
-      else
-        the_date.strftime("#{pluralize(hours, 'hour')} ago")
+    unless the_date.nil?
+      if the_date  <= 4.days.ago.end_of_day
+        the_date.strftime('%B %e at %l:%M %P')
+      elsif the_date  <= 2.days.ago.end_of_day
+        the_date.strftime('%A at %l:%M %P')
+      elsif the_date <= (Time.zone.now - 24.hours)
+        the_date.strftime('Yesterday at %l:%M %P')
+      elsif the_date <= (Time.zone.now - 1.hours)
+        hours = ((Time.zone.now - the_date)  / 3600).to_i
+        if hours == 1
+          'about an hour ago'
+        else
+          the_date.strftime("#{pluralize(hours, 'hour')} ago")
+        end
+      elsif the_date > (Time.zone.now - 1.hours) and the_date < Time.zone.now
+        minutes = ((Time.zone.now - the_date)  / 60).to_i
+        the_date.strftime("about #{pluralize(minutes, 'minute')} ago")
       end
-    elsif the_date > (Time.zone.now - 1.hours) and the_date < Time.zone.now
-      minutes = ((Time.zone.now - the_date)  / 60).to_i
-      the_date.strftime("about #{pluralize(minutes, 'minute')} ago")
     end
   end
 

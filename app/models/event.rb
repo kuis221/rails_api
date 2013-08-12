@@ -40,7 +40,8 @@ class Event < ActiveRecord::Base
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes
 
-  accepts_nested_attributes_for :results, :comments
+  accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
 
   scoped_to_company
 
@@ -155,12 +156,13 @@ class Event < ActiveRecord::Base
 
   def segments_results_for(field)
     if field.kpi.present?
-      field.kpi.kpis_segments.map do |segment|
+      fs = field.kpi.kpis_segments.map do |segment|
         result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id})
         result.form_field = field
         result.kpis_segment = segment
         result
       end
+      fs
     end
   end
 
@@ -343,6 +345,7 @@ class Event < ActiveRecord::Base
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
+      true
     end
 
 end

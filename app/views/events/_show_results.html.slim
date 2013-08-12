@@ -1,5 +1,43 @@
-.row-fluid
-	.pull-right
-	  = link_to 'Edit Results', edit_results_event_path(resource), {remote: true, class: 'btn btn-primary'}
+- fields = resource.campaign.form_fields.includes(:kpi)
+- active_kpis = fields.map(&:kpi)
+- event_data = resource.event_data
 
-= render 'photos'
+- if active_kpis.include?(Kpi.photos)
+  = render 'photos'
+
+- if event_data
+  h2 Consumer Reach
+  .row-fluid
+    .span8
+      span= event_data.impressions
+      = (event_data.impressions == 1 ? " Impression" : " Impressions")
+      br>/
+      span= number_with_delimiter(event_data.interactions.round)
+      = " Influenced"
+      br>/
+      span= number_with_delimiter(event_data.samples.round)
+      = " Sampled"
+      br>/
+      span= number_to_currency(event_data.cost, precision: 0)
+      = " Spent"
+      br>/
+      - if active_kpis.include?(Kpi.photos)
+        span= resource.photos.count
+        = " Photos"
+        br>/
+      span= 'XX'
+      = " Surveys"
+
+    span4
+      - if event_data.cost.present? && event_data.impressions > 0
+        span= number_to_currency(event_data.cost / event_data.impressions, precision: 2)
+        = " / Impression"
+        br>/
+      - if event_data.cost.present? && event_data.interactions > 0
+        span= number_to_currency(event_data.cost / event_data.interactions, precision: 2)
+        = " / Influence"
+        br>/
+      - if event_data.cost.present? && event_data.interactions > 0
+        span= number_to_currency(event_data.cost / event_data.samples, precision: 2)
+        = " / Sample"
+
