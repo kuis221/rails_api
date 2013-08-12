@@ -73,12 +73,9 @@
 
 
   - if resource.persisted?
-    p &nbsp;
-    p &nbsp;
-
     .row-fluid
       .span6
-        .row-fluid
+        #gender-graph.row-fluid
           .span4.male
             .percent
               = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
@@ -92,10 +89,9 @@
       .span6
         #overall-ethnicity-graph
 
-  p &nbsp;
-  p &nbsp;
 .venues_box
   h3 TRENDS BY DAY OF WEEK
+
 .venues_box
   h3 GALLERY
   ul.thumbnails

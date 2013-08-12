@@ -170,6 +170,33 @@ class Event < ActiveRecord::Base
     Place.locations_for_index(place)
   end
 
+  def kpi_goals
+    unless @goals
+      @goals = {}
+      Goal.scoped_by_campaign_id(campaign_id).each do |goal|
+        if goal.kpis_segment_id.present?
+          @goals[goal.kpi_id] ||= {}
+          @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value
+        else
+          @goals[goal.kpi_id] = goal.value
+        end
+      end
+    end
+    @goals
+  end
+
+  def demographics_graph_data
+    unless @demographics_graph_data
+      @demographics_graph_data = {}
+      [:age, :gender, :ethnicity].each do |kpi|
+        scoped_results = results.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
+        segments = Kpi.send(kpi).kpis_segments
+        @demographics_graph_data[kpi] = Hash[segments.map{|s| [s.text, scoped_results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+      end
+    end
+    @demographics_graph_data
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

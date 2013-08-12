@@ -1478,12 +1478,6 @@ body.events.index {
 }
 
 body.events.show {
-	#map-canvas {
-        margin: 0;
-        padding: 0;
-        height: 300px;
-  }
-
 	.team-member, .document {
 		width: 300px;
 		padding: 5px 0;
@@ -1498,6 +1492,31 @@ body.events.show {
 				display: block;
 			}
 		}
+	}
+
+	ul.consumer-reach-metrics {
+		li {
+			list-style: none;
+			height: 30px;
+			text-transform: uppercase;
+			.metric {
+				float: left;
+				width: 150px;
+				margin-right: 5px;
+				text-align: right; 
+			}
+			.progress {
+				margin-right: 10px;
+			}
+		}
+	}
+
+	#age-graph {
+		height: 300px;
+	}
+
+	#ethnicity-graph {
+		height: 350px;
 	}
 
 	address {
@@ -1752,60 +1771,6 @@ body.events.show {
 	  color: @user_menu;
 	}
 
-	.span6{
-		.female{
-			color: @venues_blue;
-			display: inline-block;
-			margin: 0 0 30px 60px;
-			.gender{
-				font-size: 20px;
-			}
-			.percent{
-				font-size: 40px;
-				padding-bottom: 15px;
-			}
-			&:before{
-				bottom:-23px;
-				content: "\e01b" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 90px;
-				padding-bottom:5px;
-			  	position: relative;
-			  	right: 60px;
-				speak: none;
-				text-align: center;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;					
-			}
-		}
-		.male{
-			color: @venues_blue;
-			display: inline-block;
-			margin: 0 0 30px 80px;
-			.gender{
-				font-size: 20px;
-			}
-			.percent{
-				font-size: 40px;
-				padding-bottom: 15px;
-			}
-			&:before{
-				bottom: -23px;
-				content: "\e01a" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 90px;
-				padding-bottom:5px;
-			  	position: relative;
-			  	right: 50px;
-				speak: none;
-				text-align: center;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;	
-			}
-		}
-	}
 
 	&.show {
 		.add-area-venue {
@@ -1933,6 +1898,61 @@ body.events.show {
 					text-align: center;
 				}
 			}
+		}
+	}
+}
+
+#gender-graph{
+	.female{
+		color: @venues_blue;
+		display: inline-block;
+		margin: 0 0 30px 60px;
+		.gender{
+			font-size: 20px;
+		}
+		.percent{
+			font-size: 40px;
+			padding-bottom: 15px;
+		}
+		&:before{
+			bottom:-23px;
+			content: "\e01b" !important;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 90px;
+			padding-bottom:5px;
+			position: relative;
+			right: 60px;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;					
+		}
+	}
+	.male{
+		color: @venues_blue;
+		display: inline-block;
+		margin: 0 0 30px 80px;
+		.gender{
+			font-size: 20px;
+		}
+		.percent{
+			font-size: 40px;
+			padding-bottom: 15px;
+		}
+		&:before{
+			bottom: -23px;
+			content: "\e01a" !important;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 90px;
+			padding-bottom:5px;
+			position: relative;
+			right: 50px;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;	
 		}
 	}
 }
