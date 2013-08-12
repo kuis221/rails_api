@@ -1034,15 +1034,21 @@ li#user_menu{
     			&:first-child{
     				line-height: 20px;
     			}
+    			.events, .hours{
+    				display: inline-block;
+    				margin-top: 10px;
+    				width: 120px;
+    				.n_events, .n_hours{
+    					font-size: 16px;
+    				}
+    			}
     			span{
     				&:first-child{
+    					float: left;
     					width: 600px;
     				}
-    				&.hours{
-    					margin-top: 15px;
-    					width: 120px;
-    				}
     				&.n_events{
+    					font-size: 16px;
     					margin-top: 15px;
     					width: 120px;
     				}
@@ -1514,7 +1520,7 @@ body.events.show {
 }
 
 //Photos
-.photo-list {
+.photo-list{
 	.thumbnail-container {
 		position: relative;
 		ul.thumbnail-toolbar {
@@ -1938,6 +1944,9 @@ body.events.show {
 			font-size: 16px;
 			margin-bottom: 30px;
 		}
+		ul.thumbnails{
+
+		}
 	}
 }
 
@@ -2137,6 +2146,7 @@ table.table td.comments-container {
 			-webkit-border-radius: 8px;
     		border-radius: 8px;
     		height: 120px;
+    		width: 180px;
 		}
 	}
 	.photo-list{
