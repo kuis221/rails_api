@@ -1,7 +1,7 @@
 li id="event_#{event.id}"
   a href="#{event_path(event)}"
     span.date= format_date_range(event.start_at, event.end_at)
-    span
+    span.address
       =
       b= event.campaign_name
       br>/

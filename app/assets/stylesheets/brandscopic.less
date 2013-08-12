@@ -598,7 +598,7 @@ header{
 h1, h2, h3{
 	font-family: 'Lato', sans-serif;
 	font-weight: normal;
-	line-height: 0;
+	line-height: 20px;
 	margin-top: 0;
 }
 .icon-chevron-up{
@@ -778,7 +778,7 @@ label{
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
-		padding: 0 15px 0 30px;
+		padding: 0 0 0 30px;
 	}
 	.checker{
 		margin:1px 5px 0 -30px;
@@ -940,6 +940,10 @@ li#user_menu{
     			&.title{
     				position: relative;
     				margin-top: 15px;
+    				overflow: hidden;
+		    		text-overflow:ellipsis;
+		    		white-space: nowrap;
+    				width: 590px;
     			}
     			&.pull-right{
     				position: relative;
@@ -950,9 +954,9 @@ li#user_menu{
     }
     ul#users-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		&.user_name, &.user_city{
-    			margin: 13px 20px 0 0;
+    			margin: 8px 20px 0 0;
     			width: 20%;
     		}
     		&.user_name{
@@ -962,28 +966,28 @@ li#user_menu{
     			}
     		}
     		&.user_mail{
-    			margin: 13px 35px 0 0;
+    			margin: 8px 35px 0 0;
     			width: 25%;
     		}
     		&.user_date{
-    			margin: 13px 0 0 0;
+    			margin: 8px 0 0 0;
     			width: 16%;
     		}
     	}
     }
     ul#teams-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			font-size: 16px;
     			top:0;
     		}
     		&:first-child{
-    			margin: 13px 100px 0 0;
+    			margin: 8px 100px 0 0;
     			width:50%;
     		}
     		&.members{
-    			margin: 13px 0 0 0;
+    			margin: 8px 0 0 0;
     			width: 15%;
     			b{
     				font-size: 16px;
@@ -993,31 +997,31 @@ li#user_menu{
     }
     ul#roles-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			top:0;
     		}
     		&:first-child{
-    			margin-top: 13px;
+    			margin-top: 8px;
     			width: 50%;
     		}
     	}
     }
     ul#campaigns-list, ul#areas-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			top:0;
     		}
     		&:first-child{
-    			margin: 10px 120px 0 0;
+    			margin: 8px 120px 0 0;
     			width: 50%;
     		}
     		&.first{
     			margin-right: 65px;
     		}
     		&.first, &.last{
-    			margin-top: 10px;
+    			margin-top: 8px;
     		    b{
     				top:-2px;
     			}
@@ -1030,15 +1034,21 @@ li#user_menu{
     			&:first-child{
     				line-height: 20px;
     			}
+    			.events, .hours{
+    				display: inline-block;
+    				margin-top: 10px;
+    				width: 120px;
+    				.n_events, .n_hours{
+    					font-size: 16px;
+    				}
+    			}
     			span{
     				&:first-child{
+    					float: left;
     					width: 600px;
     				}
-    				&.hours{
-    					margin-top: 15px;
-    					width: 120px;
-    				}
     				&.n_events{
+    					font-size: 16px;
     					margin-top: 15px;
     					width: 120px;
     				}
@@ -1089,7 +1099,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.enable:after{
 			color: white;
@@ -1101,7 +1111,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.disable:after{
 			color: white;
@@ -1113,7 +1123,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.load-comments-link:after{
 			color: white;
@@ -1125,7 +1135,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:14px;
+			top:20px;
 		}
 		&:hover{
 			background-color: @grey_one;
@@ -1146,9 +1156,13 @@ li#user_menu{
 	span{
 		display: inline-block;
 		vertical-align: top;
+		&.address{
+			line-height: 19px;
+			padding-top: 8px;
+		}
 		&.date{
-			line-height: 26px;
-			padding-top: 2px;
+			line-height: 20px;
+			padding-top: 8px;
 			width: 200px;
 		}
 		&.links{
@@ -1159,11 +1173,11 @@ li#user_menu{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
-	       top: 37%;
-	       margin-top: -17px;
+	       top: 7%;
 		}
 		&.tasks-date{
-			margin-right: 50px !important;
+			margin: 25px 20px 0 40px !important;
+			width: 80px;
 		}
 	}
 	  &.rows-no-link{
@@ -1230,7 +1244,7 @@ textarea::-webkit-input-placeholder {
 
 #company-name {
 	font-size: 22px;
-	padding: 21px 0 0 25px;
+	padding: 10px 0 0 25px;
 	a {
 		color: @brand;
 		text-decoration: none;
@@ -1308,11 +1322,18 @@ overflow: hidden;
 
 #resource-close-details {
 	background-color: @menu;
-	color:  #fff;
-	margin: 10px 0 0 0;
+	position: relative;
+	top: 30px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
     border-radius: 7px 7px 0px 0px;
+	a {
+		display: inline-block;
+		width: 99%;
+		padding: 10px 0 5px 10px;
+		text-decoration: none;
+		color: @grey_one;
+	}
 	.close {
 		opacity: 1;
 		position: relative;
@@ -1333,13 +1354,6 @@ overflow: hidden;
 	.details-bar-pull-left {
 		float: left;
 		margin: 0 10px 0 10px;
-	}
-	a {
-		display: inline-block;
-		width: 99%;
-		padding: 10px 0 5px 10px;
-		text-decoration: none;
-		color: #fff;
 	}
 }
 #application-content.with_details_bar {
@@ -1525,7 +1539,7 @@ body.events.show {
 }
 
 //Photos
-.photo-list {
+.photo-list{
 	.thumbnail-container {
 		position: relative;
 		ul.thumbnail-toolbar {
@@ -1672,9 +1686,18 @@ body.events.show {
 	}
 }
 
+	.ui-rangeSlider-label{
+		padding: 13px 10px 7px 8px !important;
+	}
+
 // VENUES
 
 .venues {
+	&.show{
+		.container{
+			padding-top: 0!important;
+		}
+	}
 	&.index {
 		#venues-search-form-box {
 			border-radius: 6px;
@@ -1874,11 +1897,91 @@ body.events.show {
 			text-decoration: underline;
 			&.icon-plus-sign{
 				color: @brand;
+				display: block;
+				margin-top: 30px;
 			}
+		}
+		h2{
+			font-size: 30px;
+			margin-bottom: 30px;
 		}
 		h3{
 			font-size: 16px;
 			margin-bottom: 30px;
+		}
+		ul.thumbnails{
+			&.venues{
+				margin: 0 -3% 0 -3%;
+				overflow: auto;
+			}
+			.thumbnail{
+				ul.thumbnail-toolbar{
+				display: none;
+				}
+				&:hover{
+					ul.thumbnail-toolbar{
+						background-color: rgba(0, 0, 0, 0.6);
+						display: block;
+						position: absolute;
+						height: 35px;
+						list-style-type: none;
+						margin:0;
+						-webkit-border-radius: 0px 0px 8px 8px;
+						border-radius: 0px 0px 8px 8px;
+						width: 180px;
+						    li a{
+					        	color: white;
+					        	opacity: 1 !important;
+					        	text-decoration: none;
+					        	&.icon-download:before{
+					        	  	color: @grey_one;
+									content: "\e00b" !important;
+								  	display: inline-block;
+								  	font-family: 'icons';
+									font-size: 13px;
+									left:127px;
+									padding-bottom:5px;
+								  	position: relative;
+									speak: none;
+									text-align: center;
+									top: 10px;
+								  	vertical-align: middle;
+									-webkit-font-smoothing: antialiased;
+					        	}
+					        	&.icon-remove-circle:before{
+					        	  	color: @grey_one;
+									content: "\e011" !important;
+								  	display: inline-block;
+								  	font-family: 'icons';
+									font-size: 13px;
+									left:135px;
+									padding-bottom:5px;
+								  	position: relative;
+									speak: none;
+									text-align: center;
+									bottom: 11px;
+								  	vertical-align: middle;
+									-webkit-font-smoothing: antialiased;
+					        	}
+					        	&.icon-ok-circle:before{
+					        	  	color: @grey_one;
+									content: "\e00d" !important;
+								  	display: inline-block;
+								  	font-family: 'icons';
+									font-size: 13px;
+									left:135px;
+									padding-bottom:5px;
+								  	position: relative;
+									speak: none;
+									text-align: center;
+									bottom: 11px;
+								  	vertical-align: middle;
+									-webkit-font-smoothing: antialiased;
+					        	}
+					        }
+					}
+				}
+			}
 		}
 	}
 }
@@ -2066,6 +2169,14 @@ table.table td.comments-container {
   color: #A0A0A0;
 }
 
+//EVENT DATA
+.event_data{
+	.main{
+		-webkit-border-radius: 0px 7px 7px 7px;
+        border-radius: 0px 7px 7px 7px;
+	}
+}
+
 // TASKS STYLES
 .tasks{
 	b{
@@ -2113,7 +2224,7 @@ table.table td.comments-container {
 }
 
 // PHOTOS
-.photos{
+.photos, .venues{
 	.main{
 		-webkit-border-radius: 0px 7px 7px 7px;
 	    border-radius: 0px 7px 7px 7px;
@@ -2126,6 +2237,7 @@ table.table td.comments-container {
 			-webkit-border-radius: 8px;
     		border-radius: 8px;
     		height: 120px;
+    		width: 180px;
 		}
 	}
 	.photo-list{

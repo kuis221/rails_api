@@ -4,18 +4,16 @@
       span
         b= venue.name
         br>/
-        p 
-        | Night Club
-        br>/
+        .type Night Club
         .venue_adress 
           = venue.formatted_address
-      span.n_events
-        = "#{venue.events}"
-        br>/
+      .events
+        .n_events
+          = "#{venue.events}"
         = "Events"
-      span.hours
-        = "#{venue.promo_hours}"
-        br>/
+      .hours
+        .n_hours
+          = "#{venue.promo_hours}"
         = "Hours"
 - else
   li id="venue_#{venue.id}"

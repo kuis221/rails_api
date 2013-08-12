@@ -130,7 +130,7 @@
 			font-family: @baseFontFamily;
 			height: 30px;
 			margin-bottom: 0;
-			width: 100px;
+			width: 97px;
 				&.input-micro{width:40px;}
 				&.input-mini{width:60px;}
 				&.input-small{width:90px;}
@@ -192,7 +192,8 @@
 				}
 				&#event_start_time, &#event_end_time{
 					background: url('time.svg') no-repeat left !important;
-					text-align: right;
+					padding-left:10px;
+					text-align: center;
 				}
 			}
 		}
@@ -324,6 +325,9 @@
 		-moz-border-radius: 4px !important;
 		border-radius: 4px !important;	
 		ul.chzn-results{
+			li{
+				padding: 8px 6px !important;
+			}
 			li.highlighted{
 				background-image: none;
 				background-color: @brand;
@@ -340,7 +344,7 @@
 		color: @text !important;
 		height: 37px !important;
 		outline:0;
-		width:240px;
+		width:242px;
 		span{
 			line-height: 36px;
 		}
@@ -351,9 +355,12 @@
 	    border-radius: 6px !important;
 		box-shadow:none;
 		margin-top: 3px !important;
-		width: 260px !important;
+		width: 252px !important;
 		ul.chzn-results{
 			padding: 0;
+			li{
+				padding: 8px 6px !important;
+			}
 			li.highlighted{
 				background-color: @brand;
 				background-image: none;
@@ -424,7 +431,7 @@
 		padding: 4px 0 0 0;
 	}
 	.ui-datepicker-title{
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: normal;
 		margin: 0 9px;
 		text-align: left;	
@@ -510,10 +517,11 @@
 	-webkit-border-radius: 6px !important;
 	border-radius: 6px !important;
 	box-shadow: none;
-	top: 315px !important;
+	top: 265px !important;
 	width:112px !important;
 	li{
 		color: @text;
+		padding: 3px 0 3px 32px;
 		&:hover{
 			background-color: @brand !important;
 			color: white !important;
@@ -532,7 +540,7 @@
 	background: white !important;
 	border:0;
 	color: @menu;
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: normal;
 	opacity: 0.8;
 	text-align: center;
