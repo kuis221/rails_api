@@ -99,12 +99,13 @@
   h3 GALLERY
   ul.thumbnails
     - resource.photos.each do |photo|
-      li.span2
-        div.photo-container.thumbnail
-          - if photo.is_a?(AttachedAsset)
-            = image_tag photo.file.url(:small)
-          - else
-            = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+      - if photo.is_a?(AttachedAsset)
+        = render partial: 'photos/photo', locals: {photo: photo}
+      - else
+        li.span2.google-image
+          div.thumbnail-container.thumbnail
+            a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
+              = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 .venues_box
   h3 COMMENTS

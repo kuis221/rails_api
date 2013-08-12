@@ -16,6 +16,15 @@ jQuery ->
 			$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
 			false
 
+		$(".fancybox").fancybox {
+			padding : 0,
+			helpers : { title: { type: 'inside' } },
+			beforeLoad: () ->
+				this.title = $(this.element).attr('caption')
+		}
+
+		true
+
 	validateForm = (e) ->
 		$(this).validate {
 			errorClass: 'help-inline',
@@ -49,6 +58,7 @@ jQuery ->
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
+
 
 
 	$('[data-sparkline]').each (index, elm) ->
