@@ -188,7 +188,7 @@ class Venue < ActiveRecord::Base
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
         elsif params[param].present? && params[param][:min].present?
-          with(param.to_sym).greater_than(params[param][:min])
+          with(param.to_sym).greater_than_or_equal_to(params[param][:min])
         end
       end
 

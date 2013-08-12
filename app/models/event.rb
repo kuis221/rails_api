@@ -69,7 +69,7 @@ class Event < ActiveRecord::Base
   after_validation :delegate_errors
 
   before_save :set_promo_hours, :check_results_changed
-  after_save :reindex_associated, :save_event_data
+  after_save :reindex_associated
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
@@ -329,13 +329,12 @@ class Event < ActiveRecord::Base
     end
 
     def reindex_associated
+      save_event_data
       if place_id_changed?
         reindex_photos
         Sunspot.index(place)
         Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was).delay.compute_stats if place_id_was.present?
       end
-      venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-      venue.delay.compute_stats
     end
 
     def reindex_photos

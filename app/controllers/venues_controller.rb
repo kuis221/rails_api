@@ -117,6 +117,7 @@ class VenuesController < FilteredController
           @search_params[param][:min] = 1 unless @search_params[:location].present? || @search_params[param][:min].present?
           @search_params[param][:max] ||= nil
         end
+        Rails.logger.debug "@search_params ===> #{@search_params}"
         @search_params
       end
     end
