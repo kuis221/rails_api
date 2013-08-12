@@ -778,7 +778,7 @@ label{
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
-		padding: 0 15px 0 30px;
+		padding: 0 0 0 30px;
 	}
 	.checker{
 		margin:1px 5px 0 -30px;
@@ -940,6 +940,10 @@ li#user_menu{
     			&.title{
     				position: relative;
     				margin-top: 15px;
+    				overflow: hidden;
+		    		text-overflow:ellipsis;
+		    		white-space: nowrap;
+    				width: 590px;
     			}
     			&.pull-right{
     				position: relative;
@@ -950,9 +954,9 @@ li#user_menu{
     }
     ul#users-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		&.user_name, &.user_city{
-    			margin: 13px 20px 0 0;
+    			margin: 8px 20px 0 0;
     			width: 20%;
     		}
     		&.user_name{
@@ -962,28 +966,28 @@ li#user_menu{
     			}
     		}
     		&.user_mail{
-    			margin: 13px 35px 0 0;
+    			margin: 8px 35px 0 0;
     			width: 25%;
     		}
     		&.user_date{
-    			margin: 13px 0 0 0;
+    			margin: 8px 0 0 0;
     			width: 16%;
     		}
     	}
     }
     ul#teams-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			font-size: 16px;
     			top:0;
     		}
     		&:first-child{
-    			margin: 13px 100px 0 0;
+    			margin: 8px 100px 0 0;
     			width:50%;
     		}
     		&.members{
-    			margin: 13px 0 0 0;
+    			margin: 8px 0 0 0;
     			width: 15%;
     			b{
     				font-size: 16px;
@@ -993,31 +997,31 @@ li#user_menu{
     }
     ul#roles-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			top:0;
     		}
     		&:first-child{
-    			margin-top: 13px;
+    			margin-top: 8px;
     			width: 50%;
     		}
     	}
     }
     ul#campaigns-list, ul#areas-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
     	span{
-    		line-height: 16px;
+    		line-height: 20px;
     		b{
     			top:0;
     		}
     		&:first-child{
-    			margin: 10px 120px 0 0;
+    			margin: 8px 120px 0 0;
     			width: 50%;
     		}
     		&.first{
     			margin-right: 65px;
     		}
     		&.first, &.last{
-    			margin-top: 10px;
+    			margin-top: 8px;
     		    b{
     				top:-2px;
     			}
@@ -1089,7 +1093,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.enable:after{
 			color: white;
@@ -1101,7 +1105,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.disable:after{
 			color: white;
@@ -1113,7 +1117,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:13px;
+			top:20px;
 		}
 		.load-comments-link:after{
 			color: white;
@@ -1125,7 +1129,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:14px;
+			top:20px;
 		}
 		&:hover{
 			background-color: @grey_one;
@@ -1146,9 +1150,13 @@ li#user_menu{
 	span{
 		display: inline-block;
 		vertical-align: top;
+		&.address{
+			line-height: 20px;
+			padding-top: 8px;
+		}
 		&.date{
-			line-height: 26px;
-			padding-top: 2px;
+			line-height: 20px;
+			padding-top: 8px;
 			width: 200px;
 		}
 		&.links{
@@ -1159,11 +1167,11 @@ li#user_menu{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
-	       top: 37%;
-	       margin-top: -17px;
+	       top: 5%;
 		}
 		&.tasks-date{
-			margin-right: 50px !important;
+			margin: 25px 20px 0 40px !important;
+			width: 80px;
 		}
 	}
 	  &.rows-no-link{
@@ -1653,11 +1661,17 @@ body.events.show {
 	}
 }
 
+	.ui-rangeSlider-label{
+		padding: 13px 10px 7px 8px !important;
+	}
+
 // VENUES
 
 .venues {
-	.container{
-		padding-top: 0!important;
+	&.show{
+		.container{
+			padding-top: 0!important;
+		}
 	}
 	&.index {
 		#venues-search-form-box {
@@ -2055,6 +2069,14 @@ table.table td.comments-container {
   color: #A0A0A0;
 }
 
+//EVENT DATA
+.event_data{
+	.main{
+		-webkit-border-radius: 0px 7px 7px 7px;
+        border-radius: 0px 7px 7px 7px;
+	}
+}
+
 // TASKS STYLES
 .tasks{
 	b{
@@ -2102,7 +2124,7 @@ table.table td.comments-container {
 }
 
 // PHOTOS
-.photos{
+.photos, .venues{
 	.main{
 		-webkit-border-radius: 0px 7px 7px 7px;
 	    border-radius: 0px 7px 7px 7px;
