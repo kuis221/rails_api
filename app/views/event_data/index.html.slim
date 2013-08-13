@@ -4,12 +4,12 @@
   #collection-list-filters
   a.btn.btn-primary Save
 
-.main
+#main.main
   .tab-content
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          =link_to '', '#', class: 'icon-fullscreen fullscreen-link'
+          =link_to '', '#', class: 'icon-fullscreen fullscreen-link', 'data-fullscreen-element' => 'main'
           =link_to '', event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
@@ -86,4 +86,3 @@ javascript:
       $('#list-view').removeClass('scroll-last');
     }
   })
-

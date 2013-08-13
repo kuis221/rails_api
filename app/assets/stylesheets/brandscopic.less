@@ -1990,6 +1990,33 @@ body.events.show {
 
 .event_data {
 	&.index {
+		//For Firefox
+		#main:-moz-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
+		//For Chrome
+		#main:-webkit-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
+		//For Opera
+		#main:-0-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
 		#list-tools {
 			display: none;
 			.xlsx-download-link, .fullscreen-link {
