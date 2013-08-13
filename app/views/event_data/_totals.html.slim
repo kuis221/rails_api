@@ -1,39 +1,59 @@
-.event-data-totals
-  span.event-data-totals-column.center-aligned
-    = number_with_delimiter(data_totals['events_count'])
-    br>/
-    = 'EVENTS'
-  span.event-data-totals-column.center-aligned
+.events-box
+  = number_with_delimiter(data_totals['events_count'])
+  br>/
+  = 'EVENTS'
+.results-box-container
+  span.event-data-column.promo-hours-box
     = number_with_precision(data_totals['promo_hours'], precision: 2)
     br>/
     = 'PROMO HOURS'
-  span.event-data-totals-column.center-aligned
+  span.event-data-column.impressions-box
     = number_with_delimiter(data_totals['impressions'])
     br>/
     = 'IMPRESSIONS'
-  span.event-data-totals-column.center-aligned
+  span.event-data-column.interactions-box
     = number_with_delimiter(data_totals['interactions'])
     br>/
     = 'INTERACTIONS'
-  span.event-data-totals-column.center-aligned
+  span.event-data-column.samples-box
     = number_with_delimiter(data_totals['samples'])
     br>/
     = 'SAMPLED'
-  span.event-data-totals-column.center-aligned
+  span.event-data-column.cost-box
     = number_to_currency(data_totals['cost'])
     br>/
     = 'SPENT'
-  span.event-data-totals-column
-    = number_to_percentage(data_totals['gender_female'], precision: 2) + ' FEMALE'
+  span.event-data-column.gender-female-box
+    = number_to_percentage(data_totals['gender_female'], precision: 2)
     br>/
-    = number_to_percentage(data_totals['gender_male'], precision: 2) + ' MALE'
-  span.event-data-totals-column
-    = number_to_percentage(data_totals['ethnicity_asian'], precision: 2) + ' ASIAN'
+    | FEMALE
+  span.event-data-column.gender-female-box
+    = number_to_percentage(data_totals['gender_male'], precision: 2)
     br>/
-    = number_to_percentage(data_totals['ethnicity_black'], precision: 2) + ' BLACK/AFRICAN AMERICAN'
+    | MALE
+  span.event-data-column.ethnicity-asian-box
+    = number_to_percentage(data_totals['ethnicity_asian'], precision: 2)
     br>/
-    = number_to_percentage(data_totals['ethnicity_hispanic'], precision: 2) + ' HISPANIC/LATINO'
+    | ASIAN
+  span.event-data-column.ethnicity-black-box
+    = number_to_percentage(data_totals['ethnicity_black'], precision: 2)
     br>/
-    = number_to_percentage(data_totals['ethnicity_native_american'], precision: 2) + ' NATIVE AMERICAN'
+    | AFRICAN
     br>/
-    = number_to_percentage(data_totals['ethnicity_white'], precision: 2) + ' WHITE'
+    | AMERICAN
+  span.event-data-column.ethnicity-hispanic-box
+    = number_to_percentage(data_totals['ethnicity_hispanic'], precision: 2)
+    br>/
+    | HISPANIC
+    br>/
+    | LATINO
+  span.event-data-column.ethnicity-native-american-box
+    = number_to_percentage(data_totals['ethnicity_native_american'], precision: 2)
+    br>/
+    | NATIVE
+    br>/
+    | AMERICAN
+  span.event-data-column.ethnicity-white-box
+    = number_to_percentage(data_totals['ethnicity_white'], precision: 2)
+    br>/
+    | WHITE

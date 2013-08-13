@@ -1990,18 +1990,127 @@ body.events.show {
 
 .event_data {
 	&.index {
-		.event-data-totals {
-			span {
+		.link-list {
+			overflow: hidden;
+		}
+		.collection-list-horizontal-scroll {
+			height: 60px;
+			position: relative;
+		}
+		#columns-scoller-arrows {
+			width: 100%;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			font-size: 40px;
+			.left-arrow {
+				margin-left: 485px;
+				float: left;
+			}
+
+			.right-arrow {
+				float: right;
+			}
+
+			a:hover {
+				text-decoration: none;
+				cursor: pointer;
+			}
+		}
+
+		#event-data-totals {
+			height: 60px;
+			width: 99%;
+			overflow: hidden;
+			.results-box-container {
+				margin-left: 500px;
+			}
+			.events-box {
+				width: 60px;
+				float: left;
+			}
+		}
+
+		#columns-scoller-arrows .left-arrow { display: none; }
+		.scroll-1 { #columns-scoller-arrows .left-arrow { display: block;} }
+		.scroll-last { #columns-scoller-arrows .right-arrow { display: none;} }
+		.scroll-1 { .results-box-container .event-data-column:nth-child(1) { display: none;} }
+		.scroll-2 { .results-box-container .event-data-column:nth-child(2) { display: none;} }
+		.scroll-3 { .results-box-container .event-data-column:nth-child(3) { display: none;} }
+		.scroll-4 { .results-box-container .event-data-column:nth-child(4) { display: none;} }
+		.scroll-5 { .results-box-container .event-data-column:nth-child(5) { display: none;} }
+		.scroll-6 { .results-box-container .event-data-column:nth-child(6) { display: none;} }
+		.scroll-7 { .results-box-container .event-data-column:nth-child(7) { display: none;} }
+		.scroll-8 { .results-box-container .event-data-column:nth-child(8) { display: none;} }
+		.scroll-9 { .results-box-container .event-data-column:nth-child(9) { display: none;} }
+		.scroll-10 { .results-box-container .event-data-column:nth-child(10) { display: none;} }
+		.scroll-11 { .results-box-container .event-data-column:nth-child(11) { display: none;} }
+
+		.results-box-container {
+			width: 1500px;
+
+			.event-data-column {
 				display: inline-block;
 				vertical-align: top;
-			}
-			.event-data-column, .event-data-totals-column {
+				height: 60px;
+				float: left;
 				margin-right: 3px;
+				text-align: center;
 				&.center-aligned {
 					text-align: center;
 				}
 			}
+
+			.promo-hours-box {
+				width: 100px;
+			}
+			.impressions-box {
+				width: 90px;
+			}
+			.interactions-box {
+				width: 100px;
+			}
+			.samples-box {
+				width: 70px;
+			}
+			.cost-box {
+				width: 70px;
+			}
+			.gender-female-box {
+				width: 70px;
+			}
+			.gender-male-box {
+				width: 70px;
+			}
+			.ethnicity-asian-box {
+				width: 70px;
+			}
+			.ethnicity-black-box {
+				width: 70px;
+			}
+			.ethnicity-hispanic-box {
+				width: 70px;
+				margin-left: 0;
+			}
+			.ethnicity-native-american-box {
+				width: 70px;
+			}
+			.ethnicity-hispanic-box {
+				width: 70px;
+			}
+			.ethnicity-white-box {
+				width: 70px;
+			}
 		}
+
+		.event-data-row {
+			.event-info {
+				float: left;
+			}
+		}
+
 	}
 }
 
