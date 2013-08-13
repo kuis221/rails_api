@@ -6,6 +6,8 @@ class FilteredController < InheritedResources::Base
 
   custom_actions collection: [:filters, :items]
 
+  after_filter :set_xlsx_header, only: :index
+
   def filters
   end
 
@@ -15,9 +17,13 @@ class FilteredController < InheritedResources::Base
 
   protected
 
+    def set_xlsx_header
+      response.headers['Content-Disposition'] = "attachment; filename=\"#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}.xlsx\"" if request.format.xlsx?
+    end
+
     def collection
       get_collection_ivar || begin
-        if action_name != 'index' || request.format.json?
+        if action_name != 'index' || request.format.json? || request.format.xlsx?
           if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
             search = resource_class.do_search(search_params)
             @collection_count = search.total
@@ -94,6 +100,9 @@ class FilteredController < InheritedResources::Base
     def search_params
       @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
         p[:company_id] = current_company.id
+        if request.format.xlsx?
+          p[:per_page] = 20000
+        end
       end
     end
 
