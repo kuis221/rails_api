@@ -1517,7 +1517,7 @@ body.events.show {
 				float: left;
 				width: 150px;
 				margin-right: 5px;
-				text-align: right; 
+				text-align: right;
 			}
 			.progress {
 				margin-right: 10px;
@@ -1990,6 +1990,15 @@ body.events.show {
 
 .event_data {
 	&.index {
+		#list-tools {
+			display: none;
+			.xlsx-download-link, .fullscreen-link {
+				font-size: 30px;
+				margin: 0px 3px;
+				text-decoration: none;
+			}
+		}
+
 		.link-list {
 			overflow: hidden;
 		}
@@ -2030,6 +2039,7 @@ body.events.show {
 			.events-box {
 				width: 60px;
 				float: left;
+				text-align: center;
 			}
 		}
 
@@ -2169,7 +2179,7 @@ body.events.show {
 			speak: none;
 			text-align: center;
 			vertical-align: middle;
-			-webkit-font-smoothing: antialiased;	
+			-webkit-font-smoothing: antialiased;
 		}
 	}
 }

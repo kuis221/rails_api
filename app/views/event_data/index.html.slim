@@ -7,6 +7,10 @@
 .main
   .tab-content
     #list-view.tab-pane.active
+      #list-tools.row-fluid
+        .pull-right
+          =link_to '', '#', class: 'icon-fullscreen fullscreen-link'
+          =link_to '', event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
           .left-arrow
@@ -39,6 +43,14 @@ javascript:
       if (response.find('div[data-content="totals-results"]').length > 0){
         $('#columns-scoller-arrows').removeClass('hide')
         $('#event-data-totals').html(response.find('div[data-content="totals-results"]').html())
+      }
+    },
+    'onItemsChange': function(response, page){
+      if ($('#event-data-list li').length > 0) {
+        $('#list-tools').show()
+      } else {
+        $('#list-tools').hide()
+        $('#event-data-list').append("<li class='placeholder'>No results. Select other filters to see results</li>");
       }
     }
   });

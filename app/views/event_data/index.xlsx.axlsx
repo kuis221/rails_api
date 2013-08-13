@@ -1,0 +1,84 @@
+wb = xlsx_package.workbook
+
+row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
+row_totals = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
+row_totals_number = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :right}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
+row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
+row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
+
+wb.add_worksheet(name: "Event Data") do |sheet|
+	sheet.add_row ['',
+                 'CAMPAIGN NAME',
+                 'PROMO HOURS',
+                 'IMPRESSIONS',
+                 'INTERACTIONS',
+                 'SAMPLED',
+                 'SPENT',
+                 'FEMALE',
+                 'MALE',
+                 'ASIAN',
+                 'BLACK/AFRICAN AMERICAN',
+                 'HISPANIC/LATINO',
+                 'NATIVE AMERICAN',
+                 'WHITE'], :style => row_header
+
+  sheet.add_row ['TOTALS',
+                 number_with_delimiter(data_totals['events_count']).to_s + ' EVENTS',
+                 number_with_precision(data_totals['promo_hours'], precision: 2),
+                 number_with_delimiter(data_totals['impressions']),
+                 number_with_delimiter(data_totals['interactions']),
+                 number_with_delimiter(data_totals['samples']),
+                 number_to_currency(data_totals['cost']),
+                 number_to_percentage(data_totals['gender_female'], precision: 2),
+                 number_to_percentage(data_totals['gender_male'], precision: 2),
+                 number_to_percentage(data_totals['ethnicity_asian'], precision: 2),
+                 number_to_percentage(data_totals['ethnicity_black'], precision: 2),
+                 number_to_percentage(data_totals['ethnicity_hispanic'], precision: 2),
+                 number_to_percentage(data_totals['ethnicity_native_american'], precision: 2),
+                 number_to_percentage(data_totals['ethnicity_white'], precision: 2)],
+                :style => [row_totals,
+                           row_totals,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number,
+                           row_totals_number]
+
+	collection.each do |event|
+		sheet.add_row ['',
+                   event.campaign_name,
+                   number_with_precision(event.promo_hours, precision: 2),
+                   number_with_delimiter(event.event_data.impressions),
+                   number_with_delimiter(event.event_data.interactions),
+                   number_with_delimiter(event.event_data.samples),
+                   number_to_currency(event.event_data.cost),
+                   number_to_percentage(event.event_data.gender_female, precision: 2),
+                   number_to_percentage(event.event_data.gender_male, precision: 2),
+                   number_to_percentage(event.event_data.ethnicity_asian, precision: 2),
+                   number_to_percentage(event.event_data.ethnicity_black, precision: 2),
+                   number_to_percentage(event.event_data.ethnicity_hispanic, precision: 2),
+                   number_to_percentage(event.event_data.ethnicity_native_american, precision: 2),
+                   number_to_percentage(event.event_data.ethnicity_white, precision: 2)],
+                  :style => [row_data_text,
+                             row_data_text,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number,
+                             row_data_number]
+	end
+end
