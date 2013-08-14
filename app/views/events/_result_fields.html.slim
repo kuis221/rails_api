@@ -5,7 +5,7 @@
   - field = ff.object.form_field
   - if field.kpi_id.nil? || @rendered_modules[field.kpi.module].nil? || current_module == field.kpi.module
     - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
-      - @rendered_modules[field.kpi.module] = true 
+      - @rendered_modules[field.kpi.module] = true
       fieldset
         legend=t "form_builder.modules.#{field.kpi.module}"
         = render partial: 'result_fields', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
@@ -26,7 +26,7 @@
     - elsif ['expenses', 'surveys'].include?(current_module)
       = render partial: current_module, locals: {f: f}
     - elsif ['photos', 'videos', 'comments'].include?(field.field_type)
-      = render partial: field.field_type, locals: {f: f}
+      = render partial: field.field_type, locals: {f: f, allow_upload: true}
     - elsif field.kpi_id.nil? || (current_module == field.kpi.module)
       = ff.hidden_field :form_field_id
       = ff.hidden_field :kpis_segment_id

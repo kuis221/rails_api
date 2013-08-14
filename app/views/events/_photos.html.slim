@@ -1,7 +1,7 @@
 - allow_upload ||= false
 .photo-list
   ul.thumbnails
-    = render partial: 'photos/photo', collection: resource.photos
+    = render partial: 'results/photos/photo', collection: resource.photos
 
 - if allow_upload
   .row-fluid
