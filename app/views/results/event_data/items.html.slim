@@ -1,5 +1,5 @@
 div data-content="items" data-total="#{collection_count}" data-pages="#{total_pages}" data-page="#{params[:page] || 1}"
-  = render collection: collection, partial: 'event_data/event_data', as: :event
+  = render collection: collection, partial: 'event_data', as: :event
 
 - if params[:page].nil? || params[:page] == '1'
   div data-content="totals-results"

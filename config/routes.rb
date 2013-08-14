@@ -17,6 +17,18 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
+  namespace :results do
+    resources :event_data, only: [:index] do
+      get :items, on: :collection
+    end
+    resources :comments, only: [:index]
+    resources :photos, only: [:index] do
+      get :items, on: :collection
+      get :autocomplete, on: :collection
+      get :filters, on: :collection
+    end
+  end
+
   # This couple of routes are for tasks
   get ":controller/:scope/filters", format: :json, as: :filters
   get ":controller/:scope/items", format: :html, as: :items
@@ -31,17 +43,6 @@ Brandscopic::Application.routes.draw do
         match 'areas/select' => 'venues#select_areas', via: :get, as: :select_areas
         match 'areas/add' => 'venues#add_areas', via: :post, as: :add_area
         match 'areas' => 'venues#areas', via: :get, as: :areas
-      end
-    end
-  end
-
-  scope "results" do
-    resources :event_data, only: [:index]
-    resources :photos, only: [:index] do
-      get :autocomplete, on: :collection
-      member do
-        get :deactivate
-        get :activate
       end
     end
   end
@@ -118,7 +119,12 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
-    resources :photos, only: :create
+    resources :photos, only: :create do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
     resources :comments, only: [:create, :index]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
