@@ -41,6 +41,10 @@
 
 /*-- GENERAL STYLES --*/
 
+abbr[title]{
+	border:0;
+}
+
 #analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
   	display: block;
   	font-family: 'icons';
@@ -518,6 +522,25 @@ body.app-layout{
     border-radius: 8px;
     &.first_login{
     	width:600px;
+    	input[type="text"]{
+    		background-color: white !important;
+    	}
+    	input[type="email"],input[type="password"]{
+    		background-color: white !important;
+    		width:568px !important;
+    	}
+    	label{
+    		color: @brand;
+    		display:block;
+    		text-align: left;
+    	}
+    	p{
+    		&.help-block{
+    			margin-bottom: 10px;
+    			padding-left: 10px;
+    			text-align: left;
+    		}
+    	}
     }
 	input{
 		margin-bottom: 10px;
