@@ -23,8 +23,6 @@ class Brand < ActiveRecord::Base
   has_many :brand_portfolios_brands
   has_many :brand_portfolios, through: :brand_portfolios_brands
 
-  scope :with_text, lambda{|text| where('brands.name ilike ? ', "%#{text}%") }
-
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
 
   searchable do

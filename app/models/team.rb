@@ -36,7 +36,6 @@ class Team < ActiveRecord::Base
 
   scope :with_users, joins(:users).group('teams.id')
   scope :with_active_users, lambda{|companies| joins(:users).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
-  scope :with_text, lambda{|text| where('teams.name ilike ? or teams.description ilike ? ', "%#{text}%", "%#{text}%") }
 
   searchable do
     integer :id

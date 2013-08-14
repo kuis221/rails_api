@@ -9,10 +9,12 @@ class CampaignsController < FilteredController
   layout false, only: :kpis
 
   def update_post_event_form
+    attrs = params[:fields].dup
+    attrs.each{|index, field| normalize_brands(field[:options][:brands]) if field[:options].present? && field[:options][:brands].present? }
     # Mark for destruction the fields that are not on the params
-    field_ids = extract_fields_ids(params[:fields])
+    field_ids = extract_fields_ids(attrs)
     mark_fields_for_destruction(resource.form_fields, field_ids)
-    resource.form_fields_attributes = params[:fields]
+    resource.form_fields_attributes = attrs
     resource.save
     render text: 'OK'
   end
@@ -42,6 +44,14 @@ class CampaignsController < FilteredController
   end
 
   protected
+    def normalize_brands(brands)
+      unless brands.empty?
+        brands.each_with_index do |b, index|
+          b = Brand.find_or_create_by_name(b).id unless b =~ /^[0-9]$/
+          brands[index] = b.to_i
+        end
+      end
+    end
 
     def mark_fields_for_destruction(fields, field_ids)
       fields.each do |f|
