@@ -5,6 +5,6 @@
   .pull-right
     = link_to '', photo.download_url, class: 'icon-download photo-download-link'
     - if photo.active?
-      = link_to '', deactivate_photo_path(photo), remote: true, class: 'icon-remove-circle photo-deactivate-link'
+      = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link'
     - else
-      = link_to '', activate_photo_path(photo), remote: true, class: 'icon-ok-circle photo-deactivate-link'
+      = link_to '', activate_event_photo_path(photo.attachable,photo), remote: true, class: 'icon-ok-circle photo-deactivate-link'

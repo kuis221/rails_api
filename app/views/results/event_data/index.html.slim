@@ -10,7 +10,7 @@
       #list-tools.row-fluid
         .pull-right
           =link_to '', '#', class: 'icon-fullscreen fullscreen-link', 'data-fullscreen-element' => 'main'
-          =link_to '', event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
+          =link_to '', results_event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
           .left-arrow
@@ -25,7 +25,7 @@
 
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: :event_data)}',
+    'source': '#{items_path(controller: 'results/event_data')}',
     'filtersUrl': '#{filters_path(controller: :events, with_event_data_only: true)}',
     'listContainer': '#event-data-list',
     'sorting': 'start_at',

@@ -38,9 +38,10 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research) do |secondary|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
-    primary.item :results, 'Results', event_data_path, highlights_on: %r(/results) do |secondary|
-      secondary.item :event_data, 'Event Data', event_data_path, highlights_on: %r(/results/event_data)
-      secondary.item :photos, 'Photos', photos_path, highlights_on: %r(/results/photos)
+    primary.item :results, 'Results', results_event_data_path, highlights_on: %r(/results) do |secondary|
+      secondary.item :event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data)
+      secondary.item :comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments)
+      secondary.item :photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos)
     end
     primary.item :analysis, 'Analysis', '#'
   end
