@@ -181,7 +181,9 @@ window.FormBuilder = {
 
 
 	renderModules: (container) ->
-		@modules = {comments: $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})}
+		commentsModule = $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})
+		@modules = {comments: commentsModule}
+		commmentsField = false
 
 		# Build the modules list
 		for kpi in @kpis
@@ -192,12 +194,18 @@ window.FormBuilder = {
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 						@modulesList.append module.render().data('field', module)
 					@modules[kpi.module].addField @buildField(field_options)
+
+					if kpi.module == 'comments'
+						commmentsField = true
 				else
 					# @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
 					@customKpisList.append @buildField(field_options)
-				
 
-		@modulesList.append @modules['comments'].render().data('field', module)
+		@modulesList.append commentsModule.render().data('field', commentsModule)
+
+		if not commmentsField
+			commentsModule.addField @buildField({type: 'Comments'})
+
 
 		@modulesList.sortable({
 			connectWith: "#form-wrapper",
