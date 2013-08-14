@@ -1,39 +1,48 @@
-h2 Complete your profile
+.login_box.first_login
+  h2  Welcome, George!
+  p 
+  | Before we get started, please tell us a bit about yourself.
 
-= simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put }) do |f|
-  = devise_error_messages!
-  = f.hidden_field :invitation_token
+  = simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put }) do |f|
+    = devise_error_messages!
+    = f.hidden_field :invitation_token
 
-  div.form-inputs
-    = f.input :accepting_invitation, :value => true, :as => :hidden
-    = f.input :first_name, :autofocus => true
-    = f.input :last_name
-    = f.input :email
-    = f.input :country, priority: ['United States'], required: true
-    = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
-    = f.input :city, required: true
-    = f.input :time_zone, required: true
+    div.form-inputs
+      = f.input :accepting_invitation, :value => true, :as => :hidden
+      .row-fluid
+        .span6
+          = f.input :first_name, :autofocus => true
+        .span6
+          = f.input :last_name
+      .row-fluid
+        = f.input :email
+      .row-fluid
+        .span6
+        = f.input :country, priority: ['United States'], required: true
+      = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+      = f.input :city, required: true
+      = f.input :time_zone, required: true
 
-    = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
-    = f.input :password_confirmation, :label => "Confirm your new password", :required => true, :input_html => {class: 'matchconfirmation'}
+      = f.input :password, :label => "New password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
+      = f.input :password_confirmation, :label => "Confirm your new password", :required => true, :input_html => {class: 'matchconfirmation'}
 
-  div.form-actions
-    = f.button :submit, "Save", class: 'btn btn-primary'
+    div.form-actions
+      = f.button :submit, "Save", class: 'btn btn-primary'
 
-javascript:
-  $('#user_time_zone').set_timezone({'mappings':#{ActiveSupport::TimeZone::MAPPING.invert.to_json.html_safe}});
+  javascript:
+    $('#user_time_zone').set_timezone({'mappings':#{ActiveSupport::TimeZone::MAPPING.invert.to_json.html_safe}});
 
-coffee:
-  $('#user_country').change () ->
-    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
-      states = $('#user_state')
-      val = states.val()
-      states.html('<option></option>')
-      if response.states
-        for state in response.states
-          option = $('<option>').val(state.id).html(state.name)
-          if val is state.id
-            option.attr('selected', 'selected')
-          states.append(option)
-  $('#user_country').change();
+  coffee:
+    $('#user_country').change () ->
+      $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+        states = $('#user_state')
+        val = states.val()
+        states.html('<option></option>')
+        if response.states
+          for state in response.states
+            option = $('<option>').val(state.id).html(state.name)
+            if val is state.id
+              option.attr('selected', 'selected')
+            states.append(option)
+    $('#user_country').change();
 
