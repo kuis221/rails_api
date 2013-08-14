@@ -23,7 +23,7 @@
             = field.kpi.description if field.kpi_id
             div.percentage-progress-bar id="progress-bar-field-#{field.id}"
               label 0%
-    - elsif ['expenses'].include?(current_module)
+    - elsif ['expenses', 'surveys'].include?(current_module)
       = render partial: current_module, locals: {f: f}
     - elsif ['photos', 'videos', 'comments'].include?(field.field_type)
       = render partial: field.field_type, locals: {f: f}

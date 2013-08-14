@@ -117,6 +117,13 @@ Brandscopic::Application.routes.draw do
       end
     end
 
+    resources :surveys, only: [:create, :new, :edit, :update] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+
     resources :documents
     resources :photos, only: :create
     resources :comments, only: [:create, :index]

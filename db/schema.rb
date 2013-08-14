@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130808222619) do
+ActiveRecord::Schema.define(:version => 20130814163147) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -406,6 +406,27 @@ ActiveRecord::Schema.define(:version => 20130808222619) do
     t.integer  "company_id"
     t.boolean  "active",      :default => true
     t.text     "description"
+  end
+
+  create_table "surveys", :force => true do |t|
+    t.integer  "event_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.boolean  "active",        :default => true
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "surveys", ["event_id"], :name => "index_surveys_on_event_id"
+
+  create_table "surveys_answers", :force => true do |t|
+    t.integer  "survey_id"
+    t.integer  "kpi_id"
+    t.integer  "question_id"
+    t.integer  "brand_id"
+    t.text     "answer"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "tasks", :force => true do |t|

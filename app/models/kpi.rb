@@ -106,6 +106,10 @@ class Kpi < ActiveRecord::Base
     def photos
       @photos ||= where(company_id: nil).find_by_name_and_module('Photos', 'photos')
     end
+
+    def surveys
+      @photos ||= where(company_id: nil).find_by_name_and_module('Surveys', 'surveys')
+    end
   end
 
 end
