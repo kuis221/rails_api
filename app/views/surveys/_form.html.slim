@@ -60,7 +60,7 @@
             th 5 - Very Likely
         tbody
           - resource.brands.each do |brand|
-            = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
               tr
                 td
                   = brand.name
@@ -91,7 +91,7 @@
             th 10 - Very Likely
         tbody
           - resource.brands.each do |brand|
-            = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
               tr
                 td
                   = brand.name
