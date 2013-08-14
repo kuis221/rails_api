@@ -1,6 +1,7 @@
 class EventDataController < FilteredController
 
   defaults :resource_class => Event
+  respond_to :xlsx, only: :index
 
   helper_method :data_totals
 

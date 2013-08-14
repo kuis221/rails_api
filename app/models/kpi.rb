@@ -76,31 +76,35 @@ class Kpi < ActiveRecord::Base
 
   class << self
     def impressions
-      where(company_id: nil).find_by_name_and_module('Impressions', 'consumer_reach')
+      @impressions ||= where(company_id: nil).find_by_name_and_module('Impressions', 'consumer_reach')
     end
 
     def interactions
-      where(company_id: nil).find_by_name_and_module('Interactions', 'consumer_reach')
+      @interactions ||= where(company_id: nil).find_by_name_and_module('Interactions', 'consumer_reach')
     end
 
     def samples
-      where(company_id: nil).find_by_name_and_module('Samples', 'consumer_reach')
+      @samples ||= where(company_id: nil).find_by_name_and_module('Samples', 'consumer_reach')
     end
 
     def cost
-      where(company_id: nil).find_by_name_and_module('Cost', 'expenses')
+      @cost ||= where(company_id: nil).find_by_name_and_module('Cost', 'expenses')
     end
 
     def gender
-      where(company_id: nil).find_by_name_and_module('Gender', 'demographics')
+      @gender ||= where(company_id: nil).find_by_name_and_module('Gender', 'demographics')
     end
 
     def age
-      where(company_id: nil).find_by_name_and_module('Age', 'demographics')
+      @age ||= where(company_id: nil).find_by_name_and_module('Age', 'demographics')
     end
 
     def ethnicity
-      where(company_id: nil).find_by_name_and_module('Ethnicity/Race', 'demographics')
+      @ethnicity ||= where(company_id: nil).find_by_name_and_module('Ethnicity/Race', 'demographics')
+    end
+
+    def photos
+      @photos ||= where(company_id: nil).find_by_name_and_module('Photos', 'photos')
     end
   end
 

@@ -26,7 +26,9 @@ class EventsController < FilteredController
   end
 
   def save_results
-    update!
+    update! do |success, failure|
+      failure.js { raise resource.errors.inspect }
+    end
   end
 
   protected

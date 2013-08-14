@@ -36,9 +36,9 @@ jQuery ->
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label")
 				if label.length > 0
-					error.insertAfter label 
+					error.insertAfter label
 				else
-					error.insertAfter element 
+					error.insertAfter element
 
 			success: (element) ->
 				element
@@ -139,8 +139,8 @@ jQuery ->
 		).trigger('scroll')
 
 	$('.totop a').click (e) ->
-	  e.preventDefault()
-	  $('body,html').animate {scrollTop: 0}, 500
+		e.preventDefault()
+		$('body,html').animate {scrollTop: 0}, 500
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return this.optional(element) || /[A-Z]/.test(value);
@@ -215,6 +215,51 @@ jQuery ->
 		google.maps.event.addListener marker, 'click',  ->
 			theInfowindow.open(map, this)
 
+	pfx = ["webkit", "moz", "ms", "o", ""]
+
+	checkFullscreenSupport = ->
+		# check for native support
+		supported = false
+		unless typeof document.cancelFullScreen is "undefined"
+			supported = true
+		else
+			# check for fullscreen support by vendor prefix
+			p = 0
+			while p < pfx.length
+				fullScreenApi.prefix = pfx[p]
+				unless typeof document[fullScreenApi.prefix + "CancelFullScreen"] is "undefined"
+					supported = true
+					break
+				p++
+		supported
+
+	runPrefixMethod = (obj, method) ->
+		p = 0
+		m = undefined
+		t = undefined
+		while p < pfx.length and not obj[m]
+			m = method
+			m = m.substr(0, 1).toLowerCase() + m.substr(1)  if pfx[p] is ""
+			m = pfx[p] + m
+			t = typeof obj[m]
+			unless t is "undefined"
+				pfx = [pfx[p]]
+				return ((if t is "function" then obj[m]() else obj[m]))
+			p++
+
+	goFullscreen = (id) ->
+		if (checkFullscreenSupport)
+			e = document.getElementById(id)
+			if runPrefixMethod(document, "FullScreen") or runPrefixMethod(document, "IsFullScreen")
+				runPrefixMethod document, "CancelFullScreen"
+			else
+				runPrefixMethod e, "RequestFullScreen"
+		else
+			bootbox.alert("Your browser don't support fullcreen mode")
+
+	$(document).delegate '.fullscreen-link', 'click', ->
+		goFullscreen $(this).data("fullscreen-element")
+		false
 
 # Hack to use bootsbox confirm dialog
 $.rails.allowAction = (element) ->

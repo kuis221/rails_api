@@ -40,7 +40,8 @@ class Event < ActiveRecord::Base
 
   attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes
 
-  accepts_nested_attributes_for :results, :comments
+  accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
 
   scoped_to_company
 
@@ -68,7 +69,7 @@ class Event < ActiveRecord::Base
   after_validation :delegate_errors
 
   before_save :set_promo_hours, :check_results_changed
-  after_save :reindex_associated, :save_event_data
+  after_save :reindex_associated
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
@@ -155,17 +156,45 @@ class Event < ActiveRecord::Base
 
   def segments_results_for(field)
     if field.kpi.present?
-      field.kpi.kpis_segments.map do |segment|
+      fs = field.kpi.kpis_segments.map do |segment|
         result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id})
         result.form_field = field
         result.kpis_segment = segment
         result
       end
+      fs
     end
   end
 
   def locations_for_index
     Place.locations_for_index(place)
+  end
+
+  def kpi_goals
+    unless @goals
+      @goals = {}
+      Goal.scoped_by_campaign_id(campaign_id).each do |goal|
+        if goal.kpis_segment_id.present?
+          @goals[goal.kpi_id] ||= {}
+          @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value
+        else
+          @goals[goal.kpi_id] = goal.value
+        end
+      end
+    end
+    @goals
+  end
+
+  def demographics_graph_data
+    unless @demographics_graph_data
+      @demographics_graph_data = {}
+      [:age, :gender, :ethnicity].each do |kpi|
+        scoped_results = results.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
+        segments = Kpi.send(kpi).kpis_segments
+        @demographics_graph_data[kpi] = Hash[segments.map{|s| [s.text, scoped_results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+      end
+    end
+    @demographics_graph_data
   end
 
   class << self
@@ -327,13 +356,12 @@ class Event < ActiveRecord::Base
     end
 
     def reindex_associated
+      save_event_data
       if place_id_changed?
         reindex_photos
         Sunspot.index(place)
         Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was).delay.compute_stats if place_id_was.present?
       end
-      venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-      venue.delay.compute_stats
     end
 
     def reindex_photos
@@ -343,6 +371,7 @@ class Event < ActiveRecord::Base
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
+      true
     end
 
 end

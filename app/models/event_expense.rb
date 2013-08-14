@@ -24,4 +24,11 @@ class EventExpense < ActiveRecord::Base
 
   validates :event_id, presence: true, numericality: true
   validates :name, presence: true
+
+  after_save :update_event_data
+
+  private
+     def update_event_data
+        event.event_data.delay.update_data if event.event_data.present?
+     end
 end

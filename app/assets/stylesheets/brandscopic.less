@@ -1492,12 +1492,6 @@ body.events.index {
 }
 
 body.events.show {
-	#map-canvas {
-        margin: 0;
-        padding: 0;
-        height: 300px;
-  }
-
 	.team-member, .document {
 		width: 300px;
 		padding: 5px 0;
@@ -1512,6 +1506,31 @@ body.events.show {
 				display: block;
 			}
 		}
+	}
+
+	ul.consumer-reach-metrics {
+		li {
+			list-style: none;
+			height: 30px;
+			text-transform: uppercase;
+			.metric {
+				float: left;
+				width: 150px;
+				margin-right: 5px;
+				text-align: right;
+			}
+			.progress {
+				margin-right: 10px;
+			}
+		}
+	}
+
+	#age-graph {
+		height: 300px;
+	}
+
+	#ethnicity-graph {
+		height: 350px;
 	}
 
 	address {
@@ -1790,60 +1809,6 @@ body.events.show {
 	  color: @user_menu;
 	}
 
-	.span6{
-		.female{
-			color: @venues_blue;
-			display: inline-block;
-			margin: 0 0 30px 60px;
-			.gender{
-				font-size: 20px;
-			}
-			.percent{
-				font-size: 40px;
-				padding-bottom: 15px;
-			}
-			&:before{
-				bottom:-23px;
-				content: "\e01b" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 90px;
-				padding-bottom:5px;
-			  	position: relative;
-			  	right: 60px;
-				speak: none;
-				text-align: center;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;					
-			}
-		}
-		.male{
-			color: @venues_blue;
-			display: inline-block;
-			margin: 0 0 30px 80px;
-			.gender{
-				font-size: 20px;
-			}
-			.percent{
-				font-size: 40px;
-				padding-bottom: 15px;
-			}
-			&:before{
-				bottom: -23px;
-				content: "\e01a" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 90px;
-				padding-bottom:5px;
-			  	position: relative;
-			  	right: 50px;
-				speak: none;
-				text-align: center;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;	
-			}
-		}
-	}
 
 	&.show {
 		.add-area-venue {
@@ -2041,17 +2006,223 @@ body.events.show {
 
 .event_data {
 	&.index {
-		.event-data-totals {
-			span {
+		//For Firefox
+		#main:-moz-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
+		//For Chrome
+		#main:-webkit-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
+		//For Opera
+		#main:-0-full-screen {
+			width: 100%;
+			margin: 0px;
+			.xlsx-download-link {
+				display: none;
+			}
+		}
+
+		#list-tools {
+			display: none;
+			.xlsx-download-link, .fullscreen-link {
+				font-size: 30px;
+				margin: 0px 3px;
+				text-decoration: none;
+			}
+		}
+
+		.link-list {
+			overflow: hidden;
+		}
+		.collection-list-horizontal-scroll {
+			height: 60px;
+			position: relative;
+		}
+		#columns-scoller-arrows {
+			width: 100%;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			font-size: 40px;
+			.left-arrow {
+				margin-left: 485px;
+				float: left;
+			}
+
+			.right-arrow {
+				float: right;
+			}
+
+			a:hover {
+				text-decoration: none;
+				cursor: pointer;
+			}
+		}
+
+		#event-data-totals {
+			height: 60px;
+			width: 98%;
+			overflow: hidden;
+			.results-box-container {
+				margin-left: 500px;
+			}
+			.events-box {
+				width: 60px;
+				float: left;
+				text-align: center;
+			}
+		}
+
+		.event-data-row {
+			width: 98%;
+			overflow: hidden;
+		}
+
+		#columns-scoller-arrows .left-arrow { visibility: hidden; }
+		.scroll-1 { #columns-scoller-arrows .left-arrow { visibility: visible; } }
+		.scroll-last { #columns-scoller-arrows .right-arrow { visibility: hidden;} }
+		.scroll-1 { .results-box-container .event-data-column:nth-child(1) { display: none;} }
+		.scroll-2 { .results-box-container .event-data-column:nth-child(2) { display: none;} }
+		.scroll-3 { .results-box-container .event-data-column:nth-child(3) { display: none;} }
+		.scroll-4 { .results-box-container .event-data-column:nth-child(4) { display: none;} }
+		.scroll-5 { .results-box-container .event-data-column:nth-child(5) { display: none;} }
+		.scroll-6 { .results-box-container .event-data-column:nth-child(6) { display: none;} }
+		.scroll-7 { .results-box-container .event-data-column:nth-child(7) { display: none;} }
+		.scroll-8 { .results-box-container .event-data-column:nth-child(8) { display: none;} }
+		.scroll-9 { .results-box-container .event-data-column:nth-child(9) { display: none;} }
+		.scroll-10 { .results-box-container .event-data-column:nth-child(10) { display: none;} }
+		.scroll-11 { .results-box-container .event-data-column:nth-child(11) { display: none;} }
+
+		.results-box-container {
+			width: 1500px;
+
+			.event-data-column {
 				display: inline-block;
 				vertical-align: top;
-			}
-			.event-data-column, .event-data-totals-column {
+				height: 60px;
+				float: left;
 				margin-right: 3px;
+				text-align: center;
 				&.center-aligned {
 					text-align: center;
 				}
 			}
+
+			.promo-hours-box {
+				width: 100px;
+			}
+			.impressions-box {
+				width: 90px;
+			}
+			.interactions-box {
+				width: 100px;
+			}
+			.samples-box {
+				width: 70px;
+			}
+			.cost-box {
+				width: 80px;
+			}
+			.gender-female-box {
+				width: 70px;
+			}
+			.gender-male-box {
+				width: 70px;
+			}
+			.ethnicity-asian-box {
+				width: 70px;
+			}
+			.ethnicity-black-box {
+				width: 70px;
+			}
+			.ethnicity-hispanic-box {
+				width: 70px;
+				margin-left: 0;
+			}
+			.ethnicity-native-american-box {
+				width: 70px;
+			}
+			.ethnicity-hispanic-box {
+				width: 70px;
+			}
+			.ethnicity-white-box {
+				width: 70px;
+			}
+		}
+
+		.event-data-row {
+			.event-info {
+				float: left;
+			}
+		}
+
+	}
+}
+
+#gender-graph{
+	.female{
+		color: @venues_blue;
+		display: inline-block;
+		margin: 0 0 30px 60px;
+		.gender{
+			font-size: 20px;
+		}
+		.percent{
+			font-size: 40px;
+			padding-bottom: 15px;
+		}
+		&:before{
+			bottom:-23px;
+			content: "\e01b" !important;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 90px;
+			padding-bottom:5px;
+			position: relative;
+			right: 60px;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+	.male{
+		color: @venues_blue;
+		display: inline-block;
+		margin: 0 0 30px 80px;
+		.gender{
+			font-size: 20px;
+		}
+		.percent{
+			font-size: 40px;
+			padding-bottom: 15px;
+		}
+		&:before{
+			bottom: -23px;
+			content: "\e01a" !important;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 90px;
+			padding-bottom:5px;
+			position: relative;
+			right: 50px;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
 		}
 	}
 }

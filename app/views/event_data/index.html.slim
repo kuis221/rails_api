@@ -4,10 +4,20 @@
   #collection-list-filters
   a.btn.btn-primary Save
 
-.main
+#main.main
   .tab-content
     #list-view.tab-pane.active
+      #list-tools.row-fluid
+        .pull-right
+          =link_to '', '#', class: 'icon-fullscreen fullscreen-link', 'data-fullscreen-element' => 'main'
+          =link_to '', event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
       .collection-list-horizontal-scroll
+        #columns-scoller-arrows.hide
+          .left-arrow
+            a.icon-angle-left
+          .right-arrow
+            a.icon-angle-right
+        #event-data-totals
       .link-list
         ul#event-data-list
           li.placeholder
@@ -31,7 +41,48 @@ javascript:
     },
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="totals-results"]').length > 0){
-        $('.collection-list-horizontal-scroll').html(response.find('div[data-content="totals-results"]'))
+        $('#columns-scoller-arrows').removeClass('hide')
+        $('#event-data-totals').html(response.find('div[data-content="totals-results"]').html())
+      }
+    },
+    'onItemsChange': function(response, page){
+      if ($('#event-data-list li').length > 0) {
+        $('#list-tools').show()
+      } else {
+        $('#list-tools').hide()
+        $('#event-data-list').append("<li class='placeholder'>No results. Select other filters to see results</li>");
       }
     }
   });
+
+  $('#columns-scoller-arrows .right-arrow').on('click', function(){
+    var $lastItem = $('.results-box-container>span:last-child:first');
+    if (($lastItem.offset().left + $lastItem.width()) > $(this).offset().left ) {
+      scroll = $('#list-view').data('scroll');
+      if (typeof scroll == 'undefined'){
+        scroll = 1;
+      }
+      $('#list-view').addClass('scroll-'+scroll).data('scroll', scroll + 1);
+    }
+    if (($lastItem.offset().left + $lastItem.width()) <= $(this).offset().left ) {
+      $('#list-view').addClass('scroll-last');
+    }
+  });
+
+  $('#columns-scoller-arrows .left-arrow').on('click', function(){
+    scroll = $('#list-view').data('scroll');
+    $('#list-view').removeClass('scroll-last')
+    if (scroll && scroll > 0){
+      scroll = scroll-1;
+      $('#list-view').removeClass('scroll-'+scroll).data('scroll', Math.max(scroll,1));
+    }
+  });
+
+  $(window).bind('resize',function(){
+    var $lastItem = $('.results-box-container>span:last-child:first');
+    if (($lastItem.offset().left + $lastItem.width()) <= $('#columns-scoller-arrows .right-arrow').offset().left ) {
+       $('#list-view').addClass('scroll-last');
+    } else {
+      $('#list-view').removeClass('scroll-last');
+    }
+  })

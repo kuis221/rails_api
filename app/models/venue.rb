@@ -80,11 +80,11 @@ class Venue < ActiveRecord::Base
     self.events = Event.where(company_id: company_id, place_id: place_id).count
     self.promo_hours = Event.where(company_id: company_id).total_promo_hours_for_places(place_id)
 
-    results = EventResult.scoped_by_place_id_and_company_id(place_id, company_id)
-    self.impressions = results.impressions.sum(:scalar_value).round
-    self.interactions = results.consumers_interactions.sum(:scalar_value).round
-    self.sampled = results.consumers_sampled.sum(:scalar_value).round
-    self.spent = results.spent.sum(:scalar_value).round
+    results = EventData.scoped_by_place_id_and_company_id(place_id, company_id)
+    self.impressions = results.sum(:impressions).round
+    self.interactions = results.sum(:interactions).round
+    self.sampled = results.sum(:samples).round
+    self.spent = results.sum(:cost).round
 
     self.avg_impressions = 0
     self.avg_impressions_hour = 0
@@ -188,7 +188,7 @@ class Venue < ActiveRecord::Base
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
         elsif params[param].present? && params[param][:min].present?
-          with(param.to_sym).greater_than(params[param][:min])
+          with(param.to_sym).greater_than_or_equal_to(params[param][:min])
         end
       end
 
