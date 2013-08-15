@@ -1,0 +1,115 @@
+= simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
+  = f.error_notification
+
+  .form-inputs
+    fieldset
+      legend Competitive Awareness & Usage
+
+      p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
+
+      table.table
+        thead
+          tr
+            th
+            th Purchased
+            th Aware
+            th Unaware
+        tbody
+          - resource.brands.each do |brand|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+              tr
+                td
+                  = brand.name
+                  = qf.hidden_field :brand_id
+                  = qf.hidden_field :question_id
+
+                td= qf.radio_button :answer, 'purchased'
+                td= qf.radio_button :answer, 'aware'
+                td= qf.radio_button :answer, 'unaware'
+
+
+      p For each brand that you have used, approximately how much do you spend each month?
+
+      table
+        tbody
+          - resource.brands.each do |brand|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
+              tr
+                td
+                  = brand.name
+                  = qf.hidden_field :brand_id
+                  = qf.hidden_field :question_id
+
+                td
+                  | $
+                  = qf.text_field :answer
+
+    fieldset
+      legend Conversion Liklihood
+
+      p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
+
+      table.table
+        thead
+          tr
+            th
+            th 1 - Very Unlikely
+            th 2
+            th 3
+            th 4
+            th 5 - Very Likely
+        tbody
+          - resource.brands.each do |brand|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+              tr
+                td
+                  = brand.name
+                  = qf.hidden_field :brand_id
+                  = qf.hidden_field :question_id
+
+                td= qf.radio_button :answer, '1'
+                td= qf.radio_button :answer, '2'
+                td= qf.radio_button :answer, '3'
+                td= qf.radio_button :answer, '4'
+                td= qf.radio_button :answer, '5'
+
+
+      p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
+
+      table.table
+        thead
+          tr
+            th
+            th 1 - Very Unlikely
+            th 2
+            th 3
+            th 4
+            th 6
+            th 7
+            th 8
+            th 9
+            th 10 - Very Likely
+        tbody
+          - resource.brands.each do |brand|
+            = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+              tr
+                td
+                  = brand.name
+                  = qf.hidden_field :brand_id
+                  = qf.hidden_field :question_id
+
+                td= qf.radio_button :answer, '1'
+                td= qf.radio_button :answer, '2'
+                td= qf.radio_button :answer, '3'
+                td= qf.radio_button :answer, '4'
+                td= qf.radio_button :answer, '5'
+                td= qf.radio_button :answer, '6'
+                td= qf.radio_button :answer, '7'
+                td= qf.radio_button :answer, '8'
+                td= qf.radio_button :answer, '9'
+                td= qf.radio_button :answer, '10'
+
+  .form-actions
+    = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

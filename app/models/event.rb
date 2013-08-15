@@ -32,14 +32,16 @@ class Event < ActiveRecord::Base
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference
+  has_many :surveys,  inverse_of: :event
+
 
   # Events-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes, :surveys_comments
 
+  accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
 
@@ -48,7 +50,6 @@ class Event < ActiveRecord::Base
   attr_accessor :place_reference
 
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
-  scope :with_text, lambda{|text| where('epj.name ilike ? or ecj.name ilike ?', "%#{text}%", "%#{text}%").joins('LEFT JOIN "campaigns" "ecj" ON "ecj"."id" = "events"."campaign_id" LEFT JOIN "places" "epj" ON "epj"."id" = "events"."place_id"') }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
 
   track_who_does_it

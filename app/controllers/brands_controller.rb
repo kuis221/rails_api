@@ -4,7 +4,6 @@ class BrandsController < FilteredController
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
 
-  has_scope :with_text
   has_scope :not_in_portfolio
 
   def create

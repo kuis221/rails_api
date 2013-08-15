@@ -26,6 +26,9 @@ jQuery ->
 		true
 
 	validateForm = (e) ->
+		if e.target.tagName is 'A'
+			return true
+
 		$(this).validate {
 			errorClass: 'help-inline',
 			errorElement: 'span',

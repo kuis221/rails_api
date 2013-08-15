@@ -5,7 +5,7 @@
 #  id                :integer          not null, primary key
 #  event_id          :integer
 #  name              :string(255)
-#  amount            :decimal(6, 2)    default(0.0)
+#  amount            :decimal(9, 2)    default(0.0)
 #  file_file_name    :string(255)
 #  file_content_type :string(255)
 #  file_file_size    :integer

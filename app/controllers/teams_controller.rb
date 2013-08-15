@@ -7,8 +7,6 @@ class TeamsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  has_scope :with_text
-
   def autocomplete
     buckets = autocomplete_buckets({
       teams: [Team],

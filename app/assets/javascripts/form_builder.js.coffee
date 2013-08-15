@@ -181,7 +181,9 @@ window.FormBuilder = {
 
 
 	renderModules: (container) ->
-		@modules = {comments: $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})}
+		commentsModule = $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})
+		@modules = {comments: commentsModule}
+		commmentsField = false
 
 		# Build the modules list
 		for kpi in @kpis
@@ -192,12 +194,18 @@ window.FormBuilder = {
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 						@modulesList.append module.render().data('field', module)
 					@modules[kpi.module].addField @buildField(field_options)
+
+					if kpi.module == 'comments'
+						commmentsField = true
 				else
 					# @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
 					@customKpisList.append @buildField(field_options)
-				
 
-		@modulesList.append @modules['comments'].render().data('field', module)
+		@modulesList.append commentsModule.render().data('field', commentsModule)
+
+		if not commmentsField
+			commentsModule.addField @buildField({type: 'Comments'})
+
 
 		@modulesList.sortable({
 			connectWith: "#form-wrapper",
@@ -221,7 +229,10 @@ window.FormBuilder = {
 		@formWrapper.find('.selected').removeClass('selected')
 		field.addClass('selected')
 		$('#form-field-tabs a[href="#attributes"]').tab('show')
-		$('#field-attributes-form').html(field.data('field').attributesForm())
+		$field = field.data('field')
+		$('#field-attributes-form').html $field .attributesForm()
+		if typeof $field.onAttributesShow != 'undefined'
+			$field.onAttributesShow $('#field-attributes-form')
 
 }
 
@@ -721,3 +732,85 @@ window.FormBuilder.CommentsField = (options) ->
 		{id: @options.id, name: @options.name, field_type: 'comments', kpi_id: @options.kpi_id, options: {}}
 
 	@field
+
+window.FormBuilder.ExpensesField = (options) ->
+	@options = $.extend({
+		name: 'Expenses'
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="ExpensesField">').append [
+		$('<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Amount</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>Name</th>
+					<th>Amount</th>
+					<th></th>
+				</tr>
+			</tbody>
+			</table>
+			')
+	]
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Field Label'),
+				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.name = input.val()
+						@field.find('.control-label').text @options.name
+			]
+		]
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'photos', kpi_id: @options.kpi_id, options: {}}
+
+	@field
+
+window.FormBuilder.SurveysField = (options) ->
+	@options = $.extend({
+		name: 'Surveys',
+		options: {brands: []}
+	}, options)
+
+	@field =  $('<div class="field control-group" data-class="SurveysField">').append [
+		$('<button class="btn btn-primary">New Survey</button>'),
+		$('<p>Survey preview goes here</p>')
+	]
+
+	@field.data('field', @)
+
+	@attributesForm = () ->
+		[
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Brands'),
+				$('<div class="controls">').append $('<input type="text" name="brands">').val(@options.options.brands).on "change", (e) =>
+					input = $(e.target)
+					@options.options.brands = input.select2("val")
+			]
+		]
+
+	@onAttributesShow = (form) ->
+		$.get '/brands.json', (response) ->
+			tags = []
+			for result in response
+				tags.push {id: result.id, text: result.name }
+			form.find('input[name=brands]').select2({
+				maximumSelectionSize: 5,
+				tags: tags
+			})
+
+	@getSaveAttributes = () ->
+		{id: @options.id, name: @options.name, field_type: 'surveys', kpi_id: @options.kpi_id, options: {brands: @options.options.brands}}
+
+	@field
+

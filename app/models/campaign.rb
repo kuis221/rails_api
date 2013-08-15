@@ -56,8 +56,6 @@ class Campaign < ActiveRecord::Base
 
   accepts_nested_attributes_for :form_fields
 
-  scope :with_text, lambda{|text| where('campaigns.name ilike ? or campaigns.description ilike ? ', "%#{text}%", "%#{text}%") }
-
   aasm do
     state :inactive, :initial => true
     state :active
