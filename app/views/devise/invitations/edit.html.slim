@@ -7,7 +7,7 @@
     = devise_error_messages!
     = f.hidden_field :invitation_token
 
-    div.form-inputs
+    div.form-inputs.chzn-container
       = f.input :accepting_invitation, :value => true, :as => :hidden
       .row-fluid
         .span6
@@ -20,7 +20,7 @@
         .span6
           = f.input :city, required: true
         .span6
-          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'chosen-enabled chzn-done'}
       .row-fluid
         .span6
           = f.input :country, priority: ['United States'], required: true
