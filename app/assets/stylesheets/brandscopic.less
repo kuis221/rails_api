@@ -1862,11 +1862,19 @@ body.events.show {
 			text-transform: uppercase;
 			span {
 				font-weight: bold;
-				font-size: 15px;
+				font-size: 16px;
 				color: #3E9CCF;
 			}
+			.live-stats-2{
+				float: right;
+				margin: 20px 0 50px 0;
+				position: relative;
+			}
 			.sparkline {
-				margin-left: 5px;
+				margin: 0 3px 0 5px;
+				canvas{
+					margin-top: 1px;
+				}
 			}
 		}
 
@@ -1885,6 +1893,7 @@ body.events.show {
 
 		#overall-ethnicity-graph {
 			height: 350px;
+			margin: 65px 60px 0 0;
 		}
 	}
 
@@ -2199,7 +2208,7 @@ body.events.show {
 	.female{
 		color: @venues_blue;
 		display: inline-block;
-		margin: 0 0 30px 60px;
+		margin: 0 0 25px 60px;
 		.gender{
 			font-size: 20px;
 		}
@@ -2225,7 +2234,7 @@ body.events.show {
 	.male{
 		color: @venues_blue;
 		display: inline-block;
-		margin: 0 0 30px 80px;
+		margin: 0 0 25px 80px;
 		.gender{
 			font-size: 20px;
 		}
