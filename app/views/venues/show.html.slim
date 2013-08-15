@@ -97,7 +97,7 @@
     ul.thumbnails#photos-list
       - resource.photos.each do |photo|
         - if photo.is_a?(AttachedAsset)
-          = render partial: 'photos/photo', locals: {photo: photo}
+          = render partial: 'results/photos/photo', locals: {photo: photo}
         - else
           li.span2.google-image
             div.thumbnail-container.thumbnail
