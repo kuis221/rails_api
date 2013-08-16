@@ -21,7 +21,9 @@ Brandscopic::Application.routes.draw do
     resources :event_data, only: [:index] do
       get :items, on: :collection
     end
-    resources :comments, only: [:index]
+    resources :comments, only: [:index] do
+      get :items, on: :collection
+    end
     resources :photos, only: [:index] do
       get :items, on: :collection
       get :autocomplete, on: :collection

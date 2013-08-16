@@ -1561,6 +1561,14 @@ body.events.show {
 	}
 }
 
+.resource-form-modal {
+	position: absolute;
+
+	.modal-body {
+		max-height: none !important;
+	}
+}
+
 //Photos
 .photo-list{
 	.thumbnail-container {
@@ -2040,7 +2048,7 @@ body.events.show {
 
 // EVENT DATA
 
-.event_data {
+.event_data, .comments {
 	&.index {
 		//For Firefox
 		#main:-moz-full-screen {
