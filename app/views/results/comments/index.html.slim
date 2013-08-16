@@ -31,6 +31,9 @@ javascript:
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },
+    'onItemsLoad': function(response, page){
+      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
+    },
     'onItemsChange': function(response, page){
       if ($('#comment-list li').length > 0) {
         $('#list-tools').show()
