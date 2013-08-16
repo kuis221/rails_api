@@ -24,7 +24,7 @@ class Ability
         can :manage, Area, :company_id => user.current_company.id
         can :manage, Event, :company_id => user.current_company.id
         can [:new, :create], Survey
-        can [:edit, :update], Survey do |survey|
+        can [:edit, :update, :activate, :deactivate], Survey do |survey|
           can :edit, survey.event
         end
         can :manage, EventData, :event => {:company_id => user.current_company.id}

@@ -3,6 +3,17 @@
 
   .form-inputs
     fieldset
+      legend Demographics
+      - Kpi.where('module' => 'demographics' ).each do |kpi|
+        .demograpics-module
+          = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
+            = qf.hidden_field :kpi_id
+            = qf.hidden_field :question_id
+            = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio, label: kpi.name
+
+
+
+    fieldset
       legend Competitive Awareness & Usage
 
       p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
