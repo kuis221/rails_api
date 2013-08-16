@@ -20,13 +20,13 @@
         .span6
           = f.input :city, required: true
         .span6
-          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'chosen-enabled chzn-done'}
+          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input -xlarge chosen-enabled'}
       .row-fluid
         .span6
-          = f.input :country, priority: ['United States'], required: true
+          = f.input :country, priority: ['United States'], required: true, input_html: {class: 'chosen-enabled'}
       .row-fluid
         .span6
-          = f.input :time_zone, required: true
+          = f.input :time_zone, required: true, input_html: {class: 'chosen-enabled'}
       .row-fluid
         = f.input :password, :label => "New Password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Password must contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
       .row-fluid
