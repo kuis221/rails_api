@@ -14,6 +14,12 @@
 
 class SurveysAnswer < ActiveRecord::Base
   belongs_to :survey
+  belongs_to :kpi
 
-  attr_accessible :answer, :brand_id, :question_id
+  attr_accessible :answer, :brand_id, :question_id, :kpi_id
+
+
+  def segment
+    kpi.kpis_segments.find(answer) unless answer.nil?
+  end
 end
