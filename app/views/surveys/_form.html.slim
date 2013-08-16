@@ -1,142 +1,147 @@
-= simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
-  = f.error_notification
+#survey-form
+  = simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
+    = f.error_notification
 
-  .form-inputs
-    fieldset
-      legend Demographics
-      - Kpi.where('module' => 'demographics' ).each do |kpi|
-        .demograpics-module
-          = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
-            = qf.hidden_field :kpi_id
-            = qf.hidden_field :question_id
-            = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio, label: kpi.name
+    .form-inputs
+      fieldset
+        legend Demographics
+        - Kpi.where('module' => 'demographics' ).each do |kpi|
+          .demograpics-module
+            = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
+              = qf.hidden_field :kpi_id
+              = qf.hidden_field :question_id
+              = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio, label: kpi.name, required: true 
 
 
 
-    fieldset
-      legend Competitive Awareness & Usage
+      fieldset
+        legend Competitive Awareness & Usage
 
-      p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
+        p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
 
-      table#purchased-brands.table
-        thead
-          tr
-            th
-            th Purchased
-            th Aware
-            th Unaware
-        tbody
+        ul
+          li
+            .row-fluid
+              .span2.offset6 Purchased
+              .span2 Aware
+              .span2 Unaware
           - resource.brands.each do |brand|
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
-              tr id="question-1-brand-#{brand.id}"
-                td
-                  = brand.name
+              .row-fluid.control-group id="question-1-brand-#{brand.id}"
+                .span6
+                  label.control-label= brand.name
                   = qf.hidden_field :brand_id
                   = qf.hidden_field :question_id
 
-                td= qf.radio_button :answer, 'purchased'
-                td= qf.radio_button :answer, 'aware'
-                td= qf.radio_button :answer, 'unaware'
+                .span2= qf.radio_button :answer, 'purchased', class: 'required'
+                .span2= qf.radio_button :answer, 'aware', class: 'required'
+                .span2= qf.radio_button :answer, 'unaware', class: 'required'
 
 
-      p For each brand that you have used, approximately how much do you spend each month?
+        p For each brand that you have used, approximately how much do you spend each month?
 
-      table#spend-brands
-        tbody
+        ul
           - resource.brands.each do |brand|
-            = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
-              tr id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
-                td
-                  = brand.name
-                  = qf.hidden_field :brand_id
-                  = qf.hidden_field :question_id
+            li
+              = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
+                .row-fluid.control-group id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
+                  .span4
+                    label.control-label= brand.name
+                    = qf.hidden_field :brand_id
+                    = qf.hidden_field :question_id
 
-                td
-                  | $
-                  = qf.text_field :answer
+                  .span3
+                    | $
+                    = qf.text_field :answer, class: 'required'
 
-    fieldset
-      legend Conversion Liklihood
+      fieldset
+        legend Conversion Liklihood
 
-      p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
+        p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
 
-      table.table
-        thead
-          tr
-            th
-            th 1 - Very Unlikely
-            th 2
-            th 3
-            th 4
-            th 5 - Very Likely
-        tbody
+        ul
+          li
+            .row-fluid
+              .span5
+              .span2 1 - Very Unlikely
+              .span1 2
+              .span1 3
+              .span1 4
+              .span2 5 - Very Likely
           - resource.brands.each do |brand|
-            = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
-              tr
-                td
-                  = brand.name
-                  = qf.hidden_field :brand_id
-                  = qf.hidden_field :question_id
-                td= qf.radio_button :answer, '1'
-                td= qf.radio_button :answer, '2'
-                td= qf.radio_button :answer, '3'
-                td= qf.radio_button :answer, '4'
-                td= qf.radio_button :answer, '5'
+            li
+              = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
+                .row-fluid.control-group
+                  .span5
+                    label.control-label= brand.name
+                    = qf.hidden_field :brand_id
+                    = qf.hidden_field :question_id
+                  .span2= qf.radio_button :answer, '1', class: 'required'
+                  .span1= qf.radio_button :answer, '2', class: 'required'
+                  .span1= qf.radio_button :answer, '3', class: 'required'
+                  .span1= qf.radio_button :answer, '4', class: 'required'
+                  .span2= qf.radio_button :answer, '5', class: 'required'
 
 
-      p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
+        p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
 
-      table.table
-        thead
-          tr
-            th
-            th 1 - Very Unlikely
-            th 2
-            th 3
-            th 4
-            th 6
-            th 7
-            th 8
-            th 9
-            th 10 - Very Likely
-        tbody
-          - resource.brands.each do |brand|
-            = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
-              tr
-                td
-                  = brand.name
-                  = qf.hidden_field :brand_id
-                  = qf.hidden_field :question_id
-                td= qf.radio_button :answer, '1'
-                td= qf.radio_button :answer, '2'
-                td= qf.radio_button :answer, '3'
-                td= qf.radio_button :answer, '4'
-                td= qf.radio_button :answer, '5'
-                td= qf.radio_button :answer, '6'
-                td= qf.radio_button :answer, '7'
-                td= qf.radio_button :answer, '8'
-                td= qf.radio_button :answer, '9'
-                td= qf.radio_button :answer, '10'
+        ul
+          li
+            .row-fluid
+              .span3
+              .span9
+                .row-fluid.control-group
+                  .span2 1 - Very Unlikely
+                  .span1 2
+                  .span1 3
+                  .span1 4
+                  .span1 6
+                  .span1 7
+                  .span1 8
+                  .span1 9
+                  .span2 10 - Very Likely
+          tbody
+            - resource.brands.each do |brand|
+              = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
+                .row-fluid.control-group
+                  .span3
+                    label.control-label= brand.name
+                    = qf.hidden_field :brand_id
+                    = qf.hidden_field :question_id
+                  .span9
+                    .row-fluid
+                      .span2= qf.radio_button :answer, '1', class: 'required'
+                      .span1= qf.radio_button :answer, '2', class: 'required'
+                      .span1= qf.radio_button :answer, '3', class: 'required'
+                      .span1= qf.radio_button :answer, '4', class: 'required'
+                      .span1= qf.radio_button :answer, '5', class: 'required'
+                      .span1= qf.radio_button :answer, '6', class: 'required'
+                      .span1= qf.radio_button :answer, '7', class: 'required'
+                      .span1= qf.radio_button :answer, '8', class: 'required'
+                      .span1= qf.radio_button :answer, '9', class: 'required'
+                      .span2= qf.radio_button :answer, '10', class: 'required'
 
-  .form-actions
-    = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
-    = "&nbsp;".html_safe
-    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+    .form-actions
+      = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+      = "&nbsp;".html_safe
+      = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
-  $('tr[data-observe]').each(function(index, row){
+  $('[data-observe]').each(function(index, row){
     var $row = $(row);
     $($row.data('observe')+' input[type=radio]').change(function(){
       if ($(this).val() != $row.data('observe-value')){
-        $row.hide()
+        $row.find('input[type=text][name*=answer]').val('')
+        $row.hide().find('.required').removeClass('required')
       } else {
-        $row.show()
+        $row.show().find('input[type=text]').addClass('required')
       }
     })
     if ($($row.data('observe')+' input[type=radio]:checked').val() != $row.data('observe-value')) {
-      $row.hide();
+      $row.hide().find('.required').removeClass('required');
+      $row.find('input[type=text][name*=answer]').val('')
     } else {
-      $row.show();
+      $row.show().find('input[type=text]').addClass('required');
     }
   });
 
