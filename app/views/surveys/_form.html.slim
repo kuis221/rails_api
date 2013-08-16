@@ -18,7 +18,7 @@
 
       p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
 
-      table.table
+      table#purchased-brands.table
         thead
           tr
             th
@@ -28,7 +28,7 @@
         tbody
           - resource.brands.each do |brand|
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
-              tr
+              tr id="question-1-brand-#{brand.id}"
                 td
                   = brand.name
                   = qf.hidden_field :brand_id
@@ -41,11 +41,11 @@
 
       p For each brand that you have used, approximately how much do you spend each month?
 
-      table
+      table#spend-brands
         tbody
           - resource.brands.each do |brand|
             = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
-              tr
+              tr id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
                 td
                   = brand.name
                   = qf.hidden_field :brand_id
@@ -77,7 +77,6 @@
                   = brand.name
                   = qf.hidden_field :brand_id
                   = qf.hidden_field :question_id
-
                 td= qf.radio_button :answer, '1'
                 td= qf.radio_button :answer, '2'
                 td= qf.radio_button :answer, '3'
@@ -108,7 +107,6 @@
                   = brand.name
                   = qf.hidden_field :brand_id
                   = qf.hidden_field :question_id
-
                 td= qf.radio_button :answer, '1'
                 td= qf.radio_button :answer, '2'
                 td= qf.radio_button :answer, '3'
@@ -124,3 +122,21 @@
     = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('tr[data-observe]').each(function(index, row){
+    var $row = $(row);
+    $($row.data('observe')+' input[type=radio]').change(function(){
+      if ($(this).val() != $row.data('observe-value')){
+        $row.hide()
+      } else {
+        $row.show()
+      }
+    })
+    if ($($row.data('observe')+' input[type=radio]:checked').val() != $row.data('observe-value')) {
+      $row.hide();
+    } else {
+      $row.show();
+    }
+  });
+
