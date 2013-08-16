@@ -522,8 +522,23 @@ body.app-layout{
     border-radius: 8px;
     &.first_login{
     	width:600px;
+    	.controls{
+    		text-align: left;
+    		width: 280px;
+    	}
+    	.country{
+			.chzn-container-single .chzn-single{
+				width: 550px;
+			}
+		}
+		.email{
+			.controls{
+				width:570px;
+			}
+		}
     	input[type="text"]{
     		background-color: white !important;
+    		width: 250px;
     	}
     	input[type="email"],input[type="password"]{
     		background-color: white !important;
@@ -2713,3 +2728,5 @@ svg{
 		top: 90px;
 	}
 }
+
+
