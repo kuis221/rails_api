@@ -441,6 +441,23 @@ body.app-layout{
 		top:2px;
 		-webkit-font-smoothing: antialiased;
 	}
+	&.fullscreen{
+		margin-left: 14px;
+		&:after{
+			color: white;
+			content: "\e00b";
+			font-family: 'icons';
+			font-size: 15px;
+			padding-left: 6px;
+			padding-right: 6px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:2px;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
 	&.list:after{
 		color: white;
 		content: "\e008";
@@ -2093,7 +2110,7 @@ body.events.show {
 		}
 
 		#list-tools {
-			display: none;
+			margin-bottom: 20px;
 			.xlsx-download-link, .fullscreen-link {
 				font-size: 30px;
 				margin: 0px 3px;
@@ -2117,12 +2134,38 @@ body.events.show {
 			top: 0;
 			font-size: 40px;
 			.left-arrow {
-				margin-left: 485px;
+				margin-left: 475px;
 				float: left;
+				a.icon-angle-left:before{
+					color:@user_menu;
+					content: "\e01c";
+				  	display: inline-block;
+				  	font-family: 'icons';
+					font-size: 26px;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
 			}
 
 			.right-arrow {
 				float: right;
+				a.icon-angle-right:before{
+					color:@user_menu;
+					content: "\e01d";
+				  	display: inline-block;
+				  	font-family: 'icons';
+					font-size: 26px;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
 			}
 
 			a:hover {
@@ -2132,9 +2175,19 @@ body.events.show {
 		}
 
 		#event-data-totals {
+			font-size: 11px;
 			height: 60px;
 			width: 98%;
 			overflow: hidden;
+			.big-number{
+				font-size: 22px;
+				font-weight: 300;
+				line-height: 28px;
+			}
+			.data-label{
+				line-height: 14px;
+				margin-top: 3px;
+			}
 			.results-box-container {
 				margin-left: 500px;
 			}

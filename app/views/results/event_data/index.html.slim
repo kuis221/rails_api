@@ -9,8 +9,8 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          =link_to '', '#', class: 'icon-fullscreen fullscreen-link', 'data-fullscreen-element' => 'main'
-          =link_to '', results_event_data_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
+          a.btn.download href="#{results_event_data_path(format:"xlsx")}" title="Download"
+          a.btn.fullscreen href="#" title="Fullscreen"
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
           .left-arrow
