@@ -5,7 +5,7 @@
 .results-box-container
   span.event-data-column.promo-hours-box
     .big-number
-      = number_with_precision(data_totals['promo_hours'], precision: 2)
+      = number_with_precision(data_totals['promo_hours'], precision: 1)
     = 'PROMO HOURS'
   span.event-data-column.impressions-box
     .big-number
@@ -25,38 +25,38 @@
     = 'SPENT'
   span.event-data-column.gender-female-box
     .big-number
-      = number_to_percentage(data_totals['gender_female'], precision: 2)
+      = number_to_percentage(data_totals['gender_female'], precision: 0)
     | FEMALE
   span.event-data-column.gender-female-box
     .big-number
-      = number_to_percentage(data_totals['gender_male'], precision: 2)
+      = number_to_percentage(data_totals['gender_male'], precision: 0)
     | MALE
   span.event-data-column.ethnicity-asian-box
     .big-number
-      = number_to_percentage(data_totals['ethnicity_asian'], precision: 2)
+      = number_to_percentage(data_totals['ethnicity_asian'], precision: 0)
     | ASIAN
   span.event-data-column.ethnicity-black-box
     .big-number
-      = number_to_percentage(data_totals['ethnicity_black'], precision: 2)
+      = number_to_percentage(data_totals['ethnicity_black'], precision: 0)
     .data-label
       | AFRICAN
       br>/
       | AMERICAN
   span.event-data-column.ethnicity-hispanic-box
     .big-number
-      = number_to_percentage(data_totals['ethnicity_hispanic'], precision: 2)
+      = number_to_percentage(data_totals['ethnicity_hispanic'], precision: 0)
     .data-label
       | HISPANIC
       br>/
       | LATINO
   span.event-data-column.ethnicity-native-american-box
     .big-number
-      = number_to_percentage(data_totals['ethnicity_native_american'], precision: 2)
+      = number_to_percentage(data_totals['ethnicity_native_american'], precision: 0)
     .data-label
       | NATIVE
       br>/
       | AMERICAN
   span.event-data-column.ethnicity-white-box
     .big-number
-      = number_to_percentage(data_totals['ethnicity_white'], precision: 2)
+      = number_to_percentage(data_totals['ethnicity_white'], precision: 0)
     | WHITE
