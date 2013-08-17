@@ -1997,7 +1997,7 @@ body.events.show {
 
 // EVENT DATA
 
-.event_data, .comments {
+.event_data, .comments, .expenses {
 	&.index {
 		//For Firefox
 		#main:-moz-full-screen {
@@ -2204,6 +2204,18 @@ body.events.show {
 			}
 		}
 
+		.expense-column {
+			width: 33%;
+			margin-right: 3px;
+			&.currency {
+				text-align: right;
+				float: right;
+			}
+		}
+
+		#expenses-totals {
+			padding: 15px 0px;
+		}
 	}
 }
 

@@ -29,6 +29,9 @@ Brandscopic::Application.routes.draw do
       get :autocomplete, on: :collection
       get :filters, on: :collection
     end
+    resources :expenses, only: [:index] do
+      get :items, on: :collection
+    end
   end
 
   # This couple of routes are for tasks

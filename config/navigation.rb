@@ -42,6 +42,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data)
       secondary.item :comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments)
       secondary.item :photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos)
+      secondary.item :expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses)
     end
     primary.item :analysis, 'Analysis', '#'
   end
