@@ -982,44 +982,55 @@ li#user_menu{
   		li{
   			color: @text;
   		}
-  		&#tasks-list{
-  			li.assigned{
-  				border-left: 5px solid @assigned;
-  			}
-  			li.completed{
-  				border-left: 5px solid @completed;
-  			}
-  			li.late{
-  				border-left: 5px solid @buttons;
-  			}
-  			li.unassigned{
-  				border-left: 5px solid @unassigned;
-  			}
-  		}
     }
     ul#tasks-list{
     	li{
     		color: @text;
     		min-height:70px;
-    		span{
-    			&:first-child{
-    			margin:15px 20px 0 0;
-    			}
-    			&:last-child{
-    				margin: 0;
-    			}
-    			&.title{
-    				position: relative;
-    				margin-top: 15px;
-    				overflow: hidden;
-		    		text-overflow:ellipsis;
-		    		white-space: nowrap;
-    				width: 590px;
-    			}
-    			&.pull-right{
-    				position: relative;
-    				margin-top:12px;
-    			}
+    		span.task-list{
+    			height: 80px;
+    			width: 100%;
+    			&.assigned{
+	  				border-left: 5px solid @assigned;
+	  			}
+	  			&.completed{
+	  				border-left: 5px solid @completed;
+	  			}
+	  			&.late{
+	  				border-left: 5px solid @buttons;
+	  			}
+	  			&.unassigned{
+	  				border-left: 5px solid @unassigned;
+	  			}
+    			span{
+	    			&:first-child{
+	    			margin:20px 20px 0 0;
+	    			}
+	    			&:last-child{
+	    				margin: 0;
+	    			}
+	    			&.tasks-date{
+						margin: 30px 20px 0 40px !important;
+						width: 80px;
+					}
+					&.links{
+						float: right;
+						margin: 5px 20px 0 0;
+					}
+	    			&.title{
+	    				display: inline-block;
+	    				position: relative;
+	    				margin-top: 20px;
+	    				overflow: hidden;
+			    		text-overflow:ellipsis;
+			    		white-space: nowrap;
+	    				width: 590px;
+	    			}
+	    			&.pull-right{
+	    				position: relative;
+	    				margin-top:12px;
+	    			}
+	    		}
     		}
     	}
     }
@@ -1211,7 +1222,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
+			top:21px;
 		}
 		&:hover{
 			background-color: @grey_one;
@@ -1241,19 +1252,11 @@ li#user_menu{
 			padding-top: 8px;
 			width: 200px;
 		}
-		&.links{
-			float: right;
-			margin: 18px 20px 0 0;
-		}
 		&.pull-right{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
 	       top: 7%;
-		}
-		&.tasks-date{
-			margin: 25px 20px 0 40px !important;
-			width: 80px;
 		}
 	}
 	  &.rows-no-link{
@@ -2294,10 +2297,12 @@ table.table td.comments-container {
 .task-comments{
 	background-color: white;
 	border-top: 1px solid @borders;
-	margin-top: 14px;
 	vertical-align: top;
 	&:hover{
 		background-color: white;
+	}
+	p{
+		color:@menu;
 	}
 }
 
