@@ -1,6 +1,6 @@
 .row-fluid
   = resource_details_bar("You are viewing venue details. Click to close.", collection_path)
-  .venues_box
+  .details_box
     - unless resource.latitude.nil?
       #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
             b= resource.name
@@ -25,7 +25,7 @@
         = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
         #venue-areas.row-fluid
           = render partial: 'areas', locals: {areas: resource.place.areas}
-.venues_box
+.details_box
   - if resource.persisted? && resource.events > 0
     .venue-overall
       .row-fluid
@@ -89,10 +89,10 @@
       .span6
         #overall-ethnicity-graph
 
-.venues_box
+.details_box
   h3 TRENDS BY DAY OF WEEK
 
-.venues_box
+.details_box
   h3 GALLERY
   .venues-photo-list
     ul.thumbnails#photos-list
@@ -105,7 +105,7 @@
               a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
                 = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
-.venues_box
+.details_box
   h3 COMMENTS
   - resource.reviews.each do |review|
     .venue-review
