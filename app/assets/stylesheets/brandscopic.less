@@ -2292,11 +2292,13 @@ table.table td.comments-container {
 	background-color: #ffffff !important;
 }
 .task-comments{
-	border-top: 1px solid @brand;
+	background-color: white;
+	border-top: 1px solid @borders;
 	margin-top: 14px;
-	opacity:0.6;
-	filter:alpha(opacity=60); /* For IE8 and earlier */
 	vertical-align: top;
+	&:hover{
+		background-color: white;
+	}
 }
 
 #comment-form-container .form-inputs {
