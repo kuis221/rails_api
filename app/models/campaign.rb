@@ -146,6 +146,17 @@ class Campaign < ActiveRecord::Base
     Sunspot.index(resource)
   end
 
+  def survey_brands
+    @survey_brands ||= begin
+      field = form_fields.scoped_by_kpi_id(Kpi.surveys).first
+      brands = []
+      if field.present?
+        brands = Brand.where(id: field.options['brands']) if field.options.has_key?('brands')
+      end
+      brands || []
+    end
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

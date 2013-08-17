@@ -1,0 +1,138 @@
+- data_labels ||= false
+
+- if question_id != 2
+  javascript:
+    $('#question-#{question_id}-graph').highcharts({
+        chart: {
+            type: 'column'
+        },
+        credits: false,
+        exporting: { enabled: false },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: #{resource.campaign.survey_brands.map(&:name).to_json.html_safe},
+            lineColor: '#D1D1D1',
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: null
+            },
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            stackLabels: { enabled: false },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1
+        },
+        legend: {
+            align: 'center',
+            x: -30,
+            verticalAlign: 'top',
+            y: 0,
+            backgroundColor: 'white',
+            borderWidth: 0,
+            shadow: false,
+            itemDistance: 50,
+            itemStyle: {
+               color: '#65B0D8',
+               fontSize: '14px'
+            },
+            labelFormatter: function() {
+                return this.options.id ? this.options.id : this.name;
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.x +'</b><br/>'+
+                    this.series.name +': '+ this.y + '%';
+            }
+        },
+        plotOptions: {
+            column: {
+                stacking: 'percent',
+                dataLabels: {
+                    enabled: #{data_labels.to_s},
+                    color: '#ffffff',
+                    formatter: function(){
+                      if (this.point.y > 0){
+                        return this.series.name;
+                      }
+                    }
+                }
+            },
+            series: {
+              pointWidth: 25
+            }
+        },
+        series: #{series.to_json.html_safe}
+    });
+
+- else
+  javascript:
+    $('#question-#{question_id}-graph').highcharts({
+        chart: {
+            type: 'column'
+        },
+        credits: false,
+        exporting: { enabled: false },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: #{series.first[:categories].to_json.html_safe},
+            lineColor: '#D1D1D1',
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: null
+            },
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            stackLabels: { enabled: false },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                dataLabels: {
+                    enabled: true,
+                    color: '#ffffff'
+                }
+            },
+            series: {
+              pointWidth: 25
+            }
+        },
+        series: #{series.to_json.html_safe}
+    });
+
+

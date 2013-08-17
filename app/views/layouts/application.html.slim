@@ -23,7 +23,7 @@ head
       $(document).ready(function(){
         checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.try(:html_safe))}', '#{escape_javascript(current_user.detected_time_zone.try(:html_safe))}');
       })
-    = render 'application/tracking/lucky_orange' if Rails.env.production?
+    = render 'application/tracking/lucky_orange' unless Rails.env.development?
 
 
 body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
