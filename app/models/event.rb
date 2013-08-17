@@ -198,6 +198,41 @@ class Event < ActiveRecord::Base
     @demographics_graph_data
   end
 
+  def survey_statistics
+    @survey_statistics ||= Hash.new.tap do |stats|
+      stats[:total] = 0
+      brands_map = Hash[campaign.survey_brands.map{|b| [b.id, b.name] }]
+      surveys.each do|survey|
+        stats[:total] += 1
+        survey.surveys_answers.each do |answer|
+          if  answer.brand_id.present? && brands_map.has_key?(answer.brand_id)
+            type = "question_#{answer.question_id}"
+            stats[type] ||= {}
+            if answer.question_id == 2
+              if answer.answer.present? && answer.answer =~ /^[0-9]+(\.[0-9])?$/
+                stats[type][brands_map[answer.brand_id]] ||= {count: 0, total: 0, avg: 0}
+                stats[type][brands_map[answer.brand_id]][:count] += 1
+                stats[type][brands_map[answer.brand_id]][:total] += answer.answer.to_f
+                stats[type][brands_map[answer.brand_id]][:avg] = stats[type][brands_map[answer.brand_id]][:total] / stats[type][brands_map[answer.brand_id]][:count]
+              end
+            else
+              stats[type][answer.answer] ||= {}
+              stats[type][answer.answer][brands_map[answer.brand_id]] ||= {count: 0, avg: 0.0}
+              stats[type][answer.answer][brands_map[answer.brand_id]][:count] += 1
+              stats[type].each{|a, brands| brands.each{|b, s| s[:avg] = s[:count]*100.0/stats[:total]} }
+            end
+          elsif answer.kpi_id.present?
+            type = "kpi_#{answer.kpi_id}"
+            stats[type] ||= {}
+            stats[type][answer.answer] ||= {count: 0, avg: 0}
+            stats[type][answer.answer][:count] += 1
+            stats[type].each{|a, s| s[:avg] = s[:count]*100/stats[:total] }
+          end
+        end
+      end
+    end
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

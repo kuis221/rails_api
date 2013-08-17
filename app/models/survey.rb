@@ -19,27 +19,22 @@ class Survey < ActiveRecord::Base
   accepts_nested_attributes_for :surveys_answers
 
   def brands
-    field = event.campaign.form_fields.scoped_by_kpi_id(Kpi.surveys).first
-    brands = []
-    if field.present?
-      brands = Brand.where(id: field.options['brands'])
-    end
-    brands || []
+    event.campaign.survey_brands
   end
 
   def age
     answer = surveys_answers.select{|a| a.kpi_id == Kpi.age.id }.first
-    answer.segment.text unless answer.nil?
+    answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
   def gender
     answer = surveys_answers.select{|a| a.kpi_id == Kpi.gender.id }.first
-    answer.segment.text unless answer.nil?
+    answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
   def ethnicity
     answer = surveys_answers.select{|a| a.kpi_id == Kpi.ethnicity.id }.first
-    answer.segment.text unless answer.nil?
+    answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
   def activate!

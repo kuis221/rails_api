@@ -19,7 +19,7 @@
       .row-fluid
         .span6
         = f.input :country, priority: ['United States'], required: true
-      = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true
+      = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, :input_html => {class: 'chosen-enabled'}
       = f.input :city, required: true
       = f.input :time_zone, required: true
 
