@@ -5,16 +5,16 @@
   .form-inputs
     h3 New campaign
     .row-fluid
-      = f.input :name
+      = f.input :name, input_html: {class: 'input-xlarge'}
 
     .row-fluid
-      = f.input :brands_list, input_html: {class: 'input-large'}
+      = f.input :brands_list
 
     .row-fluid
-      = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-large chosen-enabled', multiple: true}
+      = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-xlarge chosen-enabled', multiple: true}
 
     .row-fluid
-      = f.input :description, :input_html => {:rows => 6}
+      = f.input :description, :input_html => {:rows => 6}, input_html: {class: 'input-xlarge'}
 
   .form-actions
     = f.button :submit, "Add campaign", class: 'btn btn-primary', disable_with: 'Please wait...'
