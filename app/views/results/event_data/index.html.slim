@@ -44,6 +44,7 @@ javascript:
         $('#columns-scoller-arrows').removeClass('hide')
         $('#event-data-totals').html(response.find('div[data-content="totals-results"]').html())
       }
+      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
     },
     'onItemsChange': function(response, page){
       if ($('#event-data-list li').length > 0) {

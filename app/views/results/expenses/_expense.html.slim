@@ -1,0 +1,4 @@
+li id="expense_#{expense.id}"
+  span.expense-column= expense.name
+  span.expense-column= format_date(expense.created_at)
+  span.expense-column.currency= number_to_currency(expense.amount)

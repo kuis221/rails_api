@@ -1,0 +1,45 @@
+= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+
+.sidebar#resource-filter-column
+  #collection-list-filters
+  a.btn.btn-primary Save
+
+#main.main
+  .tab-content
+    #list-view.tab-pane.active
+      #list-tools.row-fluid
+        .pull-right
+          =link_to '', results_comments_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
+      .link-list
+        ul#comment-list
+          li.placeholder
+            | Select any filter to see results
+
+javascript:
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_path(controller: 'results/comments')}',
+    'filtersUrl': '#{filters_path(controller: :events, with_event_data_only: true)}',
+    'listContainer': '#comment-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'asc',
+    'autoLoad': false,
+    'includeCalendars': true,
+    'selectDefaultDate': false,
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'onChange': function(filterBox){
+      $(document).trigger('comments-filter:changed')
+    },
+    'onItemsLoad': function(response, page){
+      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
+    },
+    'onItemsChange': function(response, page){
+      if ($('#comment-list li').length > 0) {
+        $('#list-tools').show()
+      } else {
+        $('#list-tools').hide()
+        $('#comment-list').append("<li class='placeholder'>No results. Select other filters to see results</li>");
+      }
+    }
+  });
