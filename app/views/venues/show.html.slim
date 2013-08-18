@@ -10,21 +10,35 @@
     h2= resource.name
 
     .row-fluid
-      = resource.formatted_address
-      br>/
-      = resource.formatted_phone_number
-      - if resource.website
+      .first-data
+        = resource.formatted_address
         br>/
-        = place_website(resource.website)
-      br>/
-      = resource.price_level.times.map{ '$' }.join
-      = " "
-      = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+        = resource.formatted_phone_number
+        - if resource.website
+          br>/
+          = place_website(resource.website)
+        br>/
+        = resource.price_level.times.map{ '$' }.join
+        = " "
+        = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+      .second-data
+        = resource.formatted_address
+        br>/
+        = resource.formatted_phone_number
+        - if resource.website
+          br>/
+          = place_website(resource.website)
+        br>/
+        = resource.price_level.times.map{ '$' }.join
+        = " "
+        = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+      .third-data
+        p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
 
       - if resource.persisted?
-        = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
-        #venue-areas.row-fluid
-          = render partial: 'areas', locals: {areas: resource.place.areas}
+          = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+          #venue-areas.row-fluid
+            = render partial: 'areas', locals: {areas: resource.place.areas}
 .details_box
   - if resource.persisted? && resource.events > 0
     .venue-overall

@@ -1886,6 +1886,11 @@ body.events.show {
 		color: @venues_blue;
 	}
 
+	#venue-score-narrative{
+		margin-top:30px;
+		width:380px;
+	}
+
 	.venue-review{
 		margin-top: 20px;
 		width: 50%;
@@ -1946,6 +1951,7 @@ body.events.show {
 		.add-area-venue {
 			font-size: 20px;
 			text-decoration: none;
+			padding-left: 25px;
 		}
 
 		.area {
@@ -1989,7 +1995,9 @@ body.events.show {
 
 		#venue-score {
 			span {
-				font-size: 40px;
+				font-size: 54px;
+				font-weight: 300;
+				line-height: 45px;
 				margin-bottom: 10px;
 				display: block;
 				clear: both;
@@ -2805,6 +2813,55 @@ svg{
 	h3{
 		font-size: 16px;
 		margin-bottom: 30px;
+	}
+	.first-data, .second-data, .third-data{
+		margin:0 0 20px 30px;
+		width: 380px;		
+	}
+	.first-data{
+		&:before{
+			color: @user_menu;
+			content: "\e018";
+			font-family: 'icons';
+			font-size: 19px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 119px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}	
+	}
+	.second-data{
+		&:before{
+			color: @user_menu;
+			content: "\e01f";
+			font-family: 'icons';
+			font-size: 17px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 118px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}	
+	}
+	.third-data{
+		&:before{
+			color: @user_menu;
+			content: "\e01e";
+			font-family: 'icons';
+			font-size: 17px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 118px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}	
 	}
 	ul.thumbnails{
 		&.venues{
