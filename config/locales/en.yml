@@ -16,6 +16,11 @@ en:
       default: '%m/%d/%Y %H:%M:%S'
       db: '%m/%d/%Y %H:%M:%S'
 
+  helpers:
+    submit:
+      create: "Create"
+      update: "Save"
+
   recurrence:
     daily:
       one: 'day'

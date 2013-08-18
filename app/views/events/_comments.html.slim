@@ -3,7 +3,7 @@ h2 Comments
   = render resource.comments
 = f.simple_fields_for :comments, resource.comments.build do |cf|
   = cf.input :content, label: false, input_html: {rows: 1, class: 'input-xxlarge'}, :placeholder => 'Leave a comment', required: false
-  input#post-event-comment.btn.btn-primary type="button" value="Create Comment"
+  input#post-event-comment.btn.btn-primary type="button" value="Comment"
 
 javascript:
   $('#post-event-comment').click(function(e){
