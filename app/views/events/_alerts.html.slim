@@ -1,0 +1,58 @@
+- if resource.in_future?
+  .alert.alert-success
+    == "Your event is scheduled. You can <a href=\"#event-members\">manage the event team</a>, <a href=\"#event-tasks\">complete tasks</a>, or <a href=\"#event-documents\">upload event documents</a>."
+
+  - late_tasks = resource.tasks.late.count
+  - today_tasks = resource.tasks.due_today.count
+  - if today_tasks > 0 && today_tasks > 0
+    .alert.alert-danger
+      == "We also noticed that you have #{pluralize(late_tasks, 'late task')} and #{pluralize(today_tasks, 'task')} that are due today. <a href=\"#event-tasks\">Click here</a> to complete."
+  - else
+    - if late_tasks > 0
+      .alert.alert-danger
+        == "We also noticed that you have #{pluralize(late_tasks, 'late task')}. <a href=\"#event-tasks\">Click here</a> to complete."
+
+    - if (today_tasks = resource.tasks.due_today.count) > 0
+      .alert.alert-warning
+        == "We also noticed that #{(today_tasks > 1) ? today_tasks.to_s+' tasks are' : ' one task is'} due today. <a href=\"#event-tasks\">Click here</a> to complete."
+
+- elsif resource.happens_today?
+  .alert.alert-success
+    - links = []
+    - links.push '<a href="#event-results-form">submit post event data</a>'
+    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys">conduct surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments">gather comments</a>' if resource.campaign.active_field_types.include?('comments')
+    == "Your event is scheduled for today. Please #{links.to_sentence} from your audience during or shortly after the event ."
+
+- elsif resource.was_yesterday? and !resource.event_data_submitted?
+  .alert.alert-warning
+    - links = []
+    - links.push '<a href="#event-results-form">submit post event data</a>'
+    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
+    == "Your post event report is due. Please #{links.to_sentence} now."
+
+- elsif !resource.event_data_submitted?
+  .alert.alert-danger
+    - links = []
+    - links.push '<a href="#event-results-form">submit post event data</a>'
+    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
+    == "Your post event report is late. Please #{links.to_sentence} now."
+
+- elsif resource.event_data_approved?
+  .alert.alert-success
+    == "Your post event report has been approved."
+
+- elsif resource.event_data_rejected?
+  .alert.alert-warning
+    == "Your post event report form has been rejected for the following reasons:"
+    p <reason why the post event form was rejected>.
+    p Please make the necessary updates and resubmit.
+
+- else
+  .alert.alert-success
+    == "Your post event report has been submitted for approval."

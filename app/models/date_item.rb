@@ -69,7 +69,7 @@ class DateItem < ActiveRecord::Base
       if days.present? and !days.empty?
         days = [days] unless days.is_a?(Array)
         days = days.compact.reject{|d| d.nil? || d == '' }.map(&:capitalize)
-        description += ' on ' + days.to_sentence(last_word_connector: ' and ') unless days.empty?
+        description += ' on ' + days.to_sentence unless days.empty?
       end
       description
     end

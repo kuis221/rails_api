@@ -33,6 +33,8 @@ class Task < ActiveRecord::Base
   validates :event_id, presence: true, numericality: true
 
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
+  scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
+  scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
 
   searchable do
     integer :id

@@ -7,7 +7,7 @@
   - field = ff.object.form_field
   - if field.kpi_id.nil? || @rendered_modules[field.kpi.module].nil? || current_module == field.kpi.module
     - field_module = field.kpi_id.nil? ? ((field.is_section? || field.section_id.present?)  ? "section" : (field.field_type == 'comments' ? 'comments' : 'custom')) : field.kpi.module
-    div class="#{current_module != field_module ? 'details_box' : '' } box_#{field_module}"
+    div class="#{current_module != field_module ? 'details_box' : '' } box_#{field_module}" id="event-#{field_module}"
       - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
         - @rendered_modules[field.kpi.module] = true
         h2=t "form_builder.modules.#{field.kpi.module}"

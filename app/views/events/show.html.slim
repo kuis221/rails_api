@@ -10,6 +10,8 @@
           br>/
           = place_address(resource.place)
 
+    = render 'alerts'
+
     h2 = resource.campaign_name
 
     p
@@ -18,19 +20,19 @@
       = link_to content_tag(:i, '', class: 'icon-edit'), edit_event_path(resource), remote: true
       = active_inactive_buttons(resource)
 
-  .details_box
+  #event-members.details_box
     h2 Event Team
     #event-team-members
       = render 'team_member_list'
     = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign'
 
 
-  - if resource.end_at.to_date < Date.today
+  - if resource.event_data_submitted? and resource.in_past?
     = render 'show_results'
-  - elsif resource.end_at.to_date >= Date.today && resource.start_at.to_date <= Date.today
+  - elsif resource.happens_today? or resource.in_past?
     = render 'edit_results'
 
-  .details_box
+  #event-tasks.details_box
     h2 TASKS
 
     .pull-left
@@ -42,7 +44,7 @@
       = render partial: 'tasks', locals: {tasks: resource.tasks}
 
 
-  .details_box
+  #event-documents.details_box
     h2 DOCUMENTS
 
     #event-documents

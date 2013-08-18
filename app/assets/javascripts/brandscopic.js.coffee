@@ -23,6 +23,12 @@ jQuery ->
 				this.title = $(this.element).attr('caption')
 		}
 
+		$("a[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
+			e.preventDefault()
+			e.stopPropagation()
+			$('html, body').animate({ scrollTop: $(this.hash).offset().top - 45 }, 300)
+			false
+
 		true
 
 	validateForm = (e) ->

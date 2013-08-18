@@ -124,7 +124,7 @@ class Event < ActiveRecord::Base
     end
 
     boolean :has_event_data do
-      results.count > 0
+      event_data_submitted?
     end
   end
 
@@ -146,6 +146,34 @@ class Event < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def in_past?
+    end_at.to_date < Date.today
+  end
+
+  def in_future?
+    start_at.to_date > Date.today
+  end
+
+  def happens_today?
+    start_at.to_date <= Date.today  && end_at.to_date >= Date.today
+  end
+
+  def was_yesterday?
+    end_at.to_date == Date.yesterday
+  end
+
+  def event_data_submitted?
+    results.count > 0
+  end
+
+  def event_data_approved?
+    false
+  end
+
+  def event_data_rejected?
+    false
   end
 
   def results_for(fields)

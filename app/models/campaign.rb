@@ -146,6 +146,15 @@ class Campaign < ActiveRecord::Base
     Sunspot.index(resource)
   end
 
+  def active_kpis
+    @active_kpis ||= form_fields.includes(:kpi).map(&:kpi)
+  end
+
+  def active_field_types
+    @active_field_types ||= form_fields.map(&:field_type).uniq
+  end
+
+
   def survey_brands
     @survey_brands ||= begin
       field = form_fields.scoped_by_kpi_id(Kpi.surveys).first
