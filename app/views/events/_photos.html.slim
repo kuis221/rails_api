@@ -6,7 +6,7 @@
 - if allow_upload
   .row-fluid
     .pull-right
-      = simple_form_for([resource, resource.photos.build], url: event_photos_path(resource), html: {multipart: true, id: 'event-photos-upl-form'}) do |f|
+      = f.simple_fields_for([resource, resource.photos.build], url: event_photos_path(resource), html: {multipart: true, id: 'event-photos-upl-form'}) do |pf|
           = file_field_tag('event_photos_file', multiple: true, name: "photo[file]")
   #upload-progress-list
   |

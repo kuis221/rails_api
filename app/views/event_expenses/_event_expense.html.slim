@@ -1,7 +1,7 @@
-tr id="event_expense_#{event_expense.id}"
-  td= event_expense.name
-  td= number_to_currency(event_expense.amount, precision: 2)
-  td
+li id="event_expense_#{event_expense.id}"
+  span= event_expense.name
+  span= number_to_currency(event_expense.amount, precision: 2)
+  span
     = link_to 'Edit', edit_event_event_expense_path(event_expense.event, event_expense), remote: true
     = "&nbsp;".html_safe
     = link_to 'Delete', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete

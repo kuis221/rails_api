@@ -1,10 +1,6 @@
 #event-expenses-container
   = link_to 'Add Expense', new_event_event_expense_path(resource), remote: true, class: 'btn btn-primary'
-  table.table.table-striped
-    thead
-      tr
-        th Name
-        th Amount
-        th
-    tbody
+
+  .link-list
+    ul#expenses-list
       = render resource.event_expenses

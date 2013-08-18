@@ -2,9 +2,10 @@ module DeactivableHelper
 
   module ViewMethods
     def active_inactive_buttons(resource, message=nil)
-      content_tag(:div, class: 'btn-group active-deactive-toggle') do
-        link_to('Active', [:activate, resource], class: 'btn btn-small activate-'+resource.class.name.underscore.downcase+'-btn'+(resource.active? ? ' btn-success active' : ''), remote: true)+
-        link_to('Inactive', [:deactivate, resource], class: 'btn btn-small deactivate-'+resource.class.name.underscore.downcase+'-btn'+(resource.active? ? '' : ' btn-danger active'), confirm: message, remote: true)
+      if resource.active?
+        link_to(content_tag(:i, '', class: 'icon-check-sign'),  [:deactivate, resource], class: 'active-toggle-btn-'+resource.class.name.underscore.downcase+'-'+resource.id.to_s, confirm: message, remote: true)
+      else
+        link_to(content_tag(:i, '', class: 'icon-remove-sign'), [:activate, resource], class: 'active-toggle-btn-'+resource.class.name.underscore.downcase+'-'+resource.id.to_s, remote: true)
       end
     end
   end
