@@ -1,0 +1,18 @@
+li id="survey_#{survey.id}"
+  span
+    - if age = survey.age
+      = "#{age} year old"
+    br>/
+    = "#{survey.ethnicity} #{survey.gender}"
+  span
+    | COMPLETED
+    br>/
+    = format_date(survey.created_at)
+  span
+    | MODIFIED
+    br>/
+    = format_date(survey.updated_at)
+  span
+    = link_to '', edit_event_survey_path(survey.event, survey), remote: true, class: 'edit'
+    = link_to '', deactivate_event_survey_path(survey.event, survey), remote: true, class: 'disable' if survey.active?
+    = link_to '', activate_event_survey_path(survey.event, survey), remote: true, class: 'enable' unless survey.active?

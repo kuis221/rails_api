@@ -32,6 +32,9 @@ Brandscopic::Application.routes.draw do
     resources :expenses, only: [:index] do
       get :items, on: :collection
     end
+    resources :surveys, only: [:index] do
+      get :items, on: :collection
+    end
   end
 
   # This couple of routes are for tasks

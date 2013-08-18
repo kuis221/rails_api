@@ -126,6 +126,10 @@ class Event < ActiveRecord::Base
     boolean :has_event_data do
       event_data_submitted?
     end
+
+    boolean :has_surveys do
+      surveys.count > 0
+    end
   end
 
   def activate!
@@ -290,6 +294,7 @@ class Event < ActiveRecord::Base
         with(:status,     params[:status]) if params.has_key?(:status) and params[:status].present?
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
+        with(:has_surveys, true) if params[:with_surveys_only].present?
 
         if params.has_key?(:brand) and params[:brand].present?
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
