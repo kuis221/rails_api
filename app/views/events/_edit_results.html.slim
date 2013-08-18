@@ -15,11 +15,12 @@ javascript:
         total += parseInt($(element).val())
       }
     });
-    $('#progress-bar-field-'+ $(this).data('segment-field-id')).data('total',total).progressbar( "value", total );
+    var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger')) 
+    var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error')) 
+    $('#progress-bar-field-'+ $(this).data('segment-field-id'))
+        .removeClass('text-success text-error text-info').addClass(textClass)
+        .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
+        .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
+    $("#total-field-"+$(this).data('segment-field-id')).val(total)
   })
-  $('.percentage-progress-bar').progressbar({
-      change: function(event, ui) {
-        $(this).find('label').text( $(this).data( "total" ) + "%" );
-      }
-  });
-  $('.segment-field').keyup();  
+  $('.segment-field').keyup();

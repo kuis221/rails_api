@@ -161,6 +161,10 @@ jQuery ->
 		return (this.optional(element) && (value == '0' || value == '')) || value == '100';
 	, "The sum of the segments should be 100%");
 
+	$.validator.addMethod("segment-field", (value, element) ->
+		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
+	, "Should not exceed 100%");
+
 	$.validator.addMethod("matchconfirmation", (value, element) ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");
