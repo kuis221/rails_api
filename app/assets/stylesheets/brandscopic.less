@@ -1614,6 +1614,14 @@ body.events.show {
 		margin-top: -40px;
 	}
 
+	.box_photos, 
+	.box_surveys, 
+	.box_expenses {
+		h2 {
+			display: none;
+		}
+	}
+
 	.percentage-progress-bar {
 		width: 220px;
 		position: relative;
@@ -1623,6 +1631,23 @@ body.events.show {
 			top: 0px;
 		}
 	}
+}
+
+.fileinput-button {
+	position: relative;
+	overflow: hidden;
+}
+.fileinput-button input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	transform: translate(-300px, 0) scale(4);
+	font-size: 23px;
+	direction: ltr;
+	cursor: pointer;
 }
 
 .resource-form-modal {

@@ -1,13 +1,11 @@
 - allow_upload ||= false
-.photo-list
-  ul.thumbnails
-    = render partial: 'results/photos/photo', collection: resource.photos
 
 - if allow_upload
-  .row-fluid
-    .pull-right
-      = f.simple_fields_for([resource, resource.photos.build], url: event_photos_path(resource), html: {multipart: true, id: 'event-photos-upl-form'}) do |pf|
-          = file_field_tag('event_photos_file', multiple: true, name: "photo[file]")
+  = f.simple_fields_for([resource, AttachedAsset.new], url: event_photos_path(resource)) do |pf|
+    span.btn.btn-primary.fileinput-button
+      span Upload Photo
+      = file_field_tag('event_photos_file', multiple: true, name: "photo[file]", 'data-no-uniform' => "true")
+
   #upload-progress-list
   |
     <script id="template-upload" type="text/x-tmpl">
@@ -17,15 +15,53 @@
       </div>
     </script>
 
+.photo-list
+  ul.thumbnails
+    = render partial: 'results/photos/photo', collection: resource.photos
+
+
 javascript:
-  $(".fancybox").fancybox({
-    padding : 0,
-    helpers : {
-      title: {
-        type: 'inside'
+  $('#event-results-form #event_photos_file').fileupload({
+      dataType: "script",
+      url: '#{event_photos_path(resource)}',
+      type: 'POST',
+      formData: function (form) {
+        params = $("input[name=utf8], input[name=authenticity_token]", form).serializeArray()
+        params.push({name: 'photo_upload', value: 1});
+        return params;
+      },
+      add: function(e, data) {
+        var file, types;
+
+        types = /(\.|\/)(gif|jpe?g|png)$/i;
+        file = data.files[0];
+        if (types.test(file.type) || types.test(file.name)) {
+          data.context = $(tmpl("template-upload", file));
+          $('#event-photos-upl-form').append(data.context);
+          return data.submit();
+        } else {
+          return bootbox.alert(file.name + " is not a gif, jpeg, or png image file");
+        }
+      },
+      progress: function(e, data) {
+        var progress;
+
+        if (data.context) {
+          if (data.context.moved == null) {
+            $(data.context).appendTo('#upload-progress-list');
+            data.context.moved = true;
+          }
+          progress = parseInt(data.loaded / data.total * 100, 10);
+          data.context.find('.bar').css('width', progress + '%');
+          if (progress >= 99) {
+            return window.setTimeout(function() {
+              var _this = this;
+
+              return data.context.slideUp(600, function() {
+                return $(_this).remove();
+              });
+            }, 1000);
+          }
+        }
       }
-    },
-    beforeLoad: function() {
-      this.title = $(this.element).attr('caption');
-    }
-  });
+    });
