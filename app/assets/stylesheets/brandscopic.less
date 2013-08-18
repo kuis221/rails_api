@@ -1398,11 +1398,16 @@ overflow: hidden;
 
 #resource-close-details {
 	background-color: @menu;
-	position: relative;
-	top: 30px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-    border-radius: 7px 7px 0px 0px;
+	border-radius: 7px 7px 0px 0px;
+	&.affix {
+		top: 40px;
+		right: 10px;
+		left: 90px;
+		-webkit-border-radius: 0px;
+		border-radius: 0px;
+    }
 	a {
 		display: inline-block;
 		width: 99%;
