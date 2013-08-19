@@ -99,21 +99,24 @@ class Venue < ActiveRecord::Base
   end
 
   def compute_score
-    search = Venue.solr_search do
-      with(:company_id, company_id)
-      with(:location).in_radius(latitude, longitude, 5)
-      with(:types, types_without_establishment )
-      with(:avg_impressions).greater_than(0)
+    types = types_without_establishment
+    if types.count > 0
+      search = Venue.solr_search do
+        with(:company_id, company_id)
+        with(:location).in_radius(latitude, longitude, 5)
+        with(:types, types_without_establishment )
+        with(:avg_impressions).greater_than(0)
 
-      stat(:avg_impressions, :type => "stddev")
-      stat(:avg_impressions, :type => "mean")
-    end
-    self.score = nil
-    unless search.stat_response['stats_fields']["avg_impressions_es"].nil?
-      mean = search.stat_response['stats_fields']["avg_impressions_es"]['mean']
-      stddev = search.stat_response['stats_fields']["avg_impressions_es"]['stddev']
+        stat(:avg_impressions, :type => "stddev")
+        stat(:avg_impressions, :type => "mean")
+      end
+      self.score = nil
+      unless search.stat_response['stats_fields']["avg_impressions_es"].nil?
+        mean = search.stat_response['stats_fields']["avg_impressions_es"]['mean']
+        stddev = search.stat_response['stats_fields']["avg_impressions_es"]['stddev']
 
-      self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
+        self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
+      end
     end
     self.score
   end
