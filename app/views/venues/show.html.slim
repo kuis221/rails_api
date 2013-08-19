@@ -139,11 +139,13 @@
         .review-date= time_ago_in_words(review.created_at)
         .review-text= review.content
 
+javascript:
+  $(document).ready(function() {
+    $(this).scrollTop(400);
+  });
+
 - if resource.persisted?
   javascript:
-    $(document).ready(function() {
-      $(this).scrollTop(400);
-    });
     $('#overall-age-graph').highcharts({
         chart: { type: 'bar' },
         title: { text: null },
