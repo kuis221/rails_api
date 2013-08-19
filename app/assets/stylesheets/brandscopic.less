@@ -549,6 +549,55 @@ body.app-layout{
     	input[type="submit"].btn{
     		margin: 40px 0 0 0;
     	}
+    	.control-group{
+    		&.user_city, &.user_state, &.user_email{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:45px;
+	    		}
+    		}
+    		&.user_first_name, &.user_last_name, &.user_time_zone{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:80px;
+	    		}
+    		}
+    		&.user_country{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:65px;
+	    		}   			
+    		}
+    		&.user_password{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:110px;
+	    		}   			
+    		}
+    		&.user_password_confirmation{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:160px;
+	    		}   			
+    		}
+    		&.error{
+    			.help-inline{
+    				float: left;
+    				margin-top: 1px;
+    			}
+    		}
+    		.help-inline{
+    			&.valid{
+    				float: left;
+    				margin-top: 1px;
+    			}
+    		}
+    	}
     	.controls{
     		margin-right: 10px;
     		text-align: left;
