@@ -20,23 +20,34 @@
 
 //MODALS
 
+ul.select2-results{
+	color: @text;
+	margin: 0;
+	padding:0 !important;
+	width: 398px;
+	.select2-highlighted{
+		background: @brand;
+	}
+}
+.select2-drop {
+	border: 1px solid @user_menu !important;
+	border-radius: 4px !important;
+	margin-top: 4px !important;
+}
+
 .modal {
 	&.modal-med{
 		width: 460px;
 		.select2-container:focus{
 			outline: none !important;
 		}
-		.select2-drop {
-			border: 1px solid @user_menu !important;
-			border-radius: 4px !important;
-			margin-top: 5px !important;
-		}
 		.select2-container-multi .select2-choices{
 			background-image: none !important;
 			border: 1px solid #c0c0c0 !important;
 			border-radius: 4px !important;
 			box-shadow: none !important;
-			height: 39px !important;
+			height: 34px !important;
+			padding-top: 5px !important;
 			width: 398px !important;
 			.select2-search-choice{
 				background-color: @user_menu !important;
@@ -52,7 +63,7 @@
 				}
 			}
 			.select2-search-choice{
-				margin-top: 8px !important;
+				margin-top: 2px !important;
 			}
 		}
 		.select2-results{
