@@ -442,7 +442,7 @@ body.app-layout{
 		-webkit-font-smoothing: antialiased;
 	}
 	&.fullscreen{
-		margin-left: 14px;
+		padding: 5px 17px 4px 17px !important;
 		&:after{
 			color: white;
 			content: "\e00b";
@@ -454,7 +454,7 @@ body.app-layout{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:2px;
+			top:-2px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
@@ -1034,9 +1034,24 @@ li#user_menu{
     		}
     	}
     }
-    ul#event-data-list{
+    ul#event-data-list, ul#comment-list, ul#expenses-list, #surveys-list{
     	.event-info{
-    		margin:9px 0 0 9px;
+    		margin:16px 30px 0 20px;
+    	}
+    	li{
+    		address{
+    			width:400px !important;
+    		}
+    		&.placeholder{
+	    		height: 100%;
+	    		text-align: center;
+	    		p{
+	    			padding-top: 33px;
+	    		}
+	    	}
+	    	.promo-hours-box{
+	    		margin-left:165px;
+	    	}
     	}
     }
     ul#users-list{
@@ -2082,11 +2097,16 @@ body.events.show {
 		}
 
 		#list-tools {
-			margin-bottom: 20px;
-			.xlsx-download-link, .fullscreen-link {
+			margin-bottom: 25px;
+			.xlsx-download-link {
 				font-size: 30px;
 				margin: 0px 3px;
 				text-decoration: none;
+			}
+			.fullscreen-link{
+				font-size: 30px;
+				margin: 0px 0 0 15px;
+				text-decoration: none;				
 			}
 		}
 
@@ -2094,7 +2114,7 @@ body.events.show {
 			overflow: hidden;
 		}
 		.collection-list-horizontal-scroll {
-			height: 45px;
+			height: 60px;
 			position: relative;
 		}
 		#columns-scoller-arrows {
@@ -2106,7 +2126,7 @@ body.events.show {
 			top: 0;
 			font-size: 40px;
 			.left-arrow {
-				margin-left: 475px;
+				margin-left: 450px;
 				float: left;
 				a.icon-angle-left:before{
 					color:@user_menu;
@@ -2162,16 +2182,16 @@ body.events.show {
 				margin-top: 3px;
 			}
 			.results-box-container {
-				margin-left: 600px;
+				margin-left: 480px;
 			}
 			.events-box {
 				width: 60px;
 				float: left;
+				margin-left: 10px;
 				text-align: center;
 			}
 		}
 		.event-data-row {
-			width: 98%;
 			overflow: hidden;
 			.results-box-container{
 				.event-data-column{
@@ -2197,65 +2217,33 @@ body.events.show {
 		.scroll-11 { .results-box-container .event-data-column:nth-child(11) { display: none;} }
 
 		.results-box-container {
-			width: 1500px;
+			width: 2100px;
 
 			.event-data-column {
 				display: inline-block;
 				vertical-align: top;
 				height: 60px;
 				float: left;
-				margin-right: 3px;
 				text-align: center;
 				&.center-aligned {
 					text-align: center;
 				}
 			}
 
-			.promo-hours-box {
-				width: 100px;
-			}
-			.impressions-box {
-				width: 90px;
-			}
-			.interactions-box {
-				width: 100px;
-			}
-			.samples-box {
-				width: 70px;
-			}
-			.cost-box {
-				width: 80px;
-			}
-			.gender-female-box {
-				width: 70px;
-			}
-			.gender-male-box {
-				width: 70px;
-			}
-			.ethnicity-asian-box {
-				width: 70px;
-			}
-			.ethnicity-black-box {
-				width: 70px;
-			}
-			.ethnicity-hispanic-box {
-				width: 70px;
+			.promo-hours-box, .impressions-box, .interactions-box, .samples-box, .cost-box, .gender-female-box, .gender-male-box, .ethnicity-asian-box, .ethnicity-black-box, .ethnicity-hispanic-box, .ethnicity-native-american-box, .ethnicity-hispanic-box, .ethnicity-white-box {
 				margin-left: 0;
+				width: 100px;
 			}
-			.ethnicity-native-american-box {
-				width: 70px;
-			}
-			.ethnicity-hispanic-box {
-				width: 70px;
-			}
-			.ethnicity-white-box {
-				width: 70px;
+			.promo-hours-box{
+				margin-left:165px;
+				margin-right: 30px;
 			}
 		}
 
 		.event-data-row {
 			.event-info {
 				float: left;
+				width: 430px;
 			}
 		}
 

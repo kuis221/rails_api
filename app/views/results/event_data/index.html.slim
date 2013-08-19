@@ -21,7 +21,7 @@
       .link-list
         ul#event-data-list
           li.placeholder
-            | Select any filter to see results
+            p Select any filter to see results
 
 javascript:
   $('#collection-list-filters').filteredList({
@@ -51,7 +51,7 @@ javascript:
         $('#list-tools').show()
       } else {
         $('#list-tools').hide()
-        $('#event-data-list').append("<li class='placeholder'>No results. Select other filters to see results</li>");
+        $('#event-data-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });
