@@ -117,6 +117,27 @@ jQuery ->
 		else
 			$('.totop').slideUp()
 
+		console.log('scrolled')
+
+		$detailsBar = $('#resource-close-details')
+		if $detailsBar.length > 0
+			$alternateInfo = $('.details-bar-info').get().reverse()
+			if $alternateInfo.length > 0
+				$link = $detailsBar.find('a.close-details')
+				found = false
+				for div in $alternateInfo
+					$div = $(div)
+					if $div.offset().top  < ($detailsBar.offset().top + $detailsBar.height())
+						if not $link.data('default-content')
+							$link.data 'default-content', $link.html()
+						$link.html $div.html()
+						found = true
+						break
+				if not found and $link.data('default-content')
+					$link.html $link.data('default-content')
+					$link.data 'default-content', null
+
+
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
 		$filterSidebar.positioning = false

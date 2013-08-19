@@ -19,7 +19,7 @@ module ApplicationHelper
 
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
-      link_to(:back) do
+      link_to(:back, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, " ".html_safe, class: :close)
       end

@@ -1447,18 +1447,24 @@ overflow: hidden;
 }
 
 #resource-close-details {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
 	background-color: @menu;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	border-radius: 7px 7px 0px 0px;
 	&.affix {
+		position: fixed;
 		top: 40px;
 		right: 10px;
 		left: 90px;
+		width: auto;
 		-webkit-border-radius: 0px;
 		border-radius: 0px;
-    }
-	a {
+	}
+	a.close-details {
 		display: inline-block;
 		width: 99%;
 		padding: 10px 0 5px 10px;
@@ -1486,9 +1492,28 @@ overflow: hidden;
 		float: left;
 		margin: 0 10px 0 10px;
 	}
+
+	h3 {
+		font-size: 18px;
+		display: inline-block; 
+	}
+
+	a a {
+		font-size: 18px;
+		margin-left: 10px;
+	}
 }
-#application-content.with_details_bar {
-	margin-top: 50px;
+
+.details-bar-info {
+ 	height: 0px;
+ 	width: 1px;
+ 	float: left;
+ 	margin-left: -1000;
+ 	overflow: hidden;
+}
+
+.with-details-close-bar {
+	position: relative;
 }
 
 #content-with-left-nav {
@@ -1925,13 +1950,6 @@ body.events.show {
 		margin-top: 0;
 	}
 
-	#venue-map-canvas{
-		border:1px solid @user_menu;
-		display:block;
-		height: 150px;
-		margin: 0 0 30px 0;
-	}
-
 	#venue-score{
 		color: @venues_blue;
 	}
@@ -2353,7 +2371,10 @@ body.events.show {
 }
 
 // Maps on venue and event details
-#venue-map-canvas {
+#venue-map-canvas{
+	border:1px solid @user_menu;
+	display:block;
+	margin: 20px 0 30px 0;
 	height: 500px;
 }
 
