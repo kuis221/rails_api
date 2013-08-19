@@ -445,7 +445,7 @@ body.app-layout{
 		padding: 5px 17px 4px 17px !important;
 		&:after{
 			color: white;
-			content: "\e00b";
+			content: "\e020";
 			font-family: 'icons';
 			font-size: 15px;
 			padding-left: 6px;
@@ -539,8 +539,12 @@ body.app-layout{
     border-radius: 8px;
     &.first_login{
     	width:600px;
+    	h2{
+    		margin-bottom: 20px;
+    	}
     	.chzn-container{
     		display:block;
+    		margin-bottom: 10px;
     	}
     	.controls{
     		margin-right: 10px;
@@ -570,16 +574,20 @@ body.app-layout{
     		background-color: white !important;
     		width:556px !important;
     	}
+    	input[type="password"]{
+    		margin-bottom: 0;
+    	}
     	label{
     		color: @brand;
     		display:block;
-    		padding: 0 0 5px 10px;
+    		padding: 0 0 2px 10px;
     		text-align: left;
     	}
     	p{
+    		font-size: 11px;
+    		line-height: 15px;
     		&.help-block{
     			margin-bottom: 10px;
-    			padding-left: 10px;
     			text-align: left;
     		}
     	}
@@ -1034,7 +1042,7 @@ li#user_menu{
     		}
     	}
     }
-    ul#event-data-list, ul#comment-list, ul#expenses-list, #surveys-list{
+    ul#event-data-list, ul#comment-list, ul#expenses-list, ul#surveys-list{
     	.event-info{
     		margin:16px 30px 0 20px;
     	}
@@ -1074,6 +1082,22 @@ li#user_menu{
     		&.user_date{
     			margin: 8px 0 0 0;
     			width: 16%;
+    		}
+    	}
+    }
+    ul#surveys-list{
+    	span{
+    		&:first-child{
+    			margin: 23px 0 0 20px;
+    			width: 330px;
+    			.survey-age{
+    				font-size: 16px;
+    			}
+    		}
+    		&.date{
+    			line-height: 16px;
+    			margin: 19px 50px 0 0;
+    			width: 180px;
     		}
     	}
     }
@@ -1329,31 +1353,51 @@ input.search-query:focus{
 	background-image: none;
 	border: 0;
 	color: @text;
-	padding: 17px 0;
+	position: relative;
+	padding: 5px 0;
 	&.ui-corner-all{
 		-webkit-border-radius: 6px !important;
 	    border-radius: 6px !important;
 	}
 }
 .ui-menu{
-	li.ui-menu-item{
-		line-height: 30px;
-		a{
-			&:active, &:hover{
-				background-color: @menu !important;
-				background-image: none !important;
-				border:0;
-				color:white;
-				&.ui-corner-all{
-				    border-radius: 0px !important;
+	li{
+		&.ui-menu-item{
+			a{
+				color: @menu;
+				font-weight: normal !important;
+				padding: 7px 10px;
+				&:active, &:hover{
+					background-color: @menu !important;
+					background-image: none !important;
+					border:0;
+					color:white;
+					font-weight: normal;
+					padding: 7px 10px;
+					&.ui-corner-all{
+					    border-radius: 0px !important;
+					}
+				}
+				i{
+					color: white;
+					font-weight: normal !important;
 				}
 			}
+		}
+		&.ui-autocomplete-category{
+			color:@text;
+			font-weight: bold;
+			padding: 6px 10px;
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
 		background-color: @menu !important;
 		background-image: none !important;
 		border:0 !important;
+		border-radius: 0px !important;
+		color: white !important;
+		font-weight: normal !important;
+		padding: 8px 10px !important;
 	}
 }
 input:-moz-placeholder,
