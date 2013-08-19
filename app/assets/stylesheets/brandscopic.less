@@ -551,17 +551,38 @@ body.app-layout{
     		text-align: left;
     		width: 268px;
     		.chzn-container-single .chzn-single{
-    			height: 40px !important;
+    			height: 38px !important;
+				padding-top: 3px;
     			width: 252px !important;
+    			div b{
+    				margin-top: 3px !important;
+    			}
+			}
+			.chzn-search{
+				input[type="text"]{
+					background-image: none;
+					box-shadow: 0 !important;
+					margin: 3px 0 0 20px; 
+					width: 530px !important;
+					&:focus{
+						background-image: none;
+						box-shadow: none !important;
+					}
+				}
+			}
+			#user_country_chzn{
+				box-shadow: none;
 			}
     	}
     	.country, .time_zone{
 			.chzn-container-single .chzn-single{
-				height: 40px !important;
+				height: 38px !important;
+				margin-left: 13px;
+				padding-top: 3px;
 				width: 558px !important;
 			}
 		}
-		.email, .password{
+		.country, .email, .password, .time_zone{
 			.controls{
 				width:575px;
 			}
