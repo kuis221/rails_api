@@ -24,10 +24,13 @@ jQuery ->
 		}
 
 		$("a[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
-			e.preventDefault()
-			e.stopPropagation()
-			$('html, body').animate({ scrollTop: $(this.hash).offset().top - 45 }, 300)
-			false
+			if this.hash isnt ''
+				e.preventDefault()
+				e.stopPropagation()
+				$('html, body').animate({ scrollTop: $(this.hash).offset().top - 45 }, 300)
+				false
+			else
+				true
 
 		true
 
