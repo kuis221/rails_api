@@ -40,7 +40,6 @@
         h3= resource.name
         br>/
         = resource.formatted_address
-        = resource.formatted_phone_number
 
       - if resource.persisted?
           = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
