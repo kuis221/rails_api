@@ -2355,12 +2355,13 @@ table.table td.comments-container {
 	display: inline-block;
 	margin: 20px 0 5px 44px;
 	position: relative;
+	width: 95%;
 	.btn{
 		background-color: @user_menu;
 	}
 	.control-group{
 		display: inline-block;
-		width:80%;
+		width:65%;
 	}
 	textarea{
 		background-color: white !important;
@@ -2430,8 +2431,8 @@ table.table td.comments-container {
   color: #A0A0A0;
 }
 
-//EVENT DATA
-.event_data{
+//MAIN - Without top left rounded corner
+.event_data, .comments, .photos, .expenses, .surveys, .tasks{
 	.main{
 		-webkit-border-radius: 0px 7px 7px 7px;
         border-radius: 0px 7px 7px 7px;
@@ -2451,10 +2452,6 @@ table.table td.comments-container {
 	}
 	input[type="checkbox"]{
 		visibility: hidden;
-	}
-	.main{
-		-webkit-border-radius: 0px 7px 7px 7px;
-        border-radius: 0px 7px 7px 7px;
 	}
 	.span.date{
 		line-height: 27px;
@@ -2485,12 +2482,6 @@ table.table td.comments-container {
 }
 
 // PHOTOS
-.photos{
-	.main{
-		-webkit-border-radius: 0px 7px 7px 7px;
-	    border-radius: 0px 7px 7px 7px;
-	}
-}
 .photos, .venues{
 	.thumbnail{
 		border:0;
