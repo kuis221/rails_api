@@ -19,7 +19,7 @@
         .span6
           = f.input :city, required: true
         .span6
-          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input -xlarge chosen-enabled'}
+          = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'chosen-enabled'}
       .row-fluid
         .span6
           = f.input :country, priority: ['United States'], required: true, input_html: {class: 'chosen-enabled'}
