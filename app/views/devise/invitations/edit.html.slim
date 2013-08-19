@@ -1,7 +1,6 @@
 .login_box.first_login
   h2  Welcome, George!
-  p 
-  | Before we get started, please tell us a bit about yourself.
+  p Before we get started, please tell us a bit about yourself.
 
   = simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put }) do |f|
     = devise_error_messages!
