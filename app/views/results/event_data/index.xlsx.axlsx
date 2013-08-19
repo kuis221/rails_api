@@ -24,7 +24,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
 
   sheet.add_row ['TOTALS',
                  number_with_delimiter(data_totals['events_count']).to_s + ' EVENTS',
-                 number_with_precision(data_totals['promo_hours'], precision: 2),
+                 number_with_precision(data_totals['promo_hours'], precision: 1),
                  number_with_delimiter(data_totals['impressions']),
                  number_with_delimiter(data_totals['interactions']),
                  number_with_delimiter(data_totals['samples']),
@@ -54,7 +54,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
 	collection.each do |event|
 		sheet.add_row ['',
                    event.campaign_name,
-                   number_with_precision(event.promo_hours, precision: 2),
+                   number_with_precision(event.promo_hours, precision: 1),
                    number_with_delimiter(event.event_data.impressions),
                    number_with_delimiter(event.event_data.interactions),
                    number_with_delimiter(event.event_data.samples),
