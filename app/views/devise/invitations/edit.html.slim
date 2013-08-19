@@ -48,5 +48,6 @@
             if val is state.id
               option.attr('selected', 'selected')
             states.append(option)
+        states.trigger('liszt:updated')
     $('#user_country').change();
 
