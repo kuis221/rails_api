@@ -31,6 +31,27 @@ class EventsController < FilteredController
     end
   end
 
+  def submit
+    if resource.unsent? || resource.rejected?
+      resource.submit!
+    end
+    redirect_to resource_path
+  end
+
+  def approve
+    if resource.submitted?
+      resource.approve!
+    end
+    redirect_to resource_path
+  end
+
+  def reject
+    if resource.submitted?
+      resource.reject!
+    end
+    redirect_to resource_path
+  end
+
   protected
 
     def facets

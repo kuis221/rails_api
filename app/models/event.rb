@@ -18,6 +18,8 @@
 #
 
 class Event < ActiveRecord::Base
+  include AASM
+
   belongs_to :campaign
   belongs_to :place, autosave: true
 
@@ -76,6 +78,24 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
 
+  aasm do
+    state :unsent, :initial => true
+    state :submitted
+    state :approved
+    state :rejected
+
+    event :submit do
+      transitions :from => [:unsent, :rejected], :to => :submitted
+    end
+
+    event :approve do
+      transitions :from => :submitted, :to => :approved
+    end
+
+    event :reject do
+      transitions :from => :submitted, :to => :rejected
+    end
+  end
 
   searchable do
     boolean :active
@@ -166,18 +186,6 @@ class Event < ActiveRecord::Base
 
   def was_yesterday?
     end_at.to_date == Date.yesterday
-  end
-
-  def event_data_submitted?
-    results.count > 0
-  end
-
-  def event_data_approved?
-    false
-  end
-
-  def event_data_rejected?
-    false
   end
 
   def results_for(fields)
