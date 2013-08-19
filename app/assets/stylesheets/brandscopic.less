@@ -453,7 +453,7 @@ body.app-layout{
 		padding: 5px 17px 4px 17px !important;
 		&:after{
 			color: white;
-			content: "\e00b";
+			content: "\e020";
 			font-family: 'icons';
 			font-size: 15px;
 			padding-left: 6px;
@@ -547,8 +547,12 @@ body.app-layout{
     border-radius: 8px;
     &.first_login{
     	width:600px;
+    	h2{
+    		margin-bottom: 20px;
+    	}
     	.chzn-container{
     		display:block;
+    		margin-bottom: 10px;
     	}
     	.controls{
     		margin-right: 10px;
@@ -578,16 +582,20 @@ body.app-layout{
     		background-color: white !important;
     		width:556px !important;
     	}
+    	input[type="password"]{
+    		margin-bottom: 0;
+    	}
     	label{
     		color: @brand;
     		display:block;
-    		padding: 0 0 5px 10px;
+    		padding: 0 0 2px 10px;
     		text-align: left;
     	}
     	p{
+    		font-size: 11px;
+    		line-height: 15px;
     		&.help-block{
     			margin-bottom: 10px;
-    			padding-left: 10px;
     			text-align: left;
     		}
     	}
@@ -1042,7 +1050,7 @@ li#user_menu{
     		}
     	}
     }
-    ul#event-data-list, ul#comment-list, ul#expenses-list, #surveys-list{
+    ul#event-data-list, ul#comment-list, ul#expenses-list, ul#surveys-list{
     	.event-info{
     		margin:16px 30px 0 20px;
     	}
@@ -1082,6 +1090,22 @@ li#user_menu{
     		&.user_date{
     			margin: 8px 0 0 0;
     			width: 16%;
+    		}
+    	}
+    }
+    ul#surveys-list{
+    	span{
+    		&:first-child{
+    			margin: 23px 0 0 20px;
+    			width: 330px;
+    			.survey-age{
+    				font-size: 16px;
+    			}
+    		}
+    		&.date{
+    			line-height: 16px;
+    			margin: 19px 50px 0 0;
+    			width: 180px;
     		}
     	}
     }
@@ -1337,31 +1361,51 @@ input.search-query:focus{
 	background-image: none;
 	border: 0;
 	color: @text;
-	padding: 17px 0;
+	position: relative;
+	padding: 5px 0;
 	&.ui-corner-all{
 		-webkit-border-radius: 6px !important;
 	    border-radius: 6px !important;
 	}
 }
 .ui-menu{
-	li.ui-menu-item{
-		line-height: 30px;
-		a{
-			&:active, &:hover{
-				background-color: @menu !important;
-				background-image: none !important;
-				border:0;
-				color:white;
-				&.ui-corner-all{
-				    border-radius: 0px !important;
+	li{
+		&.ui-menu-item{
+			a{
+				color: @menu;
+				font-weight: normal !important;
+				padding: 7px 10px;
+				&:active, &:hover{
+					background-color: @menu !important;
+					background-image: none !important;
+					border:0;
+					color:white;
+					font-weight: normal;
+					padding: 7px 10px;
+					&.ui-corner-all{
+					    border-radius: 0px !important;
+					}
+				}
+				i{
+					color: white;
+					font-weight: normal !important;
 				}
 			}
+		}
+		&.ui-autocomplete-category{
+			color:@text;
+			font-weight: bold;
+			padding: 6px 10px;
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
 		background-color: @menu !important;
 		background-image: none !important;
 		border:0 !important;
+		border-radius: 0px !important;
+		color: white !important;
+		font-weight: normal !important;
+		padding: 8px 10px !important;
 	}
 }
 input:-moz-placeholder,
@@ -1455,18 +1499,24 @@ overflow: hidden;
 }
 
 #resource-close-details {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
 	background-color: @menu;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	border-radius: 7px 7px 0px 0px;
 	&.affix {
+		position: fixed;
 		top: 40px;
 		right: 10px;
 		left: 90px;
+		width: auto;
 		-webkit-border-radius: 0px;
 		border-radius: 0px;
-    }
-	a {
+	}
+	a.close-details {
 		display: inline-block;
 		width: 99%;
 		padding: 10px 0 5px 10px;
@@ -1494,9 +1544,28 @@ overflow: hidden;
 		float: left;
 		margin: 0 10px 0 10px;
 	}
+
+	h3 {
+		font-size: 18px;
+		display: inline-block; 
+	}
+
+	a a {
+		font-size: 18px;
+		margin-left: 10px;
+	}
 }
-#application-content.with_details_bar {
-	margin-top: 50px;
+
+.details-bar-info {
+ 	height: 0px;
+ 	width: 1px;
+ 	float: left;
+ 	margin-left: -1000;
+ 	overflow: hidden;
+}
+
+.with-details-close-bar {
+	position: relative;
 }
 
 #content-with-left-nav {
@@ -1933,13 +2002,6 @@ body.events.show {
 		margin-top: 0;
 	}
 
-	#venue-map-canvas{
-		border:1px solid @user_menu;
-		display:block;
-		height: 150px;
-		margin: 0 0 30px 0;
-	}
-
 	#venue-score{
 		color: @venues_blue;
 	}
@@ -2361,7 +2423,10 @@ body.events.show {
 }
 
 // Maps on venue and event details
-#venue-map-canvas {
+#venue-map-canvas{
+	border:1px solid @user_menu;
+	display:block;
+	margin: 20px 0 30px 0;
 	height: 500px;
 }
 
@@ -2849,7 +2914,7 @@ svg{
 			padding-top: 3px;
 			position: absolute;
 			speak: none;
-			left: 119px;
+			left: 28px;
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
@@ -2864,7 +2929,7 @@ svg{
 			padding-top: 3px;
 			position: absolute;
 			speak: none;
-			left: 118px;
+			left: 27px;
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
@@ -2879,11 +2944,15 @@ svg{
 			padding-top: 3px;
 			position: absolute;
 			speak: none;
-			left: 118px;
+			left: 27px;
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
 		}
+	}
+	.alert {
+		-webkit-border-radius: 0;
+  		border-radius: 0;
 	}
 	ul.thumbnails{
 		&.venues{
