@@ -1320,6 +1320,41 @@ input.search-query:focus{
 }
 .search-filter-label {
 	padding-top: 8px;
+	span.close{
+		display:none;
+	}
+}
+.ui-widget-content{
+	background-color: @brand !important;
+	background-image: none;
+	border: 0;
+	color: @text;
+	padding: 17px 0;
+	&.ui-corner-all{
+		-webkit-border-radius: 6px !important;
+	    border-radius: 6px !important;
+	}
+}
+.ui-menu{
+	li.ui-menu-item{
+		line-height: 30px;
+		a{
+			&:active, &:hover{
+				background-color: @menu !important;
+				background-image: none !important;
+				border:0;
+				color:white;
+				&.ui-corner-all{
+				    border-radius: 0px !important;
+				}
+			}
+		}
+	}
+	.ui-state-hover, .ui-state-focus{
+		background-color: @menu !important;
+		background-image: none !important;
+		border:0 !important;
+	}
 }
 input:-moz-placeholder,
 textarea:-moz-placeholder {
