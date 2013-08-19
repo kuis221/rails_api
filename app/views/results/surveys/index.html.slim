@@ -9,7 +9,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          =link_to '', results_surveys_path(format: "xlsx"), class: 'icon-download xlsx-download-link'
+          a.btn.download href="#{results_surveys_path(format: "xlsx")}" title="Download"
       #surveys-totals
       .link-list
         ul#surveys-list
