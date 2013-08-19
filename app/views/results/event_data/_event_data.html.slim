@@ -8,7 +8,7 @@
         = place_address(event.place)
       .results-box-container
         span.event-data-column.promo-hours-box
-          = number_with_precision(event.promo_hours, precision: 2)
+          = number_with_precision(event.promo_hours, precision: 1)
         span.event-data-column.impressions-box
           - if event.event_data.impressions.present?
             = number_with_delimiter(event.event_data.impressions)
@@ -31,7 +31,7 @@
           - if event.event_data.ethnicity_asian.present?
             = number_to_percentage(event.event_data.ethnicity_asian, precision: 0)
         span.event-data-column.ethnicity-black-box
-          - if event.event_data.ethnicity_black.present? 
+          - if event.event_data.ethnicity_black.present?
             = number_to_percentage(event.event_data.ethnicity_black, precision: 0)
         span.event-data-column.ethnicity-hispanic-box
           - if event.event_data.ethnicity_hispanic.present?

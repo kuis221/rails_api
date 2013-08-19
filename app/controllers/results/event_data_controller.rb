@@ -35,11 +35,11 @@ class Results::EventDataController < FilteredController
                                  avg(ethnicity_white) AS average_ethnicity_white')
                         .where(["event_id IN (?)", event_ids]).all.first
 
-        promo_hours = Event.select('avg(promo_hours) AS average_promo_hours')
+        promo_hours = Event.select('sum(promo_hours) AS total_promo_hours')
                            .where(["id IN (?)", event_ids]).all.first
 
         totals['events_count'] = event_ids.count
-        totals['promo_hours'] = promo_hours.average_promo_hours || 0
+        totals['promo_hours'] = promo_hours.total_promo_hours || 0
         totals['impressions'] = data.total_impressions || 0
         totals['interactions'] = data.total_interactions || 0
         totals['samples'] = data.total_samples || 0
