@@ -1,4 +1,4 @@
-.row-fluid
+.row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing event details. Click to close.", collection_path)
 
   .details_box
@@ -19,6 +19,15 @@
       = place_address(resource.place) if resource.place
       = link_to content_tag(:i, '', class: 'icon-edit'), edit_event_path(resource), remote: true
       = active_inactive_buttons(resource)
+
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.campaign_name
+      = link_to content_tag(:i, '', class: 'icon-edit'), edit_event_path(resource), remote: true
+      = active_inactive_buttons(resource)
+      br>/
+      = format_date_range(resource.start_at, resource.end_at, date_separator: ' ')
+
 
   #event-members.details_box
     h2 Event Team
@@ -55,7 +64,9 @@
 
 javascript:
   $(document).ready(function() {
+    console.log('before initial scroll')
     $(this).scrollTop(400);
+    console.log('after initial scroll')
   });
 
   $(document).bind('member:delete', function(e){
