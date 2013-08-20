@@ -166,6 +166,28 @@ class Venue < ActiveRecord::Base
       segments = Kpi.send(kpi).kpis_segments
       @overall_graphs_data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
     end
+
+    # First let the DB to do the math for the events that starts and ends the same day... (the easy part)
+    tz = Time.zone.now.strftime('%Z')
+    stats_by_day = Event.select("count(events.id) AS counting, avg(events.promo_hours) as promo_hours, EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}') AS weekday")
+         .group("EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}')")
+         .where(place_id: place_id, company_id: company_id)
+         .where(["date_trunc('day',start_at AT TIME ZONE ?) = date_trunc('day',end_at AT TIME ZONE ?)", tz, tz])
+    @overall_graphs_data[:trends_week_day] = Hash[(0..6).map{|i|[i, 0]}]
+    stats_by_day.each{|s| @overall_graphs_data[:trends_week_day][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.promo_hours.to_f }
+
+    # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
+    events = Event.where(place_id: place_id, company_id: company_id)
+         .where(["date_trunc('day',start_at AT TIME ZONE ?) <> date_trunc('day',end_at AT TIME ZONE ?)", tz, tz])
+    events.each do |e|
+      (e.start_at.to_date..e.end_at.to_date).each do |day|
+        hours = ([e.end_at, day.end_of_day].min - [e.start_at, day.beginning_of_day].max) / 3600
+        @overall_graphs_data[:trends_week_day][(day.wday == 0 ? 6 : day.wday-1)] += hours
+      end
+    end
+
+
+
     @overall_graphs_data
   end
 

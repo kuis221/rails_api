@@ -111,6 +111,8 @@
 
 .details_box
   h3 TRENDS BY DAY OF WEEK
+  p= venue_trend_week_day_narrative(resource)
+  #trends-day-week-graph
 
 .details_box
   h3 GALLERY
@@ -207,6 +209,74 @@ javascript:
                     style: { color: '#3E9CCF' }
                 }
 
+        }]
+    });
+
+    $('#trends-day-week-graph').highcharts({
+        credits: { enabled: false },
+        chart: {marginTop: 50 },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+            lineColor: '#D1D1D1',
+            tickWidth: 0,
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+        },
+        yAxis: {
+            title: {
+                text: null
+            },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            min: 0
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    fillColor: '#FFFFFF',
+                    lineWidth: 2,
+                    lineColor: null, // inherit from series
+                    radius: 6
+                }
+            }
+        },
+        tooltip: { enabled: false },
+        legend: {
+            floating: true,
+            borderWidth: 0,
+            y: -10,
+            align: 'right',
+            verticalAlign: 'top',
+            itemStyle: { fontSize: '10px', color: '#3E9CCF' }
+        },
+        series: [{
+            name: 'Impressions/promo hour',
+            data: #{resource.overall_graphs_data[:trends_week_day].values.map(&:round).to_json.html_safe},
+            color: '#3D9CCA',
+            dataLabels: {
+                enabled: true,
+                color: '#3E9CCF',
+                y: -20,
+                style: { color: '#3E9CCF', fontSize: '14px' }
+            }
         }]
     });
 
