@@ -1,4 +1,4 @@
-- submit_link = link_to 'submit', submit_event_path
+- submit_link = link_to 'submit', submit_event_path, method: :put
 - if resource.in_future?
   .alert.alert-grey
     == "Your event is scheduled. You can <a href=\"#event-members\">manage the event team</a>, <a href=\"#event-tasks\">complete tasks</a>, or <a href=\"#event-documents\">upload event documents</a>."
@@ -50,13 +50,14 @@
 
 - elsif resource.rejected?
   .alert.alert-danger
-    - resubmit_link = link_to 'resubmit', submit_event_path
+    - resubmit_link = link_to 'resubmit', submit_event_path, method: :put
     == "Your post event report form has been rejected for the following reasons:"
-    p <reason why the post event form was rejected>.
+    br>/
+    p #{resource.reject_reason}
     p Please make the necessary updates and #{resubmit_link}.
 
 - else
   .alert.alert-info
-    - approve_link = link_to 'approve', approve_event_path
-    - reject_link = link_to 'reject', reject_event_path
+    - approve_link = link_to 'approve', approve_event_path, method: :put
+    - reject_link = link_to 'reject', reject_event_path, class: 'reject-post-event', method: :put, remote: true
     == "Your post event report has been submitted for approval. Please review and either #{approve_link} or #{reject_link}."

@@ -146,9 +146,9 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
-      get :submit
-      get :approve
-      get :reject
+      put :submit
+      put :approve
+      put :reject
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member
