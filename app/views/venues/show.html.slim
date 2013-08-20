@@ -158,7 +158,7 @@ javascript:
                 enabled: false
             },
             labels: {
-              style: {color: '#3E9CCF'}
+              style: {color: '#3E9CCF', fontSize: '13px'}
             },
             tickLength: 0,
             lineWidth: 0
@@ -186,7 +186,8 @@ javascript:
                 pointPadding: 0,
                 pointWidth: 15,
                 dataLabels: {
-                    color: '#3E9CCF'
+                    color: '#3E9CCF',
+                    style: { fontSize: '11px' }
                 }
             }
         },
@@ -282,7 +283,7 @@ javascript:
 
     if (#{resource.overall_graphs_data[:ethnicity].values.max} > 0) {
         $('#overall-ethnicity-graph').highcharts({
-              colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
+              colors: ['#218ebf', '#3d9bce', '#6ebde7', '#94d6ed'],
               chart: {
                   type: 'pie'
               },
@@ -297,6 +298,10 @@ javascript:
                   },
                   series: {
                     enableMouseTracking: false,
+                    dataLabels: {
+                      connectorColor: '#C0C0C0',
+                      softConnector: false
+                    }
                   }
               },
               tooltip: {
@@ -304,7 +309,7 @@ javascript:
               },
               series: [{
                   name: 'Ethnicity',
-                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k, v.round]}.to_json.html_safe},
+                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k.upcase, v.round]}.to_json.html_safe},
                   size: '60%',
                   innerSize: '30%',
                   distance: -10,
@@ -312,9 +317,9 @@ javascript:
                       crop: false,
                       formatter: function() {
                           // display only if larger than 1
-                          return '<span style="font-size:15px;">'+ this.y +'%' +'</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
+                          return '<span style="font-size:16px;">'+ this.y +'%' +'</span><br /><div style="width: 50px;font-size:11px;">'+ this.point.name+'</div>';
                       },
-                      color: '#3E9CCF'
+                      color: '#3E9CCF',
                   }
               }]
         });
