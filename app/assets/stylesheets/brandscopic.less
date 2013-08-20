@@ -1614,24 +1614,26 @@ overflow: hidden;
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 5px 10px;
+		padding: 10px 0 7px 16px;
 		text-decoration: none;
 		color: @grey_one;
 	}
 	.close {
 		opacity: 1;
 		position: relative;
+		text-shadow:none;
 		&:after{
 			color: @grey_one;
 			content: "\e019";
 			display: block;
 			font-family: 'icons';
-			font-size: 12px;
+			font-size: 14px;
+			font-weight: normal;
 			position: absolute;
-			right: 10px;
+			right: 30px;
 			speak: none;
 			text-indent: 0;
-			top: 1px;
+			top: 3px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
@@ -1641,8 +1643,9 @@ overflow: hidden;
 	}
 
 	h3 {
-		font-size: 18px;
+		font-size: 16px;
 		display: inline-block; 
+		margin-bottom: 0;
 	}
 
 	a a {
