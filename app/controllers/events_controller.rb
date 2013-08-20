@@ -46,10 +46,11 @@ class EventsController < FilteredController
   end
 
   def reject
-    if resource.submitted?
+    reject_reason = params[:reason]
+    if resource.submitted? && reject_reason.present?
       resource.reject!
+      resource.update_column(:reject_reason, reject_reason)
     end
-    redirect_to resource_path
   end
 
   protected

@@ -76,7 +76,6 @@ jQuery ->
 	$('[data-sparkline]').each (index, elm) ->
 		$elm = $(elm)
 		values = $elm.data('values').split(",")
-		console.log((values.length * 3)+'px')
 		$elm.sparkline values, { type: $elm.data('sparkline'), barWidth: 1, barSpacing: 1, barColor: '#3E9CCF', height: '20px' }
 
 
@@ -116,8 +115,6 @@ jQuery ->
 			$('.totop').slideDown()
 		else
 			$('.totop').slideUp()
-
-		console.log('scrolled')
 
 		$detailsBar = $('#resource-close-details')
 		if $detailsBar.length > 0
@@ -296,6 +293,23 @@ jQuery ->
 
 	$(document).delegate '.fullscreen-link', 'click', ->
 		goFullscreen $(this).data("fullscreen-element")
+		false
+
+	$(".reject-post-event").click (e) ->
+		e.preventDefault()
+		$link = $(this)
+		bootbox.classes('modal-med rejection-prompt')
+		bootbox.prompt "Enter a reason for rejection", (result) ->
+			if result isnt null and result isnt ""
+				$.ajax $link.attr("href"),
+					method: "PUT"
+					dataType: "script"
+					data:
+						reason: result
+			else if result isnt null
+				bootbox.alert "You must enter a reason for the rejection", ->
+					$link.click()
+
 		false
 
 # Hack to use bootsbox confirm dialog
