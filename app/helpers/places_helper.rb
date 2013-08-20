@@ -12,6 +12,20 @@ module PlacesHelper
     end
   end
 
+  def venue_trend_week_day_narrative(venue)
+    stats = resource.overall_graphs_data[:trends_week_day]
+    days_names = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
+    days_with_events = stats.map{|x,y| days_names[x] if y > 0 }.compact
+    days_count = days_with_events.count
+    if days_count > 1
+      max = stats.values.max
+      best_days = stats.select{|x,y| y == max }.keys.map{|d| days_names[d] }
+      "#{venue.name} has had events on #{days_with_events.to_sentence} and has performed best on #{best_days.to_sentence}. Specifically, #{venue.name} yields more impressions per hour on #{best_days.to_sentence} than on any other day of the week."
+    elsif days_count == 1
+      "#{venue.name} has only had events on #{days_with_events.first}. Without having events on other days of the week, it is difficult to draw conclusions about what day of the week has shown the best performance at #{venue.name} in the past."
+    end
+  end
+
   private
     def score_calification_for(score)
       if score > 66

@@ -554,28 +554,123 @@ body.app-layout{
     		display:block;
     		margin-bottom: 10px;
     	}
+    	input[type="submit"].btn{
+    		margin: 40px 0 0 0;
+    	}
+    	.control-group{
+    		&.user_city, &.user_state, &.user_email{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:45px;
+	    		}
+    		}
+    		&.user_first_name, &.user_last_name, &.user_time_zone{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:80px;
+	    		}
+    		}
+    		&.user_country{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:65px;
+	    		}   			
+    		}
+    		&.user_password{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:110px;
+	    		}   			
+    		}
+    		&.user_password_confirmation{
+    			label.control-label{
+	    			display: inline-block;
+	    			float: left;
+	    			width:160px;
+	    		}   			
+    		}
+    		&.error{
+    			.help-inline{
+    				float: left;
+    				margin-top: 1px;
+    			}
+    		}
+    		.help-inline{
+    			&.valid{
+    				float: left;
+    				margin-top: 1px;
+    			}
+    		}
+    	}
     	.controls{
     		margin-right: 10px;
     		text-align: left;
     		width: 268px;
     		.chzn-container-single .chzn-single{
-    			height: 40px !important;
+    			height: 38px !important;
+				padding-top: 3px;
     			width: 252px !important;
+    			div b{
+    				margin-top: 3px !important;
+    			}
+			}
+			.chzn-search{
+				input[type="text"]{
+					background-image: none;
+					box-shadow: 0 !important;
+					margin: 3px 0 0 5px; 
+					width: 530px !important;
+					&:focus{
+						background-image: none;
+						box-shadow: none !important;
+					}
+				}
+			}
+			#user_state_chzn{
+				box-shadow: none;
+				.chzn-search{
+				input[type="text"]{
+					background-image: none;
+					box-shadow: 0 !important;
+					margin: 3px 0 0 5px; 
+					width: 250px !important;
+					&:focus{
+						background-image: none;
+						box-shadow: none !important;
+						}
+					}
+				}
+				.chzn-drop{
+					width: 262px !important;
+				}
 			}
     	}
     	.country, .time_zone{
-			.chzn-container-single .chzn-single{
-				height: 40px !important;
-				width: 558px !important;
+			.chzn-container-single{
+				.chzn-single{
+					height: 38px !important;
+					margin-left: 13px;
+					padding-top: 3px;
+					width: 558px !important;
+				}
+				.chzn-drop{
+					margin-left: 13px !important;
+					width: 568px !important;
+				}
 			}
 		}
-		.email, .password{
+		.country, .email, .password, .time_zone{
 			.controls{
 				width:575px;
 			}
 		}
     	input[type="text"]{
     		background-color: white !important;
+    		box-shadow: none !important;
     		width: 250px;
     	}
     	input[type="email"],input[type="password"]{
@@ -595,7 +690,7 @@ body.app-layout{
     		font-size: 11px;
     		line-height: 15px;
     		&.help-block{
-    			margin-bottom: 10px;
+    			margin: 5px 0 10px 0;
     			text-align: left;
     		}
     	}
@@ -1519,24 +1614,26 @@ overflow: hidden;
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 5px 10px;
+		padding: 10px 0 7px 16px;
 		text-decoration: none;
 		color: @grey_one;
 	}
 	.close {
 		opacity: 1;
 		position: relative;
+		text-shadow:none;
 		&:after{
 			color: @grey_one;
 			content: "\e019";
 			display: block;
 			font-family: 'icons';
-			font-size: 12px;
+			font-size: 14px;
+			font-weight: normal;
 			position: absolute;
-			right: 10px;
+			right: 30px;
 			speak: none;
 			text-indent: 0;
-			top: 1px;
+			top: 3px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
@@ -1546,8 +1643,9 @@ overflow: hidden;
 	}
 
 	h3 {
-		font-size: 18px;
+		font-size: 16px;
 		display: inline-block; 
+		margin-bottom: 0;
 	}
 
 	a a {
@@ -1963,11 +2061,6 @@ body.events.show {
 // VENUES
 
 .venues {
-	&.show{
-		.container{
-			padding-top: 0!important;
-		}
-	}
 	&.index {
 		#venues-search-form-box {
 			border-radius: 6px;
@@ -2008,6 +2101,9 @@ body.events.show {
 
 	#venue-score-narrative{
 		margin-top:30px;
+		width:380px;
+	}
+	#venue-trends-by-day-narrative{
 		width:380px;
 	}
 
@@ -2124,13 +2220,13 @@ body.events.show {
 			}
 		}
 
-		#overall-age-graph {
-			height: 300px;
-		}
-
 		#overall-ethnicity-graph {
 			height: 350px;
 			margin: 65px 60px 0 0;
+		}
+
+		#overall-age-graph {
+			height: 400px;
 		}
 	}
 

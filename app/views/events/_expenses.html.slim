@@ -4,3 +4,7 @@
   .link-list
     ul#expenses-list
       = render resource.event_expenses
+      li.total-expenses
+        span Total
+        span
+          b= number_to_currency(resource.event_expenses.sum(&:amount), precision: 2)

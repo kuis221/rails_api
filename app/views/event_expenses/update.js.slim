@@ -1,0 +1,8 @@
+- render 'settings'
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('.bootbox.modal').modal('hide');
+    $('#event-expenses-container').replaceWith('#{escape_javascript(render(partial: 'events/expenses', locals: {resource: resource.event}))}');
+    $(document).trigger('#{resource.class.name.pluralize.underscore}:change');

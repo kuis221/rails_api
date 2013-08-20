@@ -144,7 +144,7 @@ class Event < ActiveRecord::Base
     end
 
     boolean :has_event_data do
-      event_data_submitted?
+      has_event_data?
     end
 
     boolean :has_surveys do
@@ -186,6 +186,10 @@ class Event < ActiveRecord::Base
 
   def was_yesterday?
     end_at.to_date == Date.yesterday
+  end
+
+  def has_event_data?
+    results.count > 0
   end
 
   def results_for(fields)

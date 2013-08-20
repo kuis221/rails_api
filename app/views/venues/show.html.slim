@@ -111,6 +111,8 @@
 
 .details_box
   h3 TRENDS BY DAY OF WEEK
+  #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
+  #trends-day-week-graph
 
 .details_box
   h3 GALLERY
@@ -139,11 +141,13 @@
         .review-date= time_ago_in_words(review.created_at)
         .review-text= review.content
 
+javascript:
+  $(document).ready(function() {
+    $(this).scrollTop(400);
+  });
+
 - if resource.persisted?
   javascript:
-    $(document).ready(function() {
-      $(this).scrollTop(400);
-    });
     $('#overall-age-graph').highcharts({
         chart: { type: 'bar' },
         title: { text: null },
@@ -154,7 +158,7 @@
                 enabled: false
             },
             labels: {
-              style: {color: '#3E9CCF'}
+              style: {color: '#3E9CCF', fontSize: '13px'}
             },
             tickLength: 0,
             lineWidth: 0
@@ -182,7 +186,8 @@
                 pointPadding: 0,
                 pointWidth: 15,
                 dataLabels: {
-                    color: '#3E9CCF'
+                    color: '#3E9CCF',
+                    style: { fontSize: '11px' }
                 }
             }
         },
@@ -208,9 +213,77 @@
         }]
     });
 
+    $('#trends-day-week-graph').highcharts({
+        credits: { enabled: false },
+        chart: {marginTop: 50 },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+            lineColor: '#D1D1D1',
+            tickWidth: 0,
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+        },
+        yAxis: {
+            title: {
+                text: null
+            },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            labels: {
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            min: 0
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    fillColor: '#FFFFFF',
+                    lineWidth: 2,
+                    lineColor: null, // inherit from series
+                    radius: 6
+                }
+            }
+        },
+        tooltip: { enabled: false },
+        legend: {
+            floating: true,
+            borderWidth: 0,
+            y: -10,
+            align: 'right',
+            verticalAlign: 'top',
+            itemStyle: { fontSize: '10px', color: '#3E9CCF' }
+        },
+        series: [{
+            name: 'Impressions/promo hour',
+            data: #{resource.overall_graphs_data[:trends_week_day].values.map(&:round).to_json.html_safe},
+            color: '#3D9CCA',
+            dataLabels: {
+                enabled: true,
+                color: '#3E9CCF',
+                y: -20,
+                style: { color: '#3E9CCF', fontSize: '14px' }
+            }
+        }]
+    });
+
     if (#{resource.overall_graphs_data[:ethnicity].values.max} > 0) {
         $('#overall-ethnicity-graph').highcharts({
-              colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
+              colors: ['#218ebf', '#3d9bce', '#6ebde7', '#94d6ed'],
               chart: {
                   type: 'pie'
               },
@@ -225,6 +298,10 @@
                   },
                   series: {
                     enableMouseTracking: false,
+                    dataLabels: {
+                      connectorColor: '#C0C0C0',
+                      softConnector: false
+                    }
                   }
               },
               tooltip: {
@@ -232,7 +309,7 @@
               },
               series: [{
                   name: 'Ethnicity',
-                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k, v.round]}.to_json.html_safe},
+                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k.upcase, v.round]}.to_json.html_safe},
                   size: '60%',
                   innerSize: '30%',
                   distance: -10,
@@ -240,9 +317,9 @@
                       crop: false,
                       formatter: function() {
                           // display only if larger than 1
-                          return '<span style="font-size:15px;">'+ this.y +'%' +'</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
+                          return '<span style="font-size:16px;">'+ this.y +'%' +'</span><br /><div style="width: 50px;font-size:11px;">'+ this.point.name+'</div>';
                       },
-                      color: '#3E9CCF'
+                      color: '#3E9CCF',
                   }
               }]
         });
