@@ -512,8 +512,8 @@ body.app-layout{
 	-webkit-font-smoothing: antialiased;
 }
 .btn-primary{
-	background-color: @buttons;
-	background-image:none;
+	background-color: @buttons !important;
+	background-image:none !important;
 	border: 0;
 	box-shadow: none;
 	color: white;
@@ -521,7 +521,7 @@ body.app-layout{
 	padding: 7px 25px;
 	text-shadow:none;
     &:hover{
-		background-color: @buttons-hover;
+		background-color: @buttons-hover !important;
     }
     &:active{
     	background-color: @buttons-hover;

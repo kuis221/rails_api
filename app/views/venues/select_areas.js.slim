@@ -2,8 +2,8 @@
   bootbox.classes('modal-xlarge');
   var selectAreaDialog = bootbox.dialog($('#{escape_javascript(render "select_areas")}'), [
     {
-      "label" : 'Create New Area',
-      "class" : "btn",
+      "label" : 'New Area',
+      "class" : "btn btn-primary",
       "callback": function() {
           selectAreaDialog.off('hidden'); // To prevent the div to be removed in case the user returns to the form
           selectAreaDialog.modal('hide');
@@ -11,8 +11,8 @@
       }
     },
     {
-      "label" : "Close",
-      "class" : "btn",
+      "label" : "Cancel",
+      "class" : "btn btn btn-cancel",
       "callback": function() {
           selectAreaDialog.modal('hide');
       }
