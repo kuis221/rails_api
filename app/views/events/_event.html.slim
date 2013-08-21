@@ -7,6 +7,6 @@ li id="event_#{event.id}"
       br>/
       = place_address(event.place)
   span.pull-right
-    = link_to '', edit_event_path(event), remote: true, class: 'edit'
-    = link_to '', deactivate_event_path(event), remote: true, class: 'disable' if event.active?
-    = link_to '', activate_event_path(event), remote: true, class: 'enable' unless event.active?
+    = link_to '', edit_event_path(event), {remote: true, class: 'edit'}.merge(event_counter == 1 ? {'data-intro' => 'Edit an event', 'data-position' => 'left'} : {})
+    = link_to '', deactivate_event_path(event), {remote: true, class: 'disable'}.merge(event_counter == 1 ? {'data-intro' => 'Deactivate or reactivate an event', 'data-position' => 'bottom'} : {}) if event.active?
+    = link_to '', activate_event_path(event), {remote: true, class: 'enable'}.merge(event_counter == 1 ? {'data-intro' => 'Deactivate or reactivate an event', 'data-position' => 'bottom'} : {}) unless event.active?

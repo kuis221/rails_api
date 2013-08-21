@@ -59,7 +59,7 @@ $.widget 'nmk.filteredList', {
 
 		if @options.autoLoad
 			@_loadPage(1)
-		
+
 		@_loadFilters()
 
 		@defaultParams = []
@@ -112,7 +112,7 @@ $.widget 'nmk.filteredList', {
 		max_value = if filter.selected_max? then filter.selected_max else filter.max
 		$slider = $('<div class="slider-range">')
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
-			$('<span class="slider-label">').text(filter.label), 
+			$('<span class="slider-label">').text(filter.label),
 			$slider,
 			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
@@ -139,7 +139,7 @@ $.widget 'nmk.filteredList', {
 			$filter.find('input.max').val Math.round(data.values.max)
 			@_filtersChanged()
 			console.log("Something moved. min: " + Math.round(data.values.min) + " max: " + Math.round(data.values.max));
-		
+
 
 		@formFilters.append($filter)
 
@@ -301,7 +301,7 @@ $.widget 'nmk.filteredList', {
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
-		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
+		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter" data-intro="Search for specific events" data-position="top">')
 			.appendTo(@form)
 			.on 'blur', () =>
 				if @searchHidden.val()
@@ -360,7 +360,7 @@ $.widget 'nmk.filteredList', {
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
 		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
-		container = $('<div class="dates-range-filter">').appendTo @form
+		container = $('<div class="dates-range-filter" data-intro="Days that have events scheduled are highlighted in red. Click and drag to see events taking place within a selected date range." data-position="bottom">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
 			monthsToShow: 1,
@@ -420,7 +420,7 @@ $.widget 'nmk.filteredList', {
 		data.replace(/^&/,"")
 
 	buildParams: (params=[]) ->
-		if @nextpagetoken 
+		if @nextpagetoken
 			params = [{name: 'page', value: @nextpagetoken }]
 		else
 			data = @getFilters()
