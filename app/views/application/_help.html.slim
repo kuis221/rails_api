@@ -1,0 +1,58 @@
+#help-modal.modal.hide.fade
+  .modal-header
+    button.close aria-hidden="true" data-dismiss="modal" type="button" x
+    h3 Brandscopic Help
+  .modal-body
+    h4 FAQs
+    p List 5 of the most common FAQs that pertain to the current section/page. Below the top 5 FAQs, show a "more..." link. Clicking on any of the FAQs will open the answer to the FAQ on the desk.com support site. Clicking on the "more..." link will direct users to the full FAQ list on the desk.com support site.
+
+    h4 Overview
+    = link_to 'View Tutorial', '#', class: 'overview'
+
+    h4 Live Chat
+    | Chat with an Account Manager
+    javascript:
+      new DESK.Widget({
+        version: 1,
+        site: 'support.brandscopic.com',
+        port: '80',
+        type: 'chat',
+        displayMode: 1,
+        features: {
+          offerAlways: false,
+          offerAgentsOnline: true,
+          offerRoutingAgentsAvailable: false,
+          offerEmailIfChatUnavailable: true
+        },
+        fields: {
+          ticket: {
+            desc: '',
+            labels_new: '',
+            priority: '',
+            subject: ''
+          },
+          interaction: {
+            email: '',
+            name: ''
+          },
+          chat: {
+            subject: ''
+          },
+          customer: {
+            company: '',
+            desc: '',
+            first_name: '',
+            last_name: '',
+            locale_code: '',
+            title: ''
+          }
+        }
+      }).render()
+  .modal-footer
+    a.btn.btn-primary href="#" aria-hidden="true" data-dismiss="modal" Close
+
+javascript:
+  $('.overview').click(function(){
+    $('body').chardinJs('start');
+    $('#help-modal').modal('hide');
+  })

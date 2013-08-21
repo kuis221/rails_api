@@ -29,11 +29,7 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :help_menu,  '?', '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|
-      secondary.item :faqs, 'FAQs', '#'
-      secondary.item :overview, 'Overview', '#'
-      secondary.item :live_chat, 'Live Chat', '#'
-    end
+    primary.item :help_menu, '?', '#help-modal', link: {'data-toggle' => "modal", 'role' => "button"}
 
     primary.item :admin, '', company_users_path, if: lambda{ user_signed_in? }, link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
       secondary.item :users, 'Users', company_users_path
