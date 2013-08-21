@@ -1095,6 +1095,54 @@ li#user_menu{
   			color: @text;
   		}
     }
+    ul#areas-list{
+    	li{
+	    	span{
+	    		&.pull-right{
+	    			position: relative;
+	    			top:0;
+	    		}
+	    		&:first-child{
+	    			font-size: 11px;
+	    			margin: 20px 0 0 20px;
+	    			width: 400px;
+	    			.area_name{
+	    				font-size: 16px;
+	    			}
+	    		}
+	    		&:last-child{
+	    			.active:before{
+		        	  	color: #90bf43;
+						content: "\e00b";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:10px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 30px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
+	    			}
+	    			.add:before{
+		        	  	color: @brand;
+						content: "\e021";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:10px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 30px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;	    				
+	    			}
+	    		}
+	    	}
+	    }
+    }
     ul#tasks-list{
     	li{
     		color: @text;
@@ -1164,6 +1212,43 @@ li#user_menu{
 	    	.promo-hours-box{
 	    		margin-left:165px;
 	    	}
+    	}
+    }
+    ul#comment-list{
+    	li{
+    		span{
+    			margin: 15px 0 0 25px;
+    			width: 45%;
+    			.date{
+    				b{
+    					top: 0;
+    				}
+    			}
+    			p{
+    				padding-top: 5px;
+    			}
+    		}
+    	}
+    }
+    ul#expenses-list{
+    	li{
+    		span{
+    			&:first-child{
+    				font-size: 16px;
+    				margin: 30px 0 0 20px;
+    				overflow: hidden;
+			    	text-overflow: ellipsis;
+					white-space: nowrap;
+    				width: 380px;
+    			}
+    			&.expense-date{
+    				margin:32px 0 0 0;
+    			}
+    			&.currency{
+    				font-size: 16px;
+    				margin:30px 30px 0 0;
+    			}
+    		}
     	}
     }
     ul#users-list{
@@ -2131,6 +2216,7 @@ body.events.show {
 		}
 		.review-text{
 			font-size: 11px;
+			width: 410px;
 		}
 	}
 
@@ -2168,7 +2254,6 @@ body.events.show {
 		.add-area-venue {
 			font-size: 20px;
 			text-decoration: none;
-			padding-left: 25px;
 		}
 
 		.area {
@@ -2458,8 +2543,19 @@ body.events.show {
 			}
 		}
 
+		&.index .link-list{
+			margin-top: 0;
+		}
+
 		#expenses-totals {
 			padding: 15px 0px;
+			border:1px solid @borders;
+			border-bottom:0;
+			height: 50px;
+			span{
+				font-size: 16px;
+				margin: 15px 30px 15px 0;
+			}
 		}
 	}
 }
@@ -2984,10 +3080,13 @@ svg{
 	a{
 		color: @venues_blue;
 		text-decoration: underline;
-		&.icon-plus-sign{
+		&.icon-plus-sign:before{
+			content: "\e021";
 			color: @brand;
 			display: block;
-			margin-top: 30px;
+			font-family: 'icons';
+			font-size: 21px;
+			margin: 15px 0 0 30px;
 		}
 	}
 	h2{

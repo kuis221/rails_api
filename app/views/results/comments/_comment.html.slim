@@ -1,4 +1,5 @@
 li id="comment_#{comment.id}"
-  .date= format_date_with_time(comment.created_at)
-  p
-    = comment.content
+  span
+	  .date= format_date_with_time(comment.created_at)
+	  p
+	    = comment.content

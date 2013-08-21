@@ -1,14 +1,15 @@
 #select-areas-table-wrapper
-  table#select-areas-list.table.table-striped.table-bordered.table-scrolled.data
-    thead
-      tr
-        th data-sort="name" Name
-        th.actions
-    tbody
-      - Area.not_in_venue(resource.place_id).each do |area|
-        tr id="area-#{area.id}"
-          td= area.name
-          td= link_to 'Add', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, disable_with: '...'
+    h3 Add to Area
+    .link-list
+      ul#areas-list
+        - Area.not_in_venue(resource.place_id).each do |area|
+          li id="area-#{area.id}"
+            span.pull-left
+              .area_name= area.name
+              | Here goes the description for this
+            span.pull-right
+              = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
+              = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, disable_with: '...', class: 'active' unless area.active?
 
 javascript:
   selectAreasTable = $('#select-areas-list').dataTable({
