@@ -1094,6 +1094,54 @@ li#user_menu{
   			color: @text;
   		}
     }
+    ul#areas-list{
+    	li{
+	    	span{
+	    		&.pull-right{
+	    			position: relative;
+	    			top:0;
+	    		}
+	    		&:first-child{
+	    			font-size: 11px;
+	    			margin: 20px 0 0 20px;
+	    			width: 400px;
+	    			.area_name{
+	    				font-size: 16px;
+	    			}
+	    		}
+	    		&:last-child{
+	    			.active:before{
+		        	  	color: #90bf43;
+						content: "\e00b";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:10px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 30px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
+	    			}
+	    			.add:before{
+		        	  	color: @brand;
+						content: "\e021";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:10px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 30px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;	    				
+	    			}
+	    		}
+	    	}
+	    }
+    }
     ul#tasks-list{
     	li{
     		color: @text;
@@ -2130,6 +2178,7 @@ body.events.show {
 		}
 		.review-text{
 			font-size: 11px;
+			width: 410px;
 		}
 	}
 
@@ -2167,7 +2216,6 @@ body.events.show {
 		.add-area-venue {
 			font-size: 20px;
 			text-decoration: none;
-			padding-left: 25px;
 		}
 
 		.area {
@@ -2983,10 +3031,13 @@ svg{
 	a{
 		color: @venues_blue;
 		text-decoration: underline;
-		&.icon-plus-sign{
+		&.icon-plus-sign:before{
+			content: "\e021";
 			color: @brand;
 			display: block;
-			margin-top: 30px;
+			font-family: 'icons';
+			font-size: 21px;
+			margin: 15px 0 0 30px;
 		}
 	}
 	h2{
