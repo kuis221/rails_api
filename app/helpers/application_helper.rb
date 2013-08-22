@@ -6,8 +6,6 @@ module ApplicationHelper
       place_name = place.name
       place_city = place.city
       venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
-      Rails.logger.debug '>>>>>><<<<<<<'
-      Rails.logger.debug venue
       if venue.present?
         if place.name == place.city
           place_city = link_to place.city, venue_path(venue)
