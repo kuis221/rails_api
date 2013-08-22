@@ -160,6 +160,13 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	text-shadow:none;
 	-webkit-border-radius: 0px 0px 8px 8px;
     border-radius: 0px 0px 8px 8px;
+    &.alert-info{
+    	background-color: @brand;
+    	color: white;
+    	a{
+    		color: white;
+    	}
+    }
 }
 
 .alert-grey {
@@ -516,9 +523,10 @@ body.app-layout{
 	background-image:none !important;
 	border: 0;
 	box-shadow: none;
-	color: white;
+	color: white !important;
 	font-size: 14px;
 	padding: 7px 25px;
+	text-decoration: none !important;
 	text-shadow:none;
     &:hover{
 		background-color: @buttons-hover !important;
@@ -1524,7 +1532,6 @@ input.search-query:focus{
 	}
 }
 .ui-widget-content{
-	background-color: @brand !important;
 	background-image: none;
 	border: 0;
 	color: @text;
@@ -1534,6 +1541,9 @@ input.search-query:focus{
 		-webkit-border-radius: 6px !important;
 	    border-radius: 6px !important;
 	}
+}
+ul.ui-widget-content{
+	background: @brand !important;
 }
 .ui-menu{
 	li{
@@ -3083,11 +3093,26 @@ svg{
 		font-size: 16px;
 		margin-bottom: 30px;
 	}
-	.first-data, .second-data, .third-data{
+	.calendar-data, .place-data, .time-data, .description-data{
 		margin:0 0 20px 30px;
 		width: 380px;
 	}
-	.first-data{
+	.calendar-data{
+		&:before{
+			color: @user_menu;
+			content: "\e022";
+			font-family: 'icons';
+			font-size: 19px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 28px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+	.place-data{
 		&:before{
 			color: @user_menu;
 			content: "\e018";
@@ -3102,7 +3127,7 @@ svg{
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-	.second-data{
+	.time-data{
 		&:before{
 			color: @user_menu;
 			content: "\e01f";
@@ -3117,7 +3142,7 @@ svg{
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-	.third-data{
+	.description-data{
 		&:before{
 			color: @user_menu;
 			content: "\e01e";

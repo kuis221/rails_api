@@ -14,9 +14,11 @@
 
     h2 = resource.campaign_name
 
-    p
+    .calendar-data
       = format_date_range(resource.start_at, resource.end_at)
+    .place-data
       = place_address(resource.place) if resource.place
+
       = link_to content_tag(:i, '', class: 'icon-edit'), edit_event_path(resource), remote: true
       = active_inactive_buttons(resource)
 
@@ -30,7 +32,7 @@
 
 
   #event-members.details_box
-    h2 Event Team
+    h2 EVENT TEAM
     #event-team-members
       = render 'team_member_list'
     = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign'
@@ -42,14 +44,13 @@
     = render 'edit_results'
 
   #event-tasks.details_box
-    h2 TASKS
 
     .pull-left
       = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
     #event-tasks-counters.pull-right
       = render partial: 'tasks_counters', locals: {tasks: resource.tasks}
 
-    #event-tasks-container
+    #tasks-container
       = render partial: 'tasks', locals: {tasks: resource.tasks}
 
 
