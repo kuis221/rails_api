@@ -192,6 +192,10 @@ class Event < ActiveRecord::Base
     results.count > 0
   end
 
+  def venue
+    @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+  end
+
   def results_for(fields)
     fields.map do |field|
       result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id})

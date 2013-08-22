@@ -1,3 +1,4 @@
+- event_counter ||= 0
 li id="event_#{event.id}"
   a href="#{event_path(event)}"
     span.date= format_date_range(event.start_at, event.end_at)
