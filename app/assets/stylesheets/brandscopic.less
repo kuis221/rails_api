@@ -1880,20 +1880,63 @@ body.events.index {
 }
 
 body.events.show {
-	.team-member, .document {
-		width: 300px;
-		padding: 5px 0;
-		.pull-left {
-			margin-right: 10px;
+	.team-member, .team {
+		font-size: 11px;
+		padding: 0 0 0 50px;
+		.full-name{
+			font-size: 16px
 		}
-		.remove-member-btn {
+		.icon-remove-circle{
 			display: none;
+			float: right;
+			&:before{
+				bottom: 15px;
+        	  	color: @brand;
+				content: "\e011" !important;
+			  	display: inline-block;
+			  	font-family: 'icons';
+				font-size: 18px;
+			  	position: relative;
+			  	right: 20px;
+				speak: none;
+				text-decoration: none;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        	}
 		}
 		&:hover {
-			.remove-member-btn {
-				display: block;
+			.icon-remove-circle {
+				display: inline-block;
 			}
 		}
+	}
+
+	.team-member:before{
+        color: @user_menu;
+		content: "\e024" !important;
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		right:33px;
+		position: relative;
+		speak: none;
+		text-align: center;
+		top: 20px;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.team:before{
+        color: @user_menu;
+		content: "\e023" !important;
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		right:43px;
+		position: relative;
+		speak: none;
+		text-align: center;
+		top: 20px;
+		-webkit-font-smoothing: antialiased;
 	}
 
 	ul.consumer-reach-metrics {
@@ -2087,7 +2130,7 @@ body.events.show {
 				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
-        	}
+        		}
 			}
 		}
 
