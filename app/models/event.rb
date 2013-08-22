@@ -278,6 +278,11 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def update_venue_data
+    venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+    venue.compute_stats
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
@@ -425,6 +430,8 @@ class Event < ActiveRecord::Base
     def save_event_data
       if @refresh_event_data
         event_data.delay.update_data
+      elsif place_id_changed?
+        update_venue_data if place_id.present?
       end
     end
 
