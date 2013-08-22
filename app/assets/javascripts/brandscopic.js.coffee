@@ -24,7 +24,7 @@ jQuery ->
 		}
 
 		$("a[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
-			if this.hash isnt ''
+			if this.hash isnt '' and $(this).data('toggle') == null
 				e.preventDefault()
 				e.stopPropagation()
 				$('html, body').animate({ scrollTop: $(this.hash).offset().top - 45 }, 300)
@@ -70,7 +70,6 @@ jQuery ->
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
-
 
 
 	$('[data-sparkline]').each (index, elm) ->
