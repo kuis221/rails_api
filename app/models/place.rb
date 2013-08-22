@@ -28,8 +28,8 @@ class Place < ActiveRecord::Base
 
   attr_accessible :reference, :place_id
 
-  validates :place_id, presence: true, uniqueness: true
-  validates :reference, presence: true, uniqueness: true
+  validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place
+  validates :reference, presence: true, uniqueness: true, unless: :is_custom_place
 
   # Areas-Places relationship
   has_many :areas_places
@@ -37,6 +37,7 @@ class Place < ActiveRecord::Base
   has_many :events
 
   attr_accessor :do_not_connect_to_api
+  attr_accessor :is_custom_place
   before_create :fetch_place_data
 
   serialize :types
@@ -175,13 +176,12 @@ class Place < ActiveRecord::Base
 
     def location_for_index(place)
       unless place.nil?
-        return encode_location([place.continent_name, place.country_name, place.state_name, place.city])+'||'+place.city if  place.state_name && place.city
+        return encode_location([place.continent_name, place.country_name, place.state_name, place.city])+'||'+place.city if place.state_name && place.city
         return encode_location([place.continent_name, place.country_name, place.state_name])+'||'+place.state_name if place.state_name
         return encode_location([place.continent_name, place.country_name])+'||'+place.country_name if place.country_name
         return encode_location(place.continent_name)+'||'+place.continent_name if place.continent_name
       end
     end
-
 
     private
       def create_structure(list, parents)

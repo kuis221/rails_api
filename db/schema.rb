@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130820172608) do
+ActiveRecord::Schema.define(:version => 20130822161255) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -197,6 +197,16 @@ ActiveRecord::Schema.define(:version => 20130820172608) do
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
   add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
+
+  create_table "data_migrations", :force => true do |t|
+    t.integer  "remote_id"
+    t.string   "remote_type"
+    t.integer  "local_id"
+    t.string   "local_type"
+    t.integer  "company_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "date_items", :force => true do |t|
     t.integer  "date_range_id"
@@ -395,6 +405,7 @@ ActiveRecord::Schema.define(:version => 20130820172608) do
     t.datetime "updated_at",                            :null => false
     t.string   "administrative_level_1"
     t.string   "administrative_level_2"
+    t.string   "td_linx_code"
   end
 
   add_index "places", ["reference"], :name => "index_places_on_reference"

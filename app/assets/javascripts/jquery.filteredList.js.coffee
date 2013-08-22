@@ -110,6 +110,8 @@ $.widget 'nmk.filteredList', {
 	addSlider: (filter) ->
 		min_value = if filter.selected_min? then filter.selected_min else filter.min
 		max_value = if filter.selected_max? then filter.selected_max else filter.max
+		min_value = Math.min(min_value, filter.max)
+		max_value = Math.min(max_value, filter.max)
 		$slider = $('<div class="slider-range">')
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
@@ -117,18 +119,6 @@ $.widget 'nmk.filteredList', {
 			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
-		# $slider.slider({
-		# 	range: true,
-		# 	min: filter.min,
-		# 	max: filter.max,
-		# 	values: [ min_value, max_value ],
-		# 	slide: ( event, ui ) =>
-		# 		$(ui.handle).closest('.filter-wrapper').find('.slider-range-desc').text( ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
-		# 		$filter.find('input.min').val(ui.values[ 0 ])
-		# 		$filter.find('input.max').val(ui.values[ 1 ])
-		# 	change: ( event, ui ) =>
-		# 		@_filtersChanged()
-		# });
 
 		$slider.rangeSlider({
 			bounds: {min: filter.min, max: filter.max},

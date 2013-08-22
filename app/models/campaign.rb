@@ -46,9 +46,6 @@ class Campaign < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
-  # Campaigns-KPIs relationship
-  has_and_belongs_to_many :kpis, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
-
   # Campaigns-Goals relationship
   has_many :goals
 

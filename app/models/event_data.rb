@@ -45,8 +45,7 @@ class EventData < ActiveRecord::Base
     save
 
     # Update the venue info
-    venue = Venue.find_or_create_by_company_id_and_place_id(event.company_id, event.place_id)
-    venue.compute_stats
+    event.update_venue_data
 
     true
   end

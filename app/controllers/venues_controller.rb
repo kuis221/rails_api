@@ -60,13 +60,22 @@ class VenuesController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :location, :company_id].include?(k.to_sym)})
         facet_search = Venue.do_search(facet_params, true)
 
-        max_events = facet_search.stats.first.rows.select{|r| r.stat_field == 'events_is' }.first.value
-        max_promo_hours = facet_search.stats.first.rows.select{|r| r.stat_field == 'promo_hours_es' }.first.value
-        max_impressions = facet_search.stats.first.rows.select{|r| r.stat_field == 'impressions_is' }.first.value
-        max_interactions = facet_search.stats.first.rows.select{|r| r.stat_field == 'interactions_is' }.first.value
-        max_sampled = facet_search.stats.first.rows.select{|r| r.stat_field == 'sampled_is' }.first.value
-        max_spent = facet_search.stats.first.rows.select{|r| r.stat_field == 'spent_es' }.first.value
+        if rows = facet_search.stats.first.rows
+          max_events       = rows.select{|r| r.stat_field == 'events_is' }.first.value
+          max_promo_hours  = rows.select{|r| r.stat_field == 'promo_hours_es' }.first.value
+          max_impressions  = rows.select{|r| r.stat_field == 'impressions_is' }.first.value
+          max_interactions = rows.select{|r| r.stat_field == 'interactions_is' }.first.value
+          max_sampled      = rows.select{|r| r.stat_field == 'sampled_is' }.first.value
+          max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
 
+          f.push(label: "Events", name: :events, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+
+        end
         # Date Ranges
         prices = [
             build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),
@@ -74,12 +83,6 @@ class VenuesController < FilteredController
             build_facet_item({label: '$$$', id: '3', name: :price, count: 1, ordering: 3}),
             build_facet_item({label: '$$$$', id: '4', name: :price, count: 1, ordering: 3})
         ]
-        f.push(label: "Events", name: :events, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min] )
-        f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:events][:min] )
-        f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:events][:min] )
-        f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:events][:min] )
-        f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:events][:min] )
-        f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:events][:min] )
         f.push(label: "Price", items: prices )
 
         f.push build_locations_bucket(facet_search.facet(:place).rows)
