@@ -12,9 +12,9 @@ li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
     span
       span.tasks-date
         = format_date(task.due_at)
-      - if show_user
-        br>/
-        = task.user_full_name
+        - if show_user
+          br>/
+          = task.user_full_name
       span.links
         = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
         = link_to '', edit_task_path(task), remote: true, class: 'edit'
