@@ -160,12 +160,16 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	text-shadow:none;
 	-webkit-border-radius: 0px 0px 8px 8px;
     border-radius: 0px 0px 8px 8px;
+    color: white;
+    a{
+    	color: white !important;
+    	text-decoration: underline !important;
+    }
     &.alert-info{
     	background-color: @brand;
-    	color: white;
-    	a{
-    		color: white;
-    	}
+    }
+    &.alert-danger, &.alert-info{
+    	margin-bottom: 30px;
     }
 }
 
@@ -3116,9 +3120,14 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.link{
+		a{
+			text-decoration: underline;
+		}
+	}
 	a{
 		color: @venues_blue;
-		text-decoration: underline;
+		text-decoration: none;
 		&.icon-plus-sign:before{
 			content: "\e021";
 			color: @brand;

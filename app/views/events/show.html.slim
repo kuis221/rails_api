@@ -18,8 +18,8 @@
       = format_date_range(resource.start_at, resource.end_at)
     .place-data
       = place_address(resource.place) if resource.place
-
-      = link_to content_tag(:i, '', class: 'icon-edit'), edit_event_path(resource), remote: true
+    span.links
+      = link_to '', edit_event_path(resource), remote: true, class: 'edit'
       = active_inactive_buttons(resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position

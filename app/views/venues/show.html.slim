@@ -15,9 +15,8 @@
         br>/
         = resource.formatted_phone_number
         - if resource.website
-          br>/
-          = place_website(resource.website)
-        br>/
+          .link
+            = place_website(resource.website)
         = resource.price_level.times.map{ '$' }.join
         = " "
         = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
@@ -26,9 +25,8 @@
         br>/
         = resource.formatted_phone_number
         - if resource.website
-          br>/
-          = place_website(resource.website)
-        br>/
+          .link
+            = place_website(resource.website)
         = resource.price_level.times.map{ '$' }.join
         = " "
         = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
