@@ -3,11 +3,24 @@ require "base64"
 module ApplicationHelper
   def place_address(place)
     if !place.nil?
+      place_name = place.name
+      place_city = place.city
+      venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
+      Rails.logger.debug '>>>>>><<<<<<<'
+      Rails.logger.debug venue
+      if venue.present?
+        if place.name == place.city
+          place_city = link_to place.city, venue_path(venue)
+        else
+          place_name = link_to place.name, venue_path(venue)
+        end
+      end
+
       address = Array.new
       city_parts = []
-      address.push place.name unless place.name == place.city
+      address.push place_name unless place.name == place.city
       address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
-      city_parts.push place.city if place.city
+      city_parts.push place_city if place.city
       city_parts.push place.state if place.state
       city_parts.push place.zipcode if place.zipcode
       address.push city_parts.join(', ') unless city_parts.empty? || !place.city
