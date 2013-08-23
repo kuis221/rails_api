@@ -1,16 +1,19 @@
 require "base64"
 
 module ApplicationHelper
-  def place_address(place)
+  def place_address(place, link_name = false)
     if !place.nil?
       place_name = place.name
       place_city = place.city
-      venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
-      if venue.present?
-        if place.name == place.city
-          place_city = link_to place.city, venue_path(venue)
-        else
-          place_name = link_to place.name, venue_path(venue)
+
+      if link_name
+        venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
+        if venue.present?
+          if place.name == place.city
+            place_city = link_to place.city, venue_path(venue)
+          else
+            place_name = link_to place.name, venue_path(venue)
+          end
         end
       end
 
