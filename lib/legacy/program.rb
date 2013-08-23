@@ -24,11 +24,15 @@ class Legacy::Program  < Legacy::Record
 
   has_many :data_migrations, as: :remote
 
-  def associated_element(company, attributes={})
-    @associated_element ||= data_migrations.where(company_id: company).first.try(:local) || begin
-        data_migrations.create(company_id: company.id, local: ::Campaign.create(migration_attributes.merge(company_id: company.id), without_protection: true)).local
+  def sincronize(company, attributes={})
+    attributes.merge!({company_id: company.id})
+    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Campaign.new )
+    if migration.local.new_record? || migration.local.form_fields.count == 0
+      attributes.merge!({form_fields_attributes: form_field_attributes})
     end
-    @associated_element
+    migration.local.assign_attributes(migration_attributes.merge(attributes), without_protection: true)
+    migration.save
+    migration
   end
 
   def migration_attributes(attributes={})
@@ -38,6 +42,22 @@ class Legacy::Program  < Legacy::Record
       aasm_state: ( active ? 'active' : 'inactive' ),
       created_at: created_at,
       updated_at: updated_at
+    }
+  end
+
+  def form_field_attributes
+    {
+      "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"percentage", "kpi_id"=>"5", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
+      "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"percentage", "kpi_id"=>"6", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
+      "2" => {"ordering"=>"2", "name"=>"Ethnicity/Race", "field_type"=>"percentage", "kpi_id"=>"7", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
+      "3" => {"ordering"=>"3", "name"=>"Expenses", "field_type"=>"number", "kpi_id"=>"8", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
+      "4" => {"ordering"=>"4", "name"=>"Surveys", "field_type"=>"surveys", "kpi_id"=>"11"},
+      "5" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=>"9"},
+      "6" => {"ordering"=>"6", "name"=>"Videos", "field_type"=>"videos", "kpi_id"=>"10"},
+      "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"number", "kpi_id"=>"2", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
+      "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"number", "kpi_id"=>"3", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
+      "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"number", "kpi_id"=>"4", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
+      "10"=> {"ordering"=>"10", "name"=>"Your Comment", "field_type"=>"comments"}
     }
   end
 end

@@ -157,7 +157,7 @@ class Campaign < ActiveRecord::Base
       field = form_fields.scoped_by_kpi_id(Kpi.surveys).first
       brands = []
       if field.present?
-        brands = Brand.where(id: field.options['brands']) if field.options.has_key?('brands')
+        brands = Brand.where(id: field.options['brands']) if field.options.is_a?(Hash) && field.options.has_key?('brands')
       end
       brands || []
     end

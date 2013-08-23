@@ -216,6 +216,15 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def result_for_kpi(kpi)
+    field = campaign.form_fields.detect{|f| f.kpi_id == kpi.id }
+    if field.is_segmented?
+      segments_results_for(field)
+    else
+      results_for([field]).first
+    end
+  end
+
   def locations_for_index
     Place.locations_for_index(place)
   end
