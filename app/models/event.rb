@@ -139,9 +139,10 @@ class Event < ActiveRecord::Base
       teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
-    string :day_names, multiple: true do
-      (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
-    end
+    # Was used by date ranges filters / Removed Aug 23rd, 2013
+    # string :day_names, multiple: true do
+    #   (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
+    # end
 
     boolean :has_event_data do
       has_event_data?
@@ -354,11 +355,12 @@ class Event < ActiveRecord::Base
           end
         end
 
-        if params.has_key?(:date_range) and params[:date_range].any?
-          DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
-            range.search_filters(self)
-          end
-        end
+        # Date ranges where removed
+        # if params.has_key?(:date_range) and params[:date_range].any?
+        #   DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
+        #     range.search_filters(self)
+        #   end
+        # end
 
         if params.has_key?(:predefined_date) and params[:predefined_date].any?
           params[:predefined_date].each do |predefined_date|
