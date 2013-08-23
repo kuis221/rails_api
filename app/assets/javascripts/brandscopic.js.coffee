@@ -1,4 +1,34 @@
 jQuery ->
+	window.MAP_STYLES = [
+		{
+			stylers: [
+				{ hue: "#00ffe6" },
+				{ saturation: -100 },
+				{ gamma: 0.8 }
+			]
+		},{
+			featureType: "road",
+			elementType: "geometry",
+			stylers: [
+				{ lightness: 100 },
+				{ visibility: "simplified" }
+			]
+		},{
+			featureType: "road",
+			elementType: "labels",
+			stylers: [
+				{ visibility: "off" }
+			]
+		},{
+			featureType: "road.arterial",
+			elementType: "geometry",
+			stylers: [
+				{ color: "#BABABA" }
+			]
+		}
+	]
+
+
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
 		$('input.timepicker').timepicker()
@@ -210,33 +240,17 @@ jQuery ->
 
 		map = new google.maps.Map(container, mapOptions)
 
-		styles = [
-			{
-				stylers: [
-					{ hue: "#00ffe6" },
-					{ saturation: -20 }
-				]
-			},{
-				featureType: "road",
-				elementType: "geometry",
-				stylers: [
-					{ lightness: 100 },
-					{ visibility: "simplified" }
-				]
-			},{
-				featureType: "road",
-				elementType: "labels",
-				stylers: [
-					{ visibility: "off" }
-				]
-			}
-		]
+		map.setOptions {styles: window.MAP_STYLES}
 
-		map.setOptions {styles: styles}
+		pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|de4d43",
+			new google.maps.Size(21, 34),
+			new google.maps.Point(0,0),
+			new google.maps.Point(10, 34));
 
 		marker = new google.maps.Marker({
 			map:map,
 			draggable:false,
+			icon: pinImage,
 			animation: google.maps.Animation.DROP,
 			position: placeLocation
 		})
