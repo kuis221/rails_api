@@ -1748,7 +1748,15 @@ overflow: hidden;
 
 	a a {
 		font-size: 18px;
-		margin-left: 10px;
+		margin-left: 15px;
+		text-decoration: none;
+		&.active-toggle-btn-event-304{
+			color:@app_bg;
+ 			i{
+ 				position: relative;
+ 				top: 2px;
+ 			}
+		}	
 	}
 }
 
@@ -1898,7 +1906,8 @@ body.events.index {
 body.events.show {
 	.team-member, .team {
 		font-size: 11px;
-		padding: 0 0 0 50px;
+		padding: 0 0 0 32px;
+		margin: 0 18px 0 0;
 		.full-name{
 			font-size: 16px
 		}
@@ -1913,7 +1922,7 @@ body.events.show {
 			  	font-family: 'icons';
 				font-size: 18px;
 			  	position: relative;
-			  	right: 20px;
+			  	right: 3px;
 				speak: none;
 				text-decoration: none;
 			  	vertical-align: middle;
@@ -3137,6 +3146,21 @@ svg{
 			text-decoration: underline;
 		}
 	}
+	.links-data{
+		a{
+			&.edit:after{
+				color: @brand;
+				font-size: 17px;
+			}
+			&.active-toggle-btn-event-304{
+				color: @brand;
+				font-size: 20px;
+				margin-left: 10px;
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
 	a{
 		color: @venues_blue;
 		text-decoration: none;
@@ -3174,7 +3198,7 @@ svg{
 		font-size: 16px;
 		margin-bottom: 30px;
 	}
-	.calendar-data, .place-data, .time-data, .description-data{
+	.calendar-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;
 		width: 380px;
 	}
