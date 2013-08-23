@@ -37,10 +37,9 @@
       = render 'team_member_list'
     = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign'
 
-
-  - if resource.submitted? and resource.in_past?
+  - if !resource.unsent? and resource.in_past?
     = render 'show_results'
-  - elsif resource.happens_today? or resource.in_past?
+  - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
   #event-tasks.details_box

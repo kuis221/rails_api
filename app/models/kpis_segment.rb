@@ -12,6 +12,7 @@
 class KpisSegment < ActiveRecord::Base
   belongs_to :kpi
   has_many :goals, dependent: :destroy
+  has_many :event_results, dependent: :destroy
   attr_accessible :text, :goals_attributes
 
   accepts_nested_attributes_for :goals

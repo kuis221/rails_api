@@ -28,6 +28,9 @@ class Legacy::Account < Legacy::Record
     migration = data_migrations.find_or_initialize_by_company_id(company.id)
     unless migration.local.present?
       migration.local = find_place_on_api
+      unless migration.local.present?
+        p "Place not found [#{name}]: #{address.to_json}"
+      end
       migration.local ||= ::Place.new(migration_attributes.merge(attributes), without_protection: true)
       migration.local.is_custom_place = true
     end
