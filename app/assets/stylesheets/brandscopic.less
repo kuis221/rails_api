@@ -1414,6 +1414,11 @@ li#user_menu{
     	a:first-child{
     		line-height: 30px;
     	}
+    	.edit, .enable, .disable {
+    		height: 30px;
+			display: inline-block;
+			margin-top: 20px;
+    	}
 		.edit:after{
 			color: white;
 			content: "\e006";
@@ -1424,7 +1429,6 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
 		}
 		.enable:after{
 			color: white;
@@ -1436,7 +1440,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
+			top:2px;
 		}
 		.disable:after{
 			color: white;
@@ -1448,7 +1452,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
+			top:2px;
 		}
 		.load-comments-link:after{
 			color: white;
@@ -3322,4 +3326,8 @@ svg{
 .chardinjs-helper-layer {
 	font-family: 'rabioheadregular', sans-serif;
 	font-size: 24px;
+}
+
+.help-overlay-definitions {
+	display: none;
 }

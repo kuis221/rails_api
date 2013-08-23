@@ -24,7 +24,6 @@ $.widget 'nmk.filteredList', {
 
 		@nextpagetoken  = false
 
-
 		if @options.includeAutoComplete
 			@_addAutocompleteBox()
 
@@ -294,7 +293,7 @@ $.widget 'nmk.filteredList', {
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
-		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter" data-intro="Search for specific events" data-position="top">')
+		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
 			.appendTo(@form)
 			.on 'blur', () =>
 				if @searchHidden.val()
@@ -353,7 +352,7 @@ $.widget 'nmk.filteredList', {
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
 		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
-		container = $('<div class="dates-range-filter" data-intro="Days that have events scheduled are highlighted in red. Click and drag to see events taking place within a selected date range." data-position="bottom">').appendTo @form
+		container = $('<div class="dates-range-filter">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
 			monthsToShow: 1,

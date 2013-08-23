@@ -52,6 +52,7 @@
 
 javascript:
   $('.overview').click(function(){
-    $('body').chardinJs('start');
     $('#help-modal').modal('hide');
+    $('body').chardinJs('start');
+    return false
   })
