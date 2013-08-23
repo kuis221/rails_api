@@ -123,12 +123,15 @@ $.widget 'nmk.filteredList', {
 		$slider.rangeSlider({
 			bounds: {min: filter.min, max: filter.max},
 			defaultValues:{ min: min_value, max: max_value }
-			arrows: false
+			arrows: false,
+			enabled: (max_value > min_value)
 		}).on "userValuesChanged", (e, data) =>
 			$filter.find('input.min').val Math.round(data.values.min)
 			$filter.find('input.max').val Math.round(data.values.max)
 			@_filtersChanged()
-			console.log("Something moved. min: " + Math.round(data.values.min) + " max: " + Math.round(data.values.max));
+
+		if max_value == min_value
+			$filter.find('input.min').val min_value
 
 
 		@formFilters.append($filter)

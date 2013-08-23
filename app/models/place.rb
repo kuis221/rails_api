@@ -100,7 +100,7 @@ class Place < ActiveRecord::Base
     if persisted?
       list_reviews = Comment.for_places(self, company_id).limit(5).all
     end
-    list_reviews += spot.reviews if list_reviews.length < 5
+    list_reviews += spot.reviews if spot && list_reviews.length < 5
     list_reviews.slice(0, 5)
   end
 
@@ -109,15 +109,15 @@ class Place < ActiveRecord::Base
   end
 
   def formatted_phone_number
-    spot.formatted_phone_number
+    spot.formatted_phone_number if spot
   end
 
   def website
-    spot.website
+    spot.website if spot
   end
 
   def opening_hours
-    spot.opening_hours
+    spot.opening_hours if spot
   end
 
   # First try to find photos in the app from events, then if there no enough photos in the app,
@@ -128,7 +128,7 @@ class Place < ActiveRecord::Base
       search = AttachedAsset.do_search(place_id: self.id, company_id: company_id, sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
-    list_photos += spot.photos if list_photos.length < 10
+    list_photos += spot.photos if spot && list_photos.length < 10
     list_photos.slice(0, 10)
   end
 
@@ -274,7 +274,7 @@ class Place < ActiveRecord::Base
     end
 
     def spot
-      @spot ||= client.spot(reference)
+      @spot ||= client.spot(reference) if reference.present?
     end
 
     def client

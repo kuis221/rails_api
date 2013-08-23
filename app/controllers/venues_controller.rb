@@ -69,11 +69,11 @@ class VenuesController < FilteredController
           max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
 
           f.push(label: "Events", name: :events, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
-          f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
-          f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
-          f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
-          f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
-          f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
+          f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:impressions][:min], selected_max: search_params[:impressions][:max] )
+          f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions][:min], selected_max: search_params[:interactions][:max] )
+          f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:sampled][:min], selected_max: search_params[:sampled][:max] )
+          f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent][:min], selected_max: search_params[:spent][:max] )
 
         end
         # Date Ranges
@@ -118,7 +118,7 @@ class VenuesController < FilteredController
         [:events, :promo_hours, :impressions, :interactions, :sampled, :spent].each do |param|
           @search_params[param] ||= {}
           @search_params[param][:min] = 1 unless @search_params[:location].present? || @search_params[param][:min].present?
-          @search_params[param][:max] ||= nil
+          @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
         end
         @search_params
       end
