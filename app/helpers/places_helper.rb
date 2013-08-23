@@ -26,6 +26,22 @@ module PlacesHelper
     end
   end
 
+  def place_opening_hours(opening_hours)
+    days = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
+    if opening_hours && opening_hours.has_key?("periods")
+      (0..6).map do |i|
+        day = (i == 6 ? 0 : i + 1)
+        period = opening_hours['periods'].detect{|p| p['open']['day'].to_i == day }
+        day_name = days[day]
+        if period
+          "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
+        else
+          "#{day_name} Closed"
+        end
+      end.join('<br />').html_safe
+    end
+  end
+
   private
     def score_calification_for(score)
       if score > 66

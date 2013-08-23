@@ -20,18 +20,11 @@
         = resource.price_level.times.map{ '$' }.join
         = " "
         = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
-      .time-data
-        = resource.formatted_address
-        br>/
-        = resource.formatted_phone_number
-        - if resource.website
-          .link
-            = place_website(resource.website)
-        = resource.price_level.times.map{ '$' }.join
-        = " "
-        = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
-      .description-data
-        p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
+      - if resource.opening_hours
+        .time-data
+          = place_opening_hours(resource.opening_hours)
+      / .description-data
+      /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
 
       // The is info will be displayed on the fixed bar when the window is scolled down to this position
       .details-bar-info
