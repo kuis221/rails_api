@@ -5,3 +5,4 @@ li id="event_expense_#{event_expense.id}"
     = link_to 'Edit', edit_event_event_expense_path(event_expense.event, event_expense), remote: true
     = "&nbsp;".html_safe
     = link_to 'Delete', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete
+    = link_to 'Preview', event_expense.download_url, 'data-preview-url' => event_expense.file.url(:medium) if event_expense.file.file?

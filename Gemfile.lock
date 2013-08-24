@@ -179,7 +179,7 @@ GEM
       activesupport (~> 3.1)
       polyamorous (~> 0.5.0)
     metaclass (0.0.1)
-    mime-types (1.23)
+    mime-types (1.24)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     multi_json (1.7.9)
@@ -191,9 +191,8 @@ GEM
     options (2.3.0)
       fattr
     orm_adapter (0.4.0)
-    paperclip (3.4.1)
+    paperclip (3.5.1)
       activemodel (>= 3.0.0)
-      activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.0)
       mime-types

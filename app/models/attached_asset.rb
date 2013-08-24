@@ -170,7 +170,7 @@ class AttachedAsset < ActiveRecord::Base
 
   private
     def image?
-      !(file_content_type =~ /^image.*/).nil?
+      !(file_content_type =~ %r{^(image|(x-)?application)/(x-png|pjpeg|jpeg|jpg|png|gif)$}).nil?
     end
 
 end

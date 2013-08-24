@@ -54,19 +54,19 @@
               = (resource.events == 1 ? " Event" : " Events")
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
-              span.sparkline= resource.promo_hours
+              span.sparkline= number_with_delimiter(resource.promo_hours)
               = (resource.promo_hours == 1 ? " Promo Hour" : " Promo Hours")
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
-              span= resource.impressions
+              span= number_with_delimiter(resource.impressions)
               = (resource.impressions == 1 ? " Impression" : " Impressions")
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
-              span= resource.interactions
+              span= number_with_delimiter(resource.interactions)
               = " Influenced"
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
-              span= resource.sampled
+              span= number_with_delimiter(resource.sampled)
               = " Sampled"
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
             .live-stats-2

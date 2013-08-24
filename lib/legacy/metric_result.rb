@@ -14,8 +14,11 @@
 #
 
 class MetricResult  < Legacy::Record
-  belongs_to :event_recap
+  belongs_to :event_recap, class_name: 'Legacy::EventRecap'
   belongs_to :metric
+
+
+  has_many :data_migrations, as: :remote, class_name: 'Legacy::DataMigration'
 
   serialize :vector_value
 
