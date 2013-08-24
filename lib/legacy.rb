@@ -18,18 +18,16 @@ module Legacy
     'secret_access_key' => 'Ms3J94R2CsxU+lXwMPi6qSJ8GBr9nwR6u8rRl/hO',
     'bucket_name' => 'legacy-v3',
     'options' => {
-      'use_ssl' => true,
-      'persistent' => false
+      'use_ssl' => true
     },
   }
 
   PAPERCLIP_SETTINGS = {
-    :s3_credentials => (lambda do |attachment| {
+    :s3_credentials => {
       :access_key_id =>  Legacy::S3_CONFIGS['access_key_id'],
       :secret_access_key => Legacy::S3_CONFIGS['secret_access_key'],
       :bucket => Legacy::S3_CONFIGS['bucket_name'],
-    }
-    end),
+    },
     :storage => :s3
   }
 
@@ -46,7 +44,7 @@ module Legacy
         total = program.events.count
         p "Importing #{pluralize(total, 'event')} from #{program.name}"
         campaign = program.sincronize(company).local
-        Legacy::Event.where(program_id: program).find_in_batches(batch_size: 300) do |group|
+        Legacy::Event.where(program_id: program).find_in_batches(batch_size: 20) do |group|
           group.each do |legacy_event|
             migration = legacy_event.sincronize(company, {campaign_id: campaign.id})
             p migration.local.errors.inspect if migration.local.errors.any?
