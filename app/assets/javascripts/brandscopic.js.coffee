@@ -132,7 +132,26 @@ jQuery ->
 				askForTimeZoneChange(browserTimeZone)
 
 	askForTimeZoneChange = (browserTimeZone) ->
-		$.get('/users/time_zone_change.js', {time_zone: browserTimeZone})
+		$.get '/users/time_zone_change.js', {time_zone: browserTimeZone}
+
+
+	# For images previews on hover
+	$(document).delegate("a[data-preview-url]", 'mouseenter mouseleave', (e) ->
+		xOffset = 10
+		yOffset = 30
+		if e.type is 'mouseenter'
+			this.t = this.title
+			this.title = ""
+			c = if this.t != "" then "<br/>" + this.t else ""
+			$("body").append("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' alt='Image preview' />#{c}</p>")
+			$("#imgpreview")
+				.css("top",(e.pageY - xOffset) + "px")
+				.css("left",(e.pageX + yOffset) + "px")
+				.fadeIn("fast")
+		else
+			this.title = this.t
+			$("#imgpreview").remove()
+	)
 
 
 	# Keep filter Sidebar always visible but make it scroll if it's

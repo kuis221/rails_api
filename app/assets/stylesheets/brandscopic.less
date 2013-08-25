@@ -1558,6 +1558,8 @@ ul{
   		display:block;
   		background: #fff url(/assets/loading.gif) center center no-repeat;
   		height: 30px;
+  		width: 100%;
+  		clear: both;
   		&:hover{
   			background-color: #fff !important;
   		}
@@ -3446,4 +3448,13 @@ svg{
 .icon-remove-circle{
 	content: "\e011" !important;
 	font-family: 'icons';
+}
+
+#imgpreview{
+	position:absolute;
+	border:1px solid #ccc;
+	background:#333;
+	padding:5px;
+	display:none;
+	color:#fff;
 }

@@ -4,7 +4,7 @@
       span
         b= venue.name
         br>/
-        .type Night Club
+        .type= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
         .venue_adress 
           = venue.formatted_address
       .events

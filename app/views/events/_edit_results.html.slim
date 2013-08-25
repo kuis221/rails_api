@@ -1,5 +1,7 @@
 #event-results-form
   = simple_form_for(resource, url: save_results_event_path(resource), remote: true, html: {multipart: true}) do |f|
+    .details_box
+      = f.input :summary
     = render partial: 'result_fields', locals: {fields: resource.campaign.form_fields.includes(:kpi), f: f}
 
     = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'

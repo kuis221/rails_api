@@ -20,15 +20,33 @@ class EventExpense < ActiveRecord::Base
   belongs_to :event
   attr_accessible :amount, :file, :name
 
-  has_attached_file :file, PAPERCLIP_SETTINGS
+  has_attached_file :file, PAPERCLIP_SETTINGS.merge({
+    :styles => { :small => { :geometry => '135',  :format => :png }, :medium => { :geometry => '400',  :format => :png } },
+  })
+  before_post_process :image?
 
   validates :event_id, presence: true, numericality: true
   validates :name, presence: true
 
   after_save :update_event_data
 
+
+  def download_url(style_name=:original)
+    s3 = AWS::S3.new
+    @bucket ||= s3.buckets[file.bucket_name]
+    @bucket.objects[file.s3_object(style_name).key].url_for(:read,
+      :secure => true,
+      :expires => 24*3600, # 24 hours
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+  end
+
   private
      def update_event_data
         event.event_data.delay.update_data if event.event_data.present?
      end
+
+
+    def image?
+      !(file_content_type =~ %r{^(image|(x-)?application)/(x-png|pjpeg|jpeg|jpg|png|gif|pdf)$}).nil?
+    end
 end
