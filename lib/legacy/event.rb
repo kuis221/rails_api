@@ -129,12 +129,16 @@ class Legacy::Event < Legacy::Record
 
 
     # Expenses
-    spend_metric = Metric.scoped_by_program_id(program).scoped_by_type('Metric::BarSpend').first
-    value = event_recap.result_for_metric(spend_metric).try(:value)
+    begin
+      spend_metric = Metric.scoped_by_program_id(program).scoped_by_type('Metric::BarSpend').first
+      value = event_recap.result_for_metric(spend_metric).try(:value)
 
-    expense = event.event_expenses.where(name: 'bar spend + tip').first || event.event_expenses.build({name: 'bar spend + tip', amount: value[Metric::Tab::TOTAL]})
-    if receipt = receipts.first
-      expense.file = receipt.file if expense.file_file_size != receipt.file_file_size
+      expense = event.event_expenses.where(name: 'bar spend + tip').first || event.event_expenses.build({name: 'bar spend + tip', amount: value[Metric::Tab::TOTAL]})
+      if receipt = receipts.first
+        expense.file = receipt.file if expense.file_file_size != receipt.file_file_size
+      end
+    rescue AWS::S3::Errors::RequestTimeout => e
+      p "Couldn't save receipt #{receipt.id}: #{e.message}"
     end
 
     # Photos
@@ -146,7 +150,8 @@ class Legacy::Event < Legacy::Record
         migration.local.active = photo.active
         migration.save
       rescue AWS::S3::Errors::RequestTimeout => e
-        p "Couldn't save photo #{photo.id}: e.to_s"
+        migration.destroy
+        p "Couldn't save photo #{photo.id}: #{e.message}"
       end
 
     end
