@@ -36,9 +36,7 @@
         - if ff.object.kpis_segment_id.nil? && field.kpi_id
           .row-fluid.kpi-field
             .span4.kpi-field
-              = "before"
               = ff.input :value, field.field_options(ff.object)
-              = "after"
         - else
           = ff.input :value, field.field_options(ff.object)
       - else
