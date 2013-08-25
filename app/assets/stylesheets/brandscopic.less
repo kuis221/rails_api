@@ -1231,7 +1231,7 @@ li#user_menu{
 					&.links{
 						display: inline-block;
 						float: right;
-						margin: 5px 20px 0 0;
+						margin: 8px 20px 0 0;
 					}
 	    			&.title{
 	    				display: inline-block;
@@ -1460,7 +1460,7 @@ li#user_menu{
     	a:first-child{
     		line-height: 30px;
     	}
-    	.edit, .enable, .disable {
+    	.edit, .enable, .disable, .preview {
     		height: 30px;
 			display: inline-block;
 			margin-top: 20px;
@@ -1510,14 +1510,26 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:21px;
+			top:3px;
+		}
+		.preview:after{
+			color: white;
+			content: "\e02a";
+			font-family: 'icons';
+			font-size: 22px;
+			margin-right: 3px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:8px;
 		}
 		&:hover{
 			background-color: @grey_one;
 			a:hover:after{
 				color: @grey_three;
 			}
-			.edit:after, .enable:after, .disable:after, .load-comments-link:after{
+			.edit:after, .enable:after, .disable:after, .load-comments-link:after, .preview:after{
 				color:@brand;
 			}
 			.checker{
@@ -3190,6 +3202,40 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.box_demographics{
+		.control-group{
+			input[type="text"]{
+				-webkit-border-radius: 4px 0px 0px 4px;
+        		border-radius: 4px 0px 0px 4px;
+				width: 158px !important;
+			}
+			span.add-on{
+				background-color: @user_menu;
+				border:0 !important;
+				border-radius: 0px 4px 4px 0px;
+				color: white;
+				display: inline-block;
+				-webkit-border-radius: 0px 4px 4px 0px;
+				padding: 10px 5px 12px 4px;
+				text-align: center; 
+				text-shadow:none !important;
+				width: 40px;
+			}
+			label.control-label{
+				color:@brand;
+			 	display: inline-block;
+			 	font-size: 11px;
+			 	float: right;
+				margin-top: 12px;
+				width: 79%;
+			}
+		}
+	}
+	label{
+		color:@brand;
+		font-size: 11px;
+		margin-bottom: 2px;
+	}
 	.link{
 		a{
 			text-decoration: underline;
@@ -3216,6 +3262,39 @@ svg{
 					position: relative;
 					top: 2px;
 				}
+			}
+		}
+	}
+	ul#expenses-list{
+		li{
+			&.total-expenses{
+				span{
+					&:first-child{
+						margin-left: 698px;
+						width: 78px !important;
+					}
+					&:last-child{
+						font-weight: bold !important;
+						margin-top: 32px;
+						text-align: right;
+						width: 150px;
+					}
+				}
+			}
+		}
+		span{
+			&:first-child{
+				width: 755px !important;
+			}
+			&.links{
+				float: right;
+				margin: 3px 15px 0 0;
+			}
+			&.total{
+				font-size: 16px;
+				margin-top: 30px;
+				text-align: right;
+				width: 150px;
 			}
 		}
 	}
@@ -3262,6 +3341,7 @@ svg{
 		background-image: none !important;
 		border:1px solid @user_menu !important;
 		box-shadow: none;
+		width: 380px;
 		&:focus{
 			box-shadow: none !important;
 		}

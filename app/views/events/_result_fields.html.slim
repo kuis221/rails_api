@@ -17,7 +17,7 @@
         = render partial: 'result_fields', locals: {fields: field.fields, f: f, current_module: "section"}
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
         .control-group
-          label.control-label
+          label.field-label
             b= field.name
           .hide
             = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
