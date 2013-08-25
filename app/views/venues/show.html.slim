@@ -300,7 +300,7 @@ javascript:
               },
               series: [{
                   name: 'Ethnicity',
-                  data: #{resource.overall_graphs_data[:ethnicity].map{|k,v|[k.upcase, v.round]}.to_json.html_safe},
+                  data: #{resource.overall_graphs_data[:ethnicity].select{|k,v| v > 0 }.map{|k,v|[k.upcase, v.round]}.to_json.html_safe},
                   size: '60%',
                   innerSize: '30%',
                   distance: -10,
