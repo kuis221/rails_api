@@ -1,8 +1,9 @@
 li id="event_expense_#{event_expense.id}"
   span= event_expense.name
-  span= number_to_currency(event_expense.amount, precision: 2)
-  span
-    = link_to 'Edit', edit_event_event_expense_path(event_expense.event, event_expense), remote: true
+  span.total= number_to_currency(event_expense.amount, precision: 2)
+  span.links
+    = link_to '', event_expense.download_url, 'data-preview-url' => event_expense.file.url(:medium), :class => "preview" if event_expense.file.file?
+    = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'edit'
     = "&nbsp;".html_safe
-    = link_to 'Delete', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete
-    = link_to 'Preview', event_expense.download_url, 'data-preview-url' => event_expense.file.url(:medium) if event_expense.file.file?
+    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'disable'
+
