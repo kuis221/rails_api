@@ -57,7 +57,7 @@ class Legacy::Event < Legacy::Record
   end
 
   def photos
-    @address ||= Legacy::Photo.where(photographable_type: 'Event', photographable_id: self.id)
+    @photos ||= Legacy::Photo.where(photographable_type: 'Event', photographable_id: self.id)
   end
 
   def event_recap_attributes(event)
@@ -145,6 +145,7 @@ class Legacy::Event < Legacy::Record
       migration.local.active = photo.active
       migration.save
     end
+    @photos = []
 
   end
 end
