@@ -139,11 +139,16 @@ class Legacy::Event < Legacy::Record
 
     # Photos
     photos.each do |photo|
-      migration = photo.data_migrations.find_or_initialize_by_company_id(event.company_id)
-      migration.local ||= event.photos.build
-      migration.local.file = photo.file if photo.file_file_size != migration.local.file_file_size
-      migration.local.active = photo.active
-      migration.save
+      begin
+        migration = photo.data_migrations.find_or_initialize_by_company_id(event.company_id)
+        migration.local ||= event.photos.build
+        migration.local.file = photo.file if photo.file_file_size != migration.local.file_file_size
+        migration.local.active = photo.active
+        migration.save
+      rescue AWS::S3::Errors::RequestTimeout => e
+        p "Couldn't save photo #{photo.id}: e.to_s"
+      end
+
     end
     @photos = []
 
