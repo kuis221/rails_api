@@ -3059,10 +3059,34 @@ svg{
 }
 
 #survey-form {
+	ul{
+		margin: 0;
+		&.competitive{
+			.titles{
+				color: @brand;
+				margin: 15px 0 15px 0;
+				width:345px;
+				span{
+					margin:0;
+				}
+			}
+			label.control-label{
+				font-size: 13px !important;
+				margin-bottom: 0 !important;
+				overflow: hidden;
+		    	text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 220px;
+			}
+		}
+	}
 	li {
 		list-style: none;
 		padding: 0;
 		margin: 0;
+	}
+	p{
+		width: 360px;
 	}
 	.control-group {
 		width: 100%;
@@ -3070,7 +3094,7 @@ svg{
 	label.radio {
 		width: 100%;
 	}
-	div.radio{
+	.fields{
 		span{
 			background-image: none !important;
 			border: 4px solid #d7dcde;
@@ -3107,14 +3131,14 @@ svg{
 			text-shadow:none;
 			-webkit-font-smoothing: antialiased;
 		}
-	}
-	.radio {
-		margin: 0 10px 5px 0;
-		padding: 0;
 		input[type="radio"] {
 			margin: 4px 0 0 0;
 			visibility: hidden;
 		}
+	}
+	.radio {
+		margin: 0 10px 5px 0;
+		padding: 0;
 	}
 }
 
