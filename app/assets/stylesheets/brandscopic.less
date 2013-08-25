@@ -1222,6 +1222,7 @@ li#user_menu{
 	    			margin:20px 20px 0 0;
 	    			}
 	    			&:last-child{
+	    				float: right;
 	    				margin: 0;
 	    			}
 	    			&.tasks-date{
@@ -1337,6 +1338,7 @@ li#user_menu{
     			width: 330px;
     			.survey-age{
     				font-size: 16px;
+    				margin-bottom: 4px;
     			}
     		}
     		&.date{
@@ -3071,9 +3073,10 @@ svg{
 	}
 
 	.radio {
-		margin: 0;
+		margin: 0 10px 5px 0;
+		padding: 0;
 		input[type="radio"] {
-			margin: 0;
+			margin: 4px 0 0 0;
 		}
 	}
 }
@@ -3265,6 +3268,25 @@ svg{
 			}
 		}
 	}
+	ul#event-surveys-list{
+		li{
+			color:@text;
+			span{
+				&:first-child{
+					margin: 22px 0 0 20px;
+					width: 440px;
+					.survey-age{
+						font-size: 16px;
+						margin-bottom: 4px;
+					}
+				}
+				&.date{
+					margin-top: 16px;
+					width: 300px;
+				}
+			}
+		}
+	}
 	ul#expenses-list{
 		li{
 			&.total-expenses{
@@ -3345,6 +3367,9 @@ svg{
 		&:focus{
 			box-shadow: none !important;
 		}
+	}
+	textarea{
+		height: 130px;
 	}
 	.calendar-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;

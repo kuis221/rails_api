@@ -4,7 +4,7 @@
 
     .form-inputs
       fieldset
-        legend Demographics
+        legend DEMOGRAPHICS
         - Kpi.where('module' => 'demographics' ).each do |kpi|
           .demograpics-module
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
@@ -15,7 +15,7 @@
 
 
       fieldset
-        legend Competitive Awareness & Usage
+        legend COMPETITIVE AWARENESS & USAGE
 
         p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
 
@@ -55,7 +55,7 @@
                     = qf.text_field :answer, class: 'required'
 
       fieldset
-        legend Conversion Liklihood
+        legend CONVERSION LIKLIHOOD
 
         p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
 
