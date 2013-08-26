@@ -838,7 +838,9 @@ li.dropdown a{
 	border-top: 0;
 }
 .nav .dropdown-toggle:hover,
-.nav .dropdown-toggle:focus {
+.nav .dropdown-toggle:focus,
+.nav .single-link:hover,
+.nav .single-link:focus {
 	background-color: @menu;
 	border-radius: 0;
 	color: @user_menu;
@@ -882,6 +884,20 @@ li.dropdown a{
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
 	background-image:none;
+}
+li#help_menu{
+	.single-link:before{
+	content: "\e025";
+  	display: inline-block;
+  	font-family: 'icons';
+	font-size: 16px;
+	padding-bottom:5px;
+  	position: relative;
+	speak: none;
+	text-align: center;
+  	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	}
 }
 li.dropdown#admin{
 	.dropdown-toggle:before{
@@ -2034,6 +2050,14 @@ body.events.show {
 
 //Photos
 .photo-list{
+	.selected-for-download {
+		img {
+			opacity: 0.6;
+		}
+		ul.thumbnail-toolbar~{
+			z-index: 1;
+		}
+	}
 	.thumbnail-container {
 		position: relative;
 		ul.thumbnail-toolbar {
@@ -2838,7 +2862,7 @@ table.table td.comments-container {
 }
 
 // PHOTOS
-.photos, .venues{
+.photos, .venues {
 	.thumbnail{
 		border:0;
 		box-shadow: none;
@@ -2848,6 +2872,14 @@ table.table td.comments-container {
     		border-radius: 8px;
     		height: 120px;
     		width: 180px;
+		}
+	}
+	#list-tools {
+		.download-photos-counter {
+	    left: auto;
+	    position: absolute;
+	    right: 252px;
+	    top: 152px;
 		}
 	}
 	.photo-list{
@@ -2924,6 +2956,30 @@ table.table td.comments-container {
 			  	display: inline-block;
 			  	font-family: 'icons';
 				font-size: 13px;
+				left:135px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        	}
+        	&.icon-plus:before{
+        	  	color: @grey_one;
+			  	display: inline-block;
+				left:135px;
+				padding-bottom:5px;
+			  	position: relative;
+				speak: none;
+				text-align: center;
+				top: 10px;
+			  	vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+        	}
+        	&.icon-minus:before{
+        	  	color: @grey_one;
+			  	display: inline-block;
 				left:135px;
 				padding-bottom:5px;
 			  	position: relative;
