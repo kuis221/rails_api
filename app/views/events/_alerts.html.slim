@@ -57,7 +57,7 @@
     p Please make the necessary updates and #{resubmit_link}.
 
 - else
-  .alert.alert-info
+  .alert.alert-info.submitted
     - approve_link = link_to 'approve', approve_event_path, method: :put
     - reject_link = link_to 'reject', reject_event_path, class: 'reject-post-event', method: :put, remote: true
     == "Your post event report has been submitted for approval. Please review and either #{approve_link} or #{reject_link}."
