@@ -374,7 +374,6 @@ a.datepick-cmd:hover{
 	}
 }
 
-
 // Events Calendar picker
 .datepick{
 	background-color: white;
@@ -1239,6 +1238,7 @@ li#user_menu{
 	    			margin:20px 20px 0 0;
 	    			}
 	    			&:last-child{
+	    				float: right;
 	    				margin: 0;
 	    			}
 	    			&.tasks-date{
@@ -1354,6 +1354,7 @@ li#user_menu{
     			width: 330px;
     			.survey-age{
     				font-size: 16px;
+    				margin-bottom: 4px;
     			}
     		}
     		&.date{
@@ -3113,10 +3114,34 @@ svg{
 }
 
 #survey-form {
+	ul{
+		margin: 0;
+		&.competitive{
+			.titles{
+				color: @brand;
+				margin: 15px 0 15px 0;
+				width:345px;
+				span{
+					margin:0;
+				}
+			}
+			label.control-label{
+				font-size: 13px !important;
+				margin-bottom: 0 !important;
+				overflow: hidden;
+		    	text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 220px;
+			}
+		}
+	}
 	li {
 		list-style: none;
 		padding: 0;
 		margin: 0;
+	}
+	p{
+		width: 360px;
 	}
 	.control-group {
 		width: 100%;
@@ -3124,12 +3149,51 @@ svg{
 	label.radio {
 		width: 100%;
 	}
-
-	.radio {
-		margin: 0;
-		input[type="radio"] {
-			margin: 0;
+	.fields{
+		span{
+			background-image: none !important;
+			border: 4px solid #d7dcde;
+			display: block;
+			height: 15px;
+			-webkit-border-radius: 15px;
+			-moz-border-radius: 15px;
+			border-radius: 15px;
+			width: 15px;
+			&:hover{
+				border: 4px solid @grey_three;
+			}
 		}
+		span.checked{
+			border: 4px solid @grey_three;
+			background-image: none !important;
+			display: block;
+			height: 15px;
+			margin: 0;
+			padding:0;
+			width: 15px;
+			-webkit-border-radius: 15px;
+			-moz-border-radius: 15px;
+			border-radius: 15px;
+		}
+		span.checked:after{
+			color: @grey_three;
+			content: "\2022";
+			font-size: 25px;
+			bottom: 22px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			-webkit-font-smoothing: antialiased;
+		}
+		input[type="radio"] {
+			margin: 4px 0 0 0;
+			visibility: hidden;
+		}
+	}
+	.radio {
+		margin: 0 10px 5px 0;
+		padding: 0;
 	}
 }
 
@@ -3320,6 +3384,25 @@ svg{
 			}
 		}
 	}
+	ul#event-surveys-list{
+		li{
+			color:@text;
+			span{
+				&:first-child{
+					margin: 22px 0 0 20px;
+					width: 440px;
+					.survey-age{
+						font-size: 16px;
+						margin-bottom: 4px;
+					}
+				}
+				&.date{
+					margin-top: 16px;
+					width: 300px;
+				}
+			}
+		}
+	}
 	ul#expenses-list{
 		li{
 			&.total-expenses{
@@ -3400,6 +3483,9 @@ svg{
 		&:focus{
 			box-shadow: none !important;
 		}
+	}
+	textarea{
+		height: 130px;
 	}
 	.calendar-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;
