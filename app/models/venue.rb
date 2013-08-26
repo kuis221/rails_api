@@ -73,6 +73,10 @@ class Venue < ActiveRecord::Base
     double :avg_impressions, :stored => true
     double :avg_impressions_hour, :stored => true
     double :avg_impressions_cost, :stored => true
+
+    integer :venue_score, :stored => true do
+      score
+    end
   end
 
 
@@ -248,6 +252,7 @@ class Venue < ActiveRecord::Base
         facet :campaigns
       end
 
+      order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
       paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
     end
   end
