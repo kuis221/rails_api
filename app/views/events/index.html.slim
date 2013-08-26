@@ -9,22 +9,31 @@
 .main
 
   .pull-left
-    = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary', 'data-intro' => 'Schedule an event for your campaign', 'data-position' => 'right'}
+    = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary', :id => 'new-event-btn'}
 
   .text-right
     a.btn.download data-intro="Download the currently displayed events list to Excel" data-position="left"
-    #toggle-events-view.btn-group data-intro="Toggle between the list view and map view" data-position="top"
+    #toggle-events-view.btn-group
       a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
       a.btn.map href="#map-view" data-toggle="tab" title="Map View"
 
   .tab-content
     #list-view.tab-pane.active
-      .overlay-list data-intro="View all of your events in the events list" data-position="bottom"
       .link-list
         ul#events-list
 
     #map-view.tab-pane data-intro="Pins visually identify where events are taking place. Click on a pinned location to see a brief summary of the event." data-position="bottom"
       #map-canvas.google-map
+
+.help-overlay-definitions
+  div data-target="#events-list li:nth-child(6) a.edit" data-intro="Edit an event" data-position="left" data-tooltip-style="left:-30px; bottom:0px;height:30px"
+  div data-target="#events-list li:nth-child(6) a.disable" data-intro="Deactivate or reactivate an event" data-position="bottom" data-tooltip-style="width: 150px;left: -60px; bottom: -100px;"
+  div data-target="#events-list li:nth-child(6) a.enable" data-intro="Deactivate or reactivate an event" data-position="bottom" data-tooltip-style="width: 150px;left: -60px; bottom: -100px;"
+  div data-target="#new-event-btn" data-intro="Schedule an event for your campaign" data-position="right" data-tooltip-style="top: -3px; right: -136px;"
+  div data-target="#toggle-events-view" data-intro="Toggle between the list view and map view" data-position="top" data-tooltip-style="left: -111.5px; top: -60px; width: 300px"
+  div data-target="#events-list" data-intro="View all of your events in the events list" data-position="inner-top" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="left: 102px; top: 90px;"
+  div data-target="#search-box-filter" data-intro="Search for specific events" data-position="top" data-tooltip-style="left: 4.5px; top: -55px;"
+  div data-target=".dates-range-filter" data-intro="Days that have events scheduled are highlighted in red. Click and drag to see events taking place within a selected date range." data-position="left" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="top: 23.5px; left: -130px;"
 
 javascript:
   $('#collection-list-filters').filteredList({

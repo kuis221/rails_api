@@ -10,8 +10,4 @@
     .span4.team.clearfix id = "event-team-#{team.id}"
       .full-name
         = team.name
-      span
-      | Chris Jasckot
-      br
-      | Field Staff
       = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_team_event_path(resource, team_id: team.to_param), confirm: "Any tasks that are assigned to any user in #{team.name} must be reassigned.  Would you like to remove #{team.name} from the event team?", class: 'remove-member-btn', remote: true, method: :delete)

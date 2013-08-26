@@ -66,29 +66,9 @@ jQuery ->
       }
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
 
-      styles = [
-        {
-          stylers: [
-            { hue: "#00ffe6" },
-            { saturation: -20 }
-          ]
-        },{
-          featureType: "road",
-          elementType: "geometry",
-          stylers: [
-            { lightness: 100 },
-            { visibility: "simplified" }
-          ]
-        },{
-          featureType: "road",
-          elementType: "labels",
-          stylers: [
-            { visibility: "off" }
-          ]
-        }
-      ]
 
-      map.setOptions {styles: styles}
+
+      map.setOptions {styles: window.MAP_STYLES}
     else
       google.maps.event.trigger map, 'resize'
     placeMarkers()
@@ -109,12 +89,18 @@ jQuery ->
 
         bounds = new google.maps.LatLngBounds()
 
+        pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|de4d43",
+          new google.maps.Size(21, 34),
+          new google.maps.Point(0,0),
+          new google.maps.Point(10, 34));
+
         for event in events
           if event.place? and event.place.latitude? and event.place.latitude != ''
             placeLocation = new google.maps.LatLng(event.place.latitude,event.place.longitude)
             marker = new google.maps.Marker({
               map:map,
               draggable:false,
+              icon: pinImage,
               title: event.place.name,
               animation: google.maps.Animation.DROP,
               position: placeLocation

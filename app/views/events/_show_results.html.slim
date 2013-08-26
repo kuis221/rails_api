@@ -103,6 +103,13 @@
   - if active_kpis.include?(Kpi.surveys)
     = render 'results_surveys'
 
+  - if active_kpis.include?(Kpi.cost)
+    = render 'results_expenses'
+
+  - if resource.campaign.active_field_types.include?('comments')
+    = simple_form_for resource do |f|
+      = render partial: 'comments', locals: {f: f}
+
 javascript:
   $(document).ready(function() {
     $(this).scrollTop(400);

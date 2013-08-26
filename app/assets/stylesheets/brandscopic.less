@@ -164,6 +164,52 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	height: 21px;
 	padding: 9px 5px;
 }
+// PROGRESS BAR
+.counter{
+	color: @brand !important;
+}
+.text-success{
+	.counter{
+		color: @completed!important;
+	}
+}
+.text-error{
+	.counter{
+		color: @buttons !important;
+	}
+}
+.progress{
+	background-color: @grey_one !important;
+	background-image: none !important;
+	border-radius: 0!important;
+	box-shadow: none !important;
+	width: 220px !important;
+	&.progress-danger{
+		.bar{
+			background-color: @buttons!important;
+			background-image: none !important;
+			box-shadow: none !important;
+		}
+	}
+	&.progress-info{
+		.bar{
+			background-color: @brand !important;
+			background-image: none !important;
+			box-shadow: none !important;
+		}
+	}
+	&.progress-success{
+		.bar{
+			background-color: @completed !important;
+			background-image: none !important;
+			box-shadow: none !important;
+		}
+	}
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
 
 /*-- Alert Messages -- */
 .alert{
@@ -176,7 +222,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
     	color: white !important;
     	text-decoration: underline !important;
     }
-    &.alert-info{
+    &.alert-info, &.alert-grey{
     	background-color: @brand;
     }
     &.alert-danger, &.alert-info{
@@ -1195,7 +1241,7 @@ li#user_menu{
 	    				margin: 0;
 	    			}
 	    			&.tasks-date{
-						margin: 30px 20px 0 40px !important;
+						margin: 30px 20px 0 40px;
 						width: 80px;
 					}
 					&.links{
@@ -1430,6 +1476,11 @@ li#user_menu{
     	a:first-child{
     		line-height: 30px;
     	}
+    	.edit, .enable, .disable {
+    		height: 30px;
+			display: inline-block;
+			margin-top: 20px;
+    	}
 		.edit:after{
 			color: white;
 			content: "\e006";
@@ -1440,7 +1491,6 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
 		}
 		.enable:after{
 			color: white;
@@ -1452,7 +1502,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
+			top:2px;
 		}
 		.disable:after{
 			color: white;
@@ -1464,7 +1514,7 @@ li#user_menu{
 			speak:none;
 			text-align: center;
 			text-shadow:none;
-			top:20px;
+			top:2px;
 		}
 		.load-comments-link:after{
 			color: white;
@@ -1524,6 +1574,8 @@ ul{
   		display:block;
   		background: #fff url(/assets/loading.gif) center center no-repeat;
   		height: 30px;
+  		width: 100%;
+  		clear: both;
   		&:hover{
   			background-color: #fff !important;
   		}
@@ -1764,7 +1816,12 @@ overflow: hidden;
 
 	a a {
 		font-size: 18px;
-		margin-left: 10px;
+		margin-left: 15px;
+		text-decoration: none;			
+ 		i{  color:@app_bg;
+ 			position: relative;
+ 			top: 2px;
+		}	
 	}
 }
 
@@ -1914,7 +1971,8 @@ body.events.index {
 body.events.show {
 	.team-member, .team {
 		font-size: 11px;
-		padding: 0 0 0 50px;
+		padding: 0 0 0 32px;
+		margin: 0 18px 0 0;
 		.full-name{
 			font-size: 16px
 		}
@@ -1929,7 +1987,7 @@ body.events.show {
 			  	font-family: 'icons';
 				font-size: 18px;
 			  	position: relative;
-			  	right: 20px;
+			  	right: 13px;
 				speak: none;
 				text-decoration: none;
 			  	vertical-align: middle;
@@ -3193,6 +3251,30 @@ svg{
 			text-decoration: underline;
 		}
 	}
+	.links-data{
+		a{
+			&.edit:after{
+				color: @brand;
+				font-size: 17px;
+			}
+			i{
+				&.icon-remove-sign{
+					color: @brand;
+					font-size: 20px;
+					margin-left: 10px;
+					position: relative;
+					top: 2px;
+				}
+				&.icon-check-sign{
+					color: @brand;
+					font-size: 20px;
+					margin-left: 10px;
+					position: relative;
+					top: 2px;
+				}
+			}
+		}
+	}
 	a{
 		color: @venues_blue;
 		text-decoration: none;
@@ -3205,15 +3287,42 @@ svg{
 			margin: 15px 0 0 30px;
 		}
 	}
+	&#event-tasks{
+		a.btn{
+			margin-top: 17px;
+		}
+		.link-list ul#tasks-list li span.task-list span.tasks-date {
+			margin-top: 22px;
+			width:280px;
+		}
+		.task-comments{
+			#comment-form-container{
+				margin: 20px 0 5px 38px;
+				.control-group{
+					width:54%;
+				}
+			}
+		}
+	}
 	h2{
 		font-size: 30px;
 		margin-bottom: 30px;
 	}
 	h3{
 		font-size: 16px;
+		font-weight: bold;
 		margin-bottom: 30px;
 	}
-	.calendar-data, .place-data, .time-data, .description-data{
+	input[type="text"], textarea{
+		background-color: white !important;
+		background-image: none !important;
+		border:1px solid @user_menu !important;
+		box-shadow: none;
+		&:focus{
+			box-shadow: none !important;
+		}
+	}
+	.calendar-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;
 		width: 380px;
 	}
@@ -3361,4 +3470,22 @@ svg{
 .chardinjs-helper-layer {
 	font-family: 'rabioheadregular', sans-serif;
 	font-size: 24px;
+}
+
+.help-overlay-definitions {
+	display: none;
+}
+
+.icon-remove-circle{
+	content: "\e011" !important;
+	font-family: 'icons';
+}
+
+#imgpreview{
+	position:absolute;
+	border:1px solid #ccc;
+	background:#333;
+	padding:5px;
+	display:none;
+	color:#fff;
 }

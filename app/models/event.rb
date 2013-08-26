@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
-  has_many :event_expenses, inverse_of: :event
+  has_many :event_expenses, inverse_of: :event, autosave: true
   has_one :event_data, autosave: true
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
@@ -41,7 +41,7 @@ class Event < ActiveRecord::Base
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
+  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :summary, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
@@ -139,9 +139,10 @@ class Event < ActiveRecord::Base
       teams.map{|t| t.id.to_s + '||' + t.name}
     end
 
-    string :day_names, multiple: true do
-      (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
-    end
+    # Was used by date ranges filters / Removed Aug 23rd, 2013
+    # string :day_names, multiple: true do
+    #   (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
+    # end
 
     boolean :has_event_data do
       has_event_data?
@@ -354,11 +355,12 @@ class Event < ActiveRecord::Base
           end
         end
 
-        if params.has_key?(:date_range) and params[:date_range].any?
-          DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
-            range.search_filters(self)
-          end
-        end
+        # Date ranges where removed
+        # if params.has_key?(:date_range) and params[:date_range].any?
+        #   DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
+        #     range.search_filters(self)
+        #   end
+        # end
 
         if params.has_key?(:predefined_date) and params[:predefined_date].any?
           params[:predefined_date].each do |predefined_date|

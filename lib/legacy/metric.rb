@@ -28,6 +28,10 @@ class Metric < Legacy::Record
     {name => cast_value(result.value)}
   end
 
+  def cast_value(value)
+    value
+  end
+
   # convert keys in hash to int to keep things matching up - but preserve values
   # TODO dry vs metrics_helper.rb
   def self.scrub_hash_keys(hash)

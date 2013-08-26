@@ -48,8 +48,10 @@ class CampaignFormField < ActiveRecord::Base
 
   def simple_form_field_type
     case field_type
-    when 'text', 'number', 'percentage'
+    when 'text', 'number'
       :string
+    when 'percentage'
+      :percentage
     when 'textarea'
       :text
     else

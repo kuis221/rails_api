@@ -61,14 +61,15 @@ class EventsController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :start_date, :end_date, :company_id, :with_event_data_only, :with_surveys_only].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
 
-        # Date Ranges
-        ranges = [
-            build_facet_item({label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1}),
-            build_facet_item({label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2}),
-            build_facet_item({label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3})
-        ]
-        ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
-        f.push(label: "Date Ranges", items: ranges )
+        # Not longer used
+        # # Date Ranges
+        # ranges = [
+        #     build_facet_item({label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1}),
+        #     build_facet_item({label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2}),
+        #     build_facet_item({label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3})
+        # ]
+        # ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
+        # f.push(label: "Date Ranges", items: ranges )
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_brands_bucket(facet_search.facet(:campaign).rows)

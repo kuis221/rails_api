@@ -29,7 +29,7 @@ class Venue < ActiveRecord::Base
 
   attr_accessible :place_id, :company_id
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :zipcode, :reference, :latitude, :longitude, to: :place
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :zipcode, :reference, :latitude, :longitude, :opening_hours, to: :place
 
   searchable do
     integer :place_id

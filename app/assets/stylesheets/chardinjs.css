@@ -1,3 +1,6 @@
+.chardinjs-wrapper {
+  position: relative; }
+
 .chardinjs-overlay {
   position: absolute;
   z-index: 999999;
@@ -41,6 +44,7 @@
   .chardinjs-tooltip.chardinjs-right {
     margin-right: -135px;
     padding-left: 10px; }
+  .chardinjs-tooltip.chardinjs-inner-top,
   .chardinjs-tooltip.chardinjs-bottom {
     margin-bottom: -50px;
     padding-top: 10px; }
@@ -59,6 +63,7 @@
     font-size: 60px;
     display: inline-block;
     position: absolute; }
+  .chardinjs-tooltip.chardinjs-inner-top:before,
   .chardinjs-tooltip.chardinjs-bottom:before {
     content: "\e026" !important;
     font-family: 'icons';
@@ -74,14 +79,16 @@
   .chardinjs-tooltip.chardinjs-right:before, .chardinjs-tooltip.chardinjs-left:after {
     width: 50px;
     top: 82%; }
-  .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after {
+  .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after,
+  .chardinjs-tooltip.chardinjs-inner-bottom:before, .chardinjs-tooltip.chardinjs-inner-top:after {
     width: 1px;
     height: 50px;
     left: 50%; }
-  .chardinjs-tooltip.chardinjs-bottom:before {
+  .chardinjs-tooltip.chardinjs-bottom:before,
+  .chardinjs-tooltip.chardinjs-inner-top:before {
     top: -50px; }
   .chardinjs-tooltip.chardinjs-top:after {
-    bottom: -50px; }
+    bottom: -75px; }
   .chardinjs-tooltip.chardinjs-right:before {
     left: -50px; }
   .chardinjs-tooltip.chardinjs-left:after {
@@ -95,3 +102,7 @@
 
 .chardinjs-relative-position {
   position: relative; }
+
+.chardinjs-dashed {
+  border: 2px dashed #fff;
+}

@@ -46,7 +46,7 @@ class Legacy::Account < Legacy::Record
       result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if result['results'].count > 0
         location = result['results'].first['geometry']['location']
-        spots = api_client.spots(location['lat'], location['lng'], keyword: "#{name} #{address.street_address}", :radius => 50000)
+        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: "#{name} #{address.street_address}", :radius => 50000)
 
         if spots.any?
           spot = spots.first
@@ -79,10 +79,6 @@ class Legacy::Account < Legacy::Record
       is_custom_place: true,
       country: 'US'
     }
-  end
-
-  def api_client
-    @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
   end
 
   def address
