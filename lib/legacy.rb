@@ -51,6 +51,7 @@ module Legacy
     end
 
     def self.process_events_group_for_program(program_id, offset, limit)
+      User.current ||= company.company_users.order('id asc').first.user
       program = Legacy::Program.find(program_id)
       campaign = program.sincronize(company).local
       Legacy::Event.where(program_id: program_id).limit(limit).offset(offset).each do |legacy_event|
