@@ -1218,21 +1218,22 @@ li#user_menu{
     	li{
     		color: @text;
     		min-height:70px;
+
+			&.assigned > span.task-list {
+  				border-left: 5px solid @assigned;
+  			}
+  			&.completed > span.task-list {
+  				border-left: 5px solid @completed;
+  			}
+  			&.late > span.task-list {
+  				border-left: 5px solid @buttons;
+  			}
+  			&.unassigned > span.task-list {
+  				border-left: 5px solid @unassigned;
+  			}
     		span.task-list{
     			height: 80px;
     			width: 100%;
-    			&.assigned{
-	  				border-left: 5px solid @assigned;
-	  			}
-	  			&.completed{
-	  				border-left: 5px solid @completed;
-	  			}
-	  			&.late{
-	  				border-left: 5px solid @buttons;
-	  			}
-	  			&.unassigned{
-	  				border-left: 5px solid @unassigned;
-	  			}
     			span{
 	    			&:first-child{
 	    			margin:20px 20px 0 0;
@@ -2134,7 +2135,6 @@ body.events.show {
 			margin: 4px;
 			padding: 0;
 			position: absolute;
-			top: 0;
 			right: 0;
 			list-style-type: none;
 			background-color: #fff;
@@ -2954,14 +2954,14 @@ table.table td.comments-container {
 	}
 	.photo-list{
 		margin: 40px 0 0 0;
-		ul{
+		ul.thumbnails{
 			margin: 0 -3% 0 -3%;
 			overflow: auto;
-		}
-		li{
-			margin: 0 3% 6% 3%;
-			&:first-child{
+			&>li{
 				margin: 0 3% 6% 3%;
+				&:first-child{
+					margin: 0 3% 6% 3%;
+				}
 			}
 		}
 	}
@@ -2983,83 +2983,82 @@ table.table td.comments-container {
 		float:right !important;
 		height: 35px;
 		margin: 0;
-		top:85px;
+		bottom: 0;
 		width: 100%;
 		-webkit-border-radius: 0px 0px 8px 8px;
         border-radius: 0px 0px 8px 8px;
-        li a{
-        	color: white;
-        	opacity: 1 !important;
-        	&.icon-download:before{
-        	  	color: @grey_one;
-				content: "\e00b" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 13px;
-				left:127px;
-				padding-bottom:5px;
-			  	position: relative;
-				speak: none;
-				text-align: center;
-				top: 10px;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-        	}
-        	&.icon-remove-circle:before{
-        	  	color: @grey_one;
-				content: "\e011" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 13px;
-				left:135px;
-				padding-bottom:5px;
-			  	position: relative;
-				speak: none;
-				text-align: center;
-				top: 10px;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-        	}
-        	&.icon-ok-circle:before{
-        	  	color: @grey_one;
-				content: "\e00d" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
-				font-size: 13px;
-				left:135px;
-				padding-bottom:5px;
-			  	position: relative;
-				speak: none;
-				text-align: center;
-				top: 10px;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-        	}
-        	&.icon-plus:before{
-        	  	color: @grey_one;
-			  	display: inline-block;
-				left:135px;
-				padding-bottom:5px;
-			  	position: relative;
-				speak: none;
-				text-align: center;
-				top: 10px;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-        	}
-        	&.icon-minus:before{
-        	  	color: @grey_one;
-			  	display: inline-block;
-				left:135px;
-				padding-bottom:5px;
-			  	position: relative;
-				speak: none;
-				text-align: center;
-				top: 10px;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-        	}
-        }
+        li {
+        	float: right;
+        	a{
+	        	color: white;
+	        	opacity: 1 !important;
+	        	&.icon-download:before{
+	        	  	color: @grey_one;
+					content: "\e00b" !important;
+				  	display: inline-block;
+				  	font-family: 'icons';
+					font-size: 13px;
+					left:127px;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+					top: 10px;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+	        	}
+	        	&.icon-remove-circle:before{
+	        	  	color: @grey_one;
+					content: "\e011" !important;
+				  	display: inline-block;
+				  	font-family: 'icons';
+					font-size: 13px;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+					top: 10px;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+	        	}
+	        	&.icon-ok-circle:before{
+	        	  	color: @grey_one;
+					content: "\e00d" !important;
+				  	display: inline-block;
+				  	font-family: 'icons';
+					font-size: 13px;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+					top: 10px;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+	        	}
+	        	&.icon-plus:before{
+	        	  	color: @grey_one;
+				  	display: inline-block;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+					top: 10px;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+	        	}
+	        	&.icon-minus:before{
+	        	  	color: @grey_one;
+				  	display: inline-block;
+					padding-bottom:5px;
+				  	position: relative;
+					speak: none;
+					text-align: center;
+					top: 10px;
+				  	vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+	        	}
+	        }
+	    }
 	}
 	ul{
 		&.thumbnails{
