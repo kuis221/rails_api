@@ -18,7 +18,6 @@ head
     = javascript_include_tag "application"
     = javascript_tag '$.fx.off = true;'  if Rails.env.test?
     = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=AIzaSyC_4WyZ0ewJ0QSdFd6mnAsCvAttG8iXXQc&libraries=places&sensor=false"
-    = javascript_include_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_libraries_191.js"
     = csrf_meta_tags
     = yield(:head)
     javascript:
