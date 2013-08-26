@@ -39,6 +39,10 @@
 @unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
 @venues_blue:#3e9ccf;
+@unsent:#de4d43;
+@submitted:#3e9ccf;
+@approved:#90bf43;
+@rejected:#de4d43;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -1213,6 +1217,30 @@ li#user_menu{
 	    	}
 	    }
     }
+		ul#events-list{
+			li{
+				color: @text;
+				min-height: 70px;
+
+				&.unsent > span.event-item {
+					border-left: 5px solid @unsent;
+				}
+				&.submitted > span.event-item {
+					border-left: 5px solid @submitted;
+				}
+				&.approved > span.event-item {
+					border-left: 5px solid @approved;
+				}
+				&.rejected > span.event-item {
+					border-left: 5px solid @rejected;
+				}
+			}
+			span.event-item {
+				height: 61px;
+				width: 100%;
+				padding: 9px 0 0 15px;
+			}
+		}
     ul#tasks-list{
     	li{
     		color: @text;
@@ -3336,7 +3364,7 @@ svg{
 				display: inline-block;
 				-webkit-border-radius: 0px 4px 4px 0px;
 				padding: 10px 5px 12px 4px;
-				text-align: center; 
+				text-align: center;
 				text-shadow:none !important;
 				width: 40px;
 			}
