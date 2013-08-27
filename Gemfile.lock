@@ -248,6 +248,11 @@ GEM
       vegas (~> 0.1.2)
     resque-loner (1.2.1)
       resque (~> 1.0)
+    resque_spec (0.14.2)
+      resque (>= 1.19.0)
+      rspec-core (>= 2.5.0)
+      rspec-expectations (>= 2.5.0)
+      rspec-mocks (>= 2.5.0)
     rolify (3.2.0)
     rsolr (1.0.9)
       builder (>= 2.1.2)
@@ -395,6 +400,7 @@ DEPENDENCIES
   redis
   resque
   resque-loner
+  resque_spec
   rolify (>= 3.2.0)
   rspec
   rspec-mocks

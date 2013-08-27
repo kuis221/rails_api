@@ -109,6 +109,8 @@ class Venue < ActiveRecord::Base
       end
     end
 
+    true
+
   end
 
   def compute_scoring
@@ -153,7 +155,7 @@ class Venue < ActiveRecord::Base
   end
 
   def types_without_establishment
-    if place.types.is_a?(Array)
+    if place.present? and place.types.is_a?(Array)
       place.types - ['establishment']
     else
       []

@@ -40,10 +40,14 @@ Brandscopic::Application.configure do
   #Paperclip options
   Paperclip.options[:command_path] = "/usr/local/bin"
 
-  config.logger = Logger.new(STDOUT)
-  config.logger.level = Logger.const_get(
-    ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'
-  )
+
+  # We want to see the logs on the console for the workers :)
+  unless $rails_rake_task && !Rake.application.top_level_tasks.include?('resque:work')
+    config.logger = Logger.new(STDOUT)
+    config.logger.level = Logger.const_get(
+      ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'
+    )
+  end
 
 
   ENV["REDISTOGO_URL"] = 'redis://localhost:6379'

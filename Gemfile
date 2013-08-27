@@ -84,6 +84,7 @@ group :test do
   gem 'shoulda'
   gem 'launchy'
   gem "sunspot_test"
+  gem 'resque_spec'
 end
 
 # To use ActiveModel has_secure_password
