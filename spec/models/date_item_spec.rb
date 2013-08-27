@@ -95,7 +95,7 @@ describe DateItem do
         end
         it "correctly adds the days separated by commma and 'AND'" do
           date = DateItem.new(recurrence: true, recurrence_days: ['monday', 'tuesday', 'wednesday'])
-          date.label.should == 'On Monday, Tuesday and Wednesday'
+          date.label.should == 'On Monday, Tuesday, and Wednesday'
         end
         it "should ignore empty days" do
           date = DateItem.new(recurrence: true, recurrence_days: [''])

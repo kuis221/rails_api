@@ -36,6 +36,7 @@ module Legacy
     def self.company
       @company ||= Company.find_by_name('Legacy Marketing Partners')
     end
+
     def self.synchronize_programs(program_ids)
       User.current = company.company_users.order('id asc').first.user
       program_ids.each do |program_id|
@@ -45,6 +46,7 @@ module Legacy
         total = program.events.count
         while counter < total
           self.delay.process_events_group_for_program(program_id, counter, batch_size)
+          Resque.enqueue(PogramMigrationWorker, program_id, counter, batch_size)
           counter += batch_size
         end
       end

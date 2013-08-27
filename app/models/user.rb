@@ -58,11 +58,11 @@ class User < ActiveRecord::Base
   validates :email, presence: true
   validates :detected_time_zone, allow_nil: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
 
-  with_options unless: :inviting_user_or_invited?  do |user|
+  with_options unless: :inviting_user_or_invited? do |user|
     user.validates :country, presence: true
     user.validates :state,   presence: true
     user.validates :city,    presence: true
-    user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
+    user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s }  }
     user.validates :password, presence: true, if: :should_require_password?
     user.validates :password, confirmation: true, if: :password
   end
@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
   end
 
   def inviting_user_or_invited?
-    inviting_user or (invited_to_sign_up? and !accepting_invitation)
+    self.inviting_user || (invited_to_sign_up? and !accepting_invitation)
   end
 
   def should_require_password?

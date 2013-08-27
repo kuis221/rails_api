@@ -42,9 +42,8 @@ class EventExpense < ActiveRecord::Base
 
   private
      def update_event_data
-        event.event_data.delay.update_data if event.event_data.present?
+        Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
      end
-
 
     def image?
       !(file_content_type =~ %r{^(image|(x-)?application)/(x-png|pjpeg|jpeg|jpg|png|gif|pdf)$}).nil?
