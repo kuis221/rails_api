@@ -1,5 +1,5 @@
 class EventDataIndexer
-  @queue = :sunspot
+  @queue = :indexing
 
   def self.perform(event_data_id)
     begin
