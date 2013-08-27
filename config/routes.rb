@@ -28,6 +28,9 @@ Brandscopic::Application.routes.draw do
       get :items, on: :collection
       get :autocomplete, on: :collection
       get :filters, on: :collection
+      post 'downloads', to: 'photos#new_download', on: :collection, format: :js
+      get 'downloads/:download_id', to: 'photos#download', on: :collection, as: :download, format: :js
+      get 'downloads/:download_id/status', to: 'photos#download_status', on: :collection, as: :download_status, format: :json
     end
     resources :expenses, only: [:index] do
       get :items, on: :collection

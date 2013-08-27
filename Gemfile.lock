@@ -382,6 +382,7 @@ DEPENDENCIES
   rspec
   rspec-mocks
   rspec-rails (~> 2.0)
+  rubyzip
   sass-rails (~> 3.2.3)
   shoulda
   simple-navigation

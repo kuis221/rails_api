@@ -19,6 +19,23 @@ class Results::PhotosController < FilteredController
     render :json => buckets.flatten
   end
 
+  def download
+    @download = AssetDownload.find_by_uid(params[:download_id])
+  end
+
+  def new_download
+    @download = AttachedAsset.compress(params[:photos])
+  end
+
+  def download_status
+    url = nil
+    download = AssetDownload.find_by_uid(params[:download_id])
+    url = download.download_url if download.completed?
+    respond_to do |format|
+      format.json { render json:  {status: download.aasm_state, url: url} }
+    end
+  end
+
   protected
 
     def facets

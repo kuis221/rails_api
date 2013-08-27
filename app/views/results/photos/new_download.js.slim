@@ -1,0 +1,21 @@
+|
+  var downloadDialog = bootbox.dialog('#{j render('download')}', [{
+    "label" : "Cancel",
+    "class" : "btn btn-primary",
+    "callback": function() {
+        downloadDialog.modal('hide');
+        if (downloadInterval){
+          clearInterval(downloadInterval)
+        }
+    }
+  }], {'onEscape': false, animate: (!$.fx.off)})
+
+  var downloadInterval = setInterval(function(){
+    $.get('#{download_status_results_photos_url(@download.uid, format: :json)}', function(response){
+      if (response.status == 'completed') {
+        clearInterval(downloadInterval);
+        downloadDialog.modal('hide');
+        window.location = response.url;
+      }
+    })
+  }, 3000)

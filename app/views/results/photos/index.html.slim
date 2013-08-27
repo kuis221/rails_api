@@ -19,8 +19,6 @@
         ul.thumbnails id="#{controller_name}-list"
 
 javascript:
-  var downloadIds = []
-
   $('#collection-list-filters').filteredList({
     'source': '#{items_path(controller: 'results/photos')}',
     'filtersUrl': '#{filters_path(controller: 'results/photos')}',
@@ -40,30 +38,31 @@ javascript:
     }
   });
 
-  $(document).delegate('.photo-download-link', 'click', function() {
-    target = $(this).parents().eq(3);
+  $(document).delegate('.photo-download-link', 'click', function(e) {
+    e.preventDefault();
+    target = $(this).closest('li.photo-item');
     target.toggleClass('selected-for-download');
-    target_id = target.attr('id').replace('attached_asset_', '');
+    target_id = target.data('photo-id');
 
     if (target.is('.selected-for-download')) {
-      downloadIds.push(target_id);
       $(this).removeClass('icon-plus').addClass('icon-minus');
     } else {
-      index = $.inArray(target_id, downloadIds);
-      if(index != -1) {
-        downloadIds.splice(index, 1);
-        $(this).removeClass('icon-minus').addClass('icon-plus');
-      }
+      $(this).removeClass('icon-minus').addClass('icon-plus');
     }
-
-    selected_elements = downloadIds.length;
+    selected_elements = $('.selected-for-download').length;
     counter_html = ''
     if (selected_elements > 0) {
       counter_html = '<span class="badge download-photos-counter">' + selected_elements + '</span>';
     }
     $('#download-photos-counter-container').html(counter_html);
+
+    return false;
   });
 
-  $(document).delegate('#download-photos-button', 'click', function() {
-    return false
+  $(document).delegate('#download-photos-button', 'click', function(e) {
+    e.preventDefault();
+    ids  = $.map($('.selected-for-download'), function(photo, index){
+      return photo.getAttribute('data-photo-id');
+    })
+    $.post('#{downloads_results_photos_url(format: :js)}', {photos: ids})
   });

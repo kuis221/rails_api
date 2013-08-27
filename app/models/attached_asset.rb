@@ -166,6 +166,15 @@ class AttachedAsset < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def compress(ids)
+      assets_ids = ids.sort.map(&:to_i)
+      download = AssetDownload.find_or_create_by_assets_ids(assets_ids, assets_ids: assets_ids)
+      if download.new?
+        download.queue!
+      end
+      download
+    end
   end
 
   private

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130824182224) do
+ActiveRecord::Schema.define(:version => 20130826223112) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -67,6 +67,22 @@ ActiveRecord::Schema.define(:version => 20130824182224) do
   add_index "areas_places", ["area_id", "place_id"], :name => "index_areas_places_on_area_id_and_place_id", :unique => true
   add_index "areas_places", ["area_id"], :name => "index_areas_places_on_area_id"
   add_index "areas_places", ["place_id"], :name => "index_areas_places_on_place_id"
+
+  create_table "asset_downloads", :force => true do |t|
+    t.string   "uid"
+    t.text     "assets_ids"
+    t.string   "aasm_state"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.integer  "user_id"
+    t.datetime "last_downloaded"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "asset_downloads", ["user_id"], :name => "index_asset_downloads_on_user_id"
 
   create_table "attached_assets", :force => true do |t|
     t.string   "file_file_name"

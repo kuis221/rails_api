@@ -46,6 +46,7 @@ gem "nested_form"
 gem 'delayed_job_active_record'
 gem 'axlsx'
 gem 'axlsx_rails'
+gem 'rubyzip'
 
 # Gems used only for assets and not required
 # in production environments by default.
