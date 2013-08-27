@@ -3123,11 +3123,17 @@ svg{
 #survey-form {
 	ul{
 		margin: 0;
+		li {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
 		&.competitive{
+			margin: 5px 0 25px 0;
 			.titles{
 				color: @brand;
-				margin: 15px 0 15px 0;
-				width:345px;
+				margin: 0 0 15px 0;
+				width:315px;
 				span{
 					margin:0;
 				}
@@ -3140,23 +3146,38 @@ svg{
 				white-space: nowrap;
 				width: 220px;
 			}
+			label.radio{
+				float: left;
+				margin-right: 72px;
+				overflow: hidden;
+		    	text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 230px;
+			}
+			.radio{
+				margin-right: 72px;
+				&:last-child{
+					margin: 0;
+				}
+			}
 		}
-	}
-	li {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-	p{
-		width: 360px;
 	}
 	.control-group {
 		width: 100%;
 	}
+	input[type="text"]{
+		margin-left: 10px;
+	}
 	label.radio {
 		width: 100%;
 	}
-	.fields{
+	p{
+		width: 360px;
+	}
+	.radio{
+		margin: 0 15px 5px 0;
+		padding: 0;
+		width: 20px;
 		span{
 			background-image: none !important;
 			border: 4px solid #d7dcde;
@@ -3166,9 +3187,6 @@ svg{
 			-moz-border-radius: 15px;
 			border-radius: 15px;
 			width: 15px;
-			&:hover{
-				border: 4px solid @grey_three;
-			}
 		}
 		span.checked{
 			border: 4px solid @grey_three;
@@ -3195,12 +3213,8 @@ svg{
 		}
 		input[type="radio"] {
 			margin: 4px 0 0 0;
-			visibility: hidden;
+			opacity:0;
 		}
-	}
-	.radio {
-		margin: 0 10px 5px 0;
-		padding: 0;
 	}
 }
 
