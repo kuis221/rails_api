@@ -233,7 +233,7 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      [:events, :promo_hours, :impressions, :interactions, :samples, :spent].each do |param|
+      [:events, :promo_hours, :impressions, :interactions, :samples, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
         elsif params[param].present? && params[param][:min].present?
@@ -247,6 +247,7 @@ class Venue < ActiveRecord::Base
       stat(:interactions, :type => "max")
       stat(:sampled, :type => "max")
       stat(:spent, :type => "max")
+      stat(:venue_score, :type => "max")
 
       if include_facets
         facet :place
