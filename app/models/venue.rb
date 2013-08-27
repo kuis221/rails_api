@@ -115,9 +115,9 @@ class Venue < ActiveRecord::Base
     # Calculates the scoring for the venue
     self.score = nil
     if neighbors_establishments_search
-      unless neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_es"].nil?
-        mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_es"]['mean']
-        stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_es"]['stddev']
+      unless neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"].nil?
+        mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean']
+        stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['stddev']
 
         self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
       end
@@ -133,10 +133,10 @@ class Venue < ActiveRecord::Base
           with(:company_id, company_id)
           with(:location).in_radius(latitude, longitude, 5)
           with(:types, types_without_establishment )
-          with(:avg_impressions).greater_than(0)
+          with(:avg_impressions_hour).greater_than(0)
 
-          stat(:avg_impressions, :type => "stddev")
-          stat(:avg_impressions, :type => "mean")
+          stat(:avg_impressions_hour, :type => "stddev")
+          stat(:avg_impressions_hour, :type => "mean")
         end
       else
         false
