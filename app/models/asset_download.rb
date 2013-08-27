@@ -30,7 +30,7 @@ class AssetDownload < ActiveRecord::Base
   end
 
   def queue_process
-    self.delay.process!
+    Resque.enqueue(AssetsDownloadWorker, self.id)
   end
 
   def self.find_or_create_by_assets_ids(ids, params)
@@ -49,17 +49,30 @@ class AssetDownload < ActiveRecord::Base
 
   def compress_assets
     tmp_filename = "#{Rails.root}/tmp/assets-#{uid}.zip"
+    File.delete(tmp_filename) if File.exists?(tmp_filename) # Make sure the zipfile doesn't exists
+
+    # Add all the assets to the zip file
     Zip::ZipFile.open(tmp_filename, Zip::ZipFile::CREATE) do |zip|
       #get all of the attachments
       AttachedAsset.find(assets_ids).each do |a|
         photo_local_name = "#{Rails.root}/tmp/#{a.id}"
         a.file.copy_to_local_file(:original, photo_local_name)
-        p "Adding #{a.file.original_filename} to zipfile from #{photo_local_name}"
+
+        # Check if the file was downloaded successfully and add it to the zip
         zip.add(a.file.original_filename, photo_local_name) if File.exists?(photo_local_name)
       end
     end
     self.file = File.open(tmp_filename)
-    save
+
+    begin
+      save
+    rescue AWS::S3::Errors::RequestTimeout
+      save # Try again
+    end
+
+    File.delete(tmp_filename)
+
+    # Mark download as completed
     self.complete!
   end
 end

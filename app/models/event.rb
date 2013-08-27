@@ -294,7 +294,7 @@ class Event < ActiveRecord::Base
 
   def update_venue_data
     venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-    venue.compute_stats
+    Resque.enqueue(VenueIndexer, venue.id)
   end
 
   class << self
@@ -444,7 +444,7 @@ class Event < ActiveRecord::Base
 
     def save_event_data
       if @refresh_event_data
-        event_data.delay.update_data
+        Resque.enqueue(VenueIndexer, event_data.id)
       elsif place_id_changed?
         update_venue_data if place_id.present?
       end
@@ -462,16 +462,18 @@ class Event < ActiveRecord::Base
     def reindex_associated
       save_event_data
       if place_id_changed?
-        reindex_photos
+        Resque.enqueue(EventPhotosIndexer, self.id)
         Sunspot.index(place)
-        Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was).delay.compute_stats if place_id_was.present?
+        if place_id_was.present?
+          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was)
+          Resque.enqueue(VenueIndexer, venue.id)
+        end
       end
     end
 
     def reindex_photos
       Sunspot.index(photos)
     end
-    handle_asynchronously :reindex_photos
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
