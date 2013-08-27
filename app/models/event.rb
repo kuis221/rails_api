@@ -101,7 +101,9 @@ class Event < ActiveRecord::Base
     boolean :active
     time :start_at, :trie => true
     time :end_at, :trie => true
-    string :status
+    string :status, multiple: true do
+      [status, recap_status]
+    end
     string :start_time
 
     integer :id, stored: true
@@ -171,6 +173,14 @@ class Event < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def recap_status
+    if self.aasm_state == 'unsent'
+      'Late'
+    else
+      self.aasm_state.capitalize
+    end
   end
 
   def in_past?
@@ -322,7 +332,7 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:status,     params[:status]) if params.has_key?(:status) and params[:status].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?

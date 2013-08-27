@@ -19,6 +19,7 @@ class VenuesController < FilteredController
         result.interactions = hit.stored(:interactions)
         result.sampled = hit.stored(:sampled)
         result.spent = hit.stored(:spent)
+        result.score = hit.stored(:venue_score)
         places.push result
       end
       ids = places.map{|p| p.place.place_id}
@@ -67,6 +68,7 @@ class VenuesController < FilteredController
           max_interactions = rows.select{|r| r.stat_field == 'interactions_is' }.first.value
           max_sampled      = rows.select{|r| r.stat_field == 'sampled_is' }.first.value
           max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
+          max_venue_score  = rows.select{|r| r.stat_field == 'venue_score_is' }.first.value
 
           f.push(label: "Events", name: :events, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
           f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
@@ -74,9 +76,10 @@ class VenuesController < FilteredController
           f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions][:min], selected_max: search_params[:interactions][:max] )
           f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:sampled][:min], selected_max: search_params[:sampled][:max] )
           f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent][:min], selected_max: search_params[:spent][:max] )
+          f.push(label: "Venue Score", name: :venue_score, min: 0, max: max_venue_score.to_i, selected_min: search_params[:venue_score][:min], selected_max: search_params[:venue_score][:max] )
 
         end
-        # Date Ranges
+        # Prices
         prices = [
             build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),
             build_facet_item({label: '$$', id: '2', name: :price, count: 1, ordering: 2}),
@@ -115,7 +118,7 @@ class VenuesController < FilteredController
           @search_params[:types] = %w(establishment)
         end
 
-        [:events, :promo_hours, :impressions, :interactions, :sampled, :spent].each do |param|
+        [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
           @search_params[param] ||= {}
           @search_params[param][:min] = 1 unless @search_params[:location].present? || @search_params[param][:min].present?
           @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
