@@ -22,7 +22,7 @@
   -o-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out; }
   .chardinjs-helper-layer.chardinjs-left {
-    margin-left: -10px; }
+    margin-left: -2px; }
   .chardinjs-helper-layer.chardinjs-right {
     padding-right: 10px; }
   .chardinjs-helper-layer.chardinjs-bottom {

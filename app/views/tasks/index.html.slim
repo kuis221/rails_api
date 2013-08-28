@@ -1,13 +1,11 @@
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
+  #save-filters-btn.a.btn.btn-primary Save
 
 .main
   .tab-content
 	#list-view.tab-pane.active
 	  = render partial: 'table', locals: {source: url_for(action: :items)}
 
-
-
-        
+= render partial: 'help_tutorial'
