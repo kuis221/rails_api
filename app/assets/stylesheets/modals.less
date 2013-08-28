@@ -238,11 +238,11 @@ ul.select2-results{
 					}
 					label.radio{
 						float: left;
-						margin-right: 12px;
+						margin-right: 43px;
 						overflow: hidden;
 				    	text-overflow: ellipsis;
 						white-space: nowrap;
-						width: 286px;
+						width: 255px;
 					}
 					.radio{
 						margin-right: 90px;
@@ -252,9 +252,10 @@ ul.select2-results{
 					}
 				}
 				&.conversion{
+					margin: 0 0 25px 0;
 					.titles{
 						color: @brand;
-						float: right;
+						margin:0 0 15px 240px;
 						width: 67%;
 						span{
 							display: inline-block;
@@ -270,16 +271,20 @@ ul.select2-results{
 					}
 					label.radio{
 						display:inline-block;
+						margin-right: 43px;
 						overflow: hidden;
 				    	text-overflow: ellipsis;
 						white-space: nowrap;
-						width: 285px;
+						width: 255px;
+					}
+					.radio{
+						margin: 0 90px 0px 0;
 					}
 				}
 				&.recommend{
 					.titles{
 						color: @brand;
-						float: right;
+						margin:0 0 15px 235px;
 						width:80%;
 						span{
 							display: inline-block;
@@ -295,7 +300,14 @@ ul.select2-results{
 					}
 					label.radio{
 						display: inline-block;
-						width:286px;
+						margin-right: 43px;
+						width:255px;
+					}
+					.radio{
+						margin: 0 47px 0px 0;
+						&:last-child{
+							margin-right: 0;
+						}
 					}
 				}
 			}
