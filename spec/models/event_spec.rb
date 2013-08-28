@@ -15,6 +15,8 @@
 #  active        :boolean          default(TRUE)
 #  place_id      :integer
 #  promo_hours   :decimal(6, 2)    default(0.0)
+#  reject_reason :text
+#  summary       :text
 #
 
 require 'spec_helper'

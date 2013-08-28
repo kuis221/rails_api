@@ -6,6 +6,7 @@
 #  event_id      :integer
 #  created_by_id :integer
 #  updated_by_id :integer
+#  active        :boolean          default(TRUE)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

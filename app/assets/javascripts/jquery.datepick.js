@@ -56,7 +56,9 @@ function Datepicker() {
 		altFormat: null, // Date format for alternate field, defaults to dateFormat
 		constrainInput: true, // True to constrain typed input to dateFormat allowed characters
 		commandsAsDateFormat: false, // True to apply formatDate to the command texts
-		commands: this.commands // Command actions that may be added to a layout by name
+		commands: this.commands, // Command actions that may be added to a layout by name
+		daysHighlighted: null,
+		highlightClass: 'datepick-day-highlight'
 	};
 	this.regional = [];
 	this.regional[''] = { // US/English
@@ -1899,13 +1901,14 @@ $.extend(Datepicker.prototype, {
 						}
 					}
 				}
+				var highligthed = inst.options.daysHighlighted && inst.options.daysHighlighted[year+''] && inst.options.daysHighlighted[year+''][month+''] && inst.options.daysHighlighted[year+''][month+''][drawDate.getDate()+'']
 				var dateInfo = (!$.isFunction(inst.options.onDate) ? {} :
 					inst.options.onDate.apply(target, [drawDate, drawDate.getMonth() + 1 == month]));
 				var selectable = (selectOtherMonths || drawDate.getMonth() + 1 == month) &&
 					this._isSelectable(target, drawDate, dateInfo.selectable, minDate, maxDate);
 				days += this._prepare(renderer.day, inst).replace(/\{day\}/g,
 					(selectable ? '<a href="javascript:void(0)"' : '<span') +
-					' class="dp' + ts + ' ' + (dateInfo.dateClass || '') +
+					' class="dp' + ts + ' ' + (dateInfo.dateClass || '') + (highligthed ? ' '+inst.options.highlightClass : '') +
 					(selected && (selectOtherMonths || drawDate.getMonth() + 1 == month) ?
 					' ' + renderer.selectedClass : '') +
 					(selectable ? ' ' + renderer.defaultClass : '') +

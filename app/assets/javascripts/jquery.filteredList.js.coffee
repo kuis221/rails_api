@@ -10,7 +10,8 @@ $.widget 'nmk.filteredList', {
 		autoCompletePath: '',
 		defaultParams: [],
 		customFilters: [],
-		selectDefaultDate: false
+		selectDefaultDate: false,
+		calendarHighlights: null
 	},
 
 	_create: () ->
@@ -363,6 +364,8 @@ $.widget 'nmk.filteredList', {
 			nextText: '>',
 			showOtherMonths: true,
 			selectOtherMonths: true,
+			highlightClass: 'datepick-event',
+			daysHighlighted: @options.calendarHighlights,
 			renderer: $.extend(
 						{}, $.datepick.defaultRenderer,
 						{picker: '<div class="datepick">' +
