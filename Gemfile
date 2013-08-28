@@ -43,10 +43,12 @@ gem 'progress_bar'
 gem 'unicorn'
 gem "geocoder"
 gem "nested_form"
-gem 'delayed_job_active_record'
 gem 'axlsx'
 gem 'axlsx_rails'
 gem 'rubyzip'
+gem 'redis'
+gem "resque", :require => "resque/server"
+gem 'resque-loner'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -82,6 +84,7 @@ group :test do
   gem 'shoulda'
   gem 'launchy'
   gem "sunspot_test"
+  gem 'resque_spec'
 end
 
 # To use ActiveModel has_secure_password

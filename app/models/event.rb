@@ -101,7 +101,9 @@ class Event < ActiveRecord::Base
     boolean :active
     time :start_at, :trie => true
     time :end_at, :trie => true
-    string :status
+    string :status, multiple: true do
+      [status, recap_status]
+    end
     string :start_time
 
     integer :id, stored: true
@@ -171,6 +173,14 @@ class Event < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def recap_status
+    if self.aasm_state == 'unsent'
+      'Late'
+    else
+      self.aasm_state.capitalize
+    end
   end
 
   def in_past?
@@ -294,7 +304,7 @@ class Event < ActiveRecord::Base
 
   def update_venue_data
     venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-    venue.compute_stats
+    Resque.enqueue(VenueIndexer, venue.id)
   end
 
   class << self
@@ -322,7 +332,7 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:status,     params[:status]) if params.has_key?(:status) and params[:status].present?
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?
@@ -444,7 +454,7 @@ class Event < ActiveRecord::Base
 
     def save_event_data
       if @refresh_event_data
-        event_data.delay.update_data
+        Resque.enqueue(VenueIndexer, event_data.id)
       elsif place_id_changed?
         update_venue_data if place_id.present?
       end
@@ -462,16 +472,18 @@ class Event < ActiveRecord::Base
     def reindex_associated
       save_event_data
       if place_id_changed?
-        reindex_photos
+        Resque.enqueue(EventPhotosIndexer, self.id)
         Sunspot.index(place)
-        Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was).delay.compute_stats if place_id_was.present?
+        if place_id_was.present?
+          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was)
+          Resque.enqueue(VenueIndexer, venue.id)
+        end
       end
     end
 
     def reindex_photos
       Sunspot.index(photos)
     end
-    handle_asynchronously :reindex_photos
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600

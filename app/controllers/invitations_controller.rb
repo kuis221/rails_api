@@ -29,8 +29,11 @@ class InvitationsController < Devise::InvitationsController
         self.resource = User.new(resource_params, as: :admin)
         self.resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
       else
+        Rails.logger.debug resource_params[:company_users_attributes].inspect
         self.resource = invited_user
-        self.resource.update_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
+        self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
+        # self.resource.inviting_user = true
+        # self.resource.company_users.build resource_params[:company_users_attributes]['0'], as: User.inviter_role(current_inviter)
         if self.resource.save and self.resource.errors.empty?
           UserMailer.company_invitation(self.resource, current_company, current_user).deliver
         end

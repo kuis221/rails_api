@@ -37,4 +37,6 @@ Brandscopic::Application.configure do
 
   config.action_mailer.default_url_options = {:host => "example.com"}
 
+  ENV["REDISTOGO_URL"] = 'redis://localhost:9999'
+
 end
