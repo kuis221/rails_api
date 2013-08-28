@@ -20,7 +20,7 @@
         p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
         ul.competitive
           li
-            .titles.pull-right
+            .titles
               span PURCHASED
               span AWARE
               span UNAWARES
@@ -113,22 +113,20 @@
             - resource.brands.each do |brand|
               = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
                 .row-fluid.control-group
-                  .span3
                     label.radio= brand.name
-                    = qf.hidden_field :brand_id
-                    = qf.hidden_field :question_id
-                  .span9
-                    .row-fluid
-                      .span2= qf.radio_button :answer, '1', class: 'required'
-                      .span1= qf.radio_button :answer, '2', class: 'required'
-                      .span1= qf.radio_button :answer, '3', class: 'required'
-                      .span1= qf.radio_button :answer, '4', class: 'required'
-                      .span1= qf.radio_button :answer, '5', class: 'required'
-                      .span1= qf.radio_button :answer, '6', class: 'required'
-                      .span1= qf.radio_button :answer, '7', class: 'required'
-                      .span1= qf.radio_button :answer, '8', class: 'required'
-                      .span1= qf.radio_button :answer, '9', class: 'required'
-                      .span2= qf.radio_button :answer, '10', class: 'required'
+                    .radio-group
+                      = qf.hidden_field :brand_id
+                      = qf.hidden_field :question_id
+                      = qf.radio_button :answer, '1', class: 'required'
+                      = qf.radio_button :answer, '2', class: 'required'
+                      = qf.radio_button :answer, '3', class: 'required'
+                      = qf.radio_button :answer, '4', class: 'required'
+                      = qf.radio_button :answer, '5', class: 'required'
+                      = qf.radio_button :answer, '6', class: 'required'
+                      = qf.radio_button :answer, '7', class: 'required'
+                      = qf.radio_button :answer, '8', class: 'required'
+                      = qf.radio_button :answer, '9', class: 'required'
+                      = qf.radio_button :answer, '10', class: 'required'
 
     .form-actions
       = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
