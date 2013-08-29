@@ -2,7 +2,7 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
+  #save-filters-btn.a.btn.btn-primary Save
 
 #main.main
   .tab-content
@@ -22,6 +22,8 @@
         ul#event-data-list
           li.placeholder
             p Select any filter to see results
+
+= render partial: 'help_tutorial'
 
 javascript:
   $('#collection-list-filters').filteredList({
