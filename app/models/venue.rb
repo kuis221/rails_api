@@ -118,7 +118,7 @@ class Venue < ActiveRecord::Base
   def compute_scoring
     # Calculates the scoring for the venue
     self.score = nil
-    if neighbors_establishments_search
+    if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
       unless neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"].nil?
         mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean']
         stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['stddev']
@@ -128,7 +128,7 @@ class Venue < ActiveRecord::Base
         mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['mean']
         stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['stddev']
 
-        self.score_cost = (normdist((avg_impressions_cost-mean)/stddev) * 100).to_i if stddev != 0.0
+        self.score_cost = 100 - (normdist((avg_impressions_cost-mean)/stddev) * 100).to_i if stddev != 0.0
 
         if self.score_impressions && self.score_cost
           self.score = (self.score_impressions + self.score_cost) / 2
