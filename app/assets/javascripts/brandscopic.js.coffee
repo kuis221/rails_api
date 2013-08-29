@@ -54,10 +54,10 @@ jQuery ->
 		}
 
 		$("a[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
-			if this.hash isnt '' and $(this).data('toggle') == null
+			if this.hash isnt '' and typeof $(this).data('toggle') is 'undefined'
 				e.preventDefault()
 				e.stopPropagation()
-				$('html, body').animate({ scrollTop: $(this.hash).offset().top - 45 }, 300)
+				$('html, body').animate({ scrollTop: $(this.hash).offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 				false
 			else
 				true
