@@ -7,7 +7,9 @@
 
   - if event_data
     .row-fluid
-      .span8
+      .box_summary
+        h3 SUMMARY
+        = resource.summary
         ul.consumer-reach-metrics
           - if active_kpis.include?(Kpi.impressions)
             li
