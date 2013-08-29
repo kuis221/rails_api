@@ -93,4 +93,63 @@ describe EventsController, search: true do
       places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>place.id.to_s, "type"=>"place"}]
     end
   end
+
+  describe "GET 'tasks'" do
+    describe "counters", search: true do
+      describe "within user scope" do
+
+        let(:event) { FactoryGirl.create(:event, company_id: @company.id) }
+
+        it "should return the correct number of completed tasks" do
+          FactoryGirl.create_list(:completed_task, 3, event: event)
+
+          #Create some other tasks
+          FactoryGirl.create(:uncompleted_task, event: event)
+          FactoryGirl.create_list(:completed_task, 2, event_id: event.id+1)
+          Sunspot.commit
+
+          get 'items', event_id: event.to_param
+          assigns(:status_counters)['completed'].should == 3
+        end
+
+        it "should return the correct number of assigned tasks" do
+          FactoryGirl.create_list(:assigned_task, 3, event: event)
+
+          #Create some other tasks
+          FactoryGirl.create(:unassigned_task, event: event)
+          FactoryGirl.create_list(:assigned_task, 2, event_id: event.id+1)
+          Sunspot.commit
+
+          get 'items', event_id: event.to_param
+          assigns(:status_counters)['assigned'].should == 3
+        end
+
+        it "should return the correct number of unassigned tasks" do
+          FactoryGirl.create_list(:unassigned_task, 3, event: event)
+
+          #Create some other tasks
+          FactoryGirl.create(:assigned_task, event: event)
+          FactoryGirl.create_list(:unassigned_task, 2, event_id: event.id+1)
+          Sunspot.commit
+
+          get 'items', event_id: event.to_param
+          assigns(:status_counters)['unassigned'].should == 3
+        end
+
+        it "should return the correct number of late tasks" do
+          FactoryGirl.create_list(:late_task, 3, event: event)
+
+          #Create some other tasks
+          FactoryGirl.create(:future_task, event: event)
+          FactoryGirl.create_list(:late_task, 2, event_id: event.id+1)
+          Sunspot.commit
+
+          get 'items', event_id: event.to_param
+          assigns(:status_counters)['late'].should == 3
+        end
+      end
+    end
+  end
+
+
 end

@@ -10,6 +10,7 @@
 #  scalar_value    :decimal(10, 2)   default(0.0)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  kpi_id          :integer
 #
 
 class EventResult < ActiveRecord::Base
@@ -17,20 +18,20 @@ class EventResult < ActiveRecord::Base
 	belongs_to :kpis_segment
 	belongs_to :form_field, class_name: 'CampaignFormField'
 
-  attr_accessible :form_field_id, :kpis_segment_id, :value
+  attr_accessible :form_field_id, :kpis_segment_id, :kpi_id, :value
 
   before_save :set_scalar_value
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
   scope :scoped_by_campaign_id, lambda{|campaigns| joins(:form_field).where(campaign_form_fields: {campaign_id: campaigns}) }
-  scope :impressions, lambda{ joins(:form_field).where(campaign_form_fields:{kpi_id: Kpi.impressions}) }
-  scope :consumers_interactions, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.interactions}) }
-  scope :consumers_sampled, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.samples}) }
-  scope :spent, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.cost}) }
-  scope :gender, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.gender}) }
-  scope :age, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.age}) }
-  scope :ethnicity, lambda{ joins(:event, :form_field).where(campaign_form_fields:{kpi_id: Kpi.ethnicity}) }
+  scope :impressions, lambda{ where(kpi_id: Kpi.impressions) }
+  scope :consumers_interactions, lambda{ where(kpi_id: Kpi.interactions) }
+  scope :consumers_sampled, lambda{ where(kpi_id: Kpi.samples) }
+  scope :spent, lambda{ where(kpi_id: Kpi.cost) }
+  scope :gender, lambda{ where(kpis_segment_id: Kpi.gender.kpis_segment_ids) }
+  scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
+  scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }
 
   private
     def set_scalar_value

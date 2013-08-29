@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130829154025) do
+ActiveRecord::Schema.define(:version => 20130829181311) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -336,7 +336,10 @@ ActiveRecord::Schema.define(:version => 20130829154025) do
     t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
     t.datetime "created_at",                                                      :null => false
     t.datetime "updated_at",                                                      :null => false
+    t.integer  "kpi_id"
   end
+
+  add_index "event_results", ["kpi_id"], :name => "index_event_results_on_kpi_id"
 
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"

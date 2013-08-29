@@ -210,17 +210,19 @@ class Event < ActiveRecord::Base
   end
 
   def results_for(fields)
+    # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|
-      result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id})
+      result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id, kpi_id: field.kpi_id})
       result.form_field = field
       result
     end
   end
 
   def segments_results_for(field)
+    # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     if field.kpi.present?
       fs = field.kpi.kpis_segments.map do |segment|
-        result = results.select{|r| r.form_field_id == field.id && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id})
+        result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id, kpi_id: field.kpi_id})
         result.form_field = field
         result.kpis_segment = segment
         result

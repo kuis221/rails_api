@@ -26,7 +26,7 @@ class EventData < ActiveRecord::Base
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
 
   def update_data
-    results = EventResult.scoped_by_event_id(event_id).scoped_by_campaign_id(event.campaign_id)
+    results = EventResult.scoped_by_event_id(event_id)
     self.impressions = results.impressions.sum(:scalar_value).round
     self.interactions = results.consumers_interactions.sum(:scalar_value).round
     self.samples = results.consumers_sampled.sum(:scalar_value).round
@@ -34,8 +34,8 @@ class EventData < ActiveRecord::Base
 
     #For gender and ethnicity
     segments_names_map = {
-     gender: {'Male' => 'male', 'Female' => 'female'},
-     ethnicity: {'Asian' => 'asian', 'Black / African American' => 'black', 'Hispanic / Latino' => 'hispanic', 'Native American' => 'native_american', 'White' => 'white'},
+     gender:    {'Male' => 'male', 'Female' => 'female'},
+     ethnicity: {'Asian' => 'asian', 'Black / African American' => 'black', 'Hispanic / Latino' => 'hispanic', 'Native American' => 'native_american', 'White' => 'white'}
     }
     [:gender, :ethnicity].each do |kpi|
       segments = Kpi.send(kpi).try(:kpis_segments)

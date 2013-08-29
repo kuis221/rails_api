@@ -110,7 +110,6 @@ class TasksController < FilteredController
         super
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
           @search_params[:user] = user_ids_scope
-          @search_params[:user] = [0] if params[:scope] == 'teams' && @search_params[:user].empty?
         end
         @search_params
       end

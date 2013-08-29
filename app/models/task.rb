@@ -110,7 +110,7 @@ class Task < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:status, params[:status]) if params.has_key?(:status) and params[:status]
-        with :company_user_id, params[:user] if params.has_key?(:user)
+        with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
 
         with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: params[:team]}).map(&:id) if params.has_key?(:team) and !params[:team].empty?

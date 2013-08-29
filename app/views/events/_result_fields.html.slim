@@ -32,6 +32,7 @@
         = render partial: field.field_type, locals: {f: f, allow_upload: true}
       - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module) 
         = ff.hidden_field :form_field_id
+        = ff.hidden_field :kpi_id
         = ff.hidden_field :kpis_segment_id
         - if ff.object.kpis_segment_id.nil? && field.kpi_id
           .row-fluid.kpi-field
