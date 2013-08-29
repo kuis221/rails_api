@@ -81,7 +81,7 @@
               = " Impressions/Promo Hour"
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
-              span= number_to_currency(resource.avg_impressions_cost, precision: 0)
+              span= number_to_currency(resource.avg_impressions_cost, precision: 2)
               = " Cost/Impression"
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
 
