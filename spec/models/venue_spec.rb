@@ -17,6 +17,8 @@
 #  updated_at           :datetime         not null
 #  avg_impressions_hour :decimal(6, 2)    default(0.0)
 #  avg_impressions_cost :decimal(8, 2)    default(0.0)
+#  score_impressions    :integer
+#  score_cost           :integer
 #
 
 require 'spec_helper'

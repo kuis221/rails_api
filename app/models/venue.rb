@@ -17,6 +17,8 @@
 #  updated_at           :datetime         not null
 #  avg_impressions_hour :decimal(6, 2)    default(0.0)
 #  avg_impressions_cost :decimal(8, 2)    default(0.0)
+#  score_impressions    :integer
+#  score_cost           :integer
 #
 
 require 'normdist'
@@ -121,7 +123,16 @@ class Venue < ActiveRecord::Base
         mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean']
         stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['stddev']
 
-        self.score = (normdist((avg_impressions-mean)/stddev) * 100).to_i if stddev != 0.0
+        self.score_impressions = (normdist((avg_impressions_hour-mean)/stddev) * 100).to_i if stddev != 0.0
+
+        mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['mean']
+        stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['stddev']
+
+        self.score_cost = (normdist((avg_impressions_cost-mean)/stddev) * 100).to_i if stddev != 0.0
+
+        if self.score_impressions && self.score_cost
+          self.score = (self.score_impressions + self.score_cost) / 2
+        end
       end
     end
     self
@@ -130,18 +141,17 @@ class Venue < ActiveRecord::Base
   def neighbors_establishments_search
     @neighbors_establishments_search ||= begin
       types = types_without_establishment
-      if types.count > 0
-        Venue.solr_search do
-          with(:company_id, company_id)
-          with(:location).in_radius(latitude, longitude, 5)
-          with(:types, types_without_establishment )
-          with(:avg_impressions_hour).greater_than(0)
+      Venue.solr_search do
+        with(:company_id, company_id)
+        with(:location).in_radius(latitude, longitude, 5)
+        with(:types, types ) if types.any?
+        with(:avg_impressions_hour).greater_than(0)
 
-          stat(:avg_impressions_hour, :type => "stddev")
-          stat(:avg_impressions_hour, :type => "mean")
-        end
-      else
-        false
+        stat(:avg_impressions_hour, :type => "stddev")
+        stat(:avg_impressions_hour, :type => "mean")
+
+        stat(:avg_impressions_cost, :type => "stddev")
+        stat(:avg_impressions_cost, :type => "mean")
       end
     end
   end

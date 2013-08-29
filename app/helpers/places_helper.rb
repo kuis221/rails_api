@@ -4,12 +4,44 @@ module PlacesHelper
   end
 
   def venue_score_narrative(venue)
-    unless venue.score.nil?
-      types = venue.types_without_establishment.map{|t| t("venue_types.#{t}").downcase.pluralize }
-      "#{venue.name} has earned a Venue Score of #{venue.score} and has performed #{score_calification_for(venue.score)} other #{types.join('/')} in the area.  Specifically, #{venue.name} yields a(n) #{avg_impressions_hour_performance_for(venue)} number of impressions per promo hour.  In addition, the cost per impression is #{avg_impressions_cost_performance_for(venue)} other #{types.join('/')} in the area.
-
-      <p>Attendess at previous events have predominantly been #{predominant(:age, venue)} year old #{predominant(:ethnicity, venue)} #{predominant(:gender, venue)}.".html_safe
+    narrative = begin
+      unless venue.score.nil?
+        (build_score_narrative(venue) +
+        "<p>Attendess at previous events have predominantly been #{predominant(:age, venue)} year old #{predominant(:ethnicity, venue)} #{predominant(:gender, venue)}.").html_safe
+      else
+        nil
+      end
     end
+
+  end
+
+  def build_score_narrative(venue)
+    if venue.score_impressions <= 33
+      if venue.score_cost <= 33
+        "#{venue.name} performs poorly relative to similar venues in the area. Not only is it more expensive per impression but it also appears less popular than other venues. Consider conducting fewer events at this venue."
+      elsif venue.score_cost <= 66
+        "#{venue.name} is about average inpopularity compared to similar venues in the area though is more expensive per impression. Consider looking for lower cost venues if possible."
+      else
+        "#{venue.name} is a popular venue compared to similar venues in thearea with heavy patron traffic but above average costs per impression. If less concerned about budget, this could be attractive."
+      end
+    elsif venue.score_impressions <= 66
+      if venue.score_cost <= 33
+        "While the cost per impression for #{venue.name} is comparable to similar venues in the area, it has substantially lower patron traffic. Consider looking for more popular venues if possible."
+      elsif venue.score_cost <= 66
+        "#{venue.name} is about average compared to similar venues in the area both in terms of popularity and cost per impression. Most venues will fallinto this category."
+      else
+        "#{venue.name} is a popular venue compared to similar venues in the area with heavy patron traffic and average costs per impression. Consider running more events here when  looking to influence more individuals and are within budget."
+      end
+    else
+      if venue.score_cost <= 33
+        "While the cost per impressionfor #{venue.name} is lower thansimilar venues in the area, patron traffic also seems lower. Consider only running events here on the busiest nights of the week."
+      elsif venue.score_cost <= 66
+        "#{venue.name} is a good value for the area with low costs per impression and patron trafficcomparable to similar venues in the area. Consider running more events here when you are concerned about budget."
+      else
+        "#{venue.name} is an exceptionally strong venue compared to similar venues in the area.  It is both popular and a relatively low cost. Considerrunning more events here whenever possible."
+      end
+    end
+
   end
 
   def venue_trend_week_day_narrative(venue)
