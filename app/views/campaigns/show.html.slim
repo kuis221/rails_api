@@ -3,7 +3,7 @@
 
   .row-fluid
     .box.span12
-      .row-fluid
+      .details_box
         .span6
           h1= @campaign.name
           - if @campaign.description
@@ -35,8 +35,7 @@
         #teams-container.box-content
           = render 'teams'
 
-  .row-fluid
-    .box
+  .details_box
       a href="#kpi-content" data-toggle="collapse"
         .box-header
           h2 KPIs
@@ -45,15 +44,12 @@
         #campaign-kpis.box-content
           = render 'kpis'
 
-  .row-fluid
-    .box
+  .details_box
       a href="#post-event-form-content" data-toggle="collapse"
-        .box-header
-          h2 POST EVENT FORM
+        h2 POST EVENT FORM
 
       #post-event-form-content.collapse.in
-        .box-content
-          = render 'post_event_form'
+        = render 'post_event_form'
 
 javascript:
   $(document).on('campaigns:change', function(){
