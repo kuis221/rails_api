@@ -488,7 +488,7 @@ $.widget 'nmk.filteredList', {
 		query = window.location.search.replace(/^\?/,"")
 		if query != ''
 			vars = query.split('&')
-			dates = [new Date()]
+			dates = []
 			for qvar in vars
 				pair = qvar.split('=')
 				name = decodeURIComponent(pair[0])
@@ -508,7 +508,9 @@ $.widget 'nmk.filteredList', {
 							field.val(value)
 					else
 						@defaultParams.push {'name': name, 'value': value}
-			@form.find('.dates-range-filter').datepick('setDate', dates)
+
+			if dates.length > 0
+				@form.find('.dates-range-filter').datepick('setDate', dates)
 		if @searchHidden and @searchHidden.val()
 			@acInput.hide()
 			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
