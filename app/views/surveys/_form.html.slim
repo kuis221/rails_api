@@ -1,10 +1,10 @@
 #survey-form
   = simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
     = f.error_notification
-
+    h3 New Survey
     .form-inputs
       fieldset
-        legend DEMOGRAPHICS
+        legend Demographics
         - Kpi.where('module' => 'demographics' ).each do |kpi|
           .demograpics-module
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
@@ -15,15 +15,15 @@
 
 
       fieldset
-        legend COMPETITIVE AWARENESS & USAGE
+        legend.competitive Competitive awareness & Usage
 
         p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
         ul.competitive
           li
-            .titles.pull-right
-              .span PURCHASED
-              .span AWARE
-              .span UNAWARES
+            .titles
+              span PURCHASED
+              span AWARE
+              span UNAWARES
           li
             - resource.brands.each do |brand|
               = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
@@ -45,81 +45,88 @@
             li
               = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
                 .row-fluid.control-group id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
-                  .span4
-                    label.control-label= brand.name
+                  .hidden-label
+                    label.radio= brand.name
                     = qf.hidden_field :brand_id
                     = qf.hidden_field :question_id
 
-                  .span3
-                    | $
+                  .hidden-field
+                    .add-on $
                     = qf.text_field :answer, class: 'required'
 
       fieldset
-        legend CONVERSION LIKLIHOOD
+        legend.conversion Conversion likehood
 
         p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
 
-        ul
+        ul.conversion
           li
-            .row-fluid
-              .span5
-              .span1 1 - Very Unlikely
-              .span1 2
-              .span1 3
-              .span1 4
-              .span1 5 - Very Likely
+            .titles
+              span 
+                | VERY UNLIKELY
+                br
+                | 1
+              span 2
+              span 3
+              span 4
+              span 
+                | VERY LIKELY
+                br 
+                | 5
           - resource.brands.each do |brand|
             li
               = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
                 .row-fluid.control-group
-                  .span5
-                    label.control-label= brand.name
+                  label.radio= brand.name
+                  .radio-group
                     = qf.hidden_field :brand_id
                     = qf.hidden_field :question_id
-                  .span1= qf.radio_button :answer, '1', class: 'required'
-                  .span1= qf.radio_button :answer, '2', class: 'required'
-                  .span1= qf.radio_button :answer, '3', class: 'required'
-                  .span1= qf.radio_button :answer, '4', class: 'required'
-                  .span1= qf.radio_button :answer, '5', class: 'required'
+                    = qf.radio_button :answer, '1', class: 'required'
+                    = qf.radio_button :answer, '2', class: 'required'
+                    = qf.radio_button :answer, '3', class: 'required'
+                    = qf.radio_button :answer, '4', class: 'required'
+                    = qf.radio_button :answer, '5', class: 'required'
 
 
         p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
 
-        ul
+        ul.recommend
           li
-            .row-fluid
-              .span3
-              .span9
-                .row-fluid.control-group
-                  .span2 1 - Very Unlikely
-                  .span1 2
-                  .span1 3
-                  .span1 4
-                  .span1 6
-                  .span1 7
-                  .span1 8
-                  .span1 9
-                  .span2 10 - Very Likely
+            .titles
+              span 
+                | VERY UNLIKELY
+                br
+                | 1
+              span 2
+              span 3
+              span 4
+              span 5
+              span 6
+              span 7
+              span 8
+              span 9
+              span 
+                | VERY LIKELY
+                br 
+                | 10
           tbody
             - resource.brands.each do |brand|
               = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
                 .row-fluid.control-group
-                  .span3
-                    label.control-label= brand.name
-                    = qf.hidden_field :brand_id
-                    = qf.hidden_field :question_id
-                  .span9
-                    .row-fluid
-                      .span2= qf.radio_button :answer, '1', class: 'required'
-                      .span1= qf.radio_button :answer, '2', class: 'required'
-                      .span1= qf.radio_button :answer, '3', class: 'required'
-                      .span1= qf.radio_button :answer, '4', class: 'required'
-                      .span1= qf.radio_button :answer, '5', class: 'required'
-                      .span1= qf.radio_button :answer, '6', class: 'required'
-                      .span1= qf.radio_button :answer, '7', class: 'required'
-                      .span1= qf.radio_button :answer, '8', class: 'required'
-                      .span1= qf.radio_button :answer, '9', class: 'required'
-                      .span2= qf.radio_button :answer, '10', class: 'required'
+                    label.radio= brand.name
+                    .radio-group
+                      = qf.hidden_field :brand_id
+                      = qf.hidden_field :question_id
+                      = qf.radio_button :answer, '1', class: 'required'
+                      = qf.radio_button :answer, '2', class: 'required'
+                      = qf.radio_button :answer, '3', class: 'required'
+                      = qf.radio_button :answer, '4', class: 'required'
+                      = qf.radio_button :answer, '5', class: 'required'
+                      = qf.radio_button :answer, '6', class: 'required'
+                      = qf.radio_button :answer, '7', class: 'required'
+                      = qf.radio_button :answer, '8', class: 'required'
+                      = qf.radio_button :answer, '9', class: 'required'
+                      = qf.radio_button :answer, '10', class: 'required'
 
     .form-actions
       = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
