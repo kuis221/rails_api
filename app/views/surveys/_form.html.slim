@@ -1,10 +1,10 @@
 #survey-form
   = simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
     = f.error_notification
-
+    h3 New Survey
     .form-inputs
       fieldset
-        legend DEMOGRAPHICS
+        legend Demographics
         - Kpi.where('module' => 'demographics' ).each do |kpi|
           .demograpics-module
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
@@ -15,7 +15,7 @@
 
 
       fieldset
-        legend COMPETITIVE AWARENESS & USAGE
+        legend.competitive Competitive awareness & Usage
 
         p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
         ul.competitive
@@ -45,17 +45,17 @@
             li
               = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
                 .row-fluid.control-group id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
-                  .span4
+                  .hidden-label
                     label.radio= brand.name
                     = qf.hidden_field :brand_id
                     = qf.hidden_field :question_id
 
-                  .span3
-                    | $
+                  .hidden-field
+                    .add-on $
                     = qf.text_field :answer, class: 'required'
 
       fieldset
-        legend CONVERSION LIKLIHOOD
+        legend.conversion Conversion likehood
 
         p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
 

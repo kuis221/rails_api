@@ -187,12 +187,46 @@ ul.select2-results{
 		#survey-form {
 			.control-group {
 				width: 100%;
+				.hidden-label{
+					display: inline-block;
+					float: left;
+					margin-right: 60px;	
+					width: 230px;
+					label.radio{
+						overflow: hidden;
+				    	text-overflow: ellipsis;
+						white-space: nowrap;
+						padding-top:10px;
+						width:300px;
+					}
+				}
+				.hidden-field{
+					.add-on{
+						background-color: @brand;
+						border:0 !important;
+						border-radius: 0px 4px 4px 0px;
+						color: white;
+						display: inline-block;
+						-webkit-border-radius: 4px 0px 0px 4px;
+						padding: 10px 4px 13px 4px;
+						text-align: center;
+						text-shadow:none !important;
+						width: 40px;
+					}
+					input[type="text"]{
+						border-radius: 0px 4px 4px 0px;
+						height: 33px;
+						margin: 0;
+						width: 158px;
+						-webkit-border-radius: 0px 4px 4px 0px;
+					}
+				}
 			}
 			input[type="text"]{
 				margin-left: 10px;
 			}
 			p{
-				width: 360px;
+				width: 400px;
 			}
 			label{
 				color: @text;
@@ -209,7 +243,13 @@ ul.select2-results{
 				border:0;
 				color:@text;
 				font-size: 16px;
+				font-weight: bold;
 				margin-bottom: 10px;
+				&.competitive, &.conversion{
+					float: left;
+					margin-top: 60px;
+					position: relative;
+				}
 			}
 			ul{
 				margin: 0;
@@ -219,7 +259,7 @@ ul.select2-results{
 					margin: 0;
 				}
 				&.competitive{
-					margin: 5px 0 25px 0;
+					margin: 25px 0 25px 0;
 					.titles{
 						color: @brand;
 						margin: 0 0 15px 245px;
@@ -252,17 +292,17 @@ ul.select2-results{
 					}
 				}
 				&.conversion{
-					margin: 0 0 25px 0;
+					margin: 25px 0 60px 0;
 					.titles{
 						color: @brand;
 						margin:0 0 15px 240px;
 						width: 67%;
 						span{
 							display: inline-block;
-							margin: 0 23px 0 23px;
+							margin: 0 62px 0 40px;
 							text-align:center;
 							&:first-child{
-								margin-right: 5px;
+								margin: 0 17px 0 20px;
 							}
 							&:last-child{
 								margin: 0 0 0 5px;
@@ -282,25 +322,29 @@ ul.select2-results{
 					}
 				}
 				&.recommend{
+					margin: 25px 0 60px 0;
 					.titles{
 						color: @brand;
 						margin:0 0 15px 245px;
 						width:80%;
 						span{
 							display: inline-block;
-							margin: 0 43px 0 15px;
+							margin: 0 45px 0 14px;
 							text-align:center;
 							&:first-child{
-								margin-right: 0px;
+								margin: 0 0 0 16px;
 							}
 							&:last-child{
-								margin: 0;
+								margin-left: -23px;
 							}
 						}
 					}
 					label.radio{
 						display: inline-block;
 						margin-right: 43px;
+						overflow: hidden;
+				    	text-overflow: ellipsis;
+						white-space: nowrap;
 						width:255px;
 					}
 					.radio{
