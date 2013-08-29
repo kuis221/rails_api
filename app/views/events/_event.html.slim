@@ -8,6 +8,6 @@ li id="event_#{event.id}" class="#{event.aasm_state}"
         br>/
         = place_address(event.place)
     span.pull-right
-      = link_to '', edit_event_path(event), remote: true, class: 'edit'
-      = link_to '', deactivate_event_path(event), remote: true, class: 'disable' if event.active?
-      = link_to '', activate_event_path(event), remote: true, class: 'enable' unless event.active?
+      = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit'
+      = link_to '', deactivate_event_path(event), remote: true, class: 'disable', title: 'Deactivate' if event.active?
+      = link_to '', activate_event_path(event), remote: true, class: 'enable', title: 'Activate' unless event.active?

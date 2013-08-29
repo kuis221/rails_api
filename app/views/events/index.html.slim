@@ -35,6 +35,7 @@ javascript:
     'sorting': 'start_at',
     'sorting_dir': 'asc',
     'includeCalendars': true,
+    'calendarHighlights': #{calendar_highlights.to_json.html_safe},
     'selectDefaultDate': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',

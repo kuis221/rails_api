@@ -9,7 +9,7 @@ class TasksController < FilteredController
 
   has_scope :by_users
 
-  helper_method :assignable_users, :status_counters
+  helper_method :assignable_users, :status_counters, :calendar_highlights
 
   before_filter :set_body_class, only: :index
 
@@ -30,6 +30,17 @@ class TasksController < FilteredController
       users.uniq!
     end
     users.sort{|a,b| a.name <=> b.name}
+  end
+
+  def calendar_highlights
+    @calendar_highlights ||= Hash.new.tap do |hsh|
+      Task.select("to_char(due_at, 'YYYY:MM:DD') as due_date, count(tasks.id) as count").late
+        .where(company_user_id: user_ids_scope)
+        .group("to_char(due_at, 'YYYY:MM:DD')").map do |day|
+        parts = day.due_date.split(':').map(&:to_i)
+        hsh.merge!({parts[0] => {parts[1] => {parts[2] => day.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
+      end
+    end
   end
 
   private
@@ -98,12 +109,22 @@ class TasksController < FilteredController
       @search_params ||= begin
         super
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
-          @search_params[:user] = current_company_user.id if params[:scope] == 'user'
-          @search_params[:user] = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id } if params[:scope] == 'teams'
+          @search_params[:user] = user_ids_scope
           @search_params[:user] = [0] if params[:scope] == 'teams' && @search_params[:user].empty?
         end
         @search_params
       end
+    end
+
+    def user_ids_scope
+      ids = nil
+      if params[:scope] == 'user'
+        ids = [current_company_user.id]
+      elsif params[:scope] == 'teams'
+        ids = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id }
+        ids = [0] if ids.empty?
+      end
+      ids
     end
 
     def set_body_class

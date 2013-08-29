@@ -17,8 +17,8 @@ describe "Events", js: true, search: true do
   describe "/events", js: true, search: true  do
     describe "GET index" do
       let(:events){[
-        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.today.to_s, start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
-        FactoryGirl.create(:event, start_date: Date.today.to_s, end_date: Date.tomorrow.to_s, start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
+        FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012'), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
+        FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
       it "should display a table with the events" do
         events.size  # make sure users are created before
@@ -28,17 +28,17 @@ describe "Events", js: true, search: true do
         within("ul#events-list") do
           # First Row
           within("li:nth-child(1)") do
-            page.should have_content(events[0].start_at.strftime('%^a %b %d'))
+            page.should have_content('WED Aug 21')
             page.should have_content('11:00 AM - 12:00 PM')
             page.should have_content(events[0].place_name)
-            page.should have_content(events[0].campaign_name)
+            page.should have_content('Campaign FY2012')
           end
           # Second Row
-          within("li:nth-child(2)") do
-            page.should have_content(events[1].start_at.strftime('%^a %b %d at 12:00 PM'))
-            page.should have_content(events[1].end_at.strftime('%^a %b %d at 1:00 PM'))
+          within("li:nth-child(2)")  do
+            page.should have_content(events[1].start_at.strftime('WED Aug 28 at 12:00 PM'))
+            page.should have_content(events[1].end_at.strftime('THU Aug 29 at 1:00 PM'))
             page.should have_content(events[1].place_name)
-            page.should have_content(events[1].campaign_name)
+            page.should have_content('Another Campaign April 03')
           end
         end
 
@@ -53,10 +53,10 @@ describe "Events", js: true, search: true do
           # First Row
           within("li:nth-child(1)") do
             click_js_link('Deactivate')
-            page.should have_selector('a', text: 'Activate')
+            page.should have_selector('a.enable', text: '')
 
             click_js_link('Activate')
-            page.should have_selector('a', text: 'Deactivate')
+            page.should have_selector('a.disable', text: '')
           end
         end
 
@@ -67,23 +67,27 @@ describe "Events", js: true, search: true do
 
   describe "/events/:event_id", :js => true do
     it "GET show should display the event details page" do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      event = FactoryGirl.create(:event,
+          start_date: '08/28/2013', end_date: '08/28/2013',
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
       page.should have_selector('h2', text: 'Campaign FY2012')
+      within('.calendar-data') do
+        page.should have_content('WED Aug 28 at 9:00 PM')
+        page.should have_content('THU Aug 29 at 12:00 AM')
+      end
     end
 
     it 'allows the user to activate/deactivate a event' do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
-      within('.active-deactive-toggle') do
-        page.should have_selector('a.btn-success.active', text: 'Active')
-        page.should have_selector('a', text: 'Inactive')
-        page.should_not have_selector('a.btn-danger', text: 'Inactive')
+      within('.links-data') do
+        click_link('Deactivate')
+        page.should have_selector('a.toggle-active')
 
-        click_link('Inactive')
-        page.should have_selector('a.btn-danger.active', text: 'Inactive')
-        page.should have_selector('a', text: 'Active')
-        page.should_not have_selector('a.btn-success', text: 'Active')
+        click_link('Activate')
+        page.should have_selector('a.toggle-inactive')
       end
     end
 
@@ -95,7 +99,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add'
+      click_js_link 'Add Team Member'
       find("table#select-users-list tr#user-#{company_user.id}") # Make sure the lighbox is opened
       within "table#select-users-list tr#user-#{company_user.id}" do
         page.should have_content('Pablo')
@@ -106,7 +110,6 @@ describe "Events", js: true, search: true do
       # Test the user was added to the list of event members and it can be removed
       within('#event-team-members #event-member-'+company_user.id.to_s) do
         page.should have_content('Pablo Baltodano')
-        page.should have_content('palinair@gmail.com')
         #find('a.remove-member-btn').click
       end
 
@@ -137,27 +140,26 @@ describe "Events", js: true, search: true do
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'
-        select('Juanito Bazooka', :from => 'Assigned To')
-        #click_button 'Create Task'
-        page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
+        select_from_chosen('Juanito Bazooka', :from => 'Assigned To')
+        click_js_button 'Submit'
+        #page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
-      within('table#tasks-list tbody tr') do
+      within('#event-tasks-container li') do
         page.should have_content('Pick up the kidz at school')
         page.should have_content('Juanito Bazooka')
         page.should have_content('THU May 16')
       end
 
       # Mark the tasks as completed
-      within('table#tasks-list') do
-        checkbox = find('#task_completed')
+      within('#event-tasks-container') do
+        checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
-        checkbox.click
+        page.execute_script('$(\'.task-completed-checkbox\').click()')
 
         # refresh the page to make sure the checkbox remains selected
         visit event_path(event)
-
-        find('#task_completed')['checked'].should be_true
+        find('.task-completed-checkbox', visible: :false)['checked'].should be_true
       end
 
       # Delete Juanito Bazooka from the team and make sure that the tasks list
@@ -170,7 +172,7 @@ describe "Events", js: true, search: true do
       # TODO: the refresh should not be necessary but it looks like that it's not
       # removing the element from the table automatically in the test
       visit event_path(event)
-      within('table#tasks-list') do
+      within('#event-tasks-container') do
         page.should_not have_content('Juanito Bazooka')
       end
     end

@@ -5,7 +5,7 @@
 .results-box-container
   span.event-data-column.promo-hours-box
     .big-number
-      = number_with_precision(data_totals['promo_hours'], precision: 1)
+      = number_with_delimiter(data_totals['promo_hours'], precision: 2)
     = 'PROMO HOURS'
   span.event-data-column.impressions-box
     .big-number
