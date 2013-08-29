@@ -15,6 +15,8 @@
 #  active        :boolean          default(TRUE)
 #  place_id      :integer
 #  promo_hours   :decimal(6, 2)    default(0.0)
+#  reject_reason :text
+#  summary       :text
 #
 
 class Event < ActiveRecord::Base
@@ -454,7 +456,7 @@ class Event < ActiveRecord::Base
 
     def save_event_data
       if @refresh_event_data
-        Resque.enqueue(VenueIndexer, event_data.id)
+        Resque.enqueue(EventDataIndexer, event_data.id)
       elsif place_id_changed?
         update_venue_data if place_id.present?
       end

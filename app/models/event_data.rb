@@ -30,7 +30,7 @@ class EventData < ActiveRecord::Base
     self.impressions = results.impressions.sum(:scalar_value).round
     self.interactions = results.consumers_interactions.sum(:scalar_value).round
     self.samples = results.consumers_sampled.sum(:scalar_value).round
-    self.cost = event.event_expenses.select('sum(amount) total_expenses').all.first.total_expenses || 0
+    self.cost = event.event_expenses.sum(:amount)
 
     #For gender and ethnicity
     segments_names_map = {
@@ -38,8 +38,8 @@ class EventData < ActiveRecord::Base
      ethnicity: {'Asian' => 'asian', 'Black / African American' => 'black', 'Hispanic / Latino' => 'hispanic', 'Native American' => 'native_american', 'White' => 'white'},
     }
     [:gender, :ethnicity].each do |kpi|
-      segments = Kpi.send(kpi).kpis_segments
-      segments.each{|s| self.send("#{kpi}_#{segments_names_map[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))}
+      segments = Kpi.send(kpi).try(:kpis_segments)
+      segments.each{|s| self.send("#{kpi}_#{segments_names_map[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))} if segments
     end
 
     save

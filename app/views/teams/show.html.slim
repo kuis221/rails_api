@@ -20,43 +20,16 @@
           span.break
           = "Team Members"
       .box-content
-        #team-members-list-filter
-        table#team-members.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th data-sort="last_name" Last Name
-              th data-sort="first_name"First Name
-              th data-sort="role_name" Role
-              th data-sort="city" City
-              th data-sort="state" State
-              th data-sort="email" Email
-              th data-sort="status" Status
-              th.actions
-          tbody
+        #team-members-wrapper
+          = render 'members'
         .row-fluid
           .pull-right
             = link_to 'Add Team Member', new_member_team_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
-  $('#team-members-list-filter').filterBox({
-    'onChange': function(filterBox){
-      teamMembersTable.tableScroller('reloadData');
-    }
-  });
-
-  var teamMembersTable = $('table#team-members').tableScroller({
-    'source': '#{company_users_path(team: resource.to_param, format: :json)}',
-    'filterBox': '#team-members-list-filter',
-    'facets': false,
-    'rowValues': function(u){
-      return [u.last_name, u.first_name, u.role, u.city, u.state, u.email, u.status]
-    },
-    'rowId': function(row){
-      return 'team-member-'+row.id;
-    },
-    'actionButtons': ['deletable']
-  })
-
   $(document).on('teams:change', function(){
     window.location.reload(false);
+  })
+  $(document).on('members:change', function(){
+    $('#team-members-list-filter').load
   })

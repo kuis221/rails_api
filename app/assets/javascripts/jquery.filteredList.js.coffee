@@ -10,7 +10,8 @@ $.widget 'nmk.filteredList', {
 		autoCompletePath: '',
 		defaultParams: [],
 		customFilters: [],
-		selectDefaultDate: false
+		selectDefaultDate: false,
+		calendarHighlights: null
 	},
 
 	_create: () ->
@@ -363,6 +364,8 @@ $.widget 'nmk.filteredList', {
 			nextText: '>',
 			showOtherMonths: true,
 			selectOtherMonths: true,
+			highlightClass: 'datepick-event',
+			daysHighlighted: @options.calendarHighlights,
 			renderer: $.extend(
 						{}, $.datepick.defaultRenderer,
 						{picker: '<div class="datepick">' +
@@ -463,12 +466,12 @@ $.widget 'nmk.filteredList', {
 
 		@nextpagetoken = response.data('next-page-token')
 		if page == 1
-			totalPages = response.data('pages')
+			@totalPages = response.data('pages')
 
-			if (totalPages > 1 || @nextpagetoken)  and !@infiniteScroller
+			if (@totalPages > 1 || @nextpagetoken)  and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
-						if (page <= totalPages || @nextpagetoken) && @doneLoading
+						if (page <= @totalPages || @nextpagetoken) && @doneLoading
 							@_loadPage(page)
 						else
 							false
@@ -476,6 +479,8 @@ $.widget 'nmk.filteredList', {
 					doneLoading: =>
 						@doneLoading
 				}
+			else if @totalPages <= page and @infiniteScroller
+				@listContainer.infiniteScrollHelper 'destroy'
 
 	_parseQueryString: () ->
 		@initialized = false
