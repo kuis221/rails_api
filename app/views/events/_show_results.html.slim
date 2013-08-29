@@ -2,12 +2,10 @@
 - event_data = resource.event_data
 
 .details_box
-  h2 EVENT DATA2
   - if active_kpis.include?(Kpi.photos)
     = render 'photos'
 
   - if event_data
-    h3 Consumer Reach
     .row-fluid
       .span8
         ul.consumer-reach-metrics
@@ -82,7 +80,6 @@
                 span= number_to_currency(event_data.cost / event_data.samples, precision: 2)
                 = " / Sample"
 
-    h3 Demographics
     .row-fluid
       .span6
         - if resource.demographics_graph_data[:gender].present?
