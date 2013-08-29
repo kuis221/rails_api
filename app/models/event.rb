@@ -456,7 +456,7 @@ class Event < ActiveRecord::Base
 
     def save_event_data
       if @refresh_event_data
-        Resque.enqueue(VenueIndexer, event_data.id)
+        Resque.enqueue(EventDataIndexer, event_data.id)
       elsif place_id_changed?
         update_venue_data if place_id.present?
       end

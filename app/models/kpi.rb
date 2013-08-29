@@ -24,7 +24,7 @@ class Kpi < ActiveRecord::Base
                          "count"      => ["radio", "dropdown", "checkbox"],
                          "percentage" => ["integer", "decimal"]}
 
-  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos']
+  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys']
 
   GOAL_ONLY_TYPE_OPTIONS = OUT_BOX_TYPE_OPTIONS + ['number']
 
@@ -107,8 +107,42 @@ class Kpi < ActiveRecord::Base
       @photos ||= where(company_id: nil).find_by_name_and_module('Photos', 'photos')
     end
 
+    def videos
+      @videos ||= where(company_id: nil).find_by_name_and_module('Videos', 'videos')
+    end
+
     def surveys
       @surveys ||= where(company_id: nil).find_by_name_and_module('Surveys', 'surveys')
+    end
+  end
+
+
+  # This method is only used during the DB seed and tests
+  def self.create_global_kpis
+    Kpi.create({name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => ''}, without_protection: true)
+    Kpi.create({name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => ''}, without_protection: true)
+    Kpi.create({name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
+    Kpi.create({name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
+    Kpi.create({name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
+    gender_kpi    = Kpi.create({name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
+    age_kpi       = Kpi.create({name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
+    ethnicity_kpi = Kpi.create({name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
+    Kpi.create({name: 'Cost', kpi_type: 'number', description: 'Total cost of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses'}, without_protection: true)
+    Kpi.create({name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos'}, without_protection: true)
+    Kpi.create({name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos'}, without_protection: true)
+    Kpi.create({name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys'}, without_protection: true)
+    Kpi.create({name: 'Competitive Analysis', kpi_type: 'number', description: 'Total number of competitive analyses created for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'competitive_analysis'}, without_protection: true)
+
+    ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|
+      age_kpi.kpis_segments.create(text: segment)
+    end
+
+    ['Female', 'Male'].each do |segment|
+      gender_kpi.kpis_segments.create(text: segment)
+    end
+
+    ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
+      ethnicity_kpi.kpis_segments.create(text: segment)
     end
   end
 
