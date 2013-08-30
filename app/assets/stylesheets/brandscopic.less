@@ -2188,6 +2188,8 @@ body.events.show {
 	#uploads_container {
 		width: 100%;
 		height: 250px;
+		max-height: 250px;
+		overflow: auto;
 		border: 1px solid @grey_one;
 		color: @grey_three;
 
@@ -2222,6 +2224,13 @@ body.events.show {
 					left: 40px;
 					top: 10px;
 				}
+				.upload-file-error {
+					position: absolute;
+					left: 40px;
+					top: 30px;
+					font-size: 11px;
+					display: none;
+				}
 				.upload-file-status {
 					position: absolute;
 					right: 0;
@@ -2239,6 +2248,23 @@ body.events.show {
 			.icon-ok-sign {
 				color: #8EBA47;
 				font-size: 20px;
+			}
+			.icon-minus-sign {
+				font-size: 20px;
+				display: none;
+			}
+
+			&.failed{
+				color: #de4d43 !important;
+				.icon-ok-sign {
+					display: none;
+				}
+				.icon-minus-sign {
+					display: inline;
+				}
+				.upload-file-error {
+					display: inline;
+				}
 			}
 		}
 	}

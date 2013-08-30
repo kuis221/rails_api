@@ -16,4 +16,4 @@
       },3000);
     }
 - else
-  | $('#upload_#{params[:unique_id]} div.progress').removeClass('active').addClass('progress-danger');
+  | $('#upload_#{params[:unique_id]}').addClass('failed').find('div.progress').removeClass('active').end().find('.upload-file-error').text('#{j resource.errors.full_messages.to_sentence}');

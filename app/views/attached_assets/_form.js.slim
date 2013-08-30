@@ -27,37 +27,7 @@
 
     .uploading-panel
       #uploads_container
-        / |
-        /   <div id="upload_{%=o.unique_id%}" class="upload pending">
-        /     <div class="progress active">
-        /       <div class="bar" style="width: 0%">
-        /       </div>
-        /       <div class="upload-file-info">
-        /         <div class="upload-file-name">prueba-uno.jpg</div>
-        /         <div class="upload-file-status">pending</div>
-        /       </div>
-        /     </div>
-        /   </div>
-        /   <div id="upload_{%=o.unique_id%}" class="upload">
-        /     <div class="progress active">
-        /       <div class="bar" style="width: 30%">
-        /       </div>
-        /       <div class="upload-file-info">
-        /         <div class="upload-file-name">prueba-uno.jpg</div>
-        /         <div class="upload-file-status">1:34 min</div>
-        /       </div>
-        /     </div>
-        /   </div>
-        /   <div id="upload_{%=o.unique_id%}" class="upload complete">
-        /     <div class="progress active">
-        /       <div class="bar" style="width: 100%">
-        /       </div>
-        /       <div class="upload-file-info">
-        /         <div class="upload-file-name">prueba-uno.jpg</div>
-        /         <div class="upload-file-status"><i class="icon-ok-sign"></i></div>
-        /       </div>
-        /     </div>
-        /   </div>
+
       .action-buttons
         a#btn-upload-ok.btn.btn-primary data-dismiss="modal" aria-hidden="true" OK
         span.btn.fileinput-button
@@ -72,6 +42,7 @@
       <div class="upload-file-info">
         <div class="upload-file-icon"></div>
         <div class="upload-file-name">{%=o.name%}</div>
+        <div class="upload-file-error">{%=o.name%}</div>
         <div class="upload-file-status"><i class="icon-ok-sign"></i></div>
       </div>
     </div>
@@ -81,9 +52,19 @@
 javascript:
   $(function() {
     $('#s3_uploader').S3Uploader(
-      { 
+      {
         remove_completed_progress_bar: false,
-        progress_bar_target: $('#uploads_container')
+        progress_bar_target: $('#uploads_container'),
+        before_add: function(file) {
+          var file, types;
+
+          types = /(\.|\/)(gif|jpe?g|png)$/i;
+          if (types.test(file.type) || types.test(file.name)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
       }
     ).bind('fileuploadprogress', function (e, data) {
       var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -93,7 +74,7 @@ javascript:
         data._icon = data.context.find('.upload-file-icon').html($('<img src="/assets/file-types/32px/'+file_extension+'.png">'));
       }
     }).bind('fileuploaddone', function (e, data) {
-      data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'));
+      data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'), $('<i class="icon-minus-sign"></i>'));
     });
     $('#s3_uploader').bind('s3_upload_failed', function(e, content) {
       return alert(content.filename + ' failed to upload');

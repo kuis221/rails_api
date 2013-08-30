@@ -30,7 +30,10 @@ class AttachedAsset < ActiveRecord::Base
   }})
   attr_accessible :file, :asset_type, :direct_upload_url
 
-  before_create :set_upload_attributes
+
+  validate :valid_file_format?
+
+  before_validation :set_upload_attributes
   after_create :queue_processing
   before_post_process :post_process_required?
 
@@ -208,6 +211,14 @@ class AttachedAsset < ActiveRecord::Base
 
   protected
 
+    def valid_file_format?
+      if asset_type.to_s == 'photo'
+        if %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).nil?
+          errors.add(:file, 'is not valid format')
+        end
+      end
+    end
+
     # Determines if file requires post-processing (image resizing, etc)
     def post_process_required?
       %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
@@ -216,15 +227,17 @@ class AttachedAsset < ActiveRecord::Base
     # Set attachment attributes from the direct upload
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
-      tries ||= 5
-      direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
-      s3 = AWS::S3.new
-      direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
+      if new_record? and self.file_file_name.nil?
+        tries ||= 5
+        direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+        s3 = AWS::S3.new
+        direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
 
-      self.file_file_name     = direct_upload_url_data[:filename]
-      self.file_file_size     = direct_upload_head.content_length
-      self.file_content_type  = direct_upload_head.content_type
-      self.file_updated_at    = direct_upload_head.last_modified
+        self.file_file_name     = direct_upload_url_data[:filename]
+        self.file_file_size     = direct_upload_head.content_length
+        self.file_content_type  = direct_upload_head.content_type
+        self.file_updated_at    = direct_upload_head.last_modified
+      end
     rescue AWS::S3::Errors::NoSuchKey => e
       tries -= 1
       if tries > 0

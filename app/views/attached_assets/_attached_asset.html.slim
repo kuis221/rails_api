@@ -1,2 +1,4 @@
 - if attached_asset.asset_type == 'photo'
 	= render partial: 'results/photos/photo', :locals => {photo: attached_asset}
+- if attached_asset.asset_type == 'document'
+  = render partial: 'documents/document', :locals => {document: attached_asset}
