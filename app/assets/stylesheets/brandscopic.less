@@ -188,6 +188,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0!important;
 	box-shadow: none !important;
 	width: 220px !important;
+		.bar{
+			background-color: @unassigned!important;
+			background-image: none !important;
+			box-shadow: none !important;			
+		}
 	&.progress-danger{
 		.bar{
 			background-color: @buttons!important;
@@ -1295,7 +1300,7 @@ li#user_menu{
 	    				overflow: hidden;
 			    		text-overflow:ellipsis;
 			    		white-space: nowrap;
-	    				width: 590px;
+	    				width: 53%;
 	    			}
 	    			&.pull-right{
 	    				position: relative;
@@ -2080,8 +2085,19 @@ body.events.show {
 		top: 20px;
 		-webkit-font-smoothing: antialiased;
 	}
+	.box_metrics{
+		width: 400px;
+	}
 
 	ul.consumer-reach-metrics {
+		display: inline-block;
+		float: right;
+		margin-top: 40px;
+		width: 390px;
+		&.pull-right{
+			margin-top: 10px;
+			width:162px;
+		}
 		li {
 			list-style: none;
 			height: 30px;
@@ -2089,7 +2105,7 @@ body.events.show {
 			.metric {
 				float: left;
 				width: 150px;
-				margin-right: 5px;
+				margin-right: 15px;
 				text-align: right;
 			}
 			.progress {
@@ -2521,7 +2537,11 @@ body.events.show {
 	}
 }
 
+// CAMPAIGNS POST EVENT FORM BUILDER
+
 #post-event-form-builder {
+	border:0 !important;
+	width: 100% !important;
 	#droppable {
 		min-height: 100px;
 	}
@@ -3387,7 +3407,7 @@ svg{
 	}
 	.box_summary{
 		float: left;
-		margin-top: 60px;
+		margin-top: 30px;
 		width: 410px;
 	}
 	label{
@@ -3634,7 +3654,5 @@ svg{
 	color:#fff;
 }
 
-#post-event-form-builder{
-	border:0 !important;
-	width: 100% !important;
-}
+
+

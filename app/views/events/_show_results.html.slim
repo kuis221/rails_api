@@ -10,6 +10,7 @@
       .box_summary
         h3 SUMMARY
         = resource.summary
+      .box_metrics.pull-right
         ul.consumer-reach-metrics
           - if active_kpis.include?(Kpi.impressions)
             li
@@ -47,23 +48,21 @@
                 div.progress
                   .bar style="width: #{event_data.cost*100/resource.kpi_goals[Kpi.cost.id]}%"
 
-          - if active_kpis.include?(Kpi.photos)
-            - photo_count = resource.photos.count
+            - if active_kpis.include?(Kpi.photos)
+              - photo_count = resource.photos.count
+              li
+                div.metric
+                  span= photo_count
+                  = " Photos"
+                - if resource.kpi_goals[Kpi.photos.id].present?
+                  div.progress
+                    .bar style="width: #{photo_count*100/resource.kpi_goals[Kpi.photos.id]}%"
+
             li
               div.metric
-                span= photo_count
-                = " Photos"
-              - if resource.kpi_goals[Kpi.photos.id].present?
-                div.progress
-                  .bar style="width: #{photo_count*100/resource.kpi_goals[Kpi.photos.id]}%"
-
-          li
-            div.metric
-              span= resource.surveys.count
-              = " Surveys"
-
-      span4
-        ul.consumer-reach-metrics
+                span= resource.surveys.count
+                = " Surveys"
+        ul.consumer-reach-metrics.pull-right
           - if event_data.cost.present? && event_data.impressions > 0
             li
               div.metric
@@ -101,9 +100,6 @@
 
   - if active_kpis.include?(Kpi.surveys)
     = render 'results_surveys'
-
-  - if active_kpis.include?(Kpi.cost)
-    = render 'results_expenses'
 
   - if resource.campaign.active_field_types.include?('comments')
     = simple_form_for resource do |f|
