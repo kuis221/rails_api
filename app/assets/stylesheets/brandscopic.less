@@ -2329,15 +2329,14 @@ ul.thumbnails{
 				border-radius: 0px 0px 8px 8px;
 				width: 180px;
 				li a{
-					background-color: red;
 				    color: white;
-				    height: 10px;
+				    float: right;
+				    margin: 10px;
 				    opacity: 1 !important;
 				    text-decoration: none;
-				    width: 10px;
 				    &.photo-download-link{
 				    	float:right;
-				    	margin: 12px;
+				    	margin: 0 5px 12px 12px;
 				    	position: relative;
 				    	&:before{
 					       	color: @grey_one;
@@ -2354,7 +2353,7 @@ ul.thumbnails{
 				    }
 				    &.icon-remove-circle{
 				    	float:right;
-				    	margin: 12px;
+				    	margin: 10px;
 				    	position: relative;
 				    	&:before{
 					        color: @grey_one;
@@ -2414,12 +2413,9 @@ ul.thumbnails{
 							display: inline-block;
 							font-family: 'icons';
 							font-size: 15px;
-							right:10px;
-							padding-bottom:5px;
 							position: relative;
 							speak: none;
 							text-align: center;
-							top:10px;
 							vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -2428,12 +2424,10 @@ ul.thumbnails{
 							content: "\f067" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-						  	left: 130px;
-							padding-bottom:5px;
+						  	margin-top: 10px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
-							bottom:11px;
 						  	vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -2442,12 +2436,10 @@ ul.thumbnails{
 							content: "\f068" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-						  	left:130px;
-							padding-bottom:5px;
+							margin-top: 10px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
-							bottom:11px;
 						  	vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -3792,6 +3784,12 @@ a, i{
 		font-family: 'icons';
 		font-size: 20px;
 		position: relative;		
+	}
+	&.icon-minus:before{
+
+	}
+	&.icon-plus:before{
+
 	}
 	&.icon-plus-sign:before{
 		color: @brand;

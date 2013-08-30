@@ -4,7 +4,7 @@ module PlacesHelper
   end
 
   def venue_score_narrative(venue)
-    unless venue.score.nil?
+    unless venue.score.nil? || venue.score_impressions.nil?
       if venue.score_impressions <= 33
         if venue.score_cost <= 33
           "#{venue.name} performs poorly relative to similar venues in the area. Not only is it more expensive per impression but it also appears less popular than other venues. Consider conducting fewer events at this venue."
