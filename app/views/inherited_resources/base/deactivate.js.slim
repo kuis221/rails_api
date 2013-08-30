@@ -6,6 +6,7 @@
   |
     $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
-    |
-      $('#photo-details-toolbar').replaceWith('#{escape_javascript(render(partial: 'results/photos/photo_info', locals: {photo: resource}))}');
-  | $('.active-toggle-btn-#{resource.class.name.underscore.downcase}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}')
+    | $('#photo-details-toolbar').replaceWith('#{escape_javascript(render(partial: 'results/photos/photo_info', locals: {photo: resource}))}');
+  
+  - unless resource.is_a?(AttachedAsset)
+    | $('.active-toggle-btn-#{resource.class.name.underscore.downcase}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}')

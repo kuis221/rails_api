@@ -96,6 +96,10 @@ class AttachedAsset < ActiveRecord::Base
     update_attribute :active, true
   end
 
+  def name
+    file_file_name.gsub("\.#{file_extension}", '')
+  end
+
   def deactivate!
     update_attribute :active, false
   end
@@ -104,8 +108,8 @@ class AttachedAsset < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
-  def file_extension(filename)
-    File.extname(filename)[1..-1]
+  def file_extension
+    File.extname(file_file_name)[1..-1]
   end
 
   # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
@@ -199,7 +203,7 @@ class AttachedAsset < ActiveRecord::Base
     if post_process_required?
       self.file = URI.parse(URI.escape(direct_upload_url))
     else
-      paperclip_file_path = "documents/uploads/#{id}/original/#{direct_upload_url_data[:filename]}"
+      paperclip_file_path = file.path(:original).sub(%r{^/},'')
       s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     end
 
@@ -250,7 +254,11 @@ class AttachedAsset < ActiveRecord::Base
 
     # Queue file processing
     def queue_processing
-      Resque.enqueue(AssetsUploadWorker, id)
+      if post_process_required?
+        Resque.enqueue(AssetsUploadWorker, id)
+      else
+        transfer_and_cleanup
+      end
     end
 
 end
