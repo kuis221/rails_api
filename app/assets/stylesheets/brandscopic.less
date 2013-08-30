@@ -189,11 +189,18 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0!important;
 	box-shadow: none !important;
 	width: 220px !important;
+	.bar{
+		background-color: @unassigned!important;
+		background-image: none !important;
+		box-shadow: none !important;			
+	}
+	&.active{
 		.bar{
-			background-color: @unassigned!important;
+			background-color: @app_bg !important;
 			background-image: none !important;
-			box-shadow: none !important;			
+			box-shadow: none !important;
 		}
+	}
 	&.progress-danger{
 		.bar{
 			background-color: @buttons!important;
@@ -2170,8 +2177,19 @@ body.events.show {
 }
 
 #asset_upload_dialog {
+	color: @user_menu;
+	p{
+	margin-bottom: 0;
+		&.small{
+			font-size: 11px;
+		}
+	}
 	.modal-header {
 		border-bottom: none;
+	}
+	.divider{
+		margin: 40px 0;
+		text-align: center;
 	}
 	.uploading-panel {
 		display: none;
@@ -2185,13 +2203,19 @@ body.events.show {
 		}
 	}
 	#drop-zone {
-		border: 1px dashed @grey_one;
-		color: @grey_one;
+		border: 1px dashed @user_menu;
+		-webkit-border-radius: 4px;
+    	border-radius: 4px;
+		color: @user_menu;
+		font-size: 16px;
 		text-align: center;
 		padding: 20px;
 		&.dragging {
 			border-color: @buttons;
 		}
+	}
+	.selecting-panel{
+		margin-top: 10px;
 	}
 	#uploads_container {
 		width: 100%;
@@ -2387,7 +2411,7 @@ ul.thumbnails{
 
 	.image-loading-container {
 		height: 120px;
-		background: url(/assets/fancybox_loading@2x.gif) no-repeat center;
+		background: #fff url(/assets/loading.gif) center center no-repeat;
 	}
 
 }
@@ -3529,6 +3553,13 @@ svg{
 		float: left;
 		margin-top: 30px;
 		width: 410px;
+	}
+	.document{
+		display: inline-block;
+		width:12%;
+		img{
+			margin-right: 10px;
+		}
 	}
 	label{
 		color:@brand;
