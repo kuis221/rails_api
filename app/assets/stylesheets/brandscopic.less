@@ -189,6 +189,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0!important;
 	box-shadow: none !important;
 	width: 220px !important;
+		.bar{
+			background-color: @unassigned!important;
+			background-image: none !important;
+			box-shadow: none !important;			
+		}
 	&.progress-danger{
 		.bar{
 			background-color: @buttons!important;
@@ -1296,7 +1301,7 @@ li#user_menu{
 	    				overflow: hidden;
 			    		text-overflow:ellipsis;
 			    		white-space: nowrap;
-	    				width: 590px;
+	    				width: 53%;
 	    			}
 	    			&.pull-right{
 	    				position: relative;
@@ -2081,8 +2086,19 @@ body.events.show {
 		top: 20px;
 		-webkit-font-smoothing: antialiased;
 	}
+	.box_metrics{
+		width: 400px;
+	}
 
 	ul.consumer-reach-metrics {
+		display: inline-block;
+		float: right;
+		margin-top: 40px;
+		width: 390px;
+		&.pull-right{
+			margin-top: 10px;
+			width:162px;
+		}
 		li {
 			list-style: none;
 			height: 30px;
@@ -2090,7 +2106,7 @@ body.events.show {
 			.metric {
 				float: left;
 				width: 150px;
-				margin-right: 5px;
+				margin-right: 15px;
 				text-align: right;
 			}
 			.progress {
@@ -2129,7 +2145,9 @@ body.events.show {
 		.counter {
 			position: absolute;
 			right: -40px;
+			text-align: left;
 			top: 0px;
+			width: 20px;
 		}
 	}
 }
@@ -2652,7 +2670,11 @@ ul.thumbnails{
 	}
 }
 
+// CAMPAIGNS POST EVENT FORM BUILDER
+
 #post-event-form-builder {
+	border:0 !important;
+	width: 100% !important;
 	#droppable {
 		min-height: 100px;
 	}
@@ -3474,8 +3496,17 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.event-comments-list{
+		margin-bottom: 20px;
+		width: 410px;
+		.comment-row{
+			margin:20px 0 10px 0;
+			width: 100%;
+		}
+	}
 	.box_demographics{
 		.control-group{
+			width:390px;
 			input[type="text"]{
 				-webkit-border-radius: 4px 0px 0px 4px;
         		border-radius: 4px 0px 0px 4px;
@@ -3499,9 +3530,18 @@ svg{
 			 	font-size: 11px;
 			 	float: right;
 				margin-top: 12px;
-				width: 79%;
+				width: 150px;
 			}
 		}
+	}
+	.box_photos{
+		margin-bottom: 40px;
+		position: relative;
+	}
+	.box_summary{
+		float: left;
+		margin-top: 30px;
+		width: 410px;
 	}
 	label{
 		color:@brand;
@@ -3537,6 +3577,9 @@ svg{
 			}
 		}
 	}
+	.results-comments, .results-expenses, .results-surveys{
+		margin-top: 40px;
+	}
 	ul#event-surveys-list{
 		li{
 			color:@text;
@@ -3553,6 +3596,9 @@ svg{
 					margin-top: 16px;
 					width: 300px;
 				}
+				&.pull-right{
+					margin-top: 4px;
+				}
 			}
 		}
 	}
@@ -3561,8 +3607,9 @@ svg{
 			&.total-expenses{
 				span{
 					&:first-child{
-						margin-left: 698px;
-						width: 78px !important;
+						margin: 30px 0 0 20px;
+						text-align: right;
+						width: 70% !important;
 					}
 					&:last-child{
 						font-weight: bold !important;
@@ -3575,11 +3622,11 @@ svg{
 		}
 		span{
 			&:first-child{
-				width: 755px !important;
+				width: 70% !important;
 			}
 			&.links{
 				float: right;
-				margin: 3px 15px 0 0;
+				margin: 10px 15px 0 0;
 			}
 			&.total{
 				font-size: 16px;
@@ -3608,6 +3655,13 @@ svg{
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
 			margin-top: 22px;
 			width:280px;
+		}
+		ul#tasks-list{
+			li{
+				span.links{
+					margin-top: 14px !important;
+				}
+			}
 		}
 		.task-comments{
 			#comment-form-container{
@@ -3732,3 +3786,6 @@ svg{
 	display:none;
 	color:#fff;
 }
+
+
+
