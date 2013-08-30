@@ -15,6 +15,8 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  active            :boolean          default(TRUE)
+#  direct_upload_url :string(255)
+#  processed         :boolean          default(FALSE), not null
 #
 
 require 'spec_helper'

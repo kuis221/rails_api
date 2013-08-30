@@ -1,4 +1,19 @@
-- if resource.new_record?
-  | alert("Failed to upload photo: #{ j resource.errors.full_messages.join(', ').html_safe }");
+- if resource.persisted?
+  | 
+    $('#upload_#{params[:unique_id]}').addClass('complete');
+    $('#event-photos-thumbs').append('#{j render(partial: 'results/photos/photo', locals: {photo: resource})}')
+    if (typeof photoProcessingCheck == 'undefined' || !photoProcessingCheck) {
+      photoProcessingCheck = setInterval(function() {
+        photos = $('.photo-item[data-processed=false]');
+        if ( photos.length > 0 ) {
+          $.get('#{processing_status_event_photos_path(format: :js)}',
+                { photos: $.map(photos, function(el, index){ return $(el).data('photo-id'); }) }
+              );
+        } else {
+          clearInterval(photoProcessingCheck);
+          photoProcessingCheck = false;
+        }
+      },3000);
+    }
 - else
-  | $(".photo-list > ul.thumbnails").prepend("#{ j render(partial: 'results/photos/photo', locals: {photo: resource}) }");
+  | $('#upload_#{params[:unique_id]} div.progress').removeClass('active').addClass('progress-danger');

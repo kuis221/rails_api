@@ -49,6 +49,7 @@ gem 'rubyzip'
 gem 'redis'
 gem "resque", :require => "resque/server"
 gem 'resque-loner'
+gem 's3_direct_upload'
 
 # Gems used only for assets and not required
 # in production environments by default.

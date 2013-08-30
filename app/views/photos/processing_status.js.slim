@@ -1,0 +1,3 @@
+- @photos.each do |photo|
+  - if photo.processed?
+    | $('#attached_asset_#{photo.id}').replaceWith('#{j render(partial: 'results/photos/photo', locals: {photo: photo})}');

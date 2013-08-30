@@ -30,6 +30,16 @@ describe EventsController do
       end
     end
 
+    describe "GET 'tasks'" do
+      let(:event) { FactoryGirl.create(:event, company: @company) }
+      it "returns http success" do
+        get 'tasks', id: event.to_param
+        response.should be_success
+        response.should render_template(:tasks)
+        response.should render_template(:tasks_counters)
+      end
+    end
+
     describe "POST 'create'" do
       it "should not render form_dialog if no errors" do
         lambda {

@@ -15,21 +15,26 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  active            :boolean          default(TRUE)
+#  direct_upload_url :string(255)
+#  processed         :boolean          default(FALSE), not null
 #
 
 class AttachedAsset < ActiveRecord::Base
   track_who_does_it
 
+  DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
     :small => "180x120#",
     :medium => "700x700"
   }})
-  attr_accessible :file, :asset_type
+  attr_accessible :file, :asset_type, :direct_upload_url
 
-  before_post_process :image?
+  before_create :set_upload_attributes
+  after_create :queue_processing
+  before_post_process :post_process_required?
 
-  validates_attachment_presence :file
+  validates :direct_upload_url, presence: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
 
   searchable do
     string :status
@@ -98,6 +103,11 @@ class AttachedAsset < ActiveRecord::Base
 
   def file_extension(filename)
     File.extname(filename)[1..-1]
+  end
+
+  # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
+  def direct_upload_url=(escaped_url)
+    write_attribute(:direct_upload_url, (CGI.unescape(escaped_url) rescue nil))
   end
 
   def download_url(style_name=:original)
@@ -178,9 +188,56 @@ class AttachedAsset < ActiveRecord::Base
     end
   end
 
-  private
-    def image?
-      !(file_content_type =~ %r{^(image|(x-)?application)/(x-png|pjpeg|jpeg|jpg|png|gif)$}).nil?
+  # Final upload processing step
+  def transfer_and_cleanup
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+    s3 = AWS::S3.new
+
+    if post_process_required?
+      self.file = URI.parse(URI.escape(direct_upload_url))
+    else
+      paperclip_file_path = "documents/uploads/#{id}/original/#{direct_upload_url_data[:filename]}"
+      s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+    end
+
+    self.processed = true
+    save
+
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
+  end
+
+  protected
+
+    # Determines if file requires post-processing (image resizing, etc)
+    def post_process_required?
+      %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
+    end
+
+    # Set attachment attributes from the direct upload
+    # @note Retry logic handles S3 "eventual consistency" lag.
+    def set_upload_attributes
+      tries ||= 5
+      direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+      s3 = AWS::S3.new
+      direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
+
+      self.file_file_name     = direct_upload_url_data[:filename]
+      self.file_file_size     = direct_upload_head.content_length
+      self.file_content_type  = direct_upload_head.content_type
+      self.file_updated_at    = direct_upload_head.last_modified
+    rescue AWS::S3::Errors::NoSuchKey => e
+      tries -= 1
+      if tries > 0
+        sleep(3)
+        retry
+      else
+        false
+      end
+    end
+
+    # Queue file processing
+    def queue_processing
+      Resque.enqueue(AssetsUploadWorker, id)
     end
 
 end

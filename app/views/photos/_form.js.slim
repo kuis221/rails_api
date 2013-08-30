@@ -1,0 +1,105 @@
+#asset_upload_dialog
+  .modal-header
+    button type="button" class="close" data-dismiss="modal" aria-hidden="true" | &times;
+    h3 Upload files
+
+  = s3_uploader_form callback_url: event_photos_path(parent, format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
+
+    .selecting-panel
+      .row-fluid
+        .span7
+          | Select file(s) from your computer to upload.
+          | Maximun upload size 60MB
+        .span5
+          span.btn.btn-primary.fileinput-button
+            span Browse files
+            = file_field_tag :file, multiple: true, 'data-no-uniform' => "true"
+
+      .row-fluid
+        .span12
+          .text-center
+            | OR
+
+      .row-fluid
+        .span12
+          #drop-zone 
+            | Drag and drop file here to upload
+
+    .uploading-panel
+      #uploads_container
+        / |
+        /   <div id="upload_{%=o.unique_id%}" class="upload pending">
+        /     <div class="progress active">
+        /       <div class="bar" style="width: 0%">
+        /       </div>
+        /       <div class="upload-file-info">
+        /         <div class="upload-file-name">prueba-uno.jpg</div>
+        /         <div class="upload-file-status">pending</div>
+        /       </div>
+        /     </div>
+        /   </div>
+        /   <div id="upload_{%=o.unique_id%}" class="upload">
+        /     <div class="progress active">
+        /       <div class="bar" style="width: 30%">
+        /       </div>
+        /       <div class="upload-file-info">
+        /         <div class="upload-file-name">prueba-uno.jpg</div>
+        /         <div class="upload-file-status">1:34 min</div>
+        /       </div>
+        /     </div>
+        /   </div>
+        /   <div id="upload_{%=o.unique_id%}" class="upload complete">
+        /     <div class="progress active">
+        /       <div class="bar" style="width: 100%">
+        /       </div>
+        /       <div class="upload-file-info">
+        /         <div class="upload-file-name">prueba-uno.jpg</div>
+        /         <div class="upload-file-status"><i class="icon-ok-sign"></i></div>
+        /       </div>
+        /     </div>
+        /   </div>
+      .action-buttons
+        a#btn-upload-ok.btn.btn-primary data-dismiss="modal" aria-hidden="true" OK
+        span.btn.fileinput-button
+          span Add more files
+          = file_field_tag :file, multiple: true, 'data-no-uniform' => "true"
+|
+  <script id="template-upload" type="text/x-tmpl">
+  <div id="upload_{%=o.unique_id%}" class="upload">
+    <div class="progress active">
+      <div class="bar" style="width: 0%">
+      </div>
+      <div class="upload-file-info">
+        <div class="upload-file-icon"></div>
+        <div class="upload-file-name">{%=o.name%}</div>
+        <div class="upload-file-status"><i class="icon-ok-sign"></i></div>
+      </div>
+    </div>
+  </div>
+  </script>
+
+javascript:
+  $(function() {
+    $('#s3_uploader').S3Uploader(
+      { 
+        remove_completed_progress_bar: false,
+        progress_bar_target: $('#uploads_container')
+      }
+    ).bind('fileuploadprogress', function (e, data) {
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      data.context.find('.upload-file-status').text(progress+'%');
+      if (!data._icon){
+        var file_extension = data.files[0].name.split('.').pop().toLowerCase();
+        data._icon = data.context.find('.upload-file-icon').html($('<img src="/assets/file-types/32px/'+file_extension+'.png">'));
+      }
+    }).bind('fileuploaddone', function (e, data) {
+      data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'));
+    });
+    $('#s3_uploader').bind('s3_upload_failed', function(e, content) {
+      return alert(content.filename + ' failed to upload');
+    }).bind('s3_uploads_start', function() {
+      $('#asset_upload_dialog').addClass('upload-started');
+    });
+  });
+
+

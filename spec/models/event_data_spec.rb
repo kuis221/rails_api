@@ -24,6 +24,7 @@ require 'spec_helper'
 describe EventData do
   before do
     ResqueSpec.reset!
+    Kpi.delete_all
   end
 
   let(:event) { FactoryGirl.create(:event, event_data: FactoryGirl.build(:event_data), campaign: FactoryGirl.create(:campaign)) }

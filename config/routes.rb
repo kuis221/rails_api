@@ -139,7 +139,8 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :documents
-    resources :photos, only: :create do
+    resources :photos, only: [:create, :new] do
+      get :processing_status, on: :collection
       member do
         get :deactivate
         get :activate

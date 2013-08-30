@@ -26,21 +26,22 @@ describe "Invitations", :js => true do
     find_field('First name').value.should == 'Pedro'
     find_field('Last name').value.should == 'Picapiedra'
     find_field('Email').value.should == 'pedro@rocadura.com'
-    find_field('Country').value.should == 'CR'
-    find_field('State').value.should == 'SJ'
+    save_and_open_page
+    find_field('Country', visible: false).value.should == 'CR'
+    find_field('State', visible: false).value.should == 'SJ'
     find_field('City').value.should == 'Curridabat'
-    find_field('New password').value.should == ''
-    find_field('Confirm your new password').value.should == ''
+    find_field('New Password', match: :first).value.should == ''
+    find_field('Confirm New Password').value.should == ''
 
 
     fill_in('First name', with: 'Pablo')
     fill_in('Last name', with: 'Marmol')
     fill_in('Email', with: 'pablo@rocadura.com')
-    select('United States', from: 'Country', match: :first)
-    select('Texas', from: 'State')
+    select_from_chosen('United States', from: 'Country', match: :first)
+    select_from_chosen('Texas', from: 'State')
     fill_in('City', with: 'Texas')
-    fill_in('New password', with: 'Pablito123')
-    fill_in('Confirm your new password', with: 'Pablito123')
+    fill_in('New Password', with: 'Pablito123', match: :first)
+    fill_in('Confirm New Password', with: 'Pablito123')
 
     click_button 'Save'
 
@@ -54,10 +55,10 @@ describe "Invitations", :js => true do
     fill_in('First name', with: '')
     fill_in('Last name', with: '')
     fill_in('Email', with: '')
-    select('', from: 'State')
+    select_from_chosen('', from: 'State')
     fill_in('City', with: '')
-    fill_in('New password', with: '')
-    fill_in('Confirm your new password', with: '')
+    fill_in('New Password', with: '')
+    fill_in('Confirm New Password', with: '')
 
     click_button 'Save'
 
@@ -66,22 +67,22 @@ describe "Invitations", :js => true do
     find_field('Email').should have_error('This field is required.')
     find_field('State').should have_error('This field is required.')
     find_field('City').should have_error('This field is required.')
-    find_field('New password').should have_error('This field is required.')
+    find_field('New Password').should have_error('This field is required.')
     find_field('Confirm your new password').should have_error('This field is required.')
 
-    fill_in('New password', with: 'a')
-    fill_in('Confirm your new password', with: 'a')
+    fill_in('New Password', with: 'a')
+    fill_in('Confirm New Password', with: 'a')
 
     click_button 'Save'
-    find_field('New password').should have_error('Should have at least one upper case letter')
+    find_field('New Password').should have_error('Should have at least one upper case letter')
 
-    fill_in('New password', with: 'aA')
-    fill_in('Confirm your new password', with: 'aA')
+    fill_in('New Password', with: 'aA')
+    fill_in(' Confirm New Password', with: 'aA')
     click_button 'Save'
     find_field('New password').should have_error('Should have at least one digit')
 
     fill_in('New password', with: 'aA1')
-    fill_in('Confirm your new password', with: 'aA1')
+    fill_in(' Confirm New Password', with: 'aA1')
     click_button 'Save'
 
     find_field('New password').should have_error('Please enter at least 8 characters.')

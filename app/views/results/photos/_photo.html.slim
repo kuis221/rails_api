@@ -1,9 +1,12 @@
-li.span2.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}"
+li.span2.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
 	div.thumbnail-container.thumbnail
 		ul.thumbnail-toolbar
 			- if photo.active?
 				li= link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link'
 			- else
-				li= link_to '', activate_event_photo_path(photo.attachable,photo), remote: true, class: 'icon-ok-circle photo-deactivate-link'
+				li= link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link'
 			li= link_to '', '#', class: 'icon-plus photo-download-link'
-		= link_to image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s), photo.file.url(:medium), rel: 'photo-gallery', class: 'fancybox', caption: render(partial: 'results/photos/photo_info', locals: {photo: photo}).gsub(/"/, '&quot;').html_safe
+    - if photo.processed?
+      = link_to image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s), photo.file.url(:medium), rel: 'photo-gallery', class: 'fancybox', caption: render(partial: 'results/photos/photo_info', locals: {photo: photo}).gsub(/"/, '&quot;').html_safe
+    - else
+      .image-loading-container

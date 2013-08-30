@@ -13,11 +13,10 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-migrate-1.2.1
+//= require s3_direct_upload
 //= require twitter/bootstrap
 //= require jquery.dataTables.js
 //= require jquery-ui-1.10.1.custom
 //= require jquery_nested_form
 //= require form_builder.js
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
 //= require_directory .
