@@ -1,7 +1,6 @@
 #survey-form
   = simple_nested_form_for([parent, resource], html: { :multipart => true, class: 'survey_form' }, remote: true) do |f|
     = f.error_notification
-    h3 New Survey
     .form-inputs
       fieldset
         legend Demographics

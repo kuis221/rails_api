@@ -1,8 +1,4 @@
 #asset_upload_dialog
-  .modal-header
-    button type="button" class="close" data-dismiss="modal" aria-hidden="true" | &times;
-    h3 Upload files
-
   = s3_uploader_form callback_url: url_for(action: :create, event_id: parent.to_param, format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
 
     .selecting-panel

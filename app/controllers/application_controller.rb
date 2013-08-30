@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
 
   layout :set_layout
 
-  helper_method :current_company, :custom_body_class
+  helper_method :current_company, :custom_body_class, :modal_dialog_title
 
   protected
     def set_layout
@@ -66,5 +66,9 @@ class ApplicationController < ActionController::Base
       if params.has_key?(:return) and params[:return]
         session["return_path"] = Base64.decode64(params.has_key?(:return)) rescue nil
       end
+    end
+
+    def modal_dialog_title
+      I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
     end
 end
