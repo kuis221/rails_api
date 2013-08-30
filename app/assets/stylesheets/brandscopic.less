@@ -2035,21 +2035,11 @@ body.events.show {
 			font-size: 16px
 		}
 		.icon-remove-circle{
-			display: none;
 			float: right;
 			&:before{
 				bottom: 15px;
-        	  	color: @brand;
-				content: "\e011" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
 				font-size: 18px;
-			  	position: relative;
 			  	right: 13px;
-				speak: none;
-				text-decoration: none;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
         	}
 		}
 		&:hover {
@@ -2339,37 +2329,45 @@ ul.thumbnails{
 				border-radius: 0px 0px 8px 8px;
 				width: 180px;
 				li a{
+					background-color: red;
 				    color: white;
+				    height: 10px;
 				    opacity: 1 !important;
 				    text-decoration: none;
-				    &.photo-download-link:before{
-				    	bottom: 25px;
-				       	color: @grey_one;
-						content: "\e00b" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						left:127px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+				    width: 10px;
+				    &.photo-download-link{
+				    	float:right;
+				    	margin: 12px;
+				    	position: relative;
+				    	&:before{
+					       	color: @grey_one;
+							content: "\e00b" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+				    	}
 				    }
-				    &.icon-remove-circle:before{
-				        color: @grey_one;
-						content: "\e011" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						left:150px;
-						padding-bottom:5px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						top:10px;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+				    &.icon-remove-circle{
+				    	float:right;
+				    	margin: 12px;
+				    	position: relative;
+				    	&:before{
+					        color: @grey_one;
+							content: "\e011" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
 				    }
 				    &.icon-ok-circle:before{
 				        color: @grey_one;
@@ -2377,12 +2375,9 @@ ul.thumbnails{
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
-						left:150px;
-						padding-bottom:5px;
 						position: relative;
 						speak: none;
 						text-align: center;
-						top: 9px;
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 				    }
@@ -3786,6 +3781,36 @@ svg{
 	display:none;
 	color:#fff;
 }
+
+// GENERAL ICONS
+
+a, i{
+	&.icon-ok-circle:before{
+		color: @brand;
+		content: "\e00d";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;		
+	}
+	&.icon-plus-sign:before{
+		color: @brand;
+		content: "\e021";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+	&.icon-remove-circle:before{
+		color: @brand;
+		content: "\e011";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+}
+
 
 
 
