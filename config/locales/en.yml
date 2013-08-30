@@ -44,6 +44,43 @@ en:
       brand_portfolio: "New Brand portfolio"
       date_range: "New Date range"
       day_part: "New Day part"
+    edit:
+      team: "Edit Team"
+      campaign: "Edit Campaign"
+      role: "Edit Role"
+      area: "Edit Area"
+      brand_portfolio: "Edit Brand portfolio"
+      date_range: "Edit Date range"
+      day_part: "Edit Day part"
+
+  modals:
+    title:
+      new:
+        event: "New Event"
+        task: "New Task"
+        attached_asset: "Upload files"
+        survey: "New Survey"
+        team: "New Team"
+        campaign: "New Campaign"
+        role: "New Role"
+        area: "New Area"
+        brand_portfolio: "New Brand portfolio"
+        date_range: "New Date range"
+        day_part: "New Day part"
+        event_expense: "New Expense"
+      edit:
+        event: "Edit Event"
+        task: "Edit Task"
+        attached_asset: "Upload files"
+        survey: "Edit Survey"
+        team: "Edit Team"
+        campaign: "Edit Campaign"
+        role: "Edit Role"
+        area: "Edit Area"
+        brand_portfolio: "Edit Brand portfolio"
+        date_range: "Edit Date range"
+        day_part: "Edit Day part"
+        event_expense: "Edit Expense"
 
   form_builder:
     modules:

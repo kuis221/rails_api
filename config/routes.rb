@@ -138,7 +138,13 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :documents
+    resources :documents, only: [:create, :new] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+
     resources :photos, only: [:create, :new] do
       get :processing_status, on: :collection
       member do
@@ -146,6 +152,7 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
     end
+
     resources :comments, only: [:create, :index]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 

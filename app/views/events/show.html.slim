@@ -56,11 +56,11 @@
   #event-documents.details_box
     h3 DOCUMENTS
 
-    #event-documents
+    #event-documents-list
       = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
     .row-fluid
       .pull-right
-        = link_to 'Upload', new_event_document_path(resource), {remote: true, class: 'btn btn-primary'}
+        = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true
 
 javascript:
   $(document).ready(function() {

@@ -1,9 +1,5 @@
 #asset_upload_dialog
-  .modal-header
-    button type="button" class="close" data-dismiss="modal" aria-hidden="true" | &times;
-    h3 Upload files
-
-  = s3_uploader_form callback_url: event_photos_path(parent, format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
+  = s3_uploader_form callback_url: url_for(action: :create, event_id: parent.to_param, format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
 
     .selecting-panel
       .row-fluid
@@ -56,10 +52,10 @@ javascript:
         remove_completed_progress_bar: false,
         progress_bar_target: $('#uploads_container'),
         before_add: function(file) {
-          var file, types;
+          var file, image_types;
+          image_types = /(\.|\/)(gif|jpe?g|png)$/i;
 
-          types = /(\.|\/)(gif|jpe?g|png)$/i;
-          if (types.test(file.type) || types.test(file.name)) {
+          if ('#{resource.asset_type}' != 'photo' || image_types.test(file.type) || image_types.test(file.name)) {
             return true;
           } else {
             return false;

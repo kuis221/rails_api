@@ -27,7 +27,7 @@ class Event < ActiveRecord::Base
 
   has_many :tasks, dependent: :destroy
   has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :documents
+  has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
