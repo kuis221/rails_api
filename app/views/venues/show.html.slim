@@ -14,15 +14,15 @@
         = resource.formatted_address
         br>/
         = resource.formatted_phone_number
-        br>/
-        - if resource.place.td_linx_code
-          = 'TD Linx Code ' + resource.place.td_linx_code
         - if resource.website
           .link
             = place_website(resource.website)
         = resource.price_level.times.map{ '$' }.join
         = " "
         = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+        br>/
+        - if resource.place.td_linx_code
+          = 'TD Linx Code ' + resource.place.td_linx_code
       - if resource.opening_hours
         .time-data
           = place_opening_hours(resource.opening_hours)
@@ -241,7 +241,8 @@ javascript:
                 color: '#D1D1D1'
               }
             },
-            min: 0
+            min: 0,
+            maxPadding: 0.2
         },
         plotOptions: {
             series: {

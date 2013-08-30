@@ -117,16 +117,8 @@ do ($ = window.jQuery, window) ->
       custom_position = {}
       helper_layer = $(element).data('helper_layer')
 
-      el = element
-      position = 'absolute'
-      while el and position == 'absolute'
-
-        if el.style.position == 'fixed'
-          position = 'fixed'
-        el = el.offsetParent
-
       element_position = @._get_offset(element)
-      helper_layer.setAttribute "style", "width: #{element_position.width}px; height:#{element_position.height}px; top:#{element_position.top}px; left: #{element_position.left}px; position: #{position}"
+      helper_layer.setAttribute "style", "width: #{element_position.width}px; height:#{element_position.height}px; top:#{element_position.top}px; left: #{element_position.left}px;"
 
     _show_element: (element) ->
       target = if element.getAttribute('data-target') then $(element.getAttribute('data-target')).get()[0] else element

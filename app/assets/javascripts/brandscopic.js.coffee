@@ -187,7 +187,7 @@ jQuery ->
 		$filterSidebar.originalTop = $filterSidebar.position().top;
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
-			if $filterSidebar.positioning
+			if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
 				return true
 			$filterSidebar.positioning = true
 			sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;

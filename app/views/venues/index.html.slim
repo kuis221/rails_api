@@ -14,12 +14,13 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
+  #save-filters-btn.a.btn.btn-primary Save
 .main
   .tab-content
     .link-list
       ul#venues-list
 
+= render partial: 'help_tutorial'
 
 javascript:
   var locationAutocomplete = new google.maps.places.Autocomplete($('#venue-search-location')[0], {types: ['(cities)']});
