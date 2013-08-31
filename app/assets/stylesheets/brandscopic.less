@@ -2311,7 +2311,7 @@ body.events.show {
 	}
 
 	.action-buttons {
-		margin-top: 30px; 
+		margin-top: 30px;
 		.btn {
 			width: 70px;
 			color: #fff;
@@ -2476,7 +2476,7 @@ ul.thumbnails{
 						  	vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
-			
+
 					}
 				}
 			}
@@ -3772,6 +3772,7 @@ svg{
 	}
 }
 
+//Chardin Overlay
 .chardinjs-helper-layer {
 	font-family: 'rabioheadregular', sans-serif;
 	font-size: 24px;
@@ -3795,6 +3796,7 @@ svg{
 	color:#fff;
 }
 
+<<<<<<< HEAD
 // GENERAL ICONS
 
 a, i{
@@ -3831,5 +3833,37 @@ a, i{
 }
 
 
+// Modal Table List
 
-
+.scroll-table-content {
+  margin: 15px 0;
+  max-height: 200px;
+  overflow: auto;
+  .link-list {
+  	width: 99.5%;
+  	li {
+  		min-height: 65px;
+  		.member-data {
+  			padding: 12px;
+	  		.member-name {
+	  			font-size: 16px;
+	  		}
+	  		.member-description {
+	  			width: 90%;
+	  		}
+	  	}
+			a {
+				color: @venues_blue;
+				text-decoration: none;
+				&.icon-plus-sign:before {
+					content: "\e021";
+					color: @brand;
+					display: block;
+					font-family: 'icons';
+					font-size: 21px;
+					margin: 15px 0 0 30px;
+				}
+			}
+  	}
+  }
+}

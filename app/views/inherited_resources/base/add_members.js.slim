@@ -1,20 +1,14 @@
 - if @member_id
   |
     $(document).trigger('members:change');
-    if ($('table#select-users-list tr#user-#{@member_id}').length){
-      pos = selectMemberTable.fnGetPosition($('table#select-users-list tr#user-#{@member_id}')[0]);
-      if (pos!== null){
-        selectMemberTable.fnDeleteRow(pos);
-      }
+    if ($('ul#staff-list > li#staff-member-user-#{@member_id}').length){
+      $('ul#staff-list > li#staff-member-user-#{@member_id}').remove();
     };
 - if @team_id
   |
     $(document).trigger('teams:change');
-    if ($('table#select-teams-list tr#team-#{@team_id}').length){
-      pos = selectTeamsTable.fnGetPosition($('table#select-teams-list tr#team-#{@team_id}')[0]);
-      if (pos!== null){
-        selectTeamsTable.fnDeleteRow(pos);
-      }
+    if ($('ul#staff-list > li#staff-member-team-#{@team_id}').length){
+      $('ul#staff-list > li#staff-member-team-#{@team_id}').remove();
     };
 
 = render 'add_member'

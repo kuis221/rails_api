@@ -1,111 +1,32 @@
 - show_teams = resource.is_a?(Event) || resource.is_a?(Campaign)
-- if show_teams
-  ul#select-members-tabs.nav.nav-tabs
-    li.active
-      a href="#select-users" data-toggle="tab" Users
-    li
-      a href="#select-teams" data-toggle="tab" Teams
-
-
 .tab-content
-  #select-users.tab-pane.active
-    .row-fluid
-      .span10
-        table#select-users-list.table.table-striped.table-bordered.table-scrolled
-          thead
-            tr
-              th Last Name
-              th First Name
-              th City
-              th State
-              th Country
-              th Email
-              th Role
-              th
-          tbody
-            - @users.each do |user|
-              tr id="user-#{user.id}" data-filter-role="#{user.role_id}" data-filter-team="#{user.teams.active.map(&:id)}"
-                td= user.first_name
-                td= user.last_name
-                td= user.city
-                td= user.state_name
-                td= user.country_name
-                td= user.email
-                td= user.role_name
-                td= link_to 'Add', url_for(action: :add_members, member_id: user.id), disable_with: '...', id: "add-member-btn-#{user.id}" , data:{'user-id' => user.id}, remote: true, method: :post
-
-      .span2
-        #select-users-list-filters
-            h3 ROLES
-            - @roles.each do |role|
-              label
-                = check_box_tag(:role, role.id, true, {'data-filter' => '#select-users-list'})
-                = role.name
-
-            h3 TEAMS
-            - @teams.each do |team|
-              label
-                = check_box_tag(:team, team.id, true, {'data-filter' => '#select-users-list'})
-                = team.name
-            label
-              = check_box_tag(:team, '', true, {'data-filter' => '#select-users-list'})
-              = "[no team]"
-
-  - if show_teams
-    #select-teams.tab-pane
-      table#select-teams-list.table.table-striped.table-bordered.table-scrolled
-        thead
-          tr
-            th Teams
-            th Number of Members
-            th Description
-            th
-        tbody
-          - assignable_teams.each do |team|
-            tr id = "team-#{team.id}"
-              td= team.name
-              td= team.users.active.count
-              td= team.description
-              td= link_to 'Add', url_for(action: :add_members, team_id: team.id), disable_with: '...', data:{'team-id' => team.id}, remote: true, method: :post
-
+  .staff-table
+    .row-fluid.scroll-table-header
+      span.scroll-table-filter
+        input type="text" name="q" id="staff-search-item" onkeyup="filterList(this)"
+    .scroll-table-content
+      .link-list
+        ul#staff-list
+          - @staff.each do |member|
+            li id="staff-member-#{member.is_a?(CompanyUser) ? 'user-'+member.id.to_s : 'team-'+member.id.to_s}"
+              span.member-data
+                span.member-name= member.name
+                span.member-description= member.is_a?(CompanyUser) ? member.role_name : member.description
+              span.add-button.pull-right
+                - if member.is_a?(CompanyUser)
+                    = link_to '', url_for(action: :add_members, member_id: member.id), id: "add-member-btn-#{member.id}", data:{'user-id' => member.id}, class: 'icon-plus-sign', remote: true, method: :post
+                - else
+                    = link_to '', url_for(action: :add_members, team_id: member.id), id: "add-member-btn-#{member.id}", data:{'team-id' => member.id}, class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
-  selectMemberTable = $('#select-users-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bAutoWidth": false,
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '30px', 'bSortable': false}
-        ],
-        "myFilter": function(){
-
-        }
-  })
-
-- if show_teams
-  javascript:
-    selectTeamsTable = $('#select-teams-list').dataTable({
-          "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-          "bPaginate": false,
-          "bProcessing": true,
-          "bAutoWidth": false,
-          "aoColumns": [
-            null,
-            null,
-            null,
-            {"sWidth": '30px', 'bSortable': false}
-          ]
-    })
-
-    $('#select-members-tabs a').click(function (e) {
-      e.preventDefault();
-      $(this).tab('show');
-    })
+  function filterList(element) {
+    var value = $(element).val();
+    $("#staff-list > li").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
+  }

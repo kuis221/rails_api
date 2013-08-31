@@ -19,10 +19,12 @@ module TeamMembersHelper
     end
 
     def new_member
-      @teams = company_teams
+      @teams = assignable_teams
       @roles = company_roles
       @users = company_users
       @users = @users.where(['company_users.id not in (?)', resource.users]) unless resource.users.empty?
+      unordered_staff = @users + @teams
+      @staff = unordered_staff.sort_by &:name
     end
 
     def add_members
@@ -87,6 +89,5 @@ module TeamMembersHelper
 
   def self.extended(receiver)
     receiver.send(:include,  InstanceMethods)
-    receiver.helper_method :assignable_teams
   end
 end
