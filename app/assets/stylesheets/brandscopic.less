@@ -189,11 +189,18 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0!important;
 	box-shadow: none !important;
 	width: 220px !important;
+	.bar{
+		background-color: @unassigned!important;
+		background-image: none !important;
+		box-shadow: none !important;			
+	}
+	&.active{
 		.bar{
-			background-color: @unassigned!important;
+			background-color: @app_bg !important;
 			background-image: none !important;
-			box-shadow: none !important;			
+			box-shadow: none !important;
 		}
+	}
 	&.progress-danger{
 		.bar{
 			background-color: @buttons!important;
@@ -2031,21 +2038,11 @@ body.events.show {
 			font-size: 16px
 		}
 		.icon-remove-circle{
-			display: none;
 			float: right;
 			&:before{
 				bottom: 15px;
-        	  	color: @brand;
-				content: "\e011" !important;
-			  	display: inline-block;
-			  	font-family: 'icons';
 				font-size: 18px;
-			  	position: relative;
 			  	right: 13px;
-				speak: none;
-				text-decoration: none;
-			  	vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
         	}
 		}
 		&:hover {
@@ -2176,8 +2173,19 @@ body.events.show {
 }
 
 #asset_upload_dialog {
+	color: @user_menu;
+	p{
+	margin-bottom: 0;
+		&.small{
+			font-size: 11px;
+		}
+	}
 	.modal-header {
 		border-bottom: none;
+	}
+	.divider{
+		margin: 40px 0;
+		text-align: center;
 	}
 	.uploading-panel {
 		display: none;
@@ -2191,13 +2199,19 @@ body.events.show {
 		}
 	}
 	#drop-zone {
-		border: 1px dashed @grey_one;
-		color: @grey_one;
+		border: 1px dashed @user_menu;
+		-webkit-border-radius: 4px;
+    	border-radius: 4px;
+		color: @user_menu;
+		font-size: 16px;
 		text-align: center;
 		padding: 20px;
 		&.dragging {
 			border-color: @buttons;
 		}
+	}
+	.selecting-panel{
+		margin-top: 10px;
 	}
 	#uploads_container {
 		width: 100%;
@@ -2224,6 +2238,7 @@ body.events.show {
 			.upload-file-info {
 				position: absolute;
 				left: 0;
+				margin:3px 0 0 3px;
 				right: 0px;
 				bottom: 0;
 				top: 0;
@@ -2232,11 +2247,19 @@ body.events.show {
 					width: 30px;
 					top: 10px;
 					left: 10px;
+					img{
+						height: 18px;
+						width:16px;
+					}
 				}
 				.upload-file-name {
 					position: absolute;
 					left: 40px;
-					top: 10px;
+					overflow: hidden;
+			    	text-overflow: ellipsis;
+					white-space: nowrap;
+					top: 12px;
+					width: 70%;
 				}
 				.upload-file-error {
 					position: absolute;
@@ -2247,10 +2270,10 @@ body.events.show {
 				}
 				.upload-file-status {
 					position: absolute;
-					right: 0;
-					top: 10px;
+					right: 15px;
+					top: 12px;
 					width: 100px;
-					text-align: center;
+					text-align: right;
 				}
 			}
 		}
@@ -2336,36 +2359,43 @@ ul.thumbnails{
 				width: 180px;
 				li a{
 				    color: white;
+				    float: right;
+				    margin: 10px;
 				    opacity: 1 !important;
 				    text-decoration: none;
-				    &.photo-download-link:before{
-				    	bottom: 25px;
-				       	color: @grey_one;
-						content: "\e00b" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						left:127px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+				    &.photo-download-link{
+				    	float:right;
+				    	margin: 0 5px 12px 12px;
+				    	position: relative;
+				    	&:before{
+					       	color: @grey_one;
+							content: "\e00b" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+				    	}
 				    }
-				    &.icon-remove-circle:before{
-				        color: @grey_one;
-						content: "\e011" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						left:150px;
-						padding-bottom:5px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						top:10px;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+				    &.icon-remove-circle{
+				    	float:right;
+				    	margin: 10px;
+				    	position: relative;
+				    	&:before{
+					        color: @grey_one;
+							content: "\e011" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
 				    }
 				    &.icon-ok-circle:before{
 				        color: @grey_one;
@@ -2373,12 +2403,9 @@ ul.thumbnails{
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
-						left:150px;
-						padding-bottom:5px;
 						position: relative;
 						speak: none;
 						text-align: center;
-						top: 9px;
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 				    }
@@ -2389,7 +2416,7 @@ ul.thumbnails{
 
 	.image-loading-container {
 		height: 120px;
-		background: url(/assets/fancybox_loading@2x.gif) no-repeat center;
+		background: #fff url(/assets/loading.gif) center center no-repeat;
 	}
 
 }
@@ -2415,12 +2442,9 @@ ul.thumbnails{
 							display: inline-block;
 							font-family: 'icons';
 							font-size: 15px;
-							right:10px;
-							padding-bottom:5px;
 							position: relative;
 							speak: none;
 							text-align: center;
-							top:10px;
 							vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -2429,12 +2453,10 @@ ul.thumbnails{
 							content: "\f067" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-						  	left: 130px;
-							padding-bottom:5px;
+						  	margin-top: 10px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
-							bottom:11px;
 						  	vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -2443,12 +2465,10 @@ ul.thumbnails{
 							content: "\f068" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-						  	left:130px;
-							padding-bottom:5px;
+							margin-top: 10px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
-							bottom:11px;
 						  	vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
 					    }
@@ -2503,53 +2523,6 @@ ul.thumbnails{
 		}
 	}
 }
-/*
-	.photo-list ul.thumbnails .thumbnail:hover ul.thumbnail-toolbar{
-        li {
-        	float: right;
-        	a{
-	        	color: white;
-	        	opacity: 1 !important;
-	        	&.icon-remove-circle:before{
-  					color: @grey_one;
-							content: "\e011" !important;
-							display: inline-block;
-							font-family: 'icons';
-							font-size: 15px;
-							right:10px !important;
-							padding-bottom:5px;
-							position: relative;
-							speak: none;
-							text-align: center;
-							top:10px;
-							vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
-	        	}
-	        	&.icon-plus:before{
-	        	  	color: @grey_one;
-				  	display: inline-block;
-					padding-bottom:5px;
-				  	position: relative;
-					speak: none;
-					text-align: center;
-					top: 10px;
-				  	vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-	        	}
-	        	&.icon-minus:before{
-	        	  	color: @grey_one;
-				  	display: inline-block;
-					padding-bottom:5px;
-				  	position: relative;
-					speak: none;
-					text-align: center;
-					top: 10px;
-				  	vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-	        	}
-	        }
-	    }
-	}*/
 	ul{
 		&.thumbnails{
 			li{
@@ -3539,6 +3512,41 @@ svg{
 		margin-top: 30px;
 		width: 410px;
 	}
+	#event-documents-list{
+		margin:0 -11% 0 0;
+	}
+	.document{
+		display: inline-block;
+		margin: 0 50px 35px 20px;
+		width: 25%;
+		a{
+			color: @menu;
+			float: left;
+			overflow: hidden;
+			position: relative;
+	    	text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 85%;
+		}
+		img{
+			height: 40px;
+			margin-right: 15px;
+			width: 32px;
+		}
+		span.remove{
+			display: none;
+		}
+		&:hover{
+			span.remove{
+				display:inline-block;
+				float:right;
+				a{
+					margin-top: 8px;
+					width: 100%;
+				}
+			}
+		}
+	}
 	label{
 		color:@brand;
 		font-size: 11px;
@@ -3782,6 +3790,42 @@ svg{
 	display:none;
 	color:#fff;
 }
+
+// GENERAL ICONS
+
+a, i{
+	&.icon-ok-circle:before{
+		color: @brand;
+		content: "\e00d";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;		
+	}
+	&.icon-minus:before{
+
+	}
+	&.icon-plus:before{
+
+	}
+	&.icon-plus-sign:before{
+		color: @brand;
+		content: "\e021";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+	&.icon-remove-circle:before{
+		color: @brand;
+		content: "\e011";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+}
+
 
 
 .with-details-close-bar {

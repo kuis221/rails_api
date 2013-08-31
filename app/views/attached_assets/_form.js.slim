@@ -3,17 +3,17 @@
 
     .selecting-panel
       .row-fluid
-        .span7
-          | Select file(s) from your computer to upload.
-          | Maximun upload size 60MB
-        .span5
-          span.btn.btn-primary.fileinput-button
+        .span8
+          p Select file(s) from your computer to upload.
+          p.small Maximun upload size 60MB
+        .span4
+          span.btn.btn-primary.fileinput-button.pull-right
             span Browse files
             = file_field_tag :file, multiple: true, 'data-no-uniform' => "true"
 
       .row-fluid
         .span12
-          .text-center
+          .divider
             | OR
 
       .row-fluid

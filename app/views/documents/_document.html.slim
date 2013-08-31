@@ -1,7 +1,7 @@
 div.document.clearfix id="attached_asset_#{document.id}"
   span
   	= link_to(document_icon(document.file_extension) + document.name, document.download_url)
-  span
+  span.remove
     - if document.active?
       = link_to '', deactivate_event_document_path(document.attachable, document), remote: true, class: 'icon-remove-circle'
     - else
