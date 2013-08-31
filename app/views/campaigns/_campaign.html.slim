@@ -9,7 +9,7 @@ li id="campaign_#{campaign.id}"
       br>/
       | First event
     span.last
-      = format_date campaign.last_event.try(:start_at)
+      = format_date campaign.last_event.try(:end_at)
       br>/
       | Last event
   span.pull-right

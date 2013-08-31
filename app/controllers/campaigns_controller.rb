@@ -43,6 +43,27 @@ class CampaignsController < FilteredController
     resource.kpis.include?(kpi)
   end
 
+  def remove_kpi
+    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
+    @field.destroy
+  end
+
+  def add_kpi
+    if resource.form_fields.where(kpi_id: params[:kpi_id]).count == 0
+      kpi = Kpi.global_and_custom(current_company).find(params[:kpi_id])
+      ordering = resource.form_fields.select('max(ordering) as ordering').reorder(nil).first.ordering || 0
+      @field = resource.form_fields.create({kpi: kpi, field_type: kpi.kpi_type, name: kpi.name, ordering: ordering + 1, options: {capture_mechanism: kpi.capture_mechanism}}, without_protection: true)
+
+      # Update any preview results captured for this kpi using the new
+      # created field
+      if @field.persisted?
+        EventResult.joins(:event).where(events: {campaign_id: resource}, kpi_id: kpi).update_all(form_field_id: @field.id)
+      end
+    else
+      render text: ''
+    end
+  end
+
   protected
     def normalize_brands(brands)
       unless brands.empty?

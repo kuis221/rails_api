@@ -59,6 +59,7 @@ class CampaignFormField < ActiveRecord::Base
     end
   end
 
+  # TODO: should we delegate this to the kpi?
   def is_segmented?
     ['percentage', 'count'].include? field_type
   end

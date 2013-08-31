@@ -6,20 +6,19 @@
   label Description:
   p.kpi-element-value= resource.description
 
-.row-fluid style="display: none"
-  = f.input :kpi_type, collection: Kpi::COMPLETE_TYPE_OPTIONS.map{|o| [o.capitalize, o]}
-
-- if !Kpi::GOAL_ONLY_TYPE_OPTIONS.include?(resource.kpi_type)
-  #kpisegment-fields.row-fluid.form-horizontal style="display: none"
-    div.control-group
-      = f.fields_for :kpis_segments do |kf|
-        label.control-label= kf.object.text
-        div.controls
+- if resource.is_segmented?
+  #kpisegment-fields.row-fluid.form-horizontal
+    = f.fields_for :kpis_segments do |kf|
+      .control-group
+        .controls
           = kf.fields_for :goals, kf.object.id.nil? ? Goal.new : Goal.find_or_initialize_by_kpis_segment_id_and_campaign_id(kf.object.id, @campaign.id), wrapper: false do |gf|
             = gf.hidden_field :campaign_id
-            = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+            = gf.hidden_field :kpi_id, value: resource.id
+            label
+              = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+              = kf.object.text
 - else
-  #kpigoal-fields.row-fluid.form-horizontal style="display: none"
+  #kpigoal-fields.row-fluid.form-horizontal
     div.control-group
       = f.fields_for :goals, resource.new_record? ? Goal.new : Goal.find_or_initialize_by_kpi_id_and_campaign_id(resource.id, @campaign.id), wrapper: false do |gf|
         = gf.hidden_field :campaign_id, value: @campaign.id

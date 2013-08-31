@@ -14,6 +14,6 @@
 class Goal < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :kpi
-  belongs_to :segment
+  belongs_to :kpis_segment
   attr_accessible :value, :campaign_id, :kpi_id
 end

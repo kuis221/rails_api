@@ -77,7 +77,7 @@ window.FormBuilder = {
 			element = $(e.target).closest('.field')
 			field = element.data('field')
 			if field.options.kpi_id? 
-				bootbox.confirm "Deleting this fiel will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
+				bootbox.confirm "Deleting this field will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
 					if result
 						if field.options.module == 'custom'
 							element.appendTo @customKpisList
@@ -100,7 +100,7 @@ window.FormBuilder = {
 		true
 
 	_loadForm: (options) ->
-		$.getJSON options.url, (response) =>
+		$.getJSON "#{@options.url}/post_event_form", (response) =>
 			@kpis = response.kpis
 			@renderModules @fieldsContainer
 
@@ -141,15 +141,24 @@ window.FormBuilder = {
 		field
 
 	deactivateKpi: (kpi_id) ->
-		if field = FormBuilder._findFieldByKpi(kpi_id)
-			$(field).remove()
-			$(document).trigger 'form-builder:kpi-removed', [kpi_id]
+		$.ajax "#{@options.url}/kpi", {
+			method: 'DELETE',
+			data: {kpi_id: kpi_id},
+			dataType: 'json',
+			success: (reponse) =>
+				if field = @_findFieldByKpi(kpi_id)
+					$(field).remove()
+		}
 
 	activateKpi: (kpi_id) ->
-		kpis  = $.grep(@kpis, (kpi, index) ->  kpi.id == kpi_id )
-		if kpis.length > 0
-			kpi = kpis[0]
-			@_addFieldToForm @_kpiToField(kpi)
+		$.ajax "#{@options.url}/kpi", {
+			method: 'POST',
+			data: {kpi_id: kpi_id},
+			dataType: 'json',
+			success: (reponse) =>
+				@_addFieldToForm reponse.field
+		}
+
 	
 	removeModule: (module) ->
 		module.appendTo @modulesList
@@ -176,7 +185,7 @@ window.FormBuilder = {
 	saveForm: () ->
 		data = $.map $('> div.field, > div.section, .module div.field', @formWrapper), (fieldDiv, index) =>
 			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
-		$.post @options.saveUrl, {fields: data}, (response) =>
+		$.post "#{@options.url}/update_post_event_form", {fields: data}, (response) =>
 			alert response
 
 

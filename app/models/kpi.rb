@@ -64,6 +64,10 @@ class Kpi < ActiveRecord::Base
     self.module != 'custom'
   end
 
+  def is_segmented?
+    ['percentage', 'count'].include? kpi_type
+  end
+
   def sync_segments_and_goals
     unless self.out_of_the_box?
       if GOAL_ONLY_TYPE_OPTIONS.include?(self.kpi_type)

@@ -1,47 +1,47 @@
 - submit_link = link_to 'submit', submit_event_path, method: :put
 - if resource.in_future?
   .alert.alert-grey
-    == "Your event is scheduled. You can <a href=\"#event-members\">manage the event team</a>, <a href=\"#event-tasks\">complete tasks</a>, or <a href=\"#event-documents\">upload event documents</a>."
+    == "Your event is scheduled. You can <a href=\"#event-members\" class=\"smooth-scroll\">manage the event team</a>, <a href=\"#event-tasks\" class=\"smooth-scroll\">complete tasks</a>, or <a href=\"#event-documents\" class=\"smooth-scroll\">upload event documents</a>."
 
   - late_tasks = resource.tasks.late.count
   - today_tasks = resource.tasks.due_today.count
   - if today_tasks > 0 && today_tasks > 0
     .alert.alert-danger
-      == "Your event has #{pluralize(late_tasks, 'late task')} and #{pluralize(today_tasks, 'task')} that are due today. <a href=\"#event-tasks\">Click here</a> to complete."
+      == "Your event has #{pluralize(late_tasks, 'late task')} and #{pluralize(today_tasks, 'task')} that are due today. <a href=\"#event-tasks\" class=\"smooth-scroll\">Click here</a> to complete."
   - else
     - if late_tasks > 0
       .alert.alert-danger
-        == "Your event has #{pluralize(late_tasks, 'late task')}. <a href=\"#event-tasks\">Click here</a> to complete."
+        == "Your event has #{pluralize(late_tasks, 'late task')}. <a href=\"#event-tasks\"  class=\"smooth-scroll\">Click here</a> to complete."
 
     - if (today_tasks = resource.tasks.due_today.count) > 0
       .alert.alert-gray
-        == "Your event has #{(today_tasks > 1) ? today_tasks.to_s+' tasks that are' : ' one task that is'} due today. <a href=\"#event-tasks\">Click here</a> to complete."
+        == "Your event has #{(today_tasks > 1) ? today_tasks.to_s+' tasks that are' : ' one task that is'} due today. <a href=\"#event-tasks\" class=\"smooth-scroll\">Click here</a> to complete."
 
 - elsif resource.happens_today?
   .alert.alert-grey
     - links = []
-    - links.push '<a href="#event-results-form">post event data</a>'
-    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
-    - links.push '<a href="#event-surveys">conduct surveys</a>' if resource.campaign.active_field_types.include?('surveys')
-    - links.push '<a href="#event-comments">gather comments</a>' if resource.campaign.active_field_types.include?('comments')
+    - links.push '<a href="#event-results-form" class="smooth-scroll">post event data</a>'
+    - links.push '<a href="#event-photos" class="smooth-scroll">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys" class="smooth-scroll">conduct surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments" class="smooth-scroll">gather comments</a>' if resource.campaign.active_field_types.include?('comments')
     == "Your event is scheduled for today. Please enter #{links.to_sentence} from your audience during or shortly after the event."
 
 - elsif resource.was_yesterday? and resource.unsent?
   .alert.alert-grey
     - links = []
-    - links.push '<a href="#event-results-form">post event data</a>'
-    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
-    - links.push '<a href="#event-surveys">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
-    - links.push '<a href="#event-comments">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
+    - links.push '<a href="#event-results-form" class="smooth-scroll">post event data</a>'
+    - links.push '<a href="#event-photos" class="smooth-scroll">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys" class="smooth-scroll">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments" class="smooth-scroll">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
     == "Your post event report is due. Please enter #{links.to_sentence} now. Once complete, please #{submit_link} your post event form."
 
 - elsif resource.unsent?
   .alert.alert-danger
     - links = []
-    - links.push '<a href="#event-results-form">submit post event data</a>'
-    - links.push '<a href="#event-photos">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
-    - links.push '<a href="#event-surveys">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
-    - links.push '<a href="#event-comments">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
+    - links.push '<a href="#event-results-form" class="smooth-scroll">submit post event data</a>'
+    - links.push '<a href="#event-photos" class="smooth-scroll">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
+    - links.push '<a href="#event-surveys" class="smooth-scroll">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
+    - links.push '<a href="#event-comments" class="smooth-scroll">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
     == "Your post event report is late. Please #{links.to_sentence} now. Once complete, please #{submit_link} your post event form."
 
 - elsif resource.approved?

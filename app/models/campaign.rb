@@ -151,6 +151,23 @@ class Campaign < ActiveRecord::Base
     @active_field_types ||= form_fields.map(&:field_type).uniq
   end
 
+  def goals_for(kpis)
+    kpis.map do |kpi|
+      goal = goals.select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || goals.build({kpi: kpi, value: nil}, without_protection: true)
+      goal.kpi = kpi
+      goal
+    end
+  end
+
+  def segments_goals_for(kpi)
+    kpi.kpis_segments.map do |segment|
+      goal = goals.includes(:kpis_segment).select{|r|  r.kpis_segment_id == segment.id }.first || goals.build({kpi: kpi, kpis_segment: segment, value: nil}, without_protection: true)
+      goal.kpi = kpi
+      goal.kpis_segment = segment
+      goal
+    end
+  end
+
 
   def survey_brands
     @survey_brands ||= begin

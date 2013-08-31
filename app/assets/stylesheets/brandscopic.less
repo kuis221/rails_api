@@ -1891,10 +1891,6 @@ overflow: hidden;
  	overflow: hidden;
 }
 
-.with-details-close-bar {
-	position: relative;
-}
-
 #content-with-left-nav {
 	padding-left: 190px;
 	#content-left-nav {
@@ -3788,4 +3784,64 @@ svg{
 }
 
 
+.with-details-close-bar {
+	position: relative !important;
 
+	.padding-top-close-bar {
+		padding-top: 70px !important;
+	} 
+}
+
+.switch-toggle {
+	width: 75px;
+	height: 28px;
+	overflow: hidden;
+	a.btn {
+		line-height: normal !important;
+		float: left;
+		width: 50px;
+		height: 20px;
+		padding: 4px 5px;
+		color: #fff;
+		border-radius: 15px;
+		span {
+			background-color: #fff;
+			width: 20px;
+			height: 20px;
+			border-radius: 10px;
+			display: block;
+			float: right;
+			margin: 0;
+		}
+	}
+	a.toggle-on-btn {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+	}
+	a.toggle-off-btn {
+		text-align: right;
+		padding-right: 10px;
+		background-color: @grey_three;
+		span {
+			float: left;
+		}
+	}
+	&.inactive{
+		.toggle-on-btn {
+			display: none;
+		}
+		.toggle-off-btn {
+			display: block;
+		}
+	}
+	&.active{
+		.toggle-on-btn {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+	}
+}

@@ -405,6 +405,9 @@ ul.select2-results{
 	.modal-header {
 		border-bottom: none;
 		padding: 20px 20px 0 30px;
+		// This is to compensate the padding top of the .modal-body. If changed make sure
+		// that modals with and without headers looks good
+		margin-bottom: -20px;
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -415,7 +418,7 @@ ul.select2-results{
 	.modal-body {
 		max-height: 800px;
 		overflow: hidden;
-		padding: 0 30px 25px 30px;
+		padding: 20px 30px 25px 30px;
 		input[type="text"], input[type="email"], input[type="password"]{
 			background-color: white !important;
 			background-image: none !important;

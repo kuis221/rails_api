@@ -16,10 +16,12 @@
 javascript:
     var captureOptions = #{Kpi::CUSTOM_TYPE_OPTIONS.to_json.html_safe}
 
-    $(document).ready(function() {
-      kpiType = $('#kpi_kpi_type').val();
-      toggleSegmentsGoals(kpiType);
-    });
+    if (!#{resource.out_of_the_box?.to_s}) {
+      $(document).ready(function() {
+        kpiType = $('#kpi_kpi_type').val();
+        toggleSegmentsGoals(kpiType);
+      });
+    }
 
     $('#kpi_kpi_type').change(function() {
       capture = $('#kpi_capture_mechanism');

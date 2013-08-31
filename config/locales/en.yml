@@ -68,6 +68,7 @@ en:
         date_range: "New Date range"
         day_part: "New Day part"
         event_expense: "New Expense"
+        kpi: "New KPI"
       edit:
         event: "Edit Event"
         task: "Edit Task"
@@ -81,6 +82,7 @@ en:
         date_range: "Edit Date range"
         day_part: "Edit Day part"
         event_expense: "Edit Expense"
+        kpi: "Edit KPI"
 
   form_builder:
     modules:

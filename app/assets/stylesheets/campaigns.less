@@ -1,149 +1,180 @@
-#post-event-form-builder {
-	background-color: #fff;
-	border: 1px solid #ccc;
-	width: 850px;
-	padding: 10px;
-	margin: 0;
+.campaigns.show {
+	#kpis-list {
+		list-style: none;
+		span.on-off-switch {
+			width: 100px;
+			height: 60px;
+			float: left;
+			padding-top: 10px;
+		}
 
-	// Icons for the modules
-	.icon-consumer_reach:before{content:"\f118";}
-	.icon-consumer_reach{*zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf118;')" }
-	.icon-demographics:before{content:"\f0c0";}
-	.icon-demographics:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0c0;')" }
-	.icon-competitive_analysis:before{content:"\f0ac";}
-	.icon-competitive_analysis:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0ac;')" }
-	.icon-expenses:before{content:"\f0d6";}
-	.icon-expenses:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0d6;')" }
-	.icon-photos:before{content:"\f083";}
-	.icon-photos:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf083;')" }
-	.icon-surveys:before{content:"\f046";}
-	.icon-surveys:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf046;')" }
-	.icon-videos:before{content:"\f03d";}
-	.icon-videos:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf03d;')" }
+		span.kpi-goal {
+			width: 200px;
+			float: right;
+		}
 
-	.tab-content {
-		overflow: visible;
+		.kpi-goals-list {
+			li {
+				border: none;
+				min-height: 0;
+			}
+		}
+
 	}
 
-	ul.nav-tabs {
-		background-color: #ccc;
-	}
+	#post-event-form-builder {
+		background-color: #fff;
+		border: 1px solid #ccc;
+		width: 850px;
+		padding: 10px;
+		margin: 0;
 
-	.action-buttons {
-		position: absolute;
-		top: 0;
-		right: 0;
-		display: none;
-	}
-
-	.fields-sidebar {
-		display: inline-block;
-		width: 300px;
-		float: left;
+		// Icons for the modules
+		.icon-consumer_reach:before{content:"\f118";}
+		.icon-consumer_reach{*zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf118;')" }
+		.icon-demographics:before{content:"\f0c0";}
+		.icon-demographics:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0c0;')" }
+		.icon-competitive_analysis:before{content:"\f0ac";}
+		.icon-competitive_analysis:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0ac;')" }
+		.icon-expenses:before{content:"\f0d6";}
+		.icon-expenses:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf0d6;')" }
+		.icon-photos:before{content:"\f083";}
+		.icon-photos:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf083;')" }
+		.icon-surveys:before{content:"\f046";}
+		.icon-surveys:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf046;')" }
+		.icon-videos:before{content:"\f03d";}
+		.icon-videos:before{ *zoom: ~"expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf03d;')" }
 
 		.tab-content {
-			border: 1px solid #ccc;
-			border-top: none;
-			padding-top: 20px;
-			background-color: #fff;
+			overflow: visible;
 		}
-		.module {
-			width: 125px;
-			height: 100px;
+
+		ul.nav-tabs {
+			background-color: #ccc;
+		}
+
+		.action-buttons {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: none;
+		}
+
+		.fields-sidebar {
 			display: inline-block;
-			text-align: center;
-			i {
-				font-size: 35px;
-			}
+			width: 300px;
+			float: left;
 
-			.form-view {
-				display: none;
+			.tab-content {
+				border: 1px solid #ccc;
+				border-top: none;
+				padding-top: 20px;
+				background-color: #fff;
 			}
-		}
-
-		.ui-sortable-helper {
-			.field,
 			.module {
-				width: 300px;
-			}
-		}
+				width: 125px;
+				height: 100px;
+				display: inline-block;
+				text-align: center;
+				i {
+					font-size: 35px;
+				}
 
-		#custom-kpi-list {
-			.field {
-				.controls {
+				.form-view {
 					display: none;
 				}
 			}
-		}
 
-		div[data-class="SectionField"] {
-			margin-right: 30px;
-			border: 1px solid #ccc;
-		}
-	}
-
-	#form-wrapper {
-		display: inline-block;
-		width: 500px;
-		min-height: 500px;
-		margin-left: 15px;
-
-		div.empty-form-legend {
-			display: none;
-			padding: 50px 30px;
-			text-align: center;
-		}
-
-		div.empty-form-legend:first-child:last-child {
-		    display: block;
-		}
-
-		.field,
-		.module {
-			position: relative;
-			&:hover {
-				border: 1px dashed #ccc;
-
-				.action-buttons {
-					display: block;
+			.ui-sortable-helper {
+				.field,
+				.module {
+					width: 300px;
 				}
 			}
-			.icon-view {
+
+			#custom-kpi-list {
+				.field {
+					.controls {
+						display: none;
+					}
+				}
+			}
+
+			div[data-class="SectionField"] {
+				margin-right: 30px;
+				border: 1px solid #ccc;
+			}
+		}
+
+		#form-wrapper {
+			display: inline-block;
+			width: 500px;
+			min-height: 500px;
+			margin-left: 15px;
+
+			div.empty-form-legend {
 				display: none;
+				padding: 50px 30px;
+				text-align: center;
 			}
-		}
 
-		.module-photos {
-			.icon-picture {
-				font-size: 40px;
-				padding: 30px;
+			div.empty-form-legend:first-child:last-child {
+			    display: block;
 			}
-		}
 
-		.module-videos {
-			.icon-facetime-video {
-				font-size: 40px;
-				padding: 30px;
+			.field,
+			.module {
+				position: relative;
+				&:hover {
+					border: 1px dashed #ccc;
+
+					.action-buttons {
+						display: block;
+					}
+				}
+				.icon-view {
+					display: none;
+				}
 			}
-		}
 
-		.selected {
-			background-color: #ffff99;
+			.module-photos {
+				.icon-picture {
+					font-size: 40px;
+					padding: 30px;
+				}
+			}
+
+			.module-videos {
+				.icon-facetime-video {
+					font-size: 40px;
+					padding: 30px;
+				}
+			}
+
+			.selected {
+				background-color: #ffff99;
+			}
 		}
 	}
-}
 
-.kpi_modal {
-	form {
-		#similar-kpi-message {
-			margin-bottom: 12px;
-			color: #B94A48;
-		}
+	.kpi_modal {
+		form {
+			#similar-kpi-message {
+				margin-bottom: 12px;
+				color: #B94A48;
+			}
 
-		#kpisegment-fields, #kpigoal-fields {
-			input {
-				margin: 0 10px 10px 0;
+			.control-group {
+				width: 100%;
+			}
+
+			#kpisegment-fields, #kpigoal-fields {
+				input {
+					margin: 0 10px 10px 0;
+					float: left;
+				}
 			}
 		}
 	}
+
 }

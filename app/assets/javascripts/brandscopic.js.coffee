@@ -53,7 +53,7 @@ jQuery ->
 				this.title = $(this.element).attr('caption')
 		}
 
-		$("a[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
+		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			if this.hash isnt '' and typeof $(this).data('toggle') is 'undefined'
 				e.preventDefault()
 				e.stopPropagation()
