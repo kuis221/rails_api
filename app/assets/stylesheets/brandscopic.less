@@ -450,6 +450,9 @@ a.datepick-cmd:hover{
 			color: @buttons;
 			font-weight: bold;
 		}
+		&:focus{
+			outline:0;
+		}
 	}
 	a:hover{
 		display: block;
@@ -543,6 +546,9 @@ body.app-layout{
 		text-shadow:none;
 		top:2px;
 		-webkit-font-smoothing: antialiased;
+	}
+	&:focus{
+		outline:0;
 	}
 	&.fullscreen{
 		padding: 5px 17px 4px 17px !important;
@@ -2034,54 +2040,52 @@ body.events.index {
 }
 
 body.events.show {
+	#event-team-members{
+		margin: 0 -12% 0 0;
+	}
 	.team-member, .team {
 		font-size: 11px;
 		padding: 0 0 0 32px;
-		margin: 0 18px 0 0;
+		margin: 0 10% 30px 0;
 		.full-name{
-			font-size: 16px
+			font-size: 16px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
-		.icon-remove-circle{
-			float: right;
-			&:before{
-				bottom: 15px;
-				font-size: 18px;
-			  	right: 13px;
-        	}
-		}
-		&:hover {
-			.icon-remove-circle {
-				display: inline-block;
+		&:hover{
+			a.remove-member-btn{
+				display:inline-block;
+				float: right;
 			}
+		}
+		a.remove-member-btn{
+			display:none;
 		}
 	}
 
 	.team-member:before{
         color: @user_menu;
 		content: "\e024" !important;
-		display: inline-block;
+		display: block;
 		font-family: 'icons';
 		font-size: 20px;
-		right:33px;
+		left: -30px;
 		position: relative;
-		speak: none;
-		text-align: center;
-		top: 20px;
-		-webkit-font-smoothing: antialiased;
+		top: 15px;
+		vertical-align: middle;
 	}
 
 	.team:before{
         color: @user_menu;
 		content: "\e023" !important;
-		display: inline-block;
+		display: block;
 		font-family: 'icons';
 		font-size: 20px;
-		right:43px;
+		left: -40px;
 		position: relative;
-		speak: none;
-		text-align: center;
-		top: 20px;
-		-webkit-font-smoothing: antialiased;
+		top: 15px;
+		vertical-align: middle;
 	}
 	.box_metrics{
 		width: 400px;
@@ -2327,6 +2331,14 @@ body.events.show {
 }
 
 //PHOTOS VIEWS ----------------------------------
+
+.box_photos{
+	.dialogue-photos{
+		position: absolute;
+		left: 80px;
+		top: -60px;		
+	}
+}
 
 .thumbnail{
 	border:0;
@@ -3367,23 +3379,29 @@ svg{
   border-radius: 6px 6px 0px 0px;
 
   a,  a:visited {
+  	color: @user_menu;
     display: block;
+    font-weight: 400;
+    height: 38px;
     text-align: center;
-    line-height: 5px;
+    line-height: 4px;
     text-decoration:  none;
+    width: 35px;
+    &:hover{
+  		color: @user_menu;
+    }
   }
 
   a:before{
   	color: @user_menu;
 	content: "\e012";
-  	display: inline-block;
+  	display: block;
   	font-family: 'icons';
 	font-size: 14px;
-	padding-bottom:5px;
+	padding: 1px 0 12px 0;
   	position: relative;
 	speak: none;
 	text-align: center;
-	top: 1px;
   	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
   }
@@ -3724,10 +3742,10 @@ svg{
 	.place-data{
 		&:before{
 			color: @user_menu;
-			content: "\e018";
+			content: "\e02c";
 			font-family: 'icons';
-			font-size: 19px;
-			padding-top: 3px;
+			font-size: 23px;
+			padding-top: 5px;
 			position: absolute;
 			speak: none;
 			left: 28px;
@@ -3741,8 +3759,8 @@ svg{
 			color: @user_menu;
 			content: "\e01f";
 			font-family: 'icons';
-			font-size: 17px;
-			padding-top: 3px;
+			font-size: 22px;
+			padding-top: 5px;
 			position: absolute;
 			speak: none;
 			left: 27px;
@@ -3754,10 +3772,10 @@ svg{
 	.description-data{
 		&:before{
 			color: @user_menu;
-			content: "\e01e";
+			content: "\e02b";
 			font-family: 'icons';
-			font-size: 17px;
-			padding-top: 3px;
+			font-size: 22px;
+			padding-top: 5px;
 			position: absolute;
 			speak: none;
 			left: 27px;
