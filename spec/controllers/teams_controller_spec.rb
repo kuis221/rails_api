@@ -120,18 +120,6 @@ describe TeamsController do
       assigns(:users).should == [@company_user]
     end
 
-    it 'correctly assign the roles' do
-      roles = @company.roles.all
-      roles += FactoryGirl.create_list(:role, 3, company: @company, active: true)
-
-      # Create some other roles that should not be included
-      FactoryGirl.create(:role, company: @company, active: false, name: "Inactive Role") # inactive role
-      FactoryGirl.create(:role, company_id: @company.id + 1, active: true) # role from other company
-
-      get 'new_member', id: team.id, format: :js
-      assigns(:roles).should =~ roles
-    end
-
     it 'correctly assign the users' do
       users = FactoryGirl.create_list(:company_user, 3, company: @company, role_id: @company_user.role_id, active: true)
       users << @company_user # the current user should also appear on the list

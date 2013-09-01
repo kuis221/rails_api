@@ -86,13 +86,17 @@ module ApplicationHelper
   def format_date_range(start_at, end_at, options={})
     options[:date_separator] ||= '<br />'
 
-    if start_at.to_date != end_at.to_date
-      format_date_with_time(start_at) +
-      options[:date_separator].html_safe +
-      format_date_with_time(end_at)
-    else
-      start_at.strftime('%^a <b>%b %e</b>'+options[:date_separator]).html_safe +
-      "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+    unless start_at.nil?
+      return format_date_with_time(start_at) if end_at.nil?
+
+      if start_at.to_date != end_at.to_date
+        format_date_with_time(start_at) +
+        options[:date_separator].html_safe +
+        format_date_with_time(end_at)
+      else
+        start_at.strftime('%^a <b>%b %e</b>'+options[:date_separator]).html_safe +
+        "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+      end
     end
   end
 

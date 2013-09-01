@@ -174,21 +174,16 @@ describe EventsController do
         response.should be_success
         assigns(:event).should == event
         assigns(:users).should == [another_user]
+        assigns(:staff).should == [another_user]
       end
 
       it 'should load teams with active users' do
-        team = FactoryGirl.create(:team, company_id: @company.id)
+        @company_user.user.update_attributes({first_name: 'CDE', last_name: 'FGH'}, without_protection: true)
+        team = FactoryGirl.create(:team, name: 'ABC', company_id: @company.id)
         team.users << @company_user
         get 'new_member', id: event.id, format: :js
-        assigns(:teams).should == [team]
         assigns(:assignable_teams).should == [team]
-      end
-
-      it 'should not load teams without assignable users' do
-        team = FactoryGirl.create(:team, company_id: @company.id)
-        get 'new_member', id: event.id, format: :js
-        assigns(:teams).should == [team]
-        assigns(:assignable_teams).should == []
+        assigns(:staff).should == [team,@company_user]
       end
     end
 

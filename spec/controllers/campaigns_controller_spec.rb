@@ -165,19 +165,19 @@ describe CampaignsController do
     end
 
     it 'should load teams with active users' do
-      team = FactoryGirl.create(:team, company_id: @company.id)
+      team = FactoryGirl.create(:team, name:'123', company_id: @company.id)
       team.users << @company_user
       get 'new_member', id: campaign.id, format: :js
-      assigns(:teams).should == [team]
       assigns(:assignable_teams).should == [team]
+      assigns(:staff).should == [team, @company_user]
     end
 
     it 'should not load teams without assignable users' do
       team = FactoryGirl.create(:team, company_id: @company.id)
       campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
-      assigns(:teams).should == [team]
       assigns(:assignable_teams).should == []
+      assigns(:staff).should == []
     end
   end
 

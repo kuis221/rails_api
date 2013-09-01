@@ -19,12 +19,9 @@ module TeamMembersHelper
     end
 
     def new_member
-      @teams = assignable_teams
-      @roles = company_roles
       @users = company_users
       @users = @users.where(['company_users.id not in (?)', resource.users]) unless resource.users.empty?
-      unordered_staff = @users + @teams
-      @staff = unordered_staff.sort_by &:name
+      @staff = (@users + assignable_teams).sort_by &:name
     end
 
     def add_members
@@ -76,13 +73,14 @@ module TeamMembersHelper
       def company_teams
         @company_teams ||= current_company.teams.active.order('teams.name ASC')
       end
-      def company_roles
-        @company_roles ||= current_company.roles.active.order('roles.name ASC')
-      end
 
       def assignable_teams
-        @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
-          !resource.team_ids.include?(team.id)
+        if resource.is_a?(Team)
+          @assignable_teams = []
+        else
+          @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
+            !resource.team_ids.include?(team.id)
+          end
         end
       end
   end
