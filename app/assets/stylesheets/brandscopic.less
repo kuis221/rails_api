@@ -899,6 +899,8 @@ li.dropdown a{
 	background-color: @brand;
 	border: 0;
 	color: white;
+	text-align: center;
+	width: 90px;
 }
 .nav-tabs li a:hover{
 	background-color: white;
@@ -1487,8 +1489,8 @@ li#user_menu{
     			}
     			.events, .hours, .score{
     				display: inline-block;
-    				margin-top: 10px;
-    				width: 110px;
+    				margin: 10px 0 0 20px;
+    				width: 90px;
     				.n_events, .n_hours, .n_score{
     					font-size: 16px;
     				}
@@ -1496,7 +1498,7 @@ li#user_menu{
     			span{
     				&:first-child{
     					float: left;
-    					width: 600px;
+    					width: 60%;
     				}
     				&.n_events{
     					font-size: 16px;
@@ -2745,7 +2747,11 @@ ul.thumbnails{
 			margin: 0;
 		}
 		.control-label{
+			cursor:default;
 			margin-top: 5px;
+		}
+		.btn-primary{
+			margin-top: 4px;
 		}
 	}
 	input[type="text"]#venue-search-term, #venue-search-location{
@@ -2758,6 +2764,7 @@ ul.thumbnails{
 		padding: 2px 15px;
 		-webkit-border-radius: 20px;
     	border-radius: 20px;
+    	width:65% !important;
 	}
 	input:-moz-placeholder {
 	  color: @user_menu;
@@ -3344,6 +3351,7 @@ svg{
 }
 
 .survey-column-graph {
+	margin: 40px 0 80px 0;
 	width: 480px;
 }
 
@@ -3591,6 +3599,11 @@ svg{
 	}
 	.results-comments, .results-expenses, .results-surveys{
 		margin-top: 40px;
+	}
+	.results-surveys{
+		p{
+			width: 410px;
+		}
 	}
 	ul#event-surveys-list{
 		li{
