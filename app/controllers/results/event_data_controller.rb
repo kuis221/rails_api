@@ -25,7 +25,7 @@ class Results::EventDataController < FilteredController
         data = EventData.select('sum(impressions) AS total_impressions,
                                  sum(interactions) AS total_interactions,
                                  sum(samples) AS total_samples,
-                                 sum(cost) AS total_cost,
+                                 sum(spent) AS total_expenses,
                                  avg(gender_female) AS average_gender_female,
                                  avg(gender_male) AS average_gender_male,
                                  avg(ethnicity_asian) AS average_ethnicity_asian,
@@ -43,7 +43,7 @@ class Results::EventDataController < FilteredController
         totals['impressions'] = data.total_impressions || 0
         totals['interactions'] = data.total_interactions || 0
         totals['samples'] = data.total_samples || 0
-        totals['cost'] = data.total_cost || 0
+        totals['spent'] = data.total_expenses || 0
         totals['gender_female'] = data.average_gender_female || 0
         totals['gender_male'] = data.average_gender_male || 0
         totals['ethnicity_asian'] = data.average_ethnicity_asian || 0

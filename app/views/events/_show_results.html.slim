@@ -39,14 +39,14 @@
                 div.progress
                   .bar style="width: #{event_data.samples*100/resource.kpi_goals[Kpi.samples.id]}%"
 
-          - if active_kpis.include?(Kpi.cost)
+          - if active_kpis.include?(Kpi.expenses)
             li
               div.metric
-                span= number_to_currency(event_data.cost, precision: 0)
+                span= number_to_currency(event_data.spent, precision: 0)
                 = " Spent"
-              - if resource.kpi_goals[Kpi.cost.id].present?
+              - if resource.kpi_goals[Kpi.spent.id].present?
                 div.progress
-                  .bar style="width: #{event_data.cost*100/resource.kpi_goals[Kpi.cost.id]}%"
+                  .bar style="width: #{event_data.spent*100/resource.kpi_goals[Kpi.spent.id]}%"
 
             - if active_kpis.include?(Kpi.photos)
               - photo_count = resource.photos.count
@@ -63,22 +63,22 @@
                 span= resource.surveys.count
                 = " Surveys"
         ul.consumer-reach-metrics.pull-right
-          - if event_data.cost.present? && event_data.impressions > 0
+          - if event_data.spent.present? && event_data.impressions > 0
             li
               div.metric
-                span= number_to_currency(event_data.cost / event_data.impressions, precision: 2)
+                span= number_to_currency(event_data.spent / event_data.impressions, precision: 2)
                 = " / Impression"
 
-          - if event_data.cost.present? && event_data.interactions > 0
+          - if event_data.spent.present? && event_data.interactions > 0
             li
               div.metric
-                span= number_to_currency(event_data.cost / event_data.interactions, precision: 2)
+                span= number_to_currency(event_data.spent / event_data.interactions, precision: 2)
                 = " / Influence"
 
-          - if event_data.cost.present? && event_data.interactions > 0
+          - if event_data.spent.present? && event_data.interactions > 0
             li
               div.metric
-                span= number_to_currency(event_data.cost / event_data.samples, precision: 2)
+                span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
                 = " / Sample"
 
     .row-fluid

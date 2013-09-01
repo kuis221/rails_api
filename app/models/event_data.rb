@@ -14,14 +14,14 @@
 #  ethnicity_hispanic        :decimal(5, 2)    default(0.0)
 #  ethnicity_native_american :decimal(5, 2)    default(0.0)
 #  ethnicity_white           :decimal(5, 2)    default(0.0)
-#  cost                      :decimal(10, 2)   default(0.0)
+#  spent                      :decimal(10, 2)   default(0.0)
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #
 
 class EventData < ActiveRecord::Base
   belongs_to :event
-  attr_accessible :cost, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, :gender_female, :gender_male, :impressions, :interactions, :samples
+  attr_accessible :spent, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, :gender_female, :gender_male, :impressions, :interactions, :samples
 
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
 
@@ -30,7 +30,7 @@ class EventData < ActiveRecord::Base
     self.impressions = results.impressions.sum(:scalar_value).round
     self.interactions = results.consumers_interactions.sum(:scalar_value).round
     self.samples = results.consumers_sampled.sum(:scalar_value).round
-    self.cost = event.event_expenses.sum(:amount)
+    self.spent = event.event_expenses.sum(:amount)
 
     #For gender and ethnicity
     segments_names_map = {

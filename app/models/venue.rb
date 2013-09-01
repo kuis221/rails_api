@@ -90,7 +90,7 @@ class Venue < ActiveRecord::Base
     self.impressions = results.sum(:impressions).round
     self.interactions = results.sum(:interactions).round
     self.sampled = results.sum(:samples).round
-    self.spent = results.sum(:cost).round
+    self.spent = results.sum(:spent).round
 
     self.avg_impressions = 0
     self.avg_impressions_hour = 0

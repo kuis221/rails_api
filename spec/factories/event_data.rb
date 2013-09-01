@@ -11,6 +11,6 @@ FactoryGirl.define do
     ethnicity_hispanic        0
     ethnicity_native_american 0
     ethnicity_white           0
-    cost                      0
+    spent                     0
   end
 end

@@ -185,7 +185,7 @@ class Campaign < ActiveRecord::Base
       "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"percentage", "kpi_id"=> Kpi.gender.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
       "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"percentage", "kpi_id"=> Kpi.age.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
       "2" => {"ordering"=>"2", "name"=>"Ethnicity/Race", "field_type"=>"percentage", "kpi_id"=> Kpi.ethnicity.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "3" => {"ordering"=>"3", "name"=>"Expenses", "field_type"=>"number", "kpi_id"=> Kpi.cost.id, "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
+      "3" => {"ordering"=>"3", "name"=>"Expenses", "field_type"=>"expenses", "kpi_id"=> Kpi.expenses.id, "options"=>{"capture_mechanism"=>"currency", "predefined_value"=>""}},
       "4" => {"ordering"=>"4", "name"=>"Surveys", "field_type"=>"surveys", "kpi_id"=> Kpi.surveys.id},
       "5" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id},
       "6" => {"ordering"=>"6", "name"=>"Videos", "field_type"=>"videos", "kpi_id"=> Kpi.videos.id},

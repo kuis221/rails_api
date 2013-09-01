@@ -28,7 +28,7 @@ class EventResult < ActiveRecord::Base
   scope :impressions, lambda{ where(kpi_id: Kpi.impressions) }
   scope :consumers_interactions, lambda{ where(kpi_id: Kpi.interactions) }
   scope :consumers_sampled, lambda{ where(kpi_id: Kpi.samples) }
-  scope :spent, lambda{ where(kpi_id: Kpi.cost) }
+  scope :spent, lambda{ where(kpi_id: Kpi.expenses) }
   scope :gender, lambda{ where(kpis_segment_id: Kpi.gender.kpis_segment_ids) }
   scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
   scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }

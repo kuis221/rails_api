@@ -10,6 +10,8 @@ window.FormBuilder = {
 		@customKpisList = $('<div id="custom-kpi-list">').appendTo @fieldsContainer
 		@genericFieldsList = $('<div>').appendTo @fieldsContainer
 
+		@attributesPanel = $('<div class="field-attributes-panel">').css({position: 'absolute', display: 'none'}).appendTo($('body'))
+
 		@formWrapper.sortable {
 			cancel: '.module .field, .empty-form-legend ',
 			connectWith: '.section-fields',
@@ -111,7 +113,7 @@ window.FormBuilder = {
 		if field.module? and @modules[field.module]
 			if !@modules[field.module]._loaded
 				@modules[field.module]._loaded = true
-				@formWrapper.append @modules[field.module].element
+				@formWrapper.append @modules[field.module].render()
 				@modules[field.module].clearFields()
 			@modules[field.module].addField @buildField(field)
 		else if field.module? and field.module is 'custom'
@@ -121,7 +123,7 @@ window.FormBuilder = {
 			@formWrapper.append @buildField(field)
 		else if field.type is 'comments'
 			@modules['comments']._loaded = true
-			@formWrapper.append @modules['comments'].element
+			@formWrapper.append @modules['comments'].render()
 			@modules['comments'].clearFields()
 			@modules['comments'].addField @buildField(field)
 		else
@@ -159,20 +161,6 @@ window.FormBuilder = {
 				@_addFieldToForm reponse.field
 		}
 
-	
-	removeModule: (module) ->
-		module.appendTo @modulesList
-		for element in module.find('.field')
-			field = $(element).data('field')
-			if field.options.kpi_id?
-				$(document).trigger 'form-builder:kpi-removed', [field.options.kpi_id]
-
-		moduleObject = module.data('module')
-		moduleObject.clearFields()
-		for kpi in @kpis
-			if kpi.module == moduleObject.id
-				moduleObject.addField @buildField(@_kpiToField(kpi))
-
 
 	_findFieldByKpi: (kpi_id) ->
 		$.grep @formWrapper.find('.field'), (element, index) =>
@@ -201,32 +189,9 @@ window.FormBuilder = {
 				if kpi.module != 'custom'
 					if not @modules[kpi.module]?
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
-						@modulesList.append module.render().data('field', module)
-					@modules[kpi.module].addField @buildField(field_options)
 
 					if kpi.module == 'comments'
 						commmentsField = true
-				else
-					# @modules[kpi.module] = $.extend({}, FormModule, {id: "custom-#{kpi.id}", icon: kpi.module})
-					@customKpisList.append @buildField(field_options)
-
-		@modulesList.append commentsModule.render().data('field', commentsModule)
-
-		if not commmentsField
-			commentsModule.addField @buildField({type: 'Comments'})
-
-
-		@modulesList.sortable({
-			connectWith: "#form-wrapper",
-			items: '> div',
-			helper: ( event, element ) ->
-				$(element).data('field').draggableHelper().css({width: '400px'})
-		}).disableSelection()
-
-		@customKpisList.sortable({
-			connectWith: "#form-wrapper",
-			items: '> div'
-		}).disableSelection()
 
 		@
 
@@ -239,7 +204,12 @@ window.FormBuilder = {
 		field.addClass('selected')
 		$('#form-field-tabs a[href="#attributes"]').tab('show')
 		$field = field.data('field')
-		$('#field-attributes-form').html $field .attributesForm()
+		@attributesPanel.html('').append $('<div class="arrow-left">'), $field.attributesForm()
+		@attributesPanel.find('select').chosen()
+		$("input:checkbox, input:radio, input:file").uniform()
+
+		position = field.offset()
+		@attributesPanel.css({top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'})
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow $('#field-attributes-form')
 
@@ -266,21 +236,15 @@ window.FormModule = {
 
 	render: () ->
 		@element = $('<div class="module module-'+@id+'">')
-			.append(
-				$('<div class="icon-view">')
-					.append($('<i>',{class: "icon-#{@icon}"}))
-					.append($('<label>').text(@label))
-			)
 			.append @_formView()
 
 		@element.sortable {items: '.field'}
 		@element.data 'module', @
 		@element
 
-	_formView:() ->
+	_formView: () ->
 		$('<div class="form-view">').append(
-			$('<fieldset>').append("<legend>#{@label}</legend>"),
-			$('<div class="action-buttons">').append($('<i class="icon-remove-sign delete-module"></i>'))
+			$('<fieldset>').append("<legend>#{@label}</legend>")
 		).append(@_renderFormFields())
 
 	draggableHelper: () ->
@@ -310,7 +274,6 @@ window.FormBuilder.TextField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="TextField">').append [
-		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.options.predefined_value+'" readonly="readonly">'))
 	]
@@ -323,15 +286,15 @@ window.FormBuilder.TextField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			],
+			]),
 
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Capture Mechanism'),
 				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="text">Text</option>'),
@@ -341,11 +304,11 @@ window.FormBuilder.TextField = (options) ->
 				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.options.capture_mechanism = input.val()
-			],
+			]),
 
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
+				$('<label class="control-label">').text('Required')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -377,7 +340,6 @@ window.FormBuilder.SectionField = (options) ->
 
 	@field =  $('<div class="section" data-class="SectionField">').append $('<fieldset>').append([
 		$('<legend>').html(@options.name),
-		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		@fields = $('<div class="section-fields">').append($('<div class="empty-form-legend">This section is empty.</div>'))
 	])
 
@@ -394,13 +356,13 @@ window.FormBuilder.SectionField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Section name'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('legend').text @options.name
-			]
+			])
 		]
 
 	@_getFieldsAttributes = () ->
@@ -430,7 +392,6 @@ window.FormBuilder.NumberField = (options) ->
 	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="NumberField">').append [
-		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append($('<input type="text" value="'+@options.options.predefined_value+'" readonly="readonly">'))
 	]
@@ -439,15 +400,15 @@ window.FormBuilder.NumberField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			],
+			]),
 
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Capture Mechanism'),
 				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="integer">Whole Number</option>'),
@@ -456,11 +417,11 @@ window.FormBuilder.NumberField = (options) ->
 				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.options.capture_mechanism = input.val()
-			],
+			]),
 
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
+				$('<label class="control-label">').text('Required')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -490,7 +451,6 @@ window.FormBuilder.TextareaField = (options) ->
 	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="TextareaField">').append [
-		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
 		$('<label class="control-label">').text(@options.name),
 		$('<div class="controls">').append $('<textarea>').val(@options.options.predefined_value)
 	]
@@ -499,17 +459,17 @@ window.FormBuilder.TextareaField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			],
+			]),
 
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
+				$('<label class="control-label">').text('Required')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 		]
@@ -526,21 +486,16 @@ window.FormBuilder.PhotosField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="PhotosField">').append [
-		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append $('<input type="file">')
+		$('<img src="/assets/photos.png">')
 	]
 
 	@field.data('field', @)
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@options.name = input.val()
-						@field.find('.control-label').text @options.name
-			]
+			$('<div class="field-not-customizable-message">').text(
+				'This field is not customizable'
+			)
 		]
 
 	@getSaveAttributes = () ->
@@ -554,21 +509,16 @@ window.FormBuilder.VideosField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="VideosField">').append [
-		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append $('<input type="file">')
+		$('<img src="/assets/photos.png">')
 	]
 
 	@field.data('field', @)
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@options.name = input.val()
-						@field.find('.control-label').text @options.name
-			]
+			$('<div class="field-not-customizable-message">').text(
+				'This field is not customizable'
+			)
 		]
 
 	@getSaveAttributes = () ->
@@ -612,15 +562,15 @@ window.FormBuilder.CountField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			],
+			]),
 
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Capture Mechanism'),
 				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="radio">Radio</option>'),
@@ -630,11 +580,11 @@ window.FormBuilder.CountField = (options) ->
 						input = $(e.target)
 						@options.capture_mechanism = input.val()
 						@renderInput()
-			],
+			]),
 
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
+				$('<label class="control-label">').text('Required')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 
@@ -659,16 +609,14 @@ window.FormBuilder.PercentageField = (options) ->
 	@options.options.capture_mechanism ||= 'integer'
 	@options.options.predefined_value ||= ''
 
-	@field =  $('<div class="field control-group" data-class="PercentageField">').append [
-		$('<div class="action-buttons"><i class="icon-remove-sign delete-field"></div>'),
-		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">')
+	@field =  $('<div class="field" data-class="PercentageField">').append [
+		$('<div class="control-group percentage">').append($('<label class="field-label">').text(@options.name)),
+		$('<div class="control-group percentage"><div class="controls">')
 	]
 
 	@renderInput = () ->
 		@field.find('.controls').html('')
 			.append($.map(@options.segments, (segment, index) => $("<label><div class=\"input-append\"><input type=text value=\"0\" class=\"input-micro\" name=\"#{@options.name}\" readonly=readonly /><span class=\"add-on\">%</span></div> #{segment}</label>")))
-			.append($("<label><div class=\"input-append\"><input type=text value=\"0\" class=\"input-micro\" name=\"#{@options.name}\" readonly=readonly /><span class=\"add-on\">%</span></div> Total</label>"))
 
 		true
 
@@ -679,15 +627,15 @@ window.FormBuilder.PercentageField = (options) ->
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
 						@field.find('.control-label').text @options.name
-			],
+			]),
 
-			$('<div class="control-group">').append [
+			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Capture Mechanism'),
 				$('<div class="controls">').append $('<select name="capture_mechanism">').append([
 					$('<option value="integer">Whole Number</option>'),
@@ -695,11 +643,11 @@ window.FormBuilder.PercentageField = (options) ->
 				]).val(@options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
 						@options.capture_mechanism = input.val()
-			],
+			]),
 
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Required'),
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">')
+				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
+				$('<label class="control-label">').text('Required')
 			]).on 'change', (e) =>
 						@options.options.required = e.target.checked
 		]
@@ -720,21 +668,16 @@ window.FormBuilder.CommentsField = (options) ->
 	@options.options.predefined_value ||= ''
 
 	@field =  $('<div class="field control-group" data-class="CommentsField">').append [
-		$('<label class="control-label">').text(@options.name),
-		$('<div class="controls">').append $('<textarea>').val(@options.predefined_value)
+		$('<img src="/assets/comments.png">')
 	]
 
 	@field.data('field', @)
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
-						input = $(e.target)
-						@options.name = input.val()
-						@field.find('.control-label').text @options.name
-			]
+			$('<div class="field-not-customizable-message">').text(
+				'This field is not customizable'
+			)
 		]
 
 	@getSaveAttributes = () ->
@@ -748,36 +691,16 @@ window.FormBuilder.ExpensesField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="ExpensesField">').append [
-		$('<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Amount</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th>Name</th>
-					<th>Amount</th>
-					<th></th>
-				</tr>
-			</tbody>
-			</table>
-			')
+		$('<img src="/assets/expenses.png">')
 	]
 
 	@field.data('field', @)
 
 	@attributesForm = () ->
 		[
-			$('<div class="control-group">').append [
-				$('<label class="control-label">').text('Field Label'),
-				$('<div class="controls">').append $('<input type="text" name="name">').val(@options.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@options.name = input.val()
-						@field.find('.control-label').text @options.name
-			]
+			$('<div class="field-not-customizable-message">').text(
+				'This field is not customizable'
+			)
 		]
 
 	@getSaveAttributes = () ->
@@ -792,8 +715,7 @@ window.FormBuilder.SurveysField = (options) ->
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="SurveysField">').append [
-		$('<button class="btn btn-primary">New Survey</button>'),
-		$('<p>Survey preview goes here</p>')
+		$('<img src="/assets/surveys.png">')
 	]
 
 	@field.data('field', @)

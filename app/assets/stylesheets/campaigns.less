@@ -19,7 +19,34 @@
 				min-height: 0;
 			}
 		}
+	}
 
+	// This is where the form field attributes are displayed when
+	// a field is selected on the form builder
+	.field-attributes-panel {
+		background-color: #dfdfdf;
+		border-radius: 5px;
+		padding: 10px;
+		margin-left: 40px;
+
+		input[type=text] {
+			background-color: #fff !important;
+		}
+
+		.arrow-left {
+			width: 0; 
+			height: 0; 
+			border-top: 10px solid transparent;
+			border-bottom: 10px solid transparent; 
+			border-right:10px solid #dfdfdf;
+			position: absolute;
+			top:40px;
+			left: -10px;
+		}
+
+		.field-not-customizable-message {
+			padding: 40px 50px;
+		}
 	}
 
 	#post-event-form-builder {
@@ -60,52 +87,6 @@
 			display: none;
 		}
 
-		.fields-sidebar {
-			display: inline-block;
-			width: 300px;
-			float: left;
-
-			.tab-content {
-				border: 1px solid #ccc;
-				border-top: none;
-				padding-top: 20px;
-				background-color: #fff;
-			}
-			.module {
-				width: 125px;
-				height: 100px;
-				display: inline-block;
-				text-align: center;
-				i {
-					font-size: 35px;
-				}
-
-				.form-view {
-					display: none;
-				}
-			}
-
-			.ui-sortable-helper {
-				.field,
-				.module {
-					width: 300px;
-				}
-			}
-
-			#custom-kpi-list {
-				.field {
-					.controls {
-						display: none;
-					}
-				}
-			}
-
-			div[data-class="SectionField"] {
-				margin-right: 30px;
-				border: 1px solid #ccc;
-			}
-		}
-
 		#form-wrapper {
 			display: inline-block;
 			width: 500px;
@@ -122,18 +103,16 @@
 			    display: block;
 			}
 
-			.field,
-			.module {
+			.field {	
 				position: relative;
+				border-radius: 5px;
+				padding: 10px;
 				&:hover {
 					border: 1px dashed #ccc;
 
 					.action-buttons {
 						display: block;
 					}
-				}
-				.icon-view {
-					display: none;
 				}
 			}
 
@@ -152,8 +131,14 @@
 			}
 
 			.selected {
-				background-color: #ffff99;
+				background-color: #dfdfdf;
 			}
+		}
+	}
+
+	.PercentageField {
+		input[type=text] {
+			width: 30px;
 		}
 	}
 

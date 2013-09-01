@@ -14,7 +14,7 @@
 #  ethnicity_hispanic        :decimal(5, 2)    default(0.0)
 #  ethnicity_native_american :decimal(5, 2)    default(0.0)
 #  ethnicity_white           :decimal(5, 2)    default(0.0)
-#  cost                      :decimal(10, 2)   default(0.0)
+#  spent                     :decimal(10, 2)   default(0.0)
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #
@@ -85,7 +85,7 @@ describe EventData do
       event.event_data.interactions.should == 102
       event.event_data.samples.should      == 103
 
-      event.event_data.cost.should      == 345
+      event.event_data.spent.should      == 345
 
       event.event_data.gender_female.should  == 70
       event.event_data.gender_male.should    == 30

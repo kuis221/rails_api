@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130830163432) do
+ActiveRecord::Schema.define(:version => 20130901020307) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -284,17 +284,6 @@ ActiveRecord::Schema.define(:version => 20130830163432) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -307,7 +296,7 @@ ActiveRecord::Schema.define(:version => 20130830163432) do
     t.decimal  "ethnicity_hispanic",        :precision => 5,  :scale => 2, :default => 0.0
     t.decimal  "ethnicity_native_american", :precision => 5,  :scale => 2, :default => 0.0
     t.decimal  "ethnicity_white",           :precision => 5,  :scale => 2, :default => 0.0
-    t.decimal  "cost",                      :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "spent",                     :precision => 10, :scale => 2, :default => 0.0
     t.datetime "created_at",                                                                :null => false
     t.datetime "updated_at",                                                                :null => false
   end

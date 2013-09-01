@@ -24,7 +24,7 @@ class Kpi < ActiveRecord::Base
                          "count"      => ["radio", "dropdown", "checkbox"],
                          "percentage" => ["integer", "decimal"]}
 
-  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys']
+  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys', 'expenses']
 
   GOAL_ONLY_TYPE_OPTIONS = OUT_BOX_TYPE_OPTIONS + ['number']
 
@@ -49,6 +49,7 @@ class Kpi < ActiveRecord::Base
   accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
   accepts_nested_attributes_for :goals
 
+  scope :global, lambda{ where('company_id is null') }
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
 
@@ -91,8 +92,8 @@ class Kpi < ActiveRecord::Base
       @samples ||= where(company_id: nil).find_by_name_and_module('Samples', 'consumer_reach')
     end
 
-    def cost
-      @cost ||= where(company_id: nil).find_by_name_and_module('Cost', 'expenses')
+    def expenses
+      @expenses ||= where(company_id: nil).find_by_name_and_module('Expenses', 'expenses')
     end
 
     def gender
@@ -131,7 +132,7 @@ class Kpi < ActiveRecord::Base
     gender_kpi    = Kpi.create({name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
     age_kpi       = Kpi.create({name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
     ethnicity_kpi = Kpi.create({name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics'}, without_protection: true)
-    Kpi.create({name: 'Cost', kpi_type: 'number', description: 'Total cost of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses'}, without_protection: true)
+    Kpi.create({name: 'Expenses', kpi_type: 'expenses', description: 'Total expenses of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses'}, without_protection: true)
     Kpi.create({name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos'}, without_protection: true)
     Kpi.create({name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos'}, without_protection: true)
     Kpi.create({name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys'}, without_protection: true)
