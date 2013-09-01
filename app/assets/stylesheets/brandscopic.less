@@ -899,6 +899,8 @@ li.dropdown a{
 	background-color: @brand;
 	border: 0;
 	color: white;
+	text-align: center;
+	width: 90px;
 }
 .nav-tabs li a:hover{
 	background-color: white;
@@ -1162,6 +1164,11 @@ li#user_menu{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+}
+#select-areas-table-wrapper{
+	.link-list{
+		margin-top: 25px;
+	}
 }
 .sidebar{
 	background:white;
@@ -1482,8 +1489,8 @@ li#user_menu{
     			}
     			.events, .hours, .score{
     				display: inline-block;
-    				margin-top: 10px;
-    				width: 110px;
+    				margin: 10px 0 0 20px;
+    				width: 90px;
     				.n_events, .n_hours, .n_score{
     					font-size: 16px;
     				}
@@ -1491,7 +1498,7 @@ li#user_menu{
     			span{
     				&:first-child{
     					float: left;
-    					width: 600px;
+    					width: 60%;
     				}
     				&.n_events{
     					font-size: 16px;
@@ -1999,28 +2006,6 @@ table.dataTable, table.tableScroller {
 	background-repeat: repeat-x;
 }
 
-/*.modal {
-	&.modal-xlarge {
-		width: 900px;
-		margin-left: -450px;
-	}
-	&.modal-large {
-		width: 700px;
-		margin-left: -355px;
-	}
-	&.modal-med {
-		width: 440px;
-		margin-left: -225px;
-	}
-	&.modal-small {
-		width: 252px;
-		margin-left: -126px;
-	}
-	&.modal-mini {
-		width: 200px;
-		margin-left: -430px;
-	}
-}*/
 .bar-unassigned {
 	font-size: 12px;
 	text-align: center;
@@ -2163,9 +2148,11 @@ body.events.show {
 	opacity: 0;
 	filter: alpha(opacity=0);
 	transform: translate(-300px, 0) scale(4);
-	font-size: 23px;
+	font-size: 14px;
 	direction: ltr;
 	cursor: pointer;
+	height: 40px;
+	width: 154px;
 }
 
 .resource-form-modal {
@@ -2313,12 +2300,13 @@ body.events.show {
 	.action-buttons {
 		margin-top: 30px;
 		.btn {
-			width: 70px;
 			color: #fff;
-			font-weight: bold;
+			height: 26px;
+			line-height: 25px;
+			width: 104px;
 		}
 		.fileinput-button {
-			width: 100px;
+			width: 120px;
 		}
 		#btn-upload-ok {
 			margin-right: 10px;
@@ -2755,7 +2743,11 @@ ul.thumbnails{
 			margin: 0;
 		}
 		.control-label{
+			cursor:default;
 			margin-top: 5px;
+		}
+		.btn-primary{
+			margin-top: 4px;
 		}
 	}
 	input[type="text"]#venue-search-term, #venue-search-location{
@@ -2768,6 +2760,7 @@ ul.thumbnails{
 		padding: 2px 15px;
 		-webkit-border-radius: 20px;
     	border-radius: 20px;
+    	width:65% !important;
 	}
 	input:-moz-placeholder {
 	  color: @user_menu;
@@ -3354,6 +3347,7 @@ svg{
 }
 
 .survey-column-graph {
+	margin: 40px 0 80px 0;
 	width: 480px;
 }
 
@@ -3599,6 +3593,11 @@ svg{
 	}
 	.results-comments, .results-expenses, .results-surveys{
 		margin-top: 40px;
+	}
+	.results-surveys{
+		p{
+			width: 410px;
+		}
 	}
 	ul#event-surveys-list{
 		li{
@@ -3910,7 +3909,7 @@ a, i{
 
 // Modal Table List
 .scroll-table-content {
-  margin: 15px 0;
+  margin: 20px 0;
   max-height: 200px;
   overflow: auto;
   .link-list {
