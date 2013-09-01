@@ -42,5 +42,9 @@ describe BrandPortfoliosController do
     it "routes to #add_brands" do
       post("/brand_portfolios/1/brands/add").should route_to("brand_portfolios#add_brands", :id => "1")
     end
+
+    it "routes to #brands" do
+      get("/brand_portfolios/:brand_portfolio_id/brands").should route_to("brand_portfolios#brands", id: ':brand_portfolio_id', action: 'brands')
+    end
   end
 end

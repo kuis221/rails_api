@@ -100,17 +100,21 @@ describe "Events", js: true, search: true do
       visit event_path(event)
 
       click_js_link 'Add Team Member'
-      find("table#select-users-list tr#user-#{company_user.id}") # Make sure the lighbox is opened
-      within "table#select-users-list tr#user-#{company_user.id}" do
+      within "ul#staff-list li#staff-member-user-#{company_user.id}" do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
-        click_js_link('Add')
+        click_js_link("add-member-btn-#{company_user.id}")
       end
 
       # Test the user was added to the list of event members and it can be removed
       within('#event-team-members #event-member-'+company_user.id.to_s) do
         page.should have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
+      end
+
+      # the user should have been removed from the list
+      within "ul#staff-list" do
+        page.should_not have_selector("li#staff-member-user-#{company_user.id}")
       end
 
       # Test removal of the user

@@ -26,7 +26,6 @@ describe "Invitations", :js => true do
     find_field('First name').value.should == 'Pedro'
     find_field('Last name').value.should == 'Picapiedra'
     find_field('Email').value.should == 'pedro@rocadura.com'
-    save_and_open_page
     find_field('Country', visible: false).value.should == 'CR'
     find_field('State', visible: false).value.should == 'SJ'
     find_field('City').value.should == 'Curridabat'
@@ -57,7 +56,7 @@ describe "Invitations", :js => true do
     fill_in('Email', with: '')
     select_from_chosen('', from: 'State')
     fill_in('City', with: '')
-    fill_in('New Password', with: '')
+    fill_in('New Password', with: '', match: :first)
     fill_in('Confirm New Password', with: '')
 
     click_button 'Save'
@@ -65,27 +64,27 @@ describe "Invitations", :js => true do
     find_field('First name').should have_error('This field is required.')
     find_field('Last name').should have_error('This field is required.')
     find_field('Email').should have_error('This field is required.')
-    find_field('State').should have_error('This field is required.')
+    find_field('State', visible: false).should have_error('This field is required.')
     find_field('City').should have_error('This field is required.')
-    find_field('New Password').should have_error('This field is required.')
-    find_field('Confirm your new password').should have_error('This field is required.')
+    find_field('New Password', match: :first).should have_error('This field is required.')
+    find_field('Confirm New Password').should have_error('This field is required.')
 
-    fill_in('New Password', with: 'a')
+    fill_in('New Password', with: 'a', match: :first)
     fill_in('Confirm New Password', with: 'a')
 
     click_button 'Save'
-    find_field('New Password').should have_error('Should have at least one upper case letter')
+    find_field('New Password', match: :first).should have_error('Should have at least one upper case letter')
 
-    fill_in('New Password', with: 'aA')
+    fill_in('New Password', with: 'aA', match: :first)
     fill_in(' Confirm New Password', with: 'aA')
     click_button 'Save'
-    find_field('New password').should have_error('Should have at least one digit')
+    find_field('New Password', match: :first).should have_error('Should have at least one digit')
 
-    fill_in('New password', with: 'aA1')
-    fill_in(' Confirm New Password', with: 'aA1')
+    fill_in('New Password', with: 'aA1', match: :first)
+    fill_in('Confirm New Password', with: 'aA1')
     click_button 'Save'
 
-    find_field('New password').should have_error('Please enter at least 8 characters.')
+    find_field('New Password', with: 'aA1', match: :first).should have_error('Please enter at least 8 characters.')
 
   end
 end
