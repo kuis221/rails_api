@@ -146,17 +146,17 @@ var bootbox = window.bootbox || (function(document, $) {
         };
 
         return that.dialog(str, [{
-            // first button (cancel)
-            "label"   : labelCancel,
-            "icon"    : _icons.CANCEL,
-            "class"   : _btnClasses.CANCEL,
-            "callback": cancelCallback
-        }, {
             // second button (confirm)
             "label"   : labelOk,
             "icon"    : _icons.CONFIRM,
             "class"   : _btnClasses.CONFIRM,
             "callback": confirmCallback
+        },{
+            // first button (cancel)
+            "label"   : labelCancel,
+            "icon"    : _icons.CANCEL,
+            "class"   : _btnClasses.CANCEL,
+            "callback": cancelCallback
         }], {
             'classes': 'confirm-dialog',
             // escape key bindings
@@ -230,17 +230,17 @@ var bootbox = window.bootbox || (function(document, $) {
         };
 
         var div = that.dialog(form, [{
-            // first button (cancel)
-            "label"   : labelCancel,
-            "icon"    : _icons.CANCEL,
-            "class"   : _btnClasses.CANCEL,
-            "callback":  cancelCallback
-        }, {
             // second button (confirm)
             "label"   : labelOk,
             "icon"    : _icons.CONFIRM,
             "class"   : _btnClasses.CONFIRM,
             "callback": confirmCallback
+        }, {
+            // first button (cancel)
+            "label"   : labelCancel,
+            "icon"    : _icons.CANCEL,
+            "class"   : _btnClasses.CANCEL,
+            "callback":  cancelCallback
         }], {
             // prompts need a few extra options
             "header"  : header,
