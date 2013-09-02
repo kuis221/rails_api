@@ -4,7 +4,7 @@
   .details_box.padding-top-close-bar
     h2= resource.name
 
-    - if resource.description
+    - if resource.description.present?
       .description-data
         = resource.description
 
@@ -19,7 +19,7 @@
       = active_inactive_buttons(resource)
 
   #team-members.details_box
-    h3 TEAM MEMBERS
+    h3 Team Members
     #team-members-list
       = render 'members'
     = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'

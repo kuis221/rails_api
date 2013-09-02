@@ -7,4 +7,4 @@
         .role-name
           = user.role_name
       .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_team_path(resource, member_id: user.to_param), confirm: "Any tasks that are assigned to #{user.full_name} must be reassigned. Would you like to remove #{user.full_name} from the event team?", class: 'remove-member-btn', remote: true, method: :delete)
+        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_team_path(resource, member_id: user.to_param), class: 'remove-member-btn', remote: true, method: :delete)
