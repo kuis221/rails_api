@@ -2553,11 +2553,22 @@ ul.thumbnails{
 			text-align: left;
 			.campaign-name{
 				font-size: 16px;
+				overflow: hidden;
+			    text-overflow:ellipsis; 
 				padding: 17px 0 0 25px;
+				width: 400px;
+				white-space: nowrap;
 			}
 			.photo-location{
 				font-size: 11px;
+				overflow: hidden;
+			    text-overflow:ellipsis;
 				padding: 0 0 25px 25px;
+				width: 400px;
+				white-space: nowrap;
+			}
+			.pull-right{
+				margin: 25px 15px 0 0;
 			}
 			a{
 				opacity:1;
@@ -2567,12 +2578,10 @@ ul.thumbnails{
 			  	display: inline-block;
 			  	font-family: 'icons';
 				font-size: 18px;
-				right:45px;
 				padding-bottom:5px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
 				}
@@ -2582,12 +2591,10 @@ ul.thumbnails{
 			  	display: inline-block;
 			  	font-family: 'icons';
 				font-size: 18px;
-				right:25px;
 				padding-bottom:5px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
         		}
@@ -2597,19 +2604,22 @@ ul.thumbnails{
 			  	display: inline-block;
 			  	font-family: 'icons';
 				font-size: 18px;
-				right:25px;
 				padding-bottom:5px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
         		}
 			}
 		}
 
-		.photo-download-link, .photo-deactivate-link {
+		.photo-download-link{
+			font-size: 20px;
+			margin: 0px 8px;
+		}
+
+		.photo-deactivate-link {
 			font-size: 20px;
 			margin: 0px 2px;
 		}
@@ -3591,7 +3601,7 @@ svg{
 			}
 		}
 	}
-	.results-comments, .results-expenses, .results-surveys{
+	.results-expenses, .results-surveys{
 		margin-top: 40px;
 	}
 	.results-surveys{
