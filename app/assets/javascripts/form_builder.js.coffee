@@ -192,6 +192,13 @@ window.FormBuilder = {
 		$.each $('input[type=text]'), (index, elm) =>
 			$(elm).data 'saved-value', $(elm).val()
 
+
+		position = field.offset()
+		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
+
+		if typeof $field.onAttributesShow != 'undefined'
+			$field.onAttributesShow @attributesPanel
+
 		# Apply events to fields for autosave
 		$('select', @attributesPanel).on 'change', =>
 			@saveFields [field]
@@ -202,14 +209,14 @@ window.FormBuilder = {
 				input.data 'saved-value', input.val()
 				@saveFields [field]
 
+		$('input.select2-field', @attributesPanel).on 'change', (e) =>
+			input = $(e.target)
+			if input.data('saved-value') != input.val()
+				input.data 'saved-value', input.val()
+				@saveFields [field]
+
 		$('input[type=checkbox]', @attributesPanel).on 'click', =>
 			@saveFields [field]
-
-
-		position = field.offset()
-		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
-		if typeof $field.onAttributesShow != 'undefined'
-			$field.onAttributesShow $('#field-attributes-form')
 
 }
 
@@ -756,9 +763,10 @@ window.FormBuilder.SurveysField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
-				$('<div class="controls">').append $('<input type="text" name="brands">').val(@options.options.brands).on "change", (e) =>
+				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').val(@options.options.brands).on "change", (e) =>
 					input = $(e.target)
 					@options.options.brands = input.select2("val")
+					true
 			]
 		]
 
