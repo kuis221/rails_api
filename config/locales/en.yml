@@ -69,6 +69,7 @@ en:
         day_part: "New Day part"
         event_expense: "New Expense"
         kpi: "New KPI"
+        place: "New Place"
       edit:
         event: "Edit Event"
         task: "Edit Task"
@@ -83,6 +84,7 @@ en:
         day_part: "Edit Day part"
         event_expense: "Edit Expense"
         kpi: "Edit KPI"
+        place: "Edit Place"
 
   form_builder:
     modules:
