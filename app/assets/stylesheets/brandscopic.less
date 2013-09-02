@@ -2105,6 +2105,9 @@ body.events.show {
 
 	#age-graph {
 		height: 300px;
+		.highcharts-container{
+			width: 500px !important;
+		}
 	}
 
 	#ethnicity-graph {
@@ -2851,11 +2854,13 @@ ul.thumbnails{
 
 		#overall-age-graph {
 			height: 300px;
-			width:500px !important;
 			.highcharts-axis-labels{
 				text{
 					font-family: @baseFontFamily !important;
 				}
+			}
+			.highcharts-container{
+				width: 500px !important;
 			}
 		}
 	}
