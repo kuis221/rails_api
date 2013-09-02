@@ -28,6 +28,8 @@ jQuery ->
 		}
 	]
 
+	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
+
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
@@ -119,7 +121,7 @@ jQuery ->
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 		e.preventDefault()
-		resource_modal.modal 'hide'
+		bootbox.hideAll()
 		false
 
 	$(".totop").hide()

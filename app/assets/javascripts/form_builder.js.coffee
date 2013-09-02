@@ -19,29 +19,12 @@ window.FormBuilder = {
 				@saveOrdering()
 		}
 
-		# Add generic fields to the fields picker
-		@genericFieldsList.append new FormBuilder.TextField({})
-		@genericFieldsList.append new FormBuilder.TextareaField({})
-		@genericFieldsList.append new FormBuilder.SectionField({})
-
 
 		$(document).on 'kpis:create', (e, kpi) =>
 			@_addFieldToForm @_kpiToField(kpi)
 			@kpis.push kpi
 
 		@_loadForm options
-
-		@genericFieldsList.find('.field').draggable {
-			connectToSortable: "#form-wrapper, .section-fields",
-			helper: 'clone',
-			revert: true
-		}
-
-		@genericFieldsList.find('.section').draggable {
-			connectToSortable: "#form-wrapper",
-			helper: 'clone',
-			revert: true
-		}
 
 		$('#form-field-tabs a').click (e) ->
 			e.preventDefault()
@@ -253,7 +236,9 @@ window.FormModule = {
 		@element = $('<div class="module module-'+@id+'">')
 			.append @_formView()
 
-		@element.sortable {items: '.field'}
+		# @element.sortable {
+		# 	items: '.field',
+		# }
 		@element.data 'module', @
 		@element
 
