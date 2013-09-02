@@ -1312,7 +1312,7 @@ li#user_menu{
 					&.links{
 						display: inline-block;
 						float: right;
-						margin: 8px 20px 0 0;
+						margin: 8px 5px 0 15px;
 					}
 	    			&.title{
 	    				display: inline-block;
@@ -3206,6 +3206,7 @@ table.table td.comments-container {
 		padding: 10px 0 0 10px;
 		-webkit-border-radius: 7px;
     	border-radius: 7px;
+    	width: 95%;
     	&:focus{
     		box-shadow:none;
     	}
@@ -3275,8 +3276,7 @@ table.table td.comments-container {
 // TASKS STYLES
 .tasks{
 	b{
-		color:@menu;
-		font-size: 15px;
+		font-size: 16px;
 	}
 	.btn-primary{
 		&.tasks{
@@ -3581,14 +3581,16 @@ svg{
 			&.edit:after{
 				color: @brand;
 				font-size: 17px;
+				top: 2px;
 			}
 			i{
 				&.icon-remove-sign{
-					color: @brand;
-					font-size: 20px;
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
+					&:before{
+						font-size: 17px !important;
+					}
 				}
 				&.icon-check-sign{
 					color: @brand;
@@ -3841,7 +3843,7 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
-	&.icon-remove-circle:before{
+	&.icon-remove-circle:before, &.icon-remove-sign:before{
 		color: @brand;
 		content: "\e011";
 		display: inline-block;

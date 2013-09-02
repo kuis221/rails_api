@@ -362,7 +362,7 @@ jQuery ->
 		e.preventDefault()
 		$link = $(this)
 		bootbox.classes('modal-med rejection-prompt')
-		bootbox.prompt "Enter a reason for rejection", (result) ->
+		bootbox.prompt "Why is the post event being rejected?",'Cancel', 'Submit', (result) ->
 			if result isnt null and result isnt ""
 				$.ajax $link.attr("href"),
 					method: "PUT"
