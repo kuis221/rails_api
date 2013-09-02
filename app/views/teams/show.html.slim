@@ -1,35 +1,30 @@
-#resource-details-wrapper
-  = resource_details_bar("Viewing Team Details", collection_path)
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing team details. Click to close.", collection_path)
 
-  .row-fluid
-    .box.span12
-      .row-fluid
-        .span6
-          h2= @team.name
-          - if @team.description
-            .team-description
-              = @team.description
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_team_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            = "&nbsp;".html_safe
-            = active_inactive_buttons(resource)
-      .box-header
-        h2
-          i.icon-user
-          span.break
-          = "Team Members"
-      .box-content
-        #team-members-wrapper
-          = render 'members'
-        .row-fluid
-          .pull-right
-            = link_to 'Add Team Member', new_member_team_path(resource), remote: true, class: 'btn btn-primary'
+  .details_box.padding-top-close-bar
+    h2= resource.name
+
+    - if resource.description
+      .description-data
+        = resource.description
+
+    .links-data
+      = link_to '', edit_team_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_team_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+  #team-members.details_box
+    h3 TEAM MEMBERS
+    #team-members-list
+      = render 'members'
+    = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
 
 javascript:
   $(document).on('teams:change', function(){
     window.location.reload(false);
-  })
-  $(document).on('members:change', function(){
-    $('#team-members-list-filter').load
   })
