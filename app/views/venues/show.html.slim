@@ -264,9 +264,10 @@ javascript:
             verticalAlign: 'top',
             itemStyle: { fontSize: '10px', color: '#3E9CCF' }
         },
-        series: [{
+        series: [
+          {
             name: 'Impressions/promo hour',
-            data: #{resource.overall_graphs_data[:trends_week_day].values.map(&:round).to_json.html_safe},
+            data: #{resource.overall_graphs_data[:impressions_promo].values.map(&:round).to_json.html_safe},
             color: '#3D9CCA',
             dataLabels: {
                 enabled: true,
@@ -274,7 +275,19 @@ javascript:
                 y: -20,
                 style: { color: '#3E9CCF', fontSize: '14px' }
             }
-        }]
+          },
+          {
+            name: 'Cost/Impression',
+            data: #{resource.overall_graphs_data[:cost_impression].values.map(&:round).to_json.html_safe},
+            color: '#94D6ED',
+            dataLabels: {
+                enabled: true,
+                color: '#95D6EF',
+                y: -20,
+                style: { color: '#95D6EF', fontSize: '14px' }
+            }
+          }
+        ]
     });
 
     if (#{resource.overall_graphs_data[:ethnicity].values.max} > 0) {

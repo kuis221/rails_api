@@ -34,7 +34,7 @@ module PlacesHelper
   end
 
   def venue_trend_week_day_narrative(venue)
-    stats = resource.overall_graphs_data[:trends_week_day]
+    stats = resource.overall_graphs_data[:impressions_promo]
     days_names = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
     days_with_events = stats.map{|x,y| days_names[x] if y > 0 }.compact
     days_count = days_with_events.count
