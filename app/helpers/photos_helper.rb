@@ -1,11 +1,12 @@
 module PhotosHelper
+  include ActionView::Helpers::NumberHelper
 
   protected
 
     def describe_filters
       first_part  = "#{describe_date_ranges}  #{describe_brands} #{describe_campaigns} #{describe_locations}".strip
       first_part = nil if first_part.empty?
-      "#{view_context.pluralize(collection_count, "#{describe_status} photo")} #{first_part}"
+      "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} photo")} #{first_part}"
     end
 
     def describe_date_ranges

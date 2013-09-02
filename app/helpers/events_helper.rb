@@ -1,4 +1,6 @@
 module EventsHelper
+  include ActionView::Helpers::NumberHelper
+
   def event_date_range(event)
     if event.start_at.to_date == event.end_at.to_date
       "#{event.start_date} #{event.start_time} - #{event.end_time}"
@@ -75,7 +77,7 @@ module EventsHelper
       second_part  = "#{describe_people}".strip
       second_part = nil if second_part.empty?
 
-      "#{view_context.pluralize(collection_count, "#{describe_status} event")} #{[first_part, second_part].compact.join(' and ')}"
+      "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} event")} #{[first_part, second_part].compact.join(' and ')}"
     end
 
     def describe_date_ranges
