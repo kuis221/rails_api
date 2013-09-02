@@ -28,6 +28,8 @@ jQuery ->
 		}
 	]
 
+	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
+
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
@@ -119,7 +121,36 @@ jQuery ->
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 		e.preventDefault()
-		resource_modal.modal 'hide'
+		bootbox.hideAll()
+		false
+
+	$(document).delegate '.goalable-list a.arrow', 'click', (e) ->
+		e.stopPropagation();
+		e.preventDefault();
+		$li = $(this).closest('li')
+		$scroller = $li.find('.goals-inner')
+		if $scroller.data('moving')
+			return
+		width = $li.find('.kpi-goal').width()
+		scrollerPosition = $scroller.position()
+		move = ''
+		if $(this).is('.arrow-left')
+			distanceToMin = scrollerPosition.left * -1
+			move = if scrollerPosition.left < 0 then "+=#{Math.min(width, distanceToMin)}" else false
+		else
+			distanceToMax = $scroller.outerWidth() + scrollerPosition.left - $(this).position().left
+			move = if ($scroller.outerWidth() + scrollerPosition.left) > $(this).position().left then "-=#{Math.min(width, distanceToMax)}" else false
+
+		if move
+			$scroller.data('moving', true)
+			$scroller.animate { left: move }, 500, => 
+				scrollerPosition = $scroller.position()
+				if scrollerPosition.left == 0
+					$li.find('.arrow-left').hide()
+				else 
+					$li.find('.arrow-left').show()
+
+				$scroller.data('moving', false)
 		false
 
 	$(".totop").hide()
@@ -145,8 +176,8 @@ jQuery ->
 			c = if this.t != "" then "<br/>" + this.t else ""
 			$("body").append("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' alt='Image preview' />#{c}</p>")
 			$("#imgpreview")
-				.css("top",(e.pageY - xOffset) + "px")
-				.css("left",(e.pageX + yOffset) + "px")
+				.css("top",  (e.pageY - xOffset) + "px")
+				.css("left", (e.pageX + yOffset) + "px")
 				.fadeIn("fast")
 		else
 			this.title = this.t

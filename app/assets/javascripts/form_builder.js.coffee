@@ -15,25 +15,9 @@ window.FormBuilder = {
 		@formWrapper.sortable {
 			cancel: '.module .field, .empty-form-legend ',
 			connectWith: '.section-fields',
-			update: ( event, ui ) ->
-				if not ui.item.data('field')
-					ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
-			receive: ( event, ui ) ->
-				if ui.item.hasClass('field')
-					field = ui.item.data('field')
-					if field.options.kpi_id?
-						$(document).trigger 'form-builder:kpi-added', [field.options.kpi_id]
-				else if ui.item.hasClass('module')
-					for element in ui.item.find('.field')
-						field = $(element).data('field')
-						if field.options.kpi_id?
-							$(document).trigger 'form-builder:kpi-added', [field.options.kpi_id]
+			update: ( event, ui ) =>
+				@saveOrdering()
 		}
-
-		# Add generic fields to the fields picker
-		@genericFieldsList.append new FormBuilder.TextField({})
-		@genericFieldsList.append new FormBuilder.TextareaField({})
-		@genericFieldsList.append new FormBuilder.SectionField({})
 
 
 		$(document).on 'kpis:create', (e, kpi) =>
@@ -42,20 +26,8 @@ window.FormBuilder = {
 
 		@_loadForm options
 
-		@genericFieldsList.find('.field').draggable {
-			connectToSortable: "#form-wrapper, .section-fields",
-			helper: 'clone',
-			revert: true
-		}
-
-		@genericFieldsList.find('.section').draggable {
-			connectToSortable: "#form-wrapper",
-			helper: 'clone',
-			revert: true
-		}
-
 		$('#form-field-tabs a').click (e) ->
-		 	e.preventDefault()
+			e.preventDefault()
 			$(this).tab 'show'
 
 		@formWrapper.on 'click', '.field, .section', (e) =>
@@ -94,10 +66,6 @@ window.FormBuilder = {
 				element.remove()
 
 			false
-				
-
-		$('#save-post-event-form').click (e) =>
-			@saveForm()
 
 		true
 
@@ -170,11 +138,23 @@ window.FormBuilder = {
 	_kpiToField: (kpi) ->
 		{module: kpi.module, type: kpi.type, kpi_id: kpi.id, name: kpi.name, segments: kpi.segments}
 
-	saveForm: () ->
-		data = $.map $('> div.field, > div.section, .module div.field', @formWrapper), (fieldDiv, index) =>
-			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
+
+	saveFields: (fields) ->
+		data = $.map fields, (fieldDiv, index) =>
+			$(fieldDiv).data('field').getSaveAttributes()
+		@saveForm data
+
+	saveOrdering: ->
+		fields = $('> div.field, > div.section, .module div.field', @formWrapper)
+		data = $.map fields, (fieldDiv, index) =>
+			{id:  $(fieldDiv).data('field').getId(), ordering: index }
+		@saveForm data
+
+
+	saveForm: (data) ->
 		$.post "#{@options.url}/update_post_event_form", {fields: data}, (response) =>
-			alert response
+			if response isnt 'OK'
+				bootbox.alert response
 
 
 	renderModules: (container) ->
@@ -208,10 +188,35 @@ window.FormBuilder = {
 		@attributesPanel.find('select').chosen()
 		$("input:checkbox, input:radio, input:file").uniform()
 
+		# Store the value of each text field to compare against on the blur event
+		$.each $('input[type=text]'), (index, elm) =>
+			$(elm).data 'saved-value', $(elm).val()
+
+
 		position = field.offset()
-		@attributesPanel.css({top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'})
+		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
+
 		if typeof $field.onAttributesShow != 'undefined'
-			$field.onAttributesShow $('#field-attributes-form')
+			$field.onAttributesShow @attributesPanel
+
+		# Apply events to fields for autosave
+		$('select', @attributesPanel).on 'change', =>
+			@saveFields [field]
+
+		$('input[type=text]', @attributesPanel).on 'blur', (e) =>
+			input = $(e.target)
+			if input.data('saved-value') != input.val()
+				input.data 'saved-value', input.val()
+				@saveFields [field]
+
+		$('input.select2-field', @attributesPanel).on 'change', (e) =>
+			input = $(e.target)
+			if input.data('saved-value') != input.val()
+				input.data 'saved-value', input.val()
+				@saveFields [field]
+
+		$('input[type=checkbox]', @attributesPanel).on 'click', =>
+			@saveFields [field]
 
 }
 
@@ -238,7 +243,9 @@ window.FormModule = {
 		@element = $('<div class="module module-'+@id+'">')
 			.append @_formView()
 
-		@element.sortable {items: '.field'}
+		# @element.sortable {
+		# 	items: '.field',
+		# }
 		@element.data 'module', @
 		@element
 
@@ -314,15 +321,19 @@ window.FormBuilder.TextField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
-				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.options.predefined_value+'">')
-			]).val(@options.predefined_value).on 'keyup', (e) =>
+				$('<div class="controls">').append $('<input type="text" name="predefined_value">')
+					.val(@options.options.predefined_value).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.options.predefined_value = input.val()
 						@field.find('input').val @options.options.predefined_value
+				])
 		]
 
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'text', kpi_id: @options.kpi_id, options: @options.options}
+
+	@getId = () ->
+		@options.id
 
 	@field
 
@@ -371,6 +382,9 @@ window.FormBuilder.SectionField = (options) ->
 
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'section', kpi_id: null, options: {}, fields_attributes: @_getFieldsAttributes()}
+
+	@getId = () ->
+		@options.id
 
 	@field
 
@@ -427,15 +441,19 @@ window.FormBuilder.NumberField = (options) ->
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
-				$('<div class="controls">').append $('<input type="text" name="predefined_value" value="'+@options.options.predefined_value+'">')
-			]).val(@options.predefined_value).on 'keyup', (e) =>
+				$('<div class="controls">').append $('<input type="text" name="predefined_value">')
+					.val(@options.options.predefined_value).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.options.predefined_value = input.val()
 						@field.find('input').val @options.options.predefined_value
+			])
 		]
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: @options.type, kpi_id: @options.kpi_id, options: {capture_mechanism: @options.capture_mechanism, predefined_value: @options.predefined_value}}
+		{id: @options.id, name: @options.name, field_type: @options.type, kpi_id: @options.kpi_id, options: @options.options}
+
+	@getId = () ->
+		@options.id
 
 	@field
 
@@ -477,6 +495,9 @@ window.FormBuilder.TextareaField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'textarea', kpi_id: @options.kpi_id, options: @options.options}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 
@@ -501,6 +522,9 @@ window.FormBuilder.PhotosField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'photos', kpi_id: @options.kpi_id, options: {}}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 window.FormBuilder.VideosField = (options) ->
@@ -523,6 +547,9 @@ window.FormBuilder.VideosField = (options) ->
 
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'videos', kpi_id: @options.kpi_id, options: {}}
+
+	@getId = () ->
+		@options.id
 
 	@field
 
@@ -593,6 +620,9 @@ window.FormBuilder.CountField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'count', kpi_id: @options.kpi_id, options: @options.options}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 
@@ -655,6 +685,9 @@ window.FormBuilder.PercentageField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'percentage', kpi_id: @options.kpi_id, options: @options.options}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 window.FormBuilder.CommentsField = (options) ->
@@ -683,6 +716,9 @@ window.FormBuilder.CommentsField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'comments', kpi_id: @options.kpi_id, options: {}}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 window.FormBuilder.ExpensesField = (options) ->
@@ -706,6 +742,9 @@ window.FormBuilder.ExpensesField = (options) ->
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'photos', kpi_id: @options.kpi_id, options: {}}
 
+	@getId = () ->
+		@options.id
+
 	@field
 
 window.FormBuilder.SurveysField = (options) ->
@@ -724,9 +763,10 @@ window.FormBuilder.SurveysField = (options) ->
 		[
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
-				$('<div class="controls">').append $('<input type="text" name="brands">').val(@options.options.brands).on "change", (e) =>
+				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').val(@options.options.brands).on "change", (e) =>
 					input = $(e.target)
 					@options.options.brands = input.select2("val")
+					true
 			]
 		]
 
@@ -742,6 +782,9 @@ window.FormBuilder.SurveysField = (options) ->
 
 	@getSaveAttributes = () ->
 		{id: @options.id, name: @options.name, field_type: 'surveys', kpi_id: @options.kpi_id, options: {brands: @options.options.brands}}
+
+	@getId = () ->
+		@options.id
 
 	@field
 

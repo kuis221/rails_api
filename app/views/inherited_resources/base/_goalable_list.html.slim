@@ -1,0 +1,24 @@
+ul.goalable-list
+  - goalables.each do |goalable|
+    li
+      .goalable-name= goalable.name
+      .goals-controls
+        a.arrow.arrow-left.icon-angle-left href="#"
+        .pull-right
+          a.arrow.arrow-right.icon-angle-right href="#"
+          a.icon-remove-sign href="#"
+      .goals
+        .goals-inner
+          - kpis.each do |kpi|
+            - if kpi.is_segmented?
+              .kpi-segment-group
+                - kpi.kpis_segments.each do |segment|
+                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''} " id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}" data-kpi-id="#{kpi.id}"
+                    label
+                      input.kpi-goal-field type="text"
+                      span.kpi-name= segment.text.upcase
+            - else
+              span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}" data-kpi-id="#{kpi.id}"
+                label
+                  input.kpi-goal-field type="text"
+                  span.kpi-name= kpi.name.upcase

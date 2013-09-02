@@ -11,9 +11,6 @@ class CampaignsController < FilteredController
   def update_post_event_form
     attrs = params[:fields].dup
     attrs.each{|index, field| normalize_brands(field[:options][:brands]) if field[:options].present? && field[:options][:brands].present? }
-    # Mark for destruction the fields that are not on the params
-    field_ids = extract_fields_ids(attrs)
-    mark_fields_for_destruction(resource.form_fields, field_ids)
     resource.form_fields_attributes = attrs
     resource.save
     render text: 'OK'
@@ -71,13 +68,6 @@ class CampaignsController < FilteredController
           b = Brand.find_or_create_by_name(b).id unless b =~ /^[0-9]$/
           brands[index] = b.to_i
         end
-      end
-    end
-
-    def mark_fields_for_destruction(fields, field_ids)
-      fields.each do |f|
-        f.mark_for_destruction unless field_ids.include?(f.id)
-        mark_fields_for_destruction f.fields, field_ids if f.field_type == 'section'
       end
     end
 

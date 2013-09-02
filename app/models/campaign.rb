@@ -121,6 +121,10 @@ class Campaign < ActiveRecord::Base
     events.order('start_at').last
   end
 
+  def staff
+    (users+teams).sort_by &:name
+  end
+
   def brands_list=(list)
     brands_names = list.split(',')
     existing_ids = self.brands.map(&:id)
@@ -144,7 +148,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def active_kpis
-    @active_kpis ||= form_fields.includes(:kpi).map(&:kpi)
+    @active_kpis ||= form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi).compact
   end
 
   def active_field_types

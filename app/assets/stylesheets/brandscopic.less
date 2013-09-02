@@ -3916,6 +3916,85 @@ a, i{
 	}
 }
 
+.goalable-list {
+	list-style: none;
+	li {
+		position: relative;
+		&> div {
+			vertical-align: middle;
+			display: inline-block;
+		}
+		height: 100px;
+		width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		.goalable-name {
+			width: 200px;
+		}
+		.goals {
+			position: relative;
+			overflow: hidden;
+			width: 100%;
+			height: 100px;
+			.goals-inner {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			.kpi-segment-group:hover,
+			.kpi-goal:hover {
+				background-color: @grey_one;
+				input {
+					background-color: @grey_one;
+				}
+			}
+
+			.kpi-goal {
+				width: 130px;
+				margin: 0 5px;
+				display: inline-block;
+
+				input {
+					width: 60px;
+					display: block;
+					border: 0;
+				}
+			}
+
+			.kpi-segment-group {
+				display: inline-block;
+			}
+		}
+		.goals-controls {
+			position: absolute;
+			left: 180px;
+			right: 0;
+			height: 0;
+			z-index: 3;
+			.pull-right {
+				height: 100px;
+				background-color: #fff;
+			}
+			a {
+				margin-top: 10px;
+				color: @grey_three;
+				font-size: 30px;
+				&.arrow {
+					margin-right: 30px;
+					margin-left: 10px;
+				}
+				&.arrow-left {
+					display: none;
+				}
+				&.icon-remove-sign {
+					font-size: 22px;
+				}
+			}
+		}
+	}
+}
+
 // Modal Table List
 .scroll-table-content {
   margin: 20px 0;

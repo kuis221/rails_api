@@ -44,9 +44,9 @@
               div.metric
                 span= number_to_currency(event_data.spent, precision: 0)
                 = " Spent"
-              - if resource.kpi_goals[Kpi.spent.id].present?
+              - if resource.kpi_goals[Kpi.expenses.id].present?
                 div.progress
-                  .bar style="width: #{event_data.spent*100/resource.kpi_goals[Kpi.spent.id]}%"
+                  .bar style="width: #{event_data.spent*100/resource.kpi_goals[Kpi.expenses.id]}%"
 
             - if active_kpis.include?(Kpi.photos)
               - photo_count = resource.photos.count
