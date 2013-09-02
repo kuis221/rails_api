@@ -88,6 +88,10 @@ group :test do
   gem 'resque_spec'
 end
 
+group :production do
+  gem 'airbrake_user_attributes'
+end
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

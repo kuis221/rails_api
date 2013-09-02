@@ -29,7 +29,7 @@
         = format_date_range(first_event, last_event, date_separator: ' - ')
 
   .details_box
-    #campaign-tabs.nav.nav-tabs
+    ul#campaign-tabs.nav.nav-tabs
       li.active
         a href="#kpis" KPIs
       li
@@ -49,17 +49,20 @@
       #places.tab-pane
         = render 'places'
 
-      #staff.collapse.tab-pane
+      #staff.tab-pane
         = render 'staff'
 
   .details_box
-    a href="#post-event-form-content" data-toggle="collapse"
-      h2 POST EVENT FORM
+    h2 POST EVENT FORM
 
     #post-event-form-content
       = render 'post_event_form'
 
 javascript:
+  $('#campaign-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  })
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
   });
