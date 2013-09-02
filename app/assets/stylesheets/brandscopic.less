@@ -125,7 +125,10 @@ abbr[title]{
 
 a{
 	color:@text;
-  outline: 0;
+  	outline: 0;
+  	&:focus{
+  		outline:0;
+  	}
 }
 
 .tab-content{
@@ -967,16 +970,17 @@ li.dropdown a{
 }
 li#help_menu{
 	.single-link:before{
-	content: "\e025";
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 16px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+		color: @user_menu;
+		content: "\e025";
+	  	display: inline-block;
+	  	font-family: 'icons';
+		font-size: 16px;
+		left: 4px;
+	  	position: relative;
+		speak: none;
+		text-align: center;
+	  	vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
 	}
 }
 li.dropdown#admin{
