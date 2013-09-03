@@ -31,28 +31,28 @@
   .details_box
     ul#campaign-tabs.nav.nav-tabs
       li.active
-        a href="#kpis" KPIs
+        a href="#kpis_tab" KPIs
       li
-        a href="#places" data-content="#{tab_campaign_path(resource, :places)}" Places
+        a href="#places_tab" data-content="#{tab_campaign_path(resource, :places)}" Places
       li
-        a href="#staff" data-content="#{tab_campaign_path(resource, :staff)}" Staff
+        a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
       li
-        a href="#date_ranges" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
+        a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
       li
-        a href="#day_parts" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
+        a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
  
 
     .tab-content
-      #kpis.tab-pane.active
+      #kpis_tab.tab-pane.active
         = render 'kpis'
 
-      #places.tab-pane
+      #places_tab.tab-pane
 
-      #staff.tab-pane
+      #staff_tab.tab-pane
 
-      #date_ranges.tab-pane
+      #date_ranges_tab.tab-pane
 
-      #day_parts.tab-pane
+      #day_parts_tab.tab-pane
 
   .details_box
     h3 POST EVENT FORM

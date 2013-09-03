@@ -123,6 +123,12 @@ Brandscopic::Application.routes.draw do
       match 'members' => 'campaigns#members', via: :get, as: :members
       match 'teams' => 'campaigns#teams', via: :get, as: :teams
       match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: {tab: /staff|places|date_ranges|day_parts/}
+
+      match 'date_ranges/new' => 'campaigns#new_date_range', via: :get, as: :new_date_range
+      match 'date_ranges' => 'campaigns#add_date_range', via: :post, as: :add_date_range
+
+      match 'day_parts/new' => 'campaigns#new_day_part', via: :get, as: :new_day_part
+      match 'day_parts' => 'campaigns#add_day_part', via: :post, as: :add_day_part
     end
   end
 

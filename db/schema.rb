@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130903040128) do
+ActiveRecord::Schema.define(:version => 20130903173511) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -173,6 +173,16 @@ ActiveRecord::Schema.define(:version => 20130903040128) do
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
 
+  create_table "campaigns_date_ranges", :force => true do |t|
+    t.integer "campaign_id"
+    t.integer "date_range_id"
+  end
+
+  create_table "campaigns_day_parts", :force => true do |t|
+    t.integer "campaign_id"
+    t.integer "day_part_id"
+  end
+
   create_table "campaigns_teams", :force => true do |t|
     t.integer "campaign_id"
     t.integer "team_id"
@@ -279,17 +289,6 @@ ActiveRecord::Schema.define(:version => 20130903040128) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
-
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
 
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"

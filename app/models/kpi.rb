@@ -24,7 +24,7 @@ class Kpi < ActiveRecord::Base
                          "count"      => ["radio", "dropdown", "checkbox"],
                          "percentage" => ["integer", "decimal"]}
 
-  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys', 'expenses']
+  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys', 'expenses', 'comments']
 
   GOAL_ONLY_TYPE_OPTIONS = OUT_BOX_TYPE_OPTIONS + ['number']
 
@@ -119,6 +119,10 @@ class Kpi < ActiveRecord::Base
     def surveys
       @surveys ||= where(company_id: nil).find_by_name_and_module('Surveys', 'surveys')
     end
+
+    def comments
+      @comments ||= where(company_id: nil).find_by_name_and_module('Comments', 'comments')
+    end
   end
 
 
@@ -136,6 +140,7 @@ class Kpi < ActiveRecord::Base
     @photos = Kpi.create({name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos'}, without_protection: true)
     @videos = Kpi.create({name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos'}, without_protection: true)
     @surveys = Kpi.create({name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys'}, without_protection: true)
+    @comments = Kpi.create({name: 'Comments', kpi_type: 'comments', description: 'Total number of comments from event audience', capture_mechanism: 'integer', company_id: nil, 'module' => 'comments'}, without_protection: true)
     Kpi.create({name: 'Competitive Analysis', kpi_type: 'number', description: 'Total number of competitive analyses created for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'competitive_analysis'}, without_protection: true)
 
     ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|

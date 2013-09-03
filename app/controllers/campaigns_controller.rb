@@ -1,5 +1,5 @@
 class CampaignsController < FilteredController
-  respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :js, only: [:new, :create, :edit, :update, :new_date_range]
 
   include DeactivableHelper
 
@@ -59,6 +59,10 @@ class CampaignsController < FilteredController
     else
       render text: ''
     end
+  end
+
+  def new_date_range
+    @date_ranges = current_company.date_ranges
   end
 
   def tab

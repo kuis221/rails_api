@@ -1,6 +1,6 @@
 |
   var resource_modal, container = $('#resource-form-modal');
-  var content = "#{escape_javascript(render partial: 'form', locals: {remote: true})}";
+  var content = "#{j render(partial: 'form', locals: {remote: true})}";
   if (!container.length) {
     bootbox.classes('#{@form_modal_class} #{resource.class.name.downcase}_modal resource-form-modal');
     container = $('<div id="resource-form-modal">'+content+'</div>');

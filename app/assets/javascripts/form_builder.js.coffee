@@ -89,11 +89,6 @@ window.FormBuilder = {
 				$(aField).data('field').options.kpi_id is field.kpi_id
 			f.remove() for f in fields
 			@formWrapper.append @buildField(field)
-		else if field.type is 'comments'
-			@modules['comments']._loaded = true
-			@formWrapper.append @modules['comments'].render()
-			@modules['comments'].clearFields()
-			@modules['comments'].addField @buildField(field)
 		else
 			@formWrapper.append @buildField(field)
 
@@ -158,10 +153,6 @@ window.FormBuilder = {
 
 
 	renderModules: (container) ->
-		commentsModule = $.extend({}, FormModule, {id: 'comments', icon: 'comments', label: 'Comments'})
-		@modules = {comments: commentsModule}
-		commmentsField = false
-
 		# Build the modules list
 		for kpi in @kpis
 			if kpi.module? and kpi.module != ''
@@ -170,8 +161,6 @@ window.FormBuilder = {
 					if not @modules[kpi.module]?
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 
-					if kpi.module == 'comments'
-						commmentsField = true
 
 		@
 

@@ -39,6 +39,12 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Areas relationship
   has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true
 
+  # Campaigns-Areas relationship
+  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true
+
+  # Campaigns-Areas relationship
+  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true
+
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
