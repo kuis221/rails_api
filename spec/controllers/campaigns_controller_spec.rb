@@ -30,6 +30,90 @@ describe CampaignsController do
     end
   end
 
+  describe "GET 'new_date_range'" do
+    it "returns http success" do
+      date_range = FactoryGirl.create(:date_range, company: @company)
+      other_date_range = FactoryGirl.create(:date_range, company_id: @company.id + 1)
+      get 'new_date_range', id: campaign.to_param, format: :js
+      response.should be_success
+      response.should render_template(:new_date_range)
+      assigns(:date_ranges).should == [date_range]
+    end
+  end
+
+  describe "POST 'add_date_range'" do
+    it "adds the date range to the campaign" do
+      date_range = FactoryGirl.create(:date_range, company: @company)
+      expect {
+        post 'add_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
+      }.to change(campaign.date_ranges, :count).by(1)
+      response.should be_success
+      response.should render_template(:add_date_range)
+      campaign.date_ranges.should == [date_range]
+    end
+
+    it "adds the date range to the campaign" do
+      date_range = FactoryGirl.create(:date_range, company: @company)
+      campaign.date_ranges << date_range
+      campaign.reload.date_ranges.should == [date_range]
+      expect {
+        post 'add_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
+      }.to_not change(campaign.date_ranges, :count)
+      response.should be_success
+      response.should render_template(:add_date_range)
+      campaign.reload.date_ranges.should == [date_range]
+    end
+  end
+
+  describe "DELETE 'delete_date_range'" do
+    it "should delete the date range from the campaign" do
+      date_range = FactoryGirl.create(:date_range, company: @company)
+      campaign.date_ranges << date_range
+      expect {
+        expect {
+          delete 'delete_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
+        }.to_not change(DateRange, :count)
+        response.should be_success
+      }.to change(campaign.date_ranges, :count).by(-1)
+    end
+  end
+
+
+  describe "GET 'new_day_part'" do
+    it "returns http success" do
+      day_part = FactoryGirl.create(:day_part, company: @company)
+      other_date_range = FactoryGirl.create(:day_part, company_id: @company.id + 1)
+      get 'new_day_part', id: campaign.to_param, format: :js
+      response.should be_success
+      response.should render_template(:new_day_part)
+      assigns(:day_parts).should == [day_part]
+    end
+  end
+
+  describe "POST 'add_day_part'" do
+    it "adds the day part to the campaign" do
+      day_part = FactoryGirl.create(:day_part, company: @company)
+      expect {
+        post 'add_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
+      }.to change(campaign.day_parts, :count).by(1)
+      response.should be_success
+      response.should render_template(:add_day_part)
+      campaign.day_parts.should == [day_part]
+    end
+
+    it 'doesn\'t add the day part if it already exists ' do
+      day_part = FactoryGirl.create(:day_part, company: @company)
+      campaign.day_parts << day_part
+      campaign.reload.day_parts.should == [day_part]
+      expect {
+        post 'add_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
+      }.to_not change(campaign.day_parts, :count)
+      response.should be_success
+      response.should render_template(:add_day_part)
+      campaign.reload.day_parts.should == [day_part]
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js

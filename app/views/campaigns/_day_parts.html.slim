@@ -1,0 +1,2 @@
+= link_to "Add Day part", new_day_part_campaign_path(resource), remote: true, class: 'btn btn-primary', title: 'Add Day part'
+= render partial: 'goalable_list', locals: { goalables: resource.day_parts, kpis: resource.active_kpis }
