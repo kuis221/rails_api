@@ -9,6 +9,8 @@
     .row-fluid
       .box_summary
         h3 SUMMARY
+        .links-data
+          = link_to '', edit_summary_event_path(resource), remote: true, class: 'edit'
         = resource.summary
       .box_metrics.pull-right
         ul.consumer-reach-metrics
