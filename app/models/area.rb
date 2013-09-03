@@ -14,6 +14,7 @@
 #
 
 class Area < ActiveRecord::Base
+  include GoalableModel
   track_who_does_it
 
   scoped_to_company
@@ -23,8 +24,8 @@ class Area < ActiveRecord::Base
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true
 
-  # Areas-Places relationship
-  has_and_belongs_to_many :places
+  has_many :placeables, as: :placeable
+  has_many :places, through: :placeables
 
   scope :not_in_venue, lambda{|place| where("areas.id not in (#{AreasPlace.select('area_id').scoped_by_place_id(place).to_sql})") }
 

@@ -33,9 +33,15 @@ class Place < ActiveRecord::Base
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place
 
   # Areas-Places relationship
-  has_many :areas_places
-  has_many :areas, through: :areas_places
   has_many :events
+  has_many :placeables
+
+  with_options through: :placeables, :source => :placeable do |place|
+    place.has_many :areas, :source_type => 'Area'
+    place.has_many :campaigns, :source_type => 'Campaign'
+    place.has_many :users, :source_type => 'CompanyUser'
+    place.has_many :teams, :source_type => 'Team'
+  end
 
   attr_accessor :do_not_connect_to_api
   attr_accessor :is_custom_place

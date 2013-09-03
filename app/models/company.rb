@@ -19,6 +19,7 @@ class Company < ActiveRecord::Base
   has_many :roles
   has_many :brand_portfolios
   has_many :events
+  has_many :areas
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true

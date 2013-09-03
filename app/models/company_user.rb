@@ -35,8 +35,12 @@ class CompanyUser < ActiveRecord::Base
   # Campaigns-Users relationship
   has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign'
 
-  # Campaigns-Users relationship
+  # Events-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
+
+  # Places-Users relationship
+  has_many :placeables, as: :placeable
+  has_many :places, through: :placeables
 
   delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :time_zone, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :country_name, :state_name, to: :user

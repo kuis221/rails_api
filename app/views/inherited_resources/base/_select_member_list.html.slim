@@ -3,7 +3,7 @@
   .staff-table
     .row-fluid.scroll-table-header
       span.scroll-table-filter
-        input type="text" name="q" id="staff-search-item" onkeyup="filterList(this)"
+        input type="text" name="q" id="staff-search-item"
     .scroll-table-content
       .link-list
         ul#staff-list
@@ -19,8 +19,8 @@
                     = link_to '', url_for(action: :add_members, team_id: member.id), id: "add-member-btn-#{member.id}", data:{'team-id' => member.id}, class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
-  function filterList(element) {
-    var value = $(element).val();
+  $('#staff-search-item').on 'keyup', function () {
+    var value = $(this).val();
     $("#staff-list > li").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();

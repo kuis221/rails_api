@@ -70,6 +70,7 @@ en:
         event_expense: "New Expense"
         kpi: "New KPI"
         place: "New Place"
+        placeable: "Add Place"
       edit:
         event: "Edit Event"
         task: "Edit Task"
@@ -85,6 +86,7 @@ en:
         event_expense: "Edit Expense"
         kpi: "Edit KPI"
         place: "Edit Place"
+        placeable: "Edit Places"
 
   form_builder:
     modules:

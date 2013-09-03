@@ -47,6 +47,7 @@ class Ability
         can :manage, AttachedAsset
 
         can :manage, Goal
+        can :manage, Placeable
       end
     end
   end

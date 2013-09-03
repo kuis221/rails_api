@@ -36,6 +36,9 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Brand Portfolios relationship
   has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
 
+  # Campaigns-Areas relationship
+  has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true
+
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
@@ -49,6 +52,11 @@ class Campaign < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+
+
+  # Campaigns-Places relationship
+  has_many :placeables, as: :placeable
+  has_many :places, through: :placeables
 
   accepts_nested_attributes_for :form_fields
 
@@ -122,6 +130,11 @@ class Campaign < ActiveRecord::Base
 
   def staff
     (users+teams).sort_by &:name
+  end
+
+
+  def areas_and_places
+    (areas+places).sort_by &:name
   end
 
   def brands_list=(list)

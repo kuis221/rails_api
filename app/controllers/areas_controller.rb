@@ -6,7 +6,7 @@ class AreasController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  custom_actions member: [:select_places, :add_places]
+  custom_actions member: [:select_places, :add_places, :add_to_campaign]
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -21,6 +21,13 @@ class AreasController < FilteredController
         parent.areas << resource if parent? and parent
         render :create
       end
+    end
+  end
+
+  def add_to_campaign
+    campaign = current_company.campaigns.find(params[:campaign_id])
+    if can?(:edit, campaign) && !campaign.area_ids.include?(resource.id)
+      campaign.areas << resource
     end
   end
 

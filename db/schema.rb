@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130902205104) do
+ActiveRecord::Schema.define(:version => 20130903040128) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -59,14 +59,10 @@ ActiveRecord::Schema.define(:version => 20130902205104) do
 
   add_index "areas", ["company_id"], :name => "index_areas_on_company_id"
 
-  create_table "areas_places", :force => true do |t|
+  create_table "areas_campaigns", :force => true do |t|
     t.integer "area_id"
-    t.integer "place_id"
+    t.integer "campaign_id"
   end
-
-  add_index "areas_places", ["area_id", "place_id"], :name => "index_areas_places_on_area_id_and_place_id", :unique => true
-  add_index "areas_places", ["area_id"], :name => "index_areas_places_on_area_id"
-  add_index "areas_places", ["place_id"], :name => "index_areas_places_on_place_id"
 
   create_table "asset_downloads", :force => true do |t|
     t.string   "uid"
@@ -400,6 +396,12 @@ ActiveRecord::Schema.define(:version => 20130902205104) do
 
   add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
   add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
+
+  create_table "placeables", :force => true do |t|
+    t.integer "place_id"
+    t.integer "placeable_id"
+    t.string  "placeable_type"
+  end
 
   create_table "places", :force => true do |t|
     t.string   "name"

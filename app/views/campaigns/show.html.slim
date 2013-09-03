@@ -4,29 +4,29 @@
   = resource_details_bar("You are viewing campaign details. Click to close.", collection_path)
 
   .details_box.padding-top-close-bar
-      h2= resource.name
-      .campaign-brands
-        = resource.brands.map(&:name).to_sentence
+    h2= resource.name
+    .campaign-brands
+      = resource.brands.map(&:name).to_sentence
 
 
-      .calendar-data
-        = format_date_range(first_event, last_event, date_separator: ' - ')
+    .calendar-data
+      = format_date_range(first_event, last_event, date_separator: ' - ')
 
-      - if resource.description
-        .description-data
-          = resource.description
+    - if resource.description
+      .description-data
+        = resource.description
 
-      .links-data
-        = link_to '', edit_campaign_path(resource), remote: true, class: 'edit'
-        = active_inactive_buttons(resource)
+    .links-data
+      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
 
-      // The is info will be displayed on the fixed bar when the window is scolled down to this position
-      .details-bar-info
-        h3= resource.name
-        = link_to '', edit_campaign_path(resource), remote: true, class: 'edit'
-        = active_inactive_buttons(resource)
-        br>/
-        = format_date_range(first_event, last_event, date_separator: ' - ')
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+      br>/
+      = format_date_range(first_event, last_event, date_separator: ' - ')
 
   .details_box
     ul#campaign-tabs.nav.nav-tabs
@@ -55,7 +55,7 @@
       #day_parts.tab-pane
 
   .details_box
-    h2 POST EVENT FORM
+    h3 POST EVENT FORM
 
     #post-event-form-content
       = render 'post_event_form'
@@ -77,4 +77,8 @@ javascript:
   });
   $(document).on('members:change teams:change', function(){
     $('.tab-content #staff').load('#{tab_campaign_path(resource, :staff)}')
+  });
+
+  $(document).on('areas:change places:change', function(){
+    $('.tab-content #places').load('#{tab_campaign_path(resource, :places)}')
   });

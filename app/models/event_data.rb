@@ -14,7 +14,7 @@
 #  ethnicity_hispanic        :decimal(5, 2)    default(0.0)
 #  ethnicity_native_american :decimal(5, 2)    default(0.0)
 #  ethnicity_white           :decimal(5, 2)    default(0.0)
-#  spent                      :decimal(10, 2)   default(0.0)
+#  spent                     :decimal(10, 2)   default(0.0)
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #
