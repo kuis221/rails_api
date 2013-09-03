@@ -192,7 +192,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.bar{
 		background-color: @unassigned!important;
 		background-image: none !important;
-		box-shadow: none !important;			
+		box-shadow: none !important;
 	}
 	&.active{
 		.bar{
@@ -2020,27 +2020,27 @@ body.events.index {
 	}
 }
 
-body.events.show {
-	#event-team-members{
+body.events.show, body.teams.show, body.areas.show {
+	#event-team-members, #team-members-list, #area-places-list {
 		margin: 0 -12% 0 0;
 	}
-	.team-member, .team {
+	.team-member, .team, .area-place {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-		.full-name{
+		.full-name, .place-name {
 			font-size: 16px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 		&:hover{
-			a.remove-member-btn{
+			a.remove-member-btn, a.remove-area-btn{
 				display:inline-block;
 				float: right;
 			}
 		}
-		a.remove-member-btn{
+		a.remove-member-btn, a.remove-area-btn{
 			display:none;
 		}
 	}
@@ -2320,7 +2320,7 @@ body.events.show {
 	.dialogue-photos{
 		position: absolute;
 		left: 80px;
-		top: -60px;		
+		top: -60px;
 	}
 }
 
@@ -2453,7 +2453,8 @@ ul.thumbnails{
 							content: "\f067" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-						  	margin-top: 10px;
+							font-size: 16px;
+						  	margin-top: 12px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
@@ -2465,7 +2466,8 @@ ul.thumbnails{
 							content: "\f068" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
-							margin-top: 10px;
+							font-size: 16px;
+							margin-top: 12px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
@@ -3816,7 +3818,7 @@ a, i{
 		display: inline-block;
 		font-family: 'icons';
 		font-size: 20px;
-		position: relative;		
+		position: relative;
 	}
 	&.icon-minus:before{
 
@@ -3850,7 +3852,7 @@ a, i{
 
 	.padding-top-close-bar {
 		padding-top: 70px !important;
-	} 
+	}
 }
 
 .switch-toggle {

@@ -1,38 +1,8 @@
-table#places.table.table-striped.table-bordered.table-scrolled
-  thead
-    tr
-      th data-sort="name" Establishment
-      th data-sort="address" Address
-      th data-sort="city" City
-      th data-sort="state" State
-      th data-sort="zipcode" ZIP
-      th data-sort="country" Country
-      th.actions
-  tbody
-      - places.each do |place|
-        tr id="place-#{place.id}"
-          td= place.name
-          td= place.formatted_address
-          td= place.city
-          td= place.state
-          td= place.zipcode
-          td= place.country
-          td= link_to 'Remove', area_place_path(resource, place), method: :delete, remote: true
-
-javascript:
-  placesTable = $('table#places').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bAutoWidth": false,
-        "bDestroy": true,
-        "aoColumns": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          {"sWidth": '50px', 'bSortable': false}
-        ]
-  });
+.row-fluid
+  - places.each do |place|
+    .span3.area-place.clearfix id = "place-#{place.id}"
+      .pull-left
+        .place-name
+          = place.name
+      .pull-right
+        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  area_place_path(resource, place), class: 'remove-area-btn', remote: true, method: :delete)

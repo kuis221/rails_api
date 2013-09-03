@@ -1,30 +1,28 @@
-#resource-details-wrapper
-  = resource_details_bar("Viewing Area Details", collection_path)
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing area details. Click to close.", collection_path)
 
-  .row-fluid
-    .box.span12
-      .row-fluid
-        .span6
-          h2= @area.name
-          - if @area.description
-            .area-description
-              = @area.description
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_area_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            | &nbsp;
-            = active_inactive_buttons(resource)
-      .box-header
-        h2
-          i.icon-user
-          span.break
-          = "Places"
-      .box-content
-        = render partial: 'places', locals: { places: resource.places }
+  .details_box.padding-top-close-bar
+    h2= resource.name
 
-        .row-fluid
-          .pull-right
-            = link_to 'Add Place', new_area_place_path(resource), remote: true, class: 'btn btn-primary'
+    - if resource.description.present?
+      .description-data
+        = resource.description
+
+    .links-data
+      = link_to '', edit_area_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+    // This info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_area_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+  #area-places.details_box
+    h3 Places
+    #area-places-list
+      = render partial: 'places', locals: { places: resource.places }
+    = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place'
 
 javascript:
   $(document).on('areas:change', function(){
