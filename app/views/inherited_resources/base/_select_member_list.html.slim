@@ -19,7 +19,7 @@
                     = link_to '', url_for(action: :add_members, team_id: member.id), id: "add-member-btn-#{member.id}", data:{'team-id' => member.id}, class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
-  $('#staff-search-item').on 'keyup', function () {
+  $('#staff-search-item').on('keyup', function () {
     var value = $(this).val();
     $("#staff-list > li").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
@@ -29,4 +29,4 @@ javascript:
         $(this).hide();
       }
     });
-  }
+  });
