@@ -125,7 +125,10 @@ abbr[title]{
 
 a{
 	color:@text;
-  outline: 0;
+  	outline: 0;
+  	&:focus{
+  		outline:0;
+  	}
 }
 
 .tab-content{
@@ -967,16 +970,17 @@ li.dropdown a{
 }
 li#help_menu{
 	.single-link:before{
-	content: "\e025";
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 16px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+		color: @user_menu;
+		content: "\e025";
+	  	display: inline-block;
+	  	font-family: 'icons';
+		font-size: 16px;
+		left: 4px;
+	  	position: relative;
+		speak: none;
+		text-align: center;
+	  	vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
 	}
 }
 li.dropdown#admin{
@@ -1312,7 +1316,7 @@ li#user_menu{
 					&.links{
 						display: inline-block;
 						float: right;
-						margin: 8px 20px 0 0;
+						margin: 8px 5px 0 15px;
 					}
 	    			&.title{
 	    				display: inline-block;
@@ -2075,7 +2079,8 @@ body.events.show, body.teams.show, body.areas.show {
 	ul.consumer-reach-metrics {
 		display: inline-block;
 		float: right;
-		margin-top: 40px;
+		font-size: 11px;
+		margin-top: 65px;
 		width: 390px;
 		&.pull-right{
 			margin-top: 10px;
@@ -2095,10 +2100,18 @@ body.events.show, body.teams.show, body.areas.show {
 				margin-right: 10px;
 			}
 		}
+		span {
+			font-size: 16px;
+			color: #3E9CCF;
+			margin-right: 3px;
+		}
 	}
 
 	#age-graph {
 		height: 300px;
+		.highcharts-container{
+			width: 500px !important;
+		}
 	}
 
 	#ethnicity-graph {
@@ -2555,11 +2568,22 @@ ul.thumbnails{
 			text-align: left;
 			.campaign-name{
 				font-size: 16px;
+				overflow: hidden;
+			    text-overflow:ellipsis; 
 				padding: 17px 0 0 25px;
+				width: 400px;
+				white-space: nowrap;
 			}
 			.photo-location{
 				font-size: 11px;
+				overflow: hidden;
+			    text-overflow:ellipsis;
 				padding: 0 0 25px 25px;
+				width: 400px;
+				white-space: nowrap;
+			}
+			.pull-right{
+				margin: 25px 15px 0 0;
 			}
 			a{
 				opacity:1;
@@ -2568,13 +2592,10 @@ ul.thumbnails{
 				content: "\e00b" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
-				font-size: 18px;
-				right:45px;
-				padding-bottom:5px;
+				font-size: 20px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
 				}
@@ -2583,13 +2604,10 @@ ul.thumbnails{
 				content: "\e011" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
-				font-size: 18px;
-				right:25px;
-				padding-bottom:5px;
+				font-size: 20px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
         		}
@@ -2598,21 +2616,21 @@ ul.thumbnails{
 				content: "\e00d" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
-				font-size: 18px;
-				right:25px;
-				padding-bottom:5px;
+				font-size: 20px;
 			  	position: relative;
 				speak: none;
 				text-align: center;
-				top: 30px;
 			  	vertical-align: middle;
 				-webkit-font-smoothing: antialiased;
         		}
 			}
 		}
 
-		.photo-download-link, .photo-deactivate-link {
-			font-size: 20px;
+		.photo-download-link{
+			margin: 0px 12px;
+		}
+
+		.photo-deactivate-link {
 			margin: 0px 2px;
 		}
 
@@ -2639,6 +2657,10 @@ ul.thumbnails{
 			display: block;
 		}
 	}
+}
+
+.fancybox-close{
+	background-image: url('fancybox_sprite.png') !important;
 }
 
 // CAMPAIGNS POST EVENT FORM BUILDER
@@ -2803,9 +2825,9 @@ ul.thumbnails{
 			font-size: 11px;
 			text-transform: uppercase;
 			span {
-				font-weight: bold;
 				font-size: 16px;
 				color: #3E9CCF;
+				margin-right: 3px;
 			}
 			.live-stats-2{
 				float: right;
@@ -2837,7 +2859,15 @@ ul.thumbnails{
 		}
 
 		#overall-age-graph {
-			height: 400px;
+			height: 300px;
+			.highcharts-axis-labels{
+				text{
+					font-family: @baseFontFamily !important;
+				}
+			}
+			.highcharts-container{
+				width: 500px !important;
+			}
 		}
 	}
 
@@ -3091,14 +3121,14 @@ ul.thumbnails{
 		display: inline-block;
 		margin: 0 0 25px 60px;
 		.gender{
-			font-size: 20px;
+			font-size: 25px;
 		}
 		.percent{
-			font-size: 40px;
-			padding-bottom: 15px;
+			font-size: 55px;
+			padding-bottom: 25px;
 		}
 		&:before{
-			bottom:-23px;
+			bottom:-35px;
 			content: "\e01b" !important;
 			display: inline-block;
 			font-family: 'icons';
@@ -3117,14 +3147,14 @@ ul.thumbnails{
 		display: inline-block;
 		margin: 0 0 25px 80px;
 		.gender{
-			font-size: 20px;
+			font-size: 25px;
 		}
 		.percent{
-			font-size: 40px;
-			padding-bottom: 15px;
+			font-size: 55px;
+			padding-bottom: 25px;
 		}
 		&:before{
-			bottom: -23px;
+			bottom: -35px;
 			content: "\e01a" !important;
 			display: inline-block;
 			font-family: 'icons';
@@ -3199,6 +3229,7 @@ table.table td.comments-container {
 		padding: 10px 0 0 10px;
 		-webkit-border-radius: 7px;
     	border-radius: 7px;
+    	width: 95%;
     	&:focus{
     		box-shadow:none;
     	}
@@ -3268,8 +3299,7 @@ table.table td.comments-container {
 // TASKS STYLES
 .tasks{
 	b{
-		color:@menu;
-		font-size: 15px;
+		font-size: 16px;
 	}
 	.btn-primary{
 		&.tasks{
@@ -3560,7 +3590,6 @@ svg{
 		}
 	}
 	label{
-		color:@brand;
 		font-size: 11px;
 		margin-bottom: 2px;
 	}
@@ -3574,14 +3603,16 @@ svg{
 			&.edit:after{
 				color: @brand;
 				font-size: 17px;
+				top: 2px;
 			}
 			i{
 				&.icon-remove-sign{
-					color: @brand;
-					font-size: 20px;
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
+					&:before{
+						font-size: 17px !important;
+					}
 				}
 				&.icon-check-sign{
 					color: @brand;
@@ -3593,7 +3624,7 @@ svg{
 			}
 		}
 	}
-	.results-comments, .results-expenses, .results-surveys{
+	.results-expenses, .results-surveys{
 		margin-top: 40px;
 	}
 	.results-surveys{
@@ -3834,7 +3865,7 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
-	&.icon-remove-circle:before{
+	&.icon-remove-circle:before, &.icon-remove-sign:before{
 		color: @brand;
 		content: "\e011";
 		display: inline-block;
