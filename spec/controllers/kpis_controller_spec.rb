@@ -27,7 +27,7 @@ describe KpisController do
     it "should not render form_dialog if no errors" do
       expect {
         expect {
-          post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number', goals_attributes: {0 => {campaign_id: campaign.to_param, value: 13}}}, format: :js
+          post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number', goals_attributes: {0 => {goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}}}, format: :js
            response.should be_success
         }.to change(Kpi, :count).by(1)
       }.to change(Goal, :count).by(1)
@@ -40,7 +40,7 @@ describe KpisController do
       kpi.description.should == 'Test kpi description'
 
       goal = kpi.goals.first
-      goal.campaign.should == campaign
+      goal.goalable.should == campaign
     end
 
     it "should render the form_dialog template if errors" do

@@ -71,6 +71,7 @@ en:
         kpi: "New KPI"
         place: "New Place"
         placeable: "Add Place"
+        date_item: "New Date"
       edit:
         event: "Edit Event"
         task: "Edit Task"
@@ -87,6 +88,7 @@ en:
         kpi: "Edit KPI"
         place: "Edit Place"
         placeable: "Edit Places"
+        date_item: "Edit Date"
 
   form_builder:
     modules:

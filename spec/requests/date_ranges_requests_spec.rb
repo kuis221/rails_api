@@ -23,22 +23,16 @@ describe "DateRanges", search: true, js: true do
       Sunspot.commit
       visit date_ranges_path
 
-      within("table#date-ranges-list") do
+      within("ul#date_ranges-list") do
         # First Row
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content('Weekdays')
-          find('td:nth-child(2)').should have_content('From monday to friday')
-          find('td:nth-child(3)').should have_content('Active')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Deactivate')
+        within("li:nth-child(1)") do
+          page.should have_content('Weekdays')
+          page.should have_content('From monday to friday')
         end
         # Second Row
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content('Weekends')
-          find('td:nth-child(2)').should have_content('Saturday and Sunday')
-          find('td:nth-child(3)').should have_content('Active')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Deactivate')
+        within("li:nth-child(2)") do
+          page.should have_content('Weekends')
+          page.should have_content('Saturday and Sunday')
         end
       end
 
@@ -47,17 +41,17 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to create a new date_range' do
       visit date_ranges_path
 
-      click_link('Create a date range')
+      click_link('New Date range')
 
       within("form#new_date_range") do
         fill_in 'Name', with: 'new date range name'
         fill_in 'Description', with: 'new date range description'
-        click_button 'Create Date range'
+        click_button 'Create'
       end
 
       find('h2', text: 'new date range name') # Wait for the page to load
       page.should have_selector('h2', text: 'new date range name')
-      page.should have_selector('div.date_range-description', text: 'new date range description')
+      page.should have_selector('div.description-data', text: 'new date range description')
     end
   end
 
@@ -66,7 +60,7 @@ describe "DateRanges", search: true, js: true do
       date_range = FactoryGirl.create(:date_range, company: @company, name: 'Some Date Range', description: 'a date range description')
       visit date_range_path(date_range)
       page.should have_selector('h2', text: 'Some Date Range')
-      page.should have_selector('div.date_range-description', text: 'a date range description')
+      page.should have_selector('div.description-data', text: 'a date range description')
     end
 
     it 'diplays a table of dates within the date range' do
@@ -90,16 +84,10 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
-      within('.active-deactive-toggle') do
-        page.should have_selector('a.btn-success.active', text: 'Active')
-        page.should have_selector('a', text: 'Inactive')
-        page.should_not have_selector('a.btn-danger', text: 'Inactive')
-
-        click_link('Inactive')
-        page.should have_selector('a.btn-danger.active', text: 'Inactive')
-        page.should have_selector('a', text: 'Active')
-        page.should_not have_selector('a.btn-success', text: 'Active')
-      end
+      click_link 'Deactivate'
+      page.should have_selector('a.toggle-active')
+      click_link 'Activate'
+      page.should have_selector('a.toggle-inactive')
     end
 
     it 'allows the user to edit the date_range' do
@@ -111,12 +99,12 @@ describe "DateRanges", search: true, js: true do
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'
         fill_in 'Description', with: 'edited date range description'
-        click_button 'Update Date range'
+        click_button 'Save'
       end
       sleep(1) # Wait on second to avoid a strange error
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       page.should have_selector('h2', text: 'edited date range name')
-      page.should have_selector('div.date_range-description', text: 'edited date range description')
+      page.should have_selector('div.description-data', text: 'edited date range description')
     end
 
     it 'allows the user to add and remove date items to the date range' do
@@ -129,7 +117,7 @@ describe "DateRanges", search: true, js: true do
       within visible_modal do
         find("#calendar_start_date").click_js_link '25'
         find("#calendar_end_date").click_js_link '26'
-        click_js_button "Create Date item"
+        click_js_button "Create"
       end
 
       within("#date_range-dates") do

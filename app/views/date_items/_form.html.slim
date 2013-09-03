@@ -27,7 +27,7 @@
         = f.input :recurrence_days, label: false, as: :check_boxes, collection: Date::DAYNAMES.map{|d| [d, d.downcase] }
 
   .form-actions
-    = f.button :submit
+    = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
 
 javascript:
   $('#calendar_start_date').datepicker({

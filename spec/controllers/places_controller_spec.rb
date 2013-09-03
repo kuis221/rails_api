@@ -24,7 +24,7 @@ describe PlacesController do
         expect {
           delete 'destroy', area_id: area.to_param, id: place.id, format: :js
           response.should be_success
-        }.to change(AreasPlace, :count).by(-1)
+        }.to change(Placeable, :count).by(-1)
       }.to_not change(Area, :count)
     end
   end
