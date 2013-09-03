@@ -247,7 +247,7 @@ class Event < ActiveRecord::Base
   def kpi_goals
     unless @goals
       @goals = {}
-      Goal.scoped_by_campaign_id(campaign_id).each do |goal|
+      campaign.goals.base.each do |goal|
         if goal.kpis_segment_id.present?
           @goals[goal.kpi_id] ||= {}
           @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value

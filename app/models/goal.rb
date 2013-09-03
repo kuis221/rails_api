@@ -28,4 +28,5 @@ class Goal < ActiveRecord::Base
   validate :kpis_segment_id, numericality: true, allow_nil: true
 
   scope :in, lambda{|parent| where(parent_type: parent.class.name, parent_id: parent.id) }
+  scope :base, lambda{ where('parent_type is null') }
 end
