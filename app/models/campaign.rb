@@ -15,6 +15,8 @@
 
 class Campaign < ActiveRecord::Base
   include AASM
+  include GoalableModel
+
 
   # Created_by_id and updated_by_id fields
   track_who_does_it
@@ -45,9 +47,6 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
-
-  # Campaigns-Goals relationship
-  has_many :goals
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
@@ -153,23 +152,6 @@ class Campaign < ActiveRecord::Base
 
   def active_field_types
     @active_field_types ||= form_fields.map(&:field_type).uniq
-  end
-
-  def goals_for(kpis)
-    kpis.map do |kpi|
-      goal = goals.select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || goals.build({kpi: kpi, value: nil}, without_protection: true)
-      goal.kpi = kpi
-      goal
-    end
-  end
-
-  def segments_goals_for(kpi)
-    kpi.kpis_segments.map do |segment|
-      goal = goals.includes(:kpis_segment).select{|r|  r.kpis_segment_id == segment.id }.first || goals.build({kpi: kpi, kpis_segment: segment, value: nil}, without_protection: true)
-      goal.kpi = kpi
-      goal.kpis_segment = segment
-      goal
-    end
   end
 
 

@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :confirmable
 
   has_many :company_users, autosave: true
+
   has_many :companies, through: :company_users, order: 'companies.name ASC'
   belongs_to :current_company, class_name: 'Company'
 

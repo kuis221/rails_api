@@ -14,6 +14,8 @@
 #
 
 class Team < ActiveRecord::Base
+  include GoalableModel
+
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
@@ -28,6 +30,7 @@ class Team < ActiveRecord::Base
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
                    :after_add => :reindex_user, :after_remove => :reindex_user
+
 
   has_many :teamings
   has_many :campaigns, through: :teamings, :source => :teamable, :source_type => 'Campaign'

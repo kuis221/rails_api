@@ -45,6 +45,8 @@ class Ability
         can :manage, Task, :event => {:company_id => user.current_company.id}
 
         can :manage, AttachedAsset
+
+        can :manage, Goal
       end
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130901020307) do
+ActiveRecord::Schema.define(:version => 20130902205104) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -353,15 +353,18 @@ ActiveRecord::Schema.define(:version => 20130901020307) do
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "goals", :force => true do |t|
-    t.integer  "campaign_id"
     t.integer  "kpi_id"
     t.integer  "kpis_segment_id"
     t.decimal  "value"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
+    t.integer  "goalable_id"
+    t.string   "goalable_type"
+    t.integer  "parent_id"
+    t.string   "parent_type"
   end
 
-  add_index "goals", ["campaign_id"], :name => "index_goals_on_campaign_id"
+  add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 

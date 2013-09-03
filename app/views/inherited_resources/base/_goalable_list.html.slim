@@ -1,5 +1,7 @@
 ul.goalable-list
   - goalables.each do |goalable|
+    - goals = goalable.goals.in(resource)
+    - kpi_goals = goals.for_kpis(kpis)
     li
       .goalable-name= goalable.name
       .goals-controls
@@ -11,14 +13,17 @@ ul.goalable-list
         .goals-inner
           - kpis.each do |kpi|
             - if kpi.is_segmented?
+              - segment_goals =  goals.for_kpis_segments(kpi)
               .kpi-segment-group
                 - kpi.kpis_segments.each do |segment|
-                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''} " id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}" data-kpi-id="#{kpi.id}"
+                  - goal = segment_goals.detect{|g| g.kpis_segment_id == segment.id}
+                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''} " id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}"
                     label
-                      input.kpi-goal-field type="text"
+                      input.kpi-goal-field type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-segment-kpi-id="#{kpi.id}" data-id="#{goal.id}" data-parent-id="#{resource.id}"  data-parent-type="#{resource.class.name}" value="#{goal.value}"
                       span.kpi-name= segment.text.upcase
             - else
-              span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}" data-kpi-id="#{kpi.id}"
+              - goal = kpi_goals.detect{|g| g.kpi_id == kpi.id && g.kpis_segment_id.nil?}
+              span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}"
                 label
-                  input.kpi-goal-field type="text"
+                  input.kpi-goal-field type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}"  data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}"
                   span.kpi-name= kpi.name.upcase

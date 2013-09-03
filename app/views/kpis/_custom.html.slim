@@ -10,18 +10,24 @@
   = f.input :kpi_type, input_html: {class: 'input-medium'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
 
 #kpisegment-fields.row-fluid style="display: none"
+  - goals = @campaign.goals.for_kpis_segments(resource)
   = f.fields_for :kpis_segments do |kf|
-    = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium'
-    = kf.fields_for :goals, kf.object.id.nil? ? Goal.new : Goal.find_or_initialize_by_kpis_segment_id_and_campaign_id(kf.object.id, @campaign.id), wrapper: false do |gf|
-      = gf.hidden_field :campaign_id, value: @campaign.id
-      = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
-    = kf.link_to_remove "Remove"
+    .control-group
+      .controls
+        = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium'
+        = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
+          label
+            = gf.hidden_field :goalable_id, value: @campaign.id
+            = gf.hidden_field :goalable_type, value: 'Campaign'
+            = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+        = kf.link_to_remove "Remove"
 
   p= f.link_to_add "Add a segment", :kpis_segments
 
 #kpigoal-fields.row-fluid style="display: none"
-  = f.fields_for :goals, resource.new_record? ? Goal.new : Goal.find_or_initialize_by_kpi_id_and_campaign_id(resource.id, @campaign.id), wrapper: false do |gf|
-    = gf.hidden_field :campaign_id, value: @campaign.id
+  = f.fields_for :goals, @campaign.goals.for_kpis([resource]).first, wrapper: false do |gf|
+    = gf.hidden_field :goalable_id, value: @campaign.id
+    = gf.hidden_field :goalable_type, value: 'Campaign'
     = gf.hidden_field :kpi_id, value: resource.id
     = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}
 

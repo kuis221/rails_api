@@ -19,13 +19,13 @@
           - if kpi.is_segmented?
             - suffix = kpi.kpi_type == 'percentage' ? '%' : ''
             ul.kpi-goals-list
-              - resource.segments_goals_for(kpi).each do |goal|
+              - resource.goals.for_kpis_segments(kpi).each do |goal|
                 li
                   span.value= "#{goal.value.present? ? goal.value : '--'}#{suffix}"
                   | &nbsp;
                   span.segment_name= goal.kpis_segment.text
           - else
-            - goal = resource.goals_for([kpi]).first
+            - goal = resource.goals.for_kpis([kpi]).first
             span.value= goal.value
         span.pull-right
           = link_to '', edit_campaign_kpi_path(resource, kpi.id), remote: true, class: 'edit', title: 'Edit'

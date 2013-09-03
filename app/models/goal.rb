@@ -12,8 +12,17 @@
 #
 
 class Goal < ActiveRecord::Base
-  belongs_to :campaign
+  belongs_to :goalable, polymorphic: true
+  belongs_to :parent, polymorphic: true
   belongs_to :kpi
   belongs_to :kpis_segment
-  attr_accessible :value, :campaign_id, :kpi_id
+  attr_accessible :value, :goalable_id, :goalable_type, :parent_id, :parent_type, :kpi_id
+
+
+  validate :goalable_id, presence: true, numericality: true
+  validate :goalable_type, presence: true
+  validate :kpi_id, presence: true, numericality: true
+  validate :kpis_segment_id, numericality: true, allow_nil: true
+
+  scope :in, lambda{|parent| where(parent_type: parent.class.name, parent_id: parent.id) }
 end

@@ -124,34 +124,27 @@ jQuery ->
 		bootbox.hideAll()
 		false
 
-	$(document).delegate '.goalable-list a.arrow', 'click', (e) ->
-		e.stopPropagation();
-		e.preventDefault();
-		$li = $(this).closest('li')
-		$scroller = $li.find('.goals-inner')
-		if $scroller.data('moving')
-			return
-		width = $li.find('.kpi-goal').width()
-		scrollerPosition = $scroller.position()
-		move = ''
-		if $(this).is('.arrow-left')
-			distanceToMin = scrollerPosition.left * -1
-			move = if scrollerPosition.left < 0 then "+=#{Math.min(width, distanceToMin)}" else false
-		else
-			distanceToMax = $scroller.outerWidth() + scrollerPosition.left - $(this).position().left
-			move = if ($scroller.outerWidth() + scrollerPosition.left) > $(this).position().left then "-=#{Math.min(width, distanceToMax)}" else false
+	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->
+		$this = $(this)
+		id = $this.data('id')
+		$.ajax("/goals#{if id then '/'+id else ''}.json", {
+			method: "#{if id then "PUT" else "POST"}",
+			data: {
+				goal: {
+					kpi_id: $this.data('kpi-id'),
+					kpis_segment_id: $this.data('segment-id'),
+					value: $this.val(),
+					goalable_id: $this.data('goalable-id'),
+					goalable_type: $this.data('goalable-type'),
+					parent_id: $this.data('parent-id'),
+					parent_type: $this.data('parent-type')
+				}
+			},
+			dataType: 'json',
+			success: (response) ->
+				$this.data('id', response.id)
+		})
 
-		if move
-			$scroller.data('moving', true)
-			$scroller.animate { left: move }, 500, => 
-				scrollerPosition = $scroller.position()
-				if scrollerPosition.left == 0
-					$li.find('.arrow-left').hide()
-				else 
-					$li.find('.arrow-left').show()
-
-				$scroller.data('moving', false)
-		false
 
 	$(".totop").hide()
 

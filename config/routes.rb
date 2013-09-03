@@ -19,6 +19,9 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
+
+  resources :goals, only: [:create, :update]
+
   namespace :results do
     resources :event_data, only: [:index] do
       get :items, on: :collection
@@ -118,6 +121,7 @@ Brandscopic::Application.routes.draw do
       match 'members' => 'campaigns#add_members', via: :post, as: :add_member
       match 'members' => 'campaigns#members', via: :get, as: :members
       match 'teams' => 'campaigns#teams', via: :get, as: :teams
+      match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: {tab: /staff|places|date_ranges|day_parts/}
     end
   end
 

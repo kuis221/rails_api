@@ -61,6 +61,10 @@ class CampaignsController < FilteredController
     end
   end
 
+  def tab
+    render layout: false
+  end
+
   protected
     def normalize_brands(brands)
       unless brands.empty?

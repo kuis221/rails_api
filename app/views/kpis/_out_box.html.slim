@@ -8,19 +8,20 @@
 
 - if resource.is_segmented?
   #kpisegment-fields.row-fluid.form-horizontal
-    = f.fields_for :kpis_segments do |kf|
+    = f.fields_for :goals, @campaign.goals.for_kpis_segments(resource) do |kf|
       .control-group
         .controls
-          = kf.fields_for :goals, kf.object.id.nil? ? Goal.new : Goal.find_or_initialize_by_kpis_segment_id_and_campaign_id(kf.object.id, @campaign.id), wrapper: false do |gf|
-            = gf.hidden_field :campaign_id
-            = gf.hidden_field :kpi_id, value: resource.id
-            label
-              = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
-              = kf.object.text
+          = kf.hidden_field :goalable_id
+          = kf.hidden_field :goalable_type
+          = kf.hidden_field :kpi_id, value: resource.id
+          label
+            = kf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+            = kf.object.kpis_segment.text
 - else
   #kpigoal-fields.row-fluid.form-horizontal
     div.control-group
-      = f.fields_for :goals, resource.new_record? ? Goal.new : Goal.find_or_initialize_by_kpi_id_and_campaign_id(resource.id, @campaign.id), wrapper: false do |gf|
-        = gf.hidden_field :campaign_id, value: @campaign.id
+      = f.fields_for :goals, @campaign.goals.for_kpis([resource]).first, wrapper: false do |gf|
+        = gf.hidden_field :goalable_id, value: @campaign.id
+        = gf.hidden_field :goalable_type, value: 'Campaign'
         = gf.hidden_field :kpi_id, value: resource.id
         = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}

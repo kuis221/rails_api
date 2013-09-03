@@ -33,13 +33,13 @@
       li.active
         a href="#kpis" KPIs
       li
-        a href="#places" Places
+        a href="#places" data-content="#{tab_campaign_path(resource, :places)}" Places
       li
-        a href="#staff" Staff
+        a href="#staff" data-content="#{tab_campaign_path(resource, :staff)}" Staff
       li
-        a href="#date-ranges" Date ranges
+        a href="#date_ranges" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
       li
-        a href="#day-parts" Day parts
+        a href="#day_parts" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
  
 
     .tab-content
@@ -47,10 +47,12 @@
         = render 'kpis'
 
       #places.tab-pane
-        = render 'places'
 
       #staff.tab-pane
-        = render 'staff'
+
+      #date_ranges.tab-pane
+
+      #day_parts.tab-pane
 
   .details_box
     h2 POST EVENT FORM
@@ -63,6 +65,16 @@ javascript:
     e.preventDefault();
     $(this).tab('show');
   })
+
+  $('#campaign-tabs a[data-content]').on('show', function(e){
+    $target = $(e.target);
+    $content = $('.tab-content ' + $target.attr('href'))
+    $content.html('<img src="/assets/loading.gif" />')
+    $content.load($target.data('content'))
+  })
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
+  });
+  $(document).on('members:change teams:change', function(){
+    $('.tab-content #staff').load('#{tab_campaign_path(resource, :staff)}')
   });
