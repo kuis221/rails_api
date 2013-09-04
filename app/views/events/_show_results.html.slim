@@ -52,8 +52,9 @@
 
             li
               div.metric
-                span= resource.surveys.count
+                span= surveys_count = resource.surveys.count
                 = " Surveys"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
         ul.consumer-reach-metrics.pull-right
           - if event_data.spent.present? && event_data.impressions > 0
             li
