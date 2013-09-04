@@ -58,7 +58,7 @@ class CampaignsController < FilteredController
   end
 
   def new_date_range
-    @date_ranges = current_company.date_ranges
+    @date_ranges = current_company.date_ranges.where('date_ranges.id not in (?)', resource.date_range_ids + [0])
   end
 
   def add_date_range
@@ -74,7 +74,7 @@ class CampaignsController < FilteredController
   end
 
   def new_day_part
-    @day_parts = current_company.day_parts
+    @day_parts = current_company.day_parts.where('day_parts.id not in (?)', resource.day_part_ids + [0])
   end
 
   def add_day_part

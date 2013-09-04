@@ -39,6 +39,16 @@ describe CampaignsController do
       response.should render_template(:new_date_range)
       assigns(:date_ranges).should == [date_range]
     end
+
+    it "should not include the date ranges that are already assigned to the campaign" do
+      date_range = FactoryGirl.create(:date_range, company: @company)
+      assigned_range = FactoryGirl.create(:date_range, company: @company)
+      campaign.date_ranges << assigned_range
+      get 'new_date_range', id: campaign.to_param, format: :js
+      response.should be_success
+      response.should render_template(:new_date_range)
+      assigns(:date_ranges).should == [date_range]
+    end
   end
 
   describe "POST 'add_date_range'" do
@@ -83,6 +93,16 @@ describe CampaignsController do
     it "returns http success" do
       day_part = FactoryGirl.create(:day_part, company: @company)
       other_date_range = FactoryGirl.create(:day_part, company_id: @company.id + 1)
+      get 'new_day_part', id: campaign.to_param, format: :js
+      response.should be_success
+      response.should render_template(:new_day_part)
+      assigns(:day_parts).should == [day_part]
+    end
+
+    it "should not include the day parts that are already assigned to the campaign" do
+      day_part = FactoryGirl.create(:day_part, company: @company)
+      assigned_part = FactoryGirl.create(:day_part, company: @company)
+      campaign.day_parts << assigned_part
       get 'new_day_part', id: campaign.to_param, format: :js
       response.should be_success
       response.should render_template(:new_day_part)
