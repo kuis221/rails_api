@@ -247,12 +247,13 @@ class Event < ActiveRecord::Base
   def kpi_goals
     unless @goals
       @goals = {}
+      total_campaign_events = campaign.events.count
       campaign.goals.base.each do |goal|
         if goal.kpis_segment_id.present?
           @goals[goal.kpi_id] ||= {}
-          @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value
+          @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events
         else
-          @goals[goal.kpi_id] = goal.value
+          @goals[goal.kpi_id] = goal.value / total_campaign_events
         end
       end
     end
