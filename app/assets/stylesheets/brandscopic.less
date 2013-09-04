@@ -2599,7 +2599,7 @@ ul.thumbnails{
 			.campaign-name{
 				font-size: 16px;
 				overflow: hidden;
-			    text-overflow:ellipsis; 
+			    text-overflow:ellipsis;
 				padding: 17px 0 0 25px;
 				width: 400px;
 				white-space: nowrap;
@@ -3519,10 +3519,20 @@ svg{
 	border-radius: 7px;
 	.event-comments-list{
 		margin-bottom: 20px;
-		width: 410px;
+		width: 600px;
 		.comment-row{
-			margin:20px 0 10px 0;
+			margin: 0 0 20px 0;
 			width: 100%;
+			display: inline-block;
+			p {
+				float: left;
+				font-size: 13px;
+				width: 85%
+			}
+			.links-data{
+				float: right;
+				width: auto;
+			}
 		}
 	}
 	.control-group.percentage{

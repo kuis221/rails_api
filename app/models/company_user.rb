@@ -42,8 +42,8 @@ class CompanyUser < ActiveRecord::Base
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables
 
-  delegate :name, :full_name, :first_name, :last_name, :email, :role_name, :time_zone, :invited_to_sign_up?, to: :user
-  delegate :full_address, :country, :state, :city, :country_name, :state_name, to: :user
+  delegate :name, :full_name, :first_name, :last_name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
+  delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
   delegate :name, to: :role, prefix: true
 
   scope :active, where(:active => true)
