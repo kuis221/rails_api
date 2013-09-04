@@ -1,2 +1,7 @@
 = link_to "Add Places", new_campaign_placeable_path(resource), remote: true, class: 'btn btn-primary', title: 'Add Staff'
-= render partial: 'goalable_list', locals: { goalables: resource.areas_and_places, kpis: resource.active_kpis }
+= render layout: 'goalable_list', locals: { goalables: resource.areas_and_places, kpis: resource.active_kpis } do |goalable|
+  - if goalable.is_a?(Area)
+    = link_to '',  remove_from_campaign_area_path(goalable, campaign_id: resource), method: :delete, remote: true, class: 'icon-remove-sign'
+  - else
+    = link_to '',  campaign_place_path(resource, goalable), remote: true, method: :delete, remote: true, class: 'icon-remove-sign'
+ 

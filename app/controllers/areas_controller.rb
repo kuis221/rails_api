@@ -31,6 +31,13 @@ class AreasController < FilteredController
     end
   end
 
+  def remove_from_campaign
+    campaign = current_company.campaigns.find(params[:campaign_id])
+    if can?(:edit, campaign) && campaign.area_ids.include?(resource.id)
+      campaign.areas.delete resource
+    end
+  end
+
   private
 
     def facets

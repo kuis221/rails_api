@@ -1,5 +1,5 @@
 class PlaceablesController < FilteredController
-  respond_to :js, only: [:new, :create, :destroy]
+  respond_to :js, only: [:new, :create]
 
   belongs_to :campaign, :area, :company_user, :team, polymorphic: true
 

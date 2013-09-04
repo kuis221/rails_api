@@ -105,7 +105,8 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :placeables, only: [:new, :create, :destroy]
+    resources :placeables, only: [:new]
+    resources :places, only: [:destroy, :create]
     get :autocomplete, on: :collection
     member do
       get :post_event_form
@@ -217,6 +218,7 @@ Brandscopic::Application.routes.draw do
     resources :places, only: [:new, :create, :destroy]
     member do
       post :add_to_campaign
+      delete :remove_from_campaign
       get :deactivate
       get :activate
     end

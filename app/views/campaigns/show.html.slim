@@ -20,7 +20,7 @@
       = link_to '', edit_campaign_path(resource), remote: true, class: 'edit'
       = active_inactive_buttons(resource)
 
-    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
       = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit'
@@ -33,7 +33,7 @@
       li.active
         a href="#kpis_tab" KPIs
       li
-        a href="#places_tab" data-content="#{tab_campaign_path(resource, :places)}" Places
+        a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
       li
         a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
       li
@@ -46,7 +46,7 @@
       #kpis_tab.tab-pane.active
         = render 'kpis'
 
-      #places_tab.tab-pane
+      #campaign-places-list.tab-pane
 
       #staff_tab.tab-pane
 
@@ -87,8 +87,8 @@ javascript:
     $('#goal-team-'+team_id).remove()
   })
 
-  $(document).on('areas:change places:change', function(){
-    $('.tab-content #places_tab').load('#{tab_campaign_path(resource, :places)}')
+  $(document).on('areas:change', function(){
+    $('.tab-content #campaign-places-list').load('#{tab_campaign_path(resource, :places)}')
   });
 
   $(document).on('date_ranges:change', function(){
@@ -97,24 +97,4 @@ javascript:
 
   $(document).on('day_parts:change', function(){
     $('.tab-content #day_parts_tab').load('#{tab_campaign_path(resource, :day_parts)}')
-  });
-
-  $(document).delegate('.remove-company_user', 'click', function(){
-    $.ajax('#{campaign_path(resource)}/members/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
-    return false;
-  });
-
-  $(document).delegate('.remove-team', 'click', function(){
-    $.ajax('#{campaign_path(resource)}/teams/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
-    return false;
-  });
-
-  $(document).delegate('.remove-date_range', 'click', function(){
-    $.ajax('#{campaign_path(resource)}/date_ranges/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
-    return false;
-  });
-
-  $(document).delegate('.remove-day_part', 'click', function(){
-    $.ajax('#{campaign_path(resource)}/day_parts/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
-    return false;
   });

@@ -1,2 +1,3 @@
 = link_to "Add Date range", new_date_range_campaign_path(resource), remote: true, class: 'btn btn-primary', title: 'Add Date range'
-= render partial: 'goalable_list', locals: { goalables: resource.date_ranges, kpis: resource.active_kpis }
+= render layout: 'goalable_list', locals: { goalables: resource.date_ranges, kpis: resource.active_kpis } do |date_range|
+  = link_to '',  delete_date_range_campaign_path(resource, date_range), remote: true, method: :delete, remote: true, class: 'icon-remove-sign'
