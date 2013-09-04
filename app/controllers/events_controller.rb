@@ -10,7 +10,7 @@ class EventsController < FilteredController
 
   helper_method :describe_filters, :calendar_highlights
 
-  respond_to :js, only: [:new, :create, :eit, :update, :edit_results, :save_results, :edit_summary, :new_comment]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_summary, :new_comment]
 
   custom_actions member: [:tasks, :edit_results, :save_results, :edit_summary, :new_comment]
   layout false, only: :tasks
