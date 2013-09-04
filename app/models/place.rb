@@ -26,6 +26,7 @@
 require "base64"
 
 class Place < ActiveRecord::Base
+  include GoalableModel
 
   attr_accessible :reference, :place_id
 

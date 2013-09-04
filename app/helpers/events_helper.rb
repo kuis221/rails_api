@@ -9,6 +9,16 @@ module EventsHelper
     end
   end
 
+  def kpi_goal_progress_bar(goal, result)
+    bar_widht = [100, result * 100 / goal].min
+    bar_widht = 1 if result > 0 && bar_widht < 1   # Display at least one or two pixels
+    if goal.present?
+      content_tag(:div, class: 'progress') do
+        content_tag(:div, '', class: 'bar', style: "width: #{bar_widht}%")
+      end
+    end
+  end
+
   def series_question_1(resource)
     [{
         name: 'UNAWARE',
