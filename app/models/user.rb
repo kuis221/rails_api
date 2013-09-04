@@ -35,6 +35,10 @@
 #  current_company_id     :integer
 #  time_zone              :string(255)
 #  detected_time_zone     :string(255)
+#  phone_number           :string(255)
+#  street_address         :string(255)
+#  unit_number            :string(255)
+#  zip_code               :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -79,8 +83,8 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
-  attr_accessible :first_name, :last_name, :email, :country, :state, :city, :password, :password_confirmation, :accepting_invitation, :time_zone
+  attr_accessible :email, :phone_number, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
+  attr_accessible :first_name, :last_name, :email, :phone_number, :country, :state, :city, :street_address, :unit_number, :zip_code, :password, :password_confirmation, :accepting_invitation, :time_zone
 
   accepts_nested_attributes_for :company_users, allow_destroy: false
 
@@ -109,7 +113,10 @@ class User < ActiveRecord::Base
     city_parts = []
     city_parts.push city unless city.nil?
     city_parts.push state unless state.nil?
+    address.push street_address unless street_address.nil?
+    address.push unit_number unless unit_number.nil?
     address.push city_parts.join(', ') unless city_parts.empty?
+    address.push zip_code unless zip_code.nil?
     address.push country_name unless country_name.nil?
     address.compact.join('<br />').html_safe
   end
