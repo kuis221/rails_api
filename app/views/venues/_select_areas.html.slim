@@ -9,16 +9,3 @@
               = area.description
             span.pull-right
               = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
-
-javascript:
-  selectAreasTable = $('#select-areas-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bAutoWidth": false,
-        "bDestroy": true,
-        "aoColumns": [
-          null,
-          {"sWidth": '30px', 'bSortable': false}
-        ]
-  });
