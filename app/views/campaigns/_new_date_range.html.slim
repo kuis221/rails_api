@@ -9,4 +9,4 @@
                 span.date-range-name= date_range.name
                 span.date-range-description= date_range.description
               span.add-button.pull-right
-                = link_to '', add_date_range_campaign_path(resource, data_range_id: date_range.id), id: "add-date-range-btn-#{date_range.id}", data: {'date-range-id' => date_range.id}, class: 'icon-plus-sign', remote: true, method: :post
+                = link_to '', add_date_range_campaign_path(resource, date_range_id: date_range.id), id: "add-date-range-btn-#{date_range.id}", data: {'date-range-id' => date_range.id}, class: 'icon-plus-sign', remote: true, method: :post

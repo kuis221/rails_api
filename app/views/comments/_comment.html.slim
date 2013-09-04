@@ -1,6 +1,10 @@
-.comment-row
+.comment-row id = "comment_#{comment.id}"
   - if comment.commentable_type != 'Event'
-   .user = comment.user_full_name 
+   .user = comment.user_full_name
    .date = comment_date(comment)
-  p
+  p.content
     = comment.content
+  - if comment.commentable_type == 'Event'
+    .links-data
+      = link_to '', edit_event_comment_path(comment.commentable_id, comment), remote: true, class: 'edit'
+      = link_to(content_tag(:i,'', class: 'icon-remove-sign'),  event_comment_path(comment.commentable_id, comment.to_param), class: 'remove-comment-btn', title: 'Remove', remote: true, method: :delete)

@@ -105,7 +105,8 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :placeables, only: [:new, :create, :destroy]
+    resources :placeables, only: [:new]
+    resources :places, only: [:destroy, :create]
     get :autocomplete, on: :collection
     member do
       get :post_event_form
@@ -126,17 +127,19 @@ Brandscopic::Application.routes.draw do
 
       match 'date_ranges/new' => 'campaigns#new_date_range', via: :get, as: :new_date_range
       match 'date_ranges' => 'campaigns#add_date_range', via: :post, as: :add_date_range
+      match 'date_ranges/:date_range_id' => 'campaigns#delete_date_range', via: :delete, as: :delete_date_range
 
       match 'day_parts/new' => 'campaigns#new_day_part', via: :get, as: :new_day_part
       match 'day_parts' => 'campaigns#add_day_part', via: :post, as: :add_day_part
+      match 'day_parts/:day_part_id' => 'campaigns#delete_day_part', via: :delete, as: :delete_day_part
     end
   end
 
   resources :events do
     get :autocomplete, on: :collection
     get :tasks, on: :member
-    get :edit_results, on: :member
     put :save_results, on: :member
+    get :edit_summary, on: :member
     resources :tasks, only: [:create, :new] do
       member do
         get :deactivate
@@ -166,7 +169,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :comments, only: [:create, :index]
+    resources :comments, only: [:index, :create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
     member do
@@ -215,6 +218,7 @@ Brandscopic::Application.routes.draw do
     resources :places, only: [:new, :create, :destroy]
     member do
       post :add_to_campaign
+      delete :remove_from_campaign
       get :deactivate
       get :activate
     end

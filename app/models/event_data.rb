@@ -25,6 +25,8 @@ class EventData < ActiveRecord::Base
 
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
 
+  scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
+
   def update_data
     results = EventResult.scoped_by_event_id(event_id)
     self.impressions = results.impressions.sum(:scalar_value).round

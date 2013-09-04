@@ -36,10 +36,6 @@ class CampaignsController < FilteredController
     render json: search.results
   end
 
-  def campaign_has_kpi?(kpi)
-    resource.kpis.include?(kpi)
-  end
-
   def remove_kpi
     @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
     @field.destroy
@@ -62,7 +58,35 @@ class CampaignsController < FilteredController
   end
 
   def new_date_range
-    @date_ranges = current_company.date_ranges
+    @date_ranges = current_company.date_ranges.where('date_ranges.id not in (?)', resource.date_range_ids + [0])
+  end
+
+  def add_date_range
+    date_range = current_company.date_ranges.find(params[:date_range_id])
+    if date_range.present? && !resource.date_ranges.include?(date_range)
+      resource.date_ranges << date_range
+    end
+  end
+
+  def delete_date_range
+    date_range = resource.date_ranges.find(params[:date_range_id])
+    resource.date_ranges.delete(date_range)
+  end
+
+  def new_day_part
+    @day_parts = current_company.day_parts.where('day_parts.id not in (?)', resource.day_part_ids + [0])
+  end
+
+  def add_day_part
+    day_part = current_company.day_parts.find(params[:day_part_id])
+    if day_part.present? && !resource.day_parts.include?(day_part)
+      resource.day_parts << day_part
+    end
+  end
+
+  def delete_day_part
+    day_part = resource.day_parts.find(params[:day_part_id])
+    resource.day_parts.delete(day_part)
   end
 
   def tab

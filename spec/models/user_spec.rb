@@ -35,6 +35,10 @@
 #  current_company_id     :integer
 #  time_zone              :string(255)
 #  detected_time_zone     :string(255)
+#  phone_number           :string(255)
+#  street_address         :string(255)
+#  unit_number            :string(255)
+#  zip_code               :string(255)
 #
 
 require 'spec_helper'

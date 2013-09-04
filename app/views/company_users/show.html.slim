@@ -1,39 +1,40 @@
-#resource-details-wrapper
-  = resource_details_bar("Viewing User Details", collection_path)
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing user details. Click to close.", collection_path)
 
-  .row-fluid
-    .box.span12
-      .row-fluid
-        .span6
-          h2= "#{resource.first_name} #{resource.last_name}"
-          - if resource.role
-            .user-role
-              = resource.role.name
-          - if resource.full_address
-            .user-address
-              = resource.full_address
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_company_user_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            = "&nbsp;".html_safe
-            = active_inactive_buttons(resource)
+  .details_box.padding-top-close-bar
+    h2= resource.full_name
 
+    - if resource.role.present?
+      .user-role
+        = resource.role.name
 
-  .row-fluid
-    .box
-      a href="#tasks-content" data-toggle="collapse"
-        .box-header
-          h2 CAMPAIGNS
+    - if resource.email.present?
+      .user-email
+        = resource.email
 
-      #tasks-content.collapse.in
-        .box-content
-          = simple_form_for(resource, html: { id: 'company_user_campaigns_form'}) do |f|
-            = f.association :campaigns, as: :check_boxes, label: false, wrapper_html: {class: 'checkbox-columns'}, collection: assignable_campaigns
+    - if resource.phone_number.present?
+      .user-phone-number
+        = resource.phone_number
 
-            .row-fluid
-              .pull-right
-                = f.button :submit, 'Save Campaigns', class: 'btn-primary'
+    - if resource.full_address.present?
+      .user-address
+        = resource.full_address
 
+    .links-data
+      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.full_name
+      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+  / #team-members.details_box
+  /   h3 Team Members
+  /   #team-members-list
+  /     = render 'members'
+  /   = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
 
 javascript:
   $(document).on('company_users:change', function(){

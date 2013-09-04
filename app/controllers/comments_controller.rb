@@ -1,7 +1,7 @@
 class CommentsController < InheritedResources::Base
-  respond_to :js, only: [:index, :create]
+  respond_to :js, only: [:index, :new, :create, :edit, :update, :destroy]
 
-  actions :index, :create
+  actions :index, :new, :create, :edit, :update, :destroy
 
   belongs_to :task, :event, :polymorphic => true
 end

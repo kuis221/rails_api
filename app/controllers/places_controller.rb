@@ -1,6 +1,6 @@
 class PlacesController < FilteredController
   actions :index, :new, :create
-  belongs_to :area, optional: true
+  belongs_to :area, :campaign, optional: true
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
 

@@ -1,12 +1,78 @@
-.tab-content
-  .areas-table
-    .scroll-table-content
-      .link-list
-        ul#areas-list
-          - @areas.each do |area|
-            li id="area-#{area.id}"
-              span.area-data
-                span.area-name= area.name
-                span.area-description= area.description
-              span.add-button.pull-right
-                = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), id: "add-area-btn-#{area.id}", data:{'area-id' => area.id}, class: 'icon-plus-sign', remote: true, method: :post
+/ .tab-content
+/   .areas-table
+/     .scroll-table-content
+/       .link-list
+/         ul#areas-list
+/           - @areas.each do |area|
+/             li id="area-#{area.id}"
+/               span.area-data
+/                 span.area-name= area.name
+/                 span.area-description= area.description
+/               span.add-button.pull-right
+/                 = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), id: "add-area-btn-#{area.id}", data:{'area-id' => area.id}, class: 'icon-plus-sign', remote: true, method: :post
+
+p Add areas from the list below
+
+input type="text" name="q" id="place-search-box"
+#select-areas-table-wrapper
+  .link-list
+    ul#areas-list
+      - @areas.each do |area|
+        li id="area-#{area.id}"
+          span.pull-left
+            .area_name= area.name
+            = area.description
+          span.pull-right
+            = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
+      li.empty-list-message
+        | There are not assignable areas
+
+  p OR
+
+  p Search for places that you want to add
+
+  = simple_form_for([parent, parent.places.new], remote: true) do |f|
+    = f.error_notification
+
+    .form-inputs
+      .row-fluid
+        .pull-left
+          = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
+        .pull-right
+          = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disabled: true
+
+javascript:
+  var input = $('.modal .places-autocomplete')[0];
+  var locationAutocomplete = new google.maps.places.Autocomplete(input);
+
+  google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
+    var place = locationAutocomplete.getPlace();
+    if (!place.geometry) {
+      // Inform the user that the place was not found and return.
+      alert('Place not found');
+      return false;
+    }
+
+    $('.add-place-btn').attr('disabled', false)
+
+    $($(input).data('hidden')).val(place.reference+'||'+place.id);
+  });
+
+  $('.add-place-btn').click(function(e){
+    if ($('#place_reference').val() == ''){
+      e.preventDefault();
+      return false;
+    }
+  })
+
+  $('#place-search-box').on('keyup', function () {
+    var value = $(this).val();
+    $("#areas-list > li:not(.empty-list-message)").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
+  });

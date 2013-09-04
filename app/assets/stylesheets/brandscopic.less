@@ -1186,6 +1186,30 @@ li#user_menu{
 	width:210px;
 }
 
+
+
+.kpi-trends-stats {
+	line-height: 30px;
+	font-size: 11px;
+	text-transform: uppercase;
+	span {
+		font-size: 16px;
+		color: #3E9CCF;
+		margin-right: 3px;
+	}
+	.live-stats-2{
+		float: right;
+		margin: 20px 0 50px 0;
+		position: relative;
+	}
+	.sparkline {
+		margin: 0 3px 0 5px;
+		canvas{
+			margin-top: 1px;
+		}
+	}
+}
+
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @borders;
@@ -1224,6 +1248,12 @@ li#user_menu{
   			color: @text;
   		}
     }
+    .empty-list-message {
+    	display: none;
+    }
+	.empty-list-message:first-child:last-child {
+		display: block;
+	}
     ul#areas-list{
     	li{
 	    	span{
@@ -2568,7 +2598,7 @@ ul.thumbnails{
 			.campaign-name{
 				font-size: 16px;
 				overflow: hidden;
-			    text-overflow:ellipsis; 
+			    text-overflow:ellipsis;
 				padding: 17px 0 0 25px;
 				width: 400px;
 				white-space: nowrap;
@@ -2815,28 +2845,6 @@ ul.thumbnails{
 			&:hover {
 				.remove-area-btn {
 					display: block;
-				}
-			}
-		}
-
-		#overall-venue-stats {
-			line-height: 30px;
-			font-size: 11px;
-			text-transform: uppercase;
-			span {
-				font-size: 16px;
-				color: #3E9CCF;
-				margin-right: 3px;
-			}
-			.live-stats-2{
-				float: right;
-				margin: 20px 0 50px 0;
-				position: relative;
-			}
-			.sparkline {
-				margin: 0 3px 0 5px;
-				canvas{
-					margin-top: 1px;
 				}
 			}
 		}
@@ -3507,10 +3515,20 @@ svg{
 	border-radius: 7px;
 	.event-comments-list{
 		margin-bottom: 20px;
-		width: 410px;
+		width: 600px;
 		.comment-row{
-			margin:20px 0 10px 0;
+			margin: 0 0 20px 0;
 			width: 100%;
+			display: inline-block;
+			p {
+				float: left;
+				font-size: 13px;
+				width: 85%
+			}
+			.links-data{
+				float: right;
+				width: auto;
+			}
 		}
 	}
 	.control-group.percentage{
@@ -3980,6 +3998,13 @@ a, i{
 					width: 60px;
 					display: block;
 					border: 0;
+					border: 1px solid #fff !important;
+				}
+			}
+
+			.error {
+				input {
+					border: 1px solid @buttons !important;
 				}
 			}
 

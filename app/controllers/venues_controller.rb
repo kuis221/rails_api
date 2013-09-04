@@ -30,17 +30,18 @@ class VenuesController < FilteredController
   end
 
   def select_areas
+    @areas = current_company.areas.not_in_venue(resource.place)
   end
 
   def add_areas
-    @area = Area.find(params[:area_id])
+    @area = current_company.areas.find(params[:area_id])
     unless resource.place.area_ids.include?(@area.id)
       resource.place.areas << @area
     end
   end
 
   def delete_area
-    @area = Area.find(params[:area_id])
+    @area = current_company.areas.find(params[:area_id])
     resource.place.areas.delete(@area)
   end
 
