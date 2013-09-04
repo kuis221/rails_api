@@ -84,6 +84,11 @@ class CampaignsController < FilteredController
     end
   end
 
+  def delete_day_part
+    day_part = resource.day_parts.find(params[:day_part_id])
+    resource.day_parts.delete(day_part)
+  end
+
   def tab
     render layout: false
   end

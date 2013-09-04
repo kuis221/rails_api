@@ -4,4 +4,4 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('#area-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');
+    $('##{parent.class.name.underscore}-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');

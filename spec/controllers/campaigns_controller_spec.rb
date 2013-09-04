@@ -134,6 +134,19 @@ describe CampaignsController do
     end
   end
 
+  describe "DELETE 'delete_day_part'" do
+    it "should delete the day part from the campaign" do
+      day_part = FactoryGirl.create(:day_part, company: @company)
+      campaign.day_parts << day_part
+      expect {
+        expect {
+          delete 'delete_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
+        }.to_not change(DayPart, :count)
+        response.should be_success
+      }.to change(campaign.day_parts, :count).by(-1)
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js
@@ -329,6 +342,42 @@ describe CampaignsController do
         assigns(:campaign).should == campaign
         campaign.reload
       }.should_not change(campaign.teams, :count)
+    end
+  end
+
+  describe "GET 'tab'" do
+    it "loads the staff tab" do
+      campaign.users << @company_user
+      campaign.teams << FactoryGirl.create(:team, company: @company)
+      get 'tab', id: campaign.id, tab: 'staff'
+      assigns(:campaign).should == campaign
+      response.should render_template(:staff)
+      response.should render_template(:goalable_list)
+    end
+
+    it "loads the places tab" do
+      campaign.places << FactoryGirl.create(:place, is_custom_place: true, reference: nil)
+      campaign.areas << FactoryGirl.create(:area, company: @company)
+      get 'tab', id: campaign.id, tab: 'places'
+      assigns(:campaign).should == campaign
+      response.should render_template(:places)
+      response.should render_template(:goalable_list)
+    end
+
+    it "loads the date_ranges tab" do
+      campaign.date_ranges << FactoryGirl.create(:date_range, company: @company)
+      get 'tab', id: campaign.id, tab: 'date_ranges'
+      assigns(:campaign).should == campaign
+      response.should render_template(:date_ranges)
+      response.should render_template(:goalable_list)
+    end
+
+    it "loads the day_parts tab" do
+      campaign.day_parts << FactoryGirl.create(:day_part, company: @company)
+      get 'tab', id: campaign.id, tab: 'day_parts'
+      assigns(:campaign).should == campaign
+      response.should render_template(:day_parts)
+      response.should render_template(:goalable_list)
     end
   end
 

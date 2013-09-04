@@ -9,7 +9,8 @@ ul.goalable-list
         a.arrow.arrow-left.icon-angle-left href="#"
         .pull-right
           a.arrow.arrow-right.icon-angle-right href="#"
-          a class="icon-remove-sign remove-#{goalable.class.name.underscore}" data-id="#{goalable.id}" href="#"
+          / a class="icon-remove-sign remove-#{goalable.class.name.underscore}" data-id="#{goalable.id}" href="#"
+          = yield goalable
       .goals
         .goals-inner
           - kpis.each do |kpi|

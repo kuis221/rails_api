@@ -19,36 +19,28 @@
               div.metric
                 span= event_data.impressions
                 = (event_data.impressions == 1 ? " Impression" : " Impressions")
-              - if resource.kpi_goals[Kpi.impressions.id].present?
-                div.progress
-                  .bar style="width: #{event_data.impressions*100/resource.kpi_goals[Kpi.impressions.id]}%"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.impressions.id], event_data.impressions)
 
           - if active_kpis.include?(Kpi.interactions)
             li
               div.metric
                 span= number_with_delimiter(event_data.interactions.round)
                 = " Influenced"
-              - if resource.kpi_goals[Kpi.interactions.id].present?
-                div.progress
-                  .bar style="width: #{event_data.interactions*100/resource.kpi_goals[Kpi.interactions.id]}%"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.interactions.id], event_data.interactions)
 
           - if active_kpis.include?(Kpi.samples)
             li
               div.metric
                 span= number_with_delimiter(event_data.samples.round)
                 = " Sampled"
-              - if resource.kpi_goals[Kpi.samples.id].present?
-                div.progress
-                  .bar style="width: #{event_data.samples*100/resource.kpi_goals[Kpi.samples.id]}%"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.samples.id], event_data.samples)
 
           - if active_kpis.include?(Kpi.expenses)
             li
               div.metric
                 span= number_to_currency(event_data.spent, precision: 0)
                 = " Spent"
-              - if resource.kpi_goals[Kpi.expenses.id].present?
-                div.progress
-                  .bar style="width: #{event_data.spent*100/resource.kpi_goals[Kpi.expenses.id]}%"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
 
             - if active_kpis.include?(Kpi.photos)
               - photo_count = resource.photos.count
@@ -56,14 +48,13 @@
                 div.metric
                   span= photo_count
                   = " Photos"
-                - if resource.kpi_goals[Kpi.photos.id].present?
-                  div.progress
-                    .bar style="width: #{photo_count*100/resource.kpi_goals[Kpi.photos.id]}%"
+                = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
 
             li
               div.metric
-                span= resource.surveys.count
+                span= surveys_count = resource.surveys.count
                 = " Surveys"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
         ul.consumer-reach-metrics.pull-right
           - if event_data.spent.present? && event_data.impressions > 0
             li
