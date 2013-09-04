@@ -2,11 +2,11 @@
     h3 Add to Area
     .link-list
       ul#areas-list
-        - Area.not_in_venue(resource.place_id).each do |area|
+        - @areas.each do |area|
           li id="area-#{area.id}"
             span.pull-left
               .area_name= area.name
-              | Here goes the description for this
+              = area.description
             span.pull-right
               = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
 
