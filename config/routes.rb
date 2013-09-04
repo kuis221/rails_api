@@ -168,7 +168,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :comments, only: [:create, :index]
+    resources :comments, only: [:index, :create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
     member do

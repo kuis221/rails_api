@@ -5,7 +5,6 @@
   = f.error_notification
 
   .form-inputs
-    h3 Edit user
     = f.simple_fields_for :user do |uf|
       .row-fluid.users
         .span6
@@ -25,7 +24,7 @@
       .row-fluid.users
           = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
       - if resource.id == current_company_user.id
-        .row-fluid.users        
+        .row-fluid.users
           .span6
             = uf.input :city, required: true, input_html: {class: 'input-large'}
           .span6

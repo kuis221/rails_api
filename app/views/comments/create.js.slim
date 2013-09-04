@@ -1,7 +1,7 @@
 - if resource.errors.empty?
   - if parent.is_a?(Event)
     | $('.event-comments-list').html('#{escape_javascript(render(parent.comments))}');
-    | $('#event_comments_attributes_0_content').val('');
+    | $('.bootbox.modal').modal('hide');
   - else
     | $("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
 - else

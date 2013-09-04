@@ -56,6 +56,7 @@ en:
   modals:
     title:
       new:
+        user: "Invite User"
         event: "New Event"
         task: "New Task"
         attached_asset: "Upload files"
@@ -72,7 +73,9 @@ en:
         place: "New Place"
         placeable: "Add Place"
         date_item: "New Date"
+        comment: "New Comment"
       edit:
+        company_user: "Edit User"
         event: "Edit Event"
         task: "Edit Task"
         attached_asset: "Upload files"
@@ -89,6 +92,7 @@ en:
         place: "Edit Place"
         placeable: "Edit Places"
         date_item: "Edit Date"
+        comment: "Edit Comment"
 
   form_builder:
     modules:

@@ -103,9 +103,12 @@
   - if active_kpis.include?(Kpi.surveys)
     = render 'results_surveys'
 
-  - if resource.campaign.active_field_types.include?('comments')
-    = simple_form_for resource do |f|
-      = render partial: 'comments', locals: {f: f}
+- if resource.campaign.active_field_types.include?('comments')
+  #event-comments.details_box
+    h3 COMMENTS
+    .event-comments-list
+      = render 'comment_list'
+    = link_to "", new_event_comment_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Comment'
 
 javascript:
   $(document).ready(function() {
