@@ -234,10 +234,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 /*-- Alert Messages -- */
 .alert{
 	border: red;
+	border-radius: 0px 0px 8px 8px;
+	color: white;
+	margin: 0px -15px 0 -15px;
 	text-shadow:none;
 	-webkit-border-radius: 0px 0px 8px 8px;
-    border-radius: 0px 0px 8px 8px;
-    color: white;
     a{
     	color: white !important;
     	text-decoration: underline !important;
@@ -1710,6 +1711,7 @@ input.search-query:focus{
 }
 ul.ui-widget-content{
 	background: @brand !important;
+	margin-top: 10px;
 }
 .ui-menu{
 	li{
@@ -3107,9 +3109,15 @@ ul.thumbnails{
 			border:1px solid @borders;
 			border-bottom:0;
 			height: 50px;
+			.pull-right{
+				margin-top: 15px;
+			}
 			span{
 				font-size: 16px;
-				margin: 15px 30px 15px 0;
+				margin-right: 30px;
+				&:first-child{
+					margin-right: 10px;
+				}
 			}
 		}
 	}
@@ -3174,7 +3182,7 @@ ul.thumbnails{
 #venue-map-canvas{
 	border:1px solid @user_menu;
 	display:block;
-	margin: 20px 0 30px 0;
+	margin: 20px -15px 30px -15px;
 	height: 500px;
 }
 

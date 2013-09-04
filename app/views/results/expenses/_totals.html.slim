@@ -1,1 +1,5 @@
-span.expense-column.currency= 'TOTAL ' + number_to_currency(expenses_total)
+.pull-right
+  span
+   | Total 
+  span
+  	=number_to_currency(expenses_total)
