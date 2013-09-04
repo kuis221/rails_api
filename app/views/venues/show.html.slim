@@ -52,7 +52,7 @@
             = venue_score_narrative(resource)
 
         .span6
-          #overall-venue-stats.text-right
+          #overall-venue-stats.kpi-trends-stats.text-right
             .live-stats
               span= resource.events
               = (resource.events == 1 ? " Event" : " Events")
@@ -67,7 +67,7 @@
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
               span= number_with_delimiter(resource.interactions)
-              = " Influenced"
+              = " Interactions"
               span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
               br>/
               span= number_with_delimiter(resource.sampled)
@@ -91,14 +91,7 @@
     .row-fluid
       .span6
         #gender-graph.row-fluid
-          .span4.male
-            .percent
-              = "#{resource.overall_graphs_data[:gender].try(:[],'Male').try(:round) || 0} %"
-            .gender MALE
-          .span4.female
-            .percent
-              = "#{resource.overall_graphs_data[:gender].try(:[],'Female').try(:round) || 0} %"
-            .gender FEMALE
+          = gender_graph(resource.overall_graphs_data[:gender])
         .row-fluid
           #overall-age-graph
       .span6
@@ -143,70 +136,9 @@ javascript:
 
 - if resource.persisted?
   javascript:
-    $('#overall-age-graph').highcharts({
-        chart: { type: 'bar' },
-        title: { text: null },
-        colors: ['#DFDFDF','#3E9CCF'],
-        xAxis: {
-            categories: #{resource.overall_graphs_data[:age].keys.to_json.html_safe},
-            title: {
-                enabled: false
-            },
-            labels: {
-              style: {color: '#3E9CCF', fontSize: '13px'}
-            },
-            tickLength: 0,
-            lineWidth: 0
-        },
-        tooltip: {enabled: false},
-        yAxis: {
-            max: 100,
-            labels: { enabled: false },
-            title: {text: false},
-            gridLineColor: 'transparent',
-            enabled: false
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: false
-                }
-            },
-            series: {
-                stacking: 'percent',
-                enableMouseTracking: false,
-                pointPadding: 0,
-                groupPadding: 0,
-                borderWidth: 0,
-                pointPadding: 0,
-                pointWidth: 15,
-                dataLabels: {
-                    color: '#3E9CCF',
-                    style: { fontSize: '11px' }
-                }
-            }
-        },
-        legend: { enabled: false },
-        credits: { enabled: false },
-        series: [{
-            name: 'Fill in',
-            data: #{resource.overall_graphs_data[:age].values.map{|v|(100-v).round}.to_json.html_safe},
+    #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'}}
 
-        },{
-            name: 'Values',
-            data: #{resource.overall_graphs_data[:age].values.map(&:round).to_json.html_safe},
-            dataLabels: {
-                    enabled: true,
-                    format: '{y}%',
-                    color: '#3E9CCF',
-                    align: 'right',
-                    x: 30,
-                    y: -2,
-                    style: { color: '#3E9CCF' }
-                }
-
-        }]
-    });
+    #{render partial: 'shared/age_graph', locals:{data: resource.overall_graphs_data[:age], container: '#overall-age-graph'}}
 
     $('#trends-day-week-graph').highcharts({
         credits: { enabled: false },
@@ -289,50 +221,6 @@ javascript:
           }
         ]
     });
-
-    if (#{resource.overall_graphs_data[:ethnicity].values.max} > 0) {
-        $('#overall-ethnicity-graph').highcharts({
-              colors: ['#347a99','#218ebf', '#41AAD8', '#6ebde7', '#94d6ed'],
-              chart: {
-                  type: 'pie'
-              },
-              title: { text: null },
-              credits: { enabled: false },
-              yAxis: {
-                  title: { text: null }
-              },
-              plotOptions: {
-                  pie: {
-                      shadow: false
-                  },
-                  series: {
-                    enableMouseTracking: false,
-                    dataLabels: {
-                      connectorColor: '#C0C0C0',
-                      softConnector: false
-                    }
-                  }
-              },
-              tooltip: {
-                  enabled: false
-              },
-              series: [{
-                  name: 'Ethnicity',
-                  data: #{resource.overall_graphs_data[:ethnicity].select{|k,v| v > 0 }.map{|k,v|[k.upcase, v.round]}.to_json.html_safe},
-                  size: '60%',
-                  innerSize: '30%',
-                  distance: -10,
-                  dataLabels: {
-                      crop: false,
-                      formatter: function() {
-                          // display only if larger than 1
-                          return '<span style="font-size:16px;">'+ this.y +'%' +'</span><br /><div style="width: 50px;font-size:11px;">'+ this.point.name+'</div>';
-                      },
-                      color: '#3E9CCF',
-                  }
-              }]
-        });
-    }
 
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');

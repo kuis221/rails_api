@@ -41,6 +41,7 @@ class CompanyUsersController < FilteredController
   end
 
   def update
+    resource.user.updating_user = true if resource.id != current_company_user.id
     update! do |success, failure|
       success.js {
         if resource.user.id == current_user.id

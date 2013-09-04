@@ -1185,6 +1185,30 @@ li#user_menu{
 	width:210px;
 }
 
+
+
+.kpi-trends-stats {
+	line-height: 30px;
+	font-size: 11px;
+	text-transform: uppercase;
+	span {
+		font-size: 16px;
+		color: #3E9CCF;
+		margin-right: 3px;
+	}
+	.live-stats-2{
+		float: right;
+		margin: 20px 0 50px 0;
+		position: relative;
+	}
+	.sparkline {
+		margin: 0 3px 0 5px;
+		canvas{
+			margin-top: 1px;
+		}
+	}
+}
+
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @borders;
@@ -2822,28 +2846,6 @@ ul.thumbnails{
 			&:hover {
 				.remove-area-btn {
 					display: block;
-				}
-			}
-		}
-
-		#overall-venue-stats {
-			line-height: 30px;
-			font-size: 11px;
-			text-transform: uppercase;
-			span {
-				font-size: 16px;
-				color: #3E9CCF;
-				margin-right: 3px;
-			}
-			.live-stats-2{
-				float: right;
-				margin: 20px 0 50px 0;
-				position: relative;
-			}
-			.sparkline {
-				margin: 0 3px 0 5px;
-				canvas{
-					margin-top: 1px;
 				}
 			}
 		}

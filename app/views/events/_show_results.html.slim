@@ -78,14 +78,7 @@
       .span6
         - if resource.demographics_graph_data[:gender].present?
           #gender-graph.row-fluid
-            .span4.male
-              .percent
-                = "#{resource.demographics_graph_data[:gender].try(:[],'Male').try(:round) || 0} %"
-              .gender MALE
-            .span4.female
-              .percent
-                = "#{resource.demographics_graph_data[:gender].try(:[],'Female').try(:round) || 0} %"
-              .gender FEMALE
+            = gender_graph(resource.demographics_graph_data[:gender])
         .row-fluid
           #age-graph
       .span6

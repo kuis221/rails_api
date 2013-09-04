@@ -97,6 +97,7 @@ class User < ActiveRecord::Base
   after_save :reindex_related
 
   attr_accessor :inviting_user
+  attr_accessor :updating_user
   attr_accessor :accepting_invitation
 
   def full_name
@@ -158,7 +159,7 @@ class User < ActiveRecord::Base
   end
 
   def inviting_user_or_invited?
-    self.inviting_user || (invited_to_sign_up? and !accepting_invitation)
+    self.inviting_user || (invited_to_sign_up? and !accepting_invitation) || self.updating_user
   end
 
   def should_require_password?

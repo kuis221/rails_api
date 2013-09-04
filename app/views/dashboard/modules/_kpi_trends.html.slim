@@ -1,0 +1,36 @@
+#demographics-module.details_box
+  .row-fluid
+    .span8
+        h3 KPI TRENDS
+    .span4
+      .kpi-trends-stats.text-right
+        span= number_to_currency(dashboard_kpis_trends_data[:cost_impression], precision: 2)
+        | COST/IMPRESSION
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+        
+        span= number_to_currency(dashboard_kpis_trends_data[:cost_interaction], precision: 2)
+        | COST/INTERACTION
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+        
+        span= number_to_currency(dashboard_kpis_trends_data[:cost_sample], precision: 2)
+        | COST/SAMPLE
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+        
+        span= number_with_delimiter(dashboard_kpis_trends_data[:impressions_event])
+        | IMPRESSIONS/EVENT
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+        
+        span= number_with_delimiter(dashboard_kpis_trends_data[:interactions_event])
+        | INTERACTIONS/EVENT
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+        
+        span= number_with_delimiter(dashboard_kpis_trends_data[:sampled_event])
+        | SAMPLED/EVENT
+        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        br>/
+      
