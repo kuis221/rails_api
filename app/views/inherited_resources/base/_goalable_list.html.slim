@@ -1,3 +1,4 @@
+.goalable-errors
 ul.goalable-list
   - goalables.each do |goalable|
     - goals = goalable.goals.in(resource)
@@ -17,13 +18,20 @@ ul.goalable-list
               .kpi-segment-group
                 - kpi.kpis_segments.each do |segment|
                   - goal = segment_goals.detect{|g| g.kpis_segment_id == segment.id}
-                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''} " id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}"
+                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''}" id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}"
                     label
-                      input.kpi-goal-field type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-segment-kpi-id="#{kpi.id}" data-id="#{goal.id}" data-parent-id="#{resource.id}"  data-parent-type="#{resource.class.name}" value="#{goal.value}"
+                      input.kpi-goal-field class="#{kpi.kpi_type}" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-segment-kpi-id="#{segment.id}" data-id="#{goal.id}" data-parent-id="#{resource.id}"  data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
                       span.kpi-name= segment.text.upcase
             - else
               - goal = kpi_goals.detect{|g| g.kpi_id == kpi.id && g.kpis_segment_id.nil?}
               span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}"
                 label
-                  input.kpi-goal-field type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}"  data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}"
+                  input.kpi-goal-field class="#{kpi.kpi_type} #{kpi.capture_mechanism}" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
                   span.kpi-name= kpi.name.upcase
+
+
+javascript:
+  $('ul.goalable-list .kpi-goal-field').each(function(index, field) {
+    $f = $(field);
+    $f.val(formatGoalValue($f))
+  });

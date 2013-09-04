@@ -126,25 +126,95 @@ jQuery ->
 
 	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->
 		$this = $(this)
-		id = $this.data('id')
-		$.ajax("/goals#{if id then '/'+id else ''}.json", {
-			method: "#{if id then "PUT" else "POST"}",
-			data: {
-				goal: {
-					kpi_id: $this.data('kpi-id'),
-					kpis_segment_id: $this.data('segment-id'),
-					value: $this.val(),
-					goalable_id: $this.data('goalable-id'),
-					goalable_type: $this.data('goalable-type'),
-					parent_id: $this.data('parent-id'),
-					parent_type: $this.data('parent-type')
-				}
-			},
-			dataType: 'json',
-			success: (response) ->
-				$this.data('id', response.id)
-		})
 
+
+
+		id = $this.data('id')
+		# then check if the value is valid
+		if isValidGoal($this)
+
+			# Get the value without formatting (only with the decimals)
+			value = cleanGoalValue($this)
+
+			# Format the value
+			$this.val(formatGoalValue($this))
+
+			# First, check if the data have not changed since the last save and return false if it hasn't
+			if value == $this.data('value')
+				return true
+
+			$this.parents('.error').removeClass('error')
+
+			# disable changes on the field while it's being saved
+			$this.attr('disabed', true)
+
+			# and save the value
+			$.ajax("/goals#{if id then '/'+id else ''}.json", {
+				method: "#{if id then "PUT" else "POST"}",
+				data: {
+					goal: {
+						kpi_id: $this.data('kpi-id'),
+						kpis_segment_id: $this.data('segment-kpi-id'),
+						value: value,
+						goalable_id: $this.data('goalable-id'),
+						goalable_type: $this.data('goalable-type'),
+						parent_id: $this.data('parent-id'),
+						parent_type: $this.data('parent-type')
+					}
+				},
+				dataType: 'json',
+				success: (response) ->
+					$this.data('value', value)
+					$this.data('id', response.id)
+				complete: (response) ->
+					$this.attr('disabed', true)
+			})
+		else
+			# mark the field or segment groups as invalid
+			$this.closest('.kpi-segment-group').addClass('error')
+			$this.closest('label').addClass('error')
+
+	isValidGoal = (field) ->
+		value = cleanGoalValue(field)
+		field.val(value)
+		if value == ''
+			true
+		else if !/^[0-9]+(\.[0-9]+)?$/.test(value)
+			false
+		else if field.hasClass('percentage')
+			$li = field.closest('li')
+			total = 0
+			for segment in $li.find("input[data-kpi-id=#{field.data('kpi-id')}]")
+				total += if segment.value then parseInt(segment.value) else 0
+			valid = if total <= 100 then true else false
+			error_id = "error-kpi-#{field.data('kpi-id')}"
+			if !valid
+				if $('.goalable-errors').find("##{error_id}").length == 0
+					$('.goalable-errors').append($('<div class="alert-danger" id="'+error_id+'">').text("The combined goals for #{field.data('kpi-name')} should not exceed 100%"))
+			else
+				$('.goalable-errors').find("##{error_id}").remove()
+			valid
+		else
+			true
+
+	window.formatGoalValue = (field) ->
+		val = cleanGoalValue(field)
+		if val isnt ''
+			if field.hasClass('decimal') or field.hasClass('currency')
+				val = $.number(val, 2)
+			else if field.hasClass('integer')
+				val = $.number(val, 0)
+
+			if field.hasClass('currency')
+				val = "$#{val}"
+
+			if field.hasClass('percentage')
+				val = "#{val}%"
+
+		val
+
+	cleanGoalValue = (field) ->
+		field.val().replace(/[^0-9\.]/g,'')
 
 	$(".totop").hide()
 
