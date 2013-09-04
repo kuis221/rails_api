@@ -1223,6 +1223,12 @@ li#user_menu{
   			color: @text;
   		}
     }
+    .empty-list-message {
+    	display: none;
+    }
+	.empty-list-message:first-child:last-child {
+		display: block;
+	}
     ul#areas-list{
     	li{
 	    	span{
@@ -3983,6 +3989,13 @@ a, i{
 					width: 60px;
 					display: block;
 					border: 0;
+					border: 1px solid #fff !important;
+				}
+			}
+
+			.error {
+				input {
+					border: 1px solid @buttons !important;
 				}
 			}
 

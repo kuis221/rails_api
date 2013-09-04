@@ -14,6 +14,7 @@
 #
 
 class DateRange < ActiveRecord::Base
+  include GoalableModel
   # Created_by_id and updated_by_id fields
   track_who_does_it
 

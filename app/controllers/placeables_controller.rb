@@ -5,6 +5,6 @@ class PlaceablesController < FilteredController
 
 
   def new
-    @areas = current_company.areas
+    @areas = current_company.areas.where('areas.id not in (?)', parent.area_ids + [])
   end
 end

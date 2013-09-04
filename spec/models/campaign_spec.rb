@@ -19,6 +19,11 @@ describe Campaign do
   it { should belong_to(:company) }
   it { should have_many(:memberships) }
   it { should have_many(:users).through(:memberships) }
+  it { should have_and_belong_to_many(:brands) }
+  it { should have_and_belong_to_many(:brand_portfolios) }
+  it { should have_and_belong_to_many(:areas) }
+  it { should have_and_belong_to_many(:date_ranges) }
+  it { should have_and_belong_to_many(:day_parts) }
 
   it { should validate_presence_of(:name) }
 

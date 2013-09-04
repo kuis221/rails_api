@@ -76,9 +76,45 @@ javascript:
     window.location.reload(false);
   });
   $(document).on('members:change teams:change', function(){
-    $('.tab-content #staff').load('#{tab_campaign_path(resource, :staff)}')
+    $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
   });
 
+  $(document).on('member:delete', function(e, member_id){
+    $('#goal-company_user-'+member_id).remove()
+  })
+
+  $(document).on('team:delete', function(e, team_id){
+    $('#goal-team-'+team_id).remove()
+  })
+
   $(document).on('areas:change places:change', function(){
-    $('.tab-content #places').load('#{tab_campaign_path(resource, :places)}')
+    $('.tab-content #places_tab').load('#{tab_campaign_path(resource, :places)}')
+  });
+
+  $(document).on('date_ranges:change', function(){
+    $('.tab-content #date_ranges_tab').load('#{tab_campaign_path(resource, :date_ranges)}')
+  });
+
+  $(document).on('day_parts:change', function(){
+    $('.tab-content #day_parts_tab').load('#{tab_campaign_path(resource, :day_parts)}')
+  });
+
+  $(document).delegate('.remove-company_user', 'click', function(){
+    $.ajax('#{campaign_path(resource)}/members/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
+    return false;
+  });
+
+  $(document).delegate('.remove-team', 'click', function(){
+    $.ajax('#{campaign_path(resource)}/teams/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
+    return false;
+  });
+
+  $(document).delegate('.remove-date_range', 'click', function(){
+    $.ajax('#{campaign_path(resource)}/date_ranges/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
+    return false;
+  });
+
+  $(document).delegate('.remove-day_part', 'click', function(){
+    $.ajax('#{campaign_path(resource)}/day_parts/'+$(this).data('id'), {method: 'DELETE', dataType: 'script'});
+    return false;
   });
