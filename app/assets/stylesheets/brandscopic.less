@@ -1939,11 +1939,26 @@ overflow: hidden;
 		font-size: 18px;
 		margin-left: 15px;
 		text-decoration: none;
- 		i{  color:@app_bg;
+ 		i{  
  			position: relative;
  			top: 2px;
- 			&.icon-remove-sign:before{
+ 			&.icon-remove-sign:before{			
  				font-size: 16px;
+ 			}
+ 			&:hover{
+ 				&:before{
+ 					color:@app_bg;
+ 				}
+ 			}
+		}
+		&.edit{
+			&:after{
+				color:@brand;
+			}
+			&:hover{
+				&:after{
+ 					color:@app_bg;
+ 				}
  			}
 		}
 	}
@@ -3672,7 +3687,7 @@ svg{
 		}
 	}
 	.results-expenses, .results-surveys{
-		margin-top: 60px;
+		margin-top: 20px;
 	}
 	.results-surveys{
 		p{
