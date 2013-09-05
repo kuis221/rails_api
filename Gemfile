@@ -88,8 +88,8 @@ group :test do
   gem 'resque_spec'
 end
 
-group :production do
-  gem 'airbrake_user_attributes'
+gem 'airbrake'
+  group :production do
 end
 
 # To use ActiveModel has_secure_password

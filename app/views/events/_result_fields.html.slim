@@ -10,7 +10,8 @@
     div class="#{current_module != field_module ? 'details_box' : '' } box_#{field_module}" id="event-#{field_module}"
       - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
         - @rendered_modules[field.kpi.module] = true
-        h3.uppercase=t "form_builder.modules.#{field.kpi.module}"
+        - if field.kpi.module != 'surveys'
+          h3.uppercase=t "form_builder.modules.#{field.kpi.module}"
         = render partial: 'result_fields', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
       - elsif field.is_section?
         h2= field.name

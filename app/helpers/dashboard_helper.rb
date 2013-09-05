@@ -31,4 +31,10 @@ module DashboardHelper
       data[:cost_sample] = result.spent.to_f / result.sampled.to_i
     end
   end
+
+  def upcomming_events_list
+    @upcomming_evetns ||= begin
+      search = User.do_search({company_id: current_company.id, start_at: Date.today})
+    end
+  end
 end
