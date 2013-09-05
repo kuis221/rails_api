@@ -1939,11 +1939,26 @@ overflow: hidden;
 		font-size: 18px;
 		margin-left: 15px;
 		text-decoration: none;
- 		i{  color:@app_bg;
+ 		i{  
  			position: relative;
  			top: 2px;
- 			&.icon-remove-sign:before{
+ 			&.icon-remove-sign:before{			
  				font-size: 16px;
+ 			}
+ 			&:hover{
+ 				&:before{
+ 					color:@app_bg;
+ 				}
+ 			}
+		}
+		&.edit{
+			&:after{
+				color:@brand;
+			}
+			&:hover{
+				&:after{
+ 					color:@app_bg;
+ 				}
  			}
 		}
 	}
@@ -3671,7 +3686,16 @@ svg{
 			font-size: 16px;
 		}
 	}
+
 	.results-surveys{
+		a.edit:after{
+			color:@brand;
+			top:0;
+		}
+		h3{
+			display: inline-block;
+			width:150px;
+		}
 		p{
 			width: 410px;
 		}

@@ -155,12 +155,6 @@ javascript:
                 color: '#D1D1D1'
               }
             },
-        }, 
-        tooltip: {
-          headerFormat: '',
-          pointFormat: '{point.y}',
-          borderWidth: 0,
-          borderColor: '#FFF'
         },
         yAxis: [{
             title: {
@@ -203,8 +197,7 @@ javascript:
             },
             opposite: true,
             min: 0,
-            maxPadding: 0.2,
-            tooltip: { prefix: '$' }
+            maxPadding: 0.2
         }],
         plotOptions: {
             series: {
@@ -212,7 +205,32 @@ javascript:
                     fillColor: '#FFFFFF',
                     lineWidth: 2,
                     lineColor: null, // inherit from series
-                    radius: 6
+                    radius: 6,
+                    symbol: 'circle'
+                }
+            }
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '{point.y}',
+            borderWidth: 0,
+            borderColor: '#FFF',
+            backgroundColor: 'transparent',
+            shadow: false,
+            style: {
+                fontSize: '14px' 
+            },
+            positioner: function( labelWidth, labelHeight, point){
+                return { 
+                  x: point.plotX + this.chart.plotLeft - (labelWidth/2), 
+                  y: point.plotY + this.chart.plotTop - labelHeight - 10
+                };
+            },
+            formatter: function() {
+                if (this.series.name =='Cost/Impression'){
+                  return '<span style="font-size: 20px;color:'+this.series.color+'">$'+this.y +'</span>';
+                }else{
+                  return '<span style="font-size: 20px;color:'+this.series.color+'">'+this.y +'</span>';
                 }
             }
         },
@@ -228,13 +246,7 @@ javascript:
           {
             name: 'Impressions/promo hour',
             data: #{resource.overall_graphs_data[:impressions_promo].values.map(&:round).to_json.html_safe},
-            color: '#3D9CCA',
-            dataLabels: {
-                enabled: true,
-                color: '#3E9CCF',
-                y: -20,
-                style: { color: '#3E9CCF', fontSize: '14px' }
-            }
+            color: '#3D9CCA'
           },
           {
             name: 'Cost/Impression',
