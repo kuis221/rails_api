@@ -25,7 +25,6 @@ describe EventsController do
       end
     end
 
-
     describe "GET 'edit_surveys'" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it "returns http success" do
@@ -35,7 +34,6 @@ describe EventsController do
         response.should render_template('surveys')
       end
     end
-
 
     describe "GET 'show'" do
       describe "for an event in the future" do
@@ -69,7 +67,6 @@ describe EventsController do
             response.should_not render_template('show_results')
           end
         end
-
       end
     end
 
