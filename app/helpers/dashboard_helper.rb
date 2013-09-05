@@ -1,5 +1,6 @@
 module DashboardHelper
   def dashboard_demographics_graph_data
+    raise "This is a test error for errbit"
     @demographics_graph_data ||= Hash.new.tap do |data|
       results_scope = EventResult.scoped_by_company_id(current_company)
       [:age, :gender, :ethnicity].each do |kpi|
@@ -29,6 +30,12 @@ module DashboardHelper
       data[:cost_impression] = result.spent.to_f / result.impressions.to_i
       data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
       data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+    end
+  end
+
+  def upcomming_events_list
+    @upcomming_evetns ||= begin
+      search = User.do_search({company_id: current_company.id, start_at: Date.today})
     end
   end
 end
