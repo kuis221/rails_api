@@ -28,19 +28,18 @@
       br>/
       = format_date_range(first_event, last_event, date_separator: ' - ')
 
-  .details_box
-    ul#campaign-tabs.nav.nav-tabs
-      li.active
-        a href="#kpis_tab" KPIs
-      li
-        a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
-      li
-        a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
-      li
-        a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
-      li
-        a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
- 
+  ul#campaign-tabs.nav.nav-tabs
+    li.active
+      a href="#kpis_tab" KPIs
+    li
+      a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
+    li
+      a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
+    li
+      a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
+    li
+      a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
+  .campaigns_box
 
     .tab-content
       #kpis_tab.tab-pane.active
