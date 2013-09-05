@@ -19,17 +19,17 @@
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
         
-        span= number_with_delimiter(dashboard_kpis_trends_data[:impressions_event])
+        span= number_with_precision(dashboard_kpis_trends_data[:impressions_event], precision: 2)
         | IMPRESSIONS/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
         
-        span= number_with_delimiter(dashboard_kpis_trends_data[:interactions_event])
+        span= number_with_precision(dashboard_kpis_trends_data[:interactions_event], precision: 2)
         | INTERACTIONS/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
         
-        span= number_with_delimiter(dashboard_kpis_trends_data[:sampled_event])
+        span= number_with_precision(dashboard_kpis_trends_data[:sampled_event], precision: 2)
         | SAMPLED/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/

@@ -12,6 +12,10 @@ window.FormBuilder = {
 
 		@attributesPanel = $('<div class="field-attributes-panel">').css({position: 'absolute', display: 'none'}).appendTo($('body'))
 
+		@attributesPanel.on 'click', (e) =>
+			e.stopPropagation()
+			true
+
 		@formWrapper.sortable {
 			cancel: '.module .field, .empty-form-legend ',
 			connectWith: '.section-fields',
@@ -184,6 +188,10 @@ window.FormBuilder = {
 
 		position = field.offset()
 		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
+
+
+		$(document).click (e) => 
+			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow @attributesPanel
