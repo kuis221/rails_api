@@ -233,11 +233,17 @@ class Event < ActiveRecord::Base
 
   def result_for_kpi(kpi)
     field = campaign.form_fields.detect{|f| f.kpi_id == kpi.id }
-    if field.is_segmented?
-      segments_results_for(field)
-    else
-      results_for([field]).first
+    if field.present?
+      if field.is_segmented?
+        segments_results_for(field)
+      else
+        results_for([field]).first
+      end
     end
+  end
+
+  def results_for_kpis(kpis)
+    kpis.map{|kpi| result_for_kpi(kpi) }.flatten.compact
   end
 
   def locations_for_index
@@ -305,11 +311,6 @@ class Event < ActiveRecord::Base
         end
       end
     end
-  end
-
-  def update_venue_data
-    venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-    Resque.enqueue(VenueIndexer, venue.id)
   end
 
   class << self
@@ -457,26 +458,25 @@ class Event < ActiveRecord::Base
       Sunspot.index(tasks)
     end
 
-    def save_event_data
-      if @refresh_event_data
-        Resque.enqueue(EventDataIndexer, event_data.id)
-      elsif place_id_changed?
-        update_venue_data if place_id.present?
-      end
-    end
-
     def check_results_changed
       @refresh_event_data = false
       if results.any?{|r| r.changed?}
-        build_event_data unless event_data.present?
         @refresh_event_data = true
       end
       true
     end
 
     def reindex_associated
-      save_event_data
+      if @refresh_event_data
+        build_event_data unless event_data.present?
+        event_data.update_data
+        event_data.save
+      end
       if place_id_changed?
+        if place_id.present?
+          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+          Resque.enqueue(VenueIndexer, venue.id)
+        end
         Resque.enqueue(EventPhotosIndexer, self.id)
         Sunspot.index(place)
         if place_id_was.present?

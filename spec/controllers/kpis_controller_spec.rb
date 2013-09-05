@@ -11,6 +11,7 @@ describe KpisController do
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', campaign_id: campaign.to_param, format: :js
+      assigns(:campaign).should == campaign
       response.should be_success
     end
   end
@@ -19,6 +20,7 @@ describe KpisController do
     let(:kpi){ FactoryGirl.create(:kpi, company: @company) }
     it "returns http success" do
       get 'edit',  campaign_id: campaign.to_param, id: kpi.to_param, format: :js
+      assigns(:campaign).should == campaign
       response.should be_success
     end
   end

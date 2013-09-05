@@ -1186,7 +1186,7 @@ li#user_menu{
 	width:210px;
 }
 
-ul#kpis-list{
+ul.kpis-list{
     li{
     	min-height: 20px;
     	padding:10px 0 10px 0;
@@ -1942,6 +1942,9 @@ overflow: hidden;
  		i{  color:@app_bg;
  			position: relative;
  			top: 2px;
+ 			&.icon-remove-sign:before{
+ 				font-size: 16px;
+ 			}
 		}
 	}
 }
@@ -3513,6 +3516,19 @@ svg{
 	}
 }
 
+// CAMPAIGNS - TABS
+
+.campaigns_box{
+	background-color: white;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+	padding: 30px 10px;
+	-webkit-border-radius: 0px 7px 7px 7px;
+    border-radius: 0px 7px 7px 7px;
+    .kpis-button{
+    	margin: 50px 0 10px 0; 
+    }
+}
 // DETAILS PAGES
 
 .details_box{
@@ -3646,6 +3662,13 @@ svg{
 					top: 2px;
 				}
 			}
+		}
+	}
+	#post-event-form-builder{
+		legend{
+			border:0;
+			color: @text;
+			font-size: 16px;
 		}
 	}
 	.results-expenses, .results-surveys{
@@ -3923,15 +3946,16 @@ a, i{
 		height: 20px;
 		padding: 4px 5px;
 		color: #fff;
+		font-size: 14px;
 		border-radius: 15px;
 		span {
 			background-color: #fff;
-			width: 20px;
-			height: 20px;
+			width: 18px;
+			height: 18px;
 			border-radius: 10px;
 			display: block;
 			float: right;
-			margin: 0;
+			margin: 1px 0 0 0;
 		}
 	}
 	a.toggle-on-btn {
@@ -3941,7 +3965,7 @@ a, i{
 		padding-left: 10px;
 		.on{
 			float: left;
-			line-height: 22px;
+			line-height: 20px;
 		}
 	}
 	a.toggle-off-btn {
@@ -3952,7 +3976,7 @@ a, i{
 			float: left;
 		}
 		.off{
-			line-height: 22px;
+			line-height: 20px;
 		}
 	}
 	&.inactive{

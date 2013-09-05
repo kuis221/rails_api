@@ -1,10 +1,19 @@
-- remote ||= false
-= simple_form_for(resource, remote: remote || false) do |f|
+= simple_form_for(resource, remote: true) do |f|
   = f.error_notification
 
   .form-inputs
-    = f.input :summary, label: false, input_html: {class: 'input-xlarge'}
+    = f.input :summary, input_html: {class: 'input-xlarge'}
+    = f.simple_fields_for :results, resource.results_for_kpis([Kpi.impressions, Kpi.interactions, Kpi.samples]) do |ff|
+      = ff.input :value, as: :string, label: ff.object.form_field.name
+      = ff.hidden_field :form_field_id
+      = ff.hidden_field :kpi_id
+
+    = hidden_field_tag :partial, 'summary'
 
   .form-actions
-    = f.button :submit, "Save Summary", class: 'btn-primary', disable_with: 'Please wait...'
-    = f.button :button, 'Cancel', class: 'btn-cancel'
+    = f.button :submit, id: 'save-data', class: 'btn-primary', disable_with: 'Please wait...'
+
+javascript:
+  $('#save-data').click(function(){
+    $('form#edit_event_#{resource.id}').submit();
+  })

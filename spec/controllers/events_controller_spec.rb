@@ -16,6 +16,63 @@ describe EventsController do
       end
     end
 
+    describe "GET 'edit_summary'" do
+      let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company)) }
+      it "returns http success" do
+        get 'edit_summary', id: event.to_param, format: :js
+        response.should be_success
+        response.should render_template('edit_summary')
+      end
+    end
+
+
+    describe "GET 'edit_surveys'" do
+      let(:event){ FactoryGirl.create(:event, company: @company) }
+      it "returns http success" do
+        get 'edit_surveys', id: event.to_param, format: :js
+        response.should be_success
+        response.should render_template('edit_surveys')
+        response.should render_template('surveys')
+      end
+    end
+
+
+    describe "GET 'show'" do
+      describe "for an event in the future" do
+        let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
+
+        it "renders the correct templates" do
+          get 'show', id: event.to_param
+          response.should be_success
+          response.should render_template('show')
+          response.should_not render_template('show_results')
+          response.should_not render_template('edit_results')
+        end
+      end
+
+      describe "for an event in the past" do
+        let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company), start_date: 1.day.ago.to_s(:slashes), end_date: 1.day.ago.to_s(:slashes)) }
+
+        describe "when no data have been entered" do
+          it "renders the correct templates" do
+            Kpi.create_global_kpis
+            event.campaign.assign_all_global_kpis
+            get 'show', id: event.to_param
+            response.should be_success
+            response.should render_template('show')
+            response.should render_template('edit_results')
+            response.should render_template('surveys')
+            response.should render_template('comments')
+            response.should render_template('photos')
+            response.should render_template('videos')
+            response.should render_template('expenses')
+            response.should_not render_template('show_results')
+          end
+        end
+
+      end
+    end
+
     describe "GET 'index'" do
       it "returns http success" do
         get 'index'

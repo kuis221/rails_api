@@ -1,0 +1,65 @@
+.box_summary
+  h3 SUMMARY
+  = link_to '', edit_summary_event_path(resource), remote: true, id: 'edit-summary-btn', class: 'edit'
+  .summary-content= resource.summary
+.box_metrics.pull-right
+  ul.consumer-reach-metrics
+    - if active_kpis.include?(Kpi.impressions)
+      li
+        div.metric
+          span= event_data.impressions
+          = (event_data.impressions == 1 ? " Impression" : " Impressions")
+        = kpi_goal_progress_bar(resource.kpi_goals[Kpi.impressions.id], event_data.impressions)
+
+    - if active_kpis.include?(Kpi.interactions)
+      li
+        div.metric
+          span= number_with_delimiter(event_data.interactions.round)
+          = " Influenced"
+        = kpi_goal_progress_bar(resource.kpi_goals[Kpi.interactions.id], event_data.interactions)
+
+    - if active_kpis.include?(Kpi.samples)
+      li
+        div.metric
+          span= number_with_delimiter(event_data.samples.round)
+          = " Sampled"
+        = kpi_goal_progress_bar(resource.kpi_goals[Kpi.samples.id], event_data.samples)
+
+    - if active_kpis.include?(Kpi.expenses)
+      li
+        div.metric
+          span= number_to_currency(event_data.spent, precision: 0)
+          = " Spent"
+        = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
+
+      - if active_kpis.include?(Kpi.photos)
+        - photo_count = resource.photos.count
+        li
+          div.metric
+            span= photo_count
+            = " Photos"
+          = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
+
+      li
+        div.metric
+          span= surveys_count = resource.surveys.count
+          = " Surveys"
+        = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
+  ul.consumer-reach-metrics.pull-right
+    - if event_data.spent.present? && event_data.impressions > 0
+      li
+        div.metric
+          span= number_to_currency(event_data.spent / event_data.impressions, precision: 2)
+          = " / Impression"
+
+    - if event_data.spent.present? && event_data.interactions > 0
+      li
+        div.metric
+          span= number_to_currency(event_data.spent / event_data.interactions, precision: 2)
+          = " / Influence"
+
+    - if event_data.spent.present? && event_data.interactions > 0
+      li
+        div.metric
+          span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
+          = " / Sample"

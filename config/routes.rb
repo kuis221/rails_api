@@ -140,6 +140,7 @@ Brandscopic::Application.routes.draw do
     get :tasks, on: :member
     put :save_results, on: :member
     get :edit_summary, on: :member
+    get :edit_surveys, on: :member
     resources :tasks, only: [:create, :new] do
       member do
         get :deactivate

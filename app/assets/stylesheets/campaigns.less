@@ -1,5 +1,5 @@
 .campaigns.show {
-	#kpis-list {
+	.kpis-list {
 		list-style: none;
 		span.on-off-switch {
 			width: 100px;
@@ -9,14 +9,27 @@
 		}
 
 		span.kpi-goal {
-			width: 200px;
+			width: 280px;
 			float: right;
+		}
+
+		span.pull-right{
+			top: 0%;
 		}
 
 		.kpi-goals-list {
 			li {
 				border: none;
+				font-size: 11px;
 				min-height: 0;
+				.segment_name{
+					text-transform: uppercase;
+				}
+				.value{
+					font-size: 16px;
+					line-height: 16px;
+					padding-right: 5px;
+				}
 			}
 		}
 	}
@@ -53,7 +66,6 @@
 		background-color: #fff;
 		border: 1px solid #ccc;
 		width: 850px;
-		padding: 10px;
 		margin: 0;
 
 		// Icons for the modules
@@ -91,7 +103,6 @@
 			display: inline-block;
 			width: 500px;
 			min-height: 500px;
-			margin-left: 15px;
 
 			div.empty-form-legend {
 				display: none;
