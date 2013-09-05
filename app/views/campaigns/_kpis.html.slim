@@ -33,7 +33,7 @@
         .clearfix
 
 .row-fluid
-  .pull-right
+  .pull-left.kpis-button
     = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
@@ -54,7 +54,7 @@ javascript:
 
 //  $(document).on('form-builder:kpi-added', function(e, kpi_id){
 //    $('a#toggle-kpi-on-'+ kpi_id).addClass('btn-success active').parent().removeClass('inactive').addClass('active');
-//    $('a#toggle-kpi-off-'+ kpi_id).removeClass('btn-danger active');
+//    $('a#toggle-kpi-off-'+ kpi_id).removeClass('btn-danger active');s
 //    return false;
 //  })
 //  $(document).on('form-builder:kpi-removed', function(e, kpi_id){
