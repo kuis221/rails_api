@@ -1,5 +1,6 @@
 .results-surveys
   h3 SURVEY RESULTS
+  = link_to '', edit_surveys_event_path(resource), remote: true, class: 'edit'
 
   - if resource.surveys.count > 0
     p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
