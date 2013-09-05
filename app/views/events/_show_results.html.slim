@@ -2,9 +2,6 @@
 - event_data = resource.event_data
 
 .details_box
-  - if active_kpis.include?(Kpi.photos)
-    = render 'photos'
-
   - if event_data
     .row-fluid
       .box_summary
@@ -84,7 +81,13 @@
       .span6
         #ethnicity-graph
 
-  - if active_kpis.include?(Kpi.surveys)
+- if active_kpis.include?(Kpi.photos)
+  .details_box
+    h3 GALLERY
+    = render 'photos'
+
+- if active_kpis.include?(Kpi.surveys)
+  .details_box
     = render 'results_surveys'
 
 - if resource.campaign.active_field_types.include?('comments')

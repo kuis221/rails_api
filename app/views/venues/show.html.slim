@@ -155,8 +155,14 @@ javascript:
                 color: '#D1D1D1'
               }
             },
+        }, 
+        tooltip: {
+          headerFormat: '',
+          pointFormat: '{point.y}',
+          borderWidth: 0,
+          borderColor: '#FFF'
         },
-        yAxis: {
+        yAxis: [{
             title: {
                 text: null
             },
@@ -176,7 +182,30 @@ javascript:
             },
             min: 0,
             maxPadding: 0.2
-        },
+        },{
+            title: {
+                text: null
+            },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            labels: {
+              format: '${value}',
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            opposite: true,
+            min: 0,
+            maxPadding: 0.2,
+            tooltip: { prefix: '$' }
+        }],
         plotOptions: {
             series: {
                 marker: {
@@ -187,7 +216,6 @@ javascript:
                 }
             }
         },
-        tooltip: { enabled: false },
         legend: {
             floating: true,
             borderWidth: 0,
@@ -212,12 +240,7 @@ javascript:
             name: 'Cost/Impression',
             data: #{resource.overall_graphs_data[:cost_impression].values.map(&:round).to_json.html_safe},
             color: '#94D6ED',
-            dataLabels: {
-                enabled: true,
-                color: '#95D6EF',
-                y: -20,
-                style: { color: '#95D6EF', fontSize: '14px' }
-            }
+            yAxis: 1
           }
         ]
     });
