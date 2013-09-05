@@ -1,6 +1,5 @@
 module DashboardHelper
   def dashboard_demographics_graph_data
-    raise "This is a test error for errbit"
     @demographics_graph_data ||= Hash.new.tap do |data|
       results_scope = EventResult.scoped_by_company_id(current_company)
       [:age, :gender, :ethnicity].each do |kpi|
