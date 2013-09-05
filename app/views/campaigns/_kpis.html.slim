@@ -1,40 +1,17 @@
 - campaign ||= nil
 .link-list
-  ul#kpis-list
-    - Kpi.global_and_custom(current_company).each do |kpi|
-      li id="campaign-kpi-#{kpi.id}"
-        span.on-off-switch
-          - if kpi.module.present? and kpi.module != ''
-            div class="switch-toggle #{resource.active_kpis.include?(kpi) ? 'active' : 'inactive'}"
-              a.btn.btn-small.toggle-on-btn href="#" id="toggle-kpi-off-#{kpi.id}" data-kpi-id="#{kpi.id}"
-                .on ON
-                span
-              a.btn.btn-small.toggle-off-btn href="#" id="toggle-kpi-on-#{kpi.id}" data-kpi-id="#{kpi.id}"
-                span
-                .off OFF
-        span.kpi-info
-          .kpi-name
-            = kpi.name
-          = kpi.description
-        span.kpi-goal
-          - if kpi.is_segmented?
-            - suffix = kpi.kpi_type == 'percentage' ? '%' : ''
-            ul.kpi-goals-list
-              - resource.goals.for_kpis_segments(kpi).each do |goal|
-                li
-                  span.value= "#{goal.value.present? ? goal.value : '--'}#{suffix}"
-                  | &nbsp;
-                  span.segment_name= goal.kpis_segment.text
-          - else
-            - goal = resource.goals.for_kpis([kpi]).first
-            span.value= goal.value
-        span.pull-right
-          = link_to '', edit_campaign_kpi_path(resource, kpi.id), remote: true, class: 'edit', title: 'Edit'
-        .clearfix
+  ul#global-kpis.kpis-list
+    = render partial: 'campaigns/kpi', collection: Kpi.global
+
 
 .row-fluid
   .pull-left.kpis-button
     = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary'
+
+.link-list
+  ul#custom-kpis.kpis-list
+    = render partial: 'campaigns/kpi', collection: Kpi.custom(current_company)
+
 
 javascript:
   $(document).delegate('.toggle-off-btn', 'click', function(e){
@@ -51,14 +28,3 @@ javascript:
     });
     return false;
   });
-
-//  $(document).on('form-builder:kpi-added', function(e, kpi_id){
-//    $('a#toggle-kpi-on-'+ kpi_id).addClass('btn-success active').parent().removeClass('inactive').addClass('active');
-//    $('a#toggle-kpi-off-'+ kpi_id).removeClass('btn-danger active');s
-//    return false;
-//  })
-//  $(document).on('form-builder:kpi-removed', function(e, kpi_id){
-//    $('a#toggle-kpi-on-'+ kpi_id).removeClass('btn-success active');
-//    $('a#toggle-kpi-off-'+ kpi_id).addClass('btn-danger active');
-//    return false;
-//  })

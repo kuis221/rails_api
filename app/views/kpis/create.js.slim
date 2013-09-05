@@ -4,5 +4,4 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $(document).trigger('kpis:change');
-    $(document).trigger('kpis:create', [#{Rabl::Renderer.new('kpis/kpi', @kpi, :view_path => 'app/views', :format => 'json').render.html_safe}]);
+    $('#custom-kpis').append($('#{j render(partial:'campaigns/kpi', locals: {kpi: resource, resource: @campaign})}'));
