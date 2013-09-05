@@ -1186,6 +1186,20 @@ li#user_menu{
 	width:210px;
 }
 
+ul#kpis-list{
+    li{
+    	min-height: 20px;
+    	padding:10px 0 10px 0;
+    }
+	.kpi-info{
+		font-size: 11px;
+		margin-top: 14px;
+		.kpi-name{
+			font-size: 16px;
+		}
+	}
+}
+
 
 
 .kpi-trends-stats {
@@ -3904,6 +3918,7 @@ a, i{
 .switch-toggle {
 	width: 75px;
 	height: 28px;
+	margin: 9px 0 0 18px;
 	overflow: hidden;
 	a.btn {
 		line-height: normal !important;
@@ -3928,6 +3943,10 @@ a, i{
 		background-color: #90BE42;
 		text-align: left;
 		padding-left: 10px;
+		.on{
+			float: left;
+			line-height: 22px;
+		}
 	}
 	a.toggle-off-btn {
 		text-align: right;
@@ -3935,6 +3954,9 @@ a, i{
 		background-color: @grey_three;
 		span {
 			float: left;
+		}
+		.off{
+			line-height: 22px;
 		}
 	}
 	&.inactive{

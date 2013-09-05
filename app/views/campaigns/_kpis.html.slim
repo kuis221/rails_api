@@ -7,13 +7,14 @@
           - if kpi.module.present? and kpi.module != ''
             div class="switch-toggle #{resource.active_kpis.include?(kpi) ? 'active' : 'inactive'}"
               a.btn.btn-small.toggle-on-btn href="#" id="toggle-kpi-off-#{kpi.id}" data-kpi-id="#{kpi.id}"
-                | ON
+                .on ON
                 span
               a.btn.btn-small.toggle-off-btn href="#" id="toggle-kpi-on-#{kpi.id}" data-kpi-id="#{kpi.id}"
                 span
-                | OFF
+                .off OFF
         span.kpi-info
-          h4= kpi.name
+          .kpi-name
+            = kpi.name
           = kpi.description
         span.kpi-goal
           - if kpi.is_segmented?
