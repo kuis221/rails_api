@@ -91,7 +91,8 @@ class EventsController < FilteredController
         teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
         people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
-        f.push(label: "Status", items: ['Active', 'Inactive', 'Late', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+        f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+        f.push(label: "Event Status", items: ['Late', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
       end
     end
 

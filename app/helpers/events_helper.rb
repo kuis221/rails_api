@@ -235,8 +235,13 @@ module EventsHelper
     def describe_status
       status = params[:status]
       status = [status] unless status.is_a?(Array)
-      unless status.empty? || status.nil?
-        status.to_sentence(last_word_connector: ' and ')
+
+      event_status = params[:event_status]
+      event_status = [event_status] unless event_status.is_a?(Array)
+
+      statuses = (status + event_status).compact
+      unless statuses.empty? || statuses.nil?
+        statuses.to_sentence(last_word_connector: ' and ')
       end
     end
 end

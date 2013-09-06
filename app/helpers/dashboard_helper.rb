@@ -22,13 +22,19 @@ module DashboardHelper
       data[:events] = result.events_count.to_i
       data[:impressions] = result.impressions.to_i
       data[:interactions] = result.interactions.to_i
-      data[:impressions_event] = result.impressions.to_i/result.events_count.to_i
-      data[:interactions_event] = result.interactions.to_i/result.events_count.to_i
-      data[:sampled_event] = result.sampled.to_i/result.events_count.to_i
       data[:spent] = result.spent.to_f
-      data[:cost_impression] = result.spent.to_f / result.impressions.to_i
-      data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
-      data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+
+      if result.events_count.to_i > 0
+        data[:impressions_event] = result.impressions.to_i/result.events_count.to_i
+        data[:interactions_event] = result.interactions.to_i/result.events_count.to_i
+        data[:sampled_event] = result.sampled.to_i/result.events_count.to_i
+      end
+
+      if result.impressions.to_i > 0
+        data[:cost_impression] = result.spent.to_f / result.impressions.to_i
+        data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
+        data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+      end
     end
   end
 
