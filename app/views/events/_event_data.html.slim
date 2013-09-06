@@ -7,15 +7,15 @@
   - field = ff.object.form_field
   - if field.kpi_id.nil? || @rendered_modules[field.kpi.module].nil? || current_module == field.kpi.module
     - field_module = field.kpi_id.nil? ? ((field.is_section? || field.section_id.present?)  ? "section" : (field.field_type == 'comments' ? 'comments' : 'custom')) : field.kpi.module
-    div class="#{current_module != field_module ? 'details_box' : '' } box_#{field_module}" id="event-#{field_module}"
+    div class="box_#{field_module}" id="event-#{field_module}"
       - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
         - @rendered_modules[field.kpi.module] = true
         - if field.kpi.module != 'surveys'
           h3.uppercase=t "form_builder.modules.#{field.kpi.module}"
-        = render partial: 'result_fields', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
+        = render partial: 'event_data', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
       - elsif field.is_section?
         h2= field.name
-        = render partial: 'result_fields', locals: {fields: field.fields, f: f, current_module: "section"}
+        = render partial: 'event_data', locals: {fields: field.fields, f: f, current_module: "section"}
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
         .control-group
           label.field-label
@@ -26,11 +26,7 @@
           .progress.progress-info
             .bar
           .counter
-        = render partial: 'result_fields', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
-      - elsif ['expenses', 'surveys'].include?(current_module)
-        = render partial: current_module, locals: {f: f}
-      - elsif ['photos', 'videos', 'comments'].include?(field.field_type)
-        = render partial: field.field_type, locals: {f: f, allow_upload: true}
+        = render partial: 'event_data', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
       - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module) 
         = ff.hidden_field :form_field_id
         = ff.hidden_field :kpi_id

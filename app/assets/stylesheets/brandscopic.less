@@ -2145,7 +2145,6 @@ body.events.show, body.teams.show, body.areas.show {
 		display: inline-block;
 		float: right;
 		font-size: 11px;
-		margin-top: 65px;
 		width: 390px;
 		&.pull-right{
 			margin-top: 10px;
@@ -2395,10 +2394,14 @@ body.events.show, body.teams.show, body.areas.show {
 //PHOTOS VIEWS ----------------------------------
 
 .box_photos{
-	.dialogue-photos{
-		position: absolute;
-		left: 80px;
-		top: -60px;
+	h3 {
+		display: inline-block;
+	}
+	.dialogue-photos {
+		margin-left: 30px;
+		&:before {
+			top: 5px;
+		}
 	}
 }
 
@@ -3614,8 +3617,20 @@ svg{
 	}
 	.box_summary{
 		float: left;
-		margin-top: 60px;
 		width: 410px;
+		h3 {
+			display: inline-block;
+			margin-right: 30px;
+		}
+		a.edit:after {
+			color: #989898;
+			top: 0;
+		}
+	}
+	.box_event_data{
+		form {
+			margin-bottom: 30px;
+		}
 	}
 	#event-documents-list{
 		margin:0 -11% 0 0;

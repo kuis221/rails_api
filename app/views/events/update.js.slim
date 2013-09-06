@@ -1,0 +1,14 @@
+- render 'settings'
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  - if params['partial'] == 'event_data'
+    |
+      $('#edit_event_data_form').remove();
+      $('.box_event_data').html("#{escape_javascript(render(partial: 'results_event_data', locals: {active_kpis: resource.campaign.active_kpis}))}").show();
+      smoothScrollTo($('.box_event_data'));
+  - else
+    |
+      $('.bootbox.modal').modal('hide');
+      $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
+      $(document).trigger('#{resource.class.name.pluralize.underscore}:change');

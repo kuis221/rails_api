@@ -16,13 +16,13 @@ describe EventsController do
       end
     end
 
-    describe "GET 'edit_summary'" do
+    describe "GET 'edit_data'" do
       let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company)) }
       it "returns http success" do
         event.build_event_data.save
-        get 'edit_summary', id: event.to_param, format: :js
+        get 'edit_data', id: event.to_param, format: :js
         response.should be_success
-        response.should render_template('edit_summary')
+        response.should render_template('edit_data')
       end
     end
 
@@ -63,7 +63,6 @@ describe EventsController do
             response.should render_template('surveys')
             response.should render_template('comments')
             response.should render_template('photos')
-            response.should render_template('videos')
             response.should render_template('expenses')
             response.should_not render_template('show_results')
           end
@@ -126,7 +125,7 @@ describe EventsController do
 
     describe "PUT 'update'" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
-      it "must update the user attributes" do
+      it "must update the event attributes" do
         put 'update', id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         assigns(:event).should == event
         response.should be_success
@@ -134,6 +133,13 @@ describe EventsController do
         event.campaign_id.should == 111
         event.start_at.should == Time.zone.parse('2020-05-21 12:00:00')
         event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
+      end
+
+      it "must update the event attributes" do
+        put 'update', id: event.to_param, partial: 'event_data', event: {campaign_id: FactoryGirl.create(:campaign, company: @company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+        assigns(:event).should == event
+        response.should be_success
+        response.should render_template('results_event_data')
       end
     end
 
