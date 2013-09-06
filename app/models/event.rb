@@ -436,8 +436,14 @@ class Event < ActiveRecord::Base
     # Sets the values for start_date, start_time, end_date and end_time when from start_at and end_at
     def set_start_end_dates
       if new_record?
-        self.start_time ||= '12:00 PM'
-        self.end_time ||= '01:00 PM'
+        t= Time.zone.now.beginning_of_hour
+        t =  [t, t+15.minutes, t+30.minutes, t+45.minutes].detect{|a| Time.zone.now < a }
+        self.start_date ||= t.to_s(:slashes)
+        self.start_time ||= t.to_s(:time_only)
+
+        t = t + 1.hour
+        self.end_date ||= t.to_s(:slashes)
+        self.end_time ||= t.to_s(:time_only)
       else
         if has_attribute?(:start_at) # this if is to allow custom selects on the Event module
           self.start_date = self.start_at.to_s(:slashes)   unless self.start_at.blank?

@@ -19,6 +19,7 @@ describe EventsController do
     describe "GET 'edit_summary'" do
       let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company)) }
       it "returns http success" do
+        event.build_event_data.save
         get 'edit_summary', id: event.to_param, format: :js
         response.should be_success
         response.should render_template('edit_summary')
