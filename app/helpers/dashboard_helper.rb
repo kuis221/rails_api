@@ -43,4 +43,12 @@ module DashboardHelper
   def team_incomplete_tasks
     Task.active.incomplete.where(company_user_id: current_company_user.find_users_in_my_teams).limit(5)
   end
+
+  def top5_venues
+    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score DESC').limit(5)
+  end
+
+  def bottom5_venues
+    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score ASC').limit(5)
+  end
 end

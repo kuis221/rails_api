@@ -1,0 +1,9 @@
+li
+  .score
+    span= venue.score
+    | SCORE
+
+  .info
+    h4= venue.name
+    .types= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+    .adddress= venue.formatted_address
