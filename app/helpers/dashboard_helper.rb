@@ -33,8 +33,6 @@ module DashboardHelper
   end
 
   def upcomming_events_list
-    @upcomming_evetns ||= begin
-      search = User.do_search({company_id: current_company.id, start_at: Date.today})
-    end
+    @upcomming_events = current_company.events.active.upcomming.limit(5)
   end
 end

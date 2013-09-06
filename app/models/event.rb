@@ -54,6 +54,8 @@ class Event < ActiveRecord::Base
 
   attr_accessor :place_reference
 
+  scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
+  scope :active, lambda{ where(active: true) }
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
 

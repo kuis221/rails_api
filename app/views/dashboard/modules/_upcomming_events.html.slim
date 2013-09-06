@@ -1,0 +1,38 @@
+#demographics-module.details_box
+  h3 UPCOMMING EVENTS
+
+  .text-right
+    #toggle-upcomming-events-view.btn-group
+      a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+      a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+  
+  .tab-content
+    #list-view.tab-pane.active
+      .link-list
+        ul#events-list
+          = render upcomming_events_list
+
+    #map-view.tab-pane
+      #map-canvas.google-map
+
+
+- @events = upcomming_events_list
+javascript:
+  var upcommingEventsMap = false;
+  $('#toggle-upcomming-events-view a').on('shown', function(e){
+    if (e.target.getAttribute('href') == '#map-view'){
+      if (!upcommingEventsMap) {
+        mapOptions = {
+          zoom: 5,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        upcommingEventsMap = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+
+
+        upcommingEventsMap.setOptions({styles: window.MAP_STYLES})
+      } else {
+        google.maps.event.trigger(upcommingEventsMap, 'resize')
+      }
+      placeMarkers(upcommingEventsMap, #{render(file: 'events/index', formats: [:json]).html_safe});
+    }
+  })
