@@ -120,7 +120,7 @@ class TasksController < FilteredController
       if params[:scope] == 'user'
         ids = [current_company_user.id]
       elsif params[:scope] == 'teams'
-        ids = CompanyUser.joins(:teams).where(teams: {id: current_company_user.teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|id| id == current_company_user.id }
+        ids = current_company_user.find_users_in_my_teams
         ids = [0] if ids.empty?
       end
       ids

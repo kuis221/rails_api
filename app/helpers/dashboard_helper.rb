@@ -35,4 +35,12 @@ module DashboardHelper
   def upcomming_events_list
     @upcomming_events = current_company.events.active.upcomming.limit(5)
   end
+
+  def my_incomplete_tasks
+    Task.active.incomplete.where(company_user_id: current_company_user).limit(5)
+  end
+
+  def team_incomplete_tasks
+    Task.active.incomplete.where(company_user_id: current_company_user.find_users_in_my_teams).limit(5)
+  end
 end
