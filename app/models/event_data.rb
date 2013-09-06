@@ -44,11 +44,6 @@ class EventData < ActiveRecord::Base
       segments.each{|s| self.send("#{kpi}_#{segments_names_map[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))} if segments
     end
 
-    save
-
-    # Update the venue info
-    event.update_venue_data
-
     true
   end
 end

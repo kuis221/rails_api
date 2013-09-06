@@ -17,14 +17,13 @@ describe EventsController do
     end
 
     describe "GET 'edit_summary'" do
-      let(:event){ FactoryGirl.create(:event, company: @company) }
+      let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company)) }
       it "returns http success" do
         get 'edit_summary', id: event.to_param, format: :js
         response.should be_success
         response.should render_template('edit_summary')
       end
     end
-
 
     describe "GET 'edit_surveys'" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
@@ -35,7 +34,6 @@ describe EventsController do
         response.should render_template('surveys')
       end
     end
-
 
     describe "GET 'show'" do
       describe "for an event in the future" do
@@ -69,7 +67,6 @@ describe EventsController do
             response.should_not render_template('show_results')
           end
         end
-
       end
     end
 

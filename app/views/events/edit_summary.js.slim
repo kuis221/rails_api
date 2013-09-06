@@ -1,7 +1,2 @@
 |
-  bootbox.classes('modal-med');
-  var editSummaryDialog = bootbox.dialog(
-                            $('#{escape_javascript(render "edit_summary")}'),
-                            [],
-                            {'onEscape': true, animate: (!$.fx.off), header: 'Event Summary'}
-                          )
+  $('.summary-metrics').html('#{escape_javascript(render('edit_summary'))}');
