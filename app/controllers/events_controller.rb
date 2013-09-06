@@ -66,6 +66,25 @@ class EventsController < FilteredController
   end
 
   protected
+    def build_resource(*args)
+      super
+      t= Time.zone.now.beginning_of_hour
+      t =  [t, t+15.minutes, t+30.minutes, t+45.minutes, t+1.hour].detect{|a| Time.zone.now < a }
+      if resource.start_at.nil?
+        Rails.logger.debug t.inspect
+        resource.start_at = t
+        resource.start_date = t.to_s(:slashes)
+        resource.start_time = t.to_s(:time_only)
+      end
+
+      if resource.end_at.nil?
+        t = t + 1.hour
+        resource.end_at = t
+        resource.end_date = t.to_s(:slashes)
+        resource.end_time = t.to_s(:time_only)
+      end
+      resource
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|
