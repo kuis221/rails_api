@@ -156,7 +156,7 @@ javascript:
               }
             },
         },
-        yAxis: {
+        yAxis: [{
             title: {
                 text: null
             },
@@ -176,18 +176,64 @@ javascript:
             },
             min: 0,
             maxPadding: 0.2
-        },
+        },{
+            title: {
+                text: null
+            },
+            gridLineColor: 'transparent',
+            lineWidth: 1,
+            lineColor: '#D1D1D1',
+            tickWidth: 1,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            labels: {
+              format: '${value}',
+              style: {
+                color: '#D1D1D1'
+              }
+            },
+            opposite: true,
+            min: 0,
+            maxPadding: 0.2
+        }],
         plotOptions: {
             series: {
                 marker: {
                     fillColor: '#FFFFFF',
                     lineWidth: 2,
                     lineColor: null, // inherit from series
-                    radius: 6
+                    radius: 6,
+                    symbol: 'circle'
                 }
             }
         },
-        tooltip: { enabled: false },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '{point.y}',
+            borderWidth: 0,
+            borderColor: '#FFF',
+            backgroundColor: 'transparent',
+            shadow: false,
+            style: {
+                fontSize: '14px' 
+            },
+            positioner: function( labelWidth, labelHeight, point){
+                return { 
+                  x: point.plotX + this.chart.plotLeft - (labelWidth/2), 
+                  y: point.plotY + this.chart.plotTop - labelHeight - 10
+                };
+            },
+            formatter: function() {
+                if (this.series.name =='Cost/Impression'){
+                  return '<span style="color:'+this.series.color+'">$'+this.y +'</span>';
+                }else{
+                  return '<span style="color:'+this.series.color+'">'+this.y +'</span>';
+                }
+            }
+        },
         legend: {
             floating: true,
             borderWidth: 0,
@@ -200,24 +246,13 @@ javascript:
           {
             name: 'Impressions/promo hour',
             data: #{resource.overall_graphs_data[:impressions_promo].values.map(&:round).to_json.html_safe},
-            color: '#3D9CCA',
-            dataLabels: {
-                enabled: true,
-                color: '#3E9CCF',
-                y: -20,
-                style: { color: '#3E9CCF', fontSize: '14px' }
-            }
+            color: '#3D9CCA'
           },
           {
             name: 'Cost/Impression',
             data: #{resource.overall_graphs_data[:cost_impression].values.map(&:round).to_json.html_safe},
             color: '#94D6ED',
-            dataLabels: {
-                enabled: true,
-                color: '#95D6EF',
-                y: -20,
-                style: { color: '#95D6EF', fontSize: '14px' }
-            }
+            yAxis: 1
           }
         ]
     });

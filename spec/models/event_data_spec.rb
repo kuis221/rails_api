@@ -29,12 +29,6 @@ describe EventData do
 
   let(:event) { FactoryGirl.create(:event, event_data: FactoryGirl.build(:event_data), campaign: FactoryGirl.create(:campaign)) }
   describe "#update_data" do
-    it "should queue a job for updating venue data" do
-      expect {
-        event.event_data.update_data
-      }.to change(Venue, :count).by(1)
-      #Venue.should have_queued(person.id, :calculate)
-    end
 
     it "should correctly count the values for each segment" do
       Kpi.create_global_kpis
@@ -74,7 +68,6 @@ describe EventData do
 
 
       event.save
-      EventDataIndexer.should have_queued(event.event_data.id).in(:indexing)
 
       event.event_expenses.create(name: 'test expense', amount: 345)
 

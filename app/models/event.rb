@@ -54,6 +54,8 @@ class Event < ActiveRecord::Base
 
   attr_accessor :place_reference
 
+  scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
+  scope :active, lambda{ where(active: true) }
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
 
@@ -233,11 +235,17 @@ class Event < ActiveRecord::Base
 
   def result_for_kpi(kpi)
     field = campaign.form_fields.detect{|f| f.kpi_id == kpi.id }
-    if field.is_segmented?
-      segments_results_for(field)
-    else
-      results_for([field]).first
+    if field.present?
+      if field.is_segmented?
+        segments_results_for(field)
+      else
+        results_for([field]).first
+      end
     end
+  end
+
+  def results_for_kpis(kpis)
+    kpis.map{|kpi| result_for_kpi(kpi) }.flatten.compact
   end
 
   def locations_for_index
@@ -307,11 +315,6 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def update_venue_data
-    venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-    Resque.enqueue(VenueIndexer, venue.id)
-  end
-
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
@@ -338,6 +341,7 @@ class Event < ActiveRecord::Base
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+        with(:status, params[:event_status]) if params.has_key?(:event_status) and params[:event_status].present?
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?
@@ -457,26 +461,25 @@ class Event < ActiveRecord::Base
       Sunspot.index(tasks)
     end
 
-    def save_event_data
-      if @refresh_event_data
-        Resque.enqueue(EventDataIndexer, event_data.id)
-      elsif place_id_changed?
-        update_venue_data if place_id.present?
-      end
-    end
-
     def check_results_changed
       @refresh_event_data = false
       if results.any?{|r| r.changed?}
-        build_event_data unless event_data.present?
         @refresh_event_data = true
       end
       true
     end
 
     def reindex_associated
-      save_event_data
+      if @refresh_event_data
+        build_event_data unless event_data.present?
+        event_data.update_data
+        event_data.save
+      end
       if place_id_changed?
+        if place_id.present?
+          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+          Resque.enqueue(VenueIndexer, venue.id)
+        end
         Resque.enqueue(EventPhotosIndexer, self.id)
         Sunspot.index(place)
         if place_id_was.present?

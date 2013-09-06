@@ -2081,6 +2081,14 @@ body.events.index {
 	}
 }
 
+body.dashboard.index {
+	#map-canvas {
+		border:1px solid @user_menu;
+		height: 500px;
+		margin-top: 15px;
+	}
+}
+
 body.events.show, body.teams.show, body.areas.show {
 	#event-team-members, #team-members-list, #area-places-list {
 		margin: 0 -12% 0 0;
@@ -3686,9 +3694,7 @@ svg{
 			font-size: 16px;
 		}
 	}
-	.results-expenses, .results-surveys{
-		margin-top: 20px;
-	}
+
 	.results-surveys{
 		a.edit:after{
 			color:@brand;
@@ -3943,6 +3949,53 @@ a, i{
 		font-family: 'icons';
 		font-size: 20px;
 		position: relative;
+	}
+}
+
+
+.dashboard.index {
+	#incomplete-tasks-module {
+		.nav-tabs li a {
+			width: 150px;
+		}
+		.tab-content {
+			width: auto;
+		}
+		.details_box {
+			border-top-left-radius: 0;
+		}
+	}
+
+	#venue-performance-module {
+		.score-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			li {
+				height: 70px
+			}
+
+			div.score {
+				color: @venues_blue;
+				width: 70px;
+				display: inline-block;
+				float: left;
+				height: 100%;
+				 span {
+				 	font-size: 26px;
+				 	display: block;
+				 	clear: both;
+				 }
+			}
+
+			div.info {
+				h4 {
+					font-weight: normal;
+					margin-bottom: 5px;
+				}
+			}
+		}
 	}
 }
 

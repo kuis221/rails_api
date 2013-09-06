@@ -22,19 +22,39 @@ module DashboardHelper
       data[:events] = result.events_count.to_i
       data[:impressions] = result.impressions.to_i
       data[:interactions] = result.interactions.to_i
-      data[:impressions_event] = result.impressions.to_i/result.events_count.to_i
-      data[:interactions_event] = result.interactions.to_i/result.events_count.to_i
-      data[:sampled_event] = result.sampled.to_i/result.events_count.to_i
       data[:spent] = result.spent.to_f
-      data[:cost_impression] = result.spent.to_f / result.impressions.to_i
-      data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
-      data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+
+      if result.events_count.to_i > 0
+        data[:impressions_event] = result.impressions.to_i/result.events_count.to_i
+        data[:interactions_event] = result.interactions.to_i/result.events_count.to_i
+        data[:sampled_event] = result.sampled.to_i/result.events_count.to_i
+      end
+
+      if result.impressions.to_i > 0
+        data[:cost_impression] = result.spent.to_f / result.impressions.to_i
+        data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
+        data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+      end
     end
   end
 
   def upcomming_events_list
-    @upcomming_evetns ||= begin
-      search = User.do_search({company_id: current_company.id, start_at: Date.today})
-    end
+    @upcomming_events = current_company.events.active.upcomming.limit(5)
+  end
+
+  def my_incomplete_tasks
+    Task.active.incomplete.where(company_user_id: current_company_user).limit(5)
+  end
+
+  def team_incomplete_tasks
+    Task.active.incomplete.where(company_user_id: current_company_user.find_users_in_my_teams).limit(5)
+  end
+
+  def top5_venues
+    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score DESC').limit(5)
+  end
+
+  def bottom5_venues
+    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score ASC').limit(5)
   end
 end

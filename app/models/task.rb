@@ -32,6 +32,8 @@ class Task < ActiveRecord::Base
   validates :company_user_id, numericality: true, if: :company_user_id
   validates :event_id, presence: true, numericality: true
 
+  scope :incomplete, lambda{ where(completed: false) }
+  scope :active, lambda{ where(active: true) }
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
   scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
   scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }

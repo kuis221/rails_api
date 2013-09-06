@@ -1,0 +1,13 @@
+#venue-performance-module.details_box
+  h3 VENUE PERFORMANCE
+
+  .row-fluid
+    .span6
+      h4 Top 5
+      ul.score-list
+        = render partial: 'dashboard/modules/partials/venue', collection: top5_venues
+
+    .span6
+      h4 Bottom 5
+      ul.score-list
+        = render partial: 'dashboard/modules/partials/venue', collection: bottom5_venues

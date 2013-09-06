@@ -117,6 +117,10 @@ class CompanyUser < ActiveRecord::Base
     update_attribute(:active, false)
   end
 
+  def find_users_in_my_teams
+    @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: {company_id: company_id, id: teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|aid| aid == self.id }
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

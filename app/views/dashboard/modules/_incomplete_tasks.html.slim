@@ -1,0 +1,18 @@
+#incomplete-tasks-module
+  ul.nav.nav-tabs
+    li.active
+      a href="#my-incomplete-tasks" data-toggle="tab" My incomplete tasks
+    li
+      a href="#team-incomplete-tasks" data-toggle="tab" Team incomplete tasks
+
+  #dasboard-tasks-content.details_box.tab-content
+    #my-incomplete-tasks.tab-pane.active
+      h3 INCOMPLETE TASKS
+      .link-list
+        ul#my-tasks-list
+          = render my_incomplete_tasks
+    #team-incomplete-tasks.tab-pane
+      h3 INCOMPLETE TASKS
+      .link-list
+        ul#team-tasks-list
+          = render team_incomplete_tasks
