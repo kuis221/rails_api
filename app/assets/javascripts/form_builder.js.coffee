@@ -189,8 +189,8 @@ window.FormBuilder = {
 		position = field.offset()
 		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
 
-
-		$(document).click (e) => 
+		$(document).on 'click.fbuidler', (e) => 
+			$(document).off 'click.fbuidler'
 			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
@@ -290,6 +290,7 @@ window.FormBuilder.TextField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
@@ -364,6 +365,7 @@ window.FormBuilder.SectionField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Section name'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
@@ -411,6 +413,7 @@ window.FormBuilder.NumberField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
@@ -474,6 +477,7 @@ window.FormBuilder.TextareaField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
@@ -500,7 +504,7 @@ window.FormBuilder.TextareaField = (options) ->
 
 window.FormBuilder.PhotosField = (options) ->
 	@options = $.extend({
-		name: 'Select a file'
+		name: 'Photos'
 	}, options)
 
 	@field =  $('<div class="field control-group" data-class="PhotosField">').append [
@@ -511,6 +515,7 @@ window.FormBuilder.PhotosField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text('Photos'),
 			$('<div class="field-not-customizable-message">').text(
 				'This field is not customizable'
 			)
@@ -586,6 +591,7 @@ window.FormBuilder.CountField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
@@ -654,6 +660,7 @@ window.FormBuilder.PercentageField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label" value="'+@options.name+'">').on 'keyup', (e) =>
@@ -689,7 +696,7 @@ window.FormBuilder.PercentageField = (options) ->
 
 window.FormBuilder.CommentsField = (options) ->
 	@options = $.extend({
-		name: 'Your Comment',
+		name: 'Comments',
 		predefined_value: '',
 		type: 'comments',
 	}, options)
@@ -705,6 +712,7 @@ window.FormBuilder.CommentsField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text('Comments'),
 			$('<div class="field-not-customizable-message">').text(
 				'This field is not customizable'
 			)
@@ -731,6 +739,7 @@ window.FormBuilder.ExpensesField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="field-not-customizable-message">').text(
 				'This field is not customizable'
 			)
@@ -758,6 +767,7 @@ window.FormBuilder.SurveysField = (options) ->
 
 	@attributesForm = () ->
 		[
+			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
 				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').val(@options.options.brands).on "change", (e) =>

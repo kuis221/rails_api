@@ -10,9 +10,9 @@ class EventsController < FilteredController
 
   helper_method :describe_filters, :calendar_highlights
 
-  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_summary, :edit_surveys]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys]
 
-  custom_actions member: [:tasks, :edit_results, :save_results, :edit_summary, :edit_surveys]
+  custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
 
   def autocomplete

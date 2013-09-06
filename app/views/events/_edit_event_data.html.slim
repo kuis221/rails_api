@@ -1,0 +1,42 @@
+h3 EVENT DATA
+
+- fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
+- f ||= false
+- if f
+  = f.input :summary
+  = render partial: 'event_data', locals: {fields: fields, f: f}
+- else
+  = simple_form_for(resource, remote: true) do |f|
+    = f.error_notification
+
+    = f.input :summary
+    = render partial: 'event_data', locals: {fields: fields, f: f}
+
+    .form-actions
+      = f.button :submit, id: 'save-data', class: 'btn-primary', disable_with: 'Please wait...'
+      = "&nbsp;".html_safe
+      = f.button :button, 'Cancel', id: 'cancel-edit', class: 'btn btn-cancel'
+
+    = hidden_field_tag :partial, 'event_data'
+
+
+javascript:
+  $('#save-event-results').click(function(){
+    $('form#edit_event_#{resource.id}').submit();
+  })
+  $('.segment-field').keyup(function(e){
+    total = 0;
+    $.map($('[data-segment-field-id="'+$(this).data('segment-field-id')+'"].segment-field'), function(element, index){
+      if ( $(element).val().match(/^[0-9]+$/) ){
+        total += parseInt($(element).val())
+      }
+    });
+    var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger')) 
+    var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error')) 
+    $('#progress-bar-field-'+ $(this).data('segment-field-id'))
+        .removeClass('text-success text-error text-info').addClass(textClass)
+        .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
+        .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
+    $("#total-field-"+$(this).data('segment-field-id')).val(total)
+  })
+  $('.segment-field').keyup();
