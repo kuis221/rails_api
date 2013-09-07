@@ -46,6 +46,11 @@ class Ability
 
         can :manage, AttachedAsset
 
+        can :create, EventExpense
+        can :edit, EventExpense do |expense|
+          expense.event.company_id == user.current_company.id
+        end
+
         can :manage, Goal
         can :manage, Placeable
       end
