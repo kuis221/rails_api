@@ -106,4 +106,24 @@ describe Event do
 
   end
 
+  describe "campaign association" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+
+    it "should update campaign's first_event_id and first_event_at attributes" do
+      campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true).should be_true
+      event = FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
+      campaign.reload
+      campaign.first_event_id.should == event.id
+      campaign.first_event_at.should == Time.zone.parse('2013-01-01 01:00:00')
+    end
+
+    it "should update campaign's first_event_id and first_event_at attributes" do
+      campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true).should be_true
+      event = FactoryGirl.create(:event, campaign: campaign, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
+      campaign.reload
+      campaign.last_event_id.should == event.id
+      campaign.last_event_at.should == Time.zone.parse('2013-02-01 05:00:00')
+    end
+  end
+
 end

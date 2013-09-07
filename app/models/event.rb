@@ -470,6 +470,12 @@ class Event < ActiveRecord::Base
     end
 
     def reindex_associated
+      if campaign.present?
+        campaign.first_event = self if campaign.first_event_at.nil? || campaign.first_event_at > self.start_at
+        campaign.last_event  = self if campaign.last_event_at.nil?  || campaign.last_event_at  < self.end_at
+        campaign.save if campaign.changed?
+      end
+
       if @refresh_event_data
         build_event_data unless event_data.present?
         event_data.update_data

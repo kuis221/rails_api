@@ -1,6 +1,4 @@
 .row-fluid.with-details-close-bar
-  - first_event = resource.first_event.try(:start_at)
-  - last_event = resource.last_event.try(:end_at)
   = resource_details_bar("You are viewing campaign details. Click to close.", collection_path)
 
   .details_box.padding-top-close-bar
@@ -10,7 +8,7 @@
 
 
     .calendar-data
-      = format_date_range(first_event, last_event, date_separator: ' - ')
+      = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
     - if resource.description
       .description-data
@@ -26,7 +24,7 @@
       = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit'
       = active_inactive_buttons(resource)
       br>/
-      = format_date_range(first_event, last_event, date_separator: ' - ')
+      = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
   ul#campaign-tabs.nav.nav-tabs
     li.active

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130904202830) do
+ActiveRecord::Schema.define(:version => 20130907160431) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -166,9 +166,13 @@ ActiveRecord::Schema.define(:version => 20130904202830) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.integer  "company_id"
+    t.integer  "first_event_id"
+    t.integer  "last_event_id"
+    t.datetime "first_event_at"
+    t.datetime "last_event_at"
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
