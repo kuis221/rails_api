@@ -122,8 +122,50 @@ describe Event do
       event = FactoryGirl.create(:event, campaign: campaign, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
       campaign.reload
       campaign.last_event_id.should == event.id
-      campaign.last_event_at.should == Time.zone.parse('2013-02-01 05:00:00')
+      campaign.last_event_at.should == Time.zone.parse('2013-02-01 01:00:00')
     end
+  end
+
+  describe "#kpi_goals" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
+
+    it "should not fail if there are not goals nor KPIs for the campaign" do
+      event.kpi_goals.should == {}
+    end
+
+    it "should not fail if there are KPIs associated to the campaign but without goals" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      event.kpi_goals.should == {}
+    end
+
+    it "should not fail if the goal values are nil" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      goals = campaign.goals.for_kpis([Kpi.impressions])
+      goals.each{|g| g.value = nil; g.save}
+      event.kpi_goals.should == {}
+    end
+
+    it "returns the correct value for the goal" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      goals = campaign.goals.for_kpis([Kpi.impressions])
+      goals.each{|g| g.value = 100; g.save}
+      event.kpi_goals.should == {Kpi.impressions.id => 100}
+    end
+
+    it "returns the correctly divide the goal between the number of events" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      #Create another event for the campaign
+      FactoryGirl.create(:event, campaign: campaign)
+      goals = campaign.goals.for_kpis([Kpi.impressions])
+      goals.each{|g| g.value = 100; g.save}
+      event.kpi_goals.should == {Kpi.impressions.id => 50}
+    end
+
   end
 
 end
