@@ -2089,27 +2089,27 @@ body.dashboard.index {
 	}
 }
 
-body.events.show, body.teams.show, body.areas.show {
+body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	#event-team-members, #team-members-list, #area-places-list {
 		margin: 0 -12% 0 0;
 	}
-	.team-member, .team, .area-place {
+	.team-member, .team, .area-place, .brand{
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-		.full-name, .place-name {
+		.full-name, .place-name, .brand-name{
 			font-size: 16px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn{
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
 				display:inline-block;
 				float: right;
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn{
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
 			display:none;
 		}
 	}
@@ -4183,9 +4183,9 @@ a, i{
   	width: 99.5%;
   	li {
   		min-height: 65px;
-  		.member-data {
+  		.member-data, .brand-data {
   			padding: 12px;
-	  		.member-name {
+	  		.member-name, .brand-name {
 	  			font-size: 16px;
 	  		}
 	  		.member-description {

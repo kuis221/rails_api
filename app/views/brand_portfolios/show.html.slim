@@ -1,37 +1,34 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing brand portfolios details. Click to close.", collection_path)
 
-#resource-details-wrapper
-  = resource_details_bar("Viewing Brand Portfolio Details", collection_path)
+  .details_box.padding-top-close-bar
+    h2= resource.name
 
-  .row-fluid
-    .box.span12
-      .row-fluid
-        .span6
-          h2= resource.name
-          - if resource.description
-            .brand_portfolio-description
-              = resource.description
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            = "&nbsp;".html_safe
-            = active_inactive_buttons(resource)
-      .box-header
-        h2
-          i.icon-user
-          span.break
-          = "Brands"
-      .box-content
-        #brand_portfolio-brands-filter
-        = render partial: 'brands', locals: { brands: resource.brands }
-        .row-fluid
-          .pull-right
-            = link_to 'Add Brand', select_brands_brand_portfolio_path(resource), remote: true, class: 'btn btn-primary'
+    - if resource.description.present?
+      .description-data
+        = resource.description
+
+    .links-data
+      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit'
+      = active_inactive_buttons(resource)
+
+  #brands.details_box
+    h3 Brands
+    #brands-list
+      = render 'brands'
+    = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'
 
 javascript:
   $(document).on('brand_portfolios:change', function(){
     window.location.reload(false);
   })
 
-  $(document).on('brands:change', function(){
-    $.get('#{brands_brand_portfolio_path(resource, format: :js)}');
-  })
+  $(document).bind('brand:delete', function(e, brand_id){
+    $('#brand-'+brand_id).remove()
+  });
