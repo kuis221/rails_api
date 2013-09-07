@@ -22,11 +22,14 @@ class CampaignFormField < ActiveRecord::Base
   serialize :options
 
   validates :campaign_id, numericality: true, allow_nil: true
-  validates :kpi_id, numericality: true, allow_nil: true
-  validates :section_id, numericality: true, allow_nil: true
-  validates :ordering, numericality: true, presence: true
+  validates :kpi_id,      numericality: true, allow_nil: true
+  validates :section_id,  numericality: true, allow_nil: true
+  validates :ordering,    numericality: true, presence: true
 
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
+
+
+  scope :for_event_data, lambda{ joins(:kpi).where(kpis: {module: ['custom', 'consumer_reach', 'demographics'] } ) }
 
   # For field - sections relationship
   has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy

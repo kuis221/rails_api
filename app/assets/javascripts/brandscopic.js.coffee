@@ -56,15 +56,13 @@ jQuery ->
 		}
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
-			if this.hash isnt '' and typeof $(this).data('toggle') is 'undefined'
-				e.preventDefault()
-				e.stopPropagation()
-				$('html, body').animate({ scrollTop: $(this.hash).offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
-				false
-			else
-				true
+			e.preventDefault()
+			e.stopPropagation()
+			smoothScrollTo($(this.hash))
 
-		true
+	window.smoothScrollTo = (element) ->
+		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
+
 
 	validateForm = (e) ->
 		if e.target.tagName is 'A'
