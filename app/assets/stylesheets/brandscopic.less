@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
 @font-face {
 	font-family: 'icons';
@@ -161,6 +161,10 @@ input[type="color"],
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
+	&:focus{
+		box-shadow: none !important;
+		outline: none;
+	}
 }
 
 input[type="email"]:focus, input[type="password"]:focus, select:focus{
@@ -1267,6 +1271,11 @@ ul.kpis-list{
     }
 	.empty-list-message:first-child:last-child {
 		display: block;
+		p{
+			margin: 0;
+			padding-top: 30px;
+			text-align: center;
+		}
 	}
     ul#areas-list{
     	li{
@@ -4088,8 +4097,16 @@ a, i{
 	}
 }
 
+.goalable-errors{
+	.alert-danger{
+		margin: 0px 0 30px 0;
+		padding: 10px 20px;
+	}
+}
+
 .goalable-list {
 	list-style: none;
+	margin-left: 15px;
 	li {
 		position: relative;
 		&> div {
@@ -4106,11 +4123,11 @@ a, i{
 		.goals {
 			position: relative;
 			overflow: hidden;
-			width: 100%;
+			width: 55%;
 			height: 100px;
 			.goals-inner {
 				position: absolute;
-				top: 0;
+				top: 25px;
 				left: 0;
 			}
 
@@ -4125,13 +4142,27 @@ a, i{
 			.kpi-goal {
 				width: 130px;
 				margin: 0 5px;
+				padding: 10px;
 				display: inline-block;
 
 				input {
+					background-color:white !important;
+					box-shadow: none;
+					font-size: 22px;
+					font-weight: 100;
 					width: 60px;
 					display: block;
-					border: 0;
-					border: 1px solid #fff !important;
+					border: 1px solid white !important;
+					&:hover, &.active{
+						border: 1px solid @user_menu !important;
+					}
+				}
+
+				label{
+					.kpi-name{
+						font-size: 11px;
+						padding-top: 14px;
+					}
 				}
 			}
 

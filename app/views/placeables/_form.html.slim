@@ -11,35 +11,39 @@
 /               span.add-button.pull-right
 /                 = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), id: "add-area-btn-#{area.id}", data:{'area-id' => area.id}, class: 'icon-plus-sign', remote: true, method: :post
 
-p Add areas from the list below
+.campaigns-modals
+  p Add areas from the list below
 
-input type="text" name="q" id="place-search-box"
-#select-areas-table-wrapper
-  .link-list
-    ul#areas-list
-      - @areas.each do |area|
-        li id="area-#{area.id}"
-          span.pull-left
-            .area_name= area.name
-            = area.description
-          span.pull-right
-            = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
-      li.empty-list-message
-        | There are not assignable areas
+  input type="text" name="q" id="place-search-box"
+  #select-areas-table-wrapper
+    .link-list
+      ul#areas-list
+        - @areas.each do |area|
+          li id="area-#{area.id}"
+            span.pull-left
+              .area_name= area.name
+              = area.description
+            span.pull-right 
+              = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
+        li.empty-list-message
+          p There are not assignable areas
 
-  p OR
+    .row-fluid
+      .span12
+        .divider
+          | OR
 
-  p Search for places that you want to add
+    p Search for places that you want to add
 
-  = simple_form_for([parent, parent.places.new], remote: true) do |f|
-    = f.error_notification
+    = simple_form_for([parent, parent.places.new], remote: true) do |f|
+      = f.error_notification
 
-    .form-inputs
-      .row-fluid
-        .pull-left
-          = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
-        .pull-right
-          = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disabled: true
+      .form-inputs
+        .row-fluid
+          .pull-left
+            = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
+          .pull-right
+            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disabled: true
 
 javascript:
   var input = $('.modal .places-autocomplete')[0];
