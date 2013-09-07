@@ -1307,6 +1307,36 @@ ul.kpis-list{
 	    	}
 	    }
     }
+    ul#date-ranges-list{
+    	.date-range-data{
+    		padding: 12px;
+    	}
+    	.date-range-name{
+    		font-size: 16px;
+    	}
+    	.date-range-description{
+    		display: block;
+    	    overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;	
+			width: 320px;	
+    	}
+    }
+    ul#day-parts-list{
+    	.day-part-data{
+    		padding: 12px;
+    	}
+    	.day-part-name{
+    		font-size: 16px;
+    	}
+    	.day-part-description{
+    		display: block;
+    	    overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;	
+			width: 320px;	
+    	}
+    }
 		ul#events-list{
 			li{
 				color: @text;
@@ -4120,9 +4150,13 @@ a, i{
 		.goalable-name {
 			font-size: 16px;
 			margin-top: 35px;
+			overflow: hidden;
+	    	text-overflow: ellipsis;
+			white-space: nowrap;
 			width: 200px;
 		}
 		.goals {
+			float: right;
 			position: relative;
 			overflow: hidden;
 			width: 71%;
