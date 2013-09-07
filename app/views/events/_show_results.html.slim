@@ -8,6 +8,10 @@
   .details_box
     = render 'photos'
 
+- if active_kpis.include?(Kpi.expenses)
+  .details_box
+    = render 'results_expenses'
+
 - if active_kpis.include?(Kpi.surveys)
   .details_box
     = render 'results_surveys'
