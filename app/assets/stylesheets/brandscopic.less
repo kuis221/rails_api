@@ -4099,7 +4099,7 @@ a, i{
 
 .goalable-errors{
 	.alert-danger{
-		margin: 0px 0 30px 0;
+		margin: 30px 0 0 0;
 		padding: 10px 20px;
 	}
 }
@@ -4118,22 +4118,27 @@ a, i{
 		overflow: hidden;
 		white-space: nowrap;
 		.goalable-name {
+			font-size: 16px;
 			width: 200px;
 		}
 		.goals {
+			float: right;
 			position: relative;
 			overflow: hidden;
-			width: 55%;
+			width: 58%;
 			height: 100px;
 			.goals-inner {
 				position: absolute;
-				top: 25px;
+				top: 10px;
 				left: 0;
 			}
 
 			.kpi-segment-group:hover,
 			.kpi-goal:hover {
 				background-color: @grey_one;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
 				input {
 					background-color: @grey_one;
 				}
@@ -4142,7 +4147,7 @@ a, i{
 			.kpi-goal {
 				width: 130px;
 				margin: 0 5px;
-				padding: 10px;
+				padding: 10px 10px 5px 10px;
 				display: inline-block;
 
 				input {
@@ -4156,12 +4161,21 @@ a, i{
 					&:hover, &.active{
 						border: 1px solid @user_menu !important;
 					}
+					&:-moz-placeholder{
+					  color: @grey_three;
+					}
+					&:-ms-input-placeholder{
+					  color: @grey_three;
+					}
+					&::-webkit-input-placeholder {
+					  color: @grey_three;
+					}
 				}
 
 				label{
 					.kpi-name{
 						font-size: 11px;
-						padding-top: 14px;
+						padding: 14px 0 0 8px;
 					}
 				}
 			}
