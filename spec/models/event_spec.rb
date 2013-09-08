@@ -217,4 +217,71 @@ describe Event do
     end
   end
 
+  describe "venue reindexing" do
+    before do
+      ResqueSpec.reset!
+    end
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event)    { FactoryGirl.create(:event, campaign: campaign) }
+
+    it "should queue a job to update venue details after a event have been updated if the event data have changed" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      event.place_id = 1
+      event.save # Make sure the event have a place_id
+      ResqueSpec.reset!
+      expect {
+        field = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
+        event.update_attributes({results_attributes: {"1" => {form_field_id: field.id, kpi_id: field.kpi_id, value: '100' }}})
+      }.to change(EventResult, :count).by(1)
+      VenueIndexer.should have_queued(event.venue.id)
+    end
+
+    it "should queue a job to update venue details after a event have been updated if place_id changed" do
+      expect {
+        event.place_id =  1199
+        event.save
+      }.to change(Venue, :count).by(1)
+      VenueIndexer.should have_queued(event.venue.id)
+    end
+
+    it "should not queue a job to reindex the venue if the place_id nor the event data have changed" do
+      event.reload
+      event.start_at = event.start_at - 1.hour
+      event.save
+      VenueIndexer.should_not have_queued(event.venue.id)
+    end
+  end
+
+
+
+  describe "photos reindexing" do
+    before do
+      ResqueSpec.reset!
+    end
+    let(:event) { FactoryGirl.create(:event) }
+
+
+    it "should queue a job to reindex photos after a event have been updated if place_id changed" do
+      event.place_id = 1
+      event.save
+      ResqueSpec.reset!
+
+      # Changing the place should reindex all photos for the event
+      event.place_id =  1199
+      event.save.should be_true
+      EventPhotosIndexer.should have_queued(event.id)
+    end
+
+    it "should not queue a job to reindex if the place_id not changed" do
+      event.place_id = 1
+      event.save
+      ResqueSpec.reset!
+
+      # Changing the place should reindex all photos for the event
+      event.start_at = event.start_at - 1.hour
+      event.save.should be_true
+      EventPhotosIndexer.should_not have_queued(event.id)
+    end
+  end
 end

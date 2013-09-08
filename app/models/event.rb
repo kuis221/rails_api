@@ -512,23 +512,21 @@ class Event < ActiveRecord::Base
         event_data.update_data
         event_data.save
       end
+
+      if (@refresh_event_data || place_id_changed?) && place_id.present?
+        Resque.enqueue(VenueIndexer, venue.id)
+      end
+
       if place_id_changed?
-        if place_id.present?
-          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
-          Resque.enqueue(VenueIndexer, venue.id)
-        end
         Resque.enqueue(EventPhotosIndexer, self.id)
         Sunspot.index(place)
         if place_id_was.present?
-          venue = Venue.find_or_create_by_company_id_and_place_id(company_id, place_id_was)
-          Resque.enqueue(VenueIndexer, venue.id)
+          previous_venue = Venue.find_by_company_id_and_place_id(company_id, place_id_was)
+          Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
         end
       end
     end
 
-    def reindex_photos
-      Sunspot.index(photos)
-    end
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
