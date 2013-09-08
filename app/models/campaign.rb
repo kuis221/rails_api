@@ -58,7 +58,7 @@ class Campaign < ActiveRecord::Base
                    :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   # Campaigns-Events relationship
-  has_many :events, :order => 'start_at ASC'
+  has_many :events, :order => 'start_at ASC', inverse_of: :campaign
 
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
@@ -194,7 +194,7 @@ class Campaign < ActiveRecord::Base
   def last_event=(event)
     unless event.nil?
       self.last_event_id = event.id
-      self.last_event_at = event.end_at
+      self.last_event_at = event.start_at
     end
   end
 

@@ -4012,6 +4012,64 @@ a, i{
 			}
 		}
 	}
+
+	#age-graph {
+		width: 390px;
+		height: 270px;
+	}
+
+
+	#kpis-trends-bars {
+		max-width: 400px;
+		span.name {
+			width: 100px;
+			float: left;
+			color: @venues_blue;
+		}
+		.kpi-trend {
+			overflow: visible;
+
+			span.total {
+				position: absolute;
+				width: 100px;
+				right: -105px;
+				top: 0;
+				color: @venues_blue;
+			}
+		}
+
+		.chart-bar {
+			position: relative;
+			display: inline-block;
+			width: 300px;
+			.progress {
+				width: auto !important;
+				height: 24px;
+				.bar {
+					text-align: right;
+					span.percentage {
+						margin-right: 5px;
+						line-height: 24px;
+					}
+				}
+
+				.bar-remaining {
+					background-color: transparent !important;
+					color: @venues_blue;
+				}
+			}
+
+			.today-line-indicator {
+				position: absolute;
+				width: 2px;
+				background-color: #347a99;
+				height: 30px;
+				top: -3px;
+				border:1px solid #347a99;
+				border-radius: 2px;
+			}
+		}
+	}
 }
 
 

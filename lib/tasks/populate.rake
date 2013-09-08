@@ -143,6 +143,7 @@ namespace :db do
             event.campaign_id = campaign.id
             event.company_id = company.id
             event.place_id = places
+            event.aasm_state = 'unsent'
           end
           campaign.events.each do |event|
             if event.user_ids.size == 0

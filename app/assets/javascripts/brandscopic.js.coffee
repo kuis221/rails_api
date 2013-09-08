@@ -35,6 +35,7 @@ jQuery ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
 		$('input.timepicker').timepicker()
 		$('.chosen-enabled').chosen()
+		$('.has-tooltip').tooltip()
 		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
 		$('.toggle-input .btn').click ->
