@@ -403,13 +403,13 @@ class Event < ActiveRecord::Base
           stat(:interactions, :type => "sum")
           stat(:samples, :type => "sum")
           stat(:spent, :type => "sum")
-          stat(:gender_female, :type => "sum")
-          stat(:gender_male, :type => "sum")
-          stat(:gender_male, :type => "sum")
-          stat(:ethnicity_asian, :type => "sum")
-          stat(:ethnicity_black, :type => "sum")
-          stat(:ethnicity_hispanic, :type => "sum")
-          stat(:ethnicity_white, :type => "sum")
+          stat(:gender_female, :type => "mean")
+          stat(:gender_male, :type => "mean")
+          stat(:gender_male, :type => "mean")
+          stat(:ethnicity_asian, :type => "mean")
+          stat(:ethnicity_black, :type => "mean")
+          stat(:ethnicity_hispanic, :type => "mean")
+          stat(:ethnicity_white, :type => "mean")
         end
 
         if params.has_key?(:predefined_date) and params[:predefined_date].any?
