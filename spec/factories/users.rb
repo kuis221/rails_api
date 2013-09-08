@@ -10,7 +10,7 @@ FactoryGirl.define do
     city 'Curridabat'
     state 'SJ'
     country 'CR'
-    time_zone 'Central America'
+    time_zone Brandscopic::Application.config.time_zone
     detected_time_zone 'Central America'
     confirmed_at DateTime.now
     invitation_accepted_at DateTime.now

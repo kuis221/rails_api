@@ -168,4 +168,19 @@ describe Event do
 
   end
 
+  describe "before_save #set_promo_hours" do
+    it "correctly calculates the number of promo hours before saving the event" do
+      event = FactoryGirl.build(:event,  start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '05:00pm')
+      event.promo_hours = nil
+      event.save.should be_true
+      event.reload.promo_hours.should == 5
+    end
+    it "accepts promo_hours hours with decimals" do
+      event = FactoryGirl.build(:event,  start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '03:15pm')
+      event.promo_hours = nil
+      event.save.should be_true
+      event.reload.promo_hours.should == 3.25
+    end
+  end
+
 end

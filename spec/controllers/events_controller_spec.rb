@@ -77,6 +77,35 @@ describe EventsController do
       end
     end
 
+    describe "GET 'new'" do
+      it "initializes the event with the correct date" do
+        Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+          get 'new', format: :js
+          response.should be_success
+          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
+          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+        end
+      end
+
+      it "always choose the hour in the future" do
+        Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 01)) do
+          get 'new', format: :js
+          response.should be_success
+          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
+          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+        end
+      end
+
+      it "a event that ends on the next day" do
+        Timecop.freeze(Time.zone.local(2013, 07, 26, 23, 01)) do
+          get 'new', format: :js
+          response.should be_success
+          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 23, 15)
+          assigns(:event).end_at.should == Time.zone.local(2013, 07, 27, 0, 15)
+        end
+      end
+    end
+
     describe "GET 'items'" do
       it "returns http success" do
         get 'items'
@@ -115,9 +144,19 @@ describe EventsController do
 
       it "should assign current_user's company_id to the new event" do
         lambda {
-          post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm'}, format: :js
+          post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
         assigns(:event).company_id.should == @company.id
+      end
+
+      it "should create the event with the correct dates" do
+        lambda {
+          post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
+        }.should change(Event, :count).by(1)
+        event = Event.last
+        event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
+        event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
+        event.promo_hours.should == 1
       end
 
     end
