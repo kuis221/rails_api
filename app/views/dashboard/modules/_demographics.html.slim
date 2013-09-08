@@ -1,5 +1,6 @@
 #demographics-module.details_box
   h3 DEMOGRAPHICS
+  p Average demographic composition of attendees for all active campaigns
 
   .row-fluid
     .span6
@@ -7,7 +8,7 @@
         = gender_graph(dashboard_demographics_graph_data[:gender])
       .row-fluid
         #age-graph
-    .span6
+    .span6.ethnicity
       #ethnicity-graph
 
 javascript:

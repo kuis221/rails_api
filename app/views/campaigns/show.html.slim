@@ -37,6 +37,9 @@
       a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
     li
       a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
+    li
+      a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents      
+
   .campaigns_box
     .tab-content
       #kpis_tab.tab-pane.active
@@ -50,6 +53,8 @@
 
       #day_parts_tab.tab-pane
 
+      #documents_tab.tab-pane
+
   .details_box
     h3 POST EVENT FORM
 
@@ -60,28 +65,30 @@ javascript:
   $('#campaign-tabs a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
-  })
+  });
 
   $('#campaign-tabs a[data-content]').on('show', function(e){
     $target = $(e.target);
     $content = $('.tab-content ' + $target.attr('href'))
     $content.html('<img src="/assets/loading.gif" />')
     $content.load($target.data('content'))
-  })
+  });
+
   $(document).on('campaigns:change', function(){
     window.location.reload(false);
   });
+
   $(document).on('members:change teams:change', function(){
     $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
   });
 
   $(document).on('member:delete', function(e, member_id){
     $('#goal-company_user-'+member_id).remove()
-  })
+  });
 
   $(document).on('team:delete', function(e, team_id){
     $('#goal-team-'+team_id).remove()
-  })
+  });
 
   $(document).on('areas:change', function(){
     $('.tab-content #campaign-places-list').load('#{tab_campaign_path(resource, :places)}')
@@ -94,3 +101,7 @@ javascript:
   $(document).on('day_parts:change', function(){
     $('.tab-content #day_parts_tab').load('#{tab_campaign_path(resource, :day_parts)}')
   });
+
+  $(document).on('documents:change', function(){
+    $('.tab-content #documents_tab').load('#{tab_campaign_path(resource, :documents)}')
+  });  

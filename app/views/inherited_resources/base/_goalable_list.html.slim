@@ -6,7 +6,8 @@ ul.goalable-list
     li id="goal-#{goalable.class.name.underscore}-#{goalable.id}"
       .goalable-name= goalable.name
       .goals-controls
-        a.arrow.arrow-left.icon-angle-left href="#"
+        .pull-left
+          a.arrow.arrow-left.icon-angle-left href="#"
         .pull-right
           a.arrow.arrow-right.icon-angle-right href="#"
           / a class="icon-remove-sign remove-#{goalable.class.name.underscore}" data-id="#{goalable.id}" href="#"

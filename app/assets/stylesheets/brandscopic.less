@@ -608,6 +608,10 @@ body.app-layout{
 	margin-left: 40px;
 }
 
+.btn[disabled]{
+	opacity: 1;
+}
+
 .btn:hover{
 	background-color: @brand;
 	border: 0;
@@ -643,9 +647,37 @@ body.app-layout{
 		color: white;
 	}
 }
+
+.btn-info{
+	background-color: @user_menu !important;
+	color: white !important;
+	padding-bottom:9px;
+	padding-top: 9px;
+	&.icon-angle-right-after{
+		&:after{
+			color: white !important;
+			font-size: 19px;
+			top: 6px;
+			left: 9px;
+		}
+		&:before{
+			display:none;
+		}
+	}
+	&:hover{
+		background-color: @buttons-hover !important;
+	}
+}
 .container-fluid{
 	padding: 0;
 }
+
+p{
+	&.big{
+		font-size: 16px;
+	}
+}
+
 /*-- Login styles --*/
 .login_box{
 	background-color: @menu;
@@ -1231,7 +1263,7 @@ ul.kpis-list{
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @borders;
- 	clear: both;
+ 	//clear: both;
  	color: @brand;
  	font-size: 12px;
     margin: 14px 0 0 0;
@@ -1287,6 +1319,11 @@ ul.kpis-list{
 	    			.area_name{
 	    				font-size: 16px;
 	    			}
+	    			.area_description{
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;	    				
+				    }
 	    		}
 	    		&:last-child{
 	    			.add:before{
@@ -1295,17 +1332,47 @@ ul.kpis-list{
 					  	display: inline-block;
 					  	font-family: 'icons';
 						font-size: 21px;
-						right:10px;
+						right:5px;
 					  	position: relative;
 						speak: none;
 						text-align: center;
-						top: 30px;
+						top: 5px;
 					  	vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 	    			}
 	    		}
 	    	}
 	    }
+    }
+    ul#date-ranges-list{
+    	.date-range-data{
+    		padding: 12px;
+    	}
+    	.date-range-name{
+    		font-size: 16px;
+    	}
+    	.date-range-description{
+    		display: block;
+    	    overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;	
+			width: 320px;	
+    	}
+    }
+    ul#day-parts-list{
+    	.day-part-data{
+    		padding: 12px;
+    	}
+    	.day-part-name{
+    		font-size: 16px;
+    	}
+    	.day-part-description{
+    		display: block;
+    	    overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;	
+			width: 320px;	
+    	}
     }
 		ul#events-list{
 			li{
@@ -1331,6 +1398,20 @@ ul.kpis-list{
 				padding: 9px 0 0 15px;
 			}
 		}
+	ul#my-tasks-list{
+		li{
+			.task-list{
+				padding: 20px 0 0 0;
+				width: 100%;
+				span{
+					&.title{
+						margin-left: 18px;
+						width: 60%;
+					}
+				}
+			}
+		}
+	}
     ul#tasks-list{
     	li{
     		color: @text;
@@ -1379,7 +1460,7 @@ ul.kpis-list{
 	    			}
 	    			&.pull-right{
 	    				position: relative;
-	    				margin-top:12px;
+	    				margin-top:12%;
 	    			}
 	    		}
     		}
@@ -1590,13 +1671,9 @@ ul.kpis-list{
         width: 100%;
         min-height: 100%;
       }
-    	a:first-child{
-    		line-height: 30px;
-    	}
     	.edit, .enable, .disable, .preview {
     		height: 30px;
 			display: inline-block;
-			margin-top: 15px;
     	}
 		.edit:after{
 			color: white;
@@ -1689,7 +1766,7 @@ ul.kpis-list{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
-	       top: 7%;
+	       top: 35%;
 		}
 	}
 	  &.rows-no-link{
@@ -2091,10 +2168,27 @@ body.events.index {
 }
 
 body.dashboard.index {
+
+	#gender-graph{
+		margin-top: 40px;
+	}
+
+	h3{
+		margin-bottom: 20px;
+	}
+
+	.kpi-trends-stats{
+		margin-top: 115px;
+	}
+
 	#map-canvas {
 		border:1px solid @user_menu;
 		height: 500px;
 		margin-top: 15px;
+	}
+
+	p{
+		width: 340px;
 	}
 }
 
@@ -2544,7 +2638,7 @@ ul.thumbnails{
 						  	display: inline-block;
 						  	font-family: FontAwesome;
 							font-size: 16px;
-						  	margin-top: 13px;
+						  	margin-top: 11px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
@@ -2557,7 +2651,7 @@ ul.thumbnails{
 						  	display: inline-block;
 						  	font-family: FontAwesome;
 							font-size: 16px;
-							margin-top: 13px;
+							margin-top: 11px;
 						  	position: relative;
 							speak: none;
 							text-align: center;
@@ -2915,6 +3009,7 @@ ul.thumbnails{
 
 		#overall-age-graph {
 			height: 300px;
+			width: 480px;
 			.highcharts-axis-labels{
 				text{
 					font-family: @baseFontFamily !important;
@@ -3197,7 +3292,7 @@ ul.thumbnails{
 	.male{
 		color: @venues_blue;
 		display: inline-block;
-		margin: 0 0 25px 80px;
+		margin: 0 90px 25px 80px;
 		.gender{
 			font-size: 25px;
 		}
@@ -3384,6 +3479,8 @@ table.table td.comments-container {
 }
 
 .tasks-progress-bar{
+	position: relative;
+	padding-bottom: 80px;
 	.btn.btn-primary{
 		margin-top: 35px;
 	}
@@ -3419,10 +3516,6 @@ svg{
 
 	label.location {
 		width: auto;
-	}
-
-	.controls {
-		margin-left: 50px;
 	}
 
 	div.location {
@@ -3685,6 +3778,11 @@ svg{
 			text-decoration: underline;
 		}
 	}
+	.link-list{
+		a{
+			color:@text;
+		}
+	}
 	.links-data{
 		a{
 			&.edit:after{
@@ -3778,7 +3876,7 @@ svg{
 			}
 			&.links{
 				float: right;
-				margin: 10px 15px 0 0;
+				margin: 30px 15px 0 0;
 			}
 			&.total{
 				font-size: 16px;
@@ -3804,15 +3902,16 @@ svg{
 		a.btn{
 			margin-top: 17px;
 		}
+		#event-tasks-container{
+			clear: both;
+		}
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
 			margin-top: 22px;
 			width:280px;
 		}
-		ul#tasks-list{
-			li{
-				span.links{
-					margin-top: 14px !important;
-				}
+		.task-list{
+			span.pull-right{
+				margin-top: 6% !important;
 			}
 		}
 		.task-comments{
@@ -3952,12 +4051,6 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
-	&.icon-minus:before{
-
-	}
-	&.icon-plus:before{
-
-	}
 	&.icon-plus-sign:before{
 		color: @brand;
 		content: "\e021";
@@ -3974,11 +4067,32 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
+	&.icon-angle-right:before, &.icon-angle-right-after:after{
+		color: #c0c0c0;
+		content: "\e01d";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-angle-left:before{
+		color: #c0c0c0;
+		content: "\e01c";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
 }
 
+// DASHBOARD STYLES
 
 .dashboard.index {
 	#incomplete-tasks-module {
+
+		.link-list{
+			margin-bottom: 20px;
+		}
 
 		.tab-content {
 			width: auto;
@@ -3989,59 +4103,90 @@ a, i{
 	}
 
 	#venue-performance-module {
+		.link-list{
+			border: 0;
+			margin-top: 30px;
+			li {
+				border: 0;
+				a{
+					padding-left: 0;
+					&:hover{
+						background-color: white;
+					}
+				}
+			}
+		}
 		.score-list {
 			list-style: none;
 			margin: 0;
 			padding: 0;
 
-			li {
-				height: 70px
-			}
-
 			div.score {
 				color: @venues_blue;
+				font-size: 11px;
 				width: 70px;
 				display: inline-block;
 				float: left;
 				height: 100%;
 				 span {
-				 	font-size: 26px;
+				 	font-size: 35px;
+				 	font-weight: 200;
 				 	display: block;
 				 	clear: both;
+				 	line-height: 35px;
+				 	margin-left: -2px;
 				 }
 			}
 
 			div.info {
 				color: @text;
+				display: inline-block;
+				font-size: 11px;
 				h4 {
+					font-size: 16px;
 					font-weight: normal;
-					margin-bottom: 5px;
+					margin: 0 0 5px 0;
 				}
 			}
+		}
+		.span6{
+			margin-top: 25px;
 		}
 	}
 
 	#age-graph {
-		width: 390px;
+		width: 480px;
 		height: 270px;
+	}
+
+	#demographics-module{
+		.span6.ethnicity{
+			margin: 0;
+		}
 	}
 
 
 	#kpis-trends-bars {
 		max-width: 400px;
 		span.name {
-			width: 100px;
+			width: 90px;
 			float: left;
 			color: @venues_blue;
 		}
+
+		.container-kpi-trend{
+			margin-top: 50px;
+		}
+
 		.kpi-trend {
+			height: 44px;
 			overflow: visible;
 
 			span.total {
 				position: absolute;
 				width: 100px;
-				right: -105px;
-				top: 0;
+				right: -110px;
+				top: 2px;
 				color: @venues_blue;
 			}
 		}
@@ -4052,12 +4197,14 @@ a, i{
 			width: 300px;
 			.progress {
 				width: auto !important;
-				height: 24px;
+				height: 25px;
 				.bar {
 					text-align: right;
+					text-shadow:none;
 					span.percentage {
-						margin-right: 5px;
-						line-height: 24px;
+						margin-left: 10px;
+						margin-right: 10px;
+						line-height: 26px
 					}
 				}
 
@@ -4177,14 +4324,18 @@ a, i{
 		.goalable-name {
 			font-size: 16px;
 			margin-top: 35px;
+			overflow: hidden;
+	    	text-overflow: ellipsis;
+			white-space: nowrap;
 			width: 200px;
 		}
 		.goals {
 			float: right;
 			position: relative;
 			overflow: hidden;
-			width: 58%;
+			width: 71%;
 			height: 100px;
+
 			.goals-inner {
 				position: absolute;
 				top: 10px;
@@ -4203,10 +4354,13 @@ a, i{
 			}
 
 			.kpi-goal {
-				width: 130px;
-				margin: 0 5px;
+				margin: 0 3px;
 				padding: 10px 10px 5px 10px;
 				display: inline-block;
+
+				&.kpi-competitive_analysis{
+					width: 130px;
+				}
 
 				input {
 					background-color:white !important;
@@ -4233,7 +4387,7 @@ a, i{
 				label{
 					.kpi-name{
 						font-size: 11px;
-						padding: 14px 0 0 8px;
+						padding: 14px 0 0 6px;
 					}
 				}
 			}
@@ -4250,27 +4404,37 @@ a, i{
 		}
 		.goals-controls {
 			position: absolute;
-			left: 180px;
+			left: 275px;
 			right: 0;
 			height: 0;
 			z-index: 3;
-			.pull-right {
+			.pull-left {
 				height: 100px;
+				padding: 25px 0 0 0;
+				background-color: #fff;
+			}
+			.pull-right{
+				height: 100px;
+				padding: 25px 15px 0 0;
 				background-color: #fff;
 			}
 			a {
-				margin-top: 10px;
 				color: @grey_three;
 				font-size: 30px;
 				&.arrow {
-					margin-right: 30px;
-					margin-left: 10px;
+					margin: 0 20px;
 				}
 				&.arrow-left {
 					display: none;
 				}
 				&.icon-remove-sign {
 					font-size: 22px;
+				}
+				&:hover{
+					text-decoration: none;
+				}
+				&.icon-angle-right:before, &.icon-angle-left:before{
+					top:6px;
 				}
 			}
 		}
@@ -4304,7 +4468,7 @@ a, i{
 					display: block;
 					font-family: 'icons';
 					font-size: 21px;
-					margin: 15px 0 0 30px;
+					margin: 0 0 0 30px;
 				}
 			}
   	}

@@ -3,30 +3,32 @@
     .span8
       #kpis-trends-bars
         h3 KPI TRENDS
+        p Trends across KPIs for all active campaigns
 
-        .kpi-trend
-          span.name Events
-          = kpi_trend_chart_bar(Kpi.events)
+        .container-kpi-trend
+          .kpi-trend
+            span.name Events
+            = kpi_trend_chart_bar(Kpi.events)
 
-        .kpi-trend
-          span.name Promo Hours
-          = kpi_trend_chart_bar(Kpi.promo_hours)
+          .kpi-trend
+            span.name Promo Hours
+            = kpi_trend_chart_bar(Kpi.promo_hours)
 
-        .kpi-trend
-          span.name Impressions
-          = kpi_trend_chart_bar(Kpi.impressions)
+          .kpi-trend
+            span.name Impressions
+            = kpi_trend_chart_bar(Kpi.impressions)
 
-        .kpi-trend
-          span.name Interactions
-          = kpi_trend_chart_bar(Kpi.interactions)
+          .kpi-trend
+            span.name Interactions
+            = kpi_trend_chart_bar(Kpi.interactions)
 
-        .kpi-trend
-          span.name Sampled
-          = kpi_trend_chart_bar(Kpi.samples)
+          .kpi-trend
+            span.name Sampled
+            = kpi_trend_chart_bar(Kpi.samples)
 
-        .kpi-trend
-          span.name Spent
-          = kpi_trend_chart_bar(Kpi.expenses)
+          .kpi-trend
+            span.name Spent
+            = kpi_trend_chart_bar(Kpi.expenses)
 
     .span4
       .kpi-trends-stats.text-right

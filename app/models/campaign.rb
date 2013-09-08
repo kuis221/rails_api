@@ -72,6 +72,9 @@ class Campaign < ActiveRecord::Base
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables
 
+  # Attached Documents
+  has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+
   accepts_nested_attributes_for :form_fields
 
   aasm do
