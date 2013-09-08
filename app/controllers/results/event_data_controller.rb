@@ -12,45 +12,27 @@ class Results::EventDataController < FilteredController
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
           @search_params[:with_event_data_only] = true
         end
+        @search_params[:event_data_stats] = true
         @search_params
       end
     end
 
     def data_totals
       @data_totals ||= Hash.new.tap do |totals|
-        search_params[:per_page] = 2000
-        search = resource_class.do_search(search_params)
-        event_ids = search.hits.map{|h| h.stored(:id)}
-
-        data = EventData.select('sum(impressions) AS total_impressions,
-                                 sum(interactions) AS total_interactions,
-                                 sum(samples) AS total_samples,
-                                 sum(spent) AS total_expenses,
-                                 avg(gender_female) AS average_gender_female,
-                                 avg(gender_male) AS average_gender_male,
-                                 avg(ethnicity_asian) AS average_ethnicity_asian,
-                                 avg(ethnicity_black) AS average_ethnicity_black,
-                                 avg(ethnicity_hispanic) AS average_ethnicity_hispanic,
-                                 avg(ethnicity_native_american) AS average_ethnicity_native_american,
-                                 avg(ethnicity_white) AS average_ethnicity_white')
-                        .where(["event_id IN (?)", event_ids]).all.first
-
-        promo_hours = Event.select('sum(promo_hours) AS total_promo_hours')
-                           .where(["id IN (?)", event_ids]).all.first
-
-        totals['events_count'] = event_ids.count
-        totals['promo_hours'] = promo_hours.total_promo_hours || 0
-        totals['impressions'] = data.total_impressions || 0
-        totals['interactions'] = data.total_interactions || 0
-        totals['samples'] = data.total_samples || 0
-        totals['spent'] = data.total_expenses || 0
-        totals['gender_female'] = data.average_gender_female || 0
-        totals['gender_male'] = data.average_gender_male || 0
-        totals['ethnicity_asian'] = data.average_ethnicity_asian || 0
-        totals['ethnicity_black'] = data.average_ethnicity_black || 0
-        totals['ethnicity_hispanic'] = data.average_ethnicity_hispanic || 0
-        totals['ethnicity_native_american'] = data.average_ethnicity_native_american || 0
-        totals['ethnicity_white'] = data.average_ethnicity_white || 0
+        #raise search.stat_response.inspect
+        totals['events_count'] = @solr_search.total
+        totals['promo_hours'] = @solr_search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+        totals['impressions'] = @solr_search.stat_response['stats_fields']["impressions_es"]['sum'] rescue 0
+        totals['interactions'] = @solr_search.stat_response['stats_fields']["interactions_es"]['sum'] rescue 0
+        totals['samples'] = @solr_search.stat_response['stats_fields']["samples_es"]['sum'] rescue 0
+        totals['spent'] = @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
+        totals['gender_female'] = @solr_search.stat_response['stats_fields']["gender_female_es"]['sum'] rescue 0
+        totals['gender_male'] = @solr_search.stat_response['stats_fields']["gender_male_es"]['sum'] rescue 0
+        totals['ethnicity_asian'] = @solr_search.stat_response['stats_fields']["ethnicity_asian_es"]['sum'] rescue 0
+        totals['ethnicity_black'] = @solr_search.stat_response['stats_fields']["ethnicity_black_es"]['sum'] rescue 0
+        totals['ethnicity_hispanic'] = @solr_search.stat_response['stats_fields']["ethnicity_hispanic_es"]['sum'] rescue 0
+        totals['ethnicity_native_american'] = @solr_search.stat_response['stats_fields']["ethnicity_native_american_es"]['sum'] rescue 0
+        totals['ethnicity_white'] = @solr_search.stat_response['stats_fields']["ethnicity_white_es"]['sum'] rescue 0
       end
       @data_totals
     end

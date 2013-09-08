@@ -25,10 +25,10 @@ class FilteredController < InheritedResources::Base
       get_collection_ivar || begin
         if action_name != 'index' || request.format.json? || request.format.xlsx?
           if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
-            search = resource_class.do_search(search_params)
-            @collection_count = search.total
-            @total_pages = search.results.total_pages
-            set_collection_ivar(search.results)
+            @solr_search = resource_class.do_search(search_params)
+            @collection_count = @solr_search.total
+            @total_pages = @solr_search.results.total_pages
+            set_collection_ivar(@solr_search.results)
           else
             current_page = params[:page] || nil
             c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)

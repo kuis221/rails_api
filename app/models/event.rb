@@ -81,6 +81,7 @@ class Event < ActiveRecord::Base
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :impressions,:interactions,:samples,:spent,:gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
     state :unsent, :initial => true
@@ -157,6 +158,19 @@ class Event < ActiveRecord::Base
     boolean :has_surveys do
       surveys.count > 0
     end
+
+    double :promo_hours, stored: true
+    double :impressions, stored: true
+    double :interactions, stored: true
+    double :samples, stored: true
+    double :spent, stored: true
+    double :gender_female, stored: true
+    double :gender_male, stored: true
+    double :ethnicity_asian, stored: true
+    double :ethnicity_black, stored: true
+    double :ethnicity_hispanic, stored: true
+    double :ethnicity_native_american, stored: true
+    double :ethnicity_white, stored: true
   end
 
   def activate!
@@ -382,6 +396,21 @@ class Event < ActiveRecord::Base
         #     range.search_filters(self)
         #   end
         # end
+
+        if params.has_key?(:event_data_stats) && params[:event_data_stats]
+          stat(:promo_hours, :type => "sum")
+          stat(:impressions, :type => "sum")
+          stat(:interactions, :type => "sum")
+          stat(:samples, :type => "sum")
+          stat(:spent, :type => "sum")
+          stat(:gender_female, :type => "sum")
+          stat(:gender_male, :type => "sum")
+          stat(:gender_male, :type => "sum")
+          stat(:ethnicity_asian, :type => "sum")
+          stat(:ethnicity_black, :type => "sum")
+          stat(:ethnicity_hispanic, :type => "sum")
+          stat(:ethnicity_white, :type => "sum")
+        end
 
         if params.has_key?(:predefined_date) and params[:predefined_date].any?
           params[:predefined_date].each do |predefined_date|
