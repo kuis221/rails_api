@@ -646,6 +646,7 @@ body.app-layout{
 .container-fluid{
 	padding: 0;
 }
+
 /*-- Login styles --*/
 .login_box{
 	background-color: @menu;
@@ -2121,14 +2122,27 @@ body.events.index {
 }
 
 body.dashboard.index {
+
+	#gender-graph{
+		margin-top: 40px;
+	}
+
 	h3{
 		margin-bottom: 20px;
 	}
-	
+
+	.kpi-trends-stats{
+		margin-top: 115px;
+	}
+
 	#map-canvas {
 		border:1px solid @user_menu;
 		height: 500px;
 		margin-top: 15px;
+	}
+
+	p{
+		width: 340px;
 	}
 }
 
@@ -2949,6 +2963,7 @@ ul.thumbnails{
 
 		#overall-age-graph {
 			height: 300px;
+			width: 480px;
 			.highcharts-axis-labels{
 				text{
 					font-family: @baseFontFamily !important;
@@ -3231,7 +3246,7 @@ ul.thumbnails{
 	.male{
 		color: @venues_blue;
 		display: inline-block;
-		margin: 0 0 25px 80px;
+		margin: 0 90px 25px 80px;
 		.gender{
 			font-size: 25px;
 		}
@@ -3715,6 +3730,11 @@ svg{
 			text-decoration: underline;
 		}
 	}
+	.link-list{
+		a{
+			color:@text;
+		}
+	}
 	.links-data{
 		a{
 			&.edit:after{
@@ -4063,8 +4083,14 @@ a, i{
 	}
 
 	#age-graph {
-		width: 390px;
+		width: 480px;
 		height: 270px;
+	}
+
+	#demographics-module{
+		.span6.ethnicity{
+			margin: 0;
+		}
 	}
 
 
@@ -4099,14 +4125,14 @@ a, i{
 			width: 300px;
 			.progress {
 				width: auto !important;
-				height: 24px;
+				height: 25px;
 				.bar {
-					padding-right: 5px;
 					text-align: right;
 					text-shadow:none;
 					span.percentage {
-						margin-right: 5px;
-						line-height: 24px;
+						margin-left: 10px;
+						margin-right: 10px;
+						line-height: 26px
 					}
 				}
 
