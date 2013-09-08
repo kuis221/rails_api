@@ -4,10 +4,12 @@
   .row-fluid
     .span6
       h4 Top 5
-      ul.score-list
-        = render partial: 'dashboard/modules/partials/venue', collection: top5_venues
+      .link-list
+        ul.score-list
+          = render partial: 'dashboard/modules/partials/venue', collection: top5_venues
 
     .span6
       h4 Bottom 5
-      ul.score-list
-        = render partial: 'dashboard/modules/partials/venue', collection: bottom5_venues
+      .link-list
+        ul.score-list
+          = render partial: 'dashboard/modules/partials/venue', collection: bottom5_venues

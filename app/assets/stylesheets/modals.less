@@ -137,8 +137,9 @@ ul.select2-results{
 					width: 558px;
 				}
 			}
-			.staff-table, .brands-table{
-				input[type="text"]#staff-search-item, input[type="text"]#brands-search-item{
+
+			.staff-table, .brands-table, .campaigns-modals{
+				input[type="text"]{
 					background-image: url('search2.svg') !important;
 					background-position: center right;
 					background-repeat: no-repeat;
@@ -146,7 +147,12 @@ ul.select2-results{
 					border-radius: 20px;
 					padding-left: 2%;
 					padding-right: 2%;
-					width: 95%;
+					&#staff-search-item{
+						width: 95%;
+					}
+					&#place-search-box {
+						width: 96%;
+					}
 				}
 				.link-list{
 					margin-top: 0;
@@ -683,6 +689,19 @@ ul.select2-results{
 	.chzn-single div b {
 	background: url('triangle-down.svg') no-repeat 0px 15px !important;
 	}
+}
+
+.divider{
+	color:@user_menu;
+	font-size: 16px;
+	margin: 40px 0;
+	text-align: center;
+}
+
+// CAMPAIGNS MODALS
+
+.campaigns-modals{
+	color: @brand;
 }
 
 

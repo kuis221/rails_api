@@ -2,15 +2,19 @@
 #
 # Table name: campaigns
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  description   :text
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  company_id    :integer
+#  id             :integer          not null, primary key
+#  name           :string(255)
+#  description    :text
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  company_id     :integer
+#  first_event_id :integer
+#  last_event_id  :integer
+#  first_event_at :datetime
+#  last_event_at  :datetime
 #
 
 class Campaign < ActiveRecord::Base
@@ -45,13 +49,16 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Areas relationship
   has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true
 
+  belongs_to :first_event, class_name: 'Event'
+  belongs_to :last_event, class_name: 'Event'
+
   # Campaigns-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
                    :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   # Campaigns-Events relationship
-  has_many :events, :order => 'start_at ASC'
+  has_many :events, :order => 'start_at ASC', inverse_of: :campaign
 
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
@@ -59,6 +66,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
+  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}) }
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
@@ -129,18 +137,9 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def first_event
-    events.order('start_at').first
-  end
-
-  def last_event
-    events.order('start_at').last
-  end
-
   def staff
     (users+teams).sort_by &:name
   end
-
 
   def areas_and_places
     (areas+places).sort_by &:name
@@ -185,6 +184,20 @@ class Campaign < ActiveRecord::Base
         brands = Brand.where(id: field.options['brands']) if field.options.is_a?(Hash) && field.options.has_key?('brands')
       end
       brands || []
+    end
+  end
+
+  def first_event=(event)
+    unless event.nil?
+      self.first_event_id = event.id
+      self.first_event_at = event.start_at
+    end
+  end
+
+  def last_event=(event)
+    unless event.nil?
+      self.last_event_id = event.id
+      self.last_event_at = event.start_at
     end
   end
 

@@ -89,7 +89,7 @@ class EventsController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :start_date, :end_date, :company_id, :with_event_data_only, :with_surveys_only].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id with_event_data_only with_surveys_only).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
         # Not longer used

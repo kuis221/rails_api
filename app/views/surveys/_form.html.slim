@@ -14,7 +14,7 @@
 
 
       fieldset
-        legend.competitive Competitive awareness & Usage
+        legend.competitive Competitive awareness & usage
 
         p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
         ul.competitive
@@ -22,7 +22,7 @@
             .titles
               span PURCHASED
               span AWARE
-              span UNAWARES
+              span UNAWARE
           li
             - resource.brands.each do |brand|
               = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|

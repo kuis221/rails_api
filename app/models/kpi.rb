@@ -70,6 +70,10 @@ class Kpi < ActiveRecord::Base
     ['percentage', 'count'].include? kpi_type
   end
 
+  def currency?
+    capture_mechanism == 'currency'
+  end
+
   def sync_segments_and_goals
     unless self.out_of_the_box?
       if GOAL_ONLY_TYPE_OPTIONS.include?(self.kpi_type)
@@ -81,6 +85,14 @@ class Kpi < ActiveRecord::Base
   end
 
   class << self
+    def events
+      @events ||= where(company_id: nil).find_by_name_and_kpi_type('Events', 'events_count')
+    end
+
+    def promo_hours
+      @promo_hours ||= where(company_id: nil).find_by_name_and_kpi_type('Promo Hours', 'promo_hours')
+    end
+
     def impressions
       @impressions ||= where(company_id: nil).find_by_name_and_module('Impressions', 'consumer_reach')
     end
@@ -130,7 +142,7 @@ class Kpi < ActiveRecord::Base
   # This method is only used during the DB seed and tests
   def self.create_global_kpis
     @promo_hours = Kpi.create({name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => ''}, without_protection: true)
-    Kpi.create({name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => ''}, without_protection: true)
+    @events = Kpi.create({name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => ''}, without_protection: true)
     @impressions = Kpi.create({name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
     @interactions = Kpi.create({name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
     @samples = Kpi.create({name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach'}, without_protection: true)
