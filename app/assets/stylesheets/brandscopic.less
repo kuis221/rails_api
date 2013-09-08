@@ -1288,6 +1288,11 @@ ul.kpis-list{
 	    			.area_name{
 	    				font-size: 16px;
 	    			}
+	    			.area_description{
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;	    				
+				    }
 	    		}
 	    		&:last-child{
 	    			.add:before{
@@ -1296,11 +1301,11 @@ ul.kpis-list{
 					  	display: inline-block;
 					  	font-family: 'icons';
 						font-size: 21px;
-						right:10px;
+						right:5px;
 					  	position: relative;
 						speak: none;
 						text-align: center;
-						top: 30px;
+						top: 5px;
 					  	vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 	    			}
@@ -1362,6 +1367,18 @@ ul.kpis-list{
 				padding: 9px 0 0 15px;
 			}
 		}
+	ul#my-tasks-list{
+		li{
+			.task-list{
+				padding: 20px 0 0 0;
+				span{
+					&.title{
+						margin-left: 10px;
+					}
+				}
+			}
+		}
+	}
     ul#tasks-list{
     	li{
     		color: @text;
@@ -1410,7 +1427,7 @@ ul.kpis-list{
 	    			}
 	    			&.pull-right{
 	    				position: relative;
-	    				margin-top:12px;
+	    				margin-top:6%;
 	    			}
 	    		}
     		}
@@ -1621,13 +1638,9 @@ ul.kpis-list{
         width: 100%;
         min-height: 100%;
       }
-    	a:first-child{
-    		line-height: 30px;
-    	}
     	.edit, .enable, .disable, .preview {
     		height: 30px;
 			display: inline-block;
-			margin-top: 15px;
     	}
 		.edit:after{
 			color: white;
@@ -1720,7 +1733,7 @@ ul.kpis-list{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
-	       top: 7%;
+	       top: 32%;
 		}
 	}
 	  &.rows-no-link{
@@ -3828,7 +3841,7 @@ svg{
 			}
 			&.links{
 				float: right;
-				margin: 10px 15px 0 0;
+				margin: 30px 15px 0 0;
 			}
 			&.total{
 				font-size: 16px;
@@ -3857,13 +3870,6 @@ svg{
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
 			margin-top: 22px;
 			width:280px;
-		}
-		ul#tasks-list{
-			li{
-				span.links{
-					margin-top: 14px !important;
-				}
-			}
 		}
 		.task-comments{
 			#comment-form-container{

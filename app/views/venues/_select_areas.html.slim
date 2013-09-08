@@ -6,6 +6,6 @@
           li id="area-#{area.id}"
             span.pull-left
               .area_name= area.name
-              = area.description
+              .area_description= area.description
             span.pull-right
               = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
