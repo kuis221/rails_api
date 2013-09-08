@@ -2,7 +2,7 @@ class DocumentsController < FilteredController
 
   respond_to :js, only: [:create, :new, :processing_status]
 
-  belongs_to :event
+  belongs_to :event, :campaign, :polymorphic => true
 
   include DeactivableHelper
   include PhotosHelper

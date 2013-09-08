@@ -1,8 +1,10 @@
-div.document.clearfix id="attached_asset_#{document.id}"
-  span
-  	= link_to(document_icon(document.file_extension) + document.name, document.download_url)
-  span.remove
-    - if document.active?
-      = link_to '', deactivate_event_document_path(document.attachable, document), remote: true, class: 'icon-remove-circle'
-    - else
-      = link_to '', activate_event_document_path(document.attachable, document), remote: true, class: 'icon-ok-circle'
+- unless parent.is_a?(Event) && document.attachable_type == 'Campaign' && !document.active?
+  div.document.clearfix id="attached_asset_#{document.id}"
+    span
+      = link_to(document_icon(document.file_extension) + document.name, document.download_url)
+    - if parent == document.attachable
+      span.remove
+        - if document.active?
+          = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'
+        - else
+          = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'

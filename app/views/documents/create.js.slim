@@ -2,4 +2,4 @@
   = render 'form_dialog'
 - else
   |
-    $('#event-documents-list').prepend('#{j render(resource)}')
+    $('##{parent.class.name.underscore}-documents-list').prepend('#{j render(resource)}')
