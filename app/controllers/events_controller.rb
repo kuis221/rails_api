@@ -11,6 +11,7 @@ class EventsController < FilteredController
   helper_method :describe_filters, :calendar_highlights
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys]
+  respond_to :json, only: [:calendar_highlights]
 
   custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
   layout false, only: :tasks

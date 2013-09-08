@@ -141,6 +141,7 @@ Brandscopic::Application.routes.draw do
     put :save_results, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member
+    get :calendar_dates, on: :collection, to: :calendar_highlights
     resources :tasks, only: [:create, :new] do
       member do
         get :deactivate

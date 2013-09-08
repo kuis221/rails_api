@@ -350,6 +350,10 @@ $.widget 'nmk.filteredList', {
 
 		false
 
+	setCalendarHighlights: (highlights) ->
+		@form.find('.dates-range-filter').datepick('setOption', 'daysHighlighted', highlights)
+		@form.find('.dates-range-filter').datepick('update')
+
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
 		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
@@ -362,6 +366,7 @@ $.widget 'nmk.filteredList', {
 			selectDefaultDate: @options.selectDefaultDate,
 			prevText: '<',
 			nextText: '>',
+			onDate: true,
 			showOtherMonths: true,
 			selectOtherMonths: true,
 			highlightClass: 'datepick-event',

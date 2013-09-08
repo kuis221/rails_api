@@ -1466,6 +1466,16 @@ $.extend(Datepicker.prototype, {
 		}
 	},
 
+	_setOptionPlugin: function(target, option, value) {
+		ins = $(target).data(this.propertyName);
+		ins.options[option] = value;
+		return this;
+	},
+
+	_updatePlugin:  function(target) {
+		this._update(target);
+	},
+
 	/* Retrieve the selected date(s) for a datepicker.
 	   @param  target  (element) the control to examine
 	   @return  (CDate[]) the selected date(s) */
@@ -1901,11 +1911,14 @@ $.extend(Datepicker.prototype, {
 						}
 					}
 				}
-				var highligthed = inst.options.daysHighlighted && inst.options.daysHighlighted[year+''] && inst.options.daysHighlighted[year+''][month+''] && inst.options.daysHighlighted[year+''][month+''][drawDate.getDate()+'']
 				var dateInfo = (!$.isFunction(inst.options.onDate) ? {} :
 					inst.options.onDate.apply(target, [drawDate, drawDate.getMonth() + 1 == month]));
-				var selectable = (selectOtherMonths || drawDate.getMonth() + 1 == month) &&
-					this._isSelectable(target, drawDate, dateInfo.selectable, minDate, maxDate);
+				var y = drawDate.getYear() + 1900;
+				var m = drawDate.getMonth() + 1;
+				var highligthed = inst.options.daysHighlighted && inst.options.daysHighlighted[y+''] && inst.options.daysHighlighted[y+''][m+''] && inst.options.daysHighlighted[y+''][m+''][drawDate.getDate()+'']
+				//var selectable = (selectOtherMonths || drawDate.getMonth() + 1 == month) &&
+				//	this._isSelectable(target, drawDate, dateInfo.selectable, minDate, maxDate);
+				var selectable = true;
 				days += this._prepare(renderer.day, inst).replace(/\{day\}/g,
 					(selectable ? '<a href="javascript:void(0)"' : '<span') +
 					' class="dp' + ts + ' ' + (dateInfo.dateClass || '') + (highligthed ? ' '+inst.options.highlightClass : '') +

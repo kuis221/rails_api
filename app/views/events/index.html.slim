@@ -49,3 +49,9 @@ javascript:
       }
     }
   });
+
+  $(document).on('events:change', function(){
+    $.get('#{calendar_dates_events_path(format: :json)}', function(response) {
+      $('#collection-list-filters').filteredList('setCalendarHighlights', response)
+    })
+  })
