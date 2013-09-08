@@ -1,3 +1,5 @@
+@brand:#989898;
+
 .campaigns.show {
 	.kpis-list {
 		list-style: none;
@@ -39,11 +41,36 @@
 	.field-attributes-panel {
 		background-color: #dfdfdf;
 		border-radius: 5px;
-		padding: 10px;
-		margin-left: 40px;
+		padding: 15px 15px 5px 15px;
+		margin-left: 30px;
+
+		.checker{
+			background-color: @brand;
+			margin: 0 10px 0 0;
+		}
+
+		.chzn-container-single{
+			.chzn-single{
+				border:0 !important;
+				height: 38px !important;
+				padding-top: 2px !important;
+				width: 263px !important;
+			}
+			.chzn-search input {
+				background-image: none !important;
+				bottom: 12px !important;
+			}
+		}
+		h4{
+			margin-top: 0;
+		}
 
 		input[type=text] {
 			background-color: #fff !important;
+		}
+
+		label{
+			font-size: 11px;
 		}
 
 		.arrow-left {
@@ -99,6 +126,10 @@
 			display: none;
 		}
 
+		legend{
+			margin-bottom: 5px;
+		}
+
 		#form-wrapper {
 			display: inline-block;
 			width: 500px;
@@ -143,6 +174,17 @@
 
 			.selected {
 				background-color: #dfdfdf;
+			}
+		}
+	}
+
+	.control-group{
+		label{
+			&.field-label{
+				font-size:13px;
+			}
+			.input-append{
+				margin-right: 10px;
 			}
 		}
 	}

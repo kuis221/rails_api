@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
 @font-face {
 	font-family: 'icons';
@@ -161,6 +161,10 @@ input[type="color"],
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
+	&:focus{
+		box-shadow: none !important;
+		outline: none;
+	}
 }
 
 input[type="email"]:focus, input[type="password"]:focus, select:focus{
@@ -1267,6 +1271,11 @@ ul.kpis-list{
     }
 	.empty-list-message:first-child:last-child {
 		display: block;
+		p{
+			margin: 0;
+			padding-top: 30px;
+			text-align: center;
+		}
 	}
     ul#areas-list{
     	li{
@@ -3552,7 +3561,7 @@ svg{
 	-webkit-border-radius: 0px 7px 7px 7px;
     border-radius: 0px 7px 7px 7px;
     .kpis-button{
-    	margin: 50px 0 10px 0; 
+    	margin: 70px 0 10px 0; 
     }
 }
 // DETAILS PAGES
@@ -4146,8 +4155,16 @@ a, i{
 	}
 }
 
+.goalable-errors{
+	.alert-danger{
+		margin: 30px 0 0 0;
+		padding: 10px 20px;
+	}
+}
+
 .goalable-list {
 	list-style: none;
+	margin: 20px 0 0 15px;
 	li {
 		position: relative;
 		&> div {
@@ -4159,22 +4176,28 @@ a, i{
 		overflow: hidden;
 		white-space: nowrap;
 		.goalable-name {
+			font-size: 16px;
+			margin-top: 35px;
 			width: 200px;
 		}
 		.goals {
+			float: right;
 			position: relative;
 			overflow: hidden;
-			width: 100%;
+			width: 58%;
 			height: 100px;
 			.goals-inner {
 				position: absolute;
-				top: 0;
+				top: 10px;
 				left: 0;
 			}
 
 			.kpi-segment-group:hover,
 			.kpi-goal:hover {
 				background-color: @grey_one;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
 				input {
 					background-color: @grey_one;
 				}
@@ -4183,13 +4206,36 @@ a, i{
 			.kpi-goal {
 				width: 130px;
 				margin: 0 5px;
+				padding: 10px 10px 5px 10px;
 				display: inline-block;
 
 				input {
+					background-color:white !important;
+					box-shadow: none;
+					font-size: 22px;
+					font-weight: 100;
 					width: 60px;
 					display: block;
-					border: 0;
-					border: 1px solid #fff !important;
+					border: 1px solid white !important;
+					&:hover, &.active{
+						border: 1px solid @user_menu !important;
+					}
+					&:-moz-placeholder{
+					  color: @grey_three;
+					}
+					&:-ms-input-placeholder{
+					  color: @grey_three;
+					}
+					&::-webkit-input-placeholder {
+					  color: @grey_three;
+					}
+				}
+
+				label{
+					.kpi-name{
+						font-size: 11px;
+						padding: 14px 0 0 8px;
+					}
 				}
 			}
 
