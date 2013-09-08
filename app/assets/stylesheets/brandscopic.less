@@ -643,6 +643,27 @@ body.app-layout{
 		color: white;
 	}
 }
+
+.btn-info{
+	background-color: @user_menu !important;
+	color: white !important;
+	padding-bottom:9px;
+	padding-top: 9px;
+	&.icon-angle-right-after{
+		&:after{
+			color: white !important;
+			font-size: 19px;
+			top: 6px;
+			left: 9px;
+		}
+		&:before{
+			display:none;
+		}
+	}
+	&:hover{
+		background-color: @buttons-hover !important;
+	}
+}
 .container-fluid{
 	padding: 0;
 }
@@ -1232,7 +1253,7 @@ ul.kpis-list{
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
  	border:1px solid @borders;
- 	clear: both;
+ 	//clear: both;
  	color: @brand;
  	font-size: 12px;
     margin: 14px 0 0 0;
@@ -1371,9 +1392,11 @@ ul.kpis-list{
 		li{
 			.task-list{
 				padding: 20px 0 0 0;
+				width: 100%;
 				span{
 					&.title{
-						margin-left: 10px;
+						margin-left: 18px;
+						width: 60%;
 					}
 				}
 			}
@@ -1427,7 +1450,7 @@ ul.kpis-list{
 	    			}
 	    			&.pull-right{
 	    				position: relative;
-	    				margin-top:6%;
+	    				margin-top:12%;
 	    			}
 	    		}
     		}
@@ -1733,7 +1756,7 @@ ul.kpis-list{
 	       display: block;
 	       position: absolute;
 	       right: 15px;
-	       top: 32%;
+	       top: 35%;
 		}
 	}
 	  &.rows-no-link{
@@ -3446,6 +3469,8 @@ table.table td.comments-container {
 }
 
 .tasks-progress-bar{
+	position: relative;
+	padding-bottom: 80px;
 	.btn.btn-primary{
 		margin-top: 35px;
 	}
@@ -3867,9 +3892,17 @@ svg{
 		a.btn{
 			margin-top: 17px;
 		}
+		#event-tasks-container{
+			clear: both;
+		}
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
 			margin-top: 22px;
 			width:280px;
+		}
+		.task-list{
+			span.pull-right{
+				margin-top: 6% !important;
+			}
 		}
 		.task-comments{
 			#comment-form-container{
@@ -4024,7 +4057,7 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
-	&.icon-angle-right:before{
+	&.icon-angle-right:before, &.icon-angle-right-after:after{
 		color: #c0c0c0;
 		content: "\e01d";
 		display: inline-block;
@@ -4046,6 +4079,10 @@ a, i{
 
 .dashboard.index {
 	#incomplete-tasks-module {
+
+		.link-list{
+			margin-bottom: 20px;
+		}
 
 		.tab-content {
 			width: auto;
