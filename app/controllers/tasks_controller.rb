@@ -34,10 +34,10 @@ class TasksController < FilteredController
 
   def calendar_highlights
     @calendar_highlights ||= Hash.new.tap do |hsh|
-      Task.select("to_char(due_at, 'YYYY:MM:DD') as due_date, count(tasks.id) as count").late
+      Task.select("to_char(TIMEZONE('UTC', due_at), 'YYYY/MM/DD') as due_date, count(tasks.id) as count").late
         .where(company_user_id: user_ids_scope)
-        .group("to_char(due_at, 'YYYY:MM:DD')").map do |day|
-        parts = day.due_date.split(':').map(&:to_i)
+        .group("to_char(TIMEZONE('UTC', due_at), 'YYYY/MM/DD')").map do |day|
+        parts = day.due_date.split('/').map(&:to_i)
         hsh.merge!({parts[0] => {parts[1] => {parts[2] => day.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
       end
     end

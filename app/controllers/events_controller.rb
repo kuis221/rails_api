@@ -56,10 +56,10 @@ class EventsController < FilteredController
   def calendar_highlights
     @calendar_highlights ||= Hash.new.tap do |hsh|
       tz = Time.zone.now.strftime('%Z')
-      Event.select("to_char(start_at AT TIME ZONE '#{tz}', 'YYYY:MM:DD') as start, count(events.id) as count")
+      Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, count(events.id) as count")
         .where(company_id: current_company)
-        .group("to_char(start_at AT TIME ZONE '#{tz}', 'YYYY:MM:DD')").map do |day|
-        parts = day.start.split(':').map(&:to_i)
+        .group("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')").map do |day|
+        parts = day.start.split('/').map(&:to_i)
         hsh.merge!({parts[0] => {parts[1] => {parts[2] => day.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
       end
     end
