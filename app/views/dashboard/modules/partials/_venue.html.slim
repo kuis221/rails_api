@@ -4,6 +4,6 @@ li
     | SCORE
 
   .info
-    h4= venue.name
+    h4= link_to venue.name, venue_path(venue) 
     .types= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
     .adddress= venue.formatted_address
