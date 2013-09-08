@@ -1,5 +1,5 @@
 - submit_link = link_to 'submit', submit_event_path, method: :put
-- if resource.in_future?
+- if resource.in_future? && !resource.happens_today?
   .alert.alert-grey
     == "Your event is scheduled. You can <a href=\"#event-members\" class=\"smooth-scroll\">manage the event team</a>, <a href=\"#event-tasks\" class=\"smooth-scroll\">complete tasks</a>, or <a href=\"#event-documents\" class=\"smooth-scroll\">upload event documents</a>."
 
@@ -25,6 +25,8 @@
     - links.push '<a href="#event-surveys" class="smooth-scroll">conduct surveys</a>' if resource.campaign.active_field_types.include?('surveys')
     - links.push '<a href="#event-comments" class="smooth-scroll">gather comments</a>' if resource.campaign.active_field_types.include?('comments')
     == "Your event is scheduled for today. Please enter #{links.to_sentence} from your audience during or shortly after the event."
+    - if resource.in_past?
+      == " Once complete, please #{submit_link} your post event form."
 
 - elsif resource.was_yesterday? and resource.unsent?
   .alert.alert-grey

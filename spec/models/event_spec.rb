@@ -183,4 +183,38 @@ describe Event do
     end
   end
 
+
+  describe "in_past?" do
+    it "should return true if the event is scheduled to happen in the past" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        event = FactoryGirl.build(:event)
+        event.end_at = Time.zone.local(2013, 07, 26, 12, 00)
+        event.in_past?.should be_true
+
+        event.end_at = Time.zone.local(2013, 07, 26, 12, 12)
+        event.in_past?.should be_true
+
+        event.end_at = Time.zone.local(2013, 07, 26, 12, 15)
+        event.in_past?.should be_false
+      end
+    end
+
+    it "should return true if the event is scheduled to happen in the future" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        event = FactoryGirl.build(:event)
+        event.start_at = Time.zone.local(2013, 07, 26, 12, 00)
+        event.in_future?.should be_false
+
+        event.start_at = Time.zone.local(2013, 07, 26, 12, 12)
+        event.in_future?.should be_false
+
+        event.start_at = Time.zone.local(2013, 07, 26, 12, 15)
+        event.in_future?.should be_true
+
+        event.start_at = Time.zone.local(2014, 07, 26, 12, 15)
+        event.in_future?.should be_true
+      end
+    end
+  end
+
 end

@@ -202,11 +202,11 @@ class Event < ActiveRecord::Base
   end
 
   def in_past?
-    end_at.to_date < Date.today
+    end_at < Time.now
   end
 
   def in_future?
-    start_at.to_date > Date.today
+    start_at > Time.now
   end
 
   def happens_today?
