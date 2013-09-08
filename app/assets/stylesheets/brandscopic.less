@@ -2121,6 +2121,10 @@ body.events.index {
 }
 
 body.dashboard.index {
+	h3{
+		margin-bottom: 20px;
+	}
+	
 	#map-canvas {
 		border:1px solid @user_menu;
 		height: 500px;
@@ -4067,18 +4071,24 @@ a, i{
 	#kpis-trends-bars {
 		max-width: 400px;
 		span.name {
-			width: 100px;
+			width: 90px;
 			float: left;
 			color: @venues_blue;
 		}
+
+		.container-kpi-trend{
+			margin-top: 50px;
+		}
+
 		.kpi-trend {
+			height: 44px;
 			overflow: visible;
 
 			span.total {
 				position: absolute;
 				width: 100px;
-				right: -105px;
-				top: 0;
+				right: -110px;
+				top: 2px;
 				color: @venues_blue;
 			}
 		}
@@ -4091,7 +4101,9 @@ a, i{
 				width: auto !important;
 				height: 24px;
 				.bar {
+					padding-right: 5px;
 					text-align: right;
+					text-shadow:none;
 					span.percentage {
 						margin-right: 5px;
 						line-height: 24px;
