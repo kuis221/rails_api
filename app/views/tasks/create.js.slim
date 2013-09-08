@@ -4,7 +4,4 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    if (typeof tasksTable != 'undefined'){
-      tasksTable.tableScroller('reloadData');
-    }
     $(document).trigger('tasks:change');

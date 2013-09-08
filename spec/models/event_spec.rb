@@ -254,7 +254,6 @@ describe Event do
   end
 
 
-
   describe "photos reindexing" do
     before do
       ResqueSpec.reset!

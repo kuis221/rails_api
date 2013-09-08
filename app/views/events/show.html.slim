@@ -67,13 +67,10 @@ javascript:
     $(this).scrollTop(400);
   });
 
-  $(document).bind('member:delete', function(e){
-    tasksTable.tableScroller('reloadData');
-  });
-
   $(document).on('events:change', function(){
     window.location.reload(false);
   });
+
   $(document).on('tasks:change', function(){
     $.get('#{tasks_event_path(resource)}', function(response){
       $response = $('<div>').append(response);
