@@ -668,6 +668,12 @@ body.app-layout{
 	padding: 0;
 }
 
+p{
+	&.big{
+		font-size: 16px;
+	}
+}
+
 /*-- Login styles --*/
 .login_box{
 	background-color: @menu;
@@ -4093,35 +4099,54 @@ a, i{
 	}
 
 	#venue-performance-module {
+		.link-list{
+			border: 0;
+			margin-top: 30px;
+			li {
+				border: 0;
+				a{
+					padding-left: 0;
+					&:hover{
+						background-color: white;
+					}
+				}
+			}
+		}
 		.score-list {
 			list-style: none;
 			margin: 0;
 			padding: 0;
 
-			li {
-				height: 70px
-			}
-
 			div.score {
 				color: @venues_blue;
+				font-size: 11px;
 				width: 70px;
 				display: inline-block;
 				float: left;
 				height: 100%;
 				 span {
-				 	font-size: 26px;
+				 	font-size: 35px;
+				 	font-weight: 200;
 				 	display: block;
 				 	clear: both;
+				 	line-height: 35px;
+				 	margin-left: -2px;
 				 }
 			}
 
 			div.info {
 				color: @text;
+				display: inline-block;
+				font-size: 11px;
 				h4 {
+					font-size: 16px;
 					font-weight: normal;
-					margin-bottom: 5px;
+					margin: 0 0 5px 0;
 				}
 			}
+		}
+		.span6{
+			margin-top: 25px;
 		}
 	}
 
