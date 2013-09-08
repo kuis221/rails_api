@@ -356,8 +356,10 @@ class Event < ActiveRecord::Base
           end
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        with(:status, params[:event_status]) if params.has_key?(:event_status) and params[:event_status].present?
+
+        # We are using to options to allow searching by active/inactive in combination with approved/late/rejected/submitted
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
+        with(:status, params[:event_status]) if params.has_key?(:event_status) and params[:event_status].present? # For the event status
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?

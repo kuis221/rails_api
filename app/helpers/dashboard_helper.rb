@@ -62,8 +62,9 @@ module DashboardHelper
     @kpi_trends_totals ||= {}
     @kpi_trends_totals[kpi.id] ||= Hash.new.tap do |data|
       campaigns_scope = current_company.campaigns.with_goals_for(kpi)
+      campaign_ids =  campaigns_scope.select('campaigns.id').map(&:id)
       data[:goal] = campaigns_scope.sum('goals.value').to_i
-      data[:completed] = compute_completed_for(kpi, campaigns_scope)
+      data[:completed] = compute_completed_for(kpi, campaign_ids)
       data[:remaining] = 0
       data[:remaining] = [data[:goal] - data[:completed], 0].max if data[:completed]
       data[:completed_percentage] = 0
@@ -103,26 +104,34 @@ module DashboardHelper
 
 
   private
-    def compute_completed_for(kpi, campaigns_scope)
+    def compute_completed_for(kpi, campaign_ids)
       case kpi
       when Kpi.events
-        Event.scoped_by_campaign_id(campaigns_scope).count.to_i
+        kpis_completed_totals(campaign_ids)['events_count']
       when Kpi.promo_hours
-        Event.scoped_by_campaign_id(campaigns_scope).sum(:promo_hours).to_i
+        kpis_completed_totals(campaign_ids)['promo_hours']
       when Kpi.impressions
-        kpis_completed_totals(campaigns_scope).impressions
+        kpis_completed_totals(campaign_ids)['impressions']
       when Kpi.interactions
-        kpis_completed_totals(campaigns_scope).interactions
+        kpis_completed_totals(campaign_ids)['interactions']
       when Kpi.samples
-        kpis_completed_totals(campaigns_scope).samples
+        kpis_completed_totals(campaign_ids)['samples']
       when Kpi.expenses
-        kpis_completed_totals(campaigns_scope).spent
+        kpis_completed_totals(campaign_ids)['spent']
       else
         0
       end
     end
 
-    def kpis_completed_totals(campaigns_scope)
-      @kpis_completed_totals ||= EventData.scoped_by_campaign_id(campaigns_scope).select('sum(impressions) as impressions, sum(interactions) as interactions, sum(samples) as samples, sum(spent) as spent').first
+    def kpis_completed_totals(campaign_ids)
+      @kpis_completed_totals ||= Hash.new.tap do |totals|
+        search = Event.do_search({company_id: current_company.id, with_event_data_only: true, campaign: campaign_ids, event_data_stats: true})
+        totals['events_count'] = search.total
+        totals['promo_hours'] = search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+        totals['impressions'] = search.stat_response['stats_fields']["impressions_es"]['sum'] rescue 0
+        totals['interactions'] = search.stat_response['stats_fields']["interactions_es"]['sum'] rescue 0
+        totals['samples'] = search.stat_response['stats_fields']["samples_es"]['sum'] rescue 0
+        totals['spent'] = search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
+      end
     end
 end
