@@ -2128,27 +2128,27 @@ body.dashboard.index {
 	}
 }
 
-body.events.show, body.teams.show, body.areas.show {
+body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	#event-team-members, #team-members-list, #area-places-list {
 		margin: 0 -12% 0 0;
 	}
-	.team-member, .team, .area-place {
+	.team-member, .team, .area-place, .brand{
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-		.full-name, .place-name {
+		.full-name, .place-name, .brand-name{
 			font-size: 16px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn{
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
 				display:inline-block;
 				float: right;
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn{
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
 			display:none;
 		}
 	}
@@ -4016,9 +4016,7 @@ a, i{
 
 .dashboard.index {
 	#incomplete-tasks-module {
-		.nav-tabs li a {
-			width: 150px;
-		}
+
 		.tab-content {
 			width: auto;
 		}
@@ -4051,10 +4049,69 @@ a, i{
 			}
 
 			div.info {
+				color: @text;
 				h4 {
 					font-weight: normal;
 					margin-bottom: 5px;
 				}
+			}
+		}
+	}
+
+	#age-graph {
+		width: 390px;
+		height: 270px;
+	}
+
+
+	#kpis-trends-bars {
+		max-width: 400px;
+		span.name {
+			width: 100px;
+			float: left;
+			color: @venues_blue;
+		}
+		.kpi-trend {
+			overflow: visible;
+
+			span.total {
+				position: absolute;
+				width: 100px;
+				right: -105px;
+				top: 0;
+				color: @venues_blue;
+			}
+		}
+
+		.chart-bar {
+			position: relative;
+			display: inline-block;
+			width: 300px;
+			.progress {
+				width: auto !important;
+				height: 24px;
+				.bar {
+					text-align: right;
+					span.percentage {
+						margin-right: 5px;
+						line-height: 24px;
+					}
+				}
+
+				.bar-remaining {
+					background-color: transparent !important;
+					color: @venues_blue;
+				}
+			}
+
+			.today-line-indicator {
+				position: absolute;
+				width: 2px;
+				background-color: #347a99;
+				height: 30px;
+				top: -3px;
+				border:1px solid #347a99;
+				border-radius: 2px;
 			}
 		}
 	}
@@ -4283,9 +4340,9 @@ a, i{
   	width: 99.5%;
   	li {
   		min-height: 65px;
-  		.member-data {
+  		.member-data, .brand-data {
   			padding: 12px;
-	  		.member-name {
+	  		.member-name, .brand-name {
 	  			font-size: 16px;
 	  		}
 	  		.member-description {

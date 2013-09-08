@@ -26,6 +26,7 @@ class EventData < ActiveRecord::Base
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
+  scope :scoped_by_campaign_id, lambda{|campaigns| joins(:event).where(events: {campaign_id: campaigns}) }
 
   def update_data
     results = EventResult.scoped_by_event_id(event_id)
@@ -44,6 +45,6 @@ class EventData < ActiveRecord::Base
       segments.each{|s| self.send("#{kpi}_#{segments_names_map[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))} if segments
     end
 
-    true
+    self
   end
 end

@@ -1,8 +1,8 @@
-|
-  $(document).trigger('brands:change');
-  if ($('table#select-brands-list tr#brand-#{@brand.id}').length){
-    pos = selectBrandsTable.fnGetPosition($('table#select-brands-list tr#brand-#{@brand.id}')[0]);
-    if (pos!== null){
-      selectBrandsTable.fnDeleteRow(pos);
+- if @brand.id
+  |
+    $(document).trigger('brands:change');
+    if ($('ul#brands-list > li#brand-#{@brand.id}').length){
+      $('ul#brands-list > li#brand-#{@brand.id}').remove();     
     };
-  }
+
+= render 'add_brand'

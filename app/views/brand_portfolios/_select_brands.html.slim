@@ -1,23 +1,27 @@
-#select-brands-table-wrapper
-  table#select-brands-list.table.table-striped.table-bordered.table-scrolled.data
-    thead
-      tr
-        th data-sort="name" Name
-        th.actions
-    tbody
-      - Brand.not_in_portfolio(resource.id).each do |brand|
-        tr id="brand-#{brand.id}"
-          td= brand.name
-          td= link_to 'Add', add_brand_brand_portfolio_path(resource, brand_id: brand.id), remote: true, method: :post, disable_with: '...'
+.tab-content
+  .brands-table
+    .row-fluid.scroll-table-header
+      span.scroll-table-filter
+        input type="text" name="q" id="brands-search-item"
+    .scroll-table-content
+      .link-list
+        ul#brands-list
+          - Brand.not_in_portfolio(resource.id).each do |brand|
+            li id="brand-#{brand.id}"
+              span.brand-data
+                span.brand-name= brand.name
+              span.add-button.pull-right
+                = link_to '', add_brand_brand_portfolio_path(resource, brand_id: brand.id), id: "add-brand-btn-#{brand.id}", data:{'brand-id' => brand.id}, class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
-  selectBrandsTable = $('#select-brands-list').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'scroll-table-wrapper't>",
-        "bPaginate": false,
-        "bProcessing": true,
-        "bAutoWidth": false,
-        "aoColumns": [
-          null,
-          {"sWidth": '30px', 'bSortable': false}
-        ]
+  $('#brands-search-item').on('keyup', function () {
+    var value = $(this).val();
+    $("#brands-list > li").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
   });

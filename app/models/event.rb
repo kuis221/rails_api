@@ -256,12 +256,14 @@ class Event < ActiveRecord::Base
     unless @goals
       @goals = {}
       total_campaign_events = campaign.events.count
-      campaign.goals.base.each do |goal|
-        if goal.kpis_segment_id.present?
-          @goals[goal.kpi_id] ||= {}
-          @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events
-        else
-          @goals[goal.kpi_id] = goal.value / total_campaign_events
+      if total_campaign_events > 0
+        campaign.goals.base.each do |goal|
+          if goal.kpis_segment_id.present?
+            @goals[goal.kpi_id] ||= {}
+            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events unless goal.value.nil?
+          else
+            @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
+          end
         end
       end
     end
@@ -470,6 +472,12 @@ class Event < ActiveRecord::Base
     end
 
     def reindex_associated
+      if campaign.present?
+        campaign.first_event = self if campaign.first_event_at.nil? || campaign.first_event_at > self.start_at
+        campaign.last_event  = self if campaign.last_event_at.nil?  || campaign.last_event_at  < self.start_at
+        campaign.save if campaign.changed?
+      end
+
       if @refresh_event_data
         build_event_data unless event_data.present?
         event_data.update_data

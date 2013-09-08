@@ -194,8 +194,8 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data[:cost_impression] = Hash[(0..6).map{|i|[i, 0]}]
     event_counts = Hash[(0..6).map{|i|[i, 0]}]
     stats_by_day.each do |s|
-      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions.to_f / s.promo_hours.to_f
-      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions.to_f
+      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions.to_f / s.promo_hours.to_f if s.promo_hours.to_f > 0
+      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions.to_f if s.impressions.to_f > 0
       event_counts[(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.counting.to_i
     end
 

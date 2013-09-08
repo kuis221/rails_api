@@ -4,7 +4,5 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    if (typeof brandPortfolioBrandsTable != 'undefined'){
-      brandPortfolioBrandsTable.tableScroller('reloadData');
-    }
+    $('#brands-list').html('#{escape_javascript(render(partial: 'brand_portfolios/brands', locals: {resource: parent}))}');
     $(document).trigger('brands:change');
