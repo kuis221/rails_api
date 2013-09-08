@@ -1,6 +1,5 @@
 class RefactorDocumentsToAssets < ActiveRecord::Migration
   def change
-    Document.destroy_all
 
     remove_column :documents, :file_file_name
     remove_column :documents, :file_content_type

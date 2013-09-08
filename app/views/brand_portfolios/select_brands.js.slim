@@ -1,21 +1,13 @@
 |
-  bootbox.classes('modal-xlarge');
+  bootbox.classes('modal-large');
   var selectBrandDialog = bootbox.dialog($('#{escape_javascript(render "select_brands")}'), [
     {
       "label" : 'Create New Brand',
       "class" : "btn",
       "callback": function() {
-          selectBrandDialog.off('hidden'); // To prevent the div to be removed in case the user returns to the form
-          selectBrandDialog.modal('hide');
-          $.ajax('#{new_brand_portfolio_brand_path(resource, format: :js)}');
-      }
-    },
-    {
-      "label" : "Close",
-      "class" : "btn",
-      "callback": function() {
-          selectBrandDialog.modal('hide');
+        selectBrandDialog.off('hidden'); // To prevent the div to be removed in case the user returns to the form
+        selectBrandDialog.modal('hide');
+        $.ajax('#{new_brand_portfolio_brand_path(resource, format: :js)}');
       }
     }
-  ],{'onEscape': true})
-
+  ],{'onEscape': true, animate: (!$.fx.off), header: 'Add Brands'})
