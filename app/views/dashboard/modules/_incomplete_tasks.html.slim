@@ -12,9 +12,11 @@
         ul#my-tasks-list
           = render my_incomplete_tasks
       .pull-right
-        = link_to 'View All', '#', remote: true, class: 'btn btn-info icon-angle-right-after'
+        = link_to 'View All', mine_tasks_path, remote: true, class: 'btn btn-info icon-angle-right-after'
     #team-incomplete-tasks.tab-pane
       h3 INCOMPLETE TASKS
       .link-list
         ul#team-tasks-list
           = render team_incomplete_tasks
+      .pull-right
+        = link_to 'View All', my_teams_tasks_path, remote: true, class: 'btn btn-info icon-angle-right-after'
