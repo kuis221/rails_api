@@ -42,6 +42,10 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :day_parts, 'Day Parts', day_parts_path
     end
 
+    primary.item :notifications, '', '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
+      secondary.item :loading, 'Wait...'
+    end
+
     primary.item :user_menu,  current_user.full_name, '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|
       secondary.item :users, 'Edit Profile',  edit_company_user_path(current_company_user), link: {remote: true}
       secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete}

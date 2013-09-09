@@ -110,7 +110,7 @@ describe InvitationsController do
         user.state.should == 'FL'
         user.country.should == 'US'
         user.invitation_token.should be_nil
-        user.invitation_accepted_at.to_date.should == Date.today
+        user.invitation_accepted_at.to_date.should == Time.zone.now.to_date
         flash[:notice].should == 'Your password was set successfully. You are now signed in.'
       end
 

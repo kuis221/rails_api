@@ -53,6 +53,28 @@ en:
       date_range: "Edit Date range"
       day_part: "Edit Day part"
 
+  notifications:
+    task_late_user:
+      one: "You have one late task"
+      other: "You have %{count} late tasks"
+    task_late_team:
+      one: "Your team has one late task"
+      other: "Your team has %{count} late tasks"
+    event_recaps_due: 
+      one: "There is one event recap that is due"
+      other: "There are %{count} event recaps that are due"
+    event_recaps_late: 
+      one: "There is one late event recap"
+      other: "There are %{count} late event recaps"
+    rejected_recaps: 
+      one: "There is one event recap that has been rejected"
+      other: "There are %{count} event recaps that have been rejected"
+    recaps_prending_approval: 
+      one: "There is one event recap that is pending approval"
+      other: "There are %{count} event recaps that are pending approval"
+    unread_tasks_comments_user: "Your task <i>%{task}</i> has a new comment"
+    unread_tasks_comments_team: "Your team's task <i>%{task}</i> has a new comment"
+
   modals:
     title:
       new:

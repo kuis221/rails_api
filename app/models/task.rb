@@ -37,6 +37,7 @@ class Task < ActiveRecord::Base
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
   scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
   scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
+  scope :assigned_to, lambda{|users| where(company_user_id: users) }
 
   searchable do
     integer :id
@@ -110,11 +111,19 @@ class Task < ActiveRecord::Base
 
         with(:company_id, params[:company_id])
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status]
         with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
 
         with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: params[:team]}).map(&:id) if params.has_key?(:team) and !params[:team].empty?
+
+        if params.has_key?(:status) and params[:status]
+          late = params[:status].delete('Late')
+          with(:status, params[:status].uniq) unless params[:status].empty?
+
+          params[:late] = true if late.present?
+        end
+
+
 
         # Handles the cases from the autocomplete
         if params.has_key?(:q) and params[:q].present?
@@ -133,6 +142,7 @@ class Task < ActiveRecord::Base
 
         if params[:late]
           with(:due_at).less_than(Time.zone.now)
+          with(:completed, false)
         end
 
         if params[:start_date].present? and params[:end_date].present?

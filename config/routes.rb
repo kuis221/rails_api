@@ -19,6 +19,8 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
+  get "/notifications", to: 'company_users#notifications', format: :json
+
 
   resources :goals, only: [:create, :update]
 
@@ -139,7 +141,7 @@ Brandscopic::Application.routes.draw do
         get :deactivate
         get :activate
       end
-    end    
+    end
   end
 
   resources :events do
