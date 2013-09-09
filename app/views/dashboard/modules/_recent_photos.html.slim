@@ -1,6 +1,7 @@
 .details_box
   h3 RECENT PHOTOS
-  ul.thumbnails
-    = render partial: 'results/photos/photo', collection: recent_photos_list
-  .pull-right
+  .large-photo-list
+    ul.thumbnails#photos-list
+      = render partial: 'results/photos/photo', collection: recent_photos_list
+  .pull-right.recent
     = link_to 'View All', results_photos_path, class: 'btn btn-info icon-angle-right-after'
