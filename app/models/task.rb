@@ -43,7 +43,6 @@ class Task < ActiveRecord::Base
     text :name, stored: true do
       title
     end
-    string :title
 
     integer :company_user_id, references: CompanyUser
     integer :event_id
