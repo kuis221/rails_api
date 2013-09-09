@@ -220,7 +220,7 @@ $.widget 'nmk.filteredList', {
 			bootbox.modalClasses = 'modal-med'
 			@filtersPopup.data('wrapper', filterWrapper)
 
-			$(document).on 'click.filterbox', ()  => @_closeFilterOptions()
+			$(document).on 'click.filteredList', ()  => @_closeFilterOptions()
 
 			@_positionFiltersOptions()
 
@@ -241,7 +241,7 @@ $.widget 'nmk.filteredList', {
 	_closeFilterOptions: () ->
 		if @filtersPopup
 			@filtersPopup.remove()
-		$(document).off 'click.filterbox'
+		$(document).off 'click.filteredList'
 
 	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
