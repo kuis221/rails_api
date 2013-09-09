@@ -8,7 +8,7 @@ class UnreadMigration < ActiveRecord::Migration
     end
 
     add_index :read_marks, [:user_id, :readable_type, :readable_id]
-    add_index :commetns, :created_at
+    add_index :comments, :created_at
   end
 
   def self.down
