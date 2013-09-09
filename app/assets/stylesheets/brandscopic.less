@@ -1472,6 +1472,12 @@ ul.kpis-list{
 				color: @text;
 				min-height: 70px;
 
+				.address{
+					br{
+						display:block;
+					}
+				}
+
 				&.late > span.event-item {
 					border-left: 5px solid @late;
 				}
@@ -1486,7 +1492,7 @@ ul.kpis-list{
 				}
 			}
 			span.event-item {
-				height: 61px;
+				min-height: 82px;
 				width: 100%;
 				padding: 9px 0 0 15px;
 			}
