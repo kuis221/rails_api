@@ -1186,22 +1186,28 @@ li#notifications{
 			margin: 0;
 			padding: 0;
 			li {
-				padding: 10px;
+				padding: 14px 10px 10px 10px;
 				background-color: #fff;
+				border-top: 1px solid @borders;
+				min-height: 25px;
+
+				&:first-child{
+					border:0;
+				}
 
 				&.critical {
-					border-left: 3px solid @alert_critical;
+					border-left: 5px solid @alert_critical;
 				}
 				&.warning {
-					border-left: 3px solid @alert_warning;
+					border-left: 5px solid @alert_warning;
 				}
 				&.info {
-					border-left: 3px solid @alert_info;
+					border-left: 5px solid @alert_info;
 				}
 
 				&:hover{
 					background-color: @app_bg;
-					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before{
+					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
 						color:@brand;
 					}
 				}
@@ -1213,6 +1219,13 @@ li#notifications{
 					i{
 						margin-left: 4px;
 						margin-right: 13px;
+						&.icon-angle-right{
+							float: right;
+							left: 14px;
+							margin-top: 8px;
+							margin-right: 0;
+							position: relative;		
+						}
 					}
 					&:hover{
 						text-decoration: none;
