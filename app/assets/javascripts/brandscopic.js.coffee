@@ -30,6 +30,8 @@ jQuery ->
 
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
 
+	$('header .nav #notifications').notifications();
+
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})

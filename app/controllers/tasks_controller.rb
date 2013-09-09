@@ -72,7 +72,7 @@ class TasksController < FilteredController
         counters['unassigned'] = 0
         counters['completed'] = 0
         counters['assigned'] = 0
-        counters['late'] = count_late_events
+        counters['late'] = count_late_tasks
         facet_search.facet(:statusm).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:statusm).nil?
       end
       @status_counters
@@ -85,8 +85,8 @@ class TasksController < FilteredController
       end
     end
 
-    def count_late_events
-      @count_late_events ||= begin
+    def count_late_tasks
+      @count_late_tasks ||= begin
         count_params = HashWithIndifferentAccess.new(facet_params.merge({late: true}))
         search = resource_class.do_search(count_params, true)
         search.total

@@ -353,6 +353,8 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    unread (0.3.0)
+      activerecord (>= 3)
     uuidtools (2.1.4)
     validates_timeliness (3.0.14)
       timeliness (~> 0.3.6)
@@ -433,4 +435,5 @@ DEPENDENCIES
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   unicorn
+  unread
   validates_timeliness (~> 3.0)

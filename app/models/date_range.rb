@@ -32,12 +32,10 @@ class DateRange < ActiveRecord::Base
   searchable do
     integer :id
     text :name, stored: true
-    text :description
 
     boolean :active
 
     string :name
-    string :description
     string :status
     integer :company_id
   end

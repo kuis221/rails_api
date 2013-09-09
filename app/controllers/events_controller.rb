@@ -113,7 +113,7 @@ class EventsController < FilteredController
         people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
-        f.push(label: "Event Status", items: ['Late', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
+        f.push(label: "Event Status", items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
       end
     end
 

@@ -45,6 +45,8 @@ class User < ActiveRecord::Base
 
   track_who_does_it
 
+  acts_as_reader
+
   include SentientUser
 
   # Include default devise modules. Others available are:

@@ -31,10 +31,8 @@ class DayPart < ActiveRecord::Base
     integer :id
 
     text :name, stored: true
-    text :description
 
     string :name
-    string :description
     string :status
 
     boolean :active

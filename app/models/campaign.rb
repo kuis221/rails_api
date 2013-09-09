@@ -93,10 +93,8 @@ class Campaign < ActiveRecord::Base
 
   searchable do
     text :name, stored: true
-    text :description
 
     string :name
-    string :description
     string :status
 
     integer :company_id

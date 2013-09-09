@@ -58,6 +58,8 @@ class Event < ActiveRecord::Base
   scope :active, lambda{ where(active: true) }
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
+  scope :with_user_in_team, lambda{|user| joins(:teamings, :memberships).where('teamings.team_id in (?) OR memberships.company_user_id IN (?)', user.teams, user) }
+  scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
 
   track_who_does_it
 
@@ -107,7 +109,7 @@ class Event < ActiveRecord::Base
     time :start_at, :trie => true
     time :end_at, :trie => true
     string :status, multiple: true do
-      [status, recap_status]
+      [status, event_status]
     end
     string :start_time
 
@@ -193,12 +195,8 @@ class Event < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
-  def recap_status
-    if self.aasm_state == 'unsent'
-      'Late'
-    else
-      self.aasm_state.capitalize
-    end
+  def event_status
+    self.aasm_state.capitalize
   end
 
   def in_past?
@@ -359,7 +357,27 @@ class Event < ActiveRecord::Base
 
         # We are using to options to allow searching by active/inactive in combination with approved/late/rejected/submitted
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
-        with(:status, params[:event_status]) if params.has_key?(:event_status) and params[:event_status].present? # For the event status
+        if params.has_key?(:event_status) and params[:event_status].present? # For the event status
+          late = params[:event_status].delete('Late')
+          due = params[:event_status].delete('Due')
+
+          any_of do
+            with(:status, params[:event_status]) unless params[:event_status].empty?
+            unless late.nil?
+              all_of do
+                with(:status, 'Unsent')
+                with(:end_at).less_than(2.days.ago)
+              end
+            end
+
+            unless due.nil?
+              all_of do
+                with(:status, 'Unsent')
+                with(:end_at, 2.days.ago..Time.zone.now)
+              end
+            end
+          end
+        end
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?
@@ -392,7 +410,7 @@ class Event < ActiveRecord::Base
           end
         end
 
-        # Date ranges where removed
+        # Date ranges filter were removed
         # if params.has_key?(:date_range) and params[:date_range].any?
         #   DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
         #     range.search_filters(self)

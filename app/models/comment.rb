@@ -15,6 +15,8 @@
 class Comment < ActiveRecord::Base
   track_who_does_it
 
+  acts_as_readable :on => :created_at
+
   belongs_to :commentable, :polymorphic => true
   belongs_to :user, :foreign_key => "created_by_id"
 
@@ -27,4 +29,8 @@ class Comment < ActiveRecord::Base
   validates :commentable_type, presence: true
 
   scope :for_places, lambda{|places, company| joins('INNER JOIN events e ON e.id = commentable_id and commentable_type=\'Event\'').where(['e.place_id in (?) and e.company_id in (?)', places, company]) }
+
+  scope :for_tasks_assigned_to, lambda{|users| joins('INNER JOIN tasks t ON t.id = commentable_id and commentable_type=\'Task\'').where(['t.company_user_id in (?)', users]) }
+
+  scope :not_from, lambda{|users| where(['comments.created_by_id not in (?)', users]) }
 end

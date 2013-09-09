@@ -40,10 +40,13 @@
 @unassigned:#3e9ccf;
 @user_menu:#c0c0c0;
 @venues_blue:#3e9ccf;
-@unsent:#de4d43;
+@late:#de4d43;
 @submitted:#3e9ccf;
 @approved:#90bf43;
 @rejected:#de4d43;
+@alert_critical: #de4d43;
+@alert_warning: #3e9ccf;
+@alert_info: #90bf43;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -1022,32 +1025,20 @@ li#help_menu{
 }
 li.dropdown#admin{
 	.dropdown-toggle:before{
-	content: "\e007";
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 16px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+		content: "\e007";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 16px;
+		padding-bottom:5px;
+		position: relative;
+		speak: none;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
 	}
 }
+
 li.dropdown#user_menu{
-	.dropdown-toggle:before{
-	content: "\e000";
-  	display: inline-block;
-  	font-family: 'icons';
-	font-size: 16px;
-	right:4px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
-	}
 	.dropdown-toggle:after{
 	content: "\e004";
   	display: inline-block;
@@ -1153,6 +1144,62 @@ li#admin{
 	margin-top: 12px;
 	min-width: 148px;
 	left: -107px;
+	}
+}
+li#notifications{
+
+	&.has-notifications {
+		.dropdown-toggle { color:  #fff; }
+	}
+
+	&.has-info-notifications {
+		.dropdown-toggle { background-color:  @alert_info; }
+	}
+	&.has-warning-notifications {
+		.dropdown-toggle { background-color:  @alert_warning; }
+	}
+	&.has-critical-notifications {
+		.dropdown-toggle { background-color: @alert_critical; }
+	}
+
+	.dropdown-menu{
+		background-color: @grey_one;
+		box-shadow: none;
+		margin-top: 12px;
+		min-width: 270px;
+		left: -200px;
+		padding: 5px;
+		&:before {
+			left: 199px;
+			border-bottom: 10px solid @grey_one;
+		}
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			li {
+				padding: 10px;
+				background-color: #fff;
+
+				&.critical {
+					border-left: 3px solid @alert_critical;
+				}
+				&.warning {
+					border-left: 3px solid @alert_warning;
+				}
+				&.info {
+					border-left: 3px solid @alert_info;
+				}
+			}
+		}
+	}
+	.dropdown-toggle {
+		background-color: #626763;
+		border-radius: 5px;
+		height: 16px;
+		margin-top: 10px;
+		padding: 2px;
+		min-width: 15px;
 	}
 }
 li#user_menu{
@@ -1379,8 +1426,8 @@ ul.kpis-list{
 				color: @text;
 				min-height: 70px;
 
-				&.unsent > span.event-item {
-					border-left: 5px solid @unsent;
+				&.late > span.event-item {
+					border-left: 5px solid @late;
 				}
 				&.submitted > span.event-item {
 					border-left: 5px solid @submitted;
