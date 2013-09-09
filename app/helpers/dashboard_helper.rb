@@ -10,6 +10,11 @@ module DashboardHelper
     end
   end
 
+
+  def recent_photos_list
+    AttachedAsset.do_search({company_id: current_company.id, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
+  end
+
   def dashboard_kpis_trends_data
     @kpis_trends_data ||= Hash.new.tap do |data|
       result = EventData.select('
