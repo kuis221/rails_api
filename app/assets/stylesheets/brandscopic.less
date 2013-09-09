@@ -1169,7 +1169,7 @@ li#notifications{
 		margin-top: 22px;
 		min-width: 270px;
 		left: -181px;
-		padding: 5px;
+		padding: 5px 5px 10px 5px;
 		h5{
 			color: @brand;
 			font-size: 13px;
@@ -1197,6 +1197,26 @@ li#notifications{
 				}
 				&.info {
 					border-left: 3px solid @alert_info;
+				}
+
+				&:hover{
+					background-color: @app_bg;
+					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before{
+						color:@brand;
+					}
+				}
+
+				// Icons
+				a{ 
+					color: @text;
+					font-size: 11px;
+					i{
+						margin-left: 4px;
+						margin-right: 13px;
+					}
+					&:hover{
+						text-decoration: none;
+					}
 				}
 			}
 		}
@@ -4137,6 +4157,63 @@ a, i{
 	&.icon-angle-left:before{
 		color: #c0c0c0;
 		content: "\e01c";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	// Icons for notification center
+	&.icon-notification-event:before{
+		color: #c0c0c0;
+		content: "\e00a";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+	&.icon-notification-task:before{
+		color: #c0c0c0;
+		content: "\e015";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-comment:before{
+		color: #c0c0c0;
+		content: "\e010";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-campaign:before{
+		color: #c0c0c0;
+		content: "\e00a";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-action:before{
+		color: #c0c0c0;
+		content: "\e024";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-group:before{
+		color: #c0c0c0;
+		content: "\e023";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-venue:before{
+		color: #c0c0c0;
+		content: "\e018";
 		display: inline-block;
 		font-family: 'icons';
 		font-size: 26px;
