@@ -11,7 +11,7 @@ $.widget 'nmk.notifications', {
 		$('<div class="dropdown-menu">').insertAfter(@counter).append(@list)
 
 		$.get '/notifications.json', (response) =>
-			$('<h4>').text('Notifications').insertBefore @list
+			$('<h5>').text('Notifications').insertBefore @list
 			@_updateNotifications response
 
 	_updateNotifications: (alerts) ->
