@@ -126,7 +126,6 @@ module Analysis
         # Compute current and expectation percentages
         total_days = ((@campaign.last_event_at  - @campaign.first_event_at).to_i / 86400).round
         today_days = ((Time.zone.now  - @campaign.first_event_at).to_i / 86400).round
-        Rails.logger.debug "total_days => #{total_days};  today_days => #{today_days}\n\n"
 
         data['expected_events'] = expected_total =  events_goal > 0 ? events_goal : data['scheduled_events']
         data['remaining_events'] = expected_total - data['approved_events']
