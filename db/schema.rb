@@ -206,6 +206,7 @@ ActiveRecord::Schema.define(:version => 20130909031930) do
   end
 
   add_index "comments", ["commentable_type", "commentable_id"], :name => "index_comments_on_commentable_type_and_commentable_id"
+  add_index "comments", ["created_at"], :name => "index_comments_on_created_at"
 
   create_table "companies", :force => true do |t|
     t.string   "name"

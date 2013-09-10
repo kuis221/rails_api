@@ -1,0 +1,8 @@
+|
+  $('.bootbox.modal').modal('hide');
+  bootbox.classes('modal-large');
+  var newPlaceDialog = bootbox.dialog(
+                         $('#{escape_javascript(render "new_place_form")}'),
+                         [],
+                         {'onEscape': true, animate: (!$.fx.off), header: 'Add place'}
+                       )
