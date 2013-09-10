@@ -1,0 +1,17 @@
+h3 Reach
+
+- data = campaigns_events_data(@campaign)
+
+.row-fluid
+  .span6
+    #gender-graph.row-fluid
+      = gender_graph(data['gender'])
+    .row-fluid
+      #age-graph
+  .span6.ethnicity
+    #ethnicity-graph
+
+javascript:
+  #{render partial: 'shared/age_graph', locals: {data: data['age'], container: '#age-graph'}}
+
+  #{render partial: 'shared/ethnicity_graph', locals: {data: data['ethnicity'], container: '#ethnicity-graph'}}

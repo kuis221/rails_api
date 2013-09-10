@@ -451,6 +451,10 @@ class Event < ActiveRecord::Base
           facet :users
           facet :teams
           facet :status
+
+          if params[:facet_date_period] && params[:facet_date_start] && params[:facet_date_end]
+            facet :start_at, time_range: params[:facet_date_start]..params[:facet_date_end], :time_interval => params[:facet_date_period]
+          end
         end
 
         order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)

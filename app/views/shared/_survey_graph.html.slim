@@ -12,7 +12,7 @@
             text: null
         },
         xAxis: {
-            categories: #{resource.campaign.survey_brands.map(&:name).to_json.html_safe},
+            categories: #{brands.map(&:name).to_json.html_safe},
             lineColor: '#D1D1D1',
             labels: {
               style: {

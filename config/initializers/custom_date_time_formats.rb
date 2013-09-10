@@ -7,6 +7,7 @@
   :full_friendly => "%b %e, %Y %l:%M%p",
   :time_only => "%l:%M %p",
   :slashes => "%m/%d/%Y",
+  :numeric => "%Y%m%d",
   :slashes_inverted => "%d/%m/%Y",
   :full_calendar => "%Y-%m-%d %H:%M:00",
   :filename => "%Y-%m-%d-%k-%M"

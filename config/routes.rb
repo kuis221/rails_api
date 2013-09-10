@@ -47,6 +47,11 @@ Brandscopic::Application.routes.draw do
     end
   end
 
+  namespace :analysis do
+    get :campaigns_report, to: 'campaigns_report#index'
+    post :campaigns_report, to: 'campaigns_report#report'
+  end
+
   # This couple of routes are for tasks
   get ":controller/:scope/filters", format: :json, as: :filters
   get ":controller/:scope/items", format: :html, as: :items

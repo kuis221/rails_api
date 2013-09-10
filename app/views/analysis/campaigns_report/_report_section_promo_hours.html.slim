@@ -1,0 +1,165 @@
+h4 Promo Hours
+.row-fluid
+  .span4
+    - data = campaigns_events_data(@campaign)
+
+    .chart-header= "#{data['promo_hours_remaining']} of #{data['promo_hours_expected_total'].to_i} promo hours remaining"
+    = vertical_progress_bar(data['promo_hours_percentage'], data['promo_hours_today'])
+    .chart-title Overall Event Progress
+
+  .span8
+    .cumulative-narrative.cumulative-events-narrative
+      | Last week was a below average week (2 events per week). 
+ 
+      p The pace of events is expected to increase in the coming weeks (average of 10 events per week). At this rate, the target number of events will be achieved by April 22nd
+
+    .cumulative-title Cumulative promo hours
+
+    #promo_hours_cumulative_chart
+
+    .promo-hours-weeks-title Promo hours per week
+    #promo_hours_week_chart
+
+- start_date = @campaign.first_event_at.beginning_of_week
+- current_date = Time.zone.now.to_s(:numeric)
+javascript:
+  $('#promo_hours_cumulative_chart').highcharts({
+      chart: {
+          type: 'spline'
+      },
+      credits: false,
+      colors: ['#409DC9'],
+      legend: {enabled: false},
+      title: {
+          text: null
+      },
+      xAxis: {
+          type: 'datetime',
+          labels: {
+              enabled: false
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF',
+          plotBands: [{
+              color: 'red',
+              width: 2,
+              value: Date.UTC(#{Time.now.strftime('%Y')}, #{Time.now.strftime('%m').to_i-1}, #{Time.now.strftime('%e')}),
+              color: '#BFBFBF',
+              label: {
+                  text: 'Today',
+                  verticalAlign: 'bottom',
+                  textAlign: 'left',
+                  y: 50,
+                  style: {color: '#BFBFBF'},
+                  rotation: -90
+              }            
+          }]
+      },
+      yAxis: {
+          title: {
+              text: null
+          },
+          gridLineWidth: 0,
+          labels: {
+              enabled: false
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF',
+          plotLines: [{
+              color: '#BFBFBF',
+              width: 2,
+              value: #{data['goal']},
+              dashStyle: 'dash'
+          }],
+      },
+      tooltip: {
+          crosshairs: true,
+          shared: true
+      },
+      plotOptions: {
+          spline: {
+              marker: {
+                  enabled: false
+              }
+          }
+      },
+      series: [{
+          name: 'Promo Hours',
+          data: #{data['weeks'].map{|w,v| w < current_date ? v['cumulative_promo_hours'].round : v['cumulative_scheduled'].round}.to_json.html_safe},
+          pointStart: Date.UTC(#{start_date.strftime('%Y')}, #{start_date.strftime('%m').to_i-1}, #{start_date.strftime('%e')}),
+          pointInterval: 24 * 3600 * 1000 * 7, // one week
+      }]
+  });
+
+  $('#promo_hours_week_chart').highcharts({
+      chart: {
+          type: 'column',
+          marginBottom: 80
+      },
+      credits: false,
+      colors: ['#409DC9'],
+      legend: {enabled: false},
+      title: {
+          text: null
+      },
+      xAxis: {
+          type: 'datetime',
+          tickInterval: 24 * 3600 * 1000 * 7, // one week
+          dateTimeLabelFormats: {
+              week: '%m/%d'
+          },
+          labels: {
+              enabled: true,
+              rotation: -90,
+              style: {color: '#BFBFBF'},
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF',
+          plotBands: [{
+              color: 'red',
+              width: 2,
+              value: Date.UTC(#{Time.now.strftime('%Y')}, #{Time.now.strftime('%m').to_i-1}, #{Time.now.strftime('%e')}),
+              color: '#BFBFBF',
+              label: {
+                  text: 'Today',
+                  verticalAlign: 'bottom',
+                  textAlign: 'left',
+                  y: 50,
+                  style: {color: '#BFBFBF'},
+                  rotation: -90
+              }            
+          }]
+      },
+      yAxis: {
+          title: {
+              text: null
+          },
+          gridLineWidth: 0,
+          labels: {
+              enabled: false
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF'
+      },
+      tooltip: {
+          crosshairs: true,
+          shared: true
+      },
+      plotOptions: {
+          series: {
+              dataLabels: {
+                  align: 'center',
+                  enabled: true,
+                  x: 2,
+                  y: -10,
+                  style: {color: '#409DC9'},
+              }
+          }
+      },
+      series: [{
+          name: 'Promo Hours',
+          data: #{data['weeks'].map{|w,v| w < current_date ? v['promo_hours'].round : v['scheduled_promo_hours']}.to_json.html_safe},
+          pointStart: Date.UTC(#{start_date.strftime('%Y')}, #{start_date.strftime('%m').to_i-1}, #{start_date.strftime('%e')}),
+          pointInterval: 24 * 3600 * 1000 * 7, // one week
+      }]
+  });

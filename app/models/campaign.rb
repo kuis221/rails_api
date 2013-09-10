@@ -173,6 +173,22 @@ class Campaign < ActiveRecord::Base
     @active_field_types ||= form_fields.map(&:field_type).uniq
   end
 
+  def survey_statistics
+    answers_scope = SurveysAnswer.joins(survey: :event).where(events:{campaign_id: self.id}, brand_id: survey_brands.map(&:id), question_id: [1,3,4])
+    total_surveys = answers_scope.select('distinct(surveys.id)').count
+    answers_scope = answers_scope.select('count(surveys_answers.id) as counter,surveys_answers.answer, surveys_answers.question_id, surveys_answers.brand_id').group('surveys_answers.answer, surveys_answers.question_id, surveys_answers.brand_id')
+    brands_map = Hash[survey_brands.map{|b| [b.id, b.name] }]
+    stats = {}
+    answers_scope.each do |answer|
+      stats["question_#{answer.question_id}"] ||= {}
+      stats["question_#{answer.question_id}"][answer.answer] ||= {}
+      stats["question_#{answer.question_id}"][answer.answer][brands_map[answer.brand_id]] ||= {count: 0, avg: 0.0}
+      stats["question_#{answer.question_id}"][answer.answer][brands_map[answer.brand_id]][:count] = answer.counter.to_i
+      stats["question_#{answer.question_id}"].each{|a, brands| brands.each{|b, s| s[:avg] = s[:count]*100.0/total_surveys} }
+    end
+
+    stats
+  end
 
   def survey_brands
     @survey_brands ||= begin

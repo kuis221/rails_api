@@ -18,13 +18,13 @@
     #question-4-graph.survey-column-graph
 
     - if resource.survey_statistics.has_key?('question_1')
-      = render partial: 'survey_graph', locals: {question_id: 1, series: series_question_1(resource)}
+      = render partial: 'shared/survey_graph', locals: {question_id: 1, series: series_question_1(resource.campaign.survey_brands, resource.survey_statistics['question_1']), brands: resource.campaign.survey_brands}
     - if resource.survey_statistics.has_key?('question_2')
-      = render partial: 'survey_graph', locals: {question_id: 2, series: series_question_2(resource), data_labels: true}
+      = render partial: 'shared/survey_graph', locals: {question_id: 2, series: series_question_2(resource.survey_statistics['question_2']), data_labels: true}
     - if resource.survey_statistics.has_key?('question_3')
-      = render partial: 'survey_graph', locals: {question_id: 3, series: series_question_3(resource), data_labels: true}
+      = render partial: 'shared/survey_graph', locals: {question_id: 3, series: series_question_3(resource.campaign.survey_brands, resource.survey_statistics['question_3']), brands: resource.campaign.survey_brands, data_labels: true}
     - if resource.survey_statistics.has_key?('question_4')
-      = render partial: 'survey_graph', locals: {question_id: 4, series: series_question_4(resource), data_labels: true}
+      = render partial: 'shared/survey_graph', locals: {question_id: 4, series: series_question_4(resource.campaign.survey_brands, resource.survey_statistics['question_4']), brands: resource.campaign.survey_brands, data_labels: true}
 
   - else
     p No surveys where entered for this event
