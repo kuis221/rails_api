@@ -1,16 +1,14 @@
-- remote ||= false
-= simple_form_for([parent, resource], remote: remote || false) do |f|
-  = f.error_notification
+.places-modals
+  - remote ||= false
+  = simple_form_for([parent, resource], remote: remote || false) do |f|
+    = f.error_notification
 
-  .form-inputs
-    .row-fluid
-      .pull-left
-        = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
-      .pull-right
-        = f.button :submit, 'Add Place', class: 'btn-primary'
-    .row-fluid
-      .pull-right
-        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+    .form-inputs
+      .row-fluid
+        .pull-left
+          = f.input :reference, :as => :location, label: 'Place', wrapper_html: {class: 'form-horizontal'}
+        .pull-right
+          = f.button :submit, 'Add Place', class: 'btn-primary'
 
 javascript:
   var input = $('.modal .places-autocomplete')[0];

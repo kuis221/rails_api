@@ -28,7 +28,7 @@ require "base64"
 class Place < ActiveRecord::Base
   include GoalableModel
 
-  attr_accessible :reference, :place_id
+  attr_accessible :reference, :place_id, :name, :types, :street_number, :route, :city, :state, :zipcode, :country
 
   validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place
@@ -255,22 +255,24 @@ class Place < ActiveRecord::Base
         self.types = spot.types
 
         # Parse the address components
-        spot.address_components.each do |component|
-          if component['types'].include?('country')
-            self.country = component['short_name']
-          elsif component['types'].include?('administrative_area_level_1')
-            self.administrative_level_1 = component['short_name']
-            self.state = component['long_name']
-          elsif component['types'].include?('administrative_area_level_2')
-            self.administrative_level_2 = component['short_name']
-          elsif component['types'].include?('locality')
-            self.city = component['long_name']
-          elsif component['types'].include?('postal_code')
-            self.zipcode = component['long_name']
-          elsif component['types'].include?('street_number')
-            self.street_number = component['long_name']
-          elsif component['types'].include?('route')
-            self.route = component['long_name']
+        if spot.address_components.present?
+          spot.address_components.each do |component|
+            if component['types'].include?('country')
+              self.country = component['short_name']
+            elsif component['types'].include?('administrative_area_level_1')
+              self.administrative_level_1 = component['short_name']
+              self.state = component['long_name']
+            elsif component['types'].include?('administrative_area_level_2')
+              self.administrative_level_2 = component['short_name']
+            elsif component['types'].include?('locality')
+              self.city = component['long_name']
+            elsif component['types'].include?('postal_code')
+              self.zipcode = component['long_name']
+            elsif component['types'].include?('street_number')
+              self.street_number = component['long_name']
+            elsif component['types'].include?('route')
+              self.route = component['long_name']
+            end
           end
         end
 

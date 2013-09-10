@@ -5,3 +5,10 @@
   |
     $('.bootbox.modal').modal('hide');
     $('##{parent.class.name.underscore}-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');
+  - if @from_new_place_form
+    |
+      bootbox.dialog(
+        $('#{escape_javascript(render "form")}'),
+        [],
+        {'onEscape': true, animate: (!$.fx.off), header: 'Add place'}
+      );

@@ -23,7 +23,7 @@
             span.pull-left
               .area_name= area.name
               = area.description
-            span.pull-right 
+            span.pull-right
               = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
         li.empty-list-message
           p There are not assignable areas
@@ -43,7 +43,7 @@
           .pull-left
             = f.input :reference, :as => :location, wrapper_html: {class: 'form-horizontal'}
           .pull-right
-            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disabled: true
+            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn'
 
 javascript:
   var input = $('.modal .places-autocomplete')[0];
@@ -57,17 +57,8 @@ javascript:
       return false;
     }
 
-    $('.add-place-btn').attr('disabled', false)
-
     $($(input).data('hidden')).val(place.reference+'||'+place.id);
   });
-
-  $('.add-place-btn').click(function(e){
-    if ($('#place_reference').val() == ''){
-      e.preventDefault();
-      return false;
-    }
-  })
 
   $('#place-search-box').on('keyup', function () {
     var value = $(this).val();
