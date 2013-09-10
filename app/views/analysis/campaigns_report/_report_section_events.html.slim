@@ -1,9 +1,9 @@
 h4 Events
 .row-fluid
   .span4
-    - data = campaigns_events_data(@campaign)
-    .chart-header= "#{data['remaining']} of #{data['expected_total'].to_i} events remaining"
-    = vertical_progress_bar(data['approved_percentage'], data['today_percentage'])
+    - data = campaigns_events_data
+    .chart-header= "#{data['remaining_events']} of #{data['expected_events'].to_i} events remaining"
+    = vertical_progress_bar(data['events_percentage'], data['events_percentage_today'])
     .chart-title Overall Event Progress
 
   .span8
@@ -68,7 +68,7 @@ javascript:
           plotLines: [{
               color: '#BFBFBF',
               width: 2,
-              value: #{data['goal']},
+              value: #{data['events_goal']},
               dashStyle: 'dash'
           }],
       },
@@ -85,9 +85,9 @@ javascript:
       },
       series: [{
           name: 'Events',
-          data: #{data['weeks'].map{|w,v| w < current_date ? v['cumulative_approved'] : v['cumulative_scheduled']}.to_json.html_safe},
+          data: #{data['weeks'].map{|w,v| w < current_date ? v['cumulative_approved_events'] : v['cumulative_scheduled_events']}.to_json.html_safe},
           pointStart: Date.UTC(#{start_date.strftime('%Y')}, #{start_date.strftime('%m').to_i-1}, #{start_date.strftime('%e')}),
-          pointInterval: 24 * 3600 * 1000 * 7, // one week
+          pointInterval: 24 * 3600 * 1000 * 7 // one week
       }]
   });
 
@@ -158,8 +158,8 @@ javascript:
       },
       series: [{
           name: 'Events',
-          data: #{data['weeks'].map{|w,v| w < current_date ? v['approved'] : v['scheduled']}.to_json.html_safe},
+          data: #{data['weeks'].map{|w,v| w < current_date ? v['approved_events'] : v['scheduled_events']}.to_json.html_safe},
           pointStart: Date.UTC(#{start_date.strftime('%Y')}, #{start_date.strftime('%m').to_i-1}, #{start_date.strftime('%e')}),
-          pointInterval: 24 * 3600 * 1000 * 7, // one week
+          pointInterval: 24 * 3600 * 1000 * 7 // one week
       }]
   });
