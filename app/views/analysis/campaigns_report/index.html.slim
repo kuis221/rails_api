@@ -4,7 +4,7 @@
   .details_box
 
     = simple_form_for :report, url: analysis_campaigns_report_path, remote: true do |f|
-      = f.input :campaign_id, collection: @campaigns, input_html: {class: 'chosen-enabled'}
+      = f.input_field :campaign_id, collection: @campaigns, wrapper: false, class: 'chosen-enabled no-validate'
 
 #report-container
 

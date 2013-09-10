@@ -1,10 +1,16 @@
 .details_box 
   h3 CAMPAING REPORT
 
-  = render 'report_section_events'
+  - if @campaign.events.count > 0
 
-  = render 'report_section_promo_hours'
+    = render 'report_section_events'
 
-  = render 'report_section_reach'
+    = render 'report_section_promo_hours'
 
-  = render 'report_section_surveys'
+    = render 'report_section_reach'
+
+    = render 'report_section_surveys'
+
+  - else
+
+    p This campaing has no events

@@ -3,7 +3,7 @@ class Analysis::CampaignsReportController < ApplicationController
   authorize_resource :campaign, only: :report
 
   def index
-    @campaigns = current_company.campaigns.accessible_by(current_ability)
+    @campaigns = current_company.campaigns.accessible_by(current_ability).order('name ASC')
   end
 
   def report

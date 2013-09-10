@@ -4,6 +4,8 @@ module Analysis
 	module CampaignsReportHelper
     def campaigns_events_data(campaign)
       @campaign_data ||= begin
+        return {} if campaign.first_event_at.nil?
+
         search_params = {
           company_id: current_company.id,
           campaign: campaign.id,
