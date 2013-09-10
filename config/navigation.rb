@@ -47,7 +47,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
     primary.item :analysis, 'Analysis', analysis_campaigns_report_path,  highlights_on: %r(/analysis) do |secondary|
       secondary.item :snapshot_report, 'Snapshot Report', '#', highlights_on: %r(/analysis/snapshot_report)
-      secondary.item :campaings_report, 'Campaings Report', '#', highlights_on: %r(/analysis/campaigns_report)
+      secondary.item :campaigns_report, 'Campaigns Report', '#', highlights_on: %r(/analysis/campaigns_report)
       secondary.item :staff_performance, 'Staff Performance', '#', highlights_on: %r(/analysis/staff_performance)
     end
   end

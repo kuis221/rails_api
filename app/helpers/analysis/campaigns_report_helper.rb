@@ -145,23 +145,6 @@ module Analysis
         data['promo_hours_percentage_today'] = [100, data['expected_promo_hours_today'] * 100 / expected_total].min    # and what percentage does that represents
 
 
-        Rails.logger.debug "
-          data['approved_events'] ==> #{data['approved_events']},
-          data['approved_promo_hours'] ==> #{data['approved_promo_hours']},
-          data['scheduled_events'] ==> #{data['scheduled_events']},
-          data['scheduled_promo_hours'] ==> #{data['scheduled_promo_hours']},
-          data['remaining_events'] ==> #{data['remaining_events']},
-          data['expected_events'] ==> #{data['expected_events']},
-          data['events_percentage'] ==> #{data['events_percentage']},
-          data['expected_events_today'] ==> #{data['expected_events_today']},
-          data['events_percentage_today'] ==> #{data['events_percentage_today']},
-          data['approved_events_week_avg'] ==> #{data['approved_events_week_avg']},
-          data['approved_promo_hours_week_avg'] ==> #{data['approved_promo_hours_week_avg']},
-          data['approved_events_this_week'] ==> #{data['approved_events_this_week']},
-          data['approved_promo_hours_this_week'] ==> #{data['approved_promo_hours_this_week']},
-        "
-
-
         # Fetch KPIs data from Solr
         search_params = {
           company_id: current_company.id,
