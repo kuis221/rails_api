@@ -698,6 +698,7 @@ body.app-layout{
 		background-color: @buttons-hover !important;
 	}
 }
+
 .container-fluid{
 	padding: 0;
 }
@@ -1191,11 +1192,19 @@ li#notifications{
 
 	.dropdown-menu{
 		background-color: @grey_one;
+		border: 0;
 		box-shadow: none;
-		margin-top: 12px;
+		margin-top: 22px;
 		min-width: 270px;
-		left: -200px;
-		padding: 5px;
+		left: -181px;
+		padding: 5px 5px 10px 5px;
+		h5{
+			color: @brand;
+			font-size: 13px;
+			font-weight: bold;
+			padding-left: 10px;
+			padding-bottom: 10px;
+		}
 		&:before {
 			left: 199px;
 			border-bottom: 10px solid @grey_one;
@@ -1205,17 +1214,50 @@ li#notifications{
 			margin: 0;
 			padding: 0;
 			li {
-				padding: 10px;
+				padding: 14px 10px 10px 10px;
 				background-color: #fff;
+				border-top: 1px solid @borders;
+				min-height: 25px;
+
+				&:first-child{
+					border:0;
+				}
 
 				&.critical {
-					border-left: 3px solid @alert_critical;
+					border-left: 5px solid @alert_critical;
 				}
 				&.warning {
-					border-left: 3px solid @alert_warning;
+					border-left: 5px solid @alert_warning;
 				}
 				&.info {
-					border-left: 3px solid @alert_info;
+					border-left: 5px solid @alert_info;
+				}
+
+				&:hover{
+					background-color: @app_bg;
+					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
+						color:@brand;
+					}
+				}
+
+				// Icons
+				a{ 
+					color: @text;
+					font-size: 11px;
+					i{
+						margin-left: 4px;
+						margin-right: 13px;
+						&.icon-angle-right{
+							float: right;
+							left: 14px;
+							margin-top: 8px;
+							margin-right: 0;
+							position: relative;		
+						}
+					}
+					&:hover{
+						text-decoration: none;
+					}
 				}
 			}
 		}
@@ -1223,10 +1265,14 @@ li#notifications{
 	.dropdown-toggle {
 		background-color: #626763;
 		border-radius: 5px;
-		height: 16px;
-		margin-top: 10px;
+		font-size: 10px;
+		font-weight: bold;
+		line-height: 16px;
+		margin: 10px 8px 0 20px;
 		padding: 2px;
 		min-width: 15px;
+		text-align: center;
+		height: 17px;
 	}
 }
 li#user_menu{
@@ -1235,7 +1281,7 @@ li#user_menu{
 		box-shadow: none;
 		margin-top: 12px;
 		min-width: 148px;
-		left: -30px;
+		left: -48px;
 		li#users:last-child{
 			a:after{
 			color: @user_menu;
@@ -1453,6 +1499,12 @@ ul.kpis-list{
 				color: @text;
 				min-height: 70px;
 
+				.address{
+					br{
+						display:block;
+					}
+				}
+
 				&.late > span.event-item {
 					border-left: 5px solid @late;
 				}
@@ -1467,7 +1519,7 @@ ul.kpis-list{
 				}
 			}
 			span.event-item {
-				height: 61px;
+				min-height: 82px;
 				width: 100%;
 				padding: 9px 0 0 15px;
 			}
@@ -2284,6 +2336,9 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
 				display:inline-block;
 				float: right;
+				i.icon-remove-circle:before{
+					font-size: 18px;				
+				}
 			}
 		}
 		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
@@ -2742,7 +2797,7 @@ ul.thumbnails{
 
 // Photo list for venues an details boxes
 
-.events, .photos, .venues {
+.dashboard, .events, .photos, .venues {
 	#event-photos{
 		span.btn-primary{
 			margin-bottom: 20px;
@@ -2772,7 +2827,7 @@ ul.thumbnails{
 	.large-photo-list{
 		margin: 40px 0 0 0;
 		ul{
-			margin: 0 -6% -6% -2%;
+			margin: 0 -2% 0 -1%;
 			overflow: auto;
 		}
 		li{
@@ -3002,7 +3057,7 @@ ul.thumbnails{
 			margin-bottom: 15px;
 		}
 		.review-text{
-			font-size: 11px;
+			font-size: 13px;
 			width: 410px;
 		}
 	}
@@ -4157,6 +4212,63 @@ a, i{
 		font-size: 26px;
 		position: relative;
 	}
+	// Icons for notification center
+	&.icon-notification-event:before{
+		color: #c0c0c0;
+		content: "\e00a";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 20px;
+		position: relative;
+	}
+	&.icon-notification-task:before{
+		color: #c0c0c0;
+		content: "\e015";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-comment:before{
+		color: #c0c0c0;
+		content: "\e010";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-campaign:before{
+		color: #c0c0c0;
+		content: "\e00a";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-action:before{
+		color: #c0c0c0;
+		content: "\e024";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-group:before{
+		color: #c0c0c0;
+		content: "\e023";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
+	&.icon-notification-venue:before{
+		color: #c0c0c0;
+		content: "\e018";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 26px;
+		position: relative;
+	}
 }
 
 // DASHBOARD STYLES
@@ -4593,4 +4705,16 @@ body.campaigns_report {
 			}
   	}
   }
+}
+
+// TOOLTIP STYLES
+
+.tooltip-inner{
+    background-color:@grey_three;
+}
+
+.tooltip.top .tooltip-arrow{
+    border-left:5px solid transparent;
+    border-right:5px solid transparent;
+    border-top:5px solid @grey_three;
 }
