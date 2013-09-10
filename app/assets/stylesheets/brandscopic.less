@@ -681,6 +681,8 @@ body.app-layout{
 .btn-info{
 	background-color: @user_menu !important;
 	color: white !important;
+	font-size: 13px;
+	font-weight: bold;
 	padding-bottom:9px;
 	padding-top: 9px;
 	&.icon-angle-right-after{
@@ -695,8 +697,12 @@ body.app-layout{
 		}
 	}
 	&:hover{
-		background-color: @buttons-hover !important;
+		background-color: @brand !important;
 	}
+}
+
+.recent{
+	margin-bottom: 28px;
 }
 
 .container-fluid{
@@ -1340,6 +1346,9 @@ li#user_menu{
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	width:210px;
+	.btn-primary{
+		display: none;
+	}
 }
 
 ul.kpis-list{
@@ -1373,6 +1382,7 @@ ul.kpis-list{
 		position: relative;
 	}
 	.sparkline {
+		display:none;
 		margin: 0 3px 0 5px;
 		canvas{
 			margin-top: 1px;
@@ -2827,7 +2837,7 @@ ul.thumbnails{
 	.large-photo-list{
 		margin: 40px 0 0 0;
 		ul{
-			margin: 0 -2% 0 -1%;
+			margin: 0 -2% -2% -1%;
 			overflow: auto;
 		}
 		li{
@@ -4226,7 +4236,7 @@ a, i{
 		content: "\e015";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 	&.icon-notification-comment:before{
@@ -4234,7 +4244,7 @@ a, i{
 		content: "\e010";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 	&.icon-notification-campaign:before{
@@ -4242,7 +4252,7 @@ a, i{
 		content: "\e00a";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 	&.icon-notification-action:before{
@@ -4250,7 +4260,7 @@ a, i{
 		content: "\e024";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 	&.icon-notification-group:before{
@@ -4258,7 +4268,7 @@ a, i{
 		content: "\e023";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 	&.icon-notification-venue:before{
@@ -4266,7 +4276,7 @@ a, i{
 		content: "\e018";
 		display: inline-block;
 		font-family: 'icons';
-		font-size: 26px;
+		font-size: 20px;
 		position: relative;
 	}
 }
