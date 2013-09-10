@@ -13,6 +13,7 @@
         .controls
           = kf.hidden_field :goalable_id
           = kf.hidden_field :goalable_type
+          = kf.hidden_field :kpis_segment_id
           = kf.hidden_field :kpi_id, value: resource.id
           label
             = kf.text_field :value, placeholder: 'Goal', class: 'input-mini'
