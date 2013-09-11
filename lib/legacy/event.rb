@@ -41,6 +41,7 @@ class Legacy::Event < Legacy::Record
     if migration.save
       event_recap_attributes(migration.local)
       migration.local.save
+      synch_photos(migration.local)
     end
 
     migration
@@ -141,6 +142,9 @@ class Legacy::Event < Legacy::Record
       p "Couldn't save receipt #{receipt.id}: #{e.message}"
     end
 
+  end
+
+  def synch_photos(event)
     # Photos
     photos.each do |photo|
       begin
@@ -148,7 +152,9 @@ class Legacy::Event < Legacy::Record
         migration.local ||= event.photos.build
         migration.local.file = photo.file if photo.file_file_size != migration.local.file_file_size
         migration.local.active = photo.active
+        migration.local.processed = true
         migration.save
+        p migration.local.errors if  migration.local.errors.any?
       rescue AWS::S3::Errors::RequestTimeout => e
         migration.destroy
         p "Couldn't save photo #{photo.id}: #{e.message}"
@@ -156,6 +162,5 @@ class Legacy::Event < Legacy::Record
 
     end
     @photos = []
-
   end
 end

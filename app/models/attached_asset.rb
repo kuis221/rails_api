@@ -40,7 +40,8 @@ class AttachedAsset < ActiveRecord::Base
   after_create :queue_processing
   before_post_process :post_process_required?
 
-  validates :direct_upload_url, presence: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, presence: true, unless: :file
 
   searchable do
     string :status
@@ -255,10 +256,12 @@ class AttachedAsset < ActiveRecord::Base
 
     # Queue file processing
     def queue_processing
-      if post_process_required?
-        Resque.enqueue(AssetsUploadWorker, id)
-      else
-        transfer_and_cleanup
+      if direct_upload_url.present?
+        if post_process_required?
+          Resque.enqueue(AssetsUploadWorker, id)
+        else
+          transfer_and_cleanup
+        end
       end
     end
 

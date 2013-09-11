@@ -44,6 +44,7 @@ module Legacy
         counter = 0
         batch_size = 20
         total = program.events.count
+        total = 20
         while counter < total
           Resque.enqueue(ProgramMigrationWorker, program_id, counter, batch_size)
           counter += batch_size
