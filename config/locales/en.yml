@@ -97,6 +97,7 @@ en:
         placeable: "Add Place"
         date_item: "New Date"
         comment: "New Comment"
+        goal: "New Goal"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -117,6 +118,7 @@ en:
         placeable: "Edit Places"
         date_item: "Edit Date"
         comment: "Edit Comment"
+        goal: "Edit Goal"
 
   form_builder:
     modules:

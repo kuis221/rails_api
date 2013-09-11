@@ -1,0 +1,16 @@
+.details_box 
+  h3 STAFF REPORT
+
+  - if @goals.count > 0
+
+    = render 'report_section_events'
+
+    = render 'analysis/shared/report_section_objectives'
+
+  - else
+
+    p
+      = @company_user.full_name
+      '  has no goals. 
+      = link_to "Click here", company_user_path(@company_user)
+      '  to define some

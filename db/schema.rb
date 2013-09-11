@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130909031930) do
+ActiveRecord::Schema.define(:version => 20130911081614) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -373,6 +373,9 @@ ActiveRecord::Schema.define(:version => 20130909031930) do
     t.string   "goalable_type"
     t.integer  "parent_id"
     t.string   "parent_type"
+    t.string   "title"
+    t.date     "start_date"
+    t.date     "due_date"
   end
 
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"

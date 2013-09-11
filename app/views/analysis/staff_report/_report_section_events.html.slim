@@ -1,0 +1,169 @@
+h4 Events
+.row-fluid
+  .span4
+
+      p You worked...
+ 
+      p
+        |
+          Last Month: 20 events
+          This Month: 10 events
+          This Week: 2 events
+          Next Week: 5 events
+          This Month: 20 events
+
+  .span8
+    
+
+    .cumulative-title Cumulative events completed
+
+    #events_cumulative_chart
+
+    .events-week-narrative
+    .events-weeks-title # Events per week
+    #events_week_chart
+
+- start_week = staff_report_data['first_event_at'].beginning_of_week
+- start_day = staff_report_data['first_event_at']
+- current_date = Time.zone.now.to_s(:numeric)
+javascript:
+  $('#events_cumulative_chart').highcharts({
+      chart: {
+          type: 'spline',
+          marginBottom: 80
+      },
+      credits: false,
+      colors: ['#409DC9'],
+      legend: {enabled: false},
+      title: {
+          text: null
+      },
+      xAxis: {
+          type: 'datetime',
+          labels: {
+              enabled: false
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF',
+          plotBands: [{
+              color: 'red',
+              width: 2,
+              value: Date.UTC(#{Time.now.strftime('%Y')}, #{Time.now.strftime('%m').to_i-1}, #{Time.now.strftime('%e')}),
+              color: '#BFBFBF',
+              label: {
+                  text: 'Today',
+                  verticalAlign: 'bottom',
+                  textAlign: 'left',
+                  y: 50,
+                  style: {color: '#BFBFBF'},
+                  rotation: -90
+              }
+          }]
+      },
+      yAxis: {
+          title: {
+              text: null
+          },
+          gridLineWidth: 0,
+          labels: {
+              enabled: false
+          },
+          lineWidth: 1,
+          lineColor: '#BFBFBF',
+          plotLines: [{
+              color: '#BFBFBF',
+              width: 2,
+              value: #{staff_report_data['events_goal']},
+              dashStyle: 'dash'
+          }],
+      },
+      tooltip: {
+          crosshairs: true,
+          shared: true
+      },
+      plotOptions: {
+          spline: {
+              marker: {
+                  enabled: false
+              }
+          }
+      },
+      series: [{
+          name: 'Events',
+          data: #{staff_report_data['weeks'].map{|w,v| w < current_date ? v['cumulative_approved_events'] : v['cumulative_scheduled_events']}.to_json.html_safe},
+          pointStart: Date.UTC(#{start_week.strftime('%Y')}, #{start_week.strftime('%m').to_i-1}, #{start_week.strftime('%e')}),
+          pointInterval: 24 * 3600 * 1000 * 7 // one week
+      }]
+  });
+
+  $('#events_week_chart').highcharts({
+            chart: {
+                zoomType: 'x',
+                spacingRight: 20
+            },
+            colors: ['#409DC9'],
+            credits: false,
+            title: {
+                text: null
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                    'Click and drag in the chart area to zoom in' :
+                    'Pinch the chart to zoom in'
+            },
+            xAxis: {
+                type: 'datetime',
+                maxZoom: 14 * 24 * 3600000, // fourteen days
+                title: {
+                    text: null
+                },
+                labels: {
+                    style: {color: '#BFBFBF'},
+                },
+                lineWidth: 1,
+                lineColor: '#BFBFBF',
+            },
+            yAxis: {
+                gridLineWidth: 0,
+                title: {
+                    text: null
+                },
+                labels: {
+                  enabled: false
+                },
+                lineWidth: 1,
+                lineColor: '#BFBFBF',
+            },
+            gridLineWidth: 0,
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: '#fff',
+                    lineWidth: 1,
+                    marker: {
+                        enabled: false
+                    },
+                    shadow: false,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+
+            series: [{
+                type: 'area',
+                name: 'Events',
+                pointInterval: 24 * 3600 * 1000,
+                pointStart: Date.UTC(#{start_day.strftime('%Y')}, #{start_day.strftime('%m').to_i-1}, #{start_day.strftime('%e')}),
+                data: #{staff_report_data['days'].map{|w,v| w < current_date ? v['approved_events'] : v['scheduled_events']}.to_json.html_safe}
+            }]
+        });
+

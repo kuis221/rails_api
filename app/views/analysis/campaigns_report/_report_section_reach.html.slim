@@ -4,15 +4,19 @@ h3 Reach
 
 .row-fluid
   .span8
+
+  .span4
     .reach-narrative
       = reach_narrative(data)
-  .span6
-    #gender-graph.row-fluid
-      = gender_graph(data['gender'])
-    .row-fluid
-      #age-graph
-  .span6.ethnicity
-    #ethnicity-graph
+
+  .row-fluid
+    .span6
+      #gender-graph.row-fluid
+        = gender_graph(data['gender'])
+      .row-fluid
+        #age-graph
+    .span6.ethnicity
+      #ethnicity-graph
 
 javascript:
   #{render partial: 'shared/age_graph', locals: {data: data['age'], container: '#age-graph'}}
