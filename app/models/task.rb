@@ -123,8 +123,6 @@ class Task < ActiveRecord::Base
           params[:late] = true if late.present?
         end
 
-
-
         # Handles the cases from the autocomplete
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')

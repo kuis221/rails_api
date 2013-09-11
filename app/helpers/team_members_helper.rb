@@ -5,12 +5,12 @@ module TeamMembersHelper
     def delete_member
       if member
         user = member.dup
-        if resource.users.delete(member)
+        if resource.users.destroy(member)
           users = user.id
         end
       elsif team
         team_users = team.user_ids
-        if resource.teams.delete(team)
+        if resource.teams.destroy(team)
           resource.solr_index
           assigned_users = resource.user_ids
           users = team_users - assigned_users

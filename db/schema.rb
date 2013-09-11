@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130911081614) do
+ActiveRecord::Schema.define(:version => 20130911210826) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -414,6 +414,18 @@ ActiveRecord::Schema.define(:version => 20130911081614) do
 
   add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
   add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
+
+  create_table "notifications", :force => true do |t|
+    t.integer  "company_user_id"
+    t.string   "message"
+    t.string   "level"
+    t.text     "path"
+    t.string   "icon"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
 
   create_table "placeables", :force => true do |t|
     t.integer "place_id"
