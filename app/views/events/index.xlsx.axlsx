@@ -21,7 +21,7 @@ wb.add_worksheet(name: "Events") do |sheet|
                    format_date(event.start_at, true),
                    format_time(event.start_at),
                    event.place_name,
-                   place_address(event.place, false, true),
+                   strip_tags(place_address(event.place, false, ', ')),
                    event.place.city,
                    event.place.state_name,
                    event.place.zipcode,

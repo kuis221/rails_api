@@ -1,54 +1,59 @@
 #help-modal.modal.hide.fade
   .modal-header
-    button.close aria-hidden="true" data-dismiss="modal" type="button" x
-    h3 Brandscopic Help
-  .modal-body
-    h4 FAQs
-    p List 5 of the most common FAQs that pertain to the current section/page. Below the top 5 FAQs, show a "more..." link. Clicking on any of the FAQs will open the answer to the FAQ on the desk.com support site. Clicking on the "more..." link will direct users to the full FAQ list on the desk.com support site.
+    button.close aria-hidden="true" data-dismiss="modal" type="button"
+    h3 Help
+  .modal-body.help
+    .help-item.faqs
+      .help-name FAQs
+      p List 5 of the most common FAQs that pertain to the current section/page. Below the top 5 FAQs, show a "more..." link. Clicking on any of the FAQs will open the answer to the FAQ on the desk.com support site. Clicking on the "more..." link will direct users to the full FAQ list on the desk.com support site.
 
-    h4 Overview
-    = link_to 'View Tutorial', '#', class: 'overview'
+    .help-item.overview
+      .help-name OVERVIEW
+      p View an overlay tutorial that  guides you through the interface of the current screen.
+      = link_to 'View Tutorial', '#', class: 'btn btn-primary'
 
-    h4 Live Chat
-    javascript:
-      new DESK.Widget({
-        version: 1,
-        site: 'support.brandscopic.com',
-        port: '80',
-        type: 'chat',
-        displayMode: 1,
-        features: {
-          offerAlways: false,
-          offerAgentsOnline: true,
-          offerRoutingAgentsAvailable: false,
-          offerEmailIfChatUnavailable: true
-        },
-        fields: {
-          ticket: {
-            desc: '',
-            labels_new: '',
-            priority: '',
-            subject: ''
+    .help-item
+      .help-name LIVE SUPPORT
+      p Chat live with an Account Manager.
+      = link_to 'Start a chat', '#', class: 'btn btn-chat support'
+      javascript:
+        new DESK.Widget({
+          version: 1,
+          site: 'support.brandscopic.com',
+          port: '80',
+          type: 'chat',
+          displayMode: 1,
+          features: {
+            offerAlways: false,
+            offerAgentsOnline: true,
+            offerRoutingAgentsAvailable: false,
+            offerEmailIfChatUnavailable: true
           },
-          interaction: {
-            email: '',
-            name: ''
-          },
-          chat: {
-            subject: ''
-          },
-          customer: {
-            company: '',
-            desc: '',
-            first_name: '',
-            last_name: '',
-            locale_code: '',
-            title: ''
+          fields: {
+            ticket: {
+              desc: '',
+              labels_new: '',
+              priority: '',
+              subject: ''
+            },
+            interaction: {
+              email: '',
+              name: ''
+            },
+            chat: {
+              subject: ''
+            },
+            customer: {
+              company: '',
+              desc: '',
+              first_name: '',
+              last_name: '',
+              locale_code: '',
+              title: ''
+            }
           }
-        }
-      }).render()
-  .modal-footer
-    a.btn.btn-primary href="#" aria-hidden="true" data-dismiss="modal" Close
+        }).render()
+    .modal-footer
 
 javascript:
   $('.overview').click(function(){

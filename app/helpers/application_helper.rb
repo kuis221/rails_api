@@ -1,7 +1,7 @@
 require "base64"
 
 module ApplicationHelper
-  def place_address(place, link_name = false, plain = false)
+  def place_address(place, link_name = false, line_separator = '<br />')
     if !place.nil?
       place_name = place.name
       place_city = place.city
@@ -11,6 +11,7 @@ module ApplicationHelper
         if venue.present?
           if place.name == place.city
             place_city = link_to place.city, venue_path(venue)
+            place_name = nil
           else
             place_name = link_to place.name, venue_path(venue)
           end
@@ -19,19 +20,16 @@ module ApplicationHelper
 
       address = Array.new
       city_parts = []
-      address.push place_name unless place.name == place.city
       address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
-      city_parts.push place_city if place.city
+      city_parts.push place_city if place.city && place.name != place.city
       city_parts.push place.state if place.state
       city_parts.push place.zipcode if place.zipcode
       address.push city_parts.join(', ') unless city_parts.empty? || !place.city
       address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
 
-      if plain
-        address.compact.join(', ')
-      else
-        "<address>#{address.compact.join('<br />')}</address>".html_safe
-      end
+      address_with_name = [place_name, address.compact.join(line_separator)].compact.join('<br />')
+
+      "<address>#{address_with_name}</address>".html_safe
     end
   end
 

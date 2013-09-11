@@ -6,7 +6,7 @@ li id="event_#{event.id}" class="#{event.aasm_state}#{event.in_past? && event.un
         =
         b= event.campaign_name
         br>/
-        = place_address(event.place)
+        = place_address(event.place, false, ', ')
     span.pull-right
       = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit'
       = link_to '', deactivate_event_path(event), remote: true, class: 'disable', title: 'Deactivate' if event.active?

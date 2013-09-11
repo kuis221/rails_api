@@ -28,7 +28,7 @@ class Legacy::Program  < Legacy::Record
     attributes.merge!({company_id: company.id})
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Campaign.new )
     if migration.local.new_record? || migration.local.form_fields.count == 0
-      attributes.merge!({form_fields_attributes: form_field_attributes})
+      migration.local.assign_all_global_kpis
     end
     migration.local.assign_attributes(migration_attributes.merge(attributes), without_protection: true)
     migration.save

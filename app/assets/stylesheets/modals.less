@@ -435,6 +435,17 @@ ul.select2-results{
 			font-weight: bold;
 			line-height: 23px;
 		}
+		.close, button.close:before, a.close:before{
+			content: "\e019";
+			color: @user_menu;
+		  	display: inline-block;
+		  	font-family: 'icons';
+			font-size: 14px;
+			opacity: 1 !important;
+		  	position: relative;
+			speak: none;
+			text-align: center;
+		}
 	}
 	.modal-body {
 		max-height: 800px;
@@ -444,6 +455,43 @@ ul.select2-results{
 			font-size: 22px;
 			font-weight: bold;
 		}
+		.help-item{		
+			display: block;
+			float: left;
+			height: auto;
+			width: 100%;
+			&.overview{
+				margin-bottom: 70px !important;
+			}
+			&.faqs{
+				display:none;
+			}
+			.help-name{
+				font-size: 16px;
+				font-weight: bold;
+				margin-bottom: 20px;
+			}
+			p{
+				float: left;
+				margin: 0 30px 0 0;
+				width: 250px;
+			}
+			.btn{
+				float: right;
+				height: 40px;
+				line-height: 40px;
+				padding: 0;
+				width: 120px;
+				&.btn-chat{
+					background-color: @completed;
+					color: white;
+					&:hover{
+						background-color: #7ca63a;
+					}
+				}
+			}
+		}
+
 		input[type="text"], input[type="email"], input[type="password"]{
 			background-color: white !important;
 			background-image: none !important;
