@@ -185,20 +185,38 @@ module Analysis
 
 
     def each_campaign_goal
+      event_scope = Event.scoped_by_campaign_id(@campaign).where(aasm_state: 'approved')
       goals = @campaign.goals.joins(:kpi).where(kpi_id: @campaign.active_kpis).includes(:kpi).all
-      totals = EventResult.scoped_by_campaign_id(@campaign).scoped_by_kpi_id(goals.map(&:kpi))
+      totals = event_scope.joins(:results).where(event_results:{ kpi_id: goals.map(&:kpi)})
                           .select('count(event_results.id) total_results, sum(scalar_value) as total_value, avg(scalar_value) as avg_value, event_results.kpi_id, event_results.kpis_segment_id')
                           .group('event_results.kpi_id, event_results.kpis_segment_id')
+
       goals.each do |goal|
-        data = totals.detect{|row| row.kpi_id == goal.kpi_id && row.kpis_segment_id == goal.kpis_segment_id }
-        if data.nil?
-          yield goal, 0, 100, goal.value, 0
-        else
-          if goal.kpis_segment_id.nil?
+        totals.each{|row| Rails.logger.debug "#{row.kpi_id} == #{goal.kpi_id} && #{row.kpis_segment_id.to_i} == #{goal.kpis_segment_id.to_i}" }
+        data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
+
+        if goal.kpis_segment_id.nil?
+          # Handle special kpis types
+          completed = case goal.kpi.kpi_type
+          when 'expenses'
+            event_scope.joins(:event_data).sum('event_data.spent').to_i
+          when 'promo_hours'
+            event_scope.sum('promo_hours')
+          when 'events'
+            event_scope.count
+          when 'photos'
+            AttachedAsset.photos.for_events(event_scope).count
+          else
+            data.total_value.to_i unless data.nil?
+          end
+
+          if completed.nil?
+            yield goal, 0, 100, goal.value, 0
+          else
             goal_value = goal.value || 0
-            total_count = data.total_results.to_i
-            remaining_count =  goal_value - data.total_results.to_i
-            completed_percentage = total_count * 100 / goal_value rescue 0
+            total_count = completed
+            remaining_count =  goal_value - completed
+            completed_percentage = completed * 100 / goal_value rescue 0
             remaining_percentage = 100 - completed_percentage
             yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
           end
