@@ -85,9 +85,9 @@ module Analysis
 
           # Add the total to the week
           week = date.beginning_of_week.to_s(:numeric)
-          data['weeks'][week]['approved_promo_hours']    = event_day.promo_hours.to_i  if event_day.group_recap_status == 'approved'
+          data['weeks'][week]['approved_promo_hours']   += event_day.promo_hours.to_i  if event_day.group_recap_status == 'approved'
           data['weeks'][week]['scheduled_promo_hours']  += event_day.promo_hours.to_i
-          data['weeks'][week]['approved_events']         = event_day.events_count.to_i if event_day.group_recap_status == 'approved'
+          data['weeks'][week]['approved_events']        += event_day.events_count.to_i if event_day.group_recap_status == 'approved'
           data['weeks'][week]['scheduled_events']       += event_day.events_count.to_i
 
           # Totals
@@ -109,10 +109,10 @@ module Analysis
           approved_events += values['approved_events']
           scheduled_events += values['scheduled_events']
           # Cumulative events/promo hours
-          data['weeks'][week]['cumulative_approved_promo_hours']   = approved_promo_hours
-          data['weeks'][week]['cumulative_scheduled_promo_hours']  = scheduled_promo_hours
-          data['weeks'][week]['cumulative_approved_events']        = approved_events
-          data['weeks'][week]['cumulative_scheduled_events']       = scheduled_events
+          values['cumulative_approved_promo_hours']   = approved_promo_hours
+          values['cumulative_scheduled_promo_hours']  = scheduled_promo_hours
+          values['cumulative_approved_events']        = approved_events
+          values['cumulative_scheduled_events']       = scheduled_events
         end
 
         # Avg of approved events/promo hours per week
@@ -132,16 +132,20 @@ module Analysis
         data['remaining_events'] = 0 if data['remaining_events'] < 0
         data['events_percentage'] = data['approved_events'] * 100 / expected_total if expected_total > 0
         data['events_percentage_today'] = [100, today_days * expected_total / total_days].min
-        data['expected_events_today'] = today_days * expected_total / total_days                             # How many events are expected to be completed today
-        data['events_percentage_today'] = [100, data['expected_events_today'] * 100 / expected_total].min    # and what percentage does that represents
+        if expected_total > 0
+          data['expected_events_today'] = today_days * expected_total / total_days                             # How many events are expected to be completed today
+          data['events_percentage_today'] = [100, data['expected_events_today'] * 100 / expected_total].min    # and what percentage does that represents
+        end
 
 
         data['expected_promo_hours'] = expected_total =  promo_hours_goal > 0 ? promo_hours_goal : data['scheduled_promo_hours']
         data['remaining_promo_hours'] = expected_total - data['approved_promo_hours']
         data['remaining_promo_hours'] = 0 if data['remaining_promo_hours'] < 0
         data['promo_hours_percentage'] = data['approved_promo_hours'] * 100 / expected_total if expected_total > 0
-        data['expected_promo_hours_today'] = today_days * expected_total / total_days                                  # How many promo hours are expected to be completed today
-        data['promo_hours_percentage_today'] = [100, data['expected_promo_hours_today'] * 100 / expected_total].min    # and what percentage does that represents
+        if expected_total > 0
+          data['expected_promo_hours_today'] = today_days * expected_total / total_days                                  # How many promo hours are expected to be completed today
+          data['promo_hours_percentage_today'] = [100, data['expected_promo_hours_today'] * 100 / expected_total].min    # and what percentage does that represents
+        end
 
 
         # Fetch KPIs data from Solr
@@ -174,6 +178,29 @@ module Analysis
         data['age'] = Hash[segments.map{|s| [s.text, age_results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
 
         data
+      end
+    end
+
+
+    def each_campaign_goal
+      goals = @campaign.goals.joins(:kpi).where(kpi_id: @campaign.active_kpis).includes(:kpi).all
+      totals = EventResult.scoped_by_campaign_id(@campaign).scoped_by_kpi_id(goals.map(&:kpi))
+                          .select('count(event_results.id) total_results, sum(scalar_value) as total_value, avg(scalar_value) as avg_value, event_results.kpi_id, event_results.kpis_segment_id')
+                          .group('event_results.kpi_id, event_results.kpis_segment_id')
+      goals.each do |goal|
+        data = totals.detect{|row| row.kpi_id == goal.kpi_id && row.kpis_segment_id == goal.kpis_segment_id }
+        if data.nil?
+          yield goal, 0, 100, goal.value, 0
+        else
+          if goal.kpis_segment_id.nil?
+            goal_value = goal.value || 0
+            total_count = data.total_results.to_i
+            remaining_count =  goal_value - data.total_results.to_i
+            completed_percentage = total_count * 100 / goal_value rescue 0
+            remaining_percentage = 100 - completed_percentage
+            yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
+          end
+        end
       end
     end
 

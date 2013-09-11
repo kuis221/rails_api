@@ -4626,11 +4626,56 @@ a, i{
 	}
 }
 
+.report-kpi-chart-name {
+	color: @venues_blue;
+}
+.report-kpi-chart-bar {
+	position: relative;
+	display: inline-block;
+	width: 300px;
+	margin-top: 20px;
+	.progress {
+		width: auto !important;
+		height: 25px;
+		.bar {
+			text-align: right;
+			text-shadow:none;
+			span.percentage {
+				margin-left: 10px;
+				margin-right: 10px;
+				line-height: 26px
+			}
+		}
 
-body.campaigns_report {
+		.bar-remaining {
+			color: @venues_blue;
+		}
+	}
+	span.legend {
+		position: absolute;
+		right: 0px;
+		top: -20px;
+		text-align: right;
+		color: @grey_one;
+	}
+
+	span.total {
+		position: absolute;
+		width: 100px;
+		right: -110px;
+		top: 2px;
+		color: @venues_blue;
+	}
+}
+
+body.campaigns_report, 
+body.staff_report  {
 	.tab-content {
 		overflow: visible;
 	}
+}
+
+body.campaigns_report {
 	form {
 		.help-inline {
 			display: none;
