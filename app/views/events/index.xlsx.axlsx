@@ -1,0 +1,34 @@
+wb = xlsx_package.workbook
+
+row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
+row_totals = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
+row_totals_number = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :right}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
+row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
+row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
+
+wb.add_worksheet(name: "Events") do |sheet|
+	sheet.add_row ['CAMPAIGN NAME',
+                 'START DATE',
+                 'START TIME',
+                 'VENUE NAME',
+                 'ADDRESS',
+                 'CITY',
+                 'STATE',
+                 'ZIP',
+                 'ACTIVE STATE',
+                 'EVENT STATUS'], :style => row_header
+
+  collection.each do |event|
+    sheet.add_row [event.campaign_name,
+                   format_date(event.start_at, true),
+                   format_time(event.start_at),
+                   event.place_name,
+                   place_address(event.place, false, true),
+                   event.place.city,
+                   event.place.state_name,
+                   event.place.zipcode,
+                   event.status,
+                   event.event_status],
+                  :style => row_data_text
+  end
+end

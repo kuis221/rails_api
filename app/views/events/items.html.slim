@@ -1,4 +1,5 @@
-div data-content="items" data-total="#{collection_count}" data-pages="#{total_pages}" data-page="#{params[:page] || 1}"
+div data-content="items" data-total="#{collection_count}" data-pages="#{total_pages}" data-page="#{params[:page] || 1}" data-export-xlsx="#{url_for(params.merge({action: :index, format: :xlsx}))}"
+
   = render collection
 
 - if params[:page].nil? || params[:page] == '1'

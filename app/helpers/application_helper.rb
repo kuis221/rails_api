@@ -1,7 +1,7 @@
 require "base64"
 
 module ApplicationHelper
-  def place_address(place, link_name = false)
+  def place_address(place, link_name = false, plain = false)
     if !place.nil?
       place_name = place.name
       place_city = place.city
@@ -27,7 +27,11 @@ module ApplicationHelper
       address.push city_parts.join(', ') unless city_parts.empty? || !place.city
       address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
 
-      "<address>#{address.compact.join('<br />')}</address>".html_safe
+      if plain
+        address.compact.join(', ')
+      else
+        "<address>#{address.compact.join('<br />')}</address>".html_safe
+      end
     end
   end
 
@@ -79,8 +83,16 @@ module ApplicationHelper
     the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
   end
 
-  def format_date(the_date)
-    the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+  def format_date(the_date, plain = false)
+    if plain
+      the_date.strftime('%^a %b %e') unless the_date.nil?
+    else
+      the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+    end
+  end
+
+  def format_time(the_date)
+    the_date.strftime('%l:%M %P') unless the_date.nil?
   end
 
   def format_date_range(start_at, end_at, options={})
