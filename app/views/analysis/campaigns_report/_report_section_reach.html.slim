@@ -3,6 +3,9 @@ h3 Reach
 - data = campaigns_events_data
 
 .row-fluid
+  .span8
+    .reach-narrative
+      = reach_narrative(data)
   .span6
     #gender-graph.row-fluid
       = gender_graph(data['gender'])

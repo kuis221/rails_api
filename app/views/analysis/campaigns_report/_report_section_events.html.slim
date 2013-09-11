@@ -2,20 +2,26 @@ h4 Events
 .row-fluid
   .span4
     - data = campaigns_events_data
+
+    .percentage-remaining-narrative
+      = percentage_remaining_narrative(data['events_percentage'])
     .chart-header= "#{data['remaining_events']} of #{data['expected_events'].to_i} events remaining"
     = vertical_progress_bar(data['events_percentage'], data['events_percentage_today'])
+
     .chart-title Overall Event Progress
 
   .span8
     .cumulative-narrative.cumulative-events-narrative
-      | Last week was a below average week (2 events per week). 
- 
+      | Last week was a below average week (2 events per week).
+
       p The pace of events is expected to increase in the coming weeks (average of 10 events per week). At this rate, the target number of events will be achieved by April 22nd
 
     .cumulative-title Cumulative events completed
 
     #events_cumulative_chart
 
+    .events-week-narrative
+      = events_per_week_narrative(data)
     .events-weeks-title # Events per week
     #events_week_chart
 
@@ -53,7 +59,7 @@ javascript:
                   y: 50,
                   style: {color: '#BFBFBF'},
                   rotation: -90
-              }            
+              }
           }]
       },
       yAxis: {
@@ -153,7 +159,7 @@ javascript:
                     threshold: null
                 }
             },
-    
+
             series: [{
                 type: 'area',
                 name: 'Events',
@@ -162,3 +168,4 @@ javascript:
                 data: #{data['days'].map{|w,v| w < current_date ? v['approved_events'] : v['scheduled_events']}.to_json.html_safe}
             }]
         });
+
