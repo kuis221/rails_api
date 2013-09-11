@@ -7,7 +7,7 @@ module Analysis
 
     def campaigns_events_data
       @campaign_data ||= begin
-        data = add_events_promo_hours_info_to(data)
+        data = load_events_and_promo_hours_data
 
         return data if @campaign.first_event_at.nil?
 

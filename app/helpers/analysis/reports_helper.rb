@@ -10,7 +10,7 @@ module Analysis
     #  This methods fetchs all the statistics for events/promo hours used on the reports
     #  for the campaigns and staff sections
     #
-    def add_events_promo_hours_info_to( data )
+    def load_events_and_promo_hours_data
 
       events_goal      = @goals.detect{|g| g.kpi_id == Kpi.events.id      }.try(:value) || 0
       promo_hours_goal = @goals.detect{|g| g.kpi_id == Kpi.promo_hours.id }.try(:value) || 0
@@ -44,12 +44,12 @@ module Analysis
       }
 
       # Find the first and last event on scope
-      result = @events_scope.select('min(start_at) as start_at, max(start_at) as end_at').first
+      result = @events_scope.select('min(start_at) as first_event_at, max(start_at) as last_event_at, count(events.id) as qty_events').first
 
-      return if result.nil?
+      return data if result.nil? || result.qty_events == 0
 
-      first_event_at = result.start_at
-      last_event_at = result.end_at
+      data['first_event_at'] = first_event_at = Timeliness.parse(result.first_event_at, zone: :current)
+      data['last_event_at'] = last_event_at  = Timeliness.parse(result.last_event_at, zone: :current).end_of_day
 
       # Initialize the weeks array
       date = first_event_at.beginning_of_week
@@ -130,6 +130,8 @@ module Analysis
       # Compute current and expectation percentages
       total_days = ((last_event_at  - first_event_at).to_i / 86400).round
       today_days = ((Time.zone.now  - first_event_at).to_i / 86400).round
+
+      total_days = 1 if total_days == 0
 
       data['expected_events'] = expected_total =  events_goal > 0 ? events_goal : data['scheduled_events']
       data['remaining_events'] = expected_total - data['approved_events']
