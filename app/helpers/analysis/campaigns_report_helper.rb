@@ -76,7 +76,7 @@ module Analysis
         weeks_with_approved_events = 0
         previous_week = nil
         scope.each do |event_day|
-          date = Timeliness.parse(event_day.event_start)
+          date = Timeliness.parse(event_day.event_start, zone: :current)
           day = date.to_s(:numeric)
           data['days'][day]['approved_promo_hours']   = event_day.promo_hours.to_i  if event_day.group_recap_status == 'approved'
           data['days'][day]['scheduled_promo_hours'] += event_day.promo_hours.to_i
@@ -118,9 +118,11 @@ module Analysis
         # Avg of approved events/promo hours per week
         data['approved_events_week_avg'] = data['weeks'].values.sum{|v| v['approved_events']}
         data['approved_promo_hours_week_avg']  = data['weeks'].values.sum{|v| v['approved_promo_hours']}
-        if data['weeks'].has_key?(Time.zone.now.to_s(:numeric))
-          data['approved_events_this_week'] = data['weeks'][Time.zone.now.to_s(:numeric)]['approved_events']
-          data['approved_promo_hours_this_week'] = data['weeks'][Time.zone.now.to_s(:numeric)]['approved_promo_hours']
+
+        this_week = Time.zone.now.beginning_of_week.to_s(:numeric)
+        if data['weeks'].has_key?(this_week)
+          data['approved_events_this_week'] = data['weeks'][this_week]['approved_events']
+          data['approved_promo_hours_this_week'] = data['weeks'][this_week]['approved_promo_hours']
         end
 
         # Compute current and expectation percentages
@@ -195,7 +197,6 @@ module Analysis
       end
     end
 
-
     def vertical_progress_bar(complete, today)
       complete = 1 if complete < 1 and complete > 0
       content_tag(:div, class: 'vertical-progress') do
@@ -206,5 +207,84 @@ module Analysis
         content_tag(:div, '', class: 'today-line-indicator', style: "bottom: #{today.to_i}%")
       end
     end
+
+    def percentage_remaining_narrative(complete)
+      if complete.present?
+        if complete < 90
+          "This campaign is behind track. You have currently run #{complete.round}% of your target number of events."
+        elsif complete >= 90
+          "This campaign is approximately on track. You have currently run #{complete.round}% of your target number of events."
+        elsif complete > 110
+          "This campaign is ahead of track. You have currently run #{complete.round}% of your target number of events."
+        elsif complete == 100
+          "You have reached the target number of events."
+        end
+      end
+    end
+
+    def events_per_week_narrative(data)
+      approved_events_this_week = data['approved_events_this_week']
+      approved_events_week_avg = data['approved_events_week_avg']
+      if approved_events_this_week.present? && approved_events_week_avg.present?
+        lower_percentage_events = approved_events_week_avg - (approved_events_week_avg * 0.10)
+        upper_percentage_events = approved_events_week_avg + (approved_events_week_avg * 0.10)
+
+        if approved_events_this_week < lower_percentage_events
+          "You have completed #{approved_events_this_week} events this week. This is below average for this campaign."
+        elsif approved_events_this_week >= lower_percentage_events && approved_events_this_week <= upper_percentage_events
+          "You have completed #{approved_events_this_week} events this week. This is about average for this campaign."
+        elsif approved_events_this_week > upper_percentage_events
+          "You have completed #{approved_events_this_week} events this week. This is above average for this campaign."
+        end
+      end
+    end
+
+    def promo_hours_per_week_narrative(data)
+      approved_promo_hours_this_week = data['approved_promo_hours_this_week']
+      approved_promo_hours_week_avg = data['approved_promo_hours_week_avg']
+      if approved_promo_hours_this_week.present? && approved_promo_hours_week_avg.present?
+        lower_percentage_promo = approved_promo_hours_week_avg - (approved_promo_hours_week_avg * 0.10)
+        upper_percentage_promo = approved_promo_hours_week_avg + (approved_promo_hours_week_avg * 0.10)
+
+        if approved_promo_hours_this_week < lower_percentage_promo
+          "You have completed #{approved_promo_hours_this_week} promo hours this week. This is below average for this campaign."
+        elsif approved_promo_hours_this_week >= lower_percentage_promo && approved_events_this_week <= upper_percentage_promo
+          "You have completed #{approved_promo_hours_this_week} promo hours this week. This is about average for this campaign."
+        elsif approved_promo_hours_this_week > upper_percentage_promo
+          "You have completed #{approved_promo_hours_this_week} promo hours this week. This is above average for this campaign."
+        end
+      end
+    end
+
+    def reach_narrative(data)
+      max_ethnicity = data['ethnicity'].max_by{|k,v| v}.first
+      max_age = data['age'].max_by{|k,v| v}.first
+      max_gender = data['gender'].max_by{|k,v| v}.first
+
+      "The audience primarily was #{max_ethnicity}, #{max_age}, #{max_gender}"
+    end
+
+    # def awareness_narrative(statistics)
+    #   if statistics.present?
+    #     output = []
+    #     i = 0
+    #     statistics.each do |type, value|
+    #       value.sort{|hash_a,hash_b| hash_a[:avg] <=> hash_b[:avg]}
+    #       Rails.logger.debug value
+    #       output[i] = "[Brand] was the #{type} most likely brand to be purchased in field surveys with X% of consumers highly likely to purchase"
+    #       i += 1
+    #     end
+    #     #     Rails.logger.debug value.inspect
+    #     #   end
+    #     # statistics.each_with_index do |data, index|
+    #     #   Rails.logger.debug data.inspect
+    #     #   data.each do |field, value|
+    #     #     Rails.logger.debug value.inspect
+    #     #   end
+    #     #   output[index] = "[Brand] was the #{index} most likely brand to be purchased in field surveys with X% of consumers highly likely to purchase"
+    #     # end
+    #     output.join('<br/>').html_safe
+    #   end
+    # end
 	end
 end
