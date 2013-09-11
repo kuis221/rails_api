@@ -1,0 +1,24 @@
+= simple_form_for([parent, resource], remote: true) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      = f.input :title
+
+    .row-fluid
+      = f.input :kpi_id, collection: Kpi.not_segmented.global_and_custom(current_company), input_html: {class: 'chosen-enabled'}
+
+    .row-fluid
+      = f.input :value
+
+    .row-fluid
+      .span6
+        = f.input :start_date, :as => :date_picker
+
+      .span6
+        = f.input :due_date, :as => :date_picker
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

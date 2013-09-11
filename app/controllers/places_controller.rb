@@ -23,7 +23,7 @@ class PlacesController < FilteredController
         longitude = data['results'].first['geometry']['location']['lng']
         if latitude.present? && longitude.present?
           api_client = GooglePlaces::Client.new(GOOGLE_API_KEY)
-          spots = api_client.spots(latitude, longitude, keyword: "#{params[:place][:name]} #{params[:place][:street_number]}", :radius => 50000)
+          spots = api_client.spots(latitude, longitude, keyword: "#{params[:place][:name]} #{params[:place][:street_number]}", :radius => 1000)
 
           # If no spots for the data received, we include it in Google
           if spots.empty?

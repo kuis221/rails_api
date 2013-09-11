@@ -1,34 +1,33 @@
-h4 Promo Hours
+h4 Events
 .row-fluid
   .span4
-    - data = campaigns_events_data
 
-    .percentage-remaining-narrative
-      = percentage_remaining_narrative(data['promo_hours_percentage'])
-    .chart-header= "#{data['remaining_promo_hours']} of #{data['expected_promo_hours'].to_i} promo hours remaining"
-    = vertical_progress_bar(data['promo_hours_percentage'], data['promo_hours_percentage_today'])
-    .chart-title Overall Event Progress
+      p You worked...
+ 
+      p
+        |
+          Last Month: 20 events
+          This Month: 10 events
+          This Week: 2 events
+          Next Week: 5 events
+          This Month: 20 events
 
   .span8
-    .cumulative-narrative.cumulative-events-narrative
-      | Last week was a below average week (2 events per week).
+    
 
-      p The pace of events is expected to increase in the coming weeks (average of 10 events per week). At this rate, the target number of events will be achieved by April 22nd
+    .cumulative-title Cumulative events completed
 
-    .cumulative-title Cumulative promo hours
-
-    #promo_hours_cumulative_chart
+    #events_cumulative_chart
 
     .events-week-narrative
-      = promo_hours_per_week_narrative(data)
-    .promo-hours-weeks-title Promo hours per week
-    #promo_hours_week_chart
+    .events-weeks-title # Events per week
+    #events_week_chart
 
-- start_week = @campaign.first_event_at.beginning_of_week
-- start_day = @campaign.first_event_at
+- start_week = staff_report_data['first_event_at'].beginning_of_week
+- start_day = staff_report_data['first_event_at']
 - current_date = Time.zone.now.to_s(:numeric)
 javascript:
-  $('#promo_hours_cumulative_chart').highcharts({
+  $('#events_cumulative_chart').highcharts({
       chart: {
           type: 'spline',
           marginBottom: 80
@@ -74,7 +73,7 @@ javascript:
           plotLines: [{
               color: '#BFBFBF',
               width: 2,
-              value: #{data['promo_hours_goal']},
+              value: #{staff_report_data['events_goal']},
               dashStyle: 'dash'
           }],
       },
@@ -90,14 +89,14 @@ javascript:
           }
       },
       series: [{
-          name: 'Promo Hours',
-          data: #{data['weeks'].map{|w,v| w < current_date ? v['cumulative_approved_promo_hours'].round : v['cumulative_scheduled_promo_hours'].round}.to_json.html_safe},
+          name: 'Events',
+          data: #{staff_report_data['weeks'].map{|w,v| w < current_date ? v['cumulative_approved_events'] : v['cumulative_scheduled_events']}.to_json.html_safe},
           pointStart: Date.UTC(#{start_week.strftime('%Y')}, #{start_week.strftime('%m').to_i-1}, #{start_week.strftime('%e')}),
           pointInterval: 24 * 3600 * 1000 * 7 // one week
       }]
   });
 
-  $('#promo_hours_week_chart').highcharts({
+  $('#events_week_chart').highcharts({
             chart: {
                 zoomType: 'x',
                 spacingRight: 20
@@ -161,9 +160,10 @@ javascript:
 
             series: [{
                 type: 'area',
-                name: 'Promo Hours',
+                name: 'Events',
                 pointInterval: 24 * 3600 * 1000,
                 pointStart: Date.UTC(#{start_day.strftime('%Y')}, #{start_day.strftime('%m').to_i-1}, #{start_day.strftime('%e')}),
-                data: #{data['days'].map{|w,v| w < current_date ? v['approved_promo_hours'] : v['scheduled_promo_hours']}.to_json.html_safe}
+                data: #{staff_report_data['days'].map{|w,v| w < current_date ? v['approved_events'] : v['scheduled_events']}.to_json.html_safe}
             }]
         });
+

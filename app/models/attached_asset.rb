@@ -30,6 +30,9 @@ class AttachedAsset < ActiveRecord::Base
   }})
   attr_accessible :file, :asset_type, :direct_upload_url
 
+  scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
+  scope :photos, lambda{ where(asset_type: 'photo') }
+
 
   validate :valid_file_format?
 

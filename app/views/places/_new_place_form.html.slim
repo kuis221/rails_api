@@ -11,7 +11,7 @@ br>/
     .row-fluid
       = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, :autofocus => true
     .row-fluid
-      = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}
+      = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}, required: true
     .row-fluid
       = f.input :street_number, label: 'Address', input_html: {class: 'input-xxlarge'}, required: true
     .row-fluid
@@ -20,12 +20,12 @@ br>/
       .span6
         = f.input :city, input_html: {class: 'input-large'}, required: true
       .span6
-        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
+        = f.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}, required: true
     .row-fluid.users
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
       .span6
-        = f.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
+        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
 
     = hidden_field_tag :add_new_place, 'true'
 

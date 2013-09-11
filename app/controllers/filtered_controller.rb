@@ -107,8 +107,8 @@ class FilteredController < InheritedResources::Base
     end
 
 
-    def build_brands_bucket(campaings)
-      campaigns_counts = Hash[campaings.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
+    def build_brands_bucket(campaigns)
+      campaigns_counts = Hash[campaigns.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
       brands = {}
       Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
         campaing_brands = Hash[campaign.brands.map{|b| [b.id, {label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]}] }]

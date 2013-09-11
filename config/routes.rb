@@ -50,6 +50,9 @@ Brandscopic::Application.routes.draw do
   namespace :analysis do
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'
+
+    get :staff_report, to: 'staff_report#index'
+    post :staff_report, to: 'staff_report#report'
   end
 
   # This couple of routes are for tasks
@@ -86,6 +89,7 @@ Brandscopic::Application.routes.draw do
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
     get :event, via: :get, on: :collection # List of users by event
+    resources :goals, only: [:create, :update, :edit, :new]
     resources :tasks do
       member do
         get :deactivate
