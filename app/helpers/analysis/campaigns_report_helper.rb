@@ -132,7 +132,7 @@ module Analysis
         data['remaining_events'] = 0 if data['remaining_events'] < 0
         data['events_percentage'] = data['approved_events'] * 100 / expected_total if expected_total > 0
         data['events_percentage_today'] = [100, today_days * expected_total / total_days].min
-        if expected_total > 0
+        if expected_total > 0 && total_days > 0
           data['expected_events_today'] = today_days * expected_total / total_days                             # How many events are expected to be completed today
           data['events_percentage_today'] = [100, data['expected_events_today'] * 100 / expected_total].min    # and what percentage does that represents
         end
@@ -142,8 +142,8 @@ module Analysis
         data['remaining_promo_hours'] = expected_total - data['approved_promo_hours']
         data['remaining_promo_hours'] = 0 if data['remaining_promo_hours'] < 0
         data['promo_hours_percentage'] = data['approved_promo_hours'] * 100 / expected_total if expected_total > 0
-        if expected_total > 0
-          data['expected_promo_hours_today'] = today_days * expected_total / total_days                                  # How many promo hours are expected to be completed today
+        if expected_total > 0 && total_days > 0
+          data['expected_promo_hours_today'] = today_days * expected_total / total_days                                   # How many promo hours are expected to be completed today
           data['promo_hours_percentage_today'] = [100, data['expected_promo_hours_today'] * 100 / expected_total].min    # and what percentage does that represents
         end
 
