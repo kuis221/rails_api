@@ -1,0 +1,16 @@
+= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+
+#list-view.tab-pane.active
+  .details_box
+
+    = simple_form_for :report, url: analysis_staff_report_path, remote: true do |f|
+      = f.input_field :user_id, collection: @users, wrapper: false, class: 'chosen-enabled no-validate'
+
+#report-container
+
+javascript:
+  $('#report_user_id').on('change', function(e){
+    if ( $(this).val() ){
+      $(this.form).submit();
+    }
+  });
