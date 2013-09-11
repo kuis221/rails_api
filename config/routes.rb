@@ -89,6 +89,7 @@ Brandscopic::Application.routes.draw do
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
     get :event, via: :get, on: :collection # List of users by event
+    resources :goals, only: [:create, :update, :edit, :new]
     resources :tasks do
       member do
         get :deactivate

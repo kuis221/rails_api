@@ -1,12 +1,14 @@
 class Analysis::StaffReportController < ApplicationController
-  before_filter :company_user, only: :report
-  authorize_resource :campaign, only: :report
+  before_filter :company_user, except: :index
+  authorize_resource :campaign, except: :index
 
   def index
-    @users = current_company.company_users.joins(:user).accessible_by(current_ability).order('users.first_name ASC')
+    @users = current_company.company_users.joins(:user).order('users.first_name ASC')
   end
 
   def report
+     @events_scope = Event.with_user_in_team(company_user).where(aasm_state: 'approved')
+     @goals = company_user.goals.base.includes(:kpi).all
   end
 
   private

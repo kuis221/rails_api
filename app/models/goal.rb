@@ -12,6 +12,9 @@
 #  goalable_type   :string(255)
 #  parent_id       :integer
 #  parent_type     :string(255)
+#  title           :string(255)
+#  start_date      :date
+#  due_date        :date
 #
 
 class Goal < ActiveRecord::Base
@@ -19,7 +22,7 @@ class Goal < ActiveRecord::Base
   belongs_to :parent, polymorphic: true
   belongs_to :kpi
   belongs_to :kpis_segment
-  attr_accessible :value, :goalable_id, :goalable_type, :parent_id, :parent_type, :kpi_id, :kpis_segment_id
+  attr_accessible :value, :goalable_id, :goalable_type, :parent_id, :parent_type, :kpi_id, :kpis_segment_id, :title, :start_date, :due_date
 
 
   validate :goalable_id, presence: true, numericality: true

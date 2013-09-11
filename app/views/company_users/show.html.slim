@@ -36,6 +36,11 @@
   /     = render 'members'
   /   = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
 
+  .details_box
+    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary'
+    #resource-goals-list.link-list
+      = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+
 javascript:
   $(document).on('company_users:change', function(){
     window.location.reload(false);

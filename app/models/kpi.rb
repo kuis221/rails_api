@@ -53,6 +53,7 @@ class Kpi < ActiveRecord::Base
   scope :custom, lambda{|company| scoped_by_company_id(company) }
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
+  scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
 
   after_save :sync_segments_and_goals
 
