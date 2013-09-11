@@ -45,23 +45,12 @@ module Legacy
         batch_size = 20
         total = program.events.count
         while counter < total
-          self.delay.process_events_group_for_program(program_id, counter, batch_size)
-          Resque.enqueue(PogramMigrationWorker, program_id, counter, batch_size)
+          Resque.enqueue(ProgramMigrationWorker, program_id, counter, batch_size)
           counter += batch_size
         end
       end
     end
 
-    def self.process_events_group_for_program(program_id, offset, limit)
-      User.current ||= company.company_users.order('id asc').first.user
-      program = Legacy::Program.find(program_id)
-      campaign = program.sincronize(company).local
-      Legacy::Event.where(program_id: program_id).order('id asc').limit(limit).offset(offset).each do |legacy_event|
-        migration = legacy_event.sincronize(company, {campaign_id: campaign.id})
-        p migration.local.errors.inspect if migration.local.errors.any?
-        p "LevacyEvent[#{legacy_event.id}] => Event[#{migration.local.id}]"
-      end
-    end
 
     def self.api_client
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
