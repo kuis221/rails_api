@@ -23,6 +23,7 @@ class EventResult < ActiveRecord::Base
   before_save :set_scalar_value
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
+  scope :for_approved_events, lambda{ joins(:event).where(events: {aasm_state: 'approved'}) }
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
   scope :scoped_by_campaign_id, lambda{|campaigns| joins(:form_field).where(campaign_form_fields: {campaign_id: campaigns}) }
   scope :impressions, lambda{ where(kpi_id: Kpi.impressions) }

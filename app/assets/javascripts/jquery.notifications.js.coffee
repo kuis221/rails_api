@@ -19,13 +19,13 @@ $.widget 'nmk.notifications', {
 		if alerts.length > 0
 			@element.addClass('has-notifications')
 		@list.html('')
-		hasCritical = false
-		hasInfo = false
-		hasWarning = false
+		hasRed = false
+		hasBlue = false
+		hasGrey = false
 		for alert in alerts
-			if alert.level is 'critical' then hasCritical = true
-			if alert.level is 'info' then hasInfo = true
-			if alert.level is 'warning' then hasWarning = true
+			if alert.level is 'red' then hasRed = true
+			if alert.level is 'blue' then hasBlue = true
+			if alert.level is 'grey' then hasGrey = true
 
 			@list.append(
 				$('<li>').addClass(alert.level + (if alert.unread then ' new' else '')).append(
@@ -37,7 +37,7 @@ $.widget 'nmk.notifications', {
 				)
 			)
 
-		if hasCritical then @element.addClass('has-critical-notifications')
-		if hasCritical then @element.addClass('has-info-notifications')
-		if hasCritical then @element.addClass('has-warning-notifications')
+		if hasRed then @element.addClass('has-red-notifications')
+		if hasBlue then @element.addClass('has-blue-notifications')
+		if hasGrey then @element.addClass('has-grey-notifications')
 }

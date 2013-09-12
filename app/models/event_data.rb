@@ -32,6 +32,7 @@ class EventData < ActiveRecord::Base
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
   scope :scoped_by_campaign_id, lambda{|campaigns| joins(:event).where(events: {campaign_id: campaigns}) }
+  scope :for_approved_events, lambda{ joins(:event).where(events: {aasm_state: 'approved'}) }
 
   def update_data
     results = EventResult.scoped_by_event_id(event_id)
