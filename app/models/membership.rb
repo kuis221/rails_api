@@ -16,7 +16,10 @@ class Membership < ActiveRecord::Base
   # attr_accessible :title, :body
 
   after_create :create_notifications
+  after_create :update_tasks
+
   after_destroy :delete_notifications
+  after_destroy :update_tasks
 
   private
     def create_notifications
@@ -28,6 +31,12 @@ class Membership < ActiveRecord::Base
     def delete_notifications
       if memberable_type == 'Campaign'
         company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).delete_all
+      end
+    end
+
+    def update_tasks
+      if memberable_type == 'Event'
+        Sunspot.index(memberable.tasks)
       end
     end
 end

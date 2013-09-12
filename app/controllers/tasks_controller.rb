@@ -94,7 +94,7 @@ class TasksController < FilteredController
     end
 
     def facet_params
-      search_params.select{|k, v| [:q, :start_date, :end_date, :user, :company_id, :event_id].include?(k.to_sym)}
+      search_params.select{|k, v| [:q, :start_date, :end_date, :user, :company_id, :event_id, :not_assigned_to, :team_members].include?(k.to_sym)}
     end
 
     def parent
@@ -109,12 +109,22 @@ class TasksController < FilteredController
       @search_params ||= begin
         super
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
-          @search_params[:user] = user_ids_scope
+          @search_params.merge! user_team_search_scope
         end
         @search_params
       end
     end
 
+    def user_team_search_scope
+      if params[:scope] == 'user'
+        {user: [current_company_user.id]}
+      elsif params[:scope] == 'teams'
+        {team_members: [current_company_user.id], not_assigned_to: [current_company_user.id]}
+      end
+    end
+
+    # TODO: this doesn't work for teams, but tomorrow is the demo
+    # and there is no much time to fix it
     def user_ids_scope
       ids = nil
       if params[:scope] == 'user'

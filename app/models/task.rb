@@ -49,6 +49,10 @@ class Task < ActiveRecord::Base
     integer :event_id
     integer :company_id
 
+    integer :team_members, multiple: true do
+      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id)  }.flatten.uniq
+    end
+
     integer :campaign_id
     string :campaign do
       campaign_id.to_s + '||' + campaign_name.to_s if campaign_id
@@ -113,8 +117,10 @@ class Task < ActiveRecord::Base
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
+        with :team_members, params[:team_members] if params.has_key?(:team_members) and params[:team_members]
 
         with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: params[:team]}).map(&:id) if params.has_key?(:team) and !params[:team].empty?
+        without :company_user_id, params[:not_assigned_to] if params.has_key?(:not_assigned_to) and !params[:not_assigned_to].empty?
 
         if params.has_key?(:status) and params[:status]
           late = params[:status].delete('Late')
