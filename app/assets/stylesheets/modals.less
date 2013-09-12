@@ -455,6 +455,29 @@ ul.select2-results{
 			font-size: 22px;
 			font-weight: bold;
 		}
+		.new_kpi, .edit_kpi{
+			input[type="text"]#kpi_name, textarea{
+				width: 387px;
+			}
+			input[type="number"]{
+				background-color: white !important;
+				border:1px solid @user_menu !important;
+				margin-right: 0 !important;
+				margin-top: 3px !important;
+				width: 386px;
+			}
+			.chzn-container-single{
+				.chzn-results{
+					margin: 0 0 4px 0;
+				}
+				.chzn-drop{
+					width: 400px !important;
+				}
+				.chzn-single{
+					width: 390px;
+				}
+			}
+		}
 		.help-item{		
 			display: block;
 			float: left;
@@ -465,6 +488,9 @@ ul.select2-results{
 			}
 			&.faqs{
 				display:none;
+			}
+			.assistly-widget{
+				float: right;
 			}
 			.help-name{
 				font-size: 16px;
@@ -485,6 +511,7 @@ ul.select2-results{
 				&.btn-chat{
 					background-color: @completed;
 					color: white;
+					display: none;
 					&:hover{
 						background-color: #7ca63a;
 					}

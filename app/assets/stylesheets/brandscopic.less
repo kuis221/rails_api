@@ -1436,6 +1436,18 @@ ul.kpis-list{
   		margin:0;
   		li{
   			color: @text;
+  			&.assigned > span.task-list {
+  				border-left: 5px solid @assigned;
+  			}
+  			&.completed > span.task-list {
+  				border-left: 5px solid @completed;
+  			}
+  			&.late > span.task-list {
+  				border-left: 5px solid @buttons;
+  			}
+  			&.unassigned > span.task-list {
+  				border-left: 5px solid @unassigned;
+  			}
   		}
     }
     .empty-list-message {
@@ -1547,6 +1559,7 @@ ul.kpis-list{
 	ul#my-tasks-list{
 		li{
 			.task-list{
+				height: 63px;
 				padding: 20px 0 0 0;
 				width: 100%;
 				span{
@@ -2390,6 +2403,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		vertical-align: middle;
 	}
 	.box_metrics{
+		margin-top: 50px;
 		width: 400px;
 	}
 
@@ -2400,7 +2414,9 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		width: 390px;
 		&.pull-right{
 			margin-top: 10px;
-			width:162px;
+			.metric{
+				float: right;
+			}
 		}
 		li {
 			list-style: none;
@@ -2977,6 +2993,10 @@ ul.thumbnails{
 			display: block;
 		}
 	}
+}
+
+.fancybox-overlay{
+	background-color: rgba(0, 0, 0, .8) !important;
 }
 
 .fancybox-close{
@@ -3800,6 +3820,16 @@ svg{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
 	        border-radius: 0px 7px 7px 7px;
+	        .chzn-container-single{
+				.chzn-single{
+					height: 38px !important;
+					padding-top: 3px;
+					width: 365px !important;
+				}
+				.chzn-drop{
+					width: 374px !important;
+				}
+			}
 	    }
         .chzn-container-single{
 			.chzn-search input{
@@ -3841,8 +3871,23 @@ svg{
 	border-radius: 7px;
 	.box_report{
 		margin-bottom: 90px;
+		p.big{
+			margin-bottom: 25px;
+		}
+		.span4{
+			p{
+				line-height: 28px;
+			}
+		}
 		.span6.description{
 			margin-top: 22px;
+		}
+		.worked_events{
+			color: @venues_blue;
+			font-size: 11px;
+			.number{
+				font-size: 16px;
+			}
 		}
 	}
 	.event-comments-list{
@@ -3905,6 +3950,9 @@ svg{
 		a.edit:after {
 			color: #989898;
 			top: 0;
+		}
+		.summary-content{
+			margin-bottom: 50px;
 		}
 	}
 	.box_event_data{
@@ -4744,7 +4792,7 @@ body.staff_report  {
 	}
 }
 
-body.campaigns_report {
+body.campaigns_report, body.staff_report {
 	form {
 		.help-inline {
 			display: none;
@@ -4787,6 +4835,7 @@ body.campaigns_report {
 
 	.cumulative-narrative{
 		margin-bottom: 40px;
+		margin-top: 3px;
 		width: 450px;
 	}
 
@@ -4847,6 +4896,7 @@ body.campaigns_report {
 
 .tooltip-inner{
     background-color:@grey_three;
+    opacity: 1;
 }
 
 .tooltip.top .tooltip-arrow{

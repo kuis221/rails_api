@@ -72,8 +72,8 @@ en:
     recaps_prending_approval: 
       one: "There is one event recap that is pending approval"
       other: "There are %{count} event recaps that are pending approval"
-    unread_tasks_comments_user: "Your task <i>%{task}</i> has a new comment"
-    unread_tasks_comments_team: "Your team's task <i>%{task}</i> has a new comment"
+    unread_tasks_comments_user: "Your task %{task} has a new comment"
+    unread_tasks_comments_team: "Your team's task %{task} has a new comment"
     new_campaign: "You have a new campaign"
 
   modals:

@@ -11,4 +11,15 @@
 class Teaming < ActiveRecord::Base
   belongs_to :team
   belongs_to :teamable, polymorphic: true
+
+
+  after_create :update_tasks
+
+  after_destroy :update_tasks
+
+  def update_tasks
+    if teamable_type == 'Event'
+      Sunspot.index(teamable.tasks)
+    end
+  end
 end
