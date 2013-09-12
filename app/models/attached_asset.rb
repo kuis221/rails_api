@@ -199,6 +199,7 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
+    tries ||= 5
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
@@ -213,6 +214,14 @@ class AttachedAsset < ActiveRecord::Base
     save
 
     s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
+  rescue AWS::S3::Errors::RequestTimeout
+    tries -= 1
+    if tries > 0
+      sleep(3)
+      retry
+    else
+      false
+    end
   end
 
   protected

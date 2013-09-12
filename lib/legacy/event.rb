@@ -39,9 +39,9 @@ class Legacy::Event < Legacy::Record
     migration.local.place = account_migration.local
     migration.local.place.is_custom_place = true if account_migration.local.present? and account_migration.local.place_id.nil?
     if migration.save
-      event_recap_attributes(migration.local)
-      migration.local.save
-      #synch_photos(migration.local)
+      #event_recap_attributes(migration.local)
+      #migration.local.save
+      synch_photos(migration.local)
     end
 
     migration
