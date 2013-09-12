@@ -58,7 +58,9 @@ class Event < ActiveRecord::Base
   scope :active, lambda{ where(active: true) }
   scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
-  scope :with_user_in_team, lambda{|user| joins(:teamings, :memberships).where('teamings.team_id in (?) OR memberships.company_user_id IN (?)', user.teams, user) }
+  scope :with_user_in_team, lambda{|user|
+    joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
+    where('t.team_id in (?) OR m.company_user_id IN (?)', user.teams, user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
 
   track_who_does_it

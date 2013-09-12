@@ -7,7 +7,7 @@
   = f.input :description, :input_html => {:rows => 1}
 
 .row-fluid
-  = f.input :kpi_type, input_html: {class: 'input-medium'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
+  = f.input :kpi_type, input_html: {class: 'input-medium chosen-enabled'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
 
 #kpisegment-fields.row-fluid style="display: none"
   - goals = @campaign.goals.for_kpis_segments(resource)
@@ -32,4 +32,4 @@
     = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}
 
 .row-fluid
-  = f.input :capture_mechanism, as: :select, input_html: {class: 'input-medium'}, collection: resource.kpi_type.blank? ? [] : Kpi::CUSTOM_TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}
+  = f.input :capture_mechanism, as: :select, input_html: {class: 'input-medium chosen-enabled'}, collection: resource.kpi_type.blank? ? [] : Kpi::CUSTOM_TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}
