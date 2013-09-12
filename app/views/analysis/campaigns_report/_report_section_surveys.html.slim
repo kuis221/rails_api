@@ -6,7 +6,7 @@
       #question-1-graph.survey-chart
     .span6.pull-right
       .survey-chart-narrative
-          | Both Bushmills and Tullamore Dew are less well known than Jameson.
+        = awareness_narrative(@campaign.survey_statistics['question_1'])
 .box_report
   .row-fluid
     p.big
@@ -15,7 +15,7 @@
       #question-3-graph.survey-chart
     .span6.pull-right
       .survey-chart-narrative
-          | Both Bushmills and Tullamore Dew are less well known than Jameson.
+          = conversion_narrative(@campaign.survey_statistics['question_3'])
 .box_report
   .row-fluid
     p.big
@@ -24,7 +24,6 @@
       #question-4-graph.survey-chart
     .span6.pull-right
       .survey-chart-narrative
-          | Both Bushmills and Tullamore Dew are less well known than Jameson.
 
 
 = render partial: 'shared/survey_graph', locals: {question_id: 1, series: series_question_1(@campaign.survey_brands, @campaign.survey_statistics['question_1']), brands: @campaign.survey_brands}

@@ -11,7 +11,6 @@ module Analysis
     #  for the campaigns and staff sections
     #
     def load_events_and_promo_hours_data
-
       events_goal      = @goals.detect{|g| g.kpi_id == Kpi.events.id      }.try(:value) || 0
       promo_hours_goal = @goals.detect{|g| g.kpi_id == Kpi.promo_hours.id }.try(:value) || 0
 
@@ -46,8 +45,9 @@ module Analysis
       # Find the first and last event on scope
       result = @events_scope.select('min(start_at) as first_event_at, max(start_at) as last_event_at, count(events.id) as qty_events').first
 
-      return data if result.nil? || result.qty_events == 0
+      return data if result.nil? || result.first_event_at.nil? || result.first_event_at.empty? || result.qty_events == 0
 
+      Rails.logger.debug "first_event_at=> #{result.first_event_at} last_event_at => #{result.last_event_at}"
       data['first_event_at'] = first_event_at = Timeliness.parse(result.first_event_at, zone: :current)
       data['last_event_at'] = last_event_at  = Timeliness.parse(result.last_event_at, zone: :current).end_of_day
 
@@ -176,7 +176,7 @@ module Analysis
             goal_scope.joins(:event_data).sum('event_data.spent').to_i
           when 'promo_hours'
             goal_scope.sum('promo_hours')
-          when 'events'
+          when 'events_count'
             goal_scope.count
           when 'photos'
             AttachedAsset.photos.for_events(goal_scope).count
@@ -189,7 +189,7 @@ module Analysis
             else
               data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
             end
-            Rails.logger.debug "data ==> #{data.inspect}"
+
             data.total_value.to_i unless data.nil?
           end
 

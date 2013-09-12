@@ -58,23 +58,23 @@ module Analysis
       end
     end
 
-    def percentage_remaining_narrative(complete)
+    def percentage_remaining_narrative(complete, required_progress, metric)
       if complete.present?
-        if complete < 90
-          "This campaign is behind track. You have currently run #{complete.round}% of your target number of events."
-        elsif complete >= 90
-          "This campaign is approximately on track. You have currently run #{complete.round}% of your target number of events."
-        elsif complete > 110
-          "This campaign is ahead of track. You have currently run #{complete.round}% of your target number of events."
-        elsif complete == 100
-          "You have reached the target number of events."
+        if complete < (required_progress * 0.9)
+          "This campaign is behind track. You have currently run #{complete.round}% of your target number of #{metric}."
+        elsif complete >= (required_progress * 0.9)
+          "This campaign is approximately on track. You have currently run #{complete.round}% of your target number of #{metric}."
+        elsif complete > (required_progress * 1.1)
+          "This campaign is ahead of track. You have currently run #{complete.round}% of your target number of #{metric}."
+        elsif complete >= 100
+          "You have reached the target number of #{metric}."
         end
       end
     end
 
     def events_per_week_narrative(data)
-      approved_events_this_week = data['approved_events_this_week']
-      approved_events_week_avg = data['approved_events_week_avg']
+      approved_events_this_week = data['approved_events_this_week'] || 0
+      approved_events_week_avg = data['approved_events_week_avg'] || 0
       if approved_events_this_week.present? && approved_events_week_avg.present?
         lower_percentage_events = approved_events_week_avg - (approved_events_week_avg * 0.10)
         upper_percentage_events = approved_events_week_avg + (approved_events_week_avg * 0.10)
@@ -90,15 +90,15 @@ module Analysis
     end
 
     def promo_hours_per_week_narrative(data)
-      approved_promo_hours_this_week = data['approved_promo_hours_this_week']
-      approved_promo_hours_week_avg = data['approved_promo_hours_week_avg']
+      approved_promo_hours_this_week = data['approved_promo_hours_this_week'] || 0
+      approved_promo_hours_week_avg = data['approved_promo_hours_week_avg']   || 0
       if approved_promo_hours_this_week.present? && approved_promo_hours_week_avg.present?
         lower_percentage_promo = approved_promo_hours_week_avg - (approved_promo_hours_week_avg * 0.10)
         upper_percentage_promo = approved_promo_hours_week_avg + (approved_promo_hours_week_avg * 0.10)
 
         if approved_promo_hours_this_week < lower_percentage_promo
           "You have completed #{approved_promo_hours_this_week} promo hours this week. This is below average for this campaign."
-        elsif approved_promo_hours_this_week >= lower_percentage_promo && approved_events_this_week <= upper_percentage_promo
+        elsif approved_promo_hours_this_week >= lower_percentage_promo && approved_promo_hours_this_week <= upper_percentage_promo
           "You have completed #{approved_promo_hours_this_week} promo hours this week. This is about average for this campaign."
         elsif approved_promo_hours_this_week > upper_percentage_promo
           "You have completed #{approved_promo_hours_this_week} promo hours this week. This is above average for this campaign."
@@ -107,34 +107,41 @@ module Analysis
     end
 
     def reach_narrative(data)
-      max_ethnicity = data['ethnicity'].max_by{|k,v| v}.first
-      max_age = data['age'].max_by{|k,v| v}.first
-      max_gender = data['gender'].max_by{|k,v| v}.first
+      max_ethnicity = max_age = max_gender = nil
+      max_ethnicity = data['ethnicity'].max_by{|k,v| v}.first   if data['ethnicity'].values.max > 0
+      max_age = data['age'].max_by{|k,v| v}.first               if data['age'].values.max > 0
+      max_gender = data['gender'].max_by{|k,v| v}.first         if data['gender'].values.max > 0
 
-      "The audience primarily was #{max_ethnicity}, #{max_age}, #{max_gender}"
+      values = [max_ethnicity, max_age, max_gender].compact
+      if values.any?
+        "The audience primarily was #{values.join(', ')}"
+      end
     end
 
-    # def awareness_narrative(statistics)
-    #   if statistics.present?
-    #     output = []
-    #     i = 0
-    #     statistics.each do |type, value|
-    #       value.sort{|hash_a,hash_b| hash_a[:avg] <=> hash_b[:avg]}
-    #       Rails.logger.debug value
-    #       output[i] = "[Brand] was the #{type} most likely brand to be purchased in field surveys with X% of consumers highly likely to purchase"
-    #       i += 1
-    #     end
-    #     #     Rails.logger.debug value.inspect
-    #     #   end
-    #     # statistics.each_with_index do |data, index|
-    #     #   Rails.logger.debug data.inspect
-    #     #   data.each do |field, value|
-    #     #     Rails.logger.debug value.inspect
-    #     #   end
-    #     #   output[index] = "[Brand] was the #{index} most likely brand to be purchased in field surveys with X% of consumers highly likely to purchase"
-    #     # end
-    #     output.join('<br/>').html_safe
-    #   end
-    # end
+    def awareness_narrative(statistics)
+      if statistics.present? && statistics['aware'].present?
+        i = -1
+        rankings = ['first', 'second', 'third', 'fourth', 'fifth']
+        statistics['aware'].sort_by{|brand, data| -data[:avg] }.map do |k, v|
+          "#{k} was the #{rankings[i+=1]} most recognized brand in field surveys with #{v[:avg]}% of the population aware"
+        end.join('<br />').html_safe
+      end
+    end
+
+    def conversion_narrative(statistics)
+      i = -1
+      rankings = ['first', 'second', 'third', 'fourth', 'fifth']
+      if statistics.present? && statistics['5'].present? && statistics['5'].any?
+        statistics['5'].sort_by{|brand, data| -data[:avg] }.map do |k, v|
+          "#{k} was the #{rankings[i+=1]} most likely brand to be purchased in field surveys with #{v[:avg]}% of consumers highly likely to purchase"
+        end.join('<br />').html_safe
+      elsif statistics.present? && statistics['4'].present? && statistics['4'].any?
+        statistics['4'].sort_by{|brand, data| -data[:avg] }.map do |k, v|
+          "#{k} was the #{rankings[i+=1]} most likely brand to be purchased in field surveys with #{v[:avg]}% of consumers likely to purchase"
+        end.join('<br />').html_safe
+      end
+    end
+
+
 	end
 end

@@ -22,5 +22,5 @@
               = number_to_currency(goal.value, precision: 2)
             - else
               = number_with_delimiter(goal.value.round)
-      .span6.description.pull-right % of totals distributed
+      .span6.description.pull-right #{completed_percentage.round}% completed
 

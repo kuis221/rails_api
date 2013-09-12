@@ -1,3 +1,4 @@
+- data = staff_report_data
 .box_report
   p.big
    b Events
@@ -6,28 +7,28 @@
       p
         | Last Month: 
         span.worked_events 
-          span.number 20 
+          span.number #{data['events_last_month']} 
           | EVENTS
         br
         | This Month: 
         span.worked_events 
-          span.number 10 
+          span.number #{data['events_this_month']}  
           | EVENTS
         br
         | This Week: 
         span.worked_events 
-          span.number 2 
+          span.number #{data['events_this_week']}  
           | EVENTS
         br  
         | Next Week: 
         span.worked_events 
-          span.number 5 
+          span.number #{data['events_next_week']}  
           | EVENTS
 
     .span8
-      .cumulative-narrative.cumulative-events-narrative
-        | Last week was a below average week (2 events per week).
-        p The pace of events is expected to increase in the coming weeeks (avarage of 10 events per week). At this rate the targer number of events will be achieved by April 22nd
+      / .cumulative-narrative.cumulative-events-narrative
+      /   | Last week was a below average week (2 events per week).
+      /   p The pace of events is expected to increase in the coming weeeks (avarage of 10 events per week). At this rate the targer number of events will be achieved by April 22nd
       
 
       .cumulative-title Cumulative events completed

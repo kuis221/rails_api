@@ -6,23 +6,20 @@
       - data = campaigns_events_data
 
       .percentage-remaining-narrative
-        = percentage_remaining_narrative(data['promo_hours_percentage'])
+        = percentage_remaining_narrative(data['promo_hours_percentage'], data['promo_hours_percentage_today'], 'promo hours')
       .chart-header= "#{data['remaining_promo_hours']} of #{data['expected_promo_hours'].to_i} promo hours remaining"
       = vertical_progress_bar(data['promo_hours_percentage'], data['promo_hours_percentage_today'])
       .chart-title Promo hours progress
 
     .span7.pull-right
       .cumulative-narrative.cumulative-events-narrative
-        | Last week was a below average week (2 events per week).
-
-        p The pace of events is expected to increase in the coming weeks (average of 10 events per week). At this rate, the target number of events will be achieved by April 22nd
+        = promo_hours_per_week_narrative(data)
 
       .cumulative-title Cumulative promo hours
 
       #promo_hours_cumulative_chart
 
-      .events-week-narrative
-        = promo_hours_per_week_narrative(data)
+
       .promo-hours-weeks-title Promo hours per week
       #promo_hours_week_chart
 
