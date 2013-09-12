@@ -1,7 +1,7 @@
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
 
 #list-view.tab-pane.active
-  .details_box
+  .details_box.first
 
     = simple_form_for :report, url: analysis_staff_report_path, remote: true do |f|
       = f.input_field :user_id, collection: @users, wrapper: false, class: 'chosen-enabled no-validate'

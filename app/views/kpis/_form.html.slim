@@ -8,7 +8,7 @@
     - else
       = render partial: 'custom', locals: { f: f }
 
-  .form-actions.pull-right
+  .form-actions.pull-left
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'
