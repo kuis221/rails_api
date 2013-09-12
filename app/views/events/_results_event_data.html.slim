@@ -37,19 +37,6 @@
               = " Spent"
             = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
 
-          - if active_kpis.include?(Kpi.photos)
-            - photo_count = resource.photos.count
-            li
-              div.metric
-                span= photo_count
-                = " Photos"
-              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
-
-          li
-            div.metric
-              span= surveys_count = resource.surveys.count
-              = " Surveys"
-            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
       ul.consumer-reach-metrics.pull-right
         - if event_data.spent.present? && event_data.impressions > 0
           li
@@ -68,6 +55,20 @@
             div.metric
               span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
               = " / Sample"
+      ul.consumer-reach-metrics.pull-right
+          - if active_kpis.include?(Kpi.photos)
+            - photo_count = resource.photos.count
+            li
+              div.metric
+                span= photo_count
+                = " Photos"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
+
+            li
+              div.metric
+                span= surveys_count = resource.surveys.count
+                = " Surveys"
+              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
 
 - if event_data
   .row-fluid
