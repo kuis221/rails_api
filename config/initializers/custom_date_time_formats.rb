@@ -14,6 +14,7 @@
 })
 
 ::Date::DATE_FORMATS.merge!({
+  :slashes => "%m/%d/%Y",
   :default => '%m/%d/%Y',
   :year_month => '%Y-%m',
   :numeric => "%Y%m%d"

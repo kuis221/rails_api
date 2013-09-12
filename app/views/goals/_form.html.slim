@@ -13,10 +13,10 @@
 
     .row-fluid
       .span6
-        = f.input :start_date, :as => :date_picker
+        = f.input :start_date, as: :date_picker, input_html: {value: resource.start_date.try(:to_s, :slashes)}
 
       .span6
-        = f.input :due_date, :as => :date_picker
+        = f.input :due_date, as: :date_picker, input_html: {value: resource.due_date.try(:to_s, :slashes)}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
