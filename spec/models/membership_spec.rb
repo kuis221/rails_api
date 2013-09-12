@@ -13,5 +13,21 @@
 require 'spec_helper'
 
 describe Membership do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "new campaign notification" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:user) { FactoryGirl.create(:company_user) }
+
+    it "should generate a new notification" do
+      expect {
+        campaign.users << user
+      }.to change(Notification, :count).by(1)
+    end
+
+    it "should generate a new notification" do
+      campaign.users << user
+      expect {
+        campaign.users.destroy(user)
+      }.to change(Notification, :count).by(-1)
+    end
+  end
 end

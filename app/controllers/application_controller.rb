@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user!
   before_filter :set_user_company
   after_filter :update_user_last_activity
+  after_filter :remove_viewed_notification
 
   before_filter :set_timezone
 
@@ -70,5 +71,11 @@ class ApplicationController < ActionController::Base
 
     def modal_dialog_title
       I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
+    end
+
+    def remove_viewed_notification
+      if params[:notifid]
+        current_company_user.notifications.find(params[:notifid]).destroy
+      end
     end
 end

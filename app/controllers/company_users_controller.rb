@@ -87,15 +87,19 @@ class CompanyUsersController < FilteredController
 
 
     # Unread comments in user's tasks
-    tasks = Task.where(id: Comment.not_from(user).for_tasks_assigned_to(user).unread_by(user.user).select('commentable_id')).all
+    tasks = Task.where(id: Comment.not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).select('commentable_id')).all
     tasks.each do |task|
       alerts.push({message: I18n.translate('notifications.unread_tasks_comments_user', task: task.title), level: 'info', url: mine_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"), unread: true, icon: 'icon-notification-comment'})
     end
 
     # Unread comments in user teams' tasks
-    tasks = Task.where(id: Comment.not_from(user).for_tasks_assigned_to(user.find_users_in_my_teams).unread_by(user.user).select('commentable_id')).all
+    tasks = Task.where(id: Comment.not_from(user.user).for_tasks_assigned_to(user.find_users_in_my_teams).unread_by(user.user).select('commentable_id')).all
     tasks.each do |task|
       alerts.push({message: I18n.translate('notifications.unread_tasks_comments_team', task: task.title), level: 'info', url: my_teams_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"), unread: true, icon: 'icon-notification-comment'})
+    end
+
+    current_company_user.notifications.each do |notification|
+      alerts.push({message: I18n.translate("notifications.#{notification.message}"), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
     end
 
     render json: alerts
