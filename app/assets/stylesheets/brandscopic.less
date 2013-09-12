@@ -1436,6 +1436,18 @@ ul.kpis-list{
   		margin:0;
   		li{
   			color: @text;
+  			&.assigned > span.task-list {
+  				border-left: 5px solid @assigned;
+  			}
+  			&.completed > span.task-list {
+  				border-left: 5px solid @completed;
+  			}
+  			&.late > span.task-list {
+  				border-left: 5px solid @buttons;
+  			}
+  			&.unassigned > span.task-list {
+  				border-left: 5px solid @unassigned;
+  			}
   		}
     }
     .empty-list-message {
@@ -1547,6 +1559,7 @@ ul.kpis-list{
 	ul#my-tasks-list{
 		li{
 			.task-list{
+				height: 63px;
 				padding: 20px 0 0 0;
 				width: 100%;
 				span{
