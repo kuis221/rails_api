@@ -10,7 +10,7 @@
 	font-weight: normal;
 	font-style: normal;
 }
-
+ 
 @font-face {
 	font-family: 'rabioheadregular';
 	src: url('/assets/font/rabiohead-webfont.eot');
@@ -1223,7 +1223,7 @@ li#notifications{
 				padding: 14px 10px 10px 10px;
 				background-color: #fff;
 				border-top: 1px solid @borders;
-				min-height: 25px;
+				min-height: 38px;
 
 				&:first-child{
 					border:0;
@@ -1239,6 +1239,11 @@ li#notifications{
 					border-left: 5px solid @alert_grey;
 				}
 
+				.alert-message{
+					display: inline-block;;
+					width: 182px;
+				}
+
 				&:hover{
 					background-color: @app_bg;
 					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
@@ -1251,14 +1256,19 @@ li#notifications{
 					color: @text;
 					font-size: 11px;
 					i{
+						float: left;
 						margin-left: 4px;
 						margin-right: 13px;
+						margin-top: 4%;
 						&.icon-angle-right{
 							float: right;
-							left: 14px;
-							margin-top: 8px;
+							left: 12px;
+							margin-top: 7px;
 							margin-right: 0;
-							position: relative;		
+							position: relative;
+							&:before{
+								font-size: 22px !important;
+							}		
 						}
 					}
 					&:hover{
@@ -3783,6 +3793,28 @@ svg{
 	}
 }
 
+// ANALYSIS
+
+.campaigns_report, .snapshot_report, .staff_report{
+	.details_box{
+		&.first{
+			-webkit-border-radius: 0px 7px 7px 7px;
+	        border-radius: 0px 7px 7px 7px;
+	    }
+        .chzn-container-single{
+			.chzn-search input{
+				bottom:12px;
+			}
+			.chzn-results{
+				margin: 0 0 4px 0;
+			}
+        }
+	}
+	.nav-tabs li a{
+		width: 130px;
+	}
+}
+
 // CAMPAIGNS - TABS
 
 .campaigns_box{
@@ -3796,6 +3828,7 @@ svg{
     	margin: 70px 0 10px 0; 
     }
 }
+
 // DETAILS PAGES
 
 .details_box{
@@ -3806,6 +3839,12 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.box_report{
+		margin-bottom: 90px;
+		.span6.description{
+			margin-top: 22px;
+		}
+	}
 	.event-comments-list{
 		margin-bottom: 20px;
 		width: 600px;
@@ -4638,6 +4677,9 @@ a, i{
 
 .report-kpi-chart-name {
 	color: @venues_blue;
+	float: left;
+	margin-top: 22px;
+	width:85px;
 }
 .report-kpi-chart-bar {
 	position: relative;
@@ -4666,7 +4708,7 @@ a, i{
 		right: 0px;
 		top: -20px;
 		text-align: right;
-		color: @grey_one;
+		color: @user_menu;
 	}
 
 	span.total {
@@ -4710,11 +4752,17 @@ body.campaigns_report {
 	}
 	.vertical-progress {
 		width: 80px !important;
-		height: 240px;
+		height: 455px !important;
+		margin-top: 20px;
+		margin-left: 89px;
 		position: relative;
 		.progress {
 			height: 100%;
 			width: 80px !important;
+			.bar{
+				line-height: 40px;
+				text-shadow:none;
+			}
 		}
 		.today-line-indicator {
 			position: absolute;
@@ -4726,6 +4774,25 @@ body.campaigns_report {
 		}
 	}
 
+	.chart-header{
+		color: @user_menu;
+		margin-top: 40px;
+		text-align: center;
+	}
+
+	.chart-title{
+		clear: both;
+		text-align: center;
+	}
+
+	.cumulative-narrative{
+		margin-bottom: 40px;
+		width: 450px;
+	}
+
+	.cumulative-title{
+		margin-bottom: 30px;
+	}
 
 	.survey-chart {
 		width: 500px;

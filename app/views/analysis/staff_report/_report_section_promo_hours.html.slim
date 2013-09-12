@@ -1,4 +1,5 @@
-h4 Promo Hours
+p.big 
+ b Promo Hours
 .row-fluid
   .span4
     - data = campaigns_events_data
@@ -7,7 +8,7 @@ h4 Promo Hours
       = percentage_remaining_narrative(data['promo_hours_percentage'])
     .chart-header= "#{data['remaining_promo_hours']} of #{data['expected_promo_hours'].to_i} promo hours remaining"
     = vertical_progress_bar(data['promo_hours_percentage'], data['promo_hours_percentage_today'])
-    .chart-title Overall Event Progress
+    .chart-title Promo hours progress
 
   .span8
     .cumulative-narrative.cumulative-events-narrative
