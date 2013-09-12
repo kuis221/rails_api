@@ -12,7 +12,7 @@
     = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary', :id => 'new-event-btn'}
 
   .text-right
-    #download-excel-btn.a.btn.download
+    a.btn.download.xlsx-download-link href="#{events_path(format:"xlsx")}" title="Download"
     #toggle-events-view.btn-group
       a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
       a.btn.map href="#map-view" data-toggle="tab" title="Map View"
@@ -47,6 +47,7 @@ javascript:
       if (response.find('div[data-content="filters-description"]').length > 0){
         $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
       }
+      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
     }
   });
 

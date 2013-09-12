@@ -185,7 +185,7 @@ class Venue < ActiveRecord::Base
 
     # First let the DB to do the math for the events that starts and ends the same day... (the easy part)
     tz = Time.zone.now.strftime('%Z')
-    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours, sum(event_data.impressions) as impressions, sum(event_data.spent) as cost, EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}') AS weekday")
+    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}') AS weekday")
          .joins(:event_data)
          .group("EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}')")
          .where(place_id: place_id, company_id: company_id)
@@ -194,11 +194,10 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data[:cost_impression] = Hash[(0..6).map{|i|[i, 0]}]
     event_counts = Hash[(0..6).map{|i|[i, 0]}]
     stats_by_day.each do |s|
-      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions.to_f / s.promo_hours.to_f if s.promo_hours.to_f > 0
-      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions.to_f if s.impressions.to_f > 0
+      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions_sum.to_f / s.promo_hours_sum.to_f if s.promo_hours_sum.to_f > 0
+      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions_sum.to_f if s.impressions_sum.to_f > 0
       event_counts[(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.counting.to_i
     end
-
 
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
     events = Event.select('events.*, event_data.impressions, event_data.spent').where(place_id: place_id, company_id: company_id)

@@ -1,10 +1,12 @@
-.results-expenses
-	h3 EXPENSES
+#event-expenses-container
+  h3 EXPENSES
 
-	.link-list
-	  ul#expenses-list
-	    = render resource.event_expenses
-	    li.total-expenses
-	      span Total
-	      span
-	        b= number_to_currency(resource.event_expenses.sum(&:amount), precision: 2)
+  = link_to 'Add Expense', new_event_event_expense_path(resource), remote: true, class: 'btn btn-primary'
+
+  .link-list
+    ul#expenses-list
+      = render resource.event_expenses
+      li.total-expenses
+        span Total
+        span
+          b= number_to_currency(resource.event_expenses.sum(&:amount), precision: 2)

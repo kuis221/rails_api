@@ -85,7 +85,7 @@ class Event < ActiveRecord::Base
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
-  delegate :impressions,:interactions,:samples,:spent,:gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
+  delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
     state :unsent, :initial => true

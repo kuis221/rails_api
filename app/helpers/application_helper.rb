@@ -81,8 +81,16 @@ module ApplicationHelper
     the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
   end
 
-  def format_date(the_date)
-    the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+  def format_date(the_date, plain = false)
+    if plain
+      the_date.strftime('%^a %b %e') unless the_date.nil?
+    else
+      the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+    end
+  end
+
+  def format_time(the_date)
+    the_date.strftime('%l:%M %P') unless the_date.nil?
   end
 
   def format_date_range(start_at, end_at, options={})
