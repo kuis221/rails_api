@@ -41,7 +41,7 @@ class Legacy::Event < Legacy::Record
     if migration.save
       event_recap_attributes(migration.local)
       migration.local.save
-      synch_photos(migration.local)
+      #synch_photos(migration.local)
     end
 
     migration
