@@ -209,8 +209,12 @@ class Event < ActiveRecord::Base
     start_at > Time.now
   end
 
+  def is_late?
+    end_at.to_date <= (2.days.ago).to_date
+  end
+
   def happens_today?
-    start_at.to_date <= Date.today  && end_at.to_date >= Date.today
+    start_at.to_date <= Date.today && end_at.to_date >= Date.today
   end
 
   def was_yesterday?

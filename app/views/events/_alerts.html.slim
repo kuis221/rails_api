@@ -28,7 +28,7 @@
     - if resource.in_past?
       == " Once complete, please #{submit_link} your post event form."
 
-- elsif resource.was_yesterday? and resource.unsent?
+- elsif !resource.is_late? and resource.unsent?
   .alert.alert-grey
     - links = []
     - links.push '<a href="#event-results-form" class="smooth-scroll">post event data</a>'

@@ -1,4 +1,4 @@
-li id="event_#{event.id}" class="#{event.aasm_state}#{event.in_past? && event.unsent? ? ' late' : '' }"
+li id="event_#{event.id}" class="#{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
   span.event-item
     a href="#{event_path(event)}"
       span.date= format_date_range(event.start_at, event.end_at)
