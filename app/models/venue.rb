@@ -185,11 +185,11 @@ class Venue < ActiveRecord::Base
 
     # First let the DB to do the math for the events that starts and ends the same day... (the easy part)
     tz = Time.zone.now.strftime('%Z')
-    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}') AS weekday")
+    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}') AS weekday")
          .joins(:event_data)
-         .group("EXTRACT(DOW FROM events.start_at AT TIME ZONE '#{tz}')")
+         .group("EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}')")
          .where(place_id: place_id, company_id: company_id)
-         .where(["date_trunc('day',start_at AT TIME ZONE ?) = date_trunc('day',end_at AT TIME ZONE ?)", tz, tz])
+         .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) = date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
     @overall_graphs_data[:impressions_promo] = Hash[(0..6).map{|i|[i, 0]}]
     @overall_graphs_data[:cost_impression] = Hash[(0..6).map{|i|[i, 0]}]
     event_counts = Hash[(0..6).map{|i|[i, 0]}]
@@ -202,7 +202,7 @@ class Venue < ActiveRecord::Base
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
     events = Event.select('events.*, event_data.impressions, event_data.spent').where(place_id: place_id, company_id: company_id)
          .joins(:event_data)
-         .where(["date_trunc('day',start_at AT TIME ZONE ?) <> date_trunc('day',end_at AT TIME ZONE ?)", tz, tz])
+         .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) <> date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
     events.each do |e|
       (e.start_at.to_date..e.end_at.to_date).each do |day|
         wday = (day.wday == 0 ? 6 : day.wday-1)
