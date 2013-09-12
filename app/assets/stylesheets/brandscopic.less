@@ -44,9 +44,9 @@
 @submitted:#3e9ccf;
 @approved:#90bf43;
 @rejected:#de4d43;
-@alert_critical: #de4d43;
-@alert_warning: #3e9ccf;
-@alert_info: #90bf43;
+@alert_red: #de4d43;
+@alert_blue: #3e9ccf;
+@alert_grey: #7a7a7a;
 
 /*-- FONT FAMILY STYLES --*/
 @baseFontFamily:'Lato', sans-serif;
@@ -1186,14 +1186,14 @@ li#notifications{
 		.dropdown-toggle { color:  #fff; }
 	}
 
-	&.has-info-notifications {
-		.dropdown-toggle { background-color:  @alert_info; }
+	&.has-grey-notifications {
+		.dropdown-toggle { background-color:  @alert_grey; }
 	}
-	&.has-warning-notifications {
-		.dropdown-toggle { background-color:  @alert_warning; }
+	&.has-blue-notifications {
+		.dropdown-toggle { background-color:  @alert_blue; }
 	}
-	&.has-critical-notifications {
-		.dropdown-toggle { background-color: @alert_critical; }
+	&.has-red-notifications {
+		.dropdown-toggle { background-color: @alert_red; }
 	}
 
 	.dropdown-menu{
@@ -1229,14 +1229,14 @@ li#notifications{
 					border:0;
 				}
 
-				&.critical {
-					border-left: 5px solid @alert_critical;
+				&.red {
+					border-left: 5px solid @alert_red;
 				}
-				&.warning {
-					border-left: 5px solid @alert_warning;
+				&.blue {
+					border-left: 5px solid @alert_blue;
 				}
-				&.info {
-					border-left: 5px solid @alert_info;
+				&.grey {
+					border-left: 5px solid @alert_grey;
 				}
 
 				&:hover{

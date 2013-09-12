@@ -5,6 +5,16 @@ class Results::EventDataController < FilteredController
 
   helper_method :data_totals
 
+  def index
+    if request.format.xlsx?
+      collection
+      ids = @solr_search.hits.map{|hit| hit.primary_key}
+      @data_scope = EventData.joins(event: :campaign).select('campaigns.name as campaign_name, events.promo_hours, event_data.*').where(events: {id: ids})
+    else
+      super
+    end
+  end
+
   private
     def search_params
       @search_params ||= begin
