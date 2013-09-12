@@ -1,9 +1,10 @@
-require 'legacy'
 
 class ProgramMigrationWorker
   @queue = :migration
 
   def self.perform(program_id, offset, limit)
+    require 'legacy'
+
     company = Company.find_by_name('Legacy Marketing Partners')
     User.current = company.company_users.order('id asc').first.user
     program = Legacy::Program.find(program_id)
