@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :kpis_segment do
-    kpi nil
-    text "MyString"
+    kpi_id nil
+    text "Kpi Segment Description"
   end
 end
