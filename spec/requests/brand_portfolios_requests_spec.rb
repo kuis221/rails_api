@@ -47,10 +47,10 @@ describe "BrandPortfolios", js: true, search: true do
           # First Row
           within("li:nth-child(1)") do
             click_js_link('Deactivate')
-            page.should have_selector('a', text: 'Activate')
+            page.should have_selector('a.enable', text: '')
 
             click_js_link('Activate')
-            page.should have_selector('a', text: 'Deactivate')
+            page.should have_selector('a.disable', text: '')
           end
         end
       end
@@ -60,17 +60,17 @@ describe "BrandPortfolios", js: true, search: true do
     it 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_link('Create a brand portfolio')
+      click_link('New Brand portfolio')
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'
         fill_in 'Description', with: 'new portfolio description'
-        click_button 'Create Brand portfolio'
+        click_button 'Create'
       end
 
       find('h2', text: 'new portfolio name') # Wait for the page to load
       page.should have_selector('h2', text: 'new portfolio name')
-      page.should have_selector('div.brand_portfolio-description', text: 'new portfolio description')
+      page.should have_selector('div.description-data', text: 'new portfolio description')
     end
   end
 
@@ -79,7 +79,7 @@ describe "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       visit brand_portfolio_path(portfolio)
       page.should have_selector('h2', text: 'Some Brand Portfolio')
-      page.should have_selector('div.brand_portfolio-description', text: 'a portfolio description')
+      page.should have_selector('div.description-data', text: 'a portfolio description')
     end
 
     it 'diplays a table of brands within the brand portfolio' do
@@ -87,31 +87,27 @@ describe "BrandPortfolios", js: true, search: true do
       brands = [FactoryGirl.create(:brand, name: 'Brand 1'), FactoryGirl.create(:brand, name: 'Brand 2')]
       brands.map {|b| portfolio.brands << b }
       visit brand_portfolio_path(portfolio)
-      within('table#brand_portfolio-brands') do
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(brands[0].name)
-          find('td:nth-child(2)').should have_content('Remove')
+      within('#brands-list') do
+        within("div.brand:nth-child(1)") do
+          page.should have_content('Brand 1')
+          page.should have_selector('a.remove-brand-btn', visible: :false)
         end
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(brands[1].name)
-          find('td:nth-child(2)').should have_content('Remove')
+        within("div.brand:nth-child(2)") do
+          page.should have_content('Brand 2')
+          page.should have_selector('a.remove-brand-btn', visible: :false)
         end
       end
-
     end
 
     it 'allows the user to activate/deactivate a portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
-      within('.active-deactive-toggle') do
-        page.should have_selector('a.btn-success.active', text: 'Active')
-        page.should have_selector('a', text: 'Inactive')
-        page.should_not have_selector('a.btn-danger', text: 'Inactive')
+      within('.links-data') do
+        click_link('Deactivate')
+        page.should have_selector('a.toggle-active')
 
-        click_link('Inactive')
-        page.should have_selector('a.btn-danger.active', text: 'Inactive')
-        page.should have_selector('a', text: 'Active')
-        page.should_not have_selector('a.btn-success', text: 'Active')
+        click_link('Activate')
+        page.should have_selector('a.toggle-inactive')
       end
     end
 
@@ -124,13 +120,12 @@ describe "BrandPortfolios", js: true, search: true do
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
         fill_in 'Description', with: 'edited portfolio description'
-        click_button 'Update Brand portfolio'
+        click_button 'Save'
       end
 
-      sleep(1) # Wait on second to avoid a strange error
       find('h2', text: 'edited portfolio name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited portfolio name')
-      page.should have_selector('div.brand_portfolio-description', text: 'edited portfolio description')
+      page.should have_selector('div.description-data', text: 'edited portfolio description')
     end
 
     it 'allows the user to add brands to the portfolio' do
@@ -138,18 +133,18 @@ describe "BrandPortfolios", js: true, search: true do
       brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 
-      click_link('Add Brand')
+      click_js_link 'Add Brand'
 
-      within("table#select-brands-list") do
+      within visible_modal do
         page.should have_content('Guaro Cacique')
         click_js_link 'Add'
       end
 
       # Make sure the new brand was added to the portfolio
-      within('table#brand_portfolio-brands') do
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content('Guaro Cacique')
-          find('td:nth-child(2)').should have_content('Remove')
+      within "#brands-list" do
+        within("div.brand") do
+          page.should have_content('Guaro Cacique')
+          page.should have_selector('a.remove-brand-btn', visible: :false)
         end
       end
 
@@ -158,16 +153,14 @@ describe "BrandPortfolios", js: true, search: true do
       end
 
       within visible_modal do
-        fill_in('Name', with: 'Ron Centenario')
-        click_js_button('Create Brand')
+        fill_in('brand[name]', with: 'Ron Centenario')
+        click_js_button('Create')
       end
 
       # Make sure the new brand was added to the portfolio
-      within('table#brand_portfolio-brands') do
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content('Ron Centenario')
-          find('td:nth-child(2)').should have_content('Remove')
-        end
+      within("#brands-list div.brand:nth-child(2)") do
+        page.should have_content('Ron Centenario')
+        page.should have_selector('a.remove-brand-btn', visible: :false)
       end
 
     end

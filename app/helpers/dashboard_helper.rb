@@ -92,18 +92,20 @@ module DashboardHelper
   end
 
   def kpi_trend_chart_bar(kpi)
-    totals = kpi_trends_stats(kpi)
-    content_tag(:div, class: 'chart-bar') do
-      content_tag(:div, '', class: 'today-line-indicator', style: "left: #{totals[:today_percentage]}%") +
-      content_tag(:div, class: 'progress') do
-        content_tag(:div, class: 'bar has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:completed]) : number_with_delimiter(totals[:completed])} completed", style: "width: #{[100, totals[:completed_percentage]].min}%;") do
-          content_tag(:span, "#{totals[:completed_percentage]}%", class: :percentage)
+    unless kpi.nil?
+      totals = kpi_trends_stats(kpi)
+      content_tag(:div, class: 'chart-bar') do
+        content_tag(:div, '', class: 'today-line-indicator', style: "left: #{totals[:today_percentage]}%") +
+        content_tag(:div, class: 'progress') do
+          content_tag(:div, class: 'bar has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:completed]) : number_with_delimiter(totals[:completed])} completed", style: "width: #{[100, totals[:completed_percentage]].min}%;") do
+            content_tag(:span, "#{totals[:completed_percentage]}%", class: :percentage)
+          end +
+          content_tag(:div, class: 'bar bar-remaining has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:remaining]) : number_with_delimiter(totals[:remaining])} remaining", style: "width: #{totals[:remaining_percentage]}%;") do
+            content_tag(:span, "#{totals[:remaining_percentage]}%", class: :percentage)
+          end
         end +
-        content_tag(:div, class: 'bar bar-remaining has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:remaining]) : number_with_delimiter(totals[:remaining])} remaining", style: "width: #{totals[:remaining_percentage]}%;") do
-          content_tag(:span, "#{totals[:remaining_percentage]}%", class: :percentage)
-        end
-      end +
-      content_tag(:span, kpi.currency? ? number_to_currency(totals[:goal]) : number_with_delimiter(totals[:goal]), class: :total)
+        content_tag(:span, kpi.currency? ? number_to_currency(totals[:goal]) : number_with_delimiter(totals[:goal]), class: :total)
+      end
     end
   end
 

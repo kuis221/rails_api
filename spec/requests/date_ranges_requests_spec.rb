@@ -101,7 +101,6 @@ describe "DateRanges", search: true, js: true do
         fill_in 'Description', with: 'edited date range description'
         click_button 'Save'
       end
-      sleep(1) # Wait on second to avoid a strange error
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       page.should have_selector('h2', text: 'edited date range name')
       page.should have_selector('div.description-data', text: 'edited date range description')
@@ -122,7 +121,6 @@ describe "DateRanges", search: true, js: true do
 
       within("#date_range-dates") do
         click_js_link('Remove')
-        sleep(1)
         page.should_not have_content('Remove')
       end
 

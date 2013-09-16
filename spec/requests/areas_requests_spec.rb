@@ -22,22 +22,20 @@ describe "Areas", js: true, search: true do
       Sunspot.commit
       visit areas_path
 
-      within("table#areas-list") do
+      within("#areas-list") do
         # First Row
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content(areas[0].name)
-          find('td:nth-child(2)').should have_content(areas[0].description)
-          find('td:nth-child(3)').should have_content('Active')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Deactivate')
+        within("li#area_#{areas[0].id}") do
+          page.should have_content('Gran Area Metropolitana')
+          page.should have_content('Ciudades principales de Costa Rica')
+          page.should have_selector('a.edit')
+          page.should have_selector('a.disable')
         end
         # Second Row
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content(areas[1].name)
-          find('td:nth-child(2)').should have_content(areas[1].description)
-          find('td:nth-child(3)').should have_content('Active')
-          find('td:nth-child(4)').should have_content('Edit')
-          find('td:nth-child(4)').should have_content('Deactivate')
+        within("li#area_#{areas[1].id}") do
+          page.should have_content('Zona Norte')
+          page.should have_content('Ciudades del Norte de Costa Rica')
+          page.should have_selector('a.edit')
+          page.should have_selector('a.disable')
         end
       end
 

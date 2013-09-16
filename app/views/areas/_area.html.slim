@@ -5,6 +5,6 @@ li id="area_#{area.id}"
       span.description
         = area.description
   span.pull-right
-    = link_to '', edit_area_path(area), remote: true, class: 'edit'
-    = link_to '', deactivate_area_path(area), remote: true, class: 'disable' if area.active?
-    = link_to '', activate_area_path(area), remote: true, class: 'enable' unless area.active?
+    = link_to '', edit_area_path(area), remote: true, title: 'Edit', class: 'edit'
+    = link_to '', deactivate_area_path(area), remote: true, title: 'Deactivate', class: 'disable' if area.active?
+    = link_to '', activate_area_path(area), remote: true, title: 'Activate', class: 'enable' unless area.active?

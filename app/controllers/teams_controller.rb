@@ -18,6 +18,7 @@ class TeamsController < FilteredController
   end
 
   private
+
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search

@@ -45,7 +45,7 @@ module RequestsHelper
   end
 
   def close_modal
-    visible_modal.find(:link, 'Close').trigger 'click'
+    visible_modal.click_link('Close')
     page.should_not have_selector('.modal', visible: true)
   end
 

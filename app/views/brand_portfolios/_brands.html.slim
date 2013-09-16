@@ -5,4 +5,4 @@
         .brand-name
           = brand.name
       .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', remote: true, method: :delete)
+        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', title: 'Remove', remote: true, method: :delete)
