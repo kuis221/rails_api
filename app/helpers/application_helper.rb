@@ -27,7 +27,7 @@ module ApplicationHelper
       address.push city_parts.join(', ') unless city_parts.empty? || !place.city
       address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
 
-      address_with_name = [place_name, address.compact.join(line_separator)].compact.join('<br />')
+      address_with_name = ["<span class='address-name'>#{place_name}</span>", address.compact.join(line_separator)].compact.join('<br />')
 
       "<address>#{address_with_name}</address>".html_safe
     end

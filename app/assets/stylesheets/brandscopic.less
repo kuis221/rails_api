@@ -10,7 +10,7 @@
 	font-weight: normal;
 	font-style: normal;
 }
- 
+
 @font-face {
 	font-family: 'rabioheadregular';
 	src: url('/assets/font/rabiohead-webfont.eot');
@@ -1252,7 +1252,7 @@ li#notifications{
 				}
 
 				// Icons
-				a{ 
+				a{
 					color: @text;
 					font-size: 11px;
 					i{
@@ -1268,7 +1268,7 @@ li#notifications{
 							position: relative;
 							&:before{
 								font-size: 22px !important;
-							}		
+							}
 						}
 					}
 					&:hover{
@@ -1474,7 +1474,7 @@ ul.kpis-list{
 	    			.area_description{
 						overflow: hidden;
 						text-overflow: ellipsis;
-						white-space: nowrap;	    				
+						white-space: nowrap;
 				    }
 	    		}
 	    		&:last-child{
@@ -1507,8 +1507,8 @@ ul.kpis-list{
     		display: block;
     	    overflow: hidden;
 			text-overflow:ellipsis;
-			white-space: nowrap;	
-			width: 320px;	
+			white-space: nowrap;
+			width: 320px;
     	}
     }
     ul#day-parts-list{
@@ -1522,8 +1522,8 @@ ul.kpis-list{
     		display: block;
     	    overflow: hidden;
 			text-overflow:ellipsis;
-			white-space: nowrap;	
-			width: 320px;	
+			white-space: nowrap;
+			width: 320px;
     	}
     }
 		ul#events-list{
@@ -2184,10 +2184,10 @@ overflow: hidden;
 		font-size: 18px;
 		margin-left: 15px;
 		text-decoration: none;
- 		i{  
+ 		i{
  			position: relative;
  			top: 2px;
- 			&.icon-remove-sign:before{			
+ 			&.icon-remove-sign:before{
  				font-size: 16px;
  			}
  			&:hover{
@@ -2359,7 +2359,8 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-		.full-name, .place-name, .brand-name{
+    height: 70px;
+		.full-name, .address-name, .brand-name{
 			font-size: 16px;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -2370,7 +2371,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 				display:inline-block;
 				float: right;
 				i.icon-remove-circle:before{
-					font-size: 18px;				
+					font-size: 18px;
 				}
 			}
 		}
@@ -2380,7 +2381,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team-member:before{
-        color: @user_menu;
+    color: @user_menu;
 		content: "\e024" !important;
 		display: block;
 		font-family: 'icons';
@@ -2392,7 +2393,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team:before{
-        color: @user_menu;
+    color: @user_menu;
 		content: "\e023" !important;
 		display: block;
 		font-family: 'icons';
@@ -2402,6 +2403,19 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		top: 15px;
 		vertical-align: middle;
 	}
+
+  .area-place:before{
+    color: @user_menu;
+    content: "\e02c" !important;
+    display: block;
+    font-family: 'icons';
+    font-size: 20px;
+    left: -30px;
+    position: relative;
+    top: 13px;
+    vertical-align: middle;
+  }
+
 	.box_metrics{
 		margin-top: 50px;
 		width: 400px;
@@ -3855,7 +3869,7 @@ svg{
 	-webkit-border-radius: 0px 7px 7px 7px;
     border-radius: 0px 7px 7px 7px;
     .kpis-button{
-    	margin: 70px 0 10px 0; 
+    	margin: 70px 0 10px 0;
     }
 }
 
@@ -4768,7 +4782,7 @@ a, i{
 	}
 }
 
-body.campaigns_report, 
+body.campaigns_report,
 body.staff_report  {
 	.tab-content {
 		overflow: visible;
