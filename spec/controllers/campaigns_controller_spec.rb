@@ -346,6 +346,9 @@ describe CampaignsController do
   end
 
   describe "GET 'tab'" do
+    before do
+      Kpi.create_global_kpis
+    end
     it "loads the staff tab" do
       campaign.users << @company_user
       campaign.teams << FactoryGirl.create(:team, company: @company)
@@ -378,6 +381,13 @@ describe CampaignsController do
       assigns(:campaign).should == campaign
       response.should render_template(:day_parts)
       response.should render_template(:goalable_list)
+    end
+
+    it "loads the documents tab" do
+      campaign.documents << FactoryGirl.create(:attached_asset)
+      get 'tab', id: campaign.id, tab: 'documents'
+      assigns(:campaign).should == campaign
+      response.should render_template(:documents)
     end
   end
 
