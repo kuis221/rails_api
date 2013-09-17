@@ -4904,3 +4904,37 @@ body.campaigns_report, body.staff_report {
     border-right:5px solid transparent;
     border-top:5px solid @grey_three;
 }
+
+
+// SCROLL 
+
+::-webkit-scrollbar{
+  width: 10px;
+  background: @app_bg;
+}
+::-webkit-scrollbar-button{
+  width:8px;
+  height: 5px;
+}
+::-webkit-scrollbar-track{
+  background:@app_bg;
+  border:thin solid @app_bg;
+  -webkit-box-shadow: 0;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb{
+  background: @brand;
+  -webkit-box-shadow: 0;
+ 
+  border:thin solid @brand;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background: @brand;
+}
+/* Pseudo-clase */
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(77,161,112,.6);
+}
