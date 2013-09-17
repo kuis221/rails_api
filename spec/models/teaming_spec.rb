@@ -11,5 +11,11 @@
 require 'spec_helper'
 
 describe Teaming do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:team) }
+  it { should belong_to(:teamable) }
+
+  it { should_not allow_mass_assignment_of(:id) }
+  it { should_not allow_mass_assignment_of(:team_id) }
+  it { should_not allow_mass_assignment_of(:teamable_id) }
+  it { should_not allow_mass_assignment_of(:teamable_type) }
 end

@@ -13,6 +13,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  module            :string(255)      default("custom"), not null
+#  ordering          :integer
 #
 
 require 'spec_helper'
@@ -36,6 +37,7 @@ describe Kpi do
   it { should_not allow_mass_assignment_of(:created_at) }
   it { should_not allow_mass_assignment_of(:updated_at) }
   it { should_not allow_mass_assignment_of(:module) }
+  it { should_not allow_mass_assignment_of(:ordering) }
 
   it { should validate_presence_of(:name) }
   describe "name uniqness" do
