@@ -60,7 +60,7 @@ describe "BrandPortfolios", js: true, search: true do
     it 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_link('New Brand portfolio')
+      click_js_link('New Brand portfolio')
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'
@@ -103,10 +103,10 @@ describe "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
         page.should have_selector('a.toggle-active')
 
-        click_link('Activate')
+        click_js_link('Activate')
         page.should have_selector('a.toggle-inactive')
       end
     end
@@ -115,7 +115,7 @@ describe "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       visit brand_portfolio_path(portfolio)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'

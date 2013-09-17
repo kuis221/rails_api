@@ -83,10 +83,10 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
         page.should have_selector('a.toggle-active')
 
-        click_link('Activate')
+        click_js_link('Activate')
         page.should have_selector('a.toggle-inactive')
       end
     end
@@ -140,7 +140,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Create Task'
+      click_js_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'

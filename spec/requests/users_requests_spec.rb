@@ -24,7 +24,7 @@ describe "Users", :js => true do
       # Click on the dropdown and select the other company
       find('#company-name a.current-company-title').click
       within "ul#user-company-dropdown" do
-        click_link 'Tres Patitos S.A.'
+        click_js_link 'Tres Patitos S.A.'
       end
       current_path.should == root_path
 
@@ -36,7 +36,7 @@ describe "Users", :js => true do
       # Click on the dropdown and select the other company
       find('#company-name a.current-company-title').click
       within "ul#user-company-dropdown" do
-        click_link @company.name.to_s
+        click_js_link @company.name.to_s
       end
 
       current_path.should == root_path
@@ -64,10 +64,10 @@ describe "Users", :js => true do
         visit company_user_path(company_user)
 
         within('.links-data') do
-          click_link('Deactivate')
+          click_js_link('Deactivate')
           page.should have_selector('a.toggle-active')
 
-          click_link('Activate')
+          click_js_link('Activate')
           page.should have_selector('a.toggle-inactive')
         end
       end
@@ -102,7 +102,7 @@ describe "Users", :js => true do
       it 'allows the user to edit his profile' do
         visit company_user_path(@company_user)
 
-        find('li#user_menu').click_js_link(@user.full_name).click_link('Edit Profile')
+        find('li#user_menu').click_js_link(@user.full_name).click_js_link('Edit Profile')
 
         within("form#edit_company_user_#{@company_user.id}") do
           fill_in 'First name', with: 'Pedro'
