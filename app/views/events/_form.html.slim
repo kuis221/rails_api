@@ -2,7 +2,7 @@
 = simple_form_for(@event, remote: remote || false) do |f|
   = f.error_notification
 
-  .form-inputs
+  .form-inputs.edit-event
     .chosen-campaign
       = f.association :campaign, collection: company_campaigns.active, input_html: {class: 'chosen-enabled'}
 
