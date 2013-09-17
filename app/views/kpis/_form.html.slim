@@ -44,7 +44,7 @@ javascript:
     $('#kpi_name').focusout(function() {
       $('#similar-kpi-message').hide();
       if (name = $(this).val()) {
-        $.post('#{find_similar_kpi_campaign_path(@campaign)}', {name: name}, function(data) {
+        $.get('#{find_similar_kpi_campaigns_path}', {name: name}, function(data) {
           if (!jQuery.isEmptyObject(data)) {
             $('#similar-kpi-message').text('There may be a duplicated called ' + data[0].name);
             $('#similar-kpi-message').show();

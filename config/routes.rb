@@ -119,6 +119,7 @@ Brandscopic::Application.routes.draw do
     resources :placeables, only: [:new]
     resources :places, only: [:destroy, :create]
     get :autocomplete, on: :collection
+    get :find_similar_kpi, on: :collection
     member do
       get :post_event_form
       post :update_post_event_form
@@ -127,7 +128,6 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :kpis
-      post :find_similar_kpi
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'campaigns#new_member', via: :get, as: :new_member

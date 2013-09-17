@@ -72,7 +72,7 @@ describe CampaignsController do
     end
 
     it "routes to #find_similar_kpi" do
-      post("/campaigns/1/find_similar_kpi").should route_to("campaigns#find_similar_kpi", :id => "1")
+      get("/campaigns/find_similar_kpi").should route_to("campaigns#find_similar_kpi")
     end
 
     it "routes to #post_event_form" do
