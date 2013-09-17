@@ -68,6 +68,9 @@ do ($ = window.jQuery, window) ->
 
       overlay_layer.onclick = => @.stop()
 
+      $(document).keyup (e) =>
+        @.stop() if e.keyCode is 27
+
       setTimeout ->
         styleText += "opacity: .8;opacity: .8;-ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';filter: alpha(opacity=80);"
         overlay_layer.setAttribute "style", styleText
