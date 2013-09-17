@@ -48,6 +48,7 @@ describe "DateRanges", search: true, js: true do
         fill_in 'Description', with: 'new date range description'
         click_js_button 'Create'
       end
+      ensure_modal_was_closed
 
       find('h2', text: 'new date range name') # Wait for the page to load
       page.should have_selector('h2', text: 'new date range name')
@@ -101,6 +102,7 @@ describe "DateRanges", search: true, js: true do
         fill_in 'Description', with: 'edited date range description'
         click_button 'Save'
       end
+      ensure_modal_was_closed
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       page.should have_selector('h2', text: 'edited date range name')
       page.should have_selector('div.description-data', text: 'edited date range description')

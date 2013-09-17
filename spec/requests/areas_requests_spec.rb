@@ -100,7 +100,7 @@ describe "Areas", js: true, search: true do
       area = FactoryGirl.create(:area, company: @company)
       visit area_path(area)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within("form#edit_area_#{area.id}") do
         fill_in 'Name', with: 'edited area name'

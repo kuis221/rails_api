@@ -67,6 +67,7 @@ describe "BrandPortfolios", js: true, search: true do
         fill_in 'Description', with: 'new portfolio description'
         click_button 'Create'
       end
+      ensure_modal_was_closed
 
       find('h2', text: 'new portfolio name') # Wait for the page to load
       page.should have_selector('h2', text: 'new portfolio name')
@@ -88,11 +89,11 @@ describe "BrandPortfolios", js: true, search: true do
       brands.map {|b| portfolio.brands << b }
       visit brand_portfolio_path(portfolio)
       within('#brands-list') do
-        within("div.brand:nth-child(1)") do
+        within("div#brand-#{brands[0].id}") do
           page.should have_content('Brand 1')
           page.should have_selector('a.remove-brand-btn', visible: :false)
         end
-        within("div.brand:nth-child(2)") do
+        within("div#brand-#{brands[1].id}") do
           page.should have_content('Brand 2')
           page.should have_selector('a.remove-brand-btn', visible: :false)
         end

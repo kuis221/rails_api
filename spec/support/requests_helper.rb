@@ -37,7 +37,7 @@ module RequestsHelper
   end
 
   def visible_modal
-    find('.modal', visible: true)
+    find('.modal.in', visible: true)
   end
 
   def modal_footer
@@ -50,7 +50,7 @@ module RequestsHelper
   end
 
   def ensure_modal_was_closed
-    page.should have_no_selector('.modal', visible: true)
+    page.should have_no_selector('.modal.in', visible: true)
   end
 
   def ensure_on(path)
@@ -63,6 +63,12 @@ module RequestsHelper
     sign_in user
     user.current_company = user.companies.first
     user
+  end
+
+
+  # Helpers for events section
+  def event_team_member(member)
+    find('#event-team-members #event-member-'+member.id.to_s)
   end
 
 end

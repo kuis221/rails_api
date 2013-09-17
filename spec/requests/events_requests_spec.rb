@@ -100,30 +100,31 @@ describe "Events", js: true, search: true do
       visit event_path(event)
 
       click_js_link 'Add Team Member'
-      within "ul#staff-list li#staff-member-user-#{company_user.id}" do
+      within visible_modal do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
         click_js_link("add-member-btn-#{company_user.id}")
+
+        page.should have_no_selector("li#staff-member-user-#{company_user.id}")
       end
+      close_modal
 
       # Test the user was added to the list of event members and it can be removed
-      within('#event-team-members #event-member-'+company_user.id.to_s) do
+      within event_team_member(company_user) do
         page.should have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
-      # the user should have been removed from the list
-      within "ul#staff-list" do
-        page.should_not have_selector("li#staff-member-user-#{company_user.id}")
-      end
 
       # Test removal of the user
-      page.execute_script("$('#event-team-members #event-member-#{company_user.id.to_s} a').click()")
-      within('.bootbox.modal.confirm-dialog') do
+      within(event_team_member(company_user)) {click_js_link('Remove Member', visible: false) }
+      within visible_modal do
         page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
-        page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+        click_js_link('OK')
       end
+      ensure_modal_was_closed
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)

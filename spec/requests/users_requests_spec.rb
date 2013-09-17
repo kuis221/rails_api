@@ -22,9 +22,9 @@ describe "Users", :js => true do
       visit root_path
 
       # Click on the dropdown and select the other company
-      find('#company-name a.current-company-title').click
-      within "ul#user-company-dropdown" do
-        click_js_link 'Tres Patitos S.A.'
+      within('#company-name') do
+        click_js_link('ABC inc.')
+        find(".dropdown").click_js_link 'Tres Patitos S.A.'
       end
       current_path.should == root_path
 

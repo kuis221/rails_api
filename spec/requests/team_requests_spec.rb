@@ -44,11 +44,12 @@ describe "Teams", js: true, search: true do
 
       click_js_link('New Team')
 
-      within("form#new_team") do
+      within visible_modal do
         fill_in 'Name', with: 'new team name'
         fill_in 'Description', with: 'new team description'
         click_button 'Create'
       end
+      ensure_modal_was_closed
 
       find('h2', text: 'new team name') # Wait for the page to load
       page.should have_selector('h2', text: 'new team name')
