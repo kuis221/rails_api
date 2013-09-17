@@ -13,6 +13,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  module            :string(255)      default("custom"), not null
+#  ordering          :integer
 #
 
 class Kpi < ActiveRecord::Base

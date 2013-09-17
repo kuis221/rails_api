@@ -4262,6 +4262,24 @@ svg{
 	font-size: 24px;
 }
 
+.chardinjs-helper-layer[data-id="application-content"] {
+  .chardinjs-tooltip.chardinjs-top {
+    &:before {
+      content: "\e011";
+      display: block;
+      left: -30px;
+      font-family: 'icons';
+      font-size: 20px;
+      position: relative;
+      top: 30px;
+    }
+    &:after {
+      bottom: 10000px;
+    }
+  }
+}
+
+div.chardinjs-tooltip
 .help-overlay-definitions {
 	display: none;
 }
