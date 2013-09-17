@@ -46,9 +46,12 @@ module RequestsHelper
 
   def close_modal
     visible_modal.click_link('Close')
-    page.should_not have_selector('.modal', visible: true)
+    ensure_modal_was_closed
   end
 
+  def ensure_modal_was_closed
+    page.should have_no_selector('.modal', visible: true)
+  end
 
   def ensure_on(path)
     visit(path) unless current_path == path

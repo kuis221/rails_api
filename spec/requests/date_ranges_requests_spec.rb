@@ -41,12 +41,12 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to create a new date_range' do
       visit date_ranges_path
 
-      click_link('New Date range')
+      click_js_link('New Date range')
 
-      within("form#new_date_range") do
+      within visible_modal do
         fill_in 'Name', with: 'new date range name'
         fill_in 'Description', with: 'new date range description'
-        click_button 'Create'
+        click_js_button 'Create'
       end
 
       find('h2', text: 'new date range name') # Wait for the page to load
@@ -84,9 +84,9 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
-      click_link 'Deactivate'
+      click_js_link 'Deactivate'
       page.should have_selector('a.toggle-active')
-      click_link 'Activate'
+      click_js_link 'Activate'
       page.should have_selector('a.toggle-inactive')
     end
 
@@ -94,7 +94,7 @@ describe "DateRanges", search: true, js: true do
       date_range = FactoryGirl.create(:date_range, company: @company)
       visit date_range_path(date_range)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'
@@ -111,7 +111,7 @@ describe "DateRanges", search: true, js: true do
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
 
-      click_link('Add Date')
+      click_js_link('Add Date')
 
       within visible_modal do
         find("#calendar_start_date").click_js_link '25'
@@ -119,9 +119,11 @@ describe "DateRanges", search: true, js: true do
         click_js_button "Create"
       end
 
+      ensure_modal_was_closed
+
       within("#date_range-dates") do
         click_js_link('Remove')
-        page.should_not have_content('Remove')
+        page.should have_no_selector('Remove')
       end
 
     end

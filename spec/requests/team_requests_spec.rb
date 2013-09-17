@@ -42,7 +42,7 @@ describe "Teams", js: true, search: true do
     it 'allows the user to create a new team' do
       visit teams_path
 
-      click_link('New Team')
+      click_js_link('New Team')
 
       within("form#new_team") do
         fill_in 'Name', with: 'new team name'
@@ -92,10 +92,10 @@ describe "Teams", js: true, search: true do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
         page.should have_selector('a.toggle-active')
 
-        click_link('Activate')
+        click_js_link('Activate')
         page.should have_selector('a.toggle-inactive')
       end
     end
@@ -105,7 +105,7 @@ describe "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
@@ -130,7 +130,7 @@ describe "Teams", js: true, search: true do
         page.should_not have_content('Fulanito')
       end
 
-      click_link('Add Team Member')
+      click_js_link('Add Team Member')
 
 
       within visible_modal do
