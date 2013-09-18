@@ -19,19 +19,19 @@ describe "Passwords", :js => true do
 
   it "should display an error message when email address is not found in the database" do
     visit new_user_password_path
-    find_field('Email').value.should == ''
-    fill_in('Email', with: 'ramdom@email.com')
-    click_button 'Send me reset password instructions'
+    find_field('user[email]').value.should == ''
+    fill_in('user[email]', with: 'ramdom@email.com')
+    click_button 'Reset'
     current_path.should == user_password_path
     page.should have_content("We couldn't find that email address.  Please check that you spelled it correctly and try again.")
   end
 
   it "should send an email when email address is found for existing user" do
     visit new_user_password_path
-    find_field('Email').value.should == ''
-    fill_in('Email', with: 'test@email.com')
-    click_button 'Send me reset password instructions'
-    current_path.should == new_user_session_path
+    find_field('user[email]').value.should == ''
+    fill_in('user[email]', with: 'test@email.com')
+    click_button 'Reset'
+    current_path.should == passwords_thanks_path
     page.should have_content("You will receive an email with instructions about how to reset your password in a few minutes.")
   end
 end

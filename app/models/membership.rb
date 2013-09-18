@@ -24,7 +24,7 @@ class Membership < ActiveRecord::Base
   private
     def create_notifications
       if memberable_type == 'Campaign'
-        Notification.new_campaing(company_user, memberable)
+        Notification.new_campaign(company_user, memberable)
       end
     end
 

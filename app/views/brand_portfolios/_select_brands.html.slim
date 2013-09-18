@@ -5,18 +5,18 @@
         input type="text" name="q" id="brands-search-item"
     .scroll-table-content
       .link-list
-        ul#brands-list
+        ul#select-brands-list
           - Brand.not_in_portfolio(resource.id).each do |brand|
             li id="brand-#{brand.id}"
               span.brand-data
                 span.brand-name= brand.name
               span.add-button.pull-right
-                = link_to '', add_brand_brand_portfolio_path(resource, brand_id: brand.id), id: "add-brand-btn-#{brand.id}", data:{'brand-id' => brand.id}, class: 'icon-plus-sign', remote: true, method: :post
+                = link_to '', add_brand_brand_portfolio_path(resource, brand_id: brand.id), id: "add-brand-btn-#{brand.id}", data:{'brand-id' => brand.id}, class: 'icon-plus-sign', remote: true, method: :post, title: 'Add'
 
 javascript:
   $('#brands-search-item').on('keyup', function () {
     var value = $(this).val();
-    $("#brands-list > li").each(function() {
+    $("#select-brands-list > li").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
       }

@@ -5,6 +5,6 @@ li id="brand_portfolio_#{brand_portfolio.id}"
       span.description
         = brand_portfolio.description
   span.pull-right
-    = link_to '', edit_brand_portfolio_path(brand_portfolio), remote: true, class: 'edit'
-    = link_to '', deactivate_brand_portfolio_path(brand_portfolio), remote: true, class: 'disable' if brand_portfolio.active?
-    = link_to '', activate_brand_portfolio_path(brand_portfolio), remote: true, class: 'enable' unless brand_portfolio.active?
+    = link_to '', edit_brand_portfolio_path(brand_portfolio), remote: true, title: 'Edit', class: 'edit'
+    = link_to '', deactivate_brand_portfolio_path(brand_portfolio), remote: true, title: 'Deactivate', class: 'disable' if brand_portfolio.active?
+    = link_to '', activate_brand_portfolio_path(brand_portfolio), remote: true, title: 'Activate', class: 'enable' unless brand_portfolio.active?

@@ -361,7 +361,7 @@ var bootbox = window.bootbox || (function(document, $) {
         if (options['header']) {
             var closeButton = '';
             if (typeof options['headerCloseButton'] == 'undefined' || options['headerCloseButton']) {
-                closeButton = "<a href='"+_defaultHref+"' class='close'></a>";
+                closeButton = "<a href='"+_defaultHref+"' class='close' title='Close'></a>";
             }
 
             parts.push("<div class='modal-header'>"+closeButton+"<h3>"+options['header']+"</h3></div>");

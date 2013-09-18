@@ -177,7 +177,8 @@ GEM
       activesupport (~> 3.1)
       polyamorous (~> 0.5.0)
     metaclass (0.0.1)
-    mime-types (1.24)
+    mime-types (1.25)
+    mini_portile (0.5.1)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     mono_logger (1.1.0)
@@ -185,7 +186,8 @@ GEM
     multi_xml (0.5.5)
     nested_form (0.3.2)
     newrelic_rpm (3.6.1.88)
-    nokogiri (1.5.9)
+    nokogiri (1.6.0)
+      mini_portile (~> 0.5.0)
     oj (2.0.10)
     options (2.3.0)
       fattr
@@ -298,6 +300,10 @@ GEM
     simple_form (2.1.0)
       actionpack (~> 3.0)
       activemodel (~> 3.0)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -422,6 +428,7 @@ DEPENDENCIES
   shoulda
   simple-navigation
   simple_form
+  simplecov
   slim
   slim-rails
   sunspot-queue

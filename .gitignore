@@ -26,3 +26,4 @@ solr/data/
 solr/pids/
 .DS_Store
 dump.rdb
+coverage

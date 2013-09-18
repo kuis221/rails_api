@@ -3,7 +3,7 @@
 FactoryGirl.define do
   factory :event_expense do
     event nil
-    name "MyString"
+    sequence(:name) {|n| "Expense #{n}" }
     amount "9.99"
     file ""
   end

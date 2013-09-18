@@ -59,6 +59,10 @@ module TeamMembersHelper
         end
       end
 
+      def resource_members
+        @members ||= resource.users.includes(:user).order('users.first_name ASC, users.first_name ASC')
+      end
+
       def team
         begin
           @team = resource.teams.find(params[:team_id]) if resource.respond_to?(:teams)
@@ -87,5 +91,6 @@ module TeamMembersHelper
 
   def self.extended(receiver)
     receiver.send(:include,  InstanceMethods)
+    receiver.send(:helper_method,  :resource_members)
   end
 end

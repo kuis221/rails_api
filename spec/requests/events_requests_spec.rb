@@ -29,14 +29,14 @@ describe "Events", js: true, search: true do
           # First Row
           within("li:nth-child(1)") do
             page.should have_content('WED Aug 21')
-            page.should have_content('11:00 AM - 12:00 PM')
+            page.should have_content('10:00 AM - 11:00 AM')
             page.should have_content(events[0].place_name)
             page.should have_content('Campaign FY2012')
           end
           # Second Row
           within("li:nth-child(2)")  do
-            page.should have_content(events[1].start_at.strftime('WED Aug 28 at 12:00 PM'))
-            page.should have_content(events[1].end_at.strftime('THU Aug 29 at 1:00 PM'))
+            page.should have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
+            page.should have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
             page.should have_content(events[1].place_name)
             page.should have_content('Another Campaign April 03')
           end
@@ -74,8 +74,8 @@ describe "Events", js: true, search: true do
       visit event_path(event)
       page.should have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
-        page.should have_content('WED Aug 28 at 9:00 PM')
-        page.should have_content('THU Aug 29 at 12:00 AM')
+        page.should have_content('WED Aug 28')
+        page.should have_content('8:00 PM - 11:00 PM')
       end
     end
 
@@ -83,10 +83,10 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
         page.should have_selector('a.toggle-active')
 
-        click_link('Activate')
+        click_js_link('Activate')
         page.should have_selector('a.toggle-inactive')
       end
     end
@@ -100,30 +100,31 @@ describe "Events", js: true, search: true do
       visit event_path(event)
 
       click_js_link 'Add Team Member'
-      within "ul#staff-list li#staff-member-user-#{company_user.id}" do
+      within visible_modal do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
         click_js_link("add-member-btn-#{company_user.id}")
+
+        page.should have_no_selector("li#staff-member-user-#{company_user.id}")
       end
+      close_modal
 
       # Test the user was added to the list of event members and it can be removed
-      within('#event-team-members #event-member-'+company_user.id.to_s) do
+      within event_team_member(company_user) do
         page.should have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
-      # the user should have been removed from the list
-      within "ul#staff-list" do
-        page.should_not have_selector("li#staff-member-user-#{company_user.id}")
-      end
 
       # Test removal of the user
-      page.execute_script("$('#event-team-members #event-member-#{company_user.id.to_s} a').click()")
-      within('.bootbox.modal.confirm-dialog') do
+      within(event_team_member(company_user)) {click_js_link('Remove Member', visible: false) }
+      within visible_modal do
         page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
-        page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+        click_js_link('OK')
       end
+      ensure_modal_was_closed
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)
@@ -140,7 +141,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Create Task'
+      click_js_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'

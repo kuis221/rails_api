@@ -13,6 +13,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  module            :string(255)      default("custom"), not null
+#  ordering          :integer
 #
 
 class Kpi < ActiveRecord::Base
@@ -36,9 +37,6 @@ class Kpi < ActiveRecord::Base
   validates :company_id, numericality: true, allow_nil: true
 
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
-
-  # Campaigns-KPIs relationship
-  has_and_belongs_to_many :campaigns
 
   # KPIs-Segments relationship
   has_many :kpis_segments, dependent: :destroy, order: :id
