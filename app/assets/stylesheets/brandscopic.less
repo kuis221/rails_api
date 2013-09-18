@@ -1096,8 +1096,12 @@ li.dropdown#user_menu{
 	li a{
 		color:@grey_three;
 		font-weight: bold;
-		padding: 35px 0 20px 0;
-		height:45px;
+		padding: 28px 0 20px 0;
+		height:40px;
+		&:hover{
+			height: 40px !important;
+			padding: 28px 0 20px 0 !important;
+		}
   }
   li{
     position: relative;
@@ -1112,11 +1116,11 @@ li.dropdown#user_menu{
         display: block;
         position: absolute;
         width: 5px;
-        height: 110px;
+        height: 97px;
         top: -5px;
         right: 0;
         background-image: url(active-rounded.png),url(active-rounded.png);
-        background-position: right -5px, right 105px;
+        background-position: right -5px, right 93px;
         background-repeat: no-repeat,no-repeat;
         z-index: 100;
       }
