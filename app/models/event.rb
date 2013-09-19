@@ -62,6 +62,9 @@ class Event < ActiveRecord::Base
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
     where('t.team_id in (?) OR m.company_user_id IN (?)', user.teams, user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
+  scope :with_team, lambda{|team|
+    joins(:teamings).
+    where(teamings: {team_id: team} ) }
 
   track_who_does_it
 
