@@ -1368,6 +1368,10 @@ ul.kpis-list{
     li{
     	min-height: 20px;
     	padding:10px 0 10px 0;
+    	.kpi-goal{
+    		font-size: 16px;
+    		margin-top: 15px;
+    	}
     }
 	.kpi-info{
 		font-size: 11px;
@@ -4237,6 +4241,21 @@ svg{
 			-webkit-font-smoothing: antialiased;
 		}
 	}
+	.email{
+		&:before{
+			color: @user_menu;
+			content: "\e022";
+			font-family: 'icons';
+			font-size: 19px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 28px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;			
+		}
+	}
 	.place-data{
 		&:before{
 			color: @user_menu;
@@ -4926,7 +4945,7 @@ body.campaigns_report, body.staff_report {
 // Sessions
 
 body{
-	&.sessions{
+	&.sessions, &.passwords{
 		.alert{
 			margin: 0;
 		}
