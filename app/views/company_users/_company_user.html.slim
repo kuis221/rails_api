@@ -18,4 +18,4 @@ li id="company_user_#{company_user.id}"
   span.pull-right
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit'
     = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
-    = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active?
+    = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active? 

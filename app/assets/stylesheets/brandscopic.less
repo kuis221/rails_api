@@ -2325,6 +2325,17 @@ table.dataTable {
 	float: left;
 }
 
+body.company_users{
+	.details_box{
+		h2{
+			margin-bottom: 10px;
+		}
+	}
+	.user-role{
+		margin-bottom: 25px;
+	}
+}
+
 body.events.index {
 	#map-canvas {
 		border:1px solid @user_menu;
@@ -4217,7 +4228,7 @@ svg{
 	textarea{
 		height: 130px;
 	}
-	.calendar-data, .place-data, .time-data, .description-data, .links-data{
+	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;
 		width: 380px;
 	}
@@ -4241,13 +4252,13 @@ svg{
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-	.email{
+	.email-data{
 		&:before{
 			color: @user_menu;
-			content: "\e022";
+			content: "\e02f";
 			font-family: 'icons';
 			font-size: 19px;
-			padding-top: 3px;
+			padding-top: 6px;
 			position: absolute;
 			speak: none;
 			left: 28px;
