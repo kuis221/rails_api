@@ -37,14 +37,14 @@ describe ApplicationHelper do
       assert_dom_equal "<address><span class=\"address-name\">Place name</span><br />123 uno dos tres<br />Curridabat</address>", helper.place_address(place)
     end
 
-    pending "should add the state to the address" do
-      place= double(Place, {name: nil, street: nil, state: 'California', zipcode: nil, city: nil, formatted_address: nil})
-      assert_dom_equal "<address>California</address>", helper.place_address(place)
+    it "should add the state to the address" do
+      place= double(Place, {name: nil, street: nil, state: 'California', zipcode: nil, city: 'Los Angeles', formatted_address: nil})
+      assert_dom_equal "<address>Los Angeles, California</address>", helper.place_address(place)
     end
 
-    pending "should add the state and the zipcode to the address separated by a commma" do
-      place= double(Place, {name: nil, street: nil, state: 'California', zipcode: '90210', city: nil, formatted_address: nil})
-      assert_dom_equal "<address>California, 90210</address>", helper.place_address(place)
+    it "should add the state and the zipcode to the address separated by a commma" do
+      place= double(Place, {name: nil, street: nil, state: 'California', zipcode: '90210', city: 'Los Angeles', formatted_address: nil})
+      assert_dom_equal "<address>Los Angeles, California, 90210</address>", helper.place_address(place)
     end
 
     it "should add the city, state and the zipcode to the address separated by a commma" do

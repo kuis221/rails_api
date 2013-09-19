@@ -35,6 +35,8 @@ class Team < ActiveRecord::Base
   has_many :teamings
   has_many :campaigns, through: :teamings, :source => :teamable, :source_type => 'Campaign'
 
+  after_save :update_events
+
   scope :active, where(:active => true)
 
   scope :with_users, joins(:users).group('teams.id')
@@ -108,4 +110,11 @@ class Team < ActiveRecord::Base
       end
     end
   end
+
+  private
+    def update_events
+      if name_changed?
+        Resque.enqueue(TeamIndexer, self.id)
+      end
+    end
 end

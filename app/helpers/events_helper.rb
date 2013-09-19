@@ -145,12 +145,12 @@ module EventsHelper
       end
 
       teams = team_params
-      if users.size > 0
+      if teams.size > 0
         names += company_teams.where(id: teams).map(&:name)
       end
 
       if names.size > 0
-        "assigned to #{names.to_sentence(last_word_connector: ' and ')}"
+        "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ' or ')}"
       else
         ""
       end
@@ -181,7 +181,7 @@ module EventsHelper
       event_status = params[:event_status]
       event_status = [event_status] unless event_status.is_a?(Array)
 
-      statuses = (status + event_status).compact
+      statuses = (status + event_status).uniq.compact
       unless statuses.empty? || statuses.nil?
         statuses.to_sentence(last_word_connector: ' and ')
       end
