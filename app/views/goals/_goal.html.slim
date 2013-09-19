@@ -1,20 +1,20 @@
 li id="goal_#{goal.id}"
-  span
-    = goal.title
-    br>/
+  span.title
+    .goal-title
+      = goal.title
     = goal.kpi.name
 
-  span
+  span.goal-value
     = goal.value
     br>/
     | Goal
 
-  span
+  span.start-date
     = format_date(goal.start_date)
     br>/
     | Start date
 
-  span
+  span.due-date
     = format_date(goal.due_date)
     br>/
     | Due date
