@@ -310,10 +310,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	font-size: 16px;
 	height: 37px;
 	line-height: 23px;
-	margin:0 0 0 90px;
+	margin:0 10px 0 90px;
 	padding: 13px 0 0 21px;
 	position: relative;
-	width: 90%;
 	-webkit-border-radius: 0px 0px 8px 8px;
      border-radius: 0px 0px 8px 8px;
 
@@ -1096,8 +1095,12 @@ li.dropdown#user_menu{
 	li a{
 		color:@grey_three;
 		font-weight: bold;
-		padding: 35px 0 20px 0;
-		height:45px;
+		padding: 28px 0 20px 0;
+		height:40px;
+		&:hover{
+			height: 40px !important;
+			padding: 28px 0 20px 0 !important;
+		}
   }
   li{
     position: relative;
@@ -1112,11 +1115,11 @@ li.dropdown#user_menu{
         display: block;
         position: absolute;
         width: 5px;
-        height: 110px;
+        height: 97px;
         top: -5px;
         right: 0;
         background-image: url(active-rounded.png),url(active-rounded.png);
-        background-position: right -5px, right 105px;
+        background-position: right -5px, right 93px;
         background-repeat: no-repeat,no-repeat;
         z-index: 100;
       }
@@ -1365,6 +1368,10 @@ ul.kpis-list{
     li{
     	min-height: 20px;
     	padding:10px 0 10px 0;
+    	.kpi-goal{
+    		font-size: 16px;
+    		margin-top: 15px;
+    	}
     }
 	.kpi-info{
 		font-size: 11px;
@@ -1909,6 +1916,33 @@ ul.kpis-list{
 			}
 		}
 	}
+	&#resource-goals-list{
+		li{
+			span{
+				margin-top: 23px;
+				&.pull-right{
+					margin-top: 0;
+				}
+			}
+			.goal-value{
+				width: 30%;
+			}
+			.title{
+				font-size: 11px;
+				margin-left: 20px;
+				width: 30%;
+				.goal-title{
+					font-size: 16px;
+				}
+			}
+			.start-date{
+				width: 15%;
+			}
+			.due-date{
+				width: 10%;
+			}
+		}
+	}
 	span{
 		display: inline-block;
 		vertical-align: top;
@@ -2316,6 +2350,17 @@ table.dataTable {
 	font-size: 12px;
 	text-align: center;
 	float: left;
+}
+
+body.company_users{
+	.details_box{
+		h2{
+			margin-bottom: 10px;
+		}
+	}
+	.user-role{
+		margin-bottom: 25px;
+	}
 }
 
 body.events.index {
@@ -3014,7 +3059,27 @@ ul.thumbnails{
 }
 
 .fancybox-close{
-	background-image: url('fancybox_sprite.png') !important;
+	background-image: url('carousel-close.svg') !important;
+	background-repeat: no-repeat !important;
+	height: 25px !important;
+	right: -13px !important;
+	top: -12px !important;
+	width: 25px !important;
+}
+
+.fancybox-next span, .fancybox-prev span{
+	background-position: 0 !important;
+	background-repeat: no-repeat !important;
+	height: 40px !important; 
+	width: 40px !important;	
+}
+
+.fancybox-next span{
+	background-image: url('carousel-next.svg') !important;
+}
+
+.fancybox-prev span{
+	background-image: url('carousel-previous.svg') !important;
 }
 
 // CAMPAIGNS POST EVENT FORM BUILDER
@@ -4190,7 +4255,7 @@ svg{
 	textarea{
 		height: 130px;
 	}
-	.calendar-data, .place-data, .time-data, .description-data, .links-data{
+	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .links-data{
 		margin:0 0 20px 30px;
 		width: 380px;
 	}
@@ -4212,6 +4277,21 @@ svg{
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
+		}
+	}
+	.email-data{
+		&:before{
+			color: @user_menu;
+			content: "\e02f";
+			font-family: 'icons';
+			font-size: 19px;
+			padding-top: 6px;
+			position: absolute;
+			speak: none;
+			left: 28px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;			
 		}
 	}
 	.place-data{
@@ -4900,13 +4980,25 @@ body.campaigns_report, body.staff_report {
 	}
 }
 
+// Sessions
+
+body{
+	&.sessions, &.passwords{
+		.alert{
+			margin: 0;
+		}
+	}
+}
+
 // Modal Table List
 .scroll-table-content {
-  margin: 20px 0;
-  max-height: 200px;
+  border: 1px solid @borders;
+  margin: 20px 0 10px 0;
+  max-height: 197px;
   overflow: auto;
   .link-list {
-  	width: 99.5%;
+  	border: 0;
+  	width: 100%;
   	li {
   		min-height: 65px;
   		.member-data, .brand-data {

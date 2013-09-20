@@ -36,6 +36,7 @@ ul.select2-results{
 }
 
 .modal {
+	overflow: visible !important; 
 	&.modal-med{
 		width: 460px;
 		.select2-container:focus{
@@ -458,7 +459,7 @@ ul.select2-results{
 	}
 	.modal-body {
 		max-height: 800px;
-		overflow: hidden;
+		overflow: visible;
 		padding: 25px 30px 25px 30px;
 		h3{
 			font-size: 22px;
@@ -536,6 +537,7 @@ ul.select2-results{
 			font-family: @baseFontFamily;
 			height: 30px;
 			margin-bottom: 0;
+			padding-left: 10px;
 			width: 97px;
 				&.input-micro{width:40px;}
 				&.input-mini{width:60px;}
