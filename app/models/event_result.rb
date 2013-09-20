@@ -36,8 +36,10 @@ class EventResult < ActiveRecord::Base
 
   private
     def set_scalar_value
-      if form_field.is_numeric?
-         self.scalar_value = value.to_f  rescue 0.0
+      if value.present? and form_field.is_numeric?
+        self.scalar_value = value.to_f rescue 0
+      else
+        self.scalar_value = 0
       end
     end
 end

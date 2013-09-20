@@ -36,11 +36,6 @@ class CampaignsController < FilteredController
     render json: search.results
   end
 
-  def remove_kpi
-    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
-    @field.destroy
-  end
-
   def add_kpi
     if resource.form_fields.where(kpi_id: params[:kpi_id]).count == 0
       kpi = Kpi.global_and_custom(current_company).find(params[:kpi_id])
@@ -103,9 +98,6 @@ class CampaignsController < FilteredController
       end
     end
 
-    def extract_fields_ids(fields)
-      fields.map{|index, f| [f['id'].try(:to_i)] + extract_fields_ids(f['fields_attributes'] || []) }.flatten.compact
-    end
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search

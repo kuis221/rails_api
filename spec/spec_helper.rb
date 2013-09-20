@@ -65,16 +65,16 @@ RSpec.configure do |config|
   #Rails.logger.level = 4
 end
 
-
 def sign_in_as_user
   company = FactoryGirl.create(:company)
-  role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
-  @user = FactoryGirl.create(:user, company_id: company.id, current_company: company, role_id: role.id, active: true)
-  sign_in @user.reload
-  User.current = @user
-  @user
+  #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
+  role = company.roles.first
+  user = company.company_users.first.user
+  user.current_company = company
+  user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
+  sign_in user
+  User.current = user
 end
-
 
 class ActiveRecord::Base
   mattr_accessor :shared_connection

@@ -8,7 +8,7 @@ class Analysis::CampaignsReportController < ApplicationController
 
   def report
     @events_scope = Event.scoped_by_campaign_id(campaign).where(aasm_state: 'approved')
-    @goals = campaign.goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi).all
+    @goals = campaign.goals.base.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi).all
   end
 
   private

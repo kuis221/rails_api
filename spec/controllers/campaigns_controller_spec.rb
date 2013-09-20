@@ -391,4 +391,108 @@ describe CampaignsController do
     end
   end
 
+
+
+  describe "POST 'update_post_event_form'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+
+    it "should save the form fields information" do
+      Kpi.create_global_kpis
+      expect {
+        post 'update_post_event_form', id: campaign.id, fields: {
+          '0' => {id: nil, name: 'Test 1', ordering: 1, kpi_id: Kpi.impressions, field_type: 'number', options: {capture_mechanism: 'integer'}},
+          '1' => {id: nil, name: 'Test 2', ordering: 2, kpi_id: Kpi.interactions , field_type: 'number', options: {capture_mechanism: 'integer'}}
+        }
+      }.to change(CampaignFormField, :count).by(2)
+
+      campaign.form_fields.count.should == 2
+
+      response.should be_success
+      response.body.should == 'OK'
+    end
+
+
+    it "should update the form fields information" do
+      Kpi.create_global_kpis
+      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: Kpi.impressions, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      expect {
+        post 'update_post_event_form', id: campaign.id, fields: {
+          '0' => {id: field.id, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, options: {capture_mechanism: 'number'}}
+        }
+      }.to_not change(CampaignFormField, :count)
+
+      campaign.form_fields.count.should == 1
+
+      field.reload.name.should == '# Impressions'
+
+      response.should be_success
+      response.body.should == 'OK'
+    end
+
+    it "should normalize brands" do
+      Kpi.create_global_kpis
+      brand = FactoryGirl.create(:brand, name: 'A brand')
+      expect {
+        post 'update_post_event_form', id: campaign.id, fields: {
+          '0' => {id: nil, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, options: {capture_mechanism: 'number', brands: ['A brand', 'Another brand']}}
+        }
+      }.to change(Brand, :count).by(1)
+
+      campaign.form_fields.count.should == 1
+
+      campaign.form_fields.first.options['brands'].count.should == 2
+      campaign.form_fields.first.options['brands'].should include(brand.id)
+
+      response.should be_success
+      response.body.should == 'OK'
+    end
+  end
+
+  describe "POST 'add_kpi'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+    let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
+
+    it "should associate the kpi to the campaign" do
+      expect {
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+      }.to change(CampaignFormField, :count).by(1)
+
+      campaign.form_fields.count.should == 1
+      field = campaign.form_fields.first
+      field.kpi_id.should == kpi.id
+      field.field_type.should == kpi.kpi_type
+      field.name.should == kpi.name
+      field.ordering.should == 1
+      field.options[:capture_mechanism].should == 'integer'
+    end
+
+    it "should NOT associate the kpi to the campaign if the campaing already have it assgined" do
+      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      expect {
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+      }.to_not change(CampaignFormField, :count)
+    end
+
+    it "should automatically assign a correct ordering for the new field" do
+      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: 999, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      expect {
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+      }.to change(CampaignFormField, :count).by(1)
+
+      campaign.form_fields.count.should == 2
+      field = CampaignFormField.last
+      field.ordering.should == 2
+    end
+
+    it "should update the form_field_id for any existing results for the kpi" do
+      result = EventResult.create({form_field_id: 99912, event: FactoryGirl.create(:event, campaign: campaign, company: @company), kpis_segment_id: nil, kpi_id: kpi.id}, without_protection: true)
+      expect {
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+      }.to change(CampaignFormField, :count).by(1)
+
+      field = CampaignFormField.last
+      result.reload.form_field_id.should == field.id
+    end
+  end
+
 end

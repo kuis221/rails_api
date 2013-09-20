@@ -9,5 +9,17 @@ FactoryGirl.define do
     end_time "12:00pm"
     company_id 1
     active true
+
+    factory :approved_event do
+      aasm_state 'approved'
+    end
+
+    factory :rejected_event do
+      aasm_state 'approved'
+    end
+
+    factory :submitted_event do
+      aasm_state 'submitted'
+    end
   end
 end

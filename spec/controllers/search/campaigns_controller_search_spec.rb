@@ -96,6 +96,17 @@ describe CampaignsController, search: true do
     end
   end
 
+  describe "GET 'filters'" do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'filters', format: :json
+      response.should be_success
+
+      filters = JSON.parse(response.body)
+      filters['filters'].map{|b| b['label']}.should == ["Brands", "Brand Portfolios", "People", "Active State"]
+    end
+  end
+
 
   describe "POST 'find_similar_kpi'" do
     it "should return empty if there are no kpis" do
@@ -124,14 +135,15 @@ describe CampaignsController, search: true do
       results.length.should == 1
     end
 
-    pending "should return the kpi if there is one with a common word" do
+    it "should return the kpi if there is one with the same word but in singular" do
       FactoryGirl.create(:kpi, name: 'Events', company: @company)
       Sunspot.commit
-      get 'find_similar_kpi', name: 'Number of Events'
+      get 'find_similar_kpi', name: 'Event'
       results = JSON.parse(response.body)
       results.should_not be_empty
 
       results.length.should == 1
     end
   end
+
 end

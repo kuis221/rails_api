@@ -67,10 +67,6 @@ describe CampaignsController do
       post("/campaigns/1/kpi").should route_to("campaigns#add_kpi", :id => "1")
     end
 
-    it "routes to #remove_kpi" do
-      delete("/campaigns/1/kpi").should route_to("campaigns#remove_kpi", :id => "1")
-    end
-
     it "routes to #find_similar_kpi" do
       get("/campaigns/find_similar_kpi").should route_to("campaigns#find_similar_kpi")
     end

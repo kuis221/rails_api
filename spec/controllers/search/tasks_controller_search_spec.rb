@@ -89,4 +89,24 @@ describe TasksController, search: true do
       tasks_bucket['value'].should == [{"label"=>"<i>Bri</i>ng the beers", "value"=>task.id.to_s, "type"=>"task"}]
     end
   end
+
+  describe "GET 'filters'" do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'filters', format: :json, scope: :user
+      response.should be_success
+
+      filters = JSON.parse(response.body)
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Active State"]
+    end
+
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'filters', format: :json, scope: :teams
+      response.should be_success
+
+      filters = JSON.parse(response.body)
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Active State", "Staff"]
+    end
+  end
 end

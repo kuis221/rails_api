@@ -3,11 +3,16 @@
 
   - if @goals.count > 0
 
-    = render 'report_section_events'
-    = render 'report_section_promo_hours'
+    - if @events_scope.count > 0
 
-    = render 'analysis/shared/report_section_objectives'
+      = render 'report_section_events'
+      = render 'report_section_promo_hours'
+      = render 'analysis/shared/report_section_objectives'
 
+    - else
+      p
+        = @company_user.full_name
+        '  is not part of any event's team. 
   - else
 
     p

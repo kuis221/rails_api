@@ -166,7 +166,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def active_kpis
-    @active_kpis ||= form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi).compact + [Kpi.events, Kpi.promo_hours]
+    @active_kpis ||= (form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi) + [Kpi.events, Kpi.promo_hours]).compact
   end
 
   def active_field_types

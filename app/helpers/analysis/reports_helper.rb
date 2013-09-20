@@ -199,7 +199,11 @@ module Analysis
             goal_value = goal.value || 0
             total_count = completed
             remaining_count =  goal_value - completed
-            completed_percentage = completed * 100 / goal_value rescue 0
+            if goal_value != 0
+              completed_percentage = completed * 100 / goal_value
+            else
+              completed_percentage = 0
+            end
             remaining_percentage = 100 - completed_percentage
             yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
           end

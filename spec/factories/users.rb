@@ -14,6 +14,7 @@ FactoryGirl.define do
     detected_time_zone 'Central America'
     confirmed_at DateTime.now
     invitation_accepted_at DateTime.now
+    invitation_token nil
 
     ignore do
       role_id nil
