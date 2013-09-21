@@ -438,6 +438,7 @@ class Event < ActiveRecord::Base
           stat(:ethnicity_asian, :type => "mean")
           stat(:ethnicity_black, :type => "mean")
           stat(:ethnicity_hispanic, :type => "mean")
+          stat(:ethnicity_native_american, :type => "mean")
           stat(:ethnicity_white, :type => "mean")
         end
 
@@ -519,10 +520,8 @@ class Event < ActiveRecord::Base
         users = [member]
       end
 
-      task_ids = Task.select('tasks.id').scoped_by_event_id(self).scoped_by_company_user_id(users).map(&:id)
-      tasks = Task.scoped_by_id(task_ids)
-      tasks.update_all(company_user_id: nil)
-      Sunspot.index(tasks)
+      self.tasks.scoped_by_company_user_id(users).update_all(company_user_id: nil)
+      Sunspot.index(self.tasks)
     end
 
     def check_results_changed
