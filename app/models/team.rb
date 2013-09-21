@@ -93,7 +93,7 @@ class Team < ActiveRecord::Base
           case attribute
           when 'team'
             with :id, value
-          when 'companyuser'
+          when 'company_user'
             with :user_ids, value
           else
             with "#{attribute}_ids", value

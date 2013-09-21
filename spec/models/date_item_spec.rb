@@ -19,6 +19,7 @@ require 'spec_helper'
 describe DateItem do
   it { should belong_to(:date_range)}
   it { should validate_presence_of(:date_range_id)}
+  it { should validate_numericality_of(:date_range_id) }
   it { should ensure_inclusion_of(:recurrence_type).in_array(['daily', 'weekly', 'monthly', 'yearly'])}
   it { should_not allow_value(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'hello']).for(:recurrence_days)}
   it { should allow_value(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']).for(:recurrence_days)}
@@ -32,6 +33,8 @@ describe DateItem do
   it { should allow_mass_assignment_of(:recurrence_period)}
   it { should allow_mass_assignment_of(:recurrence_days)}
 
+  it { should_not allow_mass_assignment_of(:id)}
+  it { should_not allow_mass_assignment_of(:date_range_id)}
   it { should_not allow_mass_assignment_of(:created_at)}
   it { should_not allow_mass_assignment_of(:updated_at)}
 

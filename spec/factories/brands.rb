@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :brand do
-    name "MyString"
+    sequence(:name) {|n| "Test Brand #{n}" }
     created_by_id 1
     updated_by_id 1
   end

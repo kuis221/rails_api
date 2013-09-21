@@ -442,18 +442,19 @@ class Event < ActiveRecord::Base
           stat(:ethnicity_white, :type => "mean")
         end
 
-        if params.has_key?(:predefined_date) and params[:predefined_date].any?
-          params[:predefined_date].each do |predefined_date|
-            case predefined_date
-            when 'today'
-              with :start_at, Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
-            when 'week'
-              with :start_at, Time.zone.now.beginning_of_week..Time.zone.now.end_of_week
-            when 'month'
-              with :start_at, Time.zone.now.beginning_of_month..Time.zone.now.end_of_month
-            end
-          end
-        end
+        # Date ranges filter were removed
+        # if params.has_key?(:predefined_date) and params[:predefined_date].any?
+        #   params[:predefined_date].each do |predefined_date|
+        #     case predefined_date
+        #     when 'today'
+        #       with :start_at, Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
+        #     when 'week'
+        #       with :start_at, Time.zone.now.beginning_of_week..Time.zone.now.end_of_week
+        #     when 'month'
+        #       with :start_at, Time.zone.now.beginning_of_month..Time.zone.now.end_of_month
+        #     end
+        #   end
+        # end
 
         if include_facets
           facet :campaign
@@ -461,10 +462,6 @@ class Event < ActiveRecord::Base
           facet :users
           facet :teams
           facet :status
-
-          if params[:facet_date_period] && params[:facet_date_start] && params[:facet_date_end]
-            facet :start_at, time_range: params[:facet_date_start]..params[:facet_date_end], :time_interval => params[:facet_date_period]
-          end
         end
 
         order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
