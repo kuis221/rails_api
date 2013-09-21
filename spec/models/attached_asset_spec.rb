@@ -25,4 +25,20 @@ describe AttachedAsset do
   it { should belong_to(:attachable) }
 
   it { should allow_mass_assignment_of(:file) }
+  it { should allow_mass_assignment_of(:asset_type) }
+  it { should allow_mass_assignment_of(:direct_upload_url) }
+
+  it { should_not allow_mass_assignment_of(:id) }
+  it { should_not allow_mass_assignment_of(:file_file_name) }
+  it { should_not allow_mass_assignment_of(:file_content_type) }
+  it { should_not allow_mass_assignment_of(:file_file_size) }
+  it { should_not allow_mass_assignment_of(:file_updated_at) }
+  it { should_not allow_mass_assignment_of(:attachable_id) }
+  it { should_not allow_mass_assignment_of(:attachable_type) }
+  it { should_not allow_mass_assignment_of(:created_by_id) }
+  it { should_not allow_mass_assignment_of(:updated_by_id) }
+  it { should_not allow_mass_assignment_of(:created_at) }
+  it { should_not allow_mass_assignment_of(:updated_at) }
+  it { should_not allow_mass_assignment_of(:active) }
+  it { should_not allow_mass_assignment_of(:processed) }
 end

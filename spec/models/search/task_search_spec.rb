@@ -1,4 +1,3 @@
-
 require 'spec_helper'
 
 describe Task, search: true do
@@ -28,7 +27,7 @@ describe Task, search: true do
     Task.do_search(company_id: 1).results.should =~ user_tasks + user2_tasks
     Task.do_search(company_id: 2).results.should =~ [company2_task]
 
-    Task.do_search(company_id: 1, q: "team,#{team.id}").results.should =~ user_tasks + user2_tasks
+    Task.do_search({company_id: 1, q: "team,#{team.id}"}, true).results.should =~ user_tasks + user2_tasks
     Task.do_search(company_id: 1, q: "team,#{team2.id}").results.should =~ user2_tasks
 
     # Search for a specific user's tasks
@@ -57,10 +56,11 @@ describe Task, search: true do
     # Search for tasks on a given date range
     Task.do_search(company_id: 1, start_date: '02/21/2013', end_date: '02/23/2013').results.should =~ user_tasks
     Task.do_search(company_id: 1, start_date: '02/22/2013').results.should =~ user_tasks
-
     Task.do_search(company_id: 1, start_date: '03/21/2013', end_date: '03/23/2013').results.should =~ user2_tasks
     Task.do_search(company_id: 1, start_date: '03/22/2013').results.should =~ user2_tasks
-
     Task.do_search(company_id: 1, start_date: '01/21/2013', end_date: '01/23/2013').results.should == []
+
+    # Search for Events on a given Event
+    Task.do_search(company_id: 1, status: ['Active']).results.should =~ user_tasks + user2_tasks
   end
 end

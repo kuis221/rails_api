@@ -24,7 +24,7 @@ describe CompanyUser, search: true do
     CompanyUser.do_search(company_id: 1).results.should =~ [user, user2]
     CompanyUser.do_search(company_id: 2).results.should =~ [user2_in_company2]
 
-    CompanyUser.do_search(company_id: 1, q: "team,#{team.id}").results.should =~ [user, user2]
+    CompanyUser.do_search({company_id: 1, q: "team,#{team.id}"}, true).results.should =~ [user, user2]
     CompanyUser.do_search(company_id: 1, q: "team,#{team2.id}").results.should =~ [user2]
 
     # Search for a specific users
@@ -32,6 +32,8 @@ describe CompanyUser, search: true do
     CompanyUser.do_search(company_id: 1, q: "company_user,#{user2.id}").results.should =~ [user2]
 
     # Search for users with a specific role
+    CompanyUser.do_search(company_id: 1, q: "role,#{user.role_id}").results.should =~ [user]
+    CompanyUser.do_search(company_id: 1, q: "role,#{user2.role_id}").results.should =~ [user2]
     CompanyUser.do_search(company_id: 1, role: user.role_id).results.should =~ [user]
     CompanyUser.do_search(company_id: 1, role: user2.role_id).results.should =~ [user2]
     CompanyUser.do_search(company_id: 1, role: [user.role_id, user2.role_id]).results.should =~ [user, user2]
