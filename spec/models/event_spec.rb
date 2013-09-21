@@ -533,4 +533,65 @@ describe Event do
       data.samples.should == 102
     end
   end
+
+  describe "#activate" do
+    let(:event) { FactoryGirl.create(:event, active: false) }
+
+    it "should return the active value as true" do
+      event.activate!
+      event.reload
+      event.active.should be_true
+    end
+  end
+
+  describe "#deactivate" do
+    let(:event) { FactoryGirl.create(:event, active: false) }
+
+    it "should return the active value as false" do
+      event.deactivate!
+      event.reload
+      event.active.should be_false
+    end
+  end
+
+
+  describe "#result_for_kpi" do
+    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    it "should return a new instance of EventResult if the event has not results for the given kpi" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      result = event.result_for_kpi(Kpi.impressions)
+      result.should be_an_instance_of(EventResult)
+      result.new_record?.should be_true
+
+      # Make sure the result is correctly initialized
+      result.kpi_id == Kpi.impressions.id
+      result.form_field_id.should_not be_nil
+      result.value.should be_nil
+      result.scalar_value.should == 0
+    end
+  end
+
+
+  describe "#results_for_kpis" do
+    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    it "should return a new instance of EventResult if the event has not results for the given kpi" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      results = event.results_for_kpis([Kpi.impressions, Kpi.interactions])
+      results.count.should == 2
+      results.each do |result|
+        result.should be_an_instance_of(EventResult)
+        result.new_record?.should be_true
+
+        # Make sure the result is correctly initialized
+        [Kpi.impressions.id, Kpi.interactions.id].should include(result.kpi_id)
+        result.form_field_id.should_not be_nil
+        result.value.should be_nil
+        result.scalar_value.should == 0
+      end
+    end
+  end
 end
