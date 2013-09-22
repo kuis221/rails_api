@@ -38,8 +38,10 @@ ul.select2-results{
 .modal {
 	overflow: visible !important; 
 	&.modal-med{
-		padding-bottom: 33px;
 		width: 460px;
+		&.kpi_modal{
+			padding-bottom: 30px;
+		}
 		.select2-container:focus{
 			outline: none !important;
 		}
@@ -461,7 +463,7 @@ ul.select2-results{
 	.modal-body {
 		max-height: 800px;
 		overflow: visible;
-		padding: 25px 30px 25px 30px;
+		padding: 25px 30px 33px 30px;
 		h3{
 			font-size: 22px;
 			font-weight: bold;
