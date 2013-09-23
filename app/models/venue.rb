@@ -266,7 +266,7 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      [:events, :promo_hours, :impressions, :interactions, :samples, :spent, :venue_score].each do |param|
+      [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
         elsif params[param].present? && params[param][:min].present?

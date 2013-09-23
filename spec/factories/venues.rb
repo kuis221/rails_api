@@ -2,14 +2,19 @@
 
 FactoryGirl.define do
   factory :venue do
-    company nil
-    place nil
+    company_id 1
+    place_id nil
     events 1
-    promo_hours "9.99"
-    impressions 1
-    interactions 1
-    sampled 1
-    score 1
-    avg_impressions 1
+    promo_hours 9.5
+    impressions 100
+    interactions 100
+    sampled 100
+    spent 1000.00
+    score 90
+    avg_impressions 50.00
+    avg_impressions_hour 5.00
+    avg_impressions_cost 1.00
+    score_impressions 100
+    score_cost 1000
   end
 end
