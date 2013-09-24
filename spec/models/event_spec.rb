@@ -49,6 +49,35 @@ describe Event do
   it { should validate_presence_of(:start_at) }
   it { should validate_presence_of(:end_at) }
 
+  describe "states" do
+    before(:each) do
+      @event = FactoryGirl.create(:event)
+    end
+
+    describe ":unsent" do
+      it 'should be an initial state' do
+        @event.should be_unsent
+      end
+
+      it 'should change to :submitted on :unsent or :rejected' do
+        @event.submit
+        @event.should be_submitted
+      end
+
+      it 'should change to :approved on :submitted' do
+        @event.submit
+        @event.approve
+        @event.should be_approved
+      end
+
+      it 'should change to :rejected on :submitted' do
+        @event.submit
+        @event.reject
+        @event.should be_rejected
+      end
+    end
+  end
+
   describe "end_after_start validation" do
     subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
 
