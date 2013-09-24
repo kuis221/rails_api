@@ -237,7 +237,7 @@ class Campaign < ActiveRecord::Base
     def do_search(params, include_facets=false)
       ss = solr_search do
         with(:company_id, params[:company_id])
-        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:company_user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?

@@ -74,7 +74,7 @@ class BrandPortfolio < ActiveRecord::Base
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
-          when 'brandportfolio'
+          when 'brand_portfolio'
             with :id, value
           else
             with "#{attribute}_ids", value

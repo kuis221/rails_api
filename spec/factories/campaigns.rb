@@ -6,6 +6,8 @@ FactoryGirl.define do
     description "Test Campaign description"
     aasm_state "active"
     company_id 1
+    created_by_id 1
+    updated_by_id 1
 
     factory :inactive_campaign do
       aasm_state 'inactive'
