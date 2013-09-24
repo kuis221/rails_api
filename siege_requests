@@ -1,4 +1,4 @@
-HOST=http://brandscopic.herokuapp.com
+HOST=http://login.brandscopic.com
 $(HOST)/events.html
 $(HOST)/events.json?page=1&sorting=start_at&sorting_dir=asc&ac=&ql=&q=&start_date=7%2F2%2F2013&end_date=&status%5B%5D=Active&facets=true
 $(HOST)/tasks/mine.html

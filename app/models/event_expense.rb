@@ -25,7 +25,7 @@ class EventExpense < ActiveRecord::Base
   })
   before_post_process :image?
 
-  validates :event_id, presence: true, numericality: true
+  #validates :event_id, presence: true, numericality: true
   validates :name, presence: true
 
   after_save :update_event_data

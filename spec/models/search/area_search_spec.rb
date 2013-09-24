@@ -11,11 +11,14 @@ describe Area, search: true do
 
     Sunspot.commit
 
-    # Search for all Events on a given Company
+    # Search for all Roles on a given Company
     Area.do_search(company_id: 1).results.should =~ [area, area2]
     Area.do_search(company_id: 2).results.should =~ [company2_area]
 
     # Search for a given Area
     Area.do_search({company_id: 1, q: "area,#{area.id}"}, true).results.should =~ [area]
+
+    # Search for Areas on a given status
+    Area.do_search(company_id: 1, status: ['Active']).results.should =~ [area, area2]
   end
 end

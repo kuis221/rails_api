@@ -28,4 +28,24 @@ describe Role do
   it { should_not allow_mass_assignment_of(:updated_at) }
 
   it { should have_many(:company_users) }
+
+  describe "#activate" do
+    let(:role) { FactoryGirl.build(:role, active: false) }
+
+    it "should return the active value as true" do
+      role.activate!
+      role.reload
+      role.active.should be_true
+    end
+  end
+
+  describe "#deactivate" do
+    let(:role) { FactoryGirl.build(:role, active: false) }
+
+    it "should return the active value as false" do
+      role.deactivate!
+      role.reload
+      role.active.should be_false
+    end
+  end
 end

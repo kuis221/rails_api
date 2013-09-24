@@ -7,6 +7,8 @@ describe EventsController, search: true do
     @company_user = @user.current_company_user
   end
 
+  let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+
   describe "GET 'autocomplete'" do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
@@ -91,6 +93,47 @@ describe EventsController, search: true do
       buckets = JSON.parse(response.body)
       places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
       places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>place.id.to_s, "type"=>"place"}]
+    end
+  end
+
+
+  describe "GET 'filters'" do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'filters', format: :json
+      response.should be_success
+
+      filters = JSON.parse(response.body)
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Locations", "People", "Active State", "Event Status"]
+    end
+
+
+    it "should return the correct buckets in the right order" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      event = FactoryGirl.create(:event, campaign: campaign, company: @company)
+      set_event_results(event,
+        impressions: 100,
+        interactions: 101,
+        samples: 102,
+        gender_male: 35,
+        gender_female: 65,
+        ethnicity_asian: 15,
+        ethnicity_native_american: 23,
+        ethnicity_black: 24,
+        ethnicity_hispanic: 26,
+        ethnicity_white: 12
+      )
+      Sunspot.commit
+
+      get 'filters', with_event_data_only: true, format: :json
+
+      response.should be_success
+      filters = JSON.parse(response.body)
+
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Locations", "People", "Active State", "Event Status"]
+      filters['filters'][0]['items'].count.should == 1
+      filters['filters'][0]['items'].first['label'].should == campaign.name
     end
   end
 
