@@ -10,6 +10,24 @@ FactoryGirl.define do
     company_id 1
     active true
 
+    ignore do
+      results false
+      expenses []
+    end
+
+    before(:create) do |event, evaluator|
+      evaluator.expenses.each do |attrs|
+        ex = event.event_expenses.build(attrs, without_protection: true)
+      end
+
+      if results = evaluator.results
+        Kpi.create_global_kpis if Kpi.impressions.nil?
+        event.campaign.assign_all_global_kpis if event.campaign.form_fields.empty?
+        set_event_results(event, results, false)
+      end
+
+    end
+
     factory :approved_event do
       aasm_state 'approved'
     end

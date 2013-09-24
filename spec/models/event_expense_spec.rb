@@ -37,6 +37,4 @@ describe EventExpense do
   it { should_not allow_mass_assignment_of(:updated_at) }
 
   it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:event_id) }
-  it { should validate_numericality_of(:event_id) }
 end

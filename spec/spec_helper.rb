@@ -9,10 +9,15 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
+require 'capybara/poltergeist'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, {js_errors:true, port:44678+ENV['TEST_ENV_NUMBER'].to_i, phantomjs_options:['--proxy-type=none'], timeout:180})
+end
 
 RSpec.configure do |config|
   # ## Mock Framework
@@ -56,7 +61,8 @@ RSpec.configure do |config|
   end
 
 
-  Capybara.javascript_driver = :webkit
+  # Capybara.javascript_driver = :webkit
+  Capybara.javascript_driver = :poltergeist
   Capybara.default_wait_time = 5
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
@@ -76,7 +82,7 @@ def sign_in_as_user
   User.current = user
 end
 
-def set_event_results(event, results)
+def set_event_results(event, results, autosave = true)
   event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.has_key?(:impressions)
   event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.has_key?(:interactions)
   event.result_for_kpi(Kpi.samples).value = results[:samples] if results.has_key?(:samples)
@@ -101,7 +107,7 @@ def set_event_results(event, results)
   values.detect{|r| r.kpis_segment.text == '55 – 64'}.value = results[:age_55_64] if results.has_key?(:age_55_64)
   values.detect{|r| r.kpis_segment.text == '65+'}.value = results[:age_65] if results.has_key?(:age_65)
 
-  event.save
+  event.save if autosave
 end
 
 class ActiveRecord::Base

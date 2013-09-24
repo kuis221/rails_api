@@ -6,27 +6,17 @@ class VenuesController < FilteredController
   custom_actions member: [:select_areas, :add_areas]
 
   def collection
-    @places ||= begin
-      search = Venue.do_search(search_params)
-      @collection_count = search.total
-      @total_pages = search.results.total_pages
-      google_results = load_google_places
-      places = []
-      search.each_hit_with_result do |hit, result|
-        result.events = hit.stored(:events)
-        result.promo_hours = hit.stored(:promo_hours)
-        result.impressions = hit.stored(:impressions)
-        result.interactions = hit.stored(:interactions)
-        result.sampled = hit.stored(:sampled)
-        result.spent = hit.stored(:spent)
-        result.score = hit.stored(:venue_score)
-        places.push result
+    @extended_places = nil
+    super
+    if places = get_collection_ivar
+      @extended_places ||= begin
+        google_results = load_google_places
+        ids = places.map{|p| p.place.place_id}
+        places += google_results.reject{|gp| ids.include?(gp.id) }
+        places
       end
-      ids = places.map{|p| p.place.place_id}
-      places += google_results.reject{|gp| ids.include?(gp.id) }
-      set_collection_ivar(places)
     end
-    @places
+    @extended_places
   end
 
   def select_areas

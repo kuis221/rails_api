@@ -230,7 +230,7 @@ class Venue < ActiveRecord::Base
   end
 
   def self.do_search(params, include_facets=false)
-    ss = solr_search do
+    ss = solr_search(include: [:place]) do
 
       with(:company_id, params[:company_id]) if params.has_key?(:company_id) and params[:company_id].present?
 
