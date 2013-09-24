@@ -123,12 +123,12 @@ class Venue < ActiveRecord::Base
         mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean']
         stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['stddev']
 
-        self.score_impressions = (normdist((avg_impressions_hour-mean)/stddev) * 100).to_i if stddev != 0.0
+        self.score_impressions = (normdist((avg_impressions_hour-mean)/stddev) * 100).round if stddev != 0.0
 
         mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['mean']
         stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['stddev']
 
-        self.score_cost = 100 - (normdist((avg_impressions_cost-mean)/stddev) * 100).to_i if stddev != 0.0
+        self.score_cost = 100 - (normdist((avg_impressions_cost-mean)/stddev) * 100).round if stddev != 0.0
 
         if self.score_impressions && self.score_cost
           self.score = (self.score_impressions + self.score_cost) / 2
@@ -230,7 +230,7 @@ class Venue < ActiveRecord::Base
   end
 
   def self.do_search(params, include_facets=false)
-    ss = solr_search do
+    ss = solr_search(include: [:place]) do
 
       with(:company_id, params[:company_id]) if params.has_key?(:company_id) and params[:company_id].present?
 

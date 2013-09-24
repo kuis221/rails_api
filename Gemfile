@@ -81,7 +81,8 @@ end
 group :test do
   gem "capybara"
   gem "rspec-mocks"
-  gem "capybara-webkit"
+  #gem "capybara-webkit"
+  gem "poltergeist"
   gem "email_spec", ">= 1.4.0"
   gem 'shoulda'
   gem 'launchy'
