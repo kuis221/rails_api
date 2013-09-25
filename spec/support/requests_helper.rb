@@ -2,12 +2,14 @@
 module CapybaraBrandscopicHelpers
 
   def click_js_link(locator, options={})
-    find(:link, locator, options).trigger('click')
+    #find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
+    find(:link, locator, options).click
     self
   end
 
   def click_js_button(locator, options={})
-    find(:button, locator, options).trigger('click')
+    #find(:button, locator, options).trigger('click')
+    find(:button, locator, options).click
     self
   end
 

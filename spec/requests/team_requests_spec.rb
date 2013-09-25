@@ -127,9 +127,7 @@ describe "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      within('#team-members-list') do
-        page.should_not have_content('Fulanito')
-      end
+      page.should_not have_content('Fulanito')
 
       click_js_link('Add Team Member')
 
