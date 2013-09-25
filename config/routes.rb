@@ -27,6 +27,9 @@ Brandscopic::Application.routes.draw do
   namespace :results do
     resources :event_data, only: [:index] do
       get :items, on: :collection
+      post 'downloads', to: 'event_data#new_download', on: :collection, format: :js
+      get 'downloads/:download_id', to: 'event_data#download', on: :collection, as: :download, format: :js
+      get 'downloads/:download_id/status', to: 'event_data#download_status', on: :collection, as: :download_status, format: :json
     end
     resources :comments, only: [:index] do
       get :items, on: :collection
