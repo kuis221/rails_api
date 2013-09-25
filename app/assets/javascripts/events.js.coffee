@@ -22,7 +22,7 @@ jQuery ->
     if $(this).attr('href') is '#map-view'
       mapIsVisible = true
       initializeMap()
-      $('.table-cloned-fixed-header').hide()  
+      $('.table-cloned-fixed-header').hide()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
     else
       mapIsVisible = false
@@ -87,8 +87,8 @@ jQuery ->
           marker.theInfowindow = new google.maps.InfoWindow {
               content: $('<div>')
                       .append($('<b>').append(if event.campaign? then event.campaign.name else ''))
-                      .append($('<br>')).append(event.start_at)
-                      .append($('<br>')).append(if event.place? then event.place.formatted_address else '')
+                      .append($('<br>')).append(event.formatted_date)
+                      .append($('<br>')).append(if event.place? then event.place.name + '<br>' + event.place.formatted_address else '')
                       .append($('<br>')).append($('<a>', {'href': event.links.show}).text('View Details'))
                       .append('\xA0\xA0').append($('<a>', {'href': event.links.edit, 'data-remote': true}).text('Edit Event')).html()
           }

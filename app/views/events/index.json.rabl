@@ -10,6 +10,10 @@ child :place do
   attribute :id, :name, :latitude, :longitude, :formatted_address
 end
 
+node :formatted_date do |event|
+  format_date_range(event.start_at, event.end_at)
+end
+
 node :links do |event|
   {
     show: event_path(event),
