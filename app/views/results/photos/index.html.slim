@@ -41,7 +41,7 @@ javascript:
     }
   });
 
-  $(document).delegate('.photo-download-link', 'click', function(e) {
+  $(document).delegate('#photo-download-add', 'click', function(e) {
     e.preventDefault();
     target = $(this).closest('li.photo-item');
     target.toggleClass('selected-for-download');
