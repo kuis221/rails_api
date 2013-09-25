@@ -75,7 +75,7 @@ class Event < ActiveRecord::Base
   validates :end_at, presence: true
 
   validates_datetime :start_at
-  validates_datetime :end_at, :on_or_after => :start_at
+  validates_datetime :end_at, :on_or_after => :start_at, on_or_after_message: 'must be after'
 
   attr_accessor :start_date, :start_time, :end_date, :end_time
 
