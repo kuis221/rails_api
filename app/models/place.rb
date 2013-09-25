@@ -233,11 +233,6 @@ class Place < ActiveRecord::Base
 
         with(:types, params[:types]) if params.has_key?(:types) and params[:types].present?
 
-        if include_facets
-          facet :campaigns
-          facet :status
-        end
-
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end

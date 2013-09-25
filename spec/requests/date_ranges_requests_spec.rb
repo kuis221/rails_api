@@ -123,10 +123,11 @@ describe "DateRanges", search: true, js: true do
 
       ensure_modal_was_closed
 
+      page.should have_selector('table#date_range-dates tbody tr[id^=date_item]')
       within("#date_range-dates") do
         click_js_link('Remove')
-        page.should have_no_selector('Remove')
       end
+      page.should have_no_selector('table#date_range-dates tbody tr[id^=date_item]')
 
     end
   end

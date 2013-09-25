@@ -41,6 +41,29 @@ describe Campaign do
   it { should_not allow_mass_assignment_of(:updated_at) }
   it { should_not allow_mass_assignment_of(:company_id) }
 
+  describe "states" do
+    before(:each) do
+      @campaign = FactoryGirl.create(:inactive_campaign)
+    end
+
+    describe ":inactive" do
+      it 'should be an initial state' do
+        @campaign.should be_inactive
+      end
+
+      it 'should change to :active on :inactive or :closed' do
+        @campaign.activate
+        @campaign.should be_active
+      end
+
+      it 'should change to :inactive on :active' do
+        @campaign.activate
+        @campaign.deactivate
+        @campaign.should be_inactive
+      end
+    end
+  end
+
   describe "Get first and last events for a campaign" do
     describe "#first_event" do
       before(:each) do

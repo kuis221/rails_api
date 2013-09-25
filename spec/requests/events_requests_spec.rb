@@ -115,9 +115,14 @@ describe "Events", js: true, search: true do
         #find('a.remove-member-btn').click
       end
 
-
       # Test removal of the user
-      within(event_team_member(company_user)) {click_js_link('Remove Member', visible: false) }
+      el = page.driver.browser.find_element(:css => '#event-team-members #event-member-'+company_user.id.to_s)
+      page.driver.browser.action.move_to(el).perform
+      within(event_team_member(company_user)) {click_link('Remove Member') }
+
+
+
+
       within visible_modal do
         page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
