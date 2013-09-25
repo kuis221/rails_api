@@ -301,6 +301,7 @@ $.widget 'nmk.filteredList', {
 					@acInput.hide()
 					@searchLabel.show()
 		@acInput.bucket_complete {
+			position: { my: "left top", at: "left bottom+3", collision: "none" }
 			source: @_getAutocompleteResults,
 			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
