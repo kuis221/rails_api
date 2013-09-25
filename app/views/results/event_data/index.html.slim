@@ -9,7 +9,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          a.btn.download.xlsx-download-link href="#{results_event_data_path(format:"xlsx")}" title="Download"
+          a.btn.download.xlsx-download-link href="" title="Download"
           a.btn.fullscreen.fullscreen-link href="#" data-fullscreen-element='main' title="Fullscreen"
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
@@ -57,6 +57,11 @@ javascript:
       }
     }
   });
+
+  $(document).delegate('.xlsx-download-link', 'click', function(e) {
+    e.preventDefault();
+    $.post('#{downloads_results_event_data_url(format: :js)}')
+  })
 
   $('#columns-scoller-arrows .right-arrow').on('click', function(){
     var $lastItem = $('.results-box-container>span:last-child:first');
