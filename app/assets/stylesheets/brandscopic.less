@@ -1219,14 +1219,18 @@ li#notifications{
 			border-bottom: 10px solid @grey_one;
 		}
 		ul {
+			display: table;
 			list-style: none;
 			margin: 0;
 			padding: 0;
+			width: 100%;
 			li {
-				padding: 14px 10px 10px 10px;
+				display: table-cell;
+				vertical-align: middle;
+				padding: 10px;
 				background-color: #fff;
 				border-top: 1px solid @borders;
-				min-height: 38px;
+				height: 45px;
 
 				&:first-child{
 					border:0;
@@ -1243,8 +1247,8 @@ li#notifications{
 				}
 
 				.alert-message{
-					display: inline-block;;
-					width: 182px;
+					display: inline-block;
+					width: 188px;
 				}
 
 				&:hover{
@@ -1259,20 +1263,21 @@ li#notifications{
 					color: @text;
 					font-size: 11px;
 					i{
-						float: left;
-						margin-left: 4px;
-						margin-right: 13px;
-						margin-top: 4%;
+						margin-right: 5px;
+						vertical-align: middle;
 						&.icon-angle-right{
-							float: right;
-							left: 12px;
-							margin-top: 7px;
-							margin-right: 0;
-							position: relative;
 							&:before{
 								font-size: 22px !important;
+								left:16px !important;
+								top: 4px;
 							}
 						}
+						&.alert-icon{
+							margin-right: 10px;
+						}
+					}
+					span{
+						vertical-align: middle;
 					}
 					&:hover{
 						text-decoration: none;
@@ -1473,7 +1478,7 @@ ul.kpis-list{
 	    	span{
 	    		&:first-child{
 	    			font-size: 11px;
-	    			margin: 20px 0 0 20px;
+	    			margin: 10px 0 0 0;
 	    			width: 400px;
 	    			.area_name{
 	    				font-size: 16px;
@@ -1796,7 +1801,7 @@ ul.kpis-list{
     			span{
     				&:first-child{
     					float: left;
-    					width: 60%;
+    					width: 54%;
     				}
     				&.n_events{
     					font-size: 16px;
@@ -2909,10 +2914,10 @@ ul.thumbnails{
 	.photo-list{
 		margin: 40px 0 0 0;
 		ul.thumbnails{
-			margin: 0 -3% 0 -3%;
+			margin: 0 -5% 0 -1%;
 			overflow: auto;
 			&>li{
-				margin: 0 3% 6% 3%;
+				margin: 0 3% 6% 2%;
 				&:first-child{
 					margin: 0 3% 6% 3%;
 				}
@@ -3187,7 +3192,7 @@ ul.thumbnails{
 		}
 		.control-label{
 			cursor:default;
-			margin-top: 5px;
+			margin-top: 2px;
 		}
 		.btn-primary{
 			margin-top: 4px;
@@ -3606,7 +3611,7 @@ table.table td.comments-container {
 
 #comment-form-container{
 	display: inline-block;
-	margin: 20px 0 5px 44px;
+	margin: 20px 0 5px 40px;
 	position: relative;
 	width: 95%;
 	.btn{
@@ -3624,6 +3629,7 @@ table.table td.comments-container {
 		border:1px solid @user_menu;
 		color: @user_menu;
 		display: inline-block;
+		font-weight: 300;
 		min-height: 75px;
 		margin: 0px 15px 0 0;
 		padding: 10px 0 0 10px;
@@ -3660,10 +3666,10 @@ table.table td.comments-container {
     			width: 60%;
 	p{
 		font-size: 12px;
-		margin: 5px 0 0 0;
+		margin: 8px 0 0 0;
 	}
 	.user{
-		font-size: 14px;
+		font-size: 13px;
 	}
 	.date{
 		color: @brand;
@@ -4342,7 +4348,7 @@ svg{
 	.alert {
 		-webkit-border-radius: 0;
   		border-radius: 0;
-  		margin-bottom: 30px;
+  		margin: 40px 0 30px 0;
 	}
 }
 

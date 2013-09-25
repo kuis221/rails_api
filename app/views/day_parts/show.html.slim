@@ -1,32 +1,25 @@
-#resource-details-wrapper
+.row-fluid.with-details-close-bar
   = resource_details_bar("Viewing Day Part Details", collection_path)
 
-  .row-fluid
-    .box.span12
+  .details_box.padding-top-close-bar
+    h2= resource.name
+    - if resource.description
+      .description-data
+        = resource.description
+    .pull-left
+      = link_to 'Edit', edit_day_part_path(resource), remote: true, class: 'btn btn-primary btn-small'
+      = "&nbsp;".html_safe
+      = active_inactive_buttons(resource)
+
+  .details_box
+    h3 TIME RANGES
+
+    .box-content
+      = render partial: 'day_items', locals: { day_items: resource.day_items }
+
       .row-fluid
-        .span6
-          h2= resource.name
-          - if resource.description
-            .day-part-description
-              = resource.description
-        .span6
-          .pull-right
-            = link_to 'Edit', edit_day_part_path(resource), remote: true, class: 'btn btn-primary btn-small'
-            = "&nbsp;".html_safe
-            = active_inactive_buttons(resource)
-
-      .box-header
-        h2
-          i.icon-user
-          span.break
-          = "Times"
-
-      .box-content
-        = render partial: 'day_items', locals: { day_items: resource.day_items }
-
-        .row-fluid
-          .pull-right
-            = link_to 'Add Time', new_day_part_day_item_path(resource), remote: true, class: 'btn btn-primary'
+        .pull-right
+          = link_to 'Add Time', new_day_part_day_item_path(resource), remote: true, class: 'btn btn-primary'
 
 javascript:
   $(document).on('day_parts:change', function(){
