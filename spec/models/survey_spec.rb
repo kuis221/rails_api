@@ -28,4 +28,24 @@ describe Survey do
   it { should_not allow_mass_assignment_of(:updated_at) }
 
   it { should accept_nested_attributes_for(:surveys_answers) }
+
+  describe "#activate" do
+    let(:survey) { FactoryGirl.build(:survey, active: false) }
+
+    it "should return the active value as true" do
+      survey.activate!
+      survey.reload
+      survey.active.should be_true
+    end
+  end
+
+  describe "#deactivate" do
+    let(:survey) { FactoryGirl.build(:survey, active: false) }
+
+    it "should return the active value as false" do
+      survey.deactivate!
+      survey.reload
+      survey.active.should be_false
+    end
+  end
 end

@@ -2,8 +2,9 @@
 
 FactoryGirl.define do
   factory :survey do
-    event nil
+    event_id nil
     created_by_id 1
     updated_by_id 1
+    active true
   end
 end

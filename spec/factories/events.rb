@@ -8,6 +8,7 @@ FactoryGirl.define do
     end_date "01/23/2019"
     end_time "12:00pm"
     company_id 1
+    aasm_state 'unsent'
     active true
 
     ignore do
