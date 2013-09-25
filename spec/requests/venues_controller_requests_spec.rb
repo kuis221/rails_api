@@ -39,7 +39,6 @@ describe "VenuesController", js: true, search: true do
 
       within("ul#venues-list") do
 
-        save_and_open_page
         # First Row
         within("li:nth-child(1)") do
           page.should have_content('Costa Rica Team')
