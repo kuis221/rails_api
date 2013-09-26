@@ -16,7 +16,7 @@ wb.add_worksheet(name: "Events") do |sheet|
                  'ACTIVE STATE',
                  'EVENT STATUS'], :style => row_header
 
-  collection.each do |event|
+  each_collection_item do |event|
     sheet.add_row [event.campaign_name,
                    format_date(event.start_at, true),
                    format_time(event.start_at),

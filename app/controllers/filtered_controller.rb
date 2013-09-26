@@ -1,12 +1,10 @@
 class FilteredController < InheritedResources::Base
-  helper_method :collection_count, :facets, :page, :total_pages
+  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
   respond_to :json, only: :index
 
-  load_and_authorize_resource except: [:index, :items, :filters, :autocomplete]
+  load_and_authorize_resource except: [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
 
   custom_actions collection: [:filters, :items]
-
-  after_filter :set_xlsx_header, only: :index
 
   def filters
   end
@@ -15,15 +13,64 @@ class FilteredController < InheritedResources::Base
     render layout: false
   end
 
+  def export
+    @export = ListExport.find_by_id(params[:download_id])
+  end
+
+  def export_status
+    url = nil
+    export = ListExport.find_by_id_and_user_id(params[:download_id], current_user.id)
+    url = export.download_url if export.completed?
+    respond_to do |format|
+      format.json { render json:  {status: export.aasm_state, progress: export.progress, url: url} }
+    end
+  end
+
+  def index
+    if request.format.xlsx?
+      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xlsx', user: current_user}, without_protection: true)
+      if @export.new?
+        @export.queue!
+      end
+      render action: :new_export, formats: [:js]
+    else
+      super
+    end
+  end
+
   protected
 
-    def set_xlsx_header
-      response.headers['Content-Disposition'] = "attachment; filename=\"#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}.xlsx\"" if request.format.xlsx?
+    def export_list(export)
+      @_export = export
+      @search_params = export.params
+      @solr_search = resource_class.do_search(@search_params)
+      @collection_count = @solr_search.total
+      @total_pages = @solr_search.results.total_pages
+      @collection_results = @solr_search.results
+      set_collection_ivar(@solr_search.results)
+
+      render_to_string :index, handlers: [:axlsx], formats: [:xlsx], layout: false
+    end
+
+    def each_collection_item
+      p = @search_params.dup
+      (1..@total_pages).each do |page|
+        p[:page] = page
+        search = resource_class.do_search(p)
+        search.results.each do |result|
+          yield result
+        end
+        @_export.update_column(:progress, (page*100/@total_pages).round) unless @_export.nil?
+      end
+    end
+
+    def export_file_name
+      "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
     end
 
     def collection
       get_collection_ivar || begin
-        if action_name != 'index' || request.format.json? || request.format.xlsx?
+        if action_name != 'index' || request.format.json?
           if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
             @solr_search = resource_class.do_search(search_params)
             @collection_count = @solr_search.total
@@ -53,6 +100,9 @@ class FilteredController < InheritedResources::Base
     def facets
       @facets ||= []
     end
+
+
+    # Autocomplete helper methods
 
     def autocomplete_buckets(list)
       search_classes = list.values.flatten
@@ -92,23 +142,27 @@ class FilteredController < InheritedResources::Base
       results.map{|x| {label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format{|word| "<i>#{word}</i>" }), value: x.primary_key, type: x.class_name.underscore.downcase} }
     end
 
+    def search_params
+      @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
+        p[:company_id] = current_company.id
+      end
+    end
+
+    # Facet helper methods
+    def build_facet(klass, title, name, facets)
+      counts = Hash[facets.map{|x| [x.value.to_i, x.count] }]
+      items = klass.where(id: counts.keys).all
+      items.sort!{|a, b| counts[b.id] <=> counts[a.id] }
+      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id]})}, name: name}
+    end
+
     def build_facet_item(options)
       options[:selected] ||= params.has_key?(options[:name]) && ((params[options[:name]].is_a?(Array) and params[options[:name]].include?(options[:id])) || (params[options[:name]] == options[:id]))
       options
     end
 
-    def search_params
-      @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
-        p[:company_id] = current_company.id
-        if request.format.xlsx?
-          p[:per_page] = 20000
-        end
-      end
-    end
-
-
     def build_brands_bucket(campaigns)
-      campaigns_counts = Hash[campaigns.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
+      campaigns_counts = Hash[campaigns.map{|x| [x.value.to_i, x.count] }]
       brands = {}
       Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
         campaing_brands = Hash[campaign.brands.map{|b| [b.id, {label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]}] }]

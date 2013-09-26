@@ -105,12 +105,14 @@ class EventsController < FilteredController
         # ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
         # f.push(label: "Date Ranges", items: ranges )
 
-        f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
-        f.push build_brands_bucket(facet_search.facet(:campaign).rows)
+        f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
+        f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
         f.push build_locations_bucket(facet_search.facet(:place).rows)
         #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
-        users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
-        teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
+        users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
+        teams = build_facet(Team, 'Team', :user, facet_search.facet(:team_ids).rows)[:items]
+        # users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
+        # teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
         people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })

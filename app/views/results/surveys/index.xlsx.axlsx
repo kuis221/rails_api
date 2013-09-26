@@ -8,7 +8,7 @@ wb.add_worksheet(name: "Event Expenses") do |sheet|
   sheet.add_row ['DESCRIPTION', 'CREATED', 'UPDATED', ''], :style => row_header
 
 
-  collection.each do |event|
+  each_collection_item do |event|
     event.surveys.each do |survey|
       desc = []
       if age = survey.age

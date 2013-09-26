@@ -81,7 +81,7 @@ describe Event do
   describe "end_after_start validation" do
     subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
 
-    it { should_not allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be on or after 2016-01-20 12:05:00") }
+    it { should_not allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
     it { should allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
     it { should allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
   end

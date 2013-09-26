@@ -32,6 +32,15 @@ jQuery ->
 
 	$('header .nav #notifications').notifications();
 
+	$(window).load () =>
+		if ($.browser.webkit)
+			$('html').addClass('webkit')
+		else if ($.browser.opera)
+			$('html').addClass('opera')
+		else if $.browser.msie
+			$('html').addClass('msie')
+		else if $.browser.mozilla
+			$('html').addClass('mozilla')
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})

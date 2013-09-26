@@ -1,41 +1,8 @@
 class Results::EventDataController < FilteredController
 
   defaults :resource_class => ::Event
-  # respond_to :xlsx, only: :index
-
-  skip_load_and_authorize_resource only: [:download, :new_download, :download_status]
 
   helper_method :data_totals
-
-  # def index
-  #   if request.format.xlsx?
-  #     collection
-  #     ids = @solr_search.hits.map{|hit| hit.primary_key}
-  #     @data_scope = EventData.joins(event: :campaign).select('campaigns.name as campaign_name, events.promo_hours, event_data.*').where(events: {id: ids})
-  #   else
-  #     super
-  #   end
-  # end
-
-  def download
-    @download = ListExport.find_by_id(params[:download_id])
-  end
-
-  def new_download
-    @download = ListExport.create(list_class: resource_class.to_s, params: search_params, export_format: 'xls')
-    if @download.new?
-      @download.queue!
-    end
-  end
-
-  def download_status
-    url = nil
-    download = ListExport.find_by_id(params[:download_id])
-    url = download.download_url if download.completed?
-    respond_to do |format|
-      format.json { render json:  {status: download.aasm_state, url: url} }
-    end
-  end
 
   private
     def search_params

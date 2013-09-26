@@ -3,7 +3,6 @@
 # Table name: list_exports
 #
 #  id                :integer          not null, primary key
-#  list_class        :string(255)
 #  params            :string(255)
 #  export_format     :string(255)
 #  aasm_state        :string(255)
@@ -14,11 +13,14 @@
 #  user_id           :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  controller        :string(255)
+#  progress          :integer          default(0)
 #
 
 class ListExport < ActiveRecord::Base
   belongs_to :user
-  attr_accessible :list_class, :params, :export_format
+
+  has_attached_file :file, PAPERCLIP_SETTINGS
 
   serialize :params
 
@@ -27,19 +29,24 @@ class ListExport < ActiveRecord::Base
   aasm do
     state :new, :initial => true
     state :queued, before_enter: :queue_process
-    state :processing, after_enter: :export_list
+    state :processing
     state :completed
+    state :failed
 
     event :queue do
-      transitions :from => [:new, :complete], :to => :queued
+      transitions :from => [:new, :complete, :failed], :to => :queued
     end
 
     event :process do
-      transitions :from => [:queued, :new], :to => :processing
+      transitions :from => [:queued, :new, :failed], :to => :processing
     end
 
     event :complete do
       transitions :from => :processing, :to => :completed
+    end
+
+    event :fail do
+      transitions :from => :processing, :to => :failed
     end
   end
 
@@ -48,18 +55,24 @@ class ListExport < ActiveRecord::Base
   end
 
   def download_url(style_name=:original)
-    'url'
+    file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
+      :secure => true,
+      :expires => 300, # 5 minutes
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
   end
 
   def export_list
-    @solr_search = self.list_class.constantize.do_search(self.params)
-    @collection_count = @solr_search.total
-    @total_pages = @solr_search.results.total_pages
-    @collection_results = @solr_search.results
+    self.process!
+    controller = self.controller.constantize.new
 
-    ApplicationController.new.render_to_string(:template => "results/event_data/index", :handlers => [:axlsx], :formats => [:xlsx], :layout => false)
+    name = controller.send(:export_file_name)
+    buffer = controller.send(:export_list, self)
+    tmp_filename = "#{Rails.root}/tmp/#{name}.#{export_format}"
+    output_file = File.open(tmp_filename, 'w'){|f| f.write(buffer) }
+    self.file = File.open(tmp_filename)
+    self.save
 
-    # Mark download as completed
+    # Mark export as completed
     self.complete!
   end
 end
