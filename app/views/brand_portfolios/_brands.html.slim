@@ -1,8 +1,8 @@
 .row-fluid
   - resource.brands.each do |brand|
-    .span3.brand.clearfix id = "brand-#{brand.id}"
+    .span3.brand.clearfix id="brand-#{brand.id}"
       .pull-left
         .brand-name
           = brand.name
       .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', title: 'Remove', remote: true, method: :delete)
+        = link_to(content_tag(:i,'', class: 'icon-remove-circle'), delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', title: 'Remove', remote: true, method: :delete)

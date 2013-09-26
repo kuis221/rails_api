@@ -116,11 +116,7 @@ describe "Events", js: true, search: true do
       end
 
       # Test removal of the user
-      el = page.driver.browser.find_element(:css => '#event-team-members #event-member-'+company_user.id.to_s)
-      page.driver.browser.action.move_to(el).perform
-      within(event_team_member(company_user)) {click_link('Remove Member') }
-
-
+      hover_and_click('#event-team-members #event-member-'+company_user.id.to_s, 'Remove Member')
 
 
       within visible_modal do
