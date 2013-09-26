@@ -182,6 +182,101 @@ describe "Events", js: true, search: true do
         page.should_not have_content('Juanito Bazooka')
       end
     end
+
+    it "should allow the user to fill the event data" do
+      Kpi.create_global_kpis
+      event = FactoryGirl.create(:event, start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes), campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
+      event.campaign.assign_all_global_kpis
+
+      Sunspot.commit
+
+      visit event_path(event)
+
+      fill_in 'Summary', with: 'This is the summary'
+
+
+      fill_in '< 12', with: '10'
+      fill_in '12 – 17', with: '11'
+      fill_in '18 – 24', with: '12'
+      fill_in '25 – 34', with: '13'
+      fill_in '35 – 44', with: '14'
+      fill_in '45 – 54', with: '15'
+      fill_in '55 – 64', with: '16'
+      fill_in '65+', with: '9'
+
+
+      fill_in 'Asian', with: '20'
+      fill_in 'Black / African American', with: '12'
+      fill_in 'Hispanic / Latino', with: '13'
+      fill_in 'Native American', with: '34'
+      fill_in 'White', with: '21'
+
+
+      fill_in 'Female', with: '34'
+      fill_in 'Male', with: '66'
+
+      fill_in 'Impressions',  with: 100
+      fill_in 'Interactions', with: 110
+      fill_in 'Samples',      with: 120
+
+      click_button 'Save Result'
+
+      within visible_modal do
+        page.should have_content 'The event\'s results have been saved'
+        click_link "OK"
+      end
+
+      ensure_modal_was_closed
+
+      # Ensure the results are displayed on the page
+
+      within "#ethnicity-graph" do
+        page.should have_content "20%"
+        page.should have_content "12%"
+        page.should have_content "13%"
+        page.should have_content "34%"
+        page.should have_content "21%"
+      end
+
+      within "#gender-graph" do
+        page.should have_content "34 %"
+        page.should have_content "66 %"
+      end
+
+      within "#age-graph" do
+        page.should have_content "9%"
+        page.should have_content "11%"
+        page.should have_content "12%"
+        page.should have_content "13%"
+        page.should have_content "14%"
+        page.should have_content "15%"
+        page.should have_content "16%"
+      end
+
+      visit event_path(event)
+
+      # Page should still display the post-event format and not the form
+      page.should have_selector("#gender-graph")
+      page.should have_selector("#ethnicity-graph")
+      page.should have_selector("#age-graph")
+
+      click_link 'Edit event data'
+
+      fill_in 'Summary', with: 'Edited summary content'
+      fill_in 'Impressions', with: '3333'
+      fill_in 'Interactions', with: '222222'
+      fill_in 'Samples', with: '4444444'
+
+      click_button "Save"
+
+      within ".box_metrics" do
+        page.should have_content('3,333')
+        page.should have_content('222,222')
+        page.should have_content('4,444,444')
+      end
+
+      page.should have_content('Edited summary content')
+    end
   end
 
 end
