@@ -4,9 +4,11 @@
     bootbox.alert('Unknown error')
 - else
   |
-    $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
+    $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
     | $('#photo-details-toolbar').replaceWith('#{escape_javascript(render(partial: 'results/photos/photo_info', locals: {photo: resource}))}');
-  
+  - if resource.is_a?(AttachedAsset) && resource.asset_type == 'document' && resource.attachable_type == 'Event'
+    | $('##{resource_class}_#{resource.id}').remove()
+
   - unless resource.is_a?(AttachedAsset)
-    | $('.active-toggle-btn-#{resource.class.name.underscore.downcase}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}')
+    | $('.active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}')
