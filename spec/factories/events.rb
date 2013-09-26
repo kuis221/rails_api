@@ -34,7 +34,7 @@ FactoryGirl.define do
     end
 
     factory :rejected_event do
-      aasm_state 'approved'
+      aasm_state 'rejected'
     end
 
     factory :submitted_event do

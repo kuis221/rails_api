@@ -274,6 +274,7 @@ class Venue < ActiveRecord::Base
         end
       end
 
+
       stat(:events, :type => "max")
       stat(:promo_hours, :type => "max")
       stat(:impressions, :type => "max")
@@ -289,6 +290,7 @@ class Venue < ActiveRecord::Base
 
       order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
       paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+
     end
   end
 

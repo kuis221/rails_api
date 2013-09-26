@@ -343,7 +343,7 @@ class Event < ActiveRecord::Base
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
 
-        # We are using to options to allow searching by active/inactive in combination with approved/late/rejected/submitted
+        # We are using two options to allow searching by active/inactive in combination with approved/late/rejected/submitted
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
         if params.has_key?(:event_status) and params[:event_status].present? # For the event status
           late = params[:event_status].delete('Late')
