@@ -69,17 +69,14 @@ describe "DateRanges", search: true, js: true do
       date_items = [FactoryGirl.create(:date_item, start_date: '01/01/2013', end_date: nil), FactoryGirl.create(:date_item, start_date: '03/03/2013', end_date: nil)]
       date_items.map {|b| date_range.date_items << b }
       visit date_range_path(date_range)
-      within('table#date_range-dates') do
-        within("tbody tr:nth-child(1)") do
-          find('td:nth-child(1)').should have_content('On 01/01/2013')
-          find('td:nth-child(2)').should have_content('Remove')
+      within('#date_range-dates-list') do
+        within(".date-item:nth-child(1)") do
+          page.should have_content('On 01/01/2013')
         end
-        within("tbody tr:nth-child(2)") do
-          find('td:nth-child(1)').should have_content('On 03/03/2013')
-          find('td:nth-child(2)').should have_content('Remove')
+        within(".date-item:nth-child(2)") do
+          page.should have_content('On 03/03/2013')
         end
       end
-
     end
 
     it 'allows the user to activate/deactivate a date range' do
@@ -123,11 +120,11 @@ describe "DateRanges", search: true, js: true do
 
       ensure_modal_was_closed
 
-      page.should have_selector('table#date_range-dates tbody tr[id^=date_item]')
-      within("#date_range-dates") do
+      page.should have_selector('#date_range-dates-list div[id^=date_item]')
+      within("#date_range-dates-list .date-item") do
         click_js_link('Remove')
       end
-      page.should have_no_selector('table#date_range-dates tbody tr[id^=date_item]')
+      page.should have_no_selector('#date_range-dates-list div[id^=date_item]')
 
     end
   end

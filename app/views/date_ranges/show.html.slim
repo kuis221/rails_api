@@ -25,3 +25,8 @@
       = render 'date_items'
 
     = link_to '', new_date_range_date_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Date'
+
+javascript:
+  $(document).on('date_ranges:change', function(){
+    window.location.reload(false);
+  })

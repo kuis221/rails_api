@@ -5,4 +5,4 @@
   |
     $('.bootbox.modal').modal('hide');
     $('#date_range-dates-list').html('#{escape_javascript(render(partial: 'date_ranges/date_items', locals: {resource: parent}))}');
-    $(document).trigger('date_ranges:change');
+    $(document).trigger('date_items:change');

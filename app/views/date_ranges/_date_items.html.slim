@@ -1,5 +1,5 @@
 .row-fluid
   - resource.date_items.each do |date_item|
-    .span3.brand.clearfix id="date_item-#{date_item.id}"
+    .span3.date-item.clearfix id="date_item-#{date_item.id}"
       .pull-left= date_item.label
       .pull-right= link_to content_tag(:i,'', class: 'icon-remove-circle'), date_range_date_item_path(resource, date_item), title: 'Remove', method: :delete, remote: true

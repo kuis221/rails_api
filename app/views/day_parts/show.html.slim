@@ -8,7 +8,7 @@
         = resource.description
     
     .links-data
-      = link_to '', edit_day_part_path(resource), remote: true, class: 'edit'
+      = link_to '', edit_day_part_path(resource), remote: true, class: 'edit', title: 'Edit'
       = "&nbsp;".html_safe
       = active_inactive_buttons(resource)
 
@@ -25,3 +25,8 @@
       = render 'day_items'
 
     = link_to '', new_day_part_day_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Time'
+
+javascript:
+  $(document).on('day_parts:change', function(){
+    window.location.reload(false);
+  })
