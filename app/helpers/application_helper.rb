@@ -87,10 +87,20 @@ module ApplicationHelper
   end
 
   def format_date(the_date, plain = false)
-    if plain
-      the_date.strftime('%^a %b %e') unless the_date.nil?
-    else
-      the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+    unless the_date.nil?
+      if plain
+        if the_date.strftime("%Y") == Time.zone.now.year.to_s
+          the_date.strftime('%^a %b %e')
+        else
+          the_date.strftime('%^a %b %e %Y')
+        end
+      else
+        if the_date.strftime("%Y") == Time.zone.now.year.to_s
+          the_date.strftime('%^a <b>%b %e</b>').html_safe
+        else
+          the_date.strftime('%^a <b>%b %e %Y</b>').html_safe
+        end
+      end
     end
   end
 
