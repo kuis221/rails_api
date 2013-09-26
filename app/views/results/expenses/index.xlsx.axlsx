@@ -18,7 +18,7 @@ wb.add_worksheet(name: "Event Expenses") do |sheet|
                            row_totals_number,
                            row_totals]
 
-  collection.each do |event|
+  each_collection_item do |event|
     event.event_expenses.each do |expense|
       sheet.add_row [expense.name,
                      strip_tags(format_date(expense.created_at)),

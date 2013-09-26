@@ -406,7 +406,7 @@ ActiveRecord::Schema.define(:version => 20130925183612) do
   add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
 
   create_table "list_exports", :force => true do |t|
-    t.string   "params"
+    t.text     "params"
     t.string   "export_format"
     t.string   "aasm_state"
     t.string   "file_file_name"
@@ -414,9 +414,10 @@ ActiveRecord::Schema.define(:version => 20130925183612) do
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
     t.integer  "user_id"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
     t.string   "controller"
+    t.integer  "progress",          :default => 0
   end
 
   add_index "list_exports", ["user_id"], :name => "index_list_exports_on_user_id"
