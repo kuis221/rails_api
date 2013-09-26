@@ -24,6 +24,4 @@
     #day-part-days-list
       = render 'day_items'
 
-      .row-fluid
-        .pull-right
-          = link_to 'Add Time', new_day_part_day_item_path(resource), remote: true, class: 'btn btn-primary'
+    = link_to '', new_day_part_day_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Time'
