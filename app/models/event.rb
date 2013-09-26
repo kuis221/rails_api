@@ -120,43 +120,18 @@ class Event < ActiveRecord::Base
 
     integer :id, stored: true
     integer :company_id
-
     integer :campaign_id
-    string :campaign do
-      campaign_id.to_s + '||' + campaign_name.to_s if campaign_id
-    end
-    string :campaign_name
-
     integer :place_id
+    integer :user_ids, multiple: true
+    integer :team_ids, multiple: true
+
     string :place do
       Place.location_for_index(place) if place_id
     end
-    #string :place_name
 
     string :location, multiple: true do
       locations_for_index
     end
-
-    integer :company_user_ids, multiple: true do
-      users.map(&:id)
-    end
-
-    string :users, multiple: true, references: User do
-      users.map{|u| u.id.to_s + '||' + u.name}
-    end
-
-    integer :team_ids, multiple: true do
-      teams.map(&:id)
-    end
-
-    string :teams, multiple: true, references: Team do
-      teams.map{|t| t.id.to_s + '||' + t.name}
-    end
-
-    # Was used by date ranges filters / Removed Aug 23rd, 2013
-    # string :day_names, multiple: true do
-    #   (start_at.to_date..end_at.to_date).map{|d| Date::DAYNAMES[d.wday].downcase}.uniq
-    # end
 
     boolean :has_event_data do
       has_event_data?
@@ -350,7 +325,7 @@ class Event < ActiveRecord::Base
       ss = solr_search(options) do
         if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
           any_of do
-            with(:company_user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
+            with(:user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
             with(:team_ids, params[:team]) if params.has_key?(:team) && params[:team].present?
           end
         end
@@ -419,17 +394,12 @@ class Event < ActiveRecord::Base
             with "campaign_id", campaigns
           when 'campaign', 'place'
             with "#{attribute}_id", value
+          when 'company_user'
+            with :user_ids, value
           else
             with "#{attribute}_ids", value
           end
         end
-
-        # Date ranges filter were removed
-        # if params.has_key?(:date_range) and params[:date_range].any?
-        #   DateRange.where(company_id: params[:company_id], id: params[:date_range]).includes(:date_items).each do |range|
-        #     range.search_filters(self)
-        #   end
-        # end
 
         if params.has_key?(:event_data_stats) && params[:event_data_stats]
           stat(:promo_hours, :type => "sum")
@@ -447,25 +417,11 @@ class Event < ActiveRecord::Base
           stat(:ethnicity_white, :type => "mean")
         end
 
-        # Date ranges filter were removed
-        # if params.has_key?(:predefined_date) and params[:predefined_date].any?
-        #   params[:predefined_date].each do |predefined_date|
-        #     case predefined_date
-        #     when 'today'
-        #       with :start_at, Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
-        #     when 'week'
-        #       with :start_at, Time.zone.now.beginning_of_week..Time.zone.now.end_of_week
-        #     when 'month'
-        #       with :start_at, Time.zone.now.beginning_of_month..Time.zone.now.end_of_month
-        #     end
-        #   end
-        # end
-
         if include_facets
-          facet :campaign
+          facet :campaign_id
           facet :place
-          facet :users
-          facet :teams
+          facet :user_ids
+          facet :team_ids
           facet :status
         end
 

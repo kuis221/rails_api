@@ -30,7 +30,6 @@ describe "Users", :js => true do
 
       within '.current-company-title' do
         page.should have_content('Tres Patitos S.A.')
-        page.should_not have_content('ABC inc.')
       end
 
       # Click on the dropdown and select the other company
@@ -43,7 +42,6 @@ describe "Users", :js => true do
 
       within '.current-company-title' do
         page.should have_content('ABC inc.')
-        page.should_not have_content('Tres Patitos S.A.')
       end
     end
 

@@ -101,6 +101,9 @@ class FilteredController < InheritedResources::Base
       @facets ||= []
     end
 
+
+    # Autocomplete helper methods
+
     def autocomplete_buckets(list)
       search_classes = list.values.flatten
       search = Sunspot.search(search_classes) do
@@ -139,20 +142,27 @@ class FilteredController < InheritedResources::Base
       results.map{|x| {label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format{|word| "<i>#{word}</i>" }), value: x.primary_key, type: x.class_name.underscore.downcase} }
     end
 
-    def build_facet_item(options)
-      options[:selected] ||= params.has_key?(options[:name]) && ((params[options[:name]].is_a?(Array) and params[options[:name]].include?(options[:id])) || (params[options[:name]] == options[:id]))
-      options
-    end
-
     def search_params
       @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
         p[:company_id] = current_company.id
       end
     end
 
+    # Facet helper methods
+    def build_facet(klass, title, name, facets)
+      counts = Hash[facets.map{|x| [x.value.to_i, x.count] }]
+      items = klass.where(id: counts.keys).all
+      items.sort!{|a, b| counts[b.id] <=> counts[a.id] }
+      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id]})}, name: name}
+    end
+
+    def build_facet_item(options)
+      options[:selected] ||= params.has_key?(options[:name]) && ((params[options[:name]].is_a?(Array) and params[options[:name]].include?(options[:id])) || (params[options[:name]] == options[:id]))
+      options
+    end
 
     def build_brands_bucket(campaigns)
-      campaigns_counts = Hash[campaigns.map{|x| id, name = x.value.split('||'); [id.to_i, x.count] }]
+      campaigns_counts = Hash[campaigns.map{|x| [x.value.to_i, x.count] }]
       brands = {}
       Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
         campaing_brands = Hash[campaign.brands.map{|b| [b.id, {label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]}] }]
