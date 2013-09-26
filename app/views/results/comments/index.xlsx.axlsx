@@ -6,7 +6,7 @@ row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left, verti
 wb.add_worksheet(name: "Event Comments") do |sheet|
   sheet.add_row ['DATE/TIME', 'COMMENT'], :style => row_header
 
-  collection.each do |event|
+  each_collection_item do |event|
     event.comments.each do |comment|
       sheet.add_row [strip_tags(format_date_with_time(comment.created_at)),
                      comment.content], :style => row_data_text, :widths=>[:auto, 128]

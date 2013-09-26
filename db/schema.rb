@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130924222047) do
+ActiveRecord::Schema.define(:version => 20130925183612) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -295,17 +295,6 @@ ActiveRecord::Schema.define(:version => 20130924222047) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -417,7 +406,6 @@ ActiveRecord::Schema.define(:version => 20130924222047) do
   add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
 
   create_table "list_exports", :force => true do |t|
-    t.string   "list_class"
     t.string   "params"
     t.string   "export_format"
     t.string   "aasm_state"
@@ -428,6 +416,7 @@ ActiveRecord::Schema.define(:version => 20130924222047) do
     t.integer  "user_id"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.string   "controller"
   end
 
   add_index "list_exports", ["user_id"], :name => "index_list_exports_on_user_id"

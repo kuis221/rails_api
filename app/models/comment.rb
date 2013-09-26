@@ -33,4 +33,15 @@ class Comment < ActiveRecord::Base
   scope :for_tasks_assigned_to, lambda{|users| joins('INNER JOIN tasks t ON t.id = commentable_id and commentable_type=\'Task\'').where(['t.company_user_id in (?)', users]) }
 
   scope :not_from, lambda{|users| where(['comments.created_by_id not in (?)', users]) }
+
+
+  after_create :reindex_event
+
+  private
+
+    def reindex_event
+      if commentable.is_a?(Event)
+        Sunspot.index commentable
+      end
+    end
 end

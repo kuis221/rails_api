@@ -50,8 +50,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                            row_totals_number,
                            row_totals_number,
                            row_totals_number]
-
-	@data_scope.find_each do |event_data|
+  each_collection_item do |event_data|
 		sheet.add_row ['',
                    event_data.campaign_name,
                    number_with_precision(event_data.promo_hours, precision: 1),

@@ -1,13 +1,14 @@
 class ListExportWorker
   include Resque::Plugins::UniqueJob
-  @queue = :download
+  @queue = :export
 
   def self.perform(download_id)
-    download = ListExport.find(download_id)
+    export = ListExport.find(download_id)
     begin
-      download.process!
-    rescue
-      download.process! # Try again
+      export.export_list
+    rescue  Exception => e
+      export.fail!
+      raise e
     end
   end
 end

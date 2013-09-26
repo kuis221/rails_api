@@ -8,7 +8,7 @@ class Results::CommentsController < FilteredController
       @search_params ||= begin
         super
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
-          @search_params[:with_event_data_only] = true
+          @search_params[:with_comments_only] = true
         end
         @search_params
       end

@@ -162,6 +162,10 @@ class Event < ActiveRecord::Base
       has_event_data?
     end
 
+    boolean :has_comments do
+      comments.count > 0
+    end
+
     boolean :has_surveys do
       surveys.count > 0
     end
@@ -390,6 +394,7 @@ class Event < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?
+        with(:has_comments, true) if params[:with_comments_only].present?
 
         if params.has_key?(:brand) and params[:brand].present?
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)

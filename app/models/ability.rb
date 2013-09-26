@@ -53,6 +53,7 @@ class Ability
 
         can :manage, Goal
         can :manage, Placeable
+        can :manage, Comment
       end
     end
   end
