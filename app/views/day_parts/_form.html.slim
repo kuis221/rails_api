@@ -3,11 +3,10 @@
   = f.error_notification
 
   .form-inputs
-  	h3 New Day part
     = f.input :name, :input_html => {class: 'input-xlarge'}
     = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
 
   .form-actions
-    = f.button :submit, "New day part", class: 'btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'

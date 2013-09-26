@@ -6,25 +6,24 @@
     - if resource.description
       .description-data
         = resource.description
-    .pull-left
-      = link_to 'Edit', edit_day_part_path(resource), remote: true, class: 'btn btn-primary btn-small'
+    
+    .links-data
+      = link_to '', edit_day_part_path(resource), remote: true, class: 'edit'
       = "&nbsp;".html_safe
+      = active_inactive_buttons(resource)
+
+    // This info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_day_part_path(resource), title: 'Edit', remote: true, class: 'edit'
       = active_inactive_buttons(resource)
 
   .details_box
     h3 TIME RANGES
 
-    .box-content
-      = render partial: 'day_items', locals: { day_items: resource.day_items }
+    #day-part-days-list
+      = render 'day_items'
 
       .row-fluid
         .pull-right
           = link_to 'Add Time', new_day_part_day_item_path(resource), remote: true, class: 'btn btn-primary'
-
-javascript:
-  $(document).on('day_parts:change', function(){
-    window.location.reload(false);
-  })
-  $(document).on('day_items:change', function(){
-    window.location.reload(false);
-  })

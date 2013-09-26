@@ -1,9 +1,8 @@
+- render 'settings'
 - if resource.errors.any?
   = render 'form_dialog'
 - else
   |
     $('.bootbox.modal').modal('hide');
-    if (typeof dayitemsTable != 'undefined'){
-      dayitemsTable.fnDestroy();
-    }
-    $('table#day-part-days').replaceWith('#{escape_javascript(render partial: 'day_parts/day_items', locals: { resource: parent, day_items: parent.day_items })}');
+    $('#day-part-days-list').html('#{escape_javascript(render(partial: 'day_parts/day_items', locals: {resource: parent}))}');
+    $(document).trigger('day_items:change');
