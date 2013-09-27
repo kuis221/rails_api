@@ -355,6 +355,53 @@ describe EventsController do
         }.should change(event, :active).to(false)
       end
     end
+
+    describe "PUT 'submit'" do
+      it "should submit event" do
+        event = FactoryGirl.create(:event, active: true, company: @company)
+        lambda {
+          put 'submit', id: event.to_param, format: :js
+          response.should be_success
+          event.reload
+        }.should change(event, :submitted?).to(true)
+      end
+
+      it "should not allow to submit the event if the event data is not valid" do
+        campaign = FactoryGirl.create(:campaign, company_id: @company)
+        field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+        event = FactoryGirl.create(:event, active: true, company: @company, campaign: campaign)
+        lambda {
+          put 'submit', id: event.to_param, format: :js
+          response.should be_success
+          event.reload
+        }.should_not change(event, :submitted?).to(true)
+      end
+    end
+
+
+    describe "PUT 'approve'" do
+      it "should approve event" do
+        event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+        lambda {
+          put 'approve', id: event.to_param
+          response.should redirect_to(event_path(event))
+          event.reload
+        }.should change(event, :approved?).to(true)
+      end
+    end
+
+
+    describe "PUT 'reject'" do
+      it "should reject event" do
+        event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+        lambda {
+          put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
+          response.should be_success
+          event.reload
+        }.should change(event, :rejected?).to(true)
+        event.reject_reason.should == 'blah blah blah'
+      end
+    end
   end
 
 end

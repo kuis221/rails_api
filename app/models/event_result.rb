@@ -22,6 +22,8 @@ class EventResult < ActiveRecord::Base
 
   before_save :set_scalar_value
 
+  validate :valid_value?
+
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
   scope :for_approved_events, lambda{ joins(:event).where(events: {aasm_state: 'approved'}) }
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
@@ -40,6 +42,13 @@ class EventResult < ActiveRecord::Base
         self.scalar_value = value.to_f rescue 0
       else
         self.scalar_value = 0
+      end
+    end
+
+    def valid_value?
+      return if form_field.nil?
+      if form_field.is_required? && (value.nil? || (value.is_a?(String) && value.empty?))
+        errors.add(:value, I18n.translate('errors.messages.blank'))
       end
     end
 end

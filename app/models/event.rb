@@ -87,7 +87,7 @@ class Event < ActiveRecord::Base
   after_save :reindex_associated
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :name,:latitude,:city,:state_name,:zipcode,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
@@ -97,7 +97,7 @@ class Event < ActiveRecord::Base
     state :rejected
 
     event :submit do
-      transitions :from => [:unsent, :rejected], :to => :submitted
+      transitions :from => [:unsent, :rejected], :to => :submitted, :guard => :valid_results?
     end
 
     event :approve do
@@ -270,6 +270,7 @@ class Event < ActiveRecord::Base
     @goals
   end
 
+
   def demographics_graph_data
     unless @demographics_graph_data
       @demographics_graph_data = {}
@@ -316,6 +317,13 @@ class Event < ActiveRecord::Base
       end
     end
   end
+
+  def valid_results?
+    # Ensure all the results have been assigned/initialized
+    results_for(campaign.form_fields) if campaign.present?
+    results.all?{|r| r.valid? }
+  end
+
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin

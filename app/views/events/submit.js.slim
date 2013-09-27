@@ -1,0 +1,4 @@
+- unless resource.submitted?
+  | bootbox.alert('This event cannot be submitted. Please make sure you have entered all the required data');
+- else
+  | window.location = '#{j resource_path}';

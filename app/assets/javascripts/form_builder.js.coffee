@@ -30,10 +30,6 @@ window.FormBuilder = {
 
 		@_loadForm options
 
-		$('#form-field-tabs a').click (e) ->
-			e.preventDefault()
-			$(this).tab 'show'
-
 		@formWrapper.on 'click', '.field, .section', (e) =>
 			e.preventDefault()
 			e.stopPropagation()
@@ -179,7 +175,7 @@ window.FormBuilder = {
 		$field = field.data('field')
 		@attributesPanel.html('').append $('<div class="arrow-left">'), $field.attributesForm()
 		@attributesPanel.find('select').chosen()
-		$("input:checkbox, input:radio, input:file").uniform()
+		@attributesPanel.find("input:checkbox, input:radio, input:file").uniform()
 
 		# Store the value of each text field to compare against on the blur event
 		$.each $('input[type=text]'), (index, elm) =>
@@ -312,10 +308,13 @@ window.FormBuilder.TextField = (options) ->
 			]),
 
 			$('<div class="control-group">').append([
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
-				$('<label class="control-label">').text('Required')
-			]).on 'change', (e) =>
-						@options.options.required = e.target.checked
+				$('<div class="controls">').append(
+					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+							@options.options.required = (if e.target.checked then 'true' else 'false')
+					)
+				)
+			]),
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
@@ -434,10 +433,13 @@ window.FormBuilder.NumberField = (options) ->
 			]),
 
 			$('<div class="control-group">').append([
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
-				$('<label class="control-label">').text('Required')
-			]).on 'change', (e) =>
-						@options.options.required = e.target.checked
+				$('<div class="controls">').append(
+					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+							@options.options.required = (if e.target.checked then 'true' else 'false')
+					)
+				)
+			]),
 
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Predefined Value'),
@@ -481,16 +483,19 @@ window.FormBuilder.TextareaField = (options) ->
 			$('<div class="control-group">').append([
 				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="name" value="'+@options.name+'">').on 'keyup', (e) =>
-						input = $(e.target)
-						@options.name = input.val()
-						@field.find('.control-label').text @options.name
+					input = $(e.target)
+					@options.name = input.val()
+					@field.find('.control-label').text @options.name
 			]),
 
 			$('<div class="control-group">').append([
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
-				$('<label class="control-label">').text('Required')
-			]).on 'change', (e) =>
-						@options.options.required = e.target.checked
+				$('<div class="controls">').append(
+					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+							@options.options.required = (if e.target.checked then 'true' else 'false')
+					)
+				)
+			])
 		]
 
 	@getSaveAttributes = () ->
@@ -613,10 +618,13 @@ window.FormBuilder.CountField = (options) ->
 			]),
 
 			$('<div class="control-group">').append([
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
-				$('<label class="control-label">').text('Required')
-			]).on 'change', (e) =>
-						@options.options.required = e.target.checked
+				$('<div class="controls">').append(
+					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+							@options.options.required = (if e.target.checked then 'true' else 'false')
+					)
+				)
+			])
 
 		]
 
@@ -634,6 +642,7 @@ window.FormBuilder.PercentageField = (options) ->
 		name: 'Option Field',
 		predefined_value: '',
 		capture_mechanism: 'integer',
+		required: 'integer',
 		type: 'percentage',
 		segments: []
 	}, options)
@@ -641,6 +650,7 @@ window.FormBuilder.PercentageField = (options) ->
 	@options.options ||= {}
 	@options.options.capture_mechanism ||= 'integer'
 	@options.options.predefined_value ||= ''
+	@options.options.required ||= 'false'
 
 	@field =  $('<div class="field" data-class="PercentageField">').append [
 		$('<div class="control-group percentage">').append($('<label class="field-label">').text(@options.name)),
@@ -680,10 +690,13 @@ window.FormBuilder.PercentageField = (options) ->
 			]),
 
 			$('<div class="control-group">').append([
-				$('<div class="controls">').append $('<input type="checkbox" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">'),
-				$('<label class="control-label">').text('Required')
-			]).on 'change', (e) =>
-						@options.options.required = e.target.checked
+				$('<div class="controls">').append(
+					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @options.options.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+							@options.options.required = (if e.target.checked then 'true' else 'false')
+					)
+				)
+			])
 		]
 
 	@getSaveAttributes = () ->
