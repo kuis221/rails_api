@@ -17,8 +17,11 @@ javascript:
     autoUpload: false,
     limitMultiFileUploads: 1,
     add: function (e, data) {
-      data.context = $(this.form).find('#submit-expense-btn').off('click.upload').on('click.upload',function () {
+      data.context = $(this.form).find('#submit-expense-btn').off('click.upload').on('click.upload',function (e) {
+          e.stopPropagation();
+          e.preventDefault();
           data.submit();
+          return false;
       })
     },
     submit: function (e, data) {
