@@ -48,10 +48,12 @@ class TasksController < FilteredController
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
 
+        tasks_status = ['Completed', 'Uncompleted', 'Late'] + (params[:scope] != 'user' ? ['Assigned', 'Unassigned'] : [])
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         #f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+        f.push(label: "Task Status", items: tasks_status.map{|x| build_facet_item({label: x, id: x, name: :task_status, count: 1}) })
         if is_my_teams_view?
           users_count = Hash[facet_search.facet(:company_user_id).rows.map{|x| [x.value, x.count]}]
           users = current_company.company_users.includes(:user).where(id: facet_search.facet(:company_user_id).rows.map{|x| x.value})

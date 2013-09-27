@@ -18,14 +18,14 @@ br>/
       = f.input :route, label: false, input_html: {class: 'input-xxlarge'}
     .row-fluid.users
       .span6
-        = f.input :city, input_html: {class: 'input-large'}, required: true
-      .span6
         = f.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}, required: true
+      .span6
+        = f.input :city, input_html: {class: 'input-large'}, required: true
     .row-fluid.users
       .span6
-        = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
-      .span6
         = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
+      .span6
+        = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
 
     = hidden_field_tag :add_new_place, 'true'
 

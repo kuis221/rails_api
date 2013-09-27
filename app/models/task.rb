@@ -73,7 +73,7 @@ class Task < ActiveRecord::Base
     string :statusm, multiple: true do
       status = []
       status.push active? ? 'Active' : 'Inactive'
-      status.push completed? ? 'Completed' : 'Incomplete'
+      status.push completed? ? 'Completed' : 'Uncompleted'
       status.push assigned? ? 'Assigned' : 'Unassigned'
       status
     end
@@ -102,7 +102,7 @@ class Task < ActiveRecord::Base
   def statuses
     status = []
     status.push active? ? 'Active' : 'Inactive'
-    status.push completed? ? 'Completed' : 'Incomplete'
+    status.push completed? ? 'Completed' : 'Uncompleted'
     status.push assigned? ? 'Assigned' : 'Unassigned'
     status.push 'Late' if late?
     status
@@ -127,6 +127,19 @@ class Task < ActiveRecord::Base
           with(:status, params[:status].uniq) unless params[:status].empty?
 
           params[:late] = true if late.present?
+        end
+
+        if params.has_key?(:task_status) and params[:task_status]
+          late = params[:task_status].delete('Late')
+          any_of do
+            with(:statusm, params[:task_status].uniq) unless params[:task_status].empty?
+            if late.present?
+              all_of do
+                with(:due_at).less_than(Time.zone.now)
+                with(:completed, false)
+              end
+            end
+          end
         end
 
         # Handles the cases from the autocomplete
