@@ -25,7 +25,7 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
 
-  has_many :tasks, dependent: :destroy
+  has_many :tasks, :order => 'due_at ASC', dependent: :destroy
   has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable

@@ -160,7 +160,7 @@ describe CampaignsController do
       campaign = Campaign.last
       campaign.name.should == 'Test Campaign'
       campaign.description.should == 'Test Campaign description'
-      campaign.aasm_state.should == 'inactive'
+      campaign.aasm_state.should == 'active'
     end
 
     it "should not render form_dialog if no errors" do
