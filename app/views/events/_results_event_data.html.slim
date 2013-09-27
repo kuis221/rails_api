@@ -3,7 +3,7 @@
 .row-fluid
   .box_summary
     h3 SUMMARY
-    = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-summary-btn', class: 'edit'
+    = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'edit', title: 'Edit event data'
     .summary-content= resource.summary
 
   - if event_data
@@ -12,7 +12,7 @@
         - if active_kpis.include?(Kpi.impressions)
           li
             div.metric
-              span= event_data.impressions
+              span= number_with_delimiter(event_data.impressions)
               = (event_data.impressions == 1 ? " Impression" : " Impressions")
             = kpi_goal_progress_bar(resource.kpi_goals[Kpi.impressions.id], event_data.impressions)
 

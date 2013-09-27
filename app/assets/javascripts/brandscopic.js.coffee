@@ -101,6 +101,7 @@ jQuery ->
 		}
 
 		if not $(this).valid()
+
 			e.preventDefault()
 			e.stopPropagation()
 			false

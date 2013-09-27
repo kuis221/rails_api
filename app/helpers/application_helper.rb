@@ -79,14 +79,28 @@ module ApplicationHelper
   end
 
   def format_date_with_time(the_date)
-    the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
+    if the_date.strftime("%Y") == Time.zone.now.year.to_s
+      the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
+    else
+      the_date.strftime('%^a <b>%b %e %Y</b> at %l:%M %p').html_safe unless the_date.nil?
+    end
   end
 
   def format_date(the_date, plain = false)
-    if plain
-      the_date.strftime('%^a %b %e') unless the_date.nil?
-    else
-      the_date.strftime('%^a <b>%b %e</b>').html_safe unless the_date.nil?
+    unless the_date.nil?
+      if plain
+        if the_date.strftime("%Y") == Time.zone.now.year.to_s
+          the_date.strftime('%^a %b %e')
+        else
+          the_date.strftime('%^a %b %e %Y')
+        end
+      else
+        if the_date.strftime("%Y") == Time.zone.now.year.to_s
+          the_date.strftime('%^a <b>%b %e</b>').html_safe
+        else
+          the_date.strftime('%^a <b>%b %e %Y</b>').html_safe
+        end
+      end
     end
   end
 
@@ -105,8 +119,12 @@ module ApplicationHelper
         options[:date_separator].html_safe +
         format_date_with_time(end_at)
       else
-        start_at.strftime('%^a <b>%b %e</b>'+options[:date_separator]).html_safe +
-        "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+        if start_at.strftime("%Y") == Time.zone.now.year.to_s
+          the_date = start_at.strftime('%^a <b>%b %e</b>'+options[:date_separator]).html_safe
+        else
+          the_date = start_at.strftime('%^a <b>%b %e %Y</b>'+options[:date_separator]).html_safe
+        end
+        the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
       end
     end
   end

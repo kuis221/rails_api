@@ -72,7 +72,8 @@ class CampaignFormField < ActiveRecord::Base
   end
 
   def is_required?
-    options.try(:[], :required) == 'true'
+    required = options.try(:[], :required)
+    required == 'true' || required == true
   end
 
   def is_numeric?

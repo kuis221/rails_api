@@ -63,4 +63,23 @@ describe Task, search: true do
     # Search for Events on a given Event
     Task.do_search(company_id: 1, status: ['Active']).results.should =~ user_tasks + user2_tasks
   end
+
+  it "should search for the :task_status params" do
+    event     = FactoryGirl.create(:event, company_id: 1)
+    late_task = FactoryGirl.create(:late_task, title: "Late Task", event: event)
+    future_task = FactoryGirl.create(:future_task, title: "Task in future", event: event)
+    assigned_and_late_task = FactoryGirl.create(:assigned_task, title: "Assigned and late task", event: event, due_at: 3.weeks.ago)
+    assigned_and_in_future_task = FactoryGirl.create(:assigned_task, title: "Assigned and in future task", event: event, due_at: 3.weeks.from_now)
+    unassigned_task = FactoryGirl.create(:unassigned_task, title: "Unassigned task", event: event, due_at: 3.weeks.from_now)
+    completed_task = FactoryGirl.create(:completed_task, title: "Completed task", event: event)
+
+    Sunspot.commit
+
+    Task.do_search(company_id: 1, task_status: ['Late']).results.should =~ [late_task, assigned_and_late_task]
+    Task.do_search(company_id: 1, task_status: ['Late', 'Completed']).results.should =~ [late_task, assigned_and_late_task, completed_task]
+    Task.do_search(company_id: 1, task_status: ['Completed']).results.should =~ [completed_task]
+    Task.do_search(company_id: 1, task_status: ['Uncompleted']).results.should =~ [late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task]
+    Task.do_search(company_id: 1, task_status: ['Assigned']).results.should =~ [assigned_and_late_task, assigned_and_in_future_task]
+    Task.do_search(company_id: 1, task_status: ['Unassigned']).results.should =~ [late_task, future_task, unassigned_task, completed_task]
+  end
 end

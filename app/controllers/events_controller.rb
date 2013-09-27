@@ -10,7 +10,7 @@ class EventsController < FilteredController
 
   helper_method :describe_filters, :calendar_highlights
 
-  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
   respond_to :xlsx, only: :index
 
@@ -35,9 +35,11 @@ class EventsController < FilteredController
 
   def submit
     if resource.unsent? || resource.rejected?
-      resource.submit!
+      begin
+        resource.submit!
+      rescue AASM::InvalidTransition => e
+      end
     end
-    redirect_to resource_path
   end
 
   def approve

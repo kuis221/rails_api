@@ -25,7 +25,7 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
 
-  has_many :tasks, dependent: :destroy
+  has_many :tasks, :order => 'due_at ASC', dependent: :destroy
   has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
@@ -87,7 +87,7 @@ class Event < ActiveRecord::Base
   after_save :reindex_associated
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name,:latitude,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :name,:latitude,:city,:state_name,:zipcode,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
@@ -97,7 +97,7 @@ class Event < ActiveRecord::Base
     state :rejected
 
     event :submit do
-      transitions :from => [:unsent, :rejected], :to => :submitted
+      transitions :from => [:unsent, :rejected], :to => :submitted, :guard => :valid_results?
     end
 
     event :approve do
@@ -270,6 +270,7 @@ class Event < ActiveRecord::Base
     @goals
   end
 
+
   def demographics_graph_data
     unless @demographics_graph_data
       @demographics_graph_data = {}
@@ -317,6 +318,13 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def valid_results?
+    # Ensure all the results have been assigned/initialized
+    results_for(campaign.form_fields) if campaign.present?
+    results.all?{|r| r.valid? }
+  end
+
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
@@ -343,7 +351,7 @@ class Event < ActiveRecord::Base
         end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
 
-        # We are using to options to allow searching by active/inactive in combination with approved/late/rejected/submitted
+        # We are using two options to allow searching by active/inactive in combination with approved/late/rejected/submitted
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
         if params.has_key?(:event_status) and params[:event_status].present? # For the event status
           late = params[:event_status].delete('Late')

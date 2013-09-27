@@ -5,10 +5,14 @@ module GoalableModel
       receiver.has_many :goals, as: :goalable do
         def for_kpis(kpis)
           kpis.map do |kpi|
-            goal = all.select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || self.build({kpi: kpi, value: nil}, without_protection: true)
-            goal.kpi = kpi
-            goal
+            for_kpi(kpi)
           end
+        end
+
+        def for_kpi(kpi)
+          goal = all.select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || self.build({kpi: kpi, value: nil}, without_protection: true)
+          goal.kpi = kpi
+          goal
         end
 
         def for_kpis_segments(kpi)

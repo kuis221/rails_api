@@ -1,4 +1,4 @@
-- submit_link = link_to 'submit', submit_event_path, method: :put
+- submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
 - if resource.in_future? && !resource.happens_today?
   .alert.alert-grey
     == "Your event is scheduled. You can <a href=\"#event-members\" class=\"smooth-scroll\">manage the event team</a>, <a href=\"#event-tasks\" class=\"smooth-scroll\">complete tasks</a>, or <a href=\"#event-documents\" class=\"smooth-scroll\">upload event documents</a>."

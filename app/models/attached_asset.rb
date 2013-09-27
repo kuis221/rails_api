@@ -32,7 +32,7 @@ class AttachedAsset < ActiveRecord::Base
 
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
-
+  scope :active, lambda{ where(active: true) }
 
   validate :valid_file_format?
 

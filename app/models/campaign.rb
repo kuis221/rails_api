@@ -78,8 +78,8 @@ class Campaign < ActiveRecord::Base
   accepts_nested_attributes_for :form_fields
 
   aasm do
-    state :inactive, :initial => true
-    state :active
+    state :active, :initial => true
+    state :inactive
     state :closed
 
     event :activate do

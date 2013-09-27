@@ -43,23 +43,23 @@ describe Campaign do
 
   describe "states" do
     before(:each) do
-      @campaign = FactoryGirl.create(:inactive_campaign)
+      @campaign = FactoryGirl.create(:campaign)
     end
 
     describe ":inactive" do
       it 'should be an initial state' do
-        @campaign.should be_inactive
-      end
-
-      it 'should change to :active on :inactive or :closed' do
-        @campaign.activate
         @campaign.should be_active
       end
 
       it 'should change to :inactive on :active' do
-        @campaign.activate
         @campaign.deactivate
         @campaign.should be_inactive
+      end
+
+      it 'should change to :active on :inactive or :closed' do
+        @campaign.deactivate
+        @campaign.activate
+        @campaign.should be_active
       end
     end
   end

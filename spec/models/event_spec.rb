@@ -49,6 +49,22 @@ describe Event do
   it { should validate_presence_of(:start_at) }
   it { should validate_presence_of(:end_at) }
 
+  describe "event results validations" do
+    it "should not allow submitting the event if the resuls are not valid" do
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+      event = FactoryGirl.create(:event, campaign: campaign, company_id: 1)
+
+      expect {
+        event.submit
+      }.to raise_exception(AASM::InvalidTransition)
+
+      event.results_for([field]).each {|r| r.value = 100}
+      event.save
+      event.submit.should be_true
+    end
+  end
+
   describe "states" do
     before(:each) do
       @event = FactoryGirl.create(:event)

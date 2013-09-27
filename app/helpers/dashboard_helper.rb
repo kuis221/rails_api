@@ -132,7 +132,7 @@ module DashboardHelper
 
     def kpis_completed_totals(campaign_ids)
       @kpis_completed_totals ||= Hash.new.tap do |totals|
-        search = Event.do_search({company_id: current_company.id, with_event_data_only: true, campaign: campaign_ids, event_data_stats: true})
+        search = Event.do_search({company_id: current_company.id, campaign: campaign_ids, event_data_stats: true, status: ['Active'], event_status: ['Approved']})
         totals['events_count'] = search.total
         totals['promo_hours'] = search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
         totals['impressions'] = search.stat_response['stats_fields']["impressions_es"]['sum'] rescue 0

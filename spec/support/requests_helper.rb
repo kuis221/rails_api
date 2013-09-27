@@ -1,6 +1,16 @@
 
 module CapybaraBrandscopicHelpers
 
+  def hover_and_click(parent, locator, options={})
+    parent_element = find(parent)
+    page.execute_script("$('html, body').animate({
+        scrollTop: $('#{parent}').offset().top - 200
+    }, 0);")
+    page.driver.browser.action.move_to(parent_element.native).perform
+    find(:link, locator, options).click
+    self
+  end
+
   def click_js_link(locator, options={})
     #find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
     find(:link, locator, options).click
