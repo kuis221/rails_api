@@ -19,7 +19,7 @@
       = active_inactive_buttons(resource)
 
   #area-places.details_box
-    h3 Places
+    h3 PLACES
     #area-places-list
       = render partial: 'places', locals: { places: resource.places }
     = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place'

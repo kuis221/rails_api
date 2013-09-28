@@ -1484,7 +1484,7 @@ ul.kpis-list{
 	    	span{
 	    		&:first-child{
 	    			font-size: 11px;
-	    			margin: 20px 0 0 20px;
+	    			margin: 8px 0 0 0;
 	    			width: 400px;
 	    			.area_name{
 	    				font-size: 16px;
@@ -4321,14 +4321,29 @@ svg{
 			color: @user_menu;
 			content: "\e02c";
 			font-family: 'icons';
-			font-size: 23px;
+			font-size: 22px;
 			padding-top: 5px;
 			position: absolute;
 			speak: none;
-			left: 28px;
+			left: 31px;
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
+		}
+	}
+	.phone-data{
+		&:before{
+			color: @user_menu;
+			content: "\e02d";
+			font-family: 'icons';
+			font-size: 18px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 29px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;			
 		}
 	}
 	.time-data{
