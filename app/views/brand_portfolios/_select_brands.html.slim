@@ -15,7 +15,7 @@
 
 javascript:
   $('#brands-search-item').on('keyup', function () {
-    var value = $(this).val();
+    var value = $(this).val().toLowerCase();
     $("#select-brands-list > li").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();

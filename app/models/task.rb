@@ -80,7 +80,7 @@ class Task < ActiveRecord::Base
   end
 
   def late?
-    !completed? && due_at < Time.now unless due_at.nil?
+    !completed? && due_at.to_date <= Date.yesterday unless due_at.nil?
   end
 
   def activate!
