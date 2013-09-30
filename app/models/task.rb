@@ -73,10 +73,14 @@ class Task < ActiveRecord::Base
     string :statusm, multiple: true do
       status = []
       status.push active? ? 'Active' : 'Inactive'
-      status.push completed? ? 'Complete' : 'Incomplete'
       status.push assigned? ? 'Assigned' : 'Unassigned'
+      status.push completed? ? 'Complete' : 'Incomplete'
       status
     end
+  end
+
+  def due_today?
+    due_at.to_date <= Date.today && due_at.to_date >= Date.today
   end
 
   def late?
@@ -102,9 +106,10 @@ class Task < ActiveRecord::Base
   def statuses
     status = []
     status.push active? ? 'Active' : 'Inactive'
-    status.push completed? ? 'Complete' : 'Incomplete'
     status.push assigned? ? 'Assigned' : 'Unassigned'
+    status.push completed? ? 'Complete' : 'Incomplete'
     status.push 'Late' if late?
+    status.push 'Due' if due_today?
     status
   end
 
