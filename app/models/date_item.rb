@@ -26,6 +26,7 @@ class DateItem < ActiveRecord::Base
   validates_date :start_date, allow_nil: true, allow_blank: true
   validates_date :end_date, on_or_after: :start_date, allow_blank: true
 
+  delegate :company_id, to: :date_range
 
   validates :recurrence_type, :inclusion => { :in => RECURRENCE_TYPES,
     :message => "%{value} is not valid" }

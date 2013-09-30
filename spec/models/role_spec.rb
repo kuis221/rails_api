@@ -21,8 +21,9 @@ describe Role do
 
   it { should allow_mass_assignment_of(:name) }
   it { should allow_mass_assignment_of(:description) }
-  it { should allow_mass_assignment_of(:permissions) }
+
   it { should_not allow_mass_assignment_of(:id) }
+  it { should_not allow_mass_assignment_of(:is_admin) }
   it { should_not allow_mass_assignment_of(:active) }
   it { should_not allow_mass_assignment_of(:created_at) }
   it { should_not allow_mass_assignment_of(:updated_at) }

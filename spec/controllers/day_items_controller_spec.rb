@@ -8,6 +8,14 @@ describe DayItemsController do
 
   let(:day_part) {FactoryGirl.create(:day_part, company: @company)}
 
+
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', day_part_id: day_part.to_param, format: :js
+      response.should be_success
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', day_part_id: day_part.to_param, format: :js

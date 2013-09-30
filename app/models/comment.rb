@@ -22,6 +22,9 @@ class Comment < ActiveRecord::Base
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 
+
+  delegate :company_id, to: :commentable
+
   attr_accessible :content
 
   validates :content, presence: true

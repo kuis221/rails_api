@@ -8,6 +8,13 @@ describe DateItemsController do
 
   let(:date_range) {FactoryGirl.create(:date_range, company: @company)}
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', date_range_id: date_range.to_param, format: :js
+      response.should be_success
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', date_range_id: date_range.to_param, format: :js

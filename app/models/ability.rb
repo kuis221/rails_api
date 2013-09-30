@@ -7,6 +7,23 @@ class Ability
     if user.is_a?(AdminUser)
       # ActiveAdmin users
       can :manage, :all
+    elsif  user.is_super_admin?
+
+      # Super Admin Users can manage any object on the same company
+      can do |action, subject_class, subject|
+        subject.nil? || ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )
+      end
+
+      cannot do |action, subject_class, subject|
+        [Company].include?(subject_class)
+      end
+
+      # Other permissions
+      can [:index, :create], Brand
+
+      can [:new, :create], Kpi do |kpi|
+        can?(:edit, Campaign)
+      end
     else
       if user.id
         # Basic permissions check, all users can manage resources within

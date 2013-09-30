@@ -15,6 +15,13 @@ describe AreasController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', format: :js
+      response.should be_success
+    end
+  end
+
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'

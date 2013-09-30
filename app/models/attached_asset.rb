@@ -43,6 +43,8 @@ class AttachedAsset < ActiveRecord::Base
   validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file
 
+  delegate :company_id, to: :attachable
+
   searchable do
     string :status
     string :asset_type

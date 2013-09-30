@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130925183612) do
+ActiveRecord::Schema.define(:version => 20130927212907) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -295,17 +295,6 @@ ActiveRecord::Schema.define(:version => 20130925183612) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -456,6 +445,13 @@ ActiveRecord::Schema.define(:version => 20130925183612) do
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
 
+  create_table "permissions", :force => true do |t|
+    t.integer "role_id"
+    t.string  "action"
+    t.string  "subject_class"
+    t.string  "subject_id"
+  end
+
   create_table "placeables", :force => true do |t|
     t.integer "place_id"
     t.integer "placeable_id"
@@ -496,12 +492,12 @@ ActiveRecord::Schema.define(:version => 20130925183612) do
 
   create_table "roles", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
-    t.text     "permissions"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.integer  "company_id"
     t.boolean  "active",      :default => true
     t.text     "description"
+    t.boolean  "is_admin",    :default => false
   end
 
   create_table "surveys", :force => true do |t|

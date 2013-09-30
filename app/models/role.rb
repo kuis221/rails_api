@@ -10,20 +10,17 @@
 #  company_id  :integer
 #  active      :boolean          default(TRUE)
 #  description :text
+#  is_admin    :boolean          default(FALSE)
 #
 
 class Role < ActiveRecord::Base
   belongs_to :company
   scoped_to_company
 
-  PERMISSIONS = %w{events tasks analysis campaigns users roles other_admin}
-
   has_many :company_users
 
-  attr_accessible :name, :description, :permissions
+  attr_accessible :name, :description
   validates :name, presence: true
-
-  serialize :permissions
 
   scope :active, where(:active => true)
 

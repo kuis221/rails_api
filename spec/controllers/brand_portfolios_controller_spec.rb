@@ -21,6 +21,13 @@ describe BrandPortfoliosController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', format: :js
+      response.should be_success
+    end
+  end
+
   describe "GET 'items'" do
     it "returns the correct structure" do
       get 'items'

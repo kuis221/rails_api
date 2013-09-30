@@ -17,6 +17,15 @@ describe PlacesController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', area_id: area.id, format: :js
+      response.should be_success
+      response.should render_template('new')
+      response.should render_template('form')
+    end
+  end
+
   describe "DELETE 'destroy'" do
     it "should delete the link within the area and the place" do
       area.places << place

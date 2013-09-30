@@ -23,6 +23,15 @@ describe TeamsController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', format: :js
+      response.should be_success
+      response.should render_template('new')
+      response.should render_template('form')
+    end
+  end
+
   describe "GET 'items'" do
     it "returns http success" do
       get 'items'

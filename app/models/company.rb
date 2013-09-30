@@ -33,7 +33,7 @@ class Company < ActiveRecord::Base
   private
     def create_admin_role_and_user
       if admin_email
-        role = self.roles.create(name: 'Admin')
+        role = self.roles.create({name: 'Super Admin', is_admin: true}, without_protection: true)
         if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
           new_company_user = self.company_users.create({role_id: role.id, user: user}, without_protection: true)
           UserMailer.company_existing_admin_invitation(user, self).deliver

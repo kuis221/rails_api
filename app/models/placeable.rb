@@ -11,4 +11,6 @@
 class Placeable < ActiveRecord::Base
   belongs_to :place
   belongs_to :placeable, polymorphic: true
+
+  delegate :company_id, to: :placeable
 end

@@ -8,6 +8,15 @@ describe InvitationsController do
       @company = @user.current_company
     end
 
+    describe "GET 'new'" do
+      it "returns http success" do
+        get 'new', format: :js
+        response.should be_success
+        response.should render_template('new')
+        response.should render_template('form')
+      end
+    end
+
     describe "POST 'create'" do
       it "should not render form_dialog if no errors" do
         lambda {
