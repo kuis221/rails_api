@@ -5,8 +5,8 @@
     = render partial: 'results_event_data', locals: {active_kpis: active_kpis}
 
 - if active_kpis.include?(Kpi.photos)
-  .details_box
-    = render 'photos'
+  .details_box.box_photos
+    = render partial: 'photos', locals: {allow_upload: true}
 
 - if active_kpis.include?(Kpi.expenses)
   .details_box
