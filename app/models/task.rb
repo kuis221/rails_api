@@ -73,7 +73,7 @@ class Task < ActiveRecord::Base
     string :statusm, multiple: true do
       status = []
       status.push active? ? 'Active' : 'Inactive'
-      status.push completed? ? 'Completed' : 'Uncompleted'
+      status.push completed? ? 'Complete' : 'Incomplete'
       status.push assigned? ? 'Assigned' : 'Unassigned'
       status
     end
@@ -102,7 +102,7 @@ class Task < ActiveRecord::Base
   def statuses
     status = []
     status.push active? ? 'Active' : 'Inactive'
-    status.push completed? ? 'Completed' : 'Uncompleted'
+    status.push completed? ? 'Complete' : 'Incomplete'
     status.push assigned? ? 'Assigned' : 'Unassigned'
     status.push 'Late' if late?
     status
