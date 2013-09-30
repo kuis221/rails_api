@@ -105,7 +105,7 @@
 .details_box
   h3 GALLERY
   .large-photo-list
-    ul.thumbnails#photos-list
+    ul.thumbnails#photos-thumbs
       - resource.photos.each do |photo|
         - if photo.is_a?(AttachedAsset)
           = render partial: 'results/photos/photo', locals: {photo: photo}
@@ -218,11 +218,11 @@ javascript:
             backgroundColor: 'transparent',
             shadow: false,
             style: {
-                fontSize: '14px' 
+                fontSize: '14px'
             },
             positioner: function( labelWidth, labelHeight, point){
-                return { 
-                  x: point.plotX + this.chart.plotLeft - (labelWidth/2), 
+                return {
+                  x: point.plotX + this.chart.plotLeft - (labelWidth/2),
                   y: point.plotY + this.chart.plotTop - labelHeight - 10
                 };
             },
