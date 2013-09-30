@@ -76,9 +76,9 @@ describe Task, search: true do
     Sunspot.commit
 
     Task.do_search(company_id: 1, task_status: ['Late']).results.should =~ [late_task, assigned_and_late_task]
-    Task.do_search(company_id: 1, task_status: ['Late', 'Completed']).results.should =~ [late_task, assigned_and_late_task, completed_task]
-    Task.do_search(company_id: 1, task_status: ['Completed']).results.should =~ [completed_task]
-    Task.do_search(company_id: 1, task_status: ['Uncompleted']).results.should =~ [late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task]
+    Task.do_search(company_id: 1, task_status: ['Late', 'Complete']).results.should =~ [late_task, assigned_and_late_task, completed_task]
+    Task.do_search(company_id: 1, task_status: ['Complete']).results.should =~ [completed_task]
+    Task.do_search(company_id: 1, task_status: ['Incomplete']).results.should =~ [late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task]
     Task.do_search(company_id: 1, task_status: ['Assigned']).results.should =~ [assigned_and_late_task, assigned_and_in_future_task]
     Task.do_search(company_id: 1, task_status: ['Unassigned']).results.should =~ [late_task, future_task, unassigned_task, completed_task]
   end
