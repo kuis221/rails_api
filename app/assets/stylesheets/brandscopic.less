@@ -1043,6 +1043,9 @@ li.dropdown a{
 	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
+.nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
+	background-color: @menu;
+}
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
 	background-image:none;
@@ -1776,11 +1779,12 @@ ul.kpis-list{
     			top:0;
     		}
     		&:first-child{
-    			margin: 8px 120px 0 0;
-    			width: 50%;
+    			margin: 8px 80px 0 0;
+    			width: 45%;
     		}
     		&.first{
-    			margin-right: 65px;
+    			margin-right: 55px;
+    			width: 14%;
     		}
     		&.first, &.last{
     			margin-top: 8px;
