@@ -33,7 +33,7 @@
         - if active_kpis.include?(Kpi.expenses)
           li
             div.metric
-              span= number_to_currency(event_data.spent, precision: 0)
+              span= number_to_currency(event_data.spent, precision: 2)
               = " Spent"
             = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
 

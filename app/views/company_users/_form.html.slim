@@ -18,8 +18,9 @@
         = uf.input :email, input_html: {class: 'input-xxlarge'}
       .row-fluid.users
         = uf.input :phone_number, input_html: {class: 'input-xxlarge'}
-      .row-fluid.users-teams-roles
-        = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
+      - if resource.id != current_company_user.id
+        .row-fluid.users-teams-roles
+          = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
       .row-fluid.users
         - unless resource.invited_to_sign_up?
           = uf.input :password, input_html: {class: 'input-xxlarge'}

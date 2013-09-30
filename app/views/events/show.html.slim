@@ -47,10 +47,10 @@
     .pull-left
       = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
     #event-tasks-counters.pull-right
-      = render partial: 'tasks_counters', locals: {tasks: resource.tasks}
+      = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
 
     #event-tasks-container
-      = render partial: 'tasks', locals: {tasks: resource.tasks}
+      = render partial: 'tasks', locals: {tasks: resource.tasks.active}
 
 
   #event-documents.details_box
