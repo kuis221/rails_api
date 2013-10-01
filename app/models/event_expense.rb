@@ -30,6 +30,7 @@ class EventExpense < ActiveRecord::Base
 
   after_save :update_event_data
 
+  delegate :company_id, to: :event
 
   def download_url(style_name=:original)
     s3 = AWS::S3.new

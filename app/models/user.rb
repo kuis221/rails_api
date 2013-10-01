@@ -155,6 +155,10 @@ class User < ActiveRecord::Base
     @role ||= current_company_user.try(:role)
   end
 
+  def is_super_admin?
+    role.is_admin?
+  end
+
   def current_company_user
     @current_company_user ||= begin
       if User.current && User.current.current_company

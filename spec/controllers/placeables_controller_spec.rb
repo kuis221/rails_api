@@ -16,6 +16,8 @@ describe PlaceablesController do
       campaign.areas << assigned_area
       get :new, campaign_id: campaign.id, format: :js
 
+      response.should be_success
+
       assigns(:areas).should == [area]
     end
   end

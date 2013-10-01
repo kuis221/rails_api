@@ -4,8 +4,8 @@ FactoryGirl.define do
   factory :role do
     sequence(:name) {|n| "Role #{n}" }
     description "Test Role description"
-    permissions "Test Role permissions"
     company_id 1
+    is_admin true
     active true
   end
 end

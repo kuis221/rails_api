@@ -78,7 +78,7 @@ class FilteredController < InheritedResources::Base
             set_collection_ivar(@solr_search.results)
           else
             current_page = params[:page] || nil
-            c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)
+            c = end_of_association_chain.accessible_by_user(current_user).scoped(sorting_options)
             c = controller_filters(c)
             @collection_count_scope = c
             c = c.page(current_page).per(items_per_page) unless current_page.nil?
@@ -153,7 +153,7 @@ class FilteredController < InheritedResources::Base
       counts = Hash[facets.map{|x| [x.value.to_i, x.count] }]
       items = klass.where(id: counts.keys).all
       items.sort!{|a, b| counts[b.id] <=> counts[a.id] }
-      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id]})}, name: name}
+      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id], name: name})}}
     end
 
     def build_facet_item(options)

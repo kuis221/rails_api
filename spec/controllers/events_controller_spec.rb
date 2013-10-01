@@ -8,6 +8,15 @@ describe EventsController do
       @company_user = @user.current_company_user
     end
 
+    describe "GET 'new'" do
+      it "returns http success" do
+        get 'new', format: :js
+        response.should be_success
+        response.should render_template('new')
+        response.should render_template('form')
+      end
+    end
+
     describe "GET 'edit'" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it "returns http success" do

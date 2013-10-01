@@ -21,6 +21,8 @@ class DayItem < ActiveRecord::Base
 
   belongs_to :day_part
 
+  delegate :company_id, to: :day_part
+
   def label
     description = describe_times
     description.strip!

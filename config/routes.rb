@@ -85,7 +85,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :company_users, path: 'users' do
+  resources :company_users, except: [:new, :create], path: 'users' do
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection

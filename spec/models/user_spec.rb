@@ -162,4 +162,20 @@ describe User do
   end
 
 
+  describe "is_super_admin?" do
+    it "should return true if the current role is admin" do
+      company = FactoryGirl.build(:company)
+      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: true))])
+      User.current = user
+      user.is_super_admin?.should be_true
+    end
+
+    it "should return false if the current role is admin" do
+      company = FactoryGirl.build(:company)
+      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: false))])
+      User.current = user
+      user.is_super_admin?.should be_false
+    end
+  end
+
 end

@@ -20,6 +20,13 @@ describe DayPartsController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', format: :js
+      response.should be_success
+    end
+  end
+
   describe "GET 'edit'" do
     let(:day_part){ FactoryGirl.create(:day_part, company: @company) }
     it "returns http success" do

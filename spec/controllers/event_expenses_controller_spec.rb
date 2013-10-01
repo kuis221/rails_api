@@ -24,4 +24,13 @@ describe EventExpensesController do
       }.to raise_exception(CanCan::AccessDenied)
     end
   end
+
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', event_id: event.to_param, format: :js
+      response.should be_success
+      response.should render_template('new')
+      response.should render_template('form')
+    end
+  end
 end

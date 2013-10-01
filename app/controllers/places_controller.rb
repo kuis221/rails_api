@@ -1,10 +1,13 @@
 class PlacesController < FilteredController
+  skip_authorize_resource only: [:destroy, :create, :new]
+
   actions :index, :new, :create
   belongs_to :area, :campaign, optional: true
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
 
   def create
+    authorize!(:edit, parent)
     reference_value = params[:place][:reference]
     automatically_created = true
 
@@ -76,6 +79,8 @@ class PlacesController < FilteredController
   end
 
   def destroy
+    authorize!(:edit, parent)
+
     @place = Place.find(params[:id])
     parent.places.delete(@place)
   end
