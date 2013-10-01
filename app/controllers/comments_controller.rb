@@ -7,6 +7,8 @@ class CommentsController < InheritedResources::Base
 
   after_filter :mark_comments_as_readed, only: :index
 
+  authorize_resource
+
 
   private
     def mark_comments_as_readed

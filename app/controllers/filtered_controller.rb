@@ -43,7 +43,11 @@ class FilteredController < InheritedResources::Base
 
   protected
     def authorize_actions
-      authorize! :index, resource_class
+      if parent?
+        authorize! "index_#{resource_class.to_s.pluralize}".to_sym, parent
+      else
+        authorize! :index, resource_class
+      end
     end
 
     def export_list(export)

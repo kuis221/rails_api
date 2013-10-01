@@ -10,8 +10,6 @@ class PhotosController < FilteredController
 
   helper_method :describe_filters
 
-  skip_load_and_authorize_resource
-
   def processing_status
     @photos = parent.photos.find(params[:photos])
   end

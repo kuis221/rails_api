@@ -43,7 +43,7 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  - if can? :view_tasks, resource
+  - if can? :tasks, resource
     #event-tasks.details_box
 
       .pull-left
@@ -55,7 +55,7 @@
         = render partial: 'tasks', locals: {tasks: resource.tasks.active}
 
 
-  - if can? :view_documents, resource
+  - if can? :documents, resource
     #event-documents.details_box
       h3 DOCUMENTS
 

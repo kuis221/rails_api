@@ -55,6 +55,10 @@ class Role < ActiveRecord::Base
     permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s } || permissions.build(action: action, subject_class: subject_class.to_s)
   end
 
+  def has_permission?(action, subject_class)
+    permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

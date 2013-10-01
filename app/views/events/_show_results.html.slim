@@ -4,19 +4,19 @@
   .box_event_data
     = render partial: 'results_event_data', locals: {active_kpis: active_kpis}
 
-- if can?(:view_photos, resource) && active_kpis.include?(Kpi.photos)
+- if can?(:photos, resource) && active_kpis.include?(Kpi.photos)
   .details_box.box_photos
     = render partial: 'photos', locals: {allow_upload: true}
 
-- if can?(:show, EventExpense) && active_kpis.include?(Kpi.expenses)
+- if can?(:expenses, resource) && active_kpis.include?(Kpi.expenses)
   .details_box
-    = render 'results_expenses'
+    = render 'expenses'
 
-- if can?(:show, Survey) && active_kpis.include?(Kpi.surveys)
+- if can?(:surveys, resource) && active_kpis.include?(Kpi.surveys)
   .details_box
     = render 'results_surveys'
 
-- if can?(:view_comments, Event) && resource.campaign.active_field_types.include?('comments')
+- if can?(:comments, resource) && resource.campaign.active_field_types.include?('comments')
   #event-comments.details_box
     = render 'comments'
 

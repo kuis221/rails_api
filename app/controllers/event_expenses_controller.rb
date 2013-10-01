@@ -3,6 +3,6 @@ class EventExpensesController < InheritedResources::Base
 
   belongs_to :event
 
-  load_and_authorize_resource :event
-  load_and_authorize_resource
+  load_resource :event
+  load_and_authorize_resource through: :event
 end

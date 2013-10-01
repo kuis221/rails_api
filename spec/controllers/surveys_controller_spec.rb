@@ -56,4 +56,22 @@ describe SurveysController do
       survey.event_id.should == event.id
     end
   end
+
+  describe "GET 'deactivate'" do
+    let(:survey){ FactoryGirl.create(:survey, event: event) }
+
+    it "deactivates an active survey" do
+      survey.update_attribute(:active, true)
+      get 'deactivate', event_id: survey.event_id, id: survey.to_param, format: :js
+      response.should be_success
+      survey.reload.active?.should be_false
+    end
+
+    it "activates an inactive survey" do
+      survey.update_attribute(:active, false)
+      get 'activate', event_id: survey.event_id, id: survey.to_param, format: :js
+      response.should be_success
+      survey.reload.active?.should be_true
+    end
+  end
 end

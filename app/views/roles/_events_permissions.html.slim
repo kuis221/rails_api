@@ -39,42 +39,42 @@
 
       tr
         td.sub-level-1 Tasks
-        td= permission_checkbox(f, :view_tasks, Event)
+        td= permission_checkbox(f, :index_tasks, Event)
         td= permission_checkbox(f, :create_task, Event)
         td= permission_checkbox(f, :edit_task, Event)
         td= permission_checkbox(f, :deactivate_task, Event)
 
       tr
         td.sub-level-1 Documents
-        td= permission_checkbox(f, :view_documents, Event)
+        td= permission_checkbox(f, :index_documents, Event)
         td= permission_checkbox(f, :create_document, Event)
         td
         td= permission_checkbox(f, :deactivate_document, Event)
 
       tr
         td.sub-level-1 Photos
-        td= permission_checkbox(f, :view_photos, Event)
+        td= permission_checkbox(f, :index_photos, Event)
         td= permission_checkbox(f, :create_photo, Event)
         td
         td= permission_checkbox(f, :deactivate_photo, Event)
 
       tr
         td.sub-level-1 Expenses
-        td= permission_checkbox(f, :show, EventExpense)
-        td= permission_checkbox(f, :create, EventExpense)
-        td= permission_checkbox(f, :edit, EventExpense)
-        td= permission_checkbox(f, :deactivate, EventExpense)
+        td= permission_checkbox(f, :index_expenses, Event)
+        td= permission_checkbox(f, :create_expense, Event)
+        td= permission_checkbox(f, :edit_expense, Event)
+        td= permission_checkbox(f, :deactivate_expense, Event)
 
       tr
         td.sub-level-1 Surveys
-        td= permission_checkbox(f, :show, Survey)
-        td= permission_checkbox(f, :create, Survey)
-        td= permission_checkbox(f, :edit, Survey)
-        td= permission_checkbox(f, :deactivate, Survey)
+        td= permission_checkbox(f, :index_surveys, Event)
+        td= permission_checkbox(f, :create_survey, Event)
+        td= permission_checkbox(f, :edit_survey, Event)
+        td= permission_checkbox(f, :deactivate_survey, Event)
 
       tr
         td.sub-level-1 Comments
-        td= permission_checkbox(f, :view_comments, Event)
+        td= permission_checkbox(f, :index_comments, Event)
         td= permission_checkbox(f, :create_comment, Event)
         td= permission_checkbox(f, :edit_comment, Event)
         td= permission_checkbox(f, :deactivate_comment, Event)
