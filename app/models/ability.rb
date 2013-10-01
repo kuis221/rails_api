@@ -35,7 +35,7 @@ class Ability
 
 
       # Special permission to allow editing global kpis (for goals setting)
-      can :edit, Kpi do |kpi|
+      can [:edit, :update], Kpi do |kpi|
         kpi.company_id.nil? && can?(:edit, Campaign)
       end
 
