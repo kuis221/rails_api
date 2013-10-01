@@ -39,6 +39,48 @@ ul.select2-results{
 	overflow: visible !important; 
 	&.modal-med{
 		width: 460px;
+		&.eventexpense_modal{
+			width: 660px;
+			.pull-left, .pull-right{
+				width: 50%;
+				.control-group{
+					display:block;
+					width: 100%;
+					input[type="text"]{
+						width:90%;
+					}
+					input[type="number"] {
+						background-color: white !important;
+						border:1px solid @user_menu !important;
+						box-shadow: none !important;
+						margin-right: 0 !important;
+						width: 158px;
+					}
+					&.event_expense_amount{
+						label{
+							display: none;
+						}
+					}
+				}
+				.input-prepend{
+					.add-on{
+						background-color: #c0c0c0;
+						border: 0 !important;
+						border-radius: 4px 0px 0px 4px;
+						color: white;
+						display: inline-block;
+						-webkit-border-radius: 4px 0px 0px 4px;
+						padding: 10px 5px 12px 4px;
+						text-align: center;
+						text-shadow: none !important;
+						width: 40px;
+					}
+				}
+			}
+			.form-actions{
+				clear: both;
+			}
+		}
 		.modal-body{
 			.control-group{
 				width: 220px;
@@ -126,7 +168,7 @@ ul.select2-results{
 					}
 				}
 				&.task_due_at{
-					margin-left: 23px;
+					margin-left: 21px;
 					width: 110px;
 					input[type="text"]{
 						background: url('calendar.svg') no-repeat left !important;
@@ -573,7 +615,7 @@ ul.select2-results{
 				&.input-small{width:90px;}
 				&.input-medium{width:150px;}
 				&.input-large{width:210px;}
-				&.input-xlarge{width:385px;}
+				&.input-xlarge{width:382px;}
 				&.input-xxlarge{width:540px;
 			}
 		}

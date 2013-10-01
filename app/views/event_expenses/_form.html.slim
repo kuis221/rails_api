@@ -2,14 +2,17 @@
   = f.error_notification
 
   .form-inputs
-    = f.input :name
-    = f.input :amount
-    = f.input :file, required: false
+    .pull-left
+      = f.input :name
+      .input-prepend
+        .add-on $
+      = f.input :amount
+    .pull-right
+      = f.input :file, required: false
 
   .form-actions
     = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
-    = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
   $('#event_expense_file').fileupload({
