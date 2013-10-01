@@ -1,7 +1,7 @@
 - if resource.persisted?
-  | 
+  |
     $('#upload_#{params[:unique_id]}').addClass('complete');
-    $('#event-photos-thumbs').prepend('#{j render(partial: 'results/photos/photo', locals: {photo: resource})}')
+    $('#photos-thumbs').prepend('#{j render(partial: 'results/photos/photo', locals: {photo: resource})}')
     if (typeof photoProcessingCheck == 'undefined' || !photoProcessingCheck) {
       photoProcessingCheck = setInterval(function() {
         photos = $('.photo-item[data-processed=false]');

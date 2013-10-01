@@ -38,7 +38,7 @@
     li
       a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
     li
-      a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents      
+      a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents
 
   .campaigns_box
     .tab-content
@@ -78,6 +78,10 @@ javascript:
     window.location.reload(false);
   });
 
+  $(document).on('kpis:change', function(){
+    window.location.reload(false);
+  });
+
   $(document).on('members:change teams:change', function(){
     $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
   });
@@ -104,4 +108,4 @@ javascript:
 
   $(document).on('documents:change', function(){
     $('.tab-content #documents_tab').load('#{tab_campaign_path(resource, :documents)}')
-  });  
+  });

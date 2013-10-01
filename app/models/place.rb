@@ -133,7 +133,7 @@ class Place < ActiveRecord::Base
   def photos(company_id)
     list_photos = []
     if persisted?
-      search = AttachedAsset.do_search(place_id: self.id, company_id: company_id, asset_type: 'photo', sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      search = AttachedAsset.do_search(place_id: self.id, company_id: company_id, asset_type: 'photo', status: 'Active', sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
     list_photos += spot.photos if spot && list_photos.length < 10

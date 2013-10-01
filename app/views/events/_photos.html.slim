@@ -5,5 +5,5 @@ h3 GALLERY
   = link_to content_tag(:i,'', class: 'icon-plus-sign dialogue-photos'), new_event_photo_path(resource), remote: true
 
 .large-photo-list
-  ul#event-photos-thumbs.thumbnails
-    = render partial: 'results/photos/photo', collection: resource.photos
+  ul#photos-thumbs.thumbnails
+    = render partial: 'results/photos/photo', collection: resource.photos.active
