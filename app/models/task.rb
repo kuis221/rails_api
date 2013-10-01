@@ -80,7 +80,7 @@ class Task < ActiveRecord::Base
   end
 
   def due_today?
-    due_at.to_date <= Date.today && due_at.to_date >= Date.today
+    due_at.to_date <= Date.today && due_at.to_date >= Date.today unless due_at.nil?
   end
 
   def late?
