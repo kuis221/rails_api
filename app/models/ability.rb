@@ -9,9 +9,12 @@ class Ability
       can :notifications, CompanyUser
     end
 
+    # AdminUsers (logged in on Active Admin)
     if user.is_a?(AdminUser)
       # ActiveAdmin users
       can :manage, :all
+
+    # Super Admin Users
     elsif  user.is_super_admin?
 
       # Super Admin Users can manage any object on the same company
@@ -29,9 +32,16 @@ class Ability
       can [:new, :create], Kpi do |kpi|
         can?(:edit, Campaign)
       end
+
+
+      # Special permission to allow editing global kpis (for goals setting)
+      can [:edit, :update], Kpi do |kpi|
+        kpi.company_id.nil? && can?(:edit, Campaign)
+      end
+
+    # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
-        Rails.logger.debug "CHECKING: #{action} with aliases #{aliases_for_action(action).inspect} on #{subject_class} ::> #{subject.inspect}"
         user.role.permissions.select{|p| aliases_for_action(action).include?(p.action.to_sym)}.any? do |permission|
           permission.subject_class == subject_class.to_s &&
           (   subject.nil? ||
