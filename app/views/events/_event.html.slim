@@ -5,7 +5,6 @@ li id="event_#{event.id}" class="#{event.aasm_state}#{event.is_late? && event.un
       span.address
         =
         b= event.campaign_name
-        br>/
         = place_address(event.place, false, ', ')
     span.pull-right
       = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit'

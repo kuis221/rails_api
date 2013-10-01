@@ -29,4 +29,5 @@
  *= require 'date_ranges.less'
  *= require 'day_parts.less'
  *= require 'campaigns.less'
+ *= require 'cross_browser.less'
  */

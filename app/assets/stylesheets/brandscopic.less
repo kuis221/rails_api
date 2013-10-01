@@ -130,6 +130,7 @@ a{
 	color:@text;
   	outline: 0;
   	&:focus{
+  		color:@text;
   		outline:0;
   	}
 }
@@ -580,7 +581,7 @@ body.app-layout{
 		speak:none;
 		text-align: center;
 		text-shadow:none;
-		top:2px;
+		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
 	&:focus{
@@ -612,7 +613,7 @@ body.app-layout{
 		speak:none;
 		text-align: center;
 		text-shadow:none;
-		top:2px;
+		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
 	&.map:after{
@@ -625,7 +626,7 @@ body.app-layout{
 		speak:none;
 		text-align: center;
 		text-shadow:none;
-		top:2px;
+		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
 }
@@ -967,6 +968,12 @@ li.dropdown a{
 .nav{
 	margin-bottom: 0;
 }
+
+.nav>li>a:focus{
+	background-color: @text;
+	color:@user_menu;
+}
+
 .nav-tabs{
 	border-bottom: 0;
 }
@@ -1035,6 +1042,9 @@ li.dropdown a{
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
+}
+.nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
+	background-color: @menu;
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
@@ -1474,7 +1484,7 @@ ul.kpis-list{
 	    	span{
 	    		&:first-child{
 	    			font-size: 11px;
-	    			margin: 10px 0 0 0;
+	    			margin: 8px 0 0 0;
 	    			width: 400px;
 	    			.area_name{
 	    				font-size: 16px;
@@ -1624,7 +1634,7 @@ ul.kpis-list{
 	    			}
 	    			&.pull-right{
 	    				position: relative;
-	    				margin-top:10%;
+	    				margin-top:9%;
 	    			}
 	    		}
     		}
@@ -1763,11 +1773,12 @@ ul.kpis-list{
     			top:0;
     		}
     		&:first-child{
-    			margin: 8px 120px 0 0;
-    			width: 50%;
+    			margin: 8px 80px 0 0;
+    			width: 45%;
     		}
     		&.first{
-    			margin-right: 65px;
+    			margin-right: 55px;
+    			width: 14%;
     		}
     		&.first, &.last{
     			margin-top: 8px;
@@ -1951,7 +1962,7 @@ ul.kpis-list{
 		&.date{
 			line-height: 20px;
 			padding-top: 8px;
-			width: 200px;
+			width: 28%;
 		}
 		&.pull-right{
 	       display: block;
@@ -3957,6 +3968,11 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.box_demographics, .box_consumer_reach{
+		h3{
+			margin-top: 30px;
+		}
+	}
 	.box_report{
 		margin-bottom: 90px;
 		p.big{
@@ -4303,14 +4319,29 @@ svg{
 			color: @user_menu;
 			content: "\e02c";
 			font-family: 'icons';
-			font-size: 23px;
+			font-size: 22px;
 			padding-top: 5px;
 			position: absolute;
 			speak: none;
-			left: 28px;
+			left: 31px;
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
+		}
+	}
+	.phone-data{
+		&:before{
+			color: @user_menu;
+			content: "\e02d";
+			font-family: 'icons';
+			font-size: 18px;
+			padding-top: 3px;
+			position: absolute;
+			speak: none;
+			left: 29px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;			
 		}
 	}
 	.time-data{
@@ -5088,3 +5119,11 @@ input::-webkit-inner-spin-button {
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
+// FULLSCREEN MODE ICONS
+
+#main:-webkit-full-screen {
+   .btn.fullscreen:after {
+       content: "\e040";
+	   font-family: 'icons';
+   }
+}
