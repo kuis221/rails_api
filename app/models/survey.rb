@@ -19,6 +19,8 @@ class Survey < ActiveRecord::Base
 
   accepts_nested_attributes_for :surveys_answers
 
+  delegate :company_id, to: :event
+
   def brands
     event.campaign.survey_brands
   end

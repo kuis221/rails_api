@@ -30,25 +30,25 @@ SimpleNavigation::Configuration.run do |navigation|
   # navigation.auto_highlight = false
   navigation.items do |primary|
     primary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r(/$)
-    primary.item :events, 'Events', events_path, highlights_on: %r(/events)
-    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r(/tasks) do |secondary|
-      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine)
-      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams)
+    primary.item :events, 'Events', events_path, highlights_on: %r(/events), :if => Proc.new { can?(:index, Event) }
+    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r(/tasks), :if => Proc.new { can?(:index_my, Task) || can?(:index_team, Task) } do |secondary|
+      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine), :if => Proc.new { can?(:index_my, Task) }
+      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams), :if => Proc.new { can?(:index_team, Task) }
     end
     primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research) do |secondary|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
     primary.item :results, 'Results', results_event_data_path, highlights_on: %r(/results) do |secondary|
-      secondary.item :event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data)
-      secondary.item :comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments)
-      secondary.item :photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos)
-      secondary.item :expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses)
-      secondary.item :surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys)
+      secondary.item :event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data), :if => Proc.new { can?(:index_results, EventData) }
+      secondary.item :comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments), :if => Proc.new { can?(:index_results, Comment) }
+      secondary.item :photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos), :if => Proc.new { can?(:index_results, AttachedAsset) }
+      secondary.item :expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses), :if => Proc.new { can?(:index_results, EventExpense) }
+      secondary.item :surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys), :if => Proc.new { can?(:index_results, Survey) }
     end
     primary.item :analysis, 'Analysis', analysis_campaigns_report_path,  highlights_on: %r(/analysis) do |secondary|
       # secondary.item :snapshot_report, 'Snapshot Report', '#', highlights_on: %r(/analysis/snapshot_report)
-      secondary.item :campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)
-      secondary.item :staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r(/analysis/staff_report)
+      secondary.item :campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report), :if => Proc.new { can?(:show_analysis, CompanyUser) }
+      secondary.item :staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r(/analysis/staff_report), :if => Proc.new { can?(:show_analysis, Campaign) }
     end
   end
 end

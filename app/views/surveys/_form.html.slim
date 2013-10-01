@@ -9,9 +9,7 @@
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
               = qf.hidden_field :kpi_id
               = qf.hidden_field :question_id
-              = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio, label: kpi.name, required: true 
-
-
+              = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio_buttons, label: kpi.name, required: true 
 
       fieldset
         legend.competitive Competitive awareness & usage

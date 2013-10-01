@@ -6,21 +6,21 @@
       = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
 
     / Expenses module
-    - if resource.campaign.active_kpis.include?(Kpi.expenses)
+    - if resource.campaign.active_kpis.include?(Kpi.expenses) && can?(:show, EventExpense)
       #event-expenses.details_box.box_expenses
         = render partial: 'expenses', locals: {f: f}
 
     / Photos module
-    - if resource.campaign.active_kpis.include?(Kpi.photos)
+    - if resource.campaign.active_kpis.include?(Kpi.photos) && can?(:view_photos, resource)
       #event-photos.details_box.box_photos
         = render partial: 'photos', locals: {f: f, allow_upload: true}
 
     / Surveys module
-    - if resource.campaign.active_kpis.include?(Kpi.surveys)
+    - if resource.campaign.active_kpis.include?(Kpi.surveys) && can?(:show, Survey)
       #event-surveys.details_box.box_expenses
         = render partial: 'surveys', locals: {f: f}
 
     / Comments module
-    - if resource.campaign.active_kpis.include?(Kpi.comments)
+    - if resource.campaign.active_kpis.include?(Kpi.comments) && can?(:view_comments, Event)
       #event-comments.details_box
         = render partial: 'comments', locals: {f: f}

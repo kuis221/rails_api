@@ -156,4 +156,9 @@ module ApplicationHelper
       content_tag(:div, 'FEMALE', class: 'gender')
     end
   end
+
+  def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
+    name = capture(&block)
+    link_to_if can?(permission_action, subject_class), name, options, html_options
+  end
 end

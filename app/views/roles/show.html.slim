@@ -16,9 +16,52 @@
     .details-bar-info
       h3= resource.name
       = link_to '', edit_role_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role.  Would you like to continue?")
+      = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?")
+
+
+  .details_box
+    - unless resource.is_admin?
+      ul#permissions-tabs.nav.nav-tabs
+        li.active
+          a href="#dashboard_permissions" Dashboards
+        li
+          a href="#events_permissions" Events
+        li
+          a href="#tasks_permissions" Tasks
+        li
+          a href="#results_permissions" Results
+        li
+          a href="#analysis_permissions" Analysis
+        li
+          a href="#campaigns_permissions" Campaigns
+        li
+          a href="#admin_permissions" Admin
+
+      .campaigns_box
+        .tab-content
+          #dashboard_permissions.tab-pane.active
+
+          #events_permissions.tab-pane
+            = render 'events_permissions'
+
+          #tasks_permissions.tab-pane
+
+          #results_permissions.tab-pane
+
+          #analysis_permissions.tab-pane
+
+          #campaigns_permissions.tab-pane
+
+          #admin_permissions.tab-pane
+    - else
+      p Here goes the message for the super admin role
 
 javascript:
   $(document).on('roles:change', function(){
     window.location.reload(false);
   })
+
+  $('#permissions-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });

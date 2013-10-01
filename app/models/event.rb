@@ -48,7 +48,7 @@ class Event < ActiveRecord::Base
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
-  accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
+  accepts_nested_attributes_for :comments, reject_if: proc {|attributes| attributes['content'].blank? }
 
   scoped_to_company
 

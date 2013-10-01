@@ -4,11 +4,12 @@ class RolesController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  def set_permissions
-    if params[:permissions]
-      Role.all.each do |group|
-        group.permissions = params[:permissions][group.id.to_s]
-        group.save
+  def update
+    update! do |success, failure|
+      success.js do
+        if params[:partial].present?
+          render 'update_partial'
+        end
       end
     end
   end

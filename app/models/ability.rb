@@ -4,6 +4,11 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
 
+    # All users
+    if user.id
+      can :notifications, CompanyUser
+    end
+
     if user.is_a?(AdminUser)
       # ActiveAdmin users
       can :manage, :all
@@ -24,53 +29,16 @@ class Ability
       can [:new, :create], Kpi do |kpi|
         can?(:edit, Campaign)
       end
-    else
-      if user.id
-        # Basic permissions check, all users can manage resources within
-        # they same company
-
-        can :manage, CompanyUser
-        #can :manage, User, {:company_users => {:company_id => user.current_company.id}}
-
-        can :manage, Campaign, :company_id => user.current_company.id
-        can :manage, Kpi do |kpi|
-          kpi.company_id == user.current_company.id || kpi.company_id.nil?
+    elsif user.id
+      can do |action, subject_class, subject|
+        Rails.logger.debug "CHECKING: #{action} with aliases #{aliases_for_action(action).inspect} on #{subject_class} ::> #{subject.inspect}"
+        user.role.permissions.select{|p| aliases_for_action(action).include?(p.action.to_sym)}.any? do |permission|
+          permission.subject_class == subject_class.to_s &&
+          (   subject.nil? ||
+            ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) ) ||
+            ( permission.subject_id.nil? || permission.subject_id == subject.id )
+          )
         end
-        can :manage, Role, :company_id => user.current_company.id
-        can :manage, Team, :company_id => user.current_company.id
-        can :manage, Area, :company_id => user.current_company.id
-        can :manage, Event, :company_id => user.current_company.id
-        can [:new, :create], Survey
-        can [:edit, :update, :activate, :deactivate], Survey do |survey|
-          can :edit, survey.event
-        end
-        can :manage, EventData, :event => {:company_id => user.current_company.id}
-        can :manage, BrandPortfolio, :company_id => user.current_company.id
-        can [:index, :create], Brand
-        can [:index, :create, :destroy, :show], Place
-        can [:index, :show, :areas, :select_areas, :add_areas, :delete_area], Venue
-
-        can :manage, DateRange, :company_id => user.current_company.id
-        can :manage, DateItem, :date_range => {:company_id => user.current_company.id}
-        can :create, DateItem
-
-        can :manage, DayPart, :company_id => user.current_company.id
-        can :manage, DayItem, :day_part => {:company_id => user.current_company.id}
-        can :create, DayItem
-
-        can :create, Task
-        can :manage, Task, :event => {:company_id => user.current_company.id}
-
-        can :manage, AttachedAsset
-
-        can :create, EventExpense
-        can :edit, EventExpense do |expense|
-          expense.event.company_id == user.current_company.id
-        end
-
-        can :manage, Goal
-        can :manage, Placeable
-        can :manage, Comment
       end
     end
   end

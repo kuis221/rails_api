@@ -6,7 +6,6 @@
 #  name        :string(255)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  permissions :text
 #  company_id  :integer
 #  active      :boolean          default(TRUE)
 #  description :text
@@ -18,9 +17,12 @@ class Role < ActiveRecord::Base
   scoped_to_company
 
   has_many :company_users
+  has_many :permissions
 
-  attr_accessible :name, :description
+  attr_accessible :name, :description, :permissions_attributes
   validates :name, presence: true
+
+  accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
 
   scope :active, where(:active => true)
 
@@ -47,6 +49,10 @@ class Role < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def permission_for(action, subject_class)
+    permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s } || permissions.build(action: action, subject_class: subject_class.to_s)
   end
 
   class << self

@@ -19,6 +19,10 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_company, :custom_body_class, :modal_dialog_title
 
+  rescue_from 'CanCan::AccessDenied' do |exception|
+    render 'access_denied'
+  end
+
   protected
     def set_layout
       user_signed_in? ? 'application' : 'empty'

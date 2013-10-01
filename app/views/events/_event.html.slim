@@ -1,12 +1,15 @@
 li id="event_#{event.id}" class="#{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
   span.event-item
-    a href="#{event_path(event)}"
+    / a href="#{event_path(event)}"
+    = link_to_if_permitted(:show, Event, event_path(event)) do
       span.date= format_date_range(event.start_at, event.end_at)
       span.address
         =
         b= event.campaign_name
         = place_address(event.place, false, ', ')
+
     span.pull-right
-      = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit'
-      = link_to '', deactivate_event_path(event), remote: true, class: 'disable', title: 'Deactivate' if event.active?
-      = link_to '', activate_event_path(event), remote: true, class: 'enable', title: 'Activate' unless event.active?
+      = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit' if can? :edit, Event
+      - if can? :deactivate, Event
+        = link_to '', deactivate_event_path(event), remote: true, class: 'disable', title: 'Deactivate' if event.active?
+        = link_to '', activate_event_path(event), remote: true, class: 'enable', title: 'Activate' unless event.active?

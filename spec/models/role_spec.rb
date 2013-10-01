@@ -6,10 +6,10 @@
 #  name        :string(255)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  permissions :text
 #  company_id  :integer
 #  active      :boolean          default(TRUE)
 #  description :text
+#  is_admin    :boolean          default(FALSE)
 #
 
 require 'spec_helper'

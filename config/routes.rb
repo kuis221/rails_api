@@ -80,9 +80,6 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
     end
-    collection do
-      put :set_permissions
-    end
   end
 
   resources :company_users, except: [:new, :create], path: 'users' do

@@ -7,7 +7,6 @@ describe VenuesController, search: true do
     @company_user = @user.current_company_user
   end
 
-
   describe "GET 'filters'" do
     it "should return the correct buckets in the right order" do
       campaign = FactoryGirl.create(:campaign, company: @company)
@@ -22,6 +21,5 @@ describe VenuesController, search: true do
       filters['filters'].map{|b| b['label']}.should == ["Price", "Locations", "Campaigns", "Brands"]
     end
   end
-
 
 end

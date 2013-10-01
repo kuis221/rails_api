@@ -2,7 +2,10 @@ class FilteredController < InheritedResources::Base
   helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
   respond_to :json, only: :index
 
-  load_and_authorize_resource except: [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
+  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
+  load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
+  before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
+
 
   custom_actions collection: [:filters, :items]
 
@@ -39,6 +42,9 @@ class FilteredController < InheritedResources::Base
   end
 
   protected
+    def authorize_actions
+      authorize! :index, resource_class
+    end
 
     def export_list(export)
       @_export = export

@@ -1,5 +1,5 @@
 #event-expenses-container
-  = link_to 'Add Expense', new_event_event_expense_path(resource), remote: true, class: 'btn btn-primary'
+  = link_to 'Add Expense', new_event_event_expense_path(resource), remote: true, class: 'btn btn-primary' if can?(:create, EventExpense)
 
   .link-list
     ul#expenses-list

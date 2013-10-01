@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :company_users, allow_destroy: false
 
-  delegate :name, :id, to: :role, prefix: true, allow_nil: true
+  delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
 
   scope :active, where('invitation_accepted_at is not null')
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
@@ -156,7 +156,7 @@ class User < ActiveRecord::Base
   end
 
   def is_super_admin?
-    role.is_admin?
+    role.is_admin? unless role.nil?
   end
 
   def current_company_user

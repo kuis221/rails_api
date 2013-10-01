@@ -19,9 +19,9 @@ describe EventExpensesController do
     it 'cannot edit an event expense on other company' do
       other_event = FactoryGirl.create(:event, company: FactoryGirl.create(:company))
       other_expense = FactoryGirl.create(:event_expense, event: other_event)
-      expect {
-        get 'edit', event_id: other_event.to_param, id: other_expense.id, format: :js
-      }.to raise_exception(CanCan::AccessDenied)
+      get 'edit', event_id: other_event.to_param, id: other_expense.id, format: :js
+      response.should be_success
+      response.should render_template('access_denied')
     end
   end
 

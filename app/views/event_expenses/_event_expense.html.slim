@@ -4,6 +4,6 @@ li id="event_expense_#{event_expense.id}"
   span.links
     = link_to '', event_expense.download_url, 'data-preview-url' => event_expense.file.url(:medium), :class => "preview" if event_expense.file.file?
     = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'edit'
-    = "&nbsp;".html_safe
-    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'disable'
+    = "&nbsp;".html_safe if can?(:edit, event_expense)
+    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'disable' if can?(:deactivate, event_expense)
 
