@@ -72,8 +72,7 @@ class TasksController < FilteredController
     def status_counters
       @status_counters ||= Hash.new.tap do |counters|
         counters['unassigned'] = 0
-        counters['completed'] = 0
-        counters['assigned'] = 0
+        counters['incomplete'] = 0
         counters['late'] = count_late_tasks
         facet_search.facet(:statusm).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:statusm).nil?
       end

@@ -3,12 +3,9 @@
     .task-counter-item.unassigned
       span.count-unassigned= status_counters['unassigned']
       label.unassigned Unassigned
-  .task-counter-item.assigned
-    span.count-assigned= status_counters['assigned']
-    label.assigned Assigned
   .task-counter-item.completed
-    span.count-completed= status_counters['completed']
-    label.completed Completed
+    span.count-completed= status_counters['incomplete']
+    label.completed Incomplete
   .task-counter-item.late
     span.count-late= status_counters['late']
     label.late Late
