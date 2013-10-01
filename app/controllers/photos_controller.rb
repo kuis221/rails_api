@@ -1,4 +1,4 @@
-class PhotosController < FilteredController
+class PhotosController < InheritedResources::Base
   respond_to :js, only: [:create, :new, :processing_status]
 
   belongs_to :event, optional: true
@@ -7,6 +7,8 @@ class PhotosController < FilteredController
   include PhotosHelper
 
   defaults :resource_class => AttachedAsset
+
+  load_and_authorize_resource class: AttachedAsset, through: :parent
 
   helper_method :describe_filters
 
