@@ -65,13 +65,7 @@ class PlacesController < FilteredController
 
       # When a new place was added to Google, data needs to be added to Places table
       if !automatically_created
-        @place.street_number = params[:place][:street_number]
-        @place.route = params[:place][:route]
-        @place.city = params[:place][:city]
-        @place.state = params[:place][:state]
-        @place.zipcode = params[:place][:zipcode]
-        @place.country = params[:place][:country]
-        @place.save
+        @place.update_attributes place_params
       end
     else
       render 'new_place'
@@ -84,4 +78,10 @@ class PlacesController < FilteredController
     @place = Place.find(params[:id])
     parent.places.delete(@place)
   end
+
+
+  private
+    def place_params
+      params.permit(place: [:street_number, :route, :city, :state, :zipcode, :country])[:place]
+    end
 end

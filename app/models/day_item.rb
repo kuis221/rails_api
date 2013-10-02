@@ -11,8 +11,6 @@
 #
 
 class DayItem < ActiveRecord::Base
-  attr_accessible :start_time, :end_time
-
   validates :day_part_id, presence: true, numericality: true
   validates :start_time, presence: true
 

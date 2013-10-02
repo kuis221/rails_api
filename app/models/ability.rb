@@ -12,6 +12,10 @@ class Ability
         raise 'true'
         can?(:update, Campaign) || can?(:create, Campaign)
       end
+
+      can [:create, :update], Goal do |goal|
+        can?(:edit, goal.goalable)
+      end
     end
 
     # AdminUsers (logged in on Active Admin)
@@ -38,11 +42,12 @@ class Ability
         can?(:edit, Campaign)
       end
 
-
       # Special permission to allow editing global kpis (for goals setting)
       can [:edit, :update], Kpi do |kpi|
         kpi.company_id.nil? && can?(:edit, Campaign)
       end
+
+      can :edit_data, Event
 
     # A logged in user
     elsif user.id
@@ -58,6 +63,20 @@ class Ability
         end
       end
 
+      # Event Data
+      can :edit_data, Event do |event|
+       (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
+       (event.submitted? && can?(:edit_submitted_data, event)) ||
+       (event.approved? && can?(:edit_approved_data, event)) ||
+       (event.rejected? && can?(:edit_rejected_data, event))
+      end
+
+      can :view_data, Event do |event|
+       (event.unsent? && can?(:view_unsubmitted_data, event)) ||
+       (event.submitted? && can?(:view_submitted_data, event)) ||
+       (event.approved? && can?(:view_approved_data, event)) ||
+       (event.rejected? && can?(:view_rejected_data, event))
+      end
 
       # Tasks permissions
       can :tasks, Event do |event|
@@ -155,6 +174,10 @@ class Ability
 
       can :create, Comment do |comment|
         user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)
+      end
+
+      can :reject, Event do |event|
+        can?(:approve, event)
       end
     end
   end

@@ -22,8 +22,6 @@ class Goal < ActiveRecord::Base
   belongs_to :parent, polymorphic: true
   belongs_to :kpi
   belongs_to :kpis_segment
-  attr_accessible :value, :goalable_id, :goalable_type, :parent_id, :parent_type, :kpi_id, :kpis_segment_id, :title, :start_date, :due_date
-
 
   validate :goalable_id, presence: true, numericality: true
   validate :goalable_type, presence: true

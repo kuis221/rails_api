@@ -18,16 +18,6 @@ require 'spec_helper'
 describe BrandPortfolio do
   it { should validate_presence_of(:name) }
 
-  it { should allow_mass_assignment_of(:name) }
-  it { should allow_mass_assignment_of(:description) }
-
-  it { should_not allow_mass_assignment_of(:active) }
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:created_by_id) }
-  it { should_not allow_mass_assignment_of(:updated_by_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   describe "#activate" do
     let(:brand_portfolio) { FactoryGirl.build(:brand_portfolio, active: false) }
 

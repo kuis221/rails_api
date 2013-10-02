@@ -89,6 +89,10 @@ class CampaignsController < FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(campaign: [:name, :description, :team_ids, :brands_list, :brand_portfolio_ids, :user_ids])[:campaign]
+    end
+
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|

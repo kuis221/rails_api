@@ -39,6 +39,9 @@ class AreasController < FilteredController
   end
 
   private
+    def permitted_params
+      params.permit(area: [:name, :description])[:area]
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|

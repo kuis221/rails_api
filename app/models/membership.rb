@@ -37,6 +37,7 @@ class Membership < ActiveRecord::Base
     def update_tasks
       if memberable_type == 'Event'
         Sunspot.index(memberable.tasks)
+        Sunspot.index(memberable)
       end
     end
 end

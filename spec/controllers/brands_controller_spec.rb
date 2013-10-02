@@ -18,7 +18,6 @@ describe BrandsController do
     end
   end
 
-
   describe "brand portfolio scope" do
     let(:brand_portfolio) { FactoryGirl.create(:brand_portfolio, company: @company) }
 

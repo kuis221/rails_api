@@ -13,8 +13,6 @@
 class Brand < ActiveRecord::Base
   track_who_does_it
 
-  attr_accessible :name, :campaigns_ids
-
   validates :name, presence: true, uniqueness: true
 
   # Campaigns-Brands relationship

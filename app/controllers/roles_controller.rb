@@ -22,6 +22,9 @@ class RolesController < FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(role: [:name, :description])[:role]
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|

@@ -15,7 +15,6 @@
 class CompanyUser < ActiveRecord::Base
   include GoalableModel
 
-  attr_accessible :role_id
   belongs_to :user
   belongs_to :company
   belongs_to :role
@@ -25,8 +24,8 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
-  attr_accessible :user_attributes, :role_id, :company_id, :team_ids, :campaign_ids, as: :admin
-  attr_accessible :user_attributes
+  # attr_accessible :user_attributes, :role_id, :company_id, :team_ids, :campaign_ids, as: :admin
+  # attr_accessible :user_attributes
 
   has_many :memberships
 

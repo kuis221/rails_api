@@ -78,11 +78,6 @@ describe BrandPortfoliosController do
   end
 
   describe "POST 'create'" do
-    it "returns http success" do
-      post 'create', format: :js
-      response.should be_success
-    end
-
     it "should not render form_dialog if no errors" do
       lambda {
         post 'create', brand_portfolio: {name: 'Test brand portfolio', description: 'Test brand portfolio description'}, format: :js

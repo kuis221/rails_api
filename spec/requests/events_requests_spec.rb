@@ -195,7 +195,6 @@ describe "Events", js: true, search: true do
 
       fill_in 'Summary', with: 'This is the summary'
 
-
       fill_in '< 12', with: '10'
       fill_in '12 – 17', with: '11'
       fill_in '18 – 24', with: '12'

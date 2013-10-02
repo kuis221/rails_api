@@ -18,7 +18,6 @@
 
 class EventExpense < ActiveRecord::Base
   belongs_to :event
-  attr_accessible :amount, :file, :name
 
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
     :styles => { :small => { :geometry => '135',  :format => :png }, :medium => { :geometry => '400',  :format => :png } },

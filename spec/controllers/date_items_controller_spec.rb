@@ -47,4 +47,16 @@ describe DateItemsController do
       assigns(:date_item).errors.count > 0
     end
   end
+
+  describe "DELETE 'destroy'" do
+    let(:date_item) { FactoryGirl.create(:date_item, date_range: date_range) }
+    it "should delete the day item" do
+      date_item.save   # Make sure record is created before the expect block
+      expect {
+        delete 'destroy', date_range_id: date_range.to_param, id: date_item.to_param, format: :js
+        response.should be_success
+        response.should render_template(:destroy)
+      }.to change(DateItem, :count).by(-1)
+    end
+  end
 end

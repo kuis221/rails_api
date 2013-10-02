@@ -21,20 +21,6 @@ require 'spec_helper'
 describe AssetDownload do
   it { should belong_to(:user) }
 
-  it { should allow_mass_assignment_of(:uid) }
-  it { should allow_mass_assignment_of(:assets_ids) }
-  it { should allow_mass_assignment_of(:last_downloaded) }
-
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:file_file_name) }
-  it { should_not allow_mass_assignment_of(:file_content_type) }
-  it { should_not allow_mass_assignment_of(:file_file_size) }
-  it { should_not allow_mass_assignment_of(:file_updated_at) }
-  it { should_not allow_mass_assignment_of(:aasm_state) }
-  it { should_not allow_mass_assignment_of(:user_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   it { should validate_presence_of(:uid) }
 
   describe "states" do

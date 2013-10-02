@@ -17,8 +17,6 @@
 class DateItem < ActiveRecord::Base
   RECURRENCE_TYPES = %w(daily weekly monthly yearly)
 
-  attr_accessible :start_date, :end_date, :recurrence, :recurrence_days, :recurrence_period, :recurrence_type
-
   validates :date_range_id, presence: true, numericality: true
 
   belongs_to :date_range

@@ -44,6 +44,9 @@ class TasksController < FilteredController
   end
 
   private
+    def permitted_params
+      params.permit(task: [:completed, :due_at, :title, :company_user_id, :event_id])[:task]
+    end
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search

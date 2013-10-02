@@ -21,15 +21,6 @@ describe DateRange do
 
   it { should validate_presence_of(:name) }
 
-  it { should allow_mass_assignment_of(:name) }
-  it { should allow_mass_assignment_of(:description) }
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:company_id) }
-  it { should_not allow_mass_assignment_of(:created_by_id) }
-  it { should_not allow_mass_assignment_of(:updated_by_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   describe '#deactivate!' do
     it "should deactivate the date range" do
       date_range = FactoryGirl.create(:date_range, active: true)

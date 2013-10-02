@@ -45,15 +45,13 @@ describe AreasController do
   end
 
   describe "POST 'create'" do
-    it "returns http success" do
-      post 'create', format: :js
-      response.should be_success
-    end
-
     it "should not render form_dialog if no errors" do
       lambda {
         post 'create', area: {name: 'Test Area', description: 'Test Area description'}, format: :js
       }.should change(Area, :count).by(1)
+      area = Area.last
+      area.name.should == 'Test Area'
+      area.description.should == 'Test Area description'
       response.should be_success
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)

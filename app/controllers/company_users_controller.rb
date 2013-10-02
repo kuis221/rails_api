@@ -56,8 +56,9 @@ class CompanyUsersController < FilteredController
     user = current_company_user
 
     # Due event recaps
-    if (count = Event.active.unsent.in_past.with_user_in_team(user).where('events.end_at > ?', 2.days.ago).count) > 0
-      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: count), level: 'grey', url: events_path(event_status: ['Due']), unread: true, icon: 'icon-notification-event'})
+    count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Due'], user: [current_company_user.id], team: current_company_user.team_ids }).total
+    if count > 0
+      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: count), level: 'grey', url: events_path(event_status: ['Due'],status: ['Active']), unread: true, icon: 'icon-notification-event'})
     end
 
     # Late event recaps
@@ -106,17 +107,17 @@ class CompanyUsersController < FilteredController
   end
 
   protected
+    def permitted_params
+      if params[:id].present? && params[:id].to_s == current_company_user.id.to_s
+        allowed = {company_user: [{user_attributes: [:first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }
+      else
+        allowed = {company_user: [:role_id, {team_ids: []}, {user_attributes: [:first_name, :last_name, :email, :phone_number, :password, :password_confirmation]} ] }
+      end
+      params.permit(allowed)[:company_user]
+    end
 
     def roles
       @roles ||= current_company.roles
-    end
-
-    def as_role
-      { as: :admin }
-    end
-
-    def role_given?
-      current_user.id != resource.user_id
     end
 
     def facets

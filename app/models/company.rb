@@ -9,8 +9,6 @@
 #
 
 class Company < ActiveRecord::Base
-  attr_accessible :name, :admin_email
-
   attr_accessor :admin_email
 
   has_many :company_users

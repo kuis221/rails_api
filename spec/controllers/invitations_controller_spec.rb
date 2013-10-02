@@ -51,7 +51,7 @@ describe InvitationsController do
       it "should require the role_id" do
         lambda {
           lambda {
-            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com'}, format: :js
+            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {}}, format: :js
           }.should_not change(User, :count)
         }.should_not change(CompanyUser, :count)
         assigns(:user).company_users.first.errors[:role_id].should == ["can't be blank", "is not a number"]
@@ -110,7 +110,7 @@ describe InvitationsController do
     describe "PUT 'update'" do
       let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
       it "must update the user attributes" do
-        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', time_zone: 'American Samoa', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
         response.should redirect_to(root_path)
         user.reload
         user.first_name.should == 'Juanito'
@@ -118,6 +118,7 @@ describe InvitationsController do
         user.city.should == 'Miami'
         user.state.should == 'FL'
         user.country.should == 'US'
+        user.time_zone.should == 'American Samoa'
         user.invitation_token.should be_nil
         user.invitation_accepted_at.to_date.should == Time.zone.now.to_date
         flash[:notice].should == 'Your password was set successfully. You are now signed in.'

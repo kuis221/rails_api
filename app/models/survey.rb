@@ -13,7 +13,6 @@
 
 class Survey < ActiveRecord::Base
   belongs_to :event
-  attr_accessible :surveys_answers_attributes
 
   has_many :surveys_answers, autosave: true
 

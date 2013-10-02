@@ -91,8 +91,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:time_only)
         end
       end
 
@@ -100,8 +102,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 01)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:time_only)
         end
       end
 
@@ -109,8 +113,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 23, 01)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 23, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 27, 0, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 23, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 23, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 27, 0, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 27, 0, 15).to_s(:time_only)
         end
       end
     end
@@ -144,7 +150,7 @@ describe EventsController do
 
       it "should render the form_dialog template if errors" do
         lambda {
-          post 'create', format: :js
+          post 'create', event: {campaign_id: 'XX'}, format: :js
         }.should_not change(Event, :count)
         response.should render_template(:create)
         response.should render_template(:form_dialog)

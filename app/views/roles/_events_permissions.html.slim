@@ -79,5 +79,65 @@
         td= permission_checkbox(f, :edit_comment, Event)
         td= permission_checkbox(f, :deactivate_comment, Event)
 
+      tr
+        td
+          h3 Post Event Data
+        td
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Submit
+        td= permission_checkbox(f, :submit, Event)
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Approve/reject
+        td= permission_checkbox(f, :approve, Event)
+        td
+        td
+        td
+
+    thead
+      tr
+        th 
+        th View
+        th Edit
+        th 
+        th 
+
+      tr
+        td.sub-level-1 Unsubmitted data
+        td= permission_checkbox(f, :view_unsubmitted_data, Event)
+        td= permission_checkbox(f, :edit_unsubmitted_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Submitted data
+        td= permission_checkbox(f, :view_submitted_data, Event)
+        td= permission_checkbox(f, :edit_submitted_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Rejected data
+        td= permission_checkbox(f, :view_rejected_data, Event)
+        td= permission_checkbox(f, :edit_rejected_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Approved data
+        td= permission_checkbox(f, :view_approved_data, Event)
+        td= permission_checkbox(f, :edit_approved_data, Event)
+        td
+        td
+
+
+
   = hidden_field_tag :partial, :events_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

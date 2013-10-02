@@ -42,6 +42,14 @@ class FilteredController < InheritedResources::Base
   end
 
   protected
+    def build_resource_params
+      [permitted_params || {}]
+    end
+
+    def permitted_params
+      {}
+    end
+
     def authorize_actions
       if parent?
         authorize! "index_#{resource_class.to_s.pluralize}".to_sym, parent

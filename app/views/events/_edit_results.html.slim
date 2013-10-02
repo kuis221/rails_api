@@ -1,9 +1,10 @@
 #event-results-form
   = simple_form_for(resource, url: save_results_event_path(resource), remote: true, html: {multipart: true}) do |f|
-    .details_box.box_event_data
-      = render partial: 'edit_event_data', locals: {f: f}
+    - if can?(:edit_data, resource)
+      .details_box.box_event_data
+        = render partial: 'edit_event_data', locals: {f: f}
 
-      = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
+        = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
 
     / Expenses module
     - if resource.campaign.active_kpis.include?(Kpi.expenses) && can?(:show, EventExpense)

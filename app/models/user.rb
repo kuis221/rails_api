@@ -200,7 +200,7 @@ class User < ActiveRecord::Base
     def send_reset_password_instructions(attributes={})
       recoverable = User.joins(:company_users => :role).where(company_users: {active: true}, roles:{active: true}).where(["lower(users.email) = ?", attributes[:email].downcase]).first
       if recoverable.nil?
-        recoverable = User.new(attributes)
+        recoverable = User.new(attributes.permit(:email))
         recoverable.errors.add(:base, :reset_email_not_found)
       else
         recoverable = User.find(recoverable.id)

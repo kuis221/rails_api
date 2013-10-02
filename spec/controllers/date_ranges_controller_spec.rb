@@ -52,15 +52,15 @@ before(:each) do
 
     it "should not render form_dialog if no errors" do
       lambda {
-        post 'create', date_range: {name: 'Test brand portfolio', description: 'Test brand portfolio description'}, format: :js
+        post 'create', date_range: {name: 'Test date range', description: 'Test date range description'}, format: :js
       }.should change(DateRange, :count).by(1)
       response.should be_success
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)
 
       portfolio = DateRange.last
-      portfolio.name.should == 'Test brand portfolio'
-      portfolio.description.should == 'Test brand portfolio description'
+      portfolio.name.should == 'Test date range'
+      portfolio.description.should == 'Test date range description'
       portfolio.active.should be_true
     end
 

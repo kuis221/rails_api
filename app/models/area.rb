@@ -19,8 +19,6 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description
-
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true
 

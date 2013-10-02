@@ -1,3 +1,6 @@
-|
-  $('#resource-goals-list').html('#{j render(parent.goals.base)}');
-  $('.bootbox.modal').modal('hide');
+- unless resource.errors.any?
+  |
+    $('#resource-goals-list').html('#{j render(parent.goals.base)}');
+    $('.bootbox.modal').modal('hide');
+- else
+  = render 'form_dialog'

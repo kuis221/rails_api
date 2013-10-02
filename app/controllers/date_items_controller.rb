@@ -13,4 +13,8 @@ class DateItemsController < FilteredController
       @date.recurrence_period ||= 1
       @date
     end
+
+    def permitted_params
+      params.permit(date_item: [:start_date, :end_date, :recurrence, :recurrence_days, :recurrence_period, :recurrence_type])[:date_item]
+    end
 end

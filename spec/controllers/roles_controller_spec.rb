@@ -38,11 +38,6 @@ describe RolesController do
   end
 
   describe "POST 'create'" do
-    it "returns http success" do
-      post 'create', format: :js
-      response.should be_success
-    end
-
     it "should successfully create the new record" do
       lambda {
         post 'create', role: {name: 'Test Role', description: 'Test Role description'}, format: :js
@@ -51,6 +46,8 @@ describe RolesController do
       role.name.should == 'Test Role'
       role.description.should == 'Test Role description'
       role.active.should == true
+
+      response.should render_template(:create)
     end
 
     it "should not render form_dialog if no errors" do

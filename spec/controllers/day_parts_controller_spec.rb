@@ -58,10 +58,10 @@ describe DayPartsController do
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)
 
-      portfolio = DayPart.last
-      portfolio.name.should == 'Test day part'
-      portfolio.description.should == 'Test day part description'
-      portfolio.active.should be_true
+      day_part = DayPart.last
+      day_part.name.should == 'Test day part'
+      day_part.description.should == 'Test day part description'
+      day_part.active.should be_true
     end
 
     it "should render the form_dialog template if errors" do
