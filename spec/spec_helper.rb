@@ -75,7 +75,7 @@ RSpec.configure do |config|
   #Rails.logger.level = 4
 end
 
-def sign_in_as_user
+def sign_in_as_user(user=nil, permissions)
   company = FactoryGirl.create(:company)
   #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
   role = company.roles.first

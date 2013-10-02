@@ -419,4 +419,23 @@ describe EventsController do
     end
   end
 
+
+  describe "user with permissions to edit event data only" do
+    before(:each) do
+      @company_user = FactoryGirl.create(:company_user, company_id: FactoryGirl.create(:company).id, permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']])
+      @company = @company_user.company
+      @user = @company_user.user
+      sign_in @user
+    end
+
+    let(:event){ FactoryGirl.create(:event, company: @company) }
+
+    it "should be able to edit event_data" do
+      put 'update', id: event.to_param, event: {results_attributes: {} }, format: :js
+      assigns(:event).should == event
+      response.should be_success
+      response.should render_template('events/_event')
+    end
+  end
+
 end

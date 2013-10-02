@@ -17,6 +17,9 @@ class EventsController < FilteredController
   custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
 
+  skip_load_and_authorize_resource only: :update
+  before_filter :authorize_update, only: :update
+
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
@@ -84,11 +87,15 @@ class EventsController < FilteredController
         parameters[:end_time] = t.to_s(:time_only)
       else
         allowed = []
-        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id] if can?(:update, Event) || can?(:create, Event)
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
         allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, :id]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end
       parameters
+    end
+
+    def authorize_update
+      can?(:update, resource) || can?(:edit_data, resource)
     end
 
     def facets
