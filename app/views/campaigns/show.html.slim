@@ -15,48 +15,61 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
       br>/
       = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
   ul#campaign-tabs.nav.nav-tabs
-    li.active
-      a href="#kpis_tab" KPIs
-    li
-      a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
-    li
-      a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
-    li
-      a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
-    li
-      a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
-    li
-      a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents
+    - if can?(:view_kpis, resource)
+      li.active
+        a href="#kpis_tab" KPIs
+    - if can?(:view_places, resource)
+      li
+        a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
+    - if can?(:view_staff, resource)
+      li
+        a href="#staff_tab" data-content="#{tab_campaign_path(resource, :staff)}" Staff
+    - if can?(:view_date_ranges, resource)
+      li
+        a href="#date_ranges_tab" data-content="#{tab_campaign_path(resource, :date_ranges)}" Date ranges
+    - if can?(:view_day_parts, resource)
+      li
+        a href="#day_parts_tab" data-content="#{tab_campaign_path(resource, :day_parts)}" Day parts
+    - if can?(:view_documents, resource)
+      li
+        a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents
 
   .campaigns_box
     .tab-content
-      #kpis_tab.tab-pane.active
-        = render 'kpis'
+      - if can?(:view_kpis, resource)
+        #kpis_tab.tab-pane.active
+          = render 'kpis'
 
-      #campaign-places-list.tab-pane
+      - if can?(:view_places, resource)
+        #campaign-places-list.tab-pane
 
-      #staff_tab.tab-pane
+      - if can?(:view_staff, resource)
+        #staff_tab.tab-pane
 
-      #date_ranges_tab.tab-pane
+      - if can?(:view_date_ranges, resource)
+        #date_ranges_tab.tab-pane
 
-      #day_parts_tab.tab-pane
+      - if can?(:view_day_parts, resource)
+        #day_parts_tab.tab-pane
 
-      #documents_tab.tab-pane
+      - if can?(:view_documents, resource)
+        #documents_tab.tab-pane
 
-  .details_box
-    h3 POST EVENT FORM
+  - if can?(:view_event_form, resource)
+    .details_box
+      h3 POST EVENT FORM
 
     #post-event-form-content
       = render 'post_event_form'
