@@ -1,5 +1,5 @@
 li id="company_user_#{company_user.id}"
-  a href="#{company_user_path(company_user)}"
+  = link_to_if_permitted :show, CompanyUser, company_user_path(company_user) do
     span.user_name
       b= company_user.full_name
       br>/
@@ -16,6 +16,7 @@ li id="company_user_#{company_user.id}"
         br>/
         | Last activity
   span.pull-right
-    = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit'
-    = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
-    = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active? 
+    = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit' if can?(:edit, CompanyUser)
+    - if can?(:deactivate, CompanyUser)
+      = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
+      = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active? 

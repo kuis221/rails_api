@@ -21,14 +21,14 @@
         = resource.full_address
 
     .links-data
-      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.full_name
-      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   / #team-members.details_box
   /   h3 Team Members
@@ -37,7 +37,7 @@
   /   = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
 
   .details_box
-    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary'
+    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary' if can?(:edit, resource)
     #resource-goals-list.link-list
       = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
 

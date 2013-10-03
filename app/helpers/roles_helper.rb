@@ -5,7 +5,7 @@ module RolesHelper
         pf.check_box(:enabled, value: true) +
         pf.input(:action, as: :hidden, wrapper: false, label: false) +
         pf.input(:subject_class, as: :hidden, wrapper: false, label: false) +
-        pf.input(:subject_id, as: :hidden, wrapper: false, label: false)
+        (subject.nil? ? '' : pf.input(:subject_id, as: :hidden, wrapper: false, label: false))
       end
     end
   end
