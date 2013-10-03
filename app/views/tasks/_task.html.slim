@@ -9,7 +9,7 @@ li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
       br
       = task.campaign_name
 
-    span
+    span.last
       span.tasks-date
         = format_date(task.due_at)
         - if show_user
