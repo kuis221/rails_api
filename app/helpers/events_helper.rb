@@ -21,20 +21,6 @@ module EventsHelper
     end
   end
 
-  def can_view_event_data?(event)
-     (resource.unsent? && can?(:view_unsubmitted_data, resource)) ||
-     (resource.submitted? && can?(:view_submitted_data, resource)) ||
-     (resource.approved? && can?(:view_approved_data, resource)) ||
-     (resource.rejected? && can?(:view_rejected_data, resource))
-  end
-
-  def can_edit_event_data?(event)
-     (resource.unsent? && can?(:edit_unsubmitted_data, resource)) ||
-     (resource.submitted? && can?(:edit_submitted_data, resource)) ||
-     (resource.approved? && can?(:edit_approved_data, resource)) ||
-     (resource.rejected? && can?(:edit_rejected_data, resource))
-  end
-
   protected
 
     def describe_filters
