@@ -17,8 +17,6 @@ class Ability
         can?(:edit, goal.goalable)
       end
 
-      can :manage, :dashboard
-
       can :time_zone_change, CompanyUser
 
       # All users can update their own information
@@ -34,6 +32,7 @@ class Ability
 
     # Super Admin Users
     elsif user.is_super_admin?
+      can :manage, :dashboard
 
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
