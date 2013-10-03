@@ -17,6 +17,8 @@ class Ability
         can?(:edit, goal.goalable)
       end
 
+      can :manage, :dashboard
+
       # can :kpi_trends_module, :dashboard do
       #   user.role.has_permission?(:deactivate_task, Event)
       # end
@@ -32,6 +34,7 @@ class Ability
 
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
+        Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
         subject.nil? || ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )
       end
 
@@ -79,6 +82,11 @@ class Ability
        (event.submitted? && can?(:view_submitted_data, event)) ||
        (event.approved? && can?(:view_approved_data, event)) ||
        (event.rejected? && can?(:view_rejected_data, event))
+      end
+
+      Rails.logger.debug "\n\n\n Permission :edit, CompanyUser ==> #{user.role.has_permission?(:edit, CompanyUser)}"
+      can :edit, CompanyUser do |cu|
+        user.role.has_permission?(:edit, CompanyUser) || (cu.id == user.current_company_user.id)
       end
 
       # Team Members
