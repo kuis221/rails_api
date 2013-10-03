@@ -84,9 +84,16 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
-      Rails.logger.debug "\n\n\n Permission :edit, CompanyUser ==> #{user.role.has_permission?(:edit, CompanyUser)}"
       can :edit, CompanyUser do |cu|
         user.role.has_permission?(:edit, CompanyUser) || (cu.id == user.current_company_user.id)
+      end
+
+      can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
+        can?(:edit, brand_portfolio)
+      end
+
+      can :create, Brand do
+        can?(:edit, BrandPortfolio)
       end
 
       # Team Members
