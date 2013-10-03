@@ -81,6 +81,11 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
+      # Team Members
+      can [:new_member, :add_members, :delete_member], Team do |team|
+        can?(:edit, team)
+      end
+
       # Tasks permissions
       can :tasks, Event do |event|
         user.role.has_permission?(:index_tasks, Event) && can?(:show, event)

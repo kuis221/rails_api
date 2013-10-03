@@ -9,20 +9,20 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_area_path(resource), remote: true, title: 'Edit', class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_area_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_area_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_area_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #area-places.details_box
     h3 PLACES
     #area-places-list
       = render partial: 'places', locals: { places: resource.places }
-    = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place'
+    = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
 
 javascript:
   $(document).on('areas:change', function(){
