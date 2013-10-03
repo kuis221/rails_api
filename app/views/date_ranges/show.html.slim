@@ -9,14 +9,14 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_date_range_path(resource), title: 'Edit', remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_date_range_path(resource), title: 'Edit', remote: true, class: 'edit'  if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_date_range_path(resource), title: 'Edit', remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_date_range_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   .details_box
     h3= "DATES"
@@ -24,7 +24,7 @@
     #date_range-dates-list
       = render 'date_items'
 
-    = link_to '', new_date_range_date_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Date'
+    = link_to '', new_date_range_date_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Date' if can?(:edit, resource)
 
 javascript:
   $(document).on('date_ranges:change', function(){

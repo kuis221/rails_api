@@ -28,7 +28,7 @@
 
   ul#campaign-tabs.nav.nav-tabs
     - if can?(:view_kpis, resource)
-      li.active
+      li
         a href="#kpis_tab" KPIs
     - if can?(:view_places, resource)
       li
@@ -86,6 +86,9 @@ javascript:
     $content.html('<img src="/assets/loading.gif" />')
     $content.load($target.data('content'))
   });
+
+  $('ul#campaign-tabs li:first a').tab('show');
+
 
   $(document).on('campaigns:change', function(){
     window.location.reload(false);

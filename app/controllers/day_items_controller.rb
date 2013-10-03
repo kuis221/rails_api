@@ -4,8 +4,15 @@ class DayItemsController < FilteredController
 
   actions :all, :except => [:show, :edit, :index]
 
+  skip_authorize_resource
+  before_filter :edit_authorize_parent
+
   private
     def permitted_params
       params.permit(day_item: [:start_time, :end_time])[:day_item]
+    end
+
+    def edit_authorize_parent
+      authorize! :edit, parent
     end
 end

@@ -19,6 +19,6 @@ class Analysis::CampaignsReportController < ApplicationController
     end
 
     def authorize_actions
-      authorize! :show_analysis, Campaing
+      authorize! :show_analysis, Campaign
     end
 end
