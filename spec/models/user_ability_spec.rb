@@ -504,6 +504,59 @@ describe "User" do
         end
       end
 
+
+      #   ___     ____  _____ __ __  ____    ___    ____  ____   ___
+      #  |   \   /    |/ ___/|  |  ||    \  /   \  /    ||    \ |   \
+      #  |    \ |  o  (   \_ |  |  ||  o  )|     ||  o  ||  D  )|    \
+      #  |  D  ||     |\__  ||  _  ||     ||  O  ||     ||    / |  D  |
+      #  |     ||  _  |/  \ ||  |  ||  O  ||     ||  _  ||    \ |     |
+      #  |     ||  |  |\    ||  |  ||     ||     ||  |  ||  .  \|     |
+      #  |_____||__|__| \___||__|__||_____| \___/ |__|__||__|\_||_____|
+      #
+      describe "Dashboard permissions" do
+
+        it "should be able to view calendar module" do
+          ability.should_not be_able_to(:calendar_module, :dashboard)
+          user.role.permission_for(:calendar_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:calendar_module, :dashboard)
+        end
+
+        it "should be able to view kpi trends module" do
+          ability.should_not be_able_to(:kpi_trends_module, :dashboard)
+          user.role.permission_for(:kpi_trends_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:kpi_trends_module, :dashboard)
+        end
+
+        it "should be able to view upcomings events module" do
+          ability.should_not be_able_to(:upcomings_events_module, :dashboard)
+          user.role.permission_for(:upcomings_events_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:upcomings_events_module, :dashboard)
+        end
+
+        it "should be able to view dashboard module" do
+          ability.should_not be_able_to(:demographics_module, :dashboard)
+          user.role.permission_for(:demographics_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:demographics_module, :dashboard)
+        end
+
+        it "should be able to view incomplete task module" do
+          ability.should_not be_able_to(:incomplete_tasks_module, :dashboard)
+          user.role.permission_for(:incomplete_tasks_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:incomplete_tasks_module, :dashboard)
+        end
+
+        it "should be able to view recent photos module" do
+          ability.should_not be_able_to(:recent_photos_module, :dashboard)
+          user.role.permission_for(:recent_photos_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:recent_photos_module, :dashboard)
+        end
+
+        it "should be able to view venue performance module" do
+          ability.should_not be_able_to(:venue_performance_module, :dashboard)
+          user.role.permission_for(:venue_performance_module, Symbol, 'dashboard').save
+          ability.should be_able_to(:venue_performance_module, :dashboard)
+        end
+      end
     end
 
   end

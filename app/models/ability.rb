@@ -16,6 +16,10 @@ class Ability
       can [:create, :update], Goal do |goal|
         can?(:edit, goal.goalable)
       end
+
+      # can :kpi_trends_module, :dashboard do
+      #   user.role.has_permission?(:deactivate_task, Event)
+      # end
     end
 
     # AdminUsers (logged in on Active Admin)
@@ -52,11 +56,12 @@ class Ability
     # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
+        Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
         user.role.permissions.select{|p| aliases_for_action(action).include?(p.action.to_sym)}.any? do |permission|
           permission.subject_class == subject_class.to_s &&
           (   subject.nil? ||
             ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) ) ||
-            ( permission.subject_id.nil? || permission.subject_id == subject.id )
+            ( permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s) )
           )
         end
       end

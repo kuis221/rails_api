@@ -12,8 +12,6 @@
 class Permission < ActiveRecord::Base
   belongs_to :role
 
-  attr_accessible :action, :subject_class, :enabled
-
   validate :action, uniqueness: { scope: [:role_id, :subject_class] }
 
   attr_accessor :enabled

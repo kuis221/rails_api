@@ -51,8 +51,8 @@ class Role < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
-  def permission_for(action, subject_class)
-    permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s } || permissions.build(action: action, subject_class: subject_class.to_s)
+  def permission_for(action, subject_class, subject = nil)
+    permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build({action: action, subject_class: subject_class.to_s, subject_id: subject}, without_protection: true)
   end
 
   def has_permission?(action, subject_class)
