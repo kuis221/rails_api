@@ -19,9 +19,12 @@ class Ability
 
       can :manage, :dashboard
 
-      # can :kpi_trends_module, :dashboard do
-      #   user.role.has_permission?(:deactivate_task, Event)
-      # end
+      can :time_zone_change, CompanyUser
+
+      # All users can update their own information
+      can :update, CompanyUser do |cu|
+        cu.id == user.current_company_user.id
+      end
     end
 
     # AdminUsers (logged in on Active Admin)
@@ -30,7 +33,7 @@ class Ability
       can :manage, :all
 
     # Super Admin Users
-    elsif  user.is_super_admin?
+    elsif user.is_super_admin?
 
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
@@ -82,10 +85,6 @@ class Ability
        (event.submitted? && can?(:view_submitted_data, event)) ||
        (event.approved? && can?(:view_approved_data, event)) ||
        (event.rejected? && can?(:view_rejected_data, event))
-      end
-
-      can :edit, CompanyUser do |cu|
-        user.role.has_permission?(:edit, CompanyUser) || (cu.id == user.current_company_user.id)
       end
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
