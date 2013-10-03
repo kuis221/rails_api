@@ -38,13 +38,20 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research) do |secondary|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
-    primary.item :results, 'Results', results_event_data_path, highlights_on: %r(/results) do |secondary|
-      secondary.item :event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data), :if => Proc.new { can?(:index_results, EventData) }
-      secondary.item :comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments), :if => Proc.new { can?(:index_results, Comment) }
-      secondary.item :photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos), :if => Proc.new { can?(:index_results, AttachedAsset) }
-      secondary.item :expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses), :if => Proc.new { can?(:index_results, EventExpense) }
-      secondary.item :surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys), :if => Proc.new { can?(:index_results, Survey) }
+
+    options = []
+    options.push([:event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data) ]) if can?(:index_results, EventData)
+    options.push([:comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments) ]) if can?(:index_results, Comment)
+    options.push([:photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos) ]) if can?(:index_photo_results, AttachedAsset)
+    options.push([:expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses)]) if can?(:index_results, EventExpense)
+    options.push([:surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys)]) if can?(:index_results, Survey)
+
+    unless options.empty?
+      primary.item :results, 'Results', options.first[2], highlights_on: %r(/results) do |secondary|
+        options.each {|option| secondary.item *option }
+      end
     end
+
     primary.item :analysis, 'Analysis', analysis_campaigns_report_path,  highlights_on: %r(/analysis) do |secondary|
       # secondary.item :snapshot_report, 'Snapshot Report', '#', highlights_on: %r(/analysis/snapshot_report)
       secondary.item :campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report), :if => Proc.new { can?(:show_analysis, CompanyUser) }

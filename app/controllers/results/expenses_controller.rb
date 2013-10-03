@@ -26,4 +26,8 @@ class Results::ExpensesController < FilteredController
 
       expenses.total_expenses || 0
     end
+
+    def authorize_actions
+      authorize! :index_results, EventExpense
+    end
 end

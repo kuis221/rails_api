@@ -4,6 +4,7 @@ class Results::CommentsController < FilteredController
   respond_to :xlsx, only: :index
 
   private
+
     def search_params
       @search_params ||= begin
         super
@@ -12,5 +13,9 @@ class Results::CommentsController < FilteredController
         end
         @search_params
       end
+    end
+
+    def authorize_actions
+      authorize! :index_results, Comment
     end
 end

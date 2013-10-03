@@ -58,4 +58,8 @@ class Results::PhotosController < FilteredController
         @search_params
       end
     end
+
+    def authorize_actions
+      authorize! :index_photo_results, resource_class
+    end
 end
