@@ -1,0 +1,14 @@
+= simple_form_for resource, remote: true do |f|
+  table.table.permissions-table
+    tbody
+      tr
+        td Staff
+        td= permission_checkbox(f, :show_analysis, CompanyUser)
+
+      tr
+        td Campaigns
+        td= permission_checkbox(f, :show_analysis, Campaign)
+
+
+  = hidden_field_tag :partial, :analysis_permissions
+  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
