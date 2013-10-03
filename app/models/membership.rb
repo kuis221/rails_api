@@ -25,12 +25,16 @@ class Membership < ActiveRecord::Base
     def create_notifications
       if memberable_type == 'Campaign'
         Notification.new_campaign(company_user, memberable)
+      elsif memberable_type == 'Event'
+        Notification.new_event(company_user, memberable)
       end
     end
 
     def delete_notifications
       if memberable_type == 'Campaign'
         company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).delete_all
+      elsif memberable_type == 'Event'
+        company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).delete_all
       end
     end
 

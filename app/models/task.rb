@@ -22,6 +22,8 @@ class Task < ActiveRecord::Base
   belongs_to :company_user
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
+  after_save :create_notifications
+
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
@@ -186,4 +188,18 @@ class Task < ActiveRecord::Base
       end
     end
   end
+
+  private
+    def create_notifications
+      if (id_changed? || company_user_id_changed?) && company_user_id.present?
+        #New task with assigned user or assigning user to existing task
+        Notification.new_task(company_user, self)
+      elsif id_changed? && company_user_id.nil?
+        #New task without assigned user
+        event.all_users.each do |user|
+          Notification.new_task(user, self, true)
+        end
+      end
+    end
+
 end

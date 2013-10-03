@@ -215,6 +215,15 @@ class Event < ActiveRecord::Base
     Event.with_user_in_team(user).where(id: self.id).count > 0
   end
 
+  def all_users
+    users = []
+    users += self.users if self.users.present?
+    teams.each do |team|
+      users += team.users if team.users.present?
+    end
+    users.uniq
+  end
+
   def results_for(fields)
     # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|

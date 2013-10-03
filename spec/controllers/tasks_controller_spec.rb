@@ -63,15 +63,15 @@ describe TasksController do
   end
 
   describe "PUT 'update'" do
-    let(:task){ FactoryGirl.create(:task, event_id: event.id) }
+    let(:task){ FactoryGirl.create(:task, event_id: event.id, company_user: @company_user) }
     it "must update the task attributes" do
-      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: 3}, format: :js
+      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: @company_user.to_param}, format: :js
       assigns(:task).should == task
       response.should be_success
       task.reload
       task.title.should == 'New task title'
       task.due_at.should == Time.zone.parse('2013-12-31 00:00:00')
-      task.company_user_id.should == 3
+      task.company_user_id.should == @company_user.id
     end
 
     it "must update the task completed attribute" do

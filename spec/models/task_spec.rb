@@ -26,8 +26,10 @@ describe Task do
   it { should validate_numericality_of(:event_id) }
   it { should validate_numericality_of(:company_user_id) }
 
+  let(:event) { FactoryGirl.create(:event) }
+
   describe "#activate" do
-    let(:task) { FactoryGirl.build(:task, active: false) }
+    let(:task) { FactoryGirl.build(:task, event_id: event.id, active: false) }
 
     it "should return the active value as true" do
       task.activate!
@@ -37,7 +39,7 @@ describe Task do
   end
 
   describe "#deactivate" do
-    let(:task) { FactoryGirl.build(:task, active: false) }
+    let(:task) { FactoryGirl.build(:task, event_id: event.id, active: false) }
 
     it "should return the active value as false" do
       task.deactivate!
