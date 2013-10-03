@@ -211,6 +211,10 @@ class Event < ActiveRecord::Base
     @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
   end
 
+  def user_in_team?(user)
+    Event.with_user_in_team(user).where(id: self.id).count > 0
+  end
+
   def results_for(fields)
     # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|

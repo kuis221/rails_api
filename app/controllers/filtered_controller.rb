@@ -58,6 +58,10 @@ class FilteredController < InheritedResources::Base
       end
     end
 
+    def action_permissions
+
+    end
+
     def export_list(export)
       @_export = export
       @search_params = export.params

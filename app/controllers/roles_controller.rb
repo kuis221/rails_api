@@ -23,7 +23,7 @@ class RolesController < FilteredController
 
   protected
     def permitted_params
-      params.permit(role: [:name, :description, {permissions_attributes: [:enabled, :action, :subject_class]}])[:role]
+      params.permit(role: [:name, :description, {permissions_attributes: [:id, :enabled, :action, :subject_class]}])[:role]
     end
 
     def facets

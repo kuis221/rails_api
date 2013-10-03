@@ -52,8 +52,6 @@ class Ability
     # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
-        # Rails.logger.debug "\n\nAuthorizing #{action} on #{subject_class.to_s} => #{subject.inspect}\n"
-        # Rails.logger.debug "\n\nuser.current_company ==> #{user.current_company.inspect}\n"
         user.role.permissions.select{|p| aliases_for_action(action).include?(p.action.to_sym)}.any? do |permission|
           permission.subject_class == subject_class.to_s &&
           (   subject.nil? ||
@@ -84,11 +82,16 @@ class Ability
       end
 
       can :update, Task do |task|
-        user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)
+        Rails.logger.debug "#{user.role.has_permission?(:edit_task, Event)} #{user.role.has_permission?(:edit_my, Task)} #{user.role.has_permission?(:edit_team, Task)}"
+        (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
+        (user.role.has_permission?(:edit_my, Task) && task.company_user_id == user.current_company_user.id) ||
+        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
       end
 
       can [:deactivate, :activate], Task do |task|
-        user.role.has_permission?(:deactivate_task, Event) && can?(:show, task.event)
+        (user.role.has_permission?(:deactivate_task, Event) && can?(:show, task.event)) ||
+        (user.role.has_permission?(:deactivate_my, Task) && task.company_user_id == user.current_company_user.id) ||
+        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
       end
 
       can :create, Task do |task|
@@ -163,6 +166,10 @@ class Ability
       can :comments, Event do |event|
         user.role.has_permission?(:index_comments, Event) && can?(:show, event)
       end
+      can :comments, Task do |task|
+        (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == user.current_company_user.id) ||
+        (user.role.has_permission?(:index_team_comments, Task) && task.event.user_in_team?(user.current_company_user) )
+      end
 
       can :update, Comment do |comment|
         user.role.has_permission?(:edit_comment, Event) && can?(:show, comment.commentable)
@@ -173,7 +180,9 @@ class Ability
       end
 
       can :create, Comment do |comment|
-        user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)
+        (comment.commentable.is_a?(Event) && user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)) ||
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_my_comment, Task) && comment.commentable.company_user_id == user.current_company_user.id) ||
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.user_in_team?(user.current_company_user))
       end
 
       can :reject, Event do |event|

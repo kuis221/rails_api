@@ -7,11 +7,27 @@ class CommentsController < InheritedResources::Base
 
   after_filter :mark_comments_as_readed, only: :index
 
-  authorize_resource
+  authorize_resource except: [:index]
+
+  before_filter :authorize_actions, only: :index
 
 
   private
+    def build_resource_params
+      [permitted_params || {}]
+    end
+
+    def permitted_params
+      params.permit(comment: [:content])[:comment]
+    end
+
     def mark_comments_as_readed
       collection.each{|c| c.mark_as_read! for: current_user }
     end
+
+    def authorize_actions
+      authorize! :comments, parent
+    end
+
+
 end

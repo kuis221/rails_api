@@ -72,6 +72,17 @@ class TasksController < FilteredController
       end
     end
 
+    def authorize_actions
+      if params[:scope] == 'user'
+        Rails.logger.debug "\n\nAuthorizing #{:index_my} in Task\n\n"
+        authorize!(:index_my, Task)
+      elsif params[:scope] == 'teams'
+        authorize!(:index_team, Task)
+      else
+        authorize!(:index, Task)
+      end
+    end
+
     def status_counters
       @status_counters ||= Hash.new.tap do |counters|
         counters['unassigned'] = 0

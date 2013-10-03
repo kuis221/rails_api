@@ -66,14 +66,15 @@ describe GoalsController do
 
   describe "PUT 'update'" do
     it "should update the goal attributes" do
-      lambda {
+      goal.save
+      expect {
         put 'update', company_user_id: company_user.to_param, id: goal.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
-      }.should change(Goal, :count).by(1)
+      }.to_not change(Goal, :count)
       response.should be_success
       response.should render_template(:update)
       response.should_not render_template(:form_dialog)
 
-      goal = Goal.last
+      goal.reload
       goal.parent.should be_nil
       goal.goalable.should == company_user
       goal.value.should == 100

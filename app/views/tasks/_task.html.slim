@@ -17,7 +17,7 @@ li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
           br>/
           = task.user_full_name
       span.links.pull-right
-        = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
+        = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link' if can?(:comments, task)
         = link_to '', edit_task_path(task), remote: true, class: 'edit' if can?(:edit, task)
         -  if can?(:deactivate, task)
           = link_to '', deactivate_task_path(task), remote: true, class: 'disable' if task.active?
