@@ -18,10 +18,6 @@ head
     = yield(:head)
 body class="empty-layout #{controller_name} #{action_name}"
 
-
-  - sub_nav = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-list')
-  - content_span_size = sub_nav.nil? ? 12 : 10
-
   .container-fluid
     .row-fluid
       div.span12
@@ -29,11 +25,8 @@ body class="empty-layout #{controller_name} #{action_name}"
           .tab-pane.active
             .row-fluid
               .span12
-                - if sub_nav
-                  .nav-collapse.sidebar-nav
-                    .span2.main-menu-span= sub_nav
 
-                div class="span#{content_span_size}"
+                div
                     = render 'layouts/messages'
 
                     = yield

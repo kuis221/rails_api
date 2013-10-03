@@ -21,8 +21,6 @@ class Team < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessible :name, :description, :user_ids, :campaigns_ids
-
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
@@ -38,6 +36,7 @@ class Team < ActiveRecord::Base
   scope :active, where(:active => true)
 
   scope :with_users, joins(:users).group('teams.id')
+  scope :with_user, lambda{|company_user| joins(:users).where(company_users: {id: company_user}).group('teams.id')  }
   scope :with_active_users, lambda{|companies| joins(:users).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
 
   searchable do

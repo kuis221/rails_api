@@ -14,6 +14,9 @@ class DateRangesController < FilteredController
 
 
   protected
+    def permitted_params
+      params.permit(date_range: [:description, :name])[:date_range]
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|

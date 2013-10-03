@@ -29,7 +29,7 @@ describe KpisController do
     it "should not render form_dialog if no errors" do
       expect {
         expect {
-          post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number', goals_attributes: {0 => {goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}}}, format: :js
+          post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}]}, format: :js
            response.should be_success
         }.to change(Kpi, :count).by(1)
       }.to change(Goal, :count).by(1)
@@ -58,7 +58,6 @@ describe KpisController do
   describe "PUT 'update'" do
     let(:kpi){ FactoryGirl.create(:kpi, company: @company) }
     it "must update the date_range attributes" do
-      t = FactoryGirl.create(:kpi, company: @company)
       put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description'}, format: :js
       response.should render_template(:update)
       response.should_not render_template(:form_dialog)
@@ -66,6 +65,17 @@ describe KpisController do
       kpi.reload
       kpi.name.should == 'Test kpi'
       kpi.description.should == 'Test kpi description'
+    end
+
+    it "should not allow update global kpis' attributes" do
+      Kpi.create_global_kpis
+      put 'update', campaign_id: campaign.to_param, id: Kpi.impressions.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description'}, format: :js
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+      assigns(:kpi).should == Kpi.impressions
+      Kpi.impressions.reload
+      Kpi.impressions.name.should_not == 'Test kpi'
+      Kpi.impressions.description.should_not == 'Test kpi description'
     end
   end
 end

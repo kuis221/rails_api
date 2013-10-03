@@ -17,6 +17,9 @@ class EventsController < FilteredController
   custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
 
+  skip_load_and_authorize_resource only: :update
+  before_filter :authorize_update, only: :update
+
   def autocomplete
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
@@ -70,25 +73,29 @@ class EventsController < FilteredController
   end
 
   protected
-    def build_resource(*args)
-      super
+
+    def permitted_params
+      parameters = {}
       if action_name == 'new'
         t= Time.zone.now.beginning_of_hour
         t =  [t, t+15.minutes, t+30.minutes, t+45.minutes, t+1.hour].detect{|a| Time.zone.now < a }
-        if resource.start_at.nil?
-          resource.start_at = t
-          resource.start_date = t.to_s(:slashes)
-          resource.start_time = t.to_s(:time_only)
-        end
+        parameters[:start_date] = t.to_s(:slashes)
+        parameters[:start_time] = t.to_s(:time_only)
 
-        if resource.end_at.nil?
-          t = t + 1.hour
-          resource.end_at = t
-          resource.end_date = t.to_s(:slashes)
-          resource.end_time = t.to_s(:time_only)
-        end
+        t = t + 1.hour
+        parameters[:end_date] = t.to_s(:slashes)
+        parameters[:end_time] = t.to_s(:time_only)
+      else
+        allowed = []
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
+        allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, :id]}] if can?(:edit_data, Event)
+        parameters = params.require(:event).permit(*allowed)
       end
-      resource
+      parameters
+    end
+
+    def authorize_update
+      can?(:update, resource) || can?(:edit_data, resource)
     end
 
     def facets
@@ -97,22 +104,12 @@ class EventsController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id with_event_data_only with_surveys_only).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
-        # Not longer used
-        # # Date Ranges
-        # ranges = [
-        #     build_facet_item({label: 'Today', id: 'today', name: :predefined_date, count: 1, ordering: 1}),
-        #     build_facet_item({label: 'This Week', id: 'week', name: :predefined_date, count: 1, ordering: 2}),
-        #     build_facet_item({label: 'This Month', id: 'month', name: :predefined_date, count: 1, ordering: 3})
-        # ]
-        # ranges += DateRange.active.map{|r| {label: r.name, id: r.id, name: :date_range, count: 5}}
-        # f.push(label: "Date Ranges", items: ranges )
-
         f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
         f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
         f.push build_locations_bucket(facet_search.facet(:place).rows)
         #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
         users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
-        teams = build_facet(Team, 'Team', :user, facet_search.facet(:team_ids).rows)[:items]
+        teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
         # users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
         # teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
         people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }

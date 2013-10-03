@@ -6,6 +6,8 @@ class CampaignsController < FilteredController
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
 
+  skip_authorize_resource only: :tab
+
   layout false, only: :kpis
 
   def update_post_event_form
@@ -85,10 +87,15 @@ class CampaignsController < FilteredController
   end
 
   def tab
+    authorize! "view_#{params[:tab]}".to_sym, resource
     render layout: false
   end
 
   protected
+    def permitted_params
+      params.permit(campaign: [:name, :description, :team_ids, :brands_list, :brand_portfolio_ids, :user_ids])[:campaign]
+    end
+
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|

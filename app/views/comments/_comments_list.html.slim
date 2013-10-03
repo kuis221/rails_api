@@ -1,4 +1,5 @@
 = render collection
 
-#comment-form-container
-	= render partial: 'comments/form', locals: {resource: Comment.new, parent: parent}
+- if can?(:create, parent.comments.new)
+  #comment-form-container
+  	= render partial: 'comments/form', locals: {resource: Comment.new, parent: parent}

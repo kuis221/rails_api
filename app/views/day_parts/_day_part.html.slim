@@ -1,10 +1,11 @@
 li id="day_part_#{day_part.id}"
-  a href="#{day_part_path(day_part)}"
+  = link_to_if_permitted :show, DayPart, day_part_path(day_part) do
     span
       b= day_part.name
       span.description
         = day_part.description
   span.pull-right
-    = link_to '', edit_day_part_path(day_part), remote: true, class: 'edit'
-    = link_to '', deactivate_day_part_path(day_part), remote: true, class: 'disable' if day_part.active?
-    = link_to '', activate_day_part_path(day_part), remote: true, class: 'enable' unless day_part.active?
+    = link_to '', edit_day_part_path(day_part), remote: true, class: 'edit' if can?(:edit, DayPart)
+    - if can?(:deactivate, DayPart)
+      = link_to '', deactivate_day_part_path(day_part), remote: true, class: 'disable' if day_part.active?
+      = link_to '', activate_day_part_path(day_part), remote: true, class: 'enable' unless day_part.active?

@@ -34,4 +34,8 @@ class Results::EventDataController < FilteredController
       end
       @data_totals
     end
+
+    def authorize_actions
+      authorize! :index_results, EventData
+    end
 end

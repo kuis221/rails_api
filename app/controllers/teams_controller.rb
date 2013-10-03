@@ -18,6 +18,9 @@ class TeamsController < FilteredController
   end
 
   private
+    def permitted_params
+      params.permit(team: [:name, :description])[:team]
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|

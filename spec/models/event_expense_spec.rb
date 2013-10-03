@@ -21,20 +21,5 @@ require 'spec_helper'
 describe EventExpense do
   it { should belong_to(:event) }
 
-  it { should allow_mass_assignment_of(:amount) }
-  it { should allow_mass_assignment_of(:file) }
-  it { should allow_mass_assignment_of(:name) }
-
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:event_id) }
-  it { should_not allow_mass_assignment_of(:file_file_name) }
-  it { should_not allow_mass_assignment_of(:file_content_type) }
-  it { should_not allow_mass_assignment_of(:file_file_size) }
-  it { should_not allow_mass_assignment_of(:file_updated_at) }
-  it { should_not allow_mass_assignment_of(:created_by_id) }
-  it { should_not allow_mass_assignment_of(:updated_by_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   it { should validate_presence_of(:name) }
 end

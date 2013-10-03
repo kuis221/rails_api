@@ -18,9 +18,4 @@ describe Company do
 
   it { should validate_presence_of(:name) }
 
-  it { should allow_mass_assignment_of(:name) }
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
 end

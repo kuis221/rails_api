@@ -31,15 +31,20 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
     primary.item :help_menu, '', '#help-modal', link: {'class' => 'single-link', 'data-toggle' => "modal", 'role' => "button"}
 
-    primary.item :admin, '', company_users_path, if: lambda{ user_signed_in? }, link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
-      secondary.item :users, 'Users', company_users_path
-      secondary.item :teams, 'Teams', teams_path, highlights_on: %r(/teams)
-      secondary.item :roles, 'Roles', roles_path, highlights_on: %r(/roles)
-      secondary.item :campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)
-      secondary.item :areas, 'Areas', areas_path, highlights_on: %r(/areas)
-      secondary.item :brand_portfolios, 'Brand Portfolios', brand_portfolios_path
-      secondary.item :date_ranges, 'Date Ranges', date_ranges_path
-      secondary.item :day_parts, 'Day Parts', day_parts_path
+    options = []
+    options.push([:users, 'Users', company_users_path]) if can?(:index, CompanyUser)
+    options.push([:teams, 'Teams', teams_path, highlights_on: %r(/teams)]) if can?(:index, Team)
+    options.push([:roles, 'Roles', roles_path, highlights_on: %r(/roles)]) if can?(:index, Role)
+    options.push([:campaigns, 'Campaigns', campaigns_path, highlights_on: %r(/campaigns)]) if can?(:index, Campaign)
+    options.push([:areas, 'Areas', areas_path, highlights_on: %r(/areas)]) if can?(:index, Area)
+    options.push([:brand_portfolios, 'Brand Portfolios', brand_portfolios_path]) if can?(:index, BrandPortfolio)
+    options.push([:date_ranges, 'Date Ranges', date_ranges_path]) if can?(:index, DateRange)
+    options.push([:day_parts, 'Day Parts', day_parts_path]) if can?(:index, DayPart)
+
+    unless options.empty?
+      primary.item :admin, '', options.first[2], link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
+        options.each {|option| secondary.item *option }
+      end
     end
 
     primary.item :notifications, '', '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|

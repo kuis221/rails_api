@@ -21,16 +21,6 @@ describe Task do
   it { should belong_to(:event) }
   it { should belong_to(:company_user) }
 
-  it { should allow_mass_assignment_of(:completed) }
-  it { should allow_mass_assignment_of(:due_at) }
-  it { should allow_mass_assignment_of(:title) }
-  it { should allow_mass_assignment_of(:company_user_id) }
-  it { should allow_mass_assignment_of(:event_id) }
-
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   it { should validate_presence_of(:title) }
   it { should validate_presence_of(:event_id) }
   it { should validate_numericality_of(:event_id) }

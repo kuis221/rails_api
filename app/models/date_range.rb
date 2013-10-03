@@ -23,8 +23,6 @@ class DateRange < ActiveRecord::Base
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true
 
-  attr_accessible :active, :description, :name
-
   has_many :date_items
 
   scope :active, where(:active => true)

@@ -1,0 +1,44 @@
+= simple_form_for resource, remote: true do |f|
+  table.table.permissions-table
+    thead
+      tr
+        th 
+        th View
+        th Create
+        th Edit
+        th Deactivate
+
+    tbody
+      tr
+        td My Tasks
+        td= permission_checkbox(f, :index_my, Task)
+        td
+        td= permission_checkbox(f, :edit_my, Task)
+        td= permission_checkbox(f, :deactivate_my, Task)
+
+      tr
+        td.sub-level-1 Comments
+        td= permission_checkbox(f, :index_my_comments, Task)
+        td= permission_checkbox(f, :create_my_comment, Task)
+        td= permission_checkbox(f, :edit_my_comment,   Task)
+        td= permission_checkbox(f, :deactivate_my_comment, Task)
+
+    tbody
+      tr
+        td Team Tasks
+        td= permission_checkbox(f, :index_team, Task)
+        td
+        td= permission_checkbox(f, :edit_team, Task)
+        td= permission_checkbox(f, :deactivate_team, Task)
+
+      tr
+        td.sub-level-1 Comments
+        td= permission_checkbox(f, :index_team_comments, Task)
+        td= permission_checkbox(f, :create_team_comment, Task)
+        td= permission_checkbox(f, :edit_team_comment,   Task)
+        td= permission_checkbox(f, :deactivate_team_comment, Task)
+
+
+
+  = hidden_field_tag :partial, :tasks_permissions
+  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

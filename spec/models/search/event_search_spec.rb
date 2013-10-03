@@ -37,8 +37,8 @@ describe Event, search: true do
     # Search for a specific user's Events
     Event.do_search(company_id: 1, q: "company_user,#{user3.id}").results.should =~ [event, event2]
     Event.do_search(company_id: 1, q: "company_user,#{user4.id}").results.should =~ [event2]
-    Event.do_search(company_id: 1, user: user3.id).results.should =~ [event, event2]
-    Event.do_search(company_id: 1, user: user4.id).results.should =~ [event2]
+    Event.do_search(company_id: 1, user: [user3.id]).results.should =~ [event, event2]
+    Event.do_search(company_id: 1, user: [user4.id]).results.should =~ [event2]
     Event.do_search(company_id: 1, user: [user3.id,user4.id]).results.should =~ [event, event2]
 
     # Search for a specific Event's place

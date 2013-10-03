@@ -1,0 +1,33 @@
+= simple_form_for resource, remote: true do |f|
+  table.table.permissions-table
+    tbody
+      tr
+        td Calendar
+        td= permission_checkbox(f, :calendar_module, Symbol, 'dashboard')
+
+      tr
+        td KPI trends
+        td= permission_checkbox(f, :kpi_trends_module, Symbol, 'dashboard')
+
+      tr
+        td Upcoming events
+        td= permission_checkbox(f, :upcomings_events_module, Symbol, 'dashboard')
+
+      tr
+        td Demographics
+        td= permission_checkbox(f, :demographics_module, Symbol, 'dashboard')
+
+      tr
+        td Incomplete tasks
+        td= permission_checkbox(f, :incomplete_tasks_module, Symbol, 'dashboard')
+
+      tr
+        td Venue Performance
+        td= permission_checkbox(f, :venue_performance_module, Symbol, 'dashboard')
+
+      tr
+        td Recent photos
+        td= permission_checkbox(f, :recent_photos_module, Symbol, 'dashboard')
+
+  = hidden_field_tag :partial, :dashboard_permissions
+  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

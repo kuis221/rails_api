@@ -22,9 +22,6 @@ describe Team do
 
   it { should validate_presence_of(:name) }
 
-  it { should allow_mass_assignment_of(:name) }
-  it { should allow_mass_assignment_of(:description) }
-
   describe "#activate" do
     let(:team) { FactoryGirl.build(:team, active: false) }
 

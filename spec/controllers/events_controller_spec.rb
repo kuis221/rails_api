@@ -8,6 +8,15 @@ describe EventsController do
       @company_user = @user.current_company_user
     end
 
+    describe "GET 'new'" do
+      it "returns http success" do
+        get 'new', format: :js
+        response.should be_success
+        response.should render_template('new')
+        response.should render_template('form')
+      end
+    end
+
     describe "GET 'edit'" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it "returns http success" do
@@ -82,8 +91,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:time_only)
         end
       end
 
@@ -91,8 +102,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 01)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 12, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 26, 13, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 12, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 26, 13, 15).to_s(:time_only)
         end
       end
 
@@ -100,8 +113,10 @@ describe EventsController do
         Timecop.freeze(Time.zone.local(2013, 07, 26, 23, 01)) do
           get 'new', format: :js
           response.should be_success
-          assigns(:event).start_at.should == Time.zone.local(2013, 07, 26, 23, 15)
-          assigns(:event).end_at.should == Time.zone.local(2013, 07, 27, 0, 15)
+          assigns(:event).start_date.should == Time.zone.local(2013, 07, 26, 23, 15).to_s(:slashes)
+          assigns(:event).start_time.should == Time.zone.local(2013, 07, 26, 23, 15).to_s(:time_only)
+          assigns(:event).end_date.should == Time.zone.local(2013, 07, 27, 0, 15).to_s(:slashes)
+          assigns(:event).end_time.should == Time.zone.local(2013, 07, 27, 0, 15).to_s(:time_only)
         end
       end
     end
@@ -135,7 +150,7 @@ describe EventsController do
 
       it "should render the form_dialog template if errors" do
         lambda {
-          post 'create', format: :js
+          post 'create', event: {campaign_id: 'XX'}, format: :js
         }.should_not change(Event, :count)
         response.should render_template(:create)
         response.should render_template(:form_dialog)
@@ -401,6 +416,25 @@ describe EventsController do
         }.should change(event, :rejected?).to(true)
         event.reject_reason.should == 'blah blah blah'
       end
+    end
+  end
+
+
+  describe "user with permissions to edit event data only" do
+    before(:each) do
+      @company_user = FactoryGirl.create(:company_user, company_id: FactoryGirl.create(:company).id, permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']])
+      @company = @company_user.company
+      @user = @company_user.user
+      sign_in @user
+    end
+
+    let(:event){ FactoryGirl.create(:event, company: @company) }
+
+    it "should be able to edit event_data" do
+      put 'update', id: event.to_param, event: {results_attributes: {} }, format: :js
+      assigns(:event).should == event
+      response.should be_success
+      response.should render_template('events/_event')
     end
   end
 

@@ -2,7 +2,7 @@
   div.document.clearfix id="attached_asset_#{document.id}"
     span
       = link_to(document_icon(document.file_extension) + document.name, document.download_url)
-    - if parent == document.attachable
+    - if parent == document.attachable && can?(:deactivate, document)
       span.remove
         - if document.active?
           = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'

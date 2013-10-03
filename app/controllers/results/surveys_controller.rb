@@ -15,4 +15,8 @@ class Results::SurveysController < FilteredController
         @search_params
       end
     end
+
+    def authorize_actions
+      authorize! :index_results, Survey
+    end
 end

@@ -10,5 +10,13 @@ FactoryGirl.define do
     created_by_id 1
     updated_by_id 1
     processed true
+
+    factory :document do
+      asset_type 'document'
+    end
+
+    factory :photo do
+      asset_type 'photo'
+    end
   end
 end

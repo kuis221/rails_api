@@ -2,7 +2,7 @@ module CompanyScoped
   class Callback
     def before_validation(record)
       if record.respond_to?(:company_id) && current_user && record.new_record?
-        record.company_id ||= current_company.id unless current_company.nil?
+        record.company_id ||= current_company.id unless current_company.nil? || record.class.ignoring_company_scoped?
       end
     end
 

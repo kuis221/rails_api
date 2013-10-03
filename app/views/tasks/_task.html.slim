@@ -2,8 +2,9 @@
 li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
   span.task-list
     span
-      = simple_form_for task, remote: true do |f|
-        = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
+      - if can?(:deactivate_task, Event)
+        = simple_form_for task, remote: true do |f|
+          = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
     span.title
       b= task.title
       br
@@ -16,7 +17,8 @@ li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
           br>/
           = task.user_full_name
       span.links.pull-right
-        = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link'
-        = link_to '', edit_task_path(task), remote: true, class: 'edit'
-        = link_to '', deactivate_task_path(task), remote: true, class: 'disable' if task.active?
-        = link_to '', activate_task_path(task), remote: true, class: 'enable' unless task.active?
+        = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link' if can?(:comments, task)
+        = link_to '', edit_task_path(task), remote: true, class: 'edit' if can?(:edit, task)
+        -  if can?(:deactivate, task)
+          = link_to '', deactivate_task_path(task), remote: true, class: 'disable' if task.active?
+          = link_to '', activate_task_path(task), remote: true, class: 'enable' unless task.active?

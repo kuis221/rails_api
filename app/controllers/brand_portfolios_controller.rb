@@ -31,6 +31,10 @@ class BrandPortfoliosController < FilteredController
   end
 
   private
+    def permitted_params
+      params.permit(brand_portfolio: [:name, :description, :campaigns_ids])[:brand_portfolio]
+    end
+
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search

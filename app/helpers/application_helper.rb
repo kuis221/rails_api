@@ -82,7 +82,7 @@ module ApplicationHelper
     if the_date.strftime("%Y") == Time.zone.now.year.to_s
       the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
     else
-      the_date.strftime('%^a <b>%b %e %Y</b> at %l:%M %p').html_safe unless the_date.nil?
+      the_date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless the_date.nil?
     end
   end
 
@@ -92,13 +92,13 @@ module ApplicationHelper
         if the_date.strftime("%Y") == Time.zone.now.year.to_s
           the_date.strftime('%^a %b %e')
         else
-          the_date.strftime('%^a %b %e %Y')
+          the_date.strftime('%^a %b %e, %Y')
         end
       else
         if the_date.strftime("%Y") == Time.zone.now.year.to_s
           the_date.strftime('%^a <b>%b %e</b>').html_safe
         else
-          the_date.strftime('%^a <b>%b %e %Y</b>').html_safe
+          the_date.strftime('%^a <b>%b %e, %Y</b>').html_safe
         end
       end
     end
@@ -122,7 +122,7 @@ module ApplicationHelper
         if start_at.strftime("%Y") == Time.zone.now.year.to_s
           the_date = start_at.strftime('%^a <b>%b %e</b>'+options[:date_separator]).html_safe
         else
-          the_date = start_at.strftime('%^a <b>%b %e %Y</b>'+options[:date_separator]).html_safe
+          the_date = start_at.strftime('%^a <b>%b %e, %Y</b>'+options[:date_separator]).html_safe
         end
         the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
       end
@@ -155,5 +155,10 @@ module ApplicationHelper
       content_tag(:div, "#{data.try(:[],'Female').try(:round) || 0} %", class: 'percent') +
       content_tag(:div, 'FEMALE', class: 'gender')
     end
+  end
+
+  def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
+    name = capture(&block)
+    link_to_if can?(permission_action, subject_class), name, options, html_options
   end
 end

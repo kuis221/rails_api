@@ -66,8 +66,8 @@ Enjoy!
 		var name, namespaced;
 
 		for (name in events) {
-			if (events.hasOwnProperty(name)) {
-				namespaced = name.replace(/ |$/g, options.eventNamespace);
+			if (name && events.hasOwnProperty(name)) {
+				namespaced = name.replace(/ |$/g, options.eventNamespace+ ' ').replace(/ $/,'');
 				$el.bind(namespaced, events[name]);
 			}
 		}
@@ -535,7 +535,7 @@ Enjoy!
 
 					ds = divSpan($el, options, {
 						divClass: options.buttonClass,
-						spanHtml: getHtml(),
+						spanHtml: getHtml()
 					});
 					$div = ds.div;
 					bindUi($el, $div, options);

@@ -1,4 +1,4 @@
-class PhotosController < FilteredController
+class PhotosController < InheritedResources::Base
   respond_to :js, only: [:create, :new, :processing_status]
 
   belongs_to :event, optional: true
@@ -8,9 +8,9 @@ class PhotosController < FilteredController
 
   defaults :resource_class => AttachedAsset
 
-  helper_method :describe_filters
+  load_and_authorize_resource class: AttachedAsset, through: :parent
 
-  skip_load_and_authorize_resource
+  helper_method :describe_filters
 
   def processing_status
     @photos = parent.photos.find(params[:photos])

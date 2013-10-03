@@ -14,4 +14,9 @@ class BrandsController < FilteredController
       end
     end
   end
+
+  protected
+    def permitted_params
+      params.permit(brand: [:name])[:brand]
+    end
 end

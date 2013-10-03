@@ -51,6 +51,7 @@ gem "resque", :require => "resque/server"
 gem 'resque-loner'
 gem 's3_direct_upload'
 gem 'unread'
+gem 'strong_parameters'
 
 # Gems used only for assets and not required
 # in production environments by default.

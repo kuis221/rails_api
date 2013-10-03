@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :company_users, allow_destroy: false
 
-  delegate :name, :id, to: :role, prefix: true, allow_nil: true
+  delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
 
   scope :active, where('invitation_accepted_at is not null')
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
@@ -155,6 +155,10 @@ class User < ActiveRecord::Base
     @role ||= current_company_user.try(:role)
   end
 
+  def is_super_admin?
+    role.is_admin? unless role.nil?
+  end
+
   def current_company_user
     @current_company_user ||= begin
       if User.current && User.current.current_company
@@ -196,7 +200,7 @@ class User < ActiveRecord::Base
     def send_reset_password_instructions(attributes={})
       recoverable = User.joins(:company_users => :role).where(company_users: {active: true}, roles:{active: true}).where(["lower(users.email) = ?", attributes[:email].downcase]).first
       if recoverable.nil?
-        recoverable = User.new(attributes)
+        recoverable = User.new(attributes.permit(:email))
         recoverable.errors.add(:base, :reset_email_not_found)
       else
         recoverable = User.find(recoverable.id)

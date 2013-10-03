@@ -18,7 +18,6 @@
 
 class EventExpense < ActiveRecord::Base
   belongs_to :event
-  attr_accessible :amount, :file, :name
 
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
     :styles => { :small => { :geometry => '135',  :format => :png }, :medium => { :geometry => '400',  :format => :png } },
@@ -30,6 +29,7 @@ class EventExpense < ActiveRecord::Base
 
   after_save :update_event_data
 
+  delegate :company_id, to: :event
 
   def download_url(style_name=:original)
     s3 = AWS::S3.new

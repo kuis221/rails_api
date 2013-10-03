@@ -29,11 +29,8 @@ class InvitationsController < Devise::InvitationsController
         self.resource = User.new(resource_params, as: :admin)
         self.resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
       else
-        Rails.logger.debug resource_params[:company_users_attributes].inspect
         self.resource = invited_user
         self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
-        # self.resource.inviting_user = true
-        # self.resource.company_users.build resource_params[:company_users_attributes]['0'], as: User.inviter_role(current_inviter)
         if self.resource.save and self.resource.errors.empty?
           UserMailer.company_invitation(self.resource, current_company, current_user).deliver
         end
@@ -52,6 +49,7 @@ class InvitationsController < Devise::InvitationsController
   end
 
   protected
+
     def build_resource(*args)
       self.resource ||= super
       self.resource.company_users.new if self.resource.company_users.empty?
@@ -62,9 +60,16 @@ class InvitationsController < Devise::InvitationsController
     def resource_params
       if user_params = super and user_signed_in?
         user_params[:inviting_user] = true
-        user_params[:company_users_attributes] ||= {"0" => {:role_id => nil}}
+        user_params[:company_users_attributes] = {"0" => {:role_id => nil}} if user_params[:company_users_attributes].nil? || user_params[:company_users_attributes].empty?
         user_params[:company_users_attributes].each{|k,a| a[:company_id] = current_company.id}
       end
-      user_params
+      user_params ||= params
+      allowed = []
+      if action_name == 'update'
+        allowed = [:first_name, :last_name, :email, :password, :password_confirmation, :city, :state, :country, :time_zone, :invitation_token, :accepting_invitation]
+      else
+        allowed = [:first_name, :last_name, :email, :inviting_user, {company_users_attributes: [:company_id, :role_id, {team_ids: []}] }]
+      end
+      user_params.permit(*allowed)
     end
 end

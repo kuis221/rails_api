@@ -25,9 +25,9 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
 
-  has_many :tasks, :order => 'due_at ASC', dependent: :destroy
-  has_many :photos, conditions: {asset_type: :photo}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
+  has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, class_name: 'EventResult'
@@ -43,12 +43,12 @@ class Event < ActiveRecord::Base
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :summary, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
+  # attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :summary, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
-  accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
+  accepts_nested_attributes_for :comments, reject_if: proc {|attributes| attributes['content'].blank? }
 
   scoped_to_company
 
@@ -211,6 +211,10 @@ class Event < ActiveRecord::Base
     @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
   end
 
+  def user_in_team?(user)
+    Event.with_user_in_team(user).where(id: self.id).count > 0
+  end
+
   def results_for(fields)
     # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|
@@ -332,9 +336,13 @@ class Event < ActiveRecord::Base
       options = {include: [:campaign, :place]}
       ss = solr_search(options) do
         if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
+          team_ids = []
+          team_ids += params[:team] if params.has_key?(:team) && params[:team].any?
+          team_ids += Team.with_user(params[:user]).map(&:id) if params.has_key?(:user) && params[:user].any?
+
           any_of do
             with(:user_ids, params[:user]) if params.has_key?(:user) && params[:user].present?
-            with(:team_ids, params[:team]) if params.has_key?(:team) && params[:team].present?
+            with(:team_ids, team_ids) if team_ids.any?
           end
         end
         if params.has_key?(:place) and params[:place].present?

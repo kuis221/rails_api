@@ -9,16 +9,67 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_role_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_role_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_role_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role.  Would you like to continue?")
+      = link_to '', edit_role_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
+
+  - if can?(:edit, resource)
+    .details_box
+      - unless resource.is_admin?
+        ul#permissions-tabs.nav.nav-tabs
+          li.active
+            a href="#dashboard_permissions" Dashboards
+          li
+            a href="#events_permissions" Events
+          li
+            a href="#tasks_permissions" Tasks
+          li
+            a href="#results_permissions" Results
+          li
+            a href="#analysis_permissions" Analysis
+          li
+            a href="#campaigns_permissions" Campaigns
+          li
+            a href="#admin_permissions" Admin
+
+        .campaigns_box
+          .tab-content
+            #dashboard_permissions.tab-pane.active
+              = render 'dashboard_permissions'
+
+            #events_permissions.tab-pane
+              = render 'events_permissions'
+
+            #tasks_permissions.tab-pane
+              = render 'tasks_permissions'
+
+            #results_permissions.tab-pane
+              = render 'results_permissions'
+
+            #analysis_permissions.tab-pane
+              = render 'analysis_permissions'
+
+            #campaigns_permissions.tab-pane
+              = render 'campaigns_permissions'
+
+            #admin_permissions.tab-pane
+              = render 'admin_permissions'
+
+            #admin_permissions.tab-pane
+      - else
+        p Here goes the message for the super admin role
 
 javascript:
   $(document).on('roles:change', function(){
     window.location.reload(false);
   })
+
+  $('#permissions-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });

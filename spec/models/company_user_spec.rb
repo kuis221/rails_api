@@ -30,10 +30,6 @@ describe CompanyUser do
   it { should validate_presence_of(:company_id) }
   it { should validate_numericality_of(:company_id) }
 
-  it { should allow_mass_assignment_of(:role_id) }
-  it { should_not allow_mass_assignment_of(:company_id) }
-  it { should_not allow_mass_assignment_of(:user_id) }
-
 
   describe "#deactivate" do
     it "should deactivate the status of the user on the current company" do

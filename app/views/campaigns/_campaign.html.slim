@@ -1,5 +1,5 @@
 li id="campaign_#{campaign.id}"
-  a href="#{campaign_path(campaign)}"
+  = link_to_if_permitted :show, Campaign, campaign_path(campaign) do
     span
       b= campaign.name
       span.description
@@ -13,6 +13,7 @@ li id="campaign_#{campaign.id}"
       br>/
       | Last event
   span.pull-right
-    = link_to '', edit_campaign_path(campaign), remote: true, class: 'edit'
-    = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable' if campaign.active?
-    = link_to '', activate_campaign_path(campaign), remote: true, class: 'enable' unless campaign.active?
+    = link_to '', edit_campaign_path(campaign), remote: true, class: 'edit' if can?(:edit, Campaign)
+    - if can?(:deactivate, Campaign)
+      = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable' if campaign.active?
+      = link_to '', activate_campaign_path(campaign), remote: true, class: 'enable' unless campaign.active?

@@ -1,0 +1,143 @@
+= simple_form_for resource, remote: true do |f|
+  table.table.permissions-table
+    thead
+      tr
+        th 
+        th View
+        th Create
+        th Edit
+        th Deactivate
+
+    tbody
+      tr
+        td Events
+        td
+        td= permission_checkbox(f, :create, Event)
+        td= permission_checkbox(f, :update, Event)
+        td= permission_checkbox(f, :deactivate, Event)
+
+      tr
+        td.sub-level-1 Events list
+        td= permission_checkbox(f, :index, Event)
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Events map
+        td= permission_checkbox(f, :view_map, Event)
+        td
+        td
+        td
+
+      tr
+        td Event Details
+        td= permission_checkbox(f, :show, Event)
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Tasks
+        td= permission_checkbox(f, :index_tasks, Event)
+        td= permission_checkbox(f, :create_task, Event)
+        td= permission_checkbox(f, :edit_task, Event)
+        td= permission_checkbox(f, :deactivate_task, Event)
+
+      tr
+        td.sub-level-1 Documents
+        td= permission_checkbox(f, :index_documents, Event)
+        td= permission_checkbox(f, :create_document, Event)
+        td
+        td= permission_checkbox(f, :deactivate_document, Event)
+
+      tr
+        td.sub-level-1 Photos
+        td= permission_checkbox(f, :index_photos, Event)
+        td= permission_checkbox(f, :create_photo, Event)
+        td
+        td= permission_checkbox(f, :deactivate_photo, Event)
+
+      tr
+        td.sub-level-1 Expenses
+        td= permission_checkbox(f, :index_expenses, Event)
+        td= permission_checkbox(f, :create_expense, Event)
+        td= permission_checkbox(f, :edit_expense, Event)
+        td= permission_checkbox(f, :deactivate_expense, Event)
+
+      tr
+        td.sub-level-1 Surveys
+        td= permission_checkbox(f, :index_surveys, Event)
+        td= permission_checkbox(f, :create_survey, Event)
+        td= permission_checkbox(f, :edit_survey, Event)
+        td= permission_checkbox(f, :deactivate_survey, Event)
+
+      tr
+        td.sub-level-1 Comments
+        td= permission_checkbox(f, :index_comments, Event)
+        td= permission_checkbox(f, :create_comment, Event)
+        td= permission_checkbox(f, :edit_comment, Event)
+        td= permission_checkbox(f, :deactivate_comment, Event)
+
+      tr
+        td
+          h3 Post Event Data
+        td
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Submit
+        td= permission_checkbox(f, :submit, Event)
+        td
+        td
+        td
+
+      tr
+        td.sub-level-1 Approve/reject
+        td= permission_checkbox(f, :approve, Event)
+        td
+        td
+        td
+
+    thead
+      tr
+        th 
+        th View
+        th Edit
+        th 
+        th 
+
+      tr
+        td.sub-level-1 Unsubmitted data
+        td= permission_checkbox(f, :view_unsubmitted_data, Event)
+        td= permission_checkbox(f, :edit_unsubmitted_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Submitted data
+        td= permission_checkbox(f, :view_submitted_data, Event)
+        td= permission_checkbox(f, :edit_submitted_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Rejected data
+        td= permission_checkbox(f, :view_rejected_data, Event)
+        td= permission_checkbox(f, :edit_rejected_data, Event)
+        td
+        td
+
+      tr
+        td.sub-level-1 Approved data
+        td= permission_checkbox(f, :view_approved_data, Event)
+        td= permission_checkbox(f, :edit_approved_data, Event)
+        td
+        td
+
+
+
+  = hidden_field_tag :partial, :events_permissions
+  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

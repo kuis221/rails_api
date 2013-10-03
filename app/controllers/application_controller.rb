@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_company, :custom_body_class, :modal_dialog_title
 
+  rescue_from 'CanCan::AccessDenied', with: :access_denied
+
   protected
     def set_layout
       user_signed_in? ? 'application' : 'empty'
@@ -76,6 +78,13 @@ class ApplicationController < ActionController::Base
     def remove_viewed_notification
       if params[:notifid]
         current_company_user.notifications.find(params[:notifid]).destroy
+      end
+    end
+
+    def access_denied
+      respond_to do |format|
+        format.js { render 'access_denied'}
+        format.html { render 'access_denied'}
       end
     end
 end

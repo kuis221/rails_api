@@ -1,4 +1,4 @@
 .edit-surveys
-  = link_to 'New Survey', new_event_survey_path(resource), class: 'btn btn-primary', remote: true
+  = link_to 'New Survey', new_event_survey_path(resource), class: 'btn btn-primary', remote: true if can?(:create_survey, resource)
   ul#event-surveys-list.link-list
     = render resource.surveys

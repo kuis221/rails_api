@@ -3,7 +3,7 @@
 # Table name: list_exports
 #
 #  id                :integer          not null, primary key
-#  params            :string(255)
+#  params            :text
 #  export_format     :string(255)
 #  aasm_state        :string(255)
 #  file_file_name    :string(255)

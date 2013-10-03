@@ -23,6 +23,15 @@ describe TeamsController do
     end
   end
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', format: :js
+      response.should be_success
+      response.should render_template('new')
+      response.should render_template('form')
+    end
+  end
+
   describe "GET 'items'" do
     it "returns http success" do
       get 'items'
@@ -51,6 +60,10 @@ describe TeamsController do
       response.should be_success
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)
+
+      team = Team.last
+      team.name.should == 'Test Team'
+      team.description.should == 'Test Team description'
     end
 
     it "should render the form_dialog template if errors" do

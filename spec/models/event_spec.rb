@@ -28,21 +28,6 @@ describe Event do
   it { should have_many(:users).through(:memberships) }
   it { should have_many(:tasks) }
 
-  it { should allow_mass_assignment_of(:end_date) }
-  it { should allow_mass_assignment_of(:end_time) }
-  it { should allow_mass_assignment_of(:start_date) }
-  it { should allow_mass_assignment_of(:start_time) }
-  it { should allow_mass_assignment_of(:campaign_id) }
-  it { should allow_mass_assignment_of(:event_ids) }
-  it { should allow_mass_assignment_of(:user_ids) }
-
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:aasm_state) }
-  it { should_not allow_mass_assignment_of(:active) }
-  it { should_not allow_mass_assignment_of(:created_by_id) }
-  it { should_not allow_mass_assignment_of(:updated_by_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
 
   it { should validate_presence_of(:campaign_id) }
   it { should validate_numericality_of(:campaign_id) }

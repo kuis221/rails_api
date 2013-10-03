@@ -20,7 +20,6 @@ class Task < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :company_user
-  attr_accessible :completed, :due_at, :title, :company_user_id, :event_id
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
 
   validates_datetime :due_at, allow_nil: true, allow_blank: true
@@ -73,10 +72,14 @@ class Task < ActiveRecord::Base
     string :statusm, multiple: true do
       status = []
       status.push active? ? 'Active' : 'Inactive'
-      status.push completed? ? 'Completed' : 'Uncompleted'
       status.push assigned? ? 'Assigned' : 'Unassigned'
+      status.push completed? ? 'Complete' : 'Incomplete'
       status
     end
+  end
+
+  def due_today?
+    due_at.to_date <= Date.today && due_at.to_date >= Date.today unless due_at.nil?
   end
 
   def late?
@@ -102,9 +105,10 @@ class Task < ActiveRecord::Base
   def statuses
     status = []
     status.push active? ? 'Active' : 'Inactive'
-    status.push completed? ? 'Completed' : 'Uncompleted'
     status.push assigned? ? 'Assigned' : 'Unassigned'
+    status.push completed? ? 'Complete' : 'Incomplete'
     status.push 'Late' if late?
+    status.push 'Due' if due_today?
     status
   end
 

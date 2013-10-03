@@ -13,11 +13,12 @@
 
 class Survey < ActiveRecord::Base
   belongs_to :event
-  attr_accessible :surveys_answers_attributes
 
   has_many :surveys_answers, autosave: true
 
   accepts_nested_attributes_for :surveys_answers
+
+  delegate :company_id, to: :event
 
   def brands
     event.campaign.survey_brands

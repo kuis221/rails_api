@@ -46,15 +46,6 @@ require 'spec_helper'
 describe User do
   it { should have_many(:company_users) }
 
-  it { should validate_presence_of(:first_name) }
-  it { should validate_presence_of(:last_name) }
-  it { should validate_presence_of(:email) }
-
-  it { should allow_mass_assignment_of(:first_name) }
-  it { should allow_mass_assignment_of(:last_name) }
-  it { should allow_mass_assignment_of(:email) }
-  it { should allow_mass_assignment_of(:time_zone) }
-
   it { should allow_value('guilleva@gmail.com').for(:email) }
 
   it { should allow_value("Avalidpassword1").for(:password) }
@@ -161,5 +152,21 @@ describe User do
     end
   end
 
+
+  describe "is_super_admin?" do
+    it "should return true if the current role is admin" do
+      company = FactoryGirl.build(:company)
+      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: true))])
+      User.current = user
+      user.is_super_admin?.should be_true
+    end
+
+    it "should return false if the current role is admin" do
+      company = FactoryGirl.build(:company)
+      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: false))])
+      User.current = user
+      user.is_super_admin?.should be_false
+    end
+  end
 
 end

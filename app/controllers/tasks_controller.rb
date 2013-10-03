@@ -44,11 +44,14 @@ class TasksController < FilteredController
   end
 
   private
+    def permitted_params
+      params.permit(task: [:completed, :due_at, :title, :company_user_id, :event_id])[:task]
+    end
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
 
-        tasks_status = ['Completed', 'Uncompleted', 'Late'] + (params[:scope] != 'user' ? ['Assigned', 'Unassigned'] : [])
+        tasks_status = ['Complete', 'Incomplete', 'Late'] + (params[:scope] != 'user' ? ['Assigned', 'Unassigned'] : [])
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         #f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
@@ -69,11 +72,21 @@ class TasksController < FilteredController
       end
     end
 
+    def authorize_actions
+      if params[:scope] == 'user'
+        Rails.logger.debug "\n\nAuthorizing #{:index_my} in Task\n\n"
+        authorize!(:index_my, Task)
+      elsif params[:scope] == 'teams'
+        authorize!(:index_team, Task)
+      else
+        authorize!(:index, Task)
+      end
+    end
+
     def status_counters
       @status_counters ||= Hash.new.tap do |counters|
         counters['unassigned'] = 0
-        counters['completed'] = 0
-        counters['assigned'] = 0
+        counters['incomplete'] = 0
         counters['late'] = count_late_tasks
         facet_search.facet(:statusm).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:statusm).nil?
       end

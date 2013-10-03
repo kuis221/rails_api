@@ -37,7 +37,7 @@ describe "AdminPages" do
           #user should have password, generated with #attributes_for
           attributes.merge!(FactoryGirl.attributes_for(:admin_user)) if path == 'admin_user'
           attributes.merge!({admin_email: "testemail@brandscopic.com"}) if path == 'company'
-          attributes.reject!{|a| !test_object.class.accessible_attributes.include?(a) }
+          #attributes.reject!{|a| !test_object.class.accessible_attributes.include?(a) }
 
           post send("admin_#{path.pluralize}_path"),
                { path => attributes }

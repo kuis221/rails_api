@@ -6,25 +6,26 @@
 
 .row-fluid
   .pull-left.kpis-button
-    = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary'
+    = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_custom_kpis, resource)
 
 .link-list
   ul#custom-kpis.kpis-list
     = render partial: 'campaigns/kpi', collection: Kpi.custom(current_company)
 
 
-javascript:
-  $(document).delegate('.toggle-off-btn', 'click', function(e){
-    $(this).parent().addClass('active').removeClass('deactive')
-    FormBuilder.activateKpi($(this).data('kpi-id'));
-    return false;
-  });
-  $(document).delegate('.toggle-on-btn', 'click', function(e){
-    var kpi_id = $(this).data('kpi-id');
-    var _this = this;
-    bootbox.confirm("<p>Please confirm you want to deactivate this KPI?</p>", function (result) {
-      $(_this).parent().addClass('inactive').removeClass('active')
-      FormBuilder.deactivateKpi(kpi_id);
+- if can?(:activate_kpis, resource)
+  javascript:
+    $(document).delegate('.toggle-off-btn', 'click', function(e){
+      $(this).parent().addClass('active').removeClass('deactive')
+      FormBuilder.activateKpi($(this).data('kpi-id'));
+      return false;
     });
-    return false;
-  });
+    $(document).delegate('.toggle-on-btn', 'click', function(e){
+      var kpi_id = $(this).data('kpi-id');
+      var _this = this;
+      bootbox.confirm("<p>Please confirm you want to deactivate this KPI?</p>", function (result) {
+        $(_this).parent().addClass('inactive').removeClass('active')
+        FormBuilder.deactivateKpi(kpi_id);
+      });
+      return false;
+    });

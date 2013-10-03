@@ -23,22 +23,6 @@ describe Kpi do
   it { should have_many(:kpis_segments) }
   it { should have_many(:goals) }
 
-  it { should allow_mass_assignment_of(:name) }
-  it { should allow_mass_assignment_of(:description) }
-  it { should allow_mass_assignment_of(:kpi_type) }
-  it { should allow_mass_assignment_of(:capture_mechanism) }
-  it { should allow_mass_assignment_of(:kpis_segments_attributes) }
-  it { should allow_mass_assignment_of(:goals_attributes) }
-
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:company_id) }
-  it { should_not allow_mass_assignment_of(:created_by_id) }
-  it { should_not allow_mass_assignment_of(:updated_by_id) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-  it { should_not allow_mass_assignment_of(:module) }
-  it { should_not allow_mass_assignment_of(:ordering) }
-
   it { should validate_presence_of(:name) }
   describe "name uniqness" do
     before do

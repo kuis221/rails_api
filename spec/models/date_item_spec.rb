@@ -26,18 +26,6 @@ describe DateItem do
   it { should allow_value(nil).for(:recurrence_days)}
   it { should allow_value(['']).for(:recurrence_days)}
 
-  it { should allow_mass_assignment_of(:start_date)}
-  it { should allow_mass_assignment_of(:end_date)}
-  it { should allow_mass_assignment_of(:recurrence)}
-  it { should allow_mass_assignment_of(:recurrence_type)}
-  it { should allow_mass_assignment_of(:recurrence_period)}
-  it { should allow_mass_assignment_of(:recurrence_days)}
-
-  it { should_not allow_mass_assignment_of(:id)}
-  it { should_not allow_mass_assignment_of(:date_range_id)}
-  it { should_not allow_mass_assignment_of(:created_at)}
-  it { should_not allow_mass_assignment_of(:updated_at)}
-
   describe "#label" do
     it "returns a valid description when has start_date and end_date" do
       date = DateItem.new(start_date: '01/01/2013', end_date: '01/31/2013')

@@ -12,6 +12,9 @@ class DayPartsController < FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(day_part: [:name, :description])[:day_part]
+    end
 
     def facets
       @facets ||= Array.new.tap do |f|

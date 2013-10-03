@@ -21,7 +21,6 @@ module EventsHelper
     end
   end
 
-
   protected
 
     def describe_filters

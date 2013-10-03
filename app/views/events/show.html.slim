@@ -1,3 +1,4 @@
+- can_edit = can?(:update, resource)
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing event details. Click to close.", collection_path)
 
@@ -19,14 +20,14 @@
     .place-data
       = place_address(resource.place, true) if resource.place
     .links-data
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = active_inactive_buttons(resource) if can? :deactivate, resource
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.campaign_name
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
       = format_date_range(resource.start_at, resource.end_at, date_separator: ' ')
 
@@ -35,32 +36,34 @@
     h3 EVENT TEAM
     #event-team-members
       = render 'team_member_list'
-    = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
+    = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can_edit
 
   - if resource.has_event_data? && !resource.rejected?
     = render 'show_results'
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  #event-tasks.details_box
+  - if can? :tasks, resource
+    #event-tasks.details_box
 
-    .pull-left
-      = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'}
-    #event-tasks-counters.pull-right
-      = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
-
-    #event-tasks-container
-      = render partial: 'tasks', locals: {tasks: resource.tasks.active}
-
-
-  #event-documents.details_box
-    h3 DOCUMENTS
-
-    #event-documents-list
-      = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-    .row-fluid
       .pull-left
-        = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true
+        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
+      #event-tasks-counters.pull-right
+        = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
+
+      #event-tasks-container
+        = render partial: 'tasks', locals: {tasks: resource.tasks.active}
+
+
+  - if can? :documents, resource
+    #event-documents.details_box
+      h3 DOCUMENTS
+
+      #event-documents-list
+        = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
+      .row-fluid
+        .pull-left
+          = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true if can? :create_document, resource
 
 javascript:
   $(document).ready(function() {

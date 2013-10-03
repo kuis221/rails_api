@@ -156,5 +156,16 @@ describe CompanyUsersController do
         response.should redirect_to root_path
       end
     end
+
+    describe "GET 'notifications'" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+
+      it "returns http success" do
+        get 'notifications', id: user.to_param, format: :json
+        response.should be_success
+        alerts = JSON.parse(response.body)
+        alerts.should == []
+      end
+    end
   end
 end

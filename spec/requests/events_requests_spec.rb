@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "Events", js: true, search: true do
 
   before do
+    Kpi.destroy_all
     Warden.test_mode!
     @company = FactoryGirl.create(:company)
     @user = FactoryGirl.create(:user, company: @company, role_id: FactoryGirl.create(:role, company: @company).id)
@@ -193,7 +194,6 @@ describe "Events", js: true, search: true do
       visit event_path(event)
 
       fill_in 'Summary', with: 'This is the summary'
-
 
       fill_in '< 12', with: '10'
       fill_in '12 – 17', with: '11'

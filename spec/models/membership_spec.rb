@@ -16,13 +16,6 @@ describe Membership do
   it { should belong_to(:company_user) }
   it { should belong_to(:memberable) }
 
-  it { should_not allow_mass_assignment_of(:id) }
-  it { should_not allow_mass_assignment_of(:company_user_id) }
-  it { should_not allow_mass_assignment_of(:memberable_id) }
-  it { should_not allow_mass_assignment_of(:memberable_type) }
-  it { should_not allow_mass_assignment_of(:created_at) }
-  it { should_not allow_mass_assignment_of(:updated_at) }
-
   describe "new campaign notification" do
     let(:campaign) { FactoryGirl.create(:campaign) }
     let(:user) { FactoryGirl.create(:company_user) }

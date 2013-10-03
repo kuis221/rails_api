@@ -9,20 +9,20 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit', title: 'Edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:activate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit'
-      = active_inactive_buttons(resource)
+      = link_to '', edit_brand_portfolio_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:activate, resource)
 
   #brands.details_box
     h3 Brands
     #brands-list
       = render 'brands'
-    = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'
+    = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'  if can?(:edit, resource)
 
 javascript:
   $(document).on('brand_portfolios:change', function(){

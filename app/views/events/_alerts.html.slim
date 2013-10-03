@@ -1,4 +1,7 @@
-- submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
+- submit_link = false
+- if can?(:submit, resource)
+  - submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
+
 - if resource.in_future? && !resource.happens_today?
   .alert.alert-grey
     == "Your event is scheduled. You can <a href=\"#event-members\" class=\"smooth-scroll\">manage the event team</a>, <a href=\"#event-tasks\" class=\"smooth-scroll\">complete tasks</a>, or <a href=\"#event-documents\" class=\"smooth-scroll\">upload event documents</a>."
@@ -25,7 +28,7 @@
     - links.push '<a href="#event-surveys" class="smooth-scroll">conduct surveys</a>' if resource.campaign.active_field_types.include?('surveys')
     - links.push '<a href="#event-comments" class="smooth-scroll">gather comments</a>' if resource.campaign.active_field_types.include?('comments')
     == "Your event is scheduled for today. Please enter #{links.to_sentence} from your audience during or shortly after the event."
-    - if resource.in_past?
+    - if resource.in_past? && submit_link
       == " Once complete, please #{submit_link} your post event form."
 
 - elsif !resource.is_late? and resource.unsent?
@@ -35,7 +38,9 @@
     - links.push '<a href="#event-photos" class="smooth-scroll">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
     - links.push '<a href="#event-surveys" class="smooth-scroll">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
     - links.push '<a href="#event-comments" class="smooth-scroll">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
-    == "Your post event report is due. Please enter #{links.to_sentence} now. Once complete, please #{submit_link} your post event form."
+    == "Your post event report is due. Please enter #{links.to_sentence} now."
+    - if submit_link
+      == " Once complete, please #{submit_link} your post event form."
 
 - elsif resource.unsent?
   .alert.alert-danger
@@ -44,7 +49,9 @@
     - links.push '<a href="#event-photos" class="smooth-scroll">upload photos</a>' if resource.campaign.active_field_types.include?('photos')
     - links.push '<a href="#event-surveys" class="smooth-scroll">complete surveys</a>' if resource.campaign.active_field_types.include?('surveys')
     - links.push '<a href="#event-comments" class="smooth-scroll">enter comments</a>' if resource.campaign.active_field_types.include?('comments')
-    == "Your post event report is late. Please #{links.to_sentence} now. Once complete, please #{submit_link} your post event form."
+    == "Your post event report is late. Please #{links.to_sentence} now."
+    - if submit_link
+      == " Once complete, please #{submit_link} your post event form."
 
 - elsif resource.approved?
   .alert.alert-success
@@ -56,10 +63,13 @@
     == "Your post event report form has been rejected for the following reasons:"
     br>/
     p #{resource.reject_reason}
-    p Please make the necessary updates and #{resubmit_link}.
+    - if can?(:submit, resource)
+      p Please make the necessary updates and #{resubmit_link}.
 
 - else
   .alert.alert-info.submitted
     - approve_link = link_to 'approve', approve_event_path, method: :put
     - reject_link = link_to 'reject', reject_event_path, class: 'reject-post-event', method: :put, remote: true
-    == "Your post event report has been submitted for approval. Please review and either #{approve_link} or #{reject_link}."
+    == "Your post event report has been submitted for approval." 
+    - if can?(:approve, resource)
+      == " Please review and either #{approve_link} or #{reject_link}."

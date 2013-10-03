@@ -80,12 +80,9 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
     end
-    collection do
-      put :set_permissions
-    end
   end
 
-  resources :company_users, path: 'users' do
+  resources :company_users, except: [:new, :create], path: 'users' do
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection

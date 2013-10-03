@@ -16,6 +16,7 @@ describe "Invitations", :js => true do
       role_id: FactoryGirl.create(:role).id,
       company_id: FactoryGirl.create(:company).id
     )
+    Kpi.destroy_all
     Kpi.create_global_kpis
   end
   after do

@@ -17,12 +17,6 @@ describe DayItem do
   it { should validate_presence_of(:day_part_id)}
   it { should validate_presence_of(:start_time)}
 
-  it { should allow_mass_assignment_of(:start_time)}
-  it { should allow_mass_assignment_of(:end_time)}
-
-  it { should_not allow_mass_assignment_of(:created_at)}
-  it { should_not allow_mass_assignment_of(:updated_at)}
-
   describe "#label" do
     it "returns a valid description when has start_time and end_time" do
       time = DayItem.new(start_time: '6:00 AM', end_time: '2:00 PM')

@@ -1,14 +1,20 @@
 
-= render 'dashboard/modules/kpi_trends'
+- if can? :kpi_trends_module, :dashboard
+  = render 'dashboard/modules/kpi_trends'
 
-= render 'dashboard/modules/demographics'
+- if can? :demographics_module, :dashboard
+  = render 'dashboard/modules/demographics'
 
-= render 'dashboard/modules/upcomming_events'
+- if can? :upcomings_events_module, :dashboard
+  = render 'dashboard/modules/upcoming_events'
 
-= render 'dashboard/modules/incomplete_tasks'
+- if can? :incomplete_tasks_module, :dashboard
+  = render 'dashboard/modules/incomplete_tasks'
 
-= render 'dashboard/modules/venue_performance'
+- if can? :venue_performance_module, :dashboard
+  = render 'dashboard/modules/venue_performance'
 
-= render 'dashboard/modules/recent_photos'
+- if can? :recent_photos_module, :dashboard
+  = render 'dashboard/modules/recent_photos'
 
 = render partial: 'help_tutorial'

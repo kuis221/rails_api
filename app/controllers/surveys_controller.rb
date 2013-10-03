@@ -4,4 +4,9 @@ class SurveysController < FilteredController
   actions :new, :create, :edit, :update
 
   include DeactivableHelper
+
+  protected
+    def permitted_params
+      params.permit(survey: [:surveys_answers_attributes])[:survey]
+    end
 end

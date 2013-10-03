@@ -2,7 +2,10 @@ class FilteredController < InheritedResources::Base
   helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
   respond_to :json, only: :index
 
-  load_and_authorize_resource except: [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
+  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
+  load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
+  before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
+
 
   custom_actions collection: [:filters, :items]
 
@@ -39,6 +42,25 @@ class FilteredController < InheritedResources::Base
   end
 
   protected
+    def build_resource_params
+      [permitted_params || {}]
+    end
+
+    def permitted_params
+      {}
+    end
+
+    def authorize_actions
+      if parent?
+        authorize! "index_#{resource_class.to_s.pluralize}".to_sym, parent
+      else
+        authorize! :index, resource_class
+      end
+    end
+
+    def action_permissions
+
+    end
 
     def export_list(export)
       @_export = export
@@ -78,7 +100,7 @@ class FilteredController < InheritedResources::Base
             set_collection_ivar(@solr_search.results)
           else
             current_page = params[:page] || nil
-            c = end_of_association_chain.accessible_by(current_ability).scoped(sorting_options)
+            c = end_of_association_chain.accessible_by_user(current_user).scoped(sorting_options)
             c = controller_filters(c)
             @collection_count_scope = c
             c = c.page(current_page).per(items_per_page) unless current_page.nil?
@@ -153,7 +175,7 @@ class FilteredController < InheritedResources::Base
       counts = Hash[facets.map{|x| [x.value.to_i, x.count] }]
       items = klass.where(id: counts.keys).all
       items.sort!{|a, b| counts[b.id] <=> counts[a.id] }
-      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id]})}, name: name}
+      {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id], name: name})}}
     end
 
     def build_facet_item(options)
