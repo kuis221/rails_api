@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130927212907) do
+ActiveRecord::Schema.define(:version => 20131004220536) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -441,6 +441,7 @@ ActiveRecord::Schema.define(:version => 20130927212907) do
     t.string   "icon"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
+    t.text     "message_params"
   end
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
