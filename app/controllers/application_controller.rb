@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
 
     def remove_viewed_notification
       if params[:notifid]
-        current_company_user.notifications.find(params[:notifid]).destroy
+        current_company_user.notifications.where(id: params[:notifid]).destroy_all
       end
     end
 

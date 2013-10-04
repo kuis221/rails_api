@@ -23,4 +23,25 @@ class Notification < ActiveRecord::Base
       notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign')
     end
   end
+
+  def self.new_event(user, event)
+    path = Rails.application.routes.url_helpers.event_path(event)
+    if user.notifications.where(path: path).count == 0
+      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event')
+    end
+  end
+
+  def self.new_task(user, task, team = false)
+    if team
+      path = Rails.application.routes.url_helpers.my_teams_tasks_path(q: "task,#{task.id}")
+      message = 'new_team_task'
+    else
+      path = Rails.application.routes.url_helpers.mine_tasks_path(q: "task,#{task.id}")
+      message = 'new_task'
+    end
+
+    if user.notifications.where(path: path).count == 0
+      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'task')
+    end
+  end
 end
