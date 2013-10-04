@@ -15,7 +15,7 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position

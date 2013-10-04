@@ -15,5 +15,5 @@ li id="campaign_#{campaign.id}"
   span.pull-right
     = link_to '', edit_campaign_path(campaign), remote: true, class: 'edit' if can?(:edit, Campaign)
     - if can?(:deactivate, Campaign)
-      = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable' if campaign.active?
-      = link_to '', activate_campaign_path(campaign), remote: true, class: 'enable' unless campaign.active?
+      = link_to '', deactivate_campaign_path(campaign), remote: true, class: 'disable', title: 'Deactivate' if campaign.active?
+      = link_to '', activate_campaign_path(campaign), remote: true, class: 'enable', title: 'Activate' unless campaign.active?

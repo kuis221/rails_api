@@ -87,6 +87,11 @@ Brandscopic::Application.routes.draw do
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
     get :event, via: :get, on: :collection # List of users by event
+    resources :placeables, only: [:new] do
+      post :add_area, on: :collection
+      delete :remove_area, on: :collection
+    end
+    resources :places, only: [:destroy, :create]
     resources :goals, only: [:create, :update, :edit, :new]
     resources :tasks do
       member do
@@ -114,7 +119,10 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :placeables, only: [:new]
+    resources :placeables, only: [:new] do
+      post :add_area, on: :collection
+      delete :remove_area, on: :collection
+    end
     resources :places, only: [:destroy, :create]
     get :autocomplete, on: :collection
     get :find_similar_kpi, on: :collection
@@ -234,8 +242,6 @@ Brandscopic::Application.routes.draw do
     get :autocomplete, on: :collection
     resources :places, only: [:new, :create, :destroy]
     member do
-      post :add_to_campaign
-      delete :remove_from_campaign
       get :deactivate
       get :activate
     end
