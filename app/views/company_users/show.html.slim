@@ -37,6 +37,17 @@
   /   = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member'
 
   .details_box
+    h3 Places
+    #company_user-areas-list.row-fluid
+      = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
+
+    #company_user-places-list.row-fluid
+      = render 'places'
+
+    .row-fluid
+      = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
+
+  .details_box
     = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary' if can?(:edit, resource)
     #resource-goals-list.link-list
       = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}

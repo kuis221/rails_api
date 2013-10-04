@@ -16,7 +16,6 @@
 //= require jquery-ui-1.10.1.custom
 //= require s3_direct_upload
 //= require twitter/bootstrap
-//= require jquery.dataTables.js
 //= require jquery_nested_form
 //= require form_builder.js
 //= require_directory .

@@ -1,0 +1,5 @@
+|
+  $('#areas-list #area-#{@area.id}').remove();
+  $(document).trigger('areas:change');
+- parent_partial = "#{parent.class.name.underscore.downcase.pluralize}/add_area" 
+= render partial: parent_partial, locals: {resource: parent, area: @area} rescue nil

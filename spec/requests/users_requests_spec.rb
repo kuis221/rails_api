@@ -94,6 +94,37 @@ describe "Users", :js => true do
         page.should have_selector('div.user-role', text: 'Another Role')
       end
 
+      it "should be able to assign areas to the user" do
+        company_user = FactoryGirl.create(:company_user, company_id: @company.id)
+        area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
+        visit company_user_path(company_user)
+
+        click_js_link 'Add Area'
+
+        within visible_modal do
+          find("#area-#{area.id}").click_js_link('Add Area')
+          page.should have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
+        end
+        close_modal
+
+        click_js_link 'Add Area'
+
+        within visible_modal do
+          page.should have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
+        end
+
+        close_modal
+
+        # Ensure the area now appears on the list of areas
+        within '#company_user-areas-list' do
+          page.should have_content('San Francisco Area')
+
+          # Test the area removal
+          click_js_link 'Remove Area'
+          page.should have_no_content('San Francisco Area')
+        end
+      end
+
     end
 
     describe "edit profile" do

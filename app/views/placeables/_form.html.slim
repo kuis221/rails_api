@@ -1,16 +1,3 @@
-/ .tab-content
-/   .areas-table
-/     .scroll-table-content
-/       .link-list
-/         ul#areas-list
-/           - @areas.each do |area|
-/             li id="area-#{area.id}"
-/               span.area-data
-/                 span.area-name= area.name
-/                 span.area-description= area.description
-/               span.add-button.pull-right
-/                 = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), id: "add-area-btn-#{area.id}", data:{'area-id' => area.id}, class: 'icon-plus-sign', remote: true, method: :post
-
 .campaigns-modals
   p Add areas from the list below
 
@@ -24,7 +11,7 @@
               .area_name= area.name
               = area.description
             span.pull-right
-              = link_to '', add_to_campaign_area_path(area, campaign_id: parent.id), remote: true, method: :post, enable_with: '...', class: 'add' if area.active?
+              = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add Area' if area.active?
         li.empty-list-message
           p There are not assignable areas
 

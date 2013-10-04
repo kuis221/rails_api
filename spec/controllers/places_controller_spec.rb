@@ -6,6 +6,8 @@ describe PlacesController do
     @company = @user.companies.first
   end
 
+  let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+  let(:company_user){ FactoryGirl.create(:company_user, company: @company) }
   let(:area){ FactoryGirl.create(:area, company: @company) }
   let(:place){ FactoryGirl.create(:place) }
 
@@ -35,6 +37,33 @@ describe PlacesController do
 
       area.places.should == [place]
     end
+
+    it "should render the form for new place if the place was not selected from the autocomplete for an area" do
+      expect {
+        post 'create', area_id: area.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+      }.to_not change(Place,:count)
+      response.should be_success
+      response.should render_template('places/_new_place_form')
+      response.should render_template('places/new_place')
+    end
+
+    it "should render the form for new place if the place was not selected from the autocomplete for a campaign" do
+      expect {
+        post 'create', campaign_id: campaign.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+      }.to_not change(Place,:count)
+      response.should be_success
+      response.should render_template('places/_new_place_form')
+      response.should render_template('places/new_place')
+    end
+
+    it "should render the form for new place if the place was not selected from the autocomplete for a company user" do
+      expect {
+        post 'create', company_user_id: company_user.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+      }.to_not change(Place,:count)
+      response.should be_success
+      response.should render_template('places/_new_place_form')
+      response.should render_template('places/new_place')
+    end
   end
 
   describe "GET 'new'" do
@@ -55,6 +84,26 @@ describe PlacesController do
           response.should be_success
         }.to change(Placeable, :count).by(-1)
       }.to_not change(Area, :count)
+    end
+
+    it "should delete the link within the company user and the place" do
+      company_user.places << place
+      expect {
+        expect {
+          delete 'destroy', company_user_id: company_user.to_param, id: place.id, format: :js
+          response.should be_success
+        }.to change(Placeable, :count).by(-1)
+      }.to_not change(CompanyUser, :count)
+    end
+
+    it "should delete the link within the campaign and the place" do
+      campaign.places << place
+      expect {
+        expect {
+          delete 'destroy', campaign_id: campaign.to_param, id: place.id, format: :js
+          response.should be_success
+        }.to change(Placeable, :count).by(-1)
+      }.to_not change(Campaign, :count)
     end
   end
 
