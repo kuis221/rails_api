@@ -6,7 +6,7 @@ class Ability
 
     # All users
     if user.id
-      can :notifications, CompanyUser
+      can [:notifications, :select_company], CompanyUser
 
       can :find_similar_kpi, Campaign do
         raise 'true'
