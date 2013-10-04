@@ -24,12 +24,6 @@ describe Kpi do
   it { should have_many(:goals) }
 
   it { should validate_presence_of(:name) }
-  describe "name uniqness" do
-    before do
-      @kpi = FactoryGirl.create(:kpi)
-    end
-    it { should validate_uniqueness_of(:name).scoped_to(:company_id) }
-  end
   it { should validate_numericality_of(:company_id) }
 
   # TODO: reject_if needs to be tested in the following line

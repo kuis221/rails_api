@@ -65,13 +65,14 @@ describe Task, search: true do
   end
 
   it "should search for the :task_status params" do
+    user = FactoryGirl.create(:company_user, company_id: 1)
     event     = FactoryGirl.create(:event, company_id: 1)
     late_task = FactoryGirl.create(:late_task, title: "Late Task", event: event)
     future_task = FactoryGirl.create(:future_task, title: "Task in future", event: event)
-    assigned_and_late_task = FactoryGirl.create(:assigned_task, title: "Assigned and late task", event: event, due_at: 3.weeks.ago)
-    assigned_and_in_future_task = FactoryGirl.create(:assigned_task, title: "Assigned and in future task", event: event, due_at: 3.weeks.from_now)
+    assigned_and_late_task = FactoryGirl.create(:assigned_task, company_user: user, title: "Assigned and late task", event: event, due_at: 3.weeks.ago)
+    assigned_and_in_future_task = FactoryGirl.create(:assigned_task, company_user: user, title: "Assigned and in future task", event: event, due_at: 3.weeks.from_now)
     unassigned_task = FactoryGirl.create(:unassigned_task, title: "Unassigned task", event: event, due_at: 3.weeks.from_now)
-    completed_task = FactoryGirl.create(:completed_task, title: "Completed task", event: event)
+    completed_task = FactoryGirl.create(:completed_task, company_user: user, title: "Completed task", event: event)
 
     Sunspot.commit
 
@@ -79,7 +80,7 @@ describe Task, search: true do
     Task.do_search(company_id: 1, task_status: ['Late', 'Complete']).results.should =~ [late_task, assigned_and_late_task, completed_task]
     Task.do_search(company_id: 1, task_status: ['Complete']).results.should =~ [completed_task]
     Task.do_search(company_id: 1, task_status: ['Incomplete']).results.should =~ [late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task]
-    Task.do_search(company_id: 1, task_status: ['Assigned']).results.should =~ [assigned_and_late_task, assigned_and_in_future_task]
-    Task.do_search(company_id: 1, task_status: ['Unassigned']).results.should =~ [late_task, future_task, unassigned_task, completed_task]
+    Task.do_search(company_id: 1, task_status: ['Assigned']).results.should =~ [assigned_and_late_task, assigned_and_in_future_task, completed_task]
+    Task.do_search(company_id: 1, task_status: ['Unassigned']).results.should =~ [late_task, future_task, unassigned_task]
   end
 end

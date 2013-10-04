@@ -52,6 +52,12 @@ module RequestsHelper
     find('.modal.in', visible: true)
   end
 
+  def open_tab(tab_name)
+    link = find('.nav-tabs a', text: tab_name)
+    link.click
+    find(link['href'].gsub(/^.*#/, '#'))
+  end
+
   def modal_footer
     find('.modal .modal-footer')
   end

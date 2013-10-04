@@ -1237,13 +1237,11 @@ li#notifications{
 			border-bottom: 10px solid @grey_one;
 		}
 		ul {
-			display: table;
 			list-style: none;
 			margin: 0;
 			padding: 0;
 			width: 100%;
 			li {
-				display: table-cell;
 				vertical-align: middle;
 				padding: 10px;
 				background-color: #fff;
@@ -2304,38 +2302,6 @@ table.table {
 	}
 }
 
-table.dataTable {
-	width: 100%;
-	table-layout:fixed;
-	thead {
-		background-color: #fff;
-	}
-
-	th.actions {
-		width: 110px;
-	}
-
-	&#tasks-list .actions {
-		width: 180px;
-	}
-
-	th, td {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	td.has_link {
-		padding: 0;
-		a {
-			padding: 8px;
-			display: block;
-			text-decoration: none;
-			color: #646464;
-		}
-	}
-}
-
 .scroll-table-wrapper {
 	max-height: 200px;
 	overflow: auto;
@@ -2579,6 +2545,10 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	cursor: pointer;
 	height: 40px;
 	width: 154px;
+}
+
+.gm-style .gm-style-iw div{
+	overflow: hidden !important;
 }
 
 .resource-form-modal {
@@ -4354,7 +4324,7 @@ svg{
 			left: 29px;
 			text-align: center;
 			vertical-align: middle;
-			-webkit-font-smoothing: antialiased;			
+			-webkit-font-smoothing: antialiased;
 		}
 	}
 	.time-data{

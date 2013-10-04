@@ -5,8 +5,7 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     # All users
-    if user.id
-      can :notifications, CompanyUser
+    if user.id && !user.is_a?(AdminUser)
 
       can :find_similar_kpi, Campaign do
         raise 'true'
@@ -17,11 +16,16 @@ class Ability
         can?(:edit, goal.goalable)
       end
 
-      can :manage, :dashboard
+      can :time_zone_change, CompanyUser
+      can :notifications, CompanyUser
 
-      # can :kpi_trends_module, :dashboard do
-      #   user.role.has_permission?(:deactivate_task, Event)
-      # end
+      # All users can update their own information
+      can :update, CompanyUser, id: user.current_company_user.id
+      can :update, Campaign, id: user.current_company_user.id
+
+      can :super_update, CompanyUser do |cu|
+        user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
+      end
     end
 
     # AdminUsers (logged in on Active Admin)
@@ -30,7 +34,8 @@ class Ability
       can :manage, :all
 
     # Super Admin Users
-    elsif  user.is_super_admin?
+    elsif user.is_super_admin?
+      can :manage, :dashboard
 
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
@@ -82,10 +87,6 @@ class Ability
        (event.submitted? && can?(:view_submitted_data, event)) ||
        (event.approved? && can?(:view_approved_data, event)) ||
        (event.rejected? && can?(:view_rejected_data, event))
-      end
-
-      can :edit, CompanyUser do |cu|
-        user.role.has_permission?(:edit, CompanyUser) || (cu.id == user.current_company_user.id)
       end
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|

@@ -25,6 +25,7 @@ class Area < ActiveRecord::Base
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables
 
+  scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
 
   searchable do

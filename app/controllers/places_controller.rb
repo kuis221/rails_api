@@ -2,7 +2,7 @@ class PlacesController < FilteredController
   skip_authorize_resource only: [:destroy, :create, :new]
 
   actions :index, :new, :create
-  belongs_to :area, :campaign, optional: true
+  belongs_to :area, :campaign, :company_user, optional: true
   respond_to :json, only: [:index]
   respond_to :js, only: [:new, :create]
 

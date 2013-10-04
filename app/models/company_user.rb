@@ -24,9 +24,6 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
-  # attr_accessible :user_attributes, :role_id, :company_id, :team_ids, :campaign_ids, as: :admin
-  # attr_accessible :user_attributes
-
   has_many :memberships
 
   # Teams-Users relationship
@@ -37,6 +34,9 @@ class CompanyUser < ActiveRecord::Base
 
   # Events-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
+
+  # Area-User relationship
+  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable
