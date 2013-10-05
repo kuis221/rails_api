@@ -10,11 +10,14 @@
 #  icon            :string(255)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  message_params  :text
 #
 
 class Notification < ActiveRecord::Base
   belongs_to :company_user
-  attr_accessible :icon, :level, :message, :path
+  attr_accessible :icon, :level, :message, :message_params, :path
+
+  serialize :message_params
 
 
   def self.new_campaign(user, campaign)
@@ -41,7 +44,7 @@ class Notification < ActiveRecord::Base
     end
 
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'task')
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task')
     end
   end
 end

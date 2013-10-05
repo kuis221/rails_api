@@ -26,10 +26,11 @@ class CompanyUsersController < FilteredController
 
   def select_company
     begin
-      company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
-      current_user.current_company = company.company
+      company_user = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      company_user.role.active or raise ActiveRecord::RecordNotFound
+      current_user.current_company = company_user.company
       current_user.save
-      session[:current_company_id] = company.company_id
+      session[:current_company_id] = company_user.company_id
     rescue ActiveRecord::RecordNotFound
       flash[:error] = "You are not allowed login into this company"
     end
@@ -104,7 +105,7 @@ class CompanyUsersController < FilteredController
     end
 
     user.notifications.each do |notification|
-      alerts.push({message: I18n.translate("notifications.#{notification.message}"), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
+      alerts.push({message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
     end
 
     render json: alerts
