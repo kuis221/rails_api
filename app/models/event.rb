@@ -540,8 +540,11 @@ class Event < ActiveRecord::Base
           Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
         end
       end
-    end
 
+      if active_changed?
+        Sunspot.index self.tasks
+      end
+    end
 
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
