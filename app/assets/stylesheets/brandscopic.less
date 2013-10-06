@@ -1976,11 +1976,20 @@ ul.kpis-list{
 		&.address{
 			line-height: 19px;
 			padding-top: 8px;
+			width: 45%;
+			overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;
+			address{
+				overflow: hidden;
+				text-overflow:ellipsis;	
+				width: 95%;
+			}
 		}
 		&.date{
 			line-height: 20px;
 			padding-top: 8px;
-			width: 28%;
+			width: 35%;
 		}
 		&.pull-right{
 	       display: block;
@@ -5128,5 +5137,8 @@ table td.sub-level-1 {
 @media all and (max-width: 980px){
 	body.app-layout{
 		padding-top: 0;
+	}
+	.navbar-fixed-top{
+		margin-bottom: 0;
 	}
 }
