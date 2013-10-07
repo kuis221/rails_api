@@ -6,14 +6,24 @@ class PhotosController < InheritedResources::Base
   include DeactivableHelper
   include PhotosHelper
 
+  custom_actions collection: [:processing_status]
+
   defaults :resource_class => AttachedAsset
 
-  load_and_authorize_resource class: AttachedAsset, through: :parent
+  load_and_authorize_resource class: AttachedAsset, through: :parent, except: [:processing_status]
 
   helper_method :describe_filters
 
   def processing_status
     @photos = parent.photos.find(params[:photos])
   end
+
+  protected
+    def build_resource_params
+      [permitted_params || {}]
+    end
+    def permitted_params
+      params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
+    end
 
 end

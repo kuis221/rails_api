@@ -184,7 +184,7 @@ class Venue < ActiveRecord::Base
     end
 
     # First let the DB to do the math for the events that starts and ends the same day... (the easy part)
-    tz = Time.zone.now.strftime('%Z')
+    tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
     stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}') AS weekday")
          .joins(:event_data)
          .group("EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}')")

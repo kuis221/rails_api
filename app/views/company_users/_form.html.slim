@@ -28,22 +28,23 @@
           = uf.input :password, input_html: {class: 'input-xxlarge'}
       .row-fluid.users
           = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
-      .row-fluid.users
-        = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
-      .row-fluid.users
-        = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}
-      .row-fluid.users
-        .span6
-          = uf.input :city, required: true, input_html: {class: 'input-large'}
-        .span6
-          = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input-large chosen-enabled'}
-      .row-fluid.users
-        .span6
-          = uf.input :zip_code, input_html: {class: 'input-large'}
-        .span6
-          = uf.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
-      .row-fluid.users-teams-roles
-        = uf.input :time_zone, required: true, input_html: {class: 'input-large chosen-enabled'}
+      - if resource.id == current_company_user.id
+        .row-fluid.users
+          = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
+        .row-fluid.users
+          = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}
+        .row-fluid.users
+          .span6
+            = uf.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
+          .span6
+            = uf.input :city, required: true, input_html: {class: 'input-large'}
+        .row-fluid.users
+          .span6
+            = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input-large chosen-enabled'}
+          .span6
+            = uf.input :zip_code, input_html: {class: 'input-large'}
+        .row-fluid.users-teams-roles
+          = uf.input :time_zone, required: true, input_html: {class: 'input-large chosen-enabled'}
   .form-actions
     = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe

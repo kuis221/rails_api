@@ -72,7 +72,7 @@ module Analysis
       (first_event_at.to_date..last_event_at.to_date).each{|d| data['days'][d.to_s(:numeric)] ||= {'scheduled_events' => 0, 'approved_events' => 0, 'approved_promo_hours' => 0, 'scheduled_promo_hours' => 0}}
 
       # Get the events/promo hours data
-      tz = Time.zone.now.strftime('%Z')
+      tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       date_convert = "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')"
       scope = @events_scope.select("count(events.id) as events_count, sum(promo_hours) as promo_hours, #{date_convert} as event_start, events.aasm_state as group_recap_status").group("#{date_convert}, events.aasm_state").order(date_convert)
       weeks_with_approved_events = 0
