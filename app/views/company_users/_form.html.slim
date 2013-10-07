@@ -23,11 +23,11 @@
       - if can?(:super_update, resource)
         .row-fluid.users-teams-roles
           = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
-      .row-fluid.users
-        - unless resource.invited_to_sign_up?
-          = uf.input :password, input_html: {class: 'input-xxlarge'}
-      .row-fluid.users
-          = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
+      - unless resource.invited_to_sign_up?
+        .row-fluid.users
+            = uf.input :password, input_html: {class: 'input-xxlarge'}
+        .row-fluid.users
+            = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
       - if resource.id == current_company_user.id
         .row-fluid.users
           = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
