@@ -28,7 +28,6 @@ class AttachedAsset < ActiveRecord::Base
     :small => "180x120#",
     :medium => "700x700"
   }})
-  attr_accessible :file, :asset_type, :direct_upload_url
 
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
