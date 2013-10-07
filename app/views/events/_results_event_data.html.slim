@@ -11,31 +11,31 @@
       ul.consumer-reach-metrics
         - if active_kpis.include?(Kpi.impressions)
           li
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.impressions.id], event_data.impressions)
             div.metric
               span= number_with_delimiter(event_data.impressions)
               = (event_data.impressions == 1 ? " Impression" : " Impressions")
-            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.impressions.id], event_data.impressions)
 
         - if active_kpis.include?(Kpi.interactions)
           li
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.interactions.id], event_data.interactions)
             div.metric
               span= number_with_delimiter(event_data.interactions.round)
               = " Influenced"
-            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.interactions.id], event_data.interactions)
 
         - if active_kpis.include?(Kpi.samples)
           li
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.samples.id], event_data.samples)
             div.metric
               span= number_with_delimiter(event_data.samples.round)
               = " Sampled"
-            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.samples.id], event_data.samples)
 
         - if active_kpis.include?(Kpi.expenses)
           li
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
             div.metric
               span= number_to_currency(event_data.spent, precision: 2)
               = " Spent"
-            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
 
       ul.consumer-reach-metrics.pull-right
         - if event_data.spent.present? && event_data.impressions > 0
