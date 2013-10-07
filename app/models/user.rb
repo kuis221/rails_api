@@ -155,6 +155,10 @@ class User < ActiveRecord::Base
     @role ||= current_company_user.try(:role)
   end
 
+  def companies_active_role
+    self.company_users.select{|cu| cu.active? && cu.role.active?}.map(&:company)
+  end
+
   def is_super_admin?
     role.is_admin? unless role.nil?
   end

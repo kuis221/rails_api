@@ -130,15 +130,17 @@ module ApplicationHelper
   end
 
   def user_company_dropdown(user)
-    if user.companies.size == 1
-      link_to user.companies.first.name, root_path, class: 'current-company-title'
+    companies = user.companies_active_role
+
+    if companies.size == 1
+      link_to companies.first.name, root_path, class: 'current-company-title'
     else
       content_tag(:div, class: 'dropdown') do
         text = 'Select Company'
         text = current_company.name if current_company
         link_to((current_company.name + ' ' + content_tag(:b,'', class: 'caret')).html_safe, root_path, class: 'dropdown-toggle current-company-title', 'data-toggle' => 'dropdown') +
         content_tag(:ul, class: 'dropdown-menu', id: 'user-company-dropdown', role: 'menu', 'aria-labelledby' => "dLabel") do
-          user.companies.map do |company|
+          companies.map do |company|
             content_tag(:li, link_to(company.name, select_company_path(company), id: 'select-company-'+company.id.to_s), role: 'presentation')
           end.join('').html_safe
         end

@@ -76,8 +76,8 @@ en:
     unread_tasks_comments_team: "Your team's task %{task} has a new comment"
     new_campaign: "You have a new campaign"
     new_event: "You have a new event"
-    new_task: "You was assigned to a task"
-    new_team_task: "Your team have a new task"
+    new_task: "You have been assigned a task: %{task}"
+    new_team_task: "A new task was created for your event: %{task}"
 
   modals:
     title:

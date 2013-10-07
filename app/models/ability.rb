@@ -5,8 +5,8 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     # All users
-    if user.id && !user.is_a?(AdminUser)
 
+    if user.id && !user.is_a?(AdminUser)
       can :find_similar_kpi, Campaign do
         raise 'true'
         can?(:update, Campaign) || can?(:create, Campaign)
@@ -17,7 +17,7 @@ class Ability
       end
 
       can :time_zone_change, CompanyUser
-      can :notifications, CompanyUser
+      can [:notifications, :select_company], CompanyUser
 
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
