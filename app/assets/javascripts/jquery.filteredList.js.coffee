@@ -31,6 +31,16 @@ $.widget 'nmk.filteredList', {
 		if @options.includeCalendars
 			@_addCalendars()
 
+		$('<div class="clear-filters">')
+			.append($('<a>',{href: '#', class:''}).text('Clear filters')
+				.on 'click', (e) =>
+					@_cleanSearchFilter()
+					@form.find('.dates-range-filter').datepick('clear')
+					@form.find('.dates-range-filter').datepick('update')
+					@_filtersChanged()
+			).appendTo(@form)
+
+
 		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
 			@setFilters(@options.filters)
@@ -379,13 +389,17 @@ $.widget 'nmk.filteredList', {
 								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
-				start_date = @_formatDate(dates[0])
-				@startDateInput.val start_date
+				if dates.length > 0
+					start_date = @_formatDate(dates[0])
+					@startDateInput.val start_date
 
-				@endDateInput.val ''
-				if dates[0].toLocaleString() != dates[1].toLocaleString()
-					end_date = @_formatDate(dates[1])
-					@endDateInput.val end_date
+					@endDateInput.val ''
+					if dates[0].toLocaleString() != dates[1].toLocaleString()
+						end_date = @_formatDate(dates[1])
+						@endDateInput.val end_date
+				else
+					@startDateInput.val ''
+					@endDateInput.val ''
 
 				if @initialized == true
 					@reloadFilters()
