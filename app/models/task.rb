@@ -38,6 +38,7 @@ class Task < ActiveRecord::Base
   scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
   scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
   scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
+  scope :due_today_and_late, lambda{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
   scope :assigned_to, lambda{|users| where(company_user_id: users) }
 
   searchable do
