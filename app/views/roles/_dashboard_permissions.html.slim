@@ -1,33 +1,40 @@
 = simple_form_for resource, remote: true do |f|
-  table.table.permissions-table
-    tbody
-      tr
-        td Calendar
-        td= permission_checkbox(f, :calendar_module, Symbol, 'dashboard')
+  .permissions
+    .row-fluid
+      .span7
+        .span5 Calendar
+        .span2
+          = permission_checkbox(f, :calendar_module, Symbol, 'dashboard')
 
-      tr
-        td KPI trends
-        td= permission_checkbox(f, :kpi_trends_module, Symbol, 'dashboard')
+      .span7
+        .span5 KPI trends
+        .span2
+          = permission_checkbox(f, :kpi_trends_module, Symbol, 'dashboard')
 
-      tr
-        td Upcoming events
-        td= permission_checkbox(f, :upcomings_events_module, Symbol, 'dashboard')
+      .span7
+        .span5 Upcoming events
+        .span2
+          = permission_checkbox(f, :upcomings_events_module, Symbol, 'dashboard')
 
-      tr
-        td Demographics
-        td= permission_checkbox(f, :demographics_module, Symbol, 'dashboard')
+      .span7
+        .span5 Demographics
+        .span2
+          = permission_checkbox(f, :demographics_module, Symbol, 'dashboard')
 
-      tr
-        td Incomplete tasks
-        td= permission_checkbox(f, :incomplete_tasks_module, Symbol, 'dashboard')
+      .span7
+        .span5 Incomplete tasks
+        .span2
+          = permission_checkbox(f, :incomplete_tasks_module, Symbol, 'dashboard')
 
-      tr
-        td Venue Performance
-        td= permission_checkbox(f, :venue_performance_module, Symbol, 'dashboard')
+      .span7
+        .span5 Venue Performance
+        .span2
+          = permission_checkbox(f, :venue_performance_module, Symbol, 'dashboard')
 
-      tr
-        td Recent photos
-        td= permission_checkbox(f, :recent_photos_module, Symbol, 'dashboard')
+      .span7
+        .span5 Recent photos
+        .span2
+          = permission_checkbox(f, :recent_photos_module, Symbol, 'dashboard')
 
   = hidden_field_tag :partial, :dashboard_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

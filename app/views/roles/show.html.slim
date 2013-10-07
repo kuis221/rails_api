@@ -19,7 +19,7 @@
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
   - if can?(:edit, resource)
-    .details_box
+  
       - unless resource.is_admin?
         ul#permissions-tabs.nav.nav-tabs
           li.active
