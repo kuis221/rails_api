@@ -69,7 +69,11 @@ class Task < ActiveRecord::Base
 
     boolean :completed
     string :status do
-      active? && event.active? ? 'Active' : 'Inactive'
+      if event.active?
+        active? ? 'Active' : 'Inactive'
+      else
+        'Inactive Event'
+      end
     end
 
     string :statusm, multiple: true do
