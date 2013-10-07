@@ -62,7 +62,7 @@ class EventsController < FilteredController
 
   def calendar_highlights
     @calendar_highlights ||= Hash.new.tap do |hsh|
-      tz = Time.zone.now.strftime('%Z')
+      tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, count(events.id) as count")
         .where(company_id: current_company)
         .group("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')").map do |day|
