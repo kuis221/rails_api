@@ -13,7 +13,7 @@
 
     = render 'alerts'
 
-    h2 = resource.campaign_name
+    h2.special = resource.campaign_name
 
     .calendar-data
       = format_date_range(resource.start_at, resource.end_at)

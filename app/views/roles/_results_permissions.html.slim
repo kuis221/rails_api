@@ -1,25 +1,30 @@
 = simple_form_for resource, remote: true do |f|
-  table.table.permissions-table
-    tbody
-      tr
-        td Event Data
-        td= permission_checkbox(f, :index_results, EventData)
+  .permissions
+    .row-fluid
+      .span7
+        .span5 Event Data
+        .span2
+          = permission_checkbox(f, :index_results, EventData)
 
-      tr
-        td Comments
-        td= permission_checkbox(f, :index_results, Comment)
+      .span7
+        .span5 Comments
+        .span2
+          = permission_checkbox(f, :index_results, Comment)
 
-      tr
-        td Photos
-        td= permission_checkbox(f, :index_photo_results, AttachedAsset)
+      .span7
+        .span5 Photos
+        .span2
+          = permission_checkbox(f, :index_photo_results, AttachedAsset)
 
-      tr
-        td Expenses
-        td= permission_checkbox(f, :index_results, EventExpense)
+      .span7
+        .span5 Expenses
+        .span2
+          = permission_checkbox(f, :index_results, EventExpense)
 
-      tr
-        td Surveys
-        td= permission_checkbox(f, :index_results, Survey)
+      .span7
+        .span5 Surveys
+        .span5
+          = permission_checkbox(f, :index_results, Survey)
 
   = hidden_field_tag :partial, :results_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

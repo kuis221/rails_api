@@ -2487,7 +2487,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		display: inline-block;
 		float: right;
 		font-size: 11px;
-		width: 390px;
+		width: 400px;
 		&.pull-right{
 			margin-top: 10px;
 			.metric{
@@ -2499,12 +2499,14 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 			height: 30px;
 			text-transform: uppercase;
 			.metric {
-				float: left;
+				float: right;
 				width: 150px;
 				margin-right: 15px;
 				text-align: right;
 			}
 			.progress {
+				float: right;
+				margin-bottom: 0;
 				margin-right: 10px;
 			}
 		}
@@ -2943,7 +2945,7 @@ ul.thumbnails{
 	.large-photo-list{
 		margin: 40px 0 0 0;
 		ul{
-			margin: 0 -2% -2% -1%;
+			margin: 0 -7% -2% -2%;
 			overflow: auto;
 		}
 		li{
@@ -3107,6 +3109,14 @@ ul.thumbnails{
 body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
+	}
+}
+
+.permissions{
+	.span7, .span7:first-child{
+		font-size: 16px;
+		line-height: 40px;
+		margin: 0 0 0 20px;
 	}
 }
 
@@ -4255,12 +4265,12 @@ svg{
 			clear: both;
 		}
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
-			margin-top: 22px;
-			width:280px;
+			margin-top: 10px;
+			width: 50%;
 		}
 		.task-list{
 			span.pull-right{
-				margin-top: 6% !important;
+				margin-top: 5% !important;
 			}
 		}
 		.task-comments{
@@ -4275,6 +4285,9 @@ svg{
 	h2{
 		font-size: 30px;
 		margin-bottom: 30px;
+		&.special{
+			margin-top: 45px;
+		}
 	}
 	h3{
 		font-size: 16px;
@@ -4396,7 +4409,7 @@ svg{
 	.alert {
 		-webkit-border-radius: 0;
   		border-radius: 0;
-  		margin: 40px 0 30px 0;
+  		margin-bottom: 4px;
 	}
 }
 
@@ -5160,5 +5173,8 @@ table td.sub-level-1 {
 	}
 	.navbar-fixed-top{
 		margin-bottom: 0;
+	}
+	#resource-close-details.affix{
+		top:0;
 	}
 }
