@@ -8,7 +8,7 @@
 
     / Expenses module
     - if resource.campaign.active_kpis.include?(Kpi.expenses) && can?(:show, EventExpense)
-      #event-expenses.details_box.box_expenses
+      #event-expenses.details_box.box_expenses.smaller
         = render partial: 'expenses', locals: {f: f}
 
     / Photos module
