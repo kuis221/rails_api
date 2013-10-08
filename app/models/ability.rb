@@ -26,6 +26,10 @@ class Ability
       can :super_update, CompanyUser do |cu|
         user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
       end
+
+      can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
+        can?(:edit, cu)
+      end
     end
 
     # AdminUsers (logged in on Active Admin)

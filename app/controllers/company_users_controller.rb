@@ -4,9 +4,11 @@ class CompanyUsersController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
   respond_to :json, only: [:index, :notifications]
 
-  helper_method :assignable_campaigns
+  helper_method :brands_campaigns_list
 
   custom_actions collection: [:complete, :time_zone_change]
+
+  before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -20,27 +22,6 @@ class CompanyUsersController < FilteredController
     render :json => buckets.flatten
   end
 
-  def time_zone_change
-    current_user.update_column(:detected_time_zone, params[:time_zone])
-  end
-
-  def select_company
-    begin
-      company_user = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
-      company_user.role.active or raise ActiveRecord::RecordNotFound
-      current_user.current_company = company_user.company
-      current_user.save
-      session[:current_company_id] = company_user.company_id
-    rescue ActiveRecord::RecordNotFound
-      flash[:error] = "You are not allowed login into this company"
-    end
-    redirect_to root_path
-  end
-
-  def assignable_campaigns
-    current_company.campaigns.active.order('campaigns.name asc')
-  end
-
   def update
     resource.user.updating_user = true if resource.id != current_company_user.id
     update! do |success, failure|
@@ -49,6 +30,83 @@ class CompanyUsersController < FilteredController
           sign_in resource.user, :bypass => true
         end
       }
+    end
+  end
+
+  def time_zone_change
+    current_user.update_column(:detected_time_zone, params[:time_zone])
+  end
+
+  def select_company
+    begin
+      company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      current_user.current_company = company.company
+      current_user.save
+      session[:current_company_id] = company.company_id
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = "You are not allowed login into this company"
+    end
+    redirect_to root_path
+  end
+
+  def enable_campaigns
+    if params[:parent_type] && params[:parent_id]
+      parent_membership = resource.memberships.find_or_create_by_memberable_type_and_memberable_id(params[:parent_type], params[:parent_id])
+      @parent = parent_membership.memberable
+      @campaigns = @parent.campaigns
+      # Delete all campaign associations assigned to this user directly under this brand/portfolio
+      resource.memberships.where(parent_id: parent_membership.memberable.id, parent_type: parent_membership.memberable.class.name).destroy_all
+    end
+  end
+
+  def disable_campaigns
+    if params[:parent_type] && params[:parent_id]
+      membership = resource.memberships.find_by_memberable_type_and_memberable_id(params[:parent_type], params[:parent_id])
+      resource.memberships.where(parent_id: membership.memberable.id, parent_type: membership.memberable.class.name).destroy_all
+      # Assign all the campaings directly to the user
+      membership.memberable.campaigns.each do |campaign|
+        resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+      end
+      membership.destroy
+    end
+    render text: 'OK'
+  end
+
+  def remove_campaign
+    if params[:parent_type] && params[:parent_id] && params[:campaign_id]
+      membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
+      # If the parent is directly assigned to the user, then remove the parent and assign all the
+      # current campaigns to the user
+      unless membership.nil?
+        membership.memberable.campaigns.scoped_by_company_id(current_company.id).each do |campaign|
+          unless campaign.id == params[:campaign_id].to_i
+            resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+          end
+        end
+        membership.destroy
+      else
+        membership = resource.memberships.where(parent_type: params[:parent_type], parent_id: params[:parent_id], memberable_type: 'Campaign', memberable_id: params[:campaign_id]).destroy_all
+      end
+    end
+  end
+
+  def select_campaigns
+    @campaigns = []
+    if params[:parent_type] && params[:parent_id]
+      membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
+      if membership.nil?
+        parent = params['parent_type'].constantize.find(params['parent_id'])
+        @campaigns = parent.campaigns.scoped_by_company_id(current_company.id).where(['campaigns.id not in (?)', resource.campaigns.children_of(parent).map(&:id)+[0]])
+      end
+    end
+  end
+
+  def add_campaign
+    if params[:parent_type] && params[:parent_id] && params[:campaign_id]
+      @parent = params['parent_type'].constantize.find(params['parent_id'])
+      campaign = current_company.campaigns.find(params[:campaign_id])
+      resource.memberships.create({memberable: campaign, parent: @parent}, without_protection: true)
+      @campaigns = resource.campaigns.children_of(@parent)
     end
   end
 
@@ -105,7 +163,7 @@ class CompanyUsersController < FilteredController
     end
 
     user.notifications.each do |notification|
-      alerts.push({message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
+      alerts.push({message: I18n.translate("notifications.#{notification.message}"), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
     end
 
     render json: alerts
@@ -141,6 +199,25 @@ class CompanyUsersController < FilteredController
       path = delete_member_team_path(params[:team], member_id: user.id) if params.has_key?(:team) && params[:team]
       path = delete_member_campaign_path(params[:campaign], member_id: user.id) if params.has_key?(:campaign) && params[:campaign]
       path
+    end
+
+
+    def brands_campaigns_list
+      list = {}
+      current_company.brand_portfolios.each do |portfolio|
+        enabled = resource.brand_portfolios.include?(portfolio)
+        list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(portfolio) ) }
+      end
+      Brand.for_company_campaigns(current_company).each do |brand|
+        enabled = resource.brands.include?(brand)
+        list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(brand) ) }
+      end
+      list
+    end
+
+
+    def validate_parent
+      raise CanCan::AccessDenied unless ['BrandPortfolio', 'Brand'].include?(params[:parent_type])
     end
 
 end

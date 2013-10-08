@@ -120,7 +120,7 @@ describe "Users", :js => true do
           page.should have_content('San Francisco Area')
 
           # Test the area removal
-          click_js_link 'Remove Area'
+          hover_and_click('.hover-item', 'Remove Area')
           page.should have_no_content('San Francisco Area')
         end
       end

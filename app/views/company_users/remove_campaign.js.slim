@@ -1,0 +1,4 @@
+|
+  $('#campaigns-#{params[:parent_type]}-#{params[:parent_id]} #company_user-campaign-#{params[:campaign_id]}').remove();
+  $('#campaigns-toggle-#{params[:parent_type]}-#{params[:parent_id]}').removeClass('active').addClass('inactive');
+  $('#btn-add-campaign-#{params[:parent_type]}-#{params[:parent_id]}').show();

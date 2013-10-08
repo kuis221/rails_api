@@ -161,13 +161,20 @@ describe CampaignsController do
     end
 
     it "should successfully create the new record" do
-      lambda {
-        post 'create', campaign: {name: 'Test Campaign', description: 'Test Campaign description'}, format: :js
-      }.should change(Campaign, :count).by(1)
+      portfolios = FactoryGirl.create_list(:brand_portfolio, 2, company: @company)
+      FactoryGirl.create(:brand, name: 'Cacique')
+      expect {
+        expect {
+          post 'create', campaign: {name: 'Test Campaign', description: 'Test Campaign description', brand_portfolio_ids: portfolios.map(&:id), brands_list: "Anchor Steam,Jack Daniels,Cacique"}, format: :js
+        }.to change(Campaign, :count).by(1)
+      }.to change(Brand, :count).by(2)
       campaign = Campaign.last
       campaign.name.should == 'Test Campaign'
       campaign.description.should == 'Test Campaign description'
       campaign.aasm_state.should == 'active'
+      campaign.brand_portfolios.should =~ portfolios
+
+      campaign.brands.all.map(&:name).should =~ ['Anchor Steam','Jack Daniels','Cacique']
     end
 
     it "should not render form_dialog if no errors" do

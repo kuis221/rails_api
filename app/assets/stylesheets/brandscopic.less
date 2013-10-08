@@ -1539,6 +1539,41 @@ ul.kpis-list{
 	    	}
 	    }
     }
+    ul#select-campaigns-list{
+    	li{
+	    	span{
+	    		&:first-child{
+	    			font-size: 11px;
+	    			margin: 8px 0 0 0;
+	    			width: 400px;
+	    			.campaign_name{
+	    				font-size: 16px;
+	    			}
+	    			.campaign_description{
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+				    }
+	    		}
+	    		&:last-child{
+	    			.add:before{
+		        	  	color: @brand;
+						content: "\e021";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:5px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 5px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
+	    			}
+	    		}
+	    	}
+	    }
+    }
     ul#date-ranges-list{
     	.date-range-data{
     		padding: 12px;
@@ -2377,6 +2412,33 @@ body.company_users{
 	}
 	.user-role{
 		margin-bottom: 25px;
+	}
+
+	#company_user-areas-list, 
+	#company_user-places-list, 
+	.campaigns-list {
+		.icon-remove-sign {
+			display: none;
+		}
+		.hover-item:hover {
+			.icon-remove-sign {
+				display: inline;
+			}
+		}
+	}
+
+	.campaigns-group {
+		border: 1px solid @grey_one;
+		.campaigns-group-header {
+			border-bottom: 1px solid @grey_one;
+			padding: 5px;
+			width: auto;
+		}
+		margin-bottom: 20px;
+
+		.campaigns-list {
+			padding: 20px 10px;
+		}
 	}
 }
 

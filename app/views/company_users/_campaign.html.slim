@@ -1,0 +1,5 @@
+.span3.hover-item id="company_user-campaign-#{campaign.id}"
+  .pull-left
+    = campaign.name
+  .pull-right
+    = link_to '', remove_campaign_company_user_path(resource, parent_type: parent.class.name, parent_id: parent.id,  campaign_id: campaign.id) , method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Campaign'

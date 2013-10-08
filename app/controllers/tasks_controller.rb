@@ -75,7 +75,6 @@ class TasksController < FilteredController
 
     def authorize_actions
       if params[:scope] == 'user'
-        Rails.logger.debug "\n\nAuthorizing #{:index_my} in Task\n\n"
         authorize!(:index_my, Task)
       elsif params[:scope] == 'teams'
         authorize!(:index_team, Task)

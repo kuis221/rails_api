@@ -30,13 +30,23 @@ class CompanyUser < ActiveRecord::Base
   has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign'
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign' do
+    def children_of(parent)
+      where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
+    end
+  end
 
   # Events-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
   has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area'
+
+  # BrandPortfolio-User relationship
+  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'
+
+  # BrandPortfolio-User relationship
+  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable

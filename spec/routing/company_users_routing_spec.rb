@@ -24,7 +24,7 @@ describe CompanyUsersController do
     end
 
     it "routes to #destroy" do
-      delete("/users/1").should route_to("company_users#destroy", :id => "1")
+      delete("/users/1").should_not route_to("company_users#destroy", :id => "1")
     end
 
     it "routes to #deactivate" do

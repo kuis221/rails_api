@@ -295,17 +295,6 @@ ActiveRecord::Schema.define(:version => 20131004220536) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -439,10 +428,13 @@ ActiveRecord::Schema.define(:version => 20131004220536) do
     t.string   "memberable_type"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
+    t.integer  "parent_id"
+    t.string   "parent_type"
   end
 
   add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
   add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
+  add_index "memberships", ["parent_id", "parent_type"], :name => "index_memberships_on_parent_id_and_parent_type"
 
   create_table "notifications", :force => true do |t|
     t.integer  "company_user_id"

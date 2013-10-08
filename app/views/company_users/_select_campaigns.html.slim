@@ -1,0 +1,11 @@
+#select-campaigns-table-wrapper
+    h3 Add Campaigns
+    .link-list
+      ul#select-campaigns-list
+        - @campaigns.each do |campaign|
+          li id="campaign-#{campaign.id}"
+            span.pull-left
+              .campaign_name= campaign.name
+              .campaign_description= campaign.description
+            span.pull-right
+              = link_to '', add_campaign_company_user_path(resource, parent_id: params[:parent_id], parent_type: params[:parent_type], campaign_id: campaign.id), remote: true, method: :post, disable_with: '...', class: 'add'

@@ -1,0 +1,16 @@
+- brands_campaigns_list.each do |parent, info|
+  = render partial: 'campaings_bucket', locals: {parent: parent, enabled: info[:enabled], campaigns: info[:campaigns]}
+
+
+- if can?(:edit, resource)
+  javascript:
+    $(document).delegate('.toggle-off-btn', 'click', function(e){
+      $(this).parent().addClass('active').removeClass('deactive');
+      $.post('#{enable_campaigns_company_user_path(resource)}', {parent_id: $(this).data('parent-id'), parent_type: $(this).data('parent-type')});
+      return false;
+    });
+    $(document).delegate('.toggle-on-btn', 'click', function(e){
+      $(this).parent().addClass('inactive').removeClass('active');
+      $.post('#{disable_campaigns_company_user_path(resource)}', {parent_id: $(this).data('parent-id'), parent_type: $(this).data('parent-type')});
+      return false;
+    });

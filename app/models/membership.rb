@@ -21,6 +21,9 @@ class Membership < ActiveRecord::Base
   after_destroy :delete_notifications
   after_destroy :update_tasks
 
+
+  belongs_to :parent, polymorphic: true
+
   private
     def create_notifications
       if memberable_type == 'Campaign'
