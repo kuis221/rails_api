@@ -40,6 +40,7 @@ class Company < ActiveRecord::Base
           new_company_user = self.company_users.create({role_id: role.id, user: new_user}, without_protection: true)
           new_user.skip_invitation = true
           new_user.invite!
+          new_user.update_attributes({invitation_sent_at: Time.now.utc}, without_protection: true)
           UserMailer.company_admin_invitation(new_user).deliver
         end
       end
