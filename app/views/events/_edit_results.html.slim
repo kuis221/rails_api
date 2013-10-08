@@ -18,7 +18,7 @@
 
     / Surveys module
     - if resource.campaign.active_kpis.include?(Kpi.surveys) && can?(:show, Survey)
-      #event-surveys.details_box.box_expenses
+      #event-surveys.details_box.box_expenses.smaller
         = render partial: 'surveys', locals: {f: f}
 
     / Comments module
