@@ -1259,17 +1259,14 @@ li#notifications{
 			list-style: none;
 			margin: 0;
 			padding: 0;
+			border-bottom: 1px solid @borders;
 			width: 100%;
 			li {
 				display: table-row;
 				vertical-align: middle;
 				background-color: #fff;
-				border-top: 1px solid @borders;
 				height: 65px;
-
-				&:first-child{
-					border:0;
-				}
+				border-top: 1px solid @borders;
 
 				&.red {
 					border-left: 5px solid @alert_red;
@@ -1313,9 +1310,6 @@ li#notifications{
 							margin-left: 12px;
 							margin-right: 12px;
 						}
-					}
-					span{
-						vertical-align: middle;
 					}
 					&:hover{
 						text-decoration: none;
