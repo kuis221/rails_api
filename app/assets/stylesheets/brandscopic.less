@@ -4058,6 +4058,9 @@ body.campaigns{
 			span{
 				display: block;
 				margin-top: 30px;
+				.calendar-data{
+					font-size: 16px;
+				}
 			}
 		}
 	}
@@ -4388,9 +4391,12 @@ body.campaigns{
 	textarea{
 		height: 130px;
 	}
-	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .links-data{
+	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
 		margin:0 0 20px 30px;
 		width: 380px;
+	}
+	.links-data{
+		margin: 0 0 0 30px;
 	}
 	.calendar-data{
 		font-size: 12px;
@@ -4403,7 +4409,7 @@ body.campaigns{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			padding-top: 3px;
+			padding-top: 0;
 			position: absolute;
 			speak: none;
 			left: 28px;
