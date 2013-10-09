@@ -168,6 +168,10 @@ class Campaign < ActiveRecord::Base
     @active_kpis ||= (form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi) + [Kpi.events, Kpi.promo_hours]).compact
   end
 
+  def custom_kpis
+    @custom_kpis ||= (form_fields.where("kpi_id is not null AND module = 'custom'").joins(:kpi).map(&:kpi)).compact
+  end
+
   def active_field_types
     @active_field_types ||= form_fields.map(&:field_type).uniq
   end
