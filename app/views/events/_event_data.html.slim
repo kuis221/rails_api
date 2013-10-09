@@ -22,10 +22,11 @@
             b= field.name
           .hide
             = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
-        .percentage-progress-bar id="progress-bar-field-#{field.id}"
-          .progress.progress-info
-            .bar
-          .counter
+        - if field.field_type == 'percentage'
+          .percentage-progress-bar id="progress-bar-field-#{field.id}"
+            .progress.progress-info
+              .bar
+            .counter
         = render partial: 'event_data', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
       - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module) 
         = ff.hidden_field :form_field_id
