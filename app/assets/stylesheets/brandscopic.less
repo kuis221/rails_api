@@ -1255,21 +1255,22 @@ li#notifications{
 			border-bottom: 10px solid @grey_one;
 		}
 		ul {
+			border-collapse: collapse;
+			display: table;
 			list-style: none;
 			margin: 0;
 			padding: 0;
 			width: 100%;
 			li {
+				display: table-row;
 				vertical-align: middle;
-				padding: 10px;
 				background-color: #fff;
+				height: 65px;
 				border-top: 1px solid @borders;
-				height: 45px;
 
 				&:first-child{
-					border:0;
+					border-top: 0;
 				}
-
 				&.red {
 					border-left: 5px solid @alert_red;
 				}
@@ -1296,6 +1297,8 @@ li#notifications{
 				a{
 					color: @text;
 					font-size: 11px;
+					display: table-cell;
+					vertical-align: middle;
 					i{
 						margin-right: 5px;
 						vertical-align: middle;
@@ -1307,11 +1310,9 @@ li#notifications{
 							}
 						}
 						&.alert-icon{
-							margin-right: 10px;
+							margin-left: 12px;
+							margin-right: 12px;
 						}
-					}
-					span{
-						vertical-align: middle;
 					}
 					&:hover{
 						text-decoration: none;
@@ -3821,7 +3822,7 @@ table.table td.comments-container {
 }
 
 .task-counter-bar{
-	margin: 10px 0 12px 10px;
+	margin: 0 0 12px 10px;
 }
 
 .task-counter-item {
@@ -4059,6 +4060,9 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	&.smaller{
+		padding: 30px 10px;
+	}
 	.box_demographics, .box_consumer_reach{
 		h3{
 			margin-top: 30px;
@@ -4320,9 +4324,6 @@ svg{
 		}
 	}
 	&#event-tasks{
-		a.btn{
-			margin-top: 17px;
-		}
 		#event-tasks-container{
 			clear: both;
 		}
