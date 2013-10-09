@@ -8,6 +8,9 @@ describe "User" do
     subject(:ability){ Ability.new(user) }
     let(:user){ nil }
     let(:company) { FactoryGirl.create(:company) }
+    let(:event){ FactoryGirl.create(:event,  campaign_id: campaign.id, place_id: place.id) }
+    let(:place){ FactoryGirl.create(:place) }
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
 
     before do
       User.current = user
@@ -90,7 +93,7 @@ describe "User" do
     end
 
     context "when it is NOT a super user" do
-      let(:company_user){ FactoryGirl.create(:company_user,  company: company, role: FactoryGirl.create(:role, is_admin: false), user: FactoryGirl.create(:user,  current_company: company)) }
+      let(:company_user){ FactoryGirl.create(:company_user, company: company, place_ids: [place.id], campaign_ids: [campaign.id], role: FactoryGirl.create(:role, is_admin: false), user: FactoryGirl.create(:user,  current_company: company)) }
       let(:user){ company_user.user }
 
 
@@ -107,7 +110,6 @@ describe "User" do
       #
       describe "Event tasks permissions" do
         it "should be able to edit task in a event if has the permission :edit_task on Event" do
-          event = FactoryGirl.create(:event, company: company)
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:edit, task)
 
@@ -119,7 +121,6 @@ describe "User" do
         end
 
         it "should be able to edit task  if has the permission :edit_my on Task and it's assigned to the user" do
-          event = FactoryGirl.create(:event, company: company)
           task = FactoryGirl.create(:task, event: event, company_user: company_user )
           ability.should_not be_able_to(:edit, task)
 
@@ -130,7 +131,6 @@ describe "User" do
         end
 
         it "should be able to edit task if has the permission :edit_team on Task and it belongs to a event where the users is a team member" do
-          event = FactoryGirl.create(:event, company: company)
           event.users << company_user
           task = FactoryGirl.create(:task, event: event )
           ability.should_not be_able_to(:edit, task)
@@ -142,7 +142,6 @@ describe "User" do
         end
 
         it "should be able to deactivate a task in a event if has the permission :deactivate_task on Event" do
-          event = FactoryGirl.create(:event, company: company)
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:deactivate, task)
 
@@ -154,7 +153,6 @@ describe "User" do
         end
 
         it "should be able to deactivate a task in if has the permission :deactivate_my on Task and it's assigned to the user" do
-          event = FactoryGirl.create(:event, company: company)
           task = FactoryGirl.create(:task, event: event, company_user: company_user)
           ability.should_not be_able_to(:deactivate, task)
 
@@ -165,7 +163,6 @@ describe "User" do
         end
 
         it "should be able to deactivate a task in if has the permission :deactivate_team on Task and it belongs to a event where the users is a team member" do
-          event = FactoryGirl.create(:event, company: company)
           event.users << company_user
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:deactivate, task)
@@ -177,7 +174,6 @@ describe "User" do
         end
 
         it "should be able to create a task in a event if has the permission :create_task on Event" do
-          event = FactoryGirl.create(:event, company: company)
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:create, task)
 
@@ -188,7 +184,6 @@ describe "User" do
         end
 
         it "should be able to list tasks in a event if has the permission :index_tasks on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:tasks, event)
           ability.should_not be_able_to(:index_tasks, event)
 
@@ -210,7 +205,6 @@ describe "User" do
       #
       describe "Event documents permissions" do
         it "should be able to deactivate a document in a event if has the permission :deactivate_document on Event" do
-          event = FactoryGirl.create(:event, company: company)
           document = FactoryGirl.create(:document, attachable: event)
           ability.should_not be_able_to(:deactivate, document)
 
@@ -223,7 +217,6 @@ describe "User" do
 
 
         it "should be able to create a document in a event if has the permission :create_document on Event" do
-          event = FactoryGirl.create(:event, company: company)
           document = FactoryGirl.create(:document, attachable: event)
           ability.should_not be_able_to(:create, document)
 
@@ -235,7 +228,6 @@ describe "User" do
 
 
         it "should be able to list document in a event if has the permission :index_documents on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:documents, event)
           ability.should_not be_able_to(:index_documents, event)
 
@@ -259,7 +251,6 @@ describe "User" do
       #
       describe "Event photos permissions" do
         it "should be able to deactivate a photo in a event if has the permission :deactivate_photo on Event" do
-          event = FactoryGirl.create(:event, company: company)
           photo = FactoryGirl.create(:photo, attachable: event)
           ability.should_not be_able_to(:deactivate, photo)
 
@@ -272,7 +263,6 @@ describe "User" do
 
 
         it "should be able to create a photo in a event if has the permission :create_photo on Event" do
-          event = FactoryGirl.create(:event, company: company)
           photo = FactoryGirl.create(:photo, attachable: event)
           ability.should_not be_able_to(:create, photo)
 
@@ -284,7 +274,6 @@ describe "User" do
 
 
         it "should be able to list photo in a event if has the permission :index_photos on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:photos, event)
           ability.should_not be_able_to(:index_photos, event)
 
@@ -306,7 +295,6 @@ describe "User" do
       #
       describe "Event event expenses permissions" do
         it "should be able to destroy a event expense in a event if has the permission :deactivate_expense on Event" do
-          event = FactoryGirl.create(:event, company: company)
           event_expense = FactoryGirl.create(:event_expense, event: event)
           ability.should_not be_able_to(:destroy, event_expense)
 
@@ -317,7 +305,6 @@ describe "User" do
         end
 
         it "should be able to edit event expense in a event if has the permission :edit_expense on Event" do
-          event = FactoryGirl.create(:event, company: company)
           event_expense = FactoryGirl.create(:event_expense, event: event)
           ability.should_not be_able_to(:edit, event_expense)
 
@@ -329,7 +316,6 @@ describe "User" do
         end
 
         it "should be able to create a event expense in a event if has the permission :create_expense on Event" do
-          event = FactoryGirl.create(:event, company: company)
           event_expense = FactoryGirl.create(:event_expense, event: event)
           ability.should_not be_able_to(:create, event_expense)
 
@@ -341,7 +327,6 @@ describe "User" do
 
 
         it "should be able to list event expense in a event if has the permission :index_event_expenses on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:expenses, event)
           ability.should_not be_able_to(:index_expenses, event)
 
@@ -364,7 +349,6 @@ describe "User" do
       #
       describe "Event surveys permissions" do
         it "should be able to deactivate a survey in a event if has the permission :deactivate_survey on Event" do
-          event = FactoryGirl.create(:event, company: company)
           survey = FactoryGirl.build(:survey, event: event)
           ability.should_not be_able_to(:deactivate, survey)
 
@@ -376,7 +360,6 @@ describe "User" do
         end
 
         it "should be able to edit survey in a event if has the permission :edit_survey on Event" do
-          event = FactoryGirl.create(:event, company: company)
           survey = FactoryGirl.build(:survey, event: event)
           ability.should_not be_able_to(:edit, survey)
 
@@ -388,7 +371,6 @@ describe "User" do
         end
 
         it "should be able to create a survey in a event if has the permission :create_survey on Event" do
-          event = FactoryGirl.create(:event, company: company)
           survey = FactoryGirl.build(:survey, event: event)
           ability.should_not be_able_to(:create, survey)
 
@@ -400,7 +382,6 @@ describe "User" do
 
 
         it "should be able to list survey in a event if has the permission :index_surveys on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:surveys, event)
           ability.should_not be_able_to(:index_surveys, event)
 
@@ -422,7 +403,6 @@ describe "User" do
       #
       describe "Event comments permissions" do
         it "should be able to deactivate a comment in a event if has the permission :deactivate_comment on Event" do
-          event = FactoryGirl.create(:event, company: company)
           comment = FactoryGirl.build(:comment, commentable: event)
           ability.should_not be_able_to(:destroy, comment)
 
@@ -433,7 +413,6 @@ describe "User" do
         end
 
         it "should be able to edit comment in a event if has the permission :edit_comment on Event" do
-          event = FactoryGirl.create(:event, company: company)
           comment = FactoryGirl.build(:comment, commentable: event)
           ability.should_not be_able_to(:edit, comment)
 
@@ -445,7 +424,6 @@ describe "User" do
         end
 
         it "should be able to create a comment in a event if has the permission :create_comment on Event" do
-          event = FactoryGirl.create(:event, company: company)
           comment = FactoryGirl.build(:comment, commentable: event)
           ability.should_not be_able_to(:create, comment)
 
@@ -456,7 +434,6 @@ describe "User" do
         end
 
         it "should be able to list comments in a event if has the permission :index_comments on Event" do
-          event = FactoryGirl.create(:event, company: company)
           ability.should_not be_able_to(:comments, event)
           ability.should_not be_able_to(:index_comments, event)
 

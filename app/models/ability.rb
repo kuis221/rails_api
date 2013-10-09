@@ -26,6 +26,10 @@ class Ability
       can :super_update, CompanyUser do |cu|
         user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
       end
+
+      can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
+        can?(:edit, cu)
+      end
     end
 
     # AdminUsers (logged in on Active Admin)
@@ -89,6 +93,14 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
+      cannot [:show, :edit], Event do |event|
+        !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
+        (
+          !Place.locations_for_index(event.place).any?{|location| user.current_company_user.accessible_locations.include?(location)} &&
+          !user.current_company_user.accessible_places.include?(event.place_id)
+        )
+      end
+
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
       end
@@ -108,7 +120,6 @@ class Ability
       end
 
       can :update, Task do |task|
-        Rails.logger.debug "#{user.role.has_permission?(:edit_task, Event)} #{user.role.has_permission?(:edit_my, Task)} #{user.role.has_permission?(:edit_team, Task)}"
         (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
         (user.role.has_permission?(:edit_my, Task) && task.company_user_id == user.current_company_user.id) ||
         (user.role.has_permission?(:edit_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))

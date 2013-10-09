@@ -141,23 +141,30 @@ class Place < ActiveRecord::Base
   end
 
   class << self
-    def load_organized(company_id)
+    def load_organized(company_id, counts)
       places = find(:all)
       list = {label: :root, items: [], id: nil, path: nil}
 
-      Area.joins(:places).where(places: {id: places.map(&:id)}, company_id: company_id).each do |area|
+      areas = Area.scoped_by_company_id(company_id).active
+
+      Place.unscoped do
+        places.each do |p|
+          parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
+
+          areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
+          create_structure(list, parents)
+        end
+      end
+
+      areas = areas.select{|a| a.events_count.present? && a.events_count > 0}
+
+      areas.each do |area|
         p  = create_structure(list, area.common_denominators)
         p[:items] ||= []
         p[:items].push({label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'})
       end
 
-      places.each do |p|
-        parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
-        create_structure(list, parents)
-      end
-
-      list[:items]
-      simplify_list list[:items]
+      {locations: simplify_list(list[:items]), areas: areas}
     end
 
     def encode_location(path)
@@ -188,6 +195,16 @@ class Place < ActiveRecord::Base
         return encode_location([place.continent_name, place.country_name, place.state_name])+'||'+place.state_name if place.state_name
         return encode_location([place.continent_name, place.country_name])+'||'+place.country_name if place.country_name
         return encode_location(place.continent_name)+'||'+place.continent_name if place.continent_name
+      end
+    end
+
+    def location_for_search(place)
+      unless place.nil?
+        return nil if place.types.present? && place.types.include?('establishment')
+        return encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if place.state_name && place.city
+        return encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
+        return encode_location([place.continent_name, place.country_name]) if place.country_name
+        return encode_location(place.continent_name) if place.continent_name
       end
     end
 

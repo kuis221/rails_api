@@ -1,0 +1,3 @@
+|
+  $('#campaigns-#{params[:parent_type]}-#{params[:parent_id]}').html('#{j render(partial: 'company_users/campaign', collection: @campaigns, locals: {parent: @parent})}')
+  $('#btn-add-campaign-#{params[:parent_type]}-#{params[:parent_id]}').hide();

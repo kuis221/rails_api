@@ -1,0 +1,21 @@
+.campaigns-group
+  .row-fluid.campaigns-group-header
+    .pull-left
+      div class="switch-toggle #{enabled ? 'active' : 'inactive'}" id="campaigns-toggle-#{parent.class.name}-#{parent.id}"
+        a.btn.btn-small.toggle-on-btn href="#" id="toggle-bucket-off" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
+          .on ALL
+          span
+        a.btn.btn-small.toggle-off-btn href="#" id="toggle-bucket-on" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
+          span
+          .off 
+    .pull-left
+      h4 = parent.name
+
+
+
+  .campaigns-group-body
+    .row-fluid.campaigns-list id="campaigns-#{parent.class.name}-#{parent.id}"
+        = render partial: 'company_users/campaign', collection: campaigns, locals: {parent: parent}
+
+    .row-fluid
+      = link_to '', select_campaigns_company_user_path(resource, parent_type: parent.class.name, parent_id: parent.id), remote: true, class: 'icon-plus-sign', id: "btn-add-campaign-#{parent.class.name}-#{parent.id}", style: "display: #{enabled ? 'none' : 'inline'};"

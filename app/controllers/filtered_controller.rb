@@ -125,7 +125,6 @@ class FilteredController < InheritedResources::Base
 
 
     # Autocomplete helper methods
-
     def autocomplete_buckets(list)
       search_classes = list.values.flatten
       search = Sunspot.search(search_classes) do
@@ -156,7 +155,7 @@ class FilteredController < InheritedResources::Base
       end
 
       # Sort by scoring if we are grouping multiple clasess into one bucket
-      results = results.sort { |a, b| b.score <=> a.score }.first(5) if klasess.size > 1
+      results = results.sort{|a, b| b.score <=> a.score }.first(5) if klasess.size > 1
       {label: bucket_name.to_s.gsub(/[_]+/, ' ').capitalize, value: get_bucket_results(results)}
     end
 
@@ -167,12 +166,13 @@ class FilteredController < InheritedResources::Base
     def search_params
       @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
         p[:company_id] = current_company.id
+        p[:current_company_user] = current_company_user
       end
     end
 
     # Facet helper methods
     def build_facet(klass, title, name, facets)
-      counts = Hash[facets.map{|x| [x.value.to_i, x.count] }]
+      counts = Hash[facets.map{|x| [x.value.to_i, x.count]}]
       items = klass.where(id: counts.keys).all
       items.sort!{|a, b| counts[b.id] <=> counts[a.id] }
       {label: title, items: items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id], name: name})}}
@@ -194,13 +194,16 @@ class FilteredController < InheritedResources::Base
       {label: 'Brands', items: brands}
     end
 
-    def build_locations_bucket(facets)
-      first_five = facets.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: Base64.strict_encode64(x.value), count: x.count, name: :place}) }.first(5)
-      first_five_ids = first_five.map{|x| x[:id] }
+    def build_locations_bucket(search)
       locations = {}
-      locations = Place.where(id: facets.map{|x| x.value.split('||')[0]}.uniq.reject{|id| first_five_ids.include?(id) }).load_organized(current_company.id)
+      counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
+      locations = Place.where(id: counts.keys.uniq).load_organized(current_company.id, counts)
 
-      {label: 'Locations', top_items: first_five, items: locations}
+      first_five = (search.facet(:place).rows.map{|x| id, name = x.value.split('||'); [Base64.strict_encode64(x.value), name, x.count, :place]} + locations[:areas].map{|a| [a.id, a.name, a.events_count, :area]}).sort{|a,b| b[3] <=> a[3] }.first(5)
+
+      first_five = first_five.map{|x| build_facet_item({label: x[1], id: x[0], count: x[2], name: x[3]}) }.first(5)
+
+      {label: 'Locations', top_items: first_five, items: locations[:locations]}
     end
 
     def items_per_page

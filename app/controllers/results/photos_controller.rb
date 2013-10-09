@@ -46,7 +46,7 @@ class Results::PhotosController < FilteredController
 
         f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_brands_bucket(facet_search.facet(:campaign).rows)
-        f.push build_locations_bucket(facet_search.facet(:place).rows)
+        f.push build_locations_bucket(facet_search)
         f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
       end
     end

@@ -28,6 +28,8 @@ class Area < ActiveRecord::Base
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
 
+  attr_accessor :events_count
+
   searchable do
     integer :id
 
@@ -43,25 +45,39 @@ class Area < ActiveRecord::Base
 
   # Returns an array of the common denominators of the places within this area. Example:
   #  ['North America', 'United States', 'California', 'Los Angeles']
-  def common_denominators
+  def common_denominators(include_establishments=false)
     denominators = []
-    continents = places.map(&:continent_name)
-    if continents.compact.size == places.size and continents.uniq.size == 1
+    if include_establishments
+      list_places = places.all
+    else
+      list_places = places.select{|p| !p.types.nil? && (p.types & ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
+    end
+    continents = list_places.map(&:continent_name)
+    if continents.compact.size == list_places.size and continents.uniq.size == 1
       denominators.push continents.first
-      countries = places.map(&:country_name)
-      if countries.compact.size == places.size and countries.uniq.size == 1
+      countries = list_places.map(&:country_name)
+      if countries.compact.size == list_places.size and countries.uniq.size == 1
         denominators.push countries.first
-        states = places.map(&:state_name)
-        if states.compact.size == places.size and states.uniq.size == 1
+        states = list_places.map(&:state_name)
+        if states.compact.size == list_places.size and states.uniq.size == 1
           denominators.push states.first
-          cities = places.map(&:city)
-          if cities.compact.size == places.size and cities.uniq.size == 1
+          cities = list_places.map(&:city)
+          if cities.compact.size == list_places.size and cities.uniq.size == 1
             denominators.push cities.first
           end
         end
       end
     end
     denominators
+  end
+
+  def count_events(place, parents, count)
+    self.events_count ||= 0
+    if places.include?(place)
+      self.events_count += count
+    elsif parents.join('/').include?(common_denominators.join('/'))
+      self.events_count += count
+    end
   end
 
   def activate!

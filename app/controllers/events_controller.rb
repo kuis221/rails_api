@@ -101,12 +101,13 @@ class EventsController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id with_event_data_only with_surveys_only).include?(k)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
         f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
-        f.push build_locations_bucket(facet_search.facet(:place).rows)
+        f.push build_locations_bucket(facet_search)
+
         #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
         users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
         teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
@@ -117,13 +118,5 @@ class EventsController < FilteredController
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
         f.push(label: "Event Status", items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
       end
-    end
-
-    def begin_of_association_chain
-      current_company
-    end
-
-    def controller_filters(c)
-      c.includes([:campaign, :place])
     end
 end

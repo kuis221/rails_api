@@ -1,8 +1,8 @@
-.span3 id="company_user-place-#{place.id}"
+.span3.hover-item id="company_user-place-#{place.id}"
   .pull-left
     .place-name
       = place.name
     .place-address
       = place.formatted_address
   .pull-right
-    = link_to '',  company_user_path(resource), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Place'
+    = link_to '',  company_user_place_path(resource, place), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Place'

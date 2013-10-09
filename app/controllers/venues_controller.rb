@@ -79,7 +79,7 @@ class VenuesController < FilteredController
         ]
         f.push(label: "Price", items: prices )
 
-        f.push build_locations_bucket(facet_search.facet(:place).rows)
+        f.push build_locations_bucket(facet_search)
         f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_brands_bucket(facet_search.facet(:campaigns).rows)
       end

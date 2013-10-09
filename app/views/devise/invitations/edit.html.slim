@@ -7,7 +7,7 @@
     = f.hidden_field :invitation_token
 
     div.form-inputs.chzn-container
-      = f.input :accepting_invitation, :value => true, :as => :hidden
+      = f.input :accepting_invitation, input_html: {:value => true}, :as => :hidden
       .row-fluid
         .span6
           = f.input :first_name, :autofocus => true

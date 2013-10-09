@@ -1255,21 +1255,22 @@ li#notifications{
 			border-bottom: 10px solid @grey_one;
 		}
 		ul {
+			border-collapse: collapse;
+			display: table;
 			list-style: none;
 			margin: 0;
 			padding: 0;
 			width: 100%;
 			li {
+				display: table-row;
 				vertical-align: middle;
-				padding: 10px;
 				background-color: #fff;
+				height: 65px;
 				border-top: 1px solid @borders;
-				height: 45px;
 
 				&:first-child{
-					border:0;
+					border-top: 0;
 				}
-
 				&.red {
 					border-left: 5px solid @alert_red;
 				}
@@ -1296,6 +1297,8 @@ li#notifications{
 				a{
 					color: @text;
 					font-size: 11px;
+					display: table-cell;
+					vertical-align: middle;
 					i{
 						margin-right: 5px;
 						vertical-align: middle;
@@ -1307,11 +1310,9 @@ li#notifications{
 							}
 						}
 						&.alert-icon{
-							margin-right: 10px;
+							margin-left: 12px;
+							margin-right: 12px;
 						}
-					}
-					span{
-						vertical-align: middle;
 					}
 					&:hover{
 						text-decoration: none;
@@ -1515,6 +1516,41 @@ ul.kpis-list{
 	    				font-size: 16px;
 	    			}
 	    			.area_description{
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+				    }
+	    		}
+	    		&:last-child{
+	    			.add:before{
+		        	  	color: @brand;
+						content: "\e021";
+					  	display: inline-block;
+					  	font-family: 'icons';
+						font-size: 21px;
+						right:5px;
+					  	position: relative;
+						speak: none;
+						text-align: center;
+						top: 5px;
+					  	vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
+	    			}
+	    		}
+	    	}
+	    }
+    }
+    ul#select-campaigns-list{
+    	li{
+	    	span{
+	    		&:first-child{
+	    			font-size: 11px;
+	    			margin: 8px 0 0 0;
+	    			width: 400px;
+	    			.campaign_name{
+	    				font-size: 16px;
+	    			}
+	    			.campaign_description{
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -2377,6 +2413,33 @@ body.company_users{
 	}
 	.user-role{
 		margin-bottom: 25px;
+	}
+
+	#company_user-areas-list, 
+	#company_user-places-list, 
+	.campaigns-list {
+		.icon-remove-sign {
+			display: none;
+		}
+		.hover-item:hover {
+			.icon-remove-sign {
+				display: inline;
+			}
+		}
+	}
+
+	.campaigns-group {
+		border: 1px solid @grey_one;
+		.campaigns-group-header {
+			border-bottom: 1px solid @grey_one;
+			padding: 5px;
+			width: auto;
+		}
+		margin-bottom: 20px;
+
+		.campaigns-list {
+			padding: 20px 10px;
+		}
 	}
 }
 
@@ -3759,7 +3822,7 @@ table.table td.comments-container {
 }
 
 .task-counter-bar{
-	margin: 10px 0 12px 10px;
+	margin: 0 0 12px 10px;
 }
 
 .task-counter-item {
@@ -3997,6 +4060,9 @@ svg{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	&.smaller{
+		padding: 30px 10px;
+	}
 	.box_demographics, .box_consumer_reach{
 		h3{
 			margin-top: 30px;
@@ -4258,9 +4324,6 @@ svg{
 		}
 	}
 	&#event-tasks{
-		a.btn{
-			margin-top: 17px;
-		}
 		#event-tasks-container{
 			clear: both;
 		}

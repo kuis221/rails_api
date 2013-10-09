@@ -44,7 +44,7 @@
     = render 'edit_results'
 
   - if can? :tasks, resource
-    #event-tasks.details_box
+    #event-tasks.details_box.smaller
 
       .pull-left
         = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource

@@ -30,13 +30,23 @@ class CompanyUser < ActiveRecord::Base
   has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign'
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign' do
+    def children_of(parent)
+      where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
+    end
+  end
 
   # Events-Users relationship
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
   has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area'
+
+  # BrandPortfolio-User relationship
+  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'
+
+  # BrandPortfolio-User relationship
+  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable
@@ -119,6 +129,21 @@ class CompanyUser < ActiveRecord::Base
 
   def find_users_in_my_teams
     @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: {company_id: company_id, id: teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|aid| aid == self.id }
+  end
+
+  def accessible_campaign_ids
+    # TODO: memcache this
+    @accessible_campaign_ids ||= (campaign_ids +
+    Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).map(&:id) +
+    Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).map(&:id)).uniq
+  end
+
+  def accessible_locations
+    @accessible_locations ||= (areas.map{|a| Place.encode_location(a.common_denominators) } + places.map{|p| Place.location_for_search(p) }).compact
+  end
+
+  def accessible_places
+    @accessible_places ||= user.current_company_user.place_ids
   end
 
   class << self

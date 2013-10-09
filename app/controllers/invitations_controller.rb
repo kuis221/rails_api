@@ -68,7 +68,7 @@ class InvitationsController < Devise::InvitationsController
       if action_name == 'update'
         allowed = [:first_name, :last_name, :email, :password, :password_confirmation, :city, :state, :country, :time_zone, :invitation_token, :accepting_invitation]
       else
-        allowed = [:first_name, :last_name, :email, :inviting_user, {company_users_attributes: [:company_id, :role_id, {team_ids: []}] }]
+        allowed = [:first_name, :last_name, :email, :inviting_user, :accepting_invitation, {company_users_attributes: [:company_id, :role_id, {team_ids: []}] }]
       end
       user_params.permit(*allowed)
     end

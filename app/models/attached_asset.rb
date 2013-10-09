@@ -179,6 +179,7 @@ class AttachedAsset < ActiveRecord::Base
 
         if include_facets
           facet :campaign
+          facet :place_id
           facet :place
           facet :status
         end

@@ -82,7 +82,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :company_users, except: [:new, :create], path: 'users' do
+  resources :company_users, except: [:new, :create, :destroy], path: 'users' do
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
@@ -102,6 +102,11 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
+      post :enable_campaigns
+      post :disable_campaigns
+      get :select_campaigns
+      delete :remove_campaign
+      post :add_campaign
     end
   end
 
