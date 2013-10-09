@@ -23,5 +23,5 @@ javascript:
   $('#cancel-edit').click(function(e) {
     e.stopPropagation();
     e.preventDefault();
-    $('.summary-metrics').html("#{escape_javascript(render(partial: 'summary_metrics', locals: {active_kpis: resource.campaign.active_kpis, event_data: resource.event_data}))}");
+    $('.summary-metrics').html("#{escape_javascript(render(partial: 'summary_metrics', locals: {active_kpis: resource.campaign.active_kpis, custom_kpis: resource.campaign.custom_kpis, event_data: resource.event_data}))}");
   });

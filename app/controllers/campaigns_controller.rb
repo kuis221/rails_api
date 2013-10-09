@@ -38,6 +38,11 @@ class CampaignsController < FilteredController
     render json: search.results
   end
 
+  def remove_kpi
+    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
+    @field.destroy
+  end
+
   def add_kpi
     if resource.form_fields.where(kpi_id: params[:kpi_id]).count == 0
       kpi = Kpi.global_and_custom(current_company).find(params[:kpi_id])

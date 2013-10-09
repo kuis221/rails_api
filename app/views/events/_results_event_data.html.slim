@@ -37,49 +37,65 @@
               span= number_to_currency(event_data.spent, precision: 2)
               = " Spent"
 
-      ul.consumer-reach-metrics.pull-right
-        - if event_data.spent.present? && event_data.impressions > 0
-          li
-            div.metric
-              span= number_to_currency(event_data.spent / event_data.impressions, precision: 2)
-              = " / Impression"
-
-        - if event_data.spent.present? && event_data.interactions > 0
-          li
-            div.metric
-              span= number_to_currency(event_data.spent / event_data.interactions, precision: 2)
-              = " / Influence"
-
-        - if event_data.spent.present? && event_data.interactions > 0
-          li
-            div.metric
-              span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
-              = " / Sample"
-      ul.consumer-reach-metrics.pull-right
-          - if active_kpis.include?(Kpi.photos)
-            - photo_count = resource.photos.count
+      - if active_kpis.include?(Kpi.expenses)
+        ul.consumer-reach-metrics.pull-right
+          - if active_kpis.include?(Kpi.impressions) && event_data.spent.present? && event_data.impressions > 0
             li
               div.metric
-                span= photo_count
-                = " Photos"
-              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
+                span= number_to_currency(event_data.spent / event_data.impressions, precision: 2)
+                = " / Impression"
 
+          - if active_kpis.include?(Kpi.interactions) && event_data.spent.present? && event_data.interactions > 0
             li
               div.metric
-                span= surveys_count = resource.surveys.count
-                = " Surveys"
-              = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], surveys_count)
+                span= number_to_currency(event_data.spent / event_data.interactions, precision: 2)
+                = " / Influence"
+
+          - if active_kpis.include?(Kpi.samples) && event_data.spent.present? && event_data.interactions > 0
+            li
+              div.metric
+                span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
+                = " / Sample"
+      ul.consumer-reach-metrics.pull-right
+        - if active_kpis.include?(Kpi.photos)
+          - photo_count = resource.photos.count
+          li
+            div.metric
+              span= photo_count
+              = " Photos"
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.photos.id], photo_count)
+
+        - if active_kpis.include?(Kpi.surveys)
+          - surveys_count = resource.surveys.count
+          li
+            div.metric
+              span= surveys_count
+              = " Surveys"
+            = kpi_goal_progress_bar(resource.kpi_goals[Kpi.surveys.id], surveys_count)
+
+      ul.consumer-reach-metrics.pull-right
+        - custom_kpis.each do |custom_kpi|
+          - if custom_kpi.kpi_type = 'number'
+            - custom_kpi_value = resource.results.find_by_kpi_id(custom_kpi.id).value
+            li
+              div.metric
+                span= (custom_kpi.capture_mechanism == 'currency' ? number_to_currency(custom_kpi_value, precision: 2) : custom_kpi_value)
+                = ' ' + custom_kpi.name
 
 - if event_data
   .row-fluid
     .span6
-      - if resource.demographics_graph_data[:gender].present?
+      - if active_kpis.include?(Kpi.gender) && resource.demographics_graph_data[:gender].present?
         #gender-graph.row-fluid
           = gender_graph(resource.demographics_graph_data[:gender])
-      .row-fluid
-        #age-graph
+
+      - if active_kpis.include?(Kpi.age)
+        .row-fluid
+          #age-graph
+
     .span6
-      #ethnicity-graph
+      - if active_kpis.include?(Kpi.ethnicity)
+        #ethnicity-graph
 
 
 - if event_data

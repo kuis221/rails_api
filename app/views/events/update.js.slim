@@ -5,7 +5,7 @@
   - if params['partial'] == 'event_data'
     |
       $('#edit_event_data_form').remove();
-      $('.box_event_data').html("#{escape_javascript(render(partial: 'results_event_data', locals: {active_kpis: resource.campaign.active_kpis}))}").show();
+      $('.box_event_data').html("#{escape_javascript(render(partial: 'results_event_data', locals: {active_kpis: resource.campaign.active_kpis, custom_kpis: resource.campaign.custom_kpis}))}").show();
       smoothScrollTo($('.box_event_data'));
   - else
     |
