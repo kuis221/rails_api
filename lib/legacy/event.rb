@@ -39,9 +39,15 @@ class Legacy::Event < Legacy::Record
     migration.local.place = account_migration.local
     migration.local.place.is_custom_place = true if account_migration.local.present? and account_migration.local.place_id.nil?
     if migration.save
-      #event_recap_attributes(migration.local)
-      #migration.local.save
-      synch_photos(migration.local)
+      event_recap_attributes(migration.local)
+      tries = 3
+      begin
+        migration.local.save
+      rescue AWS::S3::Errors::RequestTimeout => e
+        sleep(3)
+        retry unless (tries -= 1).zero?
+      end
+      Resque.enqueue(PhotoMigrationWorker, self.id, migration.local.id)
     end
 
     migration
@@ -130,6 +136,7 @@ class Legacy::Event < Legacy::Record
 
 
     # Expenses
+    tries = 5
     begin
       spend_metric = Metric.scoped_by_program_id(program).scoped_by_type('Metric::BarSpend').first
       value = event_recap.result_for_metric(spend_metric).try(:value)
@@ -139,7 +146,12 @@ class Legacy::Event < Legacy::Record
         expense.file = receipt.file if expense.file_file_size != receipt.file_file_size
       end
     rescue AWS::S3::Errors::RequestTimeout => e
-      p "Couldn't save receipt #{receipt.id}: #{e.message}"
+      unless (tries -= 1).zero?
+        sleep(3)
+        retry
+      else
+        raise
+      end
     end
 
   end
@@ -147,6 +159,7 @@ class Legacy::Event < Legacy::Record
   def synch_photos(event)
     # Photos
     photos.each do |photo|
+      tries = 5
       begin
         migration = photo.data_migrations.find_or_initialize_by_company_id(event.company_id)
         migration.local ||= event.photos.build
@@ -156,8 +169,12 @@ class Legacy::Event < Legacy::Record
         migration.save
         p migration.local.errors if  migration.local.errors.any?
       rescue AWS::S3::Errors::RequestTimeout => e
-        migration.destroy
-        p "Couldn't save photo #{photo.id}: #{e.message}"
+        unless (tries -= 1).zero?
+          sleep(3)
+          retry
+        else
+          raise
+        end
       end
 
     end
