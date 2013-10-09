@@ -284,6 +284,7 @@ class Venue < ActiveRecord::Base
       stat(:venue_score, :type => "max")
 
       if include_facets
+        facet :place_id
         facet :place
         facet :campaigns
       end

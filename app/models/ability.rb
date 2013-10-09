@@ -93,6 +93,14 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
+      cannot [:show, :edit], Event do |event|
+        !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
+        (
+          !Place.locations_for_index(event.place).any?{|location| user.current_company_user.accessible_locations.include?(location)} &&
+          !user.current_company_user.accessible_places.include?(event.place_id)
+        )
+      end
+
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
       end
@@ -112,7 +120,6 @@ class Ability
       end
 
       can :update, Task do |task|
-        Rails.logger.debug "#{user.role.has_permission?(:edit_task, Event)} #{user.role.has_permission?(:edit_my, Task)} #{user.role.has_permission?(:edit_team, Task)}"
         (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
         (user.role.has_permission?(:edit_my, Task) && task.company_user_id == user.current_company_user.id) ||
         (user.role.has_permission?(:edit_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))

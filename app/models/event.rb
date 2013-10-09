@@ -344,6 +344,20 @@ class Event < ActiveRecord::Base
       # TODO: probably this options should be passed by params?
       options = {include: [:campaign, :place]}
       ss = solr_search(options) do
+
+        company_user = params[:current_company_user]
+        if company_user.present?
+          unless company_user.role.is_admin?
+            with(:campaign_id, company_user.accessible_campaign_ids)
+            any_of do
+              locations = (company_user.areas.map{|a| Place.encode_location(a.common_denominators) } + company_user.places.map{|p| Place.location_for_search(p) }).compact
+              places_ids = company_user.place_ids
+              with(:place_id, places_ids + [0])
+              with(:location, locations + [0])
+            end
+          end
+        end
+
         if (params.has_key?(:user) && params[:user].present?) || (params.has_key?(:team) && params[:team].present?)
           team_ids = []
           team_ids += params[:team] if params.has_key?(:team) && params[:team].any?
@@ -400,7 +414,7 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:place_id, AreasPlace.where(area_id: params[:area]).map(&:place_id) + [0]) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators) } ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
@@ -445,6 +459,7 @@ class Event < ActiveRecord::Base
         if include_facets
           facet :campaign_id
           facet :place
+          facet :place_id
           facet :user_ids
           facet :team_ids
           facet :status

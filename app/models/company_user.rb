@@ -131,6 +131,21 @@ class CompanyUser < ActiveRecord::Base
     @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: {company_id: company_id, id: teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|aid| aid == self.id }
   end
 
+  def accessible_campaign_ids
+    # TODO: memcache this
+    @accessible_campaign_ids ||= (campaign_ids +
+    Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).map(&:id) +
+    Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).map(&:id)).uniq
+  end
+
+  def accessible_locations
+    @accessible_locations ||= (areas.map{|a| Place.encode_location(a.common_denominators) } + places.map{|p| Place.location_for_search(p) }).compact
+  end
+
+  def accessible_places
+    @accessible_places ||= user.current_company_user.place_ids
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

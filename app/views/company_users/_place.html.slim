@@ -5,4 +5,4 @@
     .place-address
       = place.formatted_address
   .pull-right
-    = link_to '',  company_user_path(resource), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Place'
+    = link_to '',  company_user_place_path(resource, place), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Place'

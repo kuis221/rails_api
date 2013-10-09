@@ -18,7 +18,7 @@ class Brand < ActiveRecord::Base
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
 
-  has_many :brand_portfolios_brands
+  has_many :brand_portfolios_brands, dependent: :destroy
   has_many :brand_portfolios, through: :brand_portfolios_brands
 
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
