@@ -1,7 +1,7 @@
 module DashboardHelper
   def dashboard_demographics_graph_data
     @demographics_graph_data ||= Hash.new.tap do |data|
-      results_scope = EventResult.for_approved_events.scoped_by_company_id(current_company)
+      results_scope = EventResult.for_approved_events.scoped_by_company_id(current_company).scoped(event_data_scope_conditions)
       [:age, :gender, :ethnicity].each do |kpi|
         results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
         segments = Kpi.send(kpi).kpis_segments
@@ -10,9 +10,8 @@ module DashboardHelper
     end
   end
 
-
   def recent_photos_list
-    AttachedAsset.do_search({company_id: current_company.id, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
+    AttachedAsset.do_search({company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
   end
 
   def dashboard_kpis_trends_data
@@ -23,7 +22,7 @@ module DashboardHelper
           sum(event_data.interactions) as interactions,
           sum(event_data.samples) as sampled,
           sum(event_data.spent) as spent
-      ').scoped_by_company_id(current_company).first
+      ').scoped(event_data_scope_conditions).scoped_by_company_id(current_company).first
       data[:events] = result.events_count.to_i
       data[:impressions] = result.impressions.to_i
       data[:interactions] = result.interactions.to_i
@@ -33,18 +32,26 @@ module DashboardHelper
         data[:impressions_event] = result.impressions.to_i/result.events_count.to_i
         data[:interactions_event] = result.interactions.to_i/result.events_count.to_i
         data[:sampled_event] = result.sampled.to_i/result.events_count.to_i
+      else
+        data[:impressions_event] = 0
+        data[:interactions_event] = 0
+        data[:sampled_event] = 0
       end
 
       if result.impressions.to_i > 0
         data[:cost_impression] = result.spent.to_f / result.impressions.to_i
         data[:cost_interaction] = result.spent.to_f / result.interactions.to_i
         data[:cost_sample] = result.spent.to_f / result.sampled.to_i
+      else
+        data[:cost_impression] = 0
+        data[:cost_interaction] = 0
+        data[:cost_sample] = 0
       end
     end
   end
 
   def upcomming_events_list
-    @upcomming_events = current_company.events.includes([:campaign, :place]).active.upcomming.limit(5)
+    @upcomming_events = current_company.events.includes([:campaign, :place]).where(events_scope_conditions).active.upcomming.limit(5)
   end
 
   def my_incomplete_tasks
@@ -67,7 +74,9 @@ module DashboardHelper
     @kpi_trends_totals ||= {}
     @kpi_trends_totals[kpi.id] ||= Hash.new.tap do |data|
       campaigns_scope = current_company.campaigns.with_goals_for(kpi)
+      campaigns_scope = campaigns_scope.where(id: current_company_user.accessible_campaign_ids) unless current_company_user.is_admin?
       campaign_ids =  campaigns_scope.select('campaigns.id').map(&:id)
+      Rails.logger.debug "CAMPAIGN IDS: #{current_company_user.accessible_campaign_ids.inspect}"
       data[:goal] = campaigns_scope.sum('goals.value').to_i
       data[:completed] = compute_completed_for(kpi, campaign_ids)
       data[:remaining] = 0
@@ -132,7 +141,7 @@ module DashboardHelper
 
     def kpis_completed_totals(campaign_ids)
       @kpis_completed_totals ||= Hash.new.tap do |totals|
-        search = Event.do_search({company_id: current_company.id, campaign: campaign_ids, event_data_stats: true, status: ['Active'], event_status: ['Approved']})
+        search = Event.do_search({company_id: current_company.id, current_company_user: current_company_user, campaign: campaign_ids, event_data_stats: true, status: ['Active'], event_status: ['Approved']})
         totals['events_count'] = search.total
         totals['promo_hours'] = search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
         totals['impressions'] = search.stat_response['stats_fields']["impressions_es"]['sum'] rescue 0
@@ -140,5 +149,15 @@ module DashboardHelper
         totals['samples'] = search.stat_response['stats_fields']["samples_es"]['sum'] rescue 0
         totals['spent'] = search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
       end
+    end
+
+    def event_data_scope_conditions
+      conditions = {}
+      conditions = {conditions: {events: events_scope_conditions}} unless current_company_user.is_admin?
+    end
+
+    def events_scope_conditions
+      conditions = {}
+      conditions = {campaign_id: current_company_user.accessible_campaign_ids} unless current_company_user.is_admin?
     end
 end

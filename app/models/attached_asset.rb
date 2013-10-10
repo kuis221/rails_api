@@ -135,6 +135,20 @@ class AttachedAsset < ActiveRecord::Base
       options = {include: {:attachable => [:campaign, :place] }}
       solr_search(options) do
         with(:company_id, params[:company_id])
+
+        company_user = params[:current_company_user]
+        if company_user.present?
+          unless company_user.role.is_admin?
+            with(:campaign_id, company_user.accessible_campaign_ids + [0])
+            any_of do
+              locations = (company_user.areas.map{|a| Place.encode_location(a.common_denominators) } + company_user.places.map{|p| Place.location_for_search(p) }).compact
+              places_ids = company_user.place_ids
+              with(:place_id, places_ids + [0])
+              with(:location, locations + [0])
+            end
+          end
+        end
+
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
           d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
