@@ -1706,7 +1706,7 @@ ul.kpis-list{
     }
     ul#event-data-list, ul#comment-list, ul#expenses-list, ul#surveys-list{
     	.event-info{
-    		margin:16px 30px 0 20px;
+    		padding:16px 30px 0 20px;
     	}
     	li{
     		address{
@@ -3486,6 +3486,7 @@ body.roles{
 		}
 		.collection-list-horizontal-scroll {
 			height: 60px;
+			margin-bottom: 8px;
 			position: relative;
 		}
 		#columns-scoller-arrows {
@@ -3497,7 +3498,7 @@ body.roles{
 			top: 0;
 			font-size: 40px;
 			.left-arrow {
-				margin-left: 57%;
+				margin-left: 50%;
 				float: left;
 				a.icon-angle-left:before{
 					color:@user_menu;
@@ -3541,7 +3542,7 @@ body.roles{
 		#event-data-totals {
 			font-size: 11px;
 			height: 60px;
-			width: 98%;
+			width: 96%;
 			overflow: hidden;
 			.big-number{
 				font-size: 22px;
@@ -3553,19 +3554,21 @@ body.roles{
 				margin-top: 3px;
 			}
 			.events-box {
-				width: 59%;
+				.box-sizing(border-box);
 				float: left;
-				margin-left: 10px;
+				padding-left: 10px;
 				text-align: center;
+				width: 55%;
 			}
 		}
 		.event-data-row {
 			overflow: hidden;
+			width: 96%;
 			.results-box-container{
 				.event-data-column{
 					font-size: 16px;
 					margin-top: 35px;
-					width: 120px;
+					width: 142px;
 				}
 			}
 		}
@@ -3600,7 +3603,7 @@ body.roles{
 				float: left;
 				margin-left: 0;
 				text-align: center;
-				width: 120px;
+				width: 142px;
 				&.center-aligned {
 					text-align: center;
 				}
@@ -3609,6 +3612,7 @@ body.roles{
 
 		.event-data-row {
 			.event-info {
+				.box-sizing(border-box);
 				float: left;
 				width: 55%;
 			}
