@@ -1,42 +1,41 @@
 = simple_form_for resource, remote: true do |f|
-  table.table.permissions-table
-    thead
-      tr
-        th 
-        th View
-        th Create
-        th Edit
-        th Deactivate
 
-    tbody
-      tr
-        td My Tasks
-        td= permission_checkbox(f, :index_my, Task)
-        td
-        td= permission_checkbox(f, :edit_my, Task)
-        td= permission_checkbox(f, :deactivate_my, Task)
+  .permissions
+    .row-fluid
+      .span12.category
+        .span2
+        .span2 VIEW
+        .span2 CREATE
+        .span2 EDIT
+        .span2 DEACTIVATE
 
-      tr
-        td.sub-level-1 Comments
-        td= permission_checkbox(f, :index_my_comments, Task)
-        td= permission_checkbox(f, :create_my_comment, Task)
-        td= permission_checkbox(f, :edit_my_comment,   Task)
-        td= permission_checkbox(f, :deactivate_my_comment, Task)
+      .span12
+        .span2.title My tasks
+        .span2 = permission_checkbox(f, :index_my, Task)
+        .span2 
+        .span2 = permission_checkbox(f, :edit_my, Task)
+        .span2 = permission_checkbox(f, :deactivate_my, Task)
 
-    tbody
-      tr
-        td Team Tasks
-        td= permission_checkbox(f, :index_team, Task)
-        td
-        td= permission_checkbox(f, :edit_team, Task)
-        td= permission_checkbox(f, :deactivate_team, Task)
+      .span12
+        .span2 Comments
+        .span2 = permission_checkbox(f, :index_my_comments, Task)
+        .span2 = permission_checkbox(f, :create_my_comment, Task)
+        .span2 = permission_checkbox(f, :edit_my_comment,   Task)
+        .span2 = permission_checkbox(f, :deactivate_my_comment, Task)
 
-      tr
-        td.sub-level-1 Comments
-        td= permission_checkbox(f, :index_team_comments, Task)
-        td= permission_checkbox(f, :create_team_comment, Task)
-        td= permission_checkbox(f, :edit_team_comment,   Task)
-        td= permission_checkbox(f, :deactivate_team_comment, Task)
+      .span12.separate_small
+        .span2.title Team tasks
+        .span2 = permission_checkbox(f, :index_team, Task)
+        .span2 
+        .span2 = permission_checkbox(f, :edit_team, Task)
+        .span2 = permission_checkbox(f, :deactivate_team, Task)
+
+      .span12
+        .span2 Comments
+        .span2 = permission_checkbox(f, :index_team_comments, Task)
+        .span2 = permission_checkbox(f, :create_team_comment, Task)
+        .span2 = permission_checkbox(f, :edit_team_comment,   Task)
+        .span2 = permission_checkbox(f, :deactivate_team_comment, Task)
 
 
 
