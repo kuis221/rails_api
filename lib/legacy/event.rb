@@ -69,7 +69,7 @@ class Legacy::Event < Legacy::Record
 
   def event_recap_attributes(event)
     active_kpis = event.campaign.active_kpis
-    event.aasm_state = event_recap.new_record? ? 'unsent' : event_recap.state
+    event.aasm_state = event_recap.new? ? 'unsent' : event_recap.state
 
     # Event summary
     event.summary = event_recap.result_for_metric(Metric.system.find_by_name("MM / MBN Supervisor Comments")).try(:value)
