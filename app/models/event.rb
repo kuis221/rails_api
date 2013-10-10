@@ -86,6 +86,8 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
 
+  after_create :add_team_members
+
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:city,:state_name,:zipcode,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -566,4 +568,17 @@ class Event < ActiveRecord::Base
       true
     end
 
+    def add_team_members
+      campaign_team = Campaign.find_by_id(self.campaign_id).staff.uniq
+      if campaign_team.present?
+        campaign_team.each do |member|
+          if member.is_a?(CompanyUser)
+            if member.accessible_places.include?(self.place_id)
+              self.users << member
+            end
+          end
+        end
+        Sunspot.index self.users
+      end
+    end
 end
