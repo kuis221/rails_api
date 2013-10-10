@@ -44,7 +44,7 @@ module EventsHelper
         yesterday = Date.yesterday
         tomorrow = Date.tomorrow
         start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d') ))) if start_date
-        end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date == tomorrow.to_s(:slashes) ? 'tomorrow' : Timeliness.parse(end_date).strftime('%B %d')))) if end_date
+        end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date == tomorrow.to_s(:slashes) ? 'tomorrow' : (Timeliness.parse(end_date).strftime("%Y").to_i > Time.zone.now.year+1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
 
         if start_date and end_date and (start_date != end_date)
           if Timeliness.parse(end_date) < today

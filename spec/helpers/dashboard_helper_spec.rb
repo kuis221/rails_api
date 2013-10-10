@@ -7,7 +7,9 @@ describe DashboardHelper do
   end
   before do
     @company = FactoryGirl.create(:company)
+    @current_company_user = FactoryGirl.create(:company_user, company: @company, role: FactoryGirl.create(:role, is_admin: true))
     helper.stub(:current_company) { @company }
+    helper.stub(:current_company_user) { @current_company_user }
     Sunspot.commit
   end
   describe "#kpi_trends_stats", search: true do

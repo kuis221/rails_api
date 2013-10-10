@@ -176,6 +176,24 @@ class Campaign < ActiveRecord::Base
     @active_field_types ||= form_fields.map(&:field_type).uniq
   end
 
+  def add_kpi(kpi)
+    field = form_fields.where(kpi_id: kpi).first
+
+    # Make sure the kpi is not already assigned to the campaign
+    if field.nil?
+      ordering = form_fields.select('max(ordering) as ordering').reorder(nil).first.ordering || 0
+      field = form_fields.create({kpi: kpi, field_type: kpi.kpi_type, name: kpi.name, ordering: ordering + 1, options: {capture_mechanism: kpi.capture_mechanism}}, without_protection: true)
+
+      # Update any preview results captured for this kpi using the new
+      # created field
+      if field.persisted?
+        EventResult.joins(:event).where(events: {campaign_id: self.id}, kpi_id: kpi).update_all(form_field_id: field.id)
+      end
+    end
+
+    field
+  end
+
   def survey_statistics
     answers_scope = SurveysAnswer.joins(survey: :event).where(events:{campaign_id: self.id}, brand_id: survey_brands.map(&:id), question_id: [1,3,4])
     total_surveys = answers_scope.select('distinct(surveys.id)').count
@@ -218,7 +236,7 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def assign_all_global_kpis
+  def assign_all_global_kpis(autosave = true)
     assign_attributes({form_fields_attributes: {
       "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"percentage", "kpi_id"=> Kpi.gender.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
       "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"percentage", "kpi_id"=> Kpi.age.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
@@ -232,7 +250,7 @@ class Campaign < ActiveRecord::Base
       "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"number", "kpi_id"=> Kpi.samples.id, "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
       "10"=> {"ordering"=>"10", "name"=>"Your Comment", "kpi_id"=> Kpi.comments.id, "field_type"=>"comments"}
     }}, without_protection: true)
-    save
+    save if autosave
   end
 
   class << self

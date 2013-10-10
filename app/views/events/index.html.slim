@@ -38,9 +38,10 @@ javascript:
     'includeCalendars': true,
     'calendarHighlights': #{calendar_highlights.to_json.html_safe},
     'selectDefaultDate': false,
+    'selectDefaultDateRange': true,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
     'onChange': function(filterBox){
       $(document).trigger('events-filter:changed')
     },

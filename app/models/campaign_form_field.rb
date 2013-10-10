@@ -41,6 +41,9 @@ class CampaignFormField < ActiveRecord::Base
       options.merge!(label: result.kpis_segment.text)
       options[:input_html].merge!('data-segment-field-id' => self.id)
     end
+    if field_type == 'count'
+      options.merge!(collection: kpi.kpis_segments.map{|s| [s.text, s.id]})
+    end
     options
   end
 
@@ -57,6 +60,12 @@ class CampaignFormField < ActiveRecord::Base
       :percentage
     when 'textarea'
       :text
+    when 'count'
+      case self.capture_mechanism
+      when 'radio' then :radio_buttons
+      when 'checkbox' then :check_boxes
+      else :select
+      end
     else
       field_type.to_s
     end
@@ -64,7 +73,7 @@ class CampaignFormField < ActiveRecord::Base
 
   # TODO: should we delegate this to the kpi?
   def is_segmented?
-    ['percentage', 'count'].include? field_type
+    ['percentage'].include? field_type
   end
 
   def is_section?
