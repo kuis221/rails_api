@@ -10,7 +10,7 @@
 
 
 # To reindex using resque
-unless Rails.env.test? || (defined?($rails_rake_task) && $rails_rake_task && !Rake.application.top_level_tasks.include?('resque:work'))
+unless Rails.env.test? || defined?(Rails::Console) || (defined?($rails_rake_task) && $rails_rake_task && !Rake.application.top_level_tasks.include?('resque:work'))
   require "sunspot/queue/resque"
   backend = Sunspot::Queue::Resque::Backend.new
   Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
