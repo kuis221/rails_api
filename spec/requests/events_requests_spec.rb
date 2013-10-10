@@ -22,45 +22,47 @@ describe "Events", js: true, search: true do
         FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03'), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
       it "should display a table with the events" do
-        events.size  # make sure users are created before
-        Sunspot.commit
-        visit events_path
+        Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
+          events.size  # make sure users are created before
+          Sunspot.commit
+          visit events_path
 
-        within("ul#events-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            page.should have_content('WED Aug 21')
-            page.should have_content('10:00 AM - 11:00 AM')
-            page.should have_content(events[0].place_name)
-            page.should have_content('Campaign FY2012')
-          end
-          # Second Row
-          within("li:nth-child(2)")  do
-            page.should have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
-            page.should have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
-            page.should have_content(events[1].place_name)
-            page.should have_content('Another Campaign April 03')
+          within("ul#events-list") do
+            # First Row
+            within("li:nth-child(1)") do
+              page.should have_content('WED Aug 21')
+              page.should have_content('10:00 AM - 11:00 AM')
+              page.should have_content(events[0].place_name)
+              page.should have_content('Campaign FY2012')
+            end
+            # Second Row
+            within("li:nth-child(2)")  do
+              page.should have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
+              page.should have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
+              page.should have_content(events[1].place_name)
+              page.should have_content('Another Campaign April 03')
+            end
           end
         end
-
       end
 
       it "should allow user to activate/deactivate events" do
-        events.size  # make sure users are created before
-        Sunspot.commit
-        visit events_path
+        Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
+          events.size  # make sure users are created before
+          Sunspot.commit
+          visit events_path
 
-        within("ul#events-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_js_link('Deactivate')
-            page.should have_selector('a.enable', text: '')
+          within("ul#events-list") do
+            # First Row
+            within("li:nth-child(1)") do
+              click_js_link('Deactivate')
+              page.should have_selector('a.enable', text: '')
 
-            click_js_link('Activate')
-            page.should have_selector('a.disable', text: '')
+              click_js_link('Activate')
+              page.should have_selector('a.disable', text: '')
+            end
           end
         end
-
       end
     end
 
