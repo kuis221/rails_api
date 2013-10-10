@@ -28,7 +28,7 @@ class Metric < Legacy::Record
 
   def synchronize(company, attributes={})
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Kpi.find_or_initialize_by_name_and_company_id(name, company.id) )
-    raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?
+    #raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?
     attributes.merge!({company_id: company.id}).merge!(migration_attributes(migration.local))
     migration.local.assign_attributes(attributes, without_protection: true)
     migration.save
