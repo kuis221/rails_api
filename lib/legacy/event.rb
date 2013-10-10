@@ -30,12 +30,12 @@ class Legacy::Event < Legacy::Record
 
   has_many :data_migrations, as: :remote
 
-  def sincronize(company, attributes={})
+  def synchronize(company, attributes={})
     attributes.merge!({company_id: company.id})
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Event.new)
     migration.local.assign_attributes migration_attributes.merge(attributes), without_protection: true
 
-    account_migration = account.sincronize(company)
+    account_migration = account.synchronize(company)
     migration.local.place = account_migration.local
     migration.local.place.is_custom_place = true if account_migration.local.present? and account_migration.local.place_id.nil?
     if migration.save
@@ -124,15 +124,37 @@ class Legacy::Event < Legacy::Record
     kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino' }.try('value=', values[11].to_s)
     kpi_results.detect{|r| r.kpis_segment.text == 'White' }.try('value=', values[8].to_s)
 
-    # Age
-    # [[3, "LDA-27"], [4, "28-35"], [5, "36-44"], [6, "45-55"], [7, "56+"]]
-    kpi_results = event.result_for_kpi(Kpi.age)
-    values = event_recap.result_for_metric(Metric.system.find_by_name('Age')).try(:value)
-    kpi_results.detect{|r| r.kpis_segment.text == '18 – 24' }.try('value=', values[3].to_s)
-    kpi_results.detect{|r| r.kpis_segment.text == '25 – 34' }.try('value=', values[4].to_s)
-    kpi_results.detect{|r| r.kpis_segment.text == '35 – 44' }.try('value=', values[5].to_s)
-    kpi_results.detect{|r| r.kpis_segment.text == '45 – 54' }.try('value=', values[6].to_s)
-    kpi_results.detect{|r| r.kpis_segment.text == '55 – 64' }.try('value=', values[7].to_s)
+
+    # Custom KPIs
+    program.form_template.form_fields.custom.each do |field|
+      migration = Legacy::DataMigration.for_metric(field.metric).first
+      if migration.present? and migration.local.present?
+        result = event.result_for_kpi(migration.local)
+        if migration.local.is_segmented?
+          values = event_recap.result_for_metric(field.metric).try(:value)
+          values.each do |option_id, value|
+            value = value.to_i if !value.nil? and migration.local.capture_mechanism == 'integer'
+            metric_option = field.metric.metric_options.find(option_id)
+            result.detect{|r| r.kpis_segment.text == metric_option.name }.try('value=',  value.to_s) if metric_option.present?
+          end
+        else
+          metric_result = event_recap.result_for_metric(field.metric).try(:value)
+          unless metric_result.nil?
+            if field.metric.type == 'Metric::Boolean'
+              result.value = migration.local.kpis_segments.detect{|s| s.text == ['No', 'Yes'][metric_result]}.try(:id)
+            elsif migration.local.kpi_type == 'count'
+              result.value = metric_result.join(',')
+            else
+              if migration.local.capture_mechanism == 'integer'
+                result.value = metric_result.try(:to_i).try(:to_s)
+              else
+                result.value = metric_result
+              end
+            end
+          end
+        end
+      end
+    end
 
 
     # Expenses

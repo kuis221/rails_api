@@ -35,7 +35,6 @@ class Kpi < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, numericality: true, allow_nil: true
-
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
 
   # KPIs-Segments relationship
@@ -66,7 +65,7 @@ class Kpi < ActiveRecord::Base
   end
 
   def is_segmented?
-    ['percentage', 'count'].include? kpi_type
+    ['percentage'].include? kpi_type
   end
 
   def currency?

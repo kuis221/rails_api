@@ -348,7 +348,7 @@ class Event < ActiveRecord::Base
         company_user = params[:current_company_user]
         if company_user.present?
           unless company_user.role.is_admin?
-            with(:campaign_id, company_user.accessible_campaign_ids)
+            with(:campaign_id, company_user.accessible_campaign_ids + [0])
             any_of do
               locations = (company_user.areas.map{|a| Place.encode_location(a.common_denominators) } + company_user.places.map{|p| Place.location_for_search(p) }).compact
               places_ids = company_user.place_ids

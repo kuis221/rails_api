@@ -24,8 +24,10 @@
       var kpi_id = $(this).data('kpi-id');
       var _this = this;
       bootbox.confirm("<p>Please confirm you want to deactivate this KPI?</p>", function (result) {
-        $(_this).parent().addClass('inactive').removeClass('active')
-        FormBuilder.deactivateKpi(kpi_id);
+        if (result) {
+          $(_this).parent().addClass('inactive').removeClass('active')
+          FormBuilder.deactivateKpi(kpi_id);
+        }
       });
       return false;
     });
