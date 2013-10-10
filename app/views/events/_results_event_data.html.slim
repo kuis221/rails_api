@@ -100,69 +100,71 @@
 
 - if event_data
   javascript:
-    $('#age-graph').highcharts({
-        chart: { type: 'bar' },
-        title: { text: null },
-        colors: ['#DFDFDF','#3E9CCF'],
-        xAxis: {
-            categories: #{resource.demographics_graph_data[:age].keys.to_json.html_safe},
-            title: {
-                enabled: false
-            },
-            labels: {
-              style: {color: '#3E9CCF'}
-            },
-            tickLength: 0,
-            lineWidth: 0
-        },
-        tooltip: {enabled: false},
-        yAxis: {
-            max: 100,
-            labels: { enabled: false },
-            title: {text: false},
-            gridLineColor: 'transparent',
-            enabled: false
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: false
-                }
-            },
-            series: {
-                stacking: 'percent',
-                enableMouseTracking: false,
-                pointPadding: 0,
-                groupPadding: 0,
-                borderWidth: 0,
-                pointPadding: 0,
-                pointWidth: 15,
-                dataLabels: {
-                    color: '#3E9CCF'
-                }
-            }
-        },
-        legend: { enabled: false },
-        credits: { enabled: false },
-        series: [{
-            name: 'Fill in',
-            data: #{resource.demographics_graph_data[:age].values.map{|v|(100-v).round}.to_json.html_safe},
+    if (#{active_kpis.include?(Kpi.age)}) {
+      $('#age-graph').highcharts({
+          chart: { type: 'bar' },
+          title: { text: null },
+          colors: ['#DFDFDF','#3E9CCF'],
+          xAxis: {
+              categories: #{resource.demographics_graph_data[:age].keys.to_json.html_safe},
+              title: {
+                  enabled: false
+              },
+              labels: {
+                style: {color: '#3E9CCF'}
+              },
+              tickLength: 0,
+              lineWidth: 0
+          },
+          tooltip: {enabled: false},
+          yAxis: {
+              max: 100,
+              labels: { enabled: false },
+              title: {text: false},
+              gridLineColor: 'transparent',
+              enabled: false
+          },
+          plotOptions: {
+              bar: {
+                  dataLabels: {
+                      enabled: false
+                  }
+              },
+              series: {
+                  stacking: 'percent',
+                  enableMouseTracking: false,
+                  pointPadding: 0,
+                  groupPadding: 0,
+                  borderWidth: 0,
+                  pointPadding: 0,
+                  pointWidth: 15,
+                  dataLabels: {
+                      color: '#3E9CCF'
+                  }
+              }
+          },
+          legend: { enabled: false },
+          credits: { enabled: false },
+          series: [{
+              name: 'Fill in',
+              data: #{resource.demographics_graph_data[:age].values.map{|v|(100-v).round}.to_json.html_safe},
 
-        },{
-            name: 'Values',
-            data: #{resource.demographics_graph_data[:age].values.map(&:round).to_json.html_safe},
-            dataLabels: {
-                    enabled: true,
-                    format: '{y}%',
-                    color: '#3E9CCF',
-                    align: 'right',
-                    x: 30,
-                    y: -2,
-                    style: { color: '#3E9CCF' }
-                }
+          },{
+              name: 'Values',
+              data: #{resource.demographics_graph_data[:age].values.map(&:round).to_json.html_safe},
+              dataLabels: {
+                      enabled: true,
+                      format: '{y}%',
+                      color: '#3E9CCF',
+                      align: 'right',
+                      x: 30,
+                      y: -2,
+                      style: { color: '#3E9CCF' }
+                  }
 
-        }]
-    });
+          }]
+      });
+    }
 
     if (#{resource.demographics_graph_data[:ethnicity].values.max} > 0) {
         $('#ethnicity-graph').highcharts({

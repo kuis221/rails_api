@@ -11,6 +11,8 @@ $.widget 'nmk.filteredList', {
 		defaultParams: [],
 		customFilters: [],
 		selectDefaultDate: false,
+		selectedDate: new Date(),
+		selectDefaultDateRange: false,
 		calendarHighlights: null
 	},
 
@@ -80,6 +82,9 @@ $.widget 'nmk.filteredList', {
 		if @infiniteScroller
 			@listContainer.infiniteScrollHelper 'destroy'
 
+	_findDefaultParam: (paramName) ->
+		$.grep @options.defaultParams, (n, i) ->
+			n.name is paramName
 
 	disableScrolling: ->
 		if @infiniteScroller
@@ -88,7 +93,6 @@ $.widget 'nmk.filteredList', {
 	enableScrolling: ->
 		if @infiniteScroller
 			@listContainer.infiniteScrollHelper 'enableScrolling'
-
 
 	_loadFilters: ->
 		params = @buildParams()
@@ -373,7 +377,7 @@ $.widget 'nmk.filteredList', {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
-			defaultDate: (if @options.selectDefaultDate then new Date() else null),
+			defaultDate: (if @options.selectDefaultDate then @options.selectedDate else null),
 			selectDefaultDate: @options.selectDefaultDate,
 			prevText: '<',
 			nextText: '>',
@@ -406,6 +410,12 @@ $.widget 'nmk.filteredList', {
 					@_filtersChanged()
 		}
 
+		if @options.selectDefaultDateRange
+			start_date = @_findDefaultParam('start_date')
+			end_date = @_findDefaultParam('end_date')
+			if start_date.length > 0 && end_date.length > 0
+				dates = [start_date[0].value, end_date[0].value]
+				container.datepick('setDate', dates)
 
 	_formatDate: (date) ->
 		"#{date.getMonth() + 1}/#{date.getDate()}/#{date.getFullYear()}"
