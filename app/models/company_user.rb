@@ -55,10 +55,12 @@ class CompanyUser < ActiveRecord::Base
   delegate :name, :full_name, :first_name, :last_name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
   delegate :name, to: :role, prefix: true
+  delegate :is_admin?, to: :role, prefix: false
 
   scope :active, where(:active => true)
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
+  scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
 
   searchable do

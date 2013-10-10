@@ -17,21 +17,26 @@
 #
 
 class Legacy::Program  < Legacy::Record
-  has_many      :events
+  has_many      :events, inverse_of: :program
   belongs_to    :brand
 
   delegate :name, to: :brand, allow_nil: true, prefix: true
 
   has_many :data_migrations, as: :remote
 
-  def sincronize(company, attributes={})
+  has_one       :form_template
+
+  def synchronize(company, attributes={})
     attributes.merge!({company_id: company.id})
-    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Campaign.new )
+    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Campaign.find_or_initialize_by_name_and_company_id(migration_attributes[:name], company.id) )
     if migration.local.new_record? || migration.local.form_fields.count == 0
-      migration.local.assign_all_global_kpis
+      migration.local.assign_all_global_kpis(false)
     end
     migration.local.assign_attributes(migration_attributes.merge(attributes), without_protection: true)
     migration.save
+
+    synchronize_custom_kpis(company, migration.local)
+
     migration
   end
 
@@ -45,19 +50,11 @@ class Legacy::Program  < Legacy::Record
     }
   end
 
-  def form_field_attributes
-    {
-      "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"percentage", "kpi_id"=>"5", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"percentage", "kpi_id"=>"6", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "2" => {"ordering"=>"2", "name"=>"Ethnicity/Race", "field_type"=>"percentage", "kpi_id"=>"7", "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "3" => {"ordering"=>"3", "name"=>"Expenses", "field_type"=>"number", "kpi_id"=>"8", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "4" => {"ordering"=>"4", "name"=>"Surveys", "field_type"=>"surveys", "kpi_id"=>"11"},
-      "5" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=>"9"},
-      "6" => {"ordering"=>"6", "name"=>"Videos", "field_type"=>"videos", "kpi_id"=>"10"},
-      "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"number", "kpi_id"=>"2", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"number", "kpi_id"=>"3", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"number", "kpi_id"=>"4", "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "10"=> {"ordering"=>"10", "name"=>"Your Comment", "field_type"=>"comments"}
-    }
+  def synchronize_custom_kpis(company, campaign)
+    form_template.form_fields.custom.each do |field|
+      migration = field.metric.synchronize(company)
+      p migration.local.errors.inspect if migration.local.errors.any?
+      campaign.add_kpi(migration.local) if migration.local.persisted?
+    end
   end
 end

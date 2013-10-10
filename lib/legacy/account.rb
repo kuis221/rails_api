@@ -24,7 +24,7 @@ class Legacy::Account < Legacy::Record
   has_many :data_migrations, as: :remote
 
 
-  def sincronize(company, attributes={})
+  def synchronize(company, attributes={})
     migration = data_migrations.find_or_initialize_by_company_id(company.id)
     unless migration.local.present?
       migration.local = find_place_on_api
