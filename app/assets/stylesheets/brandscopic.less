@@ -65,6 +65,15 @@ abbr[title]{
 	border:0;
 }
 
+/*-- EVENT DETAILS PAGES __*/
+
+body.events.show ul.consumer-reach-metrics li .metric, body.teams.show ul.consumer-reach-metrics li .metric, body.areas.show ul.consumer-reach-metrics li .metric, body.brand_portfolios.show ul.consumer-reach-metrics li .metric{
+	width: 300px;
+}
+
+
+
+
 #analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
   	display: block;
   	font-family: 'icons';
@@ -2541,8 +2550,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
   }
 
 	.box_metrics{
-		margin-top: 50px;
-		width: 400px;
+		width: 300px;
 	}
 
 	ul.consumer-reach-metrics {
@@ -3176,6 +3184,12 @@ body.roles{
 
 .permissions{
 	margin-bottom: 30px;
+	.separate_small{
+		margin-top: 10px;
+	}
+	.separate{
+		margin-top: 30px;
+	}
 	.span7, .span7:first-child{
 		font-size: 16px;
 		line-height: 40px;
@@ -3189,12 +3203,6 @@ body.roles{
 				padding-bottom: 15px;
 				text-align: center;
 			}
-		}
-		&.separate_small{
-			margin-top: 10px;
-		}
-		&.separate{
-			margin-top: 30px;
 		}
 		.span2{
 			.checker{

@@ -51,12 +51,19 @@
         .span2 = permission_checkbox(f, :add_day_part, Campaign)
         .span2 = permission_checkbox(f, :remove_day_part, Campaign)
 
-
       .span12
         .span2.title Documents
         .span2 = permission_checkbox(f, :view_documents, Campaign)
         .span2 = permission_checkbox(f, :add_document, Campaign)
         .span2 = permission_checkbox(f, :remove_document, Campaign)
+
+      .span12
+        .span2.title.separate_small KPIs
+
+      .span12
+        .span2 View
+        .span2 = permission_checkbox(f, :view_kpis, Campaign)
+
 
   = hidden_field_tag :partial, :tasks_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
