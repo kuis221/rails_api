@@ -15,23 +15,23 @@ module DashboardHelper
   end
 
   def upcomming_events_list
-    @upcomming_events = current_company.events.includes([:campaign, :place]).where(events_scope_conditions).active.upcomming.limit(5)
+    Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :desc }).results
   end
 
   def my_incomplete_tasks
-    Task.includes(event: :campaign).active.incomplete.where(company_user_id: current_company_user).limit(5)
+    Task.do_search({company_id: current_company.id, current_company_user: current_company_user, user: [current_company_user.id], task_status: ['Incomplete'], per_page: 5, sorting: :due_at, sorting_dir: :asc }).results
   end
 
   def team_incomplete_tasks
-    Task.includes(event: :campaign).active.incomplete.where(company_user_id: current_company_user.find_users_in_my_teams).limit(5)
+    Task.do_search({company_id: current_company.id, current_company_user: current_company_user, team_members: [current_company_user.id], not_assigned_to: [current_company_user.id], task_status: ['Incomplete'], per_page: 5, sorting: :due_at, sorting_dir: :asc }).results
   end
 
   def top5_venues
-    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score DESC').limit(5)
+    Venue.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :venue_score, venue_score: {min: 0}, sorting_dir: :desc }).results
   end
 
   def bottom5_venues
-    Venue.scoped_by_company_id(current_company).where('score is not null').includes(:place).order('venues.score ASC').limit(5)
+    Venue.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :venue_score, venue_score: {min: 0}, sorting_dir: :asc }).results
   end
 
   def kpi_trends_stats(kpi)
