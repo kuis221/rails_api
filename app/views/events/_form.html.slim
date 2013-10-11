@@ -3,7 +3,7 @@
 
   .form-inputs.edit-event
     .chosen-campaign
-      = f.association :campaign, collection: company_campaigns.active, input_html: {class: 'chosen-enabled'}
+      = f.association :campaign, collection: company_campaigns.active.accessible_by_user(current_company_user), input_html: {class: 'chosen-enabled'}
 
     .row-fluid
       .span6
