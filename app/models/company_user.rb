@@ -145,7 +145,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_places
-    @accessible_places ||= user.current_company_user.place_ids
+    @accessible_places ||= (user.current_company_user.place_ids + user.current_company_user.areas.map{|a| a.places.map{|p| p.id}}).flatten.uniq
   end
 
   class << self
