@@ -83,7 +83,7 @@
                 = ' ' + custom_kpi.name
 
 - if event_data
-  .row-fluid
+  #demographics.row-fluid
     .span6
       - if active_kpis.include?(Kpi.gender) && resource.demographics_graph_data[:gender].present?
         #gender-graph.row-fluid
