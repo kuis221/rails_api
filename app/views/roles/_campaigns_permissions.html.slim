@@ -27,5 +27,36 @@
         .span2 REMOVE
         .span2 
 
+      .span12
+        .span2.title Places
+        .span2 = permission_checkbox(f, :view_places, Campaign)
+        .span2 = permission_checkbox(f, :add_place, Campaign)
+        .span2 = permission_checkbox(f, :remove_place, Campaign)
+
+      .span12
+        .span2.title Staff
+        .span2 = permission_checkbox(f, :view_staff, Campaign)
+        .span2 = permission_checkbox(f, :add_staff, Campaign)
+        .span2 = permission_checkbox(f, :remove_staff, Campaign)
+
+      .span12
+        .span2.title Date ranges
+        .span2 = permission_checkbox(f, :view_date_ranges, Campaign)
+        .span2 = permission_checkbox(f, :add_date_range, Campaign)
+        .span2 = permission_checkbox(f, :remove_date_range, Campaign)
+
+      .span12
+        .span2.title Day Parts
+        .span2 = permission_checkbox(f, :view_day_parts, Campaign)
+        .span2 = permission_checkbox(f, :add_day_part, Campaign)
+        .span2 = permission_checkbox(f, :remove_day_part, Campaign)
+
+
+      .span12
+        .span2.title Documents
+        .span2 = permission_checkbox(f, :view_documents, Campaign)
+        .span2 = permission_checkbox(f, :add_document, Campaign)
+        .span2 = permission_checkbox(f, :remove_document, Campaign)
+
   = hidden_field_tag :partial, :tasks_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
