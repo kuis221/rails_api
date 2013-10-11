@@ -69,7 +69,7 @@ class Legacy::Event < Legacy::Record
 
   def event_recap_attributes(event)
     active_kpis = event.campaign.active_kpis
-    event.aasm_state = event_recap.new? ? 'unsent' : event_recap.state
+    event.aasm_state = event_recap.state == 'new' ? 'unsent' : event_recap.state
 
     # Event summary
     event.summary = event_recap.result_for_metric(Metric.system.find_by_name("MM / MBN Supervisor Comments")).try(:value)
@@ -175,9 +175,13 @@ class Legacy::Event < Legacy::Record
       spend_metric = Metric.scoped_by_program_id(program).scoped_by_type('Metric::BarSpend').first
       value = event_recap.result_for_metric(spend_metric).try(:value)
 
-      expense = event.event_expenses.where(name: 'bar spend + tip').first || event.event_expenses.build({name: 'bar spend + tip', amount: value[Metric::Tab::TOTAL]})
+      bar_spend = event.event_expenses.where(name: 'bar spend').first || event.event_expenses.build({name: 'bar spend'})
+      bar_spend.amount = value[Metric::Tab::TAB]
+      tip = event.event_expenses.where(name: 'tip').first || event.event_expenses.build({name: 'tip'})
+      tip.amount = value[Metric::Tab::TIP]
+
       if receipt = receipts.first
-        expense.file = receipt.file if expense.file_file_size != receipt.file_file_size
+        bar_spend.file = receipt.file if bar_spend.file_file_size != receipt.file_file_size
       end
     rescue AWS::S3::Errors::RequestTimeout => e
       unless (tries -= 1).zero?
