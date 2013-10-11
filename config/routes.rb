@@ -139,6 +139,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :kpis
+      get :places
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'campaigns#new_member', via: :get, as: :new_member

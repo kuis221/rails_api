@@ -16,7 +16,10 @@
         = f.input :end_date, :as => :date_picker
         = f.input :end_time, :as => :time_picker
 
-    .row-fluid
+    .row-fluid.campaign-places
+      = f.input :place_id, label: 'Place', collection: (resource.campaign_id.present? ? Campaign.find(resource.campaign_id).places.map{|p| [p.name, p.id]} : []), input_html: {class: 'input-xxlarge chosen-enabled'}
+
+    .row-fluid.google-places
       = f.error :place
       = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xxlarge'}
 
@@ -37,6 +40,37 @@ javascript:
     defaultDate: $('#calendar_end_date').data('date')
   });
 
+  $('#event_campaign_id').on('change', function () {
+    campaign_id = $(this).val();
+    if (campaign_id) {
+      $.get('/campaigns/'+campaign_id+'/places', function(response) {
+        places_campaigns = $('#event_place_id');
+        places_google = $('#event_place_reference');
+        val = places_campaigns.val();
+        places_campaigns.html('<option></option>');
+        count = response.length;
+        if (count > 0) {
+          for (_i = 0; _i < count; _i++) {
+            place = response[_i];
+            option = $('<option>').val(place.id).html(place.label);
+            if (val == place.id) {
+              option.attr('selected', 'selected');
+            }
+            places_campaigns.append(option);
+          }
+          places_campaigns.trigger('liszt:updated');
+          $('#event_place_reference').val('');
+          $('#place_reference_ac').val('');
+          $('.google-places').hide();
+          $('.campaign-places').show();
+        } else {
+          $('.google-places').show();
+          $('.campaign-places').hide();
+        }
+      });
+    }
+  });
+
   var input = $('.modal .places-autocomplete')[0];
   var locationAutocomplete = new google.maps.places.Autocomplete(input);
 
@@ -47,4 +81,10 @@ javascript:
     }
 
     $($(input).data('hidden')).val(place.reference+'||'+place.id);
+  });
+
+  $(document).ready(function() {
+    $('.campaign-places').hide();
+    $('.google-places').hide();
+    $('#event_campaign_id').trigger("change");
   });
