@@ -65,6 +65,8 @@
         .pull-left
           = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true if can? :create_document, resource
 
+= render partial: 'help_tutorial'
+
 javascript:
   $(document).ready(function() {
     $(this).scrollTop(400);
