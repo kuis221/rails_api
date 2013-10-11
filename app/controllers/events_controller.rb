@@ -60,6 +60,10 @@ class EventsController < FilteredController
     end
   end
 
+  def calendar
+    render json: calendar_brands_events
+  end
+
   def calendar_highlights
     @calendar_highlights ||= Hash.new.tap do |hsh|
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
@@ -113,10 +117,43 @@ class EventsController < FilteredController
         teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
         # users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
         # teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
-        people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
+        people = (users + teams).sort{ |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
         f.push(label: "Event Status", items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
       end
+    end
+
+    def calendar_brands_events
+      colors = ['#d3c941', '#d7a23c', '#a18740', '#6c5f3c', '#d93f99', '#a766cf', '#7e42a4', '#bfbfbf', '#909090', '#606060']
+      brands_colors = {}
+      days = {}
+      campaing_brands_map = {}
+      start_date = DateTime.strptime(params[:start],'%s')
+      end_date = DateTime.strptime(params[:end],'%s')
+      p = search_params.merge(start_date: nil, end_date: nil)
+      search = Event.do_search(p, true)
+      #raise search.facet(:start_at).inspect
+      campaign_ids = search.facet(:campaign_id).rows.map{|r| r.value.to_i }
+      current_company.campaigns.where(id: campaign_ids).map{|campaign| campaing_brands_map[campaign.id] = campaign.associated_brands }
+
+      all_brands = campaing_brands_map.values.flatten.map(&:id).uniq
+
+      search = Event.do_search(p.merge(start_date: start_date.to_s(:slashes), end_date: end_date.to_s(:slashes), per_page: 1000))
+      search.hits.each do |hit|
+        sd = hit.stored(:start_at).to_date
+        ed = hit.stored(:end_at).to_date
+        (sd..ed).each do |day|
+          days[day] ||= {}
+          campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand|
+            days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id)}
+            days[day][brand.id][:count] += 1
+            days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
+
+            (1..5).each{|i| days[day][brand.id + i] ||= {count: 0, title: brand.name + ' ' + i.to_s, start: day, end: day, color: colors[all_brands.index(brand.id)+i%colors.count], url: events_path('brand[]' => brand.id)}}
+          end
+        end
+      end
+      days.map{|d, brands| brands.values.sort{|a, b| a[:title] <=> b[:title]}}.flatten
     end
 end

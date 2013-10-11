@@ -156,6 +156,10 @@ class Campaign < ActiveRecord::Base
     brands.map(&:name).join ','
   end
 
+  def associated_brands
+    brands + brand_portfolios.includes(:brands).map(&:brands).flatten
+  end
+
   def status
     self.aasm_state.capitalize
   end

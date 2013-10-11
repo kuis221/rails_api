@@ -638,7 +638,31 @@ body.app-layout{
 		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
+	.icon-calendar:before{
+		color: white;
+		font-size: 19px;
+		left: 2px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:1px;
+		-webkit-font-smoothing: antialiased;
+	}
 }
+#calendar-canvas {
+	margin-top: 10px;
+
+	.fc-day-header {
+		background-color: @grey_three !important;
+		color: #fff;
+	}
+
+	.fc-day-content {
+		height: 90px;
+	}
+}
+
 .btn-small {
 	padding: 2px 10px;
 }
