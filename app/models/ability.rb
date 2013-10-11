@@ -83,8 +83,8 @@ class Ability
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
-      can :places, Campaign do |campaign|
-        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      can [:places, :report], Campaign do |campaign|
+        can?(:show_analysis, campaign) && user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       # Event Data
