@@ -90,7 +90,7 @@ class CampaignsController < FilteredController
   end
 
   def places
-    render json: resource.places.map{|p| {id: p.id, label: p.name}}
+    render json: resource.places.order('places.name ASC').map{|p| {id: p.id, label: [p.name, p.city, p.state].compact.join(', ')}}
   end
 
   protected

@@ -47,7 +47,6 @@ module Analysis
 
       return data if result.nil? || result.first_event_at.nil? || result.first_event_at.empty? || result.qty_events == 0
 
-      Rails.logger.debug "first_event_at=> #{result.first_event_at} last_event_at => #{result.last_event_at}"
       data['first_event_at'] = first_event_at = Timeliness.parse(result.first_event_at, zone: :current)
       data['last_event_at'] = last_event_at  = Timeliness.parse(result.last_event_at, zone: :current).end_of_day
 
@@ -194,7 +193,7 @@ module Analysis
           end
 
           if completed.nil?
-            yield goal, 0, 100, goal.value, 0
+            yield goal, 0, 100, goal.value || 0, 0
           else
             goal_value = goal.value || 0
             total_count = completed
@@ -205,6 +204,7 @@ module Analysis
               completed_percentage = 0
             end
             remaining_percentage = 100 - completed_percentage
+            Rails.logger.debug "each_events_goal: #{goal}, #{completed_percentage}, #{remaining_percentage}, #{remaining_count}, #{total_count}"
             yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
           end
         end

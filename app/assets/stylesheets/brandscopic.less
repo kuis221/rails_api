@@ -1301,7 +1301,6 @@ li#notifications{
 					vertical-align: middle;
 					i{
 						margin-right: 5px;
-						vertical-align: middle;
 						&.icon-angle-right{
 							&:before{
 								font-size: 22px !important;
@@ -1707,7 +1706,7 @@ ul.kpis-list{
     }
     ul#event-data-list, ul#comment-list, ul#expenses-list, ul#surveys-list{
     	.event-info{
-    		margin:16px 30px 0 20px;
+    		padding:16px 30px 0 20px;
     	}
     	li{
     		address{
@@ -3176,10 +3175,39 @@ body.roles{
 }
 
 .permissions{
+	margin-bottom: 30px;
 	.span7, .span7:first-child{
 		font-size: 16px;
 		line-height: 40px;
 		margin: 0 0 0 20px;
+	}
+	.span12, .span12:first-child{
+		margin-left: 20px;
+		&.category{
+			.span2{
+				color: @brand;
+				padding-bottom: 15px;
+				text-align: center;
+			}
+		}
+		&.separate_small{
+			margin-top: 10px;
+		}
+		&.separate{
+			margin-top: 30px;
+		}
+		.span2{
+			.checker{
+				display: block;
+				float: none;
+				margin: 0 auto;
+			}
+		}
+		.span3{
+			&.title{
+				font-size: 16px;
+			}
+		}
 	}
 }
 
@@ -3459,6 +3487,7 @@ body.roles{
 		}
 		.collection-list-horizontal-scroll {
 			height: 60px;
+			margin-bottom: 8px;
 			position: relative;
 		}
 		#columns-scoller-arrows {
@@ -3470,7 +3499,7 @@ body.roles{
 			top: 0;
 			font-size: 40px;
 			.left-arrow {
-				margin-left: 57%;
+				margin-left: 50%;
 				float: left;
 				a.icon-angle-left:before{
 					color:@user_menu;
@@ -3514,7 +3543,7 @@ body.roles{
 		#event-data-totals {
 			font-size: 11px;
 			height: 60px;
-			width: 98%;
+			width: 96%;
 			overflow: hidden;
 			.big-number{
 				font-size: 22px;
@@ -3526,19 +3555,21 @@ body.roles{
 				margin-top: 3px;
 			}
 			.events-box {
-				width: 59%;
+				.box-sizing(border-box);
 				float: left;
-				margin-left: 10px;
+				padding-left: 10px;
 				text-align: center;
+				width: 55%;
 			}
 		}
 		.event-data-row {
 			overflow: hidden;
+			width: 96%;
 			.results-box-container{
 				.event-data-column{
 					font-size: 16px;
 					margin-top: 35px;
-					width: 120px;
+					width: 142px;
 				}
 			}
 		}
@@ -3573,7 +3604,7 @@ body.roles{
 				float: left;
 				margin-left: 0;
 				text-align: center;
-				width: 120px;
+				width: 142px;
 				&.center-aligned {
 					text-align: center;
 				}
@@ -3582,6 +3613,7 @@ body.roles{
 
 		.event-data-row {
 			.event-info {
+				.box-sizing(border-box);
 				float: left;
 				width: 55%;
 			}
@@ -4051,6 +4083,27 @@ svg{
     }
 }
 
+body.campaigns{
+	.details_box{
+		h2{
+			margin-bottom: 8px;
+		}
+		&.padding-top-close-bar{
+			span{
+				display: block;
+				margin-top: 30px;
+				.calendar-data{
+					font-size: 16px;
+				}
+			}
+		}
+	}
+}
+
+.campaign-brands{
+	font-size: 16px;
+}
+
 // DETAILS PAGES
 
 .details_box{
@@ -4348,6 +4401,7 @@ svg{
 	}
 	h2{
 		font-size: 30px;
+		margin-top: 10px;
 		margin-bottom: 30px;
 		&.special{
 			margin-top: 45px;
@@ -4371,9 +4425,12 @@ svg{
 	textarea{
 		height: 130px;
 	}
-	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .links-data{
+	.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
 		margin:0 0 20px 30px;
 		width: 380px;
+	}
+	.links-data{
+		margin: 0 0 0 30px;
 	}
 	.calendar-data{
 		font-size: 12px;
@@ -4386,7 +4443,7 @@ svg{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			padding-top: 3px;
+			padding-top: 0;
 			position: absolute;
 			speak: none;
 			left: 28px;

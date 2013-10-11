@@ -234,6 +234,20 @@ class Venue < ActiveRecord::Base
 
       with(:company_id, params[:company_id]) if params.has_key?(:company_id) and params[:company_id].present?
 
+      # Filter by user permissions
+      company_user = params[:current_company_user]
+      if company_user.present?
+        unless company_user.role.is_admin?
+          with(:campaign_ids, company_user.accessible_campaign_ids + [0])
+          any_of do
+            locations = company_user.accessible_locations
+            places_ids = company_user.accessible_places
+            with(:place_id, places_ids + [0])
+            with(:locations, locations + [0])
+          end
+        end
+      end
+
       if params[:location].present?
         radius = params.has_key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')

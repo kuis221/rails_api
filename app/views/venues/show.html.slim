@@ -40,94 +40,101 @@
           = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
           #venue-areas.row-fluid
             = render partial: 'areas', locals: {areas: resource.place.areas}
-.details_box
-  - if resource.persisted? && resource.events > 0
-    .venue-overall
-      .row-fluid
-        .span6
-          #venue-score
-            span= resource.score
-            | VENUE SCORE
-          #venue-score-narrative
-            = venue_score_narrative(resource)
 
-        .span6
-          #overall-venue-stats.kpi-trends-stats.text-right
-            .live-stats
-              span= resource.events
-              = (resource.events == 1 ? " Event" : " Events")
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_with_delimiter(resource.promo_hours)
-              = (resource.promo_hours == 1 ? " Promo Hour" : " Promo Hours")
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_with_delimiter(resource.impressions)
-              = (resource.impressions == 1 ? " Impression" : " Impressions")
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_with_delimiter(resource.interactions)
-              = " Interactions"
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_with_delimiter(resource.sampled)
-              = " Sampled"
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-            .live-stats-2
-              span= number_with_delimiter(resource.avg_impressions.round)
-              = " Impressions/Event"
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_with_delimiter(resource.avg_impressions_hour.round)
-              = " Impressions/Promo Hour"
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-              br>/
-              span= number_to_currency(resource.avg_impressions_cost, precision: 2)
-              = " Cost/Impression"
-              span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-
-
-  - if resource.persisted?
-    #demographics.row-fluid
-      .span6
-        #gender-graph.row-fluid
-          = gender_graph(resource.overall_graphs_data[:gender])
+- if can?(:view_score, resource) || can?(:view_kpis, resource)
+  .details_box
+    - if resource.persisted? && resource.events > 0
+      .venue-overall
         .row-fluid
-          #overall-age-graph
-      .span6
-        #overall-ethnicity-graph
+          .span6
+            - if can?(:view_score, resource)
+              #venue-score
+                span= resource.score
+                | VENUE SCORE
+              #venue-score-narrative
+                = venue_score_narrative(resource)
 
-#venue-trends-week.details_box
-  h3 TRENDS BY DAY OF WEEK
-  #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
-  #trends-day-week-graph
+          .span6
+            - if can?(:view_kpis, resource)
+              #overall-venue-stats.kpi-trends-stats.text-right
+                .live-stats
+                  span= resource.events
+                  = (resource.events == 1 ? " Event" : " Events")
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_with_delimiter(resource.promo_hours)
+                  = (resource.promo_hours == 1 ? " Promo Hour" : " Promo Hours")
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_with_delimiter(resource.impressions)
+                  = (resource.impressions == 1 ? " Impression" : " Impressions")
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_with_delimiter(resource.interactions)
+                  = " Interactions"
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_with_delimiter(resource.sampled)
+                  = " Sampled"
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                .live-stats-2
+                  span= number_with_delimiter(resource.avg_impressions.round)
+                  = " Impressions/Event"
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_with_delimiter(resource.avg_impressions_hour.round)
+                  = " Impressions/Promo Hour"
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+                  br>/
+                  span= number_to_currency(resource.avg_impressions_cost, precision: 2)
+                  = " Cost/Impression"
+                  span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
 
-#venue-photos.details_box
-  h3 GALLERY
-  .large-photo-list
-    ul.thumbnails#photos-thumbs
-      - resource.photos.each do |photo|
-        - if photo.is_a?(AttachedAsset)
-          = render partial: 'results/photos/photo', locals: {photo: photo}
+
+    - if resource.persisted? && can?(:view_kpis, resource)
+      #demographics.row-fluid
+        .span6
+          #gender-graph.row-fluid
+            = gender_graph(resource.overall_graphs_data[:gender])
+          .row-fluid
+            #overall-age-graph
+        .span6
+          #overall-ethnicity-graph
+
+- if can?(:view_trends_day_week, resource)
+  #venue-trends-week.details_box
+    h3 TRENDS BY DAY OF WEEK
+    #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
+    #trends-day-week-graph
+
+- if can?(:view_photos, resource)
+  #venue-photos.details_box
+    h3 GALLERY
+    .large-photo-list
+      ul.thumbnails#photos-thumbs
+        - resource.photos.each do |photo|
+          - if photo.is_a?(AttachedAsset)
+            = render partial: 'results/photos/photo', locals: {photo: photo}
+          - else
+            li.span2.google-image
+              div.thumbnail-container.thumbnail
+                a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
+                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+
+- if can?(:view_comments, resource)
+  #venue-comments.details_box
+    h3 COMMENTS
+    - resource.reviews.each do |review|
+      .venue-review
+        - unless review.is_a?(Comment)
+          .review-author-name= review.author_name
+          .review-rating= rating_stars(review.rating)
+          .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+          .review-text= review.text
         - else
-          li.span2.google-image
-            div.thumbnail-container.thumbnail
-              a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
-                = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
-
-#venue-comments.details_box
-  h3 COMMENTS
-  - resource.reviews.each do |review|
-    .venue-review
-      - unless review.is_a?(Comment)
-        .review-author-name= review.author_name
-        .review-rating= rating_stars(review.rating)
-        .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
-        .review-text= review.text
-      - else
-        .review-author-name= review.user_full_name
-        .review-date= time_ago_in_words(review.created_at)
-        .review-text= review.content
+          .review-author-name= review.user_full_name
+          .review-date= time_ago_in_words(review.created_at)
+          .review-text= review.content
 
 = render partial: 'help_tutorial'
 
@@ -136,7 +143,7 @@ javascript:
     $(this).scrollTop(400);
   });
 
-- if resource.persisted?
+- if resource.persisted? && can?(:view_kpis, resource)
   javascript:
     #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'}}
 

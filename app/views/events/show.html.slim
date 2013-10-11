@@ -1,4 +1,5 @@
 - can_edit = can?(:update, resource)
+- can_tasks = can?(:tasks, resource)
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing event details. Click to close.", collection_path)
 
@@ -32,18 +33,19 @@
       = format_date_range(resource.start_at, resource.end_at, date_separator: ' ')
 
 
-  #event-members.details_box
-    h3 EVENT TEAM
-    #event-team-members
-      = render 'team_member_list'
-    = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can_edit
+  - if can?(:view_members, resource)
+    #event-members.details_box
+      h3 EVENT TEAM
+      #event-team-members
+        = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
+      = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:add_member, resource) 
 
   - if resource.has_event_data? && !resource.rejected?
     = render 'show_results'
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  - if can? :tasks, resource
+  - if can_tasks
     #event-tasks.details_box.smaller
 
       .pull-left
@@ -76,10 +78,12 @@ javascript:
     window.location.reload(false);
   });
 
-  $(document).on('tasks:change', function(){
-    $.get('#{tasks_event_path(resource)}', function(response){
-      $response = $('<div>').append(response);
-      $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
-      $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
-    })
-  });
+  if (#{can_tasks}){
+    $(document).on('tasks:change', function(){
+      $.get('#{tasks_event_path(resource)}', function(response){
+        $response = $('<div>').append(response);
+        $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+        $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
+      })
+    });
+  }

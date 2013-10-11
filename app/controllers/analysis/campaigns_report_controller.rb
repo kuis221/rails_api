@@ -4,13 +4,13 @@ class Analysis::CampaignsReportController < ApplicationController
   before_filter :authorize_actions
 
   def index
-    @campaigns = current_company.campaigns.order('name ASC')
+    @campaigns = current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
   end
 
   def report
-    authorize! :show, campaign
+    authorize! :report, campaign
     @events_scope = Event.scoped_by_campaign_id(campaign).where(aasm_state: 'approved')
-    @goals = campaign.goals.base.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi).all
+    @goals = campaign.goals.base.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi).all
   end
 
   private

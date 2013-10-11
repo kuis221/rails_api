@@ -270,13 +270,14 @@ describe DashboardHelper do
     end
   end
 
-  describe "#dashboard_kpis_trends_data" do
+  describe "#kpis_completed_totals", search: true do
     it "should return all values on zero if there are not campaigns and events" do
-      stats = helper.dashboard_kpis_trends_data
-      stats[:events].should == 0
-      stats[:impressions].should == 0
-      stats[:interactions].should == 0
-      stats[:spent].should == 0
+      stats = helper.kpis_completed_totals
+      stats['events_count'].should == 0
+      stats['impressions'].should == 0
+      stats['interactions'].should == 0
+      stats['spent'].should == 0
+      stats['samples'].should == 0
     end
 
     it "should return all values of all approved events" do
@@ -287,18 +288,21 @@ describe DashboardHelper do
           results: {impressions: 15, interactions: 16, samples: 17},
           expenses: [{name: 'Expense 1', amount: 18}])
 
-      stats = helper.dashboard_kpis_trends_data
+      Sunspot.commit
 
-      stats[:events].should == 1
-      stats[:impressions].should == 15
-      stats[:interactions].should == 16
-      stats[:spent].should == 18
-      stats[:impressions_event].should == 15
-      stats[:interactions_event].should == 16
-      stats[:sampled_event].should == 17
-      stats[:cost_impression].should == 1.2
-      stats[:cost_interaction].should == 1.125
-      stats[:cost_sample].should == 1.0588235294117647
+      stats = helper.kpis_completed_totals
+
+      stats['events_count'].should == 1
+      stats['impressions'].should == 15
+      stats['interactions'].should == 16
+      stats['spent'].should == 18
+      stats['samples'].should == 17
+      stats['impressions_event'].should == 15
+      stats['interactions_event'].should == 16
+      stats['sampled_event'].should == 17
+      stats['cost_impression'].should == 1.2
+      stats['cost_interaction'].should == 1.125
+      stats['cost_sample'].should == 1.0588235294117647
     end
   end
 
