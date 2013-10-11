@@ -569,16 +569,18 @@ class Event < ActiveRecord::Base
     end
 
     def add_team_members
-      campaign_team = Campaign.find_by_id(self.campaign_id).staff.uniq
-      if campaign_team.present?
-        campaign_team.each do |member|
-          if member.is_a?(CompanyUser)
-            if member.accessible_places.include?(self.place_id)
-              self.users << member
+      if campaign.present?
+        campaign_team = campaign.staff.uniq
+        if campaign_team.present?
+          campaign_team.each do |member|
+            if member.is_a?(CompanyUser)
+              if member.accessible_places.include?(self.place_id)
+                self.users << member
+              end
             end
           end
+          Sunspot.index self.users
         end
-        Sunspot.index self.users
       end
     end
 end

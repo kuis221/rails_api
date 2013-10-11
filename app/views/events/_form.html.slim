@@ -17,7 +17,7 @@
         = f.input :end_time, :as => :time_picker
 
     .row-fluid.campaign-places
-      = f.input :place_id, label: 'Place', collection: (resource.campaign_id.present? ? Campaign.find(resource.campaign_id).places.map{|p| [p.name, p.id]} : []), input_html: {class: 'input-xxlarge chosen-enabled'}
+      = f.input :place_id, label: 'Place', collection: (resource.campaign.present? ? resource.campaign.places.map{|p| [p.name, p.id]} : []), input_html: {class: 'input-xxlarge chosen-enabled'}
 
     .row-fluid.google-places
       = f.error :place
