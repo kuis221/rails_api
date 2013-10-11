@@ -67,12 +67,19 @@ abbr[title]{
 
 /*-- EVENT DETAILS PAGES __*/
 
-body.events.show ul.consumer-reach-metrics li .metric, body.teams.show ul.consumer-reach-metrics li .metric, body.areas.show ul.consumer-reach-metrics li .metric, body.brand_portfolios.show ul.consumer-reach-metrics li .metric{
-	width: 300px;
+body.events.show ul.consumer-reach-metrics{
+	width: 100%;
 }
 
-
-
+body.events.show ul.consumer-reach-metrics li .metric{
+	float: right;
+	width: 80%;
+	margin-right: 15px;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
 #analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
   	display: block;
@@ -2550,14 +2557,14 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
   }
 
 	.box_metrics{
-		width: 300px;
+		width: 40%;
 	}
 
 	ul.consumer-reach-metrics {
 		display: inline-block;
 		float: right;
 		font-size: 11px;
-		width: 400px;
+		width: 100%;
 		&.pull-right{
 			margin-top: 10px;
 			.metric{
@@ -2570,7 +2577,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 			text-transform: uppercase;
 			.metric {
 				float: right;
-				width: 150px;
+				width: 80%;
 				margin-right: 15px;
 				text-align: right;
 			}
@@ -4200,7 +4207,7 @@ body.campaigns{
 	}
 	.box_summary{
 		float: left;
-		width: 410px;
+		width: 55%;
 		h3 {
 			display: inline-block;
 			margin-right: 30px;
@@ -4448,7 +4455,7 @@ body.campaigns{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			padding-top: 0;
+			margin-top: 4px;
 			position: absolute;
 			speak: none;
 			left: 28px;
