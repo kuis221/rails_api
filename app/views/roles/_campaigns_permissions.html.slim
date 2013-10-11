@@ -1,127 +1,31 @@
 = simple_form_for resource, remote: true do |f|
-  table.table.permissions-table
-    thead
-      tr
-        th 
-        th View
-        th Create
-        th Edit
-        th Deactivate
 
-    tbody
-      tr
-        td Campaigns
-        td= permission_checkbox(f, :read, Campaign)
-        td= permission_checkbox(f, :create, Campaign)
-        td= permission_checkbox(f, :update, Campaign)
-        td= permission_checkbox(f, :deactivate, Campaign)
+  .permissions
+    .row-fluid
+      .span12.category
+        .span2
+        .span2 VIEW
+        .span2 CREATE
+        .span2 EDIT
+        .span2 DEACTIVATE
 
-      tr
-        td colspan=5
+      .span12
+        .span2.title Campaigns
+        .span2 = permission_checkbox(f, :read, Campaign)
+        .span2 = permission_checkbox(f, :create, Campaign)
+        .span2 = permission_checkbox(f, :update, Campaign)
+        .span2 = permission_checkbox(f, :deactivate, Campaign)
 
-    thead
-      tr
-        th 
-        th View
-        th Add
-        th Remove
-        th 
+      .span12
+        .span2.title Post Event Form
+        .span2 = permission_checkbox(f, :view_event_form, Campaign)
 
-    tbody
-      tr
-        td Post Event Form
-        td= permission_checkbox(f, :view_event_form, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Places
-        td= permission_checkbox(f, :view_places, Campaign)
-        td= permission_checkbox(f, :add_place, Campaign)
-        td= permission_checkbox(f, :remove_place, Campaign)
-        td
-
-      tr
-        td Staff
-        td= permission_checkbox(f, :view_staff, Campaign)
-        td= permission_checkbox(f, :add_staff, Campaign)
-        td= permission_checkbox(f, :remove_staff, Campaign)
-        td
-
-      tr
-        td Date Ranges
-        td= permission_checkbox(f, :view_date_ranges, Campaign)
-        td= permission_checkbox(f, :add_date_range, Campaign)
-        td= permission_checkbox(f, :remove_date_range, Campaign)
-        td
-
-      tr
-        td Day Parts
-        td= permission_checkbox(f, :view_day_parts, Campaign)
-        td= permission_checkbox(f, :add_day_part, Campaign)
-        td= permission_checkbox(f, :remove_day_part, Campaign)
-        td
-
-      tr
-        td Documents
-        td= permission_checkbox(f, :view_documents, Campaign)
-        td= permission_checkbox(f, :add_document, Campaign)
-        td= permission_checkbox(f, :remove_document, Campaign)
-        td
-
-      tr
-        td colspan=5
-
-      tr
-        th 
-          h3 KPIs
-        th 
-        th 
-        th 
-        th 
-
-      tr
-        td View
-        td= permission_checkbox(f, :view_kpis, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Toggle on/off
-        td= permission_checkbox(f, :activate_kpis, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Edit goals
-        td= permission_checkbox(f, :edit_kpi_goals, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Create custom KPIs
-        td= permission_checkbox(f, :create_custom_kpis, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Edit custom KPIs
-        td= permission_checkbox(f, :edit_custom_kpi, Campaign)
-        td
-        td
-        td
-
-      tr
-        td Deactivate custom KPIs
-        td= permission_checkbox(f, :deactivate_custom_kpis, Campaign)
-        td
-        td
-        td
+      .span12.category.separate
+        .span2
+        .span2 VIEW
+        .span2 ADD
+        .span2 REMOVE
+        .span2 
 
   = hidden_field_tag :partial, :tasks_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
