@@ -83,6 +83,10 @@ class Ability
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
+      can :places, Campaign do |campaign|
+        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      end
+
       # Event Data
       can :edit_data, Event do |event|
        (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
