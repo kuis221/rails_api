@@ -1,2 +1,2 @@
 |
-  $('#event-team-members').html('#{escape_javascript(render('team_member_list'))}');
+  $('#event-team-members').html('#{j render(partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)})}');

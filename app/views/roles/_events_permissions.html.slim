@@ -17,7 +17,14 @@
 
       .span12
         .span3 Events list
-        .span2 = permission_checkbox(f, :index, Event)
+        .span2 = permission_checkbox(f, :view_list, Event)
+        .span2 
+        .span2 
+        .span2 
+
+      .span12
+        .span3 Events calendar
+        .span2 = permission_checkbox(f, :view_calendar, Event)
         .span2 
         .span2 
         .span2 
@@ -37,6 +44,13 @@
         .span2 
 
       .span12
+        .span3 Event Team
+        .span2 = permission_checkbox(f, :view_members, Event)
+        .span2 = permission_checkbox(f, :add_members, Event)
+        .span2
+        .span2 = permission_checkbox(f, :delete_member, Event)
+
+      .span12
         .span3 Tasks
         .span2 = permission_checkbox(f, :index_tasks, Event)
         .span2 = permission_checkbox(f, :create_task, Event)
@@ -49,6 +63,14 @@
         .span2 = permission_checkbox(f, :create_document, Event)
         .span2 
         .span2 = permission_checkbox(f, :deactivate_document, Event)
+
+
+      .span12
+        .span3 Documents
+        .span2 = permission_checkbox(f, :view_event_data, Event)
+        .span2 
+        .span2 = permission_checkbox(f, :edit_event_data, Event)
+        .span2
 
       .span12
         .span3 Photos

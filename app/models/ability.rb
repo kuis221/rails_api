@@ -4,11 +4,14 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
 
+
+    alias_action :activate, :to => :deactivate
+    alias_action :new_member, :to => :add_members
+
     # All users
 
     if user.id && !user.is_a?(AdminUser)
       can :find_similar_kpi, Campaign do
-        raise 'true'
         can?(:update, Campaign) || can?(:create, Campaign)
       end
 
@@ -78,6 +81,8 @@ class Ability
         end
       end
 
+      can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
+
       # Event Data
       can :edit_data, Event do |event|
        (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
@@ -110,7 +115,7 @@ class Ability
       end
 
       # Team Members
-      can [:new_member, :add_members, :delete_member], Team do |team|
+      can [:add_members, :delete_member], Team do |team|
         can?(:edit, team)
       end
 
@@ -205,7 +210,7 @@ class Ability
       end
       can :comments, Task do |task|
         (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == user.current_company_user.id) ||
-        (user.role.has_permission?(:index_team_comments, Task) && task.event.user_in_team?(user.current_company_user) )
+        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user) )
       end
 
       can :update, Comment do |comment|

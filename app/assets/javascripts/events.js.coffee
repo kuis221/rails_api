@@ -16,6 +16,7 @@ jQuery ->
 
   mapIsVisible = false
   # EVENTS INDEX
+
   $('#toggle-events-view a').on 'click', ->
     $('#toggle-events-view a').removeClass 'active'
     $(this).addClass('active').tab 'show'
@@ -28,7 +29,6 @@ jQuery ->
       mapIsVisible = false
       $('.table-cloned-fixed-header').show()
       $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
-
 
   map = null
   markersArray = []
@@ -115,3 +115,7 @@ jQuery ->
 
         markerCluster = new MarkerClusterer(map, markersArray);
 
+
+  if $('#map-view').hasClass('active')
+    mapIsVisible = true
+    initializeMap()
