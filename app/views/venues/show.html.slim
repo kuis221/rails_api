@@ -88,7 +88,7 @@
 
 
   - if resource.persisted?
-    .row-fluid
+    #demographics.row-fluid
       .span6
         #gender-graph.row-fluid
           = gender_graph(resource.overall_graphs_data[:gender])
@@ -97,12 +97,12 @@
       .span6
         #overall-ethnicity-graph
 
-.details_box
+#venue-trends-week.details_box
   h3 TRENDS BY DAY OF WEEK
   #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
   #trends-day-week-graph
 
-.details_box
+#venue-photos.details_box
   h3 GALLERY
   .large-photo-list
     ul.thumbnails#photos-thumbs
@@ -115,7 +115,7 @@
               a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
                 = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
-.details_box
+#venue-comments.details_box
   h3 COMMENTS
   - resource.reviews.each do |review|
     .venue-review
@@ -128,6 +128,8 @@
         .review-author-name= review.user_full_name
         .review-date= time_ago_in_words(review.created_at)
         .review-text= review.content
+
+= render partial: 'help_tutorial'
 
 javascript:
   $(document).ready(function() {
