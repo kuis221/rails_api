@@ -18,7 +18,7 @@ describe EventsController do
     end
 
     describe "GET 'edit'" do
-      let(:event){ FactoryGirl.create(:event, company: @company) }
+      let(:event){ FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company)) }
       it "returns http success" do
         get 'edit', id: event.to_param, format: :js
         response.should be_success

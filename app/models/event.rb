@@ -86,6 +86,8 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
 
+  #after_create :add_team_members
+
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name,:latitude,:city,:state_name,:zipcode,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -111,8 +113,8 @@ class Event < ActiveRecord::Base
 
   searchable do
     boolean :active
-    time :start_at, :trie => true
-    time :end_at, :trie => true
+    time :start_at, stored: true, trie: true
+    time :end_at, stored: true, trie: true
     string :status, multiple: true do
       [status, event_status]
     end
@@ -120,7 +122,7 @@ class Event < ActiveRecord::Base
 
     integer :id, stored: true
     integer :company_id
-    integer :campaign_id
+    integer :campaign_id, stored: true
     integer :place_id
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
@@ -340,7 +342,7 @@ class Event < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets=false, &block)
       # TODO: probably this options should be passed by params?
       options = {include: [:campaign, :place]}
       ss = solr_search(options) do
@@ -350,8 +352,8 @@ class Event < ActiveRecord::Base
           unless company_user.role.is_admin?
             with(:campaign_id, company_user.accessible_campaign_ids + [0])
             any_of do
-              locations = (company_user.areas.map{|a| Place.encode_location(a.common_denominators) } + company_user.places.map{|p| Place.location_for_search(p) }).compact
-              places_ids = company_user.place_ids
+              locations = company_user.accessible_locations
+              places_ids = company_user.accessible_places
               with(:place_id, places_ids + [0])
               with(:location, locations + [0])
             end
@@ -467,6 +469,8 @@ class Event < ActiveRecord::Base
 
         order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+
+        yield self if block_given?
       end
     end
 
@@ -566,4 +570,19 @@ class Event < ActiveRecord::Base
       true
     end
 
+    # def add_team_members
+    #   if campaign.present?
+    #     campaign_team = campaign.staff.uniq
+    #     if campaign_team.present?
+    #       campaign_team.each do |member|
+    #         if member.is_a?(CompanyUser)
+    #           if member.accessible_places.include?(self.place_id)
+    #             self.users << member
+    #           end
+    #         end
+    #       end
+    #       Sunspot.index self.users
+    #     end
+    #   end
+    # end
 end

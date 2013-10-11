@@ -89,6 +89,10 @@ class CampaignsController < FilteredController
     render layout: false
   end
 
+  def places
+    render json: resource.places.order('places.name ASC').map{|p| {id: p.id, label: [p.name, p.city, p.state].compact.join(', ')}}
+  end
+
   protected
     def permitted_params
       params.permit(campaign: [:name, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]

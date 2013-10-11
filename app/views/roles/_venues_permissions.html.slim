@@ -1,0 +1,40 @@
+= simple_form_for resource, remote: true do |f|
+  .permissions
+    .row-fluid
+      .span7
+        .span5.title Venue List
+        .span2
+          = permission_checkbox(f, :index, Venue)
+
+      .span7
+        .span5.title Venue Details
+        .span2
+          = permission_checkbox(f, :show, Venue)
+
+      .span7
+        .span5 Venue Score
+        .span2
+          = permission_checkbox(f, :view_score, Venue)
+
+      .span7
+        .span5 Venue KPIs
+        .span2
+          = permission_checkbox(f, :view_kpis, Venue)
+
+      .span7
+        .span5 Trends by day of week
+        .span2
+          = permission_checkbox(f, :view_trends_day_week, Venue)
+
+      .span7
+        .span5 Photos
+        .span2
+          = permission_checkbox(f, :view_photos, Venue)
+
+      .span7
+        .span5 Comments
+        .span2
+          = permission_checkbox(f, :view_comments, Venue)
+
+  = hidden_field_tag :partial, :venues_permissions
+  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

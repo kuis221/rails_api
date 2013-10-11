@@ -163,7 +163,7 @@ class CompanyUsersController < FilteredController
     end
 
     user.notifications.each do |notification|
-      alerts.push({message: I18n.translate("notifications.#{notification.message}"), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
+      alerts.push({message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
     end
 
     render json: alerts

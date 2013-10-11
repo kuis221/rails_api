@@ -54,7 +54,7 @@ class TasksController < FilteredController
 
         tasks_status = ['Complete', 'Incomplete', 'Late'] + (params[:scope] != 'user' ? ['Assigned', 'Unassigned'] : [])
 
-        f.push(label: "Campaigns", items: facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+        f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
         #f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
         f.push(label: "Task Status", items: tasks_status.map{|x| build_facet_item({label: x, id: x, name: :task_status, count: 1}) })
@@ -109,7 +109,7 @@ class TasksController < FilteredController
     end
 
     def facet_params
-      search_params.select{|k, v| [:q, :start_date, :end_date, :user, :company_id, :event_id, :not_assigned_to, :team_members].include?(k.to_sym)}
+      search_params.select{|k, v| [:q, :current_company_user, :start_date, :end_date, :user, :company_id, :event_id, :not_assigned_to, :team_members].include?(k.to_sym)}
     end
 
     def parent

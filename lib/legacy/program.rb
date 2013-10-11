@@ -17,6 +17,7 @@
 #
 
 class Legacy::Program  < Legacy::Record
+  has_and_belongs_to_many :accounts
   has_many      :events, inverse_of: :program
   belongs_to    :brand
 
@@ -37,6 +38,8 @@ class Legacy::Program  < Legacy::Record
 
     synchronize_custom_kpis(company, migration.local)
 
+    synchronize_venues(company, migration.local)
+
     migration
   end
 
@@ -55,6 +58,15 @@ class Legacy::Program  < Legacy::Record
       migration = field.metric.synchronize(company)
       p migration.local.errors.inspect if migration.local.errors.any?
       campaign.add_kpi(migration.local) if migration.local.persisted?
+    end
+  end
+
+  def synchronize_venues(company, campaign)
+    accounts.each do |account|
+      migration = account.synchronize(company)
+      if migration.local.present? and migration.local.persisted?
+        campaign.places << migration.local unless campaign.places.include?(migration.local)
+      end
     end
   end
 end

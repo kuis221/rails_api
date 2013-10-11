@@ -141,11 +141,13 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_locations
-    @accessible_locations ||= (areas.map{|a| Place.encode_location(a.common_denominators) } + places.map{|p| Place.location_for_search(p) }).compact
+    # TODO: memcache this
+    @accessible_locations ||= (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
   end
 
   def accessible_places
-    @accessible_places ||= user.current_company_user.place_ids
+    # TODO: memcache this
+    @accessible_places ||= (user.current_company_user.place_ids + user.current_company_user.areas.map{|a| a.places.map{|p| p.id}}).flatten.uniq
   end
 
   class << self

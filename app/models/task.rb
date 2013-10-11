@@ -27,7 +27,7 @@ class Task < ActiveRecord::Base
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
-  delegate :campaign_id, :campaign_name, :company_id, to: :event, allow_nil: true
+  delegate :campaign_id, :campaign_name, :place_id, :company_id, to: :event, allow_nil: true
 
   validates :title, presence: true
   validates :company_user_id, numericality: true, if: :company_user_id
@@ -56,9 +56,6 @@ class Task < ActiveRecord::Base
     end
 
     integer :campaign_id
-    string :campaign do
-      campaign_id.to_s + '||' + campaign_name.to_s if campaign_id
-    end
 
     time :due_at, :trie => true
     time :last_activity
@@ -124,6 +121,14 @@ class Task < ActiveRecord::Base
     def do_search(params, include_facets=false)
       ss = solr_search({include: [{:company_user => :user}, :event]}) do
 
+        # Filter by user permissions
+        company_user = params[:current_company_user]
+        if company_user.present?
+          unless company_user.role.is_admin?
+            with(:campaign_id, company_user.accessible_campaign_ids + [0])
+          end
+        end
+
         with(:company_id, params[:company_id])
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
@@ -183,7 +188,7 @@ class Task < ActiveRecord::Base
         end
 
         if include_facets
-          facet :campaign
+          facet :campaign_id
           facet :statusm
           facet :company_user_id
         end
