@@ -38,7 +38,7 @@ class EventResult < ActiveRecord::Base
 
   def display_value
     if form_field.field_type == 'count'
-      KpisSegment.find_by_id(self.value).text
+      form_field.kpi.kpis_segments.where(id: self.value).first.try(:text) if self.value
     else
       self.value
     end
