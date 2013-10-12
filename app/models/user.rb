@@ -101,6 +101,7 @@ class User < ActiveRecord::Base
   has_many :events, through: :company_users
 
   after_save :reindex_related
+  after_invitation_accepted :reindex_company_users
 
   attr_accessor :inviting_user
   attr_accessor :updating_user
@@ -188,6 +189,11 @@ class User < ActiveRecord::Base
       Sunspot.index self.tasks.includes([{:company_user => :user}, :event]).all
       Sunspot.commit
     end
+  end
+
+  def reindex_company_users
+    Sunspot.index company_users.all
+    Sunspot.commit
   end
 
   class << self
