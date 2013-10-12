@@ -15,7 +15,7 @@ module DashboardHelper
   end
 
   def upcomming_events_list
-    Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :desc }).results
+    Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc, start_date: Date.today.to_s(:slashes) }).results
   end
 
   def my_incomplete_tasks
