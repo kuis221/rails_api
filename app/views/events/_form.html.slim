@@ -49,7 +49,7 @@ javascript:
         val = places_campaigns.val();
         places_campaigns.html('<option></option>');
         count = response.length;
-        if (count > 0) {
+        if (typeof response.any_place == 'undefined'){
           for (_i = 0; _i < count; _i++) {
             place = response[_i];
             option = $('<option>').val(place.id).html(place.label);
