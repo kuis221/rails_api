@@ -31,8 +31,8 @@ javascript:
         total += parseInt($(element).val())
       }
     });
-    var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger')) 
-    var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error')) 
+    var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger'))
+    var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error'))
     $('#progress-bar-field-'+ $(this).data('segment-field-id'))
         .removeClass('text-success text-error text-info').addClass(textClass)
         .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
