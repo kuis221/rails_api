@@ -143,129 +143,134 @@ javascript:
     $(this).scrollTop(400);
   });
 
-- if resource.persisted? && can?(:view_kpis, resource)
-  javascript:
-    #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'}}
+- if resource.persisted?
+  - if can?(:view_kpis, resource)
+    javascript:
+      #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'}}
 
-    #{render partial: 'shared/age_graph', locals:{data: resource.overall_graphs_data[:age], container: '#overall-age-graph'}}
+      #{render partial: 'shared/age_graph', locals:{data: resource.overall_graphs_data[:age], container: '#overall-age-graph'}}
 
-    $('#trends-day-week-graph').highcharts({
-        credits: { enabled: false },
-        chart: {marginTop: 50 },
-        title: {
-            text: null
-        },
-        xAxis: {
-            categories: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
-            lineColor: '#D1D1D1',
-            tickWidth: 0,
-            labels: {
-              style: {
-                color: '#D1D1D1'
-              }
-            },
-        },
-        yAxis: [{
-            title: {
-                text: null
-            },
-            gridLineColor: 'transparent',
-            lineWidth: 1,
-            lineColor: '#D1D1D1',
-            tickWidth: 1,
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }],
-            labels: {
-              style: {
-                color: '#D1D1D1'
-              }
-            },
-            min: 0,
-            maxPadding: 0.2
-        },{
-            title: {
-                text: null
-            },
-            gridLineColor: 'transparent',
-            lineWidth: 1,
-            lineColor: '#D1D1D1',
-            tickWidth: 1,
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }],
-            labels: {
-              format: '${value}',
-              style: {
-                color: '#D1D1D1'
-              }
-            },
-            opposite: true,
-            min: 0,
-            maxPadding: 0.2
-        }],
-        plotOptions: {
-            series: {
-                marker: {
-                    fillColor: '#FFFFFF',
-                    lineWidth: 2,
-                    lineColor: null, // inherit from series
-                    radius: 6,
-                    symbol: 'circle'
-                }
-            }
-        },
-        tooltip: {
-            headerFormat: '',
-            pointFormat: '{point.y}',
-            borderWidth: 0,
-            borderColor: '#FFF',
-            backgroundColor: 'transparent',
-            shadow: false,
-            style: {
-                fontSize: '14px'
-            },
-            positioner: function( labelWidth, labelHeight, point){
-                return {
-                  x: point.plotX + this.chart.plotLeft - (labelWidth/2),
-                  y: point.plotY + this.chart.plotTop - labelHeight - 10
-                };
-            },
-            formatter: function() {
-                if (this.series.name =='Cost/Impression'){
-                  return '<span style="color:'+this.series.color+'">$'+this.y +'</span>';
-                }else{
-                  return '<span style="color:'+this.series.color+'">'+this.y +'</span>';
-                }
-            }
-        },
-        legend: {
-            floating: true,
-            borderWidth: 0,
-            y: -10,
-            align: 'right',
-            verticalAlign: 'top',
-            itemStyle: { fontSize: '10px', color: '#3E9CCF' }
-        },
-        series: [
-          {
-            name: 'Impressions/promo hour',
-            data: #{resource.overall_graphs_data[:impressions_promo].values.map(&:round).to_json.html_safe},
-            color: '#3D9CCA'
+
+  - if can?(:view_trends_day_week, resource)
+    javascript:
+      $('#trends-day-week-graph').highcharts({
+          credits: { enabled: false },
+          chart: {marginTop: 50 },
+          title: {
+              text: null
           },
-          {
-            name: 'Cost/Impression',
-            data: #{resource.overall_graphs_data[:cost_impression].values.map(&:round).to_json.html_safe},
-            color: '#94D6ED',
-            yAxis: 1
-          }
-        ]
-    });
+          xAxis: {
+              categories: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+              lineColor: '#D1D1D1',
+              tickWidth: 0,
+              labels: {
+                style: {
+                  color: '#D1D1D1'
+                }
+              },
+          },
+          yAxis: [{
+              title: {
+                  text: null
+              },
+              gridLineColor: 'transparent',
+              lineWidth: 1,
+              lineColor: '#D1D1D1',
+              tickWidth: 1,
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }],
+              labels: {
+                style: {
+                  color: '#D1D1D1'
+                }
+              },
+              min: 0,
+              maxPadding: 0.2
+          },{
+              title: {
+                  text: null
+              },
+              gridLineColor: 'transparent',
+              lineWidth: 1,
+              lineColor: '#D1D1D1',
+              tickWidth: 1,
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }],
+              labels: {
+                format: '${value}',
+                style: {
+                  color: '#D1D1D1'
+                }
+              },
+              opposite: true,
+              min: 0,
+              maxPadding: 0.2
+          }],
+          plotOptions: {
+              series: {
+                  marker: {
+                      fillColor: '#FFFFFF',
+                      lineWidth: 2,
+                      lineColor: null, // inherit from series
+                      radius: 6,
+                      symbol: 'circle'
+                  }
+              }
+          },
+          tooltip: {
+              headerFormat: '',
+              pointFormat: '{point.y}',
+              borderWidth: 0,
+              borderColor: '#FFF',
+              backgroundColor: 'transparent',
+              shadow: false,
+              style: {
+                  fontSize: '14px'
+              },
+              positioner: function( labelWidth, labelHeight, point){
+                  return {
+                    x: point.plotX + this.chart.plotLeft - (labelWidth/2),
+                    y: point.plotY + this.chart.plotTop - labelHeight - 10
+                  };
+              },
+              formatter: function() {
+                  if (this.series.name =='Cost/Impression'){
+                    return '<span style="color:'+this.series.color+'">$'+this.y +'</span>';
+                  }else{
+                    return '<span style="color:'+this.series.color+'">'+this.y +'</span>';
+                  }
+              }
+          },
+          legend: {
+              floating: true,
+              borderWidth: 0,
+              y: -10,
+              align: 'right',
+              verticalAlign: 'top',
+              itemStyle: { fontSize: '10px', color: '#3E9CCF' }
+          },
+          series: [
+            {
+              name: 'Impressions/promo hour',
+              data: #{resource.overall_graphs_data[:impressions_promo].values.map(&:round).to_json.html_safe},
+              color: '#3D9CCA'
+            },
+            {
+              name: 'Cost/Impression',
+              data: #{resource.overall_graphs_data[:cost_impression].values.map(&:round).to_json.html_safe},
+              color: '#94D6ED',
+              yAxis: 1
+            }
+          ]
+      });
 
+  javascript:
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');
     });

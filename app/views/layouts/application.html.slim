@@ -43,13 +43,14 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
       .menu
         = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
       = yield :alerts
+      = render 'layouts/messages'
       .container
             .tab-content
               .tab-pane.active
                 .row-fluid
                   .span12
                     #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
-                      = render 'layouts/messages'
+
 
                       = yield
 

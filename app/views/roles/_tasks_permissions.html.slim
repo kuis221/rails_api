@@ -20,8 +20,8 @@
         .span2 Comments
         .span2 = permission_checkbox(f, :index_my_comments, Task)
         .span2 = permission_checkbox(f, :create_my_comment, Task)
-        .span2 = permission_checkbox(f, :edit_my_comment,   Task)
-        .span2 = permission_checkbox(f, :deactivate_my_comment, Task)
+        .span2
+        .span2
 
       .span12.separate_small
         .span2.title Team tasks
@@ -34,8 +34,8 @@
         .span2 Comments
         .span2 = permission_checkbox(f, :index_team_comments, Task)
         .span2 = permission_checkbox(f, :create_team_comment, Task)
-        .span2 = permission_checkbox(f, :edit_team_comment,   Task)
-        .span2 = permission_checkbox(f, :deactivate_team_comment, Task)
+        .span2
+        .span2
 
 
   = hidden_field_tag :partial, :tasks_permissions
