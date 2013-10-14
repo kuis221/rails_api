@@ -10,11 +10,11 @@ class EventsController < FilteredController
 
   helper_method :describe_filters, :calendar_highlights
 
-  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys, :submit]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
   respond_to :xlsx, only: :index
 
-  custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
+  custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
 
   skip_load_and_authorize_resource only: :update
@@ -28,12 +28,6 @@ class EventsController < FilteredController
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
-  end
-
-  def save_results
-    update! do |success, failure|
-      failure.js { raise resource.errors.inspect }
-    end
   end
 
   def submit

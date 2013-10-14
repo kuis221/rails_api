@@ -18,7 +18,7 @@
 #
 
 class ListExport < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :company_user
 
   has_attached_file :file, PAPERCLIP_SETTINGS
 
@@ -64,6 +64,10 @@ class ListExport < ActiveRecord::Base
   def export_list
     self.process!
     controller = self.controller.constantize.new
+
+    User.current = company_user.user
+    controller.instance_variable_set(:@_current_user, company_user.user)
+    controller.instance_variable_set(:@current_company, company_user.company)
 
     name = controller.send(:export_file_name)
     buffer = controller.send(:export_list, self)
