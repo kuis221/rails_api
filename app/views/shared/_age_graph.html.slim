@@ -1,4 +1,5 @@
 |
+  if (#{data.values.max} > 0) {
     $('#{container}').highcharts({
         chart: { type: 'bar' },
         title: { text: null },
@@ -63,3 +64,6 @@
 
         }]
     });
+  } else {
+    $('#age-graph').height(0);
+  }
