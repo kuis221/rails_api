@@ -137,4 +137,21 @@ describe EventsController, search: true do
     end
   end
 
+  describe "GET calendar" do
+    it "should return the correct list of brands the count of events" do
+      campaign.brands << FactoryGirl.create(:brand, name: 'Jose Cuervo')
+      event = FactoryGirl.create(:event, start_date: '01/13/2013', end_date: '01/13/2013', campaign: campaign, company: @company)
+      Sunspot.commit
+      get 'calendar', start: DateTime.new(2013, 01, 01, 0, 0, 0).to_i.to_s, end: DateTime.new(2013, 01, 31, 23, 59, 59).to_i.to_s, format: :json
+      response.should be_success
+      results = JSON.parse(response.body)
+      results.count.should == 1
+      brand = results.first
+      brand['title'].should == 'Jose Cuervo'
+      brand['count'].should == 1
+      brand['start'].should == '2013-01-13'
+      brand['end'].should == '2013-01-13'
+    end
+  end
+
 end

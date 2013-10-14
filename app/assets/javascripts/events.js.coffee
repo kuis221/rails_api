@@ -25,20 +25,26 @@ jQuery ->
       initializeMap()
       $('.table-cloned-fixed-header').hide()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
+      $('.dates-range-filter').slideDown()
     else if $(this).attr('href') is '#calendar-view'
-      # $('#calendar-canvas').fullCalendar( 'destroy' )
-      # $('#calendar-canvas').fullCalendar({
-      #   editable: false,
-      #   events: '/events/calendar.json',
-      #   eventRender: (event, element) =>
-      #     element.tooltip({placement: 'bottom', html: true, title: event.description})
-      #   eventAfterRender: (event, element, view) =>
-      #     element.css({'background-color': 'transparent', color: '#000', 'border': '0'}).find('.fc-event-inner').prepend($('<span class="fc-event-bullet">&#8226;</span>').css('color': event.color))
-      #   dayRender: (date, cell) =>
-      #     cell.find('>div').append(cell.find('.fc-day-number'))
-      # })
-      $('#calendar-canvas').eventsCalendar()
+      $('.dates-range-filter').slideUp()
+      $('#calendar-canvas').eventsCalendar({
+        eventsUrl: () =>
+          "/events/calendar.json#{location.search}"
+        renderMonthDay: (day) => 
+          date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
+          "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
+      })
+      $('#calendar-canvas').on 'click', '.cal-day-link', (e) ->
+        date = $(this).data('date')
+        $('#collection-list-filters').filteredList('selectCalendarDates', date, date)
+        $('#toggle-events-view a[href="#list-view"]').click()
+        false
+
+      $('#collection-list-filters').on 'filters:changed', () ->
+        $('#calendar-canvas').eventsCalendar 'loadEvents'
     else
+      $('.dates-range-filter').slideDown()
       mapIsVisible = false
       $('.table-cloned-fixed-header').show()
       $('body.events.index #collection-list-filters').filteredList 'enableScrolling'

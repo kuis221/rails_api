@@ -420,6 +420,7 @@ describe EventsController do
         event.reject_reason.should == 'blah blah blah'
       end
     end
+
   end
 
 
@@ -440,5 +441,7 @@ describe EventsController do
       response.should render_template('events/_event')
     end
   end
+
+
 
 end

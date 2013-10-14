@@ -63,6 +63,7 @@ class EventsController < FilteredController
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, count(events.id) as count")
         .where(company_id: current_company)
+        .where(campaign_id: current_company_user.accessible_campaign_ids)
         .group("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')").map do |day|
         parts = day.start.split('/').map(&:to_i)
         hsh.merge!({parts[0] => {parts[1] => {parts[2] => day.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
@@ -106,11 +107,8 @@ class EventsController < FilteredController
         f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
         f.push build_locations_bucket(facet_search)
 
-        #f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :brand, count: x.count}) })
         users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
         teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
-        # users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
-        # teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
         people = (users + teams).sort{ |a, b| b[:count] <=> a[:count] }
         f.push(label: "People", items: people )
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
@@ -140,11 +138,9 @@ class EventsController < FilteredController
         (sd..ed).each do |day|
           days[day] ||= {}
           campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand|
-            days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id)}
+            days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes))}
             days[day][brand.id][:count] += 1
             days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
-
-            (1..5).each{|i| days[day][brand.id + i] ||= {count: 0, title: brand.name + ' ' + i.to_s, start: day, end: day, color: colors[all_brands.index(brand.id)+i%colors.count], url: events_path('brand[]' => brand.id)}}
           end
         end
       end

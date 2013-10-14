@@ -1,11 +1,94 @@
 .eventsCalendar {
 	.calendar-table {
 		width: 100%;
+		border-collapse: collapse;
+		border: 1px solid #CCC;
 		td, th {
 			width: 14.28571428571429%;
 		}
-		td {
+		th {
+			background-color: #989898;
+			color: #fff;
+			text-transform:uppercase;
+			padding: 5px;
+			text-align: left;
+		}
+		td.calendar-day {
+			border: 1px solid #CCC;
 			height: 130px;
+			.calendar-cell-wrapper {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+
+			.calendar-day-events-container {
+				position: absolute;
+				height: 100px;
+				width: 100%;
+				overflow: hidden;
+				top: 0;
+				padding: 3px;
+
+				h4 {
+					display: none;
+				}
+			}
+			.calendar-month-day{
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				height: 20px;
+			}
+			.calendar-view-more {
+				position: absolute;
+				bottom: 0;
+			}
+			&.expanded {	
+				.calendar-day-events-container {
+					height: auto;
+					width: 190%;
+					border: 1px solid #ccc;
+					background-color: #fff;
+					z-index: 2;
+					h4 {
+						display: inline;
+						color: #ccc;
+					}
+				}
+
+				.close {
+					opacity: 1;
+					position: relative;
+					text-shadow:none;
+					&:after{
+						color: #ccc;
+						content: "\e019";
+						display: block;
+						font-family: 'icons';
+						font-size: 14px;
+						font-weight: normal;
+						position: absolute;
+						right: 5px;
+						speak: none;
+						text-indent: 0;
+						-webkit-font-smoothing: antialiased;
+					}
+				}
+			}
+		}
+	}
+	.calendar-controls {
+		height: 30px;
+		.calendar-month-name{
+			float: left;
+			font-weight: bold;
+			font-size: 18px;
+		}
+
+		.calendar-months-arrows {
+			float: right;
 		}
 	}
 }
+

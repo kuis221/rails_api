@@ -102,6 +102,10 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
+      can :calendar, Event do |event|
+        can?(:view_calendar, Event) && can?(:show, event)
+      end
+
       cannot [:show, :edit], Event do |event|
         !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
         (
