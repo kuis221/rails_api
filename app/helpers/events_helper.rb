@@ -23,6 +23,60 @@ module EventsHelper
 
   protected
 
+    def describe_before_event_alert(resource)
+      description = 'Your event is scheduled. '
+      alert_parts = []
+      alert_parts.push "<a href=\"#event-members\" class=\"smooth-scroll\">manage the event team</a>" if can?(:add_members, resource) || can?(:delete_member, resource)
+      alert_parts.push "<a href=\"#event-tasks\" class=\"smooth-scroll\">complete tasks</a>" if can?(:tasks, resource)
+      alert_parts.push "<a href=\"#event-documents\" class=\"smooth-scroll\">upload event documents</a>" if can?(:create_document, resource)
+      unless alert_parts.empty?
+        description += 'You can ' + alert_parts.compact.to_sentence
+      end
+      description.html_safe
+    end
+
+    def describe_today_event_alert(resource)
+      description = 'Your event is scheduled for today. '
+      alert_parts = []
+      alert_parts.push "<a href=\"#event-results-form\" class=\"smooth-scroll\">enter post event data</a>" if can?(:edit_data, resource)
+      alert_parts.push "<a href=\"#event-photos\" class=\"smooth-scroll\">upload photos</a>" if resource.campaign.active_field_types.include?('photos') && can?(:create_photo, resource)
+      alert_parts.push "<a href=\"#event-surveys\" class=\"smooth-scroll\">conduct surveys</a>" if resource.campaign.active_field_types.include?('surveys') && can?(:create_survey, resource)
+      alert_parts.push "<a href=\"#event-expenses\" class=\"smooth-scroll\">enter expenses</a>" if resource.campaign.active_field_types.include?('expenses') && can?(:create_expense, resource)
+      alert_parts.push "<a href=\"#event-comments\" class=\"smooth-scroll\">gather comments</a>" if resource.campaign.active_field_types.include?('comments') && can?(:create_comment, resource)
+      unless alert_parts.empty?
+        description += 'Please ' + alert_parts.compact.to_sentence + ' from your audience during or shortly after the event.'
+      end
+      description.html_safe
+    end
+
+    def describe_due_event_alert(resource)
+      description = 'Your post event report is due. '
+      alert_parts = []
+      alert_parts.push "<a href=\"#event-results-form\" class=\"smooth-scroll\">enter post event data</a>" if can?(:edit_data, resource)
+      alert_parts.push "<a href=\"#event-photos\" class=\"smooth-scroll\">upload photos</a>" if resource.campaign.active_field_types.include?('photos') && can?(:create_photo, resource)
+      alert_parts.push "<a href=\"#event-surveys\" class=\"smooth-scroll\">conduct surveys</a>" if resource.campaign.active_field_types.include?('surveys') && can?(:create_survey, resource)
+      alert_parts.push "<a href=\"#event-expenses\" class=\"smooth-scroll\">enter expenses</a>" if resource.campaign.active_field_types.include?('expenses') && can?(:create_expense, resource)
+      alert_parts.push "<a href=\"#event-comments\" class=\"smooth-scroll\">gather comments</a>" if resource.campaign.active_field_types.include?('comments') && can?(:create_comment, resource)
+      unless alert_parts.empty?
+        description += 'Please ' + alert_parts.compact.to_sentence + ' now.'
+      end
+      description.html_safe
+    end
+
+    def describe_late_event_alert(resource)
+      description = 'Your post event report is late. '
+      alert_parts = []
+      alert_parts.push "<a href=\"#event-results-form\" class=\"smooth-scroll\">submit post event data</a>" if can?(:edit_data, resource)
+      alert_parts.push "<a href=\"#event-photos\" class=\"smooth-scroll\">upload photos</a>" if resource.campaign.active_field_types.include?('photos') && can?(:create_photo, resource)
+      alert_parts.push "<a href=\"#event-surveys\" class=\"smooth-scroll\">complete surveys</a>" if resource.campaign.active_field_types.include?('surveys') && can?(:create_survey, resource)
+      alert_parts.push "<a href=\"#event-expenses\" class=\"smooth-scroll\">enter expenses</a>" if resource.campaign.active_field_types.include?('expenses') && can?(:create_expense, resource)
+      alert_parts.push "<a href=\"#event-comments\" class=\"smooth-scroll\">enter comments</a>" if resource.campaign.active_field_types.include?('comments') && can?(:create_comment, resource)
+      unless alert_parts.empty?
+        description += 'Please ' + alert_parts.compact.to_sentence + ' now.'
+      end
+      description.html_safe
+    end
+
     def describe_filters
       first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_campaigns} #{describe_locations}".strip
       first_part = nil if first_part.empty?
