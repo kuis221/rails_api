@@ -1,5 +1,5 @@
 li id="campaign_#{campaign.id}"
-  = link_to_if_permitted :show, Campaign, campaign_path(campaign) do
+  = link_to_if_permitted :read, Campaign, campaign_path(campaign) do
     span
       b= campaign.name
       span.description
