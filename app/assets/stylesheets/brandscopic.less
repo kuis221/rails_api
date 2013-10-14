@@ -65,6 +65,22 @@ abbr[title]{
 	border:0;
 }
 
+/*-- EVENT DETAILS PAGES __*/
+
+body.events.show ul.consumer-reach-metrics{
+	width: 100%;
+}
+
+body.events.show ul.consumer-reach-metrics li .metric{
+	float: right;
+	width: 80%;
+	margin-right: 15px;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 #analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
   	display: block;
   	font-family: 'icons';
@@ -2438,8 +2454,8 @@ body.company_users{
 		margin-bottom: 25px;
 	}
 
-	#company_user-areas-list, 
-	#company_user-places-list, 
+	#company_user-areas-list,
+	#company_user-places-list,
 	.campaigns-list {
 		.icon-remove-sign {
 			display: none;
@@ -2565,15 +2581,14 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
   }
 
 	.box_metrics{
-		margin-top: 50px;
-		width: 400px;
+		width: 40%;
 	}
 
 	ul.consumer-reach-metrics {
 		display: inline-block;
 		float: right;
 		font-size: 11px;
-		width: 400px;
+		width: 100%;
 		&.pull-right{
 			margin-top: 10px;
 			.metric{
@@ -2586,7 +2601,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 			text-transform: uppercase;
 			.metric {
 				float: right;
-				width: 150px;
+				width: 80%;
 				margin-right: 15px;
 				text-align: right;
 			}
@@ -3196,10 +3211,19 @@ body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
 	}
+	input[type="submit"].btn {
+		width: 120px;
+	}
 }
 
 .permissions{
 	margin-bottom: 30px;
+	.separate_small{
+		margin-top: 10px;
+	}
+	.separate{
+		margin-top: 30px;
+	}
 	.span7, .span7:first-child{
 		font-size: 16px;
 		line-height: 40px;
@@ -3214,20 +3238,12 @@ body.roles{
 				text-align: center;
 			}
 		}
-		&.separate_small{
-			margin-top: 10px;
-		}
-		&.separate{
-			margin-top: 30px;
-		}
 		.span2{
 			.checker{
 				display: block;
 				float: none;
 				margin: 0 auto;
 			}
-		}
-		.span3{
 			&.title{
 				font-size: 16px;
 			}
@@ -3297,6 +3313,7 @@ body.roles{
 
 	#venue-score{
 		color: @venues_blue;
+    width: 100px;
 	}
 
 	#venue-score-narrative{
@@ -4218,7 +4235,7 @@ body.campaigns{
 	}
 	.box_summary{
 		float: left;
-		width: 410px;
+		width: 55%;
 		h3 {
 			display: inline-block;
 			margin-right: 30px;
@@ -4466,7 +4483,7 @@ body.campaigns{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			padding-top: 0;
+			margin-top: 4px;
 			position: absolute;
 			speak: none;
 			left: 28px;

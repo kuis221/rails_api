@@ -22,7 +22,7 @@ class FormField < Legacy::Record
 
 
   scope :custom, lambda{ not_global.joins(:metric).where('metrics.type not in (?)', ['Metric::BarSpend', 'Metric::PromoHours', 'Metric::Paragraph', 'Metric::Sentence']) }
-  scope :not_global, lambda{ joins(:metric).where('(metrics.program_id is not NULL OR metrics.brand_id is not NULL OR metrics.name not in (?))', ['Age', 'Gender', 'Demographic', '# Consumer Impressions', '# Consumers Sampled','# Consumer Interactions']) }
+  scope :not_global, lambda{ joins(:metric).where('(metrics.program_id is not NULL OR metrics.brand_id is not NULL OR metrics.name not in (?))', ['Age', 'Gender', 'Demographic', '# Consumer Impressions', '# Consumers Sampled','# Consumer Interactions', '# Events']) }
 
   def has_metric?
     !metric.nil?

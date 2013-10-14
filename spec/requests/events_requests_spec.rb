@@ -223,13 +223,6 @@ describe "Events", js: true, search: true do
 
       click_button 'Save Result'
 
-      within visible_modal do
-        page.should have_content 'The event\'s results have been saved'
-        click_link "OK"
-      end
-
-      ensure_modal_was_closed
-
       # Ensure the results are displayed on the page
 
       within "#ethnicity-graph" do

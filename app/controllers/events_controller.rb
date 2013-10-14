@@ -10,11 +10,11 @@ class EventsController < FilteredController
 
   helper_method :describe_filters, :calendar_highlights
 
-  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :save_results, :edit_data, :edit_surveys, :submit]
+  respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
   respond_to :xlsx, only: :index
 
-  custom_actions member: [:tasks, :edit_results, :save_results, :edit_data, :edit_surveys]
+  custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
 
   skip_load_and_authorize_resource only: :update
@@ -28,12 +28,6 @@ class EventsController < FilteredController
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
-  end
-
-  def save_results
-    update! do |success, failure|
-      failure.js { raise resource.errors.inspect }
-    end
   end
 
   def submit
@@ -91,7 +85,7 @@ class EventsController < FilteredController
         parameters[:end_time] = t.to_s(:time_only)
       else
         allowed = []
-        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
         allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, :id]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end

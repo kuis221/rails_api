@@ -1,6 +1,6 @@
 - if venue.is_a?(Venue)
   li id="venue_#{venue.id}"
-    a href="#{venue_path(venue.id)}"
+    = link_to_if_permitted(:show, Venue, venue_path(venue.id)) do
       span
         b= venue.name
         br>/
@@ -22,7 +22,7 @@
           = "Score"
 - else
   li id="venue_#{venue.id}"
-    a href="#{venue_path(venue.id, ref: venue.reference)}"
+    = link_to_if_permitted(:show, Venue, venue_path(venue.id, ref: venue.reference)) do
       span
         b= venue.name
         br>/

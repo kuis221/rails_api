@@ -10,6 +10,8 @@ class CompanyUsersController < FilteredController
 
   before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
+  skip_load_and_authorize_resource only: [:export_status]
+
   def autocomplete
     buckets = autocomplete_buckets({
       users: [CompanyUser],
@@ -107,6 +109,15 @@ class CompanyUsersController < FilteredController
       campaign = current_company.campaigns.find(params[:campaign_id])
       resource.memberships.create({memberable: campaign, parent: @parent}, without_protection: true)
       @campaigns = resource.campaigns.children_of(@parent)
+    end
+  end
+
+  def export_status
+    url = nil
+    export = ListExport.find_by_id_and_company_user_id(params[:download_id], current_company_user.id)
+    url = export.download_url if export.completed?
+    respond_to do |format|
+      format.json { render json:  {status: export.aasm_state, progress: export.progress, url: url} }
     end
   end
 

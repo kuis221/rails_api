@@ -208,7 +208,7 @@ window.FormBuilder = {
 				input.data 'saved-value', input.val()
 				@saveFields [field]
 
-		$('input[type=checkbox]', @attributesPanel).on 'click', =>
+		$('input[type=checkbox]', @attributesPanel).on 'change', =>
 			@saveFields [field]
 
 }

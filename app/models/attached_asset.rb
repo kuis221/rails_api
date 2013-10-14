@@ -141,8 +141,8 @@ class AttachedAsset < ActiveRecord::Base
           unless company_user.role.is_admin?
             with(:campaign_id, company_user.accessible_campaign_ids + [0])
             any_of do
-              locations = (company_user.areas.map{|a| Place.encode_location(a.common_denominators) } + company_user.places.map{|p| Place.location_for_search(p) }).compact
-              places_ids = company_user.place_ids
+              locations = company_user.accessible_locations
+              places_ids = company_user.accessible_places
               with(:place_id, places_ids + [0])
               with(:location, locations + [0])
             end

@@ -75,15 +75,15 @@
 
       ul.consumer-reach-metrics.pull-right
         - custom_kpis.each do |custom_kpi|
-          - if custom_kpi.kpi_type = 'number'
-            - custom_kpi_value = resource.results.find_by_kpi_id(custom_kpi.id).try(:value)
+          - if ['number', 'count'].include?(custom_kpi.kpi_type)
+            - custom_kpi_value = resource.results.find_by_kpi_id(custom_kpi.id).try(:display_value)
             li
               div.metric
                 span= (custom_kpi.capture_mechanism == 'currency' ? number_to_currency(custom_kpi_value, precision: 2) : custom_kpi_value)
                 = ' ' + custom_kpi.name
 
 - if event_data
-  .row-fluid
+  #demographics.row-fluid
     .span6
       - if active_kpis.include?(Kpi.gender) && resource.demographics_graph_data[:gender].present?
         #gender-graph.row-fluid

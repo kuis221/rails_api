@@ -1,8 +1,10 @@
 #event-results-form
-  = simple_form_for(resource, url: save_results_event_path(resource), remote: true, html: {multipart: true}) do |f|
+  = simple_form_for(resource, url: event_path(resource), remote: true, html: {multipart: true}) do |f|
     - if can?(:edit_data, resource)
       .details_box.box_event_data
         = render partial: 'edit_event_data', locals: {f: f}
+
+        = hidden_field_tag :partial, 'event_data'
 
         = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
 

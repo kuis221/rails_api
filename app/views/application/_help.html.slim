@@ -8,13 +8,18 @@
       p List 5 of the most common FAQs that pertain to the current section/page. Below the top 5 FAQs, show a "more..." link. Clicking on any of the FAQs will open the answer to the FAQ on the desk.com support site. Clicking on the "more..." link will direct users to the full FAQ list on the desk.com support site.
 
     .help-item.overview
-      .help-name OVERVIEW
-      p View an overlay tutorial that  guides you through the interface of the current screen.
+      .help-name 1. Overview Tutorial
+      p View an overlay tutorial that guides you through the interface of the current screen.
       = link_to 'View Tutorial', '#', class: 'btn btn-primary'
 
+    .help-item.support
+      .help-name 2. Browse Support Site
+      p Visit the Brandscopic support site to get answers to commonly asked questions.
+      = link_to 'Visit Support', 'http://support.brandscopic.com', target: '_blank', class: 'btn btn-primary'
+
     .help-item
-      .help-name LIVE SUPPORT
-      p Chat live with an Account Manager.
+      .help-name 3. Contact a Representative
+      p Contact an Account Manager directly.
       = link_to 'Start a chat', '#', class: 'btn btn-chat support'
       javascript:
         new DESK.Widget({

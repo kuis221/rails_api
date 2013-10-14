@@ -35,7 +35,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine), :if => Proc.new { can?(:index_my, Task) }
       secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams), :if => Proc.new { can?(:index_team, Task) }
     end
-    primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research) do |secondary|
+    primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research), :if => Proc.new { can?(:index, Venue) } do |secondary|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
 

@@ -10,7 +10,7 @@ class Analysis::StaffReportController < ApplicationController
   def report
     authorize! :show, company_user
     @events_scope = Event.with_user_in_team(company_user).where(aasm_state: 'approved')
-    @goals = company_user.goals.base.includes(:kpi).all
+    @goals = company_user.goals.base.includes(:kpi).where('goals.value is not null').all
   end
 
   private

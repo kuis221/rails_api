@@ -2,7 +2,7 @@ class FilteredController < InheritedResources::Base
   helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
   respond_to :json, only: :index
 
-  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export, :export_status]
+  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
@@ -20,18 +20,9 @@ class FilteredController < InheritedResources::Base
     @export = ListExport.find_by_id(params[:download_id])
   end
 
-  def export_status
-    url = nil
-    export = ListExport.find_by_id_and_user_id(params[:download_id], current_user.id)
-    url = export.download_url if export.completed?
-    respond_to do |format|
-      format.json { render json:  {status: export.aasm_state, progress: export.progress, url: url} }
-    end
-  end
-
   def index
     if request.format.xlsx?
-      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xlsx', user: current_user}, without_protection: true)
+      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xlsx', company_user: current_company_user}, without_protection: true)
       if @export.new?
         @export.queue!
       end
@@ -48,6 +39,11 @@ class FilteredController < InheritedResources::Base
 
     def permitted_params
       {}
+    end
+
+    alias_method :devise_current_user, :current_user
+    def current_user
+      @_current_user ||= devise_current_user
     end
 
     def authorize_actions

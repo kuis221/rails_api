@@ -36,6 +36,14 @@ class EventResult < ActiveRecord::Base
   scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
   scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }
 
+  def display_value
+    if form_field.field_type == 'count'
+      form_field.kpi.kpis_segments.where(id: self.value).first.try(:text) if self.value
+    else
+      self.value
+    end
+  end
+
   private
     def set_scalar_value
       if value.present? and form_field.is_numeric?

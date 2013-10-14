@@ -1,160 +1,103 @@
 = simple_form_for resource, remote: true do |f|
-  table.table.permissions-table
-    thead
-      tr
-        th 
-        th View
-        th Create
-        th Edit
-        th Deactivate
 
-    tbody
-      tr
-        td Users
-        td
-        td= permission_checkbox(f, :create, CompanyUser)
-        td= permission_checkbox(f, :update, CompanyUser)
-        td= permission_checkbox(f, :deactivate, CompanyUser)
+  .permissions
+    .row-fluid
+      .span12.category
+        .span2
+        .span2 VIEW
+        .span2 CREATE
+        .span2 EDIT
+        .span2 DEACTIVATE
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, CompanyUser)
-        td
-        td
-        td
+      .span12
+        .span2.title Users
+        .span2 
+        .span2 = permission_checkbox(f, :create, CompanyUser)
+        .span2 = permission_checkbox(f, :update, CompanyUser)
+        .span2 = permission_checkbox(f, :deactivate, CompanyUser)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, CompanyUser)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, CompanyUser)
 
-      tr
-        td Teams
-        td
-        td= permission_checkbox(f, :create, Team)
-        td= permission_checkbox(f, :update, Team)
-        td= permission_checkbox(f, :deactivate, Team)
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, CompanyUser)
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, Team)
-        td
-        td
-        td
+      .span12.separate
+        .span2.title Teams
+        .span2 
+        .span2 = permission_checkbox(f, :create, Team)
+        .span2 = permission_checkbox(f, :update, Team)
+        .span2 = permission_checkbox(f, :deactivate, Team)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, Team)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, Team)
 
-      tr
-        td Roles
-        td
-        td= permission_checkbox(f, :create, Role)
-        td= permission_checkbox(f, :update, Role)
-        td= permission_checkbox(f, :deactivate, Role)
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, Team)
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, Role)
-        td
-        td
-        td
+      .span12.separate
+        .span2.title Roles
+        .span2 
+        .span2 = permission_checkbox(f, :create, Role)
+        .span2 = permission_checkbox(f, :update, Role)
+        .span2 = permission_checkbox(f, :deactivate, Role)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, Role)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, Role)
 
-      tr
-        td Brand Portfolios
-        td
-        td= permission_checkbox(f, :create, BrandPortfolio)
-        td= permission_checkbox(f, :update, BrandPortfolio)
-        td= permission_checkbox(f, :deactivate, BrandPortfolio)
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, Role)
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, BrandPortfolio)
-        td
-        td
-        td
+      .span12.separate
+        .span2.title Brand Portfolios
+        .span2 
+        .span2 = permission_checkbox(f, :create, BrandPortfolio)
+        .span2 = permission_checkbox(f, :update, BrandPortfolio)
+        .span2 = permission_checkbox(f, :deactivate, BrandPortfolio)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, BrandPortfolio)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, BrandPortfolio)
 
-      tr
-        td Areas
-        td
-        td= permission_checkbox(f, :create, Area)
-        td= permission_checkbox(f, :update, Area)
-        td= permission_checkbox(f, :deactivate, Area)
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, BrandPortfolio)
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, Area)
-        td
-        td
-        td
+      .span12.separate
+        .span2.title Areas
+        .span2 
+        .span2 = permission_checkbox(f, :create, Area)
+        .span2 = permission_checkbox(f, :update, Area)
+        .span2 = permission_checkbox(f, :deactivate, Area)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, Area)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, Area)
 
-      tr
-        td Date Ranges
-        td
-        td= permission_checkbox(f, :create, DateRange)
-        td= permission_checkbox(f, :update, DateRange)
-        td= permission_checkbox(f, :deactivate, DateRange)
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, Area)
 
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, DateRange)
-        td
-        td
-        td
+      .span12.separate
+        .span2.title Date Ranges
+        .span2 
+        .span2 = permission_checkbox(f, :create, DateRange)
+        .span2 = permission_checkbox(f, :update, DateRange)
+        .span2 = permission_checkbox(f, :deactivate, DateRange)
 
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, DateRange)
-        td
-        td
-        td
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, DateRange)
 
+      .span12
+        .span2 Details
+        .span2 =  permission_checkbox(f, :show, DateRange)
 
-      tr
-        td Day Parts
-        td
-        td= permission_checkbox(f, :create, DayPart)
-        td= permission_checkbox(f, :update, DayPart)
-        td= permission_checkbox(f, :deactivate, DayPart)
-
-      tr
-        td.sub-level-1 List
-        td= permission_checkbox(f, :index, DayPart)
-        td
-        td
-        td
-
-      tr
-        td.sub-level-1 Details
-        td= permission_checkbox(f, :show, DayPart)
-        td
-        td
-        td
   = hidden_field_tag :partial, :admin_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

@@ -89,6 +89,25 @@ class CampaignsController < FilteredController
     render layout: false
   end
 
+  def places
+    places = resource.places.order('places.name ASC')
+    if places.count > 0
+      unless current_company_user.is_admin?
+        places = places.select do |place|
+          (current_company_user.accessible_locations & Place.locations_for_index(place)).count > 0 ||
+          current_company_user.accessible_places.include?(place.id)
+        end
+      end
+      render json: places.map{|p| {id: p.id, label: [p.name, p.city, p.state].compact.join(', ')}}
+    else
+      if current_company_user.is_admin?
+        render json: {any_place: true}
+      else
+        render json: []
+      end
+    end
+  end
+
   protected
     def permitted_params
       params.permit(campaign: [:name, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]

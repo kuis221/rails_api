@@ -139,6 +139,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :kpis
+      get :places
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'campaigns#new_member', via: :get, as: :new_member
@@ -168,7 +169,6 @@ Brandscopic::Application.routes.draw do
     get :autocomplete, on: :collection
     get :calendar, on: :collection
     get :tasks, on: :member
-    put :save_results, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member
     get :calendar_dates, on: :collection, to: :calendar_highlights

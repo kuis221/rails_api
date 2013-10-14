@@ -39,14 +39,19 @@ module Legacy
 
     def self.synchronize_programs(program_ids)
       User.current = company.company_users.order('id asc').first.user
+      company = Company.find_by_name('Legacy Marketing Partners')
+
       program_ids.each do |program_id|
         program = Legacy::Program.find(program_id)
-        counter = 0
-        batch_size = 20
-        total = program.events.count
-        while counter < total
-          Resque.enqueue(ProgramMigrationWorker, program_id, counter, batch_size)
-          counter += batch_size
+        campaign = program.synchronize(company).local
+        if campaign.persisted?
+          counter = 0
+          batch_size = 20
+          total = program.events.count
+          while counter < total
+            Resque.enqueue(ProgramMigrationWorker, company.id, program_id, campaign.id, counter, batch_size)
+            counter += batch_size
+          end
         end
       end
     end
