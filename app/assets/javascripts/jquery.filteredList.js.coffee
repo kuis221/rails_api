@@ -37,10 +37,13 @@ $.widget 'nmk.filteredList', {
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
 				.on 'click', (e) =>
 					@initialized = false
+					@defaultParams = []
 					@_cleanSearchFilter()
-					@form.find('.dates-range-filter').datepick('clear')
-					@form.find('.dates-range-filter').datepick('update')
+					@_deselectDates()
+					@element.find('input[type=checkbox]').attr('checked', false)
+					@_filtersChanged()
 					@initialized = true
+					false
 			).appendTo(@form)
 
 
@@ -99,6 +102,10 @@ $.widget 'nmk.filteredList', {
 		params = @buildParams()
 		$.getJSON @options.filtersUrl, params, (json) =>
 			@setFilters json.filters
+
+	_deselectDates: ->
+		@form.find('.dates-range-filter').datepick('clear')
+		@form.find('.dates-range-filter').datepick('update')
 
 	getFilters: () ->
 		p = @form.serializeArray()
@@ -521,6 +528,7 @@ $.widget 'nmk.filteredList', {
 		@_cleanSearchFilter()
 		query = window.location.search.replace(/^\?/,"")
 		if query != ''
+			@defaultParams = []
 			vars = query.split('&')
 			dates = []
 			for qvar in vars
@@ -545,6 +553,8 @@ $.widget 'nmk.filteredList', {
 
 			if dates.length > 0
 				@form.find('.dates-range-filter').datepick('setDate', dates)
+			else
+				@_deselectDates()
 		if @searchHidden and @searchHidden.val()
 			@acInput.hide()
 			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
