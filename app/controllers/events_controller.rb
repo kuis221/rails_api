@@ -117,7 +117,7 @@ class EventsController < FilteredController
     end
 
     def calendar_brands_events
-      colors = ['#d3c941', '#d7a23c', '#a18740', '#6c5f3c', '#d93f99', '#a766cf', '#7e42a4', '#bfbfbf', '#909090', '#606060']
+      colors = ['#d3c941', '#606060', '#a18740', '#d93f99', '#a766cf', '#7e42a4', '#d7a23c',  '#6c5f3c', '#bfbfbf', '#909090']
       brands_colors = {}
       days = {}
       campaing_brands_map = {}
