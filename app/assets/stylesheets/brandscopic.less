@@ -460,6 +460,12 @@ a.datepick-cmd:hover{
 
 
 // Events Calendar picker
+
+.calendar-months-arrows{
+	a:hover{
+		text-decoration: none;
+	}
+}
 .datepick{
 	background-color: white;
 	border: 0;
@@ -644,6 +650,19 @@ body.app-layout{
 	&.map:after{
 		color: white;
 		content: "\e001";
+		font-family: 'icons';
+		font-size: 15px;
+		left: 2px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top:1px;
+		-webkit-font-smoothing: antialiased;
+	}
+	&.calendar:after{
+		color: white;
+		content: "\e031";
 		font-family: 'icons';
 		font-size: 15px;
 		left: 2px;
