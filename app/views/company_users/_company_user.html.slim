@@ -15,8 +15,8 @@ li id="company_user_#{company_user.id}"
         = format_date_with_time(company_user.last_activity_at)
         br>/
         | Last activity
-  span.pull-right
+  span.pull-right.tools
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit' if can?(:edit, company_user)
     - if can?(:deactivate, CompanyUser)
       = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
-      = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active? 
+      = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active?

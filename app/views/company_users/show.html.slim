@@ -30,7 +30,7 @@
       = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
-  .details_box
+  #user-places.details_box
     h3 PLACES
     #company_user-areas-list.row-fluid
       = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
@@ -41,15 +41,17 @@
     .row-fluid
       = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
 
-  .details_box
+  #user-campaigns.details_box
     h3 CAMPAIGNS
 
     = render 'campaigns'
 
-  .details_box
-    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary' if can?(:edit, resource)
+  #user-goals.details_box
+    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
     #resource-goals-list.link-list
       = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+
+= render partial: 'help_tutorial'
 
 javascript:
   $(document).on('company_users:change', function(){
