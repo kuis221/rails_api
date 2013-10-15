@@ -30,7 +30,7 @@
           .pull-left
             = f.input :reference, :as => :location, wrapper_html: {class: 'form-horizontal'}
           .pull-right
-            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn'
+            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disable_with: 'Please wait...'
 
 javascript:
   var input = $('.modal .places-autocomplete')[0];

@@ -15,6 +15,8 @@ jQuery ->
     return false
 
   mapIsVisible = false
+  calendarIsVisible = false
+  calendarCreated = false
   # EVENTS INDEX
 
   $('#toggle-events-view a').on 'click', ->
@@ -26,26 +28,32 @@ jQuery ->
       $('.table-cloned-fixed-header').hide()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
       $('.dates-range-filter').slideDown()
+      calendarIsVisible = false
     else if $(this).attr('href') is '#calendar-view'
-      $('.dates-range-filter').slideUp()
-      $('#calendar-canvas').eventsCalendar({
-        eventsUrl: () =>
-          "/events/calendar.json#{location.search}"
-        renderMonthDay: (day) => 
-          date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
-          "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
-      })
-      $('#calendar-canvas').on 'click', '.cal-day-link', (e) ->
-        date = $(this).data('date')
-        $('#collection-list-filters').filteredList('selectCalendarDates', date, date)
-        $('#toggle-events-view a[href="#list-view"]').click()
-        false
+      calendarIsVisible = true
+      mapIsVisible = false
+      if not calendarCreated
+        $('.dates-range-filter').slideUp()
+        $('#calendar-canvas').eventsCalendar({
+          eventsUrl: () =>
+            "/events/calendar.json#{location.search}"
+          renderMonthDay: (day) => 
+            date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
+            "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
+        })
+        $('#calendar-canvas').on 'click', '.cal-day-link', (e) ->
+          date = $(this).data('date')
+          $('#collection-list-filters').filteredList('selectCalendarDates', date, date)
+          $('#toggle-events-view a[href="#list-view"]').click()
+          false
 
-      $('#collection-list-filters').on 'filters:changed', () ->
-        $('#calendar-canvas').eventsCalendar 'loadEvents'
+        $('#collection-list-filters').on 'filters:changed', () ->
+          if calendarIsVisible
+            $('#calendar-canvas').eventsCalendar 'loadEvents'
     else
       $('.dates-range-filter').slideDown()
       mapIsVisible = false
+      calendarIsVisible = false
       $('.table-cloned-fixed-header').show()
       $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
 
