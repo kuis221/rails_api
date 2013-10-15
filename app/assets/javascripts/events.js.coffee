@@ -25,7 +25,26 @@ jQuery ->
       initializeMap()
       $('.table-cloned-fixed-header').hide()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
+      $('.dates-range-filter').slideDown()
+    else if $(this).attr('href') is '#calendar-view'
+      $('.dates-range-filter').slideUp()
+      $('#calendar-canvas').eventsCalendar({
+        eventsUrl: () =>
+          "/events/calendar.json#{location.search}"
+        renderMonthDay: (day) => 
+          date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
+          "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
+      })
+      $('#calendar-canvas').on 'click', '.cal-day-link', (e) ->
+        date = $(this).data('date')
+        $('#collection-list-filters').filteredList('selectCalendarDates', date, date)
+        $('#toggle-events-view a[href="#list-view"]').click()
+        false
+
+      $('#collection-list-filters').on 'filters:changed', () ->
+        $('#calendar-canvas').eventsCalendar 'loadEvents'
     else
+      $('.dates-range-filter').slideDown()
       mapIsVisible = false
       $('.table-cloned-fixed-header').show()
       $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
@@ -41,8 +60,6 @@ jQuery ->
         mapTypeId: google.maps.MapTypeId.ROADMAP
       }
       map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
-
-
 
       map.setOptions {styles: window.MAP_STYLES}
     else

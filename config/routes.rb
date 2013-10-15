@@ -167,6 +167,7 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     get :autocomplete, on: :collection
+    get :calendar, on: :collection
     get :tasks, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member

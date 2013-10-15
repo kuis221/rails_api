@@ -402,7 +402,7 @@ class Event < ActiveRecord::Base
             unless due.nil?
               all_of do
                 with(:status, 'Unsent')
-                with(:end_at, 2.days.ago..Time.zone.now)
+                with(:end_at, Date.yesterday.beginning_of_day..Time.zone.now)
               end
             end
           end

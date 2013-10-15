@@ -414,8 +414,10 @@ $.widget 'nmk.filteredList', {
 			start_date = @_findDefaultParam('start_date')
 			end_date = @_findDefaultParam('end_date')
 			if start_date.length > 0 && end_date.length > 0
-				dates = [start_date[0].value, end_date[0].value]
-				container.datepick('setDate', dates)
+				@selectCalendarDates start_date[0].value, end_date[0].value
+
+	selectCalendarDates: (start_date, end_date) ->
+		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
 
 	_formatDate: (date) ->
 		"#{date.getMonth() + 1}/#{date.getDate()}/#{date.getFullYear()}"
@@ -435,6 +437,7 @@ $.widget 'nmk.filteredList', {
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
 
+			@element.trigger('filters:changed')
 			if @options.onChange
 				@options.onChange(@)
 
