@@ -128,37 +128,37 @@ class CompanyUsersController < FilteredController
     # Due event recaps
     count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Due'], user: [user.id], team: user.team_ids}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: count), level: 'grey', url: events_path(user: [user.id], status: ['Active'], event_status: ['Due']), unread: true, icon: 'icon-notification-event'})
+      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: count), level: 'grey', url: events_path(user: [user.id], status: ['Active'], event_status: ['Due'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Late event recaps
     count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Late'], user: [user.id], team: user.team_ids}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.event_recaps_late', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Late']), unread: true, icon: 'icon-notification-event'})
+      alerts.push({message: I18n.translate('notifications.event_recaps_late', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Late'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Recaps pending approval
     count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Submitted'], user: [user.id], team: user.team_ids}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.recaps_prending_approval', count: count), level: 'blue', url: events_path(user: [user.id], status: ['Active'], event_status: ['Submitted']), unread: true, icon: 'icon-notification-event'})
+      alerts.push({message: I18n.translate('notifications.recaps_prending_approval', count: count), level: 'blue', url: events_path(user: [user.id], status: ['Active'], event_status: ['Submitted'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Rejected recaps
     count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Rejected'], user: [user.id], team: user.team_ids}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.rejected_recaps', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected']), unread: true, icon: 'icon-notification-event'})
+      alerts.push({message: I18n.translate('notifications.rejected_recaps', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # User's teams late tasks
     count = Task.do_search({company_id: current_company.id, status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.task_late_team', count: count), level: 'red', url: my_teams_tasks_path(status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]), unread: true, icon: 'icon-notification-task'})
+      alerts.push({message: I18n.translate('notifications.task_late_team', count: count), level: 'red', url: my_teams_tasks_path(status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-task'})
     end
 
     # User's late tasks
     count = Task.do_search({company_id: current_company.id, status: ['Active'], task_status: ['Late'], user: [user.id]}).total
     if count > 0
-      alerts.push({message: I18n.translate('notifications.task_late_user', count: count), level: 'red', url: mine_tasks_path(user: [user.id], status: ['Active'], task_status: ['Late']), unread: true, icon: 'icon-notification-task'})
+      alerts.push({message: I18n.translate('notifications.task_late_user', count: count), level: 'red', url: mine_tasks_path(user: [user.id], status: ['Active'], task_status: ['Late'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-task'})
     end
 
     # Unread comments in user's tasks
