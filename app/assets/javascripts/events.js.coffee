@@ -29,12 +29,12 @@ jQuery ->
       $('.dates-range-filter').slideDown()
       initializeMap()
     else if $(this).attr('href') is '#calendar-view'
+      $('.dates-range-filter').slideUp()
       calendarIsVisible = true
       mapIsVisible = false
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
       if not calendarCreated
         calendarCreated = true
-        $('.dates-range-filter').slideUp()
         $('#calendar-canvas').eventsCalendar({
           eventsUrl: () =>
             "/events/calendar.json#{location.search}"
@@ -51,6 +51,8 @@ jQuery ->
         $('#collection-list-filters').off('filters:changed.eventsCalendar').on 'filters:changed.eventsCalendar', () ->
           if calendarIsVisible
             $('#calendar-canvas').eventsCalendar 'loadEvents'
+      else
+        $('#calendar-canvas').eventsCalendar 'loadEvents'
     else
       $('.dates-range-filter').slideDown()
       mapIsVisible = false
