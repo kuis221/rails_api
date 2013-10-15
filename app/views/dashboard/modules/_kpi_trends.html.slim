@@ -1,4 +1,4 @@
-#demographics-module.details_box
+#kpis-trends-module.details_box
   .row-fluid
     .span8
       #kpis-trends-bars
@@ -36,29 +36,28 @@
         | COST/IMPRESSION
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-        
+
         span= number_to_currency(kpis_completed_totals['cost_interaction'], precision: 2)
         | COST/INTERACTION
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-        
+
         span= number_to_currency(kpis_completed_totals['cost_sample'], precision: 2)
         | COST/SAMPLE
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-        
+
         span= number_with_precision(kpis_completed_totals['impressions_event'], precision: 2)
         | IMPRESSIONS/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-        
+
         span= number_with_precision(kpis_completed_totals['interactions_event'], precision: 2)
         | INTERACTIONS/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-        
+
         span= number_with_precision(kpis_completed_totals['sampled_event'], precision: 2)
         | SAMPLED/EVENT
         span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
         br>/
-      
