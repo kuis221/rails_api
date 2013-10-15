@@ -84,6 +84,16 @@ describe EventsController do
         get 'index'
         response.should be_success
       end
+
+      describe "calendar_highlights" do
+        it "loads the highligths for the calendar" do
+          FactoryGirl.create(:event, company: @company, start_date: '01/23/2013', end_date: '01/24/2013')
+          FactoryGirl.create(:event, company: @company, start_date: '02/15/2013', end_date: '02/15/2013')
+          get 'index'
+          response.should be_success
+          assigns(:calendar_highlights).should == {2013=>{1=>{23=>1}, 2=>{15=>1}}}
+        end
+      end
     end
 
     describe "GET 'new'" do

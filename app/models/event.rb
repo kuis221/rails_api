@@ -66,6 +66,8 @@ class Event < ActiveRecord::Base
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
+  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids) }
+
   track_who_does_it
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']

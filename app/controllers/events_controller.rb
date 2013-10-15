@@ -63,7 +63,7 @@ class EventsController < FilteredController
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, count(events.id) as count")
         .where(company_id: current_company)
-        .where(campaign_id: current_company_user.accessible_campaign_ids)
+        .for_campaigns_accessible_by(current_company_user)
         .group("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')").map do |day|
         parts = day.start.split('/').map(&:to_i)
         hsh.merge!({parts[0] => {parts[1] => {parts[2] => day.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }

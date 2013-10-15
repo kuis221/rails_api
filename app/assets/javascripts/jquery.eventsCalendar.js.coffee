@@ -123,6 +123,7 @@ $.widget 'nmk.eventsCalendar', {
 		else
 			url = @options.eventsUrl
 		$.get url, {start: @firstDay.getTime()/1000, end: @lastDay.getTime()/1000}, (response) =>
+			@calendar.find('.calendar-event').remove()
 			for eventElement in response
 				d = new Date(Date.parse(eventElement.start))
 				cell = @calendar.find("##{d.getUTCFullYear()}_#{d.getUTCMonth()+1}_#{d.getUTCDate()}")

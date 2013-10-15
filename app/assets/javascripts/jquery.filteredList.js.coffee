@@ -36,10 +36,11 @@ $.widget 'nmk.filteredList', {
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
 				.on 'click', (e) =>
+					@initialized = false
 					@_cleanSearchFilter()
 					@form.find('.dates-range-filter').datepick('clear')
 					@form.find('.dates-range-filter').datepick('update')
-					@_filtersChanged()
+					@initialized = true
 			).appendTo(@form)
 
 
