@@ -1,0 +1,11 @@
+.row-fluid
+  - resource.contact_events.each do |contact_event|
+    .span3.event-contact.clearfix id = "event-contact-#{contact_event.id}"
+      .pull-left
+        .full-name
+          = contact_event.full_name
+        .contact-title
+          = contact_event.title
+      - if can_delete
+        .pull-right
+          = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_contact_event_path(resource, contact_event), title: 'Remove Contact', class: 'remove-contact-btn', remote: true, method: :delete)

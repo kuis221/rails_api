@@ -43,7 +43,8 @@ class Event < ActiveRecord::Base
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  # attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :summary, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
+  has_many :contact_events
+  has_many :contacts, through: :contact_events
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results

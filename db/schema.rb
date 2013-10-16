@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131012154546) do
+ActiveRecord::Schema.define(:version => 20131015213823) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -226,6 +226,33 @@ ActiveRecord::Schema.define(:version => 20131012154546) do
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
   add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
+
+  create_table "contact_events", :force => true do |t|
+    t.integer  "contact_id"
+    t.integer  "event_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "contact_events", ["contact_id"], :name => "index_contact_events_on_contact_id"
+  add_index "contact_events", ["event_id"], :name => "index_contact_events_on_event_id"
+
+  create_table "contacts", :force => true do |t|
+    t.integer  "company_id"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "title"
+    t.string   "email"
+    t.string   "phone_number"
+    t.string   "street1"
+    t.string   "street2"
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip_code"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "data_migrations", :force => true do |t|
     t.integer  "remote_id"

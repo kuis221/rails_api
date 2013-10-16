@@ -1,0 +1,52 @@
+- remote ||= false
+= simple_form_for([parent, resource], remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.simple_fields_for :contact do |uf|
+      .row-fluid.users
+        .span6
+          = uf.input :first_name, input_html: {class: 'input-large'}, :autofocus => true
+        .span6
+          = uf.input :last_name, input_html: {class: 'input-large'}
+      .row-fluid.users
+        = uf.input :title, input_html: {class: 'input-xxlarge'}
+      .row-fluid.users
+        = uf.input :email, input_html: {class: 'input-xxlarge'}
+      .row-fluid.users
+        = uf.input :phone_number, input_html: {class: 'input-xxlarge'}
+
+      .row-fluid.users
+        = uf.input :street1, label: 'Address', input_html: {class: 'input-xxlarge'}
+      .row-fluid.users
+        = uf.input :street2, label: false, input_html: {class: 'input-xxlarge'}
+      .row-fluid.users
+        .span6
+          = uf.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
+        .span6
+          = uf.input :city, required: true, input_html: {class: 'input-large'}
+      .row-fluid.users
+        .span6
+          = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input-large chosen-enabled'}
+        .span6
+          = uf.input :zip_code, input_html: {class: 'input-large'}
+  .form-actions
+    = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+coffee:
+  $('#user_team_ids').select2()
+
+  $('#contact_event_contact_attributes_country').change () ->
+    $.get '/countries/states.json', {country: $(this).val()}, (response) ->
+      states = $('#contact_event_contact_attributes_state')
+      val = states.val()
+      states.html('<option></option>')
+      if response.states
+        for state in response.states
+          option = $('<option>').val(state.id).html(state.name)
+          if val is state.id
+            option.attr('selected', 'selected')
+          states.append(option)
+      states.trigger('liszt:updated')

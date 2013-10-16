@@ -103,6 +103,7 @@ en:
         comment: "New Comment"
         goal: "New Goal"
         day_item: "New Time"
+        contact_event: "New Contact"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -125,6 +126,7 @@ en:
         comment: "Edit Comment"
         goal: "Edit Goal"
         day_item: "Edit Time"
+        contact_event: "Edit Contact"
 
   form_builder:
     modules:

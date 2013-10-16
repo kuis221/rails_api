@@ -1,0 +1,41 @@
+.campaigns-modals
+  p Add contacts
+
+  input type="text" name="q" id="contact-search-box"
+  #select-contacts-table-wrapper
+    .link-list
+      ul#contacts-list
+        - @contacts.each do |contact|
+          li id="contact-#{contact.id}"
+            span.pull-left
+              .contact_name= contact.full_name
+              = contact.title
+            span.pull-right
+              = simple_form_for [parent, ContactEvent.new], remote: true do |f|
+                = f.input :contact_id, as: :hidden, input_html: {value: contact.id}
+                = f.submit "", class: 'icon-plus-sign'
+
+        li.empty-list-message
+          p There are not assignable contacts
+
+    .row-fluid
+      .span12
+        .divider
+          | OR
+
+    p
+      = link_to 'Create New Contact', new_event_contact_event_path(parent), remote: true, class: 'btn btn-primary'
+      = link_to 'Close', '', class: 'btn btn-cancel'
+
+javascript:
+  $('#contact-search-box').on('keyup', function () {
+    var value = $(this).val();
+    $("#contacts-list > li:not(.empty-list-message)").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
+  });
