@@ -101,9 +101,7 @@ class Campaign < ActiveRecord::Base
     integer :company_id
     integer :id
 
-    integer :place_ids, multiple: true do
-      []
-    end
+    integer :place_ids, multiple: true
 
     string :aasm_state
 
@@ -275,6 +273,8 @@ class Campaign < ActiveRecord::Base
           case attribute
           when 'campaign'
             with :id, value
+          when 'venue'
+            with :place_ids, Venue.find(value).place_id
           else
             with "#{attribute}_ids", value
           end

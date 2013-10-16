@@ -18,7 +18,7 @@ class CompanyUsersController < FilteredController
       teams: [Team],
       roles: [Role],
       campaigns: [Campaign],
-      places: [Place]
+      places: [Venue]
     })
 
     render :json => buckets.flatten

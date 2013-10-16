@@ -138,6 +138,7 @@ class FilteredController < InheritedResources::Base
           with(:status, ['Active'])
         end
       end
+      Rails.logger.debug "#{search.results.inspect}"
 
       @autocomplete_buckets ||= list.map do |bucket_name, klasess|
         build_bucket(search, bucket_name, klasess)

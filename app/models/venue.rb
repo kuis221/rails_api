@@ -37,7 +37,7 @@ class Venue < ActiveRecord::Base
     integer :place_id
     integer :company_id
 
-    text :name
+    text :name, stored: true
     text :types do
       begin
         place.types.join ' '
@@ -64,6 +64,10 @@ class Venue < ActiveRecord::Base
 
     integer :campaign_ids, multiple: true do
       campaigns.map(&:id)
+    end
+
+    string :status do
+      'Active'
     end
 
     integer :events, :stored => true

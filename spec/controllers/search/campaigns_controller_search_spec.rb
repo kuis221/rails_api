@@ -82,9 +82,9 @@ describe CampaignsController, search: true do
       brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
     end
 
-    it "should return the places in the Places Bucket" do
+    it "should return the venues in the Places Bucket" do
       Place.any_instance.should_receive(:fetch_place_data).and_return(true)
-      place = FactoryGirl.create(:place, name: 'Motel Paraiso')
+      venue = FactoryGirl.create(:venue, company_id: @company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
       Sunspot.commit
 
       get 'autocomplete', q: 'mot'
@@ -92,7 +92,7 @@ describe CampaignsController, search: true do
 
       buckets = JSON.parse(response.body)
       places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
-      places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>place.id.to_s, "type"=>"place"}]
+      places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
     end
   end
 

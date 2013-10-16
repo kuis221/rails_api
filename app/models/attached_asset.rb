@@ -184,8 +184,10 @@ class AttachedAsset < ActiveRecord::Base
             campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
             campaigns = '-1' if campaigns.empty?
             with "campaign_id", campaigns
-          when 'campaign', 'place'
+          when 'campaign'
             with "#{attribute}_id", value
+          when 'venue'
+            with :place_id, Venue.find(value).place_id
           else
             with "#{attribute}_ids", value
           end
