@@ -1,5 +1,5 @@
 - submit_link = false
-- if can?(:submit, resource)
+- if can?(:submit, resource) && resource.may_submit?
   - submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
 
 //Date in the future
@@ -23,10 +23,10 @@
         == "Your event has #{(today_tasks > 1) ? today_tasks.to_s+' tasks that are' : ' one task that is'} due today. <a href=\"#event-tasks\" class=\"smooth-scroll\">Click here</a> to complete."
 
 //Event is happening today
-- elsif resource.happens_today?
+- elsif resource.happens_today? && resource.unsent?
   .alert.alert-grey
     = describe_today_event_alert(resource)
-    - if resource.in_past? && submit_link
+    - if submit_link
       == " Once complete, please #{submit_link} your post event form."
 
 //Event is due

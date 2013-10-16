@@ -34,7 +34,8 @@ class EventsController < FilteredController
     if resource.unsent? || resource.rejected?
       begin
         resource.submit!
-      rescue AASM::InvalidTransition => e
+        raise resource.errors.inspect
+      # rescue AASM::InvalidTransition => e
       end
     end
   end
