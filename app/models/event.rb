@@ -179,6 +179,10 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def place_reference
+    "#{place.reference}||#{place.place_id}" if place.present?
+  end
+
   def status
     self.active? ? 'Active' : 'Inactive'
   end
