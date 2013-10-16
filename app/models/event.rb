@@ -179,6 +179,10 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def place_reference
+    "#{place.reference}||#{place.place_id}" if place.present?
+  end
+
   def status
     self.active? ? 'Active' : 'Inactive'
   end
@@ -428,6 +432,7 @@ class Event < ActiveRecord::Base
           d = Timeliness.parse(params[:start_date], zone: :current)
           with :start_at, d.beginning_of_day..d.end_of_day
         end
+
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
@@ -439,6 +444,8 @@ class Event < ActiveRecord::Base
             with "#{attribute}_id", value
           when 'company_user'
             with :user_ids, value
+          when 'venue'
+            with :place_id, Venue.find(value).place_id
           else
             with "#{attribute}_ids", value
           end
@@ -555,7 +562,6 @@ class Event < ActiveRecord::Base
 
       if place_id_changed?
         Resque.enqueue(EventPhotosIndexer, self.id)
-        Sunspot.index(place)
         if place_id_was.present?
           previous_venue = Venue.find_by_company_id_and_place_id(company_id, place_id_was)
           Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?

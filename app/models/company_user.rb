@@ -94,9 +94,8 @@ class CompanyUser < ActiveRecord::Base
       active_status
     end
 
-    integer :team_ids, multiple: true do
-      teams.map(&:id)
-    end
+    integer :team_ids, multiple: true
+    integer :place_ids, multiple: true
 
     string :teams, multiple: true, references: Team do
       teams.map{|t| t.id.to_s + '||' + t.name}
@@ -167,6 +166,8 @@ class CompanyUser < ActiveRecord::Base
             with :id, value
           when 'role'
             with "#{attribute}_id", value
+          when 'venue'
+            with :place_ids, Venue.find(value).place_id
           else
             with "#{attribute}_ids", value
           end

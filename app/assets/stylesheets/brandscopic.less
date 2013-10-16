@@ -460,6 +460,12 @@ a.datepick-cmd:hover{
 
 
 // Events Calendar picker
+
+.calendar-months-arrows{
+	a:hover{
+		text-decoration: none;
+	}
+}
 .datepick{
 	background-color: white;
 	border: 0;
@@ -654,8 +660,17 @@ body.app-layout{
 		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
-	.icon-calendar {
-		line-height: 19px;
+	&.calendar:after{
+		color: white;
+		content: "\e031";
+		font-family: 'icons';
+		font-size: 15px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top: 2px;
+		-webkit-font-smoothing: antialiased;
 	}
 	.icon-calendar:before{
 		color: white;
@@ -4492,7 +4507,6 @@ body.campaigns{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			margin-top: 4px;
 			position: absolute;
 			speak: none;
 			left: 28px;

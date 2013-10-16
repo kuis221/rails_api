@@ -24,7 +24,7 @@ class EventsController < FilteredController
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
-      places: [Place],
+      places: [Venue],
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
@@ -34,7 +34,8 @@ class EventsController < FilteredController
     if resource.unsent? || resource.rejected?
       begin
         resource.submit!
-      rescue AASM::InvalidTransition => e
+        raise resource.errors.inspect
+      # rescue AASM::InvalidTransition => e
       end
     end
   end
