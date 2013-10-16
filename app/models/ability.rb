@@ -87,6 +87,10 @@ class Ability
         can?(:show_analysis, campaign) && user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
+      can [:add_place, :remove_place], [Area, CompanyUser] do |object|
+         can?(:edit, object)
+      end
+
       # Event Data
       can :edit_data, Event do |event|
        (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
