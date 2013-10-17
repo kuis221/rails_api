@@ -146,7 +146,13 @@ class CompanyUser < ActiveRecord::Base
 
   def accessible_places
     # TODO: memcache this
-    @accessible_places ||= (user.current_company_user.place_ids + user.current_company_user.areas.map{|a| a.places.map{|p| p.id}}).flatten.uniq
+    @accessible_places ||= (place_ids + areas.map{|a| a.places.map{|p| p.id}}).flatten.uniq
+  end
+
+  def allowed_to_access_place?(place)
+    is_admin? ||
+    Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+    accessible_places.include?(place.id)
   end
 
   class << self

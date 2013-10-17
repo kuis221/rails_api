@@ -76,6 +76,8 @@ class Event < ActiveRecord::Base
   validates :start_at, presence: true
   validates :end_at, presence: true
 
+  validate :event_place_valid?
+
   validates_datetime :start_at
   validates_datetime :end_at, :on_or_after => :start_at, on_or_after_message: 'must be after'
 
@@ -175,7 +177,7 @@ class Event < ActiveRecord::Base
     @place_reference = value
     if value and value.present?
       reference, place_id = value.split('||')
-      self.place = Place.find_or_initialize_by_place_id(place_id, {reference: reference}) if value
+      self.place = Place.load_by_place_id(place_id,  reference) if value
     end
   end
 
@@ -576,6 +578,12 @@ class Event < ActiveRecord::Base
     def set_promo_hours
       self.promo_hours = (end_at - start_at) / 3600
       true
+    end
+
+    def event_place_valid?
+      unless place.nil? || User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+        errors.add(:place_reference, 'is not part of your authorized locations')
+      end
     end
 
     # def add_team_members
