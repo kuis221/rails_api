@@ -1,5 +1,5 @@
 |
-  bootbox.classes('modal-xlarge');
+  bootbox.classes('modal-large');
   var selectAreaDialog = bootbox.dialog($('#{escape_javascript(render "select_areas")}'), [
     {
       "label" : 'New Area',
@@ -17,4 +17,4 @@
           selectAreaDialog.modal('hide');
       }
     }
-  ],{'onEscape': true, animate: (!$.fx.off)})
+  ],{header: 'Add to Area', 'onEscape': true, animate: (!$.fx.off)})

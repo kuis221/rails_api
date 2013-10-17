@@ -20,7 +20,7 @@ class VenuesController < FilteredController
   end
 
   def select_areas
-    @areas = current_company.areas.not_in_venue(resource.place)
+    @areas = current_company.areas.not_in_venue(resource.place).order('name ASC')
   end
 
   def add_areas
