@@ -10,4 +10,8 @@ class Contact < ActiveRecord::Base
   def full_name
     [first_name, last_name].join ' '
   end
+
+  def country_name
+    Country.new(country).name rescue nil unless country.nil?
+  end
 end
