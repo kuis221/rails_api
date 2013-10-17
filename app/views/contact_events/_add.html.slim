@@ -7,7 +7,7 @@
       .link-list
         ul#contacts-list
           - @contacts.each do |contact|
-            li id="contact-#{contact.id}"
+            li id="contact-#{contact.class.name.underscore}-#{contact.id}"
               span.member-data
                 .member-name= contact.full_name
                 .member-description= contact.is_a?(Contact) ? contact.title : contact.role_name
@@ -15,7 +15,7 @@
                 = simple_form_for [parent, ContactEvent.new], remote: true do |f|
                   = f.hidden_field :contactable_id, as: :hidden, value: contact.id
                   = f.hidden_field :contactable_type, as: :hidden, value: contact.class.name
-                  = link_to '', '#', id: "add-contact-btn-#{contact.class.name.underscore}-#{contact.id}"" class: 'icon-plus-sign', "data-submit-link" => true, disable_with: ''
+                  = link_to '', '#', id: "add-contact-btn-#{contact.class.name.underscore}-#{contact.id}", class: 'icon-plus-sign', "data-submit-link" => true, disable_with: ''
 
           li.empty-list-message
             p There are not assignable contacts

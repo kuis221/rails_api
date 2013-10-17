@@ -5,4 +5,4 @@
     $('.contactevent_modal').modal('hide');
     $('#event-contacts-list').html('#{j render(partial: 'events/contacts', locals: {resource: parent, can_delete: can?(:delete_contact, parent)}) }');
   - if params.has_key?(:contact_event) and params[:contact_event].has_key?(:contactable_id)
-    | $('.modal #contacts-list #contact-#{params[:contact_event][:contactable_id]}').remove();
+    | $('.modal #contacts-list #contact-#{params[:contact_event][:contactable_type].underscore}-#{params[:contact_event][:contactable_id]}').remove();

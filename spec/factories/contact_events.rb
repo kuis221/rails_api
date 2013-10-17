@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :contact_event do
-    contact nil
+    contactable nil
     event nil
   end
 end

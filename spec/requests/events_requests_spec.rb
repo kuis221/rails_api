@@ -146,35 +146,102 @@ describe "Events", js: true, search: true do
 
       click_js_link 'Add Contact'
       within visible_modal do
+        page.should have_selector("li#contact-company_user-#{company_user.id}")
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
         click_js_link("add-contact-btn-company_user-#{company_user.id}")
 
-        page.should have_no_selector("li#contact-#{company_user.id}")
+        page.should have_no_selector("li#contact-company_user-#{company_user.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
-      within event_team_member(company_user) do
+      within "#event-contacts-list" do
         page.should have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
       # Test removal of the user
-      hover_and_click('#event-team-members #event-member-'+company_user.id.to_s, 'Remove Member')
-
-
-      within visible_modal do
-        page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
-        #find('a.btn-primary').click   # The "OK" button
-        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
-        click_js_link('OK')
-      end
-      ensure_modal_was_closed
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)
-      all('#event-team-members .team-member').count.should == 0
+
+      page.should_not have_content('Pablo Baltodano')
+    end
+
+
+    it "allows to add a contact as contact to the event", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      within visible_modal do
+        page.should have_selector("li#contact-contact-#{contact.id}")
+        page.should have_content('Guillermo')
+        page.should have_content('Vargas')
+        click_js_link("add-contact-btn-contact-#{contact.id}")
+
+        page.should have_no_selector("li#contact-contact-#{contact.id}")
+      end
+      close_modal
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_content('Guillermo Vargas')
+        #find('a.remove-member-btn').click
+      end
+
+      # Test removal of the user
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+
+      page.should_not have_content('Guillermo Vargas')
+    end
+
+
+    it "allows to create a contact", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      visible_modal.click_js_link("Create New Contact")
+
+      within ".contactevent_modal" do
+        fill_in 'First name', with: 'Pedro'
+        fill_in 'Last name', with: 'Picapiedra'
+        fill_in 'Email', with: 'pedro@racadura.com'
+        fill_in 'Phone number', with: '+1 505 22343222'
+        fill_in 'Address', with: 'ABC 123'
+        select_from_chosen('United States', :from => 'Country')
+        select_from_chosen('California', :from => 'State')
+        fill_in 'City', with: 'Los Angeles'
+        fill_in 'Zip code', with: '12345'
+        click_js_button 'Save'
+      end
+
+      ensure_modal_was_closed
+
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_content('Pedro Picapiedra')
+      end
+
+      # Test removal of the user
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+
+      page.should_not have_content('Pedro Picapiedra')
     end
 
     it "allows to create a new task for the event and mark it as completed" do
