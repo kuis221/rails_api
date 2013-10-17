@@ -1,3 +1,10 @@
+- content_for :help_title do
+  - if params[:id].present?
+    | The Event Details area shows all of the information related to a specific event. Based on whether the event is upcoming or in the past, this area will display different information that is most pertinent to you at that point in time.
+  - else
+    | The Events list area shows all events that you are associated with and can be used to view and schedule events for your campaigns
+- content_for :help_title_map do
+  | The Events map area visually displays all events that you are associated with and can be used to view and schedule events for your campaigns
 .help-overlay-definitions
   //For index
   div data-target="#application-content" data-intro="Click anywhere or press Esc to close" data-position="top" data-element-class="chardinjs-keep-back" data-tooltip-style="top: -30px;"

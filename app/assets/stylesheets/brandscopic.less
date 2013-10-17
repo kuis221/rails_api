@@ -460,6 +460,12 @@ a.datepick-cmd:hover{
 
 
 // Events Calendar picker
+
+.calendar-months-arrows{
+	a:hover{
+		text-decoration: none;
+	}
+}
 .datepick{
 	background-color: white;
 	border: 0;
@@ -654,8 +660,17 @@ body.app-layout{
 		top:1px;
 		-webkit-font-smoothing: antialiased;
 	}
-	.icon-calendar {
-		line-height: 19px;
+	&.calendar:after{
+		color: white;
+		content: "\e031";
+		font-family: 'icons';
+		font-size: 15px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top: 2px;
+		-webkit-font-smoothing: antialiased;
 	}
 	.icon-calendar:before{
 		color: white;
@@ -1113,6 +1128,15 @@ li.dropdown a{
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
 	background-image:none;
+}
+#help-modal{
+	.help-title{
+		margin-bottom: 20px;
+	}
+	.help-title-map{
+		display: none;
+		margin-bottom: 20px;
+	}
 }
 li#help_menu{
 	.single-link:before{
@@ -2519,6 +2543,18 @@ body.dashboard.index {
 	p{
 		width: 340px;
 	}
+
+	.modal-header{
+		h3{
+			margin-bottom: 0px;
+		}
+	}
+
+	.help-title{
+		p{
+			width: auto;
+		}
+	}
 }
 
 body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
@@ -3887,6 +3923,11 @@ table.table td.comments-container {
 	b{
 		font-size: 16px;
 	}
+	.help-title{
+		b{
+			font-size: 13px;
+		}
+	}
 	.btn-primary{
 		&.tasks{
 			margin: 30px 5px 0 0;
@@ -4492,7 +4533,6 @@ body.campaigns{
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
-			margin-top: 4px;
 			position: absolute;
 			speak: none;
 			left: 28px;

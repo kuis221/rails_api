@@ -50,28 +50,6 @@ class Place < ActiveRecord::Base
 
   serialize :types
 
-  searchable do
-    text :name, stored: true
-
-    text :formatted_address
-
-    latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
-
-    integer :company_id do
-      -1
-    end
-
-    string :status do
-      'Active'
-    end
-
-    string :name
-    string :country
-    string :state
-    string :city
-    string :types, multiple: true
-  end
-
   def street
     "#{street_number} #{route}".strip
   end

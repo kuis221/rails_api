@@ -14,7 +14,7 @@ class Results::PhotosController < FilteredController
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
-      places: [Place]
+      places: [Venue]
     })
     render :json => buckets.flatten
   end
