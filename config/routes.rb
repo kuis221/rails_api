@@ -204,7 +204,7 @@ Brandscopic::Application.routes.draw do
     resources :comments, only: [:index, :create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
-    resources :contact_events, path: :contacts, only: [:create, :new, :destroy] do
+    resources :contact_events, path: :contacts, only: [:create, :new, :destroy, :edit, :update] do
       get 'add', on: :collection
     end
 
