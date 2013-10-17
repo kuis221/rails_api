@@ -1,3 +1,8 @@
+- content_for :help_title do
+  - if params[:scope] == 'user'
+    | The My Tasks area allows you to assign, view, communicate about and complete tasks required to successfully run an event. Note that you can only assign tasks from within a specific Event
+  - else
+    | The Team Tasks area allows you to view, communicate about and complete tasks assigned to other team members. Note that you can only assign tasks from within a specific Event
 .help-overlay-definitions
   div data-target="#application-content" data-intro="Click anywhere or press Esc to close" data-position="top" data-element-class="chardinjs-keep-back" data-tooltip-style="top: -26px;"
   div data-target=".task-counter-bar" data-intro="The task counter area shows how many tasks you have unassigned, assigned, completed or late" data-position="right" data-helper-class="chardinjs-dashed" data-tooltip-style="right: -127px; top: -37px;"

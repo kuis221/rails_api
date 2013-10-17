@@ -25,6 +25,8 @@ jQuery ->
     if $(this).attr('href') is '#map-view'
       mapIsVisible = true
       calendarIsVisible = false
+      $('.help-title').hide()
+      $('.help-title-map').show()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
       $('.dates-range-filter').slideDown()
       initializeMap()
@@ -32,13 +34,15 @@ jQuery ->
       $('.dates-range-filter').slideUp()
       calendarIsVisible = true
       mapIsVisible = false
+      $('.help-title').show()
+      $('.help-title-map').hide()
       $('body.events.index #collection-list-filters').filteredList 'disableScrolling'
       if not calendarCreated
         calendarCreated = true
         $('#calendar-canvas').eventsCalendar({
           eventsUrl: () =>
             "/events/calendar.json#{location.search}"
-          renderMonthDay: (day) => 
+          renderMonthDay: (day) =>
             date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
             "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
         })
@@ -57,6 +61,8 @@ jQuery ->
       $('.dates-range-filter').slideDown()
       mapIsVisible = false
       calendarIsVisible = false
+      $('.help-title').show()
+      $('.help-title-map').hide()
       $('.table-cloned-fixed-header').show()
       $('body.events.index #collection-list-filters').filteredList 'enableScrolling'
 
