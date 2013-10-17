@@ -49,7 +49,7 @@
 
 - elsif resource.rejected?
   .alert.alert-danger
-    - resubmit_link = link_to 'resubmit', submit_event_path, method: :put
+    - resubmit_link = link_to 'resubmit', submit_event_path(format: :js), method: :put, remote: true
     == "Your post event report form has been rejected for the following reasons:"
     br>/
     p #{resource.reject_reason}
