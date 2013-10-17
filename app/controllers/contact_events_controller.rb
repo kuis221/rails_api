@@ -2,7 +2,7 @@ class ContactEventsController < InheritedResources::Base
 
   belongs_to :event
 
-  actions :new, :create, :destroy
+  actions :new, :create, :destroy, :update, :edit
 
   custom_actions collection: [:add]
 
@@ -26,6 +26,6 @@ class ContactEventsController < InheritedResources::Base
     end
 
     def permitted_params
-      params.permit(contact_event: [:contactable_id, :contactable_type, {contactable_attributes: [:street1, :street2, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :title, :zip_code]}])[:contact_event]
+      params.permit(contact_event: [:contactable_id, :contactable_type, {contactable_attributes: [:id, :street1, :street2, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :title, :zip_code]}])[:contact_event]
     end
 end

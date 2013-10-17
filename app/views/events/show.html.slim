@@ -45,7 +45,7 @@
     #event-contacts.details_box
       h3 CONTACTS
       #event-contacts-list
-        = render partial: 'contacts', locals: {can_delete: can?(:delete_contact, resource)}
+        = render 'contacts'
       = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:add_contacts, resource)
 
   - if resource.has_event_data? && !resource.rejected?

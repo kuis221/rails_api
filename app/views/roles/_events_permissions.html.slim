@@ -51,6 +51,13 @@
         .span2 = permission_checkbox(f, :delete_member, Event)
 
       .span12
+        .span3 Event Contacts
+        .span2 = permission_checkbox(f, :view_contacts, Event)
+        .span2
+        .span2 = permission_checkbox(f, :add_contacts, Event)
+        .span2 = permission_checkbox(f, :delete_contact, Event)
+
+      .span12
         .span3 Tasks
         .span2 = permission_checkbox(f, :index_tasks, Event)
         .span2 = permission_checkbox(f, :create_task, Event)

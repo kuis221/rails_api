@@ -10,9 +10,9 @@ FactoryGirl.define do
     phone_number "MyString"
     street1 "MyString"
     street2 "MyString"
-    country "MyString"
-    state "MyString"
-    city "MyString"
-    zip_code "MyString"
+    country "US"
+    state "CA"
+    city "Holliwood"
+    zip_code "43212"
   end
 end

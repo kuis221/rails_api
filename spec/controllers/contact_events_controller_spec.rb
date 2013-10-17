@@ -20,6 +20,15 @@ describe ContactEventsController do
     end
   end
 
+  describe "GET 'edit'" do
+    it "returns http success" do
+      get 'edit', event_id: event.to_param, id: contact_event.id, format: :js
+      assigns(:contact_event).should == contact_event
+      response.should be_success
+      response.should render_template('edit')
+    end
+  end
+
   describe "GET 'add'" do
     it "returns http success" do
       contact.reload
@@ -48,7 +57,7 @@ describe ContactEventsController do
   describe "POST 'create'" do
     it "assigns the contact to the event" do
       expect {
-        get 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
+        post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
         response.should be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
@@ -58,7 +67,7 @@ describe ContactEventsController do
 
     it "assigns the company user to the event" do
       expect {
-        get 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
+        post 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
         response.should be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
@@ -69,10 +78,32 @@ describe ContactEventsController do
     it "creates a new contact and assigns it to the event" do
       expect {
         expect {
-          get 'create', event_id: event.to_param, contact_event: {contactable_attributes: {first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          post 'create', event_id: event.to_param, contact_event: {contactable_attributes: {first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
           response.should be_success
         }.to change(Contact, :count).by(1)
       }.to change(ContactEvent, :count).by(1)
+
+      c = Contact.last
+      c.first_name.should == 'Fulanito'
+      c.last_name.should == 'De Tal'
+      c.email.should == 'email@test.com'
+      c.phone_number.should == '12345678'
+      c.country.should == 'US'
+      c.state.should == 'CA'
+      c.city.should == 'Los Angeles'
+      c.zip_code.should == '12345'
+    end
+  end
+
+  describe "PUT 'update'" do
+    it "should correctly update the contact details" do
+      contact_event.reload
+      expect {
+        expect {
+          put 'update', event_id: event.to_param, id: contact_event.id, contact_event: {contactable_attributes: {id: contact_event.contactable.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          response.should be_success
+        }.to_not change(Contact, :count)
+      }.to_not change(ContactEvent, :count)
 
       c = Contact.last
       c.first_name.should == 'Fulanito'
