@@ -3,6 +3,12 @@
     button.close aria-hidden="true" data-dismiss="modal" type="button"
     h3 Help
   .modal-body.help
+    .help-title
+      p
+        b= yield :help_title
+    .help-title-map
+      p
+        b= yield :help_title_map
     .help-item.faqs
       .help-name FAQs
       p List 5 of the most common FAQs that pertain to the current section/page. Below the top 5 FAQs, show a "more..." link. Clicking on any of the FAQs will open the answer to the FAQ on the desk.com support site. Clicking on the "more..." link will direct users to the full FAQ list on the desk.com support site.
