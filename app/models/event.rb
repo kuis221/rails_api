@@ -44,7 +44,6 @@ class Event < ActiveRecord::Base
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
   has_many :contact_events
-  has_many :contacts, through: :contact_events
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
@@ -214,6 +213,10 @@ class Event < ActiveRecord::Base
 
   def venue
     @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+  end
+
+  def contacts
+    @contacts ||= contact_events.map(&:contactable)
   end
 
   def user_in_team?(user)

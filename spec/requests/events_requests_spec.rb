@@ -135,6 +135,48 @@ describe "Events", js: true, search: true do
       all('#event-team-members .team-member').count.should == 0
     end
 
+
+    it "allows to add a user as contact to the event", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      within visible_modal do
+        page.should have_content('Pablo')
+        page.should have_content('Baltodano')
+        click_js_link("add-contact-btn-company_user-#{company_user.id}")
+
+        page.should have_no_selector("li#contact-#{company_user.id}")
+      end
+      close_modal
+
+      # Test the user was added to the list of event members and it can be removed
+      within event_team_member(company_user) do
+        page.should have_content('Pablo Baltodano')
+        #find('a.remove-member-btn').click
+      end
+
+      # Test removal of the user
+      hover_and_click('#event-team-members #event-member-'+company_user.id.to_s, 'Remove Member')
+
+
+      within visible_modal do
+        page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
+        #find('a.btn-primary').click   # The "OK" button
+        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
+        click_js_link('OK')
+      end
+      ensure_modal_was_closed
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+      all('#event-team-members .team-member').count.should == 0
+    end
+
     it "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')

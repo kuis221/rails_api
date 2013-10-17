@@ -132,6 +132,11 @@ jQuery ->
 		bootbox.hideAll()
 		false
 
+	$(document).on 'click', 'a[data-submit-link]', (e) ->
+		e.preventDefault()
+		$(this).closest('form').submit()
+		false
+
 	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->
 		$this = $(this)
 

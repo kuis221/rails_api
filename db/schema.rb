@@ -228,13 +228,14 @@ ActiveRecord::Schema.define(:version => 20131015213823) do
   add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
 
   create_table "contact_events", :force => true do |t|
-    t.integer  "contact_id"
     t.integer  "event_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "contactable_id"
+    t.string   "contactable_type"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
   end
 
-  add_index "contact_events", ["contact_id"], :name => "index_contact_events_on_contact_id"
+  add_index "contact_events", ["contactable_id", "contactable_type"], :name => "index_contact_events_on_contactable_id_and_contactable_type"
   add_index "contact_events", ["event_id"], :name => "index_contact_events_on_event_id"
 
   create_table "contacts", :force => true do |t|

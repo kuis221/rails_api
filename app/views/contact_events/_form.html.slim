@@ -3,7 +3,7 @@
   = f.error_notification
 
   .form-inputs
-    = f.simple_fields_for :contact do |uf|
+    = f.simple_fields_for :contactable do |uf|
       .row-fluid.users
         .span6
           = uf.input :first_name, input_html: {class: 'input-large'}, :autofocus => true
@@ -38,9 +38,9 @@
 coffee:
   $('#user_team_ids').select2()
 
-  $('#contact_event_contact_attributes_country').change () ->
+  $('#contact_event_contactable_attributes_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
-      states = $('#contact_event_contact_attributes_state')
+      states = $('#contact_event_contactable_attributes_state')
       val = states.val()
       states.html('<option></option>')
       if response.states

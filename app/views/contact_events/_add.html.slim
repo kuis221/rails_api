@@ -1,22 +1,24 @@
-.campaigns-modals
+.contacts-modals
   p Add contacts
 
   input type="text" name="q" id="contact-search-box"
   #select-contacts-table-wrapper
-    .link-list
-      ul#contacts-list
-        - @contacts.each do |contact|
-          li id="contact-#{contact.id}"
-            span.pull-left
-              .contact_name= contact.full_name
-              = contact.title
-            span.pull-right
-              = simple_form_for [parent, ContactEvent.new], remote: true do |f|
-                = f.input :contact_id, as: :hidden, input_html: {value: contact.id}
-                = f.submit "", class: 'icon-plus-sign'
+    .scroll-table-content
+      .link-list
+        ul#contacts-list
+          - @contacts.each do |contact|
+            li id="contact-#{contact.id}"
+              span.member-data
+                .member-name= contact.full_name
+                .member-description= contact.is_a?(Contact) ? contact.title : contact.role_name
+              span.add-button.pull-right
+                = simple_form_for [parent, ContactEvent.new], remote: true do |f|
+                  = f.hidden_field :contactable_id, as: :hidden, value: contact.id
+                  = f.hidden_field :contactable_type, as: :hidden, value: contact.class.name
+                  = link_to '', '#', id: "add-contact-btn-#{contact.class.name.underscore}-#{contact.id}"" class: 'icon-plus-sign', "data-submit-link" => true, disable_with: ''
 
-        li.empty-list-message
-          p There are not assignable contacts
+          li.empty-list-message
+            p There are not assignable contacts
 
     .row-fluid
       .span12
