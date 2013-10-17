@@ -575,8 +575,13 @@ class Event < ActiveRecord::Base
     end
 
     def event_place_valid?
-      unless place.nil? || User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-        errors.add(:place_reference, 'is not part of your authorized locations')
+      unless place.nil? || campaign.nil?
+        unless campaign.place_allowed_for_event?(place)
+          errors.add(:place_reference, 'is not valid for this campaign')
+        end
+        unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+          errors.add(:place_reference, 'is not part of your authorized locations')
+        end
       end
     end
 
