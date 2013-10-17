@@ -204,11 +204,11 @@ class Event < ActiveRecord::Base
   end
 
   def happens_today?
-    start_at.to_date <= Date.today && end_at.to_date >= Date.today
+    start_at.to_date <= Time.zone.now.to_date && end_at.to_date >= Time.zone.now.to_date
   end
 
   def was_yesterday?
-    end_at.to_date == Date.yesterday
+    end_at.to_date == (Time.zone.now.to_date-1)
   end
 
   def has_event_data?
