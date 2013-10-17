@@ -100,11 +100,7 @@ class CampaignsController < FilteredController
       end
       render json: places.map{|p| {id: p.id, label: [p.name, p.city, p.state].compact.join(', ')}}
     else
-      if current_company_user.is_admin?
-        render json: {any_place: true}
-      else
-        render json: []
-      end
+      render json: {any_place: true}
     end
   end
 

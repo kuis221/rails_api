@@ -397,6 +397,7 @@ describe Event do
 
     it "should initialized a new place object" do
       event = FactoryGirl.build(:event, place: nil)
+      Place.any_instance.should_receive(:fetch_place_data)
       event.place_reference = 'some_reference||some_id'
       event.place.should_not be_nil
       event.place.new_record?.should be_true

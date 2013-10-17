@@ -83,7 +83,11 @@ class Ability
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
-      can [:places, :report], Campaign do |campaign|
+      can :places, Campaign do |campaign|
+        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      end
+
+      can :report, Campaign do |campaign|
         can?(:show_analysis, campaign) && user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
@@ -108,10 +112,7 @@ class Ability
 
       cannot [:show, :edit], Event do |event|
         !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
-        (
-          !Place.locations_for_index(event.place).any?{|location| user.current_company_user.accessible_locations.include?(location)} &&
-          !user.current_company_user.accessible_places.include?(event.place_id)
-        )
+        !user.current_company_user.allowed_to_access_place?(event.place)
       end
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
