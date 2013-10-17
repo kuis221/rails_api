@@ -8,6 +8,8 @@ class ContactEventsController < InheritedResources::Base
 
   defaults :resource_class => ContactEvent
 
+  load_and_authorize_resource
+
   respond_to :js
 
   def add

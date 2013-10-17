@@ -46,7 +46,7 @@
       h3 CONTACTS
       #event-contacts-list
         = render 'contacts'
-      = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:add_contacts, resource)
+      = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:create_contacts, resource)
 
   - if resource.has_event_data? && !resource.rejected?
     = render 'show_results'

@@ -244,6 +244,34 @@ describe "Events", js: true, search: true do
       page.should_not have_content('Pedro Picapiedra')
     end
 
+    it "allows to edit a contact", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
+      FactoryGirl.create(:contact_event, event: event, contactable: contact)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      page.should have_content('Guillermo Vargas')
+
+      hover_and_click("#event-contacts-list .event-contact", 'Edit Contact')
+
+      within visible_modal do
+        fill_in 'First name', with: 'Pedro'
+        fill_in 'Last name', with: 'Picapiedra'
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_no_content('Guillermo Vargas')
+        page.should have_content('Pedro Picapiedra')
+        #find('a.remove-member-btn').click
+      end
+    end
+
+
     it "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
