@@ -151,8 +151,13 @@ class CompanyUser < ActiveRecord::Base
 
   def allowed_to_access_place?(place)
     is_admin? ||
-    Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
-    accessible_places.include?(place.id)
+    (
+      place.present? &&
+      (
+        Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+        accessible_places.include?(place.id)
+      )
+    )
   end
 
   class << self
