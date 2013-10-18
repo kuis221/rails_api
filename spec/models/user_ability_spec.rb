@@ -468,7 +468,7 @@ describe "User" do
         end
 
         it "should be able to list comments in a task if has the permission :index_team_comments on Task and the tasks is for a event where the user is part of the team" do
-          event = FactoryGirl.create(:event)
+          event = FactoryGirl.create(:event, place: FactoryGirl.create(:place))
           event.users << company_user
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:index_team_comments, Task)

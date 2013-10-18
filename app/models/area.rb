@@ -2,15 +2,16 @@
 #
 # Table name: areas
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  description   :text
-#  active        :boolean          default(TRUE)
-#  company_id    :integer
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                  :integer          not null, primary key
+#  name                :string(255)
+#  description         :text
+#  active              :boolean          default(TRUE)
+#  company_id          :integer
+#  created_by_id       :integer
+#  updated_by_id       :integer
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  common_denominators :text
 #
 
 class Area < ActiveRecord::Base
@@ -22,11 +23,15 @@ class Area < ActiveRecord::Base
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true
 
-  has_many :placeables, as: :placeable
+  has_many :placeables, as: :placeable, after_add: :update_common_denominators, after_remove: :update_common_denominators
   has_many :places, through: :placeables
 
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
+
+  serialize :common_denominators
+
+  before_save :initialize_common_denominators
 
   attr_accessor :events_count
 
@@ -43,33 +48,6 @@ class Area < ActiveRecord::Base
     integer :company_id
   end
 
-  # Returns an array of the common denominators of the places within this area. Example:
-  #  ['North America', 'United States', 'California', 'Los Angeles']
-  def common_denominators(include_establishments=false)
-    denominators = []
-    if include_establishments
-      list_places = places.all
-    else
-      list_places = places.select{|p| !p.types.nil? && (p.types & ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
-    end
-    continents = list_places.map(&:continent_name)
-    if continents.compact.size == list_places.size and continents.uniq.size == 1
-      denominators.push continents.first
-      countries = list_places.map(&:country_name)
-      if countries.compact.size == list_places.size and countries.uniq.size == 1
-        denominators.push countries.first
-        states = list_places.map(&:state_name)
-        if states.compact.size == list_places.size and states.uniq.size == 1
-          denominators.push states.first
-          cities = list_places.map(&:city)
-          if cities.compact.size == list_places.size and cities.uniq.size == 1
-            denominators.push cities.first
-          end
-        end
-      end
-    end
-    denominators
-  end
 
   def locations
     list_places = places.select{|p| !p.types.nil? && (p.types & ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
@@ -78,9 +56,7 @@ class Area < ActiveRecord::Base
 
   def count_events(place, parents, count)
     self.events_count ||= 0
-    if places.include?(place)
-      self.events_count += count
-    elsif parents.join('/').include?(common_denominators.join('/'))
+    if parents.join('/').include?((common_denominators || []).join('/'))
       self.events_count += count
     end
   end
@@ -120,4 +96,35 @@ class Area < ActiveRecord::Base
       end
     end
   end
+
+  protected
+
+
+    # Generates the common denominators of the places within this area. Example:
+    #  ['North America', 'United States', 'California', 'Los Angeles']
+    def update_common_denominators(place)
+      denominators = []
+      list_places = places.select{|p| !p.types.nil? && (p.types & ['locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
+      continents = list_places.map(&:continent_name)
+      if continents.compact.size == list_places.size and continents.uniq.size == 1
+        denominators.push continents.first
+        countries = list_places.map(&:country_name)
+        if countries.compact.size == list_places.size and countries.uniq.size == 1
+          denominators.push countries.first
+          states = list_places.map(&:state_name)
+          if states.compact.size == list_places.size and states.uniq.size == 1
+            denominators.push states.first
+            cities = list_places.map(&:city)
+            if cities.compact.size == list_places.size and cities.uniq.size == 1
+              denominators.push cities.first
+            end
+          end
+        end
+      end
+      update_attribute :common_denominators, denominators
+    end
+
+    def initialize_common_denominators
+      self.common_denominators ||= []
+    end
 end

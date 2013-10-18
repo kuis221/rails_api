@@ -424,7 +424,7 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators) } ) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators || []) } ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
@@ -581,8 +581,17 @@ class Event < ActiveRecord::Base
     end
 
     def event_place_valid?
-      unless place.nil? || User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-        errors.add(:place_reference, 'is not part of your authorized locations')
+      unless place.nil? || campaign.nil?
+        unless campaign.place_allowed_for_event?(place)
+          errors.add(:place_reference, 'is not valid for this campaign')
+        end
+        unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+          errors.add(:place_reference, 'is not part of your authorized locations')
+        end
+      else
+        if place.nil? && User.current.present? && User.current.current_company_user.present? && !User.current.current_company_user.is_admin?
+          errors.add(:place_reference, 'cannot be blank')
+        end
       end
     end
 
