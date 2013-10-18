@@ -18,8 +18,9 @@
 
     .calendar-data
       = format_date_range(resource.start_at, resource.end_at)
-    .place-data
-      = place_address(resource.place, true) if resource.place
+    - unless resource.place.nil?
+      .place-data
+        = place_address(resource.place, true) if resource.place
     .links-data
       = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
@@ -69,11 +70,13 @@
 
 = render partial: 'help_tutorial'
 
-javascript:
-  $(document).ready(function() {
-    $(this).scrollTop(400);
-  });
+- unless resource.place.nil?
+  javascript:
+    $(document).ready(function() {
+      $(this).scrollTop(400);
+    });
 
+javascript:
   $(document).on('events:change', function(){
     window.location.reload(false);
   });

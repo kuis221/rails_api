@@ -137,7 +137,7 @@ class Place < ActiveRecord::Base
       areas = areas.select{|a| a.events_count.present? && a.events_count > 0}
 
       areas.each do |area|
-        p  = create_structure(list, area.common_denominators)
+        p  = create_structure(list, area.common_denominators || [])
         p[:items] ||= []
         p[:items].push({label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'})
       end
