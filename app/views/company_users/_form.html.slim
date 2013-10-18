@@ -28,7 +28,7 @@
             = uf.input :password, input_html: {class: 'input-xxlarge'}
         .row-fluid.users
             = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
-      - if resource.id == current_company_user.id
+      - if resource.id == current_company_user.id || can?(:super_update, resource)
         .row-fluid.users
           = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
         .row-fluid.users

@@ -1,11 +1,10 @@
 #select-areas-table-wrapper
-    h3 Add to Area
-    .link-list
-      ul#areas-list
-        - @areas.each do |area|
-          li id="area-#{area.id}"
-            span.pull-left
-              .area_name= area.name
-              .area_description= area.description
-            span.pull-right
-              = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, disable_with: '...', class: 'add' if area.active?
+  .link-list
+    ul#areas-list
+      - @areas.each do |area|
+        li id="area-#{area.id}"
+          span.pull-left
+            .area_name= area.name
+            .area_description= area.description
+          span.pull-right
+            = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, disable_with: '...', class: 'add' if area.active?
