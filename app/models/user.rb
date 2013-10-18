@@ -39,6 +39,7 @@
 #  street_address         :string(255)
 #  unit_number            :string(255)
 #  zip_code               :string(255)
+#  authentication_token   :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -50,10 +51,10 @@ class User < ActiveRecord::Base
   include SentientUser
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
+  # :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :invitable, :database_authenticatable,
-         :recoverable, :rememberable, :trackable, :confirmable
+         :recoverable, :rememberable, :trackable, :confirmable, :token_authenticatable
 
   has_many :company_users, autosave: true
 

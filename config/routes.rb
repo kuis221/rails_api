@@ -1,5 +1,16 @@
 Brandscopic::Application.routes.draw do
 
+  apipie
+
+  namespace :api do
+    namespace :v1 do
+      devise_scope :user do
+        post 'sessions' => 'sessions#create', :as => 'login'
+        delete 'sessions' => 'sessions#destroy', :as => 'logout'
+      end
+    end
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -201,7 +212,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :comments, only: [:index, :create, :new, :destroy, :edit, :update]
+    resources :comments, only: [:create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
     member do

@@ -77,6 +77,7 @@ group :test, :development do
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
+  gem 'apipie-rails'
 end
 
 group :test do
