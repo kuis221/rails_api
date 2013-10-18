@@ -1,6 +1,4 @@
 - remote ||= false
-- submit_label = resource.new_record? ? 'Create User' : 'Update User'
-- submit_label = 'Save Profile' if resource.id == current_company_user.id
 = simple_form_for(resource, remote: remote || false) do |f|
   = f.error_notification
 

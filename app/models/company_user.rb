@@ -25,6 +25,7 @@ class CompanyUser < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
   has_many :memberships
+  has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
   has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'

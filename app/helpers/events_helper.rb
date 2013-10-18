@@ -21,6 +21,10 @@ module EventsHelper
     end
   end
 
+  def contact_info_tooltip(contact)
+    [(contact.respond_to?(:title) ? contact.title : contact.role_name), contact.email, contact.phone_number, contact.street_address, [contact.city, contact.state, contact.country_name].reject{|v| v.nil? || v == ''}.join(', ') ].reject{|v| v.nil? || v == ''}.join('<br />').html_safe
+  end
+
   protected
 
     def describe_before_event_alert(resource)

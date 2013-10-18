@@ -20,6 +20,7 @@ class Company < ActiveRecord::Base
   has_many :areas
   has_many :date_ranges
   has_many :day_parts
+  has_many :contacts
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true
