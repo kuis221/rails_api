@@ -46,7 +46,8 @@ jQuery ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
 		$('input.timepicker').timepicker()
 		$('.chosen-enabled').chosen()
-		$('.has-tooltip').tooltip()
+		$('.has-tooltip').tooltip({html: true})
+		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
 		$('.toggle-input .btn').click ->
@@ -130,6 +131,11 @@ jQuery ->
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 		e.preventDefault()
 		bootbox.hideAll()
+		false
+
+	$(document).on 'click', 'a[data-submit-link]', (e) ->
+		e.preventDefault()
+		$(this).closest('form').submit()
 		false
 
 	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->

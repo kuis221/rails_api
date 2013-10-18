@@ -1,0 +1,4 @@
+|
+  var content = "#{j render(partial: 'add', locals: {remote: true})}";
+  bootbox.classes('modal-large add_contact_modal');
+  bootbox.dialog(content,[],{header: 'Add Contacts',  'onEscape': true, animate: (!$.fx.off)});  
