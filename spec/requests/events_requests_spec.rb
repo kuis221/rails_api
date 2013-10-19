@@ -62,6 +62,57 @@ describe "Events", js: true, search: true do
               page.should have_selector('a.disable', text: '')
             end
           end
+
+        end
+      end
+
+      it "should allow allow filter events by date range" do
+        today = Time.zone.now.to_date
+        tomorrow = today+1
+        FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+          place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US')
+        )
+        FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+          campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+          place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+        Sunspot.commit
+
+        visit events_path
+
+        within("ul#events-list") do
+          page.should have_content('Campaign FY2012')
+          page.should have_content('Another Campaign April 03')
+        end
+
+        page.should have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+        page.should have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+
+        filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+
+        within("ul#events-list") do
+          page.should have_no_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        select_filter_calendar_day(today.strftime('%d'))
+        find('#collection-list-filters').should have_no_content('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_no_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        select_filter_calendar_day(today.strftime('%d'), tomorrow.strftime('%d'))
+        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
         end
       end
     end

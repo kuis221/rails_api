@@ -522,6 +522,7 @@ $.widget 'nmk.filteredList', {
 				}
 			else if @totalPages <= page and @infiniteScroller
 				@listContainer.infiniteScrollHelper 'destroy'
+				@infiniteScroller = false
 
 	_parseQueryString: () ->
 		@initialized = false
@@ -565,8 +566,8 @@ $.widget 'nmk.filteredList', {
 		@loadFacets = true
 		if @defaultParams.length == 0
 			@defaultParams = $.map(@formFilters.find('input[name="status[]"]:checked'), (checkbox, index) -> {'name': 'status[]', 'value': checkbox.value})
-		@formFilters.html('')
-		@form.data('serializedData','')
+		#@formFilters.html('')
+		#@form.data('serializedData','')
 		@_loadFilters()
 }
 
