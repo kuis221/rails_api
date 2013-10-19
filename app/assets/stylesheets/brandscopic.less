@@ -687,6 +687,20 @@ body.app-layout{
 #calendar-canvas {
 	margin-top: 10px;
 
+	.calendar-day-events-container{
+		color: @brand;
+		font-size: 11px;
+		line-height: 17px;
+	}
+
+	.calendar-view-more{
+		a, a:hover{
+			color: @user_menu;
+			font-size: 11px;
+			text-decoration: none;
+		}
+	}
+
 	.fc-day-header {
 		background-color: @grey_three !important;
 		color: #fff;
@@ -1742,7 +1756,7 @@ ul.kpis-list{
 	    				margin: 0;
 	    			}
 	    			&.tasks-date{
-						margin: 20px 20px 0 0;
+						margin: 10px 20px 0 0;
 						width: 45%;
 					}
 					&.last{
