@@ -445,6 +445,56 @@ describe "User" do
         end
       end
 
+      #     ___ __ __    ___  ____   ______         __   ___   ____   ______   ____    __ ______  _____
+      #    /  _]  |  |  /  _]|    \ |      |       /  ] /   \ |    \ |      | /    |  /  ]      |/ ___/
+      #   /  [_|  |  | /  [_ |  _  ||      |      /  / |     ||  _  ||      ||  o  | /  /|      (   \_
+      #  |    _]  |  ||    _]|  |  ||_|  |_|     /  /  |  O  ||  |  ||_|  |_||     |/  / |_|  |_|\__  |
+      #  |   [_|  :  ||   [_ |  |  |  |  |      /   \_ |     ||  |  |  |  |  |  _  /   \_  |  |  /  \ |
+      #  |     |\   / |     ||  |  |  |  |      \     ||     ||  |  |  |  |  |  |  \     | |  |  \    |
+      #  |_____| \_/  |_____||__|__|  |__|       \____| \___/ |__|__|  |__|  |__|__|\____| |__|   \___|
+      #
+      describe "Event contacts permissions" do
+        it "should be able to delete a contact in a event if has the permission :delete_contact on Event" do
+          contact = FactoryGirl.build(:contact_event, event: event)
+          ability.should_not be_able_to(:destroy, contact)
+
+          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:delete_contact, Event).save
+
+          ability.should be_able_to(:destroy, contact)
+        end
+
+        it "should be able to edit comment in a event if has the permission :edit_contacts on Event" do
+          contact = FactoryGirl.build(:contact_event, event: event)
+          ability.should_not be_able_to(:edit, contact)
+
+          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:edit_contacts, Event).save
+
+          ability.should be_able_to(:edit, contact)
+          ability.should be_able_to(:update, contact)
+        end
+
+        it "should be able to create a contact in a event if has the permission :create_contacts on Event" do
+          contact = FactoryGirl.build(:contact_event, event: event)
+          ability.should_not be_able_to(:create, contact)
+
+          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:create_contacts, Event).save
+
+          ability.should be_able_to(:create, contact)
+        end
+
+        it "should be able to list comments in a event if has the permission :view_contacts on Event" do
+          ability.should_not be_able_to(:view_contacts, event)
+
+          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:view_contacts, Event).save
+
+          ability.should be_able_to(:view_contacts, event)
+        end
+      end
+
 
       #   ______   ____  _____ __  _         __   ___   ___ ___  ___ ___    ___  ____   ______  _____
       #  |      | /    |/ ___/|  |/ ]       /  ] /   \ |   |   ||   |   |  /  _]|    \ |      |/ ___/
@@ -468,7 +518,7 @@ describe "User" do
         end
 
         it "should be able to list comments in a task if has the permission :index_team_comments on Task and the tasks is for a event where the user is part of the team" do
-          event = FactoryGirl.create(:event)
+          event = FactoryGirl.create(:event, place: FactoryGirl.create(:place))
           event.users << company_user
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:index_team_comments, Task)

@@ -142,6 +142,13 @@ class Campaign < ActiveRecord::Base
     (areas+places).sort_by &:name
   end
 
+  def place_allowed_for_event?(place)
+    accessible_locations = (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+    (areas.empty? && places.empty?) ||
+    Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+    places.map(&:id).include?(place.id)
+  end
+
   def brands_list=(list)
     brands_names = list.split(',')
     existing_ids = self.brands.map(&:id)

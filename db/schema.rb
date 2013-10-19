@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131012154546) do
+ActiveRecord::Schema.define(:version => 20131018172330) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -49,12 +49,13 @@ ActiveRecord::Schema.define(:version => 20131012154546) do
   create_table "areas", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.boolean  "active",        :default => true
+    t.boolean  "active",              :default => true
     t.integer  "company_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.text     "common_denominators"
   end
 
   add_index "areas", ["company_id"], :name => "index_areas_on_company_id"
@@ -226,6 +227,34 @@ ActiveRecord::Schema.define(:version => 20131012154546) do
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
   add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
+
+  create_table "contact_events", :force => true do |t|
+    t.integer  "event_id"
+    t.integer  "contactable_id"
+    t.string   "contactable_type"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "contact_events", ["contactable_id", "contactable_type"], :name => "index_contact_events_on_contactable_id_and_contactable_type"
+  add_index "contact_events", ["event_id"], :name => "index_contact_events_on_event_id"
+
+  create_table "contacts", :force => true do |t|
+    t.integer  "company_id"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "title"
+    t.string   "email"
+    t.string   "phone_number"
+    t.string   "street1"
+    t.string   "street2"
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip_code"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "data_migrations", :force => true do |t|
     t.integer  "remote_id"
@@ -612,6 +641,7 @@ ActiveRecord::Schema.define(:version => 20131012154546) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
+    t.string   "authentication_token"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

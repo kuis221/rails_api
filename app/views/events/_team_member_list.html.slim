@@ -2,7 +2,7 @@
   - resource.users.each do |team_member|
     .span3.team-member.clearfix id = "event-member-#{team_member.id}"
       .pull-left
-        .full-name
+        .full-name.has-popover data-placement="bottom" data-trigger="hover" title="#{h team_member.full_name}" data-content="#{h contact_info_tooltip(team_member)}"
           = team_member.full_name
         .role-name
           = team_member.role_name

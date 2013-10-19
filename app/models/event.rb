@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  # attr_accessible :end_date, :end_time, :start_date, :start_time, :campaign_id, :event_ids, :user_ids, :file, :summary, :place_reference, :results_attributes, :comments_attributes, :surveys_comments, :photos_attributes
+  has_many :contact_events
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
@@ -219,6 +219,10 @@ class Event < ActiveRecord::Base
 
   def venue
     @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+  end
+
+  def contacts
+    @contacts ||= contact_events.map(&:contactable)
   end
 
   def user_in_team?(user)
@@ -424,7 +428,7 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators) } ) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators || []) } ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
@@ -581,8 +585,17 @@ class Event < ActiveRecord::Base
     end
 
     def event_place_valid?
-      unless place.nil? || User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-        errors.add(:place_reference, 'is not part of your authorized locations')
+      unless place.nil? || campaign.nil?
+        unless campaign.place_allowed_for_event?(place)
+          errors.add(:place_reference, 'is not valid for this campaign')
+        end
+        unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+          errors.add(:place_reference, 'is not part of your authorized locations')
+        end
+      else
+        if place.nil? && User.current.present? && User.current.current_company_user.present? && !User.current.current_company_user.is_admin?
+          errors.add(:place_reference, 'cannot be blank')
+        end
       end
     end
 

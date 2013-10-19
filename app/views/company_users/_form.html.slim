@@ -1,6 +1,4 @@
 - remote ||= false
-- submit_label = resource.new_record? ? 'Create User' : 'Update User'
-- submit_label = 'Save Profile' if resource.id == current_company_user.id
 = simple_form_for(resource, remote: remote || false) do |f|
   = f.error_notification
 
@@ -28,7 +26,7 @@
             = uf.input :password, input_html: {class: 'input-xxlarge'}
         .row-fluid.users
             = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
-      - if resource.id == current_company_user.id
+      - if resource.id == current_company_user.id || can?(:super_update, resource)
         .row-fluid.users
           = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
         .row-fluid.users

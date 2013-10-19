@@ -1,0 +1,12 @@
+- can_delete ||= can?(:delete_contact, parent)
+- can_edit ||= can?(:edit_contacts, parent)
+div.span3.event-contact.clearfix id="contact_event_#{contact_event.id}"
+  .pull-left
+    .full-name.has-popover data-placement="bottom" data-trigger="hover" title="#{h contact_event.full_name}" data-content="#{h contact_info_tooltip(contact_event)}"
+      = contact_event.full_name
+    .contact-title
+      = contact_event.title
+  - if can_edit || can_delete
+    .pull-right
+      = link_to('',  edit_event_contact_event_path(parent, contact_event), title: 'Edit Contact', class: 'edit', remote: true) if contact_event.contactable.is_a?(Contact) and can_edit
+      = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_contact_event_path(parent, contact_event), title: 'Remove Contact', class: 'remove-contact-btn', remote: true, method: :delete) if can_delete
