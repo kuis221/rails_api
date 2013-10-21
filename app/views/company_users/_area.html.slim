@@ -1,6 +1,5 @@
-.span3.hover-item id="company_user-area-#{area.id}"
+.span3.places.hover-item id="company_user-area-#{area.id}"
   .pull-left
     = area.name
-    p lalala
   .pull-right
     = link_to '',  remove_area_company_user_placeables_path(resource, area: area.id), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Area'
