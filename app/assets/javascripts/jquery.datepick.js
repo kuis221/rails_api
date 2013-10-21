@@ -1795,7 +1795,15 @@ $.extend(Datepicker.prototype, {
 					true
 				  }
 				}).
-				draggable({ 'containment': "table", "helper": function(){ return $('<div>'); } });
+				draggable({
+					'containment': "table",
+					"helper": function(){ 
+						return $('<div>'); 
+					},
+					'stop': function() {
+						self._updateInput(target);
+					}
+				});
 		}
 		picker.find(inst.options.renderer.daySelector + ' a').hover(
 				function() { $(this).addClass(inst.options.renderer.highlightedClass); },
