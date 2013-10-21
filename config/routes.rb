@@ -7,6 +7,7 @@ Brandscopic::Application.routes.draw do
       devise_scope :user do
         post 'sessions' => 'sessions#create', :as => 'login'
         delete 'sessions' => 'sessions#destroy', :as => 'logout'
+        post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
       end
     end
   end
