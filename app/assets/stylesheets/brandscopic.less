@@ -4447,7 +4447,7 @@ body.campaigns{
 		}
 	}
 
-	.places:before{
+	.area:before{
 		content: "\e02e";
 		color: @user_menu;
 		display: block;
@@ -4455,6 +4455,23 @@ body.campaigns{
 		font-family: 'icons';
 		font-size: 16px;
 		margin: 0px 15px 0 2px;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.place{
+		&:before{
+			content: "\e02c";
+			color: @user_menu;
+			display: block;
+			float: left;
+			font-family: 'icons';
+			font-size: 21px;
+			margin: 6px 13px 0 4px;
+			-webkit-font-smoothing: antialiased;
+		}
+		.place-name{
+			margin-top: 4px;
+		}
 	}
 
 	#post-event-form-builder{
