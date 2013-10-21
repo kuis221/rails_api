@@ -7,6 +7,8 @@ Brandscopic::Application.routes.draw do
       devise_scope :user do
         post 'sessions' => 'sessions#create', :as => 'login'
         delete 'sessions' => 'sessions#destroy', :as => 'logout'
+
+        resources :events, only: [:index]
       end
     end
   end

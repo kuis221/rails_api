@@ -1,26 +1,17 @@
 class Api::V1::SessionsController < Api::V1::ApiController
-  skip_before_filter :verify_authenticity_token,
-                     :if => Proc.new { |c| c.request.format == 'application/json' }
-
-
+  skip_before_filter :verify_authenticity_token
 
   resource_description do
     short 'Site members'
     formats ['json', 'xml']
-    param :id, Fixnum, :desc => "User ID", :required => false
-    param :resource_param, Hash, :desc => 'Param description for all methods' do
-      param :ausername, String, :desc => "Username for login", :required => true
-      param :apassword, String, :desc => "Password for login", :required => true
-    end
     error 404, "Missing"
-    error 500, "Server crashed for some <%= reason %>"
+    error 401, "Invalid credentials"
+    error 500, "Server crashed for some reason"
     description <<-EOS
       == Token Authentication
 
     EOS
   end
-
-
 
 
   api :POST, '/api/v1/sessions'
@@ -39,25 +30,23 @@ class Api::V1::SessionsController < Api::V1::ApiController
                         :data => { :auth_token => resource.authentication_token } }
 
     else
-      failure
+      render :status => 401,
+       :json => { :success => false,
+                  :info => "Login Failed",
+                  :data => {} }
     end
 
   end
 
   api :DELETE, '/api/v1/sessions'
+  param :id, String, required: true, desc: "Authentication token"
   def destroy
-    warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
-    current_user.update_column(:authentication_token, nil)
-    render :status => 200,
-           :json => { :success => true,
-                      :info => "Logged out",
-                      :data => {} }
-  end
-
-  def failure
-    render :status => 401,
-           :json => { :success => false,
-                      :info => "Login Failed",
-                      :data => {} }
+    resource = User.find_by_authentication_token(params[:id])
+    if resource.nil?
+      render :status=>404, :json=>{sucess: false, info: 'Invalid token.'}
+    else
+      resource.reset_authentication_token!
+      render :status=>200, :json=>{success: true, info: 'Logged out', token: params[:id]}
+    end
   end
 end

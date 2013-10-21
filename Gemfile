@@ -52,6 +52,7 @@ gem 'resque-loner'
 gem 's3_direct_upload'
 gem 'unread'
 gem 'strong_parameters'
+gem 'apipie-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -77,7 +78,6 @@ group :test, :development do
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
-  gem 'apipie-rails'
 end
 
 group :test do
