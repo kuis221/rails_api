@@ -133,8 +133,8 @@ class EventsController < FilteredController
 
       search = Event.do_search(p.merge(start_date: start_date.to_s(:slashes), end_date: end_date.to_s(:slashes), per_page: 1000))
       search.hits.each do |hit|
-        sd = hit.stored(:start_at).to_date
-        ed = hit.stored(:end_at).to_date
+        sd = hit.stored(:start_at).in_time_zone.to_date
+        ed = hit.stored(:end_at).in_time_zone.to_date
         (sd..ed).each do |day|
           days[day] ||= {}
           campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand|

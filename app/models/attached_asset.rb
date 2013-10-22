@@ -260,18 +260,20 @@ class AttachedAsset < ActiveRecord::Base
     # Set attachment attributes from the direct upload
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
+      Rails.logger.debug "START set_upload_attributes"
       if new_record? and self.file_file_name.nil?
         tries ||= 5
         direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
         direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
 
-        self.file_file_name     = direct_upload_url_data[:filename]
+        self.file_file_name     = file.send(:cleanup_filename, direct_upload_url_data[:filename])
         self.file_file_size     = direct_upload_head.content_length
         self.file_content_type  = direct_upload_head.content_type
         self.file_updated_at    = direct_upload_head.last_modified
+        Rails.logger.debug "END set_upload_attributes"
       end
-    rescue AWS::S3::Errors::NoSuchKey => e
+    rescue AWS::S3::Errors::RequestTimeout => e
       tries -= 1
       if tries > 0
         sleep(3)
