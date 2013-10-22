@@ -2648,15 +2648,20 @@ body.events.show {
 }
 
 
-body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
-	#event-team-members, #team-members-list, #area-places-list {
+body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
+	#company_user-areas-list, #company_user-places-list, #event-team-members, #team-members-list, #area-places-list {
 		margin: 0 -12% 0 0;
 	}
-	.team-member, .team, .area-place, .brand{
+	.place, .area-user{
+		padding: 0 0 0 32px;
+		margin: 0 10% 30px 0;
+    	height: 70px;
+	}
+	.team-member, .team, .brand {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-    height: 70px;
+    	height: 70px;
 		.full-name, .address-name, .brand-name{
 			font-size: 16px;
 			overflow: hidden;
@@ -2678,7 +2683,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team-member:before{
-    color: @user_menu;
+    	color: @user_menu;
 		content: "\e024" !important;
 		display: block;
 		font-family: 'icons';
@@ -2690,7 +2695,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team:before{
-    color: @user_menu;
+    	color: @user_menu;
 		content: "\e023" !important;
 		display: block;
 		font-family: 'icons';
@@ -2701,17 +2706,17 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		vertical-align: middle;
 	}
 
-  .area-place:before{
-    color: @user_menu;
-    content: "\e02c" !important;
-    display: block;
-    font-family: 'icons';
-    font-size: 20px;
-    left: -30px;
-    position: relative;
-    top: 13px;
-    vertical-align: middle;
-  }
+	  .area-place:before{
+	    color: @user_menu;
+	    content: "\e02c" !important;
+	    display: block;
+	    font-family: 'icons';
+	    font-size: 20px;
+	    left: -30px;
+	    position: relative;
+	    top: 13px;
+	    vertical-align: middle;
+	  }
 
 	.box_metrics{
 		width: 40%;
@@ -4470,15 +4475,19 @@ body.campaigns{
 		}
 	}
 
-	.area:before{
-		content: "\e02e";
-		color: @user_menu;
-		display: block;
-		float: left;
-		font-family: 'icons';
-		font-size: 16px;
-		margin: 0px 15px 0 2px;
-		-webkit-font-smoothing: antialiased;
+	.area-user{
+		&:before{
+			content: "\e02e";
+			color: @user_menu;
+			display: block;
+			font-family: 'icons';
+			font-size: 16px;
+			left: -30px;
+			margin: 0px 15px 0 2px;
+			position: relative;
+			top: 10px;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
 
 	.place{
@@ -4486,14 +4495,13 @@ body.campaigns{
 			content: "\e02c";
 			color: @user_menu;
 			display: block;
-			float: left;
 			font-family: 'icons';
 			font-size: 21px;
-			margin: 6px 13px 0 4px;
+			left: -30px;
+			margin: 0 13px 0 4px;
+			position: relative;
+			top: 15px;
 			-webkit-font-smoothing: antialiased;
-		}
-		.place-name{
-			margin-top: 4px;
 		}
 	}
 

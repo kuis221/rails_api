@@ -32,10 +32,10 @@
 
   #user-places.details_box
     h3 PLACES
-    #company_user-areas-list.row-fluid
+    #company_user-areas-list
       = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
-    #company_user-places-list.row-fluid
+    #company_user-places-list
       = render 'places'
 
     .row-fluid.plus
