@@ -30,6 +30,8 @@ class CompanyUsersController < FilteredController
       success.js {
         if resource.user.id == current_user.id
           sign_in resource.user, :bypass => true
+        elsif resource.invited_to_sign_up?
+          resource.user.accept_invitation!
         end
       }
     end
