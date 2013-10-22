@@ -170,6 +170,7 @@ input[type="time"],
 input[type="week"],
 input[type="number"],
 input[type="email"],
+input[type="tel"],
 input[type="url"],
 input[type="search"],
 input[type="color"],
@@ -882,7 +883,7 @@ p{
 	    			width:110px;
 	    		}
     		}
-    		&.user_password_confirmation{
+    		&.user_password_confirmation, &.user_phone_number, &.user_street_address{
     			label.control-label{
 	    			display: inline-block;
 	    			float: left;
@@ -926,12 +927,12 @@ p{
 					}
 				}
 			}
-			#user_country_chzn, #user_time_zone_chzn{
+			#user_time_zone_chzn{
 				clear: both;
 				float: left;
 				width:100%;
 			}
-			#user_state_chzn{
+			#user_country_chzn, #user_state_chzn{
 				box-shadow: none;
 				float: left;
 				.chzn-search{
@@ -951,7 +952,7 @@ p{
 				}
 			}
     	}
-    	.country, .time_zone{
+    	.time_zone{
 			.chzn-container-single{
 				.chzn-single{
 					float: left;
@@ -966,7 +967,7 @@ p{
 				}
 			}
 		}
-		.country, .email, .password, .time_zone{
+		.email, .tel, .user_street_address, .user_unit_number, .password, .time_zone{
 			.controls{
 				width:575px;
 			}
@@ -976,7 +977,7 @@ p{
     		box-shadow: none !important;
     		width: 250px;
     	}
-    	input[type="email"],input[type="password"]{
+    	input[type="email"],input[type="tel"],input#user_street_address[type="text"],input#user_unit_number[type="text"],input[type="password"]{
     		background-color: white !important;
     		width:556px !important;
     	}

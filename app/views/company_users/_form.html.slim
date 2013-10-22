@@ -21,7 +21,6 @@
       - if can?(:super_update, resource)
         .row-fluid.users-teams-roles
           = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
-      - unless resource.invited_to_sign_up?
         .row-fluid.users
             = uf.input :password, input_html: {class: 'input-xxlarge'}
         .row-fluid.users

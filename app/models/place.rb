@@ -243,6 +243,7 @@ class Place < ActiveRecord::Base
         self.longitude = spot.lng
         self.formatted_address = spot.formatted_address
         self.types = spot.types
+        sublocality = nil
 
         # Parse the address components
         if spot.address_components.present?
@@ -262,6 +263,8 @@ class Place < ActiveRecord::Base
               self.street_number = component['long_name']
             elsif component['types'].include?('route')
               self.route = component['long_name']
+            elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
+              sublocality = component['long_name']
             end
           end
         end
@@ -270,6 +273,25 @@ class Place < ActiveRecord::Base
         if self.country == 'US' && self.state =~ /^[A-Z]{1,2}$/
           self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
         end
+
+        sublocality ||= self.route if types.include?('establishment')
+        sublocality ||= self.zipcode if types.include?('establishment')
+
+        # There are cases where the API doesn't give a city but a neighborhood (sublocality)
+        if !self.city && !self.types.include?('administrative_area_level_2') && sublocality
+          spots = client.spots(self.latitude, self.longitude, keywords: sublocality)
+          spots.each do |aspot|
+            s = client.spot(aspot.reference)
+            if s.address_components.present?
+              city = s.address_components.detect{|c| c['types'].include?('locality') }.try(:[], 'long_name')
+              if city.present?
+                self.city = city
+                break
+              end
+            end
+          end
+        end
+        self
       end
     end
 

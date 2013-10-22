@@ -23,6 +23,20 @@ class InvitationsController < Devise::InvitationsController
     end
   end
 
+  def send_invite
+    self.resource = User.find_by_email(params[:user][:email])
+    if  self.resource.present? && self.resource.invited_to_sign_up?
+      self.resource.invite!
+      set_flash_message(:alert, :invitation_token_resent)
+      flash[:alert] = flash[:alert].html_safe
+      redirect_to after_sign_out_path_for(resource_name)
+    else
+      set_flash_message(:alert, :invalid_email)
+      flash[:alert] = flash[:alert].html_safe
+      redirect_to users_invitation_resend_path
+    end
+  end
+
   def create
     if params[:user] and params[:user][:email] and invited_user = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first
       if invited_user.company_users.select{|cu| cu.company_id == current_company.id}.size > 0
@@ -66,7 +80,7 @@ class InvitationsController < Devise::InvitationsController
       user_params ||= params
       allowed = []
       if action_name == 'update'
-        allowed = [:first_name, :last_name, :email, :password, :password_confirmation, :city, :state, :country, :time_zone, :invitation_token, :accepting_invitation]
+        allowed = [:first_name, :last_name, :email, :phone_number, :street_address, :unit_number, :zip_code, :password, :password_confirmation, :city, :state, :country, :time_zone, :invitation_token, :accepting_invitation]
       else
         allowed = [:first_name, :last_name, :email, :inviting_user, :accepting_invitation, {company_users_attributes: [:company_id, :role_id, {team_ids: []}] }]
       end

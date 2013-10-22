@@ -9,6 +9,8 @@ Brandscopic::Application.routes.draw do
 
   devise_scope :user do
     put '/users/confirmation', to: 'confirmations#update'
+    get '/users/invitation/resend', to: 'invitations#resend'
+    post '/users/invitation/resend', to: 'invitations#send_invite'
     get "/users/password/thanks", to: 'passwords#thanks', as: :passwords_thanks
   end
 

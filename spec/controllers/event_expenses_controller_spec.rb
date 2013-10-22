@@ -28,7 +28,7 @@ describe EventExpensesController do
   describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       lambda {
-        post 'create', event_id: event.to_param, event_expense: {amount: '100', name: 'Test expense'}, format: :js
+        post 'create', event_id: event.to_param, amount: '100', name: 'Test expense', format: :js
       }.should change(EventExpense, :count).by(1)
       response.should be_success
       response.should render_template(:create)
