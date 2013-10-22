@@ -899,8 +899,11 @@ ul.select2-results{
 .campaigns-modals{
 	color: @brand;
 	#select-areas-table-wrapper .link-list {
-		border-bottom: 0;
 		ul#areas-list{
+			min-height: 82px;
+			max-height: 251px;
+			overflow-y: auto;
+			overflow-x: hidden;
 			.pull-left{
 				margin: 21px 0 0 20px;
 			}
