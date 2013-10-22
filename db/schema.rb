@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131018172330) do
+ActiveRecord::Schema.define(:version => 20131022151855) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -346,15 +346,11 @@ ActiveRecord::Schema.define(:version => 20131018172330) do
   create_table "event_expenses", :force => true do |t|
     t.integer  "event_id"
     t.string   "name"
-    t.decimal  "amount",            :precision => 9, :scale => 2, :default => 0.0
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
+    t.decimal  "amount",        :precision => 9, :scale => 2, :default => 0.0
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
+    t.datetime "created_at",                                                   :null => false
+    t.datetime "updated_at",                                                   :null => false
   end
 
   add_index "event_expenses", ["event_id"], :name => "index_event_expenses_on_event_id"
@@ -630,7 +626,6 @@ ActiveRecord::Schema.define(:version => 20131018172330) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
-    t.string   "authentication_token"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
