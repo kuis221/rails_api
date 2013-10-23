@@ -39,6 +39,7 @@
 #  street_address         :string(255)
 #  unit_number            :string(255)
 #  zip_code               :string(255)
+#  authentication_token   :string(255)
 #
 
 class User < ActiveRecord::Base
