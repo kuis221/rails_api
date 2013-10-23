@@ -1,6 +1,6 @@
 - can_delete ||= can?(:delete_contact, parent)
 - can_edit ||= can?(:edit_contacts, parent)
-div.span3.event-contact.clearfix id="contact_event_#{contact_event.id}"
+div.span3.team-member.clearfix id="contact_event_#{contact_event.id}"
   .pull-left
     .full-name.has-popover data-placement="bottom" data-trigger="hover" title="#{h contact_event.full_name}" data-content="#{h contact_info_tooltip(contact_event)}"
       = contact_event.full_name
