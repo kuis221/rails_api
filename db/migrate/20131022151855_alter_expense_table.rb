@@ -5,7 +5,7 @@ class AlterExpenseTable < ActiveRecord::Migration
       begin
         AttachedAsset.create({attachable: expense, file: expense.file, asset_type: 'expense', processed: true}, without_protection: true) if expense.file.exists?
       rescue AWS::S3::Errors::RequestTimeout => e
-        sleep(3)
+        sleep(3 + (15 - tries))
         p "Failed... #{tries} tries left!"
         retry unless (tries -= 1) <= 0
         raise e
