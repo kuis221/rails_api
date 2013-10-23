@@ -2,35 +2,50 @@
   = resource.errors.inspect
 .form-inputs
   .pull-left
-    = text_field_tag 'event_expense[name]', resource.name, id: 'event_expense_name'
-    .input-prepend
-      .add-on $
-    = text_field_tag 'event_expense[amount]', resource.amount, id: 'event_expense_amount'
+    = form_tag('#', id: 'new-expense-form') do
+      .control-group.string.required.event_expense_name
+        = label :event_expense, :name, content_tag(:abbr, '*')+"Name", class: 'string required control-label'
+        .controls
+          = text_field_tag 'event_expense[name]', resource.name, id: 'event_expense_name', size: 50, class: 'string required'
+      .control-group.decimal.optional.event_expense_amount
+        .controls
+          .input-prepend
+            .add-on $
+          = number_field_tag 'event_expense[amount]', resource.amount, id: 'event_expense_amount', class: 'numeric decimal optional', step: 'any'
+      .form-actions.inside-form
+        = submit_tag 'Save', id: 'upload-receipt-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+        = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+        = "&nbsp;".html_safe
   .pull-right
-    = s3_uploader_form callback_url: url_for(action: :create, "event_id" => parent.to_param, format: :js), id: "s3_uploader", callback_method: resource.new_record? ? 'POST' : 'PUT', callback_param: "event_expense[receipt_attributes][direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes, class: 'event_expense_form'
-      = file_field_tag :file
-
-.form-actions
-  = submit_tag 'Save', id: 'upload-receipt-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
-  = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
-  = "&nbsp;".html_safe
+    .control-group.string.required.event_expense_name
+      = label :event_expense, :receipt, "File", class: 'file optional control-label'
+      .controls
+        #uniform-event_expense_receipt.uploader
+          = s3_uploader_form callback_url: url_for(action: :create, "event_id" => parent.to_param, format: :js), id: "s3_uploader", callback_method: resource.new_record? ? 'POST' : 'PUT', callback_param: "event_expense[receipt_attributes][direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes, class: 'event_expense_form'
+            = file_field_tag :file
 
 javascript:
   $(function() {
     $('#upload-receipt-btn').hide();
     var callbackUrl = '#{j action}';
     $('#upload-receipt-btn').click(function(){
+      checkAmount();
       $('#s3_uploader').data('callback-url', callbackUrl + '?name='+escape($('#event_expense_name').val())+ '&amount='+escape($('#event_expense_amount').val()));
     });
 
-    $('#save-expense-btn').click(function(){
-      $.ajax('#{j action}', {
-        type: 'PUT',
-        data: {
-          'name': $('#event_expense_name').val(),
-          'amount': $('#event_expense_amount').val()
-        }
-      })
+    $('#save-expense-btn').click(function(e){
+      e.preventDefault();
+      checkAmount();
+      if ($('#new-expense-form').valid()) {
+        $.ajax('#{j action}', {
+          type: '#{resource.new_record? ? 'POST' : 'PUT'}',
+          data: {
+            'name': $('#event_expense_name').val(),
+            'amount': $('#event_expense_amount').val()
+          }
+        });
+      }
+      return false;
     });
     $('#s3_uploader').S3Uploader({
         remove_completed_progress_bar: false,
@@ -51,4 +66,10 @@ javascript:
     }).bind('s3_upload_failed', function(e, content) {
       return alert(content.filename + ' failed to upload');
     });
+
+    function checkAmount() {
+      if ($('#event_expense_amount').val().length == 0){
+        $('#event_expense_amount').val(0);
+      }
+    }
   });
