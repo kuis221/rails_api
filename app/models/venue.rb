@@ -31,7 +31,7 @@ class Venue < ActiveRecord::Base
 
   attr_accessible :place_id, :company_id
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :zipcode, :reference, :latitude, :longitude, :opening_hours, to: :place
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, to: :place
 
   searchable do
     integer :place_id
@@ -44,6 +44,10 @@ class Venue < ActiveRecord::Base
       rescue
         ''
       end
+    end
+
+    text :address do
+      "#{street}, #{city}, #{state}, #{state_name}, #{country_name}"
     end
 
     string :types, multiple: true
@@ -262,6 +266,7 @@ class Venue < ActiveRecord::Base
         fulltext params[:q] do
           fields(:name)
           fields(:types)
+          fields(:address) if params[:search_address]
         end
       end
 

@@ -222,15 +222,20 @@ class Place < ActiveRecord::Base
 
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      ss = solr_search do
-
-        with(:types, params[:types]) if params.has_key?(:types) and params[:types].present?
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+    # Combine search results from Google API and Existing places
+    def combined_search(params)
+      local_results = Venue.do_search(params.merge(per_page: 5)).results
+      results = local_results.map do |p|
+        address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
+        {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
       end
+      local_references = local_results.map{|p| p.reference}.compact
+
+      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
+      if google_results && google_results['results'].present?
+        results += google_results['results'].reject{|p| local_references.include?(p['reference']) }.map{|p| {value: p['name'] + ', ' + p['formatted_address'].to_s, label: p['name'] + ', ' + p['formatted_address'].to_s, id: "#{p['reference']}||#{p['id']}"} }
+      end
+      results
     end
   end
 

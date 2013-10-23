@@ -176,8 +176,12 @@ class Event < ActiveRecord::Base
   def place_reference=(value)
     @place_reference = value
     if value and value.present?
-      reference, place_id = value.split('||')
-      self.place = Place.load_by_place_id(place_id,  reference) if value
+      if value =~ /^[0-9]+$/
+        self.place = Place.find(value)
+      else
+        reference, place_id = value.split('||')
+        self.place = Place.load_by_place_id(place_id,  reference)
+      end
     end
   end
 

@@ -66,6 +66,9 @@ class PlacesController < FilteredController
       # When a new place was added to Google, data needs to be added to Places table
       if !automatically_created
         @place.update_attributes place_params
+
+        # Create a Venue for this place on the current company
+        Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
       end
     else
       render 'new_place'
@@ -77,6 +80,12 @@ class PlacesController < FilteredController
 
     @place = Place.find(params[:id])
     parent.places.delete(@place)
+  end
+
+  def search
+    results = Place.combined_search(company_id: current_company.id, q: params[:term], search_address: true)
+
+    render json: results
   end
 
 
