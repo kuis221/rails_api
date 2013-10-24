@@ -37,15 +37,17 @@ javascript:
     defaultDate: $('#calendar_end_date').data('date')
   });
 
+  $('.modal .places-autocomplete').placesAutocomplete();
 
-  var input = $('.modal .places-autocomplete')[0];
-  var locationAutocomplete = new google.maps.places.Autocomplete(input);
 
-  google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
-    var place = locationAutocomplete.getPlace();
-    if (!place.geometry) {
-      return false;
-    }
+/ var input = $('.modal .places-autocomplete')[0];
+/ var locationAutocomplete = new google.maps.places.Autocomplete(input);
 
-    $($(input).data('hidden')).val(place.reference+'||'+place.id);
-  });
+/ google.maps.event.addListener(locationAutocomplete, 'place_changed', function() {
+/   var place = locationAutocomplete.getPlace();
+/   if (!place.geometry) {
+/     return false;
+/   }
+
+/   $($(input).data('hidden')).val(place.reference+'||'+place.id);
+/ });

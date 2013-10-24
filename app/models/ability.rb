@@ -81,6 +81,8 @@ class Ability
         end
       end
 
+      can :search, Place
+
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
       can :places, Campaign do |campaign|
@@ -130,6 +132,17 @@ class Ability
       # Team Members
       can [:add_members, :delete_member], Team do |team|
         can?(:edit, team)
+      end
+
+      can :add, ContactEvent if user.role.has_permission?(:create_contacts, Event)
+      can [:new, :create], ContactEvent do |contact_event|
+        can?(:show, contact_event.event) && can?(:create_contacts, contact_event.event)
+      end
+      can :destroy, ContactEvent do |contact_event|
+        can?(:show, contact_event.event) && can?(:delete_contact, contact_event.event)
+      end
+      can :update, ContactEvent do |contact_event|
+        can?(:show, contact_event.event) && can?(:edit_contacts, contact_event.event)
       end
 
       # Tasks permissions

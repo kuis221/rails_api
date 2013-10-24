@@ -5,6 +5,5 @@ FactoryGirl.define do
     event nil
     sequence(:name) {|n| "Expense #{n}" }
     amount "9.99"
-    file ""
   end
 end

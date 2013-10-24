@@ -8,7 +8,7 @@ class PlaceablesController < FilteredController
   before_filter :authorize_parent
 
   def new
-    @areas = current_company.areas.active.where('areas.id not in (?)', parent.area_ids + [0])
+    @areas = current_company.areas.active.where('areas.id not in (?)', parent.area_ids + [0]).order('name ASC')
   end
 
   def add_area

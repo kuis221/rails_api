@@ -20,7 +20,7 @@ class VenuesController < FilteredController
   end
 
   def select_areas
-    @areas = current_company.areas.not_in_venue(resource.place)
+    @areas = current_company.areas.not_in_venue(resource.place).order('name ASC')
   end
 
   def add_areas
@@ -111,7 +111,7 @@ class VenuesController < FilteredController
 
         [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
           @search_params[param] ||= {}
-          @search_params[param][:min] = 1 unless @search_params[:location].present? || @search_params[param][:min].present?
+          @search_params[param][:min] = 0 unless @search_params[:location].present? || @search_params[param][:min].present?
           @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
         end
         @search_params

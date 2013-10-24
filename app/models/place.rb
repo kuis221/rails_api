@@ -30,8 +30,8 @@ class Place < ActiveRecord::Base
 
   attr_accessible :reference, :place_id, :name, :types, :street_number, :route, :city, :state, :zipcode, :country
 
-  validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place
-  validates :reference, presence: true, uniqueness: true, unless: :is_custom_place
+  validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
+  validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
   # Areas-Places relationship
   has_many :events
@@ -163,6 +163,7 @@ class Place < ActiveRecord::Base
         locations.push encode_location([place.continent_name, place.country_name]) if place.country_name
         locations.push encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
         locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
+        locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city.gsub('Saint','St')]) if  place.state_name && place.city && place.city =~ /^Saint.*/
       end
       locations
     end
@@ -222,15 +223,20 @@ class Place < ActiveRecord::Base
 
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      ss = solr_search do
-
-        with(:types, params[:types]) if params.has_key?(:types) and params[:types].present?
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+    # Combine search results from Google API and Existing places
+    def combined_search(params)
+      local_results = Venue.do_search(params.merge(per_page: 5)).results
+      results = local_results.map do |p|
+        address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
+        {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
       end
+      local_references = local_results.map{|p| p.reference}.compact
+
+      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
+      if google_results && google_results['results'].present?
+        results += google_results['results'].reject{|p| local_references.include?(p['reference']) }.map{|p| {value: p['name'] + ', ' + p['formatted_address'].to_s, label: p['name'] + ', ' + p['formatted_address'].to_s, id: "#{p['reference']}||#{p['id']}"} }
+      end
+      results
     end
   end
 
@@ -243,6 +249,7 @@ class Place < ActiveRecord::Base
         self.longitude = spot.lng
         self.formatted_address = spot.formatted_address
         self.types = spot.types
+        sublocality = nil
 
         # Parse the address components
         if spot.address_components.present?
@@ -262,6 +269,8 @@ class Place < ActiveRecord::Base
               self.street_number = component['long_name']
             elsif component['types'].include?('route')
               self.route = component['long_name']
+            elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
+              sublocality = component['long_name']
             end
           end
         end
@@ -270,6 +279,25 @@ class Place < ActiveRecord::Base
         if self.country == 'US' && self.state =~ /^[A-Z]{1,2}$/
           self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
         end
+
+        sublocality ||= self.route if types.include?('establishment')
+        sublocality ||= self.zipcode if types.include?('establishment')
+
+        # There are cases where the API doesn't give a city but a neighborhood (sublocality)
+        if !self.city && !self.types.include?('administrative_area_level_2') && sublocality
+          spots = client.spots(self.latitude, self.longitude, keywords: sublocality)
+          spots.each do |aspot|
+            s = client.spot(aspot.reference)
+            if s.address_components.present?
+              city = s.address_components.detect{|c| c['types'].include?('locality') }.try(:[], 'long_name')
+              if city.present?
+                self.city = city
+                break
+              end
+            end
+          end
+        end
+        self
       end
     end
 

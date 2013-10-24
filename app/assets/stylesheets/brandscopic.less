@@ -170,6 +170,7 @@ input[type="time"],
 input[type="week"],
 input[type="number"],
 input[type="email"],
+input[type="tel"],
 input[type="url"],
 input[type="search"],
 input[type="color"],
@@ -831,7 +832,7 @@ p{
 	    			width:110px;
 	    		}
     		}
-    		&.user_password_confirmation{
+    		&.user_password_confirmation, &.user_phone_number, &.user_street_address{
     			label.control-label{
 	    			display: inline-block;
 	    			float: left;
@@ -875,12 +876,12 @@ p{
 					}
 				}
 			}
-			#user_country_chzn, #user_time_zone_chzn{
+			#user_time_zone_chzn{
 				clear: both;
 				float: left;
 				width:100%;
 			}
-			#user_state_chzn{
+			#user_country_chzn, #user_state_chzn{
 				box-shadow: none;
 				float: left;
 				.chzn-search{
@@ -900,7 +901,7 @@ p{
 				}
 			}
     	}
-    	.country, .time_zone{
+    	.time_zone{
 			.chzn-container-single{
 				.chzn-single{
 					float: left;
@@ -915,7 +916,7 @@ p{
 				}
 			}
 		}
-		.country, .email, .password, .time_zone{
+		.email, .tel, .user_street_address, .user_unit_number, .password, .time_zone{
 			.controls{
 				width:575px;
 			}
@@ -925,7 +926,7 @@ p{
     		box-shadow: none !important;
     		width: 250px;
     	}
-    	input[type="email"],input[type="password"]{
+    	input[type="email"],input[type="tel"],input#user_street_address[type="text"],input#user_unit_number[type="text"],input[type="password"]{
     		background-color: white !important;
     		width:556px !important;
     	}
@@ -2556,6 +2557,23 @@ body.dashboard.index {
 		}
 	}
 }
+body.events.show {
+	.event-contact {
+		&:hover{
+			a.remove-contact-btn, a.edit {
+				display:inline-block;
+				float: right;
+				i.icon-remove-circle:before{
+					font-size: 18px;
+				}
+			}
+		}
+		a.remove-contact-btn, a.edit {
+			display:none;
+		}
+	}
+}
+
 
 body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	#event-team-members, #team-members-list, #area-places-list {
@@ -2573,7 +2591,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 			white-space: nowrap;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
 				display:inline-block;
 				float: right;
 				i.icon-remove-circle:before{
@@ -2581,7 +2599,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 				}
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn{
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
 			display:none;
 		}
 	}
@@ -5386,5 +5404,25 @@ table td.sub-level-1 {
 	}
 	#resource-close-details.affix{
 		top:0;
+	}
+}
+
+
+.ui-autocomplete {
+	z-index: 9999;
+}
+
+
+.event_place_reference .ui-autocomplete {
+	background-color: #fff !important;
+	border: 1px solid #ccc;
+
+	.ui-menu-item {
+		border-bottom: 1px solid #ccc;
+		font-size: 13px;
+
+		.ui-state-focus {
+			background-color: #989898 !important;
+		}
 	}
 }

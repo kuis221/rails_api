@@ -36,7 +36,7 @@ ul.select2-results{
 }
 
 .modal {
-	overflow: visible !important; 
+	overflow: visible !important;
 	&.modal-med{
 		width: 460px;
 		&.eventexpense_modal{
@@ -63,6 +63,7 @@ ul.select2-results{
 					}
 				}
 				.input-prepend{
+					margin-bottom: 0px;
 					.add-on{
 						background-color: #c0c0c0;
 						border: 0 !important;
@@ -212,7 +213,7 @@ ul.select2-results{
 				}
 			}
 
-			.staff-table, .brands-table, .campaigns-modals, .places-modals{
+			.staff-table, .brands-table, .campaigns-modals, .places-modals, .contacts-modals{
 				input[type="text"]{
 					background-image: url('search2.svg') !important;
 					background-position: center right;
@@ -225,6 +226,9 @@ ul.select2-results{
 						width: 95%;
 					}
 					&#place-search-box {
+						width: 96%;
+					}
+					&#contact-search-box {
 						width: 96%;
 					}
 					&.places-autocomplete{
@@ -260,7 +264,7 @@ ul.select2-results{
 			    }
 			}
 			.edit-event{
-				.chzn-container-single 
+				.chzn-container-single
 					.chzn-single{
 						width: 545px !important;
 					}
@@ -570,7 +574,7 @@ ul.select2-results{
 				}
 			}
 		}
-		.help-item{		
+		.help-item{
 			display: block;
 			float: left;
 			height: auto;
@@ -718,6 +722,9 @@ ul.select2-results{
 			.btn-primary, .btn-cancel{
 				height: 40px;
 				width: 154px;
+			}
+			&.inside-form{
+				margin: 25px 0px 33px;
 			}
 		}
 		.form-horizontal{

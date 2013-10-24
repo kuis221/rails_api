@@ -2,3 +2,6 @@
   |
     $('.bootbox.modal').modal('hide');
     $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}')
+- else
+  |
+    alert('#{j resource.errors.inspect}');

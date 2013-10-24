@@ -62,6 +62,57 @@ describe "Events", js: true, search: true do
               page.should have_selector('a.disable', text: '')
             end
           end
+
+        end
+      end
+
+      it "should allow allow filter events by date range" do
+        today = Time.zone.now.to_date
+        tomorrow = today+1
+        FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+          place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US')
+        )
+        FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+          campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+          place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+        Sunspot.commit
+
+        visit events_path
+
+        within("ul#events-list") do
+          page.should have_content('Campaign FY2012')
+          page.should have_content('Another Campaign April 03')
+        end
+
+        page.should have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+        page.should have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+
+        filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+
+        within("ul#events-list") do
+          page.should have_no_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        select_filter_calendar_day(today.strftime('%d'))
+        find('#collection-list-filters').should have_no_content('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_no_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
+        end
+
+        select_filter_calendar_day(today.strftime('%d'), tomorrow.strftime('%d'))
+        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+        within("ul#events-list") do
+          page.should have_content('Another Campaign April 03')
+          page.should have_content('Campaign FY2012')
         end
       end
     end
@@ -134,6 +185,143 @@ describe "Events", js: true, search: true do
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
     end
+
+
+    it "allows to add a user as contact to the event", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      within visible_modal do
+        page.should have_selector("li#contact-company_user-#{company_user.id}")
+        page.should have_content('Pablo')
+        page.should have_content('Baltodano')
+        click_js_link("add-contact-btn-company_user-#{company_user.id}")
+
+        page.should have_no_selector("li#contact-company_user-#{company_user.id}")
+      end
+      close_modal
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_content('Pablo Baltodano')
+        #find('a.remove-member-btn').click
+      end
+
+      # Test removal of the user
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+
+      page.should_not have_content('Pablo Baltodano')
+    end
+
+
+    it "allows to add a contact as contact to the event", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      within visible_modal do
+        page.should have_selector("li#contact-contact-#{contact.id}")
+        page.should have_content('Guillermo')
+        page.should have_content('Vargas')
+        click_js_link("add-contact-btn-contact-#{contact.id}")
+
+        page.should have_no_selector("li#contact-contact-#{contact.id}")
+      end
+      close_modal
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_content('Guillermo Vargas')
+        #find('a.remove-member-btn').click
+      end
+
+      # Test removal of the user
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+
+      page.should_not have_content('Guillermo Vargas')
+    end
+
+
+    it "allows to create a contact", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      click_js_link 'Add Contact'
+      visible_modal.click_js_link("Create New Contact")
+
+      within ".contactevent_modal" do
+        fill_in 'First name', with: 'Pedro'
+        fill_in 'Last name', with: 'Picapiedra'
+        fill_in 'Email', with: 'pedro@racadura.com'
+        fill_in 'Phone number', with: '+1 505 22343222'
+        fill_in 'Address', with: 'ABC 123'
+        select_from_chosen('United States', :from => 'Country')
+        select_from_chosen('California', :from => 'State')
+        fill_in 'City', with: 'Los Angeles'
+        fill_in 'Zip code', with: '12345'
+        click_js_button 'Save'
+      end
+
+      ensure_modal_was_closed
+
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_content('Pedro Picapiedra')
+      end
+
+      # Test removal of the user
+      hover_and_click("#event-contacts-list .event-contact", 'Remove Contact')
+
+      # Refresh the page and make sure the user is not there
+      visit event_path(event)
+
+      page.should_not have_content('Pedro Picapiedra')
+    end
+
+    it "allows to edit a contact", :js => true do
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+      contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
+      FactoryGirl.create(:contact_event, event: event, contactable: contact)
+      Sunspot.commit
+
+      visit event_path(event)
+
+      page.should have_content('Guillermo Vargas')
+
+      hover_and_click("#event-contacts-list .event-contact", 'Edit Contact')
+
+      within visible_modal do
+        fill_in 'First name', with: 'Pedro'
+        fill_in 'Last name', with: 'Picapiedra'
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      # Test the user was added to the list of event members and it can be removed
+      within "#event-contacts-list" do
+        page.should have_no_content('Guillermo Vargas')
+        page.should have_content('Pedro Picapiedra')
+        #find('a.remove-member-btn').click
+      end
+    end
+
 
     it "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)

@@ -1,6 +1,4 @@
 - remote ||= false
-- submit_label = resource.new_record? ? 'Create User' : 'Update User'
-- submit_label = 'Save Profile' if resource.id == current_company_user.id
 = simple_form_for(resource, remote: remote || false) do |f|
   = f.error_notification
 
@@ -23,12 +21,11 @@
       - if can?(:super_update, resource)
         .row-fluid.users-teams-roles
           = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
-      - unless resource.invited_to_sign_up?
         .row-fluid.users
             = uf.input :password, input_html: {class: 'input-xxlarge'}
         .row-fluid.users
             = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
-      - if resource.id == current_company_user.id
+      - if resource.id == current_company_user.id || can?(:super_update, resource)
         .row-fluid.users
           = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
         .row-fluid.users
@@ -55,8 +52,6 @@
     $('#company_user_user_attributes_time_zone').set_timezone({'mappings':#{ActiveSupport::TimeZone::MAPPING.invert.to_json.html_safe}});
 
 coffee:
-  $('#user_team_ids').select2()
-
   $('#company_user_user_attributes_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
       states = $('#company_user_user_attributes_state')

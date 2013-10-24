@@ -69,6 +69,7 @@ jQuery ->
   map = null
   markersArray = []
   events = null
+  markerCluster = false
 
   initializeMap = ->
     if not map
@@ -98,6 +99,8 @@ jQuery ->
     if map
       for marker in markersArray
         marker.setMap null
+
+      markersArray = []
 
       bounds = new google.maps.LatLngBounds()
 
@@ -146,6 +149,9 @@ jQuery ->
         )
         map.initialZoom = true;
         map.fitBounds bounds
+
+        if markerCluster
+          markerCluster.clearMarkers()
 
         markerCluster = new MarkerClusterer(map, markersArray);
 

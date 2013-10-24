@@ -22,6 +22,8 @@ Brandscopic::Application.routes.draw do
 
   devise_scope :user do
     put '/users/confirmation', to: 'confirmations#update'
+    get '/users/invitation/resend', to: 'invitations#resend'
+    post '/users/invitation/resend', to: 'invitations#send_invite'
     get "/users/password/thanks", to: 'passwords#thanks', as: :passwords_thanks
   end
 
@@ -217,6 +219,10 @@ Brandscopic::Application.routes.draw do
     resources :comments, only: [:create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
+    resources :contact_events, path: :contacts, only: [:create, :new, :destroy, :edit, :update] do
+      get 'add', on: :collection
+    end
+
     member do
       get :deactivate
       get :activate
@@ -227,6 +233,7 @@ Brandscopic::Application.routes.draw do
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member
       match 'members' => 'events#add_members', via: :post, as: :add_member
+
     end
   end
 
@@ -268,6 +275,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :places, only: [] do
+    get :search, format: :json, on: :collection
     resources :areas, only: [:new, :create]
   end
 
