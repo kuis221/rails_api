@@ -1,4 +1,4 @@
-collection :@events
+collection @events
 
 attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :event_status
 
