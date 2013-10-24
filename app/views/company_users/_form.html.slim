@@ -52,8 +52,6 @@
     $('#company_user_user_attributes_time_zone').set_timezone({'mappings':#{ActiveSupport::TimeZone::MAPPING.invert.to_json.html_safe}});
 
 coffee:
-  $('#user_team_ids').select2()
-
   $('#company_user_user_attributes_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
       states = $('#company_user_user_attributes_state')

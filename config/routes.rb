@@ -262,6 +262,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :places, only: [] do
+    get :search, format: :json, on: :collection
     resources :areas, only: [:new, :create]
   end
 

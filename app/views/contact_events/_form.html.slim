@@ -36,8 +36,6 @@
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 coffee:
-  $('#user_team_ids').select2()
-
   $('#contact_event_contactable_attributes_country').change () ->
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
       states = $('#contact_event_contactable_attributes_state')
