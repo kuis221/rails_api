@@ -163,6 +163,7 @@ class Place < ActiveRecord::Base
         locations.push encode_location([place.continent_name, place.country_name]) if place.country_name
         locations.push encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
         locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
+        locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city.gsub('Saint','St')]) if  place.state_name && place.city && place.city =~ /^Saint.*/
       end
       locations
     end
