@@ -30,8 +30,8 @@ class Place < ActiveRecord::Base
 
   attr_accessible :reference, :place_id, :name, :types, :street_number, :route, :city, :state, :zipcode, :country
 
-  validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place
-  validates :reference, presence: true, uniqueness: true, unless: :is_custom_place
+  validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
+  validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
   # Areas-Places relationship
   has_many :events

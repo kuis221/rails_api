@@ -186,7 +186,7 @@ class Event < ActiveRecord::Base
   end
 
   def place_reference
-    "#{place.reference}||#{place.place_id}" if place.present?
+    place_id
   end
 
   def status
