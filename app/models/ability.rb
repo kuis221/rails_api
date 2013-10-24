@@ -81,6 +81,8 @@ class Ability
         end
       end
 
+      can :search, Place
+
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
       can :places, Campaign do |campaign|
