@@ -14,9 +14,16 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
 
   api :GET, '/api/v1/events'
+  param :campaign, Array
   def index
     collection
   end
 
+
+  protected
+
+    def permitted_search_params
+      params.permit({campaign: []})
+    end
 
 end
