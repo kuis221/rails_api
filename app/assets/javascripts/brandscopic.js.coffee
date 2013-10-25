@@ -42,6 +42,10 @@ jQuery ->
 		else if $.browser.mozilla
 			$('html').addClass('mozilla')
 
+		# Check if we should automatically activate a tab on the app
+		if window.location.hash
+			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
 		$('input.timepicker').timepicker()

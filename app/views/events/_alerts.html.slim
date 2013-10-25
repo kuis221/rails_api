@@ -2,6 +2,15 @@
 - if can?(:submit, resource) && resource.may_submit?
   - submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
 
+// Event is scheduled on a place that is not longer part of the campaign
+- unless resource.place.nil? || resource.campaign.place_allowed_for_event?(resource.place)
+  .alert.alert-danger
+    == "Your event's location is no longer part of the campaign's approved places."
+    - allowed_actions = []
+    - allowed_actions.push "#{link_to('edit the event', edit_event_path(resource), remote: true)} and update the location" if can?(:edit, resource)
+    - allowed_actions.push "#{link_to('modify the places', campaign_path(resource.campaign, anchor: "campaign-places-list"))} for the campaign" if can?(:show, resource.campaign) && can?(:add_place, resource.campaign)
+    == " You may need to #{allowed_actions.join(' or ')}." if allowed_actions.any?
+
 //Date in the future
 - if resource.in_future? && !resource.happens_today?
   .alert.alert-grey
