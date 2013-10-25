@@ -3,6 +3,7 @@ class Api::V1::ApiController < ActionController::Base
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
+  rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
 
   protected
@@ -33,6 +34,13 @@ class Api::V1::ApiController < ActionController::Base
       render :status => 401,
        :json => { :success => false,
                   :info => "Invalid company",
+                  :data => {} }
+    end
+
+    def record_not_found
+      render :status => 404,
+       :json => { :success => false,
+                  :info => "Record not found",
                   :data => {} }
     end
 end

@@ -12,11 +12,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
     EOS
   end
 
-
   api :GET, '/api/v1/events'
   def index
     collection
   end
 
+  api :GET, '/api/v1/events/:id'
+  param :id, :number, required: true, desc: "Event ID"
+  def show
+    if resource.present?
+      render
+    end
+  end
 
 end
