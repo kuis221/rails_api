@@ -82,4 +82,34 @@ describe CompanyUser do
       CompanyUser.by_events([event, other_event]).all.should =~ users + other_users
     end
   end
+
+  describe "#accessible_campaign_ids" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1) }
+    let(:brand)     { FactoryGirl.create(:brand) }
+    let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:portfolio) { FactoryGirl.create(:brand_portfolio) }
+
+    it "should return the ids of campaigns assigend to the user" do
+      user.campaigns << campaign
+      user.accessible_campaign_ids.should == [campaign.id]
+    end
+
+    it "should return the ids of campaigns of a brand assigend to the user" do
+      campaign.brands << brand
+      user.brands << brand
+      user.accessible_campaign_ids.should == [campaign.id]
+    end
+
+    it "should return the ids of campaigns of a brand assigend to the user" do
+      campaign.brands << brand
+      user.brands << brand
+      user.accessible_campaign_ids.should == [campaign.id]
+    end
+
+    it "should return the ids of campaigns of a brand portfolio assigned to the user" do
+      campaign.brand_portfolios << portfolio
+      user.brand_portfolios << portfolio
+      user.accessible_campaign_ids.should == [campaign.id]
+    end
+  end
 end
