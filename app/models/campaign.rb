@@ -135,7 +135,15 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff
-    (users+teams).sort_by &:name
+    (staff_users+teams).sort_by &:name
+  end
+
+  def staff_users
+    staff_users = (
+      users +
+      CompanyUser.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
+      CompanyUser.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
+    ).uniq
   end
 
   def areas_and_places

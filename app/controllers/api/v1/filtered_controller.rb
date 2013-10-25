@@ -12,7 +12,7 @@ class Api::V1::FilteredController < Api::V1::ApiController
   protected
 
     def search_params
-      @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
+      @search_params ||= permitted_search_params.tap do |p|  # Duplicate the params array to make some modifications
         p[:company_id] = current_company.id
         p[:current_company_user] = current_company_user
       end

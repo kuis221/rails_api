@@ -9,9 +9,13 @@ describe "Invitations", :js => true do
       first_name: 'Pedro',
       last_name: 'Picapiedra',
       email: 'pedro@rocadura.com',
+      phone_number: '(506)22728899',
       country: 'CR',
       state: 'SJ',
       city: 'Curridabat',
+      street_address: 'This is the street address',
+      unit_number: 'This is the unit number',
+      zip_code: '90210',
       invitation_token: 'XYZ123',
       role_id: FactoryGirl.create(:role).id,
       company_id: FactoryGirl.create(:company).id
@@ -28,9 +32,13 @@ describe "Invitations", :js => true do
     find_field('First name').value.should == 'Pedro'
     find_field('Last name').value.should == 'Picapiedra'
     find_field('Email').value.should == 'pedro@rocadura.com'
+    find_field('Phone number').value.should == '(506)22728899'
     find_field('Country', visible: false).value.should == 'CR'
     find_field('State', visible: false).value.should == 'SJ'
     find_field('City').value.should == 'Curridabat'
+    find('#user_street_address').value.should == 'This is the street address'
+    find('#user_unit_number').value.should == 'This is the unit number'
+    find_field('Zip code').value.should == '90210'
     find_field('New Password', match: :first).value.should == ''
     find_field('Confirm New Password').value.should == ''
 
@@ -38,9 +46,13 @@ describe "Invitations", :js => true do
     fill_in('First name', with: 'Pablo')
     fill_in('Last name', with: 'Marmol')
     fill_in('Email', with: 'pablo@rocadura.com')
+    fill_in('Phone number', with: '(506)22506633')
     select_from_chosen('United States', from: 'Country', match: :first)
     select_from_chosen('Texas', from: 'State')
     fill_in('City', with: 'Texas')
+    fill_in('user_street_address', with: 'A different street address')
+    fill_in('user_unit_number', with: 'A different unit number')
+    fill_in('Zip code', with: '32154')
     fill_in('New Password', with: 'Pablito123', match: :first)
     fill_in('Confirm New Password', with: 'Pablito123')
 
@@ -56,8 +68,12 @@ describe "Invitations", :js => true do
     fill_in('First name', with: '')
     fill_in('Last name', with: '')
     fill_in('Email', with: '')
+    fill_in('Phone number', with: '')
     select_from_chosen('', from: 'State')
     fill_in('City', with: '')
+    fill_in('user_street_address', with: '')
+    fill_in('user_unit_number', with: '')
+    fill_in('Zip code', with: '')
     fill_in('New Password', with: '', match: :first)
     fill_in('Confirm New Password', with: '')
 

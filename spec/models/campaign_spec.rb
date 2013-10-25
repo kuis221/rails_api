@@ -115,4 +115,60 @@ describe Campaign do
     end
   end
 
+
+  describe "staff_users" do
+    it "should include users that have the brands assigned to" do
+      brand = FactoryGirl.create(:brand)
+      campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company_id: 1)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_ids: [brand.id], company_id: 1)
+
+      # Create another user related to another brand
+      FactoryGirl.create(:company_user, brand_ids: [FactoryGirl.create(:brand).id], company_id: 1)
+
+      campaign.staff_users.should == [user]
+    end
+
+    it "should include users that have the brand portfolios assigned to" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], company_id: 1)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], company_id: 1)
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user, brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio).id], company_id: 1)
+
+      campaign.staff_users.should == [user]
+    end
+
+    it "should include users that are directly assigned to the campaign" do
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+
+      # This is an user that is assgined to the campaign
+      user = FactoryGirl.create(:company_user, company_id: 1)
+
+      campaign.users << user
+
+      campaign.staff_users.should == [user]
+    end
+
+    it "mixup between the diferent sources" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio)
+      brand = FactoryGirl.create(:brand)
+      brand2 = FactoryGirl.create(:brand)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id, brand2.id], company_id: 1)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id], company_id: 1)
+      user2 = FactoryGirl.create(:company_user, brand_ids: [brand2.id], company_id: 1)
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user, brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio).id], company_id: 1)
+
+      campaign.staff_users.should =~ [user, user2]
+    end
+  end
+
 end

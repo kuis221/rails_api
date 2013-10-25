@@ -1,3 +1,11 @@
+/ CAMPAIGNS ASSIGNED TO THE USER DIRECTLY
+.campaigns-group
+  .campaigns-group-body
+    .row-fluid.campaigns-list id="campaigns-company_user-#{resource.id}"
+        = render partial: 'company_users/campaign', collection: resource.campaigns, locals: {parent: nil}
+
+
+/ CAMPAIGNS GROUPED BY BRAND
 - brands_campaigns_list.each do |parent, info|
   = render partial: 'campaings_bucket', locals: {parent: parent, enabled: info[:enabled], campaigns: info[:campaigns]}
 

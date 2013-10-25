@@ -77,8 +77,12 @@ class CompanyUsersController < FilteredController
   end
 
   def remove_campaign
-    if params[:parent_type] && params[:parent_id] && params[:campaign_id]
-      membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
+    if params[:campaign_id]
+      if params[:parent_type]
+        membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
+      else
+        membership = nil
+      end
       # If the parent is directly assigned to the user, then remove the parent and assign all the
       # current campaigns to the user
       unless membership.nil?
@@ -230,7 +234,7 @@ class CompanyUsersController < FilteredController
 
 
     def validate_parent
-      raise CanCan::AccessDenied unless ['BrandPortfolio', 'Brand'].include?(params[:parent_type])
+      raise CanCan::AccessDenied unless ['BrandPortfolio', 'Brand'].include?(params[:parent_type]) || params[:parent_type].nil?
     end
 
 end
