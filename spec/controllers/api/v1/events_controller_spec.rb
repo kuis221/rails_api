@@ -14,10 +14,12 @@ describe Api::V1::EventsController do
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
       response.should be_success
-      events = JSON.parse(response.body)
+      result = JSON.parse(response.body)
 
-      events.count.should == 3
-      events.first.keys.should =~ ["id", "start_date", "start_time", "end_date", "end_time", "status", "event_status", "campaign", "place"]
+      p result.inspect
+
+      result['results'].count.should == 3
+      result['results'].first.keys.should =~ ["id", "start_date", "start_time", "end_date", "end_time", "status", "event_status", "campaign", "place"]
     end
 
     it "return a list of events filtered by campaign id" do
