@@ -1,0 +1,13 @@
+- if @member
+  - if resource.staff.include?(@member)
+    | $('#goal-company_user-#{@member.id} .delete-buttton').remove();
+  - else
+    |
+      $("##{resource.class.name.underscore}-member-#{@member.id}").remove()
+      $(document).trigger('tasks:change');
+      $(document).trigger('member:delete', #{@member.id});
+- if @team
+  |
+    $("##{resource.class.name.underscore}-team-#{@team.id}").remove()
+    $(document).trigger('tasks:change');
+    $(document).trigger('team:delete', #{@team.id});

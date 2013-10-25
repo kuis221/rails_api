@@ -296,6 +296,17 @@ ul.select2-results{
     	left: 10%;
     	margin-left: 0;
     	min-width:80%;
+    	#select-campaigns-table-wrapper{
+			.link-list{
+				margin-top: 35px;
+				ul#select-campaigns-list{
+					li{
+						padding: 14px 0 0 20px;
+						box-sizing: border-box;
+					}
+				}
+			}
+		}
 		#survey-form {
 			.control-group {
 				width: 100%;
@@ -679,7 +690,7 @@ ul.select2-results{
 			label{
 				margin-bottom: 2px;
 			}
-			&.location {
+			&.location, &.password {
 				width: auto;
 			}
 		}
@@ -891,6 +902,22 @@ ul.select2-results{
 
 .campaigns-modals{
 	color: @brand;
+	#select-areas-table-wrapper .link-list {
+		ul#areas-list{
+			min-height: 82px;
+			max-height: 251px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			.pull-left{
+				margin: 21px 0 0 20px;
+			}
+			li{
+				span:last-child .add:before{
+					top:2px;
+				}
+			}
+		}
+	}
 }
 
 

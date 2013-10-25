@@ -167,5 +167,109 @@ describe CompanyUsersController do
         alerts.should == []
       end
     end
+
+    describe "DELETE 'remove_campaign'" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+      let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
+      let(:brand){ FactoryGirl.create(:brand) }
+
+      it 'should remove a campaing is assigned to the user' do
+        user.campaigns << campaign
+        expect {
+          delete 'remove_campaign', id: user.id, campaign_id: campaign.id, format: :js
+          response.should be_success
+          user.reload
+        }.to change(user.campaigns, :count).by(-1)
+
+        response.should render_template('remove_campaign')
+      end
+
+      it 'should remove a campaing is assigned to the user through a brand' do
+        user.memberships.create(parent: brand, memberable: campaign)
+        expect {
+          delete 'remove_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
+          response.should be_success
+          user.reload
+        }.to change(user.campaigns, :count).by(-1)
+
+        response.should render_template('remove_campaign')
+      end
+
+      it 'should deassign the brand from the user and assign any other campaigns that is part of this brand' do
+        campaign2 = FactoryGirl.create(:campaign, company_id: @company.id)
+        campaign.brands << brand
+        campaign2.brands << brand
+
+        user.memberships.create(parent: brand, memberable: brand).should be_true
+        expect {
+          delete 'remove_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
+          response.should be_success
+          user.reload
+        }.to_not change(user.memberships, :count)  # Remove the parent and add the campaign2 as a member
+
+        user.memberships.map(&:memberable).should == [campaign2]
+
+        response.should render_template('remove_campaign')
+      end
+    end
+
+    describe "add_campaign" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+      let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
+      let(:brand){ FactoryGirl.create(:brand) }
+
+      it "should add a campaign to the user that belongs to a brand" do
+        campaign.brands << brand
+        expect {
+          delete 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
+          response.should be_success
+          user.reload
+        }.to change(user.memberships, :count).by(1)
+
+        user.memberships.map(&:parent).should == [brand]
+        user.memberships.map(&:memberable).should == [campaign]
+        user.campaigns.should == [campaign]
+      end
+    end
+
+    describe "disable_campaigns" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+      let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
+      let(:brand){ FactoryGirl.create(:brand) }
+
+      it "remove the brand as a membership and assign any campaign to the user with the brand as parent" do
+        campaign.brands << brand
+        user.brands << brand
+        expect {
+          post 'disable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          response.should be_success
+          user.reload
+        }.to change(user.brands, :count).by(-1)
+
+        user.memberships.map(&:parent).should == [brand]
+        user.memberships.map(&:memberable).should == [campaign]
+        user.campaigns.should == [campaign]
+      end
+    end
+
+
+    describe "enable_campaigns" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+      let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
+      let(:brand){ FactoryGirl.create(:brand) }
+
+      it "remove the brand as a membership and assign any campaign to the user with the brand as parent" do
+        campaign.brands << brand
+        expect {
+          post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          response.should be_success
+          user.reload
+        }.to change(user.brands, :count).by(1)
+
+        user.memberships.map(&:parent).should == [nil]
+        user.memberships.map(&:memberable).should == [brand]
+        user.campaigns.should == []
+      end
+    end
   end
 end
