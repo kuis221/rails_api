@@ -17,4 +17,8 @@ class Api::V1::FilteredController < Api::V1::ApiController
         p[:current_company_user] = current_company_user
       end
     end
+
+    def build_resource_params
+      [permitted_params || {}]
+    end
 end
