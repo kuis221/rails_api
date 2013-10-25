@@ -588,17 +588,21 @@ class Event < ActiveRecord::Base
       true
     end
 
+    # Validates that the user can schedule a event on tha specified place. The validation
+    # is only made if the place_id changed or it's being created
     def event_place_valid?
-      unless place.nil? || campaign.nil?
-        unless campaign.place_allowed_for_event?(place)
-          errors.add(:place_reference, 'is not valid for this campaign')
-        end
-        unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-          errors.add(:place_reference, 'is not part of your authorized locations')
-        end
-      else
-        if place.nil? && User.current.present? && User.current.current_company_user.present? && !User.current.current_company_user.is_admin?
-          errors.add(:place_reference, 'cannot be blank')
+      if place_id_changed? || self.new_record?
+        unless place.nil? || campaign.nil?
+          unless campaign.place_allowed_for_event?(place)
+            errors.add(:place_reference, 'is not valid for this campaign')
+          end
+          unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+            errors.add(:place_reference, 'is not part of your authorized locations')
+          end
+        else
+          if place.nil? && User.current.present? && User.current.current_company_user.present? && !User.current.current_company_user.is_admin?
+            errors.add(:place_reference, 'cannot be blank')
+          end
         end
       end
     end
