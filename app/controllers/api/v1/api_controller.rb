@@ -22,18 +22,38 @@ class Api::V1::ApiController < ActionController::Base
     end
 
     def invalid_token
-      render :status => 401,
-       :json => { :success => false,
-                  :info => "Invalid auth token",
-                  :data => {} }
+      respond_to do |format|
+        format.json {
+          render :status => 401,
+                 :json => { :success => false,
+                      :info => "Invalid auth token",
+                      :data => {} }
+        }
+        format.xml {
+          render  :status => 401,
+                  :xml => { :success => false,
+                      :info => "Invalid auth token",
+                      :data => {} }.to_xml(root: 'response')
+        }
+      end
     end
 
 
     def invalid_company
-      render :status => 401,
-       :json => { :success => false,
-                  :info => "Invalid company",
-                  :data => {} }
+      respond_to do |format|
+        format.json {
+          render :status => 401,
+           :json => { :success => false,
+                      :info => "Invalid company",
+                      :data => {} }
+        }
+        format.xml {
+          render  :status => 401,
+                  :xml => { :success => false,
+                      :info => "Invalid company",
+                      :data => {} }.to_xml(root: 'response')
+        }
+      end
     end
 end
 
