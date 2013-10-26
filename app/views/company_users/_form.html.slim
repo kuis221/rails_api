@@ -1,4 +1,5 @@
 - remote ||= false
+- is_admin = can?(:super_update, resource)
 = simple_form_for(resource, remote: remote || false) do |f|
   = f.error_notification
 
@@ -10,38 +11,38 @@
         .span6
           = uf.input :last_name, input_html: {class: 'input-large'}
 
-      - if can?(:super_update, resource)
+      - if is_admin
         .row-fluid.users
             = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-xxlarge chosen-enabled'}
       .row-fluid.users
         = uf.input :email, input_html: {class: 'input-xxlarge'}
       .row-fluid.users
-        = uf.input :phone_number, input_html: {class: 'input-xxlarge'}
+        = uf.input :phone_number, input_html: {class: 'input-xxlarge'}, required: !is_admin
 
-      - if can?(:super_update, resource)
+      - if is_admin
         .row-fluid.users-teams-roles
           = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
-      - if resource.id == current_company_user.id || can?(:super_update, resource)
+      - if resource.id == current_company_user.id || is_admin
         .row-fluid.users
             = uf.input :password, input_html: {class: 'input-xxlarge', minlength: 8, maxlength: 128}, hint: 'Password must contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
         .row-fluid.users
             = uf.input :password_confirmation, input_html: {class: 'input-xxlarge'}
         .row-fluid.users
-          = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}
+          = uf.input :street_address, label: 'Address', input_html: {class: 'input-xxlarge'}, required: !is_admin
         .row-fluid.users
-          = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}
-        .row-fluid.users
-          .span6
-            = uf.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
-          .span6
-            = uf.input :city, required: true, input_html: {class: 'input-large'}
+          = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}, required: !is_admin
         .row-fluid.users
           .span6
-            = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'input-large chosen-enabled'}
+            = uf.input :country, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
           .span6
-            = uf.input :zip_code, input_html: {class: 'input-large'}
+            = uf.input :city, input_html: {class: 'input-large'}, required: !is_admin
+        .row-fluid.users
+          .span6
+            = uf.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
+          .span6
+            = uf.input :zip_code, input_html: {class: 'input-large'}, required: !is_admin
         .row-fluid.users-teams-roles
-          = uf.input :time_zone, required: true, input_html: {class: 'input-large chosen-enabled'}
+          = uf.input :time_zone, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
   .form-actions
     = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe

@@ -5,11 +5,15 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
+    phone_number '(506)22124578'
     password 'Changeme123'
     password_confirmation 'Changeme123'
     city 'Curridabat'
     state 'SJ'
     country 'CR'
+    street_address 'Street Address 123'
+    unit_number 'Unit Number 456'
+    zip_code '90210'
     time_zone Brandscopic::Application.config.time_zone
     detected_time_zone 'Central America'
     confirmed_at DateTime.now
@@ -40,9 +44,13 @@ FactoryGirl.define do
       password_confirmation nil
       invitation_sent_at DateTime.now
       invitation_accepted_at nil
+      phone_number nil
       city nil
       state nil
       country nil
+      street_address nil
+      unit_number nil
+      zip_code nil
       inviting_user true
     end
 
