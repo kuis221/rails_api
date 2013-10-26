@@ -84,7 +84,7 @@ $.widget 'nmk.eventsCalendar', {
 			for j in [0..6]
 				dayTitle = "#{cal_days_labels[currentDay.getDay()]} #{cal_months_labels[currentDay.getMonth()].substring(0,3)} #{currentDay.getDate()}"
 				html += "<td class=\"calendar-day\" id=\"#{currentDay.getFullYear()}_#{currentDay.getMonth()+1}_#{currentDay.getDate()}\"><div class=\"calendar-cell-wrapper\">"
-				html += "<div class=\"calendar-day-events-container\"><a href=\"#\" class=\"close\"></a><h4>#{dayTitle}</h4></div>"
+				html += "<div class=\"calendar-day-events-container\"><a href=\"#\" class=\"close\"></a><span class=\"daytitle\">#{dayTitle}</span></div>"
 				html += "<div class=\"calendar-view-more\"></div>"
 				html += "<div class=\"calendar-month-day\">"
 				if @options.renderMonthDay

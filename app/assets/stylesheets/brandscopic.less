@@ -688,6 +688,57 @@ body.app-layout{
 #calendar-canvas {
 	margin-top: 10px;
 
+	.calendar-day{
+		&.expanded{
+			.daytitle{
+				display: block;
+				font-size: 13px;
+				margin-bottom: 5px;
+			}		
+		}
+	}
+
+	.calendar-table th{
+		padding: 5px 0 5px 10px;
+	}
+
+	a{
+		&.cal-day-link, &.cal-day-link:hover{
+			color: @brand;
+			margin: 0 5px 5px;
+		}
+		&.icon-angle-right:before, &.icon-angle-right:before{
+			left: 10px;
+		}
+	}
+
+	.calendar-day-events-container{
+		color: @brand;
+		font-size: 11px;
+		line-height: 17px;
+		height: 100px;
+		.calendar-event-name{
+			display: block;
+			margin-left: 15px;
+			margin-top: -19px;
+			a, a:hover{
+				color: @brand;
+			}
+		}
+		.daytitle{
+			display: none;
+		}
+	}
+
+	.calendar-view-more{
+		a, a:hover{
+			color: @user_menu;
+			font-size: 11px;
+			margin: 0px 0px 5px 5px;
+			text-decoration: none;
+		}
+	}
+
 	.fc-day-header {
 		background-color: @grey_three !important;
 		color: #fff;
@@ -1743,7 +1794,7 @@ ul.kpis-list{
 	    				margin: 0;
 	    			}
 	    			&.tasks-date{
-						margin: 20px 20px 0 0;
+						margin: 10px 20px 0 0;
 						width: 45%;
 					}
 					&.last{
@@ -1840,12 +1891,12 @@ ul.kpis-list{
     			}
     		}
     		&.user_mail{
-    			margin: 8px 25px 0 0;
-    			width: 25%;
+    			margin: 8px 30px 0 0;
+    			width: 24%;
     		}
     		&.user_date{
     			margin: 8px 0 0 0;
-    			width: 17%;
+    			width: 18%;
     		}
     	}
     }
@@ -1956,14 +2007,14 @@ ul.kpis-list{
 
     }
     li{
-    	border-bottom:1px solid @borders;
+    	border-top:1px solid @borders;
     	color:@brand;
     	min-height: 83px;
     	list-style:none;
     	margin: 0;
         position: relative;
-    	&:last-child{
-    		border:0;
+    	&:first-child{
+    		border-top:0;
     	}
     	.description{
     		display: block;
@@ -2245,6 +2296,10 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
+#company_user-places-list{
+	margin-top: 36px;
+}
+
 #top-admin-home-navigation {
 	#home.active {
 		display: none;
@@ -2478,6 +2533,13 @@ body.company_users{
 			margin-bottom: 10px;
 		}
 	}
+
+	#user-places{
+		.plus{
+			margin-top: 35px;
+		}
+	}
+
 	.user-role{
 		margin-bottom: 25px;
 	}
@@ -2501,11 +2563,22 @@ body.company_users{
 			border-bottom: 1px solid @grey_one;
 			padding: 5px;
 			width: auto;
+			.switch-toggle{
+				margin: 6px 15px 0 8px;
+			}
+		}
+		.campaigns-group-body{
+			a.icon-plus-sign:before{
+				margin: 15px 0 10px 15px;
+			}
 		}
 		margin-bottom: 20px;
 
 		.campaigns-list {
 			padding: 20px 10px;
+			.user-campaign{
+				margin-left: 5px;
+			}
 		}
 	}
 }
@@ -2560,33 +2633,23 @@ body.dashboard.index {
 		}
 	}
 }
-body.events.show {
-	.event-contact {
-		&:hover{
-			a.remove-contact-btn, a.edit {
-				display:inline-block;
-				float: right;
-				i.icon-remove-circle:before{
-					font-size: 18px;
-				}
-			}
-		}
-		a.remove-contact-btn, a.edit {
-			display:none;
-		}
-	}
-}
 
 
-body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
-	#event-team-members, #team-members-list, #area-places-list {
+body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
+	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
+		clear: both;
 		margin: 0 -12% 0 0;
 	}
-	.team-member, .team, .area-place, .brand{
+	.place, .area-user{
+		padding: 0 0 0 32px;
+		margin: 0 10% 30px 0;
+    	height: 40px;
+	}
+	.team-member, .team, .brand {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-    height: 70px;
+    	height: 70px;
 		.full-name, .address-name, .brand-name{
 			font-size: 16px;
 			overflow: hidden;
@@ -2608,7 +2671,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team-member:before{
-    color: @user_menu;
+    	color: @user_menu;
 		content: "\e024" !important;
 		display: block;
 		font-family: 'icons';
@@ -2620,7 +2683,7 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 	}
 
 	.team:before{
-    color: @user_menu;
+    	color: @user_menu;
 		content: "\e023" !important;
 		display: block;
 		font-family: 'icons';
@@ -2631,17 +2694,17 @@ body.events.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
 		vertical-align: middle;
 	}
 
-  .area-place:before{
-    color: @user_menu;
-    content: "\e02c" !important;
-    display: block;
-    font-family: 'icons';
-    font-size: 20px;
-    left: -30px;
-    position: relative;
-    top: 13px;
-    vertical-align: middle;
-  }
+	  .area-place:before{
+	    color: @user_menu;
+	    content: "\e02c" !important;
+	    display: block;
+	    font-family: 'icons';
+	    font-size: 20px;
+	    left: -30px;
+	    position: relative;
+	    top: 13px;
+	    vertical-align: middle;
+	  }
 
 	.box_metrics{
 		width: 40%;
@@ -4399,6 +4462,37 @@ body.campaigns{
 			}
 		}
 	}
+
+	.area-user{
+		&:before{
+			content: "\e02e";
+			color: @user_menu;
+			display: block;
+			font-family: 'icons';
+			font-size: 16px;
+			left: -30px;
+			margin: 0px 15px 0 2px;
+			position: relative;
+			top: 10px;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+
+	.place{
+		&:before{
+			content: "\e02c";
+			color: @user_menu;
+			display: block;
+			font-family: 'icons';
+			font-size: 21px;
+			left: -30px;
+			margin: 0 13px 0 4px;
+			position: relative;
+			top: 15px;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+
 	#post-event-form-builder{
 		legend{
 			border:0;
@@ -4977,7 +5071,7 @@ a, i{
 	a.toggle-off-btn {
 		text-align: right;
 		padding-right: 10px;
-		background-color: @grey_three;
+		background-color: @user_menu;
 		span {
 			float: left;
 		}
@@ -5329,12 +5423,14 @@ body{
 .tooltip-inner{
     background-color:@grey_three;
     opacity: 1;
+    z-index: 90;
 }
 
-.tooltip.top .tooltip-arrow{
+.tooltip .tooltip-arrow{
     border-left:5px solid transparent;
     border-right:5px solid transparent;
     border-top:5px solid @grey_three;
+    opacity: 0.5;
 }
 
 

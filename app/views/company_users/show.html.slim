@@ -32,13 +32,13 @@
 
   #user-places.details_box
     h3 PLACES
-    #company_user-areas-list.row-fluid
+    #company_user-areas-list
       = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
-    #company_user-places-list.row-fluid
+    #company_user-places-list
       = render 'places'
 
-    .row-fluid
+    .row-fluid.plus
       = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
 
   #user-campaigns.details_box
