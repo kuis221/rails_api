@@ -14,5 +14,5 @@ child @events => 'results' do
 end
 
 child :facets do
-
+  facets
 end
