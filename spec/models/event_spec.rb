@@ -625,4 +625,94 @@ describe Event do
       end
     end
   end
+
+  describe "#event_place_valid?" do
+    after do
+      User.current = nil
+    end
+    let(:place_LA) { FactoryGirl.create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality']) }
+    let(:place_SF) { FactoryGirl.create(:place, name: 'San Francisco', city: 'San Francisco', state: 'California', country: 'US', types: ['locality']) }
+    it "should only allow create events that are valid for the campaign" do
+      campaign = FactoryGirl.create(:campaign)
+      campaign.places << place_LA
+
+      event = FactoryGirl.build(:event, campaign: campaign, place: place_SF)
+      event.valid?.should be_false
+      event.errors[:place_reference].should include('is not valid for this campaign')
+
+      event.place = place_LA
+      event.valid?.should be_true
+    end
+
+    it "should not validate place if the event is place haven't changed" do
+      campaign = FactoryGirl.create(:campaign)
+
+      event = FactoryGirl.create(:event, campaign: campaign, place: place_SF)
+      event.save.should be_true
+
+      campaign.places << place_LA
+
+      event.reload.valid?.should be_true
+    end
+
+    it "should allow the event to have a blank place if the user is admin" do
+      company = FactoryGirl.create(:company)
+      user = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, is_admin: true)).user
+      user.current_company = company
+      User.current = user
+
+      campaign = FactoryGirl.create(:campaign, company: company)
+      event = FactoryGirl.build(:event, campaign: campaign, place: nil)
+      event.valid?.should be_true
+    end
+
+    it "should NOT allow the event to have a blank place if the user is not admin" do
+      company = FactoryGirl.create(:company)
+      user = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, is_admin: false)).user
+      user.current_company = company
+      User.current = user
+
+      campaign = FactoryGirl.create(:campaign, company: company)
+      event = FactoryGirl.build(:event, campaign: campaign, place: nil)
+      event.valid?.should be_false
+      event.errors[:place_reference].should include('cannot be blank')
+    end
+
+
+    it "should NOT allow the event to have a place where the user is not authorized" do
+      company = FactoryGirl.create(:company)
+
+      # The user is autorized to L.A. only
+      user = FactoryGirl.create(:company_user, place_ids: [place_LA.id], company: company, role: FactoryGirl.create(:role, is_admin: false)).user
+      user.current_company = company
+      User.current = user
+
+      campaign = FactoryGirl.create(:campaign, company: company)
+      event = FactoryGirl.build(:event, campaign: campaign, place: place_SF)
+      event.valid?.should be_false
+      event.errors[:place_reference].should include('is not part of your authorized locations')
+
+      event.place = place_LA
+      event.valid?.should be_true
+
+      bar_in_LA = FactoryGirl.create(:place, name: 'Bar Testing', route: 'Amargura St.', city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment', 'bar'])
+
+      event.place = bar_in_LA
+      event.valid?.should be_true
+    end
+
+    it "should NOT give an error if the place is nil and a non admin is editing the event without modifying the place" do
+      # An example: an admin created a event without a place, but another user (not admin) is trying to approve the event
+      company = FactoryGirl.create(:company)
+      campaign = FactoryGirl.create(:campaign, company: company)
+      event = FactoryGirl.create(:event, campaign: campaign, place: nil)
+
+      # The user is autorized to L.A. only
+      user = FactoryGirl.create(:company_user, place_ids: [place_LA.id], company: company, role: FactoryGirl.create(:role, is_admin: false)).user
+      user.current_company = company
+      User.current = user
+
+      event.valid?.should be_true
+    end
+  end
 end
