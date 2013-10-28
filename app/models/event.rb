@@ -483,7 +483,38 @@ class Event < ActiveRecord::Base
           facet :place_id
           facet :user_ids
           facet :team_ids
-          facet :status
+          facet :status do
+            row(:late) do
+              with(:status, 'Unsent')
+              with(:end_at).less_than(2.days.ago)
+            end
+            row(:due) do
+              with(:status, 'Unsent')
+              with(:end_at, Date.yesterday.beginning_of_day..Time.zone.now)
+            end
+            row(:rejected) do
+              with(:status, 'Rejected')
+            end
+            row(:submitted) do
+              with(:status, 'Submitted')
+            end
+            row(:approved) do
+              with(:status, 'Approved')
+            end
+            row(:active) do
+              with(:status, 'Active')
+            end
+            row(:inactive) do
+              with(:status, 'Inactive')
+            end
+          end
+
+          facet :start_at do
+            row(:today) do
+              with(:start_at).less_than(Time.zone.now.end_of_day)
+              with(:end_at).greater_than(Time.zone.now.beginning_of_day)
+            end
+          end
         end
 
         order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)

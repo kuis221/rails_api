@@ -1,5 +1,13 @@
 object false
 
+node :page do
+  params[:page] || 1
+end
+
+node :total do
+  collection_count
+end
+
 child @events => 'results' do
 
   attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :event_status
@@ -13,6 +21,9 @@ child @events => 'results' do
   end
 end
 
-child :facets do
-  facets
+
+if params[:page].nil? || params[:page].to_i == 1
+  node :facets do
+    facets
+  end
 end

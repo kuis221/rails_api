@@ -99,25 +99,6 @@ class EventsController < FilteredController
       can?(:update, resource) || can?(:edit_data, resource)
     end
 
-    def facets
-      @facets ||= Array.new.tap do |f|
-        # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
-        facet_search = resource_class.do_search(facet_params, true)
-
-        f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
-        f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
-        f.push build_locations_bucket(facet_search)
-
-        users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
-        teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
-        people = (users + teams).sort{ |a, b| b[:count] <=> a[:count] }
-        f.push(label: "People", items: people )
-        f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
-        f.push(label: "Event Status", items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) })
-      end
-    end
-
     def calendar_brands_events
       colors = ['#d3c941', '#606060', '#a18740', '#d93f99', '#a766cf', '#7e42a4', '#d7a23c',  '#6c5f3c', '#bfbfbf', '#909090']
       brands_colors = {}

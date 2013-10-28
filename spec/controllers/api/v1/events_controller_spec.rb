@@ -15,9 +15,9 @@ describe Api::V1::EventsController do
       response.should be_success
       result = JSON.parse(response.body)
 
-      p result.inspect
-
       result['results'].count.should == 3
+      result['total'].should == 3
+      result['page'].should == 1
       result['results'].first.keys.should =~ ["id", "start_date", "start_time", "end_date", "end_time", "status", "event_status", "campaign", "place"]
     end
 
@@ -31,9 +31,37 @@ describe Api::V1::EventsController do
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, campaign: [campaign.id], format: :json
       response.should be_success
-      events = JSON.parse(response.body)
+      result = JSON.parse(response.body)
 
-      events.count.should == 3
+      result['results'].count.should == 3
+    end
+
+    it "return the facets for the search" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+      place = FactoryGirl.create(:place)
+      FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)
+      FactoryGirl.create(:rejected_event, company: company, campaign: campaign, place: place)
+      FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place)
+      FactoryGirl.create(:late_event, company: company, campaign: campaign, place: place)
+      Sunspot.commit
+
+      get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result['results'].count.should == 4
+      result['facets'].map{|f| f['label'] }.should =~ ["Campaigns", "Brands", "Locations", "People", "Active State", "Event Status"]
+
+      result['facets'].detect{|f| f['label'] == 'Event Status' }['items'].map{|i| [i['label'], i['count']]}.should =~ [["Late", 1], ["Due", 0], ["Submitted", 1], ["Rejected", 1], ["Approved", 1]]
+    end
+
+    it "should not include the facets when the page is greater than 1" do
+      get :index, auth_token: user.authentication_token, company_id: company.to_param, page: 2, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result['results'].should == []
+      result['facets'].should be_nil
+      result['page'].should == 2
     end
   end
 
