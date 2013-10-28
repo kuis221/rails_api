@@ -24,7 +24,7 @@ class PlacesController < FilteredController
         longitude = data['results'].first['geometry']['location']['lng']
         if latitude.present? && longitude.present?
           api_client = GooglePlaces::Client.new(GOOGLE_API_KEY)
-          spots = api_client.spots(latitude, longitude, keyword: "#{params[:place][:name]} #{params[:place][:street_number]}", :radius => 1000)
+          spots = api_client.spots(latitude, longitude, name: "#{params[:place][:name]}", :radius => 1000)
 
           # If no spots for the data received, we include it in Google
           if spots.empty?
@@ -59,17 +59,21 @@ class PlacesController < FilteredController
     end
 
     if reference_value and !reference_value.nil? and !reference_value.empty?
-      reference, place_id = reference_value.split('||')
-      @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
+      if reference_value =~ /(.*)\|\|(.*)/
+        reference, place_id = reference_value.split('||')
+        @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
+      else
+        @place = Place.find(reference_value)
+      end
       parent.update_attributes({place_ids: parent.place_ids + [@place.id]}, without_protection: true)
 
       # When a new place was added to Google, data needs to be added to Places table
       if !automatically_created
         @place.update_attributes place_params
-
-        # Create a Venue for this place on the current company
-        Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
       end
+
+      # Create a Venue for this place on the current company
+      Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
     else
       render 'new_place'
     end

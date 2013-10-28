@@ -464,6 +464,14 @@ $.widget 'nmk.filteredList', {
 				params.push(param)
 		params
 
+	paramsQueryString: () ->
+		quertyString = join = ""
+		for param in @buildParams()
+			quertyString += "#{join}#{param.name}=#{escape(param.value)}"
+			join = '&'
+
+		quertyString
+
 	reloadData: () ->
 		@nextpagetoken = false
 		@_loadPage 1
