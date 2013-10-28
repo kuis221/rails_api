@@ -271,7 +271,6 @@ jQuery ->
 				$(img).attr('height', "")
 				placePreviewInPosition this, preview
 
-			position = $(this).offset()
 			placePreviewInPosition this, preview
 			preview.fadeIn "fast", => placePreviewInPosition this, preview
 
