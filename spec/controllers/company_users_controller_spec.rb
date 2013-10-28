@@ -225,7 +225,7 @@ describe CompanyUsersController do
       it "should add a campaign to the user that belongs to a brand" do
         campaign.brands << brand
         expect {
-          delete 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
+          post 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
           response.should be_success
           user.reload
         }.to change(user.memberships, :count).by(1)
@@ -254,6 +254,11 @@ describe CompanyUsersController do
         user.memberships.map(&:memberable).should == [campaign]
         user.campaigns.should == [campaign]
       end
+
+      it "should now fail if invalid parent params were provided" do
+        post 'disable_campaigns', id: user.id, parent_id: '6669999', parent_type: 'Brand', format: :js
+        response.should be_success
+      end
     end
 
 
@@ -273,6 +278,16 @@ describe CompanyUsersController do
         user.memberships.map(&:parent).should == [nil]
         user.memberships.map(&:memberable).should == [brand]
         user.campaigns.should == []
+      end
+
+      it "should not create another membership if there is one already" do
+        campaign.brands << brand
+        user.memberships.create(parent_id: brand.id, parent_type: 'Brand')
+        expect {
+          post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          response.should be_success
+          user.reload
+        }.to_not change(user.memberships, :count)
       end
     end
   end

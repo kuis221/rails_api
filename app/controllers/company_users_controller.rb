@@ -66,12 +66,14 @@ class CompanyUsersController < FilteredController
   def disable_campaigns
     if params[:parent_type] && params[:parent_id]
       membership = resource.memberships.find_by_memberable_type_and_memberable_id(params[:parent_type], params[:parent_id])
-      resource.memberships.where(parent_id: membership.memberable.id, parent_type: membership.memberable.class.name).destroy_all
-      # Assign all the campaings directly to the user
-      membership.memberable.campaigns.each do |campaign|
-        resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+      unless membership.nil?
+        resource.memberships.where(parent_id: membership.memberable.id, parent_type: membership.memberable.class.name).destroy_all
+        # Assign all the campaings directly to the user
+        membership.memberable.campaigns.each do |campaign|
+          resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+        end
+        membership.destroy
       end
-      membership.destroy
     end
     render text: 'OK'
   end
