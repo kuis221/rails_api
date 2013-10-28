@@ -1,8 +1,11 @@
 class Api::V1::ApiController < ActionController::Base
   respond_to :json, :xml
 
+  include SentientController
+
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
+  rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
 
   protected
@@ -26,14 +29,14 @@ class Api::V1::ApiController < ActionController::Base
         format.json {
           render :status => 401,
                  :json => { :success => false,
-                      :info => "Invalid auth token",
-                      :data => {} }
+                            :info => "Invalid auth token",
+                            :data => {} }
         }
         format.xml {
-          render  :status => 401,
-                  :xml => { :success => false,
-                      :info => "Invalid auth token",
-                      :data => {} }.to_xml(root: 'response')
+          render :status => 401,
+                 :xml => { :success => false,
+                           :info => "Invalid auth token",
+                           :data => {} }.to_xml(root: 'response')
         }
       end
     end
@@ -43,15 +46,32 @@ class Api::V1::ApiController < ActionController::Base
       respond_to do |format|
         format.json {
           render :status => 401,
-           :json => { :success => false,
-                      :info => "Invalid company",
-                      :data => {} }
+                 :json => { :success => false,
+                            :info => "Invalid company",
+                            :data => {} }
         }
         format.xml {
-          render  :status => 401,
-                  :xml => { :success => false,
-                      :info => "Invalid company",
-                      :data => {} }.to_xml(root: 'response')
+          render :status => 401,
+                 :xml => { :success => false,
+                           :info => "Invalid company",
+                           :data => {} }.to_xml(root: 'response')
+        }
+      end
+    end
+
+    def record_not_found
+      respond_to do |format|
+        format.json {
+          render :status => 404,
+                 :json => { :success => false,
+                            :info => "Record not found",
+                            :data => {} }
+        }
+        format.xml {
+          render :status => 404,
+                 :xml => { :success => false,
+                           :info => "Record not found",
+                           :data => {} }.to_xml(root: 'response')
         }
       end
     end
