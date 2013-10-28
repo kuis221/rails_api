@@ -41,17 +41,20 @@ jQuery ->
         calendarCreated = true
         $('#calendar-canvas').eventsCalendar({
           eventsUrl: () =>
-            "/events/calendar.json#{location.search}"
+            "/events/calendar.json?#{$('#collection-list-filters').filteredList('paramsQueryString')}"
           renderMonthDay: (day) =>
             date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
             "<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
         })
+
+        # When the user clicks on the calendar day
         $('#calendar-canvas').off('click.eventsCalendar').on 'click.eventsCalendar', '.cal-day-link', (e) ->
           date = $(this).data('date')
           $('#collection-list-filters').filteredList('selectCalendarDates', date, date)
           $('#toggle-events-view a[href="#list-view"]').click()
           false
 
+        # When the filters change
         $('#collection-list-filters').off('filters:changed.eventsCalendar').on 'filters:changed.eventsCalendar', () ->
           if calendarIsVisible
             $('#calendar-canvas').eventsCalendar 'loadEvents'
