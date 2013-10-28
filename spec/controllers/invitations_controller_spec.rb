@@ -110,7 +110,7 @@ describe InvitationsController do
     describe "PUT 'update'" do
       let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
       it "must update the user attributes" do
-        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: 'Miami', state: 'FL', country: 'US', time_zone: 'American Samoa', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', phone_number: '(506)22124578', city: 'Miami', state: 'FL', country: 'US', street_address: 'Street Address 123', unit_number: 'Unit Number 456', zip_code: '90210', time_zone: 'American Samoa', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
         response.should redirect_to(root_path)
         user.reload
         user.first_name.should == 'Juanito'

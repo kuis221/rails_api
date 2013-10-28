@@ -74,6 +74,21 @@ describe User do
     end
   end
 
+  describe "validations when editing another user" do
+    context do
+      before { subject.updating_user = true }
+      it { should_not validate_presence_of(:phone_number) }
+      it { should_not validate_presence_of(:country) }
+      it { should_not validate_presence_of(:state) }
+      it { should_not validate_presence_of(:city) }
+      it { should_not validate_presence_of(:street_address) }
+      it { should_not validate_presence_of(:unit_number) }
+      it { should_not validate_presence_of(:city) }
+      it { should_not validate_presence_of(:zip_code) }
+      it { should_not validate_presence_of(:password) }
+    end
+  end
+
   describe "validations when accepting an invitation" do
     context do
       before do

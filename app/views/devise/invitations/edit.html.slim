@@ -16,11 +16,11 @@
       .row-fluid
         = f.input :email
       .row-fluid
-        = f.input :phone_number
+        = f.input :phone_number, required: true
       .row-fluid
-        = f.input :street_address, label: 'Address'
+        = f.input :street_address, label: 'Address', required: true
       .row-fluid
-        = f.input :unit_number, label: false
+        = f.input :unit_number, label: false, required: true
       .row-fluid
         .span6
           = f.input :country, priority: ['United States'], required: true, input_html: {class: 'chosen-enabled'}
@@ -30,7 +30,7 @@
         .span6
           = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), required: true, input_html: {class: 'chosen-enabled'}
         .span6
-          = f.input :zip_code
+          = f.input :zip_code, required: true
       .row-fluid
         .span6
           = f.input :time_zone, required: true, input_html: {class: 'chosen-enabled'}
