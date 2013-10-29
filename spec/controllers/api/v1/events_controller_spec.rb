@@ -92,7 +92,7 @@ describe Api::V1::EventsController do
     let(:event){ FactoryGirl.create(:event, company: company) }
     it "must update the event attributes" do
       place = FactoryGirl.create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id, active: 'false'}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       assigns(:event).should == event
       response.should be_success
       event.reload
@@ -101,6 +101,13 @@ describe Api::V1::EventsController do
       event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
       event.place_id.should == place.id
       event.promo_hours.to_i.should == 25
+    end
+
+    it "must deactivate the event" do
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {active: 'false'}, format: :json
+      assigns(:event).should == event
+      response.should be_success
+      event.reload
       event.active.should == false
     end
 
