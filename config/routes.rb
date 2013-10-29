@@ -9,7 +9,9 @@ Brandscopic::Application.routes.draw do
         delete 'sessions' => 'sessions#destroy', :as => 'logout'
         post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
 
-        resources :events, only: [:index, :show, :create, :update]
+        resources :events, only: [:index, :show, :create, :update] do
+          resources :photos, only: [:index]
+        end
       end
     end
   end
