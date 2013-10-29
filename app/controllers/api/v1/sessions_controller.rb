@@ -23,6 +23,7 @@ class Api::V1::SessionsController < Api::V1::ApiController
 
     if resource && resource.valid_password?(params[:password])
       resource.ensure_authentication_token
+      resource.save :validate => false
       sign_in(:user, resource)
       render :status => 200,
              :json => { :success => true,

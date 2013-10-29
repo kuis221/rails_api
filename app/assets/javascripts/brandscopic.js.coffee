@@ -42,6 +42,10 @@ jQuery ->
 		else if $.browser.mozilla
 			$('html').addClass('mozilla')
 
+		# Check if we should automatically activate a tab on the app
+		if window.location.hash
+			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
 		$('input.timepicker').timepicker()
@@ -245,17 +249,31 @@ jQuery ->
 
 	# For images previews on hover
 	$(document).delegate("a[data-preview-url]", 'mouseenter mouseleave', (e) ->
-		xOffset = 10
-		yOffset = 30
+
+		placePreviewInPosition = (elm, preview) ->
+			position = $(elm).offset()
+			img = new Image()
+			img.src = preview.find('img').attr('src')
+			size = {width: img.width, height: img.height}
+			preview
+				.css("top",  (position.top - (size.height/2) - 10) + "px")
+				.css("left", (position.left - size.width - 10) + "px")
+
 		if e.type is 'mouseenter'
 			this.t = this.title
 			this.title = ""
 			c = if this.t != "" then "<br/>" + this.t else ""
-			$("body").append("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' alt='Image preview' />#{c}</p>")
-			$("#imgpreview")
-				.css("top",  (e.pageY - xOffset) + "px")
-				.css("left", (e.pageX + yOffset) + "px")
-				.fadeIn("fast")
+			preview = $("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' width=100 height=100 alt='Image preview' />#{c}</p>")
+			$("body").append(preview)
+			preview.find('img').load (e) =>
+				img = e.target
+				$(img).attr('width', "")
+				$(img).attr('height', "")
+				placePreviewInPosition this, preview
+
+			placePreviewInPosition this, preview
+			preview.fadeIn "fast", => placePreviewInPosition this, preview
+
 		else
 			this.title = this.t
 			$("#imgpreview").remove()

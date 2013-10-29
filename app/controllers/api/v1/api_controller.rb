@@ -7,7 +7,6 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
-
   protected
     def current_company
       @current_company ||= current_company_user.company
