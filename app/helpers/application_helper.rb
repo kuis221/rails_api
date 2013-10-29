@@ -59,11 +59,11 @@ module ApplicationHelper
   def time_ago_in_words(the_date)
     unless the_date.nil?
       if the_date  <= 4.days.ago.end_of_day
-        the_date.strftime('%B %e at %l:%M %P')
+        the_date.strftime('%b %e @ %l:%M %p')
       elsif the_date  <= 2.days.ago.end_of_day
-        the_date.strftime('%A at %l:%M %P')
+        the_date.strftime('%A @ %l:%M %p')
       elsif the_date <= (Time.zone.now - 24.hours)
-        the_date.strftime('Yesterday at %l:%M %P')
+        the_date.strftime('Yesterday @ %l:%M %p')
       elsif the_date <= (Time.zone.now - 1.hours)
         hours = ((Time.zone.now - the_date)  / 3600).to_i
         if hours == 1
