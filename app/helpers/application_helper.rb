@@ -1,7 +1,7 @@
 require "base64"
 
 module ApplicationHelper
-  def place_address(place, link_name = false, line_separator = '<br />')
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator='<br />')
     if !place.nil?
       place_name = place.name
       place_city = place.city
@@ -28,7 +28,7 @@ module ApplicationHelper
       address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
       address_with_name = nil
       address_with_name = "<span class=\"address-name\">#{place_name}</span>" if place_name
-      address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join('<br />') unless address.compact.empty?
+      address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
 
       "<address>#{address_with_name}</address>".html_safe
     end
