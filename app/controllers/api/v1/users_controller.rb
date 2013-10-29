@@ -13,7 +13,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     EOS
   end
 
-  api :POST, '/api/v1/users/new_password'
+  api :POST, '/api/v1/users/new_password', 'Request a new password for a user'
   param :email, String, required: true, desc: "User's email"
   def new_password
     resource = User.send_reset_password_instructions(params)

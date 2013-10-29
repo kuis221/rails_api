@@ -25,7 +25,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events'
+  api :GET, '/api/v1/events', "Search for a list of events"
   param :campaign, Array, :desc => "A list of campaign ids to filter the results"
   param :place, Array, :desc => "A list of places to filter the results"
   param :area, Array, :desc => "A list of areas to filter the results"
@@ -74,7 +74,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     collection
   end
 
-  api :GET, '/api/v1/events/:id'
+  api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
   def show
     if resource.present?
@@ -82,7 +82,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :POST, '/api/v1/events'
+  api :POST, '/api/v1/events', 'Cratea a new event'
   param_group :event
   def create
     create! do |success, failure|
@@ -93,17 +93,24 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :PUT, '/api/v1/events/:id'
+  api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
   param_group :event
   def update(active = nil)
     self.active = active unless active.nil?
     update! do |success, failure|
       success.json { render :show }
-      success.xml { render :show }
+      success.xml  { render :show }
       failure.json { render json: resource.errors, status: :unprocessable_entity }
-      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
+  end
+
+  api :GET, '/api/v1/events/:id', 'Get the list of results for the events'
+  param :id, :number, required: true, desc: "Event ID"
+  def results
+    @results = resource.results_for(resource.campaign.form_fields)
+    @results.each{|r| r.save(validate: false) if r.new_record? }
   end
 
   protected

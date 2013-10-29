@@ -30,7 +30,7 @@ class Event < ActiveRecord::Base
   has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
-  has_many :results, class_name: 'EventResult'
+  has_many :results, class_name: 'EventResult', inverse_of: :event
   has_many :event_expenses, inverse_of: :event, autosave: true
   has_one :event_data, autosave: true
 
@@ -245,10 +245,14 @@ class Event < ActiveRecord::Base
   def results_for(fields)
     # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|
-      result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id, kpi_id: field.kpi_id})
-      result.form_field = field
-      result
-    end
+      if field.is_segmented?
+        segments_results_for(field)
+      else
+        result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id, kpi_id: field.kpi_id})
+        result.form_field = field
+        result
+      end
+    end.flatten
   end
 
   def segments_results_for(field)
