@@ -150,11 +150,11 @@ module ApplicationHelper
 
   def gender_graph(data)
     if data.values.max > 0
-      content_tag(:span4, class: :male) do
+      content_tag(:div, class: :male) do
         content_tag(:div, "#{data.try(:[],'Male').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'MALE', class: 'gender')
       end +
-      content_tag(:span4, class: :female) do
+      content_tag(:div, class: :female) do
         content_tag(:div, "#{data.try(:[],'Female').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'FEMALE', class: 'gender')
       end

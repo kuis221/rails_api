@@ -1,0 +1,37 @@
+@media (min-width: 979px) {
+	.main-nav-collapse {
+		display: none;
+	}
+}
+
+@media (max-width: 979px) {
+	#main-container {
+		padding: 0;
+	}
+	.collection-list-description {
+		margin: 0 10px 10px 11px;
+	}
+
+	body.app-layout {
+		background-image: none; 
+	}
+}
+
+.main-nav-collapse {
+	ul.nav {
+		li {
+			a {
+				padding: 9px 15px 9px 60px;
+
+				&:before {
+					left: -20px !important;
+					padding: 0px !important;
+					text-align: left !important;
+					top: 0px !important;
+					float: left;
+					font-size: 20px !important;
+				}
+			}
+		}
+	}
+}
