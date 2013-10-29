@@ -819,6 +819,12 @@ body.app-layout{
 	}
 }
 
+#flash_error{
+	li{
+		list-style-type: none;
+	}
+}
+
 .recent{
 	margin-bottom: 28px;
 }
@@ -2536,7 +2542,8 @@ body.company_users{
 
 	#user-places{
 		.plus{
-			margin-top: 35px;
+			clear: both;
+			margin-top: 85px;
 		}
 	}
 
@@ -2643,7 +2650,9 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 	.place, .area-user{
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-    	height: 40px;
+		.pull-left{
+			width: 90%;
+		}
 	}
 	.team-member, .team, .brand {
 		font-size: 11px;
