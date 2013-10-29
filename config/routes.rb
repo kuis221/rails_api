@@ -8,6 +8,7 @@ Brandscopic::Application.routes.draw do
         post 'sessions' => 'sessions#create', :as => 'login'
         delete 'sessions' => 'sessions#destroy', :as => 'logout'
         post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
+        get '/companies' => 'users#companies', :as => 'new_user_password'
 
         resources :events, only: [:index, :show, :create, :update] do
           get :results, on: :member

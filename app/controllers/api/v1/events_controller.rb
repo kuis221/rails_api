@@ -7,14 +7,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
     param :auth_token, String, required: true
-    param :company_id, :number, required: true
+    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the "
     description <<-EOS
 
     EOS
   end
 
   def_param_group :event do
-    param :event, Hash, :action_aware => true do
+    param :event, Hash, required: true, :action_aware => true do
       param :campaign_id, :number, required: true, desc: "Campaign ID"
       param :start_date, String, required: true, desc: "Event's start date"
       param :end_date, String, required: true, desc: "Event's end date"
@@ -34,6 +34,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
   param :event_status, ['Unsent', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
   param :page, :number, :desc => "The number of the page, Default: 1"
+  see "users#companies", "User companies"
+
   description <<-EOS
     Returns a list of events filtered by the given params. The results are returned on groups of 30 per request. To obtain the next 30 results provide the <page> param.
 

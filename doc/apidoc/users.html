@@ -22,22 +22,19 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>
-    Sessions
+    Users
     
   </li>
 </ul>
 
 <div class='page-header'>
   <h1>
-    Sessions
+    Users
     <br>
-    <small>Site members</small>
+    <small>Users</small>
   </h1>
 </div>
 
-  <div>
-<h2 id="label-Token+Authentication">Token Authentication</h2>
-</div>
 
   <h2>Supported Formats</h2>
   json, xml
@@ -46,22 +43,22 @@
 
     <hr>
     <div class='pull-right small'>
-      <a href='../apidoc/sessions/create.html'> >>> </a>
+      <a href='../apidoc/users/new_password.html'> >>> </a>
     </div>
     <div>
         <h2>
-          <a href='#description-create'
+          <a href='#description-new_password'
            class='accordion-toggle'
            data-toggle='collapse'
            data-parent='#accordion'>
-            POST /api/v1/sessions
+            POST /api/v1/users/new_password
           </a><br>
-          <small>Authenticate a user and return the authentication token</small>
+          <small>Request a new password for a user</small>
         </h2>
     </div>
 
 
-    <div id='description-create' class='collapse accordion-body'>
+    <div id='description-new_password' class='collapse accordion-body'>
       
 
         <h3>Supported Formats</h3>
@@ -70,9 +67,6 @@
         <h3>Errors</h3>
           404
           Missing
-          <br>
-          401
-          Invalid credentials
           <br>
           500
           Server crashed for some reason
@@ -106,46 +100,28 @@
   </tr>
 
   
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>password </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s password</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
 
           </tbody>
         </table>
     </div>
     <hr>
     <div class='pull-right small'>
-      <a href='../apidoc/sessions/destroy.html'> >>> </a>
+      <a href='../apidoc/users/companies.html'> >>> </a>
     </div>
     <div>
         <h2>
-          <a href='#description-destroy'
+          <a href='#description-companies'
            class='accordion-toggle'
            data-toggle='collapse'
            data-parent='#accordion'>
-            DELETE /api/v1/sessions
+            GET /api/v1/companies
           </a><br>
-          <small>Destroy authentication token for a user</small>
+          <small>Get a list of companies the user has access to</small>
         </h2>
     </div>
 
 
-    <div id='description-destroy' class='collapse accordion-body'>
+    <div id='description-companies' class='collapse accordion-body'>
       
 
         <h3>Supported Formats</h3>
@@ -155,13 +131,24 @@
           404
           Missing
           <br>
-          401
-          Invalid credentials
-          <br>
           500
           Server crashed for some reason
           <br>
 
+        <h3>Examples</h3>
+          <pre class="prettyprint">GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+
+[
+    {
+        &quot;name&quot;: &quot;Brandscopic&quot;,
+        &quot;id&quot;: 1
+    },
+    {
+        &quot;name&quot;: &quot;Legacy Marketing Partners&quot;,
+        &quot;id&quot;: 2
+    }
+]
+</pre>
 
         <h3>Params</h3>
         <table class='table'>
@@ -174,7 +161,7 @@
           <tbody>
               <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>id </strong><br>
+      <strong>auth_token </strong><br>
       <small>
         required
         
@@ -182,8 +169,6 @@
     </td>
     <td>
       
-<p>Authentication token</p>
-
         <br>
         Value: Must be String
     </td>

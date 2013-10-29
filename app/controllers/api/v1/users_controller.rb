@@ -28,6 +28,39 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+  api :GET, '/api/v1/companies', "Get a list of companies the user has access to"
+  param :auth_token, String, required: true
+  example <<-EOS
+    GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+
+    [
+        {
+            "name": "Brandscopic",
+            "id": 1
+        },
+        {
+            "name": "Legacy Marketing Partners",
+            "id": 2
+        }
+    ]
+  EOS
+
+  def companies
+    if current_user.present?
+      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      respond_to do |format|
+        format.json {
+          render :status => 401,
+                 :json => companies
+        }
+        format.xml {
+          render :status => 401,
+                 :xml => companies.to_xml(root: 'companies')
+        }
+      end
+    end
+  end
+
   def failure
     render :status => 401,
            :json => { :success => false,
