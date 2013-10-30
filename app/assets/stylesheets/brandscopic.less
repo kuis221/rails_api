@@ -333,7 +333,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-shadow: none;
 	color: white;
 	font-size: 16px;
-	height: 37px;
+	min-height: 37px;
 	line-height: 23px;
 	margin:0 10px 0 90px;
 	padding: 13px 0 0 21px;
@@ -3921,6 +3921,17 @@ body.roles{
 	}
 }
 
+.list-filter-btn {
+	color: #fff;
+	padding: 7px 17px;
+	line-height: 21px;
+	margin-left: 5px;
+	display: none;
+	&:hover {
+		color: #fff;
+	}
+}
+
 // Maps on venue and event details
 #venue-map-canvas{
 	border:1px solid @user_menu;
@@ -5558,6 +5569,10 @@ table td.sub-level-1 {
 
 .ui-autocomplete {
 	z-index: 9999;
+}
+
+#mobile-main-nav-bar-btn {
+	margin-top: 8px;
 }
 
 
