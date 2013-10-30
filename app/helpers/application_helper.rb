@@ -1,7 +1,7 @@
 require "base64"
 
 module ApplicationHelper
-  def place_address(place, link_name = false, line_separator = '<br />')
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator='<br />')
     if !place.nil?
       place_name = place.name
       place_city = place.city
@@ -21,14 +21,15 @@ module ApplicationHelper
       address = Array.new
       city_parts = []
       address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
-      city_parts.push place_city if place.city && place.name != place.city
-      city_parts.push place.state if place.state
-      city_parts.push place.zipcode if place.zipcode
-      address.push city_parts.join(', ') unless city_parts.empty? || !place.city
-      address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
+      city_parts.push place_city if place.city.present? && place.name != place.city
+      city_parts.push place.state if place.state.present?
+      city_parts.push place.zipcode if place.zipcode.present?
+
+      address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
+      address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
       address_with_name = nil
       address_with_name = "<span class=\"address-name\">#{place_name}</span>" if place_name
-      address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join('<br />') unless address.compact.empty?
+      address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
 
       "<address>#{address_with_name}</address>".html_safe
     end
@@ -36,7 +37,7 @@ module ApplicationHelper
 
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
-      link_to(:back, class: 'close-details') do
+      link_to(collection_path(:_stored => true), class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, " ".html_safe, class: :close)
       end
@@ -59,11 +60,11 @@ module ApplicationHelper
   def time_ago_in_words(the_date)
     unless the_date.nil?
       if the_date  <= 4.days.ago.end_of_day
-        the_date.strftime('%B %e at %l:%M %P')
+        the_date.strftime('%b %e @ %l:%M %p')
       elsif the_date  <= 2.days.ago.end_of_day
-        the_date.strftime('%A at %l:%M %P')
+        the_date.strftime('%A @ %l:%M %p')
       elsif the_date <= (Time.zone.now - 24.hours)
-        the_date.strftime('Yesterday at %l:%M %P')
+        the_date.strftime('Yesterday @ %l:%M %p')
       elsif the_date <= (Time.zone.now - 1.hours)
         hours = ((Time.zone.now - the_date)  / 3600).to_i
         if hours == 1
@@ -150,11 +151,11 @@ module ApplicationHelper
 
   def gender_graph(data)
     if data.values.max > 0
-      content_tag(:span4, class: :male) do
+      content_tag(:div, class: :male) do
         content_tag(:div, "#{data.try(:[],'Male').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'MALE', class: 'gender')
       end +
-      content_tag(:span4, class: :female) do
+      content_tag(:div, class: :female) do
         content_tag(:div, "#{data.try(:[],'Female').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'FEMALE', class: 'gender')
       end

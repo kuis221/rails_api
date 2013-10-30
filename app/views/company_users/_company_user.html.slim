@@ -12,7 +12,7 @@ li id="company_user_#{company_user.id}"
       = company_user.email
     - unless company_user.last_activity_at.nil?
       span.user_date
-        = format_date_with_time(company_user.last_activity_at)
+        = time_ago_in_words(company_user.last_activity_at)
         br>/
         | Last activity
   span.pull-right.tools

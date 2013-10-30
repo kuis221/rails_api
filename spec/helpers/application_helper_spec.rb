@@ -58,36 +58,36 @@ describe ApplicationHelper do
     it "should return the full date when it's older than 4 days" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 22, 11, 59))
-          helper.comment_date(comment).should == "July 22 at 11:59 am"
+          helper.comment_date(comment).should == "Jul 22 @ 11:59 AM"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 19, 11, 59))
-          helper.comment_date(comment).should == "July 19 at 11:59 am"
+          helper.comment_date(comment).should == "Jul 19 @ 11:59 AM"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 06, 19, 11, 59))
-          helper.comment_date(comment).should == "June 19 at 11:59 am"
+          helper.comment_date(comment).should == "Jun 19 @ 11:59 AM"
       end
     end
 
     it "should return the day of the week if the comment is older than yesterday but newer than 4 days" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 23, 00, 00))
-          helper.comment_date(comment).should == "Tuesday at 12:00 am"
+          helper.comment_date(comment).should == "Tuesday @ 12:00 AM"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 16, 40))
-          helper.comment_date(comment).should == "Wednesday at  4:40 pm"
+          helper.comment_date(comment).should == "Wednesday @  4:40 PM"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 23, 59))
-          helper.comment_date(comment).should == "Wednesday at 11:59 pm"
+          helper.comment_date(comment).should == "Wednesday @ 11:59 PM"
       end
     end
 
     it "should return 'Yesterday' plus the time if the date is older than 24 horus" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 11, 59))
-          helper.comment_date(comment).should == "Yesterday at 11:59 am"
+          helper.comment_date(comment).should == "Yesterday @ 11:59 AM"
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 00, 0))
-          helper.comment_date(comment).should == "Yesterday at 12:00 am"
+          helper.comment_date(comment).should == "Yesterday @ 12:00 AM"
       end
     end
 

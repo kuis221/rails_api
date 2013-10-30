@@ -91,10 +91,10 @@ class Venue < ActiveRecord::Base
 
 
   def compute_stats
-    self.events = Event.where(company_id: company_id, place_id: place_id).count
-    self.promo_hours = Event.where(company_id: company_id).total_promo_hours_for_places(place_id)
+    self.events = Event.where(company_id: company_id, place_id: place_id).active.count
+    self.promo_hours = Event.where(company_id: company_id).active.total_promo_hours_for_places(place_id)
 
-    results = EventData.scoped_by_place_id_and_company_id(place_id, company_id)
+    results = EventData.scoped_by_place_id_and_company_id(place_id, company_id).for_active_events
     self.impressions = results.sum(:impressions).round
     self.interactions = results.sum(:interactions).round
     self.sampled = results.sum(:samples).round
@@ -183,7 +183,7 @@ class Venue < ActiveRecord::Base
   def overall_graphs_data
     return @overall_graphs_data if @overall_graphs_data
 
-    results_scope = EventResult.scoped_by_place_id_and_company_id(place_id, company_id)
+    results_scope = EventResult.scoped_by_place_id_and_company_id(place_id, company_id).for_active_events
     @overall_graphs_data = {}
     [:age, :gender, :ethnicity].each do |kpi|
       results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
@@ -193,7 +193,7 @@ class Venue < ActiveRecord::Base
 
     # First let the DB to do the math for the events that starts and ends the same day... (the easy part)
     tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
-    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}') AS weekday")
+    stats_by_day = Event.select("count(events.id) AS counting, sum(events.promo_hours) as promo_hours_sum, sum(event_data.impressions) as impressions_sum, sum(event_data.spent) as cost, EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}') AS weekday").active
          .joins(:event_data)
          .group("EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}')")
          .where(place_id: place_id, company_id: company_id)
@@ -208,7 +208,7 @@ class Venue < ActiveRecord::Base
     end
 
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
-    events = Event.select('events.*, event_data.impressions, event_data.spent').where(place_id: place_id, company_id: company_id)
+    events = Event.select('events.*, event_data.impressions, event_data.spent').where(place_id: place_id, company_id: company_id).active
          .joins(:event_data)
          .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) <> date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
     events.each do |e|

@@ -5,7 +5,7 @@
         b= event.campaign_name
         br>/
         = format_date_range(event.start_at, event.end_at, date_separator: ' ')
-        = place_address(event.place)
+        = place_address(event.place, false, ', ', ', ')
       .results-box-container
         span.event-data-column.promo-hours-box
           = number_with_precision(event.promo_hours, precision: 1)
