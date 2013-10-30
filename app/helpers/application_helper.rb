@@ -21,11 +21,12 @@ module ApplicationHelper
       address = Array.new
       city_parts = []
       address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
-      city_parts.push place_city if place.city && place.name != place.city
-      city_parts.push place.state if place.state
-      city_parts.push place.zipcode if place.zipcode
-      address.push city_parts.join(', ') unless city_parts.empty? || !place.city
-      address.push place.formatted_address if place.formatted_address && city_parts.empty? && (place.city || !place.types.include?('political'))
+      city_parts.push place_city if place.city.present? && place.name != place.city
+      city_parts.push place.state if place.state.present?
+      city_parts.push place.zipcode if place.zipcode.present?
+
+      address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
+      address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
       address_with_name = nil
       address_with_name = "<span class=\"address-name\">#{place_name}</span>" if place_name
       address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
