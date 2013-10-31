@@ -4,70 +4,66 @@
 	}
 }
 
-@media (max-width: 767px) {
-	.modal {
-		&.modal-large {
-			min-width: 0 !important;
-		}
-		.edit-event {
-			.to {
-				width: 100%;
-				clear: both;
-				padding: 10px 0;
-				padding: 10px 0 10px 120px;
-				text-align: left;
-			}
-		}
-		&.modal-large {
-			.chzn-single {
-				width: 100% !important;
-			}
-			select {
-				width: 100%;
-			}
-		}
-
-		.modal-body {
-
-			.input-xxlarge {
-				width: 100% !important;
-			}
-			.control-group.location {
-				width:  100%;
-				height: 40px;
-				-moz-box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-				box-sizing: border-box;
-			}
-			.chosen-campaign .control-group {
-				width: 100%;
-			}
-
-			.form-actions {
-				.btn-primary, 
-				.btn-cancel {
-					width: 48%;
-					max-width: 140px
-				}
-			}
-		}
-	}
-}
-
 @media (max-width: 979px) {
 	#main-container {
 		padding: 0;
+		#resource-close-details {
+			&.affix {
+				left: 10px;
+			}
+		}
 	}
 	.collection-list-description {
 		margin: 0 10px 10px 11px;
 	}
 
 	body.app-layout {
-		background-image: none; 
+		background-image: none;
+		padding-left: 0px;
+		padding-right: 0px;
+		.navbar-fixed-top {
+			margin-left: 0px;
+			margin-right: 0px;
+		}
 	}
 
-	.modal {
+	#gender-graph {
+		.male {
+			margin: 0px 30px 25px 60px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 80px;
+				right: 45px
+			}
+			.percent {
+				font-size: 38px;
+				padding-bottom: 20px;
+			}
+			.gender {
+				font-size: 25px;
+			}
+		}
+	}
 
+	.details_box {
+		ul#expenses-list {
+			li{
+				&.total-expenses {
+					span {
+						&:first-child {
+							margin: 30px 0 0 0;
+							width: 67% !important;
+						}
+					}
+				}
+				span{
+					&:first-child {
+						width: 65% !important;
+					}
+				}
+			}
+		}
 	}
 
 	#top-admin-home-navigation {
@@ -121,6 +117,204 @@
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 		padding: 7px 9px;
+	}
+}
+
+@media (max-width: 767px) {
+	#main-container {
+		#resource-close-details {
+			&.affix {
+				left: 10px;
+				right: 10px;
+			}
+		}
+	}
+
+	.modal {
+		&.modal-large {
+			min-width: 0 !important;
+		}
+		.edit-event {
+			.to {
+				width: 100%;
+				clear: both;
+				padding: 10px 0;
+				padding: 10px 0 10px 120px;
+				text-align: left;
+			}
+		}
+		&.modal-large {
+			.chzn-single {
+				width: 100% !important;
+			}
+			select {
+				width: 100%;
+			}
+		}
+
+		.modal-body {
+
+			.input-xxlarge {
+				width: 100% !important;
+			}
+			.control-group.location {
+				width:  100%;
+				height: 40px;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+			.chosen-campaign .control-group {
+				width: 100%;
+			}
+
+			.form-actions {
+				.btn-primary,
+				.btn-cancel {
+					width: 48%;
+					max-width: 140px
+				}
+			}
+		}
+	}
+
+	body.events.show {
+		.team-member {
+			width: 90%;
+		}
+		.box_metrics {
+			float: left;
+			margin-bottom: 25px;
+			width: 100%;
+		}
+		ul.consumer-reach-metrics {
+			&.pull-right {
+				.metric {
+					float: left;
+				}
+			}
+			li {
+				.metric {
+					float: left;
+					text-align: left;
+				}
+				.progress {
+					float: left;
+				}
+			}
+		}
+	}
+
+	.link-list {
+		li {
+			.edit, .enable, .disable {
+				&:after {
+					font-size: 16px;
+					margin-left: 8px;
+				}
+			}
+			.preview:after {
+				font-size: 20px;
+				margin-right: 1px;
+			}
+		}
+	}
+
+	#gender-graph {
+		.male {
+			margin: 0px 30px 25px 55px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 65px;
+				right: 40px
+			}
+			.percent {
+				font-size: 25px;
+				padding-bottom: 14px;
+			}
+			.gender {
+				font-size: 20px;
+			}
+		}
+	}
+
+	.survey-column-graph {
+		margin: 25px 0 50px;
+		width: 300px;
+	}
+
+	.details_box {
+		.box_summary {
+			width: 100%;
+			.summary-content {
+				margin-bottom: 35px;
+			}
+		}
+
+		.document {
+			width: 22%;
+		}
+
+		.results-surveys {
+			p {
+				width: 300px;
+			}
+		}
+
+		ul#expenses-list {
+			li{
+				&.total-expenses {
+					span {
+						&:first-child {
+							margin: 30px 0 0 10px;
+							text-align: left;
+							width: 43% !important;
+						}
+						&:last-child{
+							margin-top: 32px;
+							text-align: left;
+							width: 89px;
+						}
+					}
+					b {
+						font-size: 14px;
+					}
+				}
+				span{
+					&:first-child {
+						font-size: 14px;
+						margin: 30px 0 0 10px;
+						width: 43% !important;
+					}
+					&.links{
+						margin: 30px 10px 0 0;
+					}
+					&.total{
+						font-size: 14px;
+						text-align: left;
+						width: 90px;
+						white-space: nowrap;
+					}
+				}
+			}
+		}
+
+		.event-comments-list{
+			width: auto;
+			.comment-row {
+				p {
+					margin-top: 0px;
+					width: 70%;
+				}
+			}
+		}
+	}
+
+	#event-expenses {
+		&.details_box {
+			padding: 30px 10px;
+		}
 	}
 }
 
