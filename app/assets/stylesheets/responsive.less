@@ -87,7 +87,7 @@
 		}
 
 		&>#resource-filter-column {
-			position: absolute;
+			position: relative;
 			overflow: hidden;
 			right: 0;
 			background-color: #c0c0c0;
@@ -119,7 +119,7 @@
 		display: inline-block;
 		position: absolute;
 		right: 0;
-		top: 30%;
+		top: 40%;
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 		padding: 7px 9px;
@@ -275,7 +275,9 @@
 		}
 
 		.document {
-			width: 22%;
+			display: block;
+			margin: 0 25px 30px 0;
+			width: 90%;
 		}
 
 		.results-surveys {
@@ -322,7 +324,7 @@
 			}
 		}
 
-		.event-comments-list{
+		.event-comments-list {
 			width: auto;
 			.comment-row {
 				p {
@@ -338,6 +340,169 @@
 			padding: 30px 10px;
 		}
 	}
+
+	#event-tasks.details_box {
+		.task-list {
+			.checkbox {
+				padding-left: 5px;
+			}
+			.task-completed {
+				margin-right: 8px !important;
+			}
+			.title {
+				b {
+					font-size: 14px;
+				}
+			}
+			.tasks-date {
+				margin-left: 10px !important;
+			}
+			.links {
+				margin: 0px;
+				a {
+					display: block;
+					height: auto;
+					&.load-comments-link, &.edit, &.disable {
+						&:after {
+							margin-left: 0px;
+							top: 0px;
+						}
+					}
+				}
+			}
+			span.pull-right {
+				margin: 0px !important;
+			}
+		}
+
+		.task-comments {
+			#comment-form-container {
+				margin-left: 13px;
+				.control-group {
+					width: 69%;
+				}
+			}
+			input.btn {
+				width: 28%;
+				white-space: normal;
+			}
+			.comment-row {
+				margin-left: 13px;
+				width: 90%;
+			}
+		}
+	}
+
+	.task-counter-bar{
+		margin-top: 10px;
+	}
+
+	.task-counter-item {
+		font-size: 25px;
+		margin-right: 25px;
+		label{
+			font-size: 10px;
+		}
+	}
+
+	.link-list ul#venues-list li a {
+		span:first-child {
+			float: none;
+			width: 50%;
+		}
+		.events, .hours, .score{
+			width: 40px;
+			.n_events, .n_hours, .n_score  {
+				font-size: 12px;
+				overflow: hidden;
+			}
+		}
+	}
+}
+
+@media (max-width: 400px) {
+	body {
+		font-size: 12px;
+	}
+	.btn {
+		padding: 4px 7px;
+		font-size: 12px;
+		&:after{
+			font-size: 12px !important;
+		}
+	}
+
+	.collection-list-description {
+		padding: 5px 0 0 5px;
+		font-size: 13px;
+		.filter-label {
+			padding-right: 20px;
+		}
+		.close  {
+			right: 20px;
+		}
+	}
+
+	.modal {
+		.modal-body  {
+			.form-actions .btn-primary,
+			.form-actions .btn-cancel {
+				width: 80px;
+			}
+		}
+		.edit-event .to {
+			display: none;
+		}
+	}
+
+	.link-list {
+		font-size: 10px;
+		b {
+			font-size: 14px;
+		}
+		ul#venues-list li a {
+			.events, .hours, .score{
+				width: 30px;
+			}
+		}
+	}
+
+	#gender-graph {
+		.male {
+			margin: 0px 0px 25px 45px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 65px;
+				right: 40px
+			}
+			.percent {
+				font-size: 25px;
+				padding-bottom: 14px;
+			}
+			.gender {
+				font-size: 20px;
+			}
+		}
+	}
+
+	.venues.show #overall-ethnicity-graph {
+		margin: 0px;
+	}
+
+	#trends-day-week-graph {
+		height: 300px;
+	}
+
+	ul.thumbnails li.span2 {
+	    display: block;
+	    margin: 10px auto;
+
+	    &:first-child {
+	    	 margin: 10px auto;
+	    }
+	}
+
 }
 
 .main-nav-collapse {

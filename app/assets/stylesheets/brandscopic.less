@@ -3190,41 +3190,38 @@ ul.thumbnails{
 }
 
 // Photo list for venues an details boxes
-
-.dashboard, .events, .photos, .venues {
-	#event-photos{
-		span.btn-primary{
-			margin-bottom: 20px;
-		}
+#event-photos{
+	span.btn-primary{
+		margin-bottom: 20px;
 	}
-	#list-tools {
-		.download-photos-counter {
-	    left: auto;
-	    position: absolute;
-	    right: 252px;
-	    top: 152px;
-		}
+}
+#list-tools {
+	.download-photos-counter {
+    left: auto;
+    position: absolute;
+    right: 252px;
+    top: 152px;
 	}
-	.photo-list{
-		margin: 40px 0 0 0;
-		ul.thumbnails{
-			margin: 0 -5% 0 -1%;
-			overflow: hidden;
-			&>li{
-				margin: 0 3% 6% 2%;
-				&:first-child{
-					margin: 0 3% 6% 3%;
-				}
+}
+.photo-list{
+	margin: 40px 0 0 0;
+	ul.thumbnails{
+		margin: 0 -5% 0 -1%;
+		overflow: hidden;
+		&>li{
+			margin: 0 3% 6% 2%;
+			&:first-child{
+				margin: 0 3% 6% 3%;
 			}
 		}
 	}
-	.large-photo-list{
-		margin: 40px 0 0 0;
-		ul{
-			margin: 0 -7% -2% -2%;
-			overflow: auto;
-		}
-		li{
+}
+.large-photo-list{
+	margin: 40px 0 0 0;
+	ul{
+		margin: 0 -7% -2% -2%;
+		overflow: auto;
+		&.thumbnails li{
 			margin: 0 2% 6% 2%;
 			&:first-child{
 				margin: 0 2% 6% 2%;
@@ -3232,16 +3229,16 @@ ul.thumbnails{
 		}
 	}
 }
-	ul{
-		&.thumbnails{
-			li{
-				&.span2{
-					display:inline-block;
-					width:180px;
-				}
+ul{
+	&.thumbnails{
+		li{
+			&.span2{
+				display:inline-block;
+				width:180px;
 			}
 		}
 	}
+}
 
 // Photo list - Fancybox styles
 .fancybox-wrap {
@@ -3493,15 +3490,14 @@ body.roles{
 
 	#venue-score-narrative{
 		margin-top:30px;
-		width:380px;
+		max-width:380px;
 	}
 	#venue-trends-by-day-narrative{
-		width:380px;
+		max-width:380px;
 	}
 
 	.venue-review{
 		margin-top: 20px;
-		width: 50%;
 		i{
 			font-size: 16px;
 			&.icon-star{
@@ -3522,7 +3518,7 @@ body.roles{
 		}
 		.review-text{
 			font-size: 13px;
-			width: 410px;
+			max-width: 410px;
 		}
 	}
 
@@ -3602,7 +3598,7 @@ body.roles{
 
 		#overall-age-graph {
 			height: 300px;
-			width: 480px;
+			max-width: 480px;
 			.highcharts-axis-labels{
 				text{
 					font-family: @baseFontFamily !important;

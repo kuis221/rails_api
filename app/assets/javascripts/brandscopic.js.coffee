@@ -351,6 +351,7 @@ jQuery ->
 		if $filterSidebar.hasClass('collapsed')
 			$filterSidebar.removeClass('collapsed').addClass('expanded').css('width','')
 			$('.list-filter-btn').css({right: $filterSidebar.outerWidth()+'px', zIndex: 9999});
+			$filterSidebar.find('.slider-range').rangeSlider('resize')
 			# $filterSidebar.animate { "width": "#{$filterSidebar.originalWidth}px" }, "slow", () ->
 			# 	$(this).removeClass('collapsed').addClass('expanded').css('width','')
 			# 	$('.list-filter-btn').css({right: $filterSidebar.outerWidth()+'px', zIndex: 9999});

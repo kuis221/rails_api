@@ -1,7 +1,7 @@
 - show_user ||= false
 li id="task_#{task.id}" class="#{task.statuses.join(' ').downcase}"
   span.task-list
-    span
+    span.task-completed
       - if can?(:deactivate_task, Event)
         = simple_form_for task, remote: true do |f|
           = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
