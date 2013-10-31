@@ -153,9 +153,16 @@
 	}
 
 	.modal {
-		&.modal-large {
+		&.modal-large, &.modal-med {
 			min-width: 0 !important;
 		}
+
+		&.modal-med {
+			&.eventexpense_modal, &.comment_modal {
+				width: auto;
+			}
+		}
+
 		.edit-event {
 			.to {
 				width: 100%;
@@ -237,7 +244,7 @@
 			}
 			.preview:after {
 				font-size: 20px;
-				margin-right: 1px;
+				margin-right: 0px;
 			}
 		}
 	}
@@ -262,8 +269,8 @@
 	}
 
 	.survey-column-graph {
-		margin: 25px 0 50px;
-		width: 300px;
+		margin: 20px 0 40px;
+		width: 99%;
 	}
 
 	.details_box {
@@ -282,7 +289,7 @@
 
 		.results-surveys {
 			p {
-				width: 300px;
+				width: 96%;
 			}
 		}
 
@@ -293,10 +300,10 @@
 						&:first-child {
 							margin: 30px 0 0 10px;
 							text-align: left;
-							width: 43% !important;
+							width: 45% !important;
 						}
 						&:last-child{
-							margin-top: 32px;
+							margin: 32px 0px 0px 15px;
 							text-align: left;
 							width: 89px;
 						}
@@ -305,17 +312,30 @@
 						font-size: 14px;
 					}
 				}
-				span{
+				span {
 					&:first-child {
 						font-size: 14px;
 						margin: 30px 0 0 10px;
-						width: 43% !important;
+						width: 45% !important;
 					}
-					&.links{
-						margin: 30px 10px 0 0;
+					&.links {
+						line-height: 5px;
+						margin: 18px 10px 0px 0px;
+						text-align: center;
+						a {
+							display: block;
+							height: 20px;
+							&.preview, &.edit, &.disable {
+								&:after {
+									margin-left: 0px;
+									top: 0px;
+								}
+							}
+						}
 					}
 					&.total{
 						font-size: 14px;
+						margin-left: 15px;
 						text-align: left;
 						width: 90px;
 						white-space: nowrap;
@@ -329,8 +349,18 @@
 			.comment-row {
 				p {
 					margin-top: 0px;
-					width: 70%;
+					width: 68%;
 				}
+			}
+		}
+
+		.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
+			width: 99%;
+		}
+
+		h2 {
+			&.special {
+				line-height: 30px;
 			}
 		}
 	}
@@ -375,6 +405,19 @@
 			}
 		}
 
+		#event-tasks-counters {
+			.task-counter-bar{
+				margin-top: 10px;
+				.task-counter-item {
+					font-size: 30px;
+					margin-right: 18px;
+					label{
+						font-size: 10px;
+					}
+				}
+			}
+		}
+
 		.task-comments {
 			#comment-form-container {
 				margin-left: 13px;
@@ -393,24 +436,12 @@
 		}
 	}
 
-	.task-counter-bar{
-		margin-top: 10px;
-	}
-
-	.task-counter-item {
-		font-size: 25px;
-		margin-right: 25px;
-		label{
-			font-size: 10px;
-		}
-	}
-
 	.link-list ul#venues-list li a {
 		span:first-child {
 			float: none;
 			width: 50%;
 		}
-		.events, .hours, .score{
+		.events, .hours, .score {
 			width: 40px;
 			.n_events, .n_hours, .n_score  {
 				font-size: 12px;
@@ -448,6 +479,19 @@
 			.form-actions .btn-primary,
 			.form-actions .btn-cancel {
 				width: 80px;
+			}
+
+			textarea {
+				&.input-xlarge {
+					width: 100%;
+				}
+			}
+		}
+		.modal-footer {
+			a {
+				&.btn {
+					width: 112px;
+				}
 			}
 		}
 		.edit-event .to {
@@ -501,12 +545,12 @@
 	}
 
 	ul.thumbnails li.span2 {
-	    display: block;
-	    margin: 10px auto;
+		display: block;
+		margin: 10px auto;
 
-	    &:first-child {
-	    	 margin: 10px auto;
-	    }
+		&:first-child {
+			margin: 10px auto;
+		}
 	}
 
 }
