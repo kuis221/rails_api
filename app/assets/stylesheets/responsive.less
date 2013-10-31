@@ -17,6 +17,12 @@
 		margin: 0 10px 10px 11px;
 	}
 
+	.main-nav-collapse {
+		#results, #analysis {
+			display: none;
+		}
+	}
+
 	body.app-layout {
 		background-image: none;
 		padding-left: 0px;
@@ -113,10 +119,26 @@
 		display: inline-block;
 		position: absolute;
 		right: 0;
-		top: 30%;
+		top: 40%;
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 		padding: 7px 9px;
+	}
+
+	.link-list ul#venues-list li a {
+		padding-left: 5px;
+		padding-right: 0px;
+		.events {
+			display: inline-block;
+			margin-left:  0px;
+			width: 50px;
+		}
+		.hours {
+			width: 50px;
+		}
+		.score {
+			width: 50px;
+		}
 	}
 }
 
@@ -382,6 +404,69 @@
 			font-size: 10px;
 		}
 	}
+
+	.link-list ul#venues-list li a {
+		span:first-child {
+			float: none;
+			width: 50%;
+		}
+		.events, .hours, .score{
+			width: 40px;
+			.n_events, .n_hours, .n_score  {
+				font-size: 12px;
+				overflow: hidden;
+			}
+		}
+	}
+}
+
+@media (max-width: 400px) {
+	body {
+		font-size: 12px;
+	}
+	.btn {
+		padding: 4px 7px;
+		font-size: 12px;
+		&:after{
+			font-size: 12px !important;
+		}
+	}
+
+	.collection-list-description {
+		padding: 5px 0 0 5px;
+		font-size: 13px;
+		.filter-label {
+			padding-right: 20px;
+		}
+		.close  {
+			right: 20px;
+		}
+	}
+
+	.modal {
+		.modal-body  {
+			.form-actions .btn-primary,
+			.form-actions .btn-cancel {
+				width: 80px;
+			}
+		}
+		.edit-event .to {
+			display: none;
+		}
+	}
+
+	.link-list {
+		font-size: 10px;
+		b {
+			font-size: 14px;
+		}
+		ul#venues-list li a {
+			.events, .hours, .score{
+				width: 30px;
+			}
+		}
+	}
+
 }
 
 .main-nav-collapse {
