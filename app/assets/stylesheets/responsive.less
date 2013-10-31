@@ -4,56 +4,6 @@
 	}
 }
 
-@media (max-width: 767px) {
-	.modal {
-		&.modal-large {
-			min-width: 0 !important;
-		}
-		.edit-event {
-			.to {
-				width: 100%;
-				clear: both;
-				padding: 10px 0;
-				padding: 10px 0 10px 120px;
-				text-align: left;
-			}
-		}
-		&.modal-large {
-			.chzn-single {
-				width: 100% !important;
-			}
-			select {
-				width: 100%;
-			}
-		}
-
-		.modal-body {
-
-			.input-xxlarge {
-				width: 100% !important;
-			}
-			.control-group.location {
-				width:  100%;
-				height: 40px;
-				-moz-box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-				box-sizing: border-box;
-			}
-			.chosen-campaign .control-group {
-				width: 100%;
-			}
-
-			.form-actions {
-				.btn-primary, 
-				.btn-cancel {
-					width: 48%;
-					max-width: 140px
-				}
-			}
-		}
-	}
-}
-
 @media (max-width: 979px) {
 	#main-container {
 		padding: 0;
@@ -115,6 +65,59 @@
 			}
 		}
 	}
+
+	#top-admin-home-navigation {
+		&>.nav-pills {
+			margin-right: 0;
+		}
+		li#admin, li#user_menu, li#help_menu {
+			display: none;
+		}
+	}
+
+	#application-content {
+		&>.main {
+			margin-right: 0;
+		}
+
+		&>#resource-filter-column {
+			position: absolute;
+			overflow: hidden;
+			right: 0;
+			background-color: #c0c0c0;
+			z-index: 1000;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+
+			&.collapsed {
+				width: 0;
+				padding: 0;
+				overflow: hidden;
+				&>* {
+					visibility: hidden;
+				}
+			}
+
+			&.expanded {
+				width: 210px;
+				padding: 13px 11px 18px 11px;
+				-webkit-box-shadow: -5px 0px 5px 0px rgba(236, 236, 236, .5);
+				box-shadow: -5px 0px 5px 0px rgba(236, 236, 236, .5);
+				&>* {
+					visibility: visible;
+				}
+			}
+		}
+	}
+	.list-filter-btn {
+		display: inline-block;
+		position: absolute;
+		right: 0;
+		top: 30%;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		padding: 7px 9px;
+	}
 }
 
 @media (max-width: 767px) {
@@ -123,6 +126,54 @@
 			&.affix {
 				left: 10px;
 				right: 10px;
+			}
+		}
+	}
+
+	.modal {
+		&.modal-large {
+			min-width: 0 !important;
+		}
+		.edit-event {
+			.to {
+				width: 100%;
+				clear: both;
+				padding: 10px 0;
+				padding: 10px 0 10px 120px;
+				text-align: left;
+			}
+		}
+		&.modal-large {
+			.chzn-single {
+				width: 100% !important;
+			}
+			select {
+				width: 100%;
+			}
+		}
+
+		.modal-body {
+
+			.input-xxlarge {
+				width: 100% !important;
+			}
+			.control-group.location {
+				width:  100%;
+				height: 40px;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+			.chosen-campaign .control-group {
+				width: 100%;
+			}
+
+			.form-actions {
+				.btn-primary,
+				.btn-cancel {
+					width: 48%;
+					max-width: 140px
+				}
 			}
 		}
 	}
@@ -188,6 +239,11 @@
 		}
 	}
 
+	.survey-column-graph {
+		margin: 25px 0 50px;
+		width: 300px;
+	}
+
 	.details_box {
 		.box_summary {
 			width: 100%;
@@ -195,9 +251,17 @@
 				margin-bottom: 35px;
 			}
 		}
+
 		.document {
 			width: 22%;
 		}
+
+		.results-surveys {
+			p {
+				width: 300px;
+			}
+		}
+
 		ul#expenses-list {
 			li{
 				&.total-expenses {
@@ -235,69 +299,22 @@
 				}
 			}
 		}
+
+		.event-comments-list{
+			width: auto;
+			.comment-row {
+				p {
+					margin-top: 0px;
+					width: 70%;
+				}
+			}
+		}
 	}
 
 	#event-expenses {
 		&.details_box {
 			padding: 30px 10px;
 		}
-	}
-
-	.modal {
-
-	}
-
-	#top-admin-home-navigation {
-		&>.nav-pills {
-			margin-right: 0;
-		}
-		li#admin, li#user_menu, li#help_menu {
-			display: none;
-		}
-	}
-
-	#application-content {
-		&>.main {
-			margin-right: 0;
-		}
-
-		&>#resource-filter-column {
-			position: absolute;
-			overflow: hidden;
-			right: 0;
-			background-color: #c0c0c0;
-			z-index: 1000;
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-
-			&.collapsed {
-				width: 0;
-				padding: 0;
-				overflow: hidden;
-				&>* {
-					visibility: hidden;
-				}
-			}
-
-			&.expanded {
-				width: 210px;
-				padding: 13px 11px 18px 11px;
-				-webkit-box-shadow: -5px 0px 5px 0px rgba(236, 236, 236, .5);
-				box-shadow: -5px 0px 5px 0px rgba(236, 236, 236, .5);
-				&>* {
-					visibility: visible;
-				}
-			}
-		}
-	}
-	.list-filter-btn {
-		display: inline-block;
-		position: absolute;
-		right: 0;
-		top: 30%;
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-		padding: 7px 9px;
 	}
 }
 
