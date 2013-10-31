@@ -253,7 +253,9 @@
 		}
 
 		.document {
-			width: 22%;
+			display: block;
+			margin: 0 25px 30px 0;
+			width: 90%;
 		}
 
 		.results-surveys {
@@ -300,7 +302,7 @@
 			}
 		}
 
-		.event-comments-list{
+		.event-comments-list {
 			width: auto;
 			.comment-row {
 				p {
@@ -314,6 +316,70 @@
 	#event-expenses {
 		&.details_box {
 			padding: 30px 10px;
+		}
+	}
+
+	#event-tasks.details_box {
+		.task-list {
+			.checkbox {
+				padding-left: 5px;
+			}
+			.task-completed {
+				margin-right: 8px !important;
+			}
+			.title {
+				b {
+					font-size: 14px;
+				}
+			}
+			.tasks-date {
+				margin-left: 10px !important;
+			}
+			.links {
+				margin: 0px;
+				a {
+					display: block;
+					height: auto;
+					&.load-comments-link, &.edit, &.disable {
+						&:after {
+							margin-left: 0px;
+							top: 0px;
+						}
+					}
+				}
+			}
+			span.pull-right {
+				margin: 0px !important;
+			}
+		}
+
+		.task-comments {
+			#comment-form-container {
+				margin-left: 13px;
+				.control-group {
+					width: 69%;
+				}
+			}
+			input.btn {
+				width: 28%;
+				white-space: normal;
+			}
+			.comment-row {
+				margin-left: 13px;
+				width: 90%;
+			}
+		}
+	}
+
+	.task-counter-bar{
+		margin-top: 10px;
+	}
+
+	.task-counter-item {
+		font-size: 25px;
+		margin-right: 25px;
+		label{
+			font-size: 10px;
 		}
 	}
 }
