@@ -87,7 +87,7 @@
 		}
 
 		&>#resource-filter-column {
-			position: absolute;
+			position: relative;
 			overflow: hidden;
 			right: 0;
 			background-color: #c0c0c0;
@@ -400,6 +400,42 @@
 				width: 30px;
 			}
 		}
+	}
+
+	#gender-graph {
+		.male {
+			margin: 0px 0px 25px 45px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 65px;
+				right: 40px
+			}
+			.percent {
+				font-size: 25px;
+				padding-bottom: 14px;
+			}
+			.gender {
+				font-size: 20px;
+			}
+		}
+	}
+
+	.venues.show #overall-ethnicity-graph {
+		margin: 0px;
+	}
+
+	#trends-day-week-graph {
+		height: 300px;
+	}
+
+	ul.thumbnails li.span2 {
+	    display: block;
+	    margin: 10px auto;
+	}
+
+	.large-photo-list li:first-child {
+	    margin: 10px auto;
 	}
 
 }
