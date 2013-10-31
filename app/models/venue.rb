@@ -109,7 +109,7 @@ class Venue < ActiveRecord::Base
 
     compute_scoring
 
-    reindex_neighbors_venues =  avg_impressions_changed?
+    reindex_neighbors_venues =  avg_impressions_changed? || avg_impressions_cost_changed?
 
     save
 

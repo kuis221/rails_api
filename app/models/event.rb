@@ -222,7 +222,7 @@ class Event < ActiveRecord::Base
   end
 
   def venue
-    @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+    @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id) unless place_id.nil?
   end
 
   def contacts

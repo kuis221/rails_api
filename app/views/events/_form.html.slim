@@ -6,15 +6,16 @@
       = f.association :campaign, collection: company_campaigns.active.accessible_by_user(current_company_user), input_html: {class: 'chosen-enabled'}
 
     .row-fluid
-      .span6
-        = f.input :start_date, :as => :date_picker
-        = f.input :start_time, :as => :time_picker, inline: true
-
-      span.to to
-
-      .span6
-        = f.input :end_date, :as => :date_picker
-        = f.input :end_time, :as => :time_picker
+      .span12
+        .pull-left
+          = f.input :start_date, :as => :date_picker
+        .pull-left
+          = f.input :start_time, :as => :time_picker, inline: true
+        .to.pull-left to
+        .pull-left
+          = f.input :end_date, :as => :date_picker
+        .pull-left
+          = f.input :end_time, :as => :time_picker
 
     .row-fluid.google-places
       = f.error :place

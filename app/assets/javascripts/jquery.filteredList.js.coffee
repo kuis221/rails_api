@@ -39,6 +39,9 @@ $.widget 'nmk.filteredList', {
 			@storageScope = window.location.pathname.replace('/','_')
 
 
+		$('body').append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('
+      <i class="icon-filter">')
+
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
 				.on 'click', (e) =>

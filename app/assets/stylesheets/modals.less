@@ -280,10 +280,10 @@ ul.select2-results{
 			.edit-event{
 				.chzn-container-single
 					.chzn-single{
-						width: 545px !important;
+						width: 545px;
 					}
 					.chzn-drop{
-						width: 555px !important;
+						width: 555px;
 					}
 			}
 			.users-teams-roles{
@@ -699,7 +699,6 @@ ul.select2-results{
 		}
 		.control-group{
 			display: inline-block;
-			margin-right: 17px;
 			width: 120px;
 			label{
 				margin-bottom: 2px;
@@ -707,6 +706,10 @@ ul.select2-results{
 			&.location, &.password {
 				width: auto;
 			}
+		}
+		.control-group.event_start_date, 
+		.control-group.event_end_date {
+			margin-right: 17px;
 		}
 		.controls{
 			input[type="text"]{
