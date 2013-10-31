@@ -1614,7 +1614,6 @@ ul.kpis-list{
     margin: 14px 0 0 0;
     padding: 0;
     position: relative;
-    width:99.8%;
     address{
     	line-height: 21px;
     	margin-bottom: 0;
@@ -1767,6 +1766,7 @@ ul.kpis-list{
 			li{
 				color: @text;
 				min-height: 70px;
+				padding: 9px 0 0 15px;
 
 				.address{
 					br{
@@ -1786,17 +1786,16 @@ ul.kpis-list{
 				&.rejected > span.event-item {
 					border-left: 5px solid @rejected;
 				}
-			}
+				}
 			span.event-item {
 				min-height: 82px;
 				width: 100%;
-				padding: 9px 0 0 15px;
 			}
 		}
 	ul#my-tasks-list{
 		li{
 			.task-list{
-				height: 63px;
+				min-height: 63px;
 				padding: 20px 0 0 0;
 				width: 100%;
 				span{
@@ -2657,7 +2656,7 @@ body.dashboard.index {
 	}
 
 	p{
-		width: 340px;
+		max-width: 340px;
 		&.help-block {
 			width: auto;
 		}
@@ -5047,7 +5046,8 @@ a, i{
 		.chart-bar {
 			position: relative;
 			display: inline-block;
-			width: 300px;
+			width: 70%;
+			max-width: 300px;
 			.progress {
 				width: auto !important;
 				height: 25px;

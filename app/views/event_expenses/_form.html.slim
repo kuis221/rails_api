@@ -1,7 +1,7 @@
 - action = resource.new_record? ? url_for(action: :create, "event_id" => parent.to_param, format: :js) : url_for(action: :update, id: resource.id, "event_id" => parent.to_param, format: :js)
   = resource.errors.inspect
 .form-inputs
-  .pull-left
+  .expense-info-form
     = form_tag('#', id: 'new-expense-form') do
       .control-group.string.required.event_expense_name
         = label :event_expense, :name, content_tag(:abbr, '*')+"Name", class: 'string required control-label'
@@ -16,13 +16,13 @@
         = submit_tag 'Save', id: 'upload-receipt-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
         = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
         = "&nbsp;".html_safe
-  .pull-right
-    .control-group.string.required.event_expense_name
-      = label :event_expense, :receipt, "File", class: 'file optional control-label'
-      .controls
-        #uniform-event_expense_receipt.uploader
-          = s3_uploader_form callback_url: url_for(action: :create, "event_id" => parent.to_param, format: :js), id: "s3_uploader", callback_method: resource.new_record? ? 'POST' : 'PUT', callback_param: "event_expense[receipt_attributes][direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes, class: 'event_expense_form'
-            = file_field_tag :file
+    .expense-file-form
+      .control-group.string.required.event_expense_name
+        = label :event_expense, :receipt, "File", class: 'file optional control-label'
+        .controls
+          #uniform-event_expense_receipt.uploader
+            = s3_uploader_form callback_url: url_for(action: :create, "event_id" => parent.to_param, format: :js), id: "s3_uploader", callback_method: resource.new_record? ? 'POST' : 'PUT', callback_param: "event_expense[receipt_attributes][direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes, class: 'event_expense_form'
+              = file_field_tag :file
 
 javascript:
   $(function() {
