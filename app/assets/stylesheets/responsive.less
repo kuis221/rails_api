@@ -7,13 +7,190 @@
 @media (max-width: 979px) {
 	#main-container {
 		padding: 0;
+		#resource-close-details {
+			&.affix {
+				left: 10px;
+			}
+		}
 	}
 	.collection-list-description {
 		margin: 0 10px 10px 11px;
 	}
 
 	body.app-layout {
-		background-image: none; 
+		background-image: none;
+		padding-left: 0px;
+		padding-right: 0px;
+		.navbar-fixed-top {
+			margin-left: 0px;
+			margin-right: 0px;
+		}
+	}
+
+	#gender-graph {
+		.male {
+			margin: 0px 30px 25px 60px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 80px;
+				right: 45px
+			}
+			.percent {
+				font-size: 38px;
+				padding-bottom: 20px;
+			}
+			.gender {
+				font-size: 25px;
+			}
+		}
+	}
+
+	.details_box {
+		ul#expenses-list {
+			li{
+				&.total-expenses {
+					span {
+						&:first-child {
+							margin: 30px 0 0 0;
+							width: 67% !important;
+						}
+					}
+				}
+				span{
+					&:first-child {
+						width: 65% !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 767px) {
+	#main-container {
+		#resource-close-details {
+			&.affix {
+				left: 10px;
+				right: 10px;
+			}
+		}
+	}
+
+	body.events.show {
+		.team-member {
+			width: 90%;
+		}
+		.box_metrics {
+			float: left;
+			margin-bottom: 25px;
+			width: 100%;
+		}
+		ul.consumer-reach-metrics {
+			&.pull-right {
+				.metric {
+					float: left;
+				}
+			}
+			li {
+				.metric {
+					float: left;
+					text-align: left;
+				}
+				.progress {
+					float: left;
+				}
+			}
+		}
+	}
+
+	.link-list {
+		li {
+			.edit, .enable, .disable {
+				&:after {
+					font-size: 16px;
+					margin-left: 8px;
+				}
+			}
+			.preview:after {
+				font-size: 20px;
+				margin-right: 1px;
+			}
+		}
+	}
+
+	#gender-graph {
+		.male {
+			margin: 0px 30px 25px 55px;
+		}
+		.male, .female {
+			&:before {
+				font-size: 65px;
+				right: 40px
+			}
+			.percent {
+				font-size: 25px;
+				padding-bottom: 14px;
+			}
+			.gender {
+				font-size: 20px;
+			}
+		}
+	}
+
+	.details_box {
+		.box_summary {
+			width: 100%;
+			.summary-content {
+				margin-bottom: 35px;
+			}
+		}
+		.document {
+			width: 22%;
+		}
+		ul#expenses-list {
+			li{
+				&.total-expenses {
+					span {
+						&:first-child {
+							margin: 30px 0 0 10px;
+							text-align: left;
+							width: 43% !important;
+						}
+						&:last-child{
+							margin-top: 32px;
+							text-align: left;
+							width: 89px;
+						}
+					}
+					b {
+						font-size: 14px;
+					}
+				}
+				span{
+					&:first-child {
+						font-size: 14px;
+						margin: 30px 0 0 10px;
+						width: 43% !important;
+					}
+					&.links{
+						margin: 30px 10px 0 0;
+					}
+					&.total{
+						font-size: 14px;
+						text-align: left;
+						width: 90px;
+						white-space: nowrap;
+					}
+				}
+			}
+		}
+	}
+
+	#event-expenses {
+		&.details_box {
+			padding: 30px 10px;
+		}
 	}
 }
 
