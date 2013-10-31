@@ -41,7 +41,7 @@ ul.select2-results{
 		width: 460px;
 		&.eventexpense_modal{
 			width: 660px;
-			.pull-left, .pull-right{
+			.expense-info-form, .expense-file-form{
 				width: 50%;
 				.control-group{
 					display:block;
@@ -77,6 +77,14 @@ ul.select2-results{
 						width: 40px;
 					}
 				}
+			}
+			.expense-info-form {
+				position: relative;
+			}
+			.expense-file-form {
+				position: absolute;
+				right: -50%;
+				top: 0;
 			}
 			.form-actions{
 				clear: both;
@@ -1039,6 +1047,9 @@ ul.select2-results{
 		}
 	}
 }
+
+
+
 
 .ui-datepicker-calendar{
 	.ui-datepicker-other-month{

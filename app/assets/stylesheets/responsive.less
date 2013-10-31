@@ -153,8 +153,9 @@
 	}
 
 	.modal {
-		&.modal-large, &.modal-med {
+		&.modal-large, &.modal-med, &.modal-med.eventexpense_modal {
 			min-width: 0 !important;
+			width: auto;
 		}
 
 		&.modal-med {
@@ -550,6 +551,22 @@
 
 		&:first-child {
 			margin: 10px auto;
+		}
+	}
+
+	.modal.modal-med.eventexpense_modal {
+		.expense-info-form {
+			height: 315px;
+			width: 100%;
+
+			.form-actions {
+				position: absolute;
+				bottom: 0px;
+			}
+		}
+		.expense-file-form {
+			position: relative;
+			 right: 0;
 		}
 	}
 
