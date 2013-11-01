@@ -61,7 +61,7 @@ class Survey < ActiveRecord::Base
 
     def reindex_event
       # if this is the first survey for the event, then reindex it to set the flag "has_surveys" true
-      if event.surveys.count == 1
+      if event.present? && event.surveys.count == 1
         Sunspot.index event
       end
     end
