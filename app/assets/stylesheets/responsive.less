@@ -153,17 +153,6 @@
 	}
 
 	.modal {
-		&.modal-large, &.modal-med, &.modal-med.eventexpense_modal {
-			min-width: 0 !important;
-			width: auto;
-		}
-
-		&.modal-med {
-			&.eventexpense_modal, &.comment_modal {
-				width: auto;
-			}
-		}
-
 		.edit-event {
 			.to {
 				width: 100%;
@@ -455,7 +444,17 @@
 @media (max-width: 400px) {
 	body {
 		font-size: 12px;
+		&.events {
+			&.show {
+				.percentage-progress-bar {
+					.counter {
+						right: -30px;
+					}
+				}
+			}
+		}
 	}
+
 	.btn {
 		padding: 4px 7px;
 		font-size: 12px;
@@ -482,12 +481,19 @@
 				width: 80px;
 			}
 
+			input {
+				&.input-xlarge[type="text"] {
+					width: 100%;
+				}
+			}
+
 			textarea {
 				&.input-xlarge {
 					width: 100%;
 				}
 			}
 		}
+
 		.modal-footer {
 			a {
 				&.btn {
@@ -495,8 +501,74 @@
 				}
 			}
 		}
+
+		&.modal-large, &.modal-med {
+			min-width: 0 !important;
+			width: auto;
+		}
+
+		&.modal-med {
+			.control-group {
+				margin-bottom: 10px !important;
+				&.task_title {
+					width: auto !important;
+				}
+
+				&.task_due_at {
+					margin-left: 0px !important;
+				}
+			}
+
+			&.eventexpense_modal {
+				width: auto;
+				.expense-info-form {
+					height: 315px;
+					width: 100%;
+
+					.form-actions {
+						position: absolute;
+						bottom: 0px;
+					}
+				}
+				.expense-file-form {
+					position: relative;
+					 right: 0;
+				}
+			}
+
+			&.comment_modal {
+				width: auto;
+			}
+		}
+
 		.edit-event .to {
 			display: none;
+		}
+	}
+
+	.details_box {
+		textarea, input[type="text"] {
+			width: 100%;
+		}
+
+		#edit_event_data_form {
+			.control-group {
+				&.percentage {
+					width: 290px;
+					input[type="text"] {
+						width: 70px !important;
+					}
+				}
+			}
+
+			.form-actions {
+				.btn-primary,
+				.btn-cancel {
+					height: 30px;
+					margin-right: 16px;
+					width: 41%;
+				}
+			}
 		}
 	}
 
@@ -505,6 +577,7 @@
 		b {
 			font-size: 14px;
 		}
+
 		ul#venues-list li a {
 			.events, .hours, .score{
 				width: 30px;
@@ -553,23 +626,6 @@
 			margin: 10px auto;
 		}
 	}
-
-	.modal.modal-med.eventexpense_modal {
-		.expense-info-form {
-			height: 315px;
-			width: 100%;
-
-			.form-actions {
-				position: absolute;
-				bottom: 0px;
-			}
-		}
-		.expense-file-form {
-			position: relative;
-			 right: 0;
-		}
-	}
-
 }
 
 .main-nav-collapse {
