@@ -9,7 +9,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          a.btn.download.xlsx-download-link href="#{results_surveys_path(format: "xlsx")}" data-remote="true" title="Download"
+          button.btn.download.xlsx-download-link data-url="#{results_surveys_path(format: "xlsx")}" title="Download"
       #surveys-totals
       .link-list
         ul#surveys-list
@@ -36,7 +36,6 @@ javascript:
       if (response.find('div[data-content="totals-results"]').length > 0){
         $('#surveys-totals').html(response.find('div[data-content="totals-results"]').html())
       }
-      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
     },
     'onItemsChange': function(response, page){
       if ($('#surveys-list li').length > 0) {
