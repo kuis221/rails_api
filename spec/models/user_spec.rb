@@ -82,7 +82,6 @@ describe User do
       it { should_not validate_presence_of(:state) }
       it { should_not validate_presence_of(:city) }
       it { should_not validate_presence_of(:street_address) }
-      it { should_not validate_presence_of(:unit_number) }
       it { should_not validate_presence_of(:city) }
       it { should_not validate_presence_of(:zip_code) }
       it { should_not validate_presence_of(:password) }

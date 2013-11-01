@@ -72,7 +72,6 @@ describe "Invitations", :js => true do
     select_from_chosen('', from: 'State')
     fill_in('City', with: '')
     fill_in('user_street_address', with: '')
-    fill_in('user_unit_number', with: '')
     fill_in('Zip code', with: '')
     fill_in('New Password', with: '', match: :first)
     fill_in('Confirm New Password', with: '')
@@ -84,6 +83,8 @@ describe "Invitations", :js => true do
     find_field('Email').should have_error('This field is required.')
     find_field('State', visible: false).should have_error('This field is required.')
     find_field('City').should have_error('This field is required.')
+    find_field('user_street_address').should have_error('This field is required.')
+    find_field('Zip code').should have_error('This field is required.')
     find_field('New Password', match: :first).should have_error('This field is required.')
     find_field('Confirm New Password').should have_error('This field is required.')
 

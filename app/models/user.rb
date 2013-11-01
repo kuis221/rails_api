@@ -72,7 +72,6 @@ class User < ActiveRecord::Base
     user.validates :state,   presence: true
     user.validates :city,    presence: true
     user.validates :street_address,    presence: true
-    user.validates :unit_number,    presence: true
     user.validates :zip_code,    presence: true
     user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s }  }
     user.validates :password, presence: true, if: :should_require_password?
