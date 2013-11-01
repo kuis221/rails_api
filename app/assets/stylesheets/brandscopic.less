@@ -693,69 +693,6 @@ body.app-layout{
 		-webkit-font-smoothing: antialiased;
 	}
 }
-#calendar-canvas {
-	margin-top: 10px;
-
-	.calendar-day{
-		&.expanded{
-			.daytitle{
-				display: block;
-				font-size: 13px;
-				margin-bottom: 5px;
-			}		
-		}
-	}
-
-	.calendar-table th{
-		padding: 5px 0 5px 10px;
-	}
-
-	a{
-		&.cal-day-link, &.cal-day-link:hover{
-			color: @brand;
-			margin: 0 5px 5px;
-		}
-		&.icon-angle-right:before, &.icon-angle-right:before{
-			left: 10px;
-		}
-	}
-
-	.calendar-day-events-container{
-		color: @brand;
-		font-size: 11px;
-		line-height: 17px;
-		height: 100px;
-		.calendar-event-name{
-			display: block;
-			margin-left: 15px;
-			margin-top: -19px;
-			a, a:hover{
-				color: @brand;
-			}
-		}
-		.daytitle{
-			display: none;
-		}
-	}
-
-	.calendar-view-more{
-		a, a:hover{
-			color: @user_menu;
-			font-size: 11px;
-			margin: 0px 0px 5px 5px;
-			text-decoration: none;
-		}
-	}
-
-	.fc-day-header {
-		background-color: @grey_three !important;
-		color: #fff;
-	}
-
-	.fc-day-content {
-		height: 90px;
-	}
-}
 
 .btn-small {
 	padding: 2px 10px;
@@ -3196,10 +3133,10 @@ ul.thumbnails{
 }
 #list-tools {
 	.download-photos-counter {
-    left: auto;
-    position: absolute;
-    right: 252px;
-    top: 152px;
+		left: auto;
+		position: absolute;
+		right: 252px;
+		top: 152px;
 	}
 }
 .photo-list{
@@ -3240,7 +3177,16 @@ ul{
 }
 
 // Photo list - Fancybox styles
+
+	.fancybox-inner{
+		height: 400px;
+	}
+
+
 .fancybox-wrap {
+	.fancybox-skin{
+		background-color: white;
+	}
 	.fancybox-title {
 		font-family: @baseFontFamily;
 		position: absolute;
