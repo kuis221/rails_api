@@ -118,6 +118,9 @@ describe InvitationsController do
         user.city.should == 'Miami'
         user.state.should == 'FL'
         user.country.should == 'US'
+        user.street_address.should == 'Street Address 123'
+        user.unit_number.should == 'Unit Number 456'
+        user.zip_code.should == '90210'
         user.time_zone.should == 'American Samoa'
         user.invitation_token.should be_nil
         user.invitation_accepted_at.to_date.should == Time.zone.now.to_date
@@ -125,12 +128,14 @@ describe InvitationsController do
       end
 
       it "must require the user location attributes" do
-        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: '', state: '', country: '', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
+        put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
         user.reload
         assigns(:user).errors.count.should > 0
         assigns(:user).errors[:country].should == ["can't be blank"]
         assigns(:user).errors[:state].should == ["can't be blank"]
         assigns(:user).errors[:city].should == ["can't be blank"]
+        assigns(:user).errors[:street_address].should == ["can't be blank"]
+        assigns(:user).errors[:zip_code].should == ["can't be blank"]
       end
 
       it "must require the password" do

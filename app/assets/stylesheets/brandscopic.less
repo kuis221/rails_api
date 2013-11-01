@@ -3506,6 +3506,7 @@ body.roles{
 		.add-area-venue {
 			font-size: 20px;
 			text-decoration: none;
+			display: inline-block;
 		}
 
 		.area {
@@ -4577,10 +4578,19 @@ body.campaigns{
 		&.icon-plus-sign:before{
 			content: "\e021";
 			color: @brand;
-			display: block;
+			display: inline-block;
 			font-family: 'icons';
 			font-size: 21px;
 			margin: 15px 0 0 30px;
+		}
+		&.icon-calendar:before{
+			content: "\e031";
+			color: @brand;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 17px;
+			margin: 0 5px 0;
+			bottom: 3px;
 		}
 	}
 	&#event-tasks{
@@ -4798,6 +4808,14 @@ a, i{
 		display: inline-block;
 		font-family: 'icons';
 		font-size: 20px;
+		position: relative;
+	}
+	&.icon-calendar:before{
+		color: @brand;
+		content: "\e031";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 17px;
 		position: relative;
 	}
 	&.icon-remove-circle:before, &.icon-remove-sign:before{
