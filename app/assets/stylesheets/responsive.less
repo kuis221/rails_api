@@ -87,8 +87,7 @@
 		}
 
 		&>#resource-filter-column {
-			position: relative;
-			overflow: hidden;
+			position: absolute;
 			right: 0;
 			background-color: #c0c0c0;
 			z-index: 1000;
@@ -98,10 +97,10 @@
 			&.collapsed {
 				width: 0;
 				padding: 0;
-				overflow: hidden;
 				&>* {
 					visibility: hidden;
 				}
+
 			}
 
 			&.expanded {
@@ -118,11 +117,12 @@
 	.list-filter-btn {
 		display: inline-block;
 		position: absolute;
-		right: 0;
-		top: 40%;
+		left: -30px;
+		top: 50px;
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 		padding: 7px 9px;
+		visibility: visible !important;
 	}
 
 	.link-list ul#venues-list li a {
@@ -625,6 +625,12 @@
 		&:first-child {
 			margin: 10px auto;
 		}
+	}
+}
+
+#asset_upload_dialog {
+	.or-divider, .file-drag-drop {
+		display: none;
 	}
 }
 
