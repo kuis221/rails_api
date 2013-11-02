@@ -1122,12 +1122,18 @@ li.dropdown a{
 		}
 		.dropdown-menu>li>a:hover, 
 		.dropdown-menu>li>a:focus,
-		.active>a,
+		.active ul li.active a,
 		.dropdown-submenu:hover>a, 
 		.dropdown-submenu:focus>a {
 			background-color: @header !important;
 			background-image: none;
 		}
+		.nav-pills>.active>a,
+		.nav-pills>.active>a:hover,
+		.nav-pills>.active>a:focus {
+			background-color: @menu;
+		}
+
 	}
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
