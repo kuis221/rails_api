@@ -9,7 +9,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          a.btn.download.xlsx-download-link href="#{url_for(format: :xlsx)}" data-remote="remote" title="Download"
+          button.btn.download.xlsx-download-link data-url="#{url_for(format: :xlsx)}" title="Download"
           a.btn.fullscreen.fullscreen-link href="#" data-fullscreen-element='main' title="Fullscreen"
       .collection-list-horizontal-scroll
         #columns-scoller-arrows.hide
@@ -46,7 +46,6 @@ javascript:
         $('#columns-scoller-arrows').removeClass('hide')
         $('#event-data-totals').html(response.find('div[data-content="totals-results"]').html())
       }
-      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
     },
     'onItemsChange': function(response, page){
       if ($('#event-data-list li').length > 0) {

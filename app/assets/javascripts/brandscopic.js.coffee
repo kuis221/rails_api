@@ -120,6 +120,15 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
+	$(document).on 'click', '.xlsx-download-link', () ->
+		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
+		$.ajax url, {
+			method: "GET"
+			dataType: "script"
+		}
+		false
+
+
 	$('[data-sparkline]').each (index, elm) ->
 		$elm = $(elm)
 		values = $elm.data('values').split(",")

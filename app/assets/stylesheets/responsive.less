@@ -8,6 +8,16 @@
 	#main-container {
 		padding: 0;
 		#resource-close-details {
+			a.close-details {
+				padding: 0;
+			}
+			.details-bar-pull-left {
+				padding: 10px 30px 7px 16px;
+			}
+			.close {
+				margin-right: -15px;
+				margin-top: 10px;
+			}
 			&.affix {
 				left: 10px;
 			}
@@ -82,11 +92,11 @@
 	}
 
 	#application-content {
-		&>.main {
+		.main {
 			margin-right: 0;
 		}
 
-		&>#resource-filter-column {
+		#resource-filter-column {
 			position: absolute;
 			right: 0;
 			background-color: #c0c0c0;
@@ -99,6 +109,7 @@
 				padding: 0;
 				&>* {
 					visibility: hidden;
+					display: none;
 				}
 
 			}
@@ -110,12 +121,13 @@
 				box-shadow: -5px 0px 5px 0px rgba(236, 236, 236, .5);
 				&>* {
 					visibility: visible;
+					display: block;
 				}
 			}
 		}
 	}
 	.list-filter-btn {
-		display: inline-block;
+		display: inline-block !important;
 		position: absolute;
 		left: -30px;
 		top: 50px;
@@ -230,12 +242,17 @@
 				&:after {
 					font-size: 16px;
 					margin-left: 8px;
+					content: "";
+					display: none;
 				}
 			}
 			.preview:after {
 				font-size: 20px;
 				margin-right: 0px;
 			}
+		}
+		span.address {
+			width: 58%;
 		}
 	}
 
@@ -376,6 +393,7 @@
 			}
 			.tasks-date {
 				margin-left: 10px !important;
+				width: 100% !important;
 			}
 			.links {
 				margin: 0px;
@@ -383,9 +401,11 @@
 					display: block;
 					height: auto;
 					&.load-comments-link, &.edit, &.disable {
+						display: none;
 						&:after {
 							margin-left: 0px;
 							top: 0px;
+							content: '';
 						}
 					}
 				}
@@ -467,7 +487,7 @@
 		padding: 5px 0 0 5px;
 		font-size: 13px;
 		.filter-label {
-			padding-right: 20px;
+			padding-right: 25px;
 		}
 		.close  {
 			right: 20px;
@@ -584,9 +604,24 @@
 			}
 		}
 
-		.task-list {
-			span.last{
-				margin-left: 58px;
+		ul#tasks-list li {
+			.task-list {
+				span.last{
+					margin-left: 58px;
+					.tasks-date {
+						width: 100%;
+					}
+				}
+				span.title {
+					width: 50% !important;
+				}
+			}
+		}
+
+		ul#tasks-list li span.task-list > span:first-child {
+			margin-right: 10px;
+			label.checkbox {
+				padding-left: 10px;
 			}
 		}
 	}
