@@ -20,6 +20,8 @@ class Survey < ActiveRecord::Base
 
   delegate :company_id, to: :event
 
+  after_save :reindex_event
+
   def brands
     event.campaign.survey_brands
   end
@@ -54,4 +56,13 @@ class Survey < ActiveRecord::Base
       surveys_answers.select{|a| a.question_id == question_id && a.kpi_id == kpi_id}.first || surveys_answers.build({question_id: question_id, kpi_id: kpi_id}, without_protection: true)
     end
   end
+
+  protected
+
+    def reindex_event
+      # if this is the first survey for the event, then reindex it to set the flag "has_surveys" true
+      if event.present? && event.surveys.count == 1
+        Sunspot.index event
+      end
+    end
 end

@@ -5,8 +5,9 @@ class SurveysController < FilteredController
 
   include DeactivableHelper
 
+
   protected
     def permitted_params
-      params.permit(survey: [:surveys_answers_attributes])[:survey]
+      params.permit(survey: {surveys_answers_attributes: [:id, :brand_id, :question_id, :answer, :kpi_id]})[:survey]
     end
 end

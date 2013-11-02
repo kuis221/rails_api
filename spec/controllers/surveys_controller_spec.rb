@@ -31,12 +31,16 @@ describe SurveysController do
     it "should not render form_dialog if no errors" do
       brand1 = FactoryGirl.create(:brand)
       brand2 = FactoryGirl.create(:brand)
+
+      age_answer = Kpi.age.kpis_segments.sample
+      gender_answer = Kpi.gender.kpis_segments.sample
+      ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
       lambda {
         post 'create', event_id: event.to_param, survey: {
           "surveys_answers_attributes"=>{
-            "0"=>{"kpi_id"=>Kpi.gender.id, "question_id"=>"1", "answer"=>Kpi.gender.kpis_segments.sample.id},
-            "1"=>{"kpi_id"=>Kpi.age.id, "question_id"=>"1", "answer"=>Kpi.age.kpis_segments.sample.id},
-            "2"=>{"kpi_id"=>Kpi.ethnicity.id, "question_id"=>"1", "answer"=>Kpi.ethnicity.kpis_segments.sample.id},
+            "0"=>{"kpi_id"=>Kpi.gender.id, "question_id"=>"1", "answer"=>gender_answer.id},
+            "1"=>{"kpi_id"=>Kpi.age.id, "question_id"=>"1", "answer"=>age_answer.id},
+            "2"=>{"kpi_id"=>Kpi.ethnicity.id, "question_id"=>"1", "answer"=>ethnicity_answer.id},
             "3"=>{"brand_id"=>brand1.to_param, "question_id"=>"1", "answer"=>"aware"},
             "4"=>{"brand_id"=>brand2.to_param, "question_id"=>"1", "answer"=>"aware"},
             "5"=>{"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>""},
@@ -48,12 +52,38 @@ describe SurveysController do
           },
         }, format: :js
       }.should change(Survey, :count).by(1)
+
+      survey = Survey.last
+      survey.age.should == age_answer.text
+      survey.gender.should == gender_answer.text
+      survey.ethnicity.should == ethnicity_answer.text
       response.should be_success
       response.should render_template(:create)
       response.should_not render_template(:form_dialog)
 
       survey = Survey.last
       survey.event_id.should == event.id
+    end
+  end
+
+  describe "PUT 'update'" do
+    let(:survey){ FactoryGirl.create(:survey, event: event) }
+
+    it "should correcly update the attribtes" do
+      age_answer = Kpi.age.kpis_segments.sample
+      gender_answer = Kpi.gender.kpis_segments.sample
+      ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
+      put 'update', event_id: event.to_param, id: survey.id, survey: {
+        "surveys_answers_attributes"=>{
+          "0"=>{"kpi_id"=>Kpi.gender.id, "question_id"=>"1", "answer"=>gender_answer.id},
+          "1"=>{"kpi_id"=>Kpi.age.id, "question_id"=>"1", "answer"=>age_answer.id},
+          "2"=>{"kpi_id"=>Kpi.ethnicity.id, "question_id"=>"1", "answer"=>ethnicity_answer.id}
+        },
+      }, format: :js
+
+      survey.age.should == age_answer.text
+      survey.gender.should == gender_answer.text
+      survey.ethnicity.should == ethnicity_answer.text
     end
   end
 

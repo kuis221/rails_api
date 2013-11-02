@@ -101,11 +101,11 @@ describe CompanyUsersController do
         @user.encrypted_password.should_not == old_password
       end
 
-      it "user have to enter the phone number, country/state, city, street address, unit number and zip code information when editing his profifle" do
+      it "user have to enter the phone number, country/state, city, street address and zip code information when editing his profile" do
         old_password = @user.encrypted_password
         controller.should_receive(:can?).twice.with(:super_update, @company_user).and_return false
         controller.should_receive(:can?).any_number_of_times.and_return true
-        put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', unit_number: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
+        put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         response.should be_success
         assigns(:company_user).errors.count.should > 0
         assigns(:company_user).errors['user.phone_number'].should == ["can't be blank"]
@@ -113,7 +113,6 @@ describe CompanyUsersController do
         assigns(:company_user).errors['user.state'].should == ["can't be blank"]
         assigns(:company_user).errors['user.city'].should == ["can't be blank"]
         assigns(:company_user).errors['user.street_address'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.unit_number'].should == ["can't be blank"]
         assigns(:company_user).errors['user.zip_code'].should == ["can't be blank"]
       end
 

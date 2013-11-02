@@ -349,12 +349,6 @@ describe Event do
       VenueIndexer.should have_queued(event.venue.id)
     end
 
-    it "should not queue a job to reindex the venue if the place_id nor the event data have changed" do
-      event.reload
-      event.start_at = event.start_at - 1.hour
-      event.save
-      VenueIndexer.should_not have_queued(event.venue.id)
-    end
   end
 
 
