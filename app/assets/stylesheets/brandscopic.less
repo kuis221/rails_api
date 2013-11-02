@@ -2637,7 +2637,7 @@ body.dashboard.index {
 }
 
 
-body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
+body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show, body.areas.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		margin: 0 -12% 0 0;
@@ -2654,7 +2654,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 			}
 		}
 	}
-	.team-member, .team, .brand {
+	.team-member, .team, .brand, .area-place {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
@@ -5571,24 +5571,6 @@ table td.sub-level-1 {
 
 		.ui-state-focus {
 			background-color: #989898 !important;
-		}
-	}
-}
-
-
-body.areas.show .area-place {
-	font-size: 11px;
-	padding: 0 0 0 32px;
-	margin: 0 10% 30px 0;
-	height: 70px;
-
-	a.remove-area-btn {
-		display: none;
-	}
-
-	&:hover {
-		a.remove-area-btn {
-			display: inline;
 		}
 	}
 }
