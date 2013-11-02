@@ -1094,16 +1094,25 @@ li.dropdown a{
 	.navbar-inner {
 		border-bottom: 0;
 	}
-	.nav .dropdown-toggle:hover,
-	.nav .dropdown-toggle:focus,
-	.nav .single-link:hover,
-	.nav .single-link:focus {
-		background-color: @menu;
-		border-radius: 0;
-		color: @user_menu;
-		height: 19px;
-		margin-top:0;
-		padding-top: 14px;
+	.nav {
+		margin: 0;
+		li>a{
+			color: @user_menu;
+			padding-left: 12px;
+			padding-right: 12px;
+		}
+		li.dropdown.open>.dropdown-toggle,
+		.dropdown-toggle:hover,
+		.dropdown-toggle:focus,
+		.single-link:hover,
+		.single-link:focus {
+			background-color: @menu;
+			border-radius: 0;
+			color: @user_menu;
+			height: 19px;
+			margin-top:0;
+			padding-top: 14px;
+		}
 	}
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
