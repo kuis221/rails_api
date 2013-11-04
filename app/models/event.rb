@@ -76,6 +76,10 @@ class Event < ActiveRecord::Base
   validates :start_at, presence: true
   validates :end_at, presence: true
 
+  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  validates :start_date, format: { with: DATE_FORMAT, message: 'DD/MM/YYYY' }
+  validates :end_date, format: { with: DATE_FORMAT, message: 'DD/MM/YYYY' }
+
   validate :event_place_valid?
 
   validates_datetime :start_at
