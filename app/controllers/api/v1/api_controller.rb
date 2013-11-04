@@ -7,6 +7,8 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
+  before_filter :set_user
+
   protected
     def current_company
       @current_company ||= current_company_user.company
@@ -73,6 +75,11 @@ class Api::V1::ApiController < ActionController::Base
                            :data => {} }.to_xml(root: 'response')
         }
       end
+    end
+
+    def set_user
+      User.current = current_user
+      User.current.current_company = current_company if params.has_key?(:company_id)
     end
 end
 
