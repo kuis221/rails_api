@@ -7,14 +7,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
     param :auth_token, String, required: true
-    param :company_id, :number, required: true
+    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the "
     description <<-EOS
 
     EOS
   end
 
   def_param_group :event do
-    param :event, Hash, :action_aware => true do
+    param :event, Hash, required: true, :action_aware => true do
       param :campaign_id, :number, required: true, desc: "Campaign ID"
       param :start_date, String, required: true, desc: "Event's start date"
       param :end_date, String, required: true, desc: "Event's end date"
@@ -25,7 +25,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events'
+  api :GET, '/api/v1/events', "Search for a list of events"
   param :campaign, Array, :desc => "A list of campaign ids to filter the results"
   param :place, Array, :desc => "A list of places to filter the results"
   param :area, Array, :desc => "A list of areas to filter the results"
@@ -34,6 +34,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
   param :event_status, ['Unsent', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
   param :page, :number, :desc => "The number of the page, Default: 1"
+  see "users#companies", "User companies"
+
   description <<-EOS
     Returns a list of events filtered by the given params. The results are returned on groups of 30 per request. To obtain the next 30 results provide the <page> param.
 
@@ -74,7 +76,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     collection
   end
 
-  api :GET, '/api/v1/events/:id'
+  api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
   def show
     if resource.present?
@@ -82,7 +84,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :POST, '/api/v1/events'
+  api :POST, '/api/v1/events', 'Cratea a new event'
   param_group :event
   def create
     create! do |success, failure|
@@ -93,17 +95,24 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :PUT, '/api/v1/events/:id'
+  api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
   param_group :event
   def update(active = nil)
     self.active = active unless active.nil?
     update! do |success, failure|
       success.json { render :show }
-      success.xml { render :show }
+      success.xml  { render :show }
       failure.json { render json: resource.errors, status: :unprocessable_entity }
-      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
+  end
+
+  api :GET, '/api/v1/events/:id', 'Get the list of results for the events'
+  param :id, :number, required: true, desc: "Event ID"
+  def results
+    @results = resource.results_for(resource.campaign.form_fields)
+    @results.each{|r| r.save(validate: false) if r.new_record? }
   end
 
   protected

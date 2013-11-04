@@ -13,7 +13,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     EOS
   end
 
-  api :POST, '/api/v1/users/new_password'
+  api :POST, '/api/v1/users/new_password', 'Request a new password for a user'
   param :email, String, required: true, desc: "User's email"
   def new_password
     resource = User.send_reset_password_instructions(params)
@@ -25,6 +25,39 @@ class Api::V1::UsersController < Api::V1::ApiController
                         :data => {} }
     else
       failure
+    end
+  end
+
+  api :GET, '/api/v1/companies', "Get a list of companies the user has access to"
+  param :auth_token, String, required: true
+  example <<-EOS
+    GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+
+    [
+        {
+            "name": "Brandscopic",
+            "id": 1
+        },
+        {
+            "name": "Legacy Marketing Partners",
+            "id": 2
+        }
+    ]
+  EOS
+
+  def companies
+    if current_user.present?
+      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      respond_to do |format|
+        format.json {
+          render :status => 401,
+                 :json => companies
+        }
+        format.xml {
+          render :status => 401,
+                 :xml => companies.to_xml(root: 'companies')
+        }
+      end
     end
   end
 

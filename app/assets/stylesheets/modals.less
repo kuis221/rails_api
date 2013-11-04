@@ -1,5 +1,6 @@
 /*-- COLOR PALETTE --*/
 @app_bg: #ececec;
+@approved:#90bf43;
 @assigned: #d6d64b;
 @borders: #d3d3d3;
 @brand:#989898;
@@ -41,7 +42,7 @@ ul.select2-results{
 		width: 460px;
 		&.eventexpense_modal{
 			width: 660px;
-			.pull-left, .pull-right{
+			.expense-info-form, .expense-file-form{
 				width: 50%;
 				.control-group{
 					display:block;
@@ -77,6 +78,14 @@ ul.select2-results{
 						width: 40px;
 					}
 				}
+			}
+			.expense-info-form {
+				position: relative;
+			}
+			.expense-file-form {
+				position: absolute;
+				right: -50%;
+				top: 0;
 			}
 			.form-actions{
 				clear: both;
@@ -192,6 +201,20 @@ ul.select2-results{
 	&.modal-large{
 		min-width: 620px;
 		.modal-body{
+			.contacts-modals{
+				a.btn.btn-primary{
+					margin-right: 10px;
+				}
+				#select-contacts-table-wrapper{
+					.divider{
+						margin-top: 30px;
+					}
+					p{
+						margin-bottom: 0;
+					}
+				}
+			}
+
 			.control-group{
 				label{
 					display: inline-block;
@@ -266,10 +289,10 @@ ul.select2-results{
 			.edit-event{
 				.chzn-container-single
 					.chzn-single{
-						width: 545px !important;
+						width: 545px;
 					}
 					.chzn-drop{
-						width: 555px !important;
+						width: 555px;
 					}
 			}
 			.users-teams-roles{
@@ -585,6 +608,11 @@ ul.select2-results{
 				}
 			}
 		}
+		/*a.a-desk-widget.a-desk-widget-chat{
+			background-color: @approved !important;
+			height: 34px;
+			width: 125px !important;
+		}*/
 		.help-item{
 			display: block;
 			float: left;
@@ -685,7 +713,6 @@ ul.select2-results{
 		}
 		.control-group{
 			display: inline-block;
-			margin-right: 17px;
 			width: 120px;
 			label{
 				margin-bottom: 2px;
@@ -693,6 +720,10 @@ ul.select2-results{
 			&.location, &.password {
 				width: auto;
 			}
+		}
+		.control-group.event_start_date, 
+		.control-group.event_end_date {
+			margin-right: 17px;
 		}
 		.controls{
 			input[type="text"]{
@@ -1023,6 +1054,9 @@ ul.select2-results{
 	}
 }
 
+
+
+
 .ui-datepicker-calendar{
 	.ui-datepicker-other-month{
 		.ui-state-default, .ui-widget-content .ui-state-default{
@@ -1143,4 +1177,13 @@ div#spin{
 }
 
 
+// HELP - CHAT SUPPORT CENTER
+
+.fancybox-wrap.fancybox-type-iframe{
+	width: 550px !important;
+	.fancybox-inner{
+		height: 349px !important;
+		width: 520px !important;
+	}
+}
 

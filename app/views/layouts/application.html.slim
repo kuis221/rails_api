@@ -29,30 +29,33 @@ head
 
 body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
 
-  header class="navbar-fixed-top"
-    .row-fluid
-      .pull-left
+  header class="navbar navbar-inverse navbar-fixed-top"
+    .navbar-inner
+      .container
+        .pull-left
           h1#company-name= user_company_dropdown(current_user)
-      .pull-right
-        - if user_signed_in?
-          #top-admin-home-navigation.pull-right
-            = render_navigation context: :top, expand_all: true, nav_class: 'nav-pills'
+        .pull-right
+          #mobile-main-nav-bar-btn.btn.btn-navbar data-toggle="collapse" data-target=".main-nav-collapse"
+            span class="icon-bar"
+            span class="icon-bar"
+            span class="icon-bar"
+        #top-admin-home-navigation.pull-right
+          = render_navigation context: :top, expand_all: true, nav_class: 'nav-pills'
+
+      .nav-collapse.collapse.main-nav-collapse
+        = render_navigation renderer: :bootstrap, nav_class: 'nav-pills'
 
   .container-fluid
     .row-fluid
-      .menu
-        = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
+      .nav-collapse.collapse
+        .menu
+          = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
       = yield :alerts
       = render 'layouts/messages'
-      .container
-            .tab-content
-              .tab-pane.active
-                .row-fluid
-                  .span12
-                    #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
-
-
-                      = yield
+      #main-container.container
+        .tab-content
+          #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
+            = yield
 
   span class="totop pull-right"
     a href="#" Top

@@ -81,60 +81,68 @@ body.events.show ul.consumer-reach-metrics li .metric{
 	white-space: nowrap;
 }
 
-#analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
-  	display: block;
-  	font-family: 'icons';
-	font-size: 27px;
-	left:2px;
-	padding-bottom:5px;
-  	position: relative;
-	speak: none;
-	text-align: center;
-	top:-3px;
-  	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
+.navbar-fixed-top {
+	.container {
+		width: 100%;
+	}
 }
 
-#analysis a:before{
-	content: "\e00e";
-}
-#dashboard a:before {
-	content: "\e00c";
-}
-#events a:before{
-	content: "\e00a";
-	left: 3px;
-}
-#tasks a:before {
-	content: "\e015";
-}
-#venues a:before {
-	content: "\e018";
-}
-#results a:before {
-	content: "\e014";
-}
-#analysis, #dashboard, #events, #tasks, #venues, #results {
-	a:hover{
-	background-color: @text;
-	color:@user_menu;
+ul.nav {
+	#analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
+		display: block;
+		font-family: 'icons';
+		font-size: 27px;
+		left:2px;
+		padding-bottom:5px;
+		position: relative;
+		speak: none;
+		text-align: center;
+		top:-3px;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
 	}
-	a.active:hover{
-		background-color: @app_bg;
-		color:@grey_three;
-		&:before{
+
+	#analysis a:before{
+		content: "\e00e";
+	}
+	#dashboard a:before {
+		content: "\e00c";
+	}
+	#events a:before{
+		content: "\e00a";
+		left: 3px;
+	}
+	#tasks a:before {
+		content: "\e015";
+	}
+	#venues a:before {
+		content: "\e018";
+	}
+	#results a:before {
+		content: "\e014";
+	}
+	#analysis, #dashboard, #events, #tasks, #venues, #results {
+		a:hover{
+		background-color: @text;
+		color:@user_menu;
+		}
+		a.active:hover{
+			background-color: @app_bg;
+			color:@grey_three;
+			&:before{
+				color:@grey_three;
+			}
+		}
+		a:hover:before{
+			color: @user_menu;
+		}
+		a:active{
+			background-color: @app_bg;
 			color:@grey_three;
 		}
-	}
-	a:hover:before{
-		color: @user_menu;
-	}
-	a:active{
-		background-color: @app_bg;
-		color:@grey_three;
-	}
-	a:active:before{
-		color:@grey_three;
+		a:active:before{
+			color:@grey_three;
+		}
 	}
 }
 
@@ -325,7 +333,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-shadow: none;
 	color: white;
 	font-size: 16px;
-	height: 37px;
+	min-height: 37px;
 	line-height: 23px;
 	margin:0 10px 0 90px;
 	padding: 13px 0 0 21px;
@@ -685,69 +693,6 @@ body.app-layout{
 		-webkit-font-smoothing: antialiased;
 	}
 }
-#calendar-canvas {
-	margin-top: 10px;
-
-	.calendar-day{
-		&.expanded{
-			.daytitle{
-				display: block;
-				font-size: 13px;
-				margin-bottom: 5px;
-			}		
-		}
-	}
-
-	.calendar-table th{
-		padding: 5px 0 5px 10px;
-	}
-
-	a{
-		&.cal-day-link, &.cal-day-link:hover{
-			color: @brand;
-			margin: 0 5px 5px;
-		}
-		&.icon-angle-right:before, &.icon-angle-right:before{
-			left: 10px;
-		}
-	}
-
-	.calendar-day-events-container{
-		color: @brand;
-		font-size: 11px;
-		line-height: 17px;
-		height: 100px;
-		.calendar-event-name{
-			display: block;
-			margin-left: 15px;
-			margin-top: -19px;
-			a, a:hover{
-				color: @brand;
-			}
-		}
-		.daytitle{
-			display: none;
-		}
-	}
-
-	.calendar-view-more{
-		a, a:hover{
-			color: @user_menu;
-			font-size: 11px;
-			margin: 0px 0px 5px 5px;
-			text-decoration: none;
-		}
-	}
-
-	.fc-day-header {
-		background-color: @grey_three !important;
-		color: #fff;
-	}
-
-	.fc-day-content {
-		height: 90px;
-	}
-}
 
 .btn-small {
 	padding: 2px 10px;
@@ -816,6 +761,12 @@ body.app-layout{
 	}
 	&:hover{
 		background-color: @brand !important;
+	}
+}
+
+#flash_error{
+	li{
+		list-style-type: none;
 	}
 }
 
@@ -1074,8 +1025,22 @@ footer{
 	}
 }
 header{
-	background-color: @header;
-	height: 41px;
+	&.navbar-inverse {
+		.navbar-inner {
+			background-color: @header;
+			padding: 0;
+			background-image: none;
+		}
+		.nav-pills>li>a {
+			padding-top: 12px;
+			margin-right: 8px;
+		}
+
+		.nav li#notifications ul li a {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 }
 
 h1, h2, h3{
@@ -1130,16 +1095,46 @@ li.dropdown a{
 	margin-right: 6px;
 }
 
-.nav .dropdown-toggle:hover,
-.nav .dropdown-toggle:focus,
-.nav .single-link:hover,
-.nav .single-link:focus {
-	background-color: @menu;
-	border-radius: 0;
-	color: @user_menu;
-	height: 19px;
-	margin-top:0;
-	padding-top: 14px;
+.navbar-inverse {
+	.navbar-inner {
+		border-bottom: 0;
+	}
+	.nav {
+		margin: 0;
+		li>a{
+			color: @user_menu;
+			padding-left: 12px;
+			padding-right: 12px;
+		}
+		li.dropdown.open>.dropdown-toggle,
+		li.dropdown.active>.dropdown-toggle,
+		li.dropdown.open.active>.dropdown-toggle,
+		.dropdown-toggle:hover,
+		.dropdown-toggle:focus,
+		.single-link:hover,
+		.single-link:focus {
+			background-color: @menu;
+			border-radius: 0;
+			color: @user_menu;
+			height: 19px;
+			margin-top:0;
+			padding-top: 14px;
+		}
+		.dropdown-menu>li>a:hover, 
+		.dropdown-menu>li>a:focus,
+		.active ul li.active a,
+		.dropdown-submenu:hover>a, 
+		.dropdown-submenu:focus>a {
+			background-color: @header !important;
+			background-image: none;
+		}
+		.nav-pills>.active>a,
+		.nav-pills>.active>a:hover,
+		.nav-pills>.active>a:focus {
+			background-color: @menu;
+		}
+
+	}
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
 	background-color: @menu;
@@ -1236,10 +1231,7 @@ li.dropdown#user_menu{
 	-webkit-font-smoothing: antialiased;
 	}
 }
-.nav-pills>li>a {
-	padding-top: 12px;
-	margin-right: 8px;
-}
+
 .nav-stacked{
 	li a{
 		color:@grey_three;
@@ -1489,7 +1481,22 @@ li#user_menu{
 	border-left: 10px solid transparent;
 	content: '';
 }
-.container{
+.navbar .nav>li> .dropdown-menu:before{
+	position: absolute;
+	top: -8px;
+	left: 114px;
+	display: inline-block;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid @menu;
+	border-left: 10px solid transparent;
+	content: '';
+}
+.navbar .nav>li> .dropdown-menu:after{
+	border: 0;
+	display: none;
+}
+
+#main-container{
 	min-height: 300px;
 	padding: 20px 0px 10px 80px;
 	width: auto;
@@ -1574,7 +1581,6 @@ ul.kpis-list{
     margin: 14px 0 0 0;
     padding: 0;
     position: relative;
-    width:99.8%;
     address{
     	line-height: 21px;
     	margin-bottom: 0;
@@ -1727,6 +1733,7 @@ ul.kpis-list{
 			li{
 				color: @text;
 				min-height: 70px;
+				padding: 9px 0 0 15px;
 
 				.address{
 					br{
@@ -1734,29 +1741,28 @@ ul.kpis-list{
 					}
 				}
 
-				&.late > span.event-item {
+				&.late {
 					border-left: 5px solid @late;
 				}
-				&.submitted > span.event-item {
+				&.submitted {
 					border-left: 5px solid @submitted;
 				}
-				&.approved > span.event-item {
+				&.approved {
 					border-left: 5px solid @approved;
 				}
-				&.rejected > span.event-item {
+				&.rejected {
 					border-left: 5px solid @rejected;
 				}
-			}
+				}
 			span.event-item {
 				min-height: 82px;
 				width: 100%;
-				padding: 9px 0 0 15px;
 			}
 		}
 	ul#my-tasks-list{
 		li{
 			.task-list{
-				height: 63px;
+				min-height: 63px;
 				padding: 20px 0 0 0;
 				width: 100%;
 				span{
@@ -2301,6 +2307,7 @@ textarea::-webkit-input-placeholder {
 }
 
 #top-admin-home-navigation {
+	height: 43px;
 	#home.active {
 		display: none;
 	}
@@ -2536,7 +2543,8 @@ body.company_users{
 
 	#user-places{
 		.plus{
-			margin-top: 35px;
+			clear: both;
+			margin-top: 85px;
 		}
 	}
 
@@ -2615,7 +2623,7 @@ body.dashboard.index {
 	}
 
 	p{
-		width: 340px;
+		max-width: 340px;
 		&.help-block {
 			width: auto;
 		}
@@ -2635,17 +2643,24 @@ body.dashboard.index {
 }
 
 
-body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
+body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show, body.areas.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
+		font-size: 16px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
-    	height: 40px;
+		.pull-left{
+			width: 90%;
+			.place-address{
+				font-size: 11px;
+				margin-top: 5px;
+			}
+		}
 	}
-	.team-member, .team, .brand {
+	.team-member, .team, .brand, .area-place {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
@@ -3141,41 +3156,38 @@ ul.thumbnails{
 }
 
 // Photo list for venues an details boxes
-
-.dashboard, .events, .photos, .venues {
-	#event-photos{
-		span.btn-primary{
-			margin-bottom: 20px;
-		}
+#event-photos{
+	span.btn-primary{
+		margin-bottom: 20px;
 	}
-	#list-tools {
-		.download-photos-counter {
-	    left: auto;
-	    position: absolute;
-	    right: 252px;
-	    top: 152px;
-		}
+}
+#list-tools {
+	.download-photos-counter {
+		left: auto;
+		position: absolute;
+		right: 252px;
+		top: 152px;
 	}
-	.photo-list{
-		margin: 40px 0 0 0;
-		ul.thumbnails{
-			margin: 0 -5% 0 -1%;
-			overflow: hidden;
-			&>li{
-				margin: 0 3% 6% 2%;
-				&:first-child{
-					margin: 0 3% 6% 3%;
-				}
+}
+.photo-list{
+	margin: 40px 0 0 0;
+	ul.thumbnails{
+		margin: 0 -5% 0 -1%;
+		overflow: hidden;
+		&>li{
+			margin: 0 3% 6% 2%;
+			&:first-child{
+				margin: 0 3% 6% 3%;
 			}
 		}
 	}
-	.large-photo-list{
-		margin: 40px 0 0 0;
-		ul{
-			margin: 0 -7% -2% -2%;
-			overflow: auto;
-		}
-		li{
+}
+.large-photo-list{
+	margin: 40px 0 0 0;
+	ul{
+		margin: 0 -7% -2% -2%;
+		overflow: auto;
+		&.thumbnails li{
 			margin: 0 2% 6% 2%;
 			&:first-child{
 				margin: 0 2% 6% 2%;
@@ -3183,19 +3195,28 @@ ul.thumbnails{
 		}
 	}
 }
-	ul{
-		&.thumbnails{
-			li{
-				&.span2{
-					display:inline-block;
-					width:180px;
-				}
+ul{
+	&.thumbnails{
+		li{
+			&.span2{
+				display:inline-block;
+				width:180px;
 			}
 		}
 	}
+}
 
 // Photo list - Fancybox styles
+
+	.fancybox-inner{
+		height: 400px;
+	}
+
+
 .fancybox-wrap {
+	.fancybox-skin{
+		background-color: white;
+	}
 	.fancybox-title {
 		font-family: @baseFontFamily;
 		position: absolute;
@@ -3444,15 +3465,14 @@ body.roles{
 
 	#venue-score-narrative{
 		margin-top:30px;
-		width:380px;
+		max-width:380px;
 	}
 	#venue-trends-by-day-narrative{
-		width:380px;
+		max-width:380px;
 	}
 
 	.venue-review{
 		margin-top: 20px;
-		width: 50%;
 		i{
 			font-size: 16px;
 			&.icon-star{
@@ -3473,7 +3493,7 @@ body.roles{
 		}
 		.review-text{
 			font-size: 13px;
-			width: 410px;
+			max-width: 410px;
 		}
 	}
 
@@ -3516,6 +3536,7 @@ body.roles{
 		.add-area-venue {
 			font-size: 20px;
 			text-decoration: none;
+			display: inline-block;
 		}
 
 		.area {
@@ -3553,7 +3574,7 @@ body.roles{
 
 		#overall-age-graph {
 			height: 300px;
-			width: 480px;
+			max-width: 480px;
 			.highcharts-axis-labels{
 				text{
 					font-family: @baseFontFamily !important;
@@ -3869,6 +3890,17 @@ body.roles{
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
 		}
+	}
+}
+
+.list-filter-btn {
+	color: #fff;
+	padding: 7px 17px;
+	line-height: 21px;
+	margin-left: 5px;
+	display: none;
+	&:hover {
+		color: #fff;
 	}
 }
 
@@ -4576,10 +4608,19 @@ body.campaigns{
 		&.icon-plus-sign:before{
 			content: "\e021";
 			color: @brand;
-			display: block;
+			display: inline-block;
 			font-family: 'icons';
 			font-size: 21px;
 			margin: 15px 0 0 30px;
+		}
+		&.icon-calendar:before{
+			content: "\e031";
+			color: @brand;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 17px;
+			margin: 0 5px 0;
+			bottom: 3px;
 		}
 	}
 	&#event-tasks{
@@ -4799,6 +4840,14 @@ a, i{
 		font-size: 20px;
 		position: relative;
 	}
+	&.icon-calendar:before{
+		color: @brand;
+		content: "\e031";
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 17px;
+		position: relative;
+	}
 	&.icon-remove-circle:before, &.icon-remove-sign:before{
 		color: @brand;
 		content: "\e011";
@@ -4991,7 +5040,8 @@ a, i{
 		.chart-bar {
 			position: relative;
 			display: inline-block;
-			width: 300px;
+			width: 70%;
+			max-width: 300px;
 			.progress {
 				width: auto !important;
 				height: 25px;
@@ -5511,8 +5561,13 @@ table td.sub-level-1 {
 	z-index: 9999;
 }
 
+#mobile-main-nav-bar-btn {
+	margin-top: 8px;
+}
 
-.event_place_reference .ui-autocomplete {
+
+.event_place_reference .ui-autocomplete,
+.place_reference .ui-autocomplete {
 	background-color: #fff !important;
 	border: 1px solid #ccc;
 

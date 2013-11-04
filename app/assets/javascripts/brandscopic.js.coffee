@@ -120,6 +120,15 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
+	$(document).on 'click', '.xlsx-download-link', () ->
+		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
+		$.ajax url, {
+			method: "GET"
+			dataType: "script"
+		}
+		false
+
+
 	$('[data-sparkline]').each (index, elm) ->
 		$elm = $(elm)
 		values = $elm.data('values').split(",")
@@ -144,7 +153,6 @@ jQuery ->
 
 	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->
 		$this = $(this)
-
 
 
 		id = $this.data('id')
@@ -311,36 +319,56 @@ jQuery ->
 
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
+		$filterSidebar.originalWidth = $filterSidebar.width();
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
-			if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
-				return true
-			$filterSidebar.positioning = true
-			sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
-			bottomPosition = $window.scrollTop()+$window.height()
-			footerHeight = $('footer').outerHeight()
+			if $window.width() >= 979 # For the responsive design
+				$filterSidebar.removeClass('responsive-mode')
+				if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
+					return true
+				$filterSidebar.positioning = true
+				sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
+				bottomPosition = $window.scrollTop()+$window.height()
+				footerHeight = $('footer').outerHeight()
 
-			if sidebarBottom < $window.height()
-				$filterSidebar.css({
-					position: 'fixed',
-					top: "#{$filterSidebar.originalTop}px",
-					right: "10px",
-					bottom: 'auto'
-				})
-			else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
-				$filterSidebar.css({
-					position: 'fixed',
-					bottom: footerHeight+"px",
-					top: 'auto',
-					right: "10px"
-				})
-			else
-				$filterSidebar.css({
-					position: 'static'
-				})
-			$filterSidebar.positioning = false
-			true
+				if sidebarBottom < $window.height()
+					$filterSidebar.css({
+						position: 'fixed',
+						top: "#{$filterSidebar.originalTop}px",
+						right: "10px",
+						bottom: 'auto'
+					})
+				else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
+					$filterSidebar.css({
+						position: 'fixed',
+						bottom: footerHeight+"px",
+						top: 'auto',
+						right: "10px"
+					})
+				else
+					$filterSidebar.css({
+						position: 'static'
+					})
+				$filterSidebar.positioning = false
+				true
+			else # On small screens, leave it static
+				$filterSidebar.css({position: ''}).addClass('responsive-mode')
 		).trigger('scroll')
+
+	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->
+		e.preventDefault()
+		if $filterSidebar.hasClass('collapsed')
+			$filterSidebar.removeClass('collapsed').addClass('expanded').css('width','')
+			$('.list-filter-btn').css({right: $filterSidebar.outerWidth()+'px', zIndex: 9999});
+			$filterSidebar.find('.slider-range').rangeSlider('resize')
+			# $filterSidebar.animate { "width": "#{$filterSidebar.originalWidth}px" }, "slow", () ->
+			# 	$(this).removeClass('collapsed').addClass('expanded').css('width','')
+			# 	$('.list-filter-btn').css({right: $filterSidebar.outerWidth()+'px', zIndex: 9999});
+		else
+			$('.list-filter-btn').css({right: '0px', zIndex: 1});
+			# $filterSidebar.animate { "width": 0 }, "slow", () ->
+			# 	$(this).removeClass('expanded').addClass('collapsed').css('width','')
+			$filterSidebar.removeClass('expanded').addClass('collapsed').css('width','')
 
 	$('.totop a').click (e) ->
 		e.preventDefault()
@@ -369,6 +397,10 @@ jQuery ->
 	$.validator.addMethod("matchconfirmation", (value, element) ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");
+
+	$.validator.addMethod("datepicker", (value, element) ->
+		return this.optional(element) || /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/.test(value);
+	, "MM/DD/YYYY");
 
 
 	$('.google-map[data-latitude]').each (index, container) ->

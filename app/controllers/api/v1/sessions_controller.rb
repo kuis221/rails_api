@@ -14,7 +14,7 @@ class Api::V1::SessionsController < Api::V1::ApiController
   end
 
 
-  api :POST, '/api/v1/sessions'
+  api :POST, '/api/v1/sessions', 'Authenticate a user and return the authentication token'
   param :email, String, required: true, desc: "User's email"
   param :password, String, required: true, desc: "User's password"
   formats ['json', 'xml']
@@ -39,7 +39,7 @@ class Api::V1::SessionsController < Api::V1::ApiController
 
   end
 
-  api :DELETE, '/api/v1/sessions'
+  api :DELETE, '/api/v1/sessions', 'Destroy authentication token for a user'
   param :id, String, required: true, desc: "Authentication token"
   def destroy
     resource = User.find_by_authentication_token(params[:id])

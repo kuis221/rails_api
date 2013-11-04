@@ -34,7 +34,7 @@
   <div class='page-header'>
     <h1>
       DELETE /api/v1/sessions<br>
-      <small></small>
+      <small>Destroy authentication token for a user</small>
     </h1>
   </div>
 
@@ -43,8 +43,50 @@
   
 
 
+    <h2>Supported Formats</h2>
+    json, xml
 
+    <h2>Errors</h2>
+      404
+      Missing
+      <br>
+      401
+      Invalid credentials
+      <br>
+      500
+      Server crashed for some reason
+      <br>
 
+    <h2>Params</h2>
+    <table class='table'>
+      <thead>
+        <tr>
+          <th>Param name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Authentication token</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+
+      </tbody>
+    </table>
 </div>
 
 

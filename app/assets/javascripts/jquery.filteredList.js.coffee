@@ -13,7 +13,8 @@ $.widget 'nmk.filteredList', {
 		selectDefaultDate: false,
 		selectedDate: new Date(),
 		selectDefaultDateRange: false,
-		calendarHighlights: null
+		calendarHighlights: null,
+		scope: null
 	},
 
 	_create: () ->
@@ -32,6 +33,14 @@ $.widget 'nmk.filteredList', {
 
 		if @options.includeCalendars
 			@_addCalendars()
+
+		@storageScope = @options.scope
+		if not @storageScope
+			@storageScope = window.location.pathname.replace('/','_')
+
+
+		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('
+      <i class="icon-filter">')
 
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
@@ -72,6 +81,7 @@ $.widget 'nmk.filteredList', {
 				@_positionFiltersOptions()
 
 		@infiniteScroller = false
+
 
 		if @options.autoLoad
 			@_loadPage(1)
@@ -441,6 +451,7 @@ $.widget 'nmk.filteredList', {
 		data = @_serializeFilters()
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
+			@_storeFilters data
 			@_loadPage(1)
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
@@ -448,6 +459,16 @@ $.widget 'nmk.filteredList', {
 			@element.trigger('filters:changed')
 			if @options.onChange
 				@options.onChange(@)
+
+	_storeFilters: (data) ->
+		if typeof(Storage) isnt "undefined"
+			sessionStorage["filters#{@storageScope}"] = data
+
+		@
+
+	_loadStoredFilters: () ->
+		if typeof(Storage) isnt "undefined"
+			sessionStorage["filters#{@storageScope}"]
 
 	_serializeFilters: () ->
 		data = @form.serialize()
@@ -463,6 +484,9 @@ $.widget 'nmk.filteredList', {
 			for param in data
 				params.push(param)
 		params
+
+	paramsQueryString: () ->
+		@_serializeFilters()
 
 	reloadData: () ->
 		@nextpagetoken = false
@@ -529,6 +553,13 @@ $.widget 'nmk.filteredList', {
 		@_cleanSearchFilter()
 		query = window.location.search.replace(/^\?/,"")
 		if query != ''
+			if query.match(/_stored=true/)
+				query = @_loadStoredFilters()
+				if not query
+					query = ''
+				else
+					history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +query);
+
 			@defaultParams = []
 			vars = query.split('&')
 			dates = []

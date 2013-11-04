@@ -9,7 +9,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          a.btn.download.xlsx-download-link href="#{results_expenses_path(format: "xlsx")}" data-remote="remote" title="Download"
+          button.btn.download.xlsx-download-link data-url="#{results_expenses_path(format: "xlsx")}" title="Download"
       #expenses-totals
       .link-list
         ul#expenses-list
@@ -36,7 +36,6 @@ javascript:
       if (response.find('div[data-content="totals-results"]').length > 0){
         $('#expenses-totals').html(response.find('div[data-content="totals-results"]').html())
       }
-      $('.xlsx-download-link').attr('href', response.find('div[data-content="items"]').data('export-xlsx'))
     },
     'onItemsChange': function(response, page){
       if ($('#expenses-list li').length > 0) {

@@ -72,7 +72,6 @@ class User < ActiveRecord::Base
     user.validates :state,   presence: true
     user.validates :city,    presence: true
     user.validates :street_address,    presence: true
-    user.validates :unit_number,    presence: true
     user.validates :zip_code,    presence: true
     user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s }  }
     user.validates :password, presence: true, if: :should_require_password?
@@ -120,14 +119,14 @@ class User < ActiveRecord::Base
   def full_address
     address = Array.new
     city_parts = []
-    city_parts.push city unless city.nil?
-    city_parts.push state unless state.nil?
-    address.push street_address unless street_address.nil?
-    address.push unit_number unless unit_number.nil?
-    address.push city_parts.join(', ') unless city_parts.empty?
-    address.push zip_code unless zip_code.nil?
-    address.push country_name unless country_name.nil?
-    address.compact.join('<br />').html_safe
+    city_parts.push city if city.present?
+    city_parts.push state if state.present?
+    address.push street_address if street_address.present?
+    address.push unit_number if unit_number.present?
+    address.push city_parts.compact.join(', ') unless city_parts.empty?
+    address.push zip_code if zip_code.present?
+    address.push country_name if country_name.present?
+    address.compact.compact.join('<br />').html_safe
   end
 
   def country_name
