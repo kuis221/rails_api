@@ -37,9 +37,10 @@
         = resource.formatted_address
 
       - if resource.persisted?
+        .tools-icons
           = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
-          #venue-areas.row-fluid
-            = render partial: 'areas', locals: {areas: resource.place.areas}
+        #venue-areas.row-fluid
+          = render partial: 'areas', locals: {areas: resource.place.areas}
 
 - if can?(:view_score, resource) || can?(:view_kpis, resource)
   .details_box
@@ -90,7 +91,6 @@
                   = " Cost/Impression"
                   span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
 
-
     - if resource.persisted? && can?(:view_kpis, resource)
       #demographics.row-fluid
         .span6
@@ -106,6 +106,12 @@
     h3 TRENDS BY DAY OF WEEK
     #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
     #trends-day-week-graph
+
+- if can?(:view_events, resource)
+  #venue-events.details_box
+    h3 EVENTS
+    #venue-events-container
+      = render partial: 'upcoming_events'
 
 - if can?(:view_photos, resource)
   #venue-photos.details_box
