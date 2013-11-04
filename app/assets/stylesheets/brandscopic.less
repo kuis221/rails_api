@@ -1035,6 +1035,11 @@ header{
 			padding-top: 12px;
 			margin-right: 8px;
 		}
+
+		.nav li#notifications ul li a {
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 }
 
@@ -1102,6 +1107,8 @@ li.dropdown a{
 			padding-right: 12px;
 		}
 		li.dropdown.open>.dropdown-toggle,
+		li.dropdown.active>.dropdown-toggle,
+		li.dropdown.open.active>.dropdown-toggle,
 		.dropdown-toggle:hover,
 		.dropdown-toggle:focus,
 		.single-link:hover,
@@ -1113,6 +1120,20 @@ li.dropdown a{
 			margin-top:0;
 			padding-top: 14px;
 		}
+		.dropdown-menu>li>a:hover, 
+		.dropdown-menu>li>a:focus,
+		.active ul li.active a,
+		.dropdown-submenu:hover>a, 
+		.dropdown-submenu:focus>a {
+			background-color: @header !important;
+			background-image: none;
+		}
+		.nav-pills>.active>a,
+		.nav-pills>.active>a:hover,
+		.nav-pills>.active>a:focus {
+			background-color: @menu;
+		}
+
 	}
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
@@ -2622,7 +2643,7 @@ body.dashboard.index {
 }
 
 
-body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show {
+body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show, body.areas.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		margin: 0 -12% 0 0;
@@ -2639,7 +2660,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 			}
 		}
 	}
-	.team-member, .team, .brand {
+	.team-member, .team, .brand, .area-place {
 		font-size: 11px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;

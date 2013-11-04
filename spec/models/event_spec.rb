@@ -34,6 +34,15 @@ describe Event do
   it { should validate_presence_of(:start_at) }
   it { should validate_presence_of(:end_at) }
 
+  it { should allow_value("12/31/2012").for(:start_date) }
+  it { should_not allow_value("12/31/12").for(:start_date).with_message('MM/DD/YYYY') }
+
+  describe "end date validations" do
+    before { subject.start_date = '12/31/2012' }
+    it { should allow_value("12/31/2012").for(:end_date) }
+    it { should_not allow_value("12/31/12").for(:end_date).with_message('MM/DD/YYYY') }
+  end
+
   describe "event results validations" do
     it "should not allow submitting the event if the resuls are not valid" do
       campaign = FactoryGirl.create(:campaign, company_id: 1)
