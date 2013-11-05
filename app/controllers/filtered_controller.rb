@@ -176,7 +176,6 @@ class FilteredController < InheritedResources::Base
     end
 
     def build_facet_item(options)
-      Rails.logger.debug "#{options[:name]} ==> #{params[options[:name]].inspect} :: #{options[:id]}"
       options[:selected] ||= params.has_key?(options[:name]) && ((params[options[:name]].is_a?(Array) and (params[options[:name]].include?(options[:id]) || params[options[:name]].include?(options[:id].to_s))) || (params[options[:name]] == options[:id]) || (params[options[:name]] == options[:id].to_s))
       options
     end

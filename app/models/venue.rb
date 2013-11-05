@@ -62,10 +62,6 @@ class Venue < ActiveRecord::Base
       Place.location_for_index(place)
     end
 
-    string :campaigns, multiple: true do
-      campaigns.map{|c| c.id.to_s + '||' + c.name.to_s}
-    end
-
     integer :campaign_ids, multiple: true do
       campaigns.map(&:id)
     end
@@ -309,7 +305,7 @@ class Venue < ActiveRecord::Base
       if include_facets
         facet :place_id
         facet :place
-        facet :campaigns
+        facet :campaign_ids
       end
 
       order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
