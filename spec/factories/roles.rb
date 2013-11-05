@@ -7,5 +7,9 @@ FactoryGirl.define do
     company_id 1
     is_admin true
     active true
+
+    factory :non_admin_role do
+      is_admin false
+    end
   end
 end
