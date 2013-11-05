@@ -154,7 +154,8 @@ class Campaign < ActiveRecord::Base
     accessible_locations = (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
     (areas.empty? && places.empty?) ||
     Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
-    places.map(&:id).include?(place.id)
+    places.map(&:id).include?(place.id) ||
+    areas.map(&:place_ids).flatten.include?(place.id)
   end
 
   def brands_list=(list)
