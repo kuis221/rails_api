@@ -382,7 +382,7 @@ describe Event do
     end
   end
 
-  describe "place_reference=" do
+  describe "#place_reference=" do
     it "should not fail if nill" do
       event = FactoryGirl.build(:event, place: nil)
       event.place_reference = nil
@@ -410,8 +410,30 @@ describe Event do
     end
   end
 
+  describe "#place_reference" do
+    it "should return the place id if the place is already stored on the DB" do
+      place = FactoryGirl.create(:place)
+      event = FactoryGirl.build(:event, place: place)
 
-  describe "demographics_graph_data" do
+      event.place_reference.should == place.id
+    end
+
+    it "should return the combination of reference and place_id if it's not stored place" do
+      place = FactoryGirl.build(:place, reference: ':the_reference', place_id: ':the_place_id')
+      event = FactoryGirl.build(:event, place: place)
+
+      event.place_reference.should == ':the_reference||:the_place_id'
+    end
+
+    it "should return nil if the event has no place associated" do
+      event = FactoryGirl.build(:event, place: nil)
+
+      event.place_reference.should be_nil
+    end
+  end
+
+
+  describe "#demographics_graph_data" do
     let(:event) { FactoryGirl.create(:event, company_id: 1, campaign: FactoryGirl.create(:campaign, company_id: 1)) }
     it "should return the correct results" do
       Kpi.create_global_kpis
