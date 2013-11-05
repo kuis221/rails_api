@@ -89,7 +89,8 @@ describe Api::V1::EventsController do
   end
 
   describe "PUT 'update'" do
-    let(:event){ FactoryGirl.create(:event, company: company) }
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
+    let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
     it "must update the event attributes" do
       place = FactoryGirl.create(:place)
       put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
@@ -116,6 +117,54 @@ describe Api::V1::EventsController do
       put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, partial: 'event_data', event: {campaign_id: FactoryGirl.create(:campaign, company: @company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       assigns(:event).should == event
       response.should be_success
+    end
+
+    it 'must update the event results' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      result = event.result_for_kpi(Kpi.impressions)
+      result.value = 321
+      event.save
+
+      put 'update',  auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id, value: '987'}]}
+      result.reload
+      result.value.should == '987'
+    end
+  end
+
+  describe "GET 'results'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
+    let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
+
+    it "should return an empty array if the campaign doesn't have any fields" do
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+      fields = JSON.parse(response.body)
+      response.should be_success
+      fields.should == []
+    end
+
+    it "should return an empty array if the campaign doesn't have any fields" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+      fields = JSON.parse(response.body)
+      response.should be_success
+      fields.count.should > 0
+      fields.first.keys.should == ["id", "value", "name", "group", "ordering", "field_type", "options"]
+      values = fields.map{|f| f['value']}
+      values.uniq.should == [nil]
+    end
+
+    it "should return the stored values within the fields" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      event.result_for_kpi(Kpi.impressions).value = 321
+      event.save
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+      fields = JSON.parse(response.body)
+      response.should be_success
+      result = fields.detect{|f| f['name'] == Kpi.impressions.name}
+      result['value'].should == '321'
     end
   end
 end

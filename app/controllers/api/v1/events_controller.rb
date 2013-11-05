@@ -22,6 +22,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_time, String, required: true, desc: "Event's end time"
       param :place_reference, :number, required: false, desc: "Event's place ID"
       param :active, String, desc: "Event's status"
+      param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
     end
   end
 
@@ -108,10 +109,168 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events/:id', 'Get the list of results for the events'
+  api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
+  description <<-EOS
+  Returns a list of form fields based on the event's campaign.
+  EOS
+  example  <<-EOS
+    [
+        {
+            "id": 80,
+            "value": "5",
+            "name": "Impressions",
+            "group": null,
+            "ordering": 2,
+            "field_type": "number",
+            "options": {
+                "capture_mechanism": "integer",
+                "predefined_value": "",
+                "required": "true"
+            }
+        },
+        {
+            "id": 82,
+            "value": "45",
+            "name": "Interactions",
+            "group": null,
+            "ordering": 3,
+            "field_type": "number",
+            "options": {
+                "capture_mechanism": "integer",
+                "predefined_value": "",
+                "required": "true"
+            }
+        },
+        {
+            "id": 83,
+            "value": "34",
+            "name": "Samples",
+            "group": null,
+            "ordering": 4,
+            "field_type": "number",
+            "options": {
+                "capture_mechanism": "integer",
+                "predefined_value": "",
+                "required": "true"
+            }
+        },
+        {
+            "id": 84,
+            "value": "30",
+            "name": "Female",
+            "group": "Gender",
+            "ordering": 5,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 85,
+            "value": "70",
+            "name": "Male",
+            "group": "Gender",
+            "ordering": 5,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 86,
+            "value": "",
+            "name": "< 12",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 87,
+            "value": "",
+            "name": "12 – 17",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 88,
+            "value": "50",
+            "name": "18 – 24",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 89,
+            "value": "50",
+            "name": "25 – 34",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 90,
+            "value": "",
+            "name": "35 – 44",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 91,
+            "value": "",
+            "name": "45 – 54",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 92,
+            "value": "",
+            "name": "55 – 64",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        },
+        {
+            "id": 93,
+            "value": "",
+            "name": "65+",
+            "group": "Age",
+            "ordering": 6,
+            "field_type": "percentage",
+            "options": {
+                "capture_mechanism": "integer"
+            }
+        }
+    ]
+  EOS
   def results
-    @results = resource.results_for(resource.campaign.form_fields)
+    @results = resource.results_for(resource.campaign.form_fields.for_event_data.includes(:kpi))
+
+    # Save the results so they are returned with an ID
     @results.each{|r| r.save(validate: false) if r.new_record? }
   end
 
