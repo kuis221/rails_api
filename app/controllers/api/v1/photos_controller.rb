@@ -17,9 +17,14 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/photos'
+  api :GET, '/api/v1/events/:event_id/photos', "Get a list of photos for an Event"
   param :event_id, :number, required: true, desc: "Event ID"
+  param :brand, Array, :desc => "A list of brand ids to filter the results"
+  param :place, Array, :desc => "A list of places to filter the results"
+  param :status, Array, :desc => "A list of photo status to filter the results. Options: Active, Inactive"
+  param :page, :number, :desc => "The number of the page, Default: 1"
   def index
+    collection
   end
 
   protected
@@ -35,8 +40,11 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     def search_params
       @search_params ||= begin
         super
-        @search_params.merge({event_id: parent.id})
+        @search_params.merge({event_id: parent.id, asset_type: 'photo'})
       end
     end
 
+    def permitted_search_params
+      params.permit({brand: [], place: [], status: []})
+    end
 end
