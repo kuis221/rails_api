@@ -67,6 +67,9 @@ describe "Events", js: true, search: true do
       end
 
       it "should allow allow filter events by date range" do
+        # Make the current date 2013/07/26 so we can play with the calendar
+        # more easily
+        Timecop.travel(Time.zone.local(2013, 07, 26, 12, 00))
         today = Time.zone.now.to_date
         tomorrow = today+1
         FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -101,14 +104,14 @@ describe "Events", js: true, search: true do
           page.should have_content('Campaign FY2012')
         end
 
-        select_filter_calendar_day(today.strftime('%d'))
+        select_filter_calendar_day("26")
         find('#collection-list-filters').should have_no_content('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_no_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
         end
 
-        select_filter_calendar_day(today.strftime('%d'), tomorrow.strftime('%d'))
+        select_filter_calendar_day("26", "27")
         filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_content('Another Campaign April 03')

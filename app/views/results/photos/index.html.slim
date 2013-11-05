@@ -67,5 +67,9 @@ javascript:
     ids  = $.map($('.selected-for-download'), function(photo, index){
       return photo.getAttribute('data-photo-id');
     })
-    $.post('#{downloads_results_photos_url(format: :js)}', {photos: ids})
+    if (ids.length > 0) {
+      $.post('#{downloads_results_photos_url(format: :js)}', {photos: ids})
+    } else {
+      bootbox.alert('Please select at least one photo to download');
+    }
   });

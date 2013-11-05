@@ -67,4 +67,55 @@ describe Venue, search: true do
     # Search for Venues on a given status
     Venue.do_search(company_id: 1, status: ['Active']).results.should =~ [venue, venue2]
   end
+
+  describe "user permissions" do
+    it "should include only venues that are between the user permissions" do
+      SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      non_accessible_campaign = FactoryGirl.create(:campaign, company_id: 1)
+
+      venue_sf1 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_sf2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_la  = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in LA',  city: 'Los Angeles', state: 'CA', country: 'US', types: ['establishment']))
+
+      # Create a non admin user
+      company_user = FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:non_admin_role))
+
+      company_user.places << SF  # Give the user access to San Francisco
+      company_user.campaigns << campaign  # Give the user access to the campaign
+
+      # Create a event for each venue on a campaing that the user doesn't have access
+      FactoryGirl.create(:event, place_id: venue_sf1.place_id, campaign: non_accessible_campaign)
+      FactoryGirl.create(:event, place_id: venue_sf2.place_id, campaign: non_accessible_campaign)
+      FactoryGirl.create(:event, place_id: venue_la.place_id, campaign: non_accessible_campaign)
+
+      Venue.reindex
+      Sunspot.commit
+
+      result = Venue.do_search(company_id: 1, current_company_user: company_user)
+
+      # Should not include venues that have no events on the accessible campaigns for the user
+      result.results.should =~ []
+
+
+      # Create a event for each venue
+      FactoryGirl.create(:event, place_id: venue_sf1.place_id, campaign: campaign)
+      FactoryGirl.create(:event, place_id: venue_sf2.place_id, campaign: campaign)
+      FactoryGirl.create(:event, place_id: venue_la.place_id, campaign: campaign)
+
+      Venue.reindex
+      Sunspot.commit
+
+      result = Venue.do_search(company_id: 1, current_company_user: company_user)
+
+      # Should not include the venue from L.A. because it's not accessible for the user
+      result.results.should =~ [venue_sf1, venue_sf2]
+
+      # Finally, it should return all the venues if the user is a super admin
+      super_admin = FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role))
+      result = Venue.do_search(company_id: 1, current_company_user: super_admin)
+      result.results.should =~ [venue_sf1, venue_sf2, venue_la]
+    end
+  end
 end

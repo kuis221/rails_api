@@ -398,6 +398,10 @@ jQuery ->
 		return value == $("#user_password").val();
 	, "Doesn't match confirmation");
 
+	$.validator.addMethod("datepicker", (value, element) ->
+		return this.optional(element) || /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/.test(value);
+	, "MM/DD/YYYY");
+
 
 	$('.google-map[data-latitude]').each (index, container) ->
 		$container = $(container)

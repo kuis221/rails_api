@@ -1,0 +1,7 @@
+.link-list.rows-no-list
+  ul#events-list
+    = render upcomming_venue_events_list
+- if @venue_events_total > 5
+  .pull-right
+    - all_upcomming_venue_events_url = events_path(start_date: Date.today, end_date: Date.today + 10.years, q: "venue,#{resource.id}")
+    = link_to 'View All', all_upcomming_venue_events_url, class: 'btn btn-info icon-angle-right-after'
