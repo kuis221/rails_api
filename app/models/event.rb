@@ -570,7 +570,7 @@ class Event < ActiveRecord::Base
         event_data.save
       end
 
-      if (@refresh_event_data || place_id_changed? || active_changed?) && place_id.present?
+      if place_id.present?
         Resque.enqueue(VenueIndexer, venue.id)
       end
 
