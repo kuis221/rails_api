@@ -246,6 +246,7 @@ class Venue < ActiveRecord::Base
           any_of do
             locations = company_user.accessible_locations
             places_ids = company_user.accessible_places
+
             with(:place_id, places_ids + [0])
             with(:locations, locations + [0])
           end
@@ -266,7 +267,13 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+      if params.has_key?(:campaign) and params[:campaign].present?
+        locations = Campaign.where(company_id: params[:company_id], id: params[:campaign]).map{|c| c.accessible_locations }.flatten.uniq.compact
+        any_of do
+          with(:campaign_ids, params[:campaign])
+          with(:locations, locations) if locations.any?
+        end
+      end
 
       if params.has_key?(:brand) and params[:brand].present?
         with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
