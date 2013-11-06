@@ -45,17 +45,16 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
       .nav-collapse.collapse.main-nav-collapse
         = render_navigation renderer: :bootstrap, nav_class: 'nav-pills'
 
-  .container-fluid
-    .row-fluid
-      .nav-collapse.collapse
-        .menu
-          = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
-      = yield :alerts
-      = render 'layouts/messages'
-      #main-container.container
-        .tab-content
-          #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
-            = yield
+  .nav-collapse.collapse
+    .menu
+      = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
+  = yield :alerts
+  = render 'layouts/messages'
+  #main-container.container
+    #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
+      .row-fluid
+        .span12
+          = yield
 
   span class="totop pull-right"
     a href="#" Top
