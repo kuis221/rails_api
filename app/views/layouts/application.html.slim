@@ -53,9 +53,10 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
       = yield :alerts
       = render 'layouts/messages'
       #main-container.container
-        .tab-content
-          #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
-            = yield
+        .row-fluid
+          .span12
+            #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
+              = yield
 
   span class="totop pull-right"
     a href="#" Top
