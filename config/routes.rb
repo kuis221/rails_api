@@ -11,6 +11,7 @@ Brandscopic::Application.routes.draw do
         get '/companies' => 'users#companies', :as => 'new_user_password'
 
         resources :events, only: [:index, :show, :create, :update] do
+          resources :photos, only: [:index]
           get :results, on: :member
         end
       end

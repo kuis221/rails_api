@@ -157,6 +157,10 @@ class AttachedAsset < ActiveRecord::Base
           d = Timeliness.parse(params[:start_date], zone: :current)
           with :start_at, d.beginning_of_day..d.end_of_day
         end
+        if params[:event_id].present?
+          with(:attachable_id, params[:event_id])
+          with(:attachable_type, 'Event')
+        end
         with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
         with(:place_id, params[:place_id]) if params.has_key?(:place_id) and params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.has_key?(:asset_type) and params[:asset_type].present?
