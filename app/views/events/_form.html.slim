@@ -1,9 +1,10 @@
 - remote ||= false
+- venue = parent if parent.present? && parent.is_a?(Venue)
 = simple_form_for(@event, remote: remote || false) do |f|
 
   .form-inputs.edit-event
     .chosen-campaign
-      = f.association :campaign, collection: company_campaigns.active.accessible_by_user(current_company_user), input_html: {class: 'chosen-enabled'}
+      = f.association :campaign, collection: allowed_campaigns(venue), input_html: {class: 'chosen-enabled'}
 
     .row-fluid
       .span12
@@ -17,9 +18,12 @@
         .pull-left
           = f.input :end_time, :as => :time_picker
 
-    .row-fluid.google-places
-      = f.error :place
-      = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xxlarge'}
+    - if parent.is_a?(Venue)
+        = f.hidden_field :place_reference, as: :hidden, value: parent.place_id
+    - else
+      .row-fluid.google-places
+        = f.error :place
+        = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, class: 'input-xxlarge'}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'

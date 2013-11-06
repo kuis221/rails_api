@@ -5,7 +5,7 @@
 #  id                   :integer          not null, primary key
 #  company_id           :integer
 #  place_id             :integer
-#  events               :integer
+#  events_count         :integer
 #  promo_hours          :decimal(8, 2)    default(0.0)
 #  impressions          :integer
 #  interactions         :integer
@@ -26,6 +26,8 @@ require 'normdist'
 class Venue < ActiveRecord::Base
   belongs_to :company
   belongs_to :place
+
+  has_many :events, through: :place
 
   include Normdist
 
