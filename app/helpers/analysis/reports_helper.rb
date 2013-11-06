@@ -41,11 +41,13 @@ module Analysis
           'days' => {},
           'weeks' => {}
       }
+      tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
 
       # Find the first and last event on scope
-      result = @events_scope.select('min(start_at) as first_event_at, max(start_at) as last_event_at, count(events.id) as qty_events').first
+      result = @events_scope.select("to_char(TIMEZONE('UTC', min(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as first_event_at, to_char(TIMEZONE('UTC', max(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as last_event_at, count(events.id) as qty_events").first
 
       return data if result.nil? || result.first_event_at.nil? || result.first_event_at.empty? || result.qty_events == 0
+
 
       data['first_event_at'] = first_event_at = Timeliness.parse(result.first_event_at, zone: :current)
       data['last_event_at'] = last_event_at  = Timeliness.parse(result.last_event_at, zone: :current).end_of_day
@@ -71,7 +73,6 @@ module Analysis
       (first_event_at.to_date..last_event_at.to_date).each{|d| data['days'][d.to_s(:numeric)] ||= {'scheduled_events' => 0, 'approved_events' => 0, 'approved_promo_hours' => 0, 'scheduled_promo_hours' => 0}}
 
       # Get the events/promo hours data
-      tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       date_convert = "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')"
       scope = @events_scope.select("count(events.id) as events_count, sum(promo_hours) as promo_hours, #{date_convert} as event_start, events.aasm_state as group_recap_status").group("#{date_convert}, events.aasm_state").order(date_convert)
       weeks_with_approved_events = 0
@@ -204,7 +205,6 @@ module Analysis
               completed_percentage = 0
             end
             remaining_percentage = 100 - completed_percentage
-            Rails.logger.debug "each_events_goal: #{goal}, #{completed_percentage}, #{remaining_percentage}, #{remaining_count}, #{total_count}"
             yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
           end
         end
