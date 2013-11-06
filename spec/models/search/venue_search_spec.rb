@@ -68,6 +68,25 @@ describe Venue, search: true do
     Venue.do_search(company_id: 1, status: ['Active']).results.should =~ [venue, venue2]
   end
 
+  describe "search by campaing" do
+    it "should include any venue that is part of the campaign scope" do
+      SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign.places << SF
+
+      venue_sf1 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_sf2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_la  = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in LA',  city: 'Los Angeles', state: 'CA', country: 'US', types: ['establishment']))
+
+      Sunspot.commit
+
+      result = Venue.do_search(company_id: 1, campaign: [campaign.id])
+
+      # Should include the venues from sf but not the venue from L.A.
+      result.results.should =~ [venue_sf1, venue_sf2]
+    end
+  end
+
   describe "user permissions" do
     it "should include only venues that are between the user permissions" do
       SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])

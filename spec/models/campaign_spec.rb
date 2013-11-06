@@ -171,4 +171,55 @@ describe Campaign do
     end
   end
 
+  describe "place_allowed_for_event?" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+
+    it "should return true if the campaing doesn't have areas or places assigned" do
+      place = FactoryGirl.create(:place)
+      campaign.place_allowed_for_event?(place).should be_true
+    end
+
+    it "should return true if the place have been assigned to the campaign directly" do
+      place = FactoryGirl.create(:place)
+      other_place = FactoryGirl.create(:place)
+      campaign.places << other_place
+
+      campaign.place_allowed_for_event?(place).should be_false
+
+      campaign.places << place
+
+      campaign.reload.place_allowed_for_event?(place).should be_true
+    end
+
+
+    it "should return true if the place is part of any of the campaigns" do
+      area = FactoryGirl.create(:area)
+      place = FactoryGirl.create(:place)
+      other_place = FactoryGirl.create(:place)
+      area.places << other_place
+      campaign.areas << area
+
+      campaign.place_allowed_for_event?(place).should be_false
+
+      area.places << place
+
+      campaign.reload.place_allowed_for_event?(place).should be_true
+    end
+
+    it "should return true if the place is part of any city of an area associated to the campaign" do
+      area = FactoryGirl.create(:area)
+      city = FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
+      place = FactoryGirl.create(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
+      other_city = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
+      area.places << other_city
+      campaign.areas << area
+
+      campaign.place_allowed_for_event?(place).should be_false
+
+      area.places << city
+
+      campaign.reload.place_allowed_for_event?(place).should be_true
+    end
+  end
+
 end

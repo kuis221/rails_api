@@ -190,7 +190,11 @@ class Event < ActiveRecord::Base
   end
 
   def place_reference
-    place_id
+    if place_id.present?
+      place_id
+    else
+      "#{place.reference}||#{place.place_id}" if place.present?
+    end
   end
 
   def status
@@ -605,7 +609,7 @@ class Event < ActiveRecord::Base
         event_data.save
       end
 
-      if (@refresh_event_data || place_id_changed? || active_changed?) && place_id.present?
+      if place_id.present?
         Resque.enqueue(VenueIndexer, venue.id)
       end
 
