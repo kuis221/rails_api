@@ -42,7 +42,7 @@ describe Venue do
 
       venue.compute_stats
       venue.reload
-      venue.events.should == 1
+      venue.events_count.should == 1
       venue.promo_hours.to_i.should == 3
 
       # TODO: test the values for impressions, interactions and other kpis values
