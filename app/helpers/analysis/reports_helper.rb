@@ -70,6 +70,7 @@ module Analysis
 
       # Initialize the days arrray
       data['days'] = {}
+      Rails.logger.debug ">>>> #{first_event_at.to_date}...#{last_event_at.to_date}"
       (first_event_at.to_date..last_event_at.to_date).each{|d| data['days'][d.to_s(:numeric)] ||= {'scheduled_events' => 0, 'approved_events' => 0, 'approved_promo_hours' => 0, 'scheduled_promo_hours' => 0}}
 
       # Get the events/promo hours data
@@ -80,6 +81,7 @@ module Analysis
       scope.each do |event_day|
         date = Timeliness.parse(event_day.event_start, zone: :current)
         day = date.to_s(:numeric)
+        Rails.logger.debug ">>>> #{day}"
         data['days'][day]['approved_promo_hours']   = event_day.promo_hours.to_i  if event_day.group_recap_status == 'approved'
         data['days'][day]['scheduled_promo_hours'] += event_day.promo_hours.to_i
         data['days'][day]['approved_events']        = event_day.events_count.to_i if event_day.group_recap_status == 'approved'

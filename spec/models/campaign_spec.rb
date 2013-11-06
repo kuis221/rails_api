@@ -191,7 +191,6 @@ describe Campaign do
       campaign.reload.place_allowed_for_event?(place).should be_true
     end
 
-
     it "should return true if the place is part of any of the campaigns" do
       area = FactoryGirl.create(:area)
       place = FactoryGirl.create(:place)
@@ -218,7 +217,7 @@ describe Campaign do
 
       area.places << city
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
     end
   end
 

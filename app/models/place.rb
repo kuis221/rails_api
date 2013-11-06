@@ -36,6 +36,7 @@ class Place < ActiveRecord::Base
   # Areas-Places relationship
   has_many :events
   has_many :placeables
+  has_many :venues, dependent: :destroy
 
   with_options through: :placeables, :source => :placeable do |place|
     place.has_many :areas, :source_type => 'Area'

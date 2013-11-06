@@ -268,7 +268,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def results
-    @results = resource.results_for(resource.campaign.form_fields.for_event_data.includes(:kpi))
+    @results = resource.all_results_for(resource.campaign.form_fields.for_event_data.includes(:kpi))
 
     # Save the results so they are returned with an ID
     @results.each{|r| r.save(validate: false) if r.new_record? }

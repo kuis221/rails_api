@@ -83,7 +83,7 @@ class PlacesController < FilteredController
     authorize!(:remove_place, parent)
 
     @place = Place.find(params[:id])
-    parent.places.delete(@place)
+    parent.places.destroy(@place)
   end
 
   def search
