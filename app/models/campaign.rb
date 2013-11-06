@@ -153,7 +153,8 @@ class Campaign < ActiveRecord::Base
   def place_allowed_for_event?(place)
     (areas.empty? && places.empty?) ||
     Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
-    places.map(&:id).include?(place.id)
+    places.map(&:id).include?(place.id) ||
+    areas.map(&:place_ids).flatten.include?(place.id)
   end
 
   def accessible_locations

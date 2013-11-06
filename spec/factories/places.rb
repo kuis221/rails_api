@@ -13,5 +13,7 @@ FactoryGirl.define do
     state "NY"
     country "US"
     do_not_connect_to_api true
+
+    after(:build) {|u| u.types ||= ['establishment'] }
   end
 end
