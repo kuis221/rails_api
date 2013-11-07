@@ -43,7 +43,7 @@ describe Venue, search: true do
     Venue.do_search(company_id: 1, brand: [brand.id, brand2.id]).results.should =~ [venue, venue2]
 
     # Range filters
-    [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |option|
+    [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |option|
       if option.to_s == 'venue_score'
         venue.score = 5
       else
@@ -66,6 +66,25 @@ describe Venue, search: true do
 
     # Search for Venues on a given status
     Venue.do_search(company_id: 1, status: ['Active']).results.should =~ [venue, venue2]
+  end
+
+  describe "search by campaing" do
+    it "should include any venue that is part of the campaign scope" do
+      SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign.places << SF
+
+      venue_sf1 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_sf2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
+      venue_la  = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in LA',  city: 'Los Angeles', state: 'CA', country: 'US', types: ['establishment']))
+
+      Sunspot.commit
+
+      result = Venue.do_search(company_id: 1, campaign: [campaign.id])
+
+      # Should include the venues from sf but not the venue from L.A.
+      result.results.should =~ [venue_sf1, venue_sf2]
+    end
   end
 
   describe "user permissions" do

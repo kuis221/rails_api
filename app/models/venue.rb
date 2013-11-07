@@ -5,7 +5,7 @@
 #  id                   :integer          not null, primary key
 #  company_id           :integer
 #  place_id             :integer
-#  events               :integer
+#  events_count         :integer
 #  promo_hours          :decimal(8, 2)    default(0.0)
 #  impressions          :integer
 #  interactions         :integer
@@ -26,6 +26,8 @@ require 'normdist'
 class Venue < ActiveRecord::Base
   belongs_to :company
   belongs_to :place
+
+  has_many :events, through: :place
 
   include Normdist
 
@@ -70,7 +72,7 @@ class Venue < ActiveRecord::Base
       'Active'
     end
 
-    integer :events, :stored => true
+    integer :events_count, :stored => true
     double :promo_hours, :stored => true
     integer :impressions, :stored => true
     integer :interactions, :stored => true
@@ -87,7 +89,7 @@ class Venue < ActiveRecord::Base
 
 
   def compute_stats
-    self.events = Event.where(company_id: company_id, place_id: place_id).active.count
+    self.events_count = Event.where(company_id: company_id, place_id: place_id).active.count
     self.promo_hours = Event.where(company_id: company_id).active.total_promo_hours_for_places(place_id)
 
     results = EventData.scoped_by_place_id_and_company_id(place_id, company_id).for_active_events
@@ -99,7 +101,7 @@ class Venue < ActiveRecord::Base
     self.avg_impressions = 0
     self.avg_impressions_hour = 0
     self.avg_impressions_cost = 0
-    self.avg_impressions = self.impressions/self.events if self.events > 0
+    self.avg_impressions = self.impressions/self.events_count if self.events_count > 0
     self.avg_impressions_hour = self.impressions/self.promo_hours if self.promo_hours > 0
     self.avg_impressions_cost = self.spent/self.impressions if self.impressions > 0
 
@@ -246,6 +248,7 @@ class Venue < ActiveRecord::Base
           any_of do
             locations = company_user.accessible_locations
             places_ids = company_user.accessible_places
+
             with(:place_id, places_ids + [0])
             with(:locations, locations + [0])
           end
@@ -266,7 +269,13 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+      if params.has_key?(:campaign) and params[:campaign].present?
+        locations = Campaign.where(company_id: params[:company_id], id: params[:campaign]).map{|c| c.accessible_locations }.flatten.uniq.compact
+        any_of do
+          with(:campaign_ids, params[:campaign])
+          with(:locations, locations) if locations.any?
+        end
+      end
 
       if params.has_key?(:brand) and params[:brand].present?
         with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
@@ -285,7 +294,7 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
+      [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
         elsif params[param].present? && params[param][:min].present?
@@ -294,7 +303,7 @@ class Venue < ActiveRecord::Base
       end
 
 
-      stat(:events, :type => "max")
+      stat(:events_count, :type => "max")
       stat(:promo_hours, :type => "max")
       stat(:impressions, :type => "max")
       stat(:interactions, :type => "max")

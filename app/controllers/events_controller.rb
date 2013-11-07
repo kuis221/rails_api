@@ -1,4 +1,5 @@
 class EventsController < FilteredController
+  belongs_to :venue, :optional => true
 
   # This helper provide the methods to add/remove team members to the event
   extend TeamMembersHelper
