@@ -1,0 +1,4 @@
+- if params[:item].present?
+  | $('#toggle-area-place-#{params[:item]} .accordion-inner').html('#{j render('report_goals_actual_item')}');
+- else
+  | $('#report-container').html('#{j render('report')}');

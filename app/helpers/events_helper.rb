@@ -25,6 +25,12 @@ module EventsHelper
     [(contact.respond_to?(:title) ? contact.title : contact.role_name), contact.email, contact.phone_number, contact.street_address, [contact.city, contact.state, contact.country_name].reject{|v| v.nil? || v == ''}.join(', ') ].reject{|v| v.nil? || v == ''}.join('<br />').html_safe
   end
 
+  def allowed_campaigns(venue = nil)
+    campaigns = company_campaigns.active.accessible_by_user(current_company_user)
+    campaigns = campaigns.select{|c| c.place_allowed_for_event?(venue.place) } if venue.present? && !current_company_user.is_admin?
+    campaigns
+  end
+
   protected
 
     def describe_before_event_alert(resource)

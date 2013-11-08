@@ -43,7 +43,7 @@ describe Venue, search: true do
     Venue.do_search(company_id: 1, brand: [brand.id, brand2.id]).results.should =~ [venue, venue2]
 
     # Range filters
-    [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |option|
+    [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |option|
       if option.to_s == 'venue_score'
         venue.score = 5
       else
