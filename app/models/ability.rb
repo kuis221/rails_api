@@ -31,8 +31,6 @@ class Ability
       end
 
       can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
-        raise "remove_campaign:: => #{can?(:edit, cu)}"
-
         can?(:edit, cu)
       end
     end
