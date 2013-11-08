@@ -1,0 +1,16 @@
+.row-fluid
+  .span12.category
+    .span2.title Metric
+    .span2.text-right.title Goal
+    .span2.text-right.title Actual
+    .span2.text-right.title Actual %
+    .span2.text-right.title Pending
+    .span2.text-right.title Pending %
+  - each_events_goal do |goal, completed_percentage, remaining_percentage, remaining_count, total_count|
+    .span12 class="#{cycle("", "dark-bg")}"
+      .span2 = goal.kpi.name
+      .span2.text-right = goal.kpi.currency? ? number_to_currency(goal.value, precision: 2) : number_with_delimiter(goal.value.round)
+      .span2.text-right = total_count.round
+      .span2.text-right = "#{completed_percentage.round}%"
+      .span2.text-right = remaining_count.round
+      .span2.text-right = "#{remaining_percentage.round}%"

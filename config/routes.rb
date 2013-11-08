@@ -48,6 +48,8 @@ Brandscopic::Application.routes.draw do
     resources :surveys, only: [:index] do
       get :items, on: :collection
     end
+    get :gva, to: 'gva#index'
+    post :gva, to: 'gva#report'
   end
 
   namespace :analysis do
