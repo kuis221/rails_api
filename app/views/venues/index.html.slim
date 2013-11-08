@@ -16,9 +16,12 @@
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save
 .main
+  .text-right
+      button.btn.download.xlsx-download-link data-url="#{venues_path(format:"xlsx")}" title="Download" class="hidden" id="venue-download-button"
   .tab-content
-    .link-list
-      ul#venues-list
+    #list-view.tab-pane.active
+      .link-list
+        ul#venues-list
 
 = render partial: 'help_tutorial'
 
@@ -77,6 +80,9 @@ javascript:
         }
       }
     }
+    if($('#venues-list').has('li')){
+        $('#venue-download-button').removeClass('hidden');
+     }
   })
 
   $('#collection-list-filters').filteredList({
@@ -90,6 +96,7 @@ javascript:
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
+       $('#venue-download-button').removeClass('hidden');
       $(document).trigger('events-filter:changed')
     }
   });

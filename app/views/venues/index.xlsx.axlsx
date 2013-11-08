@@ -1,0 +1,28 @@
+wb = xlsx_package.workbook
+
+row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
+row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
+row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
+
+wb.add_worksheet(name: "Venues") do |sheet|
+	sheet.add_row ['VENUE NAME',
+                 'ADDRESS',
+                 'CITY',
+                 'STATE',
+                 'EVENTS COUNT',
+                 'PROMO HOURS COUNT',
+                 'TOTAL $ SPENT'], :style => row_header
+
+  
+  each_collection_item do |venue|    
+    sheet.add_row [venue.name,
+                   venue.formatted_address,
+                   venue.city,
+                   venue.state,
+                   venue.events,
+                   venue.promo_hours,
+                   venue.score], :style => row_data_text
+
+  end
+  sheet.add_row ["nada"], :style => row_data_text
+end

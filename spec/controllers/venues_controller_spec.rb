@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sunspot_test/rspec'
 
 describe VenuesController do
   before(:each) do
@@ -58,6 +59,16 @@ describe VenuesController do
       expect {
         delete 'delete_area', id: venue.to_param, area_id: area.to_param, format: :js
       }.to change(venue.place.areas, :count).by(-1)
+    end
+  end
+  
+  describe "GET 'index'", js: true, search: true do
+    it "queue the job for export the list" do
+      expect{
+        get :index, format: :xlsx
+      }.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      ListExportWorker.should have_queued(export.id)
     end
   end
 

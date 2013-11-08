@@ -1,6 +1,9 @@
 class VenuesController < FilteredController
   actions :index, :show
 
+  helper_method :place_events
+  respond_to :xlsx, only: :index
+
   custom_actions member: [:select_areas, :add_areas]
 
   def collection
