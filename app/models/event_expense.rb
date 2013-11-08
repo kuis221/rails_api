@@ -15,11 +15,6 @@
 class EventExpense < ActiveRecord::Base
   belongs_to :event
 
-  has_attached_file :file, PAPERCLIP_SETTINGS.merge({
-    :styles => { :small => { :geometry => '135',  :format => :png }, :medium => { :geometry => '400',  :format => :png } },
-  })
-  before_post_process :image?
-
   #validates :event_id, presence: true, numericality: true
   validates :name, presence: true
 
@@ -38,9 +33,5 @@ class EventExpense < ActiveRecord::Base
     def update_event_data
       Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
       Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
-    end
-
-    def image?
-      !(file_content_type =~ %r{^(image|(x-)?application)/(x-png|pjpeg|jpeg|jpg|png|gif|pdf)$}).nil?
     end
 end
