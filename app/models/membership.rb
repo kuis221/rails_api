@@ -23,6 +23,8 @@ class Membership < ActiveRecord::Base
   after_destroy :delete_notifications
   after_destroy :update_tasks
 
+  validates :memberable_id, presence: true
+  validates :memberable_type, presence: true
 
   belongs_to :parent, polymorphic: true
 

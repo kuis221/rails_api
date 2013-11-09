@@ -29,7 +29,8 @@ class Legacy::Program  < Legacy::Record
 
   def synchronize(company, attributes={})
     attributes.merge!({company_id: company.id})
-    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Campaign.find_or_initialize_by_name_and_company_id(migration_attributes[:name], company.id) )
+    campaing = ::Campaign.where('lower(name) = ? and company_id=?', name.strip.downcase, company.id).first || ::Campaign.new({name: name.strip}, without_protection: true)
+    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: campaing)
     if migration.local.new_record? || migration.local.form_fields.count == 0
       migration.local.assign_all_global_kpis(false)
     end
@@ -45,7 +46,6 @@ class Legacy::Program  < Legacy::Record
 
   def migration_attributes(attributes={})
     {
-      name: name,
       brands_list: brand_name,
       aasm_state: ( active ? 'active' : 'inactive' ),
       created_at: created_at,
@@ -55,9 +55,9 @@ class Legacy::Program  < Legacy::Record
 
   def synchronize_custom_kpis(company, campaign)
     form_template.form_fields.custom.each do |field|
-      migration = field.metric.synchronize(company)
+      migration = field.metric.synchronize(company, campaign)
       p migration.local.errors.inspect if migration.local.errors.any?
-      campaign.add_kpi(migration.local) if migration.local.persisted?
+      campaign.add_kpi(migration.local) if migration.local.persisted? && field.metric.is_kpi?
     end
   end
 

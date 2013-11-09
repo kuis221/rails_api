@@ -26,22 +26,35 @@ class Metric < Legacy::Record
 
   has_many :data_migrations, as: :remote, class_name: 'Legacy::DataMigration'
 
-  def synchronize(company, attributes={})
-    migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Kpi.find_or_initialize_by_name_and_company_id(name, company.id) )
-    #raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?
-    attributes.merge!({company_id: company.id}).merge!(migration_attributes(migration.local))
-    migration.local.assign_attributes(attributes, without_protection: true)
-    migration.save
-    p migration.local.errors.inspect if migration.local.errors.any?
+  def synchronize(company, campaign, attributes={})
+    if is_kpi?
+      migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Kpi.find_or_initialize_by_name_and_company_id(name, company.id) )
+      #raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?
+      attributes.merge!({company_id: company.id}).merge!(kpi_migration_attributes(migration.local))
+      migration.local.assign_attributes(attributes, without_protection: true)
+    else
+      migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::CampaignFormField.find_or_initialize_by_name_and_campaign_id(name, campaign.id) )
+      attributes.merge!({campaign_id: campaign.id}).merge!(field_migration_attributes(campaign))
+      migration.local.assign_attributes(attributes, without_protection: true)
+    end
 
+    migration.save
     migration
   end
 
-  def migration_attributes(kpi)
+  def build_local
+    if map_type
+      ::Kpi.find_or_initialize_by_name_and_company_id(name, company.id)
+    else
+      ::CampaignFormField.find_or_initialize_by_name_and_company_id(name, company.id)
+    end
+  end
+
+  def kpi_migration_attributes(kpi)
     attributes = {
       name: name,
-      kpi_type: map_type(type),
-      capture_mechanism:  map_capture_mechanism(type, style),
+      kpi_type: map_type,
+      capture_mechanism:  map_capture_mechanism,
       module: 'custom',
       created_at: created_at,
       updated_at: updated_at
@@ -58,21 +71,43 @@ class Metric < Legacy::Record
     attributes
   end
 
+  def field_migration_attributes(campaign)
+    ordering = campaign.form_fields.select('max(ordering) as ordering').reorder(nil).first.ordering || 0
+    attributes = {
+      kpi_id: nil,
+      ordering: ordering,
+      field_type: map_type,
+      options: {capture_mechanism:  map_capture_mechanism},
+      section_id: nil,
+      created_at: created_at,
+      updated_at: updated_at
+    }
+    attributes
+  end
 
-  def map_type(type)
+  def is_kpi?
+    !['Metric::Paragraph', 'Metric::Sentence'].include?(type)
+  end
+
+
+  def map_type
     case type
     when 'Metric::Multivalue', 'Metric::Boolean', 'Metric::Multi', 'Metric::Select'
       'count'
-    when 'Metric::Percent', 'Metric::Pie'
+    when 'Metric::Pie'
       'percentage'
-    when 'Metric::BarSpend', 'Metric::PromoHours', 'Metric::Paragraph', 'Metric::Sentence'
+    when 'Metric::BarSpend', 'Metric::PromoHours'
       nil
+    when 'Metric::Sentence'
+      'text'
+    when 'Metric::Paragraph'
+      'textarea'
     else
       'number'
     end
   end
 
-  def map_capture_mechanism(type, style)
+  def map_capture_mechanism
     case type
     when 'Metric::Multivalue', 'Metric::Multi', 'Metric::Select'
       case style
@@ -82,7 +117,7 @@ class Metric < Legacy::Record
       end
     when 'Metric::Boolean'
       'radio'
-    when 'Metric::Percent', 'Metric::Pie'
+    when 'Metric::Pie'
       'decimal'
     when 'Metric::BarSpend', 'Metric::PromoHours', 'Metric::Paragraph', 'Metric::Sentence'
       nil

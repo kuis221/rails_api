@@ -10,8 +10,6 @@
 # require 'legacy/metric_result'
 
 
-
-
 module Legacy
   S3_CONFIGS = {
     'access_key_id' => 'AKIAIIGAIZKQFFQDIXZA',
@@ -42,17 +40,8 @@ module Legacy
       company = Company.find_by_name('Legacy Marketing Partners')
 
       program_ids.each do |program_id|
-        program = Legacy::Program.find(program_id)
-        campaign = program.synchronize(company).local
-        if campaign.persisted?
-          counter = 0
-          batch_size = 20
-          total = program.events.count
-          while counter < total
-            Resque.enqueue(ProgramMigrationWorker, company.id, program_id, campaign.id, counter, batch_size)
-            counter += batch_size
-          end
-        end
+        p "Queing program processing[#{program_id}]"
+        Resque.enqueue(ProgramMigrationWorker, company.id, program_id)
       end
     end
 
