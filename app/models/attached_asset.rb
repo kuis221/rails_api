@@ -226,7 +226,7 @@ class AttachedAsset < ActiveRecord::Base
     s3 = AWS::S3.new
 
     if post_process_required?
-      self.file = URI.parse(URI.escape(direct_upload_url))
+      self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]"))
     else
       paperclip_file_path = file.path(:original).sub(%r{^/},'')
       s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])

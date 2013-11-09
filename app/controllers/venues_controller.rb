@@ -2,6 +2,7 @@ class VenuesController < FilteredController
   actions :index, :show
 
   helper_method :place_events
+  respond_to :xlsx, only: :index
 
   custom_actions member: [:select_areas, :add_areas]
 
@@ -119,13 +120,4 @@ class VenuesController < FilteredController
       end
     end
 
-    def place_events
-      @place_events ||= begin
-          if resource.persisted?
-            resource.events.scoped_by_company_id(current_company).all
-          else
-            []
-          end
-      end
-    end
 end

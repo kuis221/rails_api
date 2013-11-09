@@ -455,7 +455,7 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| Place.encode_location(a.common_denominators || []) } ) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day

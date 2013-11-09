@@ -66,6 +66,8 @@ Brandscopic::Application.routes.draw do
     resources :surveys, only: [:index] do
       get :items, on: :collection
     end
+    get :gva, to: 'gva#index'
+    post :gva, to: 'gva#report'
   end
 
   namespace :analysis do
@@ -91,6 +93,7 @@ Brandscopic::Application.routes.draw do
         match 'areas/add' => 'venues#add_areas', via: :post, as: :add_area
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
+      resources :events, only: [:new, :create]
     end
   end
 

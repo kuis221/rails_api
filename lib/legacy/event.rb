@@ -38,11 +38,11 @@ class Legacy::Event < Legacy::Record
     account_migration = account.synchronize(company)
     migration.local.place = account_migration.local
     migration.local.place.is_custom_place = true if account_migration.local.present? and account_migration.local.place_id.nil?
-    if migration.save
+    if migration.save(validate: false)
       event_recap_attributes(migration.local)
       tries = 3
       begin
-        migration.local.save
+        migration.local.save(validate: false)
       rescue AWS::S3::Errors::RequestTimeout => e
         sleep(3)
         retry unless (tries -= 1).zero?
@@ -59,7 +59,8 @@ class Legacy::Event < Legacy::Record
       end_at: end_at,
       active: active,
       created_at: created_at,
-      updated_at: updated_at
+      updated_at: updated_at,
+      aasm_state: event_recap.state == 'new' ? 'unsent' : event_recap.state
     }
   end
 
@@ -69,18 +70,31 @@ class Legacy::Event < Legacy::Record
 
   def event_recap_attributes(event)
     active_kpis = event.campaign.active_kpis
-    event.aasm_state = event_recap.state == 'new' ? 'unsent' : event_recap.state
 
     # Event summary
-    event.summary = event_recap.result_for_metric(Metric.system.find_by_name("MM / MBN Supervisor Comments")).try(:value)
+    event.summary = event_recap.result_for_metric(Metric.system.find_by_name(FormField::SUMMARY_FIELD)).try(:value)
 
     # Comments
-    ["Consumer / Trade Comments, Reactions, & Quotes", "Trade / Consumer Feedback", "BA Comments (include location if not specified above, branding, brief overview of event, areas of opportunity, etc.)"].each do |metric_name|
+    FormField::COMMENTS_FIELDS.each do |metric_name|
       if result = event_recap.result_for_metric(Metric.system.find_by_name(metric_name))
         migration = result.data_migrations.find_or_initialize_by_company_id(event.company_id, local: ::Comment.new)
         migration.local.content = result.value
         migration.local.commentable = event
         migration.save
+      end
+    end
+
+    # Contacts
+    if event.contacts.empty?
+      FormField::CONTACTS_FIELDS.each do |metric_name|
+        if result = event_recap.result_for_metric(Metric.system.find_by_name(metric_name))
+          unless result.value.nil? || result.value.strip == ''
+            (first_name,last_name) = result.value.split(' ', 2)
+            contact = Contact.find_or_initialize_by_company_id_and_first_name_and_last_name(event.company_id, first_name, last_name)
+            contact.save(validate: false) if contact.new_record?
+            event.contact_events.build(contactable: contact)
+          end
+        end
       end
     end
 
@@ -131,17 +145,18 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.ethnicity)
       kpi_results = event.result_for_kpi(Kpi.ethnicity)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Demographic')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Asian' }.try('value=', values[10].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Asian'                    }.try('value=', values[10].to_s)
       kpi_results.detect{|r| r.kpis_segment.text == 'Black / African American' }.try('value=', values[9].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino' }.try('value=', values[11].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'White' }.try('value=', values[8].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'        }.try('value=', values[11].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'White'                    }.try('value=', values[8].to_s)
     end
 
     # Custom KPIs
     program.form_template.form_fields.custom.each do |field|
       migration = Legacy::DataMigration.for_metric(field.metric).first
       if migration.present? and migration.local.present?
-        result = event.result_for_kpi(migration.local)
+        result = event.result_for_kpi(migration.local) if migration.local.is_a?(Kpi)
+        result = event.results_for([migration.local]).first if migration.local.is_a?(CampaignFormField)
         if migration.local.is_segmented?
           values = event_recap.result_for_metric(field.metric).try(:value)
           values.each do |option_id, value|
@@ -154,8 +169,28 @@ class Legacy::Event < Legacy::Record
           unless metric_result.nil?
             if field.metric.type == 'Metric::Boolean'
               result.value = migration.local.kpis_segments.detect{|s| s.text == ['No', 'Yes'][metric_result]}.try(:id)
-            elsif migration.local.kpi_type == 'count'
-              result.value = metric_result.join(',')
+            elsif field.metric.type == 'Metric::Select'
+              if metric_result > 0
+                begin
+                  selected_option = field.metric.metric_options.find(metric_result).try(:name)
+                  result.value = migration.local.kpis_segments.detect{|s| s.text == selected_option}.try(:id)
+                rescue ActiveRecord::RecordNotFound => e
+                  result.value = nil
+                end
+              end
+            elsif field.metric.type == 'Metric::Multi'
+              begin
+                selected_options = field.metric.metric_options.find(metric_result).map(&:name)
+                result.value = migration.local.kpis_segments.select{|s| selected_options.include?(s.text) }.map(&:id)
+              rescue ActiveRecord::RecordNotFound => e
+                result.value = nil
+              end
+            elsif migration.local.is_a?(Kpi) && migration.local.kpi_type == 'count'
+              if metric_result.is_a?(Array)
+                result.value = metric_result.join(',')
+              else
+                result.value = metric_result
+              end
             else
               if migration.local.capture_mechanism == 'integer'
                 result.value = metric_result.try(:to_i).try(:to_s)
@@ -181,7 +216,8 @@ class Legacy::Event < Legacy::Record
       tip.amount = value[Metric::Tab::TIP]
 
       if receipt = receipts.first
-        bar_spend.file = receipt.file if bar_spend.file_file_size != receipt.file_file_size
+        bar_spend.build_receipt if bar_spend.receipt.nil?
+        bar_spend.receipt.file = receipt.file if bar_spend.receipt.file_file_size != receipt.file_file_size
       end
     rescue AWS::S3::Errors::RequestTimeout => e
       unless (tries -= 1).zero?

@@ -1,0 +1,21 @@
+.box_report
+  p.big
+    b Goals Vs. Actual
+    .goals-actual
+      = render partial: 'report_goals_actual_item'
+
+#areas-places.accordion
+  - @campaign.areas_and_places.each do |ap|
+    .accordion-group
+      .accordion-heading
+        a href="#toggle-area-place-#{ap.class.name}#{ap.id}" class="accordion-toggle" data-toggle="collapse" data-parent="#areas-places"
+          b= ap.name
+      .accordion-body.collapse data-type="#{ap.class.name}" data-id="#{ap.id}" id="toggle-area-place-#{ap.class.name}#{ap.id}"
+        .accordion-inner.goals-actual
+
+javascript:
+  $('#areas-places').on('show', function(e) {
+    $target = $(e.target);
+    $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} });
+  });
+

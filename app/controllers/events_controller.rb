@@ -1,4 +1,5 @@
 class EventsController < FilteredController
+  belongs_to :venue, :optional => true
 
   # This helper provide the methods to add/remove team members to the event
   extend TeamMembersHelper
@@ -89,7 +90,7 @@ class EventsController < FilteredController
       else
         allowed = []
         allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
-        allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, :id]}] if can?(:edit_data, Event)
+        allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, {value: []}, :id]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end
       parameters
