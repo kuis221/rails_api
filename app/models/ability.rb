@@ -16,7 +16,11 @@ class Ability
       end
 
       can [:create, :update], Goal do |goal|
-        can?(:edit, goal.goalable)
+        if goal.parent.present?
+          can?(:show, goal.parent)
+        else
+          can?(:edit, goal.goalable)
+        end
       end
 
       can :time_zone_change, CompanyUser

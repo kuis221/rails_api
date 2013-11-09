@@ -8,13 +8,14 @@
   - @campaign.areas_and_places.each do |ap|
     .accordion-group
       .accordion-heading
-        a href="#toggle-area-place-#{ap.id}" data-ap-id="#{ap.id}" class="accordion-toggle" data-toggle="collapse" data-parent="#areas-places"
+        a href="#toggle-area-place-#{ap.class.name}#{ap.id}" class="accordion-toggle" data-toggle="collapse" data-parent="#areas-places"
           b= ap.name
-      .accordion-body.collapse id="toggle-area-place-#{ap.id}"
+      .accordion-body.collapse data-type="#{ap.class.name}" data-id="#{ap.id}" id="toggle-area-place-#{ap.class.name}#{ap.id}"
         .accordion-inner.goals-actual
 
 javascript:
-  $('.accordion-toggle').on('click', function(e) {
-    $.post("#{results_gva_path}", {item: $(this).data('ap-id'), report: {campaign_id: "#{@campaign.id}"} });
+  $('#areas-places').on('show', function(e) {
+    $target = $(e.target);
+    $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} });
   });
 
