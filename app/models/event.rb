@@ -440,7 +440,6 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
@@ -464,10 +463,15 @@ class Event < ActiveRecord::Base
             with :user_ids, value
           when 'venue'
             with :place_id, Venue.find(value).place_id
+          when 'area'
+            with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } )
           else
             with "#{attribute}_ids", value
           end
         end
+
+        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
+
 
         if params.has_key?(:event_data_stats) && params[:event_data_stats]
           stat(:promo_hours, :type => "sum")
@@ -491,7 +495,42 @@ class Event < ActiveRecord::Base
           facet :place_id
           facet :user_ids
           facet :team_ids
-          facet :status
+          facet :status do
+            row(:late) do
+              with(:status, 'Unsent')
+              with(:end_at).less_than(2.days.ago)
+            end
+            row(:due) do
+              with(:status, 'Unsent')
+              with(:end_at, Date.yesterday.beginning_of_day..Time.zone.now)
+            end
+            row(:rejected) do
+              with(:status, 'Rejected')
+            end
+            row(:submitted) do
+              with(:status, 'Submitted')
+            end
+            row(:approved) do
+              with(:status, 'Approved')
+            end
+            row(:active) do
+              with(:status, 'Active')
+            end
+            row(:inactive) do
+              with(:status, 'Inactive')
+            end
+            row(:executed) do
+              with(:status, 'Active')
+              with(:end_at).less_than(Time.zone.now.beginning_of_day)
+            end
+          end
+
+          facet :start_at do
+            row(:today) do
+              with(:start_at).less_than(Time.zone.now.end_of_day)
+              with(:end_at).greater_than(Time.zone.now.beginning_of_day)
+            end
+          end
         end
 
         order_by(params[:sorting] || :start_at , params[:sorting_dir] || :desc)

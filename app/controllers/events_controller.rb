@@ -25,7 +25,7 @@ class EventsController < FilteredController
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
-      places: [Venue],
+      places: [Venue, Area],
       people: [CompanyUser, Team]
     })
     render :json => buckets.flatten
