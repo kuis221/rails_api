@@ -53,7 +53,6 @@ class Results::GvaController < ApplicationController
         params.merge!({place: [Base64.encode64(Place.location_for_index(goal.goalable))]}) if goal.goalable.is_a?(Place)
         search = Event.do_search(params, true)
         status_facets = search.facet(:status).rows
-        Rails.logger.debug status_facets.map{|x| [x.value, x.count]}.inspect
         submitted = status_facets.detect{|f| f.value == :submitted}.try(&:count) || 0
         executed = status_facets.detect{|f| f.value == :executed}.try(&:count) || 0
         scheduled = search.total

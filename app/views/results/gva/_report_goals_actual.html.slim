@@ -5,10 +5,11 @@
       = render partial: 'report_goals_actual_item'
 
 #areas-places.accordion
-  - @campaign.areas_and_places.each do |ap|
+  - pairs = Goal.in(@campaign).map{|g| "#{g.goalable_type}#{g.goalable_id}"}
+  - @campaign.areas_and_places.select{|ap| pairs.include?("#{ap.class.name}#{ap.id}") }.each do |ap|
     .accordion-group
       .accordion-heading
-        a href="#toggle-area-place-#{ap.class.name}#{ap.id}" class="accordion-toggle" data-toggle="collapse" data-parent="#areas-places"
+        a href="#toggle-area-place-#{ap.class.name}#{ap.id}" class="accordion-toggle" data-toggle="collapse"
           b= ap.name
       .accordion-body.collapse data-type="#{ap.class.name}" data-id="#{ap.id}" id="toggle-area-place-#{ap.class.name}#{ap.id}"
         .accordion-inner.goals-actual
