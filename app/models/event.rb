@@ -455,7 +455,6 @@ class Event < ActiveRecord::Base
           with "campaign_id", Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
 
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
@@ -479,10 +478,15 @@ class Event < ActiveRecord::Base
             with :user_ids, value
           when 'venue'
             with :place_id, Venue.find(value).place_id
+          when 'area'
+            with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } )
           else
             with "#{attribute}_ids", value
           end
         end
+
+        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
+
 
         if params.has_key?(:event_data_stats) && params[:event_data_stats]
           stat(:promo_hours, :type => "sum")
@@ -529,6 +533,10 @@ class Event < ActiveRecord::Base
             end
             row(:inactive) do
               with(:status, 'Inactive')
+            end
+            row(:executed) do
+              with(:status, 'Active')
+              with(:end_at).less_than(Time.zone.now.beginning_of_day)
             end
           end
 

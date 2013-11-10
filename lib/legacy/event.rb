@@ -47,7 +47,7 @@ class Legacy::Event < Legacy::Record
         sleep(3)
         retry unless (tries -= 1).zero?
       end
-      Resque.enqueue(PhotoMigrationWorker, self.id, migration.local.id)
+      Resque.enqueue(PhotoMigrationWorker, self.id, migration.local.id) if self.photos.count > 0
     end
 
     migration
@@ -65,7 +65,7 @@ class Legacy::Event < Legacy::Record
   end
 
   def photos
-    @photos ||= Legacy::Photo.where(photographable_type: 'Event', photographable_id: self.id)
+    Legacy::Photo.where(photographable_type: 'Event', photographable_id: self.id)
   end
 
   def event_recap_attributes(event)
@@ -91,6 +91,7 @@ class Legacy::Event < Legacy::Record
           unless result.value.nil? || result.value.strip == ''
             (first_name,last_name) = result.value.split(' ', 2)
             contact = Contact.find_or_initialize_by_company_id_and_first_name_and_last_name(event.company_id, first_name, last_name)
+            contact.title = metric_name
             contact.save(validate: false) if contact.new_record?
             event.contact_events.build(contactable: contact)
           end
@@ -252,6 +253,5 @@ class Legacy::Event < Legacy::Record
       end
 
     end
-    @photos = []
   end
 end
