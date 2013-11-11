@@ -55,7 +55,11 @@ module PlacesHelper
         period = opening_hours['periods'].detect{|p| p['open']['day'].to_i == day }
         day_name = days[day]
         if period
-          "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
+          if period.has_key?('open') && period.has_key?('close')
+            "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
+          elsif period.has_key?('open')
+            "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
+          end
         else
           "#{day_name} Closed"
         end

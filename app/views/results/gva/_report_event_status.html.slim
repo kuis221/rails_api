@@ -1,39 +1,42 @@
 .box_report
   p.big
     b Event Status
-    .goals-actual
-      - stats = event_status_stats_for_events
-      - if stats.any?
-        .row-fluid
-          .span12.category
-            .span2.title
-            .span2.text-right.title Goal (# Events)
-            .span2.text-right.title Scheduled
-            .span2.text-right.title Executed
-            .span2.text-right.title Remaining
-          - stats.each do |name, stats|
-            .row-fluid
-              .span12 class="#{cycle("", "dark-bg")}"
-                .span2= name
-                .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
+    - stats_events = event_status_stats_for_events
+    - stats_promo_hours = event_status_stats_for_promo_hours
+    - if stats_events.any? || stats_promo_hours.any?
+      .goals-actual
+        - if stats_events.any?
+          .row-fluid
+            .span12.category
+              .span2.title
+              .span2.text-right.title Goal (# Events)
+              .span2.text-right.title Scheduled
+              .span2.text-right.title Executed
+              .span2.text-right.title Remaining
+            - stats_events.each do |name, stats|
+              .row-fluid
+                .span12 class="#{cycle("", "dark-bg")}"
+                  .span2= name
+                  .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
 
-      - stats = event_status_stats_for_promo_hours
-      - if stats.any?
-        .row-fluid
-          .span12.category
-            .span2.title
-            .span2.text-right.title Goal (Promo Hours)
-            .span2.text-right.title Scheduled
-            .span2.text-right.title Executed
-            .span2.text-right.title Remaining
-          - stats.each do |name, stats|
-            .row-fluid
-              .span12 class="#{cycle("", "dark-bg")}"
-                .span2= name
-                .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
-                .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
+        - if stats_promo_hours.any?
+          .row-fluid
+            .span12.category
+              .span2.title
+              .span2.text-right.title Goal (Promo Hours)
+              .span2.text-right.title Scheduled
+              .span2.text-right.title Executed
+              .span2.text-right.title Remaining
+            - stats_promo_hours.each do |name, stats|
+              .row-fluid
+                .span12 class="#{cycle("", "dark-bg")}"
+                  .span2= name
+                  .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
+                  .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
+    - else
+        p This campaing has no Events Stats
