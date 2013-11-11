@@ -2,18 +2,38 @@
   p.big
     b Event Status
     .goals-actual
-      .row-fluid
-        .span12.category
-          .span2.title
-          .span2.text-right.title Goal
-          .span2.text-right.title Scheduled
-          .span2.text-right.title Executed
-          .span2.text-right.title Remaining
-        - event_status_stats.each do |name, stats|
-          .row-fluid
-            .span12 class="#{cycle("", "dark-bg")}"
-              .span2= name
-              .span2.text-right= stats[:goal]
-              .span2.text-right= stats[:scheduled]
-              .span2.text-right= stats[:executed]
-              .span2.text-right= stats[:remaining]
+      - stats = event_status_stats_for_events
+      - if stats.any?
+        .row-fluid
+          .span12.category
+            .span2.title
+            .span2.text-right.title Goal (# Events)
+            .span2.text-right.title Scheduled
+            .span2.text-right.title Executed
+            .span2.text-right.title Remaining
+          - stats.each do |name, stats|
+            .row-fluid
+              .span12 class="#{cycle("", "dark-bg")}"
+                .span2= name
+                .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
+
+      - stats = event_status_stats_for_promo_hours
+      - if stats.any?
+        .row-fluid
+          .span12.category
+            .span2.title
+            .span2.text-right.title Goal (Promo Hours)
+            .span2.text-right.title Scheduled
+            .span2.text-right.title Executed
+            .span2.text-right.title Remaining
+          - stats.each do |name, stats|
+            .row-fluid
+              .span12 class="#{cycle("", "dark-bg")}"
+                .span2= name
+                .span2.text-right= number_with_delimiter(stats[:goal].value, precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:scheduled], precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:executed], precision: 2)
+                .span2.text-right= number_with_delimiter(stats[:remaining], precision: 2)
