@@ -19,4 +19,9 @@
 
 class Legacy::Address < Legacy::Record
   belongs_to  :addressable, :polymorphic => true
+
+
+  def single_line
+    [street_address, supplemental_address, city, state, postal_code].compact.join(' ')
+  end
 end
