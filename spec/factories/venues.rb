@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :venue do
     company_id 1
     place_id nil
-    events 1
+    events_count 1
     promo_hours 9.5
     impressions 100
     interactions 100

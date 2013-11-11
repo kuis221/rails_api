@@ -1,0 +1,9 @@
+.details_box
+
+  - if @campaign.events.count > 0
+
+    = render 'report_goals_actual'
+
+  - else
+
+    p This campaing has no events

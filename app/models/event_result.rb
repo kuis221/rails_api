@@ -39,9 +39,29 @@ class EventResult < ActiveRecord::Base
 
   def display_value
     if form_field.field_type == 'count'
-      form_field.kpi.kpis_segments.where(id: self.value).first.try(:text) if self.value
+      if form_field.capture_mechanism == 'checkbox'
+        form_field.kpi.kpis_segments.where(id: self.value).map(&:text).to_sentence if self.value
+      else
+        form_field.kpi.kpis_segments.where(id: self.value).first.try(:text) if self.value
+      end
     else
       self.value
+    end
+  end
+
+  def value
+    if form_field.field_type == 'count' && form_field.capture_mechanism == 'checkbox'
+      self.attributes['value'].try(:split, ',').try(:map , &:to_i)
+    else
+      self.attributes['value']
+    end
+  end
+
+  def value=(value)
+    if form_field.field_type == 'count' && form_field.capture_mechanism == 'checkbox' && value.is_a?(Array)
+      write_attribute('value', value.reject{|v| !(v =~ /^[0-9]+$/) }.join(','))
+    else
+      write_attribute('value', value)
     end
   end
 

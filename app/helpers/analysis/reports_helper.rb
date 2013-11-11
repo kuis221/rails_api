@@ -158,7 +158,10 @@ module Analysis
     end
 
     def each_events_goal
-      totals = @events_scope.joins(:results).where(event_results:{ kpi_id: @goals.map(&:kpi)})
+      approved_totals = @events_scope.joins(:results).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
+                          .select('sum(scalar_value) as total_value, event_results.kpi_id, event_results.kpis_segment_id')
+                          .group('event_results.kpi_id, event_results.kpis_segment_id')
+      submitted_totals = @events_scope.joins(:results).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
                           .select('sum(scalar_value) as total_value, event_results.kpi_id, event_results.kpis_segment_id')
                           .group('event_results.kpi_id, event_results.kpis_segment_id')
 
@@ -171,27 +174,8 @@ module Analysis
 
         if goal.kpis_segment_id.nil?
           # Handle special kpis types
-          completed = case goal.kpi.kpi_type
-          when 'expenses'
-            goal_scope.joins(:event_data).sum('event_data.spent').to_i
-          when 'promo_hours'
-            goal_scope.sum('promo_hours')
-          when 'events_count'
-            goal_scope.count
-          when 'photos'
-            AttachedAsset.photos.for_events(goal_scope).count
-          else
-            if goal.start_date.present? || goal.due_date.present?
-              data = goal_scope.joins(:results)
-                          .select('sum(scalar_value) as total_value')
-                          .where(event_results:{ kpi_id: goal.kpi_id})
-                          .group('event_results.kpi_id').first
-            else
-              data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
-            end
-
-            data.total_value.to_i unless data.nil?
-          end
+          completed = get_total_by_status(goal_scope, goal, approved_totals, 'approved')
+          submitted = get_total_by_status(goal_scope, goal, submitted_totals, ['submitted', 'rejected'])
 
           if completed.nil?
             yield goal, 0, 100, goal.value || 0, 0
@@ -205,9 +189,33 @@ module Analysis
               completed_percentage = 0
             end
             remaining_percentage = 100 - completed_percentage
-            yield goal, completed_percentage, remaining_percentage, remaining_count, total_count
+            yield goal, completed_percentage, remaining_percentage, remaining_count, total_count, submitted
           end
         end
+      end
+    end
+
+    def get_total_by_status(goal_scope, goal, totals, status)
+      case goal.kpi.kpi_type
+      when 'expenses'
+        goal_scope.where(aasm_state: status).joins(:event_data).sum('event_data.spent').to_i
+      when 'promo_hours'
+        goal_scope.where(aasm_state: status).sum('promo_hours')
+      when 'events_count'
+        goal_scope.where(aasm_state: status).count
+      when 'photos'
+        AttachedAsset.photos.for_events(goal_scope).count
+      else
+        if goal.start_date.present? || goal.due_date.present?
+          data = goal_scope.joins(:results).where(aasm_state: status)
+                      .select('sum(scalar_value) as total_value')
+                      .where(event_results:{ kpi_id: goal.kpi_id})
+                      .group('event_results.kpi_id').first
+        else
+          data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
+        end
+
+        data.total_value.to_i unless data.nil?
       end
     end
 	end

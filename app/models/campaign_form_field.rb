@@ -29,7 +29,7 @@ class CampaignFormField < ActiveRecord::Base
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
 
-  scope :for_event_data, lambda{ joins(:kpi).where(kpis: {module: ['custom', 'consumer_reach', 'demographics'] } ) }
+  scope :for_event_data, lambda{ joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
 
   # For field - sections relationship
   has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
@@ -50,7 +50,6 @@ class CampaignFormField < ActiveRecord::Base
   def capture_mechanism
     options.try(:[], :capture_mechanism)
   end
-
 
   def simple_form_field_type
     case field_type

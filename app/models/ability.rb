@@ -16,7 +16,11 @@ class Ability
       end
 
       can [:create, :update], Goal do |goal|
-        can?(:edit, goal.goalable)
+        if goal.parent.present?
+          can?(:show, goal.parent)
+        else
+          can?(:edit, goal.goalable)
+        end
       end
 
       can :time_zone_change, CompanyUser
@@ -31,8 +35,6 @@ class Ability
       end
 
       can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
-        raise "remove_campaign:: => #{can?(:edit, cu)}"
-
         can?(:edit, cu)
       end
     end

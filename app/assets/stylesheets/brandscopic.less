@@ -1073,7 +1073,7 @@ li.dropdown a{
 	border: 0;
 	color: white;
 	text-align: center;
-	width: 90px;
+	width: 92px;
 }
 .nav-tabs li a:hover{
 	background-color: white;
@@ -1120,10 +1120,10 @@ li.dropdown a{
 			margin-top:0;
 			padding-top: 14px;
 		}
-		.dropdown-menu>li>a:hover, 
+		.dropdown-menu>li>a:hover,
 		.dropdown-menu>li>a:focus,
 		.active ul li.active a,
-		.dropdown-submenu:hover>a, 
+		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
 			background-color: @header !important;
 			background-image: none;
@@ -1578,7 +1578,7 @@ ul.kpis-list{
  	//clear: both;
  	color: @brand;
  	font-size: 12px;
-    margin: 14px 0 0 0;
+    margin: 13px 0 0 0;
     padding: 0;
     position: relative;
     address{
@@ -3398,6 +3398,44 @@ body.roles{
 	}
 }
 
+.goals-actual {
+	margin-bottom: 30px;
+	padding-right: 40px;
+	.span12, .span12:first-child {
+		margin-left: 20px;
+		&.category {
+			background-color: @brand;
+			.span2 {
+				color: #FFFFFF;
+				padding-bottom: 10px;
+			}
+		}
+		.span2 {
+			margin: 0px;
+			padding: 5px;
+			&.title {
+				font-size: 16px;
+			}
+		}
+		&.dark-bg {
+			background-color: #eee;
+		}
+	}
+}
+
+#areas-places {
+	.accordion-group, .accordion-inner {
+		border: 0px;
+	}
+
+	.accordion-toggle {
+		b {
+			color: @text;
+			font-size: 16px;
+		}
+	}
+}
+
 // CAMPAIGNS POST EVENT FORM BUILDER
 
 #post-event-form-builder {
@@ -3454,9 +3492,6 @@ body.roles{
 		}
 	}
 
-	.link-list{
-		margin-top: 0;
-	}
 
 	#venue-score{
 		color: @venues_blue;
@@ -4255,7 +4290,7 @@ svg{
 
 // ANALYSIS
 
-.campaigns_report, .snapshot_report, .staff_report{
+.campaigns_report, .snapshot_report, .staff_report, .gva {
 	.details_box{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
@@ -4270,16 +4305,19 @@ svg{
 					width: 374px !important;
 				}
 			}
-	    }
-        .chzn-container-single{
+		}
+		.chzn-container-single{
 			.chzn-search input{
 				bottom:12px;
 			}
 			.chzn-results{
 				margin: 0 0 4px 0;
 			}
-        }
+		}
 	}
+}
+
+.campaigns_report, .snapshot_report, .staff_report {
 	.nav-tabs li a{
 		width: 130px;
 	}
@@ -5342,6 +5380,12 @@ a, i{
 		right: -110px;
 		top: 2px;
 		color: @venues_blue;
+	}
+}
+
+body.gva {
+	.tab-content {
+		overflow: visible;
 	}
 }
 
