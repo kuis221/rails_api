@@ -135,8 +135,10 @@ class Legacy::Event < Legacy::Record
         if result.present?
           unless result.value.nil? || result.value.strip == ''
             (first_name,last_name) = result.value.split(' ', 2)
-            user = CompanyUser.scoped_by_company_id(event.company_id).joins(:user).where('lower(users.first_name)=? and lower(users.last_name)=?', first_name.downcase.strip, last_name.downcase.strip).first
-            event.memberships.build(company_user: user) if user.present?
+            if first_name && last_name
+              user = CompanyUser.scoped_by_company_id(event.company_id).joins(:user).where('lower(users.first_name)=? and lower(users.last_name)=?', first_name.downcase.strip, last_name.downcase.strip).first
+              event.memberships.build(company_user: user) if user.present?
+            end
           end
         end
       end
