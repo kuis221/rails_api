@@ -165,6 +165,7 @@ module Analysis
                           .select('sum(scalar_value) as total_value, event_results.kpi_id, event_results.kpis_segment_id')
                           .group('event_results.kpi_id, event_results.kpis_segment_id')
 
+      goals_result = {}
       @goals.each do |goal|
         goal_scope = @events_scope
         if goal.start_date.present? || goal.due_date.present?
@@ -178,7 +179,7 @@ module Analysis
           submitted = get_total_by_status(goal_scope, goal, submitted_totals, ['submitted', 'rejected'])
 
           if completed.nil?
-            yield goal, 0, 100, goal.value || 0, 0
+            goals_result[goal.id] = {goal: goal, completed_percentage: 0, remaining_percentage: 100, remaining_count: goal.value || 0, total_count: 0, submitted: 0}
           else
             goal_value = goal.value || 0
             total_count = completed
@@ -189,10 +190,11 @@ module Analysis
               completed_percentage = 0
             end
             remaining_percentage = 100 - completed_percentage
-            yield goal, completed_percentage, remaining_percentage, remaining_count, total_count, submitted
+            goals_result[goal.id] = {goal: goal, completed_percentage: completed_percentage, remaining_percentage: remaining_percentage, remaining_count: remaining_count, total_count: total_count, submitted: submitted}
           end
         end
       end
+      goals_result
     end
 
     def get_total_by_status(goal_scope, goal, totals, status)
