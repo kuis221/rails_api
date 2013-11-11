@@ -13,7 +13,7 @@ namespace :legacy do
   namespace :import do
     desc 'Import a list of users into a database specified by IMPORT_DB'
     task :users, [:file] => :environment do |t, args|
-      args.with_defaults(:file => "tmp/users.csv")
+      args.with_defaults(:file => "#{Rails.root}/db/users.csv")
       csv_text = File.read(args.file)
       csv = CSV.parse(csv_text, :headers => true)
       company = Company.find_by_name('Legacy Marketing Partners')
@@ -45,7 +45,10 @@ namespace :legacy do
 
           if row['Brands list']
             brands_names=row['Brands list'].split(/,|,? and /).map(&:strip).compact.reject{|n| n == ''}
-            brands_names.each{|name| company_user.memberships.build(memberable: Brand.find_or_create_by_name(name.strip)) }
+            brands_names.each do|name|
+              member = BrandPortfolio.find_by_name(name.strip) or Brand.find_by_name(name.strip)
+              company_user.memberships.build(memberable: member)
+            end
           end
 
           if row['Markets list']
@@ -56,7 +59,6 @@ namespace :legacy do
                 company_user.memberships.build(memberable:  area)
               end
             end
-            p "User without markets #{user_info}" if company_user.memberships.select{|m| m.memberable_type == 'Area'}.empty?
           end
 
           if user.save(validate: false)
