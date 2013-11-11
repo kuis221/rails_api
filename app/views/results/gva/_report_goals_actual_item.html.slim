@@ -10,8 +10,8 @@
     - pending_and_total = (pending || 0)+total_count
     .span12 class="#{cycle("", "dark-bg")}"
       .span2 = goal.kpi.name
-      .span2.text-right = goal.kpi.currency? ? number_to_currency(goal.value, precision: 2) : number_with_delimiter(goal.value.round)
-      .span2.text-right = total_count.round
+      .span2.text-right = goal.kpi.currency? ? number_to_currency(goal.value, precision: 2) : number_with_delimiter(goal.value)
+      .span2.text-right = goal.kpi.currency? ? number_to_currency(total_count, precision: 2) : number_with_delimiter(total_count)
       .span2.text-right = "#{completed_percentage.round}%"
-      .span2.text-right = (pending_and_total).round
+      .span2.text-right = (goal.kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total))
       .span2.text-right = "#{(pending_and_total/goal.value * 100).round}%"
