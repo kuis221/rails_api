@@ -75,5 +75,42 @@ namespace :legacy do
 
       p "Missing markets:\n#{missing_markets.inspect}"
     end
+
+    desc 'Reassign the campaings to the users'
+    task :assign_campaigns, [:file] => :environment do |t, args|
+      args.with_defaults(:file => "#{Rails.root}/db/users.csv")
+      csv_text = File.read(args.file)
+      csv = CSV.parse(csv_text, :headers => true)
+      company = Company.find_by_name('Legacy Marketing Partners')
+      inviter = company.company_users.order('id').first.user
+      User.current = inviter
+      all_markets = []
+      csv.each do |row|
+        user = User.where('lower(email)=?', row['Email'].downcase.strip).first
+        if user.present?
+
+          company_user = user.company_users[0]
+
+          if row['Brands list']
+            brands_names=row['Brands list'].split(/,|,? and /).map(&:strip).compact.reject{|n| n == ''}
+            brands_names.each do|name|
+              member = BrandPortfolio.find_by_name(name.strip) || Brand.find_by_name(name.strip)
+              company_user.memberships.create({memberable: member}, without_protection: true) unless member.nil? || company_user.memberships.any?{|m| m.memberable == member}
+            end
+          end
+
+          if user.save(validate: false)
+            p "User: #{user.full_name} [#{user.email}] imported!"
+          else
+            p "Unable to save user: #{user.inspect}: #{user.errors.full_messages}"
+          end
+        else
+          p "Email already exists: #{row['Email']}... ignoring!"
+        end
+      end
+      missing_markets = all_markets.uniq.compact.reject{|n| n == '' || company.areas.find_by_name(n).present?}
+
+      p "Missing markets:\n#{missing_markets.inspect}"
+    end
   end
 end
