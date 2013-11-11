@@ -42,11 +42,11 @@ class Legacy::Account < Legacy::Record
   def find_place_on_api
     place = nil
     if address.present?
-      address_txt = URI::encode("#{address.city}, #{address.state}")
+      address_txt = URI::encode("#{address.street_address}, #{address.city}, #{address.state}")
       result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if result['results'].count > 0
         location = result['results'].first['geometry']['location']
-        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: "#{name} #{address.street_address}", :radius => 50000)
+        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: name, :radius => 1000)
 
         if spots.any?
           spot = spots.first

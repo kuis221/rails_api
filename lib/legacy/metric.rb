@@ -24,11 +24,18 @@ class Metric < Legacy::Record
 
   scope :system, lambda {where(:program_id => nil, :brand_id => nil)}
 
+  scope :for_program, lambda { |program| {:conditions => ['metrics.program_id = ?', program.id]}}
+
   has_many :data_migrations, as: :remote, class_name: 'Legacy::DataMigration'
 
   def synchronize(company, campaign, attributes={})
     if is_kpi?
-      migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Kpi.find_or_initialize_by_name_and_company_id(name, company.id) )
+      migration = data_migrations.find_or_initialize_by_company_id(company.id)
+      if migration.local.nil?
+        kpi = ::Kpi.where(company_id: company.id).where('trim(both ' ' from lower(name))=?', name.strip.downcase).first
+        kpi ||= ::Kpi.new({company_id: company.id, name: name}, without_protection: true)
+        migration.local = kpi
+      end
       #raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?
       attributes.merge!({company_id: company.id}).merge!(kpi_migration_attributes(migration.local))
       migration.local.assign_attributes(attributes, without_protection: true)
@@ -52,7 +59,6 @@ class Metric < Legacy::Record
 
   def kpi_migration_attributes(kpi)
     attributes = {
-      name: name,
       kpi_type: map_type,
       capture_mechanism:  map_capture_mechanism,
       module: 'custom',
