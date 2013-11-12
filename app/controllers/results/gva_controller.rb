@@ -64,7 +64,6 @@ class Results::GvaController < ApplicationController
 
     # Returns an array of areas/places with the statistics by event status compared to the area or place's goals
     def event_status_stats_for_promo_hours
-      Rails.logger.debug "\n\n>>>event_status_stats_for_promo_hours START"
       search_params = {company_id: current_company.id, campaign: [campaign.id], status: ['Active'], current_company_user: current_company_user, event_data_stats: true}
       stats = {}
       Goal.in(campaign).
@@ -81,7 +80,6 @@ class Results::GvaController < ApplicationController
           scheduled = search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed}
       end
-      Rails.logger.debug "\n\n>>>event_status_stats_for_promo_hours END"
       stats
     end
 

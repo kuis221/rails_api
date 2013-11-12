@@ -22,7 +22,7 @@ class FormField < Legacy::Record
 
 
   SUMMARY_FIELD = "MM / MBN Supervisor Comments"
-  COMMENTS_FIELDS = ["Consumer / Trade Comments, Reactions, & Quotes", "Trade / Consumer Feedback", "BA Comments (include location if not specified above, branding, brief overview of event, areas of opportunity, etc.)", 'Bartenders Feedback/Quotes']
+  COMMENTS_FIELDS = ["Consumer / Trade Comments, Reactions, & Quotes", "Trade / Consumer Feedback", "BA Comments (include location if not specified above, branding, brief overview of event, areas of opportunity, etc.)", 'Bartenders Feedback/Quotes', 'Consumer Comments, Reactions & Quotes']
   CONTACTS_FIELDS = ["Field Ambassador 1", "Field Ambassador 2","Field Ambassador 3", 'Bar Manager on Duty', 'Account Manager on Duty']
   TEAM_FIELDS = ["MM/MBN Supervisor"]
 
