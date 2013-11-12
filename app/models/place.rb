@@ -225,7 +225,7 @@ class Place < ActiveRecord::Base
   class << self
     # Combine search results from Google API and Existing places
     def combined_search(params)
-      local_results = Venue.do_search(params.merge(per_page: 5)).results
+      local_results = Venue.do_search(params.merge({per_page: 5, search_address: true})).results
       results = local_results.map do |p|
         address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
         {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
