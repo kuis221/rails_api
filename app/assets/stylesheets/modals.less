@@ -608,21 +608,26 @@ ul.select2-results{
 				}
 			}
 		}
-		/*a.a-desk-widget.a-desk-widget-chat{
-			background-color: @approved !important;
-			height: 34px;
-			width: 125px !important;
-		}*/
+		&.help{
+			.help-title{
+				margin-bottom: 20px;
+				p{
+					margin-bottom: 50px;
+					max-width: 500px;
+				}
+			}
+			.help-title-map{
+				display: none;
+				margin-bottom: 20px;
+			}
+		}
 		.help-item{
 			display: block;
 			float: left;
 			height: auto;
 			width: 100%;
-			&.overview{
-				margin-bottom: 70px !important;
-			}
-			&.support {
-				margin-bottom: 70px !important;
+			&.overview, &.support {
+				margin-bottom: 50px !important;
 			}
 			&.faqs{
 				display:none;
@@ -633,11 +638,10 @@ ul.select2-results{
 			.help-name{
 				font-size: 16px;
 				font-weight: bold;
-				margin-bottom: 20px;
 			}
 			p{
 				float: left;
-				margin: 0 30px 0 0;
+				margin: 10px 30px 0 0;
 				width: 250px;
 			}
 			.btn{
@@ -1190,4 +1194,6 @@ div#spin{
 .fancybox-wrap iframe{
 	height: 440px;
 }
+
+
 
