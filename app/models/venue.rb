@@ -264,6 +264,7 @@ class Venue < ActiveRecord::Base
       if params[:q].present?
         fulltext params[:q] do
           fields(:types, :name => 5.0)
+          phrase_fields :name => 5.0
           fields(:address => 2.0) if params[:search_address]
         end
       end
