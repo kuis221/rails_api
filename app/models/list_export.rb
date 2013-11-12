@@ -69,6 +69,10 @@ class ListExport < ActiveRecord::Base
     controller.instance_variable_set(:@_current_user, company_user.user)
     controller.instance_variable_set(:@current_company, company_user.company)
 
+    if company_user.user.time_zone.present?
+      Time.zone = company_user.user.time_zone
+    end
+
     name = controller.send(:export_file_name)
     buffer = controller.send(:export_list, self)
     tmp_filename = "#{Rails.root}/tmp/#{name}.#{export_format}"
