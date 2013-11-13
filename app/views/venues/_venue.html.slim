@@ -11,15 +11,12 @@
         .events
           .n_events
             = "#{venue.events_count}"
-          = "Events"
         .hours
           .n_hours
             = "#{venue.promo_hours}"
-          = "Hours"
         .spent
           .n_spent
             = "#{number_to_currency(venue.spent)}"
-          = "Spent"
 - else
   li id="venue_#{venue.id}"
     = link_to_if_permitted(:show, Venue, venue_path(venue.id, ref: venue.reference)) do

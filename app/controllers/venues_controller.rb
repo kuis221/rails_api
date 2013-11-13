@@ -1,7 +1,8 @@
 class VenuesController < FilteredController
   actions :index, :show
 
-  helper_method :place_events
+  helper_method :data_totals
+
   respond_to :xlsx, only: :index
 
   custom_actions member: [:select_areas, :add_areas]
@@ -118,6 +119,15 @@ class VenuesController < FilteredController
         end
         @search_params
       end
+    end
+
+    def data_totals
+      @data_totals ||= Hash.new.tap do |totals|
+        totals['events_count'] = @solr_search.stat_response['stats_fields']["events_count_is"]['sum'] rescue 0
+        totals['promo_hours'] = @solr_search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+        totals['spent'] = @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
+      end
+      @data_totals
     end
 
 end
