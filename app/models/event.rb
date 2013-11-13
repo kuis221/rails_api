@@ -479,13 +479,13 @@ class Event < ActiveRecord::Base
           when 'venue'
             with :place_id, Venue.find(value).place_id
           when 'area'
-            with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } )
+            with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } + [0] )
           else
             with "#{attribute}_ids", value
           end
         end
 
-        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten ) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
 
 
         if params.has_key?(:event_data_stats) && params[:event_data_stats]
