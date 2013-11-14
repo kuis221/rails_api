@@ -1983,11 +1983,11 @@ ul.kpis-list{
     			&:first-child{
     				line-height: 20px;
     			}
-    			.events, .hours, .score{
+    			.events, .hours, .spent{
     				display: inline-block;
-    				margin: 10px 0 0 20px;
-    				width: 90px;
-    				.n_events, .n_hours, .n_score{
+    				margin: 10px 0 0 0;
+    				width: 136px;
+    				.n_events, .n_hours, .n_spent{
     					font-size: 16px;
     				}
     			}
@@ -3480,6 +3480,7 @@ body.roles{
 				margin-left: 10px;
 			}
 		}
+
 		.slider-range-desc {
 			float: right;
 		}
@@ -3489,6 +3490,46 @@ body.roles{
 			padding: 15px !important;
 			button{
 				float:right;
+			}
+		}
+
+		#list-tools {
+			margin-bottom: 25px;
+			.xlsx-download-link {
+				margin: 0px 3px;
+				text-decoration: none;
+			}
+		}
+
+		#venues-totals {
+			font-size: 11px;
+			height: 52px;
+			width: 100%;
+			overflow: hidden;
+
+			.results-box-container {
+				.event-data-column {
+					display: inline-block;
+					vertical-align: top;
+					height: 52px;
+					float: left;
+					margin-left: 0;
+					width: 137px;
+				}
+			}
+
+			.big-number {
+				font-size: 22px;
+				font-weight: 300;
+				line-height: 28px;
+			}
+
+			.create-box {
+				.box-sizing(border-box);
+				float: left;
+				padding-left: 10px;
+				text-align: center;
+				width: 55%;
 			}
 		}
 	}

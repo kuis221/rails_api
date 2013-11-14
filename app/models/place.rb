@@ -28,8 +28,6 @@ require "base64"
 class Place < ActiveRecord::Base
   include GoalableModel
 
-  attr_accessible :reference, :place_id, :name, :types, :street_number, :route, :city, :state, :zipcode, :country
-
   validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
@@ -279,6 +277,20 @@ class Place < ActiveRecord::Base
         # Sometimes the API doesn't provide the state's long_name
         if self.country == 'US' && self.state =~ /^[A-Z]{1,2}$/
           self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
+        end
+
+        # Make sure the city returned by Google is the correct one
+        if self.city.present?
+          results = client.spots(self.latitude, self.longitude, types: 'political', name: self.city, radius: 50000)
+          if results.any?
+            results.each do |result|
+              city_spot = client.spot(result.reference)
+              if city_spot.city == city_spot.name
+                self.city = city_spot.city if city_spot.present? && city_spot.city.present?
+                break
+              end
+            end
+          end
         end
 
         sublocality ||= self.route if types.include?('establishment')

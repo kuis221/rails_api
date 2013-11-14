@@ -215,9 +215,12 @@ describe Campaign do
 
       campaign.place_allowed_for_event?(place).should be_false
 
+      # Assign San Francisco to the area
       area.places << city
 
-      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
+      # Because the campaing cache the locations, create a new object with the same campaign ID
+      campaign_reloaded  = Campaign.find(campaign.id)
+      campaign_reloaded.place_allowed_for_event?(place).should be_true
     end
   end
 

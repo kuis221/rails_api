@@ -70,9 +70,9 @@ describe Venue, search: true do
 
   describe "search by campaing" do
     it "should include any venue that is part of the campaign scope" do
-      SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+      sf = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
       campaign = FactoryGirl.create(:campaign, company_id: 1)
-      campaign.places << SF
+      campaign.places << sf
 
       venue_sf1 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
       venue_sf2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']))
@@ -89,7 +89,7 @@ describe Venue, search: true do
 
   describe "user permissions" do
     it "should include only venues that are between the user permissions" do
-      SF = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+      sf = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
 
       campaign = FactoryGirl.create(:campaign, company_id: 1)
       non_accessible_campaign = FactoryGirl.create(:campaign, company_id: 1)
@@ -101,7 +101,7 @@ describe Venue, search: true do
       # Create a non admin user
       company_user = FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:non_admin_role))
 
-      company_user.places << SF  # Give the user access to San Francisco
+      company_user.places << sf  # Give the user access to San Francisco
       company_user.campaigns << campaign  # Give the user access to the campaign
 
       # Create a event for each venue on a campaing that the user doesn't have access

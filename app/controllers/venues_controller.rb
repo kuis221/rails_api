@@ -1,7 +1,8 @@
 class VenuesController < FilteredController
   actions :index, :show
 
-  helper_method :place_events
+  helper_method :data_totals
+
   respond_to :xlsx, only: :index
 
   custom_actions member: [:select_areas, :add_areas]
@@ -62,7 +63,7 @@ class VenuesController < FilteredController
           max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
           max_venue_score  = rows.select{|r| r.stat_field == 'venue_score_is' }.first.value
 
-          f.push(label: "Events", name: :events, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
           f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
           f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:impressions][:min], selected_max: search_params[:impressions][:max] )
           f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions][:min], selected_max: search_params[:interactions][:max] )
@@ -118,6 +119,15 @@ class VenuesController < FilteredController
         end
         @search_params
       end
+    end
+
+    def data_totals
+      @data_totals ||= Hash.new.tap do |totals|
+        totals['events_count'] = @solr_search.stat_response['stats_fields']["events_count_is"]['sum'] rescue 0
+        totals['promo_hours'] = @solr_search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+        totals['spent'] = @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
+      end
+      @data_totals
     end
 
 end
