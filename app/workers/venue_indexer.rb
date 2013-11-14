@@ -1,4 +1,5 @@
 class VenueIndexer
+  include Resque::Plugins::UniqueJob
   @queue = :indexing
 
   def self.perform(venue_id)

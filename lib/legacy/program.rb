@@ -39,7 +39,7 @@ class Legacy::Program  < Legacy::Record
 
     synchronize_custom_kpis(company, migration.local)
 
-    synchronize_venues(company, migration.local)
+    #synchronize_venues(company, migration.local)
 
     migration
   end

@@ -1,4 +1,5 @@
 class EventDataIndexer
+  include Resque::Plugins::UniqueJob
   @queue = :indexing
 
   def self.perform(event_data_id)

@@ -54,7 +54,7 @@ class VenuesController < FilteredController
         facet_search = Venue.do_search(facet_params, true)
 
         if rows = facet_search.stats.first.rows
-          max_events       = rows.select{|r| r.stat_field == 'events_is' }.first.value
+          max_events       = rows.select{|r| r.stat_field == 'events_count_is' }.first.value
           max_promo_hours  = rows.select{|r| r.stat_field == 'promo_hours_es' }.first.value
           max_impressions  = rows.select{|r| r.stat_field == 'impressions_is' }.first.value
           max_interactions = rows.select{|r| r.stat_field == 'interactions_is' }.first.value

@@ -3009,6 +3009,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 	}
 }
 ul.thumbnails{
+	width: 100%;
 	&.venues{
 		margin: 0 -3% 0 -3%;
 		overflow: auto;
@@ -3423,14 +3424,14 @@ body.roles{
 }
 
 #areas-places {
-	.accordion-group, .accordion-inner {
-		border: 0px;
-	}
-
 	.accordion-toggle {
+		&.icon-chevron-down, &.icon-chevron-right {
+			color: @grey_three;
+		}
 		b {
 			color: @text;
 			font-size: 16px;
+			margin-left: 5px;
 		}
 	}
 }

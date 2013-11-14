@@ -1,4 +1,5 @@
 class EventPhotosIndexer
+  include Resque::Plugins::UniqueJob
   @queue = :indexing
 
   def self.perform(event_id)

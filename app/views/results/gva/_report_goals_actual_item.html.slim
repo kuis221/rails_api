@@ -6,12 +6,12 @@
     .span2.text-right.title Actual %
     .span2.text-right.title Pending
     .span2.text-right.title Pending %
-  - each_events_goal do |goal, completed_percentage, remaining_percentage, remaining_count, total_count, pending|
-    - pending_and_total = (pending || 0)+total_count
+  - each_events_goal.each do |id, event_goal|
+    - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
     .span12 class="#{cycle("", "dark-bg")}"
-      .span2 = goal.kpi.name
-      .span2.text-right = goal.kpi.currency? ? number_to_currency(goal.value, precision: 2) : number_with_delimiter(goal.value.round)
-      .span2.text-right = total_count.round
-      .span2.text-right = "#{completed_percentage.round}%"
-      .span2.text-right = (pending_and_total).round
-      .span2.text-right = "#{(pending_and_total/goal.value * 100).round}%"
+      .span2 = event_goal[:goal].kpi.name
+      .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:goal].value, precision: 2) : number_with_delimiter(event_goal[:goal].value)
+      .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:total_count], precision: 2) : number_with_delimiter(event_goal[:total_count])
+      .span2.text-right = "#{event_goal[:completed_percentage].round}%"
+      .span2.text-right = (event_goal[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total))
+      .span2.text-right = "#{(pending_and_total/event_goal[:goal].value * 100).round}%"
