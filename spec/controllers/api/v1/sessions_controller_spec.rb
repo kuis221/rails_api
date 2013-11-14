@@ -13,7 +13,6 @@ describe Api::V1::SessionsController do
 
   it "should return an error if not success" do
     post :create, email: user.email, password: 'XXXXXXXX', format: :json
-    user.reload.authentication_token.should be_nil
     result = JSON.parse(response.body)
     result['success'].should be_false
     result['info'].should == 'Login Failed'

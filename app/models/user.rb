@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
   # :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :invitable, :database_authenticatable,
-         :recoverable, :rememberable, :trackable, :confirmable, :token_authenticatable
+         :recoverable, :rememberable, :trackable, :confirmable
 
   has_many :company_users, autosave: true
 
@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
 
   has_many :events, through: :company_users
 
+  before_save :ensure_authentication_token
   after_save :reindex_related
   after_invitation_accepted :reindex_company_users
 
@@ -212,6 +213,21 @@ class User < ActiveRecord::Base
         recoverable.send_reset_password_instructions if recoverable.persisted?
       end
       recoverable
+    end
+  end
+
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
     end
   end
 end

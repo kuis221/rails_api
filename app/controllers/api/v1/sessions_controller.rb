@@ -1,5 +1,6 @@
 class Api::V1::SessionsController < Api::V1::ApiController
   skip_before_filter :verify_authenticity_token
+  skip_before_filter :set_user
 
   resource_description do
     short 'Site members'

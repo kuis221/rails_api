@@ -627,6 +627,7 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "unit_number"
     t.string   "zip_code"
     t.datetime "invitation_created_at"
+    t.string   "authentication_token"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

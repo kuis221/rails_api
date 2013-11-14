@@ -22,7 +22,9 @@ class Api::V1::ApiController < ActionController::Base
     end
 
     def current_user
-      @current_user ||= User.find_by_authentication_token(params[:auth_token]) or raise Api::V1::InvalidAuthToken.new(params[:auth_token]), "invalid token"
+      unless params[:auth_token].nil? || params[:auth_token].strip == ''
+        @current_user ||= User.find_by_authentication_token(params[:auth_token]) or raise Api::V1::InvalidAuthToken.new(params[:auth_token]), "invalid token"
+      end
     end
 
     def invalid_token
