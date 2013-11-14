@@ -1,6 +1,7 @@
 - remote ||= false
 = simple_nested_form_for([@campaign, resource], remote: remote || false) do |f|
   = f.error_notification
+  = resource.errors.full_messages.join("<br />").html_safe
 
   .form-inputs
     - if resource.out_of_the_box?

@@ -37,6 +37,10 @@ class Kpi < ActiveRecord::Base
   validates :company_id, numericality: true, allow_nil: true
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
 
+  validates_associated :kpis_segments
+
+  validate :segments_can_be_deleted?
+
   # KPIs-Segments relationship
   has_many :kpis_segments, dependent: :destroy, order: :id
 
@@ -167,6 +171,13 @@ class Kpi < ActiveRecord::Base
 
     ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
       @ethnicity.kpis_segments.create(text: segment)
+    end
+  end
+
+
+  def segments_can_be_deleted?
+    kpis_segments.select{|s| s.marked_for_destruction? }.each do|segment|
+      errors.add :base, 'cannot delete segments with results' if segment.has_results?
     end
   end
 
