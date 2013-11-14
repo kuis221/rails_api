@@ -44,7 +44,7 @@ class InvitationsController < Devise::InvitationsController
         self.resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
       else
         self.resource = invited_user
-        self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, as: User.inviter_role(current_inviter))
+        self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, without_protection: true)
         if self.resource.save and self.resource.errors.empty?
           UserMailer.company_invitation(self.resource, current_company, current_user).deliver
         end
@@ -55,7 +55,7 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def resource_from_invitation_token
-    unless params[:invitation_token] && self.resource = resource_class.to_adapter.find_first(params.slice(:invitation_token))
+    unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
       set_flash_message(:alert, :invitation_token_invalid, :reset_pass_url => new_password_path(resource_name))
       flash[:alert] = flash[:alert].html_safe
       redirect_to after_sign_out_path_for(resource_name)
@@ -80,10 +80,15 @@ class InvitationsController < Devise::InvitationsController
       user_params ||= params
       allowed = []
       if action_name == 'update'
+        user_params[:accepting_invitation] = true
         allowed = [:first_name, :last_name, :email, :phone_number, :street_address, :unit_number, :zip_code, :password, :password_confirmation, :city, :state, :country, :time_zone, :invitation_token, :accepting_invitation]
       else
         allowed = [:first_name, :last_name, :email, :inviting_user, :accepting_invitation, {company_users_attributes: [:company_id, :role_id, {team_ids: []}] }]
       end
       user_params.permit(*allowed)
+    end
+
+    def update_resource_params
+      resource_params
     end
 end

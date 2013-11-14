@@ -281,11 +281,11 @@ describe CompanyUsersController do
 
       it "should not create another membership if there is one already" do
         campaign.brands << brand
-        user.memberships.create(parent_id: brand.id, parent_type: 'Brand')
+        user.memberships.create(memberable: brand)
+        user.reload
         expect {
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           response.should be_success
-          user.reload
         }.to_not change(user.memberships, :count)
       end
     end
