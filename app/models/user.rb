@@ -198,6 +198,17 @@ class User < ActiveRecord::Base
 
   class << self
 
+    # Find a user by its confirmation token and try to confirm it.
+    # If no user is found, returns a new user with an error.
+    # If the user is already confirmed, create an error for the user
+    # Options must have the confirmation_token
+    def confirm_by_token(confirmation_token)
+      confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
+      confirmable.inviting_user = true
+      confirmable.confirm! if confirmable.persisted?
+      confirmable
+    end
+
     # Attempt to find a user by its email. If a record is found, send new
     # password instructions to it. If user is not found, returns a new user
     # with an email not found error.
