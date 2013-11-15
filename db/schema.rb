@@ -324,6 +324,17 @@ ActiveRecord::Schema.define(:version => 20131106150122) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "documents", :force => true do |t|
+    t.string   "name"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "event_id"
+  end
+
+  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
+
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -626,7 +637,6 @@ ActiveRecord::Schema.define(:version => 20131106150122) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
-    t.string   "authentication_token"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
