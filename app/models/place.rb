@@ -285,7 +285,7 @@ class Place < ActiveRecord::Base
           if results.any?
             results.each do |result|
               city_spot = client.spot(result.reference)
-              if city_spot.city == city_spot.name
+              if city_spot.city == city_spot.name || city_spot.name == self.city
                 self.city = city_spot.city if city_spot.present? && city_spot.city.present?
                 break
               end

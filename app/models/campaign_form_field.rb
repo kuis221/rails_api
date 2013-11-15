@@ -28,7 +28,6 @@ class CampaignFormField < ActiveRecord::Base
 
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
-
   scope :for_event_data, lambda{ joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
 
   # For field - sections relationship
