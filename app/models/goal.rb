@@ -23,10 +23,10 @@ class Goal < ActiveRecord::Base
   belongs_to :kpi
   belongs_to :kpis_segment
 
-  validate :goalable_id, presence: true, numericality: true
-  validate :goalable_type, presence: true
-  validate :kpi_id, presence: true, numericality: true
-  validate :kpis_segment_id, numericality: true, allow_nil: true
+  validates :goalable_id, presence: true, numericality: true
+  validates :goalable_type, presence: true
+  validates :kpis_segment_id, numericality: true, allow_nil: true
+  validates :value, numericality: true, allow_nil: true
 
   validates_datetime :start_date, allow_nil: true, allow_blank: true
   validates_datetime :due_date, allow_nil: true, allow_blank: true, :on_or_after => :start_date
