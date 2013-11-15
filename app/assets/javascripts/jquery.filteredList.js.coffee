@@ -201,20 +201,31 @@ $.widget 'nmk.filteredList', {
 
 		@formFilters.append($filter)
 		if optionsCount > 5
-			$ul = $('<ul class="sf-menu sf-vertical">')
+      $li = $('<li>')
+      $div = $('<div>')
+			$ul = $('<ul class="sf-menu sf-vertical-menu">')
+        
 			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
-					false
+          if $trigger.next().css('display') == "none"
+            $('.child_div').hide()
+            $('.child_div').parent().css('height','8%')
+            $('.more-options-link').next().hide()
+            $trigger.next().show()
+          else
+            $('.more-options-link').next().hide()
+          false
 				.on 'mouseover.firstime', (e)=>
 					$(e.target).off('mouseover.firstime')
 					if not $ul.hasClass('sf-js-enabled')
-						list = @_buildFilterOptionsList(filter, $filter)
+						list = @_buildFilterOptionsList(filter, $filter,false)
 						$ul.find('li').append(list)
 						$trigger.superfish({cssArrows: false, disableHI: true})
 						$trigger.superfish('show')
 					false
 				.on ''
-			$('<div>').append($ul.append($('<li>').append($trigger))).insertAfter($filter)
+        
+			$div.append($ul.append($li.append($trigger))).insertAfter($filter)
 
 			$filter
 		items = @_sortOptionsAlpha(items)
@@ -245,7 +256,7 @@ $.widget 'nmk.filteredList', {
 			@_closeFilterOptions()
 
 		filter = filterWrapper.data('filter')
-		items = @_buildFilterOptionsList(filter, filterWrapper)
+		items = @_buildFilterOptionsList(filter, filterWrapper,false)
 
 		if items? and items.find('li').length > 0
 			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
@@ -275,7 +286,7 @@ $.widget 'nmk.filteredList', {
 			@filtersPopup.remove()
 		$(document).off 'click.filteredList'
 
-	_buildFilterOptionsList: (list, filterWrapper) ->
+	_buildFilterOptionsList: (list, filterWrapper,showChild) ->
 		$list = null
 		if list? and list.items? and list.items.length
 			items = {}
@@ -308,21 +319,50 @@ $.widget 'nmk.filteredList', {
 						# if @filtersPopup.find('li').length == 0
 						# 	@_closeFilterOptions()
 						# 	filterWrapper.find('.more-options-link').remove()
-					if child = @_buildFilterOptionsList(option, filterWrapper)
+					if child = @_buildFilterOptionsList(option, filterWrapper,true)
 						$option.append child
 
-			$list = $('<ul>')
+			if showChild == false 
+        $list = $('<ul class="sf-vertical-menu filter_vertical_box">')
+      else
+        $list = $('<ul class="child_submenu">')
 			for group, children of items
 				if children.length > 0
 					if group isnt '__default__'
-						$list.append $('<li class="options-list-group">').text(group)
+						$list_group = $('<li class="options-list-group">')
+							.on 'click', (e) =>
+								$current_div = $list_group.parent().parent()
+								if $current_div.hasClass('parent_div')
+									$('.child_div').hide()
+									$('.child_div').parent().css('height','8%')
+									$list_group.siblings().css('height','8%')
+								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0 
+										$list_group.siblings().find("div").hide()
+									
+						$list.append $list_group.text(group)
 					$list.append children
-		$list
 
+     if showChild == false
+      $div = $('<div class="parent_div">')
+     else
+      $div = $('<div class="child_div">')
+     $div.append $list
+		$div
 
 	_buildFilterOption: (option) ->
-		$('<li>').append($('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label))
-
+		$label = $('<label style= "font-size: 11px">')
+		$input = $('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')})
+		$li = $('<li>')
+			.on 'mouseover', (e) =>
+				$div_tmp = $li.find('.child_div')
+				if $div_tmp.hasClass('child_div') and $div_tmp.css('display') == 'none' and !$div_tmp.hasClass('checker')
+					$(".child_div").parent().css('height','8%')
+					$div_tmp.css('display','inline-block')
+					$div_tmp.find(".child_div").hide() # remove extra titles
+					$li.css('height','25%')
+					$li.siblings().find('.child_div').hide()
+			
+		$li.append($label.append($input, option.label))
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
