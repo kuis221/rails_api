@@ -79,7 +79,7 @@ class Kpi < ActiveRecord::Base
   def sync_segments_and_goals
     unless self.out_of_the_box?
       if GOAL_ONLY_TYPE_OPTIONS.include?(self.kpi_type)
-        self.kpis_segments.delete_all
+        self.kpis_segments.destroy_all
       else
         self.goals.where(kpis_segment_id: nil).delete_all
       end

@@ -57,15 +57,73 @@ describe KpisController do
 
   describe "PUT 'update'" do
     let(:kpi){ FactoryGirl.create(:kpi, company: @company) }
-    it "must update the date_range attributes" do
-      put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description'}, format: :js
+    it "must update the kpi attributes" do
+      kpi.save
+      expect {
+        expect {
+          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}]}, format: :js
+        }.to change(Goal, :count).by(1)
+      }.to_not change(Kpi, :count)
       response.should render_template(:update)
       response.should_not render_template(:form_dialog)
+
+      campaign.goals.for_kpi(kpi).value.should == 13
       assigns(:kpi).should == kpi
       kpi.reload
       kpi.name.should == 'Test kpi'
       kpi.description.should == 'Test kpi description'
     end
+
+    it "must update the goals for kpis that already have a goal" do
+      kpi.save
+      goal = campaign.goals.for_kpi(kpi)
+      goal.value = 33
+      goal.save.should be_true
+
+      expect {
+        expect {
+          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{id: goal.id, goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 44}]}, format: :js
+        }.to_not change(Goal, :count).by(1)
+      }.to_not change(Kpi, :count)
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+
+      campaign.goals.for_kpi(kpi).value.should == 44
+    end
+
+
+    it "should create the associated segments" do
+      kpi.save
+      goal = campaign.goals.for_kpi(kpi)
+      goal.value = 33
+      goal.save.should be_true
+
+      expect {
+        expect {
+          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', kpi_type: 'count', description: 'Test kpi description', kpis_segments_attributes: [{text: 'An option'}, {text: 'Another option'}]}, format: :js
+        }.to change(KpisSegment, :count).by(2)
+      }.to_not change(Kpi, :count)
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+    end
+
+    it "should save the goals for the associated segments" do
+      kpi.save
+      expect {
+        expect {
+          expect {
+            put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', kpi_type: 'count', description: 'Test kpi description',
+              kpis_segments_attributes: [
+                {text: 'An option', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 44}]},
+                {text: 'Another option', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 55}]}
+              ]}, format: :js
+          }.to change(Goal, :count).by(2)
+        }.to change(KpisSegment, :count).by(2)
+      }.to_not change(Kpi, :count)
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+    end
+
 
     it "should not allow update global kpis' attributes" do
       Kpi.create_global_kpis

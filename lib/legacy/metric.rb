@@ -32,7 +32,12 @@ class Metric < Legacy::Record
     if is_kpi?
       migration = data_migrations.find_or_initialize_by_company_id(company.id)
       if migration.local.nil?
-        kpi = ::Kpi.where(company_id: company.id).where('trim(both ' ' from lower(name))=?', name.strip.downcase).first
+        kpi = ::Kpi.where(company_id: company.id).where("trim(both ' ' from lower(regexp_replace(name, '[:#\\.,;]', '','g')))=?", name.gsub(/[:#\.,;]/,'').strip.downcase).first
+
+        # If the KPI wasn't found by the name, try to find a field on the campaign with that label
+        if kpi.nil?
+          kpi = campaign.form_fields.detect{|f| f.name.gsub(/[:#\.,;]/,'').strip.downcase ==  name.gsub(/[:#\.,;]/,'').strip.downcase && f.field_type == map_type}.try(:kpi)
+        end
         kpi ||= ::Kpi.new({company_id: company.id, name: name}, without_protection: true)
         migration.local = kpi
       end

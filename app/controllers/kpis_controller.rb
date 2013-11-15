@@ -10,6 +10,8 @@ class KpisController < FilteredController
     def permitted_params
       goals_attributes = [:id, :goalable_id, :goalable_type, :value, :kpis_segment_id, :kpi_id]
       common_params = [{kpis_segments_attributes: [:id, :text, :_destroy, {goals_attributes: goals_attributes}]}, {goals_attributes: goals_attributes}]
+
+      # Allow only certain params for global KPIs like impresssions, interactions, gender, etc
       if params[:id].nil? || params[:id].empty? || !Kpi.global.select('id').map(&:id).include?(params[:id].to_i)
         params.permit(kpi: [:name, :description, :kpi_type, :capture_mechanism] + common_params)[:kpi]
       else
