@@ -499,7 +499,7 @@ describe CampaignsController do
     end
 
     it "should update the form_field_id for any existing results for the kpi" do
-      result = EventResult.create({form_field_id: 99912, event: FactoryGirl.create(:event, campaign: campaign, company: @company), kpis_segment_id: nil, kpi_id: kpi.id}, without_protection: true)
+      result = EventResult.create({form_field: FactoryGirl.create(:campaign_form_field, campaign: campaign), event: FactoryGirl.create(:event, campaign: campaign, company: @company), kpis_segment_id: nil, kpi_id: kpi.id}, without_protection: true)
       expect {
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
       }.to change(CampaignFormField, :count).by(1)

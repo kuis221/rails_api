@@ -10,7 +10,7 @@ gem "rack-timeout"
 
 gem 'pg'
 gem 'devise'
-gem 'devise_invitable', '~> 1.1.0'
+gem 'devise_invitable', '~> 1.3.0'
 gem "cancan", ">= 1.6.8"
 gem "rolify", ">= 3.2.0"
 gem "slim"

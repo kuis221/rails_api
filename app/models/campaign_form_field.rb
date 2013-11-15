@@ -28,7 +28,6 @@ class CampaignFormField < ActiveRecord::Base
 
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
-
   scope :for_event_data, lambda{ joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
 
   # For field - sections relationship
@@ -36,7 +35,7 @@ class CampaignFormField < ActiveRecord::Base
   accepts_nested_attributes_for :fields
 
   def field_options(result)
-    options = {as: simple_form_field_type, capture_mechanism: self.capture_mechanism, label: self.name, field_id: self.id, options: self.options, required: is_required?, input_html: {class: field_validation_classes(result)}}
+    options = {as: simple_form_field_type, capture_mechanism: self.capture_mechanism, label: self.name, field_id: self.id, options: self.options, required: is_required?, input_html: {value: result.value, class: field_validation_classes(result)}}
     unless result.kpis_segment_id.nil?
       options.merge!(label: result.kpis_segment.text)
       options[:input_html].merge!('data-segment-field-id' => self.id)

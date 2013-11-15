@@ -9,6 +9,7 @@ FactoryGirl.define do
     completed false
 
     factory :late_task do
+      completed false
       due_at 3.days.ago
     end
 

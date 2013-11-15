@@ -34,7 +34,7 @@ describe Place do
     it "should correctly assign the attributes returned by the api call" do
       place = Place.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
-      place.should_receive(:client).and_return(api_client)
+      place.should_receive(:client).any_number_of_times.and_return(api_client)
       api_client.should_receive(:spot).with('YXZ').and_return(double(:spot, {
           name: 'Rancho Grande',
           lat: '12.345678',
@@ -51,6 +51,8 @@ describe Place do
             {'types' => ['route'],'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia'}
           ]
         }))
+      api_client.should_receive(:spots).and_return([])
+
       place.save
       place.reload
       place.name.should == 'Rancho Grande'
@@ -66,13 +68,16 @@ describe Place do
       place.zipcode.should == '12345'
       place.street_number.should == '7'
       place.route.should == 'Calle Melancolia'
+    end
+
+    it "should fix the city" do
 
     end
 
     it "should find out the correct state name if the API doesn't provide it" do
       place = Place.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
-      place.should_receive(:client).and_return(api_client)
+      place.should_receive(:client).any_number_of_times.and_return(api_client)
       api_client.should_receive(:spot).with('YXZ').and_return(double(:spot, {
           name: 'Shark\'s Cove',
           lat: '12.345678',
@@ -88,6 +93,7 @@ describe Place do
             {'types' => ['route'],'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia'}
           ]
         }))
+      api_client.should_receive(:spots).and_return([])
       place.save
       place.reload
       place.name.should == 'Shark\'s Cove'

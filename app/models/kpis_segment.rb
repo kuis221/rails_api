@@ -16,4 +16,23 @@ class KpisSegment < ActiveRecord::Base
   attr_accessible :text, :goals_attributes
 
   accepts_nested_attributes_for :goals
+
+  before_destroy :check_results_for_segment
+
+  validates_associated :goals
+
+  validates :text, presence: true, uniqueness: {scope: :kpi_id}
+
+  def has_results?
+    EventResult.where(kpi_id: kpi_id ).where('event_results.value=? or event_results.kpis_segment_id=?', self.id.to_s, self.id).count > 0
+  end
+
+
+  protected
+
+    def check_results_for_segment
+      errors.add :base, "cannot delete with results" if has_results?
+
+      errors.blank?
+    end
 end

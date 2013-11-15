@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131106150122) do
+ActiveRecord::Schema.define(:version => 20131114022734) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -603,12 +603,12 @@ ActiveRecord::Schema.define(:version => 20131106150122) do
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "email",                                :default => "", :null => false
-    t.string   "encrypted_password",                   :default => ""
+    t.string   "email",                               :default => "", :null => false
+    t.string   "encrypted_password",                  :default => ""
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                        :default => 0
+    t.integer  "sign_in_count",                       :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -617,14 +617,14 @@ ActiveRecord::Schema.define(:version => 20131106150122) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
     t.string   "country",                :limit => 4
     t.string   "state"
     t.string   "city"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.string   "invitation_token",       :limit => 60
+    t.string   "invitation_token"
     t.datetime "invitation_sent_at"
     t.datetime "invitation_accepted_at"
     t.integer  "invitation_limit"
@@ -637,6 +637,11 @@ ActiveRecord::Schema.define(:version => 20131106150122) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
+<<<<<<< HEAD
+=======
+    t.string   "authentication_token"
+    t.datetime "invitation_created_at"
+>>>>>>> 2fa009c06a0dc706e1eea4ab00dc356d8695ae1e
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

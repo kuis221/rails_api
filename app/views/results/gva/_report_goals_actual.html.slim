@@ -6,7 +6,7 @@
       .goals-actual
         = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
     - else
-        p This campaing has no events Goal Vs. Actual stats
+        p This campaign has no events Goal Vs. Actual stats
 
 #areas-places.accordion
   - pairs = Goal.in(@campaign).map{|g| "#{g.goalable_type}#{g.goalable_id}"}

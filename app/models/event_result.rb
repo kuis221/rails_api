@@ -52,6 +52,8 @@ class EventResult < ActiveRecord::Base
   def value
     if form_field.field_type == 'count' && form_field.capture_mechanism == 'checkbox'
       self.attributes['value'].try(:split, ',').try(:map , &:to_i)
+    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present?
+      self.attributes['value'].to_i
     else
       self.attributes['value']
     end

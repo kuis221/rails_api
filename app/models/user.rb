@@ -88,10 +88,6 @@ class User < ActiveRecord::Base
   validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
   validates_confirmation_of :password
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :phone_number, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
-  attr_accessible :first_name, :last_name, :email, :phone_number, :country, :state, :city, :street_address, :unit_number, :zip_code, :password, :password_confirmation, :accepting_invitation, :time_zone
-
   accepts_nested_attributes_for :company_users, allow_destroy: false
 
   delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
@@ -202,9 +198,15 @@ class User < ActiveRecord::Base
 
   class << self
 
-    def inviter_role(inviter)
-      return :admin if inviter.is_a?(User)
-      :default
+    # Find a user by its confirmation token and try to confirm it.
+    # If no user is found, returns a new user with an error.
+    # If the user is already confirmed, create an error for the user
+    # Options must have the confirmation_token
+    def confirm_by_token(confirmation_token)
+      confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
+      confirmable.inviting_user = true
+      confirmable.confirm! if confirmable.persisted?
+      confirmable
     end
 
     # Attempt to find a user by its email. If a record is found, send new
