@@ -60,7 +60,7 @@ places_003:
   route: Jeff Fuqua Blvd
   zipcode: '32827'
   city: Orlando
-  state: FL
+  state: Florida
   country: US
   created_at: '2013-05-20 20:52:07.492817'
   updated_at: '2013-06-13 16:53:49.590499'
@@ -83,7 +83,7 @@ places_004:
   route: 
   zipcode: '32830'
   city: Lake Buena Vista
-  state: FL
+  state: Florida
   country: US
   created_at: '2013-05-20 20:53:23.573462'
   updated_at: '2013-06-13 16:53:50.121461'
