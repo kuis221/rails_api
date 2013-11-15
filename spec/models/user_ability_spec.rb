@@ -100,6 +100,20 @@ describe "User" do
       it { should be_able_to(:notifications, CompanyUser) }
 
 
+      describe "Campaign permissions" do
+        it "should be able to activate kpis if has the :activate_kpis permission" do
+          campaign = FactoryGirl.create(:campaign, company: company)
+          ability.should_not be_able_to(:add_kpi, campaign)
+          ability.should_not be_able_to(:remove_kpi, campaign)
+
+          user.role.permission_for(:activate_kpis, Campaign).save
+
+          ability.should be_able_to(:add_kpi, campaign)
+          ability.should be_able_to(:remove_kpi, campaign)
+        end
+      end
+
+
       #     ___ __ __    ___  ____   ______      ______   ____  _____ __  _  _____
       #    /  _]  |  |  /  _]|    \ |      |    |      | /    |/ ___/|  |/ ]/ ___/
       #   /  [_|  |  | /  [_ |  _  ||      |    |      ||  o  (   \_ |  ' /(   \_
