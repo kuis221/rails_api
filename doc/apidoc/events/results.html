@@ -33,7 +33,7 @@
 
   <div class='page-header'>
     <h1>
-      GET /api/v1/events/:id<br>
+      GET /api/v1/events/:id/results<br>
       <small>Get the list of results for the events</small>
     </h1>
   </div>
@@ -41,7 +41,162 @@
 <div>
 
   
+<p>Returns a list of form fields based on the event&#39;s campaign.</p>
 
+
+    <h2>Examples</h2>
+      <pre class="prettyprint">[
+    {
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Impressions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 2,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 82,
+        &quot;value&quot;: &quot;45&quot;,
+        &quot;name&quot;: &quot;Interactions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 3,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 83,
+        &quot;value&quot;: &quot;34&quot;,
+        &quot;name&quot;: &quot;Samples&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 84,
+        &quot;value&quot;: &quot;30&quot;,
+        &quot;name&quot;: &quot;Female&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 85,
+        &quot;value&quot;: &quot;70&quot;,
+        &quot;name&quot;: &quot;Male&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 86,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;&lt; 12&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 87,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;12 – 17&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 88,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;18 – 24&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 89,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;25 – 34&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 90,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;35 – 44&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 91,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;45 – 54&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 92,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;55 – 64&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 93,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;65+&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    }
+]
+</pre>
 
     <h2>Supported Formats</h2>
     json, xml

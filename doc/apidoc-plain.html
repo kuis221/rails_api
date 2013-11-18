@@ -6,6 +6,10 @@
       <li><a href='#events-update'>update</a></li>
       <li><a href='#events-results'>results</a></li>
   </ul>
+  <h4><a href='#photos'>Photos</a></h4>
+  <ul>
+      <li><a href='#photos-index'>index</a></li>
+  </ul>
   <h4><a href='#sessions'>Sessions</a></h4>
   <ul>
       <li><a href='#sessions-create'>create</a></li>
@@ -344,8 +348,8 @@ on the following search params</p>
     <li>
       <strong>event </strong>:
       <small>
-        optional
-        , nil allowed
+        required
+        
           [ Must be a Hash ]
       </small>
       
@@ -432,6 +436,19 @@ on the following search params</p>
       </small>
       
 <p>Event&#39;s status</p>
+
+    </li>
+    
+    <li>
+      <strong>results_attributes </strong>:
+      <small>
+        optional
+        , nil allowed
+          [ Must be a list of results [id, value]. ]
+      </small>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
 
     </li>
     
@@ -507,8 +524,8 @@ on the following search params</p>
     <li>
       <strong>event </strong>:
       <small>
-        optional
-        , nil allowed
+        required
+        
           [ Must be a Hash ]
       </small>
       
@@ -598,6 +615,19 @@ on the following search params</p>
 
     </li>
     
+    <li>
+      <strong>results_attributes </strong>:
+      <small>
+        optional
+        , nil allowed
+          [ Must be a list of results [id, value]. ]
+      </small>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
+
+    </li>
+    
 </ul>
 
 </ul>
@@ -611,7 +641,7 @@ on the following search params</p>
 
       <div>
           <h4>
-              GET /api/v1/events/:id
+              GET /api/v1/events/:id/results
             <br>
             <small>Get the list of results for the events</small>
           </h4>
@@ -619,6 +649,161 @@ on the following search params</p>
 
       <div>
         
+<p>Returns a list of form fields based on the event&#39;s campaign.</p>
+
+          <h4>Examples</h4>
+            <pre class="wiki">[
+    {
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Impressions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 2,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 82,
+        &quot;value&quot;: &quot;45&quot;,
+        &quot;name&quot;: &quot;Interactions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 3,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 83,
+        &quot;value&quot;: &quot;34&quot;,
+        &quot;name&quot;: &quot;Samples&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 84,
+        &quot;value&quot;: &quot;30&quot;,
+        &quot;name&quot;: &quot;Female&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 85,
+        &quot;value&quot;: &quot;70&quot;,
+        &quot;name&quot;: &quot;Male&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 86,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;&lt; 12&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 87,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;12 – 17&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 88,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;18 – 24&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 89,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;25 – 34&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 90,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;35 – 44&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 91,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;45 – 54&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 92,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;55 – 64&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 93,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;65+&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    }
+]
+</pre>
 
           <h4>Errors</h4>
             404
@@ -664,6 +849,133 @@ on the following search params</p>
       </small>
       
 <p>Event ID</p>
+
+    </li>
+    
+</ul>
+
+      </div>
+  </div>
+
+  <hr/>
+
+  <div>
+    <h2 id="photos">
+      <a href='#photos'>Photos</a><br>
+      <small>Photos</small>
+    </h2>
+  </div>
+
+
+  <div>
+
+      <hr/>
+
+      <h3 id="photos-index">
+      <a href='#photos'>Photos</a> / <a href='#photos-index'>index</a>
+      </h3>
+
+      <div>
+          <h4>
+              GET /api/v1/events/:event_id/photos
+            <br>
+            <small>Get a list of photos for an Event</small>
+          </h4>
+      </div>
+
+      <div>
+        
+
+          <h4>Errors</h4>
+            404
+            Missing
+            <br>
+            401
+            Unauthorized access
+            <br>
+            500
+            Server crashed for some reason
+            <br>
+
+          <h4>Params</h4>
+          <ul>
+    <li>
+      <strong>auth_token </strong>:
+      <small>
+        required
+        
+          [ Must be String ]
+      </small>
+      
+    </li>
+    
+    <li>
+      <strong>company_id </strong>:
+      <small>
+        required
+        
+          [ Must be a number. ]
+      </small>
+      
+    </li>
+    
+    <li>
+      <strong>event_id </strong>:
+      <small>
+        required
+        
+          [ Must be a number. ]
+      </small>
+      
+<p>Event ID</p>
+
+    </li>
+    
+    <li>
+      <strong>brand </strong>:
+      <small>
+        optional
+        
+          [ Must be Array ]
+      </small>
+      
+<p>A list of brand ids to filter the results</p>
+
+    </li>
+    
+    <li>
+      <strong>place </strong>:
+      <small>
+        optional
+        
+          [ Must be Array ]
+      </small>
+      
+<p>A list of places to filter the results</p>
+
+    </li>
+    
+    <li>
+      <strong>status </strong>:
+      <small>
+        optional
+        
+          [ Must be Array ]
+      </small>
+      
+<p>A list of photo status to filter the results. Options: Active, Inactive</p>
+
+    </li>
+    
+    <li>
+      <strong>page </strong>:
+      <small>
+        optional
+        
+          [ Must be a number. ]
+      </small>
+      
+<p>The number of the page, Default: 1</p>
 
     </li>
     

@@ -490,8 +490,8 @@ on the following search params</p>
     <td>
       <strong>event </strong><br>
       <small>
-        optional
-        , nil allowed
+        required
+        
       </small>
     </td>
     <td>
@@ -623,6 +623,25 @@ on the following search params</p>
 
         <br>
         Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[results_attributes] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
+
+        <br>
+        Value: Must be a list of results [id, value].
     </td>
   </tr>
 
@@ -732,8 +751,8 @@ on the following search params</p>
     <td>
       <strong>event </strong><br>
       <small>
-        optional
-        , nil allowed
+        required
+        
       </small>
     </td>
     <td>
@@ -869,6 +888,25 @@ on the following search params</p>
   </tr>
 
   
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[results_attributes] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
+
+        <br>
+        Value: Must be a list of results [id, value].
+    </td>
+  </tr>
+
+  
 
 
           </tbody>
@@ -884,7 +922,7 @@ on the following search params</p>
            class='accordion-toggle'
            data-toggle='collapse'
            data-parent='#accordion'>
-            GET /api/v1/events/:id
+            GET /api/v1/events/:id/results
           </a><br>
           <small>Get the list of results for the events</small>
         </h2>
@@ -893,6 +931,8 @@ on the following search params</p>
 
     <div id='description-results' class='collapse accordion-body'>
       
+<p>Returns a list of form fields based on the event&#39;s campaign.</p>
+
 
         <h3>Supported Formats</h3>
         json, xml
@@ -908,6 +948,159 @@ on the following search params</p>
           Server crashed for some reason
           <br>
 
+        <h3>Examples</h3>
+          <pre class="prettyprint">[
+    {
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Impressions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 2,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 82,
+        &quot;value&quot;: &quot;45&quot;,
+        &quot;name&quot;: &quot;Interactions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 3,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 83,
+        &quot;value&quot;: &quot;34&quot;,
+        &quot;name&quot;: &quot;Samples&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 84,
+        &quot;value&quot;: &quot;30&quot;,
+        &quot;name&quot;: &quot;Female&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 85,
+        &quot;value&quot;: &quot;70&quot;,
+        &quot;name&quot;: &quot;Male&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 86,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;&lt; 12&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 87,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;12 – 17&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 88,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;18 – 24&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 89,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;25 – 34&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 90,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;35 – 44&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 91,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;45 – 54&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 92,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;55 – 64&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 93,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;65+&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    }
+]
+</pre>
 
         <h3>Params</h3>
         <table class='table'>

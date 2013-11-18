@@ -22,19 +22,19 @@
     <span class='divider'>/</span>
   </li>
   <li>
-    <a href='../../apidoc/events.html'>
-      Events
+    <a href='../../apidoc/photos.html'>
+      Photos
       
     </a>
     <span class='divider'>/</span>
   </li>
-  <li class='active'>update</li>
+  <li class='active'>index</li>
 </ul>
 
   <div class='page-header'>
     <h1>
-      PUT /api/v1/events/:id<br>
-      <small>Update a event's details</small>
+      GET /api/v1/events/:event_id/photos<br>
+      <small>Get a list of photos for an Event</small>
     </h1>
   </div>
 
@@ -92,8 +92,6 @@
     </td>
     <td>
       
-<p>One of the allowed company ids returned by the</p>
-
         <br>
         Value: Must be a number.
     </td>
@@ -102,7 +100,7 @@
   
   <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>id </strong><br>
+      <strong>event_id </strong><br>
       <small>
         required
         
@@ -120,22 +118,7 @@
   
   <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>event </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-        <br>
-        Value: Must be a Hash
-    </td>
-  </tr>
-
-    <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[campaign_id] </strong><br>
+      <strong>brand </strong><br>
       <small>
         optional
         
@@ -143,7 +126,61 @@
     </td>
     <td>
       
-<p>Campaign ID</p>
+<p>A list of brand ids to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>place </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of places to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of photo status to filter the results. Options: Active, Inactive</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
 
         <br>
         Value: Must be a number.
@@ -151,134 +188,6 @@
   </tr>
 
   
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[start_date] </strong><br>
-      <small>
-        optional
-        
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s start date</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[end_date] </strong><br>
-      <small>
-        optional
-        
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s end date</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[start_time] </strong><br>
-      <small>
-        optional
-        
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s start time&#39;</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[end_time] </strong><br>
-      <small>
-        optional
-        
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s end time</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[place_reference] </strong><br>
-      <small>
-        optional
-        , nil allowed
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s place ID</p>
-
-        <br>
-        Value: Must be a number.
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[active] </strong><br>
-      <small>
-        optional
-        , nil allowed
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s status</p>
-
-        <br>
-        Value: Must be String
-    </td>
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[results_attributes] </strong><br>
-      <small>
-        optional
-        , nil allowed
-      </small>
-    </td>
-    <td>
-      
-<p>A list of event results with the id and value. Eg: results_attributes:
-[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
-
-        <br>
-        Value: Must be a list of results [id, value].
-    </td>
-  </tr>
-
-  
-
 
       </tbody>
     </table>
