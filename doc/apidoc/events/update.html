@@ -233,10 +233,15 @@
     </td>
     <td>
       
-<p>Event&#39;s place ID</p>
+<p>Event&#39;s Place ID. This can be either an existing place id that is
+already registered on the application, or the combination of the place
+reference + place id returned by Google&#39;s places API. (See: <a
+href="https://developers.google.com/places/documentation/details">developers.google.com/places/documentation/details</a>).
+Those two values must be concatenated by &#39;||&#39; in the form of
+&#39;&lt;reference&gt;||&lt;place_id&gt;&#39;</p>
 
         <br>
-        Value: Must be a number.
+        Value: Must be String
     </td>
   </tr>
 
