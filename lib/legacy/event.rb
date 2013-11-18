@@ -148,21 +148,21 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.impressions)
       result = event.result_for_kpi(Kpi.impressions)
       result.value = event_recap.result_for_metric(Metric.system.find_by_name('# Consumer Impressions')).try(:scalar_value)
-      result.value = result.value.to_s unless result.value.nil?
+      result.value = result.value.to_i.to_s unless result.value.nil?
     end
 
     # Consumers Sampled
     if active_kpis.include?(Kpi.samples)
       result = event.result_for_kpi(Kpi.samples)
       result.value = event_recap.result_for_metric(Metric.system.find_by_name('# Consumers Sampled')).try(:scalar_value)
-      result.value = result.value.to_s unless result.value.nil?
+      result.value = result.value.to_i.to_s unless result.value.nil?
     end
 
     # Consumers Interactions
     if active_kpis.include?(Kpi.interactions)
       result = event.result_for_kpi(Kpi.interactions)
       result.value = event_recap.result_for_metric(Metric.system.find_by_name('# Consumer Interactions')).try(:scalar_value)
-      result.value = result.value.to_s unless result.value.nil?
+      result.value = result.value.to_i.to_s unless result.value.nil?
     end
 
     # Gender
@@ -170,8 +170,8 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.gender)
       kpi_results = event.result_for_kpi(Kpi.gender)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Gender')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Male' }.try('value=', values[1].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Female' }.try('value=', values[2].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Male' }.try('value=', values[1].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Female' }.try('value=', values[2].to_i.to_s)
     end
 
     # Age
@@ -179,11 +179,11 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.age)
       kpi_results = event.result_for_kpi(Kpi.age)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Age')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == '18 – 24' }.try('value=', values[3].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '25 – 34' }.try('value=', values[4].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '35 – 44' }.try('value=', values[5].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '45 – 54' }.try('value=', values[6].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '55 – 64' }.try('value=', values[7].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == '18 – 24' }.try('value=', values[3].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == '25 – 34' }.try('value=', values[4].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == '35 – 44' }.try('value=', values[5].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == '45 – 54' }.try('value=', values[6].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == '55 – 64' }.try('value=', values[7].to_i.to_s)
     end
 
     # Ethnicity
@@ -191,10 +191,10 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.ethnicity)
       kpi_results = event.result_for_kpi(Kpi.ethnicity)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Demographic')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Asian'                    }.try('value=', values[10].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Black / African American' }.try('value=', values[9].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'        }.try('value=', values[11].to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'White'                    }.try('value=', values[8].to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Asian'                    }.try('value=', values[10].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Black / African American' }.try('value=', values[9].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'        }.try('value=', values[11].to_i.to_s)
+      kpi_results.detect{|r| r.kpis_segment.text == 'White'                    }.try('value=', values[8].to_i.to_s)
     end
 
     # Custom KPIs
