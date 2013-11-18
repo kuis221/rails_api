@@ -81,6 +81,7 @@ def sign_in_as_user
   role = company.roles.first
   user = company.company_users.first.user
   user.current_company = company
+  user.ensure_authentication_token
   user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
   sign_in user
   User.current = user

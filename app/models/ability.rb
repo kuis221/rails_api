@@ -7,6 +7,9 @@ class Ability
 
     alias_action :activate, :to => :deactivate
     alias_action :new_member, :to => :add_members
+    alias_action :new_member, :to => :add_members
+    alias_action :add_kpi, :to => :activate_kpis
+    alias_action :remove_kpi, :to => :activate_kpis
 
     # All users
 
