@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131114022734) do
+ActiveRecord::Schema.define(:version => 20131119162327) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -426,6 +426,7 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "text"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "ordering"
   end
 
   add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
@@ -626,8 +627,8 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
-    t.datetime "invitation_created_at"
     t.string   "authentication_token"
+    t.datetime "invitation_created_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
