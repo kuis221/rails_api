@@ -50,7 +50,7 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result['results'].count.should == 4
-      result['facets'].map{|f| f['label'] }.should =~ ["Campaigns", "Brands", "Locations", "People", "Active State", "Event Status"]
+      result['facets'].map{|f| f['label'] }.should =~ ["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status"]
 
       result['facets'].detect{|f| f['label'] == 'Event Status' }['items'].map{|i| [i['label'], i['count']]}.should =~ [["Late", 1], ["Due", 0], ["Submitted", 1], ["Rejected", 1], ["Approved", 1]]
     end
@@ -128,7 +128,7 @@ describe Api::V1::EventsController do
 
       put 'update',  auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id, value: '987'}]}
       result.reload
-      result.value.should == '987'
+      result.value.should == 987
     end
   end
 
@@ -164,7 +164,7 @@ describe Api::V1::EventsController do
       fields = JSON.parse(response.body)
       response.should be_success
       result = fields.detect{|f| f['name'] == Kpi.impressions.name}
-      result['value'].should == '321'
+      result['value'].should == 321
     end
   end
 end

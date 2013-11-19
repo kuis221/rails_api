@@ -46,6 +46,26 @@ module FacetsHelper
     {label: 'Locations', top_items: first_five, items: locations[:locations]}
   end
 
+
+  def build_areas_bucket(search)
+    counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
+    places = Place.where(id: counts.keys.uniq).all
+    list = {label: :root, items: [], id: nil, path: nil}
+
+    areas = Area.scoped_by_company_id(current_company.id).active
+
+    Place.unscoped do
+      places.each do |p|
+        parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
+        areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
+      end
+    end
+
+    areas.reject!{|a| a.events_count.nil? || !a.events_count}
+
+    {label: 'Areas', items: areas.map{|a| {label: a.name, id: a.id, count: a.events_count, name: :area} }}
+  end
+
   # Returns the facets for the events controller
   def events_facets
     @events_facets ||= Array.new.tap do |f|
@@ -55,7 +75,8 @@ module FacetsHelper
 
       f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
       f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
-      f.push build_locations_bucket(facet_search)
+      #f.push build_locations_bucket(facet_search)
+      f.push build_areas_bucket(facet_search)
 
       users = build_facet(CompanyUser.includes(:user), 'User', :user, facet_search.facet(:user_ids).rows)[:items]
       teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
