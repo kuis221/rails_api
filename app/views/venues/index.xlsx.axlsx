@@ -3,6 +3,7 @@ wb = xlsx_package.workbook
 row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
 row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
 row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
+currency = wb.styles.add_style :num_fmt => 5
 
 wb.add_worksheet(name: "Venues") do |sheet|
 	sheet.add_row ['VENUE NAME',
@@ -19,9 +20,9 @@ wb.add_worksheet(name: "Venues") do |sheet|
                    venue.formatted_address,
                    venue.city,
                    venue.state,
-                   venue.events,
+                   venue.events_count,
                    venue.promo_hours,
-                   venue.score], :style => row_data_text
+                   venue.spent], :style => [row_data_text,row_data_text,row_data_text,row_data_text,row_data_number,row_data_number,currency]
 
   end
   sheet.add_row ["nada"], :style => row_data_text

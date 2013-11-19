@@ -217,6 +217,10 @@ class Campaign < ActiveRecord::Base
     field
   end
 
+  def form_field_for_kpi(kpi)
+    form_fields.detect{|field| field.kpi_id == kpi.id}
+  end
+
   def survey_statistics
     answers_scope = SurveysAnswer.joins(survey: :event).where(events:{campaign_id: self.id}, brand_id: survey_brands.map(&:id), question_id: [1,3,4])
     total_surveys = answers_scope.select('distinct(surveys.id)').count

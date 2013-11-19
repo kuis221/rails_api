@@ -21,7 +21,7 @@ FactoryGirl.define do
     ordering 1
     name "MyString"
     field_type "number"
-    options ''
+    options {}
     section_id 1
   end
 end

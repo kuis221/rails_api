@@ -13,4 +13,14 @@ class Placeable < ActiveRecord::Base
   belongs_to :placeable, polymorphic: true
 
   delegate :company_id, to: :placeable
+
+  after_create :update_area_denominators
+  before_destroy :update_area_denominators
+
+  protected
+    def update_area_denominators
+      if placeable.is_a?(Area)
+        placeable.send(:update_common_denominators)
+      end
+    end
 end

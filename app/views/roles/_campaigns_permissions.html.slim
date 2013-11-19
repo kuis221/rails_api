@@ -64,6 +64,26 @@
         .span2 View
         .span2 = permission_checkbox(f, :view_kpis, Campaign)
 
+      .span12
+        .span2 Toggle on/off
+        .span2 = permission_checkbox(f, :activate_kpis, Campaign)
+
+      .span12
+        .span2 Edit goals
+        .span2 = permission_checkbox(f, :edit_kpi_goals, Campaign)
+
+      .span12
+        .span2 Create custom KPIs
+        .span2 = permission_checkbox(f, :create_custom_kpis, Campaign)
+
+      .span12
+        .span2 Edit custom KPIs
+        .span2 = permission_checkbox(f, :edit_custom_kpi, Campaign)
+
+      .span12
+        .span2 Deactivate custom KPIs
+        .span2 = permission_checkbox(f, :deactivate_custom_kpis, Campaign)
+
 
   = hidden_field_tag :partial, :campaigns_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

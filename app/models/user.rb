@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
   include SentientUser
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
+  # :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :trackable, :confirmable
@@ -88,10 +88,6 @@ class User < ActiveRecord::Base
   validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
   validates_confirmation_of :password
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :phone_number, :password, :password_confirmation, :remember_me, :first_name, :last_name, :role_id, :inviting_user, :filling_profile, :company_users_attributes, as: :admin
-  attr_accessible :first_name, :last_name, :email, :phone_number, :country, :state, :city, :street_address, :unit_number, :zip_code, :password, :password_confirmation, :accepting_invitation, :time_zone
-
   accepts_nested_attributes_for :company_users, allow_destroy: false
 
   delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
@@ -104,6 +100,7 @@ class User < ActiveRecord::Base
 
   has_many :events, through: :company_users
 
+  before_save :ensure_authentication_token
   after_save :reindex_related
   after_invitation_accepted :reindex_company_users
 
@@ -202,9 +199,15 @@ class User < ActiveRecord::Base
 
   class << self
 
-    def inviter_role(inviter)
-      return :admin if inviter.is_a?(User)
-      :default
+    # Find a user by its confirmation token and try to confirm it.
+    # If no user is found, returns a new user with an error.
+    # If the user is already confirmed, create an error for the user
+    # Options must have the confirmation_token
+    def confirm_by_token(confirmation_token)
+      confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
+      confirmable.inviting_user = true
+      confirmable.confirm! if confirmable.persisted?
+      confirmable
     end
 
     # Attempt to find a user by its email. If a record is found, send new
@@ -221,6 +224,21 @@ class User < ActiveRecord::Base
         recoverable.send_reset_password_instructions if recoverable.persisted?
       end
       recoverable
+    end
+  end
+
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
     end
   end
 end

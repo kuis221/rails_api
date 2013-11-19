@@ -1,0 +1,16 @@
+.create-box
+  .pull-left
+    = '.'
+.results-box-container
+  span.event-data-column.events-box
+    .big-number
+      = number_with_delimiter(data_totals['events_count'])
+    = 'EVENTS'
+  span.event-data-column.hours-box
+    .big-number
+      = number_with_delimiter(data_totals['promo_hours'], precision: 2)
+    = 'HOURS'
+  span.event-data-column.spent-box
+    .big-number
+      = number_to_currency(data_totals['spent'])
+    = 'SPENT'

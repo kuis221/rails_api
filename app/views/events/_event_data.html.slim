@@ -28,7 +28,7 @@
               .bar
             .counter
         = render partial: 'event_data', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
-      - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module) 
+      - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module)
         = ff.hidden_field :form_field_id
         = ff.hidden_field :kpi_id
         = ff.hidden_field :kpis_segment_id
@@ -38,6 +38,4 @@
               = ff.input :value, field.field_options(ff.object)
         - else
           = ff.input :value, field.field_options(ff.object)
-      - else
-        = field.kpi.inspect
 

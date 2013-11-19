@@ -9,10 +9,8 @@
 }
 .sf-menu ul {
 	position: absolute;
-	display: none;
 	top: -100%;
 	left: -100%;
-	width: 200px;
 	z-index: 99;
 }
 .sf-menu li:hover > ul,
@@ -51,21 +49,20 @@
 }
 
 .sf-menu li li {
-	background: #ccc;
+/*	background: #ccc;*/
 	white-space: nowrap; /* no need for Supersubs plugin */
 	*white-space: normal; /* ...unless you support IE7 (let it wrap) */
 	-webkit-transition: background .2s;
 	transition: background .2s;
 }
 .sf-menu li ul li {
-	background: #ccc;
+/*	background: #ccc;*/
 }
-.sf-menu ul ul li {
+/*.sf-menu ul ul li {
 	background: #ccc;
-}
+}*/
 .sf-menu li li:hover,
 .sf-menu li li.sfHover {
-	background: #49afcd;
 	/* only transition out, not in */
 	-webkit-transition: none;
 	transition: none;

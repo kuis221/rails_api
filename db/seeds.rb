@@ -11,6 +11,7 @@ AdminUser.create!(:email => 'admin@brandscopic.com', :password => 'AdminPazBC', 
 
 c = Company.find_or_create_by_name(name: 'Brandscopic', admin_email: 'admin@brandscopic.com')
 u = User.find_by_email('admin@brandscopic.com')
+
 u.update_attributes({password: 'Adminpass12', password_confirmation: 'Adminpass12', country: 'US', state: 'CA', city: 'San Francisco', invitation_accepted_at: Time.now, confirmed_at: Time.now, invitation_token: nil, time_zone: 'Pacific Time (US & Canada)'}, without_protection: true)
 u.save(validate: false) # Make sure it's saved
 

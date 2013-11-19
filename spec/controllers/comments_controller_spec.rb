@@ -12,16 +12,7 @@ describe CommentsController do
   let(:task_comment) {FactoryGirl.create(:comment, commentable: task)}
 
   describe "GET 'index'" do
-    it "should be able index event's commetns" do
-      event_comment.save
-      get 'index', event_id: event.to_param, format: :js
-      response.should be_success
-      response.should render_template('comments/index')
-      response.should render_template('comments/_comments_list')
-      response.should render_template('comments/_comment')
-    end
-
-    it "should be able index task's commetns" do
+    it "should be able index task's comments" do
       task_comment.save
       get 'index', task_id: task.to_param, format: :js
       response.should be_success

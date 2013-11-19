@@ -191,7 +191,6 @@ describe Campaign do
       campaign.reload.place_allowed_for_event?(place).should be_true
     end
 
-
     it "should return true if the place is part of any of the campaigns" do
       area = FactoryGirl.create(:area)
       place = FactoryGirl.create(:place)
@@ -216,9 +215,12 @@ describe Campaign do
 
       campaign.place_allowed_for_event?(place).should be_false
 
+      # Assign San Francisco to the area
       area.places << city
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      # Because the campaing cache the locations, create a new object with the same campaign ID
+      campaign_reloaded  = Campaign.find(campaign.id)
+      campaign_reloaded.place_allowed_for_event?(place).should be_true
     end
   end
 
