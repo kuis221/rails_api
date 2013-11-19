@@ -40,5 +40,12 @@ FactoryGirl.define do
     factory :submitted_event do
       aasm_state 'submitted'
     end
+
+
+    factory :late_event do
+      aasm_state 'unsent'
+      start_date 3.weeks.ago.to_s(:slashes)
+      end_date 3.weeks.ago.to_s(:slashes)
+    end
   end
 end

@@ -105,6 +105,18 @@ describe PlacesController do
         }.to change(Placeable, :count).by(-1)
       }.to_not change(Campaign, :count)
     end
+
+    it "should call the method update_area_denominators" do
+      area.places << place
+
+      Area.any_instance.should_receive(:update_common_denominators)
+      expect {
+        expect {
+          delete 'destroy', area_id: area.to_param, id: place.id, format: :js
+          response.should be_success
+        }.to change(Placeable, :count).by(-1)
+      }.to_not change(Area, :count)
+    end
   end
 
 end

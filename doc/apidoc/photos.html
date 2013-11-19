@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Photos
+    
+  </li>
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Photos
+    <br>
+    <small>Photos</small>
+  </h1>
+</div>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/photos/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events/:event_id/photos
+          </a><br>
+          <small>Get a list of photos for an Event</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brand ids to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>place </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of places to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of photo status to filter the results. Options: Active, Inactive</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+
+          </tbody>
+        </table>
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer>  
+</footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

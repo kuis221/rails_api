@@ -287,6 +287,7 @@ describe CompanyUsersController do
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           response.should be_success
         }.to_not change(user.memberships, :count)
+
       end
     end
   end

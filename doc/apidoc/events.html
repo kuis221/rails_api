@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Events
+    
+  </li>
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Events
+    <br>
+    <small>Events</small>
+  </h1>
+</div>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events
+          </a><br>
+          <small>Search for a list of events</small>
+        </h2>
+    </div>
+
+      Also see <a href="../apidoc/users/companies.html">User companies</a>.
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a list of events filtered by the given params. The results are
+returned on groups of 30 per request. To obtain the next 30 results provide
+the &lt;page&gt; param.</p>
+
+<p><strong>Facets</strong></p>
+
+<p>Faceting is a feature of Solr that determines the number of documents that
+match a given search and an additional criterion</p>
+
+<p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
+on the following search params</p>
+<ul><li>
+<p>start_date</p>
+</li><li>
+<p>end_date</p>
+</li></ul>
+
+<p>*Facets Results*</p>
+
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+    items: [                  # List of items for the facet sorted by relevance
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    top_items: [              # Some facets will return this as a list of items that have the greater number of results
+      &lt;other list of items&gt;
+    ]
+  }
+]</pre>
+
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of campaign ids to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>place </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of places to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>area </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of areas to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>user </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of users to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>team </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of teams to filter the results</p>
+
+        <br>
+        Value: Must be Array
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event status to filter the results</p>
+
+        <br>
+        Value: Must be one of: Active, Inactive.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event_status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event recap status to filter the results</p>
+
+        <br>
+        Value: Must be one of: Unsent, Submitted, Approved, Rejected, Late, Due.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/show.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-show'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events/:id
+          </a><br>
+          <small>Return a event's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-show' class='collapse accordion-body'>
+      
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/create.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-create'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            POST /api/v1/events
+          </a><br>
+          <small>Cratea a new event</small>
+        </h2>
+    </div>
+
+
+    <div id='description-create' class='collapse accordion-body'>
+      
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+    </td>
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[campaign_id] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Campaign ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[start_date] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s start date</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[end_date] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s end date</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[start_time] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s start time&#39;</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[end_time] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s end time</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[place_reference] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s Place ID. This can be either an existing place id that is
+already registered on the application, or the combination of the place
+reference + place id returned by Google&#39;s places API. (See: <a
+href="https://developers.google.com/places/documentation/details">developers.google.com/places/documentation/details</a>).
+Those two values must be concatenated by &#39;||&#39; in the form of
+&#39;&lt;reference&gt;||&lt;place_id&gt;&#39;</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[active] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s status</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[results_attributes] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
+
+        <br>
+        Value: Must be a list of results [id, value].
+    </td>
+  </tr>
+
+  
+
+
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/update.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-update'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            PUT /api/v1/events/:id
+          </a><br>
+          <small>Update a event's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-update' class='collapse accordion-body'>
+      
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+    </td>
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[campaign_id] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Campaign ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[start_date] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s start date</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[end_date] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s end date</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[start_time] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s start time&#39;</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[end_time] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s end time</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[place_reference] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s Place ID. This can be either an existing place id that is
+already registered on the application, or the combination of the place
+reference + place id returned by Google&#39;s places API. (See: <a
+href="https://developers.google.com/places/documentation/details">developers.google.com/places/documentation/details</a>).
+Those two values must be concatenated by &#39;||&#39; in the form of
+&#39;&lt;reference&gt;||&lt;place_id&gt;&#39;</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[active] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Event&#39;s status</p>
+
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[results_attributes] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event results with the id and value. Eg: results_attributes:
+[{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
+
+        <br>
+        Value: Must be a list of results [id, value].
+    </td>
+  </tr>
+
+  
+
+
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/results.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-results'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events/:id/results
+          </a><br>
+          <small>Get the list of results for the events</small>
+        </h2>
+    </div>
+
+
+    <div id='description-results' class='collapse accordion-body'>
+      
+<p>Returns a list of form fields based on the event&#39;s campaign.</p>
+
+
+        <h3>Supported Formats</h3>
+        json, xml
+
+        <h3>Errors</h3>
+          404
+          Missing
+          <br>
+          401
+          Unauthorized access
+          <br>
+          500
+          Server crashed for some reason
+          <br>
+
+        <h3>Examples</h3>
+          <pre class="prettyprint">[
+    {
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Impressions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 2,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 82,
+        &quot;value&quot;: &quot;45&quot;,
+        &quot;name&quot;: &quot;Interactions&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 3,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 83,
+        &quot;value&quot;: &quot;34&quot;,
+        &quot;name&quot;: &quot;Samples&quot;,
+        &quot;group&quot;: null,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;number&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;,
+            &quot;predefined_value&quot;: &quot;&quot;,
+            &quot;required&quot;: &quot;true&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 84,
+        &quot;value&quot;: &quot;30&quot;,
+        &quot;name&quot;: &quot;Female&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 85,
+        &quot;value&quot;: &quot;70&quot;,
+        &quot;name&quot;: &quot;Male&quot;,
+        &quot;group&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 5,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 86,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;&lt; 12&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 87,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;12 – 17&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 88,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;18 – 24&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 89,
+        &quot;value&quot;: &quot;50&quot;,
+        &quot;name&quot;: &quot;25 – 34&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 90,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;35 – 44&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 91,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;45 – 54&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 92,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;55 – 64&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    },
+    {
+        &quot;id&quot;: 93,
+        &quot;value&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;65+&quot;,
+        &quot;group&quot;: &quot;Age&quot;,
+        &quot;ordering&quot;: 6,
+        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;options&quot;: {
+            &quot;capture_mechanism&quot;: &quot;integer&quot;
+        }
+    }
+]
+</pre>
+
+        <h3>Params</h3>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Param name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event ID</p>
+
+        <br>
+        Value: Must be a number.
+    </td>
+  </tr>
+
+  
+
+          </tbody>
+        </table>
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer>  
+</footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

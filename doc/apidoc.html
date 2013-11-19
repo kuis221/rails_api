@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='./apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='./apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='./apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='./apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li class='active'><a href='./apidoc.html'>Brandscopic 1.0</a></li>
+</ul>
+
+<div>Another API description</div>
+
+<h1 class='page-header'>Resources</h1>
+
+  <h2>
+    <a href='./apidoc/events.html'>
+      Events
+    </a><br>
+    <small>Events</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td><a href='./apidoc/events/index.html'>GET /api/v1/events</a></td>
+            <td width='60%'>Search for a list of events</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/events/show.html'>GET /api/v1/events/:id</a></td>
+            <td width='60%'>Return a event&#x27;s details</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/events/create.html'>POST /api/v1/events</a></td>
+            <td width='60%'>Cratea a new event</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/events/update.html'>PUT /api/v1/events/:id</a></td>
+            <td width='60%'>Update a event&#x27;s details</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/events/results.html'>GET /api/v1/events/:id/results</a></td>
+            <td width='60%'>Get the list of results for the events</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/photos.html'>
+      Photos
+    </a><br>
+    <small>Photos</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td><a href='./apidoc/photos/index.html'>GET /api/v1/events/:event_id/photos</a></td>
+            <td width='60%'>Get a list of photos for an Event</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/sessions.html'>
+      Sessions
+    </a><br>
+    <small>Site members</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td><a href='./apidoc/sessions/create.html'>POST /api/v1/sessions</a></td>
+            <td width='60%'>Authenticate a user and return the authentication token</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/sessions/destroy.html'>DELETE /api/v1/sessions</a></td>
+            <td width='60%'>Destroy authentication token for a user</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/users.html'>
+      Users
+    </a><br>
+    <small>Users</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td><a href='./apidoc/users/new_password.html'>POST /api/v1/users/new_password</a></td>
+            <td width='60%'>Request a new password for a user</td>
+          </tr>
+          <tr>
+            <td><a href='./apidoc/users/companies.html'>GET /api/v1/companies</a></td>
+            <td width='60%'>Get a list of companies the user has access to</td>
+          </tr>
+    </tbody>
+  </table>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer>  
+</footer>
+  </div>
+  <script type='text/javascript' src='./apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='./apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='./apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='./apidoc/javascripts/apipie.js'></script>
+</body>
+</html>
