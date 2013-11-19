@@ -19,7 +19,7 @@ wb.add_worksheet(name: "Venues") do |sheet|
                    venue.formatted_address,
                    venue.city,
                    venue.state,
-                   venue.events,
+                   venue.events_count,
                    venue.promo_hours,
                    venue.score], :style => row_data_text
 
