@@ -29,6 +29,7 @@
 @brand:#989898;
 @buttons:#de4d43;
 @buttons-hover:#cc4137;
+@btnHover: #d6d6d6;
 @complete: #90bf43;
 @grey_one:#dfdfdf;
 @grey_two:#ececec;
@@ -425,7 +426,7 @@ a.datepick-cmd:hover{
 	display: inline-block;
 	float:left;
 	height: 20px;
-	margin:10px 0 0 0;
+	margin: 0px 0 0 0;
 	padding: 0;
 	width:20px;
 	-webkit-border-radius: 5px;
@@ -448,7 +449,7 @@ a.datepick-cmd:hover{
 		font-family: 'icons';
 		font-size: 14px;
 		left:3px;
-		top: -20px;
+		// top: -20px;
 		position: relative;
 		speak:none;
 		text-align: center;
@@ -610,6 +611,13 @@ body.app-layout{
 	font-family: @baseFontFamily;
 	padding: 7px 17px;
 	text-shadow:none;
+	&.active{
+		&.list, &.map, &.calendar{
+			&:after{
+				color: @user_menu;
+			}
+		}
+	}
 	&.download:after{
 		color: white;
 		content: "\e00b";
@@ -626,6 +634,11 @@ body.app-layout{
 	}
 	&:focus{
 		outline:0;
+	}
+	&:hover{
+		background-color: @btnHover;
+		border: 0;
+		box-shadow: none;
 	}
 	&.fullscreen{
 		padding: 5px 17px 4px 17px !important;
@@ -705,11 +718,6 @@ body.app-layout{
 	opacity: 1;
 }
 
-.btn:hover{
-	background-color: @brand;
-	border: 0;
-	box-shadow: none;
-}
 .btn.active{
 	background-color: @brand;
 	border: 0;
@@ -1175,15 +1183,6 @@ li.dropdown a{
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
 	background-color: @header !important;
 	background-image:none;
-}
-#help-modal{
-	.help-title{
-		margin-bottom: 20px;
-	}
-	.help-title-map{
-		display: none;
-		margin-bottom: 20px;
-	}
 }
 li#help_menu{
 	.single-link:before{
@@ -2640,6 +2639,11 @@ body.dashboard.index {
 			width: auto;
 		}
 	}
+}
+
+
+#event-contacts.details_box, #event-members.details_box, #event-documents.details_box {
+	overflow: hidden;
 }
 
 

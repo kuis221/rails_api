@@ -5,7 +5,7 @@
         title: { text: null },
         colors: ['#DFDFDF','#3E9CCF'],
         xAxis: {
-            categories: #{data.keys.to_json.html_safe},
+            categories: #{data.reject{|k, v| v.to_i == 0 }.keys.to_json.html_safe},
             title: {
                 enabled: false
             },
@@ -47,11 +47,11 @@
         credits: { enabled: false },
         series: [{
             name: 'Fill in',
-            data: #{data.values.map{|v|(100-v).round}.to_json.html_safe},
+            data: #{data.reject{|k, v| v.to_i == 0 }.values.map{|v|(100-v).round}.to_json.html_safe},
 
         },{
             name: 'Values',
-            data: #{data.values.map(&:round).to_json.html_safe},
+            data: #{data.reject{|k, v| v.to_i == 0 }.values.map(&:round).to_json.html_safe},
             dataLabels: {
                     enabled: true,
                     format: '{y}%',

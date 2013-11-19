@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-migrate-1.2.1
-//= require jquery-ui-1.10.1.custom
+//= require jquery-ui-1.10.3.custom
 //= require s3_direct_upload
 //= require twitter/bootstrap
 //= require jquery_nested_form

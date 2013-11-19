@@ -32,15 +32,15 @@
 
     .span4
       .kpi-trends-stats.text-right
-        span= number_to_currency(kpis_completed_totals['cost_impression'], precision: 2)
-        | COST/IMPRESSION
-        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-        br>/
+        / span= number_to_currency(kpis_completed_totals['cost_impression'], precision: 2)
+        / | COST/IMPRESSION
+        / span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        / br>/
 
-        span= number_to_currency(kpis_completed_totals['cost_interaction'], precision: 2)
-        | COST/INTERACTION
-        span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
-        br>/
+        / span= number_to_currency(kpis_completed_totals['cost_interaction'], precision: 2)
+        / | COST/INTERACTION
+        / span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
+        / br>/
 
         span= number_to_currency(kpis_completed_totals['cost_sample'], precision: 2)
         | COST/SAMPLE

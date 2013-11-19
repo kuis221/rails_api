@@ -1,5 +1,23 @@
 Brandscopic::Application.routes.draw do
 
+  apipie
+
+  namespace :api do
+    namespace :v1 do
+      devise_scope :user do
+        post 'sessions' => 'sessions#create', :as => 'login'
+        delete 'sessions' => 'sessions#destroy', :as => 'logout'
+        post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
+        get '/companies' => 'users#companies', :as => 'new_user_password'
+
+        resources :events, only: [:index, :show, :create, :update] do
+          resources :photos, only: [:index]
+          get :results, on: :member
+        end
+      end
+    end
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -206,7 +224,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :comments, only: [:index, :create, :new, :destroy, :edit, :update]
+    resources :comments, only: [:create, :new, :destroy, :edit, :update]
     resources :event_expenses, only: [:create, :new, :destroy, :edit, :update]
 
     resources :contact_events, path: :contacts, only: [:create, :new, :destroy, :edit, :update] do

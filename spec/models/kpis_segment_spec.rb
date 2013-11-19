@@ -7,6 +7,7 @@
 #  text       :string(255)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  ordering   :integer
 #
 
 require 'spec_helper'

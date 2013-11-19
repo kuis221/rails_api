@@ -13,7 +13,7 @@
 
 .filter_vertical_box{
 	overflow:auto; 
-	height:400px; 
+	max-height:400px; 
 	width:inherit;
 	left:	-100%;
 	top: 0;
@@ -31,7 +31,6 @@
 	display: inline-block;
   overflow:auto;
 	display: scroll;
-	min-height: 400px;
 }
 
 .child_div{

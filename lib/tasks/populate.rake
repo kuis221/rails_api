@@ -28,7 +28,6 @@ namespace :db do
       end
     end
 
-
     desc 'Add users'
     task :users => :environment do
 
@@ -98,22 +97,24 @@ namespace :db do
 
     desc 'Create test campaigns'
     task :campaigns => :environment do
-      def build_campaign_name
-        @brands ||= Brand.all.map(&:name)
+      def build_campaign_name(brand)
         @suffixes = ['January '+['12','13','14'].sample,'February '+['12','13','14'].sample,'March '+['12','13','14'].sample,'April '+['12','13','14'].sample,'May '+['12','13','14'].sample,'June '+['12','13','14'].sample,'July '+['12','13','14'].sample,'August '+['12','13','14'].sample,'September '+['12','13','14'].sample,'Octuber '+['12','13','14'].sample,'November '+['12','13','14'].sample,'December '+['12','13','14'].sample,'FY13','FY12', 'FY14','FY13','FY12', 'FY14','FY13','FY12', 'FY14']
-        "#{@brands.sample} #{@suffixes.sample}"
+        "#{brand.name} #{@suffixes.sample}"
       end
+
+      @brands ||= Brand.all
       Company.all.each do |company|
         user_ids = company.company_users.map(&:id)
         team_ids = company.teams.map(&:id)
         Campaign.populate(30) do |campaign|
-          campaign.name = build_campaign_name
+          brand = @brands.sample
+          campaign.name = build_campaign_name(brand)
           campaign.description = Faker::Lorem.paragraphs
           campaign.aasm_state = ['active', 'closed','active','active','inactive','active','active']
           campaign.company_id = company.id
 
           tmp_list = user_ids.shuffle
-          Membership.populate(Random.rand(5)) do |membership|
+          Membership.populate(Random.rand(10)) do |membership|
             membership.company_user_id = tmp_list.pop
             membership.memberable_id = campaign.id
             membership.memberable_type = 'Campaign'
@@ -125,6 +126,14 @@ namespace :db do
             teaming.teamable_id = campaign.id
             teaming.teamable_type = 'Campaign'
           end
+        end
+
+        Campaign.where(company_id: company.id).each do |campaign|
+          brand = @brands.sample
+          campaign.name = build_campaign_name(brand)
+          campaign.brand_ids = [brand.id]
+          campaign.assign_all_global_kpis(false)
+          campaign.save
         end
       end
     end
@@ -139,7 +148,7 @@ namespace :db do
           Event.populate(rand(10..20)) do |event|
             event.start_at = rand(0..10).send([:weeks,:days,:months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
             event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)
-            event.active = true
+            event.active = [true, true, true, false, true, true, true, true]
             event.campaign_id = campaign.id
             event.company_id = company.id
             event.place_id = places

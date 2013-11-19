@@ -26,7 +26,7 @@
 #  city                   :string(255)
 #  created_by_id          :integer
 #  updated_by_id          :integer
-#  invitation_token       :string(60)
+#  invitation_token       :string(255)
 #  invitation_sent_at     :datetime
 #  invitation_accepted_at :datetime
 #  invitation_limit       :integer
@@ -40,6 +40,7 @@
 #  unit_number            :string(255)
 #  zip_code               :string(255)
 #  authentication_token   :string(255)
+#  invitation_created_at  :datetime
 #
 
 class User < ActiveRecord::Base
@@ -51,7 +52,7 @@ class User < ActiveRecord::Base
   include SentientUser
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
+  # :confirmable,
   # :lockable, :timeoutable and :omniauthable, :confirmable,
   devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :trackable, :confirmable
@@ -100,6 +101,7 @@ class User < ActiveRecord::Base
 
   has_many :events, through: :company_users
 
+  before_save :ensure_authentication_token
   after_save :reindex_related
   after_invitation_accepted :reindex_company_users
 
@@ -223,6 +225,21 @@ class User < ActiveRecord::Base
         recoverable.send_reset_password_instructions if recoverable.persisted?
       end
       recoverable
+    end
+  end
+
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
     end
   end
 end

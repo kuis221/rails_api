@@ -26,7 +26,7 @@
 #  city                   :string(255)
 #  created_by_id          :integer
 #  updated_by_id          :integer
-#  invitation_token       :string(60)
+#  invitation_token       :string(255)
 #  invitation_sent_at     :datetime
 #  invitation_accepted_at :datetime
 #  invitation_limit       :integer
@@ -39,6 +39,8 @@
 #  street_address         :string(255)
 #  unit_number            :string(255)
 #  zip_code               :string(255)
+#  authentication_token   :string(255)
+#  invitation_created_at  :datetime
 #
 
 require 'spec_helper'

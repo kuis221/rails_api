@@ -10,6 +10,7 @@ FactoryGirl.define do
     created_by_id 1
     updated_by_id 1
     processed true
+    active true
 
     factory :document do
       asset_type 'document'

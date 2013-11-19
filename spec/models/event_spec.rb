@@ -651,6 +651,79 @@ describe Event do
     end
   end
 
+
+  describe "#results_for" do
+    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+
+    it "should return empty array if no fields given" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      results = event.results_for([])
+
+      results.should == []
+    end
+
+    it "should return empty array if no fields given" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      results = event.results_for([])
+
+      results.should == []
+    end
+
+
+    it "should only return the results for the given fields" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      impressions  = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
+      interactions = campaign.form_fields.detect{|f| f.kpi_id == Kpi.interactions.id}
+      results = event.results_for([impressions, interactions])
+
+      # Only two results returned
+      results.count.should == 2
+
+      # They both should be new records
+      results.all?{|r| r.new_record? }.should be_true
+
+      results.map{|r| r.kpi_id }.should =~ [Kpi.impressions.id, Kpi.interactions.id]
+    end
+
+
+    it "should not include segmented fields " do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      results = event.results_for(campaign.form_fields)
+
+      results.any?{|r| r.kpis_segment_id.present? }.should be_false
+    end
+  end
+
+  describe "#segments_results_for" do
+    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+
+    it "should return empty array if the fields is not segmented" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      impressions  = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
+      results = event.segments_results_for(impressions)
+
+      results.should == []
+    end
+
+    it "the values for the all segments" do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      gender  = campaign.form_fields.detect{|f| f.kpi_id == Kpi.gender.id}
+      results = event.segments_results_for(gender)
+
+      results.all?{|r| r.new_record? }.should be_true
+
+      results.count.should == 2
+    end
+  end
+
   describe "#event_place_valid?" do
     after do
       User.current = nil
@@ -669,7 +742,7 @@ describe Event do
       event.valid?.should be_true
     end
 
-    it "should not validate place if the event is place haven't changed" do
+    it "should not validate place if the event's place haven't changed" do
       campaign = FactoryGirl.create(:campaign)
 
       event = FactoryGirl.create(:event, campaign: campaign, place: place_SF)

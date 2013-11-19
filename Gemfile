@@ -52,7 +52,12 @@ gem 'resque-loner'
 gem 's3_direct_upload'
 gem 'unread'
 gem 'strong_parameters'
+gem 'apipie-rails'
 gem 'nearest_time_zone'
+gem "memcachier"
+gem 'rack-cache'
+gem 'dalli'
+gem 'kgio'
 
 # Gems used only for assets and not required
 # in production environments by default.
