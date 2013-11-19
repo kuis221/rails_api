@@ -1,0 +1,52 @@
+/*
+
+Uniform Theme: Uniform Default
+Version: 1.8
+By: Josh Pyles
+License: MIT License
+---
+For use with the Uniform plugin:
+http://uniformjs.com/
+
+*/
+/* General settings */
+div.selector, div.selector span, div.radio span, div.uploader, div.uploader span.action, div.button, div.button span {
+  background-image: url("/assets/sprite.png");
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased; }
+div.selector, div.button, div.radio, div.uploader {
+  display: -moz-inline-box;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  vertical-align: middle;
+  /* Keeping this as :focus to remove browser styles */ }
+  div.selector:focus, div.button:focus, div.radio:focus, div.uploader:focus {
+    outline: 0; }
+div.selector, div.selector *, div.radio, div.radio *, div.uploader, div.uploader *, div.button, div.button * {
+  margin: 0;
+  padding: 0; }
+
+.highContrastDetect {
+  background: url("/assets/bg-input.png") repeat-x 0 0;
+  width: 0px;
+  height: 0px; }
+
+
+/* PRESENTATION */
+
+/* Select */
+div.selector {
+  font-size: 12px; }
+  div.selector span {
+    color: #666;
+    text-shadow: 0 1px 0 white; }
+  div.selector select {
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 12px; }
+  div.selector.disabled span, div.selector.disabled.active span {
+    color: #bbb; }
+
+/* Radio */
+div.radio {
+  margin-right: 3px; }
