@@ -120,7 +120,6 @@ module DashboardHelper
   end
 
   def kpis_executed_totals(campaign_ids=[])
-    Rails.logger.debug "\n\n\n\n\nkpis_executed_totals START"
     @kpis_executed_totals ||= {}
     @kpis_executed_totals['c'+campaign_ids.join('-')] ||= Hash.new.tap do |totals|
       search = Event.do_search({company_id: current_company.id, current_company_user: current_company_user, campaign: campaign_ids, event_data_stats: true, status: ['Active'], start_date: '01/01/1900', end_date:  Time.zone.now.to_s(:slashes)})
