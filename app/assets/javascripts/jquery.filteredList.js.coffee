@@ -201,20 +201,20 @@ $.widget 'nmk.filteredList', {
 
 		@formFilters.append($filter)
 		if optionsCount > 5
-      $li = $('<li>')
-      $div = $('<div>')
+			$li = $('<li>')
+			$div = $('<div>')
 			$ul = $('<ul class="sf-menu sf-vertical-menu">')
         
 			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
-          if $trigger.next().css('display') == "none"
-            $('.child_div').hide()
-            $('.child_div').parent().css('height','8%')
-            $('.more-options-link').next().hide()
-            $trigger.next().show()
-          else
-            $('.more-options-link').next().hide()
-          false
+					if $trigger.next().css('display') == "none"
+						$('.child_div').hide()
+						$('.child_div').parent().css('height','8%')
+						$('.more-options-link').next().hide()
+						$trigger.next().show()
+					else
+						$('.more-options-link').next().hide()
+     false
 				.on 'mouseover.firstime', (e)=>
 					$(e.target).off('mouseover.firstime')
 					if not $ul.hasClass('sf-js-enabled')
@@ -223,7 +223,6 @@ $.widget 'nmk.filteredList', {
 						$trigger.superfish({cssArrows: false, disableHI: true})
 						$trigger.superfish('show')
 					false
-				.on ''
         
 			$div.append($ul.append($li.append($trigger))).insertAfter($filter)
 
@@ -298,8 +297,8 @@ $.widget 'nmk.filteredList', {
 					items[group] ||= []
 					items[group].push $option
 					$option.bind 'click.filter', (e) =>
-						e.stopPropagation()
-						true
+					e.stopPropagation()
+					true
 					.find('input[type=checkbox]').bind 'change.filter', (e) =>
 						$checkbox = $(e.target)
 						listItem = $($(e.target).parents('li')[0])
@@ -323,9 +322,9 @@ $.widget 'nmk.filteredList', {
 						$option.append child
 
 			if showChild == false 
-        $list = $('<ul class="sf-vertical-menu filter_vertical_box">')
-      else
-        $list = $('<ul class="child_submenu">')
+				$list = $('<ul class="sf-vertical-menu filter_vertical_box">')
+			else
+				$list = $('<ul class="child_submenu">')
 			for group, children of items
 				if children.length > 0
 					if group isnt '__default__'
@@ -337,16 +336,16 @@ $.widget 'nmk.filteredList', {
 									$('.child_div').parent().css('height','8%')
 									$list_group.siblings().css('height','8%')
 								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0 
-										$list_group.siblings().find("div").hide()
+									$list_group.siblings().find("div").hide()
 									
 						$list.append $list_group.text(group)
 					$list.append children
 
-     if showChild == false
-      $div = $('<div class="parent_div">')
-     else
-      $div = $('<div class="child_div">')
-     $div.append $list
+				if showChild == false
+					$div = $('<div class="parent_div">')
+				else
+					$div = $('<div class="child_div">')
+					$div.append $list
 		$div
 
 	_buildFilterOption: (option) ->
