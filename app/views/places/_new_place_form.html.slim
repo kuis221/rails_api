@@ -1,11 +1,13 @@
-.row-fluid
-  |
-    It looks like we couldn't find the place you were looking for.
-    Just enter the place's information below and we'll add it to the campaign.
-br>/
+- if parent.present?
+  .row-fluid
+    |
+      It looks like we couldn't find the place you were looking for.
+      Just enter the place's information below and we'll add it to the campaign.
+  br>/
 
 = simple_form_for([parent, resource], remote: true) do |f|
   = f.error_notification
+  = f.error :base
 
   .form-inputs
     .row-fluid
@@ -42,7 +44,7 @@ coffee:
       states.html('<option></option>')
       if response.states
         for state in response.states
-          option = $('<option>').val(state.name).html(state.name)
+          option = $('<option>').val(state.id).html(state.name)
           if val is state.id
             option.attr('selected', 'selected')
           states.append(option)

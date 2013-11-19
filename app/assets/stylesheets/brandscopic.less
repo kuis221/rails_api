@@ -3508,7 +3508,7 @@ body.roles{
 			overflow: hidden;
 
 			.results-box-container {
-				.event-data-column {
+				.venues-data-column {
 					display: inline-block;
 					vertical-align: top;
 					height: 52px;
@@ -3530,6 +3530,10 @@ body.roles{
 				padding-left: 10px;
 				text-align: center;
 				width: 55%;
+
+				#new-venue-btn {
+					margin-top: 10px;
+				}
 			}
 		}
 	}
@@ -4787,6 +4791,7 @@ body.campaigns{
 		}
 	}
 	.place-data{
+		width: 500px;
 		&:before{
 			color: @user_menu;
 			content: "\e02c";
@@ -4799,6 +4804,10 @@ body.campaigns{
 			text-align: center;
 			vertical-align: middle;
 			-webkit-font-smoothing: antialiased;
+		}
+
+		address{
+			margin-bottom: 0px;
 		}
 	}
 	.phone-data{
