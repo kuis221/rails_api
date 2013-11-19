@@ -63,7 +63,6 @@
 }*/
 .sf-menu li li:hover,
 .sf-menu li li.sfHover {
-	background: #49afcd;
 	/* only transition out, not in */
 	-webkit-transition: none;
 	transition: none;
