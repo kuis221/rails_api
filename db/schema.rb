@@ -626,7 +626,6 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
-    t.string   "authentication_token"
     t.datetime "invitation_created_at"
     t.string   "authentication_token"
   end
