@@ -1987,6 +1987,7 @@ ul.kpis-list{
     ul#venues-list{
     	li{
     		a{
+    			padding-left: 15px;
     			&:first-child{
     				line-height: 20px;
     			}
@@ -1997,6 +1998,17 @@ ul.kpis-list{
     				.n_events, .n_hours, .n_spent{
     					font-size: 16px;
     				}
+    			}
+    			.score{
+						color: @venues_blue;
+    				margin-right: 15px;
+    				width: 45px;
+    				text-align: center;
+						.big-number{
+							font-size: 30px;
+							font-weight: 300;
+							line-height: 28px;
+						}
     			}
     			span{
     				&:first-child{
