@@ -2,10 +2,4 @@
 - if parent.present?
   = render 'form_dialog'
 - else
-  |
-    bootbox.classes('#{@form_modal_class} #{resource.class.name.downcase}_modal resource-form-modal');
-    bootbox.dialog(
-      $('#{escape_javascript(render "new_place_form")}'),
-      [],
-      {'onEscape': true, animate: (!$.fx.off), header: 'New place'}
-    );
+  = render partial: 'form_dialog', locals: {form_partial: 'new_place_form', resource: resource}

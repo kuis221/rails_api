@@ -18,12 +18,12 @@ class PlacesController < FilteredController
       automatically_created = true
 
       if params[:add_new_place].present?
-        address_txt = URI::encode("#{params[:place][:street_number]},
-                                   #{params[:place][:route]},
-                                   #{params[:place][:city]},
-                                   #{params[:place][:state]},
-                                   #{params[:place][:zipcode]}
-                                   #{params[:place][:country]}")
+        address_txt = URI::encode([params[:place][:street_number],
+                                   params[:place][:route],
+                                   params[:place][:city],
+                                   params[:place][:state] + ' ' + params[:place][:zipcode],
+                                   params[:place][:country]].join(', '))
+
         data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
         if data['results'].count > 0
           latitude = data['results'].first['geometry']['location']['lat']
@@ -43,12 +43,12 @@ class PlacesController < FilteredController
                           :name => params[:place][:name],
                           :types => [params[:place][:types]]
                         }
-
+              Rails.logger.debug address.inspect
               result = HTTParty.post("https://maps.googleapis.com/maps/api/place/add/json?sensor=true&key=#{GOOGLE_API_KEY}",
                                       :body => address.to_json,
                                       :headers => { 'Content-Type' => 'application/json' }
                                     )
-
+              Rails.logger.debug result.inspect
               if result['reference'].present? && result['id'].present?
                 reference_value = result['reference']+'||'+result['id']
                 automatically_created = false
@@ -59,6 +59,8 @@ class PlacesController < FilteredController
               reference_value = spot.reference+'||'+spot.id
             end
           end
+        else
+          @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
         end
 
         @from_new_place_form = true

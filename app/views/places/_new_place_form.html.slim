@@ -25,7 +25,7 @@
         = f.input :city, input_html: {class: 'input-large'}, required: true
     .row-fluid.users
       .span6
-        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],k]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
+        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
 
@@ -44,7 +44,7 @@ coffee:
       states.html('<option></option>')
       if response.states
         for state in response.states
-          option = $('<option>').val(state.id).html(state.name)
+          option = $('<option>').val(state.name).html(state.name)
           if val is state.id
             option.attr('selected', 'selected')
           states.append(option)
