@@ -40,6 +40,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   description <<-EOS
     Returns a list of events filtered by the given params. The results are returned on groups of 30 per request. To obtain the next 30 results provide the <page> param.
 
+    All the times and dates are returned on the user's timezone.
+
     *Facets*
 
     Faceting is a feature of Solr that determines the number of documents that match a given search and an additional criterion
@@ -73,12 +75,109 @@ class Api::V1::EventsController < Api::V1::FilteredController
       ]
 
   EOS
+
+  example <<-EOS
+  {
+      "page": 1,
+      "total": 7238,
+      "facets": [
+          <HERE GOES THE LIST FACETS DESCRIBED ABOVE>
+      ],
+      "results": [
+          {
+              "id": 5486,
+              "start_date": "05/24/2014",
+              "start_time": " 9:00 PM",
+              "end_date": "05/24/2014",
+              "end_time": "10:00 PM",
+              "status": "Active",
+              "event_status": "Unsent",
+              "place": {
+                  "id": 2624,
+                  "name": "Kelly's Pub Too",
+                  "latitude": 39.7924104,
+                  "longitude": -86.2514126,
+                  "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
+                  "country": "US",
+                  "state": "Indiana",
+                  "state_name": "Indiana",
+                  "city": "Indianapolis",
+                  "route": "5341 W. 10th Street",
+                  "street_number": null,
+                  "zipcode": "46224"
+              },
+              "campaign": {
+                  "id": 33,
+                  "name": "Kahlua Midnight FY14"
+              }
+          },
+          {
+              "id": 5199,
+              "start_date": "05/03/2014",
+              "start_time": " 7:30 PM",
+              "end_date": "05/03/2014",
+              "end_time": " 8:30 PM",
+              "status": "Active",
+              "event_status": "Unsent",
+              "place": {
+                  "id": 2587,
+                  "name": "8 Seconds Saloon",
+                  "latitude": 39.767723,
+                  "longitude": -86.24897,
+                  "formatted_address": "111 North Lynhurst Drive, Indianapolis, IN, United States",
+                  "country": "US",
+                  "state": "Indiana",
+                  "state_name": "Indiana",
+                  "city": "Indianapolis",
+                  "route": "North Lynhurst Drive",
+                  "street_number": "111",
+                  "zipcode": "46224"
+              },
+              "campaign": {
+                  "id": 33,
+                  "name": "Kahlua Midnight FY14"
+              }
+          },
+          ....
+      ]
+  }
+  EOS
   def index
     collection
   end
 
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
+
+  example <<-EOS
+  {
+      "id": 5486,
+      "start_date": "05/24/2014",
+      "start_time": " 9:00 PM",
+      "end_date": "05/24/2014",
+      "end_time": "10:00 PM",
+      "status": "Active",
+      "event_status": "Unsent",
+      "place": {
+          "id": 2624,
+          "name": "Kelly's Pub Too",
+          "latitude": 39.7924104,
+          "longitude": -86.2514126,
+          "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
+          "country": "US",
+          "state": "Indiana",
+          "state_name": "Indiana",
+          "city": "Indianapolis",
+          "route": "5341 W. 10th Street",
+          "street_number": null,
+          "zipcode": "46224"
+      },
+      "campaign": {
+          "id": 33,
+          "name": "Kahlua Midnight FY14"
+      }
+  }
+  EOS
   def show
     if resource.present?
       render
