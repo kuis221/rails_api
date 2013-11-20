@@ -3,9 +3,17 @@ module DashboardHelper
     @demographics_graph_data ||= Hash.new.tap do |data|
       results_scope = EventResult.for_approved_events.scoped_by_company_id(current_company).scoped(event_data_scope_conditions)
       [:age, :gender, :ethnicity].each do |kpi|
-        results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
         segments = Kpi.send(kpi).kpis_segments
-        data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+        results = results_scope.send(kpi).where('kpis_segment_id in (?)', segments.map(&:id)).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg, count(event_results.id) as result_count').group('event_results.kpis_segment_id')
+        totals = results.sum{|r|r.segment_sum.to_f}
+        data[kpi] = Hash[segments.map do |s|
+          [s.text, if r = results.detect{|r| r.kpis_segment_id == s.id}
+            r.segment_sum.to_f*100 / totals
+          else
+            0
+          end
+          ]
+        end]
       end
     end
   end
