@@ -38,6 +38,10 @@ class VenuesController < FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(venue: [:place_id, :company_id])[:venue]
+    end
+
     def load_google_places
       places=[]
       if params[:location].present?

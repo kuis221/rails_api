@@ -1,6 +1,11 @@
 - if venue.is_a?(Venue)
   li id="venue_#{venue.id}"
     = link_to_if_permitted(:show, Venue, venue_path(venue.id)) do
+      .pull-left
+        .score
+          .big-number
+            = "#{venue.score}"
+          = venue.score.present? ? 'SCORE' : "&nbsp;".html_safe
       span
         b= venue.name
         br>/
