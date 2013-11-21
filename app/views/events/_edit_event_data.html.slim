@@ -21,6 +21,8 @@ h3 EVENT DATA
 
 
 javascript:
+  makeFormValidatable($('form#edit_event_#{resource.id}'));
+
   $('#save-event-results').click(function(){
     $('form#edit_event_#{resource.id}').submit();
   })

@@ -81,17 +81,14 @@ jQuery ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 
 
-	validateForm = (e) ->
-		if e.target.tagName is 'A'
-			return true
-
-		$(this).validate {
+	window.makeFormValidatable = (e) ->
+		e.validate {
 			errorClass: 'help-inline',
 			errorElement: 'span',
 			ignore: '.no-validate',
 			highlight: (element) ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
-			,
+
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label")
 				if label.length > 0
@@ -99,11 +96,27 @@ jQuery ->
 				else
 					error.insertAfter element
 
+			focusInvalid: false,
+			invalidHandler: (form, validator) ->
+				return unless validator.numberOfInvalids()
+				element = $(validator.errorList[0].element)
+				while element.is(":hidden")
+					element = element.parent()
+
+				$("html, body").animate
+					scrollTop: element.offset().top - 200
+				, 1000
 			success: (element) ->
 				element
 					.addClass('valid').text('OK!')
 					.closest('.control-group').removeClass('error')
 		}
+
+	validateForm = (e) ->
+		if e.target.tagName is 'A'
+			return true
+
+		makeFormValidatable($(this))
 
 		if not $(this).valid()
 
@@ -119,7 +132,6 @@ jQuery ->
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
 
-
 	$(document).on 'click', '.xlsx-download-link', () ->
 		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
 		$.ajax url, {
@@ -128,12 +140,10 @@ jQuery ->
 		}
 		false
 
-
 	$('[data-sparkline]').each (index, elm) ->
 		$elm = $(elm)
 		values = $elm.data('values').split(",")
 		$elm.sparkline values, { type: $elm.data('sparkline'), barWidth: 1, barSpacing: 1, barColor: '#3E9CCF', height: '20px' }
-
 
 	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
 	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
