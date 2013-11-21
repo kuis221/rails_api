@@ -42,7 +42,7 @@ class Kpi < ActiveRecord::Base
   validate :segments_can_be_deleted?
 
   # KPIs-Segments relationship
-  has_many :kpis_segments, dependent: :destroy, order: :id
+  has_many :kpis_segments, dependent: :destroy, order: 'ordering ASC, id ASC'
 
   # KPIs-Goals relationship
   has_many :goals

@@ -4,11 +4,16 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('##{parent.class.name.underscore}-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');
+  - if parent.present?
+    |
+      $('##{parent.class.name.underscore}-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');
   - if @from_new_place_form
     - if parent.is_a?(Campaign)
       |
         $.get('#{new_campaign_placeable_path(parent, format: :js)}');
+    - elsif parent.nil?
+      |
+        window.location = "#{venue_path(@venue.id)}"
     - else
       |
         bootbox.dialog(

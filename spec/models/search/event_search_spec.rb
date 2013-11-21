@@ -95,4 +95,16 @@ describe Event, search: true do
     #Search for Events with stats
     Event.do_search({company_id: 1, event_data_stats: true}).results.should =~ [event, event2]
   end
+
+  it "should not fail if a brand without campaings is given" do
+    FactoryGirl.create(:event, company_id: 1)
+
+    Sunspot.commit
+    # Invalid brand
+    Event.do_search(company_id: 1, brand: 1).results.should =~ []
+
+    # Brand without campaings
+    brand = FactoryGirl.create(:brand)
+    Event.do_search(company_id: 1, brand: brand.id).results.should =~ []
+  end
 end

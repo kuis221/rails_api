@@ -772,6 +772,8 @@ window.FormBuilder.SurveysField = (options) ->
 		options: {brands: []}
 	}, options)
 
+	@options.options ||= {}
+
 	@field =  $('<div class="field control-group" data-class="SurveysField">').append [
 		$('<img src="/assets/surveys.png">')
 	]
@@ -783,7 +785,7 @@ window.FormBuilder.SurveysField = (options) ->
 			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
-				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').val(@options.options.brands).on "change", (e) =>
+				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').val(if @options.options? && @options.options.brands  then  @options.options.brands else '').on "change", (e) =>
 					input = $(e.target)
 					@options.options.brands = input.select2("val")
 					true

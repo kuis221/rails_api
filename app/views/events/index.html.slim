@@ -9,7 +9,7 @@
 .main
 
   .pull-left
-    = link_to 'Create', new_event_path, {remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
+    = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
 
   .text-right
     button.btn.download.xlsx-download-link data-url="#{events_path(format:"xlsx")}" title="Download"

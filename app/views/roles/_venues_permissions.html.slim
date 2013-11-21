@@ -2,6 +2,11 @@
   .permissions
     .row-fluid
       .span7
+        .span5.title Create
+        .span2
+          = permission_checkbox(f, :create, Venue)
+
+      .span7
         .span5.title Venue List
         .span2
           = permission_checkbox(f, :index, Venue)

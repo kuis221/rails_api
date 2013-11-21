@@ -24,14 +24,13 @@
 require 'normdist'
 
 class Venue < ActiveRecord::Base
-  belongs_to :company
+  scoped_to_company
+
   belongs_to :place
 
   has_many :events, through: :place
 
   include Normdist
-
-  attr_accessible :place_id, :company_id
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, to: :place
 

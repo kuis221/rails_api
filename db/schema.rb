@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131114022734) do
+ActiveRecord::Schema.define(:version => 20131119162327) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -324,17 +324,6 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -437,6 +426,7 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "text"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "ordering"
   end
 
   add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"

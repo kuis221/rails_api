@@ -1,0 +1,5 @@
+- render 'settings'
+- if parent.present?
+  = render 'form_dialog'
+- else
+  = render partial: 'form_dialog', locals: {form_partial: 'new_place_form', resource: resource}
