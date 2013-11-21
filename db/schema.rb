@@ -637,15 +637,8 @@ ActiveRecord::Schema.define(:version => 20131114022734) do
     t.string   "street_address"
     t.string   "unit_number"
     t.string   "zip_code"
-<<<<<<< HEAD
-=======
     t.string   "authentication_token"
     t.datetime "invitation_created_at"
-<<<<<<< HEAD
->>>>>>> 2fa009c06a0dc706e1eea4ab00dc356d8695ae1e
-=======
-    t.string   "authentication_token"
->>>>>>> ec6ed989cabf3f8223f1f28cbd56d58f5fa2dbef
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
