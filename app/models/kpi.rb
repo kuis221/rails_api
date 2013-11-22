@@ -138,39 +138,104 @@ class Kpi < ActiveRecord::Base
     def comments
       @comments ||= where(company_id: nil).find_by_name_and_module('Comments', 'comments')
     end
-  end
 
+    # This method is only used during the DB seed and tests
+    def create_global_kpis
+      Kpi.global.destroy_all
+      without_company_scoped do
+        @events = Kpi.create({name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 1}, without_protection: true)
+        @promo_hours = Kpi.create({name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 2}, without_protection: true)
+        @impressions = Kpi.create({name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 3}, without_protection: true)
+        @interactions = Kpi.create({name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 4}, without_protection: true)
+        @samples = Kpi.create({name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 5}, without_protection: true)
+        @gender  = Kpi.create({name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 6}, without_protection: true)
+        @age     = Kpi.create({name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 7}, without_protection: true)
+        @ethnicity = Kpi.create({name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 8}, without_protection: true)
+        @photos = Kpi.create({name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos', ordering: 9}, without_protection: true)
+        @expenses = Kpi.create({name: 'Expenses', kpi_type: 'expenses', description: 'Total expenses of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses', ordering: 10}, without_protection: true)
+        @videos = Kpi.create({name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos', ordering: 11}, without_protection: true)
+        @surveys = Kpi.create({name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys', ordering: 12}, without_protection: true)
+        @comments = Kpi.create({name: 'Comments', kpi_type: 'comments', description: 'Total number of comments from event audience', capture_mechanism: 'integer', company_id: nil, 'module' => 'comments', ordering: 13}, without_protection: true)
+        Kpi.create({name: 'Competitive Analysis', kpi_type: 'number', description: 'Total number of competitive analyses created for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'competitive_analysis', ordering: 14}, without_protection: true)
+      end
 
-  # This method is only used during the DB seed and tests
-  def self.create_global_kpis
-    Kpi.global.destroy_all
-    without_company_scoped do
-      @events = Kpi.create({name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 1}, without_protection: true)
-      @promo_hours = Kpi.create({name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 2}, without_protection: true)
-      @impressions = Kpi.create({name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 3}, without_protection: true)
-      @interactions = Kpi.create({name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 4}, without_protection: true)
-      @samples = Kpi.create({name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 5}, without_protection: true)
-      @gender  = Kpi.create({name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 6}, without_protection: true)
-      @age     = Kpi.create({name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 7}, without_protection: true)
-      @ethnicity = Kpi.create({name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 8}, without_protection: true)
-      @photos = Kpi.create({name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos', ordering: 9}, without_protection: true)
-      @expenses = Kpi.create({name: 'Expenses', kpi_type: 'expenses', description: 'Total expenses of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses', ordering: 10}, without_protection: true)
-      @videos = Kpi.create({name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos', ordering: 11}, without_protection: true)
-      @surveys = Kpi.create({name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys', ordering: 12}, without_protection: true)
-      @comments = Kpi.create({name: 'Comments', kpi_type: 'comments', description: 'Total number of comments from event audience', capture_mechanism: 'integer', company_id: nil, 'module' => 'comments', ordering: 13}, without_protection: true)
-      Kpi.create({name: 'Competitive Analysis', kpi_type: 'number', description: 'Total number of competitive analyses created for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'competitive_analysis', ordering: 14}, without_protection: true)
+      ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|
+        @age.kpis_segments.create(text: segment)
+      end
+
+      ['Female', 'Male'].each do |segment|
+        @gender.kpis_segments.create(text: segment)
+      end
+
+      ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
+        @ethnicity.kpis_segments.create(text: segment)
+      end
     end
 
-    ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|
-      @age.kpis_segments.create(text: segment)
-    end
+    def merge_fields(options)
+      kpis = all
+      campaings = CampaignFormField.includes(:campaign).where(kpi_id: kpis).map(&:campaign)
+      Kpi.transaction do
+        campaings.each do |campaign|
+          kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) }
+          kpi_keep = kpis.detect{|k| k.id == options[:master_kpi][campaign.id.to_s].to_i }
+          kpis_to_remove.reject!{|k| k.id == kpi_keep.id }
 
-    ['Female', 'Male'].each do |segment|
-      @gender.kpis_segments.create(text: segment)
-    end
+          if kpi_keep
+            kpi_keep.name = options[:name]
+            kpi_keep.description = options[:description]
+            CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
+            kpi_keep.save
+            Rails.logger.debug "Campaign: #{campaign.name}(#{campaign.id})"
+            Rails.logger.debug "  KPI to keep: #{kpi_keep.inspect}"
+            Rails.logger.debug "  KPIs to remove: #{kpis_to_remove.inspect}"
 
-    ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
-      @ethnicity.kpis_segments.create(text: segment)
+            # If this campaing has at leas more than one
+            if kpis_to_remove.count > 0
+              campaign.events.find_in_batches do |group|
+                group.each do |event|
+                  event.campaign = campaign # To avoid each event to reload the campaign
+                  if kpi_keep.kpi_type == 'percentage'
+                    results = event.result_for_kpi(kpi_keep)
+                    if results.map(&:value).map(&:to_i).sum == 0
+                      values_to_copy = kpis_to_remove.each do|k|
+                        values_to_copy = event.result_for_kpi(k)
+                        if values_to_copy.map(&:value).map(&:to_i) != 0
+                          values_to_copy.each do |result_copy|
+                            if result = results.detect{|r| r.kpis_segment.text.downcase.strip == result_copy.kpis_segment.text.downcase.strip}
+                              result.value = result_copy.value
+                              result.save
+                            end
+                          end
+                        end
+                      end
+                    end
+                  else
+                    result = event.result_for_kpi(kpi_keep)
+                    value = result.value
+
+                    # If the event doesn't have a value for that field, then try looking for a value on another KPI
+                    if value.nil? || !value.present?
+                      value ||= kpis_to_remove.map{|k| r = event.result_for_kpi(k); r.value }.compact.first
+                      if kpi_keep.kpi_type == 'count'
+                        option_text = KpisSegment.find(value).text.downcase.strip rescue nil
+                        value = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == option_text}.try(:id) if option_text
+                      end
+                    end
+
+                    result.value = value
+
+                    result.save
+                  end
+                end
+              end
+            end
+            CampaignFormField.where(kpi_id: kpis_to_remove).destroy_all
+            EventResult.where(kpi_id: kpis_to_remove).destroy_all
+            kpis_to_remove.each{|k| k.destroy }
+          end
+        end
+      end
     end
   end
 
