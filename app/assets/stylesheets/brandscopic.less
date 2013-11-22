@@ -68,18 +68,37 @@ abbr[title]{
 
 /*-- EVENT DETAILS PAGES __*/
 
-body.events.show ul.consumer-reach-metrics{
-	width: 100%;
-}
+body.events.show{
+	ul{
+		&.consumer-reach-metrics{
+			width: 100%;
+			li{
+				.metric{
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+			}
+		}
+	}
 
-body.events.show ul.consumer-reach-metrics li .metric{
-	float: right;
-	width: 80%;
-	margin-right: 15px;
-	text-align: right;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	#event-results-form{
+		.control-group{
+			.segment-total{
+				display: none;
+			}
+			&.error{
+				.controls{
+					input[type="text"]{
+						border-color: @alert_red !important;
+					}
+					span.add-on{
+						background-color: @alert_red;
+					}
+				}
+			}
+		}
+	}
 }
 
 .navbar-fixed-top {

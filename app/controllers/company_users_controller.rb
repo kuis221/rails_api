@@ -1,12 +1,12 @@
 class CompanyUsersController < FilteredController
   include DeactivableHelper
 
-  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change]
+  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change,:time_zone_update ]
   respond_to :json, only: [:index, :notifications]
 
   helper_method :brands_campaigns_list
 
-  custom_actions collection: [:complete, :time_zone_change]
+  custom_actions collection: [:complete, :time_zone_change, :time_zone_update]
 
   before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
@@ -39,6 +39,11 @@ class CompanyUsersController < FilteredController
 
   def time_zone_change
     current_user.update_column(:detected_time_zone, params[:time_zone])
+  end
+	
+  def time_zone_update
+    current_user.update_column(:time_zone, params[:time_zone])
+    render nothing: true
   end
 
   def select_company
