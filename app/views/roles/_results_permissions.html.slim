@@ -26,5 +26,10 @@
         .span5
           = permission_checkbox(f, :index_results, Survey)
 
+      .span7
+        .span5 Goals vs. Actual
+        .span5
+          = permission_checkbox(f, :gva_report, Campaign)
+
   = hidden_field_tag :partial, :results_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
