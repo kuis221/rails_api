@@ -150,7 +150,7 @@ class Place < ActiveRecord::Base
     end
 
     def load_by_place_id(place_id, reference)
-      Place.find_or_initialize_by_place_id(place_id: place_id, reference: reference) do |p|
+      Place.find_or_initialize_by_place_id({place_id: place_id, reference: reference}, without_protection: true) do |p|
         p.send(:fetch_place_data)
       end
     end
