@@ -27,6 +27,7 @@ class Ability
       end
 
       can :time_zone_change, CompanyUser
+      can :time_zone_update, CompanyUser
       can [:notifications, :select_company], CompanyUser
 
       # All users can update their own information
