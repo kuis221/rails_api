@@ -309,6 +309,13 @@ class Place < ActiveRecord::Base
               end
             end
           end
+
+          # If still there is no city... :s then assign it's own name as the city
+          # Example of places with this issue:
+          # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
+          if !self.city
+            self.city = self.name
+          end
         end
         self
       end
