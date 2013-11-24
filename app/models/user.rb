@@ -108,6 +108,8 @@ class User < ActiveRecord::Base
   attr_accessor :inviting_user
   attr_accessor :updating_user
   attr_accessor :accepting_invitation
+  attr_accessor :invitation_created_at
+  attr_accessor :invitation_updated_at
 
   def full_name
     "#{first_name} #{last_name}".strip
@@ -115,17 +117,17 @@ class User < ActiveRecord::Base
   alias_method :name, :full_name
 	
 	def is_fully_valid?
-		if phone_number.present? or
-    country.present? or
-    state.present? or
-    city.present? or
-    street_address.present? or
-    zip_code.present? or
-    time_zone.present? or
-    password.present?
-		 return false
-		end
-	end
+    if !phone_number.present? or
+    !country.present? or
+    !state.present? or
+    !city.present? or
+    !street_address.present? or
+    !zip_code.present?
+      return false
+    else
+      return true
+    end
+  end
 
   def full_address
     address = Array.new

@@ -256,15 +256,19 @@ jQuery ->
 
 	# TimeZone change detection methods
 	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
-		browserTimeZone = $window.get_timezone()
-		if browserTimeZone? and browserTimeZone != ''
-			if userTimeZone != browserTimeZone && browserTimeZone != lastDetectedTimeZone
-				askForTimeZoneChange(browserTimeZone)
+   browserTimeZone = $window.get_timezone()
+   if browserTimeZone? and browserTimeZone != ''
+    if userTimeZone != browserTimeZone && browserTimeZone != lastDetectedTimeZone
+     askForTimeZoneChange(browserTimeZone)
 
 	askForTimeZoneChange = (browserTimeZone) ->
 		$.get '/users/time_zone_change.js', {time_zone: browserTimeZone}
 
-
+ #User completed profile detection method
+ window.checkUserProfile = (isProfileCompleted) ->
+  if isProfileCompleted == 'false'
+   $.get '/users/complete_profile.js'
+   
 	# For images previews on hover
 	$(document).delegate("a[data-preview-url]", 'mouseenter mouseleave', (e) ->
 

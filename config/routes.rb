@@ -110,6 +110,7 @@ Brandscopic::Application.routes.draw do
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
     put :time_zone_update, on: :collection
+    get :complete_profile, on: :collection
     get :event, via: :get, on: :collection # List of users by event
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
