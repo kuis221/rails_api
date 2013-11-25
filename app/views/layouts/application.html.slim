@@ -23,7 +23,6 @@ head
     javascript:
       $(document).ready(function(){
         checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.try(:html_safe))}', '#{escape_javascript(current_user.detected_time_zone.try(:html_safe))}');
-        //checkUserProfile('#{current_user.is_fully_valid?}');
       })
     = render 'application/tracking/lucky_orange' unless Rails.env.development? || Rails.env.test?
 
