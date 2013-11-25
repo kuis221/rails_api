@@ -130,4 +130,15 @@ class EventsController < FilteredController
       end
       days.map{|d, brands| brands.values.sort{|a, b| a[:title] <=> b[:title]}}.flatten
     end
+
+    def search_params
+      @search_params ||= begin
+        super
+        if request.format.xlsx?
+          @search_params[:sorting] = 'start_at'
+          @search_params[:sorting_dir] = 'asc'
+        end
+        @search_params
+      end
+    end
 end
