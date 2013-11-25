@@ -10,7 +10,7 @@ class Results::GvaController < ApplicationController
   end
 
   def report
-    authorize! :report, campaign
+    authorize_actions
 
     @events_scope = Event.where(id: filter_event_ids)
     if area
@@ -37,7 +37,7 @@ class Results::GvaController < ApplicationController
     end
 
     def authorize_actions
-      authorize! :show_analysis, Campaign
+      authorize! :gva_report, Campaign
     end
 
     # Returns an array of areas/places with the statistics by event status compared to the area or place's goals
