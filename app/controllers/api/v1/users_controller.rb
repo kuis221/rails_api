@@ -50,11 +50,11 @@ class Api::V1::UsersController < Api::V1::ApiController
       companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
       respond_to do |format|
         format.json {
-          render :status => 401,
+          render :status => 200,
                  :json => companies
         }
         format.xml {
-          render :status => 401,
+          render :status => 200,
                  :xml => companies.to_xml(root: 'companies')
         }
       end
