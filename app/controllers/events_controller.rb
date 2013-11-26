@@ -76,6 +76,14 @@ class EventsController < FilteredController
 
   protected
 
+    def build_resource
+      super
+      if action_name == 'new' && params[:event]
+        @event.assign_attributes(params.permit(event: [:place_reference])[:event])
+      end
+      @event
+    end
+
     def permitted_params
       parameters = {}
       if action_name == 'new'

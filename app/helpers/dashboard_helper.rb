@@ -8,7 +8,11 @@ module DashboardHelper
         totals = results.sum{|r|r.segment_sum.to_f}
         data[kpi] = Hash[segments.map do |s|
           [s.text, if r = results.detect{|r| r.kpis_segment_id == s.id}
-            r.segment_sum.to_f*100 / totals
+            if totals > 0
+              r.segment_sum.to_f * 100 / totals
+            else
+              0
+            end
           else
             0
           end

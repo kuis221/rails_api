@@ -1,0 +1,58 @@
+= form_tag batch_action_admin_kpis_path, method: :post, class: :formtastic do
+  input type="hidden" name="batch_action" value="merge"
+  - @kpis.each do |kpi|
+    input type="hidden" name="collection_selection[]" value="#{kpi.id}"
+  fieldset.inputs
+    legend
+      span Merge KPIs
+    p= "You are going to merge the following #{@kpis.count} KPIs:"
+    table style="width:300px"
+      tr
+        td 
+          b Name
+        td 
+          b # Campaigns
+      - @kpis.each do |kpi|
+        tr
+          td= link_to kpi.name, admin_kpi_path(kpi)
+          td= CampaignFormField.where(kpi_id: kpi).count
+
+  fieldset.inputs
+    legend 
+      span Process summary
+
+
+    - segments = @kpis.first.kpis_segments.map{|s| s.text.downcase.strip }
+    - if ['count', 'percentage'].include?(@kpis.first.kpi_type) && @kpis.any?{|k| (segments & k.kpis_segments.map{|s| s.text.downcase.strip }).count != segments.count}
+      b WARNING!! Not all KPIs have the same segments that the others. If you proceed with the merge some answers can be lost!!
+
+    p In case a campaign have more than one of those KPIs assigned, we need to know what KPI's values should be keeped if it happens that a event have values for more than one of those KPIs.  
+    - @campaigns.each do |campaign|
+      ol
+        li.string.input.required.stringish
+          label.label for="kpi_name"
+            = campaign.name
+            abbr title="required" *
+          - kpis = (@kpis & campaign.active_kpis)
+          - kpis.each do |kpi|
+            label
+              input name="merge[master_kpi][#{campaign.id}]" type="radio" value="#{kpi.id}"
+              = " #{kpi.name}"
+
+  fieldset.inputs
+    legend 
+      span Resulting KPI's info
+    ol
+      li.string.input.required.stringish
+        label.label for="kpi_name"
+          = "Name"
+          abbr title="required" *
+        input id="kpi_name" name="merge[name]" type="text" value="#{@kpis.first.name}"
+
+      li.string.input.required.stringish
+        label.label for="kpi_description" 
+          = "Description"
+          abbr title="required" *
+        textarea id="kpi_description" name="merge[description]"= @kpis.detect{|k| k.description.present? }.try(:description)
+
+  = submit_tag 'Merge', name: 'merge[confirm]'

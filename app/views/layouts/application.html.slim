@@ -16,7 +16,7 @@ head
     = stylesheet_link_tag "application", :media => "all"
     = stylesheet_link_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_191.css"
     = javascript_include_tag "application"
-    = javascript_tag '$.fx.off = true;'  if Rails.env.test?
+    = javascript_tag '$.fx.off = true;' if Rails.env.test?
     = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_API_KEY}&libraries=places&sensor=false"
     = csrf_meta_tags
     = yield(:head)
