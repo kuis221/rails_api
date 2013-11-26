@@ -15,6 +15,13 @@ describe InvitationsController do
         response.should render_template('new')
         response.should render_template('form')
       end
+
+      it "builds a new company user relationship on user" do
+        get 'new', format: :js
+        assigns(:user).new_record?.should be_true
+        assigns(:user).company_users.any?.should be_true
+        assigns(:user).company_users.first.new_record?.should be_true
+      end
     end
 
     describe "POST 'create'" do
