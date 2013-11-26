@@ -48,7 +48,7 @@ class Results::GvaController < ApplicationController
         where('goals.value <> 0 and goals.value is not null').
         where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids, campaign.place_ids).
         where(kpi_id: Kpi.events.id).map do |goal|
-          params = search_params
+          params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
           params.merge!({place: [Base64.encode64(Place.location_for_index(goal.goalable))]}) if goal.goalable.is_a?(Place)
           search = Event.do_search(params, true)
@@ -58,7 +58,7 @@ class Results::GvaController < ApplicationController
           scheduled = search.total
           stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed}
       end
-      stats
+      stats.sort
     end
 
 
@@ -70,17 +70,17 @@ class Results::GvaController < ApplicationController
         where('goals.value <> 0 and goals.value is not null').
         where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids, campaign.place_ids).
         where(kpi_id: Kpi.promo_hours.id).map do |goal|
-          params = search_params
+          params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
           params.merge!({place: [Base64.encode64(Place.location_for_index(goal.goalable))]})   if goal.goalable.is_a?(Place)
           search = Event.do_search(params, true)
           status_facets = search.facet(:status).rows
-          submitted = Event.do_search(params.merge(event_status: [:submitted]), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
-          executed = Event.do_search(params.merge(event_status: [:executed]), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+          submitted = Event.do_search(params.merge(event_status: ['Submitted']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
+          executed = Event.do_search(params.merge(event_status: ['Executed']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           scheduled = search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed}
       end
-      stats
+      stats.sort
     end
 
     def filter_event_ids
