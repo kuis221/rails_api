@@ -68,6 +68,20 @@ describe BrandPortfoliosController do
     end
   end
 
+  describe "DELETE 'delete_brand'" do
+    let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
+    it "should delete the brand from the portfolio" do
+      brand = FactoryGirl.create(:brand)
+      brand_portfolio.brands << brand
+      expect {
+        expect {
+          delete 'delete_brand', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
+        }.to_not change(Brand, :count)
+        response.should be_success
+      }.to change(brand_portfolio.brands, :count).by(-1)
+    end
+  end
+
   describe "GET 'show'" do
     let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "assigns the loads the correct objects and templates" do
