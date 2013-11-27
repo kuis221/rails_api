@@ -32,10 +32,4 @@ class TeamsController < FilteredController
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end
-
-    def delete_member_path(team)
-      path = nil
-      path = delete_team_campaign_path(params[:campaign], team_id: team.id) if params.has_key?(:campaign) && params[:campaign].present?
-      path
-    end
 end
