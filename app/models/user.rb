@@ -108,11 +108,26 @@ class User < ActiveRecord::Base
   attr_accessor :inviting_user
   attr_accessor :updating_user
   attr_accessor :accepting_invitation
+  attr_accessor :invitation_created_at
+  attr_accessor :invitation_updated_at
 
   def full_name
     "#{first_name} #{last_name}".strip
   end
   alias_method :name, :full_name
+	
+	def is_fully_valid?
+    if !phone_number.present? or
+    !country.present? or
+    !state.present? or
+    !city.present? or
+    !street_address.present? or
+    !zip_code.present?
+      return false
+    else
+      return true
+    end
+  end
 
   def full_address
     address = Array.new
@@ -197,6 +212,18 @@ class User < ActiveRecord::Base
     Sunspot.index company_users.all
     Sunspot.commit
   end
+	
+  # Update password saving the record and clearing token. Returns true if
+  # the passwords are valid and the record was saved, false otherwise.
+  def reset_password!(new_password, new_password_confirmation)
+    self.password = new_password
+    self.password_confirmation = new_password_confirmation
+
+    clear_reset_password_token
+    after_password_reset
+    
+    self.save(:validate => false)
+  end
 
   class << self
 
@@ -210,7 +237,7 @@ class User < ActiveRecord::Base
       confirmable.confirm! if confirmable.persisted?
       confirmable
     end
-
+		
     # Attempt to find a user by its email. If a record is found, send new
     # password instructions to it. If user is not found, returns a new user
     # with an email not found error.

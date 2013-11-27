@@ -39,6 +39,7 @@ class Venue < ActiveRecord::Base
     integer :company_id
 
     text :name, stored: true
+    string :name
     text :types do
       begin
         place.types.join ' '

@@ -49,13 +49,13 @@ describe "VenuesController", js: true, search: true do
 
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('Bar Camelas')
-          page.should have_selector('div.n_spent', text: '$2,500.00')
+          page.should have_content('Bar Benito')
+           page.should have_selector('div.n_spent', text: '$1,500.00')
         end
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('Bar Benito')
-           page.should have_selector('div.n_spent', text: '$1,500.00')
+          page.should have_content('Bar Camelas')
+          page.should have_selector('div.n_spent', text: '$2,500.00')
         end
       end
 

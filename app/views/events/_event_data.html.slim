@@ -20,8 +20,7 @@
         .control-group
           label.field-label
             b= field.name
-          .hide
-            = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
+          = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
         - if field.field_type == 'percentage'
           .percentage-progress-bar id="progress-bar-field-#{field.id}"
             .progress.progress-info

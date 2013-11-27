@@ -8,6 +8,8 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
   before_filter :set_user
+  after_filter :set_access_control_headers
+
 
   protected
     def current_company
@@ -82,6 +84,15 @@ class Api::V1::ApiController < ActionController::Base
     def set_user
       User.current = current_user
       User.current.current_company = current_company if params.has_key?(:company_id)
+    end
+
+    def set_access_control_headers
+      unless Rails.env.production?
+        headers['Access-Control-Allow-Origin'] = '*'
+      else
+        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+      end
+      headers['Access-Control-Request-Method'] = '*'
     end
 end
 

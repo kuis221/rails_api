@@ -428,6 +428,8 @@ class Event < ActiveRecord::Base
         if params.has_key?(:event_status) and params[:event_status].present? # For the event status
           late = params[:event_status].delete('Late')
           due = params[:event_status].delete('Due')
+          executed = params[:event_status].delete('Executed')
+          scheduled = params[:event_status].delete('Scheduled')
 
           any_of do
             with(:status, params[:event_status]) unless params[:event_status].empty?
@@ -443,6 +445,14 @@ class Event < ActiveRecord::Base
                 with(:status, 'Unsent')
                 with(:end_at, Date.yesterday.beginning_of_day..Time.zone.now)
               end
+            end
+
+            unless executed.nil?
+              with(:end_at).less_than(Time.zone.now)
+            end
+
+            unless scheduled.nil?
+              with(:end_at).greater_than(Time.zone.now.beginning_of_day)
             end
           end
         end
@@ -538,6 +548,10 @@ class Event < ActiveRecord::Base
             row(:executed) do
               with(:status, 'Active')
               with(:end_at).less_than(Time.zone.now.beginning_of_day)
+            end
+            row(:scheduled) do
+              with(:status, 'Active')
+              with(:end_at).greater_than(Time.zone.now.beginning_of_day)
             end
           end
 

@@ -1,4 +1,9 @@
 class InvitationsController < Devise::InvitationsController
+  def new
+    build_resource
+    render :new
+  end
+
   def edit
     unless resource.errors.empty?
       respond_with_navigational(resource.errors, :status => :unprocessable_entity){ render :new }
@@ -65,8 +70,8 @@ class InvitationsController < Devise::InvitationsController
   protected
 
     def build_resource(*args)
-      self.resource ||= super
-      self.resource.company_users.new if self.resource.company_users.empty?
+      self.resource ||= resource_class.new
+      self.resource.company_users.build if self.resource.company_users.empty?
       self.resource.company_users.each{|cu| cu.company_id = current_company.id if cu.new_record? }
       self.resource
     end
