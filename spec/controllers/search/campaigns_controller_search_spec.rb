@@ -97,7 +97,7 @@ describe CampaignsController, search: true do
   end
 
   describe "GET 'filters'" do
-    it "should return the correct buckets in the right order" do
+    it "should return the correct filters in the right order" do
       Sunspot.commit
       get 'filters', format: :json
       response.should be_success
@@ -106,7 +106,6 @@ describe CampaignsController, search: true do
       filters['filters'].map{|b| b['label']}.should == ["Brands", "Brand Portfolios", "People", "Active State"]
     end
   end
-
 
   describe "POST 'find_similar_kpi'" do
     it "should return empty if there are no kpis" do

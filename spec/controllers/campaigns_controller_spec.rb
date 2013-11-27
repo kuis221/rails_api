@@ -509,4 +509,17 @@ describe CampaignsController do
     end
   end
 
+  describe "DELETE 'remove_kpi'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+    let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
+
+    it "should disassociate the kpi from the campaign" do
+      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      expect {
+        post 'remove_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+      }.to change(CampaignFormField, :count).by(-1)
+      response.should be_success
+    end
+  end
+
 end
