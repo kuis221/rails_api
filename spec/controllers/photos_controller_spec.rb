@@ -6,7 +6,7 @@ describe PhotosController do
     @company = @user.current_company
   end
 
-  let(:event) {FactoryGirl.create(:event, company: @company)}
+  let(:event) {FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign))}
   let(:photo) {FactoryGirl.create(:photo, attachable: event)}
 
   describe "POST 'create'" do
