@@ -103,16 +103,26 @@ describe RolesController do
       role.description.should == 'New description for Role'
     end
 
+    it "must update the role permissions, inserting them when they are selected" do
+      expect {
+        put 'update', id: role.to_param,
+                      role: {permissions_attributes: [{enabled: "1", action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard'},
+                                                      {enabled: "1", action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard'},
+                                                      {enabled: "1", action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard'}
+                                                     ]},
+                      partial: "dashboard_permissions",
+                      format: :js
+      }.to change(role.permissions, :count).by(3)
+      response.should render_template('update_partial')
+    end
+
     it "must update the role permissions, deleting them when enabled = 0" do
       permission1 = FactoryGirl.create(:permission, role_id: role.id, action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard')
       permission2 = FactoryGirl.create(:permission, role_id: role.id, action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard')
       permission3 = FactoryGirl.create(:permission, role_id: role.id, action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard')
-      permission4 = FactoryGirl.create(:permission, role_id: role.id, action: 'incomplete_tasks_module', subject_class: 'Symbol', subject_id: 'dashboard')
-      permission5 = FactoryGirl.create(:permission, role_id: role.id, action: 'venue_performance_module', subject_class: 'Symbol', subject_id: 'dashboard')
-      permission6 = FactoryGirl.create(:permission, role_id: role.id, action: 'recent_photos_module', subject_class: 'Symbol', subject_id: 'dashboard')
       expect {
-        put 'update', id: role.to_param, role: {permissions_attributes: [{enabled: '0', id: permission1.id}, {enabled: '0', id: permission3.id}, {enabled: '0', id: permission5.id}]}, partial: "dashboard_permissions", format: :js
-      }.to change(Permission, :count).by(-3)
+        put 'update', id: role.to_param, role: {permissions_attributes: [{enabled: '0', id: permission1.id}, {enabled: '0', id: permission2.id}, {enabled: '0', id: permission3.id}]}, partial: "dashboard_permissions", format: :js
+      }.to change(role.permissions, :count).by(-3)
       response.should render_template('update_partial')
     end
   end
