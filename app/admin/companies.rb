@@ -1,4 +1,6 @@
 ActiveAdmin.register Company do
+  actions :index, :show, :edit, :update, :new, :create
+
   form do |f|
     f.inputs "Details" do
       f.input :name
