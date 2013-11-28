@@ -160,17 +160,6 @@ describe CompanyUsersController do
       end
     end
 
-    describe "GET 'notifications'" do
-      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
-
-      it "returns http success" do
-        get 'notifications', id: user.to_param, format: :json
-        response.should be_success
-        alerts = JSON.parse(response.body)
-        alerts.should == []
-      end
-    end
-
     describe "DELETE 'remove_campaign'" do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
       let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }

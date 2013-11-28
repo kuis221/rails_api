@@ -80,4 +80,109 @@ describe CompanyUsersController, search: true do
       places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
     end
   end
+
+  describe "GET 'notifications'" do
+    it "should return a notification if a user is added to a event's team" do
+      event = FactoryGirl.create(:event, company: @company)
+      event.users << @company_user
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      response.should be_success
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => event_path(event, notifid: Notification.last.id), "unread" => true, "icon" => "icon-notification-event"})
+    end
+
+    it "should return a notification if the user have a late event recap" do
+      event = FactoryGirl.create(:late_event, company: @company)
+      event.users << @company_user
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      response.should be_success
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+    end
+
+    it "should NOT return a notification if the user is not part of the event's team" do
+      event = FactoryGirl.create(:late_event, company: @company)
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      response.should be_success
+
+      notifications = JSON.parse(response.body)
+      notifications.should == []
+    end
+
+    it "should return a notification if the user have a submitted event recap that is waiting for approval" do
+      event = FactoryGirl.create(:submitted_event, company: @company)
+      event.users << @company_user
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      response.should be_success
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+    end
+
+    it "should return a notification if the user have a due event recap" do
+      event = FactoryGirl.create(:due_event, company: @company)
+      event.users << @company_user
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      response.should be_success
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+    end
+
+    it "should return a notification if the user has is assigned to a task that is late" do
+      event = FactoryGirl.create(:event, company: @company)
+      task = FactoryGirl.create(:late_task, event: event, company_user_id: @company_user.id)
+
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"You have one late task", "level"=>"red", "url"=>"/tasks/mine?end_date=&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+    end
+
+
+    it "should return a notification if the user is part of the event's team that have a late task" do
+      event = FactoryGirl.create(:event, company: @company)
+      event.users << @company_user
+      task = FactoryGirl.create(:late_task, event: event, company_user_id: nil)
+
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"Your team has one late task", "level"=>"red", "url"=>"/tasks/my_teams?end_date=&not_assigned_to%5B%5D=#{@company_user.id}&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&team_members%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+    end
+
+    it "should return a notification if the user is part of the event's team and a new task is created on that event" do
+      event = FactoryGirl.create(:event, company: @company)
+      event.users << @company_user
+      task = FactoryGirl.create(:task, title: 'The task title', event: event)
+
+      Sunspot.commit
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+    end
+  end
 end
