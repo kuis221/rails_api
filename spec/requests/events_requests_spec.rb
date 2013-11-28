@@ -379,7 +379,11 @@ describe "Events", js: true, search: true do
 
     it "should allow the user to fill the event data" do
       Kpi.create_global_kpis
-      event = FactoryGirl.create(:event, start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes), campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
+      event = FactoryGirl.create(:event,
+          start_date: Date.yesterday.to_s(:slashes),
+          end_date: Date.yesterday.to_s(:slashes),
+          campaign: FactoryGirl.create(:campaign, company: @company),
+          company: @company )
       event.campaign.assign_all_global_kpis
 
       Sunspot.commit
@@ -456,6 +460,7 @@ describe "Events", js: true, search: true do
       click_button "Save"
 
       within ".box_metrics" do
+        save_and_open_page
         page.should have_content('3,333')
         page.should have_content('222,222')
         page.should have_content('4,444,444')

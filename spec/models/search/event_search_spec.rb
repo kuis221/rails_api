@@ -107,4 +107,14 @@ describe Event, search: true do
     brand = FactoryGirl.create(:brand)
     Event.do_search(company_id: 1, brand: brand.id).results.should =~ []
   end
+
+  it "should return the campaing name without loading the campaign object" do
+    FactoryGirl.create(:event, company_id: 1, campaign: FactoryGirl.create(:campaign, company_id: 1, name: 'The Campaign name'))
+
+    Sunspot.commit
+    event = Event.do_search(company_id: 1).results.first
+    event.campaign_name == 'The Campaign name'
+    event.association(:campaign).loaded?.should be_false
+
+  end
 end

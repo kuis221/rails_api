@@ -35,6 +35,23 @@ module ApplicationHelper
     end
   end
 
+  def event_place_address(event, link_name = false, line_separator = '<br />', name_separator='<br />')
+    street = "#{event.place_street_number} #{event.place_route}".strip
+    address = Array.new
+    city_parts = []
+    address.push street unless street.nil? || street.empty? || event.place_name == street
+    city_parts.push event.place_city if event.place_city.present? && event.place_name != event.place_city
+    city_parts.push event.place_state if event.place_state.present?
+    city_parts.push event.place_zipcode if event.place_zipcode.present?
+
+    address.push city_parts.compact.join(', ') unless city_parts.empty? || !event.place_city
+    address_with_name = nil
+    address_with_name = "<span class=\"address-name\">#{event.place_name}</span>" if event.place_name
+    address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
+
+    "<address>#{address_with_name}</address>".html_safe
+  end
+
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
       link_to(collection_path(:_stored => true), class: 'close-details') do

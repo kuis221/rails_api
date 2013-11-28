@@ -6,7 +6,7 @@ li id="event_#{event.id}" class="#{event.aasm_state}#{event.is_late? && event.un
       span.address
         =
         b= event.campaign_name
-        = place_address(event.place, false, ', ')
+        = event_place_address(event, false, ', ')
 
     span.pull-right
       = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit' if can? :edit, Event
