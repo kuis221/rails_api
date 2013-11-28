@@ -188,7 +188,8 @@ describe EventsController do
 
 
     describe "PUT 'update'" do
-      let(:event){ FactoryGirl.create(:event, company: @company) }
+      let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+      let(:event){ FactoryGirl.create(:event, company: @company, campaign: campaign) }
       it "must update the event attributes" do
         put 'update', id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         assigns(:event).should == event
@@ -204,6 +205,54 @@ describe EventsController do
         assigns(:event).should == event
         response.should be_success
         response.should render_template('results_event_data')
+      end
+
+      it "should update the event data for a event without data" do
+        Kpi.create_global_kpis
+        campaign.assign_all_global_kpis
+        expect {
+          put 'update', id: event.to_param,
+            event: {
+              summary: 'A summary of the events',
+              results_attributes: [
+                {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "100"},
+                {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "200"}
+              ]
+            }
+        }.to change(EventResult, :count).by(2)
+        event.reload
+        event.summary.should == 'A summary of the events'
+        event.result_for_kpi(Kpi.impressions).value.should == 100
+        event.result_for_kpi(Kpi.interactions).value.should == 200
+      end
+
+
+      it "should update the event data for a event that already have results" do
+        Kpi.create_global_kpis
+        campaign.assign_all_global_kpis
+
+        impressions = event.result_for_kpi(Kpi.impressions)
+        interactions = event.result_for_kpi(Kpi.interactions)
+        expect {
+          event.result_for_kpi(Kpi.impressions).value = 100
+          event.result_for_kpi(Kpi.interactions).value = 200
+          event.save
+        }.to change(EventResult, :count).by(2)
+
+        expect {
+          put 'update', id: event.to_param,
+            event: {
+              summary: 'A summary of the events',
+              results_attributes: [
+                {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "1111", id: impressions.id},
+                {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "2222", id: interactions.id}
+              ]
+            }
+        }.to_not change(EventResult, :count)
+        event.reload
+        event.summary.should == 'A summary of the events'
+        event.result_for_kpi(Kpi.impressions).value.should == 1111
+        event.result_for_kpi(Kpi.interactions).value.should == 2222
       end
     end
 
