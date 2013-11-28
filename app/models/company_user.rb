@@ -18,13 +18,13 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :user
   belongs_to :company
   belongs_to :role
-  has_many :tasks
-  has_many :notifications
+  has_many :tasks, dependent: :nullify
+  has_many :notifications, dependent: :destroy
 
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
@@ -50,7 +50,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand'
 
   # Places-Users relationship
-  has_many :placeables, as: :placeable
+  has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables
 
   delegate :name, :full_name, :first_name, :last_name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
