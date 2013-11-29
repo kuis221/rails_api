@@ -37,9 +37,9 @@ class EventData < ActiveRecord::Base
 
   def update_data
     results = EventResult.scoped_by_event_id(event_id)
-    self.impressions = results.impressions.sum(:scalar_value).round
-    self.interactions = results.consumers_interactions.sum(:scalar_value).round
-    self.samples = results.consumers_sampled.sum(:scalar_value).round
+    self.impressions  = (results.impressions.first.try(:scalar_value) || 0).round
+    self.interactions = (results.consumers_interactions.first.try(:scalar_value) || 0).round
+    self.samples      = (results.consumers_sampled.first.try(:scalar_value) || 0).round
     self.spent = event.event_expenses.sum(:amount)
 
     #For gender and ethnicity
