@@ -416,7 +416,7 @@ describe "Events", js: true, search: true do
       fill_in 'Interactions', with: 110
       fill_in 'Samples',      with: 120
 
-      click_button 'Save Result'
+      click_button 'Save'
 
       # Ensure the results are displayed on the page
 
@@ -460,7 +460,6 @@ describe "Events", js: true, search: true do
       click_button "Save"
 
       within ".box_metrics" do
-        save_and_open_page
         page.should have_content('3,333')
         page.should have_content('222,222')
         page.should have_content('4,444,444')

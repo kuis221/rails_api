@@ -1,23 +1,22 @@
-h3 EVENT DATA
+- allow_cancel ||= false
+#event-results-form
+  #event-results-form.details_box.box_event_data
+    h3 EVENT DATA
 
-- fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
-- f ||= false
-- if f
-  = f.input :summary
-  = render partial: 'event_data', locals: {fields: fields, f: f}
-- else
-  = simple_form_for(resource, remote: true) do |f|
-    = f.error_notification
+    - fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
+    = simple_form_for(resource, remote: true) do |f|
+      = f.error_notification
 
-    = f.input :summary
-    = render partial: 'event_data', locals: {fields: fields, f: f}
+      = f.input :summary
+      = render partial: 'event_data', locals: {fields: fields, f: f}
 
-    .form-actions
-      = f.button :submit, id: 'save-data', class: 'btn-primary', disable_with: 'Please wait...'
-      = "&nbsp;".html_safe
-      = f.button :button, 'Cancel', id: 'cancel-edit', class: 'btn btn-cancel'
+      .form-actions
+        = f.button :submit, id: 'save-data', class: 'btn-primary', disable_with: 'Please wait...'
+        - if allow_cancel
+          = "&nbsp;".html_safe
+          = f.button :button, 'Cancel', id: 'cancel-edit', class: 'btn btn-cancel'
 
-    = hidden_field_tag :partial, 'event_data'
+      = hidden_field_tag :partial, 'event_data'
 
 
 javascript:

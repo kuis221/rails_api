@@ -1,6 +1,6 @@
 |
   $('.box_event_data').hide()
-  $('<div id="edit_event_data_form">').html('#{escape_javascript(render('edit_event_data'))}').insertAfter($('.box_event_data')).find('#cancel-edit').click(function(){
+  $('<div id="edit_event_data_form">').html('#{escape_javascript(render(partial: 'edit_event_data', locals:{allow_cancel: true}))}').insertAfter($('.box_event_data')).find('#cancel-edit').click(function(){
     $('#edit_event_data_form').remove();
     $('.box_event_data').show();
     smoothScrollTo($('.box_event_data'));
