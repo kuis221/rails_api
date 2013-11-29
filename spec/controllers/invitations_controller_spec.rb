@@ -7,7 +7,7 @@ describe InvitationsController do
       @user = sign_in_as_user
       @company = @user.current_company
     end
-
+    
     describe "GET 'new'" do
       it "returns http success" do
         get 'new', format: :js
@@ -92,7 +92,7 @@ describe InvitationsController do
           UserMailer.should_receive(:company_invitation).with(user, @company, @user).and_return(double(deliver: true))
           post 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         end
-
+        
         it "should not reassign the user to the same company" do
           user = FactoryGirl.create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
           lambda {
@@ -106,16 +106,36 @@ describe InvitationsController do
       end
     end
   end
-
+  
 
   describe('as a invited user') do
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @company = FactoryGirl.create(:company)
     end
+    let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
+    
+    describe "POST 'send_invite'" do
+      it "ask for resending the invitation's instructions" do
+        post 'send_invite', user: {email: user.email}
+        response.should render_template('devise/mailer/invitation_instructions')
+        response.should redirect_to new_user_session_path
+      end
+
+      it "ask for resending the invitation's instructions with empty email" do
+        post 'send_invite', user: {email: ''}
+        response.should redirect_to users_invitation_resend_path
+      end
+    end
+    
+    describe "GET 'edit'" do
+      it "should accept a company invitation email" do
+        get 'edit', invitation_token: user.invitation_token, format: :js
+        response.should be_success
+      end
+    end
 
     describe "PUT 'update'" do
-      let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
       it "must update the user attributes" do
         put 'update', user: {accepting_invitation: true, first_name: 'Juanito', last_name: 'Perez', phone_number: '(506)22124578', city: 'Miami', state: 'FL', country: 'US', street_address: 'Street Address 123', unit_number: 'Unit Number 456', zip_code: '90210', time_zone: 'American Samoa', password: 'zddjadasidasdASD123', password_confirmation: 'zddjadasidasdASD123', invitation_token: user.invitation_token}
         response.should redirect_to(root_path)
