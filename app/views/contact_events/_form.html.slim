@@ -2,6 +2,9 @@
 = simple_form_for([parent, resource], remote: remote || false) do |f|
   = f.error_notification
 
+  - if resource.contactable.persisted?
+    = f.input :contactable_type, as: :hidden
+    = f.input :contactable_id, as: :hidden
   .form-inputs
     = f.simple_fields_for :contactable do |uf|
       .row-fluid.users
