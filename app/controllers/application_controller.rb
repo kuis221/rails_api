@@ -1,13 +1,13 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  around_filter :scope_current_user
+
   skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  include SentientController
   include CurrentCompanyHelper
 
   before_filter :authenticate_user!
-  before_filter :set_user_company
   after_filter :update_user_last_activity
   after_filter :remove_viewed_notification
 
@@ -42,10 +42,6 @@ class ApplicationController < ActionController::Base
 
     def update_user_last_activity
       current_company_user.update_column(:last_activity_at, DateTime.now) if user_signed_in? && request.format.html? && current_company_user.present?
-    end
-
-    def set_user_company
-      current_user.current_company = current_company if user_signed_in?
     end
 
     # Overwriting the sign_out redirect path method
@@ -86,5 +82,13 @@ class ApplicationController < ActionController::Base
         format.js { render 'access_denied'}
         format.html { render 'access_denied'}
       end
+    end
+
+    def scope_current_user
+      User.current = current_user
+      current_user.current_company = current_company if user_signed_in?
+      yield
+    ensure
+      User.current = nil
     end
 end
