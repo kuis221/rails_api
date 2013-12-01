@@ -253,6 +253,20 @@ class User < ActiveRecord::Base
       end
       recoverable
     end
+
+    # This method is overrided to remove the call to the deprected method Devise.allow_insecure_token_lookup
+    # TODO: check if this was corrected on gem and remove this from this file
+    def find_by_invitation_token(original_token, only_valid)
+      invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+
+      invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
+      if !invitable.persisted? # && Devise.allow_insecure_token_lookup
+        invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
+      end
+      invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+      invitable.invitation_token = original_token
+      invitable unless only_valid && invitable.errors.present?
+    end
   end
 
   def ensure_authentication_token
