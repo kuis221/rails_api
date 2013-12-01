@@ -272,7 +272,6 @@ GEM
       rspec-core (>= 2.5.0)
       rspec-expectations (>= 2.5.0)
       rspec-mocks (>= 2.5.0)
-    rolify (3.2.0)
     rsolr (1.0.9)
       builder (>= 2.1.2)
     rspec (2.13.0)
@@ -450,7 +449,6 @@ DEPENDENCIES
   resque
   resque-loner
   resque_spec
-  rolify (>= 3.2.0)
   rspec
   rspec-mocks
   rspec-rails (~> 2.0)
