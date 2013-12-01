@@ -29,10 +29,14 @@ class Contact < ActiveRecord::Base
   validates :last_name, presence: true
 
   def full_name
-    [first_name, last_name].join ' '
+    [first_name, last_name].join(' ').strip
   end
 
   def country_name
     Country.new(country).name rescue nil unless country.nil?
+  end
+
+  def street_address
+    [street1, street2].reject{|v| v.nil? || v == ''}.join(', ')
   end
 end
