@@ -16,6 +16,9 @@ describe "Events", js: true, search: true do
   end
 
   describe "/events", js: true, search: true  do
+    after do
+      Timecop.return
+    end
     describe "GET index" do
       let(:events){[
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),

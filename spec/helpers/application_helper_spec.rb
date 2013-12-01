@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe ApplicationHelper do
+  after do
+    Timecop.return
+  end
+
   describe "#place_address" do
     it "should add the name to the address" do
       place= double(Place, {name: 'Some Place Name', street: nil, state: nil, zipcode: nil, city: nil, formatted_address: nil})

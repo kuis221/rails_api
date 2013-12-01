@@ -8,6 +8,10 @@ describe EventsController do
       @company_user = @user.current_company_user
     end
 
+    after do
+      Timecop.return
+    end
+
     describe "GET 'new'" do
       it "returns http success" do
         get 'new', format: :js

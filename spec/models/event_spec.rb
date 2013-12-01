@@ -224,6 +224,9 @@ describe Event do
 
 
   describe "in_past?" do
+    after do
+      Timecop.return
+    end
     it "should return true if the event is scheduled to happen in the past" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.build(:event)
@@ -258,6 +261,9 @@ describe Event do
 
 
   describe "is_late?" do
+    after do
+      Timecop.return
+    end
     it "should return true if the event is scheduled to happen in more than to days go" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/23/2013', end_date: '07/23/2013', start_time: '10:00 am', end_time: '2:00 pm')
@@ -276,6 +282,9 @@ describe Event do
   end
 
   describe "happens_today?" do
+    after do
+      Timecop.return
+    end
     it "should return true if the current day is between the start and end dates of the event" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/26/2013', end_date: '07/26/2013', start_time: '10:00 am', end_time: '2:00 pm')
@@ -304,6 +313,9 @@ describe Event do
   end
 
   describe "was_yesterday?" do
+    after do
+      Timecop.return
+    end
     it "should return true if the end_date is the day before" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/24/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')

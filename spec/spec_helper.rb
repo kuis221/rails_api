@@ -65,6 +65,12 @@ RSpec.configure do |config|
   end
 
 
+  config.after(:each) do
+    User.current = nil
+    Time.zone = Rails.application.config.time_zone
+  end
+
+
   # Capybara.javascript_driver = :webkit
   Capybara.javascript_driver = :selenium
   Capybara.default_wait_time = 5

@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Event, search: true do
+  after do
+    Timecop.return
+  end
   it "should search for events" do
 
     # First populate the Database with some data
