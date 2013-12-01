@@ -11,8 +11,6 @@ class ApplicationController < ActionController::Base
   after_filter :update_user_last_activity
   after_filter :remove_viewed_notification
 
-  before_filter :set_timezone
-
   before_filter :remember_return_path, only: :show
 
   layout :set_layout
@@ -53,14 +51,6 @@ class ApplicationController < ActionController::Base
       @custom_body_class ||= ''
     end
 
-    def set_timezone
-      if current_user.present? and current_user.time_zone.present?
-        Time.zone = current_user.time_zone
-      else
-        Time.zone = Brandscopic::Application.config.time_zone
-      end
-    end
-
     def remember_return_path
       if params.has_key?(:return) and params[:return]
         session["return_path"] = Base64.decode64(params.has_key?(:return)) rescue nil
@@ -86,9 +76,13 @@ class ApplicationController < ActionController::Base
 
     def scope_current_user
       User.current = current_user
-      current_user.current_company = current_company if user_signed_in?
+      if user_signed_in?
+        current_user.current_company = current_company
+        Time.zone = current_user.time_zone
+      end
       yield
     ensure
       User.current = nil
+      Time.zone = Rails.application.config.time_zone
     end
 end
