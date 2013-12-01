@@ -35,13 +35,23 @@ describe ContactEventsController do
       get 'add', event_id: event.to_param, format: :js
       response.should be_success
       response.should render_template('add')
+    end
+  end
+
+
+  describe "GET 'list'" do
+    it "returns http success" do
+      contact.reload
+      get 'list', event_id: event.to_param, format: :js
+      response.should be_success
+      response.should render_template('list')
 
       assigns(:contacts).should =~ [company_user, contact]
     end
 
     it "should not load in @contacts the contacts that are already assigned to the event" do
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
-      get 'add', event_id: event.to_param, format: :js
+      get 'list', event_id: event.to_param, format: :js
       assigns(:contacts).should =~ [company_user]
     end
 
@@ -49,7 +59,7 @@ describe ContactEventsController do
     it "should not load in @contacts the users that are already assigned to the event" do
       contact.reload
       FactoryGirl.create(:contact_event, event: event, contactable: company_user)
-      get 'add', event_id: event.to_param, format: :js
+      get 'list', event_id: event.to_param, format: :js
       assigns(:contacts).should =~ [contact]
     end
   end

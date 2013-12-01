@@ -6,19 +6,8 @@
     .scroll-table-content
       .link-list
         ul#contacts-list
-          - @contacts.each do |contact|
-            li id="contact-#{contact.class.name.underscore}-#{contact.id}"
-              span.member-data
-                .member-name= contact.full_name
-                .member-description= contact.is_a?(Contact) ? contact.title : contact.role_name
-              span.add-button.pull-right
-                = simple_form_for [parent, ContactEvent.new], remote: true do |f|
-                  = f.hidden_field :contactable_id, as: :hidden, value: contact.id
-                  = f.hidden_field :contactable_type, as: :hidden, value: contact.class.name
-                  = link_to '', '#', id: "add-contact-btn-#{contact.class.name.underscore}-#{contact.id}", class: 'icon-plus-sign', "data-submit-link" => true, disable_with: ''
+          li.loading-spinner
 
-          li.empty-list-message
-            p There are not assignable contacts
 
     .row-fluid
       .span12
@@ -30,6 +19,7 @@
       = link_to 'Close', '', class: 'btn btn-cancel'
 
 javascript:
+  $('ul#contacts-list').load('#{list_event_contact_events_path}');
   $('#contact-search-box').on('keyup', function () {
     var value = $(this).val();
     $("#contacts-list > li:not(.empty-list-message)").each(function() {

@@ -230,6 +230,7 @@ Brandscopic::Application.routes.draw do
 
     resources :contact_events, path: :contacts, only: [:create, :new, :destroy, :edit, :update] do
       get 'add', on: :collection
+      get 'list', on: :collection
     end
 
     member do

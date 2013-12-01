@@ -53,15 +53,17 @@ class CompanyUser < ActiveRecord::Base
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables
 
-  delegate :name, :full_name, :first_name, :last_name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
+  delegate :name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
-  delegate :name, to: :role, prefix: true
   delegate :is_admin?, to: :role, prefix: false
 
   scope :active, where(:active => true)
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
+
+  scope :with_user_info, lambda{ joins(:user).select('users.first_name as first_name, users.last_name as last_name') }
+  scope :with_role_info, lambda{ joins(:role).select('roles.name as role_name') }
 
   searchable do
     integer :id
@@ -158,6 +160,35 @@ class CompanyUser < ActiveRecord::Base
         accessible_places.include?(place.id)
       )
     )
+  end
+
+  def full_name
+    "#{self.first_name} #{self.last_name}".strip
+  end
+
+  def first_name
+    if self.attributes.has_key?('first_name')
+      self.read_attribute('first_name')
+    else
+      user.try(:first_name)
+    end
+  end
+
+  def last_name
+    if self.attributes.has_key?('last_name')
+      self.read_attribute('last_name')
+    else
+      user.try(:last_name)
+    end
+  end
+
+
+  def role_name
+    if self.attributes.has_key?('role_name')
+      self.read_attribute('role_name')
+    else
+      role.try(:name)
+    end
   end
 
   class << self

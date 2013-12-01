@@ -13,7 +13,11 @@ class ContactEventsController < InheritedResources::Base
   respond_to :js
 
   def add
-    @contacts = ((current_company.contacts+current_company.company_users.includes(:user, :role)) - parent.contacts).sort{|a, b| a.full_name <=> b.full_name}
+  end
+
+  def list
+    @contacts = ((current_company.contacts+current_company.company_users.select('company_users.*').with_user_info.with_role_info) - parent.contacts).sort{|a, b| a.full_name <=> b.full_name}
+    render layout: false
   end
 
   protected
