@@ -91,7 +91,6 @@ describe ContactEventsController do
       expect {
         expect {
           post 'create', event_id: event.to_param,  contact_event: {contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: {id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
-          p assigns(:contact_event).errors.inspect
           response.should be_success
         }.to_not change(Contact, :count)
       }.to change(ContactEvent, :count).by(1)
