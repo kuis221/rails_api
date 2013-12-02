@@ -15,5 +15,5 @@
     = 'HOURS'
   span.venues-data-column.spent-box
     .big-number
-      = number_to_currency(data_totals['spent'])
+      = number_to_currency(data_totals['spent'], precision: 2)
     = 'SPENT'
