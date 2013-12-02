@@ -186,9 +186,6 @@ class Kpi < ActiveRecord::Base
             kpi_keep.description = options[:description]
             CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
             kpi_keep.save
-            Rails.logger.debug "Campaign: #{campaign.name}(#{campaign.id})"
-            Rails.logger.debug "  KPI to keep: #{kpi_keep.inspect}"
-            Rails.logger.debug "  KPIs to remove: #{kpis_to_remove.inspect}"
 
             # If this campaing has at leas more than one
             if kpis_to_remove.count > 0
