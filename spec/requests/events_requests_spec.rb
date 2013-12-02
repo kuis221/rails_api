@@ -16,6 +16,9 @@ describe "Events", js: true, search: true do
   end
 
   describe "/events", js: true, search: true  do
+    after do
+      Timecop.return
+    end
     describe "GET index" do
       let(:events){[
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
@@ -379,7 +382,11 @@ describe "Events", js: true, search: true do
 
     it "should allow the user to fill the event data" do
       Kpi.create_global_kpis
-      event = FactoryGirl.create(:event, start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes), campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
+      event = FactoryGirl.create(:event,
+          start_date: Date.yesterday.to_s(:slashes),
+          end_date: Date.yesterday.to_s(:slashes),
+          campaign: FactoryGirl.create(:campaign, company: @company),
+          company: @company )
       event.campaign.assign_all_global_kpis
 
       Sunspot.commit
@@ -412,7 +419,7 @@ describe "Events", js: true, search: true do
       fill_in 'Interactions', with: 110
       fill_in 'Samples',      with: 120
 
-      click_button 'Save Result'
+      click_button 'Save'
 
       # Ensure the results are displayed on the page
 

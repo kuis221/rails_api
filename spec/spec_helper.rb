@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start "rails"
 
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
@@ -62,6 +62,12 @@ RSpec.configure do |config|
   end
   config.after(:all) do
     DeferredGarbageCollection.reconsider
+  end
+
+
+  config.after(:each) do
+    User.current = nil
+    Time.zone = Rails.application.config.time_zone
   end
 
 

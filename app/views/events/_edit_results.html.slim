@@ -1,29 +1,24 @@
-#event-results-form
-  = simple_form_for(resource, url: event_path(resource), remote: true, html: {multipart: true}) do |f|
-    - if can?(:edit_data, resource)
-      #event-results-form.details_box.box_event_data
-        = render partial: 'edit_event_data', locals: {f: f}
+- active_kpis = resource.campaign.active_kpis
 
-        = hidden_field_tag :partial, 'event_data'
+- if can?(:edit_data, resource)
+  = render partial: 'edit_event_data'
 
-        = f.submit "Save Results", id: 'save-event-results', class: 'btn btn-primary', disable_with: 'Please wait...'
+/ Expenses module
+- if active_kpis.include?(Kpi.expenses) && can?(:expenses, resource)
+  #event-expenses.details_box.box_expenses.smaller
+    = render partial: 'expenses'
 
-    / Expenses module
-    - if resource.campaign.active_kpis.include?(Kpi.expenses) && can?(:expenses, resource)
-      #event-expenses.details_box.box_expenses.smaller
-        = render partial: 'expenses', locals: {f: f}
+/ Photos module
+- if active_kpis.include?(Kpi.photos) && can?(:photos, resource)
+  #event-photos.details_box.box_photos
+    = render partial: 'photos', locals: {allow_upload: true}
 
-    / Photos module
-    - if resource.campaign.active_kpis.include?(Kpi.photos) && can?(:photos, resource)
-      #event-photos.details_box.box_photos
-        = render partial: 'photos', locals: {f: f, allow_upload: true}
+/ Surveys module
+- if active_kpis.include?(Kpi.surveys) && can?(:surveys, resource)
+  #event-surveys.details_box.box_expenses.smaller
+    = render partial: 'surveys'
 
-    / Surveys module
-    - if resource.campaign.active_kpis.include?(Kpi.surveys) && can?(:surveys, resource)
-      #event-surveys.details_box.box_expenses.smaller
-        = render partial: 'surveys', locals: {f: f}
-
-    / Comments module
-    - if resource.campaign.active_kpis.include?(Kpi.comments) && can?(:comments, resource)
-      #event-comments.details_box
-        = render partial: 'comments', locals: {f: f}
+/ Comments module
+- if active_kpis.include?(Kpi.comments) && can?(:comments, resource)
+  #event-comments.details_box
+    = render partial: 'comments'

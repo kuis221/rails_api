@@ -13,13 +13,17 @@ class ContactEventsController < InheritedResources::Base
   respond_to :js
 
   def add
-    @contacts = ((current_company.contacts+current_company.company_users.includes(:user, :role)) - parent.contacts).sort{|a, b| a.full_name <=> b.full_name}
+  end
+
+  def list
+    @contacts = ((current_company.contacts+current_company.company_users.select('company_users.*').with_user_info.with_role_info) - parent.contacts).sort{|a, b| a.full_name <=> b.full_name}
+    render layout: false
   end
 
   protected
     def build_resource(*args)
       @contact_event ||= super
-      @contact_event.build_contactable if @contact_event.contactable.nil?
+      @contact_event.build_contactable if action_name == 'new' && @contact_event.contactable.nil?
       @contact_event
     end
 
@@ -29,5 +33,9 @@ class ContactEventsController < InheritedResources::Base
 
     def permitted_params
       params.permit(contact_event: [:id, :contactable_id, :contactable_type, {contactable_attributes: [:id, :street1, :street2, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :title, :zip_code]}])[:contact_event]
+    end
+
+    def modal_dialog_title
+      I18n.translate("modals.title.#{resource.contactable.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
     end
 end

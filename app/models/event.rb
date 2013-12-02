@@ -96,8 +96,7 @@ class Event < ActiveRecord::Base
 
   #after_create :add_team_members
 
-  delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name,:latitude,:city,:state_name,:zipcode,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
@@ -324,7 +323,6 @@ class Event < ActiveRecord::Base
     @goals
   end
 
-
   def demographics_graph_data
     unless @demographics_graph_data
       @demographics_graph_data = {}
@@ -378,13 +376,23 @@ class Event < ActiveRecord::Base
     results.all?{|r| r.valid? }
   end
 
+  def method_missing(method_name)
+    matches = /(place|campaign)_(.*)/.match(method_name)
+    if matches && matches.length == 3
+      if read_attribute("#{matches[1]}_name")
+        read_attribute(method_name)
+      else
+        send(matches[1]).try(matches[2])
+      end
+    else
+      super
+    end
+  end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
-      # TODO: probably this options should be passed by params?
-      options = {include: [:campaign, :place]}
-      ss = solr_search(options) do
+      ss = solr_search do
 
         company_user = params[:current_company_user]
         if company_user.present?
@@ -466,7 +474,6 @@ class Event < ActiveRecord::Base
           with "campaign_id", campaing_ids + [0]
         end
 
-
         if params[:start_date].present? and params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
           d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
@@ -497,7 +504,6 @@ class Event < ActiveRecord::Base
         end
 
         with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
-
 
         if params.has_key?(:event_data_stats) && params[:event_data_stats]
           stat(:promo_hours, :type => "sum")

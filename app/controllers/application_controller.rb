@@ -1,17 +1,15 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  around_filter :scope_current_user
+
   skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  include SentientController
   include CurrentCompanyHelper
 
   before_filter :authenticate_user!
-  before_filter :set_user_company
   after_filter :update_user_last_activity
   after_filter :remove_viewed_notification
-
-  before_filter :set_timezone
 
   before_filter :remember_return_path, only: :show
 
@@ -44,10 +42,6 @@ class ApplicationController < ActionController::Base
       current_company_user.update_column(:last_activity_at, DateTime.now) if user_signed_in? && request.format.html? && current_company_user.present?
     end
 
-    def set_user_company
-      current_user.current_company = current_company if user_signed_in?
-    end
-
     # Overwriting the sign_out redirect path method
     def after_sign_out_path_for(resource_or_scope)
       new_user_session_path
@@ -55,14 +49,6 @@ class ApplicationController < ActionController::Base
 
     def custom_body_class
       @custom_body_class ||= ''
-    end
-
-    def set_timezone
-      if current_user.present? and current_user.time_zone.present?
-        Time.zone = current_user.time_zone
-      else
-        Time.zone = Brandscopic::Application.config.time_zone
-      end
     end
 
     def remember_return_path
@@ -86,5 +72,17 @@ class ApplicationController < ActionController::Base
         format.js { render 'access_denied'}
         format.html { render 'access_denied'}
       end
+    end
+
+    def scope_current_user
+      User.current = current_user
+      if user_signed_in?
+        current_user.current_company = current_company
+        Time.zone = current_user.time_zone
+      end
+      yield
+    ensure
+      User.current = nil
+      Time.zone = Rails.application.config.time_zone
     end
 end

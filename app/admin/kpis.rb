@@ -32,6 +32,13 @@ ActiveAdmin.register Kpi do
     end
   end
 
+  controller do
+    def apply_pagination(chain)
+        chain = super unless formats.include?(:json) || formats.include?(:csv)
+        chain
+    end
+  end
+
   index do
     selectable_column
     column :name

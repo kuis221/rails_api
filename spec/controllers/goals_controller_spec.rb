@@ -11,6 +11,15 @@ describe GoalsController do
   let(:campaign) {FactoryGirl.create(:campaign, company: @company)}
   let(:company_user) {FactoryGirl.create(:company_user, company: @company)}
 
+  describe "GET 'new'" do
+    it "returns http success" do
+      get 'new', company_user_id: company_user.to_param, format: :js
+      response.should be_success
+      response.should render_template('new')
+      response.should render_template('form')
+    end
+  end
+
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', company_user_id: company_user.to_param, goal: {value: '100', kpi_id: kpi.id}, format: :js
@@ -64,8 +73,17 @@ describe GoalsController do
     end
   end
 
+  describe "GET 'edit'" do
+    it "returns http success" do
+      get 'edit', company_user_id: company_user.to_param, id: goal.to_param, format: :js
+      response.should be_success
+      assigns(:company_user).should == company_user
+      assigns(:goal).should == goal
+    end
+  end
+
   describe "PUT 'update'" do
-    it "should update the goal attributes" do
+    it "should update the goal attributes for the company user" do
       goal.save
       expect {
         put 'update', company_user_id: company_user.to_param, id: goal.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
@@ -82,6 +100,22 @@ describe GoalsController do
       goal.title.should == 'Goal Title'
       goal.start_date.should == Time.zone.local(2012, 01, 31).to_date
       goal.due_date.should   == Time.zone.local(2013, 01, 31).to_date
+    end
+
+    it "should update the goal value for the company user in a given campaign" do
+      goal.save
+      expect {
+        put 'update', id: goal.to_param, goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: company_user.id, goalable_type: 'CompanyUser', value: '110', kpi_id: kpi.id}, format: :json
+      }.to_not change(Goal, :count)
+      response.should be_success
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+
+      goal.reload
+      goal.parent.should == campaign
+      goal.goalable.should == company_user
+      goal.value.should == 110
+      goal.kpi_id.should == kpi.id
     end
   end
 

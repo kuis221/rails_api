@@ -70,10 +70,6 @@ describe Place do
       place.route.should == 'Calle Melancolia'
     end
 
-    it "should fix the city" do
-
-    end
-
     it "should find out the correct state name if the API doesn't provide it" do
       place = Place.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)

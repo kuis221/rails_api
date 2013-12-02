@@ -76,6 +76,7 @@ describe Task, search: true do
 
     Sunspot.commit
 
+
     Task.do_search(company_id: 1, task_status: ['Late']).results.should =~ [late_task, assigned_and_late_task]
     Task.do_search(company_id: 1, task_status: ['Late', 'Complete']).results.should =~ [late_task, assigned_and_late_task, completed_task]
     Task.do_search(company_id: 1, task_status: ['Complete']).results.should =~ [completed_task]

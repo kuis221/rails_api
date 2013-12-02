@@ -29,6 +29,30 @@ describe EventData do
 
   let(:event) { FactoryGirl.create(:event, event_data: FactoryGirl.build(:event_data), campaign: FactoryGirl.create(:campaign)) }
   describe "#update_data" do
+    it "should set values to 0 if the event has no data" do
+      Kpi.create_global_kpis
+      event.campaign.assign_all_global_kpis
+      event.save
+
+      # Call the method manually
+      event.event_data.update_data
+
+      event.event_data.update_data
+      event.event_data.impressions.should  == 0
+      event.event_data.interactions.should == 0
+      event.event_data.samples.should      == 0
+
+      event.event_data.spent.should == 0
+
+      event.event_data.gender_female.should be_nil
+      event.event_data.gender_male.should be_nil
+
+      event.event_data.ethnicity_asian.should    be_nil
+      event.event_data.ethnicity_black.should    be_nil
+      event.event_data.ethnicity_hispanic.should be_nil
+      event.event_data.ethnicity_native_american.should  be_nil
+      event.event_data.ethnicity_white.should be_nil
+    end
 
     it "should correctly count the values for each segment" do
       Kpi.create_global_kpis

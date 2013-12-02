@@ -40,7 +40,7 @@ class CompanyUsersController < FilteredController
   def time_zone_change
     current_user.update_column(:detected_time_zone, params[:time_zone])
   end
-	
+
   def time_zone_update
     current_user.update_column(:time_zone, params[:time_zone])
     render nothing: true
@@ -138,28 +138,28 @@ class CompanyUsersController < FilteredController
     alerts = []
     user = current_company_user
 
+    # Gets the counts with a single Solr request
+    status_counts = {late: 0, due: 0, submitted: 0, rejected: 0}
+    events_search = Event.do_search({company_id: user.company_id, status: ['Active'], user: [user.id], team: user.team_ids}, true)
+    events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
     # Due event recaps
-    count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Due'], user: [user.id], team: user.team_ids}).total
-    if count > 0
-      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: count), level: 'grey', url: events_path(user: [user.id], status: ['Active'], event_status: ['Due'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
+    if status_counts[:due] > 0
+      alerts.push({message: I18n.translate('notifications.event_recaps_due', count: status_counts[:due]), level: 'grey', url: events_path(user: [user.id], status: ['Active'], event_status: ['Due'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Late event recaps
-    count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Late'], user: [user.id], team: user.team_ids}).total
-    if count > 0
-      alerts.push({message: I18n.translate('notifications.event_recaps_late', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Late'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
+    if status_counts[:late] > 0
+      alerts.push({message: I18n.translate('notifications.event_recaps_late', count: status_counts[:late]), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Late'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Recaps pending approval
-    count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Submitted'], user: [user.id], team: user.team_ids}).total
-    if count > 0
-      alerts.push({message: I18n.translate('notifications.recaps_prending_approval', count: count), level: 'blue', url: events_path(user: [user.id], status: ['Active'], event_status: ['Submitted'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
+    if status_counts[:submitted] > 0
+      alerts.push({message: I18n.translate('notifications.recaps_prending_approval', count: status_counts[:submitted]), level: 'blue', url: events_path(user: [user.id], status: ['Active'], event_status: ['Submitted'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # Rejected recaps
-    count = Event.do_search({company_id: current_company.id, status: ['Active'], event_status: ['Rejected'], user: [user.id], team: user.team_ids}).total
-    if count > 0
-      alerts.push({message: I18n.translate('notifications.rejected_recaps', count: count), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
+    if status_counts[:rejected] > 0
+      alerts.push({message: I18n.translate('notifications.rejected_recaps', count: status_counts[:rejected]), level: 'red', url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''), unread: true, icon: 'icon-notification-event'})
     end
 
     # User's teams late tasks
@@ -225,7 +225,6 @@ class CompanyUsersController < FilteredController
       path
     end
 
-
     def brands_campaigns_list
       list = {}
       current_company.brand_portfolios.each do |portfolio|
@@ -238,7 +237,6 @@ class CompanyUsersController < FilteredController
       end
       list
     end
-
 
     def validate_parent
       raise CanCan::AccessDenied unless ['BrandPortfolio', 'Brand'].include?(params[:parent_type]) || params[:parent_type].nil?

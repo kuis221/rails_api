@@ -58,6 +58,8 @@ class Api::V1::UsersController < Api::V1::ApiController
                  :xml => companies.to_xml(root: 'companies')
         }
       end
+    else
+      failure
     end
   end
 

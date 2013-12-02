@@ -35,13 +35,23 @@ describe ContactEventsController do
       get 'add', event_id: event.to_param, format: :js
       response.should be_success
       response.should render_template('add')
+    end
+  end
+
+
+  describe "GET 'list'" do
+    it "returns http success" do
+      contact.reload
+      get 'list', event_id: event.to_param, format: :js
+      response.should be_success
+      response.should render_template('list')
 
       assigns(:contacts).should =~ [company_user, contact]
     end
 
     it "should not load in @contacts the contacts that are already assigned to the event" do
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
-      get 'add', event_id: event.to_param, format: :js
+      get 'list', event_id: event.to_param, format: :js
       assigns(:contacts).should =~ [company_user]
     end
 
@@ -49,7 +59,7 @@ describe ContactEventsController do
     it "should not load in @contacts the users that are already assigned to the event" do
       contact.reload
       FactoryGirl.create(:contact_event, event: event, contactable: company_user)
-      get 'add', event_id: event.to_param, format: :js
+      get 'list', event_id: event.to_param, format: :js
       assigns(:contacts).should =~ [contact]
     end
   end
@@ -65,6 +75,17 @@ describe ContactEventsController do
       c.event_id.should == event.id
     end
 
+    it "loads the contact edit form if the contact record is invalid" do
+      contact = Contact.new
+      contact.save(validate: false).should be_true
+      contact.id.should > 1
+      expect {
+        post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
+        response.should be_success
+        response.should render_template('contact_events/_form')
+      }.to_not change(ContactEvent, :count)
+    end
+
     it "assigns the company user to the event" do
       expect {
         post 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
@@ -73,6 +94,26 @@ describe ContactEventsController do
       c = ContactEvent.last
       c.contactable.should == company_user
       c.event_id.should == event.id
+    end
+
+    it "adds the contact to the event saving the changes to an existing contact" do
+      contact = FactoryGirl.create(:contact, company: @company)
+      expect {
+        expect {
+          post 'create', event_id: event.to_param,  contact_event: {contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: {id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          response.should be_success
+        }.to_not change(Contact, :count)
+      }.to change(ContactEvent, :count).by(1)
+
+      contact.reload
+      contact.first_name.should == 'Fulanito'
+      contact.last_name.should == 'De Tal'
+      contact.email.should == 'email@test.com'
+      contact.phone_number.should == '12345678'
+      contact.country.should == 'US'
+      contact.state.should == 'CA'
+      contact.city.should == 'Los Angeles'
+      contact.zip_code.should == '12345'
     end
 
     it "creates a new contact and assigns it to the event" do

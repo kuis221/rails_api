@@ -143,6 +143,7 @@ GEM
     has_scope (0.5.1)
     highline (1.6.19)
     hike (1.2.3)
+    hodel_3000_compliant_logger (0.1.1)
     htmlentities (4.3.1)
     httparty (0.11.0)
       multi_json (~> 1.0)
@@ -197,6 +198,9 @@ GEM
     newrelic_rpm (3.6.1.88)
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
+    oink (0.10.1)
+      activerecord
+      hodel_3000_compliant_logger
     oj (2.0.10)
     options (2.3.0)
       fattr
@@ -268,7 +272,6 @@ GEM
       rspec-core (>= 2.5.0)
       rspec-expectations (>= 2.5.0)
       rspec-mocks (>= 2.5.0)
-    rolify (3.2.0)
     rsolr (1.0.9)
       builder (>= 2.1.2)
     rspec (2.13.0)
@@ -431,6 +434,7 @@ DEPENDENCIES
   nearest_time_zone
   nested_form
   newrelic_rpm
+  oink
   oj
   paperclip (~> 3.0)
   pg
@@ -445,7 +449,6 @@ DEPENDENCIES
   resque
   resque-loner
   resque_spec
-  rolify (>= 3.2.0)
   rspec
   rspec-mocks
   rspec-rails (~> 2.0)

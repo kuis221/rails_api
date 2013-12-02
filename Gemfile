@@ -12,7 +12,6 @@ gem 'pg'
 gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
 gem "cancan", ">= 1.6.8"
-gem "rolify", ">= 3.2.0"
 gem "slim"
 gem "slim-rails"
 gem "annotate", ">=2.5.0",  :group => :development
@@ -58,6 +57,7 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
+gem "oink"
 
 # Gems used only for assets and not required
 # in production environments by default.

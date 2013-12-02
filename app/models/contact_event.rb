@@ -14,6 +14,7 @@ class ContactEvent < ActiveRecord::Base
   belongs_to :contactable, polymorphic: true
   belongs_to :event
 
+
   delegate :company_id, to: :event
 
   accepts_nested_attributes_for :contactable

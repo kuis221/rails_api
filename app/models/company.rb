@@ -11,19 +11,19 @@
 class Company < ActiveRecord::Base
   attr_accessor :admin_email
 
-  has_many :company_users
-  has_many :teams
-  has_many :campaigns
-  has_many :roles
-  has_many :brand_portfolios
-  has_many :events
-  has_many :areas
-  has_many :date_ranges
-  has_many :day_parts
-  has_many :contacts
+  has_many :company_users, dependent: :destroy
+  has_many :teams, dependent: :destroy
+  has_many :campaigns, dependent: :destroy
+  has_many :roles, dependent: :destroy
+  has_many :brand_portfolios, dependent: :destroy
+  has_many :events, dependent: :destroy
+  has_many :areas, dependent: :destroy
+  has_many :date_ranges, dependent: :destroy
+  has_many :day_parts, dependent: :destroy
+  has_many :contacts, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
-  validates :admin_email, presence: true
+  validates :admin_email, presence: true, on: :create
 
   validates_format_of :admin_email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true
 

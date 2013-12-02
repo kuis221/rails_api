@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
   devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :trackable, :confirmable
 
-  has_many :company_users, autosave: true
+  has_many :company_users, autosave: true, dependent: :destroy
 
   has_many :companies, through: :company_users, order: 'companies.name ASC'
   belongs_to :current_company, class_name: 'Company'
@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}".strip
   end
   alias_method :name, :full_name
-	
+
 	def is_fully_valid?
     if !phone_number.present? or
     !country.present? or
@@ -212,7 +212,7 @@ class User < ActiveRecord::Base
     Sunspot.index company_users.all
     Sunspot.commit
   end
-	
+
   # Update password saving the record and clearing token. Returns true if
   # the passwords are valid and the record was saved, false otherwise.
   def reset_password!(new_password, new_password_confirmation)
@@ -221,7 +221,7 @@ class User < ActiveRecord::Base
 
     clear_reset_password_token
     after_password_reset
-    
+
     self.save(:validate => false)
   end
 
@@ -237,7 +237,7 @@ class User < ActiveRecord::Base
       confirmable.confirm! if confirmable.persisted?
       confirmable
     end
-		
+
     # Attempt to find a user by its email. If a record is found, send new
     # password instructions to it. If user is not found, returns a new user
     # with an email not found error.
@@ -253,6 +253,20 @@ class User < ActiveRecord::Base
       end
       recoverable
     end
+
+    # This method is overrided to remove the call to the deprected method Devise.allow_insecure_token_lookup
+    # TODO: check if this was corrected on gem and remove this from this file
+    def find_by_invitation_token(original_token, only_valid)
+      invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+
+      invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
+      if !invitable.persisted? # && Devise.allow_insecure_token_lookup
+        invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
+      end
+      invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+      invitable.invitation_token = original_token
+      invitable unless only_valid && invitable.errors.present?
+    end
   end
 
   def ensure_authentication_token
@@ -263,10 +277,10 @@ class User < ActiveRecord::Base
 
   private
 
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
+    def generate_authentication_token
+      loop do
+        token = Devise.friendly_token
+        break token unless User.where(authentication_token: token).first
+      end
     end
-  end
 end
