@@ -1,4 +1,5 @@
 li id="expense_#{expense.id}"
-  span.expense-column= expense.name
-  span.expense-date= format_date(expense.created_at)
-  span.expense-column.currency= number_to_currency(expense.amount)
+  = link_to_if_permitted(:show, Event, event_path(expense.event_id), id: "expense-link-#{expense.id}") do
+    span.expense-column= expense.name
+    span.expense-date= format_date(expense.created_at)
+    span.expense-column.currency= number_to_currency(expense.amount)
