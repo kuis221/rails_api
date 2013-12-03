@@ -30,6 +30,8 @@ class Legacy::Event < Legacy::Record
 
   has_many :data_migrations, as: :remote
 
+  delegate :name, :id, to: :account, prefix: true
+
   def synchronize(company, attributes={})
     attributes.merge!({company_id: company.id})
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Event.new)
