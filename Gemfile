@@ -96,6 +96,7 @@ group :test do
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
+  gem 'roo'
   gem 'simplecov', :require => false
 end
 

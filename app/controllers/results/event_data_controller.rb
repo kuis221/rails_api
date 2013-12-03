@@ -35,6 +35,16 @@ class Results::EventDataController < FilteredController
       @data_totals
     end
 
+    def custom_fields_to_export
+      @kpis_to_export ||= begin
+        campaign_ids = current_company_user.accessible_campaign_ids
+        campaign_ids = campaign_ids & params[:campaign] if params[:campaign]
+        Hash[CampaignFormField.where(campaign_id: campaign_ids).map do |field|
+          [field.name, field]
+        end]
+      end
+    end
+
     def authorize_actions
       authorize! :index_results, EventData
     end
