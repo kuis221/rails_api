@@ -8,9 +8,7 @@ module CompanyScoped
     before_validation CompanyScoped::Callback.new
 
 
-    if column_names.include?('company_id')
-      belongs_to :company
-    end
+    belongs_to :company
 
     def self.ignoring_company_scoped?
       @_ignore_nil ||= false
