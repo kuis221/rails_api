@@ -43,5 +43,3 @@ module Sunspot #:nodoc:
     end
   end
 end
-
-Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::EventDataAccessor, Event)

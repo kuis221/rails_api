@@ -376,7 +376,7 @@ class Event < ActiveRecord::Base
     results.all?{|r| r.valid? }
   end
 
-  def method_missing(method_name)
+  def method_missing(method_name, *args)
     matches = /(place|campaign)_(.*)/.match(method_name)
     if matches && matches.length == 3
       if read_attribute("#{matches[1]}_name")
@@ -706,3 +706,6 @@ class Event < ActiveRecord::Base
     #   end
     # end
 end
+
+
+Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::EventDataAccessor, Event)
