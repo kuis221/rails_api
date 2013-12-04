@@ -1,8 +1,8 @@
-== Welcome to Brandscopic
+## Welcome to Brandscopic
 
 ![build status](https://www.codeship.io/projects/13757f10-3f31-0131-665a-6636da7c5096/status.jpg)
 
-== Getting Started
+## Getting Started
 
 1. At the command prompt, clone the project:
 
@@ -83,7 +83,7 @@
         Password: Adminpass12
 
 
-== Rebuilding the Solr index
+## Rebuilding the Solr index
 
 Sometimes the data can come out of sync during the development phase. Fortunately
 there is a command we can use to build the entire index.
