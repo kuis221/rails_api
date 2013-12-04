@@ -23,5 +23,14 @@ describe Results::CommentsController do
       ListExportWorker.should have_queued(export.id)
     end
   end
+  
+  describe "GET 'items'", search: true do
+    it "should return http success" do
+      Sunspot.commit
+      get 'items'
+      response.should be_success
+      response.should render_template('items')
+    end
+  end
 
 end
