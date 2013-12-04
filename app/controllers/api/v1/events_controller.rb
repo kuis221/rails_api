@@ -33,7 +33,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :user, Array, :desc => "A list of users to filter the results"
   param :team, Array, :desc => "A list of teams to filter the results"
   param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
-  param :event_status, ['Unsent', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
+  param :event_status, ['Scheduled', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
   param :page, :number, :desc => "The number of the page, Default: 1"
   see "users#companies", "User companies"
 

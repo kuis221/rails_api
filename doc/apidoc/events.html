@@ -65,6 +65,8 @@
 returned on groups of 30 per request. To obtain the next 30 results provide
 the &lt;page&gt; param.</p>
 
+<p>All the times and dates are returned on the user&#39;s timezone.</p>
+
 <p><strong>Facets</strong></p>
 
 <p>Faceting is a feature of Solr that determines the number of documents that
@@ -116,6 +118,72 @@ on the following search params</p>
           Server crashed for some reason
           <br>
 
+        <h3>Examples</h3>
+          <pre class="prettyprint">{
+    &quot;page&quot;: 1,
+    &quot;total&quot;: 7238,
+    &quot;facets&quot;: [
+        &lt;HERE GOES THE LIST FACETS DESCRIBED ABOVE&gt;
+    ],
+    &quot;results&quot;: [
+        {
+            &quot;id&quot;: 5486,
+            &quot;start_date&quot;: &quot;05/24/2014&quot;,
+            &quot;start_time&quot;: &quot; 9:00 PM&quot;,
+            &quot;end_date&quot;: &quot;05/24/2014&quot;,
+            &quot;end_time&quot;: &quot;10:00 PM&quot;,
+            &quot;status&quot;: &quot;Active&quot;,
+            &quot;event_status&quot;: &quot;Unsent&quot;,
+            &quot;place&quot;: {
+                &quot;id&quot;: 2624,
+                &quot;name&quot;: &quot;Kelly&#x27;s Pub Too&quot;,
+                &quot;latitude&quot;: 39.7924104,
+                &quot;longitude&quot;: -86.2514126,
+                &quot;formatted_address&quot;: &quot;5341 W. 10th Street, Indianapolis, IN 46224&quot;,
+                &quot;country&quot;: &quot;US&quot;,
+                &quot;state&quot;: &quot;Indiana&quot;,
+                &quot;state_name&quot;: &quot;Indiana&quot;,
+                &quot;city&quot;: &quot;Indianapolis&quot;,
+                &quot;route&quot;: &quot;5341 W. 10th Street&quot;,
+                &quot;street_number&quot;: null,
+                &quot;zipcode&quot;: &quot;46224&quot;
+            },
+            &quot;campaign&quot;: {
+                &quot;id&quot;: 33,
+                &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;
+            }
+        },
+        {
+            &quot;id&quot;: 5199,
+            &quot;start_date&quot;: &quot;05/03/2014&quot;,
+            &quot;start_time&quot;: &quot; 7:30 PM&quot;,
+            &quot;end_date&quot;: &quot;05/03/2014&quot;,
+            &quot;end_time&quot;: &quot; 8:30 PM&quot;,
+            &quot;status&quot;: &quot;Active&quot;,
+            &quot;event_status&quot;: &quot;Unsent&quot;,
+            &quot;place&quot;: {
+                &quot;id&quot;: 2587,
+                &quot;name&quot;: &quot;8 Seconds Saloon&quot;,
+                &quot;latitude&quot;: 39.767723,
+                &quot;longitude&quot;: -86.24897,
+                &quot;formatted_address&quot;: &quot;111 North Lynhurst Drive, Indianapolis, IN, United States&quot;,
+                &quot;country&quot;: &quot;US&quot;,
+                &quot;state&quot;: &quot;Indiana&quot;,
+                &quot;state_name&quot;: &quot;Indiana&quot;,
+                &quot;city&quot;: &quot;Indianapolis&quot;,
+                &quot;route&quot;: &quot;North Lynhurst Drive&quot;,
+                &quot;street_number&quot;: &quot;111&quot;,
+                &quot;zipcode&quot;: &quot;46224&quot;
+            },
+            &quot;campaign&quot;: {
+                &quot;id&quot;: 33,
+                &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;
+            }
+        },
+        ....
+    ]
+}
+</pre>
 
         <h3>Params</h3>
         <table class='table'>
@@ -281,7 +349,7 @@ on the following search params</p>
 <p>A list of event recap status to filter the results</p>
 
         <br>
-        Value: Must be one of: Unsent, Submitted, Approved, Rejected, Late, Due.
+        Value: Must be one of: Scheduled, Submitted, Approved, Rejected, Late, Due.
     </td>
   </tr>
 
@@ -342,6 +410,35 @@ on the following search params</p>
           Server crashed for some reason
           <br>
 
+        <h3>Examples</h3>
+          <pre class="prettyprint">{
+    &quot;id&quot;: 5486,
+    &quot;start_date&quot;: &quot;05/24/2014&quot;,
+    &quot;start_time&quot;: &quot; 9:00 PM&quot;,
+    &quot;end_date&quot;: &quot;05/24/2014&quot;,
+    &quot;end_time&quot;: &quot;10:00 PM&quot;,
+    &quot;status&quot;: &quot;Active&quot;,
+    &quot;event_status&quot;: &quot;Unsent&quot;,
+    &quot;place&quot;: {
+        &quot;id&quot;: 2624,
+        &quot;name&quot;: &quot;Kelly&#x27;s Pub Too&quot;,
+        &quot;latitude&quot;: 39.7924104,
+        &quot;longitude&quot;: -86.2514126,
+        &quot;formatted_address&quot;: &quot;5341 W. 10th Street, Indianapolis, IN 46224&quot;,
+        &quot;country&quot;: &quot;US&quot;,
+        &quot;state&quot;: &quot;Indiana&quot;,
+        &quot;state_name&quot;: &quot;Indiana&quot;,
+        &quot;city&quot;: &quot;Indianapolis&quot;,
+        &quot;route&quot;: &quot;5341 W. 10th Street&quot;,
+        &quot;street_number&quot;: null,
+        &quot;zipcode&quot;: &quot;46224&quot;
+    },
+    &quot;campaign&quot;: {
+        &quot;id&quot;: 33,
+        &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;
+    }
+}
+</pre>
 
         <h3>Params</h3>
         <table class='table'>

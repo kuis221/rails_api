@@ -76,9 +76,26 @@ class ListExport < ActiveRecord::Base
     name = controller.send(:export_file_name)
     buffer = controller.send(:export_list, self)
     tmp_filename = "#{Rails.root}/tmp/#{name}.#{export_format}"
-    output_file = File.open(tmp_filename, 'w'){|f| f.write(buffer) }
+    File.open(tmp_filename, 'w'){|f| f.write(buffer) }
     self.file = File.open(tmp_filename)
-    self.save
+
+
+    # Save export with retry to handle errors on S3 comunications
+    tries = 3
+    begin
+      self.save
+    rescue Exception => e
+      tries -= 1
+      if tries > 0
+        sleep(3)
+        retry
+      else
+        false
+      end
+    end
+
+    # Delete tempfile
+    File.delete(tmp_filename)
 
     # Mark export as completed
     self.complete!
