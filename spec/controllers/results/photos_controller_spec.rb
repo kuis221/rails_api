@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Results::PhotosController, search: true do
-  render_views
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -102,7 +101,6 @@ describe Results::PhotosController, search: true do
     
     it "show show the download status" do
       asset_download = FactoryGirl.create(:asset_download)
-      puts asset_download.inspect
       get "download_status", download_id: asset_download.uid, format: :json
       response.should be_success
     end
