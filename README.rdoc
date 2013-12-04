@@ -1,6 +1,6 @@
 == Welcome to Brandscopic
 
-
+![build status](https://www.codeship.io/projects/13757f10-3f31-0131-665a-6636da7c5096/status)
 
 == Getting Started
 
