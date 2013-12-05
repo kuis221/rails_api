@@ -90,5 +90,52 @@ describe Kpi do
       result.reload
       result.value.should == 100
     end
+
+
+    it "should merge two kpis that are in different campaigns kpi" do
+      kpi1 = FactoryGirl.create(:kpi)
+      kpi2 = FactoryGirl.create(:kpi)
+      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+
+      expect {
+        campaign1.add_kpi(kpi1)
+        campaign2.add_kpi(kpi2)
+      }.to change(CampaignFormField, :count).by(2)
+
+      # Enter results for both Kpis for a event
+      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
+      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      expect {
+        result = event1.result_for_kpi(kpi1)
+        result.value = 100
+        event1.save
+
+        result2 = event2.result_for_kpi(kpi2)
+        result2.value = 200
+        event2.save
+      }.to change(EventResult, :count).by(2)
+
+
+      expect{
+        expect{
+          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
+            name: 'New Name',
+            description: 'a description',
+            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+          })
+        }.to change(Kpi, :count).by(-1)
+      }.to_not change(EventResult, :count)
+
+      event1.reload
+      result = event1.result_for_kpi(kpi1)
+      result.reload
+      result.value.should == 100
+
+      event2.reload
+      result = event2.result_for_kpi(kpi1)
+      result.reload
+      result.value.should == 200
+    end
   end
 end
