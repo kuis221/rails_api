@@ -10,6 +10,7 @@ row_data_currency = wb.styles.add_style :num_fmt => 5
 wb.add_worksheet(name: "Event Data") do |sheet|
 	sheet.add_row ['',
                  'CAMPAIGN NAME',
+                 'AREA',
                  'VENUE NAME',
                  'ADDRESS',
                  'CITY',
@@ -37,6 +38,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                  '',
                  '',
                  '',
+                 '',
                  number_with_precision(data_totals['promo_hours'], precision: 1),
                  number_with_delimiter(data_totals['impressions']),
                  number_with_delimiter(data_totals['interactions']),
@@ -50,6 +52,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                  number_to_percentage(data_totals['ethnicity_native_american'], precision: 2),
                  number_to_percentage(data_totals['ethnicity_white'], precision: 2)],
                 :style => [row_totals,
+                           row_totals,
                            row_totals,
                            row_totals,
                            row_totals,
@@ -74,6 +77,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
   each_collection_item do |event|
 		sheet.add_row ['',
                    event.campaign_name,
+                   area_for_event(event),
                    event.place_name,
                    strip_tags(event_place_address(event, false, ', ', ', ')),
                    event.place_city,
@@ -94,6 +98,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                    number_to_percentage(event.ethnicity_white, precision: 2)]+
                    custom_fields_to_export_values(event),
                   :style => [row_data_text,
+                             row_data_text,
                              row_data_text,
                              row_data_text,
                              row_data_text,

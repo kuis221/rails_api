@@ -19,6 +19,10 @@ module Results
       event_values.values
     end
 
+    def area_for_event(event)
+      campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ')
+    end
+
     private
       # Returns an array of nils that need to be populated by the event
       # where the key is the id of the field + the id of the segment id if the field is segmentable
@@ -30,7 +34,7 @@ module Results
       # Returns and array of Form Field IDs that are assigned to a campaign
       def active_fields_for_campaign(campaign_id)
         @campaign_fields ||= {}
-        @campaign_fields[campaign_id] ||= Campaign.find(campaign_id).form_fields.where(id: custom_fields_to_export.keys).map(&:id)
+        @campaign_fields[campaign_id] ||= campaign_from_cache(campaign_id).form_fields.where(id: custom_fields_to_export.keys).map(&:id)
         @campaign_fields[campaign_id]
       end
 
@@ -51,6 +55,12 @@ module Results
           Hash[fields_scope.map{|field| [field.id, field]}]
         end
         @kpis_to_export
+      end
+
+      def campaign_from_cache(id)
+        @_campaign_cache ||= []
+        @_campaign_cache[id] ||= Campaign.find(id)
+        @_campaign_cache[id]
       end
   end
 end
