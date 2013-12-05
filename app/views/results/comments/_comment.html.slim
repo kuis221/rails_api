@@ -1,5 +1,6 @@
-li id="comment_#{comment.id}"
-  span
-	  .date= format_date_with_time(comment.created_at)
-	  p
-	    = comment.content
+= link_to_if_permitted(:show, Event, event_path(comment.commentable.id), id: "event-link-#{comment.commentable.id}") do
+  li id="comment_#{comment.id}"
+    span
+	    .date= format_date_with_time(comment.created_at)
+	    p
+	      = comment.content
