@@ -40,9 +40,9 @@ class EventResult < ActiveRecord::Base
   def display_value
     if form_field.field_type == 'count'
       if form_field.capture_mechanism == 'checkbox'
-        form_field.kpi.kpis_segments.where(id: self.value).map(&:text).to_sentence if self.value
+        form_field.kpi.kpis_segments.select{|s| self.value.include?(s.id)}.map(&:text).to_sentence if self.value
       else
-        form_field.kpi.kpis_segments.where(id: self.value).first.try(:text) if self.value
+        form_field.kpi.kpis_segments.detect{|s| s.id == self.value}.try(:text) if self.value
       end
     else
       self.value
