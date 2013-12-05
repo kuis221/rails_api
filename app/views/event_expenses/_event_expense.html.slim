@@ -1,5 +1,5 @@
 li id="event_expense_#{event_expense.id}"
-  span= event_expense.name
+  span.data= event_expense.name
   span.total= number_to_currency(event_expense.amount, precision: 2)
   span.links
     = link_to '', event_expense.download_url, 'data-preview-url' => event_expense.receipt.file.url(:medium), :class => "preview" if event_expense.receipt.present?
