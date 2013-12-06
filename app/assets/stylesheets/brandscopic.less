@@ -28,6 +28,7 @@
 @borders: #d3d3d3;
 @brand:#989898;
 @buttons:#de4d43;
+@buttons-border: #acacac;
 @buttons-hover:#cc4137;
 @btnHover: #d6d6d6;
 @complete: #90bf43;
@@ -739,6 +740,20 @@ body.app-layout{
 }
 .btn-group{
 	margin-left: 40px;
+	.btn{
+		border: 0;
+		box-shadow: none;
+		&.list{
+			border-right:1px solid @buttons-border;
+		}
+		&.calendar{
+			border-left: 1px solid @buttons-border;
+			border-right: 1px solid @buttons-border;
+		}
+		&.map{
+			border-left: 1px solid @buttons-border;
+		}
+	}
 }
 
 .btn[disabled]{
