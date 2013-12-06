@@ -3,6 +3,7 @@ li id="expense_#{event.id}"
     span.expense-column
       b= event.campaign_name
       br>/
-      = format_date_range(event.start_at, event.end_at, date_separator: ' ')
+      .clean-date
+        = format_date_range(event.start_at, event.end_at, date_separator: ' ')
       = place_address(event.place, false, ', ', ', ')
     span.expense-column.currency= number_to_currency(event.event_data.spent)
