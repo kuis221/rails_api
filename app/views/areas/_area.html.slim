@@ -1,4 +1,4 @@
-li id="area_#{area.id}"
+li id="area_#{area.id}" class="#{active_class(area)}"
   = link_to_if_permitted :show, Area, area_path(area) do
     span
       b= area.name

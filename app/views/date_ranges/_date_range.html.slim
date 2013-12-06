@@ -1,4 +1,4 @@
-li id="date_range_#{date_range.id}"
+li id="date_range_#{date_range.id}" class="#{active_class(date_range)}"
   = link_to_if_permitted :show, DateRange, date_range_path(date_range) do
     span
       b= date_range.name

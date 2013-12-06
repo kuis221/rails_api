@@ -1,4 +1,4 @@
-li id="day_part_#{day_part.id}"
+li id="day_part_#{day_part.id}" class="#{active_class(day_part)}"
   = link_to_if_permitted :show, DayPart, day_part_path(day_part) do
     span
       b= day_part.name
