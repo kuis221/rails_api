@@ -65,5 +65,7 @@ module Brandscopic
     config.assets.precompile += %w[admin/active_admin.css admin/active_admin.js]
 
     config.cache_store = :dalli_store
+
+    I18n.enforce_available_locales = true
   end
 end

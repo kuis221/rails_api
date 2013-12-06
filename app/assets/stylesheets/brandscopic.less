@@ -1628,6 +1628,12 @@ ul.kpis-list{
 		position: relative;
 		top: -2px;
 	}
+	.clean-date {
+		b{
+			font-size: 12px;
+			top: 0px;
+		}
+	}
     ul{
   		padding: 0;
   		margin:0;
@@ -1873,9 +1879,15 @@ ul.kpis-list{
     	}
     }
     ul#comment-list{
+    	.event-info{
+    		width: 90%;
+    	}
     	li{
-    		span{
-    			margin: 15px 0 0 25px;
+    		address{
+    			width: auto !important;
+    		}
+    		span.comment-text{
+    			margin: 15px 0 0 20px;
     			width: 45%;
     			.date{
     				b{
@@ -1890,21 +1902,24 @@ ul.kpis-list{
     }
     ul#expenses-list{
     	li{
+    		address{
+    			width: auto !important;
+    		}
     		span{
-    			&:first-child{
+    			&.data{
     				font-size: 16px;
     				margin: 30px 0 0 20px;
     				overflow: hidden;
 			    	text-overflow: ellipsis;
-					white-space: nowrap;
+						white-space: nowrap;
     				width: 380px;
-    			}
+	    		}
     			&.expense-date{
     				margin:32px 0 0 0;
     			}
     			&.currency{
     				font-size: 16px;
-    				margin:30px 30px 0 0;
+    				margin:30px 15px 0 0;
     			}
     		}
     	}
@@ -3924,9 +3939,12 @@ body.roles{
 		}
 
 		.expense-column {
-			width: 33%;
 			margin-right: 3px;
+			&:first-child{
+				width: 65%;
+			}
 			&.currency {
+				width: 25%;
 				text-align: right;
 				float: right;
 			}
@@ -4687,7 +4705,8 @@ body.campaigns{
 			&.total-expenses{
 				span{
 					&:first-child{
-						margin: 30px 0 0 20px;
+	    			font-size: 16px;
+						margin: 32px 0 0 20px;
 						text-align: right;
 						width: 70% !important;
 					}

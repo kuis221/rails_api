@@ -182,10 +182,7 @@ class Kpi < ActiveRecord::Base
           kpis_to_remove.reject!{|k| k.id == kpi_keep.id }
 
           if kpi_keep
-            kpi_keep.name = options[:name]
-            kpi_keep.description = options[:description]
-            CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
-            kpi_keep.save
+
 
             # If this campaing has at leas more than one
             if kpis_to_remove.count > 0
@@ -233,12 +230,25 @@ class Kpi < ActiveRecord::Base
           end
         end
       end
+
+      remaining_kpis = all
+      if remaining_kpis.count > 0
+        kpi_keep = remaining_kpis.shift
+        kpi_keep.name = options[:name]
+        kpi_keep.description = options[:description]
+        kpi_keep.save
+
+        CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
+        CampaignFormField.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+        EventResult.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+        remaining_kpis.each{|k| k.destroy }
+      end
     end
   end
 
 
   def segments_can_be_deleted?
-    kpis_segments.select{|s| s.marked_for_destruction? }.each do|segment|
+    kpis_segments.select{|s| s.marked_for_destruction? }.each do |segment|
       errors.add :base, 'cannot delete segments with results' if segment.has_results?
     end
   end

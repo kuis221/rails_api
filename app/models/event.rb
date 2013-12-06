@@ -376,7 +376,7 @@ class Event < ActiveRecord::Base
     results.all?{|r| r.valid? }
   end
 
-  def method_missing(method_name)
+  def method_missing(method_name, *args)
     matches = /(place|campaign)_(.*)/.match(method_name)
     if matches && matches.length == 3
       if read_attribute("#{matches[1]}_name")
@@ -466,9 +466,9 @@ class Event < ActiveRecord::Base
         end
         with(:company_id, params[:company_id])
         with(:has_event_data, true) if params[:with_event_data_only].present?
+        with(:spent).greater_than(0) if params[:with_expenses_only].present?
         with(:has_surveys, true) if params[:with_surveys_only].present?
         with(:has_comments, true) if params[:with_comments_only].present?
-
         if params.has_key?(:brand) and params[:brand].present?
           campaing_ids = Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).map(&:id)
           with "campaign_id", campaing_ids + [0]
@@ -630,7 +630,7 @@ class Event < ActiveRecord::Base
 
     def check_results_changed
       @refresh_event_data = false
-      if results.any?{|r| r.changed?}
+      if results.any?{|r| r.changed?} || event_expenses.any?{|e| e.changed?}
         @refresh_event_data = true
       end
       true
@@ -706,3 +706,6 @@ class Event < ActiveRecord::Base
     #   end
     # end
 end
+
+
+Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::EventDataAccessor, Event)

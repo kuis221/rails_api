@@ -1,5 +1,12 @@
 li id="comment_#{comment.id}"
-  span
-	  .date= format_date_with_time(comment.created_at)
-	  p
-	    = comment.content
+  = link_to_if_permitted(:show, Event, event_path(comment.commentable.id), id: "event-link-#{comment.commentable.id}") do
+    span.event-info
+      b= comment.commentable.campaign_name
+      br>/
+      .clean-date
+        = format_date_range(comment.commentable.start_at, comment.commentable.end_at, date_separator: ' ')
+      = place_address(comment.commentable.place, false, ', ', ', ')
+    span.comment-text
+  	  .comment-date.clean-date= format_date_with_time(comment.created_at)
+  	  p
+  	    = comment.content

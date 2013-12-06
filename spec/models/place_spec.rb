@@ -199,4 +199,17 @@ describe Place do
       structure.map{|i| i[:items].map{|j| j[:items].map{|k| k[:label]} if j[:items] }}.should =~ [[["Area of California", "San Francisco"], ["Las Vegas"]], [nil]]
     end
   end
+
+  describe "#political_division" do
+    it "should return the city in the locations" do
+      bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'Los Angeles', state:'California', country:'US')
+      Place.political_division(bar).should == ['North America', 'United States', 'California', 'Los Angeles']
+    end
+
+
+    it "should return false if the place is a state and the are has cities of that state" do
+      california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
+      Place.political_division(bar).should == ['North America', 'United States', 'California']
+    end
+  end
 end

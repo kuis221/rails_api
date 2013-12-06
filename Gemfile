@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '3.2.13'
+gem 'rails', '3.2.16'
 gem "rack-timeout"
 
 # Bundle edge Rails instead:
@@ -96,6 +96,7 @@ group :test do
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
+  gem 'roo'
   gem 'simplecov', :require => false
 end
 

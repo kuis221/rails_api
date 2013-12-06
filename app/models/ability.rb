@@ -142,7 +142,7 @@ class Ability
         can?(:edit, team)
       end
 
-      can :add, ContactEvent if user.role.has_permission?(:create_contacts, Event)
+      can [:add, :list], ContactEvent if user.role.has_permission?(:create_contacts, Event)
       can [:new, :create], ContactEvent do |contact_event|
         can?(:show, contact_event.event) && can?(:create_contacts, contact_event.event)
       end

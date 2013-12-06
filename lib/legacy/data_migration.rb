@@ -17,4 +17,7 @@ class Legacy::DataMigration < ActiveRecord::Base
   validates :local_type, presence: true
 
   scope :for_metric, lambda{|metric| where(remote_type: 'Metric', remote_id: metric.id)}
+
+  delegate :campaign_name, :start_at, :end_at, :place_name, :place_id, to: :local
+  delegate :account_name, :account_id, to: :remote
 end
