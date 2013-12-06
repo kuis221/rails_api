@@ -20,6 +20,8 @@ class EventExpense < ActiveRecord::Base
 
   after_save :update_event_data
 
+  after_destroy :update_event_data
+
   delegate :company_id, to: :event
 
   has_one :receipt, class_name: 'AttachedAsset', as: :attachable
@@ -27,7 +29,6 @@ class EventExpense < ActiveRecord::Base
   delegate :download_url, to: :receipt
 
   accepts_nested_attributes_for :receipt
-
 
   private
     def update_event_data
