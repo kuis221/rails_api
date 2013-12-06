@@ -95,4 +95,32 @@ describe Area do
       area.reload.common_denominators.should == ["North America","United States","California"]
     end
   end
+
+  describe "#place_in_scope?" do
+    it "should return true if the place belogns to the area" do
+      bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'Los Angeles', state:'California', country:'US')
+      area = FactoryGirl.create(:area)
+      area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
+
+      area.place_in_scope?(bar).should be_true
+    end
+
+    it "should return false if the place belogns to the area" do
+      bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'San Francisco', state:'California', country:'US')
+      area = FactoryGirl.create(:area)
+      area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
+
+      area.place_in_scope?(bar).should be_false
+    end
+
+
+    it "should return false if the place is a state and the are has cities of that state" do
+      california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
+      area = FactoryGirl.create(:area)
+      area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
+      area.places << FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state:'California', country:'US')
+
+      area.place_in_scope?(california).should be_false
+    end
+  end
 end

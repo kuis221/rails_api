@@ -179,11 +179,12 @@ class Place < ActiveRecord::Base
     def location_for_search(place)
       unless place.nil?
         return nil if place.types.present? && place.types.include?('establishment')
-        return encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if place.state_name && place.city
-        return encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
-        return encode_location([place.continent_name, place.country_name]) if place.country_name
-        return encode_location(place.continent_name) if place.continent_name
+        return encode_location(political_division(place))
       end
+    end
+
+    def political_division(place)
+      return [place.continent_name, place.country_name, place.state_name, place.city].compact
     end
 
     private
