@@ -1800,7 +1800,17 @@ ul.kpis-list{
 				&.rejected {
 					border-left: 5px solid @rejected;
 				}
-				}
+				&.inactive{
+					a{
+  						color:@user_menu;
+					}
+  				}
+  				&:hover{
+  					&.inactive a{
+  						color:@text;
+  					}
+  				}
+			}
 			span.event-item {
 				min-height: 82px;
 				width: 100%;
