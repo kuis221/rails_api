@@ -1,4 +1,4 @@
-li id="brand_portfolio_#{brand_portfolio.id}"
+li id="brand_portfolio_#{brand_portfolio.id}" class="#{active_class(brand_portfolio)}"
   = link_to_if_permitted :show, BrandPortfolio, brand_portfolio_path(brand_portfolio) do
     span
       b= brand_portfolio.name

@@ -1,4 +1,4 @@
-li id="team_#{team.id}"
+li id="team_#{team.id}" class="#{active_class(team)}"
   = link_to_if_permitted :show, Team, team_path(team) do
     span
       b= team.name
