@@ -74,7 +74,7 @@ describe "Events", js: true, search: true do
         # more easily
         Timecop.travel(Time.zone.local(2013, 07, 26, 12, 00))
         today = Time.zone.now.to_date
-        tomorrow = today+1
+        tomorrow = today+1.day
         FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
           campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
           place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US')
@@ -109,6 +109,7 @@ describe "Events", js: true, search: true do
 
         select_filter_calendar_day("26")
         find('#collection-list-filters').should have_no_content('Another Campaign April 03')
+        save_and_open_page
         within("ul#events-list") do
           page.should have_no_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
