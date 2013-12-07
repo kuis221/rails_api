@@ -119,6 +119,12 @@ describe "Invitations", :js => true do
       page.should have_content('Your password was set successfully. You are now signed in.')
     end
 
+    it "should display an error if the token is not valid" do
+      visit accept_user_invitation_path(invitation_token: 'INVALIDTOKEN')
+      page.should have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
+      current_path.should == new_user_session_path
+    end
+
     it "should validate the required fields" do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
 

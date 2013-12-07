@@ -88,4 +88,12 @@ class InvitationsController < Devise::InvitationsController
     def update_resource_params
       resource_params
     end
+
+    def resource_from_invitation_token
+      unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
+        set_flash_message(:alert, :invitation_token_invalid, :reset_pass_url => new_password_path(resource_name))
+        flash[:alert] = flash[:alert].html_safe
+        redirect_to after_sign_out_path_for(resource_name)
+      end
+    end
 end
