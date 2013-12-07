@@ -1,6 +1,9 @@
 ## Welcome to Brandscopic
 
-![build status](https://www.codeship.io/projects/13757f10-3f31-0131-665a-6636da7c5096/status.jpg)
+
+Master Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=master)
+
+Development Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=development)
 
 ## Getting Started
 
