@@ -2,7 +2,7 @@
   var tzmodal = bootbox.confirm($('<div>#{escape_javascript(render(partial: 'time_zone_change'))}</div>'), function(result){
     if (result){
       $.ajax({
-          url: '#{time_zone_update_company_users_path(current_company_user, format: :js)}',
+          url: '#{time_zone_update_company_users_path(format: :js)}',
           type: 'PUT',
           data: {time_zone: '#{escape_javascript(params[:time_zone].html_safe)}'}
       });

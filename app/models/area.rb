@@ -61,6 +61,17 @@ class Area < ActiveRecord::Base
     end
   end
 
+  # If place is in /North America/United States/California/Los Angeles and the area
+  # par
+  def place_in_scope?(place)
+    if place.present?
+      political_location = Place.political_division(place).join('/')
+      locations.include?(political_location)
+    else
+      false
+    end
+  end
+
   def activate!
     update_attribute :active, true
   end

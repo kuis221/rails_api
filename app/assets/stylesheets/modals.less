@@ -292,7 +292,7 @@ ul.select2-results{
 						width: 545px;
 					}
 					.chzn-drop{
-						width: 555px;
+						width: 555px !important;
 					}
 			}
 			.users-teams-roles{
@@ -1182,6 +1182,8 @@ div#spin{
 
 // HELP - CHAT SUPPORT CENTER
 
+/*
+
 .fancybox-wrap.fancybox-type-iframe{
 	width: 550px !important;
 	.fancybox-inner{
@@ -1191,8 +1193,31 @@ div#spin{
 }
 
 .fancybox-wrap iframe{
-	height: 440px;
+	height: auto !important;
+	min-height: 450px !important;
+	overflow: visible !important;
 }
 
 
 
+.fancybox-iframe{
+	min-height: 450px !important;
+	height: auto !important;
+}
+
+.fancybox-inner{
+	height: auto !important;
+	overflow: visible !important;
+}
+*/
+
+
+.fancybox-type-iframe .fancybox-inner{
+	height: auto;
+	width: 520px !important;
+}
+
+.fancybox-skin{
+	width: 520px !important;
+	left: 20%;
+}

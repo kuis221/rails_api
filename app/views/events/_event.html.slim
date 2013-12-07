@@ -1,4 +1,4 @@
-li id="event_#{event.id}" class="#{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
+li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
   span.event-item
     / a href="#{event_path(event)}"
     = link_to_if_permitted(:show, Event, event_path(event)) do

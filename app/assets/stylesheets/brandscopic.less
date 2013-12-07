@@ -28,6 +28,7 @@
 @borders: #d3d3d3;
 @brand:#989898;
 @buttons:#de4d43;
+@buttons-border: #acacac;
 @buttons-hover:#cc4137;
 @btnHover: #d6d6d6;
 @complete: #90bf43;
@@ -739,6 +740,20 @@ body.app-layout{
 }
 .btn-group{
 	margin-left: 40px;
+	.btn{
+		border: 0;
+		box-shadow: none;
+		&.list{
+			border-right:1px solid @buttons-border;
+		}
+		&.calendar{
+			border-left: 1px solid @buttons-border;
+			border-right: 1px solid @buttons-border;
+		}
+		&.map{
+			border-left: 1px solid @buttons-border;
+		}
+	}
 }
 
 .btn[disabled]{
@@ -1628,6 +1643,12 @@ ul.kpis-list{
 		position: relative;
 		top: -2px;
 	}
+	.clean-date {
+		b{
+			font-size: 12px;
+			top: 0px;
+		}
+	}
     ul{
   		padding: 0;
   		margin:0;
@@ -1779,7 +1800,17 @@ ul.kpis-list{
 				&.rejected {
 					border-left: 5px solid @rejected;
 				}
-				}
+				&.inactive{
+					a{
+  						color:@user_menu;
+					}
+  				}
+  				&:hover{
+  					&.inactive a{
+  						color:@text;
+  					}
+  				}
+			}
 			span.event-item {
 				min-height: 82px;
 				width: 100%;
@@ -1873,11 +1904,19 @@ ul.kpis-list{
     	}
     }
     ul#comment-list{
+    	.event-info{
+    		width: 90%;
+    	}
     	li{
-    		span{
-    			margin: 15px 0 0 25px;
+    		address{
+    			width: auto !important;
+    		}
+    		span.comment-text{
+    			font-size: 13px;
+    			margin: 15px 0 0 20px;
     			width: 45%;
-    			.date{
+    			.comment-date{
+    				font-size: 12px;
     				b{
     					top: 0;
     				}
@@ -1890,21 +1929,24 @@ ul.kpis-list{
     }
     ul#expenses-list{
     	li{
+    		address{
+    			width: auto !important;
+    		}
     		span{
-    			&:first-child{
+    			&.data{
     				font-size: 16px;
     				margin: 30px 0 0 20px;
     				overflow: hidden;
 			    	text-overflow: ellipsis;
-					white-space: nowrap;
+						white-space: nowrap;
     				width: 380px;
-    			}
+	    		}
     			&.expense-date{
     				margin:32px 0 0 0;
     			}
     			&.currency{
     				font-size: 16px;
-    				margin:30px 30px 0 0;
+    				margin:30px 15px 0 0;
     			}
     		}
     	}
@@ -3253,9 +3295,8 @@ ul{
 // Photo list - Fancybox styles
 
 	.fancybox-inner{
-		height: 400px;
+		height: auto;
 	}
-
 
 .fancybox-wrap {
 	.fancybox-skin{
@@ -3344,10 +3385,10 @@ ul{
 			margin: 0px 2px;
 		}
 
-		.fancybox-inner, .fancybox-image{
+		/*.fancybox-inner, .fancybox-image{
 			height: 300px !important;
 			width: 500px !important;
-		}
+		}*/
 
 		.campaign-name, .photo-location {
 			padding: 0px 5px;
@@ -3925,9 +3966,12 @@ body.roles{
 		}
 
 		.expense-column {
-			width: 33%;
 			margin-right: 3px;
+			&:first-child{
+				width: 65%;
+			}
 			&.currency {
+				width: 25%;
 				text-align: right;
 				float: right;
 			}
@@ -3949,7 +3993,7 @@ body.roles{
 				font-size: 16px;
 				margin-right: 30px;
 				&:first-child{
-					margin-right: 10px;
+					margin-right: 54px;
 				}
 			}
 		}
@@ -4688,7 +4732,8 @@ body.campaigns{
 			&.total-expenses{
 				span{
 					&:first-child{
-						margin: 30px 0 0 20px;
+	    			font-size: 16px;
+						margin: 32px 0 0 54px;
 						text-align: right;
 						width: 70% !important;
 					}
@@ -4696,7 +4741,7 @@ body.campaigns{
 						font-weight: bold !important;
 						margin-top: 32px;
 						text-align: right;
-						width: 150px;
+						width: 115px;
 					}
 				}
 			}

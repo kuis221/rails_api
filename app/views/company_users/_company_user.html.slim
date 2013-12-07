@@ -1,4 +1,4 @@
-li id="company_user_#{company_user.id}"
+li id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
   = link_to_if_permitted :show, CompanyUser, company_user_path(company_user) do
     span.user_name
       b= company_user.full_name

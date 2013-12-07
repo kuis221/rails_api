@@ -45,7 +45,7 @@ class Kpi < ActiveRecord::Base
   has_many :kpis_segments, dependent: :destroy, order: 'ordering ASC, id ASC'
 
   # KPIs-Goals relationship
-  has_many :goals
+  has_many :goals, dependent: :destroy
 
   accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
   accepts_nested_attributes_for :goals
@@ -174,19 +174,24 @@ class Kpi < ActiveRecord::Base
 
     def merge_fields(options)
       kpis = all
+
+      # Only to prevent a terrible mistake :p, do not allow
+      # this being called for more than one out-of-the-box KPIs
+      return false if kpis.select{|k| k.out_of_the_box? }.count > 1
+
       campaings = CampaignFormField.includes(:campaign).where(kpi_id: kpis).map(&:campaign)
       Kpi.transaction do
+
+        # STEP 1: merge the values of events if the campaign has more than one of the chosen KPIs
+        # to merge
+        # Campaing A has KPI: "# impressions"
+        # Campaing B has KPI: "# of impressions"
         campaings.each do |campaign|
           kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) }
           kpi_keep = kpis.detect{|k| k.id == options[:master_kpi][campaign.id.to_s].to_i }
           kpis_to_remove.reject!{|k| k.id == kpi_keep.id }
 
           if kpi_keep
-            kpi_keep.name = options[:name]
-            kpi_keep.description = options[:description]
-            CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
-            kpi_keep.save
-
             # If this campaing has at leas more than one
             if kpis_to_remove.count > 0
               campaign.events.find_in_batches do |group|
@@ -210,35 +215,75 @@ class Kpi < ActiveRecord::Base
                   else
                     result = event.result_for_kpi(kpi_keep)
                     value = result.value
-
                     # If the event doesn't have a value for that field, then try looking for a value on another KPI
-                    if value.nil? || !value.present?
+                    if value.nil? || value == ''
                       value ||= kpis_to_remove.map{|k| r = event.result_for_kpi(k); r.value }.compact.first
                       if kpi_keep.kpi_type == 'count'
                         option_text = KpisSegment.find(value).text.downcase.strip rescue nil
+                        p "Searching for value '#{option_text}' "
                         value = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == option_text}.try(:id) if option_text
                       end
+                      result.value = value
+                      result.save
                     end
-
-                    result.value = value
-
-                    result.save
                   end
                 end
               end
+              EventResult.joins(:event).where(events: {campaign_id: campaign.id}, kpi_id: kpis_to_remove).destroy_all
+              CampaignFormField.where(campaign_id: campaign.id, kpi_id: kpis_to_remove).destroy_all
+            else
+
             end
-            CampaignFormField.where(kpi_id: kpis_to_remove).destroy_all
-            EventResult.where(kpi_id: kpis_to_remove).destroy_all
-            kpis_to_remove.each{|k| k.destroy }
+            # CampaignFormField.where(kpi_id: kpis_to_remove).destroy_all
+            # EventResult.where(kpi_id: kpis_to_remove).destroy_all
+            # kpis_to_remove.each{|k| k.destroy unless k.out_of_the_box? }
           end
         end
+      end
+
+      # STEP 2: merge any remaining KPIs that are in more than one campaign, example:
+      # Campaing A has KPI: "# impressions"
+      # Campaing B has KPI: "# of impressions"
+      remaining_kpis = all
+      kpi_keep = nil
+      if remaining_kpis.count > 0
+        kpi_keep = remaining_kpis.detect(Proc.new{ remaining_kpis.first}){|k| k.out_of_the_box? }
+        remaining_kpis.reject!{|k| k == kpi_keep }
+        CampaignFormField.where(kpi_id: remaining_kpis).each do |field|
+          if field.kpi.kpi_type == 'percentage'
+            field.kpi.kpis_segments.each do |segment|
+              if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
+                EventResult.where(kpi_id: field.kpi.id, kpis_segment_id: segment.id).update_all(kpi_id: kpi_keep.id, kpis_segment_id: new_segment.id)
+              end
+            end
+          elsif field.kpi.kpi_type == 'count'
+            field.kpi.kpis_segments.each do |segment|
+              if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
+                EventResult.where(kpi_id: field.kpi.id, value: segment.id.to_s).update_all(kpi_id: kpi_keep.id, value: new_segment.id)
+              end
+            end
+          else
+            EventResult.joins(:event).where(events: {campaign_id: field.campaign_id}, kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+          end
+        end
+        CampaignFormField.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+        remaining_kpis.each{|k| k.destroy unless k.out_of_the_box? }
+      else
+        kpi_keep = remaining_kpis.first
+      end
+
+      if kpi_keep
+        kpi_keep.name = options[:name]
+        kpi_keep.description = options[:description]
+        kpi_keep.save
+        CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options[:name])
       end
     end
   end
 
 
   def segments_can_be_deleted?
-    kpis_segments.select{|s| s.marked_for_destruction? }.each do|segment|
+    kpis_segments.select{|s| s.marked_for_destruction? }.each do |segment|
       errors.add :base, 'cannot delete segments with results' if segment.has_results?
     end
   end

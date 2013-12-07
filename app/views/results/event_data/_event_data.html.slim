@@ -5,7 +5,8 @@
         span.event-info
           b= event.campaign_name
           br>/
-          = format_date_range(event.start_at, event.end_at, date_separator: ' ')
+          .clean-date
+            = format_date_range(event.start_at, event.end_at, date_separator: ' ')
           = place_address(event.place, false, ', ', ', ')
         .results-box-container
           span.event-data-column.promo-hours-box

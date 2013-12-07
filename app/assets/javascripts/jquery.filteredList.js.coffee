@@ -428,6 +428,15 @@ $.widget 'nmk.filteredList', {
 	_addCalendars: () ->
 		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
 		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
+		@_previousDates = []
+
+		if @options.defaultParams
+			for param in @options.defaultParams
+				if param.name is 'start_date'
+					@startDateInput.val param.value
+				if param.name is 'end_date'
+					@endDateInput.val param.value
+
 		container = $('<div class="dates-range-filter">').appendTo @form
 		container.datepick {
 			rangeSelect: true,
@@ -449,21 +458,11 @@ $.widget 'nmk.filteredList', {
 								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
-				if dates.length > 0
-					start_date = @_formatDate(dates[0])
-					@startDateInput.val start_date
-
-					@endDateInput.val ''
-					if dates[0].toLocaleString() != dates[1].toLocaleString()
-						end_date = @_formatDate(dates[1])
-						@endDateInput.val end_date
-				else
-					@startDateInput.val ''
-					@endDateInput.val ''
-
 				if @initialized == true
-					@reloadFilters()
-					@_filtersChanged()
+					if @_previousDates != @_datesToString(dates)
+						@_previousDates = @_datesToString(dates)
+						@_filtersChanged()
+						@reloadFilters()
 		}
 
 		if @options.selectDefaultDateRange
@@ -475,6 +474,27 @@ $.widget 'nmk.filteredList', {
 	selectCalendarDates: (start_date, end_date) ->
 		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
 
+	_setCalendarDatesFromCalendar: () ->
+		dates = @element.find('.dates-range-filter').datepick('getDate')
+		if dates.length > 0
+			start_date = @_formatDate(dates[0])
+			@startDateInput.val start_date
+
+			@endDateInput.val ''
+			if dates[0].toLocaleString() != dates[1].toLocaleString()
+				end_date = @_formatDate(dates[1])
+				@endDateInput.val end_date
+		else
+			@startDateInput.val ''
+			@endDateInput.val ''
+		true
+
+	_datesToString: (dates) ->
+		if dates.length > 0
+			@_formatDate(dates[0]) + @_formatDate(dates[1])
+		else
+			''
+
 	_formatDate: (date) ->
 		"#{date.getMonth() + 1}/#{date.getDate()}/#{date.getFullYear()}"
 
@@ -483,6 +503,7 @@ $.widget 'nmk.filteredList', {
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
 	_filtersChanged: (updateState=true) ->
+		@_setCalendarDatesFromCalendar()
 		@nextpagetoken = false
 		if @options.source
 			@reloadData

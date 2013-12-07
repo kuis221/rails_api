@@ -1,4 +1,4 @@
-li id="role_#{role.id}"
+li id="role_#{role.id}" class="#{active_class(role)}"
   = link_to_if_permitted :show, Role, role_path(role) do
     span
       b= role.name

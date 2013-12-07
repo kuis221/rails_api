@@ -184,4 +184,8 @@ module ApplicationHelper
     allowed = current_company_user.role.is_admin? || current_company_user.role.has_permission?(permission_action, subject_class)
     link_to_if allowed, name, options, html_options
   end
+
+  def active_class(item)
+    item.active? ? 'active' : 'inactive'
+  end
 end

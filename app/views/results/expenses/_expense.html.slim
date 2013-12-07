@@ -1,5 +1,9 @@
-li id="expense_#{expense.id}"
-  = link_to_if_permitted(:show, Event, event_path(expense.event_id), id: "expense-link-#{expense.id}") do
-    span.expense-column= expense.name
-    span.expense-date= format_date(expense.created_at)
-    span.expense-column.currency= number_to_currency(expense.amount)
+li id="expense_#{event.id}"
+  = link_to_if_permitted(:show, Event, event_path(event.id), id: "event-link-#{event.id}") do
+    span.expense-column
+      b= event.campaign_name
+      br>/
+      .clean-date
+        = format_date_range(event.start_at, event.end_at, date_separator: ' ')
+      = place_address(event.place, false, ', ', ', ')
+    span.expense-column.currency= number_to_currency(event.event_data.spent)
