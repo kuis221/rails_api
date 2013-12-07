@@ -184,7 +184,7 @@ class Place < ActiveRecord::Base
     end
 
     def political_division(place)
-      return [place.continent_name, place.country_name, place.state_name, place.city].compact
+      [place.continent_name, place.country_name, place.state_name, place.city].compact if place.present?
     end
 
     private

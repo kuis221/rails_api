@@ -211,5 +211,9 @@ describe Place do
       california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
       Place.political_division(california).should == ['North America', 'United States', 'California']
     end
+
+    it "returns nil if no place is given" do
+      Place.political_division(nil).should be_nil
+    end
   end
 end

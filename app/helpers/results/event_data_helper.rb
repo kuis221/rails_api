@@ -20,7 +20,7 @@ module Results
     end
 
     def area_for_event(event)
-      campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ')
+      campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ') unless event.place.nil?
     end
 
     private
