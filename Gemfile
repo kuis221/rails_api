@@ -98,6 +98,7 @@ group :test do
   gem 'resque_spec'
   gem 'roo'
   gem 'simplecov', :require => false
+  gem 'capybara-screenshot'
 end
 
 gem 'airbrake'
