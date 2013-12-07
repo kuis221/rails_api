@@ -47,7 +47,7 @@ describe Results::ExpensesController, js: true, search: true  do
           page.should have_content('$20.00')
         end
       end
-      page.should have_content('Total $30.00')
+      page.should have_content('TOTAL$30.00')
     end
 
     it "GET index should display a table with the expenses" do

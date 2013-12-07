@@ -38,7 +38,7 @@ describe Results::CommentsController, js: true, search: true  do
           page.should have_content('WED Aug 21 8:00 PM - 11:00 PM')
           page.should have_content('Place 1, New York City, NY, 12345')
           page.should have_content('Comment #1')
-          page.should have_content('THU Aug 22 at 11:59 AM')
+          page.should have_content('Aug 22 @ 11:59 AM')
         end
         # Second Row
         within("li:nth-child(2)") do
@@ -46,7 +46,7 @@ describe Results::CommentsController, js: true, search: true  do
           page.should have_content('WED Aug 21 8:00 PM - 11:00 PM')
           page.should have_content('Place 1, New York City, NY, 12345')
           page.should have_content('Comment #2')
-          page.should have_content('FRI Aug 23 at 9:15 AM')
+          page.should have_content('Aug 23 @ 9:15 AM')
         end
       end
     end

@@ -18,7 +18,7 @@ class Results::ExpensesController < FilteredController
     end
 
     def expenses_total
-      @solr_search.stat_response['stats_fields']["spent_es"]['sum']
+      @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
     end
 
     def authorize_actions
