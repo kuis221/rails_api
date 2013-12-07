@@ -15,7 +15,7 @@ FactoryGirl.define do
     unit_number 'Unit Number 456'
     zip_code '90210'
     time_zone Brandscopic::Application.config.time_zone
-    detected_time_zone 'Central America'
+    detected_time_zone Brandscopic::Application.config.time_zone
     confirmed_at DateTime.now
     invitation_accepted_at DateTime.now
     invitation_token nil

@@ -9,6 +9,7 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
+require 'capybara-screenshot/rspec'
 #require 'capybara/poltergeist'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
