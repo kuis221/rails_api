@@ -3,7 +3,11 @@ class EventDataIndexer
   @queue = :indexing
 
   def self.perform(event_data_id)
-    data =  EventData.find(event_data_id).update_data.save
-    Resque.reindex(data.event)
+    begin
+      data = EventData.find(event_data_id).update_data
+      data.save
+      Sunspot.index(data.event)
+    rescue
+    end
   end
 end

@@ -97,6 +97,11 @@ describe Area do
   end
 
   describe "#place_in_scope?" do
+    it "should return false if place is nil" do
+      area = FactoryGirl.create(:area)
+      area.place_in_scope?(nil).should be_false
+    end
+
     it "should return true if the place belogns to the area" do
       bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'Los Angeles', state:'California', country:'US')
       area = FactoryGirl.create(:area)

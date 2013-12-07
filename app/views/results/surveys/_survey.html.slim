@@ -5,11 +5,11 @@ li id="survey_#{survey.id}"
         = "#{age} year old"
     = "#{survey.ethnicity} #{survey.gender}"
   span.date
-    = format_date(survey.created_at)
+    = time_ago_in_words(survey.created_at)
     br>/
     | Completed
   span.date
-    = format_date(survey.updated_at)
+    = time_ago_in_words(survey.updated_at)
     br>/
     | Modified
   span.pull-right

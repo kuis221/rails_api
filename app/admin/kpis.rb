@@ -15,18 +15,18 @@ ActiveAdmin.register Kpi do
       @campaigns = Campaign.where(id: campaign_ids.uniq)
       @conflict_campaigns = campaign_ids.select{|e| campaign_ids.rindex(e) != campaign_ids.index(e) }.uniq
       if @kpis.map(&:kpi_type).uniq.count > 1
-        redirect_to :back, :alert => 'Cannot merge different kind of KPIs'
-      elsif @kpis.map(&:module).uniq != ['custom']
-        redirect_to :back, :alert => 'Merging global KPIs is not allowed'
-      elsif @kpis.map(&:company_id).uniq.count > 1
-        redirect_to :back, :alert => 'Cannot merge KPIs of different companies'
+        redirect_to collection_path, :alert => 'Cannot merge different kind of KPIs'
+      elsif @kpis.select{|k| k.out_of_the_box? }.count > 1
+        redirect_to collection_path, :alert => 'It\'s not possible to merge two Out-of-the-box KPIs'
+      elsif @kpis.map(&:company_id).compact.uniq.count > 1
+        redirect_to collection_path, :alert => 'Cannot merge KPIs of different companies'
       elsif params[:merge].present? && params[:merge][:confirm] == 'Merge'
         if @campaigns.any? && @campaigns.count !=  params[:merge][:master_kpi].try(:count)
           flash[:error] = 'Please make sure to select a KPI for all the campaigns'
         else
           @kpis.merge_fields(params[:merge])
 
-          redirect_to collection_path, :notice => 'The campaigns have been sucessfully merged'
+          redirect_to collection_path, :notice => 'The KPIs have been sucessfully merged'
         end
       end
     end
