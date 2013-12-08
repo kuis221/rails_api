@@ -11,7 +11,7 @@
 / Photos module
 - if active_kpis.include?(Kpi.photos) && can?(:photos, resource)
   #event-photos.details_box.box_photos
-    = render partial: 'photos', locals: {allow_upload: true}
+    = render partial: 'photos', locals: {allow_upload: true, :show_date_details: false}
 
 / Surveys module
 - if active_kpis.include?(Kpi.surveys) && can?(:surveys, resource)
