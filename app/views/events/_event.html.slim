@@ -11,5 +11,5 @@ li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{eve
     span.pull-right
       = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit' if can? :edit, Event
       - if can? :deactivate, Event
-        = link_to '', deactivate_event_path(event), remote: true, class: 'disable', title: 'Deactivate' if event.active?
-        = link_to '', activate_event_path(event), remote: true, class: 'enable', title: 'Activate' unless event.active?
+        = link_to_deactivate event
+        = link_to '', activate_event_path(event), remote: true, class: 'enable', title: I18n.t('confirmation.deactive'), unless event.active?

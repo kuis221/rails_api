@@ -11,5 +11,5 @@ li id="team_#{team.id}" class="#{active_class(team)}"
   span.pull-right
     = link_to '', edit_team_path(team), remote: true, class: 'edit' if can?(:edit, Team)
     - if can?(:deactivate, Team)
-      = link_to '', deactivate_team_path(team), remote: true, class: 'disable' if team.active?
-      = link_to '', activate_team_path(team), remote: true, class: 'enable' unless team.active?
+      = link_to_deactivate team
+      = link_to '', activate_team_path(team), remote: true, class: 'enable',title: I18n.t('confirmation.active') unless team.active?

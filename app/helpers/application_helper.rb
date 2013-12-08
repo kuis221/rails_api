@@ -184,6 +184,13 @@ module ApplicationHelper
     allowed = current_company_user.role.is_admin? || current_company_user.role.has_permission?(permission_action, subject_class)
     link_to_if allowed, name, options, html_options
   end
+  
+  def link_to_deactivate(model)
+    model_sytem_name = model.class.name.split(/(?=[A-Z])/).join('_').downcase
+    humanized_name = model_sytem_name.gsub('_', ' ')
+    function = "deactivate_#{model_sytem_name}_path #{model.id}"
+    link_to '', eval(function), remote: true, title: I18n.t('confirmation.deactive') , class: 'disable', confirm: I18n.t('confirmation.deactive_confirm_message', model: humanized_name) if model.active?
+  end
 
   def active_class(item)
     item.active? ? 'active' : 'inactive'

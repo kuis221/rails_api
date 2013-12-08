@@ -7,5 +7,5 @@ li id="area_#{area.id}" class="#{active_class(area)}"
   span.pull-right
     = link_to '', edit_area_path(area), remote: true, title: 'Edit', class: 'edit' if can?(:edit, Area)
     - if can?(:deactivate, Area)
-      = link_to '', deactivate_area_path(area), remote: true, title: 'Deactivate', class: 'disable' if area.active?
-      = link_to '', activate_area_path(area), remote: true, title: 'Activate', class: 'enable' unless area.active?
+      = link_to_deactivate area
+      = link_to '', activate_area_path(area), remote: true, title: I18n.t('confirmation.deactive'), class: 'enable' unless area.active?

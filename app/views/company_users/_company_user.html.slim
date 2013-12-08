@@ -18,5 +18,5 @@ li id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
   span.pull-right.tools
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit' if can?(:edit, company_user)
     - if can?(:deactivate, CompanyUser)
-      = link_to '', deactivate_company_user_path(company_user), remote: true, class: 'disable' if company_user.active?
-      = link_to '', activate_company_user_path(company_user), remote: true, class: 'enable' unless company_user.active?
+      = link_to_deactivate company_user
+      = link_to '', activate_company_user_path(company_user),title: I18n.t('confirmation.active'), remote: true, class: 'enable' unless company_user.active?

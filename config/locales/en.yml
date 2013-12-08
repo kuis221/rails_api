@@ -267,3 +267,9 @@ en:
     sublocality_level_1: "Sublocality level 1"
     subpremise: "Subpremise"
     transit_station: "Transit Station"
+    
+  confirmation:
+    deactive: "Deactive"
+    active: "Active"
+    deactive_confirm_message: "Are you sure you want to deactivate this %{model}?"
+    
