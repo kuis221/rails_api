@@ -1,9 +1,10 @@
+- show_date_details ||= true
 li.span2.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
   div.thumbnail-container.thumbnail
     ul.thumbnail-toolbar
       - if can? :deactivate_photo, Event
         - if photo.active?
-          li= link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactive', model: 'photo' )
+          li= link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactive_confirm_message', model: 'photo' )
         - else
           li= link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link'
       li= link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
