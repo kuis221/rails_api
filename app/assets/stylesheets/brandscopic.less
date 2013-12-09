@@ -1128,17 +1128,19 @@ li.dropdown a{
 .nav-tabs li a:hover{
 	background-color: white;
 	border-bottom: 0;
-	color: @text;
+	color: @brand;
 }
 .nav-tabs>.active>a{
+	color: @brand;
 	border-left: 0;
 	border-right: 0;
 	border-top: 0;
-}
-.nav-tabs>.active>a:hover{
-	border-left:0;
-	border-right: 0;
-	border-top: 0;
+	&:hover{
+		color: @brand;
+		border-left:0;
+		border-right: 0;
+		border-top: 0;
+	}
 }
 
 .nav-pills > li > a.single-link{
