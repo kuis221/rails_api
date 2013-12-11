@@ -35,19 +35,19 @@ describe Results::ExpensesController, js: true, search: true  do
         # First Row
         within("li:nth-child(1)") do
           page.should have_content('First Campaign')
-          page.should have_content('WED Aug 21 8:00 PM - 11:00 PM')
+          page.should have_content('WED Aug 21, 8:00 PM – 11:00 PM')
           page.should have_content('Place 1, New York City, NY, 12345')
           page.should have_content('$10.00')
         end
         # Second Row
         within("li:nth-child(2)") do
           page.should have_content('First Campaign')
-          page.should have_content('SUN Aug 25 9:00 AM - 10:00 AM')
+          page.should have_content('SUN Aug 25, 9:00 AM – 10:00 AM')
           page.should have_content('Place 2, New York City, NY, 12345')
           page.should have_content('$20.00')
         end
       end
-      page.should have_content('TOTAL$30.00')
+      page.should have_content('TOTAL:$30.00')
     end
 
     it "GET index should display a table with the expenses" do
