@@ -218,7 +218,14 @@ module Analysis
           data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
         end
 
-        data.total_value.to_i unless data.nil?
+        unless data.nil?
+          case goal.kpi.capture_mechanism
+          when 'integer'
+            data.total_value.to_i
+          when 'decimal'
+            data.total_value.to_f
+          end
+        end
       end
     end
 	end
