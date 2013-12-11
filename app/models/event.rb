@@ -30,7 +30,11 @@ class Event < ActiveRecord::Base
   has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
-  has_many :results, class_name: 'EventResult', inverse_of: :event
+  has_many :results, class_name: 'EventResult', inverse_of: :event do
+    def active
+      where(form_field_id: proxy_association.owner.campaign.form_field_ids)
+    end
+  end
   has_many :event_expenses, inverse_of: :event, autosave: true
   has_one :event_data, autosave: true
 
