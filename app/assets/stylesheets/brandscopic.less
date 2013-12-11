@@ -1700,18 +1700,18 @@ ul.kpis-list{
 	    		}
 	    		&:last-child{
 	    			.add:before{
-		        	  	color: @brand;
-						content: "\e021";
+		        	color: @brand;
+							content: "\e021";
 					  	display: inline-block;
 					  	font-family: 'icons';
-						font-size: 21px;
-						right:5px;
+							font-size: 21px;
+							right:5px;
 					  	position: relative;
-						speak: none;
-						text-align: center;
-						top: 5px;
+							speak: none;
+							text-align: center;
+							top: 5px;
 					  	vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+						  -webkit-font-smoothing: antialiased;
 	    			}
 	    		}
 	    	}
@@ -2327,6 +2327,8 @@ ul.ui-widget-content{
 .ui-menu{
 	li{
 		&.ui-menu-item{
+			margin: 0 0 0 2px !important;
+			width: 98% !important;
 			a{
 				color: @menu;
 				font-weight: normal !important;
@@ -5634,7 +5636,7 @@ body{
 	  			font-size: 16px;
 	  		}
 	  		.member-description {
-	  			width: 90%;
+	  			line-height: 16px;
 	  		}
 	  	}
 			a {
