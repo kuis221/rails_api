@@ -76,7 +76,7 @@
       ul.consumer-reach-metrics.pull-right
         - custom_kpis.each do |custom_kpi|
           - if ['number', 'count'].include?(custom_kpi.kpi_type)
-            - custom_kpi_value = resource.results.find_by_kpi_id(custom_kpi.id).try(:display_value)
+            - custom_kpi_value = resource.results.active.find_by_kpi_id(custom_kpi.id).try(:display_value)
             - field = resource.campaign.form_field_for_kpi(custom_kpi)
             - unless field.nil?
               li

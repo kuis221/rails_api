@@ -68,6 +68,7 @@ class ListExport < ActiveRecord::Base
     User.current = company_user.user
     controller.instance_variable_set(:@_current_user, company_user.user)
     controller.instance_variable_set(:@current_company, company_user.company)
+    controller.instance_variable_set(:@current_company_user, company_user)
 
     if company_user.user.time_zone.present?
       Time.zone = company_user.user.time_zone
