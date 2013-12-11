@@ -34,7 +34,7 @@ describe "Events", js: true, search: true do
             # First Row
             within("li:nth-child(1)") do
               page.should have_content('WED Aug 21')
-              page.should have_content('10:00 AM - 11:00 AM')
+              page.should have_content('10:00 AM – 11:00 AM')
               page.should have_content(events[0].place_name)
               page.should have_content('Campaign FY2012')
             end
@@ -132,7 +132,7 @@ describe "Events", js: true, search: true do
       page.should have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
         page.should have_content('WED Aug 28')
-        page.should have_content('8:00 PM - 11:00 PM')
+        page.should have_content('8:00 PM – 11:00 PM')
       end
     end
 
