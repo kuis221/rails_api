@@ -67,7 +67,7 @@ describe Api::V1::UsersController do
       FactoryGirl.create(:company_user, company: company2, user: user, role: FactoryGirl.create(:role, company: company2))
       get 'companies', auth_token: user.authentication_token, format: :json
       companies = JSON.parse(response.body)
-      companies.should == [
+      companies.should =~ [
         {'name' => company.name,  'id' => company.id },
         {'name' => company2.name, 'id' => company2.id}
       ]

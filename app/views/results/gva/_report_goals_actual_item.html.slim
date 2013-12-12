@@ -13,5 +13,5 @@
       .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:goal].value, precision: 2) : number_with_delimiter(event_goal[:goal].value)
       .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:total_count], precision: 2) : number_with_delimiter(event_goal[:total_count])
       .span2.text-right = "#{event_goal[:completed_percentage].round}%"
-      .span2.text-right = (event_goal[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total))
+      .span2.text-right = (event_goal[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total.round(2)))
       .span2.text-right = "#{(pending_and_total/event_goal[:goal].value * 100).round}%"

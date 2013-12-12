@@ -127,7 +127,7 @@ describe "Users", :js => true do
 
     end
 
-    describe "edit profile" do
+    describe "edit profile link" do
       it 'allows the user to edit his profile' do
         visit company_user_path(@company_user)
 
