@@ -1669,6 +1669,16 @@ ul.kpis-list{
   			&.due > span.task-list {
   				border-left: 5px solid @due_today;
   			}
+				&.inactive{
+					a{
+  					color:@user_menu;
+					}
+  			}
+				&:hover{
+					&.inactive a{
+						color:@text;
+					}
+				}
   		}
     }
     .empty-list-message {
@@ -1806,16 +1816,6 @@ ul.kpis-list{
 				&.rejected {
 					border-left: 5px solid @rejected;
 				}
-				&.inactive{
-					a{
-  					color:@user_menu;
-					}
-  				}
-  				&:hover{
-  					&.inactive a{
-  						color:@text;
-  					}
-  				}
 			}
 			span.event-item {
 				min-height: 82px;
