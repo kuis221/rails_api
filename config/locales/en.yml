@@ -269,7 +269,7 @@ en:
     transit_station: "Transit Station"
     
   confirmation:
-    deactive: "Deactive"
-    active: "Active"
-    deactive_confirm_message: "Are you sure you want to deactivate this %{model}?"
+    deactivate: "Deactivate"
+    activate: "Activate"
+    deactivate_confirm_message: "Are you sure you want to deactivate this %{model}?"
     

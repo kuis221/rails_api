@@ -48,11 +48,18 @@ describe "Areas", js: true, search: true do
       within("ul#areas-list") do
         # First Row
         within("li:nth-child(1)") do
-          click_js_link('Deactivate')
-          page.should have_selector('a.enable', text: '')
-
-          click_js_link('Activate')
-          page.should have_selector('a.disable', text: '')
+          click_link('Deactivate')
+        end
+      end
+      
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      
+      within("ul#areas-list") do
+        # First Row
+        within("li:nth-child(1)") do
+          page.should have_link('Activate')
+          click_link('Activate')
         end
       end
     end
@@ -89,10 +96,11 @@ describe "Areas", js: true, search: true do
       visit area_path(area)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 

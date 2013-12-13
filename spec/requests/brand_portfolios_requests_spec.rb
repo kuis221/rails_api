@@ -46,15 +46,21 @@ describe "BrandPortfolios", js: true, search: true do
         within("ul#brand_portfolios-list") do
           # First Row
           within("li:nth-child(1)") do
-            click_js_link('Deactivate')
-            page.should have_selector('a.enable', text: '')
+            click_link('Deactivate') 
+          end  
+        end
 
-            click_js_link('Activate')
-            page.should have_selector('a.disable', text: '')
-          end
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
+        
+        within("ul#brand_portfolios-list") do
+          # First Row
+          within("li:nth-child(1)") do
+            page.should have_link('Activate')
+            click_link('Activate')
+          end  
         end
       end
-
     end
 
     it 'allows the user to create a new portfolio' do
@@ -105,10 +111,11 @@ describe "BrandPortfolios", js: true, search: true do
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 

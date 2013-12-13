@@ -58,13 +58,20 @@ describe "Events", js: true, search: true do
           within("ul#events-list") do
             # First Row
             within("li:nth-child(1)") do
-              click_js_link('Deactivate')
-              page.should have_selector('a.enable', text: '')
-
-              click_js_link('Activate')
-              page.should have_selector('a.disable', text: '')
+              click_link('Deactivate')
             end
           end
+          
+          visible_modal.click_js_link("OK")
+          ensure_modal_was_closed
+          
+           within("ul#events-list") do
+            # First Row
+            within("li:nth-child(1)") do
+              click_link('Activate')
+            end
+          end
+          
 
         end
       end
@@ -140,12 +147,13 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
-        click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
-      end
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it "allows to add a member to the event", :js => true do

@@ -12,4 +12,4 @@ li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{eve
       = link_to '', edit_event_path(event), remote: true, class: 'edit', title: 'Edit' if can? :edit, Event
       - if can? :deactivate, Event
         = link_to_deactivate event
-        = link_to '', activate_event_path(event), remote: true, class: 'enable', title: I18n.t('confirmation.deactive') unless event.active?
+        = link_to '', activate_event_path(event), remote: true, class: 'enable', title: I18n.t('confirmation.activate') unless event.active?

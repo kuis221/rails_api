@@ -35,7 +35,29 @@ describe "DayParts", search: true, js: true do
           page.should have_content('From 8 to 11am')
         end
       end
-
+    end
+    
+    it "should allow user to activate/deactivate Date Rages" do
+        FactoryGirl.create(:day_part, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true)
+        Sunspot.commit
+        visit day_parts_path
+        
+        within("ul#day_parts-list") do
+          # First Row
+          within("li:nth-child(1)") do
+            click_link('Deactivate')
+          end
+        end
+        
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
+        
+        within("ul#day_parts-list") do
+          # Second Row
+          within("li:nth-child(1)") do
+            click_link('Activate')
+          end
+      end
     end
 
     it 'allows the user to create a new day_part' do
@@ -85,10 +107,14 @@ describe "DayParts", search: true, js: true do
     it 'allows the user to activate/deactivate a day part' do
       day_part = FactoryGirl.create(:day_part, company: @company, active: true)
       visit day_part_path(day_part)
-      click_js_link 'Deactivate'
-      page.should have_selector('a.toggle-active')
-      click_js_link 'Activate'
-      page.should have_selector('a.toggle-inactive')
+      within('.links-data') do
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it 'allows the user to edit the day_part' do
