@@ -465,7 +465,7 @@ describe EventsController do
         event = FactoryGirl.create(:submitted_event, active: true, company: @company)
         lambda {
           put 'approve', id: event.to_param
-          response.should redirect_to(event_path(event))
+          response.should redirect_to(event_path(event, :status => 'approved'))
           event.reload
         }.should change(event, :approved?).to(true)
       end
@@ -483,7 +483,6 @@ describe EventsController do
         event.reject_reason.should == 'blah blah blah'
       end
     end
-
   end
 
 
