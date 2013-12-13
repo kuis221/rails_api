@@ -46,7 +46,7 @@ class EventsController < FilteredController
       raise resource.errors.full_messages if resource.errors.any?
     end
     flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path
+    redirect_to resource_path(:status => 'approved')
   end
 
   def reject
