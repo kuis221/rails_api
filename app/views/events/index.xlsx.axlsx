@@ -6,7 +6,6 @@ row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
 
 wb.add_worksheet(name: "Events") do |sheet|
 	sheet.add_row ['CAMPAIGN NAME',
-                 'AREA',
                  'START DATE',
                  'START TIME',
                  'VENUE NAME',
@@ -19,7 +18,6 @@ wb.add_worksheet(name: "Events") do |sheet|
 
   each_collection_item do |event|
     sheet.add_row [event.campaign_name,
-                   area_for_event(event),
                    format_date(event.start_at, true),
                    format_time(event.start_at),
                    event.place_name,
