@@ -14,14 +14,13 @@
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'document' && resource.attachable_type == 'Event'
     | $('##{resource_class}_#{resource.id}').remove()
 
-  - if resource.is_a?(Task)
-    |
-      active_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Active"]').prop('checked')
-      inactive_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Inactive"]').prop('checked')
-      if ((active_checked != inactive_checked) ||
-          (typeof active_checked === 'undefined' && typeof inactive_checked === 'undefined')) {
-        $('##{resource_class}_#{resource.id}').remove()
-      }
+  |
+    active_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Active"]').prop('checked')
+    inactive_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Inactive"]').prop('checked')
+    if ((active_checked != inactive_checked) ||
+        (typeof active_checked === 'undefined' && typeof inactive_checked === 'undefined')) {
+      $('##{resource_class}_#{resource.id}').remove()
+    }
 
   - unless resource.is_a?(AttachedAsset) || resource.is_a?(Task)
     | $('.active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}')
