@@ -40,8 +40,8 @@ describe "Areas", js: true, search: true do
       end
     end
 
-    it "should allow user to activate/deactivate brand areas" do
-      FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: true, company: @company)
+    it "should allow user to deactivate areas" do
+      area = FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: true, company: @company)
       Sunspot.commit
       visit areas_path
 
@@ -49,10 +49,24 @@ describe "Areas", js: true, search: true do
         # First Row
         within("li:nth-child(1)") do
           click_js_link('Deactivate')
-          page.should have_selector('a.enable', text: '')
+          page.should have_no_selector("li#area_#{area.id}")
+        end
+      end
+    end
 
+    it "should allow user to activate areas" do
+      area = FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: false, company: @company)
+      Sunspot.commit
+      visit areas_path
+
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      within("ul#areas-list") do
+        # First Row
+        within("li:nth-child(1)") do
           click_js_link('Activate')
-          page.should have_selector('a.disable', text: '')
+          page.should have_no_selector("li#area_#{area.id}")
         end
       end
     end
