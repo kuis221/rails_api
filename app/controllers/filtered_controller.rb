@@ -7,10 +7,15 @@ class FilteredController < InheritedResources::Base
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
-
+  before_filter :set_previous_page, only: [:show]
 
   custom_actions collection: [:filters, :items]
 
+  def set_previous_page
+    session[:previous_page] = request.env['HTTP_REFERER']
+    url_array = session[:previous_page].split('?')
+    session[:filters] = CGI::parse(url_array[1]) if url_array[1]
+  end
   def filters
   end
 
