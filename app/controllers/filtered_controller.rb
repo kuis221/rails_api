@@ -13,8 +13,9 @@ class FilteredController < InheritedResources::Base
 
   def set_previous_page
     session[:previous_page] = request.env['HTTP_REFERER']
-    url_array = session[:previous_page].split('?')
-    session[:filters] = CGI::parse(url_array[1]) if url_array[1]
+    session[:filters] =  Rack::Utils.parse_nested_query(session[:previous_page].split('?').last).deep_symbolize_keys
+    session[:filters][:events] = session[:filters][:events_count]
+    session[:filters].delete(:events_count)
   end
   def filters
   end

@@ -534,7 +534,6 @@ $.widget 'nmk.filteredList', {
 
 	_serializeFilters: () ->
 		data = @form.serialize()
-		alert(data)
 		for filter in @options.customFilters
 			data += "&#{filter.name}=#{escape(filter.value)}"
 		data.replace(/^&/,"")

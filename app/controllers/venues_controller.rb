@@ -139,27 +139,11 @@ class VenuesController < FilteredController
     def load_filters_from_session
       filters = session[:filters]
       session[:filters] = nil
-
-      search_params[:events][:min] = filters['events_count[min]'] if !filters['events_count[min]'].first.blank?
-      search_params[:events][:max] = filters['events_count[max]'] if !filters['events_count[max]'].first.blank?
-
-      search_params[:promo_hours][:min] = filters['promo_hours[min]'] if !filters['promo_hours[min]'].first.blank?
-      search_params[:promo_hours][:max] = filters['promo_hours[max]'] if !filters['promo_hours[max]'].first.blank?
-
-      search_params[:impressions][:min] = filters['impressions[min]'] if !filters['impressions[min]'].first.blank?
-      search_params[:impressions][:max] = filters['impressions[max]'] if !filters['impressions[max]'].first.blank?
-
-      search_params[:interactions][:min] = filters['interactions[min]'] if !filters['interactions[min]'].first.blank?
-      search_params[:interactions][:max] = filters['interactions[max]'] if !filters['interactions[max]'].first.blank?
-
-      search_params[:sampled][:min] = filters['sampled[min]'] if !filters['sampled[min]'].first.blank?
-      search_params[:sampled][:max] = filters['sampled[max]'] if !filters['sampled[max]'].first.blank?
-      
-      search_params[:spent][:min] = filters['spent[min]'] if !filters['spent[min]'].first.blank?
-      search_params[:spent][:max] = filters['spent[max]'] if !filters['spent[max]'].first.blank?
-      
-      search_params[:venue_score][:min] = filters['venue_score[min]'] if !filters['venue_score[min]'].first.blank?
-      search_params[:venue_score][:max] = filters['venue_score[max]'] if !filters['venue_score[max]'].first.blank?
+      filters.each do |index,value|
+        value.each do |i,v|
+          search_params[index][i] = v if !v.blank?
+        end if value
+      end
     end
 
 end
