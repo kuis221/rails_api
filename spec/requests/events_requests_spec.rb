@@ -22,7 +22,7 @@ describe "Events", js: true, search: true do
     describe "GET index" do
       let(:events){[
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
-        FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am',  end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
+        FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
       it "should display a table with the events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
@@ -49,23 +49,34 @@ describe "Events", js: true, search: true do
         end
       end
 
-      it "should allow user to activate/deactivate events" do
+      it "should allow user to deactivate events" do
         Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
           visit events_path
 
-          within("ul#events-list") do
-            # First Row
-            within("li:nth-child(1)") do
-              click_js_link('Deactivate')
-              page.should have_selector('a.enable', text: '')
-
-              click_js_link('Activate')
-              page.should have_selector('a.disable', text: '')
-            end
+          within("ul#events-list li:nth-child(1)") do
+            page.should have_content('Campaign FY2012')
+            click_js_link('Deactivate')
+            page.should have_no_content('Campaign FY2012')
           end
+        end
+      end
 
+      it "should allow user to activate events" do
+        Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
+          FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Our Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
+          FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Another Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
+          Sunspot.commit
+          visit events_path
+
+          filter_section('ACTIVE STATE').unicheck('Inactive')
+
+          within("ul#events-list li:nth-child(1)") do
+            page.should have_content('Our Test Campaign')
+            click_js_link('Activate')
+            page.should have_no_content('Our Test Campaign')
+          end
         end
       end
 
