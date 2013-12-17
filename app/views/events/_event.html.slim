@@ -2,7 +2,7 @@ li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{eve
   span.event-item
     / a href="#{event_path(event)}"
     = link_to_if_permitted(:show, Event, event_path(event)) do
-      span.date= format_date_range(event.start_at, event.end_at)
+      span.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
       span.address
         =
         b= event.campaign_name

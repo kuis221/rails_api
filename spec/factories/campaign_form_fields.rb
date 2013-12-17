@@ -22,6 +22,6 @@ FactoryGirl.define do
     name "MyString"
     field_type "number"
     options {}
-    section_id 1
+    section_id nil
   end
 end

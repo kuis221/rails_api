@@ -185,7 +185,7 @@ class Kpi < ActiveRecord::Base
         # STEP 1: merge the values of events if the campaign has more than one of the chosen KPIs
         # to merge
         # Campaing A has KPI: "# impressions"
-        # Campaing B has KPI: "# of impressions"
+        # Campaing A has KPI: "# of impressions"
         campaings.each do |campaign|
           kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) }
           kpi_keep = kpis.detect{|k| k.id == options[:master_kpi][campaign.id.to_s].to_i }

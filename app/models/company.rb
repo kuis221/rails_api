@@ -2,10 +2,11 @@
 #
 # Table name: companies
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  timezone_support :boolean
 #
 
 class Company < ActiveRecord::Base
@@ -29,6 +30,14 @@ class Company < ActiveRecord::Base
 
   after_create :create_admin_role_and_user
 
+  def self.current=(company)
+    Thread.current[:company] = company
+  end
+
+  def self.current
+    Thread.current[:company]
+  end
+
   private
     def create_admin_role_and_user
       if admin_email
@@ -46,5 +55,4 @@ class Company < ActiveRecord::Base
         end
       end
     end
-
 end
