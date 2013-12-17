@@ -32,6 +32,22 @@ ActiveAdmin.register Kpi do
     end
   end
 
+  collection_action :export_duplicated_data, :method => :get do
+    kpis = Kpi.find(params[:kpis])
+    file = CSV.generate do |csv|
+      csv << ['Event'] + kpis.map(&:name)
+      Campaign.find(params[:campaign_id]).events.find_in_batches do |group|
+        group.each do |event|
+          results = kpis.map{|k| event.result_for_kpi(k).try(:value)}.compact.uniq
+          csv << [event_url(event)] + results if results.count > 1
+        end
+      end
+    end
+    respond_to do |format|
+      format.csv { render text: file }
+    end
+  end
+
   controller do
     def apply_pagination(chain)
         chain = super unless formats.include?(:json) || formats.include?(:csv)
