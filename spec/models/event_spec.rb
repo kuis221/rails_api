@@ -17,6 +17,7 @@
 #  promo_hours   :decimal(6, 2)    default(0.0)
 #  reject_reason :text
 #  summary       :text
+#  timezone      :string(255)
 #
 
 require 'spec_helper'
@@ -823,6 +824,60 @@ describe Event do
       User.current = user
 
       event.valid?.should be_true
+    end
+  end
+
+  describe "after_validation #set_event_timezone" do
+    it "should set the current timezone for new events" do
+      event = FactoryGirl.build(:event)
+      event.valid?  # this will trigger the after_validation call
+      event.timezone.should == 'America/Los_Angeles'
+    end
+
+    it "should set the current timezone if the event's start date is updated" do
+      event = nil
+      Time.use_zone('America/New_York') do
+        event = FactoryGirl.create(:event)
+        event.timezone.should == "America/New_York"
+      end
+      Time.use_zone("America/Guatemala") do
+        event = Event.last
+        event.start_date = '01/22/2019'
+        event.valid?  # this will trigger the after_validation call
+        event.timezone.should == "America/Guatemala"
+      end
+    end
+
+    it "should set the current timezone if the event's end date is updated" do
+      event = nil
+      Time.use_zone('America/New_York') do
+        event = FactoryGirl.create(:event)
+        event.timezone.should == "America/New_York"
+      end
+      Time.use_zone("America/Guatemala") do
+        event = Event.last
+        event.end_date = '01/22/2019'
+        event.valid?  # this will trigger the after_validation call
+        event.timezone.should == "America/Guatemala"
+      end
+    end
+
+    it "should not update the timezone if the event's dates are not modified" do
+      event = nil
+      # When creating the event the timezone should be set to America/New_York
+      Time.use_zone('America/New_York') do
+        event = FactoryGirl.create(:event, timezone: Time.zone.name)
+        event.timezone.should == 'America/New_York'
+      end
+
+      # Then if later it's updated on a different timezone, the timezone should not be updated
+      # if the dates are not modified
+      Time.use_zone('America/Guatemala') do
+        event = Event.last
+        event.summary = 'Just modifying any column'
+        event.save.should be_true
+        event.timezone.should == 'America/New_York'
+      end
     end
   end
 end

@@ -2,14 +2,6 @@ module EventsHelper
   include ActionView::Helpers::NumberHelper
   include SurveySeriesHelper
 
-  def event_date_range(event)
-    if event.start_at.to_date == event.end_at.to_date
-      "#{event.start_date} #{event.start_time} - #{event.end_time}"
-    else
-      "#{event.start_date} #{event.start_time} -  #{event.end_date} #{event.end_time}"
-    end
-  end
-
   def kpi_goal_progress_bar(goal, result)
     if goal.present?
       result ||= 0
@@ -29,6 +21,12 @@ module EventsHelper
     campaigns = company_campaigns.active.accessible_by_user(current_company_user)
     campaigns = campaigns.select{|c| c.place_allowed_for_event?(venue.place) } if venue.present? && !current_company_user.is_admin?
     campaigns
+  end
+
+  def event_date(event, attribute)
+    date = event.send(attribute)
+    date = Timeliness.parse(date.in_time_zone(event.timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: event.timezone) if current_company.timezone_support? && event.timezone.present?
+    date
   end
 
   protected
