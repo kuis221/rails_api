@@ -39,34 +39,30 @@ describe "BrandPortfolios", js: true, search: true do
       end
 
       it "should allow user to deactivate brand portfolios" do
-        brand_portfolio = FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
+        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
 
-        within("ul#brand_portfolios-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_js_link('Deactivate')
-            page.should have_no_selector("li#brand_portfolio_#{brand_portfolio.id}")
-          end
+        page.should have_content('A Vinos ticos')
+        within("ul#brand_portfolios-list li:nth-child(1)") do
+          click_js_link('Deactivate')
         end
+        page.should have_no_content('A Vinos ticos')
       end
 
       it "should allow user to activate brand portfolios" do
-        brand_portfolio = FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
+        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
 
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
 
-        within("ul#brand_portfolios-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_js_link('Activate')
-            page.should have_no_selector("li#brand_portfolio_#{brand_portfolio.id}")
-          end
+        page.should have_content('A Vinos ticos')
+        within("ul#brand_portfolios-list li:nth-child(1)") do
+          click_js_link('Activate')
         end
+        page.should have_no_content('A Vinos ticos')
       end
     end
 
