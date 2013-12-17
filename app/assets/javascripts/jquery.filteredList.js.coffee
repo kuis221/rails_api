@@ -90,6 +90,7 @@ $.widget 'nmk.filteredList', {
 
 		@defaultParams = []
 		@initialized = true
+		@_serializeFilters()
 
 	destroy: ->
 		@_closeFilterOptions()
@@ -148,8 +149,8 @@ $.widget 'nmk.filteredList', {
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
 			$slider,
-			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
-			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
+			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="'+min_value+'" />'),
+			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="'+max_value+'" />')
 		)
 
 		$slider.rangeSlider({
@@ -533,6 +534,7 @@ $.widget 'nmk.filteredList', {
 
 	_serializeFilters: () ->
 		data = @form.serialize()
+		alert(data)
 		for filter in @options.customFilters
 			data += "&#{filter.name}=#{escape(filter.value)}"
 		data.replace(/^&/,"")
