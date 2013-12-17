@@ -12,10 +12,14 @@ class FilteredController < InheritedResources::Base
   custom_actions collection: [:filters, :items]
 
   def set_previous_page
-    session[:previous_page] = request.env['HTTP_REFERER']
-    session[:filters] =  Rack::Utils.parse_nested_query(session[:previous_page].split('?').last).deep_symbolize_keys
-    session[:filters][:events] = session[:filters][:events_count]
-    session[:filters].delete(:events_count)
+    if request.env['HTTP_REFERER']
+      session[:previous_page] = request.env['HTTP_REFERER']
+      if session[:previous_page] and session[:previous_page].include?('?')
+        session[:filters] =  Rack::Utils.parse_nested_query(session[:previous_page].split('?').last).deep_symbolize_keys if session[:previous_page].split('?')
+        session[:filters][:events] = session[:filters][:events_count]
+        session[:filters].delete(:events_count)
+      end
+    end
   end
   def filters
   end
