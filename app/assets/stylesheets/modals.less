@@ -650,12 +650,7 @@ ul.select2-results{
 				padding: 0;
 				width: 120px;
 				&.btn-chat{
-					background-color: @completed;
-					color: white;
 					display: none;
-					&:hover{
-						background-color: #7ca63a;
-					}
 				}
 			}
 		}
@@ -1180,37 +1175,8 @@ div#spin{
 }
 
 
-// HELP - CHAT SUPPORT CENTER
 
-/*
-
-.fancybox-wrap.fancybox-type-iframe{
-	width: 550px !important;
-	.fancybox-inner{
-		height: auto !important;
-		width: 520px !important;
-	}
-}
-
-.fancybox-wrap iframe{
-	height: auto !important;
-	min-height: 450px !important;
-	overflow: visible !important;
-}
-
-
-
-.fancybox-iframe{
-	min-height: 450px !important;
-	height: auto !important;
-}
-
-.fancybox-inner{
-	height: auto !important;
-	overflow: visible !important;
-}
-*/
-
+/* -- HELP CHAT SUPPORT CENTER -- */
 
 .fancybox-type-iframe .fancybox-inner{
 	height: auto;
@@ -1218,6 +1184,28 @@ div#spin{
 }
 
 .fancybox-skin{
-	width: 520px !important;
-	left: 20%;
+	width: auto !important;
 }
+
+/* ESTO ME DEFORMA TODO */
+
+.fancybox-wrap.fancybox-type-iframe{
+	top: 10%;
+	width: 545px !important;
+}
+
+
+.assistly-widget a {
+   background-position: 2px 0 !important;
+   display: block;
+   height: 45px !important;
+   width: 125px !important;
+   overflow: hidden; 
+}
+           
+.assistly-widget a:hover {
+   background-position: 2px -44px !important;         
+}
+          
+
+

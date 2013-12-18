@@ -507,7 +507,7 @@ a.datepick-cmd:hover{
 .datepick{
 	background-color: white;
 	border: 0;
-	margin-bottom: 30px;
+	margin-bottom: 10px;
 }
 .datepick-month td .datepick-other-month {
 	color:@user_menu;
@@ -1128,17 +1128,19 @@ li.dropdown a{
 .nav-tabs li a:hover{
 	background-color: white;
 	border-bottom: 0;
-	color: @text;
+	color: @brand;
 }
 .nav-tabs>.active>a{
+	color: @brand;
 	border-left: 0;
 	border-right: 0;
 	border-top: 0;
-}
-.nav-tabs>.active>a:hover{
-	border-left:0;
-	border-right: 0;
-	border-top: 0;
+	&:hover{
+		color: @brand;
+		border-left:0;
+		border-right: 0;
+		border-top: 0;
+	}
 }
 
 .nav-pills > li > a.single-link{
@@ -1315,9 +1317,9 @@ label{
 	font-size: 13px;
 	margin: 35px 0 0 0;
 	h3{
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: bold;
-		margin-bottom: 15px;
+		margin-bottom: 10px;
 		text-transform: uppercase;
 	}
 	input[type="checkbox"]{
@@ -1343,6 +1345,10 @@ label{
 }
 .clear-filters {
   float: right;
+  text-decoration: underline;
+  a{
+  	color: @user_menu;
+  }
   a:hover{
     color: @text;
   }
@@ -1704,18 +1710,18 @@ ul.kpis-list{
 	    		}
 	    		&:last-child{
 	    			.add:before{
-		        	  	color: @brand;
-						content: "\e021";
+		        	color: @brand;
+							content: "\e021";
 					  	display: inline-block;
 					  	font-family: 'icons';
-						font-size: 21px;
-						right:5px;
+							font-size: 21px;
+							right:5px;
 					  	position: relative;
-						speak: none;
-						text-align: center;
-						top: 5px;
+							speak: none;
+							text-align: center;
+							top: 5px;
 					  	vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+						  -webkit-font-smoothing: antialiased;
 	    			}
 	    		}
 	    	}
@@ -2321,6 +2327,8 @@ ul.ui-widget-content{
 .ui-menu{
 	li{
 		&.ui-menu-item{
+			margin: 0 0 0 2px !important;
+			width: 98% !important;
 			a{
 				color: @menu;
 				font-weight: normal !important;
@@ -3263,7 +3271,7 @@ ul.thumbnails{
 		&>li{
 			margin: 0 3% 6% 2%;
 			&:first-child{
-				margin: 0 3% 6% 3%;
+				margin: 0 3% 6% 2%;
 			}
 		}
 	}
@@ -3399,6 +3407,7 @@ ul{
 			opacity: 0.6;
 			&:hover {
 				opacity: 1.0;
+				color: @text;
 			}
 		}
 	}
@@ -5627,7 +5636,7 @@ body{
 	  			font-size: 16px;
 	  		}
 	  		.member-description {
-	  			width: 90%;
+	  			line-height: 16px;
 	  		}
 	  	}
 			a {
@@ -5757,4 +5766,8 @@ table td.sub-level-1 {
 			background-color: #989898 !important;
 		}
 	}
+}
+
+.date-range-filter{
+	display: inline-block;
 }
