@@ -66,6 +66,7 @@ class ListExport < ActiveRecord::Base
     controller = self.controller.constantize.new
 
     User.current = company_user.user
+    Company.current = company_user.company
     controller.instance_variable_set(:@_current_user, company_user.user)
     controller.instance_variable_set(:@current_company, company_user.company)
     controller.instance_variable_set(:@current_company_user, company_user)
