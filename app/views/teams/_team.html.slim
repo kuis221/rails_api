@@ -12,4 +12,4 @@ li id="team_#{team.id}" class="#{active_class(team)}"
     = link_to '', edit_team_path(team), remote: true, class: 'edit' if can?(:edit, Team)
     - if can?(:deactivate, Team)
       = link_to_deactivate team
-      = link_to '', activate_team_path(team), remote: true, class: 'enable',title: I18n.t('confirmation.active') unless team.active?
+      = link_to '', activate_team_path(team), remote: true, class: 'enable',title: I18n.t('confirmation.activate') unless team.active?

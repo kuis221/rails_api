@@ -37,9 +37,25 @@ describe "Tasks", js: true, search: true do
           page.should have_content('MON Sep 2')
           page.should have_content('Centenario FY14')
         end
-
       end
+    end
+    
+    it "allows the user to activate/deactivate tasks" do
+      tasks = [
+        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
+        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02' , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company)))
+      ]
+      Sunspot.commit
+      visit mine_tasks_path
 
+      within("ul#tasks-list") do
+        # First Row
+        within("li:nth-child(1)") do
+          click_link('Deactivate')
+        end
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
     end
   end
 

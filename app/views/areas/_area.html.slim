@@ -8,4 +8,4 @@ li id="area_#{area.id}" class="#{active_class(area)}"
     = link_to '', edit_area_path(area), remote: true, title: 'Edit', class: 'edit' if can?(:edit, Area)
     - if can?(:deactivate, Area)
       = link_to_deactivate area
-      = link_to '', activate_area_path(area), remote: true, title: I18n.t('confirmation.deactive'), class: 'enable' unless area.active?
+      = link_to '', activate_area_path(area), remote: true, title: I18n.t('confirmation.activate'), class: 'enable' unless area.active?

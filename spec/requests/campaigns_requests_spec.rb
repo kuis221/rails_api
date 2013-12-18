@@ -47,6 +47,8 @@ describe "Campaigns", js: true, search: true do
         within("ul#campaigns-list li:nth-child(1)") do
           click_js_link('Deactivate')
         end
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
         page.should have_no_content('Cacique FY13')
       end
 
@@ -98,10 +100,11 @@ describe "Campaigns", js: true, search: true do
       visit campaign_path(campaign)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 
@@ -117,7 +120,7 @@ describe "Campaigns", js: true, search: true do
         click_button 'Save'
       end
 
-      find('h2', text: 'edited campaign name') # Wait for the page to reload
+      #find('h2', text: 'edited campaign name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited campaign name')
       page.should have_selector('div.description-data', text: 'edited campaign description')
     end

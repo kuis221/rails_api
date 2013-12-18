@@ -47,6 +47,8 @@ describe "BrandPortfolios", js: true, search: true do
         within("ul#brand_portfolios-list li:nth-child(1)") do
           click_js_link('Deactivate')
         end
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
         page.should have_no_content('A Vinos ticos')
       end
 
@@ -114,10 +116,11 @@ describe "BrandPortfolios", js: true, search: true do
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 

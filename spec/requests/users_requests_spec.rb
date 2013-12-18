@@ -44,6 +44,29 @@ describe "Users", :js => true do
         page.should have_content('ABC inc.')
       end
     end
+    
+    describe "/users", :js => true, :search => true do
+      it "allows the user to activate/deactivate users" do
+        role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
+        user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+        Sunspot.commit
+        visit company_users_path
+        within("ul#users-list") do
+        # First Row
+          within("li:nth-child(2)") do
+            click_link('Deactivate')
+          end
+        end
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
+        within("ul#users-list") do
+        # First Row
+          within("li:nth-child(2)") do
+            click_link('Activate')
+          end
+        end
+      end
+    end
 
     describe "/users/:user_id", :js => true do
       it "GET show should display the user details page" do
@@ -62,12 +85,13 @@ describe "Users", :js => true do
         visit company_user_path(company_user)
 
         within('.links-data') do
-          click_js_link('Deactivate')
-          page.should have_selector('a.toggle-active')
-
-          click_js_link('Activate')
-          page.should have_selector('a.toggle-inactive')
-        end
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
       end
 
       it 'allows the user to edit another user' do
