@@ -43,6 +43,8 @@ RSpec.configure do |config|
 
   config.render_views
 
+  config.formatter = 'Fuubar' unless ENV['CI']
+
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.

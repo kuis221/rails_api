@@ -603,6 +603,14 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def start_at
+    localize_date(:start_at)
+  end
+
+  def end_at
+    localize_date(:end_at)
+  end
+
   private
 
     # Copy some errors to the attributes used on the forms so the user
@@ -632,9 +640,9 @@ class Event < ActiveRecord::Base
       else
         if has_attribute?(:start_at) # this if is to allow custom selects on the Event module
           self.start_date = self.start_at.to_s(:slashes)   unless self.start_at.blank?
-          self.start_time = self.start_at.to_s(:time_only) unless self.start_at.blank?
+          self.start_time = self.start_at.to_s(:time_only).strip unless self.start_at.blank?
           self.end_date   = self.end_at.to_s(:slashes)     unless self.end_at.blank?
-          self.end_time   = self.end_at.to_s(:time_only)   unless self.end_at.blank?
+          self.end_time   = self.end_at.to_s(:time_only).strip   unless self.end_at.blank?
         end
       end
     end
@@ -716,6 +724,14 @@ class Event < ActiveRecord::Base
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
       end
+    end
+
+    def localize_date(attribute)
+      date = read_attribute(attribute)
+      if date && timezone && Company.current && Company.current.timezone_support? && Company.current.id == company_id
+        date = Timeliness.parse(date.in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone)
+      end
+      date
     end
 
     # def add_team_members
