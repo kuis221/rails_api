@@ -186,10 +186,9 @@ module ApplicationHelper
   end
   
   def link_to_deactivate(model)
-    model_sytem_name = model.class.name.split(/(?=[A-Z])/).join('_').downcase
-    humanized_name = model_sytem_name.gsub('_', ' ')
-    function = "deactivate_#{model_sytem_name}_path #{model.id}"
-    link_to '', eval(function), remote: true, title: I18n.t('confirmation.deactive') , class: 'disable', confirm: I18n.t('confirmation.deactive_confirm_message', model: humanized_name) if model.active?
+    model_sytem_name = model.class.name.underscore
+    humanized_name = model_sytem_name.humanize
+    link_to '', [:deactivate, model], remote: true, title: I18n.t('confirmation.deactive') , class: 'disable', confirm: I18n.t('confirmation.deactive_confirm_message', model: humanized_name) if model.active?
   end
 
   def active_class(item)
