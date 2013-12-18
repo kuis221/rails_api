@@ -89,7 +89,6 @@ describe "Users", :js => true do
           click_js_button 'Save'
         end
 
-        find('h2', text: 'Pedro Navaja') # Wait for the page to reload
         page.should have_selector('h2', text: 'Pedro Navaja')
         page.should have_selector('div.user-role', text: 'Another Role')
       end
@@ -127,7 +126,7 @@ describe "Users", :js => true do
 
     end
 
-    describe "edit profile" do
+    describe "edit profile link" do
       it 'allows the user to edit his profile' do
         visit company_user_path(@company_user)
 

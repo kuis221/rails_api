@@ -1,4 +1,15 @@
 require 'spec_helper'
+require 'roo'
+
+class EventsController
+  def test_export
+    exporter = ListExport.create(controller: 'EventsController', company_user: @company_user, export_format: 'xlsx', params: search_params)
+    send_data export_list(exporter), filename: 'test.xlsx'
+  end
+end
+
+class EventDatum < Event
+end
 
 describe EventsController do
   describe "as registered user" do
@@ -97,6 +108,52 @@ describe EventsController do
           response.should be_success
           assigns(:calendar_highlights).should == {2013=>{1=>{23=>1}, 2=>{15=>1}}}
         end
+      end
+
+      it "queue the job for export the list" do
+        expect{
+          get :index, format: :xlsx
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        ListExportWorker.should have_queued(export.id)
+      end
+    end
+
+    describe "GET 'list_export'", search: true do
+      let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
+      it "should return an empty book with the correct headers" do
+        with_routing do |map|
+          map.draw { get ':controller/:action' }
+          get 'test_export'
+          woorbook_from_response do |oo|
+            oo.last_row.should == 1
+            1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS"]
+          end
+        end
+      end
+
+      it "should include the event results" do
+        place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
+        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
+        Sunspot.commit
+
+        with_routing do |map|
+          map.draw { get ':controller/:action' }
+          get 'test_export'
+          woorbook_from_response do |oo|
+            oo.last_row.should == 2
+            1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved"]
+          end
+        end
+      end
+    end
+
+    def woorbook_from_response
+      File.open('tmp/g.xlsx', 'w'){|f| f.write(response.body) }
+      file = Tempfile.open(['export', '.xlsx'], Rails.root.join('tmp') ) do |file|
+        file.print(response.body)
+        file.flush
+        yield Roo::Excelx.new(file.path)
       end
     end
 
@@ -465,7 +522,7 @@ describe EventsController do
         event = FactoryGirl.create(:submitted_event, active: true, company: @company)
         lambda {
           put 'approve', id: event.to_param
-          response.should redirect_to(event_path(event))
+          response.should redirect_to(event_path(event, :status => 'approved'))
           event.reload
         }.should change(event, :approved?).to(true)
       end
@@ -483,7 +540,6 @@ describe EventsController do
         event.reject_reason.should == 'blah blah blah'
       end
     end
-
   end
 
 

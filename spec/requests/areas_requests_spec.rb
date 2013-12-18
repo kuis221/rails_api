@@ -40,24 +40,33 @@ describe "Areas", js: true, search: true do
       end
     end
 
-    it "should allow user to activate/deactivate brand areas" do
+    it "should allow user to deactivate areas" do
       FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: true, company: @company)
       Sunspot.commit
       visit areas_path
 
-      within("ul#areas-list") do
-        # First Row
-        within("li:nth-child(1)") do
-          click_js_link('Deactivate')
-          page.should have_selector('a.enable', text: '')
-
-          click_js_link('Activate')
-          page.should have_selector('a.disable', text: '')
-        end
+      page.should have_content('Wild Wild West')
+      within("ul#areas-list li:nth-child(1)") do
+        click_js_link('Deactivate')
       end
+      page.should have_no_content('Wild Wild West')
+    end
+
+    it "should allow user to activate areas" do
+      FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: false, company: @company)
+      Sunspot.commit
+      visit areas_path
+
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      page.should have_content('Wild Wild West')
+      within("ul#areas-list li:nth-child(1)") do
+        click_js_link('Activate')
+      end
+      page.should have_no_content('Wild Wild West')
     end
   end
-
 
   describe "/areas/:area_id", :js => true do
     it "GET show should display the area details page" do

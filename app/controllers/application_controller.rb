@@ -28,12 +28,14 @@ class ApplicationController < ActionController::Base
       @current_company ||= begin
         current_company_id = session[:current_company_id]
         company = nil
-        if current_company_id
-          company = current_user.companies.find(current_company_id) rescue nil
-        else
-          company = current_user.current_company
+        if user_signed_in?
+          if current_company_id
+            company = current_user.companies.find(current_company_id) rescue nil
+          else
+            company = current_user.current_company
+          end
+          company ||= current_user.companies.first
         end
-        company ||= current_user.companies.first
         company
       end
     end
@@ -69,20 +71,21 @@ class ApplicationController < ActionController::Base
 
     def access_denied
       respond_to do |format|
-        format.js { render 'access_denied'}
-        format.html { render 'access_denied'}
+        format.js { render 'access_denied' }
+        format.html { render 'access_denied' }
       end
     end
 
     def scope_current_user
       User.current = current_user
       if user_signed_in?
-        current_user.current_company = current_company
+        Company.current = current_user.current_company = current_company
         Time.zone = current_user.time_zone
       end
       yield
     ensure
       User.current = nil
+      Company.current = nil
       Time.zone = Rails.application.config.time_zone
     end
 end

@@ -54,7 +54,7 @@ module ApplicationHelper
 
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
-      link_to(collection_path(:_stored => true), class: 'close-details') do
+      link_to(params[:status].present? ? collection_path(:_stored => true) : :back, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, " ".html_safe, class: :close)
       end
@@ -142,7 +142,7 @@ module ApplicationHelper
         else
           the_date = start_at.strftime('%^a <b>%b %e, %Y</b>'+options[:date_separator]).html_safe
         end
-        the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+        the_date + "#{start_at.strftime('%l:%M %p').strip} – #{end_at.strftime('%l:%M %p').strip}".html_safe
       end
     end
   end

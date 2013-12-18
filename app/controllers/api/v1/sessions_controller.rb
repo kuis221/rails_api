@@ -48,7 +48,8 @@ class Api::V1::SessionsController < Api::V1::ApiController
       render :status=>404, :json=>{sucess: false, info: 'Invalid token.'}
     else
       resource.reset_authentication_token!
-      render :status=>200, :json=>{success: true, info: 'Logged out', token: params[:id]}
+
+      render :status=>200, :json=>{success: true, info: 'Logged out' + resource.errors.inspect, token: params[:id]}
     end
   end
 end

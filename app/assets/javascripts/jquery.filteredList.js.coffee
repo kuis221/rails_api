@@ -320,7 +320,7 @@ $.widget 'nmk.filteredList', {
 					if child = @_buildFilterOptionsList(option, filterWrapper,true)
 						$option.append child
 
-			if showChild == false 
+			if showChild == false
 				$list = $('<ul class="sf-vertical-menu filter_vertical_box">')
 			else
 				$list = $('<ul class="child_submenu">')
@@ -334,9 +334,9 @@ $.widget 'nmk.filteredList', {
 									$('.child_div').hide()
 									$('.child_div').parent().css('height','8%')
 									$list_group.siblings().css('height','8%')
-								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0 
+								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0
 									$list_group.siblings().find("div").hide()
-									
+
 						$list.append $list_group.text(group)
 					$list.append children
 
@@ -359,7 +359,7 @@ $.widget 'nmk.filteredList', {
 					$div_tmp.find(".child_div").hide() # remove extra titles
 					$li.css('height','25%')
 					$li.siblings().find('.child_div').hide()
-			
+
 		$li.append($label.append($input, option.label))
 
 	_addAutocompleteBox: () ->
@@ -503,7 +503,9 @@ $.widget 'nmk.filteredList', {
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
 	_filtersChanged: (updateState=true) ->
-		@_setCalendarDatesFromCalendar()
+		if @options.includeCalendars
+			@_setCalendarDatesFromCalendar()
+
 		@nextpagetoken = false
 		if @options.source
 			@reloadData

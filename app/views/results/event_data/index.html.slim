@@ -68,7 +68,7 @@ javascript:
       }
       $('#list-view').addClass('scroll-'+scroll).data('scroll', scroll + 1);
     }
-    if (($lastItem.offset().left + $lastItem.width()) <= $(this).offset().left ) {
+    if (($lastItem.offset().left + $lastItem.width()) <= $(this).offset().left + ($lastItem.width()*2) ) {
       $('#list-view').addClass('scroll-last');
     }
   });
