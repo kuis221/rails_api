@@ -71,6 +71,22 @@ RSpec.configure do |config|
     Time.zone = Rails.application.config.time_zone
   end
 
+  if ENV['CI']
+    Capybara::Screenshot.autosave_on_failure = false
+
+    # Save screenshot to Amazon S3 on failure when running on the CI server
+    if Capybara.page.current_url != '' && example.exception
+      filename_prefix = Capybara::Screenshot.filename_prefix_for(:rspec, example)
+      saver = Capybara::Screenshot::Saver.new(Capybara, Capybara.page, true, filename_prefix)
+      saver.save
+
+      # Save it to S3
+      s3 = AWS::S3.new
+      bucket = s3.buckets[S3_CONFIGS['bucket_name']]
+      obj = bucket.objects['key'].write(File.open(saver.screenshot_path))
+      example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read)}"
+    end
+  end
 
   # Capybara.javascript_driver = :webkit
   Capybara.javascript_driver = :selenium
