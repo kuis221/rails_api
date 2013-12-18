@@ -38,23 +38,31 @@ describe "Campaigns", js: true, search: true do
 
       end
 
-      it "should allow user to activate/deactivate Campaigns" do
+      it "should allow user to deactivate campaigns" do
         FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
         Sunspot.commit
         visit campaigns_path
 
-        within("ul#campaigns-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_js_link('Deactivate')
-            page.should have_selector('a.enable', text: '')
-
-            click_js_link('Activate')
-            page.should have_selector('a.disable', text: '')
-          end
+        page.should have_content('Cacique FY13')
+        within("ul#campaigns-list li:nth-child(1)") do
+          click_js_link('Deactivate')
         end
+        page.should have_no_content('Cacique FY13')
       end
 
+      it "should allow user to activate campaigns" do
+        campaign = FactoryGirl.create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+        Sunspot.commit
+        visit campaigns_path
+
+        filter_section('ACTIVE STATE').unicheck('Inactive')
+
+        page.should have_content('Cacique FY13')
+        within("ul#campaigns-list li:nth-child(1)") do
+          click_js_link('Activate')
+        end
+        page.should have_no_content('Cacique FY13')
+      end
     end
 
     it 'allows the user to create a new campaign' do

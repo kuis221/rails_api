@@ -8,7 +8,7 @@
       #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
           b= resource.campaign_name
           br>/
-          = resource.start_at.to_s
+          = event_date(resource, :start_at).to_s
           br>/
           = place_address(resource.place)
 
@@ -17,7 +17,7 @@
     h2.special = resource.campaign_name
 
     .calendar-data
-      = format_date_range(resource.start_at, resource.end_at)
+      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
     - unless resource.place.nil?
       .place-data
         = place_address(resource.place, true) if resource.place
@@ -31,7 +31,7 @@
       = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
-      = format_date_range(resource.start_at, resource.end_at, date_separator: ' ')
+      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')
 
 
   - if can?(:view_members, resource)

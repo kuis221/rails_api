@@ -3,11 +3,12 @@ wb = xlsx_package.workbook
 row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
 row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
 row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
+row_data_date = wb.styles.add_style sz: 11, :format_code => 'mm/dd/yy hh:mm AM/PM'
 
 wb.add_worksheet(name: "Events") do |sheet|
 	sheet.add_row ['CAMPAIGN NAME',
-                 'START DATE',
-                 'START TIME',
+                 'START',
+                 'END',
                  'VENUE NAME',
                  'ADDRESS',
                  'CITY',
@@ -18,15 +19,25 @@ wb.add_worksheet(name: "Events") do |sheet|
 
   each_collection_item do |event|
     sheet.add_row [event.campaign_name,
-                   format_date(event.start_at, true),
-                   format_time(event.start_at),
+                   Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
+                   Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
                    event.place_name,
-                   strip_tags(place_address(event.place, false, ', ')),
+                   strip_tags(event_place_address(event, false, ', ', ', ')),
                    event.place_city,
                    event.place_state_name,
                    event.place_zipcode,
                    event.status,
                    event.event_status],
-                  :style => row_data_text
+                  :style => [row_data_text,
+                             row_data_date,
+                             row_data_date,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text,
+                             row_data_text]
   end
 end

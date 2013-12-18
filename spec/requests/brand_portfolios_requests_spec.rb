@@ -38,23 +38,32 @@ describe "BrandPortfolios", js: true, search: true do
 
       end
 
-      it "should allow user to activate/deactivate brand portfolios" do
+      it "should allow user to deactivate brand portfolios" do
         FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
 
-        within("ul#brand_portfolios-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_js_link('Deactivate')
-            page.should have_selector('a.enable', text: '')
-
-            click_js_link('Activate')
-            page.should have_selector('a.disable', text: '')
-          end
+        page.should have_content('A Vinos ticos')
+        within("ul#brand_portfolios-list li:nth-child(1)") do
+          click_js_link('Deactivate')
         end
+        page.should have_no_content('A Vinos ticos')
       end
 
+      it "should allow user to activate brand portfolios" do
+        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
+        Sunspot.commit
+        visit brand_portfolios_path
+
+        filter_section('ACTIVE STATE').unicheck('Inactive')
+        filter_section('ACTIVE STATE').unicheck('Active')
+
+        page.should have_content('A Vinos ticos')
+        within("ul#brand_portfolios-list li:nth-child(1)") do
+          click_js_link('Activate')
+        end
+        page.should have_no_content('A Vinos ticos')
+      end
     end
 
     it 'allows the user to create a new portfolio' do
