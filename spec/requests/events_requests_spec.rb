@@ -130,7 +130,7 @@ describe "Events", js: true, search: true do
         end
       end
 
-      describe "with timezone suport turned ON" do
+      describe "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
           @user.reload
@@ -152,6 +152,100 @@ describe "Events", js: true, search: true do
               page.should have_content('WED Aug 21')
               page.should have_content('10:00 AM – 11:00 AM')
             end
+          end
+        end
+      end
+    end
+  end
+
+  describe "create a event" do
+    it "allows to create a new event" do
+      FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka')
+      visit events_path
+
+      click_button 'Create'
+
+      within visible_modal do
+        select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
+        click_button 'Create'
+      end
+      ensure_modal_was_closed
+      page.should have_content('ABSOLUT Vodka')
+    end
+  end
+
+
+  describe "edit a event" do
+    it "allows to edit a event" do
+      FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka FY2013')
+      event = FactoryGirl.create(:event,
+          start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+
+      Sunspot.commit
+
+      visit events_path
+
+      within("ul#events-list") do
+        click_link 'Edit'
+      end
+
+      within visible_modal do
+        find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
+        find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+        find_field('Start time').value.should == '8:00pm'
+        find_field('End time').value.should == '11:00pm'
+
+        select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
+        click_button 'Save'
+      end
+      ensure_modal_was_closed
+      page.should have_content('ABSOLUT Vodka FY2013')
+    end
+
+    describe "with timezone support turned ON" do
+      before do
+        @company.update_column(:timezone_support, true)
+        @user.reload
+      end
+      it "should display the dates relative to event's timezone" do
+        Time.use_zone('America/Guatemala') do
+          event = FactoryGirl.create(:event,
+              start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+              start_time: '8:00 PM', end_time: '11:00 PM',
+              campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+        end
+
+        Sunspot.commit
+
+        Time.use_zone('America/New_York') do
+          visit events_path
+
+          within("ul#events-list") do
+            click_link 'Edit'
+          end
+
+          within visible_modal do
+            find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('Start time').value.should == '8:00pm'
+            find_field('End time').value.should == '11:00pm'
+
+            fill_in('Start time', with: '10:00pm')
+            fill_in('End time', with: '11:00pm')
+
+            click_button 'Save'
+          end
+          ensure_modal_was_closed
+          page.should have_content('10:00 PM – 11:00 PM')
+        end
+
+        # Check that the event's time is displayed with the same time in a different tiem zone
+        Time.use_zone('America/Los_Angeles') do
+          visit events_path
+          within("ul#events-list") do
+            page.should have_content('10:00 PM – 11:00 PM')
           end
         end
       end
