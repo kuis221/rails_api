@@ -16,7 +16,7 @@
         .pull-left
           = f.input :end_date, :as => :date_picker
         .pull-left
-          = f.input :end_time, :as => :time_picker
+          = f.input :end_time, :as => :time_picker, inline: true
 
     - if parent.is_a?(Venue)
         = f.hidden_field :place_reference, as: :hidden, value: parent.place_id

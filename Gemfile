@@ -99,6 +99,7 @@ group :test do
   gem 'roo'
   gem 'simplecov', :require => false
   gem 'capybara-screenshot'
+  gem 'fuubar'
 end
 
 gem 'airbrake'
