@@ -59,7 +59,10 @@ describe "Events", js: true, search: true do
             page.should have_content('Campaign FY2012')
             click_js_link('Deactivate')
           end
-          visible_modal.click_js_link("OK")
+          within visible_modal do
+            page.should have_content('Are you sure you want to deactivate this Event?')
+            click_js_link("OK")
+          end
           ensure_modal_was_closed
           within "ul#events-list" do
             page.should have_no_content('Campaign FY2012')

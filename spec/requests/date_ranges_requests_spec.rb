@@ -112,7 +112,10 @@ describe "DateRanges", search: true, js: true do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
       find('.links-data').click_js_link('Deactivate')
-      visible_modal.click_js_link("OK")
+      within visible_modal do
+        page.should have_content("Are you sure you want to deactivate this date range?")
+        click_js_link("OK")
+      end
       ensure_modal_was_closed
       find('.links-data').click_js_link('Activate')
     end
