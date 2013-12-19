@@ -220,7 +220,6 @@ class Kpi < ActiveRecord::Base
                       value ||= kpis_to_remove.map{|k| r = event.result_for_kpi(k); r.value }.compact.first
                       if kpi_keep.kpi_type == 'count'
                         option_text = KpisSegment.find(value).text.downcase.strip rescue nil
-                        p "Searching for value '#{option_text}' "
                         value = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == option_text}.try(:id) if option_text
                       end
                       result.value = value

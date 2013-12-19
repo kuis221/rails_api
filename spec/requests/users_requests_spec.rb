@@ -44,7 +44,7 @@ describe "Users", :js => true do
         page.should have_content('ABC inc.')
       end
     end
-    
+
     describe "/users", :js => true, :search => true do
       it "allows the user to activate/deactivate users" do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
@@ -52,18 +52,20 @@ describe "Users", :js => true do
         Sunspot.commit
         visit company_users_path
         within("ul#users-list") do
-        # First Row
-          within("li:nth-child(2)") do
-            click_link('Deactivate')
-          end
+          hover_and_click "li:nth-child(2)", 'Deactivate'
         end
-        visible_modal.click_js_link("OK")
+        within visible_modal do
+          page.should have_content('Are you sure you want to deactivate this User?')
+          click_js_link("OK")
+        end
         ensure_modal_was_closed
+        # Make it show only the inactive elements
+        filter_section('ACTIVE STATE').unicheck('Inactive')
+        filter_section('ACTIVE STATE').unicheck('Active')
         within("ul#users-list") do
-        # First Row
-          within("li:nth-child(2)") do
-            click_link('Activate')
-          end
+          page.should have_content('Pedro Navaja')
+          hover_and_click "li:nth-child(1)", 'Activate'
+          page.should have_no_content('Pedro Navaja')
         end
       end
     end

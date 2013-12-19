@@ -61,7 +61,9 @@ describe "Events", js: true, search: true do
           end
           visible_modal.click_js_link("OK")
           ensure_modal_was_closed
-          page.should have_no_content('Campaign FY2012')
+          within "ul#events-list" do
+            page.should have_no_content('Campaign FY2012')
+          end
         end
       end
 

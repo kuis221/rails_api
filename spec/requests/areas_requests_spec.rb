@@ -101,8 +101,12 @@ describe "Areas", js: true, search: true do
       within('.links-data') do
         click_js_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this area?')
+        click_js_link("OK")
+      end
       ensure_modal_was_closed
+
       within('.links-data') do
         click_js_link('Activate')
       end

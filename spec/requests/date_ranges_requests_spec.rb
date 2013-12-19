@@ -37,27 +37,33 @@ describe "DateRanges", search: true, js: true do
       end
 
     end
-    
-     it "should allow user to activate/deactivate Date Rages" do
-        FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
-        Sunspot.commit
-        visit date_ranges_path
-        
-        within("ul#date_ranges-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            click_link('Deactivate')
-          end
-        end
-        
-        visible_modal.click_js_link("OK")
-        ensure_modal_was_closed
-        
-        within("ul#date_ranges-list") do
-          # Second Row
-          within("li:nth-child(1)") do
-            click_link('Activate')
-          end
+
+    it "should allow user to activate/deactivate Date Ranges" do
+      FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
+      Sunspot.commit
+      visit date_ranges_path
+
+      within("ul#date_ranges-list") do
+        click_link('Deactivate')
+      end
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this Date range?')
+        click_js_link("OK")
+      end
+      ensure_modal_was_closed
+
+      within("ul#date_ranges-list") do
+        page.should have_no_selector('li')
+      end
+
+      # Make it show only the inactive elements
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      within("ul#date_ranges-list") do
+        page.should have_content('Weekdays')
+        click_link('Activate')
+        page.should have_no_content('Weekdays')
       end
     end
 
@@ -105,21 +111,17 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
-      within('.links-data') do
-         click_js_link('Deactivate')
-       end
-       visible_modal.click_js_link("OK")
-       ensure_modal_was_closed
-       within('.links-data') do
-         click_js_link('Activate')
-       end
+      find('.links-data').click_js_link('Deactivate')
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      find('.links-data').click_js_link('Activate')
     end
 
     it 'allows the user to edit the date_range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
       visit date_range_path(date_range)
 
-      click_js_link('Edit')
+      find('.links-data').click_js_link('Edit')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'

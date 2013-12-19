@@ -296,10 +296,6 @@ jQuery ->
 			$("#imgpreview").remove()
 	)
 
-
-	# Keep filter Sidebar always visible but make it scroll if it's
-	# taller than the window size
-	$filterSidebar = $('#resource-filter-column')
 	$window = $(window)
 	$window.scroll ->
 		if $(this).scrollTop() > 200
@@ -326,16 +322,19 @@ jQuery ->
 					$link.data 'default-content', null
 
 
+	# Keep filter Sidebar always visible but make it scroll if it's
+	# taller than the window size
+	$filterSidebar = $('#resource-filter-column')
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
 		$filterSidebar.originalWidth = $filterSidebar.width();
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
 			if $window.width() >= 979 # For the responsive design
-				$filterSidebar.removeClass('responsive-mode')
 				if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
 					return true
 				$filterSidebar.positioning = true
+				$filterSidebar.removeClass('responsive-mode')
 				sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
 				bottomPosition = $window.scrollTop()+$window.height()
 				footerHeight = $('footer').outerHeight()

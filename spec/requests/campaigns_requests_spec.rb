@@ -68,7 +68,7 @@ describe "Campaigns", js: true, search: true do
     end
 
     it 'allows the user to create a new campaign' do
-      porfolio = FactoryGirl.create(:brand_portfolio, name: 'Test porfolio')
+      porfolio = FactoryGirl.create(:brand_portfolio, name: 'Test portfolio', company: @company)
       visit campaigns_path
 
       click_js_link('New Campaign')
@@ -76,7 +76,7 @@ describe "Campaigns", js: true, search: true do
       within("form#new_campaign") do
         fill_in 'Name', with: 'new campaign name'
         fill_in 'Description', with: 'new campaign description'
-        select_from_chosen('Test porfolio', from: 'Brand portfolios', match: :first)
+        select_from_chosen('Test portfolio', from: 'Brand portfolios', match: :first)
         click_button 'Create'
       end
       ensure_modal_was_closed

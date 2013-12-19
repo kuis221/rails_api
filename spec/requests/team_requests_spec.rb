@@ -38,30 +38,34 @@ describe "Teams", js: true, search: true do
       end
 
     end
-    
+
     it "allows the user to activate/deactivate teams" do
-      teams = [
-        FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
-        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: true, company_id: @company.id)
-      ]
-      # Create a few users for each team
-      teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
-      teams[1].users << FactoryGirl.create_list(:company_user, 2, company_id: @company.id)
+      FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company: @company)
+      Sunspot.commit
+
       visit teams_path
 
       within("ul#teams-list") do
-        # First Row
-        within("li:nth-child(1)") do
-           click_link('Deactivate')
-        end
+        page.should have_content('Costa Rica Team')
+        hover_and_click 'li', 'Deactivate'
       end
-      visible_modal.click_js_link("OK")
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this Team?')
+        click_js_link("OK")
+      end
       ensure_modal_was_closed
-        
       within("ul#teams-list") do
-        within("li:nth-child(1)") do
-          click_link('Activate')
-        end
+        page.should have_no_content('Costa Rica Team')
+      end
+
+      # Make it show only the inactive elements
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      within("ul#teams-list") do
+        page.should have_content('Costa Rica Team')
+        hover_and_click 'li', 'Activate'
+        page.should have_no_content('Costa Rica Team')
       end
 
     end
