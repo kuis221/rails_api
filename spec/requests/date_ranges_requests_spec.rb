@@ -37,6 +37,29 @@ describe "DateRanges", search: true, js: true do
       end
 
     end
+    
+     it "should allow user to activate/deactivate Date Rages" do
+        FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
+        Sunspot.commit
+        visit date_ranges_path
+        
+        within("ul#date_ranges-list") do
+          # First Row
+          within("li:nth-child(1)") do
+            click_link('Deactivate')
+          end
+        end
+        
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
+        
+        within("ul#date_ranges-list") do
+          # Second Row
+          within("li:nth-child(1)") do
+            click_link('Activate')
+          end
+      end
+    end
 
     it 'allows the user to create a new date_range' do
       visit date_ranges_path
@@ -82,10 +105,14 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
-      click_js_link 'Deactivate'
-      page.should have_selector('a.toggle-active')
-      click_js_link 'Activate'
-      page.should have_selector('a.toggle-inactive')
+      within('.links-data') do
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it 'allows the user to edit the date_range' do

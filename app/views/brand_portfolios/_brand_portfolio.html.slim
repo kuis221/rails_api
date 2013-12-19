@@ -7,5 +7,5 @@ li id="brand_portfolio_#{brand_portfolio.id}" class="#{active_class(brand_portfo
   span.pull-right
     = link_to '', edit_brand_portfolio_path(brand_portfolio), remote: true, title: 'Edit', class: 'edit' if can?(:edit, BrandPortfolio)
     - if can?(:deactivate, BrandPortfolio)
-      = link_to '', deactivate_brand_portfolio_path(brand_portfolio), remote: true, title: 'Deactivate', class: 'disable' if brand_portfolio.active?
-      = link_to '', activate_brand_portfolio_path(brand_portfolio), remote: true, title: 'Activate', class: 'enable' unless brand_portfolio.active?
+      = link_to_deactivate(brand_portfolio)
+      = link_to '', activate_brand_portfolio_path(brand_portfolio), remote: true, title: I18n.t('confirmation.activate'), class: 'enable' unless brand_portfolio.active?

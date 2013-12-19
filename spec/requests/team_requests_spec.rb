@@ -38,6 +38,33 @@ describe "Teams", js: true, search: true do
       end
 
     end
+    
+    it "allows the user to activate/deactivate teams" do
+      teams = [
+        FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
+        FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: true, company_id: @company.id)
+      ]
+      # Create a few users for each team
+      teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
+      teams[1].users << FactoryGirl.create_list(:company_user, 2, company_id: @company.id)
+      visit teams_path
+
+      within("ul#teams-list") do
+        # First Row
+        within("li:nth-child(1)") do
+           click_link('Deactivate')
+        end
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+        
+      within("ul#teams-list") do
+        within("li:nth-child(1)") do
+          click_link('Activate')
+        end
+      end
+
+    end
 
     it 'allows the user to create a new team' do
       visit teams_path
@@ -93,12 +120,13 @@ describe "Teams", js: true, search: true do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-        click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
-        click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
-      end
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it 'allows the user to edit the team' do

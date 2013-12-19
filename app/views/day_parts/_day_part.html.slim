@@ -7,5 +7,5 @@ li id="day_part_#{day_part.id}" class="#{active_class(day_part)}"
   span.pull-right
     = link_to '', edit_day_part_path(day_part), remote: true, class: 'edit' if can?(:edit, DayPart)
     - if can?(:deactivate, DayPart)
-      = link_to '', deactivate_day_part_path(day_part), remote: true, class: 'disable' if day_part.active?
-      = link_to '', activate_day_part_path(day_part), remote: true, class: 'enable' unless day_part.active?
+      = link_to_deactivate day_part
+      = link_to '', activate_day_part_path(day_part), remote: true,title: I18n.t('confirmation.activate'), class: 'enable' unless day_part.active?
