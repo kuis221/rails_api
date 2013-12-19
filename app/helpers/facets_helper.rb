@@ -70,7 +70,7 @@ module FacetsHelper
   def events_facets
     @events_facets ||= Array.new.tap do |f|
       # select what params should we use for the facets search
-      facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(q start_date end_date company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
+      facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %(company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
       facet_search = resource_class.do_search(facet_params, true)
 
       f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)

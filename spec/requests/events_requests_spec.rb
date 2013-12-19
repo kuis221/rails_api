@@ -123,14 +123,13 @@ describe "Events", js: true, search: true do
         end
 
         select_filter_calendar_day("26")
-        find('#collection-list-filters').should have_no_content('Another Campaign April 03')
+        find('#collection-list-filters').should have_content('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_no_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26", "27")
-        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
