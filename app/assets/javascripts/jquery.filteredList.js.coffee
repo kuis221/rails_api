@@ -72,7 +72,7 @@ $.widget 'nmk.filteredList', {
 			if firstTime
 				firstTime = false
 			else
-				@reloadFilters()
+				#@reloadFilters()
 				@_parseQueryString()
 				@_filtersChanged(false)
 
@@ -376,7 +376,7 @@ $.widget 'nmk.filteredList', {
 			source: @_getAutocompleteResults,
 			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
-				@reloadFilters()
+				#@reloadFilters()
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
@@ -417,8 +417,8 @@ $.widget 'nmk.filteredList', {
 			@acInput.show().val ""
 			@searchLabel.hide().find('span.term').text ''
 
-		if @initialized
-			@reloadFilters()
+		#if @initialized
+			#@reloadFilters()
 
 		false
 
@@ -463,7 +463,7 @@ $.widget 'nmk.filteredList', {
 					if @_previousDates != @_datesToString(dates)
 						@_previousDates = @_datesToString(dates)
 						@_filtersChanged()
-						@reloadFilters()
+						#@reloadFilters()
 		}
 
 		if @options.selectDefaultDateRange
