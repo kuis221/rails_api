@@ -216,8 +216,8 @@ $.widget 'nmk.filteredList', {
 					else
 						$('.more-options-link').next().hide()
 					false
-				.on 'mouseover.firstime', (e)=>
-					$(e.target).off('mouseover.firstime')
+				.on 'click.firstime', (e)=>
+					$(e.target).off('click.firstime')
 					if not $ul.hasClass('sf-js-enabled')
 						list = @_buildFilterOptionsList(filter, $filter,false)
 						$ul.find('li').append(list)
