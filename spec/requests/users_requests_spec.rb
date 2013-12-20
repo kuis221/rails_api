@@ -55,7 +55,7 @@ describe "Users", :js => true do
           hover_and_click "li:nth-child(2)", 'Deactivate'
         end
         within visible_modal do
-          page.should have_content('Are you sure you want to deactivate this User?')
+          page.should have_content('Are you sure you want to deactivate this user?')
           click_js_link("OK")
         end
         ensure_modal_was_closed
