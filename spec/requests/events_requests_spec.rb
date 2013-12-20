@@ -60,7 +60,7 @@ describe "Events", js: true, search: true do
             click_js_link('Deactivate')
           end
           within visible_modal do
-            page.should have_content('Are you sure you want to deactivate this Event?')
+            page.should have_content('Are you sure you want to deactivate this event?')
             click_js_link("OK")
           end
           ensure_modal_was_closed

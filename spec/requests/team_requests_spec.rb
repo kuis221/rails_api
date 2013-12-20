@@ -50,7 +50,7 @@ describe "Teams", js: true, search: true do
         hover_and_click 'li', 'Deactivate'
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this Team?')
+        page.should have_content('Are you sure you want to deactivate this team?')
         click_js_link("OK")
       end
       ensure_modal_was_closed

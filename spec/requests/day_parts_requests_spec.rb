@@ -46,7 +46,7 @@ describe "DayParts", search: true, js: true do
         click_link('Deactivate')
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this Day part?')
+        page.should have_content('Are you sure you want to deactivate this day part?')
         click_js_link("OK")
       end
       ensure_modal_was_closed
