@@ -2339,7 +2339,7 @@ ul.ui-widget-content{
 					border:0;
 					color:white;
 					font-weight: normal;
-					padding: 7px 10px;
+					padding: 5px 10px;
 					&.ui-corner-all{
 					    border-radius: 0px !important;
 					}
@@ -2353,8 +2353,11 @@ ul.ui-widget-content{
 		&.ui-autocomplete-category{
 			color:@text;
 			font-weight: bold;
-			padding: 6px 10px;
+			padding: 24px 10px 6px 10px;
 			text-transform: uppercase;
+			&:first-of-type{
+				padding: 4px 10px;
+			}
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
