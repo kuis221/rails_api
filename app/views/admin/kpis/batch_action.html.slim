@@ -39,6 +39,8 @@
               input name="merge[master_kpi][#{campaign.id}]" type="radio" value="#{kpi.id}"
               = " #{kpi.name}"
 
+          = link_to 'Export', export_duplicated_data_admin_kpis_path(campaign_id: campaign.id, kpis: kpis.map(&:id), format: :csv) if kpis.length > 1
+
   fieldset.inputs
     legend 
       span Resulting KPI's info

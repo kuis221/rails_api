@@ -6,6 +6,7 @@ row_totals_number = wb.styles.add_style sz: 11, b: true, alignment: {horizontal:
 row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
 row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
 row_data_currency = wb.styles.add_style :num_fmt => 5
+row_data_date = wb.styles.add_style sz: 11, :format_code => 'mm/dd/yy hh:mm AM/PM'
 
 wb.add_worksheet(name: "Event Data") do |sheet|
 	sheet.add_row ['',
@@ -15,7 +16,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                  'CITY',
                  'STATE',
                  'ZIP',
-                 'START DATE',
+                 'START',
+                 'END',
                  'PROMO HOURS',
                  'IMPRESSIONS',
                  'INTERACTIONS',
@@ -31,6 +33,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
 
   sheet.add_row ['TOTALS',
                  number_with_delimiter(data_totals['events_count']).to_s + ' EVENTS',
+                 '',
                  '',
                  '',
                  '',
@@ -79,7 +82,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                    event.place_city,
                    event.place_state,
                    event.place_zipcode,
-                   format_date(event.start_at, true),
+                   Timeliness.parse(event.start_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
+                   Timeliness.parse(event.end_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
                    number_with_precision(event.promo_hours, precision: 1),
                    number_with_delimiter(event.impressions),
                    number_with_delimiter(event.interactions),
@@ -100,7 +104,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                              row_data_text,
                              row_data_text,
                              row_data_text,
-                             row_data_text,
+                             row_data_date,
+                             row_data_date,
                              row_data_number,
                              row_data_number,
                              row_data_number,

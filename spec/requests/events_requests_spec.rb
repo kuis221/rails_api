@@ -58,6 +58,13 @@ describe "Events", js: true, search: true do
           within("ul#events-list li:nth-child(1)") do
             page.should have_content('Campaign FY2012')
             click_js_link('Deactivate')
+          end
+          within visible_modal do
+            page.should have_content('Are you sure you want to deactivate this Event?')
+            click_js_link("OK")
+          end
+          ensure_modal_was_closed
+          within "ul#events-list" do
             page.should have_no_content('Campaign FY2012')
           end
         end
@@ -116,21 +123,20 @@ describe "Events", js: true, search: true do
         end
 
         select_filter_calendar_day("26")
-        find('#collection-list-filters').should have_no_content('Another Campaign April 03')
+        find('#collection-list-filters').should have_content('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_no_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26", "27")
-        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
         within("ul#events-list") do
           page.should have_content('Another Campaign April 03')
           page.should have_content('Campaign FY2012')
         end
       end
 
-      describe "with timezone suport turned ON" do
+      describe "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
           @user.reload
@@ -152,6 +158,100 @@ describe "Events", js: true, search: true do
               page.should have_content('WED Aug 21')
               page.should have_content('10:00 AM – 11:00 AM')
             end
+          end
+        end
+      end
+    end
+  end
+
+  describe "create a event" do
+    it "allows to create a new event" do
+      FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka')
+      visit events_path
+
+      click_button 'Create'
+
+      within visible_modal do
+        select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
+        click_button 'Create'
+      end
+      ensure_modal_was_closed
+      page.should have_content('ABSOLUT Vodka')
+    end
+  end
+
+
+  describe "edit a event" do
+    it "allows to edit a event" do
+      FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka FY2013')
+      event = FactoryGirl.create(:event,
+          start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+
+      Sunspot.commit
+
+      visit events_path
+
+      within("ul#events-list") do
+        click_link 'Edit'
+      end
+
+      within visible_modal do
+        find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
+        find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+        find_field('Start time').value.should == '8:00pm'
+        find_field('End time').value.should == '11:00pm'
+
+        select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
+        click_button 'Save'
+      end
+      ensure_modal_was_closed
+      page.should have_content('ABSOLUT Vodka FY2013')
+    end
+
+    describe "with timezone support turned ON" do
+      before do
+        @company.update_column(:timezone_support, true)
+        @user.reload
+      end
+      it "should display the dates relative to event's timezone" do
+        Time.use_zone('America/Guatemala') do
+          event = FactoryGirl.create(:event,
+              start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+              start_time: '8:00 PM', end_time: '11:00 PM',
+              campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+        end
+
+        Sunspot.commit
+
+        Time.use_zone('America/New_York') do
+          visit events_path
+
+          within("ul#events-list") do
+            click_link 'Edit'
+          end
+
+          within visible_modal do
+            find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('Start time').value.should == '8:00pm'
+            find_field('End time').value.should == '11:00pm'
+
+            fill_in('Start time', with: '10:00pm')
+            fill_in('End time', with: '11:00pm')
+
+            click_button 'Save'
+          end
+          ensure_modal_was_closed
+          page.should have_content('10:00 PM – 11:00 PM')
+        end
+
+        # Check that the event's time is displayed with the same time in a different tiem zone
+        Time.use_zone('America/Los_Angeles') do
+          visit events_path
+          within("ul#events-list") do
+            page.should have_content('10:00 PM – 11:00 PM')
           end
         end
       end
@@ -204,12 +304,13 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
-        click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
-      end
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it "allows to add a member to the event", :js => true do
@@ -379,6 +480,7 @@ describe "Events", js: true, search: true do
         fill_in 'Last name', with: 'Picapiedra'
         click_js_button 'Save'
       end
+      sleep 1
       ensure_modal_was_closed
 
       # Test the user was added to the list of event members and it can be removed

@@ -45,6 +45,31 @@ describe "Users", :js => true do
       end
     end
 
+    describe "/users", :js => true, :search => true do
+      it "allows the user to activate/deactivate users" do
+        role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
+        user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+        Sunspot.commit
+        visit company_users_path
+        within("ul#users-list") do
+          hover_and_click "li:nth-child(2)", 'Deactivate'
+        end
+        within visible_modal do
+          page.should have_content('Are you sure you want to deactivate this User?')
+          click_js_link("OK")
+        end
+        ensure_modal_was_closed
+        # Make it show only the inactive elements
+        filter_section('ACTIVE STATE').unicheck('Inactive')
+        filter_section('ACTIVE STATE').unicheck('Active')
+        within("ul#users-list") do
+          page.should have_content('Pedro Navaja')
+          hover_and_click "li:nth-child(1)", 'Activate'
+          page.should have_no_content('Pedro Navaja')
+        end
+      end
+    end
+
     describe "/users/:user_id", :js => true do
       it "GET show should display the user details page" do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
@@ -62,12 +87,13 @@ describe "Users", :js => true do
         visit company_user_path(company_user)
 
         within('.links-data') do
-          click_js_link('Deactivate')
-          page.should have_selector('a.toggle-active')
-
-          click_js_link('Activate')
-          page.should have_selector('a.toggle-inactive')
-        end
+         click_js_link('Deactivate')
+       end
+       visible_modal.click_js_link("OK")
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
       end
 
       it 'allows the user to edit another user' do

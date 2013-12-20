@@ -44,7 +44,7 @@ module Results
           campaign_ids = params[:campaign] if params[:campaign] && params[:campaign].any?
           unless current_company_user.is_admin?
             if campaign_ids.any?
-              campaign_ids = campaign_ids & current_company_user.accessible_campaign_ids
+              campaign_ids = campaign_ids.map(&:to_i) & current_company_user.accessible_campaign_ids
             else
               campaign_ids = current_company_user.accessible_campaign_ids
             end

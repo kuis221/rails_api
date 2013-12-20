@@ -54,7 +54,7 @@ module ApplicationHelper
 
   def resource_details_bar(title, url)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
-      link_to(params[:status].present? ? collection_path(:_stored => true) : :back, class: 'close-details') do
+      link_to(session[:previous_page] || collection_path, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, " ".html_safe, class: :close)
       end
@@ -183,6 +183,12 @@ module ApplicationHelper
     name = capture(&block)
     allowed = current_company_user.role.is_admin? || current_company_user.role.has_permission?(permission_action, subject_class)
     link_to_if allowed, name, options, html_options
+  end
+
+  def link_to_deactivate(model)
+    model_sytem_name = model.class.name.underscore
+    humanized_name = model.class.model_name.human
+    link_to '', [:deactivate, model], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
   end
 
   def active_class(item)

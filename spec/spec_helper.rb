@@ -43,6 +43,8 @@ RSpec.configure do |config|
 
   config.render_views
 
+  config.formatter = 'Fuubar' unless ENV['CI']
+
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
@@ -91,6 +93,7 @@ RSpec.configure do |config|
 
   # Capybara.javascript_driver = :webkit
   Capybara.javascript_driver = :selenium
+  # Capybara.javascript_driver = :poltergeist
   Capybara.default_wait_time = 5
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start

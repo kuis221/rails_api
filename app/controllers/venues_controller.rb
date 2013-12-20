@@ -66,6 +66,8 @@ class VenuesController < FilteredController
           max_sampled      = rows.select{|r| r.stat_field == 'sampled_is' }.first.value
           max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
           max_venue_score  = rows.select{|r| r.stat_field == 'venue_score_is' }.first.value
+          
+          load_filters_from_session if session[:filters]
 
           f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
           f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
@@ -132,6 +134,16 @@ class VenuesController < FilteredController
         totals['spent'] = @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
       end
       @data_totals
+    end
+    
+    def load_filters_from_session
+      filters = session[:filters]
+      session[:filters] = nil
+      filters.each do |index,value|
+        value.each do |i,v|
+          search_params[index][i] = v if !v.blank?
+        end if value
+      end
     end
 
 end

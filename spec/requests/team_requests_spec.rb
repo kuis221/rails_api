@@ -39,6 +39,37 @@ describe "Teams", js: true, search: true do
 
     end
 
+    it "allows the user to activate/deactivate teams" do
+      FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company: @company)
+      Sunspot.commit
+
+      visit teams_path
+
+      within("ul#teams-list") do
+        page.should have_content('Costa Rica Team')
+        hover_and_click 'li', 'Deactivate'
+      end
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this Team?')
+        click_js_link("OK")
+      end
+      ensure_modal_was_closed
+      within("ul#teams-list") do
+        page.should have_no_content('Costa Rica Team')
+      end
+
+      # Make it show only the inactive elements
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      within("ul#teams-list") do
+        page.should have_content('Costa Rica Team')
+        hover_and_click 'li', 'Activate'
+        page.should have_no_content('Costa Rica Team')
+      end
+
+    end
+
     it 'allows the user to create a new team' do
       visit teams_path
 
@@ -93,12 +124,16 @@ describe "Teams", js: true, search: true do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-        click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
-        click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
+         click_js_link('Deactivate')
+       end
+       within visible_modal do
+        page.should have_content("Are you sure you want to deactivate this team?")
+        click_js_link("OK")
       end
+       ensure_modal_was_closed
+       within('.links-data') do
+         click_js_link('Activate')
+       end
     end
 
     it 'allows the user to edit the team' do

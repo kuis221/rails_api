@@ -24,9 +24,7 @@ module EventsHelper
   end
 
   def event_date(event, attribute)
-    date = event.send(attribute)
-    date = Timeliness.parse(date.in_time_zone(event.timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: event.timezone) if current_company.timezone_support? && event.timezone.present?
-    date
+    event.send(attribute)
   end
 
   protected

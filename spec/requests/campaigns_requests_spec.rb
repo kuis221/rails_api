@@ -47,6 +47,8 @@ describe "Campaigns", js: true, search: true do
         within("ul#campaigns-list li:nth-child(1)") do
           click_js_link('Deactivate')
         end
+        visible_modal.click_js_link("OK")
+        ensure_modal_was_closed
         page.should have_no_content('Cacique FY13')
       end
 
@@ -66,7 +68,7 @@ describe "Campaigns", js: true, search: true do
     end
 
     it 'allows the user to create a new campaign' do
-      porfolio = FactoryGirl.create(:brand_portfolio, name: 'Test porfolio')
+      porfolio = FactoryGirl.create(:brand_portfolio, name: 'Test portfolio', company: @company)
       visit campaigns_path
 
       click_js_link('New Campaign')
@@ -74,7 +76,7 @@ describe "Campaigns", js: true, search: true do
       within("form#new_campaign") do
         fill_in 'Name', with: 'new campaign name'
         fill_in 'Description', with: 'new campaign description'
-        select_from_chosen('Test porfolio', from: 'Brand portfolios', match: :first)
+        select_from_chosen('Test portfolio', from: 'Brand portfolios', match: :first)
         click_button 'Create'
       end
       ensure_modal_was_closed
@@ -98,10 +100,11 @@ describe "Campaigns", js: true, search: true do
       visit campaign_path(campaign)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
-
+      end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 
@@ -117,7 +120,7 @@ describe "Campaigns", js: true, search: true do
         click_button 'Save'
       end
 
-      find('h2', text: 'edited campaign name') # Wait for the page to reload
+      #find('h2', text: 'edited campaign name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited campaign name')
       page.should have_selector('div.description-data', text: 'edited campaign description')
     end

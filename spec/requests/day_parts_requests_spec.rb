@@ -35,10 +35,38 @@ describe "DayParts", search: true, js: true do
           page.should have_content('From 8 to 11am')
         end
       end
-
     end
 
-    it 'allows the user to create a new day_part' do
+    it "should allow user to activate/deactivate Day Parts" do
+      FactoryGirl.create(:day_part, company: @company, name: 'Morning', active: true)
+      Sunspot.commit
+      visit day_parts_path
+
+      within("ul#day_parts-list") do
+        click_link('Deactivate')
+      end
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this Day part?')
+        click_js_link("OK")
+      end
+      ensure_modal_was_closed
+
+      within("ul#day_parts-list") do
+        page.should have_no_content('Morning')
+      end
+
+      # Make it show only the inactive elements
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      within("ul#day_parts-list") do
+        page.should have_content('Morning')
+        click_link('Activate')
+        page.should have_no_content('Morning')
+      end
+    end
+
+    it 'allows the user to create a new day part' do
       visit day_parts_path
 
       click_js_link('New Day part')
@@ -85,17 +113,17 @@ describe "DayParts", search: true, js: true do
     it 'allows the user to activate/deactivate a day part' do
       day_part = FactoryGirl.create(:day_part, company: @company, active: true)
       visit day_part_path(day_part)
-      click_js_link 'Deactivate'
-      page.should have_selector('a.toggle-active')
-      click_js_link 'Activate'
-      page.should have_selector('a.toggle-inactive')
+      find('.links-data').click_js_link('Deactivate')
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
+      find('.links-data').click_js_link('Activate')
     end
 
     it 'allows the user to edit the day_part' do
       day_part = FactoryGirl.create(:day_part, company: @company)
       visit day_part_path(day_part)
 
-      click_js_link('Edit')
+      find('.links-data').click_js_link('Edit')
 
       within("form#edit_day_part_#{day_part.id}") do
         fill_in 'Name', with: 'edited day part name'

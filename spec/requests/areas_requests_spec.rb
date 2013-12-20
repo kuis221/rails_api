@@ -49,6 +49,8 @@ describe "Areas", js: true, search: true do
       within("ul#areas-list li:nth-child(1)") do
         click_js_link('Deactivate')
       end
+      visible_modal.click_js_link("OK")
+      ensure_modal_was_closed
       page.should have_no_content('Wild Wild West')
     end
 
@@ -64,7 +66,7 @@ describe "Areas", js: true, search: true do
       within("ul#areas-list li:nth-child(1)") do
         click_js_link('Activate')
       end
-      page.should have_no_content('Wild Wild West')
+      page.should have_content('Wild Wild West')
     end
   end
 
@@ -98,10 +100,15 @@ describe "Areas", js: true, search: true do
       visit area_path(area)
       within('.links-data') do
         click_js_link('Deactivate')
-        page.should have_selector('a.toggle-active')
+      end
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this area?')
+        click_js_link("OK")
+      end
+      ensure_modal_was_closed
 
+      within('.links-data') do
         click_js_link('Activate')
-        page.should have_selector('a.toggle-inactive')
       end
     end
 
@@ -117,7 +124,7 @@ describe "Areas", js: true, search: true do
         click_button 'Save'
       end
 
-      find('h2', text: 'edited area name') # Wait for the page to reload
+      #find('h2', text: 'edited area name') # Wait for the page to reload
       page.should have_selector('h2', text: 'edited area name')
       page.should have_selector('div.description-data', text: 'edited area description')
     end

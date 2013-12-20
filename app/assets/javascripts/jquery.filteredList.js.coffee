@@ -72,7 +72,7 @@ $.widget 'nmk.filteredList', {
 			if firstTime
 				firstTime = false
 			else
-				@reloadFilters()
+				#@reloadFilters()
 				@_parseQueryString()
 				@_filtersChanged(false)
 
@@ -90,6 +90,7 @@ $.widget 'nmk.filteredList', {
 
 		@defaultParams = []
 		@initialized = true
+		@_serializeFilters()
 
 	destroy: ->
 		@_closeFilterOptions()
@@ -148,8 +149,8 @@ $.widget 'nmk.filteredList', {
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
 			$slider,
-			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
-			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
+			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="'+min_value+'" />'),
+			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="'+max_value+'" />')
 		)
 
 		$slider.rangeSlider({
@@ -375,7 +376,7 @@ $.widget 'nmk.filteredList', {
 			source: @_getAutocompleteResults,
 			sourcePath: @options.autoCompletePath,
 			select: (event, ui) =>
-				@reloadFilters()
+				#@reloadFilters()
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
@@ -416,8 +417,8 @@ $.widget 'nmk.filteredList', {
 			@acInput.show().val ""
 			@searchLabel.hide().find('span.term').text ''
 
-		if @initialized
-			@reloadFilters()
+		#if @initialized
+			#@reloadFilters()
 
 		false
 
@@ -462,7 +463,7 @@ $.widget 'nmk.filteredList', {
 					if @_previousDates != @_datesToString(dates)
 						@_previousDates = @_datesToString(dates)
 						@_filtersChanged()
-						@reloadFilters()
+						#@reloadFilters()
 		}
 
 		if @options.selectDefaultDateRange
