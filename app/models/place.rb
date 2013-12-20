@@ -318,6 +318,9 @@ class Place < ActiveRecord::Base
             self.city = self.name
           end
         end
+        self.city.strip!
+        self.state.strip!
+        self.country.strip!
         self
       end
     end

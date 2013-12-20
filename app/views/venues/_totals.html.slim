@@ -7,11 +7,11 @@
 .results-box-container
   span.venues-data-column.events-box
     .big-number
-      = number_with_delimiter(data_totals['events_count'])
+      = number_with_precision(data_totals['events_count'], precision: 0, separator: '.', delimiter: ',')
     = 'EVENTS'
   span.venues-data-column.hours-box
     .big-number
-      = number_with_delimiter(data_totals['promo_hours'], precision: 2)
+      = number_with_precision(data_totals['promo_hours'], precision: 2, separator: '.', delimiter: ',')
     = 'HOURS'
   span.venues-data-column.spent-box
     .big-number

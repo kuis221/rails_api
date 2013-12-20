@@ -1,0 +1,11 @@
+- @reports.each do |report|
+  |
+    console.log('AQUI');
+    $parent = $('#report_#{report.id}');
+    $parent.attr('data-status', '#{report.aasm_state}')
+      .find('.bar').css({'width': '#{report.progress || 0}%'}).end()
+      .find('.status').html('#{h report.aasm_state.capitalize}');
+  - if report.complete?
+    |
+      $parent.find('a.download').attr('href','#{j report.download_url.html_safe}');
+      window.setTimeout(function(){ $('#report_#{report.id}').find('.progress').slideUp() }, 1000);
