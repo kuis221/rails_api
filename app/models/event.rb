@@ -61,7 +61,7 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
-  scope :by_period, lambda{|start_date, end_date| where("start_at >= ? AND start_at <= ?", Timeliness.parse(start_date), Timeliness.parse(end_date.empty? ? start_date : end_date).end_of_day) unless start_date.nil? or start_date.empty? }
+  scope :between_dates, lambda {|start_date, end_date| where("end_at > ? AND start_at < ?", start_date, end_date) }
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').

@@ -1,0 +1,26 @@
+.details_box.first
+  #kpi-report-form
+    h3 Generate new KPI report
+
+    = simple_form_for :report, url: results_kpi_report_path, remote: true do |f|
+      = f.input :campaign_id, collection: @campaigns, required: false, input_html: {class: 'chosen-enabled', multiple: true}
+      = f.input :year, input_html: {class: 'chosen-enabled'}, required: true, collection: 2009..Time.now.year
+      = f.input :month, input_html: {class: 'chosen-enabled'}, required: true, collection: Hash[I18n.translate(:'date.month_names').each_with_index.map{|name, index|[name, index]}]
+      = f.submit "Generate", class: 'btn btn-primary', id: 'generate-report-btn'
+
+.details_box
+  #report-container
+    .link-list
+      ul#reports-list
+        = render @reports
+
+
+javascript:
+  var reportInterval = window.setInterval(function(){
+    ids = $('ul#reports-list').find('li[data-status="queued"],li[data-status="new"],li[data-status="processing"]').map(function(){
+      return $(this).data('id');
+    }).get();
+    if (ids.length > 0) {
+      $.get('#{results_kpi_report_status_path(format: :js)}', {report_ids: ids}, null, 'script')
+    }
+  },3000)
