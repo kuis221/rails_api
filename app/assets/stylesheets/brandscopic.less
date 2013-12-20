@@ -5783,6 +5783,10 @@ table td.sub-level-1 {
 
 /*-- MORE MENU STYLES --*/
 
+.sf-menu li li {
+	white-space: normal;
+}
+
 .parent_div{
 	width: 211px;
 	ul.filter_vertical_box{
@@ -5792,7 +5796,13 @@ table td.sub-level-1 {
 		-moz-border-radius: 6px;
 		border-radius: 6px;
 		margin-top: 15px;
-		padding: 5px;
+		padding: 5px 0;
+		li{
+			label:hover{
+				background-color: @brand;
+				color: white;
+			}
+		}
 	}
 
 	&:after {
