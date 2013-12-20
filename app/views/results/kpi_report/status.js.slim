@@ -1,6 +1,5 @@
 - @reports.each do |report|
   |
-    console.log('AQUI');
     $parent = $('#report_#{report.id}');
     $parent.attr('data-status', '#{report.aasm_state}')
       .find('.bar').css({'width': '#{report.progress || 0}%'}).end()

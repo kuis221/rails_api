@@ -62,15 +62,13 @@ class Report < ActiveRecord::Base
   def generate_report
     return unless queued?
     self.process!
-    #File.open(File.join(Rails.root,'tmp','report.html'), 'w') {|f| f.write(report_output) }
     self.file = StringIO.new(report_output)
     self.file_file_name = object_name
     self.file_content_type = 'text/csv'
     self.save
     self.succeed!
-    # rescue Exception => e
-    #   p e.inspect
-    #   self.fail!
+    rescue Exception => e
+      self.fail!
   end
 
   # This method should be implemented by the child class
