@@ -5791,6 +5791,33 @@ table td.sub-level-1 {
 		-webkit-border-radius: 6px;
 		-moz-border-radius: 6px;
 		border-radius: 6px;
+		margin-top: 15px;
 		padding: 5px;
+	}
+
+	&:after {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 0 8px 10px;
+		border-color: #FFFFFF transparent;
+		display: block;
+		width: 0;
+		z-index: 109;
+		top: 27px;
+		left: 21px;
+	}
+
+	&:before {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 0 8px 10px;
+		border-color: #cccccc transparent;
+		display: block;
+		width: 0;
+		z-index: 22;
+		top: 25px;
+		left: 21px;
 	}
 }
