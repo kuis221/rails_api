@@ -128,7 +128,7 @@ describe "Teams", js: true, search: true do
        end
        within visible_modal do
         page.should have_content("Are you sure you want to deactivate this team?")
-        click_js_link("OK")
+        click_link("OK")
       end
        ensure_modal_was_closed
        within('.links-data') do
