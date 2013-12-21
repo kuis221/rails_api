@@ -158,7 +158,6 @@ describe CompanyUsersController, search: true do
       notifications.should include({"message"=>"You have one late task", "level"=>"red", "url"=>"/tasks/mine?end_date=&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task"})
     end
 
-
     it "should return a notification if the user is part of the event's team that have a late task" do
       event = FactoryGirl.create(:event, company: @company)
       event.users << @company_user

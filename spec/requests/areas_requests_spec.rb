@@ -62,11 +62,13 @@ describe "Areas", js: true, search: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      page.should have_content('Wild Wild West')
       within("ul#areas-list li:nth-child(1)") do
+        page.should have_content('Wild Wild West')
         click_js_link('Activate')
       end
-      page.should have_content('Wild Wild West')
+      within("ul#areas-list") do
+        page.should have_no_content('Wild Wild West')
+      end
     end
   end
 
@@ -109,6 +111,7 @@ describe "Areas", js: true, search: true do
 
       within('.links-data') do
         click_js_link('Activate')
+        page.should have_link('Deactivate') # test the link have changed
       end
     end
 

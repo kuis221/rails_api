@@ -304,13 +304,17 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-         click_js_link('Deactivate')
-       end
-       visible_modal.click_js_link("OK")
-       ensure_modal_was_closed
-       within('.links-data') do
-         click_js_link('Activate')
-       end
+        click_js_link('Deactivate')
+      end
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this event?')
+        click_js_link("OK")
+      end
+      ensure_modal_was_closed
+      within('.links-data') do
+        click_js_link('Activate')
+        page.should have_link('Deactivate') # test the link have changed
+      end
     end
 
     it "allows to add a member to the event", :js => true do

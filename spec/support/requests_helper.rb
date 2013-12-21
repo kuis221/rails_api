@@ -1,6 +1,18 @@
 
 module CapybaraBrandscopicHelpers
 
+  def visit(path)
+    super
+    wait_for_ajax_to_load
+  end
+
+  def wait_for_ajax_to_load
+    while page.evaluate_script("$.active").to_i > 0
+      p "Wating: #{page.evaluate_script("$.active").to_i}"
+      sleep(1)
+    end
+  end
+
   def hover_and_click(parent, locator, options={})
     parent_element = find(parent)
     parent_element.hover

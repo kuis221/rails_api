@@ -35,7 +35,6 @@ describe "Campaigns", js: true, search: true do
             page.should have_content(campaigns[1].description)
           end
         end
-
       end
 
       it "should allow user to deactivate campaigns" do
@@ -61,6 +60,7 @@ describe "Campaigns", js: true, search: true do
 
         page.should have_content('Cacique FY13')
         within("ul#campaigns-list li:nth-child(1)") do
+          page.should have_content('Cacique FY13')
           click_js_link('Activate')
         end
         page.should have_no_content('Cacique FY13')
@@ -101,10 +101,15 @@ describe "Campaigns", js: true, search: true do
       within('.links-data') do
         click_js_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+
+      within visible_modal do
+        page.should have_content("Are you sure you want to deactivate this campaign?")
+        click_link("OK")
+      end
       ensure_modal_was_closed
       within('.links-data') do
         click_js_link('Activate')
+        page.should have_link('Deactivate') # test the link have changed
       end
     end
 
@@ -133,7 +138,6 @@ describe "Campaigns", js: true, search: true do
 
       tab = open_tab('Places')
       within tab do
-
         click_js_link 'Add Places'
       end
 
@@ -160,7 +164,5 @@ describe "Campaigns", js: true, search: true do
         page.should have_no_content('San Francisco Area')
       end
     end
-
   end
-
 end

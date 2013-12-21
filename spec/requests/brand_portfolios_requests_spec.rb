@@ -121,6 +121,7 @@ describe "BrandPortfolios", js: true, search: true do
       ensure_modal_was_closed
       within('.links-data') do
         click_js_link('Activate')
+        page.should have_link('Deactivate') # test the link have changed
       end
     end
 

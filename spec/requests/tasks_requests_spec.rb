@@ -39,23 +39,33 @@ describe "Tasks", js: true, search: true do
         end
       end
     end
-    
+
     it "allows the user to activate/deactivate tasks" do
-      tasks = [
-        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
-        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02' , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company)))
-      ]
+      FactoryGirl.create(:task,
+        title: 'Pick up kidz at school',
+        company_user: @company_user, due_at: '2013-09-01', active: true,
+        event: FactoryGirl.create(:event, company: @company,
+          campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company)))
       Sunspot.commit
       visit mine_tasks_path
 
-      within("ul#tasks-list") do
-        # First Row
-        within("li:nth-child(1)") do
-          click_link('Deactivate')
-        end
+      within("ul#tasks-list li:nth-child(1)") do
+        click_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this task?')
+        click_js_link("OK")
+      end
       ensure_modal_was_closed
+      filter_section('ACTIVE STATE').unicheck('Active')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      within "ul#tasks-list li:nth-child(1)" do
+        page.should have_content('Pick up kidz at school')
+        click_link 'Activate'
+      end
+      within "ul#tasks-list" do
+        page.should have_no_content('Pick up kidz at school')
+      end
     end
   end
 

@@ -11,4 +11,4 @@
       - if photo.active?
         = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactive_confirm_message', model: 'photo')
       - else
-        = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link',title: I18n.t('confirmation.active')
+        = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link',title: I18n.t('confirmation.activate')

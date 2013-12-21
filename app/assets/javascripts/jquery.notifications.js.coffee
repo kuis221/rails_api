@@ -1,7 +1,8 @@
 $.widget 'nmk.notifications', {
 	options: {
 		counterSelector: '.dropdown-toggle',
-		listSelector: '.dropdown-menu'
+		listSelector: '.dropdown-menu',
+		notifications: false
 	},
 
 	_create: () ->
@@ -10,9 +11,14 @@ $.widget 'nmk.notifications', {
 		@list.removeClass('dropdown-menu')
 		$('<div class="dropdown-menu">').insertAfter(@counter).append(@list)
 
-		$.get '/notifications.json', (response) =>
+
+		if @options.notifications
 			$('<h5>').text('Notifications').insertBefore @list
-			@_updateNotifications response
+			@_updateNotifications @options.notifications
+		else
+			$.get '/notifications.json', (response) =>
+				$('<h5>').text('Notifications').insertBefore @list
+				@_updateNotifications response
 
 	_updateNotifications: (alerts) ->
 		@counter.text(alerts.length)

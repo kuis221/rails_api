@@ -117,7 +117,11 @@ describe "DateRanges", search: true, js: true do
         click_js_link("OK")
       end
       ensure_modal_was_closed
-      find('.links-data').click_js_link('Activate')
+
+      within('.links-data') do
+        click_link('Activate')
+        page.should have_link('Deactivate') # test the link have changed
+      end
     end
 
     it 'allows the user to edit the date_range' do
