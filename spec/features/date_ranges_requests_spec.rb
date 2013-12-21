@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "DateRanges", search: true, js: true do
+feature "DateRanges", search: true, js: true do
 
   before do
     Warden.test_mode!
@@ -14,8 +14,8 @@ describe "DateRanges", search: true, js: true do
     Warden.test_reset!
   end
 
-  describe "/date_ranges" do
-    it "GET index should display a table with the date_ranges" do
+  feature "/date_ranges" do
+    scenario "GET index should display a table with the date_ranges" do
       date_ranges = [
         FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true),
         FactoryGirl.create(:date_range, company: @company, name: 'Weekends', description: 'Saturday and Sunday', active: true)
@@ -38,7 +38,7 @@ describe "DateRanges", search: true, js: true do
 
     end
 
-    it "should allow user to activate/deactivate Date Ranges" do
+    scenario "should allow user to activate/deactivate Date Ranges" do
       FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
       Sunspot.commit
       visit date_ranges_path
@@ -48,7 +48,7 @@ describe "DateRanges", search: true, js: true do
       end
       within visible_modal do
         page.should have_content('Are you sure you want to deactivate this date range?')
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
 
@@ -70,7 +70,7 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to create a new date_range' do
       visit date_ranges_path
 
-      click_js_link('New Date range')
+      click_link('New Date range')
 
       within visible_modal do
         fill_in 'Name', with: 'new date range name'
@@ -85,8 +85,8 @@ describe "DateRanges", search: true, js: true do
     end
   end
 
-  describe "/date_ranges/:date_range_id", :js => true do
-    it "GET show should display the date_range details page" do
+  feature "/date_ranges/:date_range_id", :js => true do
+    scenario "GET show should display the date_range details page" do
       date_range = FactoryGirl.create(:date_range, company: @company, name: 'Some Date Range', description: 'a date range description')
       visit date_range_path(date_range)
       page.should have_selector('h2', text: 'Some Date Range')
@@ -111,10 +111,10 @@ describe "DateRanges", search: true, js: true do
     it 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
-      find('.links-data').click_js_link('Deactivate')
+      find('.links-data').click_link('Deactivate')
       within visible_modal do
         page.should have_content("Are you sure you want to deactivate this date range?")
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
 
@@ -128,7 +128,7 @@ describe "DateRanges", search: true, js: true do
       date_range = FactoryGirl.create(:date_range, company: @company)
       visit date_range_path(date_range)
 
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_link('Edit')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'
@@ -146,11 +146,11 @@ describe "DateRanges", search: true, js: true do
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
 
-      click_js_link('Add Date')
+      click_link('Add Date')
 
       within visible_modal do
-        find("#calendar_start_date").click_js_link '25'
-        find("#calendar_end_date").click_js_link '26'
+        find("#calendar_start_date").click_link '25'
+        find("#calendar_end_date").click_link '26'
         click_js_button "Create"
       end
 
@@ -158,7 +158,7 @@ describe "DateRanges", search: true, js: true do
 
       page.should have_selector('#date_range-dates-list div[id^=date_item]')
       within("#date_range-dates-list .date-item") do
-        click_js_link('Remove')
+        click_link('Remove')
       end
       page.should have_no_selector('#date_range-dates-list div[id^=date_item]')
 

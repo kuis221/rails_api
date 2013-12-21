@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Users", :js => true do
+feature "Users", :js => true do
 
   before do
     Warden.test_mode!
@@ -11,8 +11,8 @@ describe "Users", :js => true do
     sign_in @user
   end
 
-  describe "user with multiple companies", :js => true do
-    it "can switch between companies" do
+  feature "user with multiple companies", :js => true do
+    scenario "can switch between companies" do
       Kpi.create_global_kpis
 
       another_company = FactoryGirl.create(:company, name: 'Tres Patitos S.A.')
@@ -23,8 +23,8 @@ describe "Users", :js => true do
 
       # Click on the dropdown and select the other company
       within('#company-name') do
-        click_js_link('ABC inc.')
-        find(".dropdown").click_js_link 'Tres Patitos S.A.'
+        click_link('ABC inc.')
+        find(".dropdown").click_link 'Tres Patitos S.A.'
       end
       current_path.should == root_path
 
@@ -35,7 +35,7 @@ describe "Users", :js => true do
       # Click on the dropdown and select the other company
       find('#company-name a.current-company-title').click
       within "ul#user-company-dropdown" do
-        click_js_link @company.name.to_s
+        click_link @company.name.to_s
       end
 
       current_path.should == root_path
@@ -45,8 +45,8 @@ describe "Users", :js => true do
       end
     end
 
-    describe "/users", :js => true, :search => true do
-      it "allows the user to activate/deactivate users" do
+    feature "/users", :js => true, :search => true do
+      scenario "allows the user to activate/deactivate users" do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
         Sunspot.commit
@@ -56,7 +56,7 @@ describe "Users", :js => true do
         end
         within visible_modal do
           page.should have_content('Are you sure you want to deactivate this user?')
-          click_js_link("OK")
+          click_link("OK")
         end
         ensure_modal_was_closed
         # Make it show only the inactive elements
@@ -70,8 +70,8 @@ describe "Users", :js => true do
       end
     end
 
-    describe "/users/:user_id", :js => true do
-      it "GET show should display the user details page" do
+    feature "/users/:user_id", :js => true do
+      scenario "GET show should display the user details page" do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
@@ -87,15 +87,15 @@ describe "Users", :js => true do
         visit company_user_path(company_user)
 
         within('.links-data') do
-         click_js_link('Deactivate')
+         click_link('Deactivate')
         end
         within visible_modal do
           page.should have_content('Are you sure you want to deactivate this user?')
-          click_js_link("OK")
+          click_link("OK")
         end
         ensure_modal_was_closed
         within('.links-data') do
-          click_js_link('Activate')
+          click_link('Activate')
           page.should have_link('Deactivate') # test the link have changed
         end
       end
@@ -107,7 +107,7 @@ describe "Users", :js => true do
         company_user = user.company_users.first
         visit company_user_path(company_user)
 
-        click_js_link('Edit')
+        click_link('Edit')
 
         within("form#edit_company_user_#{company_user.id}") do
           fill_in 'First name', with: 'Pedro'
@@ -123,20 +123,20 @@ describe "Users", :js => true do
         page.should have_selector('div.user-role', text: 'Another Role')
       end
 
-      it "should be able to assign areas to the user" do
+      scenario "should be able to assign areas to the user" do
         company_user = FactoryGirl.create(:company_user, company_id: @company.id)
         area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
         visit company_user_path(company_user)
 
-        click_js_link 'Add Area'
+        click_link 'Add Area'
 
         within visible_modal do
-          find("#area-#{area.id}").click_js_link('Add Area')
+          find("#area-#{area.id}").click_link('Add Area')
           page.should have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
         end
         close_modal
 
-        click_js_link 'Add Area'
+        click_link 'Add Area'
 
         within visible_modal do
           page.should have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
@@ -156,11 +156,14 @@ describe "Users", :js => true do
 
     end
 
-    describe "edit profile link" do
+    feature "edit profile link" do
       it 'allows the user to edit his profile' do
         visit company_user_path(@company_user)
 
-        find('li#user_menu').click_js_link(@user.full_name).click_js_link('Edit Profile')
+        within 'li#user_menu' do
+          click_link(@user.full_name)
+          click_link('Edit Profile')
+        end
 
         within("form#edit_company_user_#{@company_user.id}") do
           fill_in 'First name', with: 'Pedro'

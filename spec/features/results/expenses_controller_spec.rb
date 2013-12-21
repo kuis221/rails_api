@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::ExpensesController, js: true, search: true  do
+feature "Results Expenses Page", js: true, search: true  do
 
   before do
     Kpi.destroy_all
@@ -16,8 +16,8 @@ describe Results::ExpensesController, js: true, search: true  do
 
   let(:campaign){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
 
-  describe "/results/expenses", js: true, search: true  do
-    it "GET index should display a table with the expenses" do
+  feature "Event Expenses index", js: true, search: true  do
+    scenario "GET index should display a table with the expenses" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.expenses)
       event = FactoryGirl.build(:approved_event, campaign: campaign, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 1'))
@@ -50,7 +50,7 @@ describe Results::ExpensesController, js: true, search: true  do
       page.should have_content('TOTAL:$30.00')
     end
 
-    it "GET index should display a table with the expenses" do
+    scenario "GET index should display a table with the expenses" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.expenses)
       event = FactoryGirl.build(:approved_event, campaign: campaign, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm')
@@ -60,7 +60,7 @@ describe Results::ExpensesController, js: true, search: true  do
       Sunspot.commit
       visit results_expenses_path
 
-      click_js_link("event-link-#{event.id}")
+      click_link("event-link-#{event.id}")
 
       current_path.should == event_path(event.id)
     end

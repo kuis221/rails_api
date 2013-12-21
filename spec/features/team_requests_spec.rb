@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Teams", js: true, search: true do
+feature "Teams", js: true, search: true do
   before do
     @user = login
     sign_in @user
@@ -11,8 +11,8 @@ describe "Teams", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/teams" do
-    it "GET index should display a list with the teams" do
+  feature "/teams" do
+    scenario "GET index should display a list with the teams" do
       teams = [
         FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
         FactoryGirl.create(:team, name: 'San Francisco Team', description: 'the guys from SF', active: true, company_id: @company.id)
@@ -39,7 +39,7 @@ describe "Teams", js: true, search: true do
 
     end
 
-    it "allows the user to activate/deactivate teams" do
+    scenario "allows the user to activate/deactivate teams" do
       FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company: @company)
       Sunspot.commit
 
@@ -51,7 +51,7 @@ describe "Teams", js: true, search: true do
       end
       within visible_modal do
         page.should have_content('Are you sure you want to deactivate this team?')
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
       within("ul#teams-list") do
@@ -73,7 +73,7 @@ describe "Teams", js: true, search: true do
     it 'allows the user to create a new team' do
       visit teams_path
 
-      click_js_link('New Team')
+      click_link('New Team')
 
       within visible_modal do
         fill_in 'Name', with: 'new team name'
@@ -88,8 +88,8 @@ describe "Teams", js: true, search: true do
     end
   end
 
-  describe "/teams/:team_id", :js => true do
-    it "GET show should display the team details page" do
+  feature "/teams/:team_id", :js => true do
+    scenario "GET show should display the team details page" do
       team = FactoryGirl.create(:team, name: 'Some Team Name', description: 'a team description', company_id: @user.current_company.id)
       visit team_path(team)
       page.should have_selector('h2', text: 'Some Team Name')
@@ -124,7 +124,7 @@ describe "Teams", js: true, search: true do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-         click_js_link('Deactivate')
+         click_link('Deactivate')
        end
        within visible_modal do
         page.should have_content("Are you sure you want to deactivate this team?")
@@ -132,7 +132,7 @@ describe "Teams", js: true, search: true do
       end
        ensure_modal_was_closed
        within('.links-data') do
-         click_js_link('Activate')
+         click_link('Activate')
          page.should have_link('Deactivate') # test the link have changed
        end
     end
@@ -142,7 +142,7 @@ describe "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      click_js_link('Edit')
+      click_link('Edit')
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
@@ -165,11 +165,11 @@ describe "Teams", js: true, search: true do
 
       page.should_not have_content('Fulanito')
 
-      click_js_link('Add Team Member')
+      click_link('Add Team Member')
 
 
       within visible_modal do
-        find("#staff-member-user-#{company_user.id}").click_js_link('Add')
+        find("#staff-member-user-#{company_user.id}").click_link('Add')
       end
 
       close_modal

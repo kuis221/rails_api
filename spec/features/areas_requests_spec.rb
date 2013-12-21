@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Areas", js: true, search: true do
+feature "Areas", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -13,8 +13,8 @@ describe "Areas", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/areas" do
-    it "GET index should display a table with the areas" do
+  feature "/areas" do
+    scenario "GET index should display a table with the areas" do
       areas = [
         FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
         FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: @company)
@@ -40,21 +40,21 @@ describe "Areas", js: true, search: true do
       end
     end
 
-    it "should allow user to deactivate areas" do
+    scenario "should allow user to deactivate areas" do
       FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: true, company: @company)
       Sunspot.commit
       visit areas_path
 
       page.should have_content('Wild Wild West')
       within("ul#areas-list li:nth-child(1)") do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+      visible_modal.click_link("OK")
       ensure_modal_was_closed
       page.should have_no_content('Wild Wild West')
     end
 
-    it "should allow user to activate areas" do
+    scenario "should allow user to activate areas" do
       FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: false, company: @company)
       Sunspot.commit
       visit areas_path
@@ -64,7 +64,7 @@ describe "Areas", js: true, search: true do
 
       within("ul#areas-list li:nth-child(1)") do
         page.should have_content('Wild Wild West')
-        click_js_link('Activate')
+        click_link('Activate')
       end
       within("ul#areas-list") do
         page.should have_no_content('Wild Wild West')
@@ -72,8 +72,8 @@ describe "Areas", js: true, search: true do
     end
   end
 
-  describe "/areas/:area_id", :js => true do
-    it "GET show should display the area details page" do
+  feature "/areas/:area_id", :js => true do
+    scenario "GET show should display the area details page" do
       area = FactoryGirl.create(:area, name: 'Some Area', description: 'an area description', company: @company)
       visit area_path(area)
       page.should have_selector('h2', text: 'Some Area')
@@ -101,16 +101,16 @@ describe "Areas", js: true, search: true do
       area = FactoryGirl.create(:area, name: 'Some area', description: 'an area description', active: true, company: @company)
       visit area_path(area)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
       within visible_modal do
         page.should have_content('Are you sure you want to deactivate this area?')
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
 
       within('.links-data') do
-        click_js_link('Activate')
+        click_link('Activate')
         page.should have_link('Deactivate') # test the link have changed
       end
     end
@@ -119,7 +119,7 @@ describe "Areas", js: true, search: true do
       area = FactoryGirl.create(:area, company: @company)
       visit area_path(area)
 
-      click_js_link('Edit')
+      click_link('Edit')
 
       within("form#edit_area_#{area.id}") do
         fill_in 'Name', with: 'edited area name'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Events", js: true, search: true do
+feature "Events", js: true, search: true do
 
   before do
     Kpi.destroy_all
@@ -15,16 +15,16 @@ describe "Events", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/events", js: true, search: true  do
+  feature "/events", js: true, search: true  do
     after do
       Timecop.return
     end
-    describe "GET index" do
+    feature "GET index" do
       let(:events){[
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
-      it "should display a table with the events" do
+      scenario "should display a table with the events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -49,7 +49,7 @@ describe "Events", js: true, search: true do
         end
       end
 
-      it "should allow user to deactivate events" do
+      scenario "should allow user to deactivate events" do
         Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -57,11 +57,11 @@ describe "Events", js: true, search: true do
 
           within("ul#events-list li:nth-child(1)") do
             page.should have_content('Campaign FY2012')
-            click_js_link('Deactivate')
+            click_link('Deactivate')
           end
           within visible_modal do
             page.should have_content('Are you sure you want to deactivate this event?')
-            click_js_link("OK")
+            click_link("OK")
           end
           ensure_modal_was_closed
           within "ul#events-list" do
@@ -70,7 +70,7 @@ describe "Events", js: true, search: true do
         end
       end
 
-      it "should allow user to activate events" do
+      scenario "should allow user to activate events" do
         Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Our Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
           FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Another Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
@@ -81,13 +81,13 @@ describe "Events", js: true, search: true do
 
           within("ul#events-list li:nth-child(1)") do
             page.should have_content('Our Test Campaign')
-            click_js_link('Activate')
+            click_link('Activate')
             page.should have_no_content('Our Test Campaign')
           end
         end
       end
 
-      it "should allow allow filter events by date range" do
+      scenario "should allow allow filter events by date range" do
         today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
         tomorrow = today+1.day
         FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -136,12 +136,12 @@ describe "Events", js: true, search: true do
         end
       end
 
-      describe "with timezone support turned ON" do
+      feature "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
           @user.reload
         end
-        it "should display the dates relative to event's timezone" do
+        scenario "should display the dates relative to event's timezone" do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             # Create a event with the time zone "Central America"
             Time.use_zone('Central America') do
@@ -164,8 +164,8 @@ describe "Events", js: true, search: true do
     end
   end
 
-  describe "create a event" do
-    it "allows to create a new event" do
+  feature "create a event" do
+    scenario "allows to create a new event" do
       FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka')
       visit events_path
 
@@ -181,8 +181,8 @@ describe "Events", js: true, search: true do
   end
 
 
-  describe "edit a event" do
-    it "allows to edit a event" do
+  feature "edit a event" do
+    scenario "allows to edit a event" do
       FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka FY2013')
       event = FactoryGirl.create(:event,
           start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
@@ -210,15 +210,16 @@ describe "Events", js: true, search: true do
       page.should have_content('ABSOLUT Vodka FY2013')
     end
 
-    describe "with timezone support turned ON" do
+    feature "with timezone support turned ON" do
       before do
         @company.update_column(:timezone_support, true)
         @user.reload
       end
-      it "should display the dates relative to event's timezone" do
+      scenario "should display the dates relative to event's timezone" do
+        date = 3.days.from_now.to_s(:slashes)
         Time.use_zone('America/Guatemala') do
           event = FactoryGirl.create(:event,
-              start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+              start_date: date, end_date: date,
               start_time: '8:00 PM', end_time: '11:00 PM',
               campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
         end
@@ -233,8 +234,8 @@ describe "Events", js: true, search: true do
           end
 
           within visible_modal do
-            find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
-            find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('Start date').value.should == date
+            find_field('End date').value.should == date
             find_field('Start time').value.should == '8:00pm'
             find_field('End time').value.should == '11:00pm'
 
@@ -258,8 +259,8 @@ describe "Events", js: true, search: true do
     end
   end
 
-  describe "/events/:event_id", :js => true do
-    it "GET show should display the event details page" do
+  feature "/events/:event_id", :js => true do
+    scenario "GET show should display the event details page" do
       event = FactoryGirl.create(:event,
           start_date: '08/28/2013', end_date: '08/28/2013',
           start_time: '8:00 PM', end_time: '11:00 PM',
@@ -272,13 +273,13 @@ describe "Events", js: true, search: true do
       end
     end
 
-    describe "with timezone suport turned ON" do
+    feature "with timezone suport turned ON" do
       before do
         @company.update_column(:timezone_support, true)
         @user.reload
       end
 
-      it "should display the dates relative to event's timezone" do
+      scenario "should display the dates relative to event's timezone" do
         event = nil
         # Create a event with the time zone "Central America"
         Time.use_zone('Central America') do
@@ -304,20 +305,20 @@ describe "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
       within visible_modal do
         page.should have_content('Are you sure you want to deactivate this event?')
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
       within('.links-data') do
-        click_js_link('Activate')
+        click_link('Activate')
         page.should have_link('Deactivate') # test the link have changed
       end
     end
 
-    it "allows to add a member to the event", :js => true do
+    scenario "allows to add a member to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
       company_user = user.company_users.first
@@ -325,11 +326,11 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Add Team Member'
+      click_link 'Add Team Member'
       within visible_modal do
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
-        click_js_link("add-member-btn-#{company_user.id}")
+        click_link("add-member-btn-#{company_user.id}")
 
         page.should have_no_selector("li#staff-member-user-#{company_user.id}")
       end
@@ -349,7 +350,7 @@ describe "Events", js: true, search: true do
         page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
         #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
-        click_js_link('OK')
+        click_link('OK')
       end
       ensure_modal_was_closed
 
@@ -359,7 +360,7 @@ describe "Events", js: true, search: true do
     end
 
 
-    it "allows to add a user as contact to the event", :js => true do
+    scenario "allows to add a user as contact to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
       company_user = user.company_users.first
@@ -367,12 +368,12 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
+      click_link 'Add Contact'
       within visible_modal do
         page.should have_selector("li#contact-company_user-#{company_user.id}")
         page.should have_content('Pablo')
         page.should have_content('Baltodano')
-        click_js_link("add-contact-btn-company_user-#{company_user.id}")
+        click_link("add-contact-btn-company_user-#{company_user.id}")
 
         page.should have_no_selector("li#contact-company_user-#{company_user.id}")
       end
@@ -394,19 +395,19 @@ describe "Events", js: true, search: true do
     end
 
 
-    it "allows to add a contact as contact to the event", :js => true do
+    scenario "allows to add a contact as contact to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
       Sunspot.commit
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
+      click_link 'Add Contact'
       within visible_modal do
         page.should have_selector("li#contact-contact-#{contact.id}")
         page.should have_content('Guillermo')
         page.should have_content('Vargas')
-        click_js_link("add-contact-btn-contact-#{contact.id}")
+        click_link("add-contact-btn-contact-#{contact.id}")
 
         page.should have_no_selector("li#contact-contact-#{contact.id}")
       end
@@ -428,14 +429,14 @@ describe "Events", js: true, search: true do
     end
 
 
-    it "allows to create a contact", :js => true do
+    scenario "allows to create a contact", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       Sunspot.commit
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
-      visible_modal.click_js_link("Create New Contact")
+      click_link 'Add Contact'
+      visible_modal.click_link("Create New Contact")
 
       within ".contactevent_modal" do
         fill_in 'First name', with: 'Pedro'
@@ -467,7 +468,7 @@ describe "Events", js: true, search: true do
       page.should_not have_content('Pedro Picapiedra')
     end
 
-    it "allows to edit a contact", :js => true do
+    scenario "allows to edit a contact", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
@@ -496,7 +497,7 @@ describe "Events", js: true, search: true do
     end
 
 
-    it "allows to create a new task for the event and mark it as completed" do
+    scenario "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
       company_user = user.company_users.first
@@ -506,7 +507,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Create Task'
+      click_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'
@@ -547,7 +548,7 @@ describe "Events", js: true, search: true do
       end
     end
 
-    it "should allow the user to fill the event data" do
+    scenario "should allow the user to fill the event data" do
       Kpi.create_global_kpis
       event = FactoryGirl.create(:event,
           start_date: Date.yesterday.to_s(:slashes),

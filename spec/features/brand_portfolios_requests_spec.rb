@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "BrandPortfolios", js: true, search: true do
+feature "BrandPortfolios", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -13,9 +13,9 @@ describe "BrandPortfolios", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/brand_portfolios" do
-    describe "GET index" do
-      it "should display a table with the portfolios" do
+  feature "/brand_portfolios" do
+    feature "GET index" do
+      scenario "should display a table with the portfolios" do
         portfolios = [
           FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
           FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: @company)
@@ -38,21 +38,21 @@ describe "BrandPortfolios", js: true, search: true do
 
       end
 
-      it "should allow user to deactivate brand portfolios" do
+      scenario "should allow user to deactivate brand portfolios" do
         FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
 
         page.should have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
-          click_js_link('Deactivate')
+          click_link('Deactivate')
         end
-        visible_modal.click_js_link("OK")
+        visible_modal.click_link("OK")
         ensure_modal_was_closed
         page.should have_no_content('A Vinos ticos')
       end
 
-      it "should allow user to activate brand portfolios" do
+      scenario "should allow user to activate brand portfolios" do
         FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
         Sunspot.commit
         visit brand_portfolios_path
@@ -62,7 +62,7 @@ describe "BrandPortfolios", js: true, search: true do
 
         page.should have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
-          click_js_link('Activate')
+          click_link('Activate')
         end
         page.should have_no_content('A Vinos ticos')
       end
@@ -71,7 +71,7 @@ describe "BrandPortfolios", js: true, search: true do
     it 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_js_link('New Brand portfolio')
+      click_link('New Brand portfolio')
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'
@@ -86,8 +86,8 @@ describe "BrandPortfolios", js: true, search: true do
     end
   end
 
-  describe "/brand_portfolios/:brand_portfolio_id", :js => true do
-    it "GET show should display the portfolio details page" do
+  feature "/brand_portfolios/:brand_portfolio_id", :js => true do
+    scenario "GET show should display the portfolio details page" do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       visit brand_portfolio_path(portfolio)
       page.should have_selector('h2', text: 'Some Brand Portfolio')
@@ -115,12 +115,12 @@ describe "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+      visible_modal.click_link("OK")
       ensure_modal_was_closed
       within('.links-data') do
-        click_js_link('Activate')
+        click_link('Activate')
         page.should have_link('Deactivate') # test the link have changed
       end
     end
@@ -129,7 +129,7 @@ describe "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       visit brand_portfolio_path(portfolio)
 
-      click_js_link('Edit')
+      click_link('Edit')
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
@@ -147,11 +147,11 @@ describe "BrandPortfolios", js: true, search: true do
       brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 
-      click_js_link 'Add Brand'
+      click_link 'Add Brand'
 
       within visible_modal do
         page.should have_content('Guaro Cacique')
-        click_js_link 'Add'
+        click_link 'Add'
       end
 
       # Make sure the new brand was added to the portfolio
@@ -163,7 +163,7 @@ describe "BrandPortfolios", js: true, search: true do
       end
 
       within visible_modal do
-        click_js_link('Create New Brand')
+        click_link('Create New Brand')
       end
 
       within visible_modal do

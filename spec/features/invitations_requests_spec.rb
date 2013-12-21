@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe "Invitations", :js => true do
-  describe 'send invitation' do
+feature "Invitations", :js => true do
+  feature 'send invitation' do
     before do
       Warden.test_mode!
       @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
@@ -15,7 +15,7 @@ describe "Invitations", :js => true do
       Warden.test_reset!
     end
 
-    it "should allow the user fill the invitation form and send the invitation" do
+    scenario "should allow the user fill the invitation form and send the invitation" do
       role = FactoryGirl.create(:role, name: 'Test role', company: @company)
       team = FactoryGirl.create(:team, name: 'Test team', company: @company)
       visit company_users_path
@@ -41,7 +41,7 @@ describe "Invitations", :js => true do
       new_user.email.should == 'pablo@rocadura.com'
     end
 
-    it "should validate the required fields" do
+    scenario "should validate the required fields" do
       visit company_users_path
       click_button 'Invite user'
 
@@ -59,7 +59,7 @@ describe "Invitations", :js => true do
     end
   end
 
-  describe 'accept invitation' do
+  feature 'accept invitation' do
     before do
       Warden.test_mode!
       @user = FactoryGirl.create(:invited_user,
@@ -84,7 +84,7 @@ describe "Invitations", :js => true do
       Warden.test_reset!
     end
 
-    it "should allow the user to complete the profile and log him in after that" do
+    scenario "should allow the user to complete the profile and log him in after that" do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
       find_field('First name').value.should == 'Pedro'
       find_field('Last name').value.should == 'Picapiedra'
@@ -119,13 +119,13 @@ describe "Invitations", :js => true do
       page.should have_content('Your password was set successfully. You are now signed in.')
     end
 
-    it "should display an error if the token is not valid" do
+    scenario "should display an error if the token is not valid" do
       visit accept_user_invitation_path(invitation_token: 'INVALIDTOKEN')
       page.should have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
       current_path.should == new_user_session_path
     end
 
-    it "should validate the required fields" do
+    scenario "should validate the required fields" do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
 
       fill_in('First name', with: '')

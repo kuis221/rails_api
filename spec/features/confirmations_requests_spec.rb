@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe "Confirmations", :js => true do
+feature "Confirmations", :js => true do
   before do
     @user = FactoryGirl.create(:user,
       first_name: 'Pedro',
@@ -22,7 +22,7 @@ describe "Confirmations", :js => true do
     )
   end
 
-  it "should allow the user to confirm the email change and log him in after that" do
+  scenario "should allow the user to confirm the email change and log him in after that" do
     visit users_confirmation_path(confirmation_token: 'XYZ123')
 
     page.should have_content('Your account was successfully confirmed.')

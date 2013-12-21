@@ -56,9 +56,9 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
-  config.include Capybara::DSL, :type => :request
-  config.include SignHelper, :type => :request
-  config.include RequestsHelper, :type => :request
+  #config.include Capybara::DSL, :type => :request
+  config.include SignHelper, :type => :feature
+  config.include RequestsHelper, :type => :feature
 
   config.before(:all) do
     DeferredGarbageCollection.start

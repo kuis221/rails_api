@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::CommentsController, js: true, search: true  do
+feature "Results Comments Page", js: true, search: true  do
 
   before do
     Kpi.destroy_all
@@ -17,8 +17,8 @@ describe Results::CommentsController, js: true, search: true  do
 
   let(:campaign){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
 
-  describe "/results/comments", js: true, search: true  do
-    it "GET index should display a table with the comments" do
+  feature "/results/comments", js: true, search: true  do
+    scenario "GET index should display a table with the comments" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.comments)
       event = FactoryGirl.create(:approved_event, campaign: campaign, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 1'))

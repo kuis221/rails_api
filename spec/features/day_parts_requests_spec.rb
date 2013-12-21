@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "DayParts", search: true, js: true do
+feature "DayParts", search: true, js: true do
 
   before do
     Warden.test_mode!
@@ -14,8 +14,8 @@ describe "DayParts", search: true, js: true do
     Warden.test_reset!
   end
 
-  describe "/day_parts" do
-    it "GET index should display a table with the day_parts" do
+  feature "/day_parts" do
+    scenario "GET index should display a table with the day_parts" do
       day_parts = [
         FactoryGirl.create(:day_part, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
         FactoryGirl.create(:day_part, company: @company, name: 'Afternoons', description: 'From 1 to 6pm', active: true)
@@ -37,7 +37,7 @@ describe "DayParts", search: true, js: true do
       end
     end
 
-    it "should allow user to activate/deactivate Day Parts" do
+    scenario "should allow user to activate/deactivate Day Parts" do
       FactoryGirl.create(:day_part, company: @company, name: 'Morning', active: true)
       Sunspot.commit
       visit day_parts_path
@@ -47,7 +47,7 @@ describe "DayParts", search: true, js: true do
       end
       within visible_modal do
         page.should have_content('Are you sure you want to deactivate this day part?')
-        click_js_link("OK")
+        click_link("OK")
       end
       ensure_modal_was_closed
 
@@ -69,7 +69,7 @@ describe "DayParts", search: true, js: true do
     it 'allows the user to create a new day part' do
       visit day_parts_path
 
-      click_js_link('New Day part')
+      click_link('New Day part')
 
       within visible_modal do
         fill_in 'Name', with: 'new day part name'
@@ -84,8 +84,8 @@ describe "DayParts", search: true, js: true do
     end
   end
 
-  describe "/day_parts/:day_part_id", :js => true do
-    it "GET show should display the day_part details page" do
+  feature "/day_parts/:day_part_id", :js => true do
+    scenario "GET show should display the day_part details page" do
       day_part = FactoryGirl.create(:day_part, company: @company, name: 'Some day part', description: 'a day part description')
       visit day_part_path(day_part)
       page.should have_selector('h2', text: 'Some day part')
@@ -113,17 +113,20 @@ describe "DayParts", search: true, js: true do
     it 'allows the user to activate/deactivate a day part' do
       day_part = FactoryGirl.create(:day_part, company: @company, active: true)
       visit day_part_path(day_part)
-      find('.links-data').click_js_link('Deactivate')
-      visible_modal.click_js_link("OK")
+      find('.links-data').click_link('Deactivate')
+      within visible_modal do
+        page.should have_content('Are you sure you want to deactivate this day part?')
+        click_link("OK")
+      end
       ensure_modal_was_closed
-      find('.links-data').click_js_link('Activate')
+      find('.links-data').click_link('Activate')
     end
 
     it 'allows the user to edit the day_part' do
       day_part = FactoryGirl.create(:day_part, company: @company)
       visit day_part_path(day_part)
 
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_link('Edit')
 
       within("form#edit_day_part_#{day_part.id}") do
         fill_in 'Name', with: 'edited day part name'
@@ -141,7 +144,7 @@ describe "DayParts", search: true, js: true do
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit day_part_path(day_part)
 
-      click_js_link('Add Time')
+      click_link('Add Time')
 
       within visible_modal do
         fill_in 'Start', with: '1:00am'
@@ -154,7 +157,7 @@ describe "DayParts", search: true, js: true do
       day_item_text = 'From 1:00 AM to 4:00 AM'
       page.should have_content(day_item_text)
       within("#day-part-days-list .date-item") do
-        click_js_link('Remove')
+        click_link('Remove')
       end
       page.should have_no_content(day_item_text)
 
