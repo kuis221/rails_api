@@ -32,16 +32,15 @@ feature "Venues Section", js: true, search: true do
       visit venues_path
 
       within("ul#venues-list") do
-
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('Bar Benito')
-           page.should have_selector('div.n_spent', text: '$1,000.00')
+          expect(page).to have_content('Bar Benito')
+           expect(page).to have_selector('div.n_spent', text: '$1,000.00')
         end
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('Bar Camelas')
-          page.should have_selector('div.n_spent', text: '$2,000.00')
+          expect(page).to have_content('Bar Camelas')
+          expect(page).to have_selector('div.n_spent', text: '$2,000.00')
         end
       end
 

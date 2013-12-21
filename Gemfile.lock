@@ -363,8 +363,7 @@ GEM
       nokogiri
       sunspot (= 2.0.0)
     sunspot_solr (2.0.0)
-    sunspot_stats (0.0.5)
-      sunspot (~> 2.0.0.pre.120417)
+    sunspot_stats (0.0.7)
     sunspot_test (0.4.0)
       sunspot_rails (>= 1.2.1)
     temple (0.6.5)
