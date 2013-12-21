@@ -116,12 +116,12 @@ feature "Invitations", :js => true do
       click_button 'Save'
 
       current_path.should == root_path
-      page.should have_content('Your password was set successfully. You are now signed in.')
+      expect(page).to have_content('Your password was set successfully. You are now signed in.')
     end
 
     scenario "should display an error if the token is not valid" do
       visit accept_user_invitation_path(invitation_token: 'INVALIDTOKEN')
-      page.should have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
+      expect(page).to have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
       current_path.should == new_user_session_path
     end
 

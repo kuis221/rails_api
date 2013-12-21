@@ -34,19 +34,19 @@ feature "Results Comments Page", js: true, search: true  do
       within("ul#comment-list") do
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('First Campaign')
-          page.should have_content('WED Aug 21 8:00 PM – 11:00 PM')
-          page.should have_content('Place 1, New York City, NY, 12345')
-          page.should have_content('Comment #1')
-          page.should have_content('Aug 22 @ 11:59 AM')
+          expect(page).to have_content('First Campaign')
+          expect(page).to have_content('WED Aug 21 8:00 PM – 11:00 PM')
+          expect(page).to have_content('Place 1, New York City, NY, 12345')
+          expect(page).to have_content('Comment #1')
+          expect(page).to have_content('Aug 22 @ 11:59 AM')
         end
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('First Campaign')
-          page.should have_content('WED Aug 21 8:00 PM – 11:00 PM')
-          page.should have_content('Place 1, New York City, NY, 12345')
-          page.should have_content('Comment #2')
-          page.should have_content('Aug 23 @ 9:15 AM')
+          expect(page).to have_content('First Campaign')
+          expect(page).to have_content('WED Aug 21 8:00 PM – 11:00 PM')
+          expect(page).to have_content('Place 1, New York City, NY, 12345')
+          expect(page).to have_content('Comment #2')
+          expect(page).to have_content('Aug 23 @ 9:15 AM')
         end
       end
     end

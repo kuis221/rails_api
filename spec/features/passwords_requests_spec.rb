@@ -23,7 +23,7 @@ feature "Passwords", :js => true do
     fill_in('user[email]', with: 'ramdom@email.com')
     click_button 'Reset'
     current_path.should == user_password_path
-    page.should have_content("We couldn't find that email address.  Please check that you spelled it correctly and try again.")
+    expect(page).to have_content("We couldn't find that email address.  Please check that you spelled it correctly and try again.")
   end
 
   scenario "should send an email when email address is found for existing user" do
@@ -32,6 +32,6 @@ feature "Passwords", :js => true do
     fill_in('user[email]', with: 'test@email.com')
     click_button 'Reset'
     current_path.should == passwords_thanks_path
-    page.should have_content("You will receive an email with instructions about how to reset your password in a few minutes.")
+    expect(page).to have_content("You will receive an email with instructions about how to reset your password in a few minutes.")
   end
 end

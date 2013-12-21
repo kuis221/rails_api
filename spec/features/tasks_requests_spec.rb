@@ -26,16 +26,16 @@ feature "Tasks", js: true, search: true do
       within("ul#tasks-list") do
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('Pick up kidz at school')
-          page.should have_content('SUN Sep 1')
-          page.should have_content('Cacique FY14')
+          expect(page).to have_content('Pick up kidz at school')
+          expect(page).to have_content('SUN Sep 1')
+          expect(page).to have_content('Cacique FY14')
         end
 
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('Bring beers to the party')
-          page.should have_content('MON Sep 2')
-          page.should have_content('Centenario FY14')
+          expect(page).to have_content('Bring beers to the party')
+          expect(page).to have_content('MON Sep 2')
+          expect(page).to have_content('Centenario FY14')
         end
       end
     end
@@ -53,18 +53,18 @@ feature "Tasks", js: true, search: true do
         click_link('Deactivate')
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this task?')
+        expect(page).to have_content('Are you sure you want to deactivate this task?')
         click_link("OK")
       end
       ensure_modal_was_closed
       filter_section('ACTIVE STATE').unicheck('Active')
       filter_section('ACTIVE STATE').unicheck('Inactive')
       within "ul#tasks-list li:nth-child(1)" do
-        page.should have_content('Pick up kidz at school')
+        expect(page).to have_content('Pick up kidz at school')
         click_link 'Activate'
       end
       within "ul#tasks-list" do
-        page.should have_no_content('Pick up kidz at school')
+        expect(page).to have_no_content('Pick up kidz at school')
       end
     end
   end
@@ -89,8 +89,8 @@ feature "Tasks", js: true, search: true do
         team_tasks.each do |task|
           # Find task Row
           within("li#task_#{task.id}") do
-            page.should have_content(task.title)
-            page.should have_content(task.event.campaign_name)
+            expect(page).to have_content(task.title)
+            expect(page).to have_content(task.event.campaign_name)
           end
         end
       end

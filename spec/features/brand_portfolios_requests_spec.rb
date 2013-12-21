@@ -26,13 +26,13 @@ feature "BrandPortfolios", js: true, search: true do
         within("ul#brand_portfolios-list") do
           # First Row
           within("li:nth-child(1)") do
-            page.should have_content(portfolios[0].name)
-            page.should have_content(portfolios[0].description)
+            expect(page).to have_content(portfolios[0].name)
+            expect(page).to have_content(portfolios[0].description)
           end
           # Second Row
           within("li:nth-child(2)") do
-            page.should have_content(portfolios[1].name)
-            page.should have_content(portfolios[1].description)
+            expect(page).to have_content(portfolios[1].name)
+            expect(page).to have_content(portfolios[1].description)
           end
         end
 
@@ -43,13 +43,13 @@ feature "BrandPortfolios", js: true, search: true do
         Sunspot.commit
         visit brand_portfolios_path
 
-        page.should have_content('A Vinos ticos')
+        expect(page).to have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
           click_link('Deactivate')
         end
         visible_modal.click_link("OK")
         ensure_modal_was_closed
-        page.should have_no_content('A Vinos ticos')
+        expect(page).to have_no_content('A Vinos ticos')
       end
 
       scenario "should allow user to activate brand portfolios" do
@@ -60,11 +60,11 @@ feature "BrandPortfolios", js: true, search: true do
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
 
-        page.should have_content('A Vinos ticos')
+        expect(page).to have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
           click_link('Activate')
         end
-        page.should have_no_content('A Vinos ticos')
+        expect(page).to have_no_content('A Vinos ticos')
       end
     end
 
@@ -81,8 +81,8 @@ feature "BrandPortfolios", js: true, search: true do
       ensure_modal_was_closed
 
       find('h2', text: 'new portfolio name') # Wait for the page to load
-      page.should have_selector('h2', text: 'new portfolio name')
-      page.should have_selector('div.description-data', text: 'new portfolio description')
+      expect(page).to have_selector('h2', text: 'new portfolio name')
+      expect(page).to have_selector('div.description-data', text: 'new portfolio description')
     end
   end
 
@@ -90,8 +90,8 @@ feature "BrandPortfolios", js: true, search: true do
     scenario "GET show should display the portfolio details page" do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       visit brand_portfolio_path(portfolio)
-      page.should have_selector('h2', text: 'Some Brand Portfolio')
-      page.should have_selector('div.description-data', text: 'a portfolio description')
+      expect(page).to have_selector('h2', text: 'Some Brand Portfolio')
+      expect(page).to have_selector('div.description-data', text: 'a portfolio description')
     end
 
     it 'diplays a table of brands within the brand portfolio' do
@@ -101,12 +101,12 @@ feature "BrandPortfolios", js: true, search: true do
       visit brand_portfolio_path(portfolio)
       within('#brands-list') do
         within("div#brand-#{brands[0].id}") do
-          page.should have_content('Brand 1')
-          page.should have_selector('a.remove-brand-btn', visible: :false)
+          expect(page).to have_content('Brand 1')
+          expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end
         within("div#brand-#{brands[1].id}") do
-          page.should have_content('Brand 2')
-          page.should have_selector('a.remove-brand-btn', visible: :false)
+          expect(page).to have_content('Brand 2')
+          expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end
       end
     end
@@ -121,7 +121,7 @@ feature "BrandPortfolios", js: true, search: true do
       ensure_modal_was_closed
       within('.links-data') do
         click_link('Activate')
-        page.should have_link('Deactivate') # test the link have changed
+        expect(page).to have_link('Deactivate') # test the link have changed
       end
     end
 
@@ -138,8 +138,8 @@ feature "BrandPortfolios", js: true, search: true do
       end
 
       find('h2', text: 'edited portfolio name') # Wait for the page to reload
-      page.should have_selector('h2', text: 'edited portfolio name')
-      page.should have_selector('div.description-data', text: 'edited portfolio description')
+      expect(page).to have_selector('h2', text: 'edited portfolio name')
+      expect(page).to have_selector('div.description-data', text: 'edited portfolio description')
     end
 
     it 'allows the user to add brands to the portfolio' do
@@ -150,15 +150,15 @@ feature "BrandPortfolios", js: true, search: true do
       click_link 'Add Brand'
 
       within visible_modal do
-        page.should have_content('Guaro Cacique')
+        expect(page).to have_content('Guaro Cacique')
         click_link 'Add'
       end
 
       # Make sure the new brand was added to the portfolio
       within "#brands-list" do
         within("div.brand") do
-          page.should have_content('Guaro Cacique')
-          page.should have_selector('a.remove-brand-btn', visible: :false)
+          expect(page).to have_content('Guaro Cacique')
+          expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end
       end
 
@@ -173,8 +173,8 @@ feature "BrandPortfolios", js: true, search: true do
 
       # Make sure the new brand was added to the portfolio
       within("#brands-list div.brand:nth-child(2)") do
-        page.should have_content('Ron Centenario')
-        page.should have_selector('a.remove-brand-btn', visible: :false)
+        expect(page).to have_content('Ron Centenario')
+        expect(page).to have_selector('a.remove-brand-btn', visible: :false)
       end
 
     end

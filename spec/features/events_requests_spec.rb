@@ -33,17 +33,17 @@ feature "Events", js: true, search: true do
           within("ul#events-list") do
             # First Row
             within("li:nth-child(1)") do
-              page.should have_content('WED Aug 21')
-              page.should have_content('10:00 AM – 11:00 AM')
-              page.should have_content(events[0].place_name)
-              page.should have_content('Campaign FY2012')
+              expect(page).to have_content('WED Aug 21')
+              expect(page).to have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content(events[0].place_name)
+              expect(page).to have_content('Campaign FY2012')
             end
             # Second Row
             within("li:nth-child(2)")  do
-              page.should have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
-              page.should have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
-              page.should have_content(events[1].place_name)
-              page.should have_content('Another Campaign April 03')
+              expect(page).to have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
+              expect(page).to have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
+              expect(page).to have_content(events[1].place_name)
+              expect(page).to have_content('Another Campaign April 03')
             end
           end
         end
@@ -56,16 +56,16 @@ feature "Events", js: true, search: true do
           visit events_path
 
           within("ul#events-list li:nth-child(1)") do
-            page.should have_content('Campaign FY2012')
+            expect(page).to have_content('Campaign FY2012')
             click_link('Deactivate')
           end
           within visible_modal do
-            page.should have_content('Are you sure you want to deactivate this event?')
+            expect(page).to have_content('Are you sure you want to deactivate this event?')
             click_link("OK")
           end
           ensure_modal_was_closed
           within "ul#events-list" do
-            page.should have_no_content('Campaign FY2012')
+            expect(page).to have_no_content('Campaign FY2012')
           end
         end
       end
@@ -80,9 +80,9 @@ feature "Events", js: true, search: true do
           filter_section('ACTIVE STATE').unicheck('Inactive')
 
           within("ul#events-list li:nth-child(1)") do
-            page.should have_content('Our Test Campaign')
+            expect(page).to have_content('Our Test Campaign')
             click_link('Activate')
-            page.should have_no_content('Our Test Campaign')
+            expect(page).to have_no_content('Our Test Campaign')
           end
         end
       end
@@ -102,37 +102,37 @@ feature "Events", js: true, search: true do
         visit events_path
 
         within("ul#events-list") do
-          page.should have_content('Campaign FY2012')
-          page.should have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
         end
 
-        page.should have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
-        #page.should have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+        expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+        #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
 
         filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
 
         within("ul#events-list") do
-          page.should have_no_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_no_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
         within("ul#events-list") do
-          page.should have_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26")
         find('#collection-list-filters').should have_content('Another Campaign April 03')
         within("ul#events-list") do
-          page.should have_no_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_no_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26", "27")
         within("ul#events-list") do
-          page.should have_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
       end
 
@@ -155,8 +155,8 @@ feature "Events", js: true, search: true do
             visit events_path
 
             within("ul#events-list li:nth-child(1)") do
-              page.should have_content('WED Aug 21')
-              page.should have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content('WED Aug 21')
+              expect(page).to have_content('10:00 AM – 11:00 AM')
             end
           end
         end
@@ -176,7 +176,7 @@ feature "Events", js: true, search: true do
         click_button 'Create'
       end
       ensure_modal_was_closed
-      page.should have_content('ABSOLUT Vodka')
+      expect(page).to have_content('ABSOLUT Vodka')
     end
   end
 
@@ -207,7 +207,7 @@ feature "Events", js: true, search: true do
         click_button 'Save'
       end
       ensure_modal_was_closed
-      page.should have_content('ABSOLUT Vodka FY2013')
+      expect(page).to have_content('ABSOLUT Vodka FY2013')
     end
 
     feature "with timezone support turned ON" do
@@ -245,14 +245,14 @@ feature "Events", js: true, search: true do
             click_button 'Save'
           end
           ensure_modal_was_closed
-          page.should have_content('10:00 PM – 11:00 PM')
+          expect(page).to have_content('10:00 PM – 11:00 PM')
         end
 
         # Check that the event's time is displayed with the same time in a different tiem zone
         Time.use_zone('America/Los_Angeles') do
           visit events_path
           within("ul#events-list") do
-            page.should have_content('10:00 PM – 11:00 PM')
+            expect(page).to have_content('10:00 PM – 11:00 PM')
           end
         end
       end
@@ -266,10 +266,10 @@ feature "Events", js: true, search: true do
           start_time: '8:00 PM', end_time: '11:00 PM',
           campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
-      page.should have_selector('h2', text: 'Campaign FY2012')
+      expect(page).to have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
-        page.should have_content('WED Aug 28')
-        page.should have_content('8:00 PM – 11:00 PM')
+        expect(page).to have_content('WED Aug 28')
+        expect(page).to have_content('8:00 PM – 11:00 PM')
       end
     end
 
@@ -295,8 +295,8 @@ feature "Events", js: true, search: true do
         visit event_path(event)
 
         within('.calendar-data') do
-          page.should have_content('WED Aug 21')
-          page.should have_content('10:00 AM – 11:00 AM')
+          expect(page).to have_content('WED Aug 21')
+          expect(page).to have_content('10:00 AM – 11:00 AM')
         end
       end
     end
@@ -308,13 +308,13 @@ feature "Events", js: true, search: true do
         click_link('Deactivate')
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this event?')
+        expect(page).to have_content('Are you sure you want to deactivate this event?')
         click_link("OK")
       end
       ensure_modal_was_closed
       within('.links-data') do
         click_link('Activate')
-        page.should have_link('Deactivate') # test the link have changed
+        expect(page).to have_link('Deactivate') # test the link have changed
       end
     end
 
@@ -328,17 +328,17 @@ feature "Events", js: true, search: true do
 
       click_link 'Add Team Member'
       within visible_modal do
-        page.should have_content('Pablo')
-        page.should have_content('Baltodano')
+        expect(page).to have_content('Pablo')
+        expect(page).to have_content('Baltodano')
         click_link("add-member-btn-#{company_user.id}")
 
-        page.should have_no_selector("li#staff-member-user-#{company_user.id}")
+        expect(page).to have_no_selector("li#staff-member-user-#{company_user.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within event_team_member(company_user) do
-        page.should have_content('Pablo Baltodano')
+        expect(page).to have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
@@ -347,7 +347,7 @@ feature "Events", js: true, search: true do
 
 
       within visible_modal do
-        page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
+        expect(page).to have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
         #find('a.btn-primary').click   # The "OK" button
         #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
         click_link('OK')
@@ -370,18 +370,18 @@ feature "Events", js: true, search: true do
 
       click_link 'Add Contact'
       within visible_modal do
-        page.should have_selector("li#contact-company_user-#{company_user.id}")
-        page.should have_content('Pablo')
-        page.should have_content('Baltodano')
+        expect(page).to have_selector("li#contact-company_user-#{company_user.id}")
+        expect(page).to have_content('Pablo')
+        expect(page).to have_content('Baltodano')
         click_link("add-contact-btn-company_user-#{company_user.id}")
 
-        page.should have_no_selector("li#contact-company_user-#{company_user.id}")
+        expect(page).to have_no_selector("li#contact-company_user-#{company_user.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Pablo Baltodano')
+        expect(page).to have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
@@ -391,7 +391,7 @@ feature "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Pablo Baltodano')
+      expect(page).to_not have_content('Pablo Baltodano')
     end
 
 
@@ -404,18 +404,18 @@ feature "Events", js: true, search: true do
 
       click_link 'Add Contact'
       within visible_modal do
-        page.should have_selector("li#contact-contact-#{contact.id}")
-        page.should have_content('Guillermo')
-        page.should have_content('Vargas')
+        expect(page).to have_selector("li#contact-contact-#{contact.id}")
+        expect(page).to have_content('Guillermo')
+        expect(page).to have_content('Vargas')
         click_link("add-contact-btn-contact-#{contact.id}")
 
-        page.should have_no_selector("li#contact-contact-#{contact.id}")
+        expect(page).to have_no_selector("li#contact-contact-#{contact.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Guillermo Vargas')
+        expect(page).to have_content('Guillermo Vargas')
         #find('a.remove-member-btn').click
       end
 
@@ -425,7 +425,7 @@ feature "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Guillermo Vargas')
+      expect(page).to_not have_content('Guillermo Vargas')
     end
 
 
@@ -456,7 +456,7 @@ feature "Events", js: true, search: true do
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Pedro Picapiedra')
+        expect(page).to have_content('Pedro Picapiedra')
       end
 
       # Test removal of the user
@@ -465,7 +465,7 @@ feature "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Pedro Picapiedra')
+      expect(page).to_not have_content('Pedro Picapiedra')
     end
 
     scenario "allows to edit a contact", :js => true do
@@ -476,7 +476,7 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      page.should have_content('Guillermo Vargas')
+      expect(page).to have_content('Guillermo Vargas')
 
       hover_and_click("#event-contacts-list .event-contact", 'Edit Contact')
 
@@ -490,8 +490,8 @@ feature "Events", js: true, search: true do
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_no_content('Guillermo Vargas')
-        page.should have_content('Pedro Picapiedra')
+        expect(page).to have_no_content('Guillermo Vargas')
+        expect(page).to have_content('Pedro Picapiedra')
         #find('a.remove-member-btn').click
       end
     end
@@ -517,9 +517,9 @@ feature "Events", js: true, search: true do
       end
 
       within('#event-tasks-container li') do
-        page.should have_content('Pick up the kidz at school')
-        page.should have_content('Juanito Bazooka')
-        page.should have_content('THU May 16')
+        expect(page).to have_content('Pick up the kidz at school')
+        expect(page).to have_content('Juanito Bazooka')
+        expect(page).to have_content('THU May 16')
       end
 
       # Mark the tasks as completed
@@ -544,7 +544,7 @@ feature "Events", js: true, search: true do
       # removing the element from the table automatically in the test
       visit event_path(event)
       within('#event-tasks-container') do
-        page.should_not have_content('Juanito Bazooka')
+        expect(page).to_not have_content('Juanito Bazooka')
       end
     end
 
@@ -592,34 +592,34 @@ feature "Events", js: true, search: true do
       # Ensure the results are displayed on the page
 
       within "#ethnicity-graph" do
-        page.should have_content "20%"
-        page.should have_content "12%"
-        page.should have_content "13%"
-        page.should have_content "34%"
-        page.should have_content "21%"
+        expect(page).to have_content "20%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "34%"
+        expect(page).to have_content "21%"
       end
 
       within "#gender-graph" do
-        page.should have_content "34 %"
-        page.should have_content "66 %"
+        expect(page).to have_content "34 %"
+        expect(page).to have_content "66 %"
       end
 
       within "#age-graph" do
-        page.should have_content "9%"
-        page.should have_content "11%"
-        page.should have_content "12%"
-        page.should have_content "13%"
-        page.should have_content "14%"
-        page.should have_content "15%"
-        page.should have_content "16%"
+        expect(page).to have_content "9%"
+        expect(page).to have_content "11%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "14%"
+        expect(page).to have_content "15%"
+        expect(page).to have_content "16%"
       end
 
       visit event_path(event)
 
-      # Page should still display the post-event format and not the form
-      page.should have_selector("#gender-graph")
-      page.should have_selector("#ethnicity-graph")
-      page.should have_selector("#age-graph")
+      # expect(page).to still display the post-event format and not the form
+      expect(page).to have_selector("#gender-graph")
+      expect(page).to have_selector("#ethnicity-graph")
+      expect(page).to have_selector("#age-graph")
 
       click_link 'Edit event data'
 
@@ -631,12 +631,12 @@ feature "Events", js: true, search: true do
       click_button "Save"
 
       within ".box_metrics" do
-        page.should have_content('3,333')
-        page.should have_content('222,222')
-        page.should have_content('4,444,444')
+        expect(page).to have_content('3,333')
+        expect(page).to have_content('222,222')
+        expect(page).to have_content('4,444,444')
       end
 
-      page.should have_content('Edited summary content')
+      expect(page).to have_content('Edited summary content')
     end
   end
 

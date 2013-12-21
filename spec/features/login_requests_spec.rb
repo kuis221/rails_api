@@ -5,7 +5,7 @@ feature "Login", :js => true do
     visit root_path
 
     current_path.should == new_user_session_path
-    page.should have_content("You need to sign in or sign up before continuing.")
+    expect(page).to have_content("You need to sign in or sign up before continuing.")
   end
 
   scenario "should allow the user to complete the profile and log him in after that" do
@@ -33,6 +33,6 @@ feature "Login", :js => true do
     click_button 'Login'
 
     current_path.should == new_user_session_path
-    page.should have_content('Invalid email or password.')
+    expect(page).to have_content('Invalid email or password.')
   end
 end

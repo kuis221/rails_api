@@ -25,15 +25,15 @@ feature "Teams", js: true, search: true do
       within("ul#teams-list") do
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('Costa Rica Team')
-          page.should have_selector('span.members>b', text: '3')
-          page.should have_content('el grupo de ticos')
+          expect(page).to have_content('Costa Rica Team')
+          expect(page).to have_selector('span.members>b', text: '3')
+          expect(page).to have_content('el grupo de ticos')
         end
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('San Francisco Team')
-           page.should have_selector('span.members>b', text: '2')
-          page.should have_content('the guys from SF')
+          expect(page).to have_content('San Francisco Team')
+           expect(page).to have_selector('span.members>b', text: '2')
+          expect(page).to have_content('the guys from SF')
         end
       end
 
@@ -46,16 +46,16 @@ feature "Teams", js: true, search: true do
       visit teams_path
 
       within("ul#teams-list") do
-        page.should have_content('Costa Rica Team')
+        expect(page).to have_content('Costa Rica Team')
         hover_and_click 'li', 'Deactivate'
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this team?')
+        expect(page).to have_content('Are you sure you want to deactivate this team?')
         click_link("OK")
       end
       ensure_modal_was_closed
       within("ul#teams-list") do
-        page.should have_no_content('Costa Rica Team')
+        expect(page).to have_no_content('Costa Rica Team')
       end
 
       # Make it show only the inactive elements
@@ -63,9 +63,9 @@ feature "Teams", js: true, search: true do
       filter_section('ACTIVE STATE').unicheck('Active')
 
       within("ul#teams-list") do
-        page.should have_content('Costa Rica Team')
+        expect(page).to have_content('Costa Rica Team')
         hover_and_click 'li', 'Activate'
-        page.should have_no_content('Costa Rica Team')
+        expect(page).to have_no_content('Costa Rica Team')
       end
 
     end
@@ -83,8 +83,8 @@ feature "Teams", js: true, search: true do
       ensure_modal_was_closed
 
       find('h2', text: 'new team name') # Wait for the page to load
-      page.should have_selector('h2', text: 'new team name')
-      page.should have_selector('div.description-data', text: 'new team description')
+      expect(page).to have_selector('h2', text: 'new team name')
+      expect(page).to have_selector('div.description-data', text: 'new team description')
     end
   end
 
@@ -92,8 +92,8 @@ feature "Teams", js: true, search: true do
     scenario "GET show should display the team details page" do
       team = FactoryGirl.create(:team, name: 'Some Team Name', description: 'a team description', company_id: @user.current_company.id)
       visit team_path(team)
-      page.should have_selector('h2', text: 'Some Team Name')
-      page.should have_selector('div.description-data', text: 'a team description')
+      expect(page).to have_selector('h2', text: 'Some Team Name')
+      expect(page).to have_selector('div.description-data', text: 'a team description')
     end
 
     it 'diplays a list of users within the team details page' do
@@ -107,14 +107,14 @@ feature "Teams", js: true, search: true do
       visit team_path(team)
       within('#team-members-list') do
         within("div.team-member:nth-child(1)") do
-          page.should have_content('First1 Last1')
-          page.should have_content('Brand Manager')
-          page.should have_selector('a.remove-member-btn', visible: false)
+          expect(page).to have_content('First1 Last1')
+          expect(page).to have_content('Brand Manager')
+          expect(page).to have_selector('a.remove-member-btn', visible: false)
         end
         within("div.team-member:nth-child(2)") do
-          page.should have_content('First2 Last2')
-          page.should have_content('Staff')
-          page.should have_selector('a.remove-member-btn', visible: false)
+          expect(page).to have_content('First2 Last2')
+          expect(page).to have_content('Staff')
+          expect(page).to have_selector('a.remove-member-btn', visible: false)
         end
       end
 
@@ -127,13 +127,13 @@ feature "Teams", js: true, search: true do
          click_link('Deactivate')
        end
        within visible_modal do
-        page.should have_content("Are you sure you want to deactivate this team?")
+        expect(page).to have_content("Are you sure you want to deactivate this team?")
         click_link("OK")
       end
        ensure_modal_was_closed
        within('.links-data') do
          click_link('Activate')
-         page.should have_link('Deactivate') # test the link have changed
+         expect(page).to have_link('Deactivate') # test the link have changed
        end
     end
 
@@ -151,8 +151,8 @@ feature "Teams", js: true, search: true do
       end
 
       find('h2', text: 'edited team name') # Wait for the page to reload
-      page.should have_selector('h2', text: 'edited team name')
-      page.should have_selector('div.description-data', text: 'edited team description')
+      expect(page).to have_selector('h2', text: 'edited team name')
+      expect(page).to have_selector('div.description-data', text: 'edited team description')
     end
 
 
@@ -163,7 +163,7 @@ feature "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      page.should_not have_content('Fulanito')
+      expect(page).to_not have_content('Fulanito')
 
       click_link('Add Team Member')
 
@@ -175,7 +175,7 @@ feature "Teams", js: true, search: true do
       close_modal
 
       within('#team-members-list')  do
-        page.should have_content('Fulanito')
+        expect(page).to have_content('Fulanito')
       end
     end
   end

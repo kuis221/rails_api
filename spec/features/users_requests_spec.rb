@@ -29,7 +29,7 @@ feature "Users", :js => true do
       current_path.should == root_path
 
       within '.current-company-title' do
-        page.should have_content('Tres Patitos S.A.')
+        expect(page).to have_content('Tres Patitos S.A.')
       end
 
       # Click on the dropdown and select the other company
@@ -41,7 +41,7 @@ feature "Users", :js => true do
       current_path.should == root_path
 
       within '.current-company-title' do
-        page.should have_content('ABC inc.')
+        expect(page).to have_content('ABC inc.')
       end
     end
 
@@ -55,7 +55,7 @@ feature "Users", :js => true do
           hover_and_click "li:nth-child(2)", 'Deactivate'
         end
         within visible_modal do
-          page.should have_content('Are you sure you want to deactivate this user?')
+          expect(page).to have_content('Are you sure you want to deactivate this user?')
           click_link("OK")
         end
         ensure_modal_was_closed
@@ -63,9 +63,9 @@ feature "Users", :js => true do
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
         within("ul#users-list") do
-          page.should have_content('Pedro Navaja')
+          expect(page).to have_content('Pedro Navaja')
           hover_and_click "li:nth-child(1)", 'Activate'
-          page.should have_no_content('Pedro Navaja')
+          expect(page).to have_no_content('Pedro Navaja')
         end
       end
     end
@@ -76,8 +76,8 @@ feature "Users", :js => true do
         user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
         visit company_user_path(company_user)
-        page.should have_selector('h2', text: 'Pedro Navaja')
-        page.should have_selector('div.user-role', text: 'TestRole')
+        expect(page).to have_selector('h2', text: 'Pedro Navaja')
+        expect(page).to have_selector('div.user-role', text: 'TestRole')
       end
 
       it 'allows the user to activate/deactivate a user' do
@@ -90,13 +90,13 @@ feature "Users", :js => true do
          click_link('Deactivate')
         end
         within visible_modal do
-          page.should have_content('Are you sure you want to deactivate this user?')
+          expect(page).to have_content('Are you sure you want to deactivate this user?')
           click_link("OK")
         end
         ensure_modal_was_closed
         within('.links-data') do
           click_link('Activate')
-          page.should have_link('Deactivate') # test the link have changed
+          expect(page).to have_link('Deactivate') # test the link have changed
         end
       end
 
@@ -119,8 +119,8 @@ feature "Users", :js => true do
           click_js_button 'Save'
         end
 
-        page.should have_selector('h2', text: 'Pedro Navaja')
-        page.should have_selector('div.user-role', text: 'Another Role')
+        expect(page).to have_selector('h2', text: 'Pedro Navaja')
+        expect(page).to have_selector('div.user-role', text: 'Another Role')
       end
 
       scenario "should be able to assign areas to the user" do
@@ -132,25 +132,25 @@ feature "Users", :js => true do
 
         within visible_modal do
           find("#area-#{area.id}").click_link('Add Area')
-          page.should have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
+          expect(page).to have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
         end
         close_modal
 
         click_link 'Add Area'
 
         within visible_modal do
-          page.should have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
+          expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
         end
 
         close_modal
 
         # Ensure the area now appears on the list of areas
         within '#company_user-areas-list' do
-          page.should have_content('San Francisco Area')
+          expect(page).to have_content('San Francisco Area')
 
           # Test the area removal
           hover_and_click('.hover-item', 'Remove Area')
-          page.should have_no_content('San Francisco Area')
+          expect(page).to have_no_content('San Francisco Area')
         end
       end
 

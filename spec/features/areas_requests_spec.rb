@@ -25,17 +25,17 @@ feature "Areas", js: true, search: true do
       within("#areas-list") do
         # First Row
         within("li#area_#{areas[0].id}") do
-          page.should have_content('Gran Area Metropolitana')
-          page.should have_content('Ciudades principales de Costa Rica')
-          page.should have_selector('a.edit')
-          page.should have_selector('a.disable')
+          expect(page).to have_text('Gran Area Metropolitana')
+          expect(page).to have_text('Ciudades principales de Costa Rica')
+          expect(page).to have_selector('a.edit')
+          expect(page).to have_selector('a.disable')
         end
         # Second Row
         within("li#area_#{areas[1].id}") do
-          page.should have_content('Zona Norte')
-          page.should have_content('Ciudades del Norte de Costa Rica')
-          page.should have_selector('a.edit')
-          page.should have_selector('a.disable')
+          expect(page).to have_text('Zona Norte')
+          expect(page).to have_text('Ciudades del Norte de Costa Rica')
+          expect(page).to have_selector('a.edit')
+          expect(page).to have_selector('a.disable')
         end
       end
     end
@@ -45,13 +45,13 @@ feature "Areas", js: true, search: true do
       Sunspot.commit
       visit areas_path
 
-      page.should have_content('Wild Wild West')
+      expect(page).to have_text('Wild Wild West')
       within("ul#areas-list li:nth-child(1)") do
         click_link('Deactivate')
       end
       visible_modal.click_link("OK")
       ensure_modal_was_closed
-      page.should have_no_content('Wild Wild West')
+      expect(page).to have_no_content('Wild Wild West')
     end
 
     scenario "should allow user to activate areas" do
@@ -63,11 +63,11 @@ feature "Areas", js: true, search: true do
       filter_section('ACTIVE STATE').unicheck('Active')
 
       within("ul#areas-list li:nth-child(1)") do
-        page.should have_content('Wild Wild West')
+        expect(page).to have_text('Wild Wild West')
         click_link('Activate')
       end
       within("ul#areas-list") do
-        page.should have_no_content('Wild Wild West')
+        expect(page).to have_no_content('Wild Wild West')
       end
     end
   end
@@ -76,8 +76,8 @@ feature "Areas", js: true, search: true do
     scenario "GET show should display the area details page" do
       area = FactoryGirl.create(:area, name: 'Some Area', description: 'an area description', company: @company)
       visit area_path(area)
-      page.should have_selector('h2', text: 'Some Area')
-      page.should have_selector('div.description-data', text: 'an area description')
+      expect(page).to have_selector('h2', text: 'Some Area')
+      expect(page).to have_selector('div.description-data', text: 'an area description')
     end
 
     it 'diplays a table of places within the area' do
@@ -87,12 +87,12 @@ feature "Areas", js: true, search: true do
       visit area_path(area)
       within('#area-places-list') do
         within("div.area-place:nth-child(1)") do
-          page.should have_content('Place 1')
-          page.should have_selector('a.remove-area-btn', visible: :false)
+          expect(page).to have_text('Place 1')
+          expect(page).to have_selector('a.remove-area-btn', visible: :false)
         end
         within("div.area-place:nth-child(2)") do
-          page.should have_content('Place 2')
-          page.should have_selector('a.remove-area-btn', visible: :false)
+          expect(page).to have_text('Place 2')
+          expect(page).to have_selector('a.remove-area-btn', visible: :false)
         end
       end
     end
@@ -104,14 +104,14 @@ feature "Areas", js: true, search: true do
         click_link('Deactivate')
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this area?')
+        expect(page).to have_text('Are you sure you want to deactivate this area?')
         click_link("OK")
       end
       ensure_modal_was_closed
 
       within('.links-data') do
         click_link('Activate')
-        page.should have_link('Deactivate') # test the link have changed
+        expect(page).to have_link('Deactivate') # test the link have changed
       end
     end
 
@@ -128,8 +128,8 @@ feature "Areas", js: true, search: true do
       end
 
       #find('h2', text: 'edited area name') # Wait for the page to reload
-      page.should have_selector('h2', text: 'edited area name')
-      page.should have_selector('div.description-data', text: 'edited area description')
+      expect(page).to have_selector('h2', text: 'edited area name')
+      expect(page).to have_selector('div.description-data', text: 'edited area description')
     end
 
   end

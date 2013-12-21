@@ -26,13 +26,13 @@ feature "Campaigns", js: true, search: true do
         within("ul#campaigns-list") do
           # First Row
           within("li:nth-child(1)") do
-            page.should have_content(campaigns[0].name)
-            page.should have_content(campaigns[0].description)
+            expect(page).to have_content(campaigns[0].name)
+            expect(page).to have_content(campaigns[0].description)
           end
           # Second Row
           within("li:nth-child(2)") do
-            page.should have_content(campaigns[1].name)
-            page.should have_content(campaigns[1].description)
+            expect(page).to have_content(campaigns[1].name)
+            expect(page).to have_content(campaigns[1].description)
           end
         end
       end
@@ -42,16 +42,16 @@ feature "Campaigns", js: true, search: true do
         Sunspot.commit
         visit campaigns_path
 
-        page.should have_content('Cacique FY13')
+        expect(page).to have_content('Cacique FY13')
         within("ul#campaigns-list li:nth-child(1)") do
           click_link('Deactivate')
         end
         within visible_modal do
-          page.should have_content("Are you sure you want to deactivate this campaign?")
+          expect(page).to have_content("Are you sure you want to deactivate this campaign?")
           click_link("OK")
         end
         ensure_modal_was_closed
-        page.should have_no_content('Cacique FY13')
+        expect(page).to have_no_content('Cacique FY13')
       end
 
       scenario "should allow user to activate campaigns" do
@@ -61,12 +61,12 @@ feature "Campaigns", js: true, search: true do
 
         filter_section('ACTIVE STATE').unicheck('Inactive')
 
-        page.should have_content('Cacique FY13')
+        expect(page).to have_content('Cacique FY13')
         within("ul#campaigns-list li:nth-child(1)") do
-          page.should have_content('Cacique FY13')
+          expect(page).to have_content('Cacique FY13')
           click_link('Activate')
         end
-        page.should have_no_content('Cacique FY13')
+        expect(page).to have_no_content('Cacique FY13')
       end
     end
 
@@ -85,8 +85,8 @@ feature "Campaigns", js: true, search: true do
       ensure_modal_was_closed
 
       find('h2', text: 'new campaign name') # Wait for the page to load
-      page.should have_selector('h2', text: 'new campaign name')
-      page.should have_selector('div.description-data', text: 'new campaign description')
+      expect(page).to have_selector('h2', text: 'new campaign name')
+      expect(page).to have_selector('div.description-data', text: 'new campaign description')
     end
   end
 
@@ -94,8 +94,8 @@ feature "Campaigns", js: true, search: true do
     scenario "GET show should display the campaign details page" do
       campaign = FactoryGirl.create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
       visit campaign_path(campaign)
-      page.should have_selector('h2', text: 'Some Campaign')
-      page.should have_selector('div.description-data', text: 'a campaign description')
+      expect(page).to have_selector('h2', text: 'Some Campaign')
+      expect(page).to have_selector('div.description-data', text: 'a campaign description')
     end
 
     it 'allows the user to activate/deactivate a campaign' do
@@ -106,13 +106,13 @@ feature "Campaigns", js: true, search: true do
       end
 
       within visible_modal do
-        page.should have_content("Are you sure you want to deactivate this campaign?")
+        expect(page).to have_content("Are you sure you want to deactivate this campaign?")
         click_link("OK")
       end
       ensure_modal_was_closed
       within('.links-data') do
         click_link('Activate')
-        page.should have_link('Deactivate') # test the link have changed
+        expect(page).to have_link('Deactivate') # test the link have changed
       end
     end
 
@@ -129,8 +129,8 @@ feature "Campaigns", js: true, search: true do
       end
 
       #find('h2', text: 'edited campaign name') # Wait for the page to reload
-      page.should have_selector('h2', text: 'edited campaign name')
-      page.should have_selector('div.description-data', text: 'edited campaign description')
+      expect(page).to have_selector('h2', text: 'edited campaign name')
+      expect(page).to have_selector('div.description-data', text: 'edited campaign description')
     end
 
 
@@ -146,25 +146,25 @@ feature "Campaigns", js: true, search: true do
 
       within visible_modal do
         find("#area-#{area.id}").click_link('Add Area')
-        page.should have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
+        expect(page).to have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
       end
       close_modal
 
       click_link 'Add Places'
 
       within visible_modal do
-        page.should have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
+        expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
       end
 
       close_modal
 
       within tab do
         # Ensure the area now appears on the list of areas
-        page.should have_content('San Francisco Area')
+        expect(page).to have_content('San Francisco Area')
 
         # Test the area removal
         click_link 'Remove Area'
-        page.should have_no_content('San Francisco Area')
+        expect(page).to have_no_content('San Francisco Area')
       end
     end
   end
