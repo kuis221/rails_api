@@ -121,8 +121,9 @@ feature "BrandPortfolios", js: true, search: true do
       within('.links-data') do
         click_link('Deactivate')
       end
-      visible_modal.click_link("OK")
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
+
       within('.links-data') do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
