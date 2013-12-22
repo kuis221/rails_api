@@ -59,17 +59,15 @@ class VenuesController < FilteredController
         facet_search = Venue.do_search(facet_params, true)
 
         if rows = facet_search.stats.first.rows
-          max_events       = rows.select{|r| r.stat_field == 'events_count_is' }.first.value
-          max_promo_hours  = rows.select{|r| r.stat_field == 'promo_hours_es' }.first.value
-          max_impressions  = rows.select{|r| r.stat_field == 'impressions_is' }.first.value
-          max_interactions = rows.select{|r| r.stat_field == 'interactions_is' }.first.value
-          max_sampled      = rows.select{|r| r.stat_field == 'sampled_is' }.first.value
-          max_spent        = rows.select{|r| r.stat_field == 'spent_es' }.first.value
-          max_venue_score  = rows.select{|r| r.stat_field == 'venue_score_is' }.first.value
-          
-          load_filters_from_session if session[:filters]
+          max_events       = rows.detect{|r| r.stat_field == 'events_count_is' }.try(:value) || 0
+          max_promo_hours  = rows.detect{|r| r.stat_field == 'promo_hours_es' }.try(:value) || 0
+          max_impressions  = rows.detect{|r| r.stat_field == 'impressions_is' }.try(:value) || 0
+          max_interactions = rows.detect{|r| r.stat_field == 'interactions_is' }.try(:value) || 0
+          max_sampled      = rows.detect{|r| r.stat_field == 'sampled_is' }.try(:value) || 0
+          max_spent        = rows.detect{|r| r.stat_field == 'spent_es' }.try(:value) || 0
+          max_venue_score  = rows.detect{|r| r.stat_field == 'venue_score_is' }.try(:value) || 0
 
-          f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events][:min], selected_max: search_params[:events][:max] )
+          f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events_count][:min], selected_max: search_params[:events_count][:max] )
           f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
           f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:impressions][:min], selected_max: search_params[:impressions][:max] )
           f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions][:min], selected_max: search_params[:interactions][:max] )
@@ -118,7 +116,7 @@ class VenuesController < FilteredController
           @search_params[:types] = %w(establishment)
         end
 
-        [:events, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
+        [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
           @search_params[param] ||= {}
           @search_params[param][:min] = nil unless @search_params[:location].present? || @search_params[param][:min].present?
           @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
@@ -135,15 +133,4 @@ class VenuesController < FilteredController
       end
       @data_totals
     end
-    
-    def load_filters_from_session
-      filters = session[:filters]
-      session[:filters] = nil
-      filters.each do |index,value|
-        value.each do |i,v|
-          search_params[index][i] = v if !v.blank?
-        end if value
-      end
-    end
-
 end

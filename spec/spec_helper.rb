@@ -10,7 +10,7 @@ require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
 require 'capybara-screenshot/rspec'
-#require 'capybara/poltergeist'
+require 'capybara/poltergeist'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -56,9 +56,9 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
-  config.include Capybara::DSL, :type => :request
-  config.include SignHelper, :type => :request
-  config.include RequestsHelper, :type => :request
+  #config.include Capybara::DSL, :type => :request
+  config.include SignHelper, :type => :feature
+  config.include RequestsHelper, :type => :feature
 
   config.before(:all) do
     DeferredGarbageCollection.start
@@ -67,10 +67,17 @@ RSpec.configure do |config|
     DeferredGarbageCollection.reconsider
   end
 
-
   config.after(:each) do
     User.current = nil
     Time.zone = Rails.application.config.time_zone
+    Capybara.reset_sessions!
+  end
+
+  config.before(:each) do
+    Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
+    Rails.logger.debug "**************************************************************************************"
+    Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
+    Rails.logger.debug "**************************************************************************************"
   end
 
   if ENV['CI']
@@ -92,9 +99,9 @@ RSpec.configure do |config|
   end
 
   # Capybara.javascript_driver = :webkit
-  Capybara.javascript_driver = :selenium
-  # Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 5
+  #Capybara.javascript_driver = :selenium
+  Capybara.javascript_driver = :poltergeist
+  Capybara.default_wait_time = 2
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 

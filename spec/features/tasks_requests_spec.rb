@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Tasks", js: true, search: true do
+feature "Tasks", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -14,8 +14,8 @@ describe "Tasks", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/tasks/mine"  do
-    it "GET index should display a table with the events" do
+  feature "/tasks/mine"  do
+    scenario "GET index should display a table with the events" do
       tasks = [
         FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
         FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02' , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company)))
@@ -26,41 +26,51 @@ describe "Tasks", js: true, search: true do
       within("ul#tasks-list") do
         # First Row
         within("li:nth-child(1)") do
-          page.should have_content('Pick up kidz at school')
-          page.should have_content('SUN Sep 1')
-          page.should have_content('Cacique FY14')
+          expect(page).to have_content('Pick up kidz at school')
+          expect(page).to have_content('SUN Sep 1')
+          expect(page).to have_content('Cacique FY14')
         end
 
         # Second Row
         within("li:nth-child(2)") do
-          page.should have_content('Bring beers to the party')
-          page.should have_content('MON Sep 2')
-          page.should have_content('Centenario FY14')
+          expect(page).to have_content('Bring beers to the party')
+          expect(page).to have_content('MON Sep 2')
+          expect(page).to have_content('Centenario FY14')
         end
       end
+      wait_for_ajax
     end
-    
-    it "allows the user to activate/deactivate tasks" do
-      tasks = [
-        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
-        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02' , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company)))
-      ]
+
+    scenario "allows the user to activate/deactivate tasks" do
+      FactoryGirl.create(:task,
+        title: 'Pick up kidz at school',
+        company_user: @company_user, due_at: '2013-09-01', active: true,
+        event: FactoryGirl.create(:event, company: @company,
+          campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company)))
       Sunspot.commit
       visit mine_tasks_path
 
-      within("ul#tasks-list") do
-        # First Row
-        within("li:nth-child(1)") do
-          click_link('Deactivate')
-        end
+      within("ul#tasks-list li:nth-child(1)") do
+        click_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this task?'
+
+      filter_section('ACTIVE STATE').unicheck('Active')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      within "ul#tasks-list li:nth-child(1)" do
+        expect(page).to have_content('Pick up kidz at school')
+        click_link 'Activate'
+      end
+      within "ul#tasks-list" do
+        expect(page).to have_no_content('Pick up kidz at school')
+      end
+      wait_for_ajax
     end
   end
 
-  describe "/tasks/my_teams"  do
-    it "GET index should display a table with the events" do
+  feature "/tasks/my_teams"  do
+    scenario "GET index should display a table with the events" do
       team1 = FactoryGirl.create(:team, company: @company)
       team2 = FactoryGirl.create(:team, company: @company)
       @company_user.update_attributes({:team_ids => [team1.id, team2.id]}, without_protection: true)
@@ -79,12 +89,12 @@ describe "Tasks", js: true, search: true do
         team_tasks.each do |task|
           # Find task Row
           within("li#task_#{task.id}") do
-            page.should have_content(task.title)
-            page.should have_content(task.event.campaign_name)
+            expect(page).to have_content(task.title)
+            expect(page).to have_content(task.event.campaign_name)
           end
         end
       end
-
+      wait_for_ajax
     end
   end
 end

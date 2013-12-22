@@ -15,4 +15,4 @@ li id="survey_#{survey.id}"
   span.pull-right
     = link_to '', edit_event_survey_path(survey.event, survey), remote: true, class: 'edit'
     = link_to '', deactivate_event_survey_path(survey.event, survey), remote: true, class: 'disable', :confirm=> I18n.t('confirmation.deactive_confirm_message', model: survey.class.name) if survey.active?
-    = link_to '', activate_event_survey_path(survey.event, survey),title: I18n.t('confirmation.active'), remote: true, class: 'enable' unless survey.active?
+    = link_to '', activate_event_survey_path(survey.event, survey),title: I18n.t('confirmation.activate'), remote: true, class: 'enable' unless survey.active?
