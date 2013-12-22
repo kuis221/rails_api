@@ -39,6 +39,7 @@ feature "Invitations", :js => true do
       new_user.teams.should == [team]
       new_user.role_id.should == role.id
       new_user.email.should == 'pablo@rocadura.com'
+      wait_for_ajax
     end
 
     scenario "should validate the required fields" do
@@ -56,6 +57,7 @@ feature "Invitations", :js => true do
       find_field('Last name').should have_error('This field is required.')
       find_field('Role', visible: false).should have_error('This field is required.')
       find_field('Email').should have_error('This field is required.')
+      wait_for_ajax
     end
   end
 
@@ -117,6 +119,7 @@ feature "Invitations", :js => true do
 
       current_path.should == root_path
       expect(page).to have_content('Your password was set successfully. You are now signed in.')
+      wait_for_ajax
     end
 
     scenario "should display an error if the token is not valid" do
@@ -167,7 +170,7 @@ feature "Invitations", :js => true do
       click_button 'Save'
 
       find_field('New Password', with: 'aA1', match: :first).should have_error('Please enter at least 8 characters.')
-
+      wait_for_ajax
     end
   end
 end

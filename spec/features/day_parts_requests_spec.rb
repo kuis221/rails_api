@@ -34,6 +34,7 @@ feature "DayParts", search: true, js: true do
           expect(page).to have_content('Morningns')
           expect(page).to have_content('From 8 to 11am')
         end
+        wait_for_ajax
       end
     end
 
@@ -45,11 +46,8 @@ feature "DayParts", search: true, js: true do
       within("ul#day_parts-list") do
         click_link('Deactivate')
       end
-      within visible_modal do
-        expect(page).to have_content('Are you sure you want to deactivate this day part?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this day part?'
 
       within("ul#day_parts-list") do
         expect(page).to have_no_content('Morning')
@@ -64,9 +62,10 @@ feature "DayParts", search: true, js: true do
         click_link('Activate')
         expect(page).to have_no_content('Morning')
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to create a new day part' do
+    scenario 'allows the user to create a new day part' do
       visit day_parts_path
 
       click_link('New Day part')
@@ -81,6 +80,7 @@ feature "DayParts", search: true, js: true do
       find('h2', text: 'new day part name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new day part name')
       expect(page).to have_selector('div.description-data', text: 'new day part description')
+      wait_for_ajax
     end
   end
 
@@ -90,9 +90,10 @@ feature "DayParts", search: true, js: true do
       visit day_part_path(day_part)
       expect(page).to have_selector('h2', text: 'Some day part')
       expect(page).to have_selector('div.description-data', text: 'a day part description')
+      wait_for_ajax
     end
 
-    it 'diplays a table of dates within the day part' do
+    scenario 'diplays a table of dates within the day part' do
       day_part = FactoryGirl.create(:day_part, company: @company,
           day_items:[
             FactoryGirl.create(:day_item, start_time: '12:00pm', end_time: '4:00pm'),
@@ -108,21 +109,21 @@ feature "DayParts", search: true, js: true do
           expect(page).to have_content('From 1:00 PM to 3:00 PM')
         end
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a day part' do
+    scenario 'allows the user to activate/deactivate a day part' do
       day_part = FactoryGirl.create(:day_part, company: @company, active: true)
       visit day_part_path(day_part)
       find('.links-data').click_link('Deactivate')
-      within visible_modal do
-        expect(page).to have_content('Are you sure you want to deactivate this day part?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this day part?'
+
       find('.links-data').click_link('Activate')
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the day_part' do
+    scenario 'allows the user to edit the day_part' do
       day_part = FactoryGirl.create(:day_part, company: @company)
       visit day_part_path(day_part)
 
@@ -137,9 +138,10 @@ feature "DayParts", search: true, js: true do
       page.find('h2', text: 'edited day part name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited day part name')
       expect(page).to have_selector('div.description-data', text: 'edited day part description')
+      wait_for_ajax
     end
 
-    it 'allows the user to add and remove date items to the day part' do
+    scenario 'allows the user to add and remove date items to the day part' do
       day_part = FactoryGirl.create(:day_part, company: @company)
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit day_part_path(day_part)
@@ -160,7 +162,7 @@ feature "DayParts", search: true, js: true do
         click_link('Remove')
       end
       expect(page).to have_no_content(day_item_text)
-
+      wait_for_ajax
     end
   end
 end

@@ -38,6 +38,7 @@ feature "Areas", js: true, search: true do
           expect(page).to have_selector('a.disable')
         end
       end
+      wait_for_ajax
     end
 
     scenario "should allow user to deactivate areas" do
@@ -52,6 +53,7 @@ feature "Areas", js: true, search: true do
       visible_modal.click_link("OK")
       ensure_modal_was_closed
       expect(page).to have_no_content('Wild Wild West')
+      wait_for_ajax
     end
 
     scenario "should allow user to activate areas" do
@@ -69,6 +71,7 @@ feature "Areas", js: true, search: true do
       within("ul#areas-list") do
         expect(page).to have_no_content('Wild Wild West')
       end
+      wait_for_ajax
     end
   end
 
@@ -80,7 +83,7 @@ feature "Areas", js: true, search: true do
       expect(page).to have_selector('div.description-data', text: 'an area description')
     end
 
-    it 'diplays a table of places within the area' do
+    scenario 'diplays a table of places within the area' do
       area = FactoryGirl.create(:area, name: 'Some do', description: 'an area description', company: @company)
       places = [FactoryGirl.create(:place, name: 'Place 1'), FactoryGirl.create(:place, name: 'Place 2')]
       places.map {|p| area.places << p }
@@ -95,9 +98,10 @@ feature "Areas", js: true, search: true do
           expect(page).to have_selector('a.remove-area-btn', visible: :false)
         end
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a area' do
+    scenario 'allows the user to activate/deactivate a area' do
       area = FactoryGirl.create(:area, name: 'Some area', description: 'an area description', active: true, company: @company)
       visit area_path(area)
       within('.links-data') do
@@ -113,9 +117,10 @@ feature "Areas", js: true, search: true do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the area' do
+    scenario 'allows the user to edit the area' do
       area = FactoryGirl.create(:area, company: @company)
       visit area_path(area)
 
@@ -130,6 +135,7 @@ feature "Areas", js: true, search: true do
       #find('h2', text: 'edited area name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited area name')
       expect(page).to have_selector('div.description-data', text: 'edited area description')
+      wait_for_ajax
     end
 
   end

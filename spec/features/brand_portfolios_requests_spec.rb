@@ -35,7 +35,7 @@ feature "BrandPortfolios", js: true, search: true do
             expect(page).to have_content(portfolios[1].description)
           end
         end
-
+        wait_for_ajax
       end
 
       scenario "should allow user to deactivate brand portfolios" do
@@ -50,6 +50,7 @@ feature "BrandPortfolios", js: true, search: true do
         visible_modal.click_link("OK")
         ensure_modal_was_closed
         expect(page).to have_no_content('A Vinos ticos')
+        wait_for_ajax
       end
 
       scenario "should allow user to activate brand portfolios" do
@@ -65,10 +66,11 @@ feature "BrandPortfolios", js: true, search: true do
           click_link('Activate')
         end
         expect(page).to have_no_content('A Vinos ticos')
+        wait_for_ajax
       end
     end
 
-    it 'allows the user to create a new portfolio' do
+    scenario 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
       click_link('New Brand portfolio')
@@ -83,6 +85,7 @@ feature "BrandPortfolios", js: true, search: true do
       find('h2', text: 'new portfolio name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new portfolio name')
       expect(page).to have_selector('div.description-data', text: 'new portfolio description')
+      wait_for_ajax
     end
   end
 
@@ -94,7 +97,7 @@ feature "BrandPortfolios", js: true, search: true do
       expect(page).to have_selector('div.description-data', text: 'a portfolio description')
     end
 
-    it 'diplays a table of brands within the brand portfolio' do
+    scenario 'diplays a table of brands within the brand portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
       brands = [FactoryGirl.create(:brand, name: 'Brand 1'), FactoryGirl.create(:brand, name: 'Brand 2')]
       brands.map {|b| portfolio.brands << b }
@@ -109,9 +112,10 @@ feature "BrandPortfolios", js: true, search: true do
           expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a portfolio' do
+    scenario 'allows the user to activate/deactivate a portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
@@ -123,9 +127,10 @@ feature "BrandPortfolios", js: true, search: true do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the portfolio' do
+    scenario 'allows the user to edit the portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       visit brand_portfolio_path(portfolio)
 
@@ -140,9 +145,10 @@ feature "BrandPortfolios", js: true, search: true do
       find('h2', text: 'edited portfolio name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited portfolio name')
       expect(page).to have_selector('div.description-data', text: 'edited portfolio description')
+      wait_for_ajax
     end
 
-    it 'allows the user to add brands to the portfolio' do
+    scenario 'allows the user to add brands to the portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
       brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
       visit brand_portfolio_path(portfolio)
@@ -176,7 +182,7 @@ feature "BrandPortfolios", js: true, search: true do
         expect(page).to have_content('Ron Centenario')
         expect(page).to have_selector('a.remove-brand-btn', visible: :false)
       end
-
+      wait_for_ajax
     end
   end
 

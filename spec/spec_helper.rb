@@ -70,6 +70,14 @@ RSpec.configure do |config|
   config.after(:each) do
     User.current = nil
     Time.zone = Rails.application.config.time_zone
+    Capybara.reset_sessions!
+  end
+
+  config.before(:each) do
+    Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
+    Rails.logger.debug "**************************************************************************************"
+    Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
+    Rails.logger.debug "**************************************************************************************"
   end
 
   if ENV['CI']
@@ -93,7 +101,7 @@ RSpec.configure do |config|
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 5
+  Capybara.default_wait_time = 2
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 

@@ -43,6 +43,7 @@ feature "Users", :js => true do
       within '.current-company-title' do
         expect(page).to have_content('ABC inc.')
       end
+      wait_for_ajax
     end
 
     feature "/users", :js => true, :search => true do
@@ -54,11 +55,9 @@ feature "Users", :js => true do
         within("ul#users-list") do
           hover_and_click "li:nth-child(2)", 'Deactivate'
         end
-        within visible_modal do
-          expect(page).to have_content('Are you sure you want to deactivate this user?')
-          click_link("OK")
-        end
-        ensure_modal_was_closed
+
+        confirm_prompt 'Are you sure you want to deactivate this user?'
+
         # Make it show only the inactive elements
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
@@ -67,6 +66,7 @@ feature "Users", :js => true do
           hover_and_click "li:nth-child(1)", 'Activate'
           expect(page).to have_no_content('Pedro Navaja')
         end
+        wait_for_ajax
       end
     end
 
@@ -78,9 +78,10 @@ feature "Users", :js => true do
         visit company_user_path(company_user)
         expect(page).to have_selector('h2', text: 'Pedro Navaja')
         expect(page).to have_selector('div.user-role', text: 'TestRole')
+        wait_for_ajax
       end
 
-      it 'allows the user to activate/deactivate a user' do
+      scenario 'allows the user to activate/deactivate a user' do
         role = FactoryGirl.create(:role, name: 'TestRole')
         user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
@@ -89,18 +90,17 @@ feature "Users", :js => true do
         within('.links-data') do
          click_link('Deactivate')
         end
-        within visible_modal do
-          expect(page).to have_content('Are you sure you want to deactivate this user?')
-          click_link("OK")
-        end
-        ensure_modal_was_closed
+
+        confirm_prompt 'Are you sure you want to deactivate this user?'
+
         within('.links-data') do
           click_link('Activate')
           expect(page).to have_link('Deactivate') # test the link have changed
         end
+        wait_for_ajax
       end
 
-      it 'allows the user to edit another user' do
+      scenario 'allows the user to edit another user' do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
         user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
@@ -121,6 +121,7 @@ feature "Users", :js => true do
 
         expect(page).to have_selector('h2', text: 'Pedro Navaja')
         expect(page).to have_selector('div.user-role', text: 'Another Role')
+        wait_for_ajax
       end
 
       scenario "should be able to assign areas to the user" do
@@ -152,12 +153,13 @@ feature "Users", :js => true do
           hover_and_click('.hover-item', 'Remove Area')
           expect(page).to have_no_content('San Francisco Area')
         end
+        wait_for_ajax
       end
 
     end
 
     feature "edit profile link" do
-      it 'allows the user to edit his profile' do
+      scenario 'allows the user to edit his profile' do
         visit company_user_path(@company_user)
 
         within 'li#user_menu' do
@@ -186,6 +188,7 @@ feature "Users", :js => true do
         @company_user.country.should == 'CR'
         @company_user.state.should == 'C'
         @company_user.city.should == 'Tres Rios'
+        wait_for_ajax
       end
     end
 

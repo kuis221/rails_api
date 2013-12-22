@@ -36,7 +36,7 @@ feature "Teams", js: true, search: true do
           expect(page).to have_content('the guys from SF')
         end
       end
-
+      wait_for_ajax
     end
 
     scenario "allows the user to activate/deactivate teams" do
@@ -49,11 +49,9 @@ feature "Teams", js: true, search: true do
         expect(page).to have_content('Costa Rica Team')
         hover_and_click 'li', 'Deactivate'
       end
-      within visible_modal do
-        expect(page).to have_content('Are you sure you want to deactivate this team?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt "Are you sure you want to deactivate this team?"
+
       within("ul#teams-list") do
         expect(page).to have_no_content('Costa Rica Team')
       end
@@ -67,10 +65,10 @@ feature "Teams", js: true, search: true do
         hover_and_click 'li', 'Activate'
         expect(page).to have_no_content('Costa Rica Team')
       end
-
+      wait_for_ajax
     end
 
-    it 'allows the user to create a new team' do
+    scenario 'allows the user to create a new team' do
       visit teams_path
 
       click_link('New Team')
@@ -85,6 +83,7 @@ feature "Teams", js: true, search: true do
       find('h2', text: 'new team name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new team name')
       expect(page).to have_selector('div.description-data', text: 'new team description')
+      wait_for_ajax
     end
   end
 
@@ -94,9 +93,10 @@ feature "Teams", js: true, search: true do
       visit team_path(team)
       expect(page).to have_selector('h2', text: 'Some Team Name')
       expect(page).to have_selector('div.description-data', text: 'a team description')
+      wait_for_ajax
     end
 
-    it 'diplays a list of users within the team details page' do
+    scenario 'diplays a list of users within the team details page' do
       team = FactoryGirl.create(:team, company_id: @user.current_company.id)
       users = [
         FactoryGirl.create(:user, first_name: 'First1', last_name: 'Last1', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com'),
@@ -117,27 +117,26 @@ feature "Teams", js: true, search: true do
           expect(page).to have_selector('a.remove-member-btn', visible: false)
         end
       end
-
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a team' do
+    scenario 'allows the user to activate/deactivate a team' do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
          click_link('Deactivate')
        end
-       within visible_modal do
-        expect(page).to have_content("Are you sure you want to deactivate this team?")
-        click_link("OK")
-      end
-       ensure_modal_was_closed
+
+       confirm_prompt "Are you sure you want to deactivate this team?"
+
        within('.links-data') do
          click_link('Activate')
          expect(page).to have_link('Deactivate') # test the link have changed
        end
+       wait_for_ajax
     end
 
-    it 'allows the user to edit the team' do
+    scenario 'allows the user to edit the team' do
       team = FactoryGirl.create(:team, company_id: @company.id)
       Sunspot.commit
       visit team_path(team)
@@ -153,10 +152,11 @@ feature "Teams", js: true, search: true do
       find('h2', text: 'edited team name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited team name')
       expect(page).to have_selector('div.description-data', text: 'edited team description')
+      wait_for_ajax
     end
 
 
-    it 'allows the user to add the users to the team' do
+    scenario 'allows the user to add the users to the team' do
       team = FactoryGirl.create(:team, company_id: @user.current_company.id)
       user = FactoryGirl.create(:user, first_name: 'Fulanito', last_name: 'DeTal', company_id: @user.current_company.id, role_id: FactoryGirl.create(:role, company: @user.current_company, name: 'Brand Manager').id, city: 'Miami', state:'FL', country:'US', email: 'user1@example.com')
       company_user = user.company_users.first
@@ -177,6 +177,7 @@ feature "Teams", js: true, search: true do
       within('#team-members-list')  do
         expect(page).to have_content('Fulanito')
       end
+      wait_for_ajax
     end
   end
 

@@ -35,6 +35,7 @@ feature "Campaigns", js: true, search: true do
             expect(page).to have_content(campaigns[1].description)
           end
         end
+        wait_for_ajax
       end
 
       scenario "should allow user to deactivate campaigns" do
@@ -46,12 +47,11 @@ feature "Campaigns", js: true, search: true do
         within("ul#campaigns-list li:nth-child(1)") do
           click_link('Deactivate')
         end
-        within visible_modal do
-          expect(page).to have_content("Are you sure you want to deactivate this campaign?")
-          click_link("OK")
-        end
-        ensure_modal_was_closed
+
+        confirm_prompt "Are you sure you want to deactivate this campaign?"
+
         expect(page).to have_no_content('Cacique FY13')
+        wait_for_ajax
       end
 
       scenario "should allow user to activate campaigns" do
@@ -67,10 +67,11 @@ feature "Campaigns", js: true, search: true do
           click_link('Activate')
         end
         expect(page).to have_no_content('Cacique FY13')
+        wait_for_ajax
       end
     end
 
-    it 'allows the user to create a new campaign' do
+    scenario 'allows the user to create a new campaign' do
       porfolio = FactoryGirl.create(:brand_portfolio, name: 'Test portfolio', company: @company)
       visit campaigns_path
 
@@ -87,6 +88,7 @@ feature "Campaigns", js: true, search: true do
       find('h2', text: 'new campaign name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new campaign name')
       expect(page).to have_selector('div.description-data', text: 'new campaign description')
+      wait_for_ajax
     end
   end
 
@@ -98,25 +100,23 @@ feature "Campaigns", js: true, search: true do
       expect(page).to have_selector('div.description-data', text: 'a campaign description')
     end
 
-    it 'allows the user to activate/deactivate a campaign' do
+    scenario 'allows the user to activate/deactivate a campaign' do
       campaign = FactoryGirl.create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
       visit campaign_path(campaign)
       within('.links-data') do
         click_link('Deactivate')
       end
 
-      within visible_modal do
-        expect(page).to have_content("Are you sure you want to deactivate this campaign?")
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+      confirm_prompt "Are you sure you want to deactivate this campaign?"
+
       within('.links-data') do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the campaign' do
+    scenario 'allows the user to edit the campaign' do
       campaign = FactoryGirl.create(:campaign, company: @company)
       visit campaign_path(campaign)
 
@@ -131,6 +131,7 @@ feature "Campaigns", js: true, search: true do
       #find('h2', text: 'edited campaign name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited campaign name')
       expect(page).to have_selector('div.description-data', text: 'edited campaign description')
+      wait_for_ajax
     end
 
 
@@ -166,6 +167,7 @@ feature "Campaigns", js: true, search: true do
         click_link 'Remove Area'
         expect(page).to have_no_content('San Francisco Area')
       end
+      wait_for_ajax
     end
   end
 end

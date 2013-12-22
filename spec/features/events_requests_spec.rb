@@ -47,6 +47,7 @@ feature "Events", js: true, search: true do
             end
           end
         end
+        wait_for_ajax
       end
 
       scenario "should allow user to deactivate events" do
@@ -59,15 +60,14 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
             click_link('Deactivate')
           end
-          within visible_modal do
-            expect(page).to have_content('Are you sure you want to deactivate this event?')
-            click_link("OK")
-          end
-          ensure_modal_was_closed
+
+          confirm_prompt 'Are you sure you want to deactivate this event?'
+
           within "ul#events-list" do
             expect(page).to have_no_content('Campaign FY2012')
           end
         end
+        wait_for_ajax
       end
 
       scenario "should allow user to activate events" do
@@ -85,6 +85,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_no_content('Our Test Campaign')
           end
         end
+        wait_for_ajax
       end
 
       scenario "should allow allow filter events by date range" do
@@ -134,6 +135,7 @@ feature "Events", js: true, search: true do
           expect(page).to have_content('Another Campaign April 03')
           expect(page).to have_content('Campaign FY2012')
         end
+        wait_for_ajax
       end
 
       feature "with timezone support turned ON" do
@@ -159,6 +161,7 @@ feature "Events", js: true, search: true do
               expect(page).to have_content('10:00 AM – 11:00 AM')
             end
           end
+          wait_for_ajax
         end
       end
     end
@@ -177,6 +180,7 @@ feature "Events", js: true, search: true do
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka')
+      wait_for_ajax
     end
   end
 
@@ -208,6 +212,7 @@ feature "Events", js: true, search: true do
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka FY2013')
+      wait_for_ajax
     end
 
     feature "with timezone support turned ON" do
@@ -255,6 +260,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('10:00 PM – 11:00 PM')
           end
         end
+        wait_for_ajax
       end
     end
   end
@@ -271,6 +277,7 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('WED Aug 28')
         expect(page).to have_content('8:00 PM – 11:00 PM')
       end
+      wait_for_ajax
     end
 
     feature "with timezone suport turned ON" do
@@ -298,24 +305,24 @@ feature "Events", js: true, search: true do
           expect(page).to have_content('WED Aug 21')
           expect(page).to have_content('10:00 AM – 11:00 AM')
         end
+        wait_for_ajax
       end
     end
 
-    it 'allows the user to activate/deactivate a event' do
+    scenario 'allows the user to activate/deactivate a event' do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
         click_link('Deactivate')
       end
-      within visible_modal do
-        expect(page).to have_content('Are you sure you want to deactivate this event?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this event?'
+
       within('.links-data') do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
     scenario "allows to add a member to the event", :js => true do
@@ -345,18 +352,12 @@ feature "Events", js: true, search: true do
       # Test removal of the user
       hover_and_click('#event-team-members #event-member-'+company_user.id.to_s, 'Remove Member')
 
-
-      within visible_modal do
-        expect(page).to have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
-        #find('a.btn-primary').click   # The "OK" button
-        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
-        click_link('OK')
-      end
-      ensure_modal_was_closed
+      confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?'
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
+      wait_for_ajax
     end
 
 
@@ -392,6 +393,7 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pablo Baltodano')
+      wait_for_ajax
     end
 
 
@@ -426,6 +428,7 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Guillermo Vargas')
+      wait_for_ajax
     end
 
 
@@ -466,6 +469,7 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pedro Picapiedra')
+      wait_for_ajax
     end
 
     scenario "allows to edit a contact", :js => true do
@@ -494,6 +498,7 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('Pedro Picapiedra')
         #find('a.remove-member-btn').click
       end
+      wait_for_ajax
     end
 
 
@@ -546,6 +551,7 @@ feature "Events", js: true, search: true do
       within('#event-tasks-container') do
         expect(page).to_not have_content('Juanito Bazooka')
       end
+      wait_for_ajax
     end
 
     scenario "should allow the user to fill the event data" do
@@ -637,6 +643,7 @@ feature "Events", js: true, search: true do
       end
 
       expect(page).to have_content('Edited summary content')
+      wait_for_ajax
     end
   end
 

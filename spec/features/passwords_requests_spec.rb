@@ -24,6 +24,7 @@ feature "Passwords", :js => true do
     click_button 'Reset'
     current_path.should == user_password_path
     expect(page).to have_content("We couldn't find that email address.  Please check that you spelled it correctly and try again.")
+    wait_for_ajax
   end
 
   scenario "should send an email when email address is found for existing user" do
@@ -33,5 +34,6 @@ feature "Passwords", :js => true do
     click_button 'Reset'
     current_path.should == passwords_thanks_path
     expect(page).to have_content("You will receive an email with instructions about how to reset your password in a few minutes.")
+    wait_for_ajax
   end
 end

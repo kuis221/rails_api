@@ -35,7 +35,7 @@ feature "DateRanges", search: true, js: true do
           expect(page).to have_content('Saturday and Sunday')
         end
       end
-
+      wait_for_ajax
     end
 
     scenario "should allow user to activate/deactivate Date Ranges" do
@@ -46,11 +46,8 @@ feature "DateRanges", search: true, js: true do
       within("ul#date_ranges-list") do
         click_link('Deactivate')
       end
-      within visible_modal do
-        expect(page).to have_content('Are you sure you want to deactivate this date range?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt 'Are you sure you want to deactivate this date range?'
 
       within("ul#date_ranges-list") do
         expect(page).to have_no_selector('li')
@@ -65,9 +62,10 @@ feature "DateRanges", search: true, js: true do
         click_link('Activate')
         expect(page).to have_no_content('Weekdays')
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to create a new date_range' do
+    scenario 'allows the user to create a new date_range' do
       visit date_ranges_path
 
       click_link('New Date range')
@@ -82,6 +80,7 @@ feature "DateRanges", search: true, js: true do
       find('h2', text: 'new date range name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new date range name')
       expect(page).to have_selector('div.description-data', text: 'new date range description')
+      wait_for_ajax
     end
   end
 
@@ -91,9 +90,10 @@ feature "DateRanges", search: true, js: true do
       visit date_range_path(date_range)
       expect(page).to have_selector('h2', text: 'Some Date Range')
       expect(page).to have_selector('div.description-data', text: 'a date range description')
+      wait_for_ajax
     end
 
-    it 'diplays a table of dates within the date range' do
+    scenario 'diplays a table of dates within the date range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
       date_items = [FactoryGirl.create(:date_item, start_date: '01/01/2013', end_date: nil), FactoryGirl.create(:date_item, start_date: '03/03/2013', end_date: nil)]
       date_items.map {|b| date_range.date_items << b }
@@ -106,25 +106,24 @@ feature "DateRanges", search: true, js: true do
           expect(page).to have_content('On 03/03/2013')
         end
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a date range' do
+    scenario 'allows the user to activate/deactivate a date range' do
       date_range = FactoryGirl.create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
       find('.links-data').click_link('Deactivate')
-      within visible_modal do
-        expect(page).to have_content("Are you sure you want to deactivate this date range?")
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt "Are you sure you want to deactivate this date range?"
 
       within('.links-data') do
         click_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the date_range' do
+    scenario 'allows the user to edit the date_range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
       visit date_range_path(date_range)
 
@@ -139,9 +138,10 @@ feature "DateRanges", search: true, js: true do
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited date range name')
       expect(page).to have_selector('div.description-data', text: 'edited date range description')
+      wait_for_ajax
     end
 
-    it 'allows the user to add and remove date items to the date range' do
+    scenario 'allows the user to add and remove date items to the date range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
@@ -161,7 +161,7 @@ feature "DateRanges", search: true, js: true do
         click_link('Remove')
       end
       expect(page).to have_no_selector('#date_range-dates-list div[id^=date_item]')
-
+      wait_for_ajax
     end
   end
 end

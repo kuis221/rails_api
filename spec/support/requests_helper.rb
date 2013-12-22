@@ -1,15 +1,14 @@
+require "timeout"
 
 module CapybaraBrandscopicHelpers
-
-  def visit(path)
-    super
-    wait_for_ajax_to_load
+  def wait_for_ajax(timeout = Capybara.default_wait_time)
+    wait_until { page.evaluate_script 'jQuery.active == 0' }
   end
 
-  def wait_for_ajax_to_load
-    while page.evaluate_script("$.active").to_i > 0
-      p "Wating: #{page.evaluate_script("$.active").to_i}"
-      sleep(1)
+  def wait_until
+    Timeout.timeout(Capybara.default_wait_time) do
+      sleep(0.1) until value = yield
+      value
     end
   end
 
@@ -18,6 +17,17 @@ module CapybaraBrandscopicHelpers
     parent_element.hover
     parent_element.find(:link, locator, options).click
     self
+  end
+
+  def confirm_prompt(message)
+    within visible_modal do
+      expect(page).to have_content(message)
+      # For some reason, the click_link function doesn't always works, so we are using JS
+      # for this instead
+      #click_link("OK")
+      page.execute_script("$('.bootbox.modal.confirm-dialog.in a.btn-primary').click()")
+    end
+    ensure_modal_was_closed
   end
 
   def click_js_link(locator, options={})
