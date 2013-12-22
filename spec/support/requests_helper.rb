@@ -117,7 +117,7 @@ module RequestsHelper
   end
 
   def ensure_modal_was_closed
-    page.should have_no_selector('.modal.in', visible: true)
+    expect(page).to have_no_selector('.modal.in', visible: true)
   end
 
   def ensure_on(path)
