@@ -521,6 +521,11 @@ feature "Events", js: true, search: true do
         #page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
+      expect(page).to have_text('0 UNASSIGNED')
+      expect(page).to have_text('0 COMPLETED')
+      expect(page).to have_text('1 ASSIGNED')
+      expect(page).to have_text('0 LATE')
+
       within('#event-tasks-container li') do
         expect(page).to have_content('Pick up the kidz at school')
         expect(page).to have_content('Juanito Bazooka')
@@ -532,6 +537,10 @@ feature "Events", js: true, search: true do
         checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
         page.execute_script('$(\'.task-completed-checkbox\').click()')
+        expect(page).to have_text('0 UNASSIGNED')
+        expect(page).to have_text('1 COMPLETED')
+        expect(page).to have_text('1 ASSIGNED')
+        expect(page).to have_text('0 LATE')
 
         # refresh the page to make sure the checkbox remains selected
         visit event_path(event)

@@ -9,8 +9,8 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
-require 'capybara-screenshot/rspec'
 require 'capybara/poltergeist'
+require 'capybara-screenshot/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -70,7 +70,6 @@ RSpec.configure do |config|
   config.after(:each) do
     User.current = nil
     Time.zone = Rails.application.config.time_zone
-    Capybara.reset_sessions!
   end
 
   config.before(:each) do
@@ -101,7 +100,7 @@ RSpec.configure do |config|
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 2
+  Capybara.default_wait_time = 3
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 
