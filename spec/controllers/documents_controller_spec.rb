@@ -12,10 +12,10 @@ describe DocumentsController do
   describe "POST 'create'" do
     it "queue a job for processing the photos" do
       ResqueSpec.reset!
-      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-dev" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
       AttachedAsset.any_instance.should_receive(:download_url).and_return('dummy.jpg')
       expect {
-        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
+        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       response.should be_success
       response.should render_template('document')
@@ -23,7 +23,7 @@ describe DocumentsController do
       document = AttachedAsset.last
       document.attachable.should == event
       document.asset_type.should == 'document'
-      document.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'
+      document.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'
       AssetsUploadWorker.should have_queued(document.id)
     end
   end

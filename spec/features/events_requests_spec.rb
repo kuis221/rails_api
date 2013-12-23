@@ -524,7 +524,7 @@ feature "Events", js: true, search: true do
       expect(page).to have_text('0 UNASSIGNED')
       expect(page).to have_text('0 COMPLETED')
       expect(page).to have_text('1 ASSIGNED')
-      expect(page).to have_text('0 LATE')
+      expect(page).to have_text('1 LATE')
 
       within('#event-tasks-container li') do
         expect(page).to have_content('Pick up the kidz at school')
@@ -537,15 +537,17 @@ feature "Events", js: true, search: true do
         checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
         page.execute_script('$(\'.task-completed-checkbox\').click()')
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('1 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('0 LATE')
 
         # refresh the page to make sure the checkbox remains selected
         visit event_path(event)
         find('.task-completed-checkbox', visible: :false)['checked'].should be_true
       end
+
+      # Check that the totals where properly updated
+      expect(page).to have_text('0 UNASSIGNED')
+      expect(page).to have_text('1 COMPLETED')
+      expect(page).to have_text('1 ASSIGNED')
+      expect(page).to have_text('0 LATE')
 
       # Delete Juanito Bazooka from the team and make sure that the tasks list
       # is refreshed and the task unassigned

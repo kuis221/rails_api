@@ -12,10 +12,10 @@ describe PhotosController do
   describe "POST 'create'" do
     it "queue a job for processing the photos" do
       ResqueSpec.reset!
-      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-dev" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
       AttachedAsset.any_instance.should_receive(:download_url).and_return('dummy.jpg')
       expect {
-        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
+        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       response.should be_success
       response.should render_template('photo')
@@ -23,7 +23,7 @@ describe PhotosController do
       photo = AttachedAsset.last
       photo.attachable.should == event
       photo.asset_type.should == 'photo'
-      photo.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'
+      photo.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'
       AssetsUploadWorker.should have_queued(photo.id)
     end
   end
@@ -44,6 +44,28 @@ describe PhotosController do
       get 'processing_status', event_id: event.to_param, photos: [photo.id], format: :js
       response.should be_success
       response.should render_template('processing_status')
+    end
+  end
+
+  describe "GET 'deactivate'" do
+    it "deactivates an active photo" do
+      photo.update_attribute(:active, true)
+      get 'deactivate', event_id: event.to_param, id: photo.to_param, format: :js
+      response.should be_success
+      photo.reload.active?.should be_false
+      response.should render_template('results/photos/_photo_info')
+    end
+  end
+
+  describe "GET 'activate'" do
+    let(:photo){ FactoryGirl.create(:photo, attachable: event, active: false) }
+
+    it "activates an inactive campaign" do
+      photo.active?.should be_false
+      get 'activate',  event_id: event.to_param, id: photo.to_param, format: :js
+      response.should be_success
+      photo.reload.active?.should be_true
+      response.should render_template('results/photos/_photo_info')
     end
   end
 

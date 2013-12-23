@@ -2,11 +2,11 @@ require "timeout"
 
 module CapybaraBrandscopicHelpers
   def wait_for_ajax(timeout = Capybara.default_wait_time)
-    wait_until { page.evaluate_script 'jQuery.active == 0' }
+    wait_until(timeout) { page.evaluate_script 'jQuery.active == 0' }
   end
 
-  def wait_until
-    Timeout.timeout(Capybara.default_wait_time) do
+  def wait_until(timeout = Capybara.default_wait_time)
+    Timeout.timeout(timeout) do
       sleep(0.1) until value = yield
       value
     end
@@ -31,8 +31,8 @@ module CapybaraBrandscopicHelpers
   end
 
   def click_js_link(locator, options={})
-    #find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
-    find(:link, locator, options).click
+    find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
+    #find(:link, locator, options).click   # For Selenium
     self
   end
 

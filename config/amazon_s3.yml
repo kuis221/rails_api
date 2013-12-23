@@ -19,5 +19,5 @@ development:
   <<: *base
 
 test:
-  bucket_name: brandscopic-dev
+  bucket_name: brandscopic-test
   <<: *base
