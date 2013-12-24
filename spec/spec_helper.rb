@@ -92,7 +92,7 @@ RSpec.configure do |config|
         s3 = AWS::S3.new
         bucket = s3.buckets[S3_CONFIGS['bucket_name']]
         obj = bucket.objects['key'].write(File.open(saver.screenshot_path))
-        example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read)}"
+        example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read, :expires => 24*3600*100)}"
       end
     end
   end
