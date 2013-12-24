@@ -1,16 +1,18 @@
 require 'spec_helper'
 
-describe "Login", :js => true do
-  it "should redirect the user to the login page" do
+feature "Login", :js => true do
+  scenario "should redirect the user to the login page" do
     visit root_path
 
     current_path.should == new_user_session_path
-    page.should have_content("You need to sign in or sign up before continuing.")
+    expect(page).to have_content("You need to sign in or sign up before continuing.")
+    wait_for_ajax
   end
 
-  it "should allow the user to complete the profile and log him in after that" do
+  scenario "should allow the user to complete the profile and log him in after that" do
+    Kpi.create_global_kpis
     @company = FactoryGirl.create(:company, name: 'ABC inc.')
-    @user = FactoryGirl.create(:user,
+    user = FactoryGirl.create(:user,
       company_id: @company.id,
       email: 'pedrito-picaso@gmail.com',
       password: 'SomeValidPassword01',
@@ -23,16 +25,20 @@ describe "Login", :js => true do
     click_button 'Login'
 
     current_path.should == root_path
+    expect(page).to have_text('ABC inc.')
+    expect(page).to have_text(user.full_name)
+    wait_for_ajax
   end
 
 
-  it "should display a message if the password is not valid" do
+  scenario "should display a message if the password is not valid" do
     visit new_user_session_path
     fill_in('E-mail', with: 'non-existing-user@gmail.com')
     fill_in('Password', with: 'SomeValidPassword01')
     click_button 'Login'
 
     current_path.should == new_user_session_path
-    page.should have_content('Invalid email or password.')
+    expect(page).to have_content('Invalid email or password.')
+    wait_for_ajax
   end
 end

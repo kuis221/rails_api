@@ -8,4 +8,4 @@ li id="role_#{role.id}" class="#{active_class(role)}"
     = link_to '', edit_role_path(role), remote: true, class: 'edit' if can?(:edit, Role)
     - if can?(:deactivate, Role)
       = link_to_deactivate role
-      = link_to '', activate_role_path(role), remote: true, class: 'enable',title: I18n.t('confirmation.active') unless role.active?
+      = link_to '', activate_role_path(role), remote: true, class: 'enable',title: I18n.t('confirmation.activate') unless role.active?

@@ -140,6 +140,10 @@ en:
       videos: "Videos"
       comments: "Comments"
 
+  errors:
+    result:
+      invalid: 'is not valid' 
+
   venue_types:
     accounts: "Accounts"
     airport: "Airport"

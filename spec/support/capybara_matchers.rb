@@ -37,3 +37,59 @@ RSpec::Matchers.define :have_filter_section do |filter|
   end
 
 end
+
+
+RSpec::Matchers.define :have_file_in_queue do |file_name|
+  match do |actual|
+    @queued = page.all('.progress .upload-file-name').map(&:text)
+
+    @queued.include? file_name
+  end
+
+
+  failure_message_for_should do |actual|
+    message = "expected queue to include '#{file_name}' but have [#{@queued.join(',')}]"
+    message
+  end
+
+  failure_message_for_should_not do |actual|
+    message = "expected queue to NOT include '#{file_name}' but it did"
+    message
+  end
+
+  description do
+    message = "has #{file_name} queued"
+  end
+end
+
+
+RSpec::Matchers.define :have_photo_thumbnail do |photo|
+  @errors = []
+  found = false
+  match do |actual|
+    src = photo.file.url(:small).gsub(/\?.*/,'')
+    page.all('.photo-item').each do |thumbnail|
+      img = thumbnail.find(:xpath, "//a/img")
+      if img['src'] =~ /^#{src}$/
+        found = true
+      end
+    end
+
+    @errors.push "Image with src=\"#{src}\" not found in list" unless found
+
+    @errors.empty?
+  end
+
+
+  failure_message_for_should do |actual|
+    "expected list have thumbnail for '#{photo.file_file_name}': #{@error.join('\n')}"
+  end
+
+  failure_message_for_should_not do |actual|
+    "expected list to not have thumbnail for '#{photo.file_file_name}'"
+  end
+
+  description do
+    "has thumbnail for '#{photo.file_file_name}'"
+  end
+end

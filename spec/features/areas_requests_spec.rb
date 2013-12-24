@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Areas", js: true, search: true do
+feature "Areas", js: true, search: true do
 
   before do
     Warden.test_mode!
@@ -13,8 +13,8 @@ describe "Areas", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/areas" do
-    it "GET index should display a table with the areas" do
+  feature "/areas" do
+    scenario "GET index should display a table with the areas" do
       areas = [
         FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
         FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: @company)
@@ -25,36 +25,38 @@ describe "Areas", js: true, search: true do
       within("#areas-list") do
         # First Row
         within("li#area_#{areas[0].id}") do
-          page.should have_content('Gran Area Metropolitana')
-          page.should have_content('Ciudades principales de Costa Rica')
-          page.should have_selector('a.edit')
-          page.should have_selector('a.disable')
+          expect(page).to have_text('Gran Area Metropolitana')
+          expect(page).to have_text('Ciudades principales de Costa Rica')
+          expect(page).to have_selector('a.edit')
+          expect(page).to have_selector('a.disable')
         end
         # Second Row
         within("li#area_#{areas[1].id}") do
-          page.should have_content('Zona Norte')
-          page.should have_content('Ciudades del Norte de Costa Rica')
-          page.should have_selector('a.edit')
-          page.should have_selector('a.disable')
+          expect(page).to have_text('Zona Norte')
+          expect(page).to have_text('Ciudades del Norte de Costa Rica')
+          expect(page).to have_selector('a.edit')
+          expect(page).to have_selector('a.disable')
         end
       end
+      wait_for_ajax
     end
 
-    it "should allow user to deactivate areas" do
+    scenario "should allow user to deactivate areas" do
       FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: true, company: @company)
       Sunspot.commit
       visit areas_path
 
-      page.should have_content('Wild Wild West')
+      expect(page).to have_text('Wild Wild West')
       within("ul#areas-list li:nth-child(1)") do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
-      visible_modal.click_js_link("OK")
+      visible_modal.click_link("OK")
       ensure_modal_was_closed
-      page.should have_no_content('Wild Wild West')
+      expect(page).to have_no_content('Wild Wild West')
+      wait_for_ajax
     end
 
-    it "should allow user to activate areas" do
+    scenario "should allow user to activate areas" do
       FactoryGirl.create(:area, name: 'Wild Wild West', description: 'Cowboys\' home', active: false, company: @company)
       Sunspot.commit
       visit areas_path
@@ -62,61 +64,67 @@ describe "Areas", js: true, search: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      page.should have_content('Wild Wild West')
       within("ul#areas-list li:nth-child(1)") do
-        click_js_link('Activate')
+        expect(page).to have_text('Wild Wild West')
+        click_link('Activate')
       end
-      page.should have_content('Wild Wild West')
+      within("ul#areas-list") do
+        expect(page).to have_no_content('Wild Wild West')
+      end
+      wait_for_ajax
     end
   end
 
-  describe "/areas/:area_id", :js => true do
-    it "GET show should display the area details page" do
+  feature "/areas/:area_id", :js => true do
+    scenario "GET show should display the area details page" do
       area = FactoryGirl.create(:area, name: 'Some Area', description: 'an area description', company: @company)
       visit area_path(area)
-      page.should have_selector('h2', text: 'Some Area')
-      page.should have_selector('div.description-data', text: 'an area description')
+      expect(page).to have_selector('h2', text: 'Some Area')
+      expect(page).to have_selector('div.description-data', text: 'an area description')
     end
 
-    it 'diplays a table of places within the area' do
+    scenario 'diplays a table of places within the area' do
       area = FactoryGirl.create(:area, name: 'Some do', description: 'an area description', company: @company)
       places = [FactoryGirl.create(:place, name: 'Place 1'), FactoryGirl.create(:place, name: 'Place 2')]
       places.map {|p| area.places << p }
       visit area_path(area)
       within('#area-places-list') do
         within("div.area-place:nth-child(1)") do
-          page.should have_content('Place 1')
-          page.should have_selector('a.remove-area-btn', visible: :false)
+          expect(page).to have_text('Place 1')
+          expect(page).to have_selector('a.remove-area-btn', visible: :false)
         end
         within("div.area-place:nth-child(2)") do
-          page.should have_content('Place 2')
-          page.should have_selector('a.remove-area-btn', visible: :false)
+          expect(page).to have_text('Place 2')
+          expect(page).to have_selector('a.remove-area-btn', visible: :false)
         end
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to activate/deactivate a area' do
+    scenario 'allows the user to activate/deactivate a area' do
       area = FactoryGirl.create(:area, name: 'Some area', description: 'an area description', active: true, company: @company)
       visit area_path(area)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_link('Deactivate')
       end
       within visible_modal do
-        page.should have_content('Are you sure you want to deactivate this area?')
-        click_js_link("OK")
+        expect(page).to have_text('Are you sure you want to deactivate this area?')
+        click_link("OK")
       end
       ensure_modal_was_closed
 
       within('.links-data') do
-        click_js_link('Activate')
+        click_link('Activate')
+        expect(page).to have_link('Deactivate') # test the link have changed
       end
+      wait_for_ajax
     end
 
-    it 'allows the user to edit the area' do
+    scenario 'allows the user to edit the area' do
       area = FactoryGirl.create(:area, company: @company)
       visit area_path(area)
 
-      click_js_link('Edit')
+      click_link('Edit')
 
       within("form#edit_area_#{area.id}") do
         fill_in 'Name', with: 'edited area name'
@@ -125,8 +133,9 @@ describe "Areas", js: true, search: true do
       end
 
       #find('h2', text: 'edited area name') # Wait for the page to reload
-      page.should have_selector('h2', text: 'edited area name')
-      page.should have_selector('div.description-data', text: 'edited area description')
+      expect(page).to have_selector('h2', text: 'edited area name')
+      expect(page).to have_selector('div.description-data', text: 'edited area description')
+      wait_for_ajax
     end
 
   end

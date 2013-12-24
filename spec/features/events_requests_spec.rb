@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Events", js: true, search: true do
+feature "Events", js: true, search: true do
 
   before do
     Kpi.destroy_all
@@ -15,16 +15,16 @@ describe "Events", js: true, search: true do
     Warden.test_reset!
   end
 
-  describe "/events", js: true, search: true  do
+  feature "/events", js: true, search: true  do
     after do
       Timecop.return
     end
-    describe "GET index" do
+    feature "GET index" do
       let(:events){[
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
-      it "should display a table with the events" do
+      scenario "should display a table with the events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -33,44 +33,44 @@ describe "Events", js: true, search: true do
           within("ul#events-list") do
             # First Row
             within("li:nth-child(1)") do
-              page.should have_content('WED Aug 21')
-              page.should have_content('10:00 AM – 11:00 AM')
-              page.should have_content(events[0].place_name)
-              page.should have_content('Campaign FY2012')
+              expect(page).to have_content('WED Aug 21')
+              expect(page).to have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content(events[0].place_name)
+              expect(page).to have_content('Campaign FY2012')
             end
             # Second Row
             within("li:nth-child(2)")  do
-              page.should have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
-              page.should have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
-              page.should have_content(events[1].place_name)
-              page.should have_content('Another Campaign April 03')
+              expect(page).to have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
+              expect(page).to have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
+              expect(page).to have_content(events[1].place_name)
+              expect(page).to have_content('Another Campaign April 03')
             end
           end
         end
+        wait_for_ajax
       end
 
-      it "should allow user to deactivate events" do
+      scenario "should allow user to deactivate events" do
         Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
           visit events_path
 
           within("ul#events-list li:nth-child(1)") do
-            page.should have_content('Campaign FY2012')
-            click_js_link('Deactivate')
+            expect(page).to have_content('Campaign FY2012')
+            click_link('Deactivate')
           end
-          within visible_modal do
-            page.should have_content('Are you sure you want to deactivate this Event?')
-            click_js_link("OK")
-          end
-          ensure_modal_was_closed
+
+          confirm_prompt 'Are you sure you want to deactivate this event?'
+
           within "ul#events-list" do
-            page.should have_no_content('Campaign FY2012')
+            expect(page).to have_no_content('Campaign FY2012')
           end
         end
+        wait_for_ajax
       end
 
-      it "should allow user to activate events" do
+      scenario "should allow user to activate events" do
         Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Our Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
           FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Another Test Campaign',company: @company), active: false, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company)
@@ -80,14 +80,15 @@ describe "Events", js: true, search: true do
           filter_section('ACTIVE STATE').unicheck('Inactive')
 
           within("ul#events-list li:nth-child(1)") do
-            page.should have_content('Our Test Campaign')
-            click_js_link('Activate')
-            page.should have_no_content('Our Test Campaign')
+            expect(page).to have_content('Our Test Campaign')
+            click_link('Activate')
+            expect(page).to have_no_content('Our Test Campaign')
           end
         end
+        wait_for_ajax
       end
 
-      it "should allow allow filter events by date range" do
+      scenario "should allow allow filter events by date range" do
         today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
         tomorrow = today+1.day
         FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -102,46 +103,47 @@ describe "Events", js: true, search: true do
         visit events_path
 
         within("ul#events-list") do
-          page.should have_content('Campaign FY2012')
-          page.should have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
         end
 
-        page.should have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
-        #page.should have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+        expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+        #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
 
         filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
 
         within("ul#events-list") do
-          page.should have_no_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_no_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
         within("ul#events-list") do
-          page.should have_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26")
         find('#collection-list-filters').should have_content('Another Campaign April 03')
         within("ul#events-list") do
-          page.should have_no_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_no_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
 
         select_filter_calendar_day("26", "27")
         within("ul#events-list") do
-          page.should have_content('Another Campaign April 03')
-          page.should have_content('Campaign FY2012')
+          expect(page).to have_content('Another Campaign April 03')
+          expect(page).to have_content('Campaign FY2012')
         end
+        wait_for_ajax
       end
 
-      describe "with timezone support turned ON" do
+      feature "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
           @user.reload
         end
-        it "should display the dates relative to event's timezone" do
+        scenario "should display the dates relative to event's timezone" do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             # Create a event with the time zone "Central America"
             Time.use_zone('Central America') do
@@ -155,17 +157,18 @@ describe "Events", js: true, search: true do
             visit events_path
 
             within("ul#events-list li:nth-child(1)") do
-              page.should have_content('WED Aug 21')
-              page.should have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content('WED Aug 21')
+              expect(page).to have_content('10:00 AM – 11:00 AM')
             end
           end
+          wait_for_ajax
         end
       end
     end
   end
 
-  describe "create a event" do
-    it "allows to create a new event" do
+  feature "create a event" do
+    scenario "allows to create a new event" do
       FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka')
       visit events_path
 
@@ -176,13 +179,14 @@ describe "Events", js: true, search: true do
         click_button 'Create'
       end
       ensure_modal_was_closed
-      page.should have_content('ABSOLUT Vodka')
+      expect(page).to have_content('ABSOLUT Vodka')
+      wait_for_ajax
     end
   end
 
 
-  describe "edit a event" do
-    it "allows to edit a event" do
+  feature "edit a event" do
+    scenario "allows to edit a event" do
       FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka FY2013')
       event = FactoryGirl.create(:event,
           start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
@@ -207,18 +211,20 @@ describe "Events", js: true, search: true do
         click_button 'Save'
       end
       ensure_modal_was_closed
-      page.should have_content('ABSOLUT Vodka FY2013')
+      expect(page).to have_content('ABSOLUT Vodka FY2013')
+      wait_for_ajax
     end
 
-    describe "with timezone support turned ON" do
+    feature "with timezone support turned ON" do
       before do
         @company.update_column(:timezone_support, true)
         @user.reload
       end
-      it "should display the dates relative to event's timezone" do
+      scenario "should display the dates relative to event's timezone" do
+        date = 3.days.from_now.to_s(:slashes)
         Time.use_zone('America/Guatemala') do
           event = FactoryGirl.create(:event,
-              start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+              start_date: date, end_date: date,
               start_time: '8:00 PM', end_time: '11:00 PM',
               campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
         end
@@ -233,8 +239,8 @@ describe "Events", js: true, search: true do
           end
 
           within visible_modal do
-            find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
-            find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
+            find_field('Start date').value.should == date
+            find_field('End date').value.should == date
             find_field('Start time').value.should == '8:00pm'
             find_field('End time').value.should == '11:00pm'
 
@@ -244,41 +250,43 @@ describe "Events", js: true, search: true do
             click_button 'Save'
           end
           ensure_modal_was_closed
-          page.should have_content('10:00 PM – 11:00 PM')
+          expect(page).to have_content('10:00 PM – 11:00 PM')
         end
 
         # Check that the event's time is displayed with the same time in a different tiem zone
         Time.use_zone('America/Los_Angeles') do
           visit events_path
           within("ul#events-list") do
-            page.should have_content('10:00 PM – 11:00 PM')
+            expect(page).to have_content('10:00 PM – 11:00 PM')
           end
         end
+        wait_for_ajax
       end
     end
   end
 
-  describe "/events/:event_id", :js => true do
-    it "GET show should display the event details page" do
+  feature "/events/:event_id", :js => true do
+    scenario "GET show should display the event details page" do
       event = FactoryGirl.create(:event,
           start_date: '08/28/2013', end_date: '08/28/2013',
           start_time: '8:00 PM', end_time: '11:00 PM',
           campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
-      page.should have_selector('h2', text: 'Campaign FY2012')
+      expect(page).to have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
-        page.should have_content('WED Aug 28')
-        page.should have_content('8:00 PM – 11:00 PM')
+        expect(page).to have_content('WED Aug 28')
+        expect(page).to have_content('8:00 PM – 11:00 PM')
       end
+      wait_for_ajax
     end
 
-    describe "with timezone suport turned ON" do
+    feature "with timezone suport turned ON" do
       before do
         @company.update_column(:timezone_support, true)
         @user.reload
       end
 
-      it "should display the dates relative to event's timezone" do
+      scenario "should display the dates relative to event's timezone" do
         event = nil
         # Create a event with the time zone "Central America"
         Time.use_zone('Central America') do
@@ -294,26 +302,30 @@ describe "Events", js: true, search: true do
         visit event_path(event)
 
         within('.calendar-data') do
-          page.should have_content('WED Aug 21')
-          page.should have_content('10:00 AM – 11:00 AM')
+          expect(page).to have_content('WED Aug 21')
+          expect(page).to have_content('10:00 AM – 11:00 AM')
         end
+        wait_for_ajax
       end
     end
 
-    it 'allows the user to activate/deactivate a event' do
+    scenario 'allows the user to activate/deactivate a event' do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-         click_js_link('Deactivate')
-       end
-       visible_modal.click_js_link("OK")
-       ensure_modal_was_closed
-       within('.links-data') do
-         click_js_link('Activate')
-       end
+        click_link('Deactivate')
+      end
+
+      confirm_prompt 'Are you sure you want to deactivate this event?'
+
+      within('.links-data') do
+        click_link('Activate')
+        expect(page).to have_link('Deactivate') # test the link have changed
+      end
+      wait_for_ajax
     end
 
-    it "allows to add a member to the event", :js => true do
+    scenario "allows to add a member to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
       company_user = user.company_users.first
@@ -321,41 +333,35 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Add Team Member'
+      click_link 'Add Team Member'
       within visible_modal do
-        page.should have_content('Pablo')
-        page.should have_content('Baltodano')
-        click_js_link("add-member-btn-#{company_user.id}")
+        expect(page).to have_content('Pablo')
+        expect(page).to have_content('Baltodano')
+        click_link("add-member-btn-#{company_user.id}")
 
-        page.should have_no_selector("li#staff-member-user-#{company_user.id}")
+        expect(page).to have_no_selector("li#staff-member-user-#{company_user.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within event_team_member(company_user) do
-        page.should have_content('Pablo Baltodano')
+        expect(page).to have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
       # Test removal of the user
       hover_and_click('#event-team-members #event-member-'+company_user.id.to_s, 'Remove Member')
 
-
-      within visible_modal do
-        page.should have_content('Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?')
-        #find('a.btn-primary').click   # The "OK" button
-        #page.execute_script("$('.bootbox.modal.confirm-dialog a.btn-primary').click()")
-        click_js_link('OK')
-      end
-      ensure_modal_was_closed
+      confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?'
 
       # Refresh the page and make sure the user is not there
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
+      wait_for_ajax
     end
 
 
-    it "allows to add a user as contact to the event", :js => true do
+    scenario "allows to add a user as contact to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       user = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: @company.id, role_id: @company_user.role_id)
       company_user = user.company_users.first
@@ -363,20 +369,20 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
+      click_link 'Add Contact'
       within visible_modal do
-        page.should have_selector("li#contact-company_user-#{company_user.id}")
-        page.should have_content('Pablo')
-        page.should have_content('Baltodano')
-        click_js_link("add-contact-btn-company_user-#{company_user.id}")
+        expect(page).to have_selector("li#contact-company_user-#{company_user.id}")
+        expect(page).to have_content('Pablo')
+        expect(page).to have_content('Baltodano')
+        click_link("add-contact-btn-company_user-#{company_user.id}")
 
-        page.should have_no_selector("li#contact-company_user-#{company_user.id}")
+        expect(page).to have_no_selector("li#contact-company_user-#{company_user.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Pablo Baltodano')
+        expect(page).to have_content('Pablo Baltodano')
         #find('a.remove-member-btn').click
       end
 
@@ -386,31 +392,32 @@ describe "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Pablo Baltodano')
+      expect(page).to_not have_content('Pablo Baltodano')
+      wait_for_ajax
     end
 
 
-    it "allows to add a contact as contact to the event", :js => true do
+    scenario "allows to add a contact as contact to the event", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
       Sunspot.commit
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
+      click_link 'Add Contact'
       within visible_modal do
-        page.should have_selector("li#contact-contact-#{contact.id}")
-        page.should have_content('Guillermo')
-        page.should have_content('Vargas')
-        click_js_link("add-contact-btn-contact-#{contact.id}")
+        expect(page).to have_selector("li#contact-contact-#{contact.id}")
+        expect(page).to have_content('Guillermo')
+        expect(page).to have_content('Vargas')
+        click_link("add-contact-btn-contact-#{contact.id}")
 
-        page.should have_no_selector("li#contact-contact-#{contact.id}")
+        expect(page).to have_no_selector("li#contact-contact-#{contact.id}")
       end
       close_modal
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Guillermo Vargas')
+        expect(page).to have_content('Guillermo Vargas')
         #find('a.remove-member-btn').click
       end
 
@@ -420,17 +427,18 @@ describe "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Guillermo Vargas')
+      expect(page).to_not have_content('Guillermo Vargas')
+      wait_for_ajax
     end
 
 
-    it "allows to create a contact", :js => true do
+    scenario "allows to create a contact", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       Sunspot.commit
 
       visit event_path(event)
 
-      click_js_link 'Add Contact'
+      click_link 'Add Contact'
       visible_modal.click_js_link("Create New Contact")
 
       within ".contactevent_modal" do
@@ -451,7 +459,7 @@ describe "Events", js: true, search: true do
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_content('Pedro Picapiedra')
+        expect(page).to have_content('Pedro Picapiedra')
       end
 
       # Test removal of the user
@@ -460,10 +468,11 @@ describe "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
 
-      page.should_not have_content('Pedro Picapiedra')
+      expect(page).to_not have_content('Pedro Picapiedra')
+      wait_for_ajax
     end
 
-    it "allows to edit a contact", :js => true do
+    scenario "allows to edit a contact", :js => true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: @company.id)
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
@@ -471,7 +480,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      page.should have_content('Guillermo Vargas')
+      expect(page).to have_content('Guillermo Vargas')
 
       hover_and_click("#event-contacts-list .event-contact", 'Edit Contact')
 
@@ -485,14 +494,15 @@ describe "Events", js: true, search: true do
 
       # Test the user was added to the list of event members and it can be removed
       within "#event-contacts-list" do
-        page.should have_no_content('Guillermo Vargas')
-        page.should have_content('Pedro Picapiedra')
+        expect(page).to have_no_content('Guillermo Vargas')
+        expect(page).to have_content('Pedro Picapiedra')
         #find('a.remove-member-btn').click
       end
+      wait_for_ajax
     end
 
 
-    it "allows to create a new task for the event and mark it as completed" do
+    scenario "allows to create a new task for the event and mark it as completed" do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
       company_user = user.company_users.first
@@ -502,7 +512,7 @@ describe "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_js_link 'Create Task'
+      click_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'
@@ -511,10 +521,15 @@ describe "Events", js: true, search: true do
         #page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
+      expect(page).to have_text('0 UNASSIGNED')
+      expect(page).to have_text('0 COMPLETED')
+      expect(page).to have_text('1 ASSIGNED')
+      expect(page).to have_text('1 LATE')
+
       within('#event-tasks-container li') do
-        page.should have_content('Pick up the kidz at school')
-        page.should have_content('Juanito Bazooka')
-        page.should have_content('THU May 16')
+        expect(page).to have_content('Pick up the kidz at school')
+        expect(page).to have_content('Juanito Bazooka')
+        expect(page).to have_content('THU May 16')
       end
 
       # Mark the tasks as completed
@@ -528,6 +543,12 @@ describe "Events", js: true, search: true do
         find('.task-completed-checkbox', visible: :false)['checked'].should be_true
       end
 
+      # Check that the totals where properly updated
+      expect(page).to have_text('0 UNASSIGNED')
+      expect(page).to have_text('1 COMPLETED')
+      expect(page).to have_text('1 ASSIGNED')
+      expect(page).to have_text('0 LATE')
+
       # Delete Juanito Bazooka from the team and make sure that the tasks list
       # is refreshed and the task unassigned
       page.execute_script("$('#event-member-#{company_user.id.to_s} a.remove-member-btn').click()")
@@ -539,11 +560,12 @@ describe "Events", js: true, search: true do
       # removing the element from the table automatically in the test
       visit event_path(event)
       within('#event-tasks-container') do
-        page.should_not have_content('Juanito Bazooka')
+        expect(page).to_not have_content('Juanito Bazooka')
       end
+      wait_for_ajax
     end
 
-    it "should allow the user to fill the event data" do
+    scenario "should allow the user to fill the event data" do
       Kpi.create_global_kpis
       event = FactoryGirl.create(:event,
           start_date: Date.yesterday.to_s(:slashes),
@@ -587,34 +609,34 @@ describe "Events", js: true, search: true do
       # Ensure the results are displayed on the page
 
       within "#ethnicity-graph" do
-        page.should have_content "20%"
-        page.should have_content "12%"
-        page.should have_content "13%"
-        page.should have_content "34%"
-        page.should have_content "21%"
+        expect(page).to have_content "20%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "34%"
+        expect(page).to have_content "21%"
       end
 
       within "#gender-graph" do
-        page.should have_content "34 %"
-        page.should have_content "66 %"
+        expect(page).to have_content "34 %"
+        expect(page).to have_content "66 %"
       end
 
       within "#age-graph" do
-        page.should have_content "9%"
-        page.should have_content "11%"
-        page.should have_content "12%"
-        page.should have_content "13%"
-        page.should have_content "14%"
-        page.should have_content "15%"
-        page.should have_content "16%"
+        expect(page).to have_content "9%"
+        expect(page).to have_content "11%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "14%"
+        expect(page).to have_content "15%"
+        expect(page).to have_content "16%"
       end
 
       visit event_path(event)
 
-      # Page should still display the post-event format and not the form
-      page.should have_selector("#gender-graph")
-      page.should have_selector("#ethnicity-graph")
-      page.should have_selector("#age-graph")
+      # expect(page).to still display the post-event format and not the form
+      expect(page).to have_selector("#gender-graph")
+      expect(page).to have_selector("#ethnicity-graph")
+      expect(page).to have_selector("#age-graph")
 
       click_link 'Edit event data'
 
@@ -626,12 +648,13 @@ describe "Events", js: true, search: true do
       click_button "Save"
 
       within ".box_metrics" do
-        page.should have_content('3,333')
-        page.should have_content('222,222')
-        page.should have_content('4,444,444')
+        expect(page).to have_content('3,333')
+        expect(page).to have_content('222,222')
+        expect(page).to have_content('4,444,444')
       end
 
-      page.should have_content('Edited summary content')
+      expect(page).to have_content('Edited summary content')
+      wait_for_ajax
     end
   end
 

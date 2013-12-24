@@ -1,5 +1,16 @@
+require "timeout"
 
 module CapybaraBrandscopicHelpers
+  def wait_for_ajax(timeout = Capybara.default_wait_time)
+    wait_until(timeout) { page.evaluate_script 'jQuery.active == 0' }
+  end
+
+  def wait_until(timeout = Capybara.default_wait_time)
+    Timeout.timeout(timeout) do
+      sleep(0.1) until value = yield
+      value
+    end
+  end
 
   def hover_and_click(parent, locator, options={})
     parent_element = find(parent)
@@ -8,9 +19,20 @@ module CapybaraBrandscopicHelpers
     self
   end
 
+  def confirm_prompt(message)
+    within visible_modal do
+      expect(page).to have_content(message)
+      # For some reason, the click_link function doesn't always works, so we are using JS
+      # for this instead
+      #click_link("OK")
+      page.execute_script("$('.bootbox.modal.confirm-dialog.in a.btn-primary').click()")
+    end
+    ensure_modal_was_closed
+  end
+
   def click_js_link(locator, options={})
-    #find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
-    find(:link, locator, options).click
+    find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
+    #find(:link, locator, options).click   # For Selenium
     self
   end
 
@@ -95,7 +117,7 @@ module RequestsHelper
   end
 
   def ensure_modal_was_closed
-    page.should have_no_selector('.modal.in', visible: true)
+    expect(page).to have_no_selector('.modal.in', visible: true)
   end
 
   def ensure_on(path)

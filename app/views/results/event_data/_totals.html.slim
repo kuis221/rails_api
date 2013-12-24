@@ -1,24 +1,24 @@
 .events-box
   .pull-left
     .big-number
-      = number_with_delimiter(data_totals['events_count'])
+      = number_with_precision(data_totals['events_count'], precision: 0, separator: '.', delimiter: ',')
     = 'EVENTS'
 .results-box-container
   span.event-data-column.promo-hours-box
     .big-number
-      = number_with_delimiter(data_totals['promo_hours'], precision: 2)
+      = number_with_precision(data_totals['promo_hours'], precision: 2, separator: '.', delimiter: ',')
     = 'PROMO HOURS'
   span.event-data-column.impressions-box
     .big-number
-      = number_with_delimiter(data_totals['impressions'])
+      = number_with_precision(data_totals['impressions'], precision: 0, separator: '.', delimiter: ',')
     = 'IMPRESSIONS'
   span.event-data-column.interactions-box
     .big-number
-      = number_with_delimiter(data_totals['interactions'])
+      = number_with_precision(data_totals['interactions'], precision: 0, separator: '.', delimiter: ',')
     = 'INTERACTIONS'
   span.event-data-column.samples-box
     .big-number
-      = number_with_delimiter(data_totals['samples'])
+      = number_with_precision(data_totals['samples'], precision: 0, separator: '.', delimiter: ',')
     = 'SAMPLED'
   span.event-data-column.spent-box
     .big-number

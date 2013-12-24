@@ -63,7 +63,7 @@ module FacetsHelper
 
     areas.reject!{|a| a.events_count.nil? || !a.events_count}
 
-    {label: 'Areas', items: areas.map{|a| {label: a.name, id: a.id, count: a.events_count, name: :area} }}
+    {label: 'Areas', items: areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }}
   end
 
   # Returns the facets for the events controller

@@ -34,14 +34,13 @@ Development Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f
           server: 127.0.0.1
           min_messages: WARNING
 
-3. Make sure you have QT installed or run this (on Mac OSx):
+3. Make sure you have [PhantomJS](http://phantomjs.org/download.html):
 
-        brew install
-        brew install qt
+  For MacOS, type:
 
-  or the following if you are using ubuntu:
+        brew update && brew install phantomjs
 
-        sudo apt-get install libqt4-dev libxslt-dev libxml2-dev libpq-dev openjdk-7-jre
+  For Linux Download the correct package from [here](http://phantomjs.org/download.html) and copy to any folder in your $PATH
 
 4. Install the required gems:
 

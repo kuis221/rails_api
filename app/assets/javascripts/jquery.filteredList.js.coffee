@@ -216,8 +216,8 @@ $.widget 'nmk.filteredList', {
 					else
 						$('.more-options-link').next().hide()
 					false
-				.on 'mouseover.firstime', (e)=>
-					$(e.target).off('mouseover.firstime')
+				.on 'click.firstime', (e)=>
+					$(e.target).off('click.firstime')
 					if not $ul.hasClass('sf-js-enabled')
 						list = @_buildFilterOptionsList(filter, $filter,false)
 						$ul.find('li').append(list)
@@ -570,6 +570,9 @@ $.widget 'nmk.filteredList', {
 		if page is 1
 			if @infiniteScroller
 				@listContainer.infiniteScrollHelper 'resetPageCount'
+
+			$('.main').css {'min-height': $('#resource-filter-column').outerHeight()}
+			@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
 		@listContainer.append $('<li class="loading-spinner">');
 
@@ -581,6 +584,7 @@ $.widget 'nmk.filteredList', {
 				@options.onItemsLoad($response, page)
 
 			@listContainer.append($items.html())
+			@listContainer.css {height: ''}
 
 			@_pageLoaded(page, $items)
 

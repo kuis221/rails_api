@@ -18,7 +18,7 @@ describe VenuesController, search: true do
       # TODO: make this test to return the ranges filters as well
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Price", "Locations", "Campaigns", "Brands"]
+      filters['filters'].map{|b| b['label']}.should == ["Events", "Promo Hours", "Impressions", "Interactions", "Samples", "$ Spent", "Venue Score", "Price", "Locations", "Campaigns", "Brands"]
     end
   end
 
