@@ -84,12 +84,11 @@ class CampaignFormField < ActiveRecord::Base
   end
 
   def is_numeric?
-    (['number', 'percentage', 'count'].include?(field_type)) ||
-    (field_type == 'text' && ['integer', 'decimal', 'currency'].include?(capture_mechanism) )
+    ['number', 'percentage', 'count'].include?(field_type)
   end
 
   def is_decimal?
-    (['text', 'percentage'].include?('text') && ['decimal', 'currency'].include?(capture_mechanism))
+    (['number', 'percentage'].include?(field_type) && ['decimal', 'currency'].include?(capture_mechanism))
   end
 
   def field_validation_classes(result)

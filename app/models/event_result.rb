@@ -24,6 +24,12 @@ class EventResult < ActiveRecord::Base
 
   validate :valid_value?
 
+  validates :value, numericality: true,  allow_nil: true, if: :is_numeric?
+  validates :form_field_id, numericality: true, presence: true
+  validates :kpi_id, numericality: true, allow_nil: true
+  validates :kpis_segment_id, numericality: true, allow_nil: true
+  validates :scalar_value, numericality: true, allow_nil: true
+
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
   scope :for_approved_events, lambda{ joins(:event).where(events: {aasm_state: 'approved'}) }
   scope :for_active_events, lambda{ joins(:event).where(events: {active: true}) }
@@ -36,6 +42,8 @@ class EventResult < ActiveRecord::Base
   scope :gender, lambda{ where(kpis_segment_id: Kpi.gender.kpis_segment_ids) }
   scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
   scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }
+
+  delegate :is_numeric?, to: :form_field, allow_nil: true
 
   def display_value
     if form_field.field_type == 'count'
@@ -80,6 +88,10 @@ class EventResult < ActiveRecord::Base
       return if form_field.nil?
       if form_field.is_required? && (value.nil? || (value.is_a?(String) && value.empty?))
         errors.add(:value, I18n.translate('errors.messages.blank'))
+      end
+
+      if form_field.field_type == 'count' && value.present? && !form_field.kpi.kpis_segment_ids.include?(value)
+        errors.add(:value, I18n.translate('errors.result.invalid'))
       end
     end
 end

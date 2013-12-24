@@ -137,34 +137,80 @@ describe Api::V1::EventsController do
     let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
 
     it "should return an empty array if the campaign doesn't have any fields" do
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       fields = JSON.parse(response.body)
       response.should be_success
       fields.should == []
     end
 
-    it "should return an empty array if the campaign doesn't have any fields" do
-      Kpi.create_global_kpis
-      campaign.assign_all_global_kpis
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+    it "should return the stored values within the fields" do
+      kpi = FactoryGirl.create(:kpi, name: '# of cats', kpi_type: 'number')
+      campaign.add_kpi kpi
+      result = event.result_for_kpi(kpi)
+      result.value = 321
+      event.save
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+
       fields = JSON.parse(response.body)
       response.should be_success
-      fields.count.should > 0
-      fields.first.keys.should == ["id", "value", "name", "group", "ordering", "field_type", "options"]
-      values = fields.map{|f| f['value']}
-      values.uniq.should == [nil]
+      expect(fields.first).to include(
+          'id' => result.id,
+          'name' => '# of cats',
+          'field_type' => 'number',
+          'value' => 321
+        )
+      expect(fields.first.keys).to_not include('segments')
     end
 
-    it "should return the stored values within the fields" do
-      Kpi.create_global_kpis
-      campaign.assign_all_global_kpis
-      event.result_for_kpi(Kpi.impressions).value = 321
+    it "should return the segments for count fields" do
+      kpi = FactoryGirl.create(:kpi, name: 'Are you tall?', kpi_type: 'count', description: 'some description to show',
+          kpis_segments: [
+            FactoryGirl.create(:kpis_segment, text: 'Yes'), FactoryGirl.create(:kpis_segment, text: 'No')
+          ]
+      )
+      campaign.add_kpi kpi
+      segments = kpi.kpis_segments
+      result = event.result_for_kpi(kpi)
+      result.value = segments.first.id
       event.save
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param
+
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       fields = JSON.parse(response.body)
-      response.should be_success
-      result = fields.detect{|f| f['name'] == Kpi.impressions.name}
-      result['value'].should == 321
+      expect(fields.first).to include(
+          'id' => result.id,
+          'name' => 'Are you tall?',
+          'field_type' => 'count',
+          'value' => segments.first.id,
+          'description' => 'some description to show',
+          'segments' => [
+              {'id' => segments.first.id, 'text' => 'Yes'},
+              {'id' => segments.last.id, 'text' => 'No'}
+          ]
+        )
+    end
+
+    it "should return the percentage fields as one single field" do
+      kpi = FactoryGirl.create(:kpi, name: 'Age', kpi_type: 'percentage',
+          kpis_segments: [
+            FactoryGirl.create(:kpis_segment, text: 'Uno'), FactoryGirl.create(:kpis_segment, text: 'Dos')
+          ]
+      )
+      campaign.add_kpi kpi
+      results = event.result_for_kpi(kpi)
+      event.save
+
+      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      fields = JSON.parse(response.body)
+      expect(fields.first).to include(
+          'name' => 'Age',
+          'field_type' => 'percentage',
+          'segments' => [
+              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil},
+              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil}
+          ]
+        )
+
+      expect(fields.first.keys).to_not include('id', 'value')
     end
   end
 end

@@ -211,16 +211,61 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
-  Returns a list of form fields based on the event's campaign.
+  Returns a list of form fields based on the event's campaign. Each campaign can have a
+  different set of fields that have to be capture for its events. a field returned by the
+  API consists on the following attributes:
+
+  * *id:* the id of the field that have to be used later save the results. Please see the documentation
+    for saving a devent. This is not included for "percentage" fields as such fields have to be sent to
+    the API as separate fields. See the examples for more detail.
+
+  * *value:* the event's current value for that field. This should be used to pre-populate the field or
+    to select the correspondent options for the case of radio buttons/checboxes/dropdown.
+
+    For "count" fields, this is filled with the id of the currently selected +segment+ (see the "segments" section below)
+
+  * *name:* the label of the field
+
+  * *ordering:* how this field is ordered in the event's campaign.
+
+  * *field_type:* what kind of field is this, the possible options are: "number", "count", "percentage", "text", "textarea"
+
+  * *description:* the field's description
+
+  * *segments:* when the +fied_type+ is either "count" or "percentage", this will enumerate the possible
+    options for the "count" fields or the different subfields for the "percentage" fields.
+
+    This will contain a list with the following attributes:
+
+    * *id:* this is the ID of the option (for count fields) or sub-field (for percentage fields)
+
+    * *text:* the label/text for the option/sub-field
+
+    * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100 
+
+  * *options:* specific options for this field, depending of the field_type these can be:
+
+    * *capture_mechanism:* especifies how should the data should be captured for this field, the possible options are:
+
+      * If the +field_type+ is "number" then: "integer", "decimal" or "currency"
+      * If the +field_type+ is "count" then: "radio", "dropdown" or "checkbox"
+      * If the +field_type+ is "currency" then: "integer" or "decimal"
+      * If the +field_type+ is "text" then: _null_
+      * If the +field_type+ is "textarea" then: _null_
+
+    * *predefined_value:* if the field have this attribute and the +value+ is empty, this should be used as the default value for the event
+
+    * *required:* indicates whether this field is required or not
+
   EOS
   example  <<-EOS
+    A response with all the different kind of fields
     [
         {
             "id": 80,
             "value": "5",
             "name": "Impressions",
-            "group": null,
-            "ordering": 2,
+            "ordering": 1,
             "field_type": "number",
             "options": {
                 "capture_mechanism": "integer",
@@ -229,148 +274,101 @@ class Api::V1::EventsController < Api::V1::FilteredController
             }
         },
         {
-            "id": 82,
-            "value": "45",
-            "name": "Interactions",
-            "group": null,
-            "ordering": 3,
-            "field_type": "number",
-            "options": {
-                "capture_mechanism": "integer",
-                "predefined_value": "",
-                "required": "true"
+            "id":81,
+            "value":null,
+            "name":"Banner Displayed",
+            "segments":[
+                {
+                  "id":93,
+                  "text":"Yes"
+                },
+                {
+                  "id":94,
+                  "text":"No"
+                }
+            ],
+            "ordering":2,
+            "field_type":"count",
+            "options":{
+               "capture_mechanism":"radio"
             }
         },
         {
-            "id": 83,
-            "value": "34",
-            "name": "Samples",
-            "group": null,
-            "ordering": 4,
-            "field_type": "number",
-            "options": {
-                "capture_mechanism": "integer",
-                "predefined_value": "",
-                "required": "true"
-            }
-        },
-        {
-            "id": 84,
             "value": "30",
-            "name": "Female",
-            "group": "Gender",
-            "ordering": 5,
+            "name": "Gender",
+            "ordering": 3,
             "field_type": "percentage",
+            "segments":[
+                {
+                  "id":84,
+                  "text":"Female",
+                  "value": 55
+                },
+                {
+                  "id":85,
+                  "text":"Male",
+                  "value": 45
+                }
+            ],
             "options": {
                 "capture_mechanism": "integer"
             }
         },
         {
-            "id": 85,
-            "value": "70",
-            "name": "Male",
-            "group": "Gender",
-            "ordering": 5,
-            "field_type": "percentage",
+            "id": 80,
+            "value": "5",
+            "name": "Manager Name",
+            "ordering": 4,
+            "field_type": "text",
             "options": {
-                "capture_mechanism": "integer"
+                "capture_mechanism": null
             }
         },
         {
-            "id": 86,
-            "value": "",
-            "name": "< 12",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
+            "id": 80,
+            "value": "5",
+            "name": "Manager Comments",
+            "ordering": 4,
+            "field_type": "textarea",
             "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 87,
-            "value": "",
-            "name": "12 – 17",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 88,
-            "value": "50",
-            "name": "18 – 24",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 89,
-            "value": "50",
-            "name": "25 – 34",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 90,
-            "value": "",
-            "name": "35 – 44",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 91,
-            "value": "",
-            "name": "45 – 54",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 92,
-            "value": "",
-            "name": "55 – 64",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
-            }
-        },
-        {
-            "id": 93,
-            "value": "",
-            "name": "65+",
-            "group": "Age",
-            "ordering": 6,
-            "field_type": "percentage",
-            "options": {
-                "capture_mechanism": "integer"
+                "capture_mechanism": null
             }
         }
     ]
   EOS
   def results
-    @results = resource.all_results_for(resource.campaign.form_fields.for_event_data.includes(:kpi))
+    @fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
 
     # Save the results so they are returned with an ID
-    @results.each{|r| r.save(validate: false) if r.new_record? }
+    resource.all_results_for(@fields).each{|r| r.save(validate: false) if r.new_record? }
+
+    results = @fields.map do |field|
+      result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
+      if field.field_type == 'percentage'
+        result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value}}})
+      else
+        if field.field_type == 'count'
+          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text}}})
+        end
+        r = resource.results_for([field]).first
+        result.merge!({id: r.id, value: r.value})
+      end
+
+      result.merge!(description: field.kpi.description) if field.kpi.present?
+
+      result
+    end
+
+    respond_to do |format|
+        format.json {
+          render :status => 200,
+                 :json => results
+        }
+        format.xml {
+          render :status => 200,
+                 :xml => results.to_xml(root: 'results')
+        }
+    end
   end
 
   protected
