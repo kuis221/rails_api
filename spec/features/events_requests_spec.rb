@@ -537,6 +537,7 @@ feature "Events", js: true, search: true do
         checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
         page.execute_script('$(\'.task-completed-checkbox\').click()')
+        wait_for_ajax
 
         # refresh the page to make sure the checkbox remains selected
         visit event_path(event)
