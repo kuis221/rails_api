@@ -3,6 +3,6 @@
 FactoryGirl.define do
   factory :kpis_segment do
     kpi_id nil
-    text "Kpi Segment Description"
+    sequence(:text) { |n| "Kpi Segment #{n}" }
   end
 end

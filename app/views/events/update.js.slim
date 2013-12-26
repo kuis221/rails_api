@@ -1,6 +1,10 @@
 - render 'settings'
 - if resource.errors.any?
-  = render 'form_dialog'
+  - if params['partial'] == 'event_data'
+    - resource.results.each{|r| p r.inspect unless r.valid? } 
+    | bootbox.alert('#{j resource.errors.full_messages.join("<br />").html_safe }')
+  - else
+    = render 'form_dialog'
 - else
   - if params['partial'] == 'event_data'
     |
