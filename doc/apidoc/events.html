@@ -349,7 +349,7 @@ on the following search params</p>
 <p>A list of event recap status to filter the results</p>
 
         <br>
-        Value: Must be one of: Scheduled, Submitted, Approved, Rejected, Late, Due.
+        Value: Must be one of: Scheduled, Executed, Submitted, Approved, Rejected, Late, Due.
     </td>
   </tr>
 
@@ -1038,7 +1038,73 @@ Those two values must be concatenated by &#39;||&#39; in the form of
 
     <div id='description-results' class='collapse accordion-body'>
       
-<p>Returns a list of form fields based on the event&#39;s campaign.</p>
+<p>Returns a list of form fields based on the event&#39;s campaign. Each
+campaign can have a different set of fields that have to be capture for its
+events. a field returned by the API consists on the following attributes:</p>
+<ul><li>
+<p><strong>id:</strong> the id of the field that have to be used later save
+the results. Please see the documentation for saving a devent. This is not
+included for “percentage” fields as such fields have to be sent to the API
+as separate fields. See the examples for more detail.</p>
+</li><li>
+<p><strong>value:</strong> the event&#39;s current value for that field. This
+should be used to pre-populate the field or to select the correspondent
+options for the case of radio buttons/checboxes/dropdown.</p>
+
+<p>For “count” fields, this is filled with the id of the currently selected
+<code>segment</code> (see the “segments” section below)</p>
+</li><li>
+<p><strong>name:</strong> the label of the field</p>
+</li><li>
+<p><strong>ordering:</strong> how this field is ordered in the event&#39;s
+campaign.</p>
+</li><li>
+<p><strong>field_type:</strong> what kind of field is this, the possible
+options are: “number”, “count”, “percentage”, “text”, “textarea”</p>
+</li><li>
+<p><strong>description:</strong> the field&#39;s description</p>
+</li><li>
+<p><strong>segments:</strong> when the <code>fied_type</code> is either
+“count” or “percentage”, this will enumerate the possible options for the
+“count” fields or the different subfields for the “percentage” fields.</p>
+
+<p>This will contain a list with the following attributes:</p>
+<ul><li>
+<p><strong>id:</strong> this is the ID of the option (for count fields) or
+sub-field (for percentage fields)</p>
+</li><li>
+<p><strong>text:</strong> the label/text for the option/sub-field</p>
+</li><li>
+<p><strong>value:</strong> (for percentage fields only) the current value for
+this segment, the sum for all fields&#39; segments should be 100</p>
+</li></ul>
+</li><li>
+<p><strong>options:</strong> specific options for this field, depending of the
+field_type these can be:</p>
+<ul><li>
+<p><strong>capture_mechanism:</strong> especifies how should the data should
+be captured for this field, the possible options are:</p>
+<ul><li>
+<p>If the <code>field_type</code> is “number” then: “integer”, “decimal” or
+“currency”</p>
+</li><li>
+<p>If the <code>field_type</code> is “count” then: “radio”, “dropdown” or
+“checkbox”</p>
+</li><li>
+<p>If the <code>field_type</code> is “currency” then: “integer” or “decimal”</p>
+</li><li>
+<p>If the <code>field_type</code> is “text” then: <em>null</em></p>
+</li><li>
+<p>If the <code>field_type</code> is “textarea” then: <em>null</em></p>
+</li></ul>
+</li><li>
+<p><strong>predefined_value:</strong> if the field have this attribute and the
+<code>value</code> is empty, this should be used as the default value for
+the event</p>
+</li><li>
+<p><strong>required:</strong> indicates whether this field is required or not</p>
+</li></ul>
+</li></ul>
 
 
         <h3>Supported Formats</h3>
@@ -1056,13 +1122,13 @@ Those two values must be concatenated by &#39;||&#39; in the form of
           <br>
 
         <h3>Examples</h3>
-          <pre class="prettyprint">[
+          <pre class="prettyprint">A response with all the different kind of fields
+[
     {
         &quot;id&quot;: 80,
         &quot;value&quot;: &quot;5&quot;,
         &quot;name&quot;: &quot;Impressions&quot;,
-        &quot;group&quot;: null,
-        &quot;ordering&quot;: 2,
+        &quot;ordering&quot;: 1,
         &quot;field_type&quot;: &quot;number&quot;,
         &quot;options&quot;: {
             &quot;capture_mechanism&quot;: &quot;integer&quot;,
@@ -1071,139 +1137,64 @@ Those two values must be concatenated by &#39;||&#39; in the form of
         }
     },
     {
-        &quot;id&quot;: 82,
-        &quot;value&quot;: &quot;45&quot;,
-        &quot;name&quot;: &quot;Interactions&quot;,
-        &quot;group&quot;: null,
-        &quot;ordering&quot;: 3,
-        &quot;field_type&quot;: &quot;number&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;,
-            &quot;predefined_value&quot;: &quot;&quot;,
-            &quot;required&quot;: &quot;true&quot;
+        &quot;id&quot;:81,
+        &quot;value&quot;:null,
+        &quot;name&quot;:&quot;Banner Displayed&quot;,
+        &quot;segments&quot;:[
+            {
+              &quot;id&quot;:93,
+              &quot;text&quot;:&quot;Yes&quot;
+            },
+            {
+              &quot;id&quot;:94,
+              &quot;text&quot;:&quot;No&quot;
+            }
+        ],
+        &quot;ordering&quot;:2,
+        &quot;field_type&quot;:&quot;count&quot;,
+        &quot;options&quot;:{
+           &quot;capture_mechanism&quot;:&quot;radio&quot;
         }
     },
     {
-        &quot;id&quot;: 83,
-        &quot;value&quot;: &quot;34&quot;,
-        &quot;name&quot;: &quot;Samples&quot;,
-        &quot;group&quot;: null,
-        &quot;ordering&quot;: 4,
-        &quot;field_type&quot;: &quot;number&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;,
-            &quot;predefined_value&quot;: &quot;&quot;,
-            &quot;required&quot;: &quot;true&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 84,
         &quot;value&quot;: &quot;30&quot;,
-        &quot;name&quot;: &quot;Female&quot;,
-        &quot;group&quot;: &quot;Gender&quot;,
-        &quot;ordering&quot;: 5,
+        &quot;name&quot;: &quot;Gender&quot;,
+        &quot;ordering&quot;: 3,
         &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;segments&quot;:[
+            {
+              &quot;id&quot;:84,
+              &quot;text&quot;:&quot;Female&quot;,
+              &quot;value&quot;: 55
+            },
+            {
+              &quot;id&quot;:85,
+              &quot;text&quot;:&quot;Male&quot;,
+              &quot;value&quot;: 45
+            }
+        ],
         &quot;options&quot;: {
             &quot;capture_mechanism&quot;: &quot;integer&quot;
         }
     },
     {
-        &quot;id&quot;: 85,
-        &quot;value&quot;: &quot;70&quot;,
-        &quot;name&quot;: &quot;Male&quot;,
-        &quot;group&quot;: &quot;Gender&quot;,
-        &quot;ordering&quot;: 5,
-        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Manager Name&quot;,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
+            &quot;capture_mechanism&quot;: null
         }
     },
     {
-        &quot;id&quot;: 86,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;&lt; 12&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
+        &quot;id&quot;: 80,
+        &quot;value&quot;: &quot;5&quot;,
+        &quot;name&quot;: &quot;Manager Comments&quot;,
+        &quot;ordering&quot;: 4,
+        &quot;field_type&quot;: &quot;textarea&quot;,
         &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 87,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;12 – 17&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 88,
-        &quot;value&quot;: &quot;50&quot;,
-        &quot;name&quot;: &quot;18 – 24&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 89,
-        &quot;value&quot;: &quot;50&quot;,
-        &quot;name&quot;: &quot;25 – 34&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 90,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;35 – 44&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 91,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;45 – 54&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 92,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;55 – 64&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
-    },
-    {
-        &quot;id&quot;: 93,
-        &quot;value&quot;: &quot;&quot;,
-        &quot;name&quot;: &quot;65+&quot;,
-        &quot;group&quot;: &quot;Age&quot;,
-        &quot;ordering&quot;: 6,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
+            &quot;capture_mechanism&quot;: null
         }
     }
 ]

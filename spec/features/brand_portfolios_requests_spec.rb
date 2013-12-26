@@ -47,8 +47,8 @@ feature "BrandPortfolios", js: true, search: true do
         within("ul#brand_portfolios-list li:nth-child(1)") do
           click_link('Deactivate')
         end
-        visible_modal.click_link("OK")
-        ensure_modal_was_closed
+        confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
+
         expect(page).to have_no_content('A Vinos ticos')
         wait_for_ajax
       end

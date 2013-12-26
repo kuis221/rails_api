@@ -439,7 +439,7 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       click_link 'Add Contact'
-      visible_modal.click_link("Create New Contact")
+      visible_modal.click_js_link("Create New Contact")
 
       within ".contactevent_modal" do
         fill_in 'First name', with: 'Pedro'
