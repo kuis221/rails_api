@@ -20,7 +20,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_date, String, required: true, desc: "Event's end date"
       param :start_time, String, required: true, desc: "Event's start time'"
       param :end_time, String, required: true, desc: "Event's end time"
-      param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'"
+      param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
     end
@@ -241,7 +241,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     * *text:* the label/text for the option/sub-field
 
-    * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100 
+    * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100
 
   * *options:* specific options for this field, depending of the field_type these can be:
 

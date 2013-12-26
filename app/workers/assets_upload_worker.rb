@@ -12,7 +12,7 @@ class AssetsUploadWorker
       sleep(3)
       retry
     else
-      false
+      raise e
     end
   end
 end
