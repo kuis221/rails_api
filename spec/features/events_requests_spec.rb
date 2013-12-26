@@ -577,9 +577,15 @@ feature "Events", js: true, search: true do
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Integer field', kpi_type: 'number', capture_mechanism: 'integer')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Decimal field', kpi_type: 'number', capture_mechanism: 'decimal')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Currency field', kpi_type: 'number', capture_mechanism: 'currency')
-      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio field', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
         FactoryGirl.create(:kpis_segment, text: 'Radio Option 1'),
         FactoryGirl.create(:kpis_segment, text: 'Radio Option 2')
+      ])
+
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Checkbox field', kpi_type: 'count', capture_mechanism: 'checkbox', kpis_segments: [
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 1'),
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 2'),
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
       ])
 
       Sunspot.commit
@@ -618,6 +624,9 @@ feature "Events", js: true, search: true do
 
       choose('Radio Option 1')
 
+      unicheck('Checkbox Option 1')
+      unicheck('Checkbox Option 2')
+
       click_button 'Save'
 
       # Ensure the results are displayed on the page
@@ -649,6 +658,9 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('99 INTEGER FIELD')
         expect(page).to have_content('99.9 DECIMAL FIELD')
         expect(page).to have_content('$79.90 CURRENCY FIELD')
+        expect(page).to have_content('$79.90 CURRENCY FIELD')
+        expect(page).to have_content('RADIO OPTION 1 RADIO FIELD')
+        expect(page).to have_content('CHECKBOX OPTION 1 AND CHECK')
       end
 
       visit event_path(event)
