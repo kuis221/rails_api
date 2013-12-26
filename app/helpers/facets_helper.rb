@@ -44,8 +44,8 @@ module FacetsHelper
     first_five = (search.facet(:place).rows.map{|x| id, name = x.value.split('||'); [Base64.strict_encode64(x.value), name, x.count, :place]} + locations[:areas].map{|a| [a.id, a.name, a.events_count, :area]}).sort{|a,b| b[3] <=> a[3] }.first(5)
 
     first_five = first_five.map{|x| build_facet_item({label: x[1], id: x[0], count: x[2], name: x[3]}) }.first(5)
-
-    {label: 'Locations', top_items: first_five, items: locations[:locations]}
+    items = locations[:locations].sort{|a, b| a[:label] <=> b[:label] }
+    {label: 'Locations', top_items: first_five, items: items}
   end
 
 
@@ -85,6 +85,12 @@ module FacetsHelper
         map{|x| build_facet_item({label: x, id: x, name: :event_status, count: counters.try(:[], x) || 0}) }.
         sort{ |a, b| a[:label] <=> b[:label] }}
   end
+  
+  def build_campaign_bucket facet_search
+      items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label]}
+      {label: "Campaigns", items: items}
+    end
 
   # Returns the facets for the events controller
   def events_facets

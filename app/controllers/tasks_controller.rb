@@ -57,7 +57,7 @@ class TasksController < FilteredController
         f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
         #f.push(label: "Status", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
-        f.push(label: "Task Status", items: tasks_status.map{|x| build_facet_item({label: x, id: x, name: :task_status, count: 1}) })
+        f.push(label: "Task Status", items: tasks_status.map{|x| build_facet_item({label: x, id: x, name: :task_status, count: 1}) }.sort{ |a, b| a[:label] <=> b[:label] })
         if is_my_teams_view?
           users_count = Hash[facet_search.facet(:company_user_id).rows.map{|x| [x.value, x.count]}]
           users = current_company.company_users.includes(:user).where(id: facet_search.facet(:company_user_id).rows.map{|x| x.value})
@@ -67,7 +67,7 @@ class TasksController < FilteredController
             user_ids = team.user_ids
             build_facet_item({label: team.name, id: team.id, name: :team, count: user_ids.map{|id| users_count.has_key?(id) ? users_count[id] : 0 }.sum})
           end
-          people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
+          people = (users + teams).sort { |a, b| b[:label] <=> a[:label] }
           f.push(label: "Staff", items: people)
         end
       end

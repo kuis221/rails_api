@@ -109,13 +109,36 @@ class CampaignsController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
 
-        f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) } )
-        f.push(label: "Brand Portfolios", items: facet_search.facet(:brand_portfolios).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand_portfolio}) } )
-        users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
-        teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
-        people = (users + teams).sort { |a, b| b[:count] <=> a[:count] }
-        f.push(label: "People", items: people )
-        f.push(label: "Active State", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
+        f.push build_brand_bucket facet_search
+        f.push build_brand_portfolio_bucket facet_search
+        
+        f.push build_people_bucket facet_search
+        f.push build_status_bucket facet_search
       end
+    end
+    
+    def build_brand_bucket facet_search
+      items = facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label]}
+      {label: "Brands", items: items  }
+    end
+    
+    def build_brand_portfolio_bucket facet_search
+      items = facet_search.facet(:brand_portfolios).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand_portfolio}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label] }
+      {label: "Brand Portfolios", items: items}
+    end
+    
+    def build_people_bucket facet_search
+      users = facet_search.facet(:users).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :user}) }
+      teams = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
+      people = (users + teams).sort { |a, b| a[:label] <=> b[:label] }
+      {label: "People", items: people}
+    end
+    
+    def build_status_bucket facet_search
+      items = facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label] }
+      {label: "Active State", items: items}
     end
 end

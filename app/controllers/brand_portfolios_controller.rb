@@ -41,8 +41,14 @@ class BrandPortfoliosController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
 
-        f.push(label: "Brands", items: facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) } )
+        f.push build_brand_bucket facet_search
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
+    end
+    
+    def build_brand_bucket facet_search
+      items = facet_search.facet(:brands).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :brand}) } 
+      items = items.sort{|a, b| a[:label] <=> b[:label] }
+      {label: "Brands", items: items }
     end
 end
