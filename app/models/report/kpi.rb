@@ -21,7 +21,7 @@ require 'report'
 class Report::Kpi < Report
   def report_output
     CSV.generate do |csv|
-      csv << ['Brand','Date', 'Cm # Consumer Impressions', 'Cm # Consumers Sampled', 'Cm Total Consumers',
+      csv << ['TD Linx','Brand','Date', 'Cm # Consumer Impressions', 'Cm # Consumers Sampled', 'Cm Total Consumers',
               'Cm Promo Hours', 'Cm # Events', 'Cm Bar Spend', 'Fytd # Consumer Impressions',
               'Fytd # Consumers Sampled', 'Fytd Total Consumers', 'Fytd Promo Hours Fytd',
               '# Events Fytd', 'Bar Spend', 'Area', 'Venue', 'Program']
@@ -45,6 +45,7 @@ class Report::Kpi < Report
           place_events_fytd = place_events.between_dates(fytd_start, fytd_end)
           place_events_cm = place_events.between_dates(the_month.beginning_of_month, the_month.end_of_month)
           csv << [
+            place.td_linx_code, #TD Linx
             brands,         # Brand
             nil,            # Date
             impressions = sum_results(place_events_cm, impressions_field),     # Cm # Consumer Impressions
