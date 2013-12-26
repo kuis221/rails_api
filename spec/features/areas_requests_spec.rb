@@ -46,12 +46,8 @@ feature "Areas", js: true, search: true do
       Sunspot.commit
       visit areas_path
 
-      expect(page).to have_text('Wild Wild West')
-      within("ul#areas-list li:nth-child(1)") do
-        click_link('Deactivate')
-      end
-      visible_modal.click_link("OK")
-      ensure_modal_was_closed
+      confirm_prompt "Are you sure you want to deactivate this area?"
+
       expect(page).to have_no_content('Wild Wild West')
       wait_for_ajax
     end
@@ -107,11 +103,8 @@ feature "Areas", js: true, search: true do
       within('.links-data') do
         click_link('Deactivate')
       end
-      within visible_modal do
-        expect(page).to have_text('Are you sure you want to deactivate this area?')
-        click_link("OK")
-      end
-      ensure_modal_was_closed
+
+      confirm_prompt "Are you sure you want to deactivate this area?"
 
       within('.links-data') do
         click_link('Activate')
