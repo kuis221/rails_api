@@ -24,11 +24,12 @@ class EventResult < ActiveRecord::Base
 
   validate :valid_value?
 
-  validates :value, numericality: true,  allow_nil: true, if: :is_numeric?
+  validates :value, numericality: true, allow_nil: true, allow_blank: true, if: :allow_decimals?
+  validates :value, numericality: { only_integer: true }, allow_nil: true, allow_blank: true, if: :is_numeric_field?, unless: :allow_decimals?
   validates :form_field_id, numericality: true, presence: true
   validates :kpi_id, numericality: true, allow_nil: true
   validates :kpis_segment_id, numericality: true, allow_nil: true
-  validates :scalar_value, numericality: true, allow_nil: true
+  validates :scalar_value, numericality: true, allow_nil: true, allow_blank: true
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
   scope :for_approved_events, lambda{ joins(:event).where(events: {aasm_state: 'approved'}) }
@@ -43,11 +44,11 @@ class EventResult < ActiveRecord::Base
   scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
   scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }
 
-  delegate :is_numeric?, to: :form_field, allow_nil: true
+  delegate :is_numeric?, :capture_mechanism, to: :form_field, allow_nil: true
 
   def display_value
     if form_field.field_type == 'count'
-      if form_field.capture_mechanism == 'checkbox'
+      if capture_mechanism == 'checkbox'
         form_field.kpi.kpis_segments.select{|s| self.value.include?(s.id)}.map(&:text).to_sentence if self.value
       else
         form_field.kpi.kpis_segments.detect{|s| s.id == self.value}.try(:text) if self.value
@@ -58,18 +59,24 @@ class EventResult < ActiveRecord::Base
   end
 
   def value
-    if form_field.field_type == 'count' && form_field.capture_mechanism == 'checkbox'
-      self.attributes['value'].try(:split, ',').try(:map , &:to_i)
+    if form_field.field_type == 'count' && capture_mechanism == 'checkbox'
+      if self.attributes['value'].is_a?(String)
+        self.attributes['value'].try(:split, ',').try(:map , &:to_i)
+      elsif self.attributes['value'].is_a?(Numeric)
+        [self.attributes['value']]
+      else
+        self.attributes['value']
+      end
     elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present?
-      self.attributes['value'].to_i
+      self.attributes['value'].to_i if self.attributes['value'].present?
     else
       self.attributes['value']
     end
   end
 
   def value=(value)
-    if form_field.field_type == 'count' && form_field.capture_mechanism == 'checkbox' && value.is_a?(Array)
-      write_attribute('value', value.reject{|v| !(v =~ /^[0-9]+$/) }.join(','))
+    if form_field.field_type == 'count' && capture_mechanism == 'checkbox' && value.is_a?(Array)
+      write_attribute('value', value.map{|v| v.is_a?(String) ? v.strip : v}.join(','))
     else
       write_attribute('value', value)
     end
@@ -77,11 +84,19 @@ class EventResult < ActiveRecord::Base
 
   private
     def set_scalar_value
-      if value.present? and form_field.is_numeric?
+      if value.present? and is_numeric?
         self.scalar_value = value.to_f rescue 0
       else
         self.scalar_value = 0
       end
+    end
+
+    def is_numeric_field?
+      form_field.present? && ['percentage', 'number'].include?(form_field.field_type)
+    end
+
+    def allow_decimals?
+      is_numeric_field? && ['currency', 'decimal'].include?(capture_mechanism)
     end
 
     def valid_value?
@@ -90,8 +105,26 @@ class EventResult < ActiveRecord::Base
         errors.add(:value, I18n.translate('errors.messages.blank'))
       end
 
-      if form_field.field_type == 'count' && value.present? && !form_field.kpi.kpis_segment_ids.include?(value)
-        errors.add(:value, I18n.translate('errors.result.invalid'))
+      if form_field.field_type == 'count' && value.present? && value != ''
+        if value.present? && capture_mechanism == 'radio' && !form_field.kpi.kpis_segment_ids.include?(value)
+          errors.add(:value, I18n.translate('errors.result.invalid'))
+        end
+
+        if value.present? && capture_mechanism == 'checkbox' && value.any?{|v| !form_field.kpi.kpis_segment_ids.include?(v) }
+          errors.add(:value, I18n.translate('errors.result.invalid'))
+        end
+
+        if capture_mechanism != 'checkbox'
+          errors.add(:value, I18n.translate('errors.messages.not_a_number')) if !parse_raw_value_as_a_number(value)
+        else capture_mechanism == 'checkbox'
+          errors.add(:value, I18n.translate('errors.messages.not_a_number')) if value.any?{|v| !parse_raw_value_as_a_number(v)}
+        end
       end
+    end
+
+    def parse_raw_value_as_a_number(raw_value)
+      Kernel.Float(raw_value) if raw_value !~ /\A0[xX]/
+    rescue ArgumentError, TypeError
+      nil
     end
 end

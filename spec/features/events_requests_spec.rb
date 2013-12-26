@@ -575,6 +575,14 @@ feature "Events", js: true, search: true do
           company: @company )
       event.campaign.assign_all_global_kpis
 
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Integer field', kpi_type: 'number', capture_mechanism: 'integer')
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Decimal field', kpi_type: 'number', capture_mechanism: 'decimal')
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Currency field', kpi_type: 'number', capture_mechanism: 'currency')
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
+        FactoryGirl.create(:kpis_segment, text: 'Radio Option 1'),
+        FactoryGirl.create(:kpis_segment, text: 'Radio Option 2')
+      ])
+
       Sunspot.commit
 
       visit event_path(event)
@@ -605,6 +613,12 @@ feature "Events", js: true, search: true do
       fill_in 'Interactions', with: 110
       fill_in 'Samples',      with: 120
 
+      fill_in 'Integer field', with: '99'
+      fill_in 'Decimal field', with: '99.9'
+      fill_in 'Currency field', with: '79.9'
+
+      choose('Radio Option 1')
+
       click_button 'Save'
 
       # Ensure the results are displayed on the page
@@ -630,6 +644,12 @@ feature "Events", js: true, search: true do
         expect(page).to have_content "14%"
         expect(page).to have_content "15%"
         expect(page).to have_content "16%"
+      end
+
+      within ".box_metrics" do
+        expect(page).to have_content('99 INTEGER FIELD')
+        expect(page).to have_content('99.9 DECIMAL FIELD')
+        expect(page).to have_content('$79.90 CURRENCY FIELD')
       end
 
       visit event_path(event)
