@@ -8,15 +8,13 @@ module FacetsHelper
 
   # Facet helper methods
   def build_facet(klass, title, name, facets)
-    if klass.name != 'CompanyUser'
-      items = klass.where(id: facets.map(&:value)).order(:name)
-      items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
+    if klass.name == 'CompanyUser'
+      items = klass.where(id: facets.map(&:value)).joins(:user).includes(:user).order('users.first_name, users.last_name')
     else
-      items = klass.where(id: facets.map(&:value))
-      items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
-      items = items.sort{|a, b| a[:label] <=> b[:label] }
+      items = klass.where(id: facets.map(&:value)).order(:name)
     end
-    
+    items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
+
     {label: title, items: items}
   end
 
@@ -71,24 +69,24 @@ module FacetsHelper
     areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
     {label: 'Areas', items: areas}
   end
-  
+
   def build_people_bucket(facet_search)
     users = build_facet(CompanyUser, 'User', :user, facet_search.facet(:user_ids).rows)[:items]
     teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
     people = (users + teams).sort{ |a, b| a[:label] <=> b[:label] }
     {label: 'People', items: people }
   end
-  
+
   def build_state_bucket counters
     {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: counters.try(:[], x) || 0}) }}
   end
-  
+
   def build_status_bucket counters
     {label: 'Event Status', items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].
         map{|x| build_facet_item({label: x, id: x, name: :event_status, count: counters.try(:[], x) || 0}) }.
         sort{ |a, b| a[:label] <=> b[:label] }}
   end
-  
+
   def build_campaign_bucket facet_search
       items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}
@@ -107,7 +105,7 @@ module FacetsHelper
       #f.push build_locations_bucket(facet_search)
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )
-      
+
       counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
       f.push build_state_bucket( counters )
       f.push build_status_bucket( counters )

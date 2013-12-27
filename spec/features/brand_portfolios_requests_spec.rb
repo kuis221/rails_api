@@ -45,7 +45,7 @@ feature "BrandPortfolios", js: true, search: true do
 
         expect(page).to have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
-          click_link('Deactivate')
+          click_js_link('Deactivate')
         end
         confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
@@ -63,7 +63,7 @@ feature "BrandPortfolios", js: true, search: true do
 
         expect(page).to have_content('A Vinos ticos')
         within("ul#brand_portfolios-list li:nth-child(1)") do
-          click_link('Activate')
+          click_js_link('Activate')
         end
         expect(page).to have_no_content('A Vinos ticos')
         wait_for_ajax
@@ -78,7 +78,7 @@ feature "BrandPortfolios", js: true, search: true do
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'
         fill_in 'Description', with: 'new portfolio description'
-        click_button 'Create'
+        click_js_button 'Create'
       end
       ensure_modal_was_closed
 
@@ -119,7 +119,7 @@ feature "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
@@ -140,10 +140,9 @@ feature "BrandPortfolios", js: true, search: true do
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
         fill_in 'Description', with: 'edited portfolio description'
-        click_button 'Save'
+        click_js_button 'Save'
       end
 
-      find('h2', text: 'edited portfolio name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited portfolio name')
       expect(page).to have_selector('div.description-data', text: 'edited portfolio description')
       wait_for_ajax
@@ -154,7 +153,7 @@ feature "BrandPortfolios", js: true, search: true do
       brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 
-      click_link 'Add Brand'
+      click_js_link 'Add Brand'
 
       within visible_modal do
         expect(page).to have_content('Guaro Cacique')
@@ -170,7 +169,7 @@ feature "BrandPortfolios", js: true, search: true do
       end
 
       within visible_modal do
-        click_link('Create New Brand')
+        click_js_link('Create New Brand')
       end
 
       within visible_modal do

@@ -44,7 +44,7 @@ feature "DateRanges", search: true, js: true do
       visit date_ranges_path
 
       within("ul#date_ranges-list") do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this date range?'
@@ -59,7 +59,7 @@ feature "DateRanges", search: true, js: true do
 
       within("ul#date_ranges-list") do
         expect(page).to have_content('Weekdays')
-        click_link('Activate')
+        click_js_link('Activate')
         expect(page).to have_no_content('Weekdays')
       end
       wait_for_ajax
@@ -117,7 +117,7 @@ feature "DateRanges", search: true, js: true do
       confirm_prompt "Are you sure you want to deactivate this date range?"
 
       within('.links-data') do
-        click_link('Activate')
+        click_js_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
       wait_for_ajax
@@ -132,7 +132,7 @@ feature "DateRanges", search: true, js: true do
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'
         fill_in 'Description', with: 'edited date range description'
-        click_button 'Save'
+        click_js_button 'Save'
       end
       ensure_modal_was_closed
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
@@ -146,7 +146,7 @@ feature "DateRanges", search: true, js: true do
       date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
 
-      click_link('Add Date')
+      click_js_link('Add Date')
 
       within visible_modal do
         find("#calendar_start_date").click_link '25'

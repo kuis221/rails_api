@@ -77,7 +77,9 @@ feature "Events", js: true, search: true do
           Sunspot.commit
           visit events_path
 
+          # Show only inactive items
           filter_section('ACTIVE STATE').unicheck('Inactive')
+          filter_section('ACTIVE STATE').unicheck('Active')
 
           within("ul#events-list li:nth-child(1)") do
             expect(page).to have_content('Our Test Campaign')
@@ -91,51 +93,52 @@ feature "Events", js: true, search: true do
       scenario "should allow allow filter events by date range" do
         today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
         tomorrow = today+1.day
-        FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
-          place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US')
-        )
-        FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-          campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
-          place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
-        Sunspot.commit
+        Timecop.travel(today) do
+          FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          Sunspot.commit
 
-        visit events_path
+          visit events_path
 
-        within("ul#events-list") do
-          expect(page).to have_content('Campaign FY2012')
-          expect(page).to have_content('Another Campaign April 03')
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+
+          expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+          #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+
+          filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+          within("ul#events-list") do
+            expect(page).to have_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          select_filter_calendar_day("26")
+          find('#collection-list-filters').should have_content('Another Campaign April 03')
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          select_filter_calendar_day("26", "27")
+          within("ul#events-list") do
+            expect(page).to have_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+          wait_for_ajax
         end
-
-        expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
-        #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
-
-        filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-
-        within("ul#events-list") do
-          expect(page).to have_no_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-
-        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
-        within("ul#events-list") do
-          expect(page).to have_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-
-        select_filter_calendar_day("26")
-        find('#collection-list-filters').should have_content('Another Campaign April 03')
-        within("ul#events-list") do
-          expect(page).to have_no_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-
-        select_filter_calendar_day("26", "27")
-        within("ul#events-list") do
-          expect(page).to have_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-        wait_for_ajax
       end
 
       feature "with timezone support turned ON" do

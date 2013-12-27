@@ -105,7 +105,7 @@ RSpec.configure do |config|
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 3
+  Capybara.default_wait_time = 4
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 
