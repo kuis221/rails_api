@@ -70,6 +70,11 @@ RSpec.configure do |config|
   config.after(:each) do
     User.current = nil
     Time.zone = Rails.application.config.time_zone
+
+    # Reset all KPIs values to nil
+    ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
+      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
+    end
   end
 
   config.before(:each) do
