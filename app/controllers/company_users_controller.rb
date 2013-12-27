@@ -211,12 +211,31 @@ class CompanyUsersController < FilteredController
         # select what params should we use for the facets search
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id, :current_company_user].include?(k.to_sym)})
         facet_search = resource_class.do_search(facet_params, true)
-        f.push(label: "Roles", items: facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) } )
-        f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) })
-        f.push(label: "Teams", items: facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) })
+        
+        f.push build_role_bucket facet_search
+        f.push build_campaign_bucket facet_search
+        f.push build_team_bucket facet_search
         # f.push(label: "Active State", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
-        f.push(label: "Active State", items: ['Active', 'Inactive', 'Invited'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+        f.push build_state_bucket
       end
+    end
+    
+    def build_role_bucket facet_search
+      items = facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label]} 
+      {label: "Roles", items: items}
+    end
+    
+    def build_team_bucket facet_search
+      items = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label]}
+      {label: "Teams", items: items}
+    end
+    
+    def build_state_bucket
+      items = ['Active', 'Inactive', 'Invited'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }
+      items = items.sort{|a, b| a[:label] <=> b[:label]}
+      {label: "Active State", items: items}
     end
 
     def delete_member_path(user)
