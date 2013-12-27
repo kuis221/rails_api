@@ -8,11 +8,15 @@ module FacetsHelper
 
   # Facet helper methods
   def build_facet(klass, title, name, facets)
-    counts = Hash[facets.map{|x| [x.value.to_i, x.count]}]
-    items = klass.where(id: counts.keys).all
-    #items.sort!{|a, b| counts[b.name] <=> counts[a.name] }
-    items = items.map{|x| build_facet_item({label: x.name, id: x.id, count: counts[x.id], name: name})}
-    items = items.sort{|a, b| a[:label] <=> b[:label] }
+    if klass.name != 'CompanyUser'
+      items = klass.where(id: facets.map(&:value)).order(:name)
+      items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
+    else
+      items = klass.where(id: facets.map(&:value))
+      items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
+      items = items.sort{|a, b| a[:label] <=> b[:label] }
+    end
+    
     {label: title, items: items}
   end
 
@@ -54,7 +58,7 @@ module FacetsHelper
     places = Place.where(id: counts.keys.uniq).all
     list = {label: :root, items: [], id: nil, path: nil}
 
-    areas = Area.scoped_by_company_id(current_company.id).active
+    areas = Area.scoped_by_company_id(current_company.id).order(:name).active
 
     Place.unscoped do
       places.each do |p|
@@ -65,7 +69,6 @@ module FacetsHelper
 
     areas.reject!{|a| a.events_count.nil? || !a.events_count}
     areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
-    areas = areas.sort{|a, b| a[:label] <=> b[:label] }
     {label: 'Areas', items: areas}
   end
   
@@ -89,7 +92,7 @@ module FacetsHelper
   def build_campaign_bucket facet_search
       items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}
-      {label: "Campaigns", items: items}
+      {label: 'Campaigns', items: items}
     end
 
   # Returns the facets for the events controller
