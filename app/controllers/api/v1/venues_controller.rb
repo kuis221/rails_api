@@ -15,7 +15,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
 
 
   api :GET, '/api/v1/venues/search', "Search for a list of venues matching a term"
-  param :term, String, :desc => "The search term"
+  param :term, String, :desc => "The search term", required: true
 
   description <<-EOS
     Returns a list of venues matching the search +term+ ordered by relevance limited to 10 results.
