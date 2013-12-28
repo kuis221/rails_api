@@ -17,7 +17,7 @@ class Api::V1::ApiController < ActionController::Base
     end
 
     def current_company_user
-      @current_company_user ||= current_user.company_users.where(company_id: params[:company_id]).first
+      @current_company_user ||= current_user.company_users.where(company_id: params[:company_id]).first if current_user.present?
       raise Api::V1::InvalidCompany.new(params[:company_id]) if @current_company_user.nil? || !@current_company_user.active?
 
       @current_company_user

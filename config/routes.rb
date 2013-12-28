@@ -5,10 +5,11 @@ Brandscopic::Application.routes.draw do
   namespace :api do
     namespace :v1 do
       devise_scope :user do
-        post 'sessions' => 'sessions#create', :as => 'login'
-        delete 'sessions' => 'sessions#destroy', :as => 'logout'
-        post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
-        get '/companies' => 'users#companies', :as => 'new_user_password'
+        post 'sessions' => 'sessions#create'
+        delete 'sessions' => 'sessions#destroy'
+        post '/users/password/new_password' => 'users#new_password'
+        get '/companies' => 'users#companies'
+        get '/permissions' => 'users#permissions'
 
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index]

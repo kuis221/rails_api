@@ -6,8 +6,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 404, "Missing"
     error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
-    param :auth_token, String, required: true
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the "
+    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
+    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
 
     EOS

@@ -74,4 +74,63 @@ describe Api::V1::UsersController do
       response.should be_success
     end
   end
+
+  describe "GET 'permissions'" do
+    let(:company) { user.company_users.first.company }
+    it "should return failure for invalid authorization token" do
+      get 'permissions', auth_token: 'XXXXXXXXXXXXXXXX',company_id: company.id, format: :json
+      response.response_code.should == 401
+      result = JSON.parse(response.body)
+      result['success'].should == false
+      result['info'].should == 'Invalid auth token'
+      result['data'].should be_empty
+    end
+
+    it "should require the company_id param" do
+      company = FactoryGirl.create(:company)
+      FactoryGirl.create(:company_user, company: company, user: user, role: FactoryGirl.create(:role, company: company))
+      expect{
+        get 'permissions', auth_token: user.authentication_token, format: :json
+      }.to raise_exception(Apipie::ParamMissing, 'Missing parameter company_id')
+    end
+
+    it "should return list of permissions for the current user" do
+      company = FactoryGirl.create(:company)
+      FactoryGirl.create(:company_user, company: company, user: user, role: FactoryGirl.create(:role, company: company))
+      get 'permissions', auth_token: user.authentication_token, company_id: company.id, format: :json
+      response.should be_success
+      permissions = JSON.parse(response.body)
+      permissions.should =~ ["events", "events_add_contacts", "events_add_team_members", "events_contacts", "events_create", "events_create_documents",
+        "events_create_expenses", "events_create_photos", "events_create_surveys", "events_create_tasks", "events_deactivate_documents", "events_deactivate_expenses",
+        "events_deactivate_photos", "events_deactivate_surveys", "events_delete_contacts", "events_delete_team_members", "events_documents", "events_edit_contacts",
+        "events_edit_expenses", "events_edit_surveys", "events_edit_tasks", "events_expenses", "events_deactivate", "events_edit", "events_photos", "events_show", "events_surveys", "events_tasks",
+        "events_team_members", "tasks_comments_own", "tasks_comments_team", "tasks_create_comments_own", "tasks_create_comments_team", "tasks_deactivate_own",
+        "tasks_deactivate_team", "tasks_edit_own", "tasks_edit_team", "tasks_own", "tasks_team", "venues", "venues_create"]
+    end
+
+    it "should return empty list if the user has no permissions" do
+      role = FactoryGirl.create(:non_admin_role, company: company,)
+      non_admin = FactoryGirl.create(:user, company_users: [FactoryGirl.create(:company_user, company: company, role: role)])
+
+      get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json
+
+      response.should be_success
+      permissions = JSON.parse(response.body)
+      permissions.should =~ []
+    end
+
+    it "should return only the permissions given to the user's role" do
+      role = FactoryGirl.create(:non_admin_role, company: company,)
+      non_admin = FactoryGirl.create(:user, company_users: [FactoryGirl.create(:company_user, company: company, role: role)])
+
+      role.permissions.create({action: :create, subject_class: 'Event'}, without_protection: true)
+      role.permissions.create({action: :view_list, subject_class: 'Event'}, without_protection: true)
+
+      get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json
+
+      response.should be_success
+      permissions = JSON.parse(response.body)
+      permissions.should =~ ["events", "events_create"]
+    end
+  end
 end
