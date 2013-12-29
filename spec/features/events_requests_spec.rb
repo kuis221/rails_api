@@ -315,13 +315,13 @@ feature "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this event?'
 
       within('.links-data') do
-        click_link('Activate')
+        click_js_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
       wait_for_ajax
@@ -335,11 +335,11 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Team Member'
+      click_js_link 'Add Team Member'
       within visible_modal do
         expect(page).to have_content('Pablo')
         expect(page).to have_content('Baltodano')
-        click_link("add-member-btn-#{company_user.id}")
+        click_js_link("add-member-btn-#{company_user.id}")
 
         expect(page).to have_no_selector("li#staff-member-user-#{company_user.id}")
       end
@@ -371,12 +371,12 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       within visible_modal do
         expect(page).to have_selector("li#contact-company_user-#{company_user.id}")
         expect(page).to have_content('Pablo')
         expect(page).to have_content('Baltodano')
-        click_link("add-contact-btn-company_user-#{company_user.id}")
+        click_js_link("add-contact-btn-company_user-#{company_user.id}")
 
         expect(page).to have_no_selector("li#contact-company_user-#{company_user.id}")
       end
@@ -406,12 +406,12 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       within visible_modal do
         expect(page).to have_selector("li#contact-contact-#{contact.id}")
         expect(page).to have_content('Guillermo')
         expect(page).to have_content('Vargas')
-        click_link("add-contact-btn-contact-#{contact.id}")
+        click_js_link("add-contact-btn-contact-#{contact.id}")
 
         expect(page).to have_no_selector("li#contact-contact-#{contact.id}")
       end
@@ -440,7 +440,7 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       visible_modal.click_js_link("Create New Contact")
 
       within ".contactevent_modal" do
@@ -514,7 +514,7 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Create Task'
+      click_js_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'
@@ -672,7 +672,7 @@ feature "Events", js: true, search: true do
       expect(page).to have_selector("#ethnicity-graph")
       expect(page).to have_selector("#age-graph")
 
-      click_link 'Edit event data'
+      click_js_link 'Edit event data'
 
       fill_in 'Summary', with: 'Edited summary content'
       fill_in 'Impressions', with: '3333'
