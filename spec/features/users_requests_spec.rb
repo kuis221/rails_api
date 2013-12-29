@@ -136,7 +136,7 @@ feature "Users", :js => true do
         click_link 'Add Area'
 
         within visible_modal do
-          find("#area-#{area.id}").click_link('Add Area')
+          find("#area-#{area.id}").click_js_link('Add Area')
           expect(page).to have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
         end
         close_modal

@@ -35,7 +35,7 @@ feature "Venues Section", js: true, search: true do
         # First Row
         within("li:nth-child(1)") do
           expect(page).to have_content('Bar Benito')
-           expect(page).to have_selector('div.n_spent', text: '$1,000.00')
+          expect(page).to have_selector('div.n_spent', text: '$1,000.00')
         end
         # Second Row
         within("li:nth-child(2)") do
