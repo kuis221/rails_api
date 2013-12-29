@@ -43,9 +43,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id}
           })
         }.to change(CampaignFormField, :count).by(-2)
       }.to change(Kpi, :count).by(-1)
@@ -79,9 +79,9 @@ describe Kpi do
 
       expect{
         Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-          name: 'New Name',
-          description: 'a description',
-          master_kpi: {campaign.id.to_s => kpi1.id}
+          'name' => 'New Name',
+          'description' => 'a description',
+          'master_kpi' => {campaign.id.to_s => kpi1.id}
         })
       }.to change(EventResult, :count).by(-1)
 
@@ -118,9 +118,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
@@ -174,9 +174,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
@@ -231,9 +231,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign.id.to_s => kpi1.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign.id.to_s => kpi1.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-2)
@@ -276,9 +276,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
@@ -324,9 +324,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
@@ -376,9 +376,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
@@ -421,9 +421,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id, Kpi.impressions.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-2)
       }.to_not change(EventResult, :count)
