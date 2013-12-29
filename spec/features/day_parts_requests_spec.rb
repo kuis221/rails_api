@@ -124,9 +124,10 @@ feature "DayParts", search: true, js: true do
     end
 
     scenario 'allows the user to edit the day_part' do
-      day_part = FactoryGirl.create(:day_part, company: @company)
+      day_part = FactoryGirl.create(:day_part, name: 'Old name', company: @company)
       visit day_part_path(day_part)
 
+      expect(page).to have_content('Old name')
       find('.links-data').click_link('Edit')
 
       within("form#edit_day_part_#{day_part.id}") do
@@ -135,6 +136,7 @@ feature "DayParts", search: true, js: true do
         click_button 'Save'
       end
       ensure_modal_was_closed
+      expect(page).to have_no_content('Old name')
       page.find('h2', text: 'edited day part name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited day part name')
       expect(page).to have_selector('div.description-data', text: 'edited day part description')

@@ -88,7 +88,7 @@ feature "Users", :js => true do
         visit company_user_path(company_user)
 
         within('.links-data') do
-         click_link('Deactivate')
+         click_js_link('Deactivate')
         end
 
         confirm_prompt 'Are you sure you want to deactivate this user?'
@@ -103,9 +103,11 @@ feature "Users", :js => true do
       scenario 'allows the user to edit another user' do
         role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
         other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
-        user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
+        user = FactoryGirl.create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: @company.id)
         company_user = user.company_users.first
         visit company_user_path(company_user)
+
+        expect(page).to have_content('Juanito Mora')
 
         click_link('Edit')
 
@@ -118,7 +120,9 @@ feature "Users", :js => true do
           fill_in 'Password confirmation', with: 'Pedrito123'
           click_js_button 'Save'
         end
+        ensure_modal_was_closed
 
+        expect(page).to have_no_content('Juanito Mora')
         expect(page).to have_selector('h2', text: 'Pedro Navaja')
         expect(page).to have_selector('div.user-role', text: 'Another Role')
         wait_for_ajax
@@ -137,8 +141,8 @@ feature "Users", :js => true do
         end
         close_modal
 
+        # Re-open the modal to make sure it's not added again to the list
         click_link 'Add Area'
-
         within visible_modal do
           expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
         end
@@ -163,8 +167,8 @@ feature "Users", :js => true do
         visit company_user_path(@company_user)
 
         within 'li#user_menu' do
-          click_link(@user.full_name)
-          click_link('Edit Profile')
+          click_js_link(@user.full_name)
+          click_js_link('Edit Profile')
         end
 
         within("form#edit_company_user_#{@company_user.id}") do

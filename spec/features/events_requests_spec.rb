@@ -195,7 +195,6 @@ feature "Events", js: true, search: true do
           start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
           start_time: '8:00 PM', end_time: '11:00 PM',
           campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
-
       Sunspot.commit
 
       visit events_path
@@ -211,7 +210,7 @@ feature "Events", js: true, search: true do
         find_field('End time').value.should == '11:00pm'
 
         select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
-        click_button 'Save'
+        click_js_button 'Save'
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka FY2013')

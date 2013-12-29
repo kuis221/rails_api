@@ -60,6 +60,7 @@ feature "Campaigns", js: true, search: true do
         visit campaigns_path
 
         filter_section('ACTIVE STATE').unicheck('Inactive')
+        filter_section('ACTIVE STATE').unicheck('Active')
 
         expect(page).to have_content('Cacique FY13')
         within("ul#campaigns-list li:nth-child(1)") do

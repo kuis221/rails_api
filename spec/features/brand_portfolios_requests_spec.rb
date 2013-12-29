@@ -132,9 +132,9 @@ feature "BrandPortfolios", js: true, search: true do
     end
 
     scenario 'allows the user to edit the portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
+      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Old name', company: @company)
       visit brand_portfolio_path(portfolio)
-
+      expect(page).to have_content('Old name')
       click_link('Edit')
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
@@ -142,6 +142,8 @@ feature "BrandPortfolios", js: true, search: true do
         fill_in 'Description', with: 'edited portfolio description'
         click_js_button 'Save'
       end
+      ensure_modal_was_closed
+      expect(page).to have_no_content('Old name')
 
       expect(page).to have_selector('h2', text: 'edited portfolio name')
       expect(page).to have_selector('div.description-data', text: 'edited portfolio description')

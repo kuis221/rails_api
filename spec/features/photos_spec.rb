@@ -11,6 +11,7 @@ feature "Photos", search: true, js: true do
   end
 
   after do
+    AttachedAsset.destroy_all
     Warden.test_reset!
   end
 

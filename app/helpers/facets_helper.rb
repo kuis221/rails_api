@@ -77,17 +77,19 @@ module FacetsHelper
     {label: 'People', items: people }
   end
 
-  def build_state_bucket counters
+  def build_state_bucket(facet_search)
+    counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
     {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: counters.try(:[], x) || 0}) }}
   end
 
-  def build_status_bucket counters
+  def build_status_bucket(facet_search)
+    counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
     {label: 'Event Status', items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].
         map{|x| build_facet_item({label: x, id: x, name: :event_status, count: counters.try(:[], x) || 0}) }.
         sort{ |a, b| a[:label] <=> b[:label] }}
   end
 
-  def build_campaign_bucket facet_search
+  def build_campaign_bucket(facet_search)
       items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}
       {label: 'Campaigns', items: items}
@@ -106,9 +108,9 @@ module FacetsHelper
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )
 
-      counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
-      f.push build_state_bucket( counters )
-      f.push build_status_bucket( counters )
+
+      f.push build_state_bucket( facet_search )
+      f.push build_status_bucket( facet_search )
       f.push()
     end
   end

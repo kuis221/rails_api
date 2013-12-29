@@ -124,8 +124,9 @@ feature "DateRanges", search: true, js: true do
     end
 
     scenario 'allows the user to edit the date_range' do
-      date_range = FactoryGirl.create(:date_range, company: @company)
+      date_range = FactoryGirl.create(:date_range, name: 'Old name', company: @company)
       visit date_range_path(date_range)
+      page.should have_content('Old name')
 
       find('.links-data').click_link('Edit')
 
@@ -135,6 +136,7 @@ feature "DateRanges", search: true, js: true do
         click_js_button 'Save'
       end
       ensure_modal_was_closed
+      page.should have_no_content('Old name')
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited date range name')
       expect(page).to have_selector('div.description-data', text: 'edited date range description')
@@ -143,7 +145,6 @@ feature "DateRanges", search: true, js: true do
 
     scenario 'allows the user to add and remove date items to the date range' do
       date_range = FactoryGirl.create(:date_range, company: @company)
-      date_item = FactoryGirl.create(:date_item) # Create the date_item to be added
       visit date_range_path(date_range)
 
       click_js_link('Add Date')

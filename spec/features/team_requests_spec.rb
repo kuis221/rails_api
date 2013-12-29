@@ -146,7 +146,7 @@ feature "Teams", js: true, search: true do
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
         fill_in 'Description', with: 'edited team description'
-        click_button 'Save'
+        click_js_button 'Save'
       end
 
       find('h2', text: 'edited team name') # Wait for the page to reload

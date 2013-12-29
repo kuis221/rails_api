@@ -10,6 +10,7 @@ require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
 require 'capybara/poltergeist'
+require 'database_cleaner'
 require 'capybara-screenshot/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -39,11 +40,11 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   config.render_views
 
-  config.formatter = 'Fuubar' unless ENV['CI']
+  config.formatter = 'Fuubar' unless ENV['CI'] || ENV['NOBAR']
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -60,21 +61,26 @@ RSpec.configure do |config|
   config.include SignHelper, :type => :feature
   config.include RequestsHelper, :type => :feature
 
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.logger = Rails.logger
+  end
+
   config.before(:all) do
     DeferredGarbageCollection.start
   end
+
   config.after(:all) do
     DeferredGarbageCollection.reconsider
   end
 
-  config.after(:each) do
-    User.current = nil
-    Time.zone = Rails.application.config.time_zone
-
-    # Reset all KPIs values to nil
-    ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
-      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
-    end
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+  config.before(:each, :js => true) do
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each) do
@@ -82,6 +88,7 @@ RSpec.configure do |config|
     Rails.logger.debug "**************************************************************************************"
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
     Rails.logger.debug "**************************************************************************************"
+    DatabaseCleaner.start
   end
 
   if ENV['CI']
@@ -101,6 +108,18 @@ RSpec.configure do |config|
       end
     end
   end
+
+  config.after(:each) do
+    User.current = nil
+    Time.zone = Rails.application.config.time_zone
+
+    # Reset all KPIs values to nil
+    ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
+      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
+    end
+    DatabaseCleaner.clean
+  end
+
 
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium

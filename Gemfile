@@ -100,6 +100,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'capybara-screenshot'
   gem 'fuubar'
+  gem 'database_cleaner'
 end
 
 gem 'airbrake'
