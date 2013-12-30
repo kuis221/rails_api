@@ -280,14 +280,15 @@ describe Api::V1::EventsController do
     end
 
     it "users can also be added as contacts" do
-      FactoryGirl.create(:contact_event, event: event, contactable: user)
+      company_user = user.company_users.first
+      FactoryGirl.create(:contact_event, event: event, contactable: company_user)
 
       get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>user.company_users.first.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica"}
+        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica"}
       ]
     end
   end
