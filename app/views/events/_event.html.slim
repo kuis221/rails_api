@@ -1,7 +1,7 @@
 li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
   span.event-item
     / a href="#{event_path(event)}"
-    = link_to_if_permitted(:show, Event, event_path(event)) do
+    = link_to_if_permitted(:show, Event, event_path(event), title: 'Event Details') do
       span.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
       span.address
         =

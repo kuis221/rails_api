@@ -112,6 +112,10 @@ module RequestsHelper
     ensure_modal_was_closed
   end
 
+  def close_resource_details
+    find('a.close-details').click
+  end
+
   def ensure_modal_was_closed
     expect(page).to have_no_selector('.modal.in', visible: true)
   end

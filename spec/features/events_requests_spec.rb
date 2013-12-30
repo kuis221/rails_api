@@ -24,7 +24,7 @@ feature "Events", js: true, search: true do
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
-      scenario "should display a table with the events" do
+      scenario "should display a list of events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -104,6 +104,8 @@ feature "Events", js: true, search: true do
 
           visit events_path
 
+          expect(page).to have_content('2 Active events taking place from today to the future')
+
           within("ul#events-list") do
             expect(page).to have_content('Campaign FY2012')
             expect(page).to have_content('Another Campaign April 03')
@@ -113,6 +115,8 @@ feature "Events", js: true, search: true do
           #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
 
           filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+
+          expect(page).to have_content('1 Active event as part of Campaign FY2012')
 
           within("ul#events-list") do
             expect(page).to have_no_content('Another Campaign April 03')
@@ -125,6 +129,8 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
+          expect(page).to have_content('2 Active events as part of Campaign FY2012 and Another Campaign April 03')
+
           select_filter_calendar_day("26")
           find('#collection-list-filters').should have_content('Another Campaign April 03')
           within("ul#events-list") do
@@ -132,13 +138,54 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
+          expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012 and Another Campaign April 03")
+
           select_filter_calendar_day("26", "27")
           within("ul#events-list") do
             expect(page).to have_content('Another Campaign April 03')
             expect(page).to have_content('Campaign FY2012')
           end
-          wait_for_ajax
+
+          expect(page).to have_content("2 Active events taking place from today to tomorrow as part of Campaign FY2012 and Another Campaign April 03")
         end
+        wait_for_ajax
+      end
+
+      scenario "Filters are preserved upon navigation" do
+        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        tomorrow = today+1.day
+        Timecop.travel(today) do
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          Sunspot.commit
+
+          visit events_path
+
+          filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+          select_filter_calendar_day("26")
+
+          within("ul#events-list") do
+            click_link('Event Details')
+          end
+
+          current_path.should == event_path(ev1)
+
+          close_resource_details
+
+          current_path.should == events_path
+
+          expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012")
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+        end
+        wait_for_ajax
       end
 
       feature "with timezone support turned ON" do
