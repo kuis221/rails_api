@@ -213,4 +213,51 @@ describe Api::V1::EventsController do
       expect(fields.first.keys).to_not include('id', 'value')
     end
   end
+
+  describe "GET 'index'", search: true do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of users in the users attribute" do
+      users = [
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez'), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company)),
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra'), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+      ]
+      event.users << users
+      Sunspot.commit
+
+      get :team, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result['users'].should =~ [
+        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach"},
+        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador"}
+      ]
+
+      result['teams'].should == []
+    end
+
+    it "return a list of users in the users attribute" do
+      teams = [
+        FactoryGirl.create(:team, name: 'Team C', description: 'team 3 description'),
+        FactoryGirl.create(:team, name: 'Team A', description: 'team 1 description'),
+        FactoryGirl.create(:team, name: 'Team B', description: 'team 2 description')
+      ]
+      event.teams << teams
+      Sunspot.commit
+
+      get :team, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result['users'].should == []
+
+      result['teams'].should =~ [
+        {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description"},
+        {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description"},
+        {"id"=>teams.first.id, "name"=>"Team C", "description"=>"team 3 description"}
+      ]
+    end
+  end
+
+
 end

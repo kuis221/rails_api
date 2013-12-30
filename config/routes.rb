@@ -14,6 +14,7 @@ Brandscopic::Application.routes.draw do
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index]
           get :results, on: :member
+          get :team, on: :member
         end
 
         resources :venues, only: [] do
