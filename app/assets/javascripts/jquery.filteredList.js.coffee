@@ -291,8 +291,7 @@ $.widget 'nmk.filteredList', {
 		if list? and list.items? and list.items.length
 			items = {}
 			for option in list.items
-				if (option.count > 0 or (option.items? and option.items.length)) and
-				filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
+				if filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
 					$option = @_buildFilterOption(option)
 					group = if option.group then option.group else '__default__'
 					items[group] ||= []
@@ -474,6 +473,7 @@ $.widget 'nmk.filteredList', {
 
 	selectCalendarDates: (start_date, end_date) ->
 		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
+		@_setCalendarDatesFromCalendar()
 
 	_setCalendarDatesFromCalendar: () ->
 		dates = @element.find('.dates-range-filter').datepick('getDate')
@@ -650,7 +650,7 @@ $.widget 'nmk.filteredList', {
 						@defaultParams.push {'name': name, 'value': value}
 
 			if dates.length > 0
-				@form.find('.dates-range-filter').datepick('setDate', dates)
+				@selectCalendarDates dates[0], dates[1]
 			else
 				@_deselectDates()
 		if @searchHidden and @searchHidden.val()
