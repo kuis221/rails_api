@@ -28,6 +28,8 @@ Brandscopic::Application.routes.draw do
         resources :venues, only: [] do
           get :search, on: :collection
         end
+
+        resources :contacts, only: [:index]
       end
     end
   end
