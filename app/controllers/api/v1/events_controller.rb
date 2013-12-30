@@ -377,18 +377,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     Returns a list of teams and users that are part of the event's team
 
     Each results have the following attributes:
-    * *users*:
-      * *id*: the user id
-      * *first_name*: the user's first name
-      * *last_name*: the user's last name
-      * *full_name*: the user's full name
-      * *email*: the user's email address
-      * *street_address*: the user's street name and number
-      * *city*: the user's city name
-      * *state*: the user's state code
-      * *country*: the user's country
-      * *zip_code*: the user's ZIP code
-      * *role_name*: the user's role name
+    * *users*: It contains the same results as for /api/v1/users
 
     * *teams*:
       * *id*: the user id

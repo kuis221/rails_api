@@ -129,7 +129,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
-          expect(page).to have_content('2 Active events as part of Campaign FY2012 and Another Campaign April 03')
+          expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
 
           select_filter_calendar_day("26")
           find('#collection-list-filters').should have_content('Another Campaign April 03')
@@ -138,7 +138,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
-          expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012 and Another Campaign April 03")
+          expect(page).to have_content("1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012")
 
           select_filter_calendar_day("26", "27")
           within("ul#events-list") do
@@ -146,7 +146,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
-          expect(page).to have_content("2 Active events taking place from today to tomorrow as part of Campaign FY2012 and Another Campaign April 03")
+          expect(page).to have_content("2 Active events taking place from today to tomorrow as part of Another Campaign April 03 and Campaign FY2012")
         end
         wait_for_ajax
       end

@@ -1,7 +1,9 @@
-class Api::V1::UsersController < Api::V1::ApiController
+class Api::V1::UsersController < Api::V1::FilteredController
 
   skip_before_filter :verify_authenticity_token,
                      :if => Proc.new { |c| c.request.format == 'application/json' }
+
+  defaults resource_class: CompanyUser
 
   resource_description do
     short 'Users'
@@ -23,6 +25,76 @@ class Api::V1::UsersController < Api::V1::ApiController
              :json => { :success => true,
                         :info => "Reset password instructions sent",
                         :data => {} }
+    else
+      failure
+    end
+  end
+
+  api :GET, '/api/v1/users', "Get a list of users for a specific company"
+  param :auth_token, String, required: true
+  param :company_id, :number, required: true
+  param :campaign, Array, :desc => "A list of campaign ids. If given, the list will include only users that are assigned to these campaigns"
+  param :team, Array, :desc => "A list of team ids. If given, the list will include only users that are members of these teams"
+  param :role, Array, :desc => "A list of role ids. If given, the list will include only users with there roles"
+  description <<-EOS
+    Returns a full list of the existing users in the company
+    Each user have the following attributes:
+    * *id*: the user id
+    * *first_name*: the user's first name
+    * *last_name*: the user's last name
+    * *full_name*: the user's full name
+    * *email*: the user's email address
+    * *street_address*: the user's street name and number
+    * *city*: the user's city name
+    * *state*: the user's state code
+    * *country*: the user's country
+    * *zip_code*: the user's ZIP code
+    * *role_name*: the user's role name
+  EOS
+  example <<-EOS
+    A list of users for company id 1:
+    GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    [
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "email": "trinity.ruiz@gmail.com",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "Canada"
+        }
+    ]
+  EOS
+
+  example <<-EOS
+    A list of ACTIVE users for company id 1 filtered by roles 1 and 2:
+    GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&company_id=1&role[]=1&role[]=2
+    [
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "email": "trinity.ruiz@gmail.com",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "Canada"
+        }
+    ]
+  EOS
+  def index
+    if current_user.present?
+      collection
     else
       failure
     end
@@ -194,4 +266,15 @@ class Api::V1::UsersController < Api::V1::ApiController
     permissions
   end
 
+
+  private
+    def search_params
+      super
+      @search_params[:status] = ['Active']
+      @search_params
+    end
+
+    def permitted_search_params
+      params.permit({role: []}, {status: []}, {team: []}, {campaign: []})
+    end
 end

@@ -7,9 +7,14 @@ Brandscopic::Application.routes.draw do
       devise_scope :user do
         post 'sessions' => 'sessions#create'
         delete 'sessions' => 'sessions#destroy'
-        post '/users/password/new_password' => 'users#new_password'
+
         get '/companies' => 'users#companies'
-        get '/permissions' => 'users#permissions'
+        resources :users, only: [:index] do
+          collection do
+            match 'password/new_password', to: 'users#new_password', via: :post
+            get :permissions
+          end
+        end
 
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index]

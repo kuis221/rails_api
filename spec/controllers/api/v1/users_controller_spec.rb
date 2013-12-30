@@ -2,6 +2,71 @@ require 'spec_helper'
 
 describe Api::V1::UsersController do
   let(:user) { sign_in_as_user }
+  let(:company) { user.company_users.first.company }
+
+  describe "GET 'index'", search: true do
+    before do
+      user.reload  # Make sure the user is created
+      Sunspot.commit
+    end
+    it "should return failure for invalid authorization token" do
+      get :index, company_id: company.id, auth_token: 'XXXXXXXXXXXXXXXX', format: :json
+      response.response_code.should == 401
+      result = JSON.parse(response.body)
+      result['success'].should == false
+      result['info'].should == 'Invalid auth token'
+      result['data'].should be_empty
+    end
+
+    it "returns an empty list of users" do
+      get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == [{
+        "id" => user.company_users.first.id,
+        "first_name" => user.first_name,
+        "last_name" => user.last_name,
+        "full_name" => user.full_name,
+        "role_name" => user.company_users.first.role.name,
+        "email" => user.email,
+        "phone_number" => user.phone_number,
+        "street_address" => user.street_address,
+        "city" => user.city,
+        "state" => user.state,
+        "zip_code" => user.zip_code,
+        "country" => user.country_name}]
+    end
+
+    it "should filter the users by role" do
+      role = FactoryGirl.create(:role, company: company)
+      another_user = FactoryGirl.create(:company_user, company: company, role: role)
+      Sunspot.commit
+      get :index, company_id: company.id, auth_token: user.authentication_token, role: [role.id], format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.count.should == 1
+      result.first.should include(
+        "id" => another_user.id,
+        "role_name" => role.name
+      )
+    end
+
+
+    it "should return only active users" do
+      role = user.company_users.first.role
+      inactive_user = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company: company, role: role, active: false)
+      invited_user = FactoryGirl.create(:company_user, user: FactoryGirl.create(:invited_user), company: company, role: role)
+      Sunspot.commit
+      get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.count.should == 1
+      result.first.should include(
+        "id" => user.company_users.first.id,
+        "role_name" => role.name
+      )
+    end
+  end
 
   describe "POST 'new_password'" do
     it "should return failure for a non-existent user" do
