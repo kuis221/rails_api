@@ -71,7 +71,7 @@ feature "Teams", js: true, search: true do
     scenario 'allows the user to create a new team' do
       visit teams_path
 
-      click_link('New Team')
+      click_js_link('New Team')
 
       within visible_modal do
         fill_in 'Name', with: 'new team name'
@@ -124,7 +124,7 @@ feature "Teams", js: true, search: true do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-         click_link('Deactivate')
+         click_js_link('Deactivate')
        end
 
        confirm_prompt "Are you sure you want to deactivate this team?"
@@ -141,7 +141,7 @@ feature "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
@@ -165,11 +165,11 @@ feature "Teams", js: true, search: true do
 
       expect(page).to_not have_content('Fulanito')
 
-      click_link('Add Team Member')
+      click_js_link('Add Team Member')
 
 
       within visible_modal do
-        find("#staff-member-user-#{company_user.id}").click_link('Add')
+        find("#staff-member-user-#{company_user.id}").click_js_link('Add')
       end
 
       close_modal
