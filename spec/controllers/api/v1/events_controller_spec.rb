@@ -214,29 +214,28 @@ describe Api::V1::EventsController do
     end
   end
 
-  describe "GET 'index'", search: true do
+  describe "GET 'team'" do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of users in the users attribute" do
       users = [
-        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez'), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company)),
-        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra'), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company)),
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
       ]
       event.users << users
-      Sunspot.commit
 
       get :team, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
       result = JSON.parse(response.body)
 
       result['users'].should =~ [
-        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach"},
-        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador"}
+        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica"},
+        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica"}
       ]
 
       result['teams'].should == []
     end
 
-    it "return a list of users in the users attribute" do
+    it "return a list of teams in the teams attribute" do
       teams = [
         FactoryGirl.create(:team, name: 'Team C', description: 'team 3 description'),
         FactoryGirl.create(:team, name: 'Team A', description: 'team 1 description'),
@@ -260,4 +259,36 @@ describe Api::V1::EventsController do
   end
 
 
+  describe "GET 'contacts'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of contacts" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador'),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach')
+      ]
+      FactoryGirl.create(:contact_event, event: event, contactable: contacts.first)
+      FactoryGirl.create(:contact_event, event: event, contactable: contacts.last)
+
+      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States"},
+        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States"}
+      ]
+    end
+
+    it "users can also be added as contacts" do
+      FactoryGirl.create(:contact_event, event: event, contactable: user)
+
+      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>user.company_users.first.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica"}
+      ]
+    end
+  end
 end

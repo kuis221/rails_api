@@ -249,7 +249,7 @@ class Event < ActiveRecord::Base
   end
 
   def contacts
-    @contacts ||= contact_events.map(&:contactable)
+    @contacts ||= contact_events.map(&:contactable).sort{|a, b| a.full_name <=> b.full_name }
   end
 
   def user_in_team?(user)

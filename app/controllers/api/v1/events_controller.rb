@@ -370,7 +370,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-
   api :GET, '/api/v1/events/:id/team', "Get a list of users associated to the event"
   param :company_id, :number, required: true, desc: "Event ID"
   param :id, :number, required: true, desc: "Event ID"
@@ -384,7 +383,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
       * *last_name*: the user's last name
       * *full_name*: the user's full name
       * *email*: the user's email address
-      * *address*: the user's formatted physical address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
       * *role_name*: the user's role name
 
     * *teams*:
@@ -399,13 +402,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
     GET: /api/v1/events/8383/team.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     {
       "users": [
-          {
-              "id": 268,
-              "first_name": "Trinity",
-              "last_name": "Ruiz",
-              "full_name": "Trinity Ruiz",
-              "role_name": "MBN Supervisor"
-          }
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "email": "trinity.ruiz@gmail.com",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "Canada"
+        }
       ],
       "teams": [
         {
@@ -432,7 +442,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
               "first_name": "Trinity",
               "last_name": "Ruiz",
               "full_name": "Trinity Ruiz",
-              "role_name": "MBN Supervisor"
+              "role_name": "MBN Supervisor",
+              "phone_number": "+1 233 245 4332",
+              "street_address": "1st Young st.,",
+              "city": "Toronto",
+              "state": "ON",
+              "country": "Canada",
+              "zip_code": "12345"
           }
       ],
       "teams": []
@@ -443,6 +459,53 @@ class Api::V1::EventsController < Api::V1::FilteredController
     @teams = resource.teams.order(:name)
   end
 
+
+  api :GET, '/api/v1/events/:id/contacts', "Get a list of users associated to the event"
+  param :company_id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: "Event ID"
+  description <<-EOS
+    Returns a list of contacts that are associated to the event
+
+    Each contact have the following attributes:
+    * *users*:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *title*: the user's full name
+      * *email*: the user's email address
+      * *phone_number*: the user's phone number
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+
+  EOS
+
+  example <<-EOS
+    An example with a event with one contact
+    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "first_name": "Trinity",
+          "last_name": "Ruiz",
+          "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "email": "trinity.ruiz@gmail.com",
+          "phone_number": "+1 233 245 4332",
+          "street_address": "1st Young st.,",
+          "city": "Toronto",
+          "state": "ON",
+          "country": "Canada",
+          "zip_code": "12345"
+      }
+    ]
+  EOS
+  def contacts
+    @contacts = resource.contacts
+  end
 
   protected
 

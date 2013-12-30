@@ -147,7 +147,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   def user_permissions
     permissions = []
     permissions.push 'events' if can?(:view_list, Event)
-    permissions.push 'events_create' if can?(:view_list, Event)
+    permissions.push 'events_create' if can?(:create, Event)
     permissions.push 'events_show' if can?(:show, Event)
     permissions.push 'events_edit' if can?(:update, Event)
     permissions.push 'events_deactivate' if can?(:deactivate, Event)
