@@ -53,7 +53,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   EOS
 
   def index
-    @contacts = current_company.contacts
+    @contacts = current_company.contacts.order('contacts.first_name, contacts.last_name')
   end
 
 end

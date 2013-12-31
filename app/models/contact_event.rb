@@ -14,13 +14,11 @@ class ContactEvent < ActiveRecord::Base
   belongs_to :contactable, polymorphic: true
   belongs_to :event
 
-
   delegate :company_id, to: :event
 
   accepts_nested_attributes_for :contactable
 
   validates :event_id, :uniqueness => { :scope => [:contactable_type, :contactable_id] }
-
 
   delegate :full_name, :country_name, :street_address, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :zip_code, to: :contactable
 

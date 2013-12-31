@@ -20,8 +20,12 @@ Brandscopic::Application.routes.draw do
           resources :photos, only: [:index]
           member do
             get :results
-            get :team
+            get :members
+            post :members, to: "events#add_member"
+            get :assignable_members
             get :contacts
+            post :contacts, to: "events#add_contact"
+            get :assignable_contacts
           end
         end
 
