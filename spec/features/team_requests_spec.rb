@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "Teams", js: true, search: true do
   before do
-    @user = login
+    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
   end

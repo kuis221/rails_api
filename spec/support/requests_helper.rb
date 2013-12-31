@@ -124,16 +124,6 @@ module RequestsHelper
     visit(path) unless current_path == path
   end
 
-  def login
-    Warden.test_mode!
-    user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    sign_in user
-    User.current = user
-    user.current_company = user.companies.first
-    user
-  end
-
-
   # Helpers for events section
   def event_team_member(member)
     find('#event-team-members #event-member-'+member.id.to_s)

@@ -112,9 +112,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     if example.metadata[:js]
-      Rails.logger.debug "\n\nWaiting for AJAX TO COMPLETE"
       wait_for_ajax
-      Rails.logger.debug "ALL AJAX REQUESTS ENDED\n\n"
       #Capybara.reset_sessions!
     end
     User.current = nil
@@ -124,7 +122,6 @@ RSpec.configure do |config|
     ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
       Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
     end
-    Rails.logger.debug "\n\nCALLING DatabaseCleaner\n\n"
     DatabaseCleaner.clean
   end
 
@@ -144,12 +141,12 @@ def sign_in_as_user
   company = FactoryGirl.create(:company)
   #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
   role = company.roles.first
-  user = company.company_users.first.user
+  User.current = user = company.company_users.first.user
   user.current_company = company
   user.ensure_authentication_token
   user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
   sign_in user
-  User.current = user
+  user
 end
 
 def set_event_results(event, results, autosave = true)

@@ -8,8 +8,7 @@ feature "Login", :js => true do
     expect(page).to have_content("You need to sign in or sign up before continuing.")
   end
 
-  scenario "should allow the user to complete the profile and log him in after that" do
-    Kpi.create_global_kpis
+  scenario "A valid user can login" do
     @company = FactoryGirl.create(:company, name: 'ABC inc.')
     user = FactoryGirl.create(:user,
       company_id: @company.id,

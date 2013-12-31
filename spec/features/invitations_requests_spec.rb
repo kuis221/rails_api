@@ -28,7 +28,7 @@ feature "Invitations", :js => true do
         select_from_chosen('Test team', from: 'Teams', match: :first)
         select_from_chosen('Test role', from: 'Role', match: :first)
         fill_in('Email', with: 'pablo@rocadura.com')
-        click_button 'Send request'
+        click_js_button 'Send request'
       end
       ensure_modal_was_closed
 
