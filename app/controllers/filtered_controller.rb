@@ -136,10 +136,9 @@ class FilteredController < InheritedResources::Base
           limit 5
         end
         with(:company_id, [-1, current_company.id])
+        with(:status, ['Active'])
         any_of do
-          # The actual class should also include inactive results
           with(:class, resource_class) if search_classes.include?(resource_class)
-          with(:status, ['Active'])
         end
       end
 
