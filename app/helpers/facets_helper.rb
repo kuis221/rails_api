@@ -108,10 +108,8 @@ module FacetsHelper
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )
 
-
-      f.push build_state_bucket( facet_search )
       f.push build_status_bucket( facet_search )
-      f.push()
+      f.push build_state_bucket( facet_search )
     end
   end
 
