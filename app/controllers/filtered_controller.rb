@@ -137,9 +137,6 @@ class FilteredController < InheritedResources::Base
         end
         with(:company_id, [-1, current_company.id])
         with(:status, ['Active'])
-        any_of do
-          with(:class, resource_class) if search_classes.include?(resource_class)
-        end
       end
 
       @autocomplete_buckets ||= list.map do |bucket_name, klasess|
