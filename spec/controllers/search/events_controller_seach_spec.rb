@@ -104,7 +104,7 @@ describe EventsController, search: true do
       response.should be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status"]
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"]
     end
 
 
@@ -131,7 +131,7 @@ describe EventsController, search: true do
       response.should be_success
       filters = JSON.parse(response.body)
 
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status"]
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"]
       filters['filters'][0]['items'].count.should == 1
       filters['filters'][0]['items'].first['label'].should == campaign.name
     end
