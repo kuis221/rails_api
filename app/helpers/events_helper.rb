@@ -150,7 +150,7 @@ module EventsHelper
     def describe_areas
       areas = area_params
       if areas.size > 0
-        names = current_company.areas.select('name').where(id: areas).map(&:name).sort.to_sentence
+        names = current_company.areas.select('name').where(id: areas).map(&:name).sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
         "in #{names}"
       else
         ""
