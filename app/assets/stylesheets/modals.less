@@ -190,6 +190,16 @@ ul.select2-results{
 					}
 				}
 			}
+			#goal_kpi_id_chzn{
+				&.chzn-container-single{
+					.chzn-single{
+						width: 390px;
+					}
+					.chzn-drop{
+						width: 400px !important;
+					}
+				}
+			}
 		}
 
 		&.rejection-prompt{
@@ -580,6 +590,15 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 33px 30px;
+		#select-areas-table-wrapper{
+			ul#areas-list{
+				li{
+					span:first-child{
+						margin: 22px 0 0 22px;
+					}
+				}
+			}
+		}
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -655,7 +674,7 @@ ul.select2-results{
 			}
 		}
 
-		input[type="text"], input[type="email"], input[type="password"], input[type="tel"]{
+		input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"]{
 			background-color: white !important;
 			background-image: none !important;
 			border: 1px solid @user_menu;
@@ -726,7 +745,7 @@ ul.select2-results{
 		.controls{
 			input[type="text"]{
 				color: @text !important;
-				&#event_start_date, &#event_end_date{
+				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date{
 					background: url('calendar.svg') no-repeat left !important;
 					text-align: right;
 				}
