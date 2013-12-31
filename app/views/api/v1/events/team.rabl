@@ -1,9 +1,11 @@
-object false
+collection @members
 
-child @users => :users do
-  extends "api/v1/users/user"
-end
-
-child @teams => :teams do
-  extends "api/v1/teams/team"
+node do |member|
+  if member.is_a?(CompanyUser)
+    node(:type) { :user }
+    partial "api/v1/users/user", :object => member
+  else
+    node(:type) { :team }
+    partial "api/v1/teams/team", :object => member
+  end
 end

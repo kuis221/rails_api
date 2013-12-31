@@ -37,7 +37,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   param :team, Array, :desc => "A list of team ids. If given, the list will include only users that are members of these teams"
   param :role, Array, :desc => "A list of role ids. If given, the list will include only users with there roles"
   description <<-EOS
-    Returns a full list of the existing users in the company
+    Returns a full list of the existing users in the company. Only active users are returned.
     Each user have the following attributes:
     * *id*: the user id
     * *first_name*: the user's first name

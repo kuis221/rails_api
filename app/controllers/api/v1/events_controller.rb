@@ -370,27 +370,45 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events/:id/team', "Get a list of users associated to the event"
+  api :GET, '/api/v1/events/:id/team', "Get a list of users and teams associated to the event"
   param :company_id, :number, required: true, desc: "Event ID"
   param :id, :number, required: true, desc: "Event ID"
+  param :type, ['user', 'team'], required: false, desc: "Filter the results by type"
   description <<-EOS
-    Returns a list of teams and users that are part of the event's team
+    Returns a mixed list of teams and users that are part of the event's team. The items are sorted by name.
 
     Each results have the following attributes:
-    * *users*: It contains the same results as for /api/v1/users
+    * For users:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *role_name*: the user's role name
+      * *type*: the type of the current item (user)
 
-    * *teams*:
+    * For teams:
       * *id*: the user id
       * *name*: the teams's name
       * *description*: the teams's description
+      * *type*: the type of the current item (team)
 
   EOS
 
   example <<-EOS
     An example with a event with both, users and teams
     GET: /api/v1/events/8383/team.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
-    {
-      "users": [
+    [
+        {
+            "id": 22,
+            "name": "Northerners", "description": "he people from the north",
+            "type": "team"
+        },
         {
             "id": 268,
             "first_name": "Trinity",
@@ -403,49 +421,65 @@ class Api::V1::EventsController < Api::V1::FilteredController
             "city": "Toronto",
             "state": "ON",
             "country": "Canada",
-            "zip_code": "Canada"
-        }
-      ],
-      "teams": [
-        {
-          "id": 22,
-          "name": "Northerners", "description": "he people from the north"
+            "zip_code": "Canada",
+            "type": "user"
         },
         {
-          "id":  1,
-          "name": "Southerners",
-          "description": "The people from the south"
+            "id":  1,
+            "name": "Southerners",
+            "description": "The people from the south",
+            "type": "team"
         }
-      ]
-    }
+    ]
   EOS
 
 
   example <<-EOS
-    An example with a event with only users but no teams
+    An example with a event with only users and no teams
     GET: /api/v1/events/8383/team.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
-    {
-      "users": [
-          {
-              "id": 268,
-              "first_name": "Trinity",
-              "last_name": "Ruiz",
-              "full_name": "Trinity Ruiz",
-              "role_name": "MBN Supervisor",
-              "phone_number": "+1 233 245 4332",
-              "street_address": "1st Young st.,",
-              "city": "Toronto",
-              "state": "ON",
-              "country": "Canada",
-              "zip_code": "12345"
-          }
-      ],
-      "teams": []
-    }
+    [
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "12345",
+            "type": "user"
+        }
+    ]
   EOS
+
+
+  example <<-EOS
+    An example requesting only the teams and not the users
+    GET: /api/v1/events/8383/team.json?type=team&auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+        {
+            "id": 22,
+            "name": "Northerners", "description": "he people from the north",
+            "type": "team"
+        },
+        {
+            "id":  1,
+            "name": "Southerners",
+            "description": "The people from the south",
+            "type": "team"
+        }
+    ]
+  EOS
+
+
   def team
-    @users = resource.users.joins([:role, :user]).includes([:role, :user]).order('users.first_name, users.last_name')
-    @teams = resource.teams.order(:name)
+    @users = @teams = []
+    @users = resource.users.with_user_and_role.order('users.first_name, users.last_name') unless params[:type] == 'team'
+    @teams = resource.teams.order(:name) unless params[:type] == 'user'
+    @members = (@users + @teams).sort{|a, b| a.name.downcase <=> b.name.downcase }
   end
 
 
