@@ -35,7 +35,6 @@ feature "BrandPortfolios", js: true, search: true do
             expect(page).to have_content(portfolios[1].description)
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow user to deactivate brand portfolios" do
@@ -50,7 +49,6 @@ feature "BrandPortfolios", js: true, search: true do
         confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
         expect(page).to have_no_content('A Vinos ticos')
-        wait_for_ajax
       end
 
       scenario "should allow user to activate brand portfolios" do
@@ -66,14 +64,13 @@ feature "BrandPortfolios", js: true, search: true do
           click_js_link('Activate')
         end
         expect(page).to have_no_content('A Vinos ticos')
-        wait_for_ajax
       end
     end
 
     scenario 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_link('New Brand portfolio')
+      click_js_button 'New Brand portfolio'
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'
@@ -85,7 +82,6 @@ feature "BrandPortfolios", js: true, search: true do
       find('h2', text: 'new portfolio name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new portfolio name')
       expect(page).to have_selector('div.description-data', text: 'new portfolio description')
-      wait_for_ajax
     end
   end
 
@@ -112,7 +108,6 @@ feature "BrandPortfolios", js: true, search: true do
           expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end
       end
-      wait_for_ajax
     end
 
     scenario 'allows the user to activate/deactivate a portfolio' do
@@ -125,17 +120,16 @@ feature "BrandPortfolios", js: true, search: true do
       confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
       within('.links-data') do
-        click_link('Activate')
+        click_js_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
-      wait_for_ajax
     end
 
     scenario 'allows the user to edit the portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Old name', company: @company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_content('Old name')
-      click_link('Edit')
+      click_js_link('Edit')
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
@@ -147,7 +141,6 @@ feature "BrandPortfolios", js: true, search: true do
 
       expect(page).to have_selector('h2', text: 'edited portfolio name')
       expect(page).to have_selector('div.description-data', text: 'edited portfolio description')
-      wait_for_ajax
     end
 
     scenario 'allows the user to add brands to the portfolio' do
@@ -159,7 +152,7 @@ feature "BrandPortfolios", js: true, search: true do
 
       within visible_modal do
         expect(page).to have_content('Guaro Cacique')
-        click_link 'Add'
+        click_js_link 'Add'
       end
 
       # Make sure the new brand was added to the portfolio
@@ -184,7 +177,6 @@ feature "BrandPortfolios", js: true, search: true do
         expect(page).to have_content('Ron Centenario')
         expect(page).to have_selector('a.remove-brand-btn', visible: :false)
       end
-      wait_for_ajax
     end
   end
 

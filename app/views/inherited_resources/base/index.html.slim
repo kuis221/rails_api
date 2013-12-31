@@ -3,7 +3,7 @@
   a.btn.btn-primary Save
 .main
   .pull-left
-    = link_to t("buttons.new.#{resource_class.name.underscore.downcase}"), url_for(controller: controller_name, action: :new), {remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
+    = button_to t("buttons.new.#{resource_class.name.underscore.downcase}"), url_for(controller: controller_name, action: :new), {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
   .tab-content
     .link-list
       ul id="#{controller_name}-list"

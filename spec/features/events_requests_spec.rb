@@ -47,7 +47,6 @@ feature "Events", js: true, search: true do
             end
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow user to deactivate events" do
@@ -58,7 +57,7 @@ feature "Events", js: true, search: true do
 
           within("ul#events-list li:nth-child(1)") do
             expect(page).to have_content('Campaign FY2012')
-            click_link('Deactivate')
+            click_js_link 'Deactivate'
           end
 
           confirm_prompt 'Are you sure you want to deactivate this event?'
@@ -67,7 +66,6 @@ feature "Events", js: true, search: true do
             expect(page).to have_no_content('Campaign FY2012')
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow user to activate events" do
@@ -83,11 +81,10 @@ feature "Events", js: true, search: true do
 
           within("ul#events-list li:nth-child(1)") do
             expect(page).to have_content('Our Test Campaign')
-            click_link('Activate')
+            click_js_link('Activate')
             expect(page).to have_no_content('Our Test Campaign')
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow allow filter events by date range" do
@@ -148,7 +145,6 @@ feature "Events", js: true, search: true do
 
           expect(page).to have_content("2 Active events taking place from today to tomorrow as part of Another Campaign April 03 and Campaign FY2012")
         end
-        wait_for_ajax
       end
 
       scenario "Filters are preserved upon navigation" do
@@ -169,23 +165,22 @@ feature "Events", js: true, search: true do
           select_filter_calendar_day("26")
 
           within("ul#events-list") do
-            click_link('Event Details')
+            click_js_link('Event Details')
           end
 
+          expect(page).to have_selector('h2', text: ev1.campaign_name)
           current_path.should == event_path(ev1)
 
           close_resource_details
 
-          current_path.should == events_path
-
           expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012")
+          current_path.should == events_path
 
           within("ul#events-list") do
             expect(page).to have_no_content('Another Campaign April 03')
             expect(page).to have_content('Campaign FY2012')
           end
         end
-        wait_for_ajax
       end
 
       feature "with timezone support turned ON" do
@@ -211,7 +206,6 @@ feature "Events", js: true, search: true do
               expect(page).to have_content('10:00 AM – 11:00 AM')
             end
           end
-          wait_for_ajax
         end
       end
     end
@@ -230,7 +224,6 @@ feature "Events", js: true, search: true do
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka')
-      wait_for_ajax
     end
   end
 
@@ -247,7 +240,7 @@ feature "Events", js: true, search: true do
       visit events_path
 
       within("ul#events-list") do
-        click_link 'Edit'
+        click_js_link 'Edit'
       end
 
       within visible_modal do
@@ -261,7 +254,6 @@ feature "Events", js: true, search: true do
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka FY2013')
-      wait_for_ajax
     end
 
     feature "with timezone support turned ON" do
@@ -284,7 +276,7 @@ feature "Events", js: true, search: true do
           visit events_path
 
           within("ul#events-list") do
-            click_link 'Edit'
+            click_js_link 'Edit'
           end
 
           within visible_modal do
@@ -309,7 +301,6 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('10:00 PM – 11:00 PM')
           end
         end
-        wait_for_ajax
       end
     end
   end
@@ -326,7 +317,6 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('WED Aug 28')
         expect(page).to have_content('8:00 PM – 11:00 PM')
       end
-      wait_for_ajax
     end
 
     feature "with timezone suport turned ON" do
@@ -354,7 +344,6 @@ feature "Events", js: true, search: true do
           expect(page).to have_content('WED Aug 21')
           expect(page).to have_content('10:00 AM – 11:00 AM')
         end
-        wait_for_ajax
       end
     end
 
@@ -371,7 +360,6 @@ feature "Events", js: true, search: true do
         click_js_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
-      wait_for_ajax
     end
 
     scenario "allows to add a member to the event", :js => true do
@@ -406,7 +394,6 @@ feature "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
-      wait_for_ajax
     end
 
 
@@ -442,7 +429,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pablo Baltodano')
-      wait_for_ajax
     end
 
 
@@ -477,7 +463,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Guillermo Vargas')
-      wait_for_ajax
     end
 
 
@@ -518,7 +503,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pedro Picapiedra')
-      wait_for_ajax
     end
 
     scenario "allows to edit a contact", :js => true do
@@ -547,7 +531,6 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('Pedro Picapiedra')
         #find('a.remove-member-btn').click
       end
-      wait_for_ajax
     end
 
 
@@ -611,7 +594,6 @@ feature "Events", js: true, search: true do
       within('#event-tasks-container') do
         expect(page).to_not have_content('Juanito Bazooka')
       end
-      wait_for_ajax
     end
 
     scenario "should allow the user to fill the event data" do
@@ -735,7 +717,6 @@ feature "Events", js: true, search: true do
       end
 
       expect(page).to have_content('Edited summary content')
-      wait_for_ajax
     end
   end
 

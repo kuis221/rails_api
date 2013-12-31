@@ -26,7 +26,6 @@ feature "Photos", search: true, js: true do
         within visible_modal do
           attach_file "file", 'spec/fixtures/photo.jpg'
           expect(upload_queue).to have_file_in_queue('photo.jpg')
-
           wait_for_ajax(15) # For the image to upload to S3
           find('#btn-upload-ok').click
         end
@@ -39,8 +38,6 @@ feature "Photos", search: true, js: true do
           expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
         end
       end
-
-      wait_for_ajax
     end
 
     scenario "A user can deactivate a photo" do
@@ -56,8 +53,6 @@ feature "Photos", search: true, js: true do
 
       confirm_prompt "Are you sure you want to deactivate this photo?"
       expect(gallery_box).to have_no_selector('li')
-
-      wait_for_ajax
     end
   end
 

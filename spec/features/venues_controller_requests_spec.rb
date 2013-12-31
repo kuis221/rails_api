@@ -43,7 +43,6 @@ feature "Venues Section", js: true, search: true do
           expect(page).to have_selector('div.n_spent', text: '$2,000.00')
         end
       end
-      wait_for_ajax
     end
   end
 

@@ -77,10 +77,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
-  end
-  config.before(:each, :js => true) do
-    DatabaseCleaner.strategy = :truncation
+    if example.metadata[:js]
+      DatabaseCleaner.strategy = :truncation
+    else
+      DatabaseCleaner.strategy = :transaction
+    end
   end
 
   config.before(:each) do
@@ -110,6 +111,12 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    if example.metadata[:js]
+      Rails.logger.debug "\n\nWaiting for AJAX TO COMPLETE"
+      wait_for_ajax
+      Rails.logger.debug "ALL AJAX REQUESTS ENDED\n\n"
+      #Capybara.reset_sessions!
+    end
     User.current = nil
     Time.zone = Rails.application.config.time_zone
 
@@ -117,6 +124,7 @@ RSpec.configure do |config|
     ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
       Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
     end
+    Rails.logger.debug "\n\nCALLING DatabaseCleaner\n\n"
     DatabaseCleaner.clean
   end
 

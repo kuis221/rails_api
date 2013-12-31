@@ -2,7 +2,7 @@ require "timeout"
 
 module CapybaraBrandscopicHelpers
   def wait_for_ajax(timeout = Capybara.default_wait_time)
-    wait_until(timeout) { page.evaluate_script 'jQuery.active == 0' }
+    wait_until(timeout) { page.evaluate_script '((typeof jQuery == "undefined") || (jQuery.active == 0))' }
   end
 
   def wait_until(timeout = Capybara.default_wait_time)

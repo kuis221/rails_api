@@ -43,7 +43,6 @@ feature "Users", :js => true do
       within '.current-company-title' do
         expect(page).to have_content('ABC inc.')
       end
-      wait_for_ajax
     end
 
     feature "/users", :js => true, :search => true do
@@ -66,7 +65,6 @@ feature "Users", :js => true do
           hover_and_click "li:nth-child(1)", 'Activate'
           expect(page).to have_no_content('Pedro Navaja')
         end
-        wait_for_ajax
       end
     end
 
@@ -78,7 +76,6 @@ feature "Users", :js => true do
         visit company_user_path(company_user)
         expect(page).to have_selector('h2', text: 'Pedro Navaja')
         expect(page).to have_selector('div.user-role', text: 'TestRole')
-        wait_for_ajax
       end
 
       scenario 'allows the user to activate/deactivate a user' do
@@ -94,10 +91,9 @@ feature "Users", :js => true do
         confirm_prompt 'Are you sure you want to deactivate this user?'
 
         within('.links-data') do
-          click_link('Activate')
+          click_js_link 'Activate'
           expect(page).to have_link('Deactivate') # test the link have changed
         end
-        wait_for_ajax
       end
 
       scenario 'allows the user to edit another user' do
@@ -109,7 +105,7 @@ feature "Users", :js => true do
 
         expect(page).to have_content('Juanito Mora')
 
-        click_link('Edit')
+        click_js_link 'Edit'
 
         within("form#edit_company_user_#{company_user.id}") do
           fill_in 'First name', with: 'Pedro'
@@ -125,7 +121,6 @@ feature "Users", :js => true do
         expect(page).to have_no_content('Juanito Mora')
         expect(page).to have_selector('h2', text: 'Pedro Navaja')
         expect(page).to have_selector('div.user-role', text: 'Another Role')
-        wait_for_ajax
       end
 
       scenario "should be able to assign areas to the user" do
@@ -133,7 +128,7 @@ feature "Users", :js => true do
         area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
         visit company_user_path(company_user)
 
-        click_link 'Add Area'
+        click_js_link 'Add Area'
 
         within visible_modal do
           find("#area-#{area.id}").click_js_link('Add Area')
@@ -142,7 +137,7 @@ feature "Users", :js => true do
         close_modal
 
         # Re-open the modal to make sure it's not added again to the list
-        click_link 'Add Area'
+        click_js_link 'Add Area'
         within visible_modal do
           expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
         end
@@ -157,7 +152,6 @@ feature "Users", :js => true do
           hover_and_click('.hover-item', 'Remove Area')
           expect(page).to have_no_content('San Francisco Area')
         end
-        wait_for_ajax
       end
 
     end
@@ -192,7 +186,6 @@ feature "Users", :js => true do
         @company_user.country.should == 'CR'
         @company_user.state.should == 'C'
         @company_user.city.should == 'Tres Rios'
-        wait_for_ajax
       end
     end
 
