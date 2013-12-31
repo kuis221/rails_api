@@ -31,4 +31,12 @@ class ContactEvent < ActiveRecord::Base
   def build_contactable(params={}, assignment_options={})
     self.contactable = Contact.new(params, assignment_options)
   end
+
+  def self.contactables_for_event(event)
+    (contactables_list(event.company) - event.contacts).sort{|a, b| a.full_name <=> b.full_name}
+  end
+
+  def self.contactables_list(company)
+    company.contacts+company.company_users.active.joins([:user, :role]).includes([:user, :role])
+  end
 end

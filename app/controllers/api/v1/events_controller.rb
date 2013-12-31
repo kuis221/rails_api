@@ -473,8 +473,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
         }
     ]
   EOS
-
-
   def team
     @users = @teams = []
     @users = resource.users.with_user_and_role.order('users.first_name, users.last_name') unless params[:type] == 'team'
@@ -490,20 +488,18 @@ class Api::V1::EventsController < Api::V1::FilteredController
     Returns a list of contacts that are associated to the event
 
     Each contact have the following attributes:
-    * *users*:
-      * *id*: the user id
-      * *first_name*: the user's first name
-      * *last_name*: the user's last name
-      * *full_name*: the user's full name
-      * *title*: the user's full name
-      * *email*: the user's email address
-      * *phone_number*: the user's phone number
-      * *street_address*: the user's street name and number
-      * *city*: the user's city name
-      * *state*: the user's state code
-      * *country*: the user's country
-      * *zip_code*: the user's ZIP code
-
+    * *id*: the user id
+    * *first_name*: the user's first name
+    * *last_name*: the user's last name
+    * *full_name*: the user's full name
+    * *title*: the user's full name
+    * *email*: the user's email address
+    * *phone_number*: the user's phone number
+    * *street_address*: the user's street name and number
+    * *city*: the user's city name
+    * *state*: the user's state code
+    * *country*: the user's country
+    * *zip_code*: the user's ZIP code
   EOS
 
   example <<-EOS

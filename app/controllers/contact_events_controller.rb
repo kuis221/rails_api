@@ -4,7 +4,7 @@ class ContactEventsController < InheritedResources::Base
 
   actions :new, :create, :destroy, :update, :edit
 
-  custom_actions collection: [:add]
+  custom_actions collection: [:add, :list]
 
   defaults :resource_class => ContactEvent
 
