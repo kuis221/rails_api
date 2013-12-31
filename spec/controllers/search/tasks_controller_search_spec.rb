@@ -97,7 +97,7 @@ describe TasksController, search: true do
       response.should be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Active State", "Task Status"]
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Task Status", "Active State"]
     end
 
     it "should return the correct buckets in the right order" do
@@ -106,7 +106,7 @@ describe TasksController, search: true do
       response.should be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Active State","Task Status", "Staff"]
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns","Task Status", "Staff", "Active State"]
     end
   end
 end
