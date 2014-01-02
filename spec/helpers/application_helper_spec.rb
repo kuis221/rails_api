@@ -123,7 +123,6 @@ describe ApplicationHelper do
           helper.comment_date(comment).should == "about 59 minutes ago"
       end
     end
-
   end
 
   describe "#format_date" do
@@ -131,19 +130,30 @@ describe ApplicationHelper do
       helper.format_date(nil).should be_nil
     end
 
-    it "should return nil if date is nil" do
-      assert_dom_equal 'FRI <b>Jul 26</b>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
+    it "should return the formatted date without the year if the event is in the same year" do
+      Timecop.freeze(Time.zone.local(2013, 9, 1, 12, 0)) do
+        assert_dom_equal 'FRI <b>Jul 26</b>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
+      end
+    end
+
+    it "should return the formatted date with the year if the event is in other year" do
+      Timecop.freeze(Time.zone.local(2012, 9, 1, 12, 0)) do
+        assert_dom_equal 'FRI <b>Jul 26, 2013</b>', helper.format_date(Time.zone.local(2013, 07, 26, 3, 0))
+      end
     end
   end
 
-
   describe "#format_date_range" do
     it "should return both dates" do
-      assert_dom_equal 'FRI <b>Jul 26</b> at 10:59 AM<br />SAT <b>Jul 27</b> at  3:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 10, 59), Time.zone.local(2013, 07, 27, 3, 0))
+      Timecop.freeze(Time.zone.local(2013, 9, 1, 12, 0)) do
+        assert_dom_equal 'FRI <b>Jul 26</b> at 10:59 AM<br />SAT <b>Jul 27</b> at  3:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 10, 59), Time.zone.local(2013, 07, 27, 3, 0))
+      end
     end
 
     it "should one date and both hours if the end day is the same as the start day" do
-      assert_dom_equal 'FRI <b>Jul 26</b><br />3:00 AM – 9:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
+      Timecop.freeze(Time.zone.local(2013, 9, 1, 12, 0)) do
+        assert_dom_equal 'FRI <b>Jul 26</b><br />3:00 AM – 9:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
+      end
     end
   end
 end
