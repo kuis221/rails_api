@@ -579,24 +579,40 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events/:id/contacts', "Get a list of contacts associated to the event"
+  api :GET, '/api/v1/events/:id/contacts', "Get a list of users+contacts associated to the event"
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
-    Returns a list of contacts that are associated to the event
+    Returns a mixed list of users+contacts that are associated to the event. The results are sorted by the contact's full name.
 
     Each contact have the following attributes:
-    * *id*: the user id
-    * *first_name*: the user's first name
-    * *last_name*: the user's last name
-    * *full_name*: the user's full name
-    * *title*: the user's title
-    * *email*: the user's email address
-    * *phone_number*: the user's phone number
-    * *street_address*: the user's street name and number
-    * *city*: the user's city name
-    * *state*: the user's state code
-    * *country*: the user's country
-    * *zip_code*: the user's ZIP code
+    * For contacts:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *title*: the user's title
+      * *email*: the user's email address
+      * *phone_number*: the user's phone number
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *type*: the type of the current item (contact)
+
+    * For users:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *role_name*: the user's role name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *type*: the type of the current item (user)
   EOS
 
   example <<-EOS
@@ -617,6 +633,41 @@ class Api::V1::EventsController < Api::V1::FilteredController
           "country": "Canada",
           "zip_code": "12345"
       }
+    ]
+  EOS
+  example <<-EOS
+    An example with a event with one contact and one user
+    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "first_name": "Trinity",
+          "last_name": "Ruiz",
+          "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "email": "trinity.ruiz@gmail.com",
+          "phone_number": "+1 233 245 4332",
+          "street_address": "1st Young st.,",
+          "city": "Toronto",
+          "state": "ON",
+          "country": "Canada",
+          "zip_code": "12345",
+          "type": "contact"
+      },
+      {
+          "id": 223,
+          "first_name": "Pablo",
+          "last_name": "Brenes",
+          "full_name": "Pablo Brenes",
+          "role_name": "MBN Supervisor",
+          "phone_number": "+1 243 222 4332",
+          "street_address": "1st Felicity st.,",
+          "city": "Los Angeles",
+          "state": "CA",
+          "country": "United States",
+          "zip_code": "23343",
+          "type": "user"
+        }
     ]
   EOS
   def contacts
