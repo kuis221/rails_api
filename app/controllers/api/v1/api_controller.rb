@@ -1,6 +1,8 @@
 class Api::V1::ApiController < ActionController::Base
   respond_to :json, :xml
 
+  inherit_resources
+
   include SentientController
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
