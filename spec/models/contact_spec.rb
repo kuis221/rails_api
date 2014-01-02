@@ -25,6 +25,36 @@ describe Contact do
   it { should have_many(:contact_events) }
   it { should validate_presence_of(:first_name) }
   it { should validate_presence_of(:last_name) }
+  it { should validate_presence_of(:country) }
+  it { should validate_presence_of(:state) }
+  it { should validate_presence_of(:city) }
+
+  it { should allow_value('guilleva@gmail.com').for(:email) }
+  it { should allow_value('').for(:email) }
+  it { should allow_value(nil).for(:email) }
+  it { should_not allow_value('guilleva').for(:email) }
+  it { should_not allow_value('guilleva@dsada').for(:email) }
+
+  it {should allow_value('US').for(:country) }
+  it {should allow_value('CR').for(:country) }
+  it {should allow_value('CA').for(:country) }
+  it {should_not allow_value('ZZY').for(:country).with_message('is not valid') }
+
+  describe "state validation" do
+    describe "when country is nil" do
+      subject{ Contact.new({country: nil}, without_protection: true) }
+
+      it {should_not allow_value('CA').for(:state).with_message('is not valid') }
+      it {should_not allow_value('ON').for(:state).with_message('is not valid') }
+    end
+
+    describe "with United States as country" do
+      subject{ Contact.new({country: 'US'}, without_protection: true) }
+
+      it {should allow_value('CA').for(:state) }
+      it {should_not allow_value('ON').for(:state).with_message('is not valid') }
+    end
+  end
 
   describe "#full_name" do
     let(:contact) { FactoryGirl.build(:contact, :first_name => 'Juanito', :last_name => 'Perez') }

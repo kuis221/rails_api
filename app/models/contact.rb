@@ -27,6 +27,13 @@ class Contact < ActiveRecord::Base
 
   validates :first_name, presence: true
   validates :last_name, presence: true
+  validates :country, presence: true,
+                      inclusion: { in: proc { Country.all.map{|c| c[1]} }, message: 'is not valid'  }
+  validates :state,   presence: true,
+                      inclusion: { in: proc {|event| Country[event.country].states.keys rescue [] }, message: 'is not valid' }
+  validates :city,    presence: true
+
+  validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
 
   def full_name
     [first_name, last_name].join(' ').strip

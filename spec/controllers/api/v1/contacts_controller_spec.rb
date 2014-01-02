@@ -27,11 +27,99 @@ describe Api::V1::ContactsController do
         "title" => contact.title,
         "email" => contact.email,
         "phone_number" => contact.phone_number,
+        "street1" => contact.street1,
+        "street2" => contact.street2,
+        "phone_number" => contact.phone_number,
         "street_address" => contact.street_address,
         "city" => contact.city,
         "state" => contact.state,
         "zip_code" => contact.zip_code,
         "country" => contact.country_name}]
+    end
+  end
+
+  describe "#create" do
+    it "should create a new contact" do
+      expect {
+        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+            first_name: 'Juanito',
+            last_name: 'Bazooka',
+            title: 'Prueba',
+            email: 'juanito@Bazooka.com',
+            phone_number: '(123) 2322 2222',
+            street1: '123 Felicidad St.',
+            street2: '2nd floor, #5',
+            city: 'Miami',
+            state: 'CA',
+            country: 'US',
+            zip_code: '12345'
+          }, format: :json
+          expect(response).to be_success
+      }.to change(Contact, :count).by(1)
+      expect(response).to render_template('show')
+
+      contact = Contact.last
+      expect(contact.first_name).to eql('Juanito')
+      expect(contact.last_name).to eql('Bazooka')
+      expect(contact.title).to eql('Prueba')
+      expect(contact.email).to eql('juanito@Bazooka.com')
+      expect(contact.phone_number).to eql('(123) 2322 2222')
+      expect(contact.street1).to eql('123 Felicidad St.')
+      expect(contact.street2).to eql('2nd floor, #5')
+      expect(contact.city).to eql('Miami')
+      expect(contact.state).to eql('CA')
+      expect(contact.country).to eql('US')
+      expect(contact.zip_code).to eql('12345')
+    end
+
+    it "should create a new contact with only the resquired fields" do
+      expect {
+        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+            first_name: 'Juanito',
+            last_name: 'Bazooka',
+            city: 'Miami',
+            state: 'CA',
+            country: 'US'
+          }, format: :json
+          expect(response).to be_success
+      }.to change(Contact, :count).by(1)
+      expect(response).to render_template('show')
+
+      contact = Contact.last
+      expect(contact.first_name).to eql('Juanito')
+      expect(contact.last_name).to eql('Bazooka')
+      expect(contact.title).to be_nil
+      expect(contact.email).to be_nil
+      expect(contact.phone_number).to be_nil
+      expect(contact.street1).to be_nil
+      expect(contact.street2).to be_nil
+      expect(contact.city).to eql('Miami')
+      expect(contact.state).to eql('CA')
+      expect(contact.country).to eql('US')
+      expect(contact.zip_code).to be_nil
+    end
+
+    it "should validate required fields" do
+      expect {
+        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+          }, format: :json
+          expect(response).to be_success
+      }.to raise_error(Apipie::ParamMissing)
+      expect(response).to_not render_template('show')
+    end
+
+    it "should return code 422 if date/country is not valid" do
+      expect {
+        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+            first_name: 'Juanito',
+            last_name: 'Bazooka',
+            city: 'Miami',
+            state: 'XX',
+            country: 'YY'
+          }, format: :json
+          expect(response.code).to eql('422')
+      }.to_not change(Contact, :count)
+      expect(response).to_not render_template('show')
     end
   end
 end

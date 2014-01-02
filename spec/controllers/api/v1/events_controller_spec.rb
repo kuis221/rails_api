@@ -318,8 +318,8 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States"},
-        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States"}
+        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"},
+        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"}
       ]
     end
 
@@ -332,7 +332,7 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica"}
+        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica", "type"=>"user"}
       ]
     end
   end

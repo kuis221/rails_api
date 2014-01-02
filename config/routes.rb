@@ -33,7 +33,7 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
         end
 
-        resources :contacts, only: [:index]
+        resources :contacts, only: [:index, :create]
       end
     end
   end
