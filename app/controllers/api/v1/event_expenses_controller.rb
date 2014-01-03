@@ -1,5 +1,7 @@
 class Api::V1::EventExpensesController < Api::V1::ApiController
 
+  inherit_resources
+
   belongs_to :event
 
   resource_description do
