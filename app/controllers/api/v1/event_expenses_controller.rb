@@ -28,19 +28,53 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     * *id*: the expense id
     * *name*: the expense name
     * *amount*: the expense amount
+    * *receipt:* attachet asset for the expense invoice
+      This will contain the following attributes:
+      * *id:* the ID of the attached asset
+      * *file_file_name:* the name/label of the attached asset
+      * *file_content_type:* the attached asset type
+      * *file_file_size:* the attached asset size
+      * *created_at:* creation date for the attached asset
+      * *active:* status (true/false) of the attached asset
+      * *file_small:* URL for the small size representation of the attached asset
+      * *file_medium:* URL for the medium size representation of the attached asset
+      * *file_original:* URL for the original size representation of the attached asset
   EOS
   example <<-EOS
     An example with expenses for an event in the response
     GET: /api/v1/events/1351/event_expenses.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     [
       {
-          "id": 28,
-          "name": "Expense #1",
-          "amount": "200.0"
-      },{
-          "id": 29,
-          "name": "Expense #2",
-          "amount": "359.0"
+        "id": 28,
+        "name": "Expense #1",
+        "amount": "200.0",
+        "receipt": {
+          "id": 26,
+          "file_file_name": "image1.jpg",
+          "file_content_type": "image/jpeg",
+          "file_file_size": 44705,
+          "created_at": "2013-10-22T13:30:12-07:00",
+          "active": true,
+          "file_small": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/small/image1.jpg?1382473842",
+          "file_medium": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/medium/image1.jpg?1382473842",
+          "file_original": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/original/image1.jpg?1382473842"
+        }
+      },
+      {
+        "id": 29,
+        "name": "Expense #2",
+        "amount": "359.0",
+        "receipt": {
+          "id": 27,
+          "file_file_name": "image2.jpg",
+          "file_content_type": "image/jpeg",
+          "file_file_size": 10461,
+          "created_at": "2013-10-22T14:25:13-07:00",
+          "active": true,
+          "file_small": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/small/image2.jpg?1382477120",
+          "file_medium": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/medium/image2.jpg?1382477120",
+          "file_original": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/original/image2.jpg?1382477120"
+        }
       }
     ]
   EOS
