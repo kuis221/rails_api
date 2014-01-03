@@ -33,6 +33,10 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
         end
 
+        resources :countries, only: [:index] do
+          get :states, on: :member
+        end
+
         resources :contacts, only: [:index, :create]
       end
     end
