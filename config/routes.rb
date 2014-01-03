@@ -19,6 +19,7 @@ Brandscopic::Application.routes.draw do
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index]
           resources :event_expenses, only: [:index]
+          resources :tasks, only: [:index]
           member do
             get :results
             get :members
@@ -39,6 +40,13 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :contacts, only: [:index, :create]
+
+        resources :tasks, only: [] do
+          collection do
+            get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
+            get :team, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+          end
+        end
       end
     end
   end

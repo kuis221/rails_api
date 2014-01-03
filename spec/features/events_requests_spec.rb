@@ -550,7 +550,6 @@ feature "Events", js: true, search: true do
         fill_in 'Due at', with: '05/16/2013'
         select_from_chosen('Juanito Bazooka', :from => 'Assigned To')
         click_js_button 'Submit'
-        #page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
       expect(page).to have_text('0 UNASSIGNED')
@@ -568,7 +567,8 @@ feature "Events", js: true, search: true do
       within('#event-tasks-container') do
         checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
-        page.execute_script('$(\'.task-completed-checkbox\').click()')
+        find('.task-completed-checkbox').trigger('click')
+        wait_for_ajax
 
         # refresh the page to make sure the checkbox remains selected
         visit event_path(event)
