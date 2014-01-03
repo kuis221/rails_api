@@ -45,14 +45,7 @@ $.widget 'nmk.filteredList', {
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
 				.on 'click', (e) =>
-					@initialized = false
-					@defaultParams = []
-					@_cleanSearchFilter()
-					@_deselectDates()
-					@element.find('input[type=checkbox]').attr('checked', false)
-					@_filtersChanged()
-					@initialized = true
-					false
+					@_cleanFilters()
 			).appendTo(@form)
 
 
@@ -409,6 +402,7 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
+		@_cleanFilters()
 		@searchHidden.val "#{item.type},#{item.value}"
 		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
 		@searchHiddenLabel.val cleanedLabel
@@ -416,7 +410,19 @@ $.widget 'nmk.filteredList', {
 		@searchLabel.show().find('span.term').html cleanedLabel
 		@_filtersChanged()
 		false
-
+	
+	_cleanFilters: () ->
+		@initialized = false
+		@defaultParams = []
+		@_cleanSearchFilter()
+		@_deselectDates()
+		@defaultParams = @options.defaultParams
+		@element.find('input[type=checkbox]').attr('checked', false)
+		for param in @defaultParams
+			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
+		@_filtersChanged()
+		@initialized = true
+		false
 	_cleanSearchFilter: () ->
 		if @searchHidden
 			@searchHidden.val ""
