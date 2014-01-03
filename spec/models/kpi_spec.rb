@@ -50,9 +50,9 @@ describe Kpi do
         }.to change(CampaignFormField, :count).by(-2)
       }.to change(Kpi, :count).by(-1)
 
-      kpi1.reload
-      kpi1.name.should == 'New Name'
-      kpi1.description.should == 'a description'
+      kpi = Kpi.all.first # Get the resulting KPI
+      kpi.name.should == 'New Name'
+      kpi.description.should == 'a description'
     end
 
     it "should update the events results by keeping the value of the master kpi" do
