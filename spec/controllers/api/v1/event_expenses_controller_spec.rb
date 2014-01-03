@@ -18,7 +18,8 @@ describe Api::V1::EventExpensesController do
     it "returns the list of expenses for the event" do
       place = FactoryGirl.create(:place, name: 'Test Bar', city: 'Los Angeles', state: 'California', country: 'US')
       event = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)
-      expense1 = FactoryGirl.create(:event_expense, amount: 99.99, name: 'Expense #1', event: event)
+      receipt1 = FactoryGirl.create(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+      expense1 = FactoryGirl.create(:event_expense, amount: 99.99, name: 'Expense #1', receipt: receipt1, event: event)
       expense2 = FactoryGirl.create(:event_expense, amount: 159.15, name: 'Expense #2', event: event)
       Sunspot.commit
 
@@ -29,12 +30,24 @@ describe Api::V1::EventExpensesController do
       result.should == [{
                          'id' => expense1.id,
                          'name' => 'Expense #1',
-                         'amount' => '99.99'
+                         'amount' => '99.99',
+                         'receipt' => {
+                                       'id' => receipt1.id,
+                                       'file_file_name' => receipt1.file_file_name,
+                                       'file_content_type' => receipt1.file_content_type,
+                                       'file_file_size' => receipt1.file_file_size,
+                                       'created_at' => '2013-08-22T11:59:00-07:00',
+                                       'active' => receipt1.active,
+                                       'file_small' => receipt1.file.url(:small),
+                                       'file_medium' => receipt1.file.url(:medium),
+                                       'file_original' => receipt1.file.url
+                                      }
                         },
                         {
                          'id' => expense2.id,
                          'name' => 'Expense #2',
-                         'amount' => '159.15'
+                         'amount' => '159.15',
+                         'receipt' => nil
                         }                      ]
     end
   end
