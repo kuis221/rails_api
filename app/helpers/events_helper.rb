@@ -106,21 +106,23 @@ module EventsHelper
         start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d') ))) if start_date
         end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date_d == tomorrow ? 'tomorrow' : (Timeliness.parse(end_date).strftime("%Y").to_i > Time.zone.now.year+1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
 
+        verb = (end_date && end_date_d < today) ? 'took' : 'taking'
+
         if start_date and end_date and (start_date != end_date)
-          if Timeliness.parse(end_date) < today
-            description = "took place from #{start_date_label} to #{end_date_label}"
+          if start_date_label == 'today' and end_date_label == 'the future'
+            description = "#{verb} place today and in the future"
           else
-            description = "taking place from #{start_date_label} to #{end_date_label}"
+            description = "#{verb} place between #{start_date_label} and #{end_date_label}"
           end
         elsif start_date
           if start_date_d == today
-            description = "taking place today"
+            description = "#{verb} place today"
           elsif start_date_d >= today
             start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-            description = "taking place #{start_date_label}"
+            description = "#{verb} place #{start_date_label}"
           else
             start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-            description = "took place #{start_date_label}"
+            description = "#{verb} place #{start_date_label}"
           end
         end
       end

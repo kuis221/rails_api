@@ -101,7 +101,7 @@ feature "Events", js: true, search: true do
 
           visit events_path
 
-          expect(page).to have_content('2 Active events taking place from today to the future')
+          expect(page).to have_content('2 Active events taking place today and in the future')
 
           within("ul#events-list") do
             expect(page).to have_content('Campaign FY2012')
@@ -143,7 +143,7 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('Campaign FY2012')
           end
 
-          expect(page).to have_content("2 Active events taking place from today to tomorrow as part of Another Campaign April 03 and Campaign FY2012")
+          expect(page).to have_content("2 Active events taking place between today and tomorrow as part of Another Campaign April 03 and Campaign FY2012")
         end
       end
 
