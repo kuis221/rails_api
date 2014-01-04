@@ -96,10 +96,10 @@ class PlacesController < FilteredController
 
       data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if data['results'].count > 0
-        location = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
-        if location
-          place.latitude = location['lat']
-          place.longitude = location['lng']
+        result = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
+        if result
+          place.latitude = result['geometry']['location']['lat']
+          place.longitude = result['geometry']['location']['lng']
           true
         else
           false

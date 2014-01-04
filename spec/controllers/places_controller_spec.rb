@@ -34,6 +34,8 @@ describe PlacesController do
       expect(place.state).to eql 'San Jose'
       expect(place.zipcode).to eql '12345'
       expect(place.country).to eql 'CR'
+      expect(place.latitude).to eql 1.2322
+      expect(place.longitude).to eql -3.23455
 
       expect(area.places).to match_array([place])
     end
