@@ -294,6 +294,8 @@ class Venue < ActiveRecord::Base
         end
       end
 
+      with(:locations, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+
       [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
           with(param.to_sym, params[param][:min].to_i..params[param][:max].to_i)
