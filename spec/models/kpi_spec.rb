@@ -181,7 +181,7 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
       result.reload
       result.value.should == 100
@@ -189,7 +189,7 @@ describe Kpi do
       field1 = event1.campaign.form_field_for_kpi(kpi1)
       field1.should == result.form_field
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
       result.reload
       result.value.should == 300
@@ -331,10 +331,10 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       event1.result_for_kpi(kpi1).display_value.should == 'Uno'
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       event2.result_for_kpi(kpi1).display_value.should == 'Dos'
     end
 
@@ -383,10 +383,10 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       event1.result_for_kpi(kpi1).map(&:value).should == [33, 67]
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       event2.result_for_kpi(kpi1).map(&:value).should == [44, 56]
     end
 
@@ -428,12 +428,12 @@ describe Kpi do
         }.to change(Kpi, :count).by(-2)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(Kpi.impressions)
       result.reload
       result.value.should == 100
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(Kpi.impressions)
       result.reload
       result.value.should == 200

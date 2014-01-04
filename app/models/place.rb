@@ -31,6 +31,9 @@ class Place < ActiveRecord::Base
   validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
+  validates :country, allow_nil: true, allow_blank: true,
+                      inclusion: { in: proc { Country.all.map{|c| c[1]} }, message: 'is not valid' }
+
   # Areas-Places relationship
   has_many :events
   has_many :placeables

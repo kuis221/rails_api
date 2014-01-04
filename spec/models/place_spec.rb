@@ -30,6 +30,15 @@ describe Place do
   it { should validate_presence_of(:place_id) }
   it { should validate_presence_of(:reference) }
 
+  it {should allow_value(nil).for(:country) }
+  it {should allow_value('').for(:country) }
+  it {should allow_value('US').for(:country) }
+  it {should allow_value('CR').for(:country) }
+  it {should allow_value('CA').for(:country) }
+  it {should_not allow_value('ZZY').for(:country).with_message('is not valid') }
+  it {should_not allow_value('Costa Rica').for(:country).with_message('is not valid') }
+  it {should_not allow_value('United States').for(:country).with_message('is not valid') }
+
   describe "fetch_place_data" do
     it "should correctly assign the attributes returned by the api call" do
       place = Place.new(reference: 'YXZ', place_id: '123')
