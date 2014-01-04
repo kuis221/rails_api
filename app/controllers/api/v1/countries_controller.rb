@@ -51,7 +51,7 @@ class Api::V1::CountriesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/countries/:id/states', "Get a list of countries"
+  api :GET, '/api/v1/countries/:id/states', "Get a list of stages for a country"
   param :id, String, required: true, desc: "The country's code."
   see 'countries#index'
   description <<-EOS
