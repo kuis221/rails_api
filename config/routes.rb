@@ -43,7 +43,7 @@ Brandscopic::Application.routes.draw do
           get :states, on: :member
         end
 
-        resources :contacts, only: [:index, :create]
+        resources :contacts, only: [:index, :create, :update]
 
         resources :tasks, only: [] do
           collection do
