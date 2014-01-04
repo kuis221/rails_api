@@ -4,7 +4,7 @@
   .box_summary
     h3 SUMMARY
     = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'edit', title: 'Edit event data' if can?(:edit_data, resource)
-    .summary-content= resource.summary
+    .summary-content= simple_format(resource.summary)
 
   - if event_data
     .box_metrics.pull-right

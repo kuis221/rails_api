@@ -249,7 +249,7 @@ class Event < ActiveRecord::Base
   end
 
   def contacts
-    @contacts ||= contact_events.map(&:contactable)
+    @contacts ||= contact_events.map(&:contactable).sort{|a, b| a.full_name <=> b.full_name }
   end
 
   def user_in_team?(user)
@@ -455,13 +455,14 @@ class Event < ActiveRecord::Base
           # We are using two options to allow searching by active/inactive in combination with approved/late/rejected/submitted
           with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
           if params.has_key?(:event_status) and params[:event_status].present? # For the event status
-            late = params[:event_status].delete('Late')
-            due = params[:event_status].delete('Due')
-            executed = params[:event_status].delete('Executed')
-            scheduled = params[:event_status].delete('Scheduled')
+            event_status = params[:event_status].dup
+            late = event_status.delete('Late')
+            due = event_status.delete('Due')
+            executed = event_status.delete('Executed')
+            scheduled = event_status.delete('Scheduled')
 
             any_of do
-              with(:status, params[:event_status]) unless params[:event_status].empty?
+              with(:status, event_status) unless event_status.empty?
               unless late.nil?
                 all_of do
                   with(:status, 'Unsent')

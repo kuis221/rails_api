@@ -45,14 +45,7 @@ $.widget 'nmk.filteredList', {
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
 				.on 'click', (e) =>
-					@initialized = false
-					@defaultParams = []
-					@_cleanSearchFilter()
-					@_deselectDates()
-					@element.find('input[type=checkbox]').attr('checked', false)
-					@_filtersChanged()
-					@initialized = true
-					false
+					@_cleanFilters()
 			).appendTo(@form)
 
 
@@ -189,9 +182,9 @@ $.widget 'nmk.filteredList', {
 		if not top5
 			optionsCount = items.length
 			top5 = []
-			while i < optionsCount
+			while i < optionsCount 
 				option = items[i]
-				if option.count > 0 and (i < 5 or option.selected)
+				if (i < 5 or option.selected)
 					top5.push option
 				i++
 		else
@@ -291,8 +284,7 @@ $.widget 'nmk.filteredList', {
 		if list? and list.items? and list.items.length
 			items = {}
 			for option in list.items
-				if (option.count > 0 or (option.items? and option.items.length)) and
-				filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
+				if filterWrapper.find('input:checkbox[name^="'+option.name+'"][value="'+option.id+'"]').length == 0
 					$option = @_buildFilterOption(option)
 					group = if option.group then option.group else '__default__'
 					items[group] ||= []
@@ -402,6 +394,7 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
+		#@_cleanFilters()
 		@searchHidden.val "#{item.type},#{item.value}"
 		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
 		@searchHiddenLabel.val cleanedLabel
@@ -409,7 +402,19 @@ $.widget 'nmk.filteredList', {
 		@searchLabel.show().find('span.term').html cleanedLabel
 		@_filtersChanged()
 		false
-
+	
+	_cleanFilters: () ->
+		@initialized = false
+		@defaultParams = []
+		@_cleanSearchFilter()
+		@_deselectDates()
+		@defaultParams = @options.defaultParams
+		@element.find('input[type=checkbox]').attr('checked', false)
+		for param in @defaultParams
+			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
+		@_filtersChanged()
+		@initialized = true
+		false
 	_cleanSearchFilter: () ->
 		if @searchHidden
 			@searchHidden.val ""
@@ -474,6 +479,7 @@ $.widget 'nmk.filteredList', {
 
 	selectCalendarDates: (start_date, end_date) ->
 		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
+		@_setCalendarDatesFromCalendar()
 
 	_setCalendarDatesFromCalendar: () ->
 		dates = @element.find('.dates-range-filter').datepick('getDate')
@@ -650,7 +656,7 @@ $.widget 'nmk.filteredList', {
 						@defaultParams.push {'name': name, 'value': value}
 
 			if dates.length > 0
-				@form.find('.dates-range-filter').datepick('setDate', dates)
+				@selectCalendarDates dates[0], dates[1]
 			else
 				@_deselectDates()
 		if @searchHidden and @searchHidden.val()

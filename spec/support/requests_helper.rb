@@ -2,7 +2,7 @@ require "timeout"
 
 module CapybaraBrandscopicHelpers
   def wait_for_ajax(timeout = Capybara.default_wait_time)
-    wait_until(timeout) { page.evaluate_script 'jQuery.active == 0' }
+    wait_until(timeout) { page.evaluate_script '((typeof jQuery == "undefined") || (jQuery.active == 0))' }
   end
 
   def wait_until(timeout = Capybara.default_wait_time)
@@ -31,24 +31,20 @@ module CapybaraBrandscopicHelpers
   end
 
   def click_js_link(locator, options={})
-    find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead and not selenium
+    find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead of selenium
     #find(:link, locator, options).click   # For Selenium
     self
   end
 
   def click_js_button(locator, options={})
-    #find(:button, locator, options).trigger('click')
-    find(:button, locator, options).click
+    find(:button, locator, options).trigger('click') # Use this if using capybara-webkit instead of selenium
+    #find(:button, locator, options).click
     self
   end
 
   def select_from_chosen(item_text, options)
     field = find_field(options[:from], visible: false)
-    field.find('option', text: item_text, visible: false, match: :first)
-    option_value = page.evaluate_script("$(\"##{field[:id]} option\:contains('#{item_text}')\").val()")
-    page.execute_script("value = ['#{option_value}']\; if ($('##{field[:id]}').val()) {$.merge(value, $('##{field[:id]}').val())}")
-    option_value = page.evaluate_script("value")
-    page.execute_script("$('##{field[:id]}').val(#{option_value})")
+    field.find('option', text: item_text, visible: false, match: :first).select_option
     page.execute_script("$('##{field[:id]}').trigger('liszt\:updated').trigger('change')")
   end
 
@@ -116,6 +112,10 @@ module RequestsHelper
     ensure_modal_was_closed
   end
 
+  def close_resource_details
+    find('a.close-details').click
+  end
+
   def ensure_modal_was_closed
     expect(page).to have_no_selector('.modal.in', visible: true)
   end
@@ -123,16 +123,6 @@ module RequestsHelper
   def ensure_on(path)
     visit(path) unless current_path == path
   end
-
-  def login
-    Warden.test_mode!
-    user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    sign_in user
-    User.current = user
-    user.current_company = user.companies.first
-    user
-  end
-
 
   # Helpers for events section
   def event_team_member(member)

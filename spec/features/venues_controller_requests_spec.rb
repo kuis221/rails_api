@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "Venues Section", js: true, search: true do
   before do
-    @user = login
+    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
   end
@@ -35,7 +35,7 @@ feature "Venues Section", js: true, search: true do
         # First Row
         within("li:nth-child(1)") do
           expect(page).to have_content('Bar Benito')
-           expect(page).to have_selector('div.n_spent', text: '$1,000.00')
+          expect(page).to have_selector('div.n_spent', text: '$1,000.00')
         end
         # Second Row
         within("li:nth-child(2)") do
@@ -43,7 +43,6 @@ feature "Venues Section", js: true, search: true do
           expect(page).to have_selector('div.n_spent', text: '$2,000.00')
         end
       end
-      wait_for_ajax
     end
   end
 

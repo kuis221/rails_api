@@ -5,14 +5,51 @@ Brandscopic::Application.routes.draw do
   namespace :api do
     namespace :v1 do
       devise_scope :user do
-        post 'sessions' => 'sessions#create', :as => 'login'
-        delete 'sessions' => 'sessions#destroy', :as => 'logout'
-        post '/users/password/new_password' => 'users#new_password', :as => 'new_user_password'
-        get '/companies' => 'users#companies', :as => 'new_user_password'
+        post 'sessions' => 'sessions#create'
+        delete 'sessions' => 'sessions#destroy'
+
+        get '/companies' => 'users#companies'
+        resources :users, only: [:index] do
+          collection do
+            match 'password/new_password', to: 'users#new_password', via: :post
+            get :permissions
+          end
+        end
 
         resources :events, only: [:index, :show, :create, :update] do
-          resources :photos, only: [:index]
-          get :results, on: :member
+          resources :photos, only: [:index, :create, :update]
+          resources :event_expenses, only: [:index]
+          resources :tasks, only: [:index]
+          member do
+            get :results
+            get :members
+            post :members, to: "events#add_member"
+            get :assignable_members
+            get :contacts
+            post :contacts, to: "events#add_contact"
+            get :assignable_contacts
+          end
+        end
+
+        resources :campaigns, only: [] do
+          get :all, on: :collection
+        end
+
+        resources :venues, only: [] do
+          get :search, on: :collection
+        end
+
+        resources :countries, only: [:index] do
+          get :states, on: :member
+        end
+
+        resources :contacts, only: [:index, :create, :update]
+
+        resources :tasks, only: [] do
+          collection do
+            get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
+            get :team, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+          end
         end
       end
     end

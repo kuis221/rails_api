@@ -40,6 +40,7 @@ FactoryGirl.define do
     factory :invited_user do
       sequence(:invitation_token) {|n| "#{n}EmMBowassEf#{n}GSHyBhEnX#{n}" }
       association :invited_by, factory: :user
+      first_name 'Test Invited'
       password nil
       password_confirmation nil
       invitation_sent_at DateTime.now
@@ -53,6 +54,5 @@ FactoryGirl.define do
       zip_code nil
       inviting_user true
     end
-
   end
 end

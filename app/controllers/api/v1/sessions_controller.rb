@@ -19,17 +19,32 @@ class Api::V1::SessionsController < Api::V1::ApiController
   param :email, String, required: true, desc: "User's email"
   param :password, String, required: true, desc: "User's password"
   formats ['json', 'xml']
+  description <<-EOS
+  Validates the user credentials and returns the authentication token if valid.
+  EOS
+  example <<-EOS
+  POST /api/v1/sessions.json?email=fulano@detal.com&password=MySuperSecretPassword
+  {
+    sucess: true,
+    info: 'Logged in',
+    data: {
+      auth_token: 'XXXYYYYZZZ',
+      current_company_id: 1
+    }
+  }
+  EOS
   def create
     resource = User.find_for_database_authentication(:email=>params[:email])
 
     if resource && resource.valid_password?(params[:password])
       resource.ensure_authentication_token
+      resource.current_company = resource.companies.first if resource.current_company.nil? || !resource.companies.include?(resource.current_company)
       resource.save :validate => false
       sign_in(:user, resource)
       render :status => 200,
              :json => { :success => true,
                         :info => "Logged in",
-                        :data => { :auth_token => resource.authentication_token } }
+                        :data => { :auth_token => resource.authentication_token, current_company_id: resource.current_company_id } }
 
     else
       render :status => 401,

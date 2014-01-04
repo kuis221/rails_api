@@ -68,6 +68,7 @@ class Campaign < ActiveRecord::Base
 
   scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}) }
   scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
+  scope :active, lambda { where(aasm_state: 'active') }
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable

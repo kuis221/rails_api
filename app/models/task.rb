@@ -129,8 +129,8 @@ class Task < ActiveRecord::Base
           end
         end
 
-        with(:company_id, params[:company_id])
-        with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
+        with :company_id, params[:company_id]
+        with :campaign_id, params[:campaign]  if params.has_key?(:campaign) and params[:campaign]
         with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
         with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
         with :team_members, params[:team_members] if params.has_key?(:team_members) and params[:team_members]
@@ -148,7 +148,7 @@ class Task < ActiveRecord::Base
         if params.has_key?(:task_status) and params[:task_status]
           late = params[:task_status].delete('Late')
           any_of do
-            with(:statusm, params[:task_status].uniq) unless params[:task_status].empty?
+            with :statusm, params[:task_status].uniq unless params[:task_status].empty?
             if late.present?
               all_of do
                 with(:due_at).less_than(Time.zone.now)
@@ -175,7 +175,7 @@ class Task < ActiveRecord::Base
 
         if params[:late]
           with(:due_at).less_than(Time.zone.now)
-          with(:completed, false)
+          with :completed, false
         end
 
         if params[:start_date].present? and params[:end_date].present?
@@ -189,12 +189,45 @@ class Task < ActiveRecord::Base
 
         if include_facets
           facet :campaign_id
-          facet :statusm
+          facet :status do
+            row(:late) do
+              with(:statusm, 'Incomplete')
+              with(:due_at).less_than(Date.yesterday)
+            end
+            row(:unassigned) do
+              with(:statusm, 'Unassigned')
+            end
+            row(:assigned) do
+              with(:statusm, 'Assigned')
+            end
+            row(:incomplete) do
+              with(:statusm, 'Incomplete')
+            end
+            row(:complete) do
+              with(:statusm, 'Complete')
+            end
+            row(:active) do
+              with(:statusm, 'Active')
+            end
+            row(:inactive) do
+              with(:statusm, 'Inactive')
+            end
+          end
           facet :company_user_id
         end
 
         order_by(params[:sorting] || :due_at, params[:sorting_dir] || :asc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
+
+    def search_params_for_scope(scope, company_user)
+      if scope == 'user'
+        {user: [company_user.id]}
+      elsif scope == 'teams'
+        {team_members: [company_user.id], not_assigned_to: [company_user.id]}
+      else
+        {}
       end
     end
   end

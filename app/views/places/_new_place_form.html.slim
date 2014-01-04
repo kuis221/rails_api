@@ -25,14 +25,14 @@
         = f.input :city, input_html: {class: 'input-large'}, required: true
     .row-fluid.users
       .span6
-        = f.input :state, collection: (resource.country.present? ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
+        = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
 
     = hidden_field_tag :add_new_place, 'true'
 
   .form-actions
-    = f.button :submit, 'Add place', class: 'btn btn-primary'
+    = f.button :submit, 'Add place', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

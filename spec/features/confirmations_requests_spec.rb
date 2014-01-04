@@ -32,6 +32,5 @@ feature "Confirmations", :js => true do
     @user.email.should == 'pedro123@rocadura.com'
     @user.unconfirmed_email.should == nil
     @user.confirmation_token.should == nil
-    wait_for_ajax
   end
 end

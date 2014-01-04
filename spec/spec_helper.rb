@@ -10,6 +10,7 @@ require 'rspec/autorun'
 require 'capybara/rails'
 require 'sunspot_test/rspec'
 require 'capybara/poltergeist'
+require 'database_cleaner'
 require 'capybara-screenshot/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -39,11 +40,11 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   config.render_views
 
-  config.formatter = 'Fuubar' unless ENV['CI']
+  config.formatter = 'Fuubar' unless ENV['CI'] || ENV['NOBAR']
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -60,16 +61,27 @@ RSpec.configure do |config|
   config.include SignHelper, :type => :feature
   config.include RequestsHelper, :type => :feature
 
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.logger = Rails.logger
+  end
+
   config.before(:all) do
     DeferredGarbageCollection.start
   end
+
   config.after(:all) do
     DeferredGarbageCollection.reconsider
   end
 
-  config.after(:each) do
-    User.current = nil
-    Time.zone = Rails.application.config.time_zone
+  config.before(:each) do
+    if example.metadata[:js]
+      DatabaseCleaner.strategy = :truncation
+    else
+      DatabaseCleaner.strategy = :transaction
+    end
   end
 
   config.before(:each) do
@@ -77,6 +89,7 @@ RSpec.configure do |config|
     Rails.logger.debug "**************************************************************************************"
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
     Rails.logger.debug "**************************************************************************************"
+    DatabaseCleaner.start
   end
 
   if ENV['CI']
@@ -91,16 +104,32 @@ RSpec.configure do |config|
         # Save it to S3
         s3 = AWS::S3.new
         bucket = s3.buckets[S3_CONFIGS['bucket_name']]
-        obj = bucket.objects['key'].write(File.open(saver.screenshot_path))
+        obj = bucket.objects[File.basename(saver.screenshot_path)].write(File.open(saver.screenshot_path))
         example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read, :expires => 24*3600*100)}"
       end
     end
   end
 
+  config.after(:each) do
+    if example.metadata[:js]
+      wait_for_ajax
+      #Capybara.reset_sessions!
+    end
+    User.current = nil
+    Time.zone = Rails.application.config.time_zone
+
+    # Reset all KPIs values to nil
+    ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
+      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
+    end
+    DatabaseCleaner.clean
+  end
+
+
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 3
+  Capybara.default_wait_time = 4
 
   SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 
@@ -112,12 +141,12 @@ def sign_in_as_user
   company = FactoryGirl.create(:company)
   #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
   role = company.roles.first
-  user = company.company_users.first.user
+  User.current = user = company.company_users.first.user
   user.current_company = company
   user.ensure_authentication_token
   user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
   sign_in user
-  User.current = user
+  user
 end
 
 def set_event_results(event, results, autosave = true)

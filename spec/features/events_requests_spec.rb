@@ -24,7 +24,7 @@ feature "Events", js: true, search: true do
         FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
         FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
       ]}
-      scenario "should display a table with the events" do
+      scenario "should display a list of events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -47,7 +47,6 @@ feature "Events", js: true, search: true do
             end
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow user to deactivate events" do
@@ -58,7 +57,7 @@ feature "Events", js: true, search: true do
 
           within("ul#events-list li:nth-child(1)") do
             expect(page).to have_content('Campaign FY2012')
-            click_link('Deactivate')
+            click_js_link 'Deactivate'
           end
 
           confirm_prompt 'Are you sure you want to deactivate this event?'
@@ -67,7 +66,6 @@ feature "Events", js: true, search: true do
             expect(page).to have_no_content('Campaign FY2012')
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow user to activate events" do
@@ -77,65 +75,112 @@ feature "Events", js: true, search: true do
           Sunspot.commit
           visit events_path
 
+          # Show only inactive items
           filter_section('ACTIVE STATE').unicheck('Inactive')
+          filter_section('ACTIVE STATE').unicheck('Active')
 
           within("ul#events-list li:nth-child(1)") do
             expect(page).to have_content('Our Test Campaign')
-            click_link('Activate')
+            click_js_link('Activate')
             expect(page).to have_no_content('Our Test Campaign')
           end
         end
-        wait_for_ajax
       end
 
       scenario "should allow allow filter events by date range" do
         today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
         tomorrow = today+1.day
-        FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
-          place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US')
-        )
-        FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-          campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
-          place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
-        Sunspot.commit
+        Timecop.travel(today) do
+          FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          Sunspot.commit
 
-        visit events_path
+          visit events_path
 
-        within("ul#events-list") do
-          expect(page).to have_content('Campaign FY2012')
-          expect(page).to have_content('Another Campaign April 03')
+          expect(page).to have_content('2 Active events taking place today and in the future')
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+
+          expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+          #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+
+          filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+
+          expect(page).to have_content('1 Active event as part of Campaign FY2012')
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+          within("ul#events-list") do
+            expect(page).to have_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
+
+          select_filter_calendar_day("26")
+          find('#collection-list-filters').should have_content('Another Campaign April 03')
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          expect(page).to have_content("1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012")
+
+          select_filter_calendar_day("26", "27")
+          within("ul#events-list") do
+            expect(page).to have_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
+
+          expect(page).to have_content("2 Active events taking place between today and tomorrow as part of Another Campaign April 03 and Campaign FY2012")
         end
+      end
 
-        expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
-        #expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
+      scenario "Filters are preserved upon navigation" do
+        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        tomorrow = today+1.day
+        Timecop.travel(today) do
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          Sunspot.commit
 
-        filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+          visit events_path
 
-        within("ul#events-list") do
-          expect(page).to have_no_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
+          filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+          select_filter_calendar_day("26")
+
+          within("ul#events-list") do
+            click_js_link('Event Details')
+          end
+
+          expect(page).to have_selector('h2', text: ev1.campaign_name)
+          current_path.should == event_path(ev1)
+
+          close_resource_details
+
+          expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012")
+          current_path.should == events_path
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Another Campaign April 03')
+            expect(page).to have_content('Campaign FY2012')
+          end
         end
-
-        filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
-        within("ul#events-list") do
-          expect(page).to have_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-
-        select_filter_calendar_day("26")
-        find('#collection-list-filters').should have_content('Another Campaign April 03')
-        within("ul#events-list") do
-          expect(page).to have_no_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-
-        select_filter_calendar_day("26", "27")
-        within("ul#events-list") do
-          expect(page).to have_content('Another Campaign April 03')
-          expect(page).to have_content('Campaign FY2012')
-        end
-        wait_for_ajax
       end
 
       feature "with timezone support turned ON" do
@@ -161,7 +206,6 @@ feature "Events", js: true, search: true do
               expect(page).to have_content('10:00 AM – 11:00 AM')
             end
           end
-          wait_for_ajax
         end
       end
     end
@@ -180,7 +224,6 @@ feature "Events", js: true, search: true do
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka')
-      wait_for_ajax
     end
   end
 
@@ -192,13 +235,12 @@ feature "Events", js: true, search: true do
           start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
           start_time: '8:00 PM', end_time: '11:00 PM',
           campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
-
       Sunspot.commit
 
       visit events_path
 
       within("ul#events-list") do
-        click_link 'Edit'
+        click_js_link 'Edit'
       end
 
       within visible_modal do
@@ -208,11 +250,10 @@ feature "Events", js: true, search: true do
         find_field('End time').value.should == '11:00pm'
 
         select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
-        click_button 'Save'
+        click_js_button 'Save'
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka FY2013')
-      wait_for_ajax
     end
 
     feature "with timezone support turned ON" do
@@ -235,7 +276,7 @@ feature "Events", js: true, search: true do
           visit events_path
 
           within("ul#events-list") do
-            click_link 'Edit'
+            click_js_link 'Edit'
           end
 
           within visible_modal do
@@ -260,7 +301,6 @@ feature "Events", js: true, search: true do
             expect(page).to have_content('10:00 PM – 11:00 PM')
           end
         end
-        wait_for_ajax
       end
     end
   end
@@ -277,7 +317,6 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('WED Aug 28')
         expect(page).to have_content('8:00 PM – 11:00 PM')
       end
-      wait_for_ajax
     end
 
     feature "with timezone suport turned ON" do
@@ -305,7 +344,6 @@ feature "Events", js: true, search: true do
           expect(page).to have_content('WED Aug 21')
           expect(page).to have_content('10:00 AM – 11:00 AM')
         end
-        wait_for_ajax
       end
     end
 
@@ -313,16 +351,15 @@ feature "Events", js: true, search: true do
       event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
       visit event_path(event)
       within('.links-data') do
-        click_link('Deactivate')
+        click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this event?'
 
       within('.links-data') do
-        click_link('Activate')
+        click_js_link('Activate')
         expect(page).to have_link('Deactivate') # test the link have changed
       end
-      wait_for_ajax
     end
 
     scenario "allows to add a member to the event", :js => true do
@@ -333,11 +370,11 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Team Member'
+      click_js_link 'Add Team Member'
       within visible_modal do
         expect(page).to have_content('Pablo')
         expect(page).to have_content('Baltodano')
-        click_link("add-member-btn-#{company_user.id}")
+        click_js_link("add-member-btn-#{company_user.id}")
 
         expect(page).to have_no_selector("li#staff-member-user-#{company_user.id}")
       end
@@ -357,7 +394,6 @@ feature "Events", js: true, search: true do
       # Refresh the page and make sure the user is not there
       visit event_path(event)
       all('#event-team-members .team-member').count.should == 0
-      wait_for_ajax
     end
 
 
@@ -369,12 +405,12 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       within visible_modal do
         expect(page).to have_selector("li#contact-company_user-#{company_user.id}")
         expect(page).to have_content('Pablo')
         expect(page).to have_content('Baltodano')
-        click_link("add-contact-btn-company_user-#{company_user.id}")
+        click_js_link("add-contact-btn-company_user-#{company_user.id}")
 
         expect(page).to have_no_selector("li#contact-company_user-#{company_user.id}")
       end
@@ -393,7 +429,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pablo Baltodano')
-      wait_for_ajax
     end
 
 
@@ -404,12 +439,12 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       within visible_modal do
         expect(page).to have_selector("li#contact-contact-#{contact.id}")
         expect(page).to have_content('Guillermo')
         expect(page).to have_content('Vargas')
-        click_link("add-contact-btn-contact-#{contact.id}")
+        click_js_link("add-contact-btn-contact-#{contact.id}")
 
         expect(page).to have_no_selector("li#contact-contact-#{contact.id}")
       end
@@ -428,7 +463,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Guillermo Vargas')
-      wait_for_ajax
     end
 
 
@@ -438,7 +472,7 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Add Contact'
+      click_js_link 'Add Contact'
       visible_modal.click_js_link("Create New Contact")
 
       within ".contactevent_modal" do
@@ -469,7 +503,6 @@ feature "Events", js: true, search: true do
       visit event_path(event)
 
       expect(page).to_not have_content('Pedro Picapiedra')
-      wait_for_ajax
     end
 
     scenario "allows to edit a contact", :js => true do
@@ -498,7 +531,6 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('Pedro Picapiedra')
         #find('a.remove-member-btn').click
       end
-      wait_for_ajax
     end
 
 
@@ -512,13 +544,12 @@ feature "Events", js: true, search: true do
 
       visit event_path(event)
 
-      click_link 'Create Task'
+      click_js_link 'Create Task'
       within('form#new_task') do
         fill_in 'Title', with: 'Pick up the kidz at school'
         fill_in 'Due at', with: '05/16/2013'
         select_from_chosen('Juanito Bazooka', :from => 'Assigned To')
         click_js_button 'Submit'
-        #page.execute_script("$('form#new_task input[type=submit].btn-primary').click()")
       end
 
       expect(page).to have_text('0 UNASSIGNED')
@@ -536,7 +567,7 @@ feature "Events", js: true, search: true do
       within('#event-tasks-container') do
         checkbox = find('.task-completed-checkbox', visible: :false)
         checkbox['checked'].should be_false
-        page.execute_script('$(\'.task-completed-checkbox\').click()')
+        find('.task-completed-checkbox').trigger('click')
         wait_for_ajax
 
         # refresh the page to make sure the checkbox remains selected
@@ -563,7 +594,6 @@ feature "Events", js: true, search: true do
       within('#event-tasks-container') do
         expect(page).to_not have_content('Juanito Bazooka')
       end
-      wait_for_ajax
     end
 
     scenario "should allow the user to fill the event data" do
@@ -578,9 +608,15 @@ feature "Events", js: true, search: true do
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Integer field', kpi_type: 'number', capture_mechanism: 'integer')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Decimal field', kpi_type: 'number', capture_mechanism: 'decimal')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Currency field', kpi_type: 'number', capture_mechanism: 'currency')
-      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio field', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
         FactoryGirl.create(:kpis_segment, text: 'Radio Option 1'),
         FactoryGirl.create(:kpis_segment, text: 'Radio Option 2')
+      ])
+
+      event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Checkbox field', kpi_type: 'count', capture_mechanism: 'checkbox', kpis_segments: [
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 1'),
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 2'),
+        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
       ])
 
       Sunspot.commit
@@ -619,6 +655,9 @@ feature "Events", js: true, search: true do
 
       choose('Radio Option 1')
 
+      unicheck('Checkbox Option 1')
+      unicheck('Checkbox Option 2')
+
       click_button 'Save'
 
       # Ensure the results are displayed on the page
@@ -650,6 +689,9 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('99 INTEGER FIELD')
         expect(page).to have_content('99.9 DECIMAL FIELD')
         expect(page).to have_content('$79.90 CURRENCY FIELD')
+        expect(page).to have_content('$79.90 CURRENCY FIELD')
+        expect(page).to have_content('RADIO OPTION 1 RADIO FIELD')
+        expect(page).to have_content('CHECKBOX OPTION 1 AND CHECK')
       end
 
       visit event_path(event)
@@ -659,7 +701,7 @@ feature "Events", js: true, search: true do
       expect(page).to have_selector("#ethnicity-graph")
       expect(page).to have_selector("#age-graph")
 
-      click_link 'Edit event data'
+      click_js_link 'Edit event data'
 
       fill_in 'Summary', with: 'Edited summary content'
       fill_in 'Impressions', with: '3333'
@@ -675,7 +717,6 @@ feature "Events", js: true, search: true do
       end
 
       expect(page).to have_content('Edited summary content')
-      wait_for_ajax
     end
   end
 

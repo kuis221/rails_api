@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "Teams", js: true, search: true do
   before do
-    @user = login
+    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
   end
@@ -36,7 +36,6 @@ feature "Teams", js: true, search: true do
           expect(page).to have_content('the guys from SF')
         end
       end
-      wait_for_ajax
     end
 
     scenario "allows the user to activate/deactivate teams" do
@@ -65,13 +64,12 @@ feature "Teams", js: true, search: true do
         hover_and_click 'li', 'Activate'
         expect(page).to have_no_content('Costa Rica Team')
       end
-      wait_for_ajax
     end
 
     scenario 'allows the user to create a new team' do
       visit teams_path
 
-      click_link('New Team')
+      click_js_button 'New Team'
 
       within visible_modal do
         fill_in 'Name', with: 'new team name'
@@ -83,7 +81,6 @@ feature "Teams", js: true, search: true do
       find('h2', text: 'new team name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new team name')
       expect(page).to have_selector('div.description-data', text: 'new team description')
-      wait_for_ajax
     end
   end
 
@@ -93,7 +90,6 @@ feature "Teams", js: true, search: true do
       visit team_path(team)
       expect(page).to have_selector('h2', text: 'Some Team Name')
       expect(page).to have_selector('div.description-data', text: 'a team description')
-      wait_for_ajax
     end
 
     scenario 'diplays a list of users within the team details page' do
@@ -117,23 +113,21 @@ feature "Teams", js: true, search: true do
           expect(page).to have_selector('a.remove-member-btn', visible: false)
         end
       end
-      wait_for_ajax
     end
 
     scenario 'allows the user to activate/deactivate a team' do
       team = FactoryGirl.create(:team, active: true, company_id: @user.current_company.id)
       visit team_path(team)
       within('.links-data') do
-         click_link('Deactivate')
+         click_js_link('Deactivate')
        end
 
        confirm_prompt "Are you sure you want to deactivate this team?"
 
        within('.links-data') do
-         click_link('Activate')
+         click_js_link 'Activate'
          expect(page).to have_link('Deactivate') # test the link have changed
        end
-       wait_for_ajax
     end
 
     scenario 'allows the user to edit the team' do
@@ -141,18 +135,17 @@ feature "Teams", js: true, search: true do
       Sunspot.commit
       visit team_path(team)
 
-      click_link('Edit')
+      click_js_link('Edit')
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
         fill_in 'Description', with: 'edited team description'
-        click_button 'Save'
+        click_js_button 'Save'
       end
 
       find('h2', text: 'edited team name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited team name')
       expect(page).to have_selector('div.description-data', text: 'edited team description')
-      wait_for_ajax
     end
 
 
@@ -165,11 +158,11 @@ feature "Teams", js: true, search: true do
 
       expect(page).to_not have_content('Fulanito')
 
-      click_link('Add Team Member')
+      click_js_link('Add Team Member')
 
 
       within visible_modal do
-        find("#staff-member-user-#{company_user.id}").click_link('Add')
+        find("#staff-member-user-#{company_user.id}").click_js_link('Add')
       end
 
       close_modal
@@ -177,7 +170,6 @@ feature "Teams", js: true, search: true do
       within('#team-members-list')  do
         expect(page).to have_content('Fulanito')
       end
-      wait_for_ajax
     end
   end
 

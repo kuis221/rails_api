@@ -43,16 +43,16 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id}
           })
         }.to change(CampaignFormField, :count).by(-2)
       }.to change(Kpi, :count).by(-1)
 
-      kpi1.reload
-      kpi1.name.should == 'New Name'
-      kpi1.description.should == 'a description'
+      kpi = Kpi.all.first # Get the resulting KPI
+      kpi.name.should == 'New Name'
+      kpi.description.should == 'a description'
     end
 
     it "should update the events results by keeping the value of the master kpi" do
@@ -79,9 +79,9 @@ describe Kpi do
 
       expect{
         Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-          name: 'New Name',
-          description: 'a description',
-          master_kpi: {campaign.id.to_s => kpi1.id}
+          'name' => 'New Name',
+          'description' => 'a description',
+          'master_kpi' => {campaign.id.to_s => kpi1.id}
         })
       }.to change(EventResult, :count).by(-1)
 
@@ -118,14 +118,14 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
       result.reload
       result.value.should == 100
@@ -133,7 +133,7 @@ describe Kpi do
       field1 = event1.campaign.form_field_for_kpi(kpi1)
       field1.should == result.form_field
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
       result.reload
       result.value.should == 200
@@ -174,14 +174,14 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
       result.reload
       result.value.should == 100
@@ -189,7 +189,7 @@ describe Kpi do
       field1 = event1.campaign.form_field_for_kpi(kpi1)
       field1.should == result.form_field
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
       result.reload
       result.value.should == 300
@@ -231,9 +231,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign.id.to_s => kpi1.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign.id.to_s => kpi1.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-2)
@@ -276,9 +276,9 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
@@ -324,17 +324,17 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       event1.result_for_kpi(kpi1).display_value.should == 'Uno'
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       event2.result_for_kpi(kpi1).display_value.should == 'Dos'
     end
 
@@ -376,17 +376,17 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       event1.result_for_kpi(kpi1).map(&:value).should == [33, 67]
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       event2.result_for_kpi(kpi1).map(&:value).should == [44, 56]
     end
 
@@ -421,19 +421,19 @@ describe Kpi do
       expect{
         expect{
           Kpi.where(id: [kpi1.id, kpi2.id, Kpi.impressions.id]).merge_fields({
-            name: 'New Name',
-            description: 'a description',
-            master_kpi: {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => {campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id}
           })
         }.to change(Kpi, :count).by(-2)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(Kpi.impressions)
       result.reload
       result.value.should == 100
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(Kpi.impressions)
       result.reload
       result.value.should == 200

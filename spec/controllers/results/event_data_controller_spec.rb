@@ -33,7 +33,7 @@ describe Results::EventDataController do
     end
   end
 
-  describe "GET 'index'", js: true, search: true do
+  describe "GET 'index'" do
     it "queue the job for export the list" do
       expect{
         get :index, format: :xlsx

@@ -68,12 +68,13 @@ class VenuesController < FilteredController
           max_venue_score  = rows.detect{|r| r.stat_field == 'venue_score_is' }.try(:value) || 0
 
           f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events_count][:min], selected_max: search_params[:events_count][:max] )
-          f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
           f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:impressions][:min], selected_max: search_params[:impressions][:max] )
           f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions][:min], selected_max: search_params[:interactions][:max] )
+          f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours][:min], selected_max: search_params[:promo_hours][:max] )
           f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:sampled][:min], selected_max: search_params[:sampled][:max] )
-          f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent][:min], selected_max: search_params[:spent][:max] )
           f.push(label: "Venue Score", name: :venue_score, min: 0, max: max_venue_score.to_i, selected_min: search_params[:venue_score][:min], selected_max: search_params[:venue_score][:max] )
+          f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent][:min], selected_max: search_params[:spent][:max] )
+
 
         end
         # Prices
@@ -85,7 +86,7 @@ class VenuesController < FilteredController
         ]
         f.push(label: "Price", items: prices )
 
-        f.push build_locations_bucket(facet_search)
+        f.push build_areas_bucket(facet_search)
         #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
         f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_ids).rows)
         f.push build_brands_bucket(facet_search.facet(:campaign_ids).rows)

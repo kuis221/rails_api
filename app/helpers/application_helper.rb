@@ -167,7 +167,7 @@ module ApplicationHelper
   end
 
   def gender_graph(data)
-    if data.values.max > 0
+    if data.present? && data.values.max > 0
       content_tag(:div, class: :male) do
         content_tag(:div, "#{data.try(:[],'Male').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'MALE', class: 'gender')

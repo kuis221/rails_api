@@ -38,7 +38,6 @@ feature "Tasks", js: true, search: true do
           expect(page).to have_content('Centenario FY14')
         end
       end
-      wait_for_ajax
     end
 
     scenario "allows the user to activate/deactivate tasks" do
@@ -51,7 +50,7 @@ feature "Tasks", js: true, search: true do
       visit mine_tasks_path
 
       within("ul#tasks-list li:nth-child(1)") do
-        click_link('Deactivate')
+        click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this task?'
@@ -60,12 +59,11 @@ feature "Tasks", js: true, search: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       within "ul#tasks-list li:nth-child(1)" do
         expect(page).to have_content('Pick up kidz at school')
-        click_link 'Activate'
+        click_js_link 'Activate'
       end
       within "ul#tasks-list" do
         expect(page).to have_no_content('Pick up kidz at school')
       end
-      wait_for_ajax
     end
   end
 
@@ -94,7 +92,6 @@ feature "Tasks", js: true, search: true do
           end
         end
       end
-      wait_for_ajax
     end
   end
 end

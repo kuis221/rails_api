@@ -479,7 +479,6 @@ a.datepick-cmd:hover{
 	input[type=checkbox]{
 		visibility: hidden;
 	}
-
 }
 
 .permissions {
@@ -1344,7 +1343,7 @@ label{
 	}
 }
 .clear-filters {
-  float: right;
+  text-align: right;
   text-decoration: underline;
   a{
   	color: @user_menu;
@@ -2339,7 +2338,7 @@ ul.ui-widget-content{
 					border:0;
 					color:white;
 					font-weight: normal;
-					padding: 7px 10px;
+					padding: 5px 10px;
 					&.ui-corner-all{
 					    border-radius: 0px !important;
 					}
@@ -2353,7 +2352,11 @@ ul.ui-widget-content{
 		&.ui-autocomplete-category{
 			color:@text;
 			font-weight: bold;
-			padding: 6px 10px;
+			padding: 24px 10px 6px 10px;
+			text-transform: uppercase;
+			&:first-of-type{
+				padding: 4px 10px;
+			}
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
@@ -3624,7 +3627,6 @@ body.roles{
 			.create-box {
 				.box-sizing(border-box);
 				float: left;
-				padding-left: 10px;
 				text-align: center;
 				width: 55%;
 
@@ -5172,7 +5174,7 @@ a, i{
 			div.info {
 				color: @text;
 				display: inline-block;
-				font-size: 11px;
+				font-size: 12px;
 				h4 {
 					font-size: 16px;
 					font-weight: normal;
@@ -5640,6 +5642,7 @@ body{
 	  			font-size: 16px;
 	  		}
 	  		.member-description {
+	  			display: block;
 	  			line-height: 16px;
 	  		}
 	  	}
@@ -5776,6 +5779,58 @@ table td.sub-level-1 {
 	display: inline-block;
 }
 
+
+
+/*-- MORE MENU STYLES --*/
+
+.sf-menu li li {
+	white-space: normal;
+}
+
+.parent_div{
+	width: 211px;
+	ul.filter_vertical_box{
+		box-sizing:border-box;
+		overflow-x: hidden;
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+		margin-top: 15px;
+		padding: 5px 0;
+		li{
+			label:hover{
+				background-color: @brand;
+				color: white;
+			}
+		}
+	}
+
+	&:after {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 0 8px 10px;
+		border-color: #FFFFFF transparent;
+		display: block;
+		width: 0;
+		z-index: 109;
+		top: 27px;
+		left: 21px;
+	}
+
+	&:before {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 0 8px 10px;
+		border-color: #cccccc transparent;
+		display: block;
+		width: 0;
+		z-index: 22;
+		top: 25px;
+		left: 21px;
+	}
+}
 
 // REPORTS
 ul#reports-list {

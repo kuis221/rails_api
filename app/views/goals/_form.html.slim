@@ -3,20 +3,20 @@
 
   .form-inputs
     .row-fluid
-      = f.input :title
+      = f.input :title, input_html: {class: 'input-xlarge'}
 
     .row-fluid
       = f.input :kpi_id, collection: Kpi.not_segmented.global_and_custom(current_company), input_html: {class: 'chosen-enabled'}
 
     .row-fluid
-      = f.input :value
+      = f.input :value, input_html: {class: 'input-xlarge'}
 
     .row-fluid
-      .span6
-        = f.input :start_date, as: :date_picker, input_html: {value: resource.start_date.try(:to_s, :slashes)}
+      .span4
+        = f.input :start_date, as: :date_picker, input_html: {class: 'goal_start_date', value: resource.start_date.try(:to_s, :slashes)}
 
-      .span6
-        = f.input :due_date, as: :date_picker, input_html: {value: resource.due_date.try(:to_s, :slashes)}
+      .span4
+        = f.input :due_date, as: :date_picker, input_html: {class: 'goal_end_date', value: resource.due_date.try(:to_s, :slashes)}
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'

@@ -27,6 +27,15 @@ module EventsHelper
     event.send(attribute)
   end
 
+  def describe_filters
+    first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_campaigns} #{describe_areas}".strip
+    first_part = nil if first_part.empty?
+    second_part  = "#{describe_people}".strip
+    second_part = nil if second_part.empty?
+
+    "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} event")} #{[first_part, second_part].compact.join(' and ')}"
+  end
+
   protected
 
     def describe_before_event_alert(resource)
@@ -83,15 +92,6 @@ module EventsHelper
       description.html_safe
     end
 
-    def describe_filters
-      first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_campaigns} #{describe_locations}".strip
-      first_part = nil if first_part.empty?
-      second_part  = "#{describe_people}".strip
-      second_part = nil if second_part.empty?
-
-      "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} event")} #{[first_part, second_part].compact.join(' and ')}"
-    end
-
     def describe_date_ranges
       description = ''
       start_date = params.has_key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
@@ -104,23 +104,25 @@ module EventsHelper
         yesterday = Date.yesterday
         tomorrow = Date.tomorrow
         start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d') ))) if start_date
-        end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date == tomorrow.to_s(:slashes) ? 'tomorrow' : (Timeliness.parse(end_date).strftime("%Y").to_i > Time.zone.now.year+1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
+        end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date_d == tomorrow ? 'tomorrow' : (Timeliness.parse(end_date).strftime("%Y").to_i > Time.zone.now.year+1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
+
+        verb = (end_date && end_date_d < today) ? 'took' : 'taking'
 
         if start_date and end_date and (start_date != end_date)
-          if Timeliness.parse(end_date) < today
-            description = "took place from #{start_date_label} to #{end_date_label}"
+          if start_date_label == 'today' and end_date_label == 'the future'
+            description = "#{verb} place today and in the future"
           else
-            description = "taking place from #{start_date_label} to #{end_date_label}"
+            description = "#{verb} place between #{start_date_label} and #{end_date_label}"
           end
         elsif start_date
           if start_date_d == today
-            description = "taking place today"
+            description = "#{verb} place today"
           elsif start_date_d >= today
             start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-            description = "taking place #{start_date_label}"
+            description = "#{verb} place #{start_date_label}"
           else
             start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-            description = "took place #{start_date_label}"
+            description = "#{verb} place #{start_date_label}"
           end
         end
       end
@@ -131,7 +133,7 @@ module EventsHelper
     def describe_campaigns
       campaigns = campaing_params
       if campaigns.size > 0
-        names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).to_sentence(last_word_connector: ' and ')
+        names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).sort.to_sentence
         "as part of #{names}"
       else
         ""
@@ -145,6 +147,25 @@ module EventsHelper
         campaigns.push params[:q].gsub('campaign,','')
       end
       campaigns.compact
+    end
+
+    def describe_areas
+      areas = area_params
+      if areas.size > 0
+        names = current_company.areas.select('name').where(id: areas).map(&:name).sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
+        "in #{names}"
+      else
+        ""
+      end
+    end
+
+    def area_params
+      areas = params[:area]
+      areas = [areas] unless areas.is_a?(Array)
+      if params.has_key?(:q) && params[:q] =~ /^area,/
+        areas.push params[:q].gsub('area,','')
+      end
+      areas.compact
     end
 
     def describe_locations
@@ -161,7 +182,7 @@ module EventsHelper
       end
 
       if names.size > 0
-        "in #{names.to_sentence(last_word_connector: ' and ')}"
+        "in #{names.to_sentence}"
       else
         ""
       end
@@ -181,7 +202,7 @@ module EventsHelper
       names = []
       if brands.size > 0
         names = Brand.select('name').where(id: brands).map(&:name)
-        "for #{names.to_sentence(last_word_connector: ' and ')}"
+        "for #{names.to_sentence}"
       else
         ""
       end
@@ -209,7 +230,7 @@ module EventsHelper
       end
 
       if names.size > 0
-        "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ' or ')}"
+        "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ')}"
       else
         ""
       end
@@ -242,7 +263,7 @@ module EventsHelper
 
       statuses = (status + event_status).uniq.compact
       unless statuses.empty? || statuses.nil?
-        statuses.to_sentence(last_word_connector: ' and ')
+        [status.to_sentence(last_word_connector: ', or ', two_words_connector: ' or '), event_status.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')].reject{|s| s.nil? || s.empty?}.to_sentence
       end
     end
 end

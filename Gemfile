@@ -79,7 +79,6 @@ group :test, :development do
   gem "factory_girl_rails", "~> 4.0"
   gem "rspec"
   gem "rspec-rails", "~> 2.0"
-  gem 'faker'
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
@@ -100,6 +99,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'capybara-screenshot'
   gem 'fuubar'
+  gem 'database_cleaner'
 end
 
 gem 'airbrake'

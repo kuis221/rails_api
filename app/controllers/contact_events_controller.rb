@@ -4,7 +4,7 @@ class ContactEventsController < InheritedResources::Base
 
   actions :new, :create, :destroy, :update, :edit
 
-  custom_actions collection: [:add]
+  custom_actions collection: [:add, :list]
 
   defaults :resource_class => ContactEvent
 
@@ -16,7 +16,7 @@ class ContactEventsController < InheritedResources::Base
   end
 
   def list
-    @contacts = ((current_company.contacts+current_company.company_users.select('company_users.*').with_user_info.with_role_info) - parent.contacts).sort{|a, b| a.full_name <=> b.full_name}
+    @contacts = ContactEvent.contactables_for_event(parent)
     render layout: false
   end
 

@@ -1,13 +1,12 @@
 class Api::V1::EventsController < Api::V1::FilteredController
-
   resource_description do
     short 'Events'
     formats ['json', 'xml']
     error 404, "Missing"
     error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
-    param :auth_token, String, required: true
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the "
+    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
+    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
 
     EOS
@@ -20,7 +19,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_date, String, required: true, desc: "Event's end date"
       param :start_time, String, required: true, desc: "Event's start time'"
       param :end_time, String, required: true, desc: "Event's end time"
-      param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'"
+      param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
     end
@@ -184,7 +183,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :POST, '/api/v1/events', 'Cratea a new event'
+  api :POST, '/api/v1/events', 'Create a new event'
   param_group :event
   def create
     create! do |success, failure|
@@ -241,7 +240,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     * *text:* the label/text for the option/sub-field
 
-    * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100 
+    * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100
 
   * *options:* specific options for this field, depending of the field_type these can be:
 
@@ -371,6 +370,410 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  api :GET, '/api/v1/events/:id/members', "Get a list of users and teams associated to the event"
+  param :id, :number, required: true, desc: "Event ID"
+  param :type, ['user', 'team'], required: false, desc: "Filter the results by type"
+  description <<-EOS
+    Returns a mixed list of teams and users that are part of the event's team. The items are sorted by name.
+
+    Each results have the following attributes:
+    * For users:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *role_name*: the user's role name
+      * *type*: the type of the current item (user)
+
+    * For teams:
+      * *id*: the user id
+      * *name*: the teams's name
+      * *description*: the teams's description
+      * *type*: the type of the current item (team)
+
+  EOS
+
+  example <<-EOS
+    An example with a event with both, users and teams
+    GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+        {
+            "id": 22,
+            "name": "Northerners", "description": "he people from the north",
+            "type": "team"
+        },
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "email": "trinity.ruiz@gmail.com",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "Canada",
+            "type": "user"
+        },
+        {
+            "id":  1,
+            "name": "Southerners",
+            "description": "The people from the south",
+            "type": "team"
+        }
+    ]
+  EOS
+
+  example <<-EOS
+    An example with a event with only users and no teams
+    GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+        {
+            "id": 268,
+            "first_name": "Trinity",
+            "last_name": "Ruiz",
+            "full_name": "Trinity Ruiz",
+            "role_name": "MBN Supervisor",
+            "phone_number": "+1 233 245 4332",
+            "street_address": "1st Young st.,",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "Canada",
+            "zip_code": "12345",
+            "type": "user"
+        }
+    ]
+  EOS
+
+
+  example <<-EOS
+    An example requesting only the teams and not the users
+    GET: /api/v1/events/8383/members.json?type=team&auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+        {
+            "id": 22,
+            "name": "Northerners", "description": "he people from the north",
+            "type": "team"
+        },
+        {
+            "id":  1,
+            "name": "Southerners",
+            "description": "The people from the south",
+            "type": "team"
+        }
+    ]
+  EOS
+  def members
+    @users = @teams = []
+    @users = resource.users.with_user_and_role.order('users.first_name, users.last_name') unless params[:type] == 'team'
+    @teams = resource.teams.order(:name) unless params[:type] == 'user'
+    @members = (@users + @teams).sort{|a, b| a.name.downcase <=> b.name.downcase }
+  end
+
+  api :GET, '/api/v1/events/:id/assignable_members', "Get a list of users+teams that can be associated to the event's team"
+  param :id, :number, required: true, desc: "Event ID"
+  description <<-EOS
+    Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
+
+    The results are sorted by +full_name+.
+
+    Each item have the following attributes:
+    * *id*: the user id
+    * *name*: the user or team's name
+    * *description*: the user's role name or the team's descrition
+    * *type*: indicates if the current item is a user or a team
+  EOS
+  see 'events#add_member'
+
+  example <<-EOS
+    An example with a user and a contact in the response
+    GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "name": "Trinity Ruiz",
+          "description": "Bartender",
+          "type": "user"
+      },{
+          "id": 268,
+          "name": "San Francisco MBN Team",
+          "description": "Field Ambassador",
+          "type": "team"
+      }
+    ]
+  EOS
+  def assignable_members
+    @members =  (
+      current_company.company_users.with_user_and_role.where('company_users.id not in (?)', resource.user_ids+[0]).all +
+      current_company.teams.where('teams.id not in (?)', resource.team_ids+[0])
+    ).sort{|a, b| a.name <=> b.name}
+  end
+
+  api :POST, '/api/v1/events/:id/members', 'Assocciate a user or team to the event\'s team'
+  param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
+  param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be added as a member'
+  see 'events#assignable_members'
+
+  example <<-EOS
+    Adding a user to the event members
+    POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully added to event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Adding a contact to the event members
+    POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'contact'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully added to event",
+      'data': {}
+    }
+  EOS
+  def add_member
+    memberable = build_memberable_from_request
+    if memberable.save
+      result = { :success => true,
+                 :info => "Member successfully added to event",
+                 :data => {} }
+      respond_to do |format|
+        format.json do
+          render :status => 200,
+                 :json => result
+        end
+        format.xml do
+          render :status => 200,
+                 :xml => result.to_xml(root: 'result')
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render json: memberable.errors, status: :unprocessable_entity }
+        format.xml { render xml: memberable.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  api :GET, '/api/v1/events/:id/contacts', "Get a list of users+contacts associated to the event"
+  param :id, :number, required: true, desc: "Event ID"
+  description <<-EOS
+    Returns a mixed list of users+contacts that are associated to the event. The results are sorted by the contact's full name.
+
+    Each contact have the following attributes:
+    * For contacts:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *title*: the user's title
+      * *email*: the user's email address
+      * *phone_number*: the user's phone number
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *type*: the type of the current item (contact)
+
+    * For users:
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *role_name*: the user's role name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *type*: the type of the current item (user)
+  EOS
+
+  example <<-EOS
+    An example with a event with one contact
+    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "first_name": "Trinity",
+          "last_name": "Ruiz",
+          "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "email": "trinity.ruiz@gmail.com",
+          "phone_number": "+1 233 245 4332",
+          "street_address": "1st Young st.,",
+          "city": "Toronto",
+          "state": "ON",
+          "country": "Canada",
+          "zip_code": "12345"
+      }
+    ]
+  EOS
+  example <<-EOS
+    An example with a event with one contact and one user
+    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "first_name": "Trinity",
+          "last_name": "Ruiz",
+          "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "email": "trinity.ruiz@gmail.com",
+          "phone_number": "+1 233 245 4332",
+          "street_address": "1st Young st.,",
+          "city": "Toronto",
+          "state": "ON",
+          "country": "Canada",
+          "zip_code": "12345",
+          "type": "contact"
+      },
+      {
+          "id": 223,
+          "first_name": "Pablo",
+          "last_name": "Brenes",
+          "full_name": "Pablo Brenes",
+          "role_name": "MBN Supervisor",
+          "phone_number": "+1 243 222 4332",
+          "street_address": "1st Felicity st.,",
+          "city": "Los Angeles",
+          "state": "CA",
+          "country": "United States",
+          "zip_code": "23343",
+          "type": "user"
+        }
+    ]
+  EOS
+  def contacts
+    @contacts = resource.contacts
+  end
+
+
+  api :GET, '/api/v1/events/:id/assignable_contacts', "Get a list of contacts+users that can be associated to the event as a contact"
+  param :id, :number, required: true, desc: "Event ID"
+  description <<-EOS
+    Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
+
+    The results are sorted by +full_name+.
+
+    Each item have the following attributes:
+    * *id*: the user id
+    * *full_name*: the user's full name
+    * *title*: the user's title
+    * *type*: indicates if the current item is a user or contact
+  EOS
+  see 'events#add_contact'
+
+  example <<-EOS
+    An example with a user and a contact in the response
+    GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+          "id": 268,
+          "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "type": "contact"
+      },{
+          "id": 268,
+          "full_name": "Trinity Ruiz",
+          "title": "Field Ambassador",
+          "type": "user"
+      }
+    ]
+  EOS
+  def assignable_contacts
+    @contacts =  ContactEvent.contactables_for_event(resource)
+  end
+
+
+  api :POST, '/api/v1/events/:id/contacts', 'Assocciate a contact to the event'
+  param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'
+  param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be added as a contact'
+  see 'events#assignable_contacts'
+
+  example <<-EOS
+    Adding a user to the event contacts
+    POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully added to event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Adding a contact to the event contacts
+    POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'contact'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully added to event",
+      'data': {}
+    }
+  EOS
+  def add_contact
+    contact = resource.contact_events.build({contactable: load_contactable_from_request}, without_protection: true)
+    if contact.save
+      result = { :success => true,
+                 :info => "Contact successfully added to event",
+                 :data => {} }
+      respond_to do |format|
+        format.json do
+          render :status => 200,
+                 :json => result
+        end
+        format.xml do
+          render :status => 200,
+                 :xml => result.to_xml(root: 'result')
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render json: contact.errors, status: :unprocessable_entity }
+        format.xml { render xml: contact.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   protected
 
     def permitted_params
@@ -384,6 +787,22 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     def permitted_search_params
       params.permit({campaign: []}, {status: []}, {event_status: []})
+    end
+
+    def load_contactable_from_request
+      if params[:contactable_type] == 'user'
+        current_company.company_users.find(params[:contactable_id])
+      else
+        current_company.contacts.find(params[:contactable_id])
+      end
+    end
+
+    def build_memberable_from_request
+      if params[:memberable_type] == 'team'
+        resource.teamings.build({team: current_company.teams.find(params[:memberable_id])}, without_protection: true)
+      else
+        resource.memberships.build({company_user: current_company.company_users.find(params[:memberable_id])}, without_protection: true)
+      end
     end
 
 end

@@ -213,4 +213,265 @@ describe Api::V1::EventsController do
       expect(fields.first.keys).to_not include('id', 'value')
     end
   end
+
+  describe "GET 'team'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of users" do
+      users = [
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company)),
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+      ]
+      event.users << users
+
+      get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
+        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+      ]
+    end
+
+    it "return a list of teams" do
+      teams = [
+        FactoryGirl.create(:team, name: 'Team C', description: 'team 3 description'),
+        FactoryGirl.create(:team, name: 'Team A', description: 'team 1 description'),
+        FactoryGirl.create(:team, name: 'Team B', description: 'team 2 description')
+      ]
+      event.teams << teams
+
+      get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description", "type"=>"team"},
+        {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description", "type"=>"team"},
+        {"id"=>teams.first.id, "name"=>"Team C", "description"=>"team 3 description", "type"=>"team"}
+      ]
+    end
+
+    describe "event with users and teams" do
+      before do
+        @users = [
+          FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'A', last_name: 'User', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: company), company: company),
+          FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'User', last_name: '2', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+        ]
+        @teams = [
+          FactoryGirl.create(:team, name: 'A team', description: 'team 1 description'),
+          FactoryGirl.create(:team, name: 'Team 2', description: 'team 2 description')
+        ]
+        event.users << @users
+        event.teams << @teams
+      end
+
+      it "return a mixed list of users and teams" do
+        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        response.should be_success
+        result = JSON.parse(response.body)
+
+        result.should == [
+          {"id"=>@teams.first.id, "name"=>"A team", "description"=>"team 1 description", "type"=>"team"},
+          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>@teams.last.id, "name"=>"Team 2", "description"=>"team 2 description", "type"=>"team"},
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+        ]
+      end
+
+      it "returns only the users" do
+        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, type: 'user', format: :json
+        response.should be_success
+        result = JSON.parse(response.body)
+
+        result.should == [
+          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+        ]
+      end
+
+      it "returns only the team" do
+        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, type: 'team', format: :json
+        response.should be_success
+        result = JSON.parse(response.body)
+
+        result.should == [
+          {"id"=>@teams.first.id, "name"=>"A team", "description"=>"team 1 description", "type"=>"team"},
+          {"id"=>@teams.last.id, "name"=>"Team 2", "description"=>"team 2 description", "type"=>"team"}
+        ]
+      end
+    end
+  end
+
+  describe "GET 'contacts'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of contacts" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador'),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach')
+      ]
+      FactoryGirl.create(:contact_event, event: event, contactable: contacts.first)
+      FactoryGirl.create(:contact_event, event: event, contactable: contacts.last)
+
+      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"},
+        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"}
+      ]
+    end
+
+    it "users can also be added as contacts" do
+      company_user = user.company_users.first
+      FactoryGirl.create(:contact_event, event: event, contactable: company_user)
+
+      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica", "type"=>"user"}
+      ]
+    end
+  end
+
+  describe "GET 'assignable_members'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of users that are not assined to the event" do
+      users = [
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: company), company: company),
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      ]
+
+      event.users << user.company_users.first
+
+      get :assignable_members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>users.first.id, "name"=>"Luis Perez",   "description"=>"Field Ambassador", 'type' => 'user'},
+        {"id"=>users.last.id,  "name"=>"Pedro Guerra", "description"=>"Coach", 'type' => 'user'}
+      ]
+    end
+
+    it "returns users and teams mixed on the list" do
+      teams = [
+        FactoryGirl.create(:team, name: 'Z Team', description: 'team 3 description', company: company),
+        FactoryGirl.create(:team, name: 'Team A', description: 'team 1 description', company: company),
+        FactoryGirl.create(:team, name: 'Team B', description: 'team 2 description', company: company)
+      ]
+      company_user = user.company_users.first
+
+      get :assignable_members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description", 'type' => 'team'},
+        {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description", 'type' => 'team'},
+        {"id"=>company_user.id, "name"=>company_user.full_name, "description"=>company_user.role_name, 'type' => 'user'},
+        {"id"=>teams.first.id, "name"=>"Z Team", "description"=>"team 3 description", 'type' => 'team'}
+      ]
+    end
+  end
+
+  describe "POST 'add_member'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should add a team to the event's team" do
+      team = FactoryGirl.create(:team, company: company)
+      expect {
+        post :add_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: team.id, memberable_type: 'team', format: :json
+      }.to change(Teaming, :count).by(1)
+      event.teams.should == [team]
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully added to event", 'data' => {} }
+    end
+
+    it "should add a user to the event's team" do
+      company_user = user.company_users.first
+      expect {
+        post :add_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: company_user.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(1)
+      event.users.should == [company_user]
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully added to event", 'data' => {} }
+    end
+  end
+
+  describe "GET 'assignable_contacts'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+    it "return a list of contacts that are not assined to the event" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
+      ]
+
+      associated_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      FactoryGirl.create(:contact_event, event: event, contactable: associated_contact)   # this contact should not be returned on the list
+      FactoryGirl.create(:contact_event, event: event, contactable: user.company_users.first) # Also associate the current user so it's not returned in the results
+
+      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'},
+        {"id"=>contacts.last.id, "full_name"=>"Pedro Guerra", "title"=>"Coach", 'type' => 'contact'}
+      ]
+    end
+
+    it "returns users and contacts mixed on the list" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
+      ]
+      company_user = user.company_users.first
+
+      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'},
+        {"id"=>contacts.last.id, "full_name"=>"Pedro Guerra", "title"=>"Coach", 'type' => 'contact'},
+        {"id"=>company_user.id, "full_name"=>company_user.full_name, "title"=>company_user.role_name, 'type' => 'user'},
+      ]
+    end
+  end
+
+  describe "POST 'add_contact'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should add a contact to the event as a contact" do
+      contact = FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company)
+      expect {
+        post :add_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(1)
+      event.contacts.should == [contact]
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully added to event", 'data' => {} }
+    end
+
+    it "should add a user to the event as a contact" do
+      company_user = user.company_users.first
+      expect {
+        post :add_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: company_user.id, contactable_type: 'user', format: :json
+      }.to change(ContactEvent, :count).by(1)
+      event.contacts.should == [company_user]
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully added to event", 'data' => {} }
+    end
+  end
 end

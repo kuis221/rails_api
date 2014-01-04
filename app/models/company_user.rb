@@ -62,8 +62,7 @@ class CompanyUser < ActiveRecord::Base
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
 
-  scope :with_user_info, lambda{ joins(:user).select('users.first_name as first_name, users.last_name as last_name') }
-  scope :with_role_info, lambda{ joins(:role).select('roles.name as role_name') }
+  scope :with_user_and_role, lambda{ joins([:role, :user]).includes([:role, :user]) }
 
   searchable do
     integer :id

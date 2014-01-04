@@ -21,8 +21,8 @@ describe Results::PhotosController, search: true do
       response.should render_template('results/photos/items')
     end
   end
-  
-  describe "GET 'index'", js: true, search: true do
+
+  describe "GET 'index'" do
     it "queue the job for export the list" do
       expect{
         get :index, format: :xlsx
@@ -31,8 +31,8 @@ describe Results::PhotosController, search: true do
       ListExportWorker.should have_queued(export.id)
     end
   end
-  
-  describe "GET 'autocomplete'" do
+
+  describe "GET 'autocomplete'", search: true do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'autocomplete'
@@ -79,7 +79,7 @@ describe Results::PhotosController, search: true do
       places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
     end
   end
-  
+
   describe "GET 'filters'" do
     it "should return the correct buckets" do
       Sunspot.commit
@@ -90,20 +90,20 @@ describe Results::PhotosController, search: true do
       filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Locations", "Status"]
     end
   end
-  
+
   describe "GET 'download'" do
     let(:attached_asset){ FactoryGirl.create(:attached_asset) }
     it "should download a photo" do
       post 'new_download', photos: [attached_asset.id], format: :js
       response.should render_template("results/photos/_download")
-      response.should render_template("results/photos/new_download")   
+      response.should render_template("results/photos/new_download")
     end
-    
+
     it "show show the download status" do
       asset_download = FactoryGirl.create(:asset_download)
       get "download_status", download_id: asset_download.uid, format: :json
       response.should be_success
     end
   end
- 
+
 end
