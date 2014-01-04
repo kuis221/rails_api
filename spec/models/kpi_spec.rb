@@ -125,7 +125,7 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to_not change(EventResult, :count)
 
-      event1.reload
+      event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
       result.reload
       result.value.should == 100
@@ -133,7 +133,7 @@ describe Kpi do
       field1 = event1.campaign.form_field_for_kpi(kpi1)
       field1.should == result.form_field
 
-      event2.reload
+      event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
       result.reload
       result.value.should == 200
