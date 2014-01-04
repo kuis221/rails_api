@@ -17,7 +17,7 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :events, only: [:index, :show, :create, :update] do
-          resources :photos, only: [:index]
+          resources :photos, only: [:index, :create, :update]
           resources :event_expenses, only: [:index]
           resources :tasks, only: [:index]
           member do

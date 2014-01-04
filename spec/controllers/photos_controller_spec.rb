@@ -28,7 +28,6 @@ describe PhotosController do
     end
   end
 
-
   describe "GET 'new'" do
     it "should render the comment form for a event comment" do
       get 'new', event_id: event.to_param, format: :js
