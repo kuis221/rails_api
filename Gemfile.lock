@@ -346,6 +346,9 @@ GEM
       slim (>= 0.9.2)
     spreadsheet (0.9.6)
       ruby-ole (>= 1.0)
+    spring (1.0.0)
+    spring-commands-rspec (1.0.1)
+      spring (>= 0.9.1)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -480,6 +483,8 @@ DEPENDENCIES
   simplecov
   slim
   slim-rails
+  spring
+  spring-commands-rspec
   strong_parameters
   sunspot-queue
   sunspot_rails

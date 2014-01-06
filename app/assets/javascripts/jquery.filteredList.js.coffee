@@ -394,7 +394,7 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		#@_cleanFilters()
+		#@_cleanFilters(true)
 		@searchHidden.val "#{item.type},#{item.value}"
 		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
 		@searchHiddenLabel.val cleanedLabel
@@ -403,12 +403,13 @@ $.widget 'nmk.filteredList', {
 		@_filtersChanged()
 		false
 	
-	_cleanFilters: () ->
+	_cleanFilters: (restoreDefault=false) ->
 		@initialized = false
 		@defaultParams = []
 		@_cleanSearchFilter()
 		@_deselectDates()
-		@defaultParams = @options.defaultParams
+		if restoreDefault
+			@defaultParams = @options.defaultParams
 		@element.find('input[type=checkbox]').attr('checked', false)
 		for param in @defaultParams
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
