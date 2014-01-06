@@ -69,13 +69,18 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   method described in this article[http://aws.amazon.com/articles/1434]. Once uploaded to S3, the resulting
   URL should be submitted to this method and the photo will be attached to the event. Because the photo is
   generated asynchronously, the thumbnails are not inmediately available.
+
+  The format of the URL should be in the form: *https*://s3.amazonaws.com/<bucket_name>/uploads/<folder>/filename where:
+
+  * *bucket_name*: brandscopic-stage
+  * *folder*: the folder name where the photo was uploaded to
   EOS
   example <<-EOS
   POST /api/v1/events/192/photos.json?auth_token=AJHshslaA.sdd&company_id=1
   DATA:
   {
     attached_asset: {
-      direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/SV-T101-P005-111413.jpg'
+      direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/12390bs-25632sj-2-83KjsH984sd/SV-T101-P005-111413.jpg'
     }
   }
 
