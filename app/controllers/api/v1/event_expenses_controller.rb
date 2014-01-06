@@ -17,6 +17,16 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     EOS
   end
 
+  def_param_group :event_expense do
+    param :event_expense, Hash, required: true, :action_aware => true do
+      param :name, String, required: true, desc: "Event expense name/label"
+      param :amount, String, required: true, desc: "Event expense amount"
+      param :receipt_attributes, Hash do
+        param :direct_upload_url, String, desc: "The receipt URL. This should be a valid Amazon S3's URL."
+      end
+    end
+  end
+
   api :GET, '/api/v1/events/:event_id/event_expenses', "Get a list of expenses for an Event"
   param :event_id, :number, required: true, desc: "Event ID"
   description <<-EOS
@@ -84,8 +94,49 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
   api :POST, '/api/v1/events/:event_id/event_expenses', 'Create a new event expense'
   param :event_id, :number, required: true, desc: "Event ID"
-  param :name, String, required: true, desc: "Event expense name/label"
-  param :amount, String, required: true, desc: "Event expense amount"
+  param_group :event_expense
+  description <<-EOS
+  Allows to attach an expense file to the event. The expense file should first be uploaded to Amazon S3 using the
+  method described in this article[http://aws.amazon.com/articles/1434]. Once uploaded to S3, the resulting
+  URL should be submitted to this method and the expense file will be attached to the event. Because the expense file is
+  generated asynchronously, the thumbnails are not inmediately available.
+
+  The format of the URL should be in the form: *https*://s3.amazonaws.com/<bucket_name>/uploads/<folder>/filename where:
+
+  * *bucket_name*: brandscopic-stage
+  * *folder*: the folder name where the photo was uploaded to
+  EOS
+  example <<-EOS
+  POST /api/v1/events/192/event_expenses.json?auth_token=AJHshslaA.sdd&company_id=1
+  DATA:
+  {
+    event_expense: {
+      name: 'Expense #1',
+      amount: 350,
+      receipt_attributes: {
+        direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/12390bs-25632sj-2-83KjsH984sd/SV-T101-P005-111413.jpg'
+      }
+    }
+  }
+
+  RESPONSE:
+  {
+    "id": 196,
+    "name": "Expense #1",
+    "amount": "350.0",
+    "receipt": {
+      "id": 45554,
+      "file_file_name": "SV-T101-P005-111413.JPG",
+      "file_content_type": "image/jpeg",
+      "file_file_size": 611320,
+      "created_at": "2013-11-19T00:49:24-08:00",
+      "active": true
+      "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/small/SV-T101-P005-111413.jpg?1389026763",
+      "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/medium/SV-T101-P005-111413.jpg?1389026763",
+      "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/original/SV-T101-P005-111413.jpg?1389026763"
+    }
+  }
+  EOS
   def create
     create! do |success, failure|
       success.json { render :show }
@@ -100,11 +151,6 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     end
 
     def permitted_params
-      p = params.dup
-      p[:event_expense] ||= {}
-      p[:event_expense][:name] = params[:name]
-      p[:event_expense][:amount] = params[:amount]
-
-      p = p.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
+      params.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
     end
 end

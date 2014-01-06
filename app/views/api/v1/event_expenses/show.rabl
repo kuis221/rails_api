@@ -1,3 +1,3 @@
 object @event_expense
 
-attributes :id, :name, :amount
+extends "api/v1/event_expenses/expense"
