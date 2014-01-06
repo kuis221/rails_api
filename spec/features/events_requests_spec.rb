@@ -183,6 +183,20 @@ feature "Events", js: true, search: true do
         end
       end
 
+      scenario "first filter should make the list show events in the past" do
+        campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
+        past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        Sunspot.commit
+
+        visit events_path
+        expect(page).to have_content('1 Active event taking place today and in the future')
+        expect(page).to have_selector('ul#events-list li', count: 1)
+
+        filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
+        expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
+      end
+
       feature "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
