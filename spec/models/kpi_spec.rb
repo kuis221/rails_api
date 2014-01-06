@@ -50,7 +50,7 @@ describe Kpi do
         }.to change(CampaignFormField, :count).by(-2)
       }.to change(Kpi, :count).by(-1)
 
-      kpi = Kpi.all.first # Get the resulting KPI
+      kpi = Kpi.all.last # Get the resulting KPI
       kpi.name.should == 'New Name'
       kpi.description.should == 'a description'
     end
