@@ -26,7 +26,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
     Each item have the following attributes:
     * *id*: the expense id
-    * *name*: the expense name
+    * *name*: the expense name/label
     * *amount*: the expense amount
     * *receipt:* attachet asset for the expense invoice
       This will contain the following attributes:
@@ -82,4 +82,29 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     @expenses = parent.event_expenses.sort_by {|e| e.id}
   end
 
+  api :POST, '/api/v1/events/:event_id/event_expenses', 'Create a new event expense'
+  param :event_id, :number, required: true, desc: "Event ID"
+  param :name, String, required: true, desc: "Event expense name/label"
+  param :amount, String, required: true, desc: "Event expense amount"
+  def create
+    create! do |success, failure|
+      success.json { render :show }
+      failure.json { render json: resource.errors }
+    end
+  end
+
+  protected
+
+    def build_resource_params
+      [permitted_params || {}]
+    end
+
+    def permitted_params
+      p = params.dup
+      p[:event_expense] ||= {}
+      p[:event_expense][:name] = params[:name]
+      p[:event_expense][:amount] = params[:amount]
+
+      p = p.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
+    end
 end
