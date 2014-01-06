@@ -1,3 +1,3 @@
-object @contact
+object @photo
 
-extends 'api/v1/contacts/contact'
+extends 'api/v1/photos/photo'
