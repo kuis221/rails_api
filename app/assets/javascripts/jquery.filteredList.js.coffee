@@ -39,8 +39,7 @@ $.widget 'nmk.filteredList', {
 			@storageScope = window.location.pathname.replace('/','_')
 
 
-		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('
-      <i class="icon-filter">')
+		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-filter">')
 
 		$('<div class="clear-filters">')
 			.append($('<a>',{href: '#', class:''}).text('Clear filters')
@@ -74,7 +73,6 @@ $.widget 'nmk.filteredList', {
 				@_positionFiltersOptions()
 
 		@infiniteScroller = false
-
 
 		if @options.autoLoad
 			@_loadPage(1)
@@ -112,7 +110,11 @@ $.widget 'nmk.filteredList', {
 		@form.find('.dates-range-filter').datepick('update')
 
 	getFilters: () ->
-		p = @form.serializeArray()
+		data = @form.serializeArray()
+		p = []
+		for param in data 
+			p.push param if param.value != ''
+
 		for param in @defaultParams
 			p.push param
 
@@ -121,7 +123,7 @@ $.widget 'nmk.filteredList', {
 
 		if @loadFacets
 			p.push {'name': 'facets', 'value': true}
-			@loadFacets=false
+			@loadFacets = false
 		p
 
 	setFilters: (filters) ->
@@ -193,7 +195,7 @@ $.widget 'nmk.filteredList', {
 		for option in @_sortOptionsAlpha(top5)
 			$list.append @_buildFilterOption(option).change( (e) => @_filtersChanged() )
 
-		@formFilters.append($filter)
+		@formFilters.append $filter
 		if optionsCount > 5
 			$li = $('<li>')
 			$div = $('<div>')
@@ -394,7 +396,7 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		#@_cleanFilters(true)
+		#@_cleanFilters()
 		@searchHidden.val "#{item.type},#{item.value}"
 		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
 		@searchHiddenLabel.val cleanedLabel
@@ -403,19 +405,20 @@ $.widget 'nmk.filteredList', {
 		@_filtersChanged()
 		false
 	
-	_cleanFilters: (restoreDefault=false) ->
+	_cleanFilters: () ->
 		@initialized = false
 		@defaultParams = []
 		@_cleanSearchFilter()
 		@_deselectDates()
-		if restoreDefault
-			@defaultParams = @options.defaultParams
+		defaultParams = if @options.clearFilterParams then @options.clearFilterParams else @options.defaultParams
+
 		@element.find('input[type=checkbox]').attr('checked', false)
-		for param in @defaultParams
+		for param in defaultParams
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
 		@_filtersChanged()
 		@initialized = true
 		false
+
 	_cleanSearchFilter: () ->
 		if @searchHidden
 			@searchHidden.val ""
@@ -540,10 +543,11 @@ $.widget 'nmk.filteredList', {
 			sessionStorage["filters#{@storageScope}"]
 
 	_serializeFilters: () ->
-		data = @form.serialize()
-		for filter in @options.customFilters
-			data += "&#{filter.name}=#{escape(filter.value)}"
-		data.replace(/^&/,"")
+		data = @getFilters()
+		filtersStr = ''
+		for filter in data
+			filtersStr += "&#{filter.name}=#{escape(filter.value)}"
+		filtersStr.replace(/^&/,"")
 
 	buildParams: (params=[]) ->
 		if @nextpagetoken

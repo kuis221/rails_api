@@ -263,7 +263,7 @@ module EventsHelper
 
       statuses = (status + event_status).uniq.compact
       unless statuses.empty? || statuses.nil?
-        [status.to_sentence(last_word_connector: ', or ', two_words_connector: ' or '), event_status.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')].reject{|s| s.nil? || s.empty?}.to_sentence
+        [status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or '), event_status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')].reject{|s| s.nil? || s.empty?}.to_sentence
       end
     end
 end

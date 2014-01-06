@@ -209,11 +209,11 @@ feature "Events", js: true, search: true do
         expect(page).to have_selector('ul#events-list li', count: 1)
 
         click_link 'Clear filters'
-        expect(page).to have_content('2 events')  # The list shouldn't be filtered by date
+        expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
 
         filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
-        expect(page).to have_content('2 events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
+        expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
       end
 
