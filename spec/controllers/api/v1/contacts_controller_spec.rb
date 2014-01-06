@@ -122,4 +122,19 @@ describe Api::V1::ContactsController do
       expect(response).to_not render_template('show')
     end
   end
+
+
+  describe "PUT 'update'" do
+    let(:contact){ FactoryGirl.create(:contact, company: company) }
+    it "must update the event attributes" do
+      place = FactoryGirl.create(:place)
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: contact.to_param, contact: {first_name: 'Updated Name', last_name: 'Updated Last Name'}, format: :json
+      assigns(:contact).should == contact
+      response.should be_success
+
+      contact.reload
+      contact.first_name.should == 'Updated Name'
+      contact.last_name.should == 'Updated Last Name'
+    end
+  end
 end

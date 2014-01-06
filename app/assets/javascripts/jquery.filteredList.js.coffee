@@ -359,14 +359,6 @@ $.widget 'nmk.filteredList', {
 		previousValue = '';
 		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
 			.appendTo(@form)
-			.on 'click', (e) =>
-					@initialized = false
-					@defaultParams = []
-					@_cleanSearchFilter()
-					@_deselectDates()
-					@element.find('input[type=checkbox]').attr('checked', false)
-					@_filtersChanged()
-					@initialized = true
 			.on 'blur', () =>
 				if @searchHidden.val()
 					@acInput.hide()
@@ -402,7 +394,7 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		@_cleanFilters()
+		#@_cleanFilters()
 		@searchHidden.val "#{item.type},#{item.value}"
 		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
 		@searchHiddenLabel.val cleanedLabel

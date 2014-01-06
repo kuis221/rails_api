@@ -25,12 +25,12 @@ describe Admin::PlacesController do
 
   describe "PUT 'update'" do
     it "returns http success" do
-      put 'update', id: place.to_param, place: {name: 'New Name', city: 'Curri', state: 'SJ', country: 'Costa Rica', zipcode: '12345', street_number: '562', route: 'calle123'}
+      put 'update', id: place.to_param, place: {name: 'New Name', city: 'Curri', state: 'SJ', country: 'CR', zipcode: '12345', street_number: '562', route: 'calle123'}
       response.should redirect_to(admin_place_path(place))
       assigns(:place).should == place
       place.reload
       place.name.should == 'New Name'
-      place.country.should == 'Costa Rica'
+      place.country.should == 'CR'
       place.state.should == 'SJ'
       place.city.should == 'Curri'
       place.zipcode.should == '12345'

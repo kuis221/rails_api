@@ -17,7 +17,7 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :events, only: [:index, :show, :create, :update] do
-          resources :photos, only: [:index]
+          resources :photos, only: [:index, :create, :update]
           resources :event_expenses, only: [:index, :create]
           resources :tasks, only: [:index]
           member do
@@ -31,6 +31,10 @@ Brandscopic::Application.routes.draw do
           end
         end
 
+        resources :campaigns, only: [] do
+          get :all, on: :collection
+        end
+
         resources :venues, only: [] do
           get :search, on: :collection
         end
@@ -39,7 +43,7 @@ Brandscopic::Application.routes.draw do
           get :states, on: :member
         end
 
-        resources :contacts, only: [:index, :create]
+        resources :contacts, only: [:index, :create, :update]
 
         resources :tasks, only: [] do
           collection do

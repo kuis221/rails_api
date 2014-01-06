@@ -80,7 +80,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   error 422, "There is one or more invalid attributes for the contact"
   param_group :contact
   description <<-EOS
-  Creates a new conctact and returns all the contacts info, including the assigned unique ID.
+  Creates a new contact and returns all the contact's info, including the assigned unique ID.
   EOS
   example <<-EOS
     POST /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&company_id=1
@@ -126,6 +126,59 @@ class Api::V1::ContactsController < Api::V1::ApiController
       success.xml { render :show }
       failure.json { render json: resource.errors, status: :unprocessable_entity }
       failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :PUT, '/api/v1/contacts/:id', 'Update a contact\'s details'
+  param :id, :number, required: true, desc: "Contact ID"
+  param_group :contact
+  description <<-EOS
+  Updates a contact's information and returns all the contact's updated info.
+  EOS
+  example <<-EOS
+    PUT /api/v1/contacts/268?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    DATA:
+    {
+        contact: {
+            "first_name": "Trinity",
+            "last_name": "Blue",
+            "full_name": "Trinity Blue",
+            "title": "MBN Supervisor",
+            "email": "trinity@matrix.com",
+            "phone_number": "+1 233 245 4332",
+            "stree1": "1st Young st.,",
+            "stree2": "2nd floor, #34",
+            "city": "Toronto",
+            "state": "ON",
+            "country": "CA",
+            "zip_code": "12345"
+        }
+    }
+
+    RESPONSE:
+    {
+        "id": 268,
+        "first_name": "Trinity",
+        "last_name": "Blue",
+        "full_name": "Trinity Blue",
+        "title": "MBN Supervisor",
+        "email": "trinity@matrix.com",
+        "phone_number": "+1 233 245 4332",
+        "stree1": "1st Young st.,",
+        "stree2": "2nd floor, #34",
+        "street_address": "1st Young st., 2nd floor, #34"",
+        "city": "Toronto",
+        "state": "ON",
+        "country": "Canada",
+        "zip_code": "12345"
+    }
+  EOS
+  def update
+    update! do |success, failure|
+      success.json { render :show }
+      success.xml  { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
 

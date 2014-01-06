@@ -39,6 +39,8 @@ describe Contact do
   it {should allow_value('CR').for(:country) }
   it {should allow_value('CA').for(:country) }
   it {should_not allow_value('ZZY').for(:country).with_message('is not valid') }
+  it {should_not allow_value('Costa Rica').for(:country).with_message('is not valid') }
+  it {should_not allow_value('United States').for(:country).with_message('is not valid') }
 
   describe "state validation" do
     describe "when country is nil" do

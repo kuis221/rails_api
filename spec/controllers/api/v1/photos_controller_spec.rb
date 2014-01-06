@@ -73,4 +73,22 @@ describe Api::V1::PhotosController do
       result['results'].count.should == 6
     end
   end
+
+  describe "POST 'create'" do
+    let(:event) {FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company))}
+    it "queue a job for processing the photos" do
+      ResqueSpec.reset!
+      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      expect {
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :json
+      }.to change(AttachedAsset, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('show')
+      photo = AttachedAsset.last
+      photo.attachable.should == event
+      photo.asset_type.should == 'photo'
+      photo.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'
+      AssetsUploadWorker.should have_queued(photo.id)
+    end
+  end
 end
