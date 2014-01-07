@@ -112,7 +112,7 @@ $.widget 'nmk.filteredList', {
 	getFilters: () ->
 		data = @form.serializeArray()
 		p = []
-		for param in data 
+		for param in data
 			p.push param if param.value != ''
 
 		for param in @defaultParams
@@ -184,7 +184,7 @@ $.widget 'nmk.filteredList', {
 		if not top5
 			optionsCount = items.length
 			top5 = []
-			while i < optionsCount 
+			while i < optionsCount
 				option = items[i]
 				if (i < 5 or option.selected)
 					top5.push option
@@ -218,6 +218,12 @@ $.widget 'nmk.filteredList', {
 						$ul.find('li').append(list)
 						$trigger.superfish({cssArrows: false, disableHI: true})
 						$trigger.superfish('show')
+					false
+				.on 'click', (e) =>
+					if $trigger.next().css('display') == "inline-block"
+						$(document).on 'click.more-options-link', (e) ->
+							$('.more-options-link').next().hide()
+							$(document).off 'click.more-options-link'
 					false
 
 			$div.append($ul.append($li.append($trigger))).insertAfter($filter)
@@ -404,7 +410,7 @@ $.widget 'nmk.filteredList', {
 		@searchLabel.show().find('span.term').html cleanedLabel
 		@_filtersChanged()
 		false
-	
+
 	_cleanFilters: () ->
 		@initialized = false
 		@defaultParams = []
