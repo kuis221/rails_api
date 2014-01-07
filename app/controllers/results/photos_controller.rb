@@ -41,7 +41,7 @@ class Results::PhotosController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id, :current_company_user].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id current_company_user).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_campaign_bucket facet_search
@@ -50,13 +50,13 @@ class Results::PhotosController < FilteredController
         f.push build_status_bucket facet_search
       end
     end
-    
+
     def build_status_bucket facet_search
       items = facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}
       {label: "Status", items: items}
     end
-    
+
     def build_campaign_bucket facet_search
       items = facet_search.facet(:campaign).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}

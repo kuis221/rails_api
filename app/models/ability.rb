@@ -80,7 +80,7 @@ class Ability
     elsif user.id
       can do |action, subject_class, subject|
         Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
-        user.role.permissions.select{|p| aliases_for_action(action).include?(p.action.to_sym)}.any? do |permission|
+        user.role.cached_permissions.select{|p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s)}.any? do |permission|
           permission.subject_class == subject_class.to_s &&
           (   subject.nil? ||
             ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) ) ||

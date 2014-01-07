@@ -77,7 +77,7 @@ gem 'jquery-rails'
 group :test, :development do
   gem "spring"
   gem "spring-commands-rspec"
-  gem "factory_girl_rails", "~> 4.0"
+  gem "factory_girl_rails", "~> 4.3"
   gem "rspec"
   gem "rspec-rails", "~> 2.0"
   gem 'populator'

@@ -26,6 +26,8 @@ class Area < ActiveRecord::Base
   has_many :placeables, as: :placeable, inverse_of: :placeable #, after_add: :update_common_denominators, after_remove: :update_common_denominators
   has_many :places, through: :placeables
 
+  has_and_belongs_to_many :campaigns, :order => 'name ASC'
+
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
 

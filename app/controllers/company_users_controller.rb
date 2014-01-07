@@ -12,6 +12,8 @@ class CompanyUsersController < FilteredController
 
   skip_load_and_authorize_resource only: [:export_status]
 
+  caches_action :notifications, expires_in: 15.minutes, cache_path: Proc.new { {company_user_id: current_company_user.id} }
+
   def autocomplete
     buckets = autocomplete_buckets({
       users: [CompanyUser],
@@ -48,10 +50,10 @@ class CompanyUsersController < FilteredController
 
   def select_company
     begin
-      company = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
-      current_user.current_company = company.company
-      current_user.save
-      session[:current_company_id] = company.company_id
+      company_user = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      current_user.current_company = company_user.company
+      current_user.update_column(:current_company_id, company_user.company.id)
+      session[:current_company_id] = company_user.company_id
     rescue ActiveRecord::RecordNotFound
       flash[:error] = "You are not allowed login into this company"
     end
@@ -175,18 +177,20 @@ class CompanyUsersController < FilteredController
     end
 
     # Unread comments in user's tasks
-    tasks = Task.where(id: Comment.not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).select('commentable_id')).all
-    tasks.each do |task|
+    tasks = Task.select('id, title').where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).to_sql})")
+    user_tasks = [0]
+    tasks.find_each do |task|
       alerts.push({message: I18n.translate('notifications.unread_tasks_comments_user', task: task.title), level: 'grey', url: mine_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"), unread: true, icon: 'icon-notification-comment'})
+      user_tasks.push task.id
     end
 
     # Unread comments in user teams' tasks
-    tasks = Task.where(id: Comment.not_from(user.user).for_tasks_where_user_in_team(user).unread_by(user.user).select('commentable_id')).all
-    tasks.each do |task|
+    tasks = Task.select('id, title').where("id not in (?)", user_tasks).where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_where_user_in_team(user).unread_by(user.user).to_sql})")
+    tasks.find_each do |task|
       alerts.push({message: I18n.translate('notifications.unread_tasks_comments_team', task: task.title), level: 'grey', url: my_teams_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"), unread: true, icon: 'icon-notification-comment'})
     end
 
-    user.notifications.each do |notification|
+    user.notifications.find_each do |notification|
       alerts.push({message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level, url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}" , unread: true, icon: 'icon-notification-'+ notification.icon})
     end
 
@@ -209,9 +213,9 @@ class CompanyUsersController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id, :current_company_user].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id current_company_user).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
-        
+
         f.push build_role_bucket facet_search
         f.push build_campaign_bucket facet_search
         f.push build_team_bucket facet_search
@@ -219,19 +223,19 @@ class CompanyUsersController < FilteredController
         f.push build_state_bucket
       end
     end
-    
+
     def build_role_bucket facet_search
       items = facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) }
-      items = items.sort{|a, b| a[:label] <=> b[:label]} 
+      items = items.sort{|a, b| a[:label] <=> b[:label]}
       {label: "Roles", items: items}
     end
-    
+
     def build_team_bucket facet_search
       items = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}
       {label: "Teams", items: items}
     end
-    
+
     def build_state_bucket
       items = ['Active', 'Inactive', 'Invited'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}

@@ -21,6 +21,9 @@ class Placeable < ActiveRecord::Base
     def update_area_denominators
       if placeable.is_a?(Area)
         placeable.send(:update_common_denominators)
+        placeable.campaign_ids.each do |id|
+          Rails.cache.delete("campaign_locations_#{id}")
+        end
       end
     end
 end
