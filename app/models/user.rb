@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
   devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :trackable, :confirmable
 
-  has_many :company_users, autosave: true, dependent: :destroy
+  has_many :company_users, dependent: :destroy
 
   has_many :companies, through: :company_users, order: 'companies.name ASC'
   belongs_to :current_company, class_name: 'Company'

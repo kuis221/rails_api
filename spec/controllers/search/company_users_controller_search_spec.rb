@@ -183,5 +183,39 @@ describe CompanyUsersController, search: true do
       notifications = JSON.parse(response.body)
       notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task"})
     end
+
+    it "should return a notification if there is a new task for the user" do
+      task = FactoryGirl.create(:task,
+        title: 'The task title',
+        event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"You have been assigned a task: The task title", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+    end
+
+    it "should return a notification if there is a new comment for a user's task" do
+      task = FactoryGirl.create(:task, title: 'The task title', event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+      comment = FactoryGirl.create(:comment, commentable: task)
+      comment.update_column(:created_by_id, FactoryGirl.create(:company_user, company: @company).user.id)
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"Your task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment"})
+    end
+
+    it "should return a notification if there is a new comment for a user's team task" do
+      task = FactoryGirl.create(:task, title: 'The task title', event: FactoryGirl.create(:event, company: @company))
+      task.event.users << @company_user
+      comment = FactoryGirl.create(:comment, commentable: task)
+      comment.update_column(:created_by_id, @company_user.user.id+1)
+
+      get 'notifications', id: @company_user.to_param, format: :json
+
+      notifications = JSON.parse(response.body)
+      notifications.should include({"message"=>"Your team's task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment"})
+    end
   end
 end

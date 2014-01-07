@@ -30,6 +30,8 @@ Brandscopic::Application.routes.draw do
             get :assignable_contacts
           end
         end
+        # To allow CORS for any API action
+        match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
           get :all, on: :collection

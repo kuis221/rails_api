@@ -99,6 +99,12 @@ describe PlacesController do
       end
     end
 
+    it "adds a place to the campaing and clears the cache" do
+      Rails.cache.should_receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
+      post 'create', campaign_id: campaign.id, place: {reference: place.to_param}, format: :js
+      expect(campaign.places).to include(place)
+    end
+
     it "validates the address" do
       expect {
         post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'Costa Rica'}, format: :js
@@ -166,6 +172,7 @@ describe PlacesController do
     end
 
     it "should delete the link within the campaign and the place" do
+      Rails.cache.should_receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
       campaign.places << place
       expect {
         expect {

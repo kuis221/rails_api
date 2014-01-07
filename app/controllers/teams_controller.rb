@@ -25,7 +25,7 @@ class TeamsController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_campaign_bucket facet_search
