@@ -65,7 +65,7 @@ class Event < ActiveRecord::Base
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
-    where('t.team_id in (?) OR m.company_user_id IN (?)', user.teams, user) }
+    where('t.team_id in (?) OR m.company_user_id IN (?)', user.team_ids, user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
   scope :with_team, lambda{|team|
     joins(:teamings).
@@ -253,7 +253,7 @@ class Event < ActiveRecord::Base
   end
 
   def user_in_team?(user)
-    Event.with_user_in_team(user).where(id: self.id).count > 0
+    ::Event.with_user_in_team(user).where(id: self.id).count > 0
   end
 
   def all_users

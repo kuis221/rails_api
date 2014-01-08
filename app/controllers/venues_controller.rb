@@ -55,7 +55,7 @@ class VenuesController < FilteredController
     def facets
       @facet_search ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :current_company_user, :location, :company_id].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q current_company_user location company_id).include?(k)})
         facet_search = Venue.do_search(facet_params, true)
 
         if rows = facet_search.stats.first.rows

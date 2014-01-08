@@ -85,7 +85,7 @@ class CampaignsController < FilteredController
   end
 
   def tab
-    authorize! "view_#{params[:tab]}".to_sym, resource
+    authorize! "view_#{params[:tab]}", resource
     render layout: false
   end
 
@@ -106,7 +106,7 @@ class CampaignsController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| [:q, :company_id].include?(k.to_sym)})
+        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_brand_bucket facet_search

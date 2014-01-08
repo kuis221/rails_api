@@ -56,7 +56,7 @@ class FilteredController < InheritedResources::Base
 
     def authorize_actions
       if parent?
-        authorize! "index_#{resource_class.to_s.pluralize}".to_sym, parent
+        authorize! "index_#{resource_class.to_s.pluralize}", parent
       else
         authorize! :index, resource_class
       end

@@ -21,7 +21,6 @@ gem 'simple_form'
 gem 'inherited_resources'
 gem 'has_scope'
 gem 'clerk'
-gem 'faker'
 gem 'rabl'
 gem 'oj'
 gem 'simple-navigation'
@@ -59,8 +58,6 @@ gem 'dalli'
 gem 'kgio'
 gem "oink"
 gem 'therubyracer', :platforms => :ruby
-gem "spring", group: :development
-gem "spring-commands-rspec", group: :development
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -78,12 +75,15 @@ end
 gem 'jquery-rails'
 
 group :test, :development do
-  gem "factory_girl_rails", "~> 4.0"
+  gem "spring"
+  gem "spring-commands-rspec"
+  gem "factory_girl_rails", "~> 4.3"
   gem "rspec"
   gem "rspec-rails", "~> 2.0"
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
+  gem 'faker'
 end
 
 group :test do

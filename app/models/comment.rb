@@ -37,7 +37,7 @@ class Comment < ActiveRecord::Base
 
   scope :for_tasks_where_user_in_team, lambda{|users| joins('INNER JOIN tasks t ON t.id = commentable_id and commentable_type=\'Task\'').where("t.event_id in (#{Event.select('events.id').with_user_in_team(users).to_sql})") }
 
-  scope :not_from, lambda{|users| where(['comments.created_by_id not in (?)', users]) }
+  scope :not_from, lambda{|user| where(['comments.created_by_id<>?', user]) }
 
 
   after_create :reindex_event

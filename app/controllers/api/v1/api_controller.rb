@@ -7,8 +7,13 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
-  before_filter :set_user
+  before_filter :cors_preflight_check
   after_filter :set_access_control_headers
+
+  before_filter :set_user
+
+  def options
+  end
 
   protected
     def current_company
@@ -92,7 +97,25 @@ class Api::V1::ApiController < ActionController::Base
         headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
       end
       headers['Access-Control-Request-Method'] = '*'
+      headers['Access-Control-Expose-Headers'] = 'ETag'
+      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
+      headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+      headers['Access-Control-Max-Age'] = '86400'
     end
+
+  def cors_preflight_check
+    if request.method == 'OPTIONS'
+      unless Rails.env.production?
+        headers['Access-Control-Allow-Origin'] = '*'
+      else
+        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+      end
+      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
+      headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+      headers['Access-Control-Max-Age'] = '86400'
+      render :text => '', :content_type => 'text/plain'
+    end
+  end
 end
 
 

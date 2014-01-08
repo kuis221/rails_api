@@ -18,8 +18,9 @@ Brandscopic::Application.routes.draw do
 
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index, :create, :update]
-          resources :event_expenses, only: [:index]
+          resources :event_expenses, only: [:index, :create]
           resources :tasks, only: [:index]
+          resources :comments, only: [:index]
           member do
             get :results
             get :members
@@ -30,6 +31,8 @@ Brandscopic::Application.routes.draw do
             get :assignable_contacts
           end
         end
+        # To allow CORS for any API action
+        match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
           get :all, on: :collection

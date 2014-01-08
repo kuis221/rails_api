@@ -22,7 +22,6 @@ class Campaign < ActiveRecord::Base
   include AASM
   include GoalableModel
 
-
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
@@ -41,7 +40,7 @@ class Campaign < ActiveRecord::Base
   has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
   has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true
@@ -72,7 +71,7 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
-  has_many :places, through: :placeables
+  has_many :places, through: :placeables, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Attached Documents
   has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
@@ -152,14 +151,16 @@ class Campaign < ActiveRecord::Base
   end
 
   def place_allowed_for_event?(place)
-    (areas.empty? && places.empty?) ||
+    !geographically_restricted? ||
     Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
     places.map(&:id).include?(place.id) ||
     areas.map(&:place_ids).flatten.include?(place.id)
   end
 
   def accessible_locations
-    @accessible_locations ||= (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+    Rails.cache.fetch("campaign_locations_#{id}") do
+      (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+    end
   end
 
   def brands_list=(list)
@@ -198,6 +199,12 @@ class Campaign < ActiveRecord::Base
 
   def active_field_types
     @active_field_types ||= form_fields.map(&:field_type).uniq
+  end
+
+  # Returns true if there is any area or place associated to the campaign
+  def geographically_restricted?
+    (self.areas.loaded? ? self.areas.any? : self.areas.count > 0 ) ||
+    (self.places.loaded? ? self.places.any? : self.places.count > 0 )
   end
 
   def add_kpi(kpi)
@@ -279,6 +286,10 @@ class Campaign < ActiveRecord::Base
       "10"=> {"ordering"=>"10", "name"=>"Your Comment", "kpi_id"=> Kpi.comments.id, "field_type"=>"comments"}
     }}, without_protection: true)
     save if autosave
+  end
+
+  def clear_locations_cache(area)
+    Rails.cache.delete("campaign_locations_#{self.id}")
   end
 
   class << self

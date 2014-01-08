@@ -40,6 +40,8 @@ Brandscopic::Application.configure do
   #Paperclip options
   Paperclip.options[:command_path] = "/usr/local/bin"
 
+  config.cache_store = :dalli_store
+
 
   # We want to see the logs on the console for the workers :)
   unless $rails_rake_task && !Rake.application.top_level_tasks.include?('resque:work')

@@ -3,9 +3,10 @@ require 'spec_helper'
 describe Api::V1::EventExpensesController do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
+  let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01') }
+  let(:place) { FactoryGirl.create(:place) }
 
   describe "GET 'index'" do
-    let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01') }
     it "should return failure for invalid authorization token" do
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
       response.response_code.should == 401
@@ -16,7 +17,6 @@ describe Api::V1::EventExpensesController do
     end
 
     it "returns the list of expenses for the event" do
-      place = FactoryGirl.create(:place, name: 'Test Bar', city: 'Los Angeles', state: 'California', country: 'US')
       event = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)
       receipt1 = FactoryGirl.create(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
       expense1 = FactoryGirl.create(:event_expense, amount: 99.99, name: 'Expense #1', receipt: receipt1, event: event)
@@ -49,6 +49,26 @@ describe Api::V1::EventExpensesController do
                          'amount' => '159.15',
                          'receipt' => nil
                         }                      ]
+    end
+  end
+
+  describe "POST 'create'" do
+    let(:event) {FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)}
+    it "create an expense and queue a job for processing the attached expense file" do
+      ResqueSpec.reset!
+      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      expect {
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, event_expense: {name: 'Expense #1', amount: '350', receipt_attributes: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}}, format: :json
+      }.to change(AttachedAsset, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('show')
+      expense = EventExpense.last
+      expense.name.should == 'Expense #1'
+      expense.amount.should == 350
+      expense.receipt.attachable.should == expense
+      expense.receipt.asset_type.should == nil
+      expense.receipt.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'
+      AssetsUploadWorker.should have_queued(expense.receipt.id)
     end
   end
 end

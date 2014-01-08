@@ -17,7 +17,7 @@ class Role < ActiveRecord::Base
   scoped_to_company
 
   has_many :company_users
-  has_many :permissions
+  has_many :permissions, after_add: :clear_cached_permissions, after_remove: :clear_cached_permissions
 
   attr_accessible :name, :description, :permissions_attributes
   validates :name, presence: true
@@ -57,6 +57,17 @@ class Role < ActiveRecord::Base
 
   def has_permission?(action, subject_class)
     permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+  end
+
+
+  def cached_permissions
+    Rails.cache.fetch("role_permissions_#{id}") do
+      permissions.all
+    end
+  end
+
+  def clear_cached_permissions(permission)
+    Rails.cache.delete("role_permissions_#{id}")
   end
 
   class << self
