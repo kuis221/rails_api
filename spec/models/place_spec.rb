@@ -108,113 +108,16 @@ describe Place do
     end
   end
 
-  describe 'load_organized' do
-    pending "should return the cities grouped by state and the states grouped by country" do
-      Place.should_receive(:find).and_return([
-        double(Place, id: 1, state_name: 'Ontario', city: 'Toronto', country_name: 'Canada', continent_name: 'North America'),
-        double(Place, id: 2, state_name: 'Quebec', city: 'Montreal', country_name: 'Canada', continent_name: 'North America'),
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 4, state_name: 'California', city: 'Los Angeles', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'Nevada', city: 'Las Vegas', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 6, state_name: 'Florida', city: 'Miami', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 7, state_name: 'Florida', city: 'Tampa', country_name: 'United States', continent_name: 'North America')
-      ])
-      structure = Place.load_organized(1, {})
-
-      structure.map{|i| i[:label]}.should =~ ['United States', 'Canada']
-      structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [['Ontario','Quebec'], ['California', 'Nevada', 'Florida']]
-      structure.map{|i| i[:items].map{|j| j[:items].map{|k| k[:label] } }}.should =~ [[['Toronto'], ['Montreal']],[['San Francisco', 'Los Angeles'], ['Las Vegas'], ['Miami', 'Tampa']]]
-    end
-
-    pending "should return the cities grouped by state" do
-      Place.should_receive(:find).and_return([
-        double(Place, id: 1, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 2, state_name: 'California', city: 'Los Angeles', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 3, state_name: 'Nevada', city: 'Las Vegas', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 4, state_name: 'Florida', city: 'Miami', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'Florida', city: 'Tampa', country_name: 'United States', continent_name: 'North America')
-      ])
-      structure = Place.load_organized(1)
-      structure.map{|i| i[:label]}.should =~ ['California', 'Nevada', 'Florida']
-      structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [['San Francisco', 'Los Angeles'], ['Las Vegas'], ['Miami', 'Tampa']]
-    end
-
-    pending "should return only the cities if they are all within the same country and state" do
-      Place.should_receive(:find).and_return([
-        double(Place, id: 1, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 2, state_name: 'California', city: 'Los Angeles', country_name: 'United States', continent_name: 'North America')
-      ])
-      structure = Place.load_organized(1)
-      structure.size.should == 2
-      structure.map{|i| i[:label]}.should =~ ['San Francisco', 'Los Angeles']
-      structure.map{|i| i[:items]}.should =~ [nil, nil]
-    end
-
-    pending "should not include the state if all the cities are inside the same state" do
-      Place.should_receive(:find).and_return([
-        double(Place, id: 1, state_name: 'Ontario', city: 'Toronto', country_name: 'Canada', continent_name: 'North America'),
-        double(Place, id: 2, state_name: 'Ontario', city: 'Ottawa', country_name: 'Canada', continent_name: 'North America'),
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 4, state_name: 'California', city: 'Los Angeles', country_name: 'United States', continent_name: 'North America'),
-      ])
-      structure = Place.load_organized(1)
-
-      structure.map{|i| i[:label]}.should =~ ['United States', 'Canada']
-      structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [['Toronto','Ottawa'], ['San Francisco', 'Los Angeles']]
-      structure.map{|i| i[:items].map{|j| j[:items] }}.should =~ [[nil, nil],[nil, nil]]
-    end
-
-
-    pending "generate the correct ids for the cities/states/countries/continents" do
-      Place.should_receive(:find).and_return([
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'Nevada', city: 'Las Vegas', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'San Jose', city: 'Curridabat', country_name: 'Costa Rica', continent_name: 'South America')
-      ])
-      structure = Place.load_organized(1)
-
-      structure.map{|i| i[:label]}.should =~ ['North America', 'South America']
-      structure.map{|i| i[:id]}.should =~ ["NDYwNDkxZmM1MjBmNGRiZmNmZjIyZDFhNDVmNmIwNTZ8fE5vcnRoIEFtZXJpY2E=", "YjFmZjVmNTEyZjBmNWIxOTUyMDM5OGJmZmM3MzJhNmJ8fFNvdXRoIEFtZXJpY2E="]
-      structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [["California", "Nevada"], ["Curridabat"]]
-      structure.map{|i| i[:items].map{|j| j[:id] }}.should =~ [["OTI4MDU2MzcwYWRmZDAyNDMxYjJkNmVkODdhNTg5MGF8fEN1cnJpZGFiYXQ="], ["ZTY2OTRmNDViYTFiNWUzMGM5OWU2NGFlNjc2YzIyNDB8fENhbGlmb3JuaWE=", "M2JjNTIyMTQ4NTExOWIzYTFiMjI1ODE3N2I0NzUwZDJ8fE5ldmFkYQ=="]]
-    end
-
-    pending "should return only the area" do
-      fake_collection  = double()
-      Area.should_receive(:joins).and_return(fake_collection)
-      fake_collection.stubs(:where).returns([
-        double(Area, id: 1, name: 'Area of California', common_denominators: ['North America', 'United States', 'California']),
-      ])
-      structure = Place.load_organized(1)
-      structure.map{|i| i[:label]}.should =~ ['Area of California']
-    end
-
-    pending "should place the area under the correct parent" do
-      fake_collection  = double()
-      Area.should_receive(:joins).and_return(fake_collection)
-      fake_collection.stubs(:where).returns([
-        double(Area, id: 1, name: 'Area of California', common_denominators: ['North America', 'United States', 'California']),
-      ])
-      Place.should_receive(:find).and_return([
-        double(Place, id: 3, state_name: 'California', city: 'San Francisco', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'Nevada', city: 'Las Vegas', country_name: 'United States', continent_name: 'North America'),
-        double(Place, id: 5, state_name: 'San Jose', city: 'Curridabat', country_name: 'Costa Rica', continent_name: 'South America')
-      ])
-      structure = Place.load_organized(1)
-      structure.map{|i| i[:label]}.should =~ ['North America', 'South America']
-      structure.map{|i| i[:items].map{|j| j[:label] }}.should =~ [["California", "Nevada"], ["Curridabat"]]
-      structure.map{|i| i[:items].map{|j| j[:items].map{|k| k[:label]} if j[:items] }}.should =~ [[["Area of California", "San Francisco"], ["Las Vegas"]], [nil]]
-    end
-  end
-
   describe "#political_division" do
+    it "should return the name in the locations if it's a sublocality" do
+      sublocality = FactoryGirl.create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil, street_number: nil, city: 'Los Angeles', state:'California', country:'US')
+      Place.political_division(sublocality).should == ['North America', 'United States', 'California', 'Los Angeles', 'Beverly Hills']
+    end
+
     it "should return the city in the locations" do
       bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'Los Angeles', state:'California', country:'US')
       Place.political_division(bar).should == ['North America', 'United States', 'California', 'Los Angeles']
     end
-
 
     it "should return false if the place is a state and the are has cities of that state" do
       california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
@@ -223,6 +126,48 @@ describe Place do
 
     it "returns nil if no place is given" do
       Place.political_division(nil).should be_nil
+    end
+  end
+
+
+  describe "#locations_for_index" do
+    it "returns only the continent and country" do
+      country = FactoryGirl.create(:place, name: 'United States', types: ['country'], route: nil, street_number: nil, city: nil, state:nil, country:'US')
+      expect(Place.locations_for_index(country)).to match_array([
+        Place.encode_location(['North America']),
+        Place.encode_location(['North America', 'United States'])
+      ])
+    end
+
+    it "returns the state, continent and country" do
+      country = FactoryGirl.create(:place, name: 'California', types: ['administrative_area_level_1'], route: nil, street_number: nil, city: nil, state:'California', country:'US')
+      expect(Place.locations_for_index(country)).to match_array([
+        Place.encode_location(['North America']),
+        Place.encode_location(['North America', 'United States']),
+        Place.encode_location(['North America', 'United States', 'California'])
+      ])
+    end
+
+    it "returns the citym state, continent and country" do
+      country = FactoryGirl.create(:place, name: 'Los Angeles', types: ['locality'], route: nil, street_number: nil, city: 'Los Angeles', state:'California', country:'US')
+      expect(Place.locations_for_index(country)).to match_array([
+        Place.encode_location(['North America']),
+        Place.encode_location(['North America', 'United States']),
+        Place.encode_location(['North America', 'United States', 'California']),
+        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles'])
+      ])
+    end
+
+
+    it "returns the citym state, continent and country" do
+      country = FactoryGirl.create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil, street_number: nil, city: 'Los Angeles', state:'California', country:'US')
+      expect(Place.locations_for_index(country)).to match_array([
+        Place.encode_location(['North America']),
+        Place.encode_location(['North America', 'United States']),
+        Place.encode_location(['North America', 'United States', 'California']),
+        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles']),
+        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles', 'Beverly Hills'])
+      ])
     end
   end
 end

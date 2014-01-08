@@ -87,7 +87,7 @@ describe Results::PhotosController, search: true do
       response.should be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Locations", "Status"]
+      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "Status"]
     end
   end
 

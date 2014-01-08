@@ -158,25 +158,18 @@ class Place < ActiveRecord::Base
       end
     end
 
+    # Returns a list of the different locations where the place belongs to, so, if the place
+    # is in Los Angeles, CA, it will return:
+    # ["460491fc520f4dbfcff22d1a45f6b056", "cdbe9fe33896a9afa77c66177551fa54", "e6694f45ba1b5e30c99e64ae676c2240", "e4f529bbd3bfe9699536ec957be40fa1"]
+    # where
+    # * "North America" ==> 460491fc520f4dbfcff22d1a45f6b056
+    # * "North America/United States" ==> cdbe9fe33896a9afa77c66177551fa54
+    # * "North America/United States/California"  ==> e6694f45ba1b5e30c99e64ae676c2240
+    # * "North America/United States/California/Los Angeles" ==> e4f529bbd3bfe9699536ec957be40fa1
+    #
     def locations_for_index(place)
-      locations = []
-      unless place.nil?
-        locations.push encode_location(place.continent_name) if place.continent_name
-        locations.push encode_location([place.continent_name, place.country_name]) if place.country_name
-        locations.push encode_location([place.continent_name, place.country_name, place.state_name]) if place.state_name
-        locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city]) if  place.state_name && place.city
-        locations.push encode_location([place.continent_name, place.country_name, place.state_name, place.city.gsub('Saint','St')]) if  place.state_name && place.city && place.city =~ /^Saint.*/
-      end
-      locations
-    end
-
-    def location_for_index(place)
-      unless place.nil?
-        return encode_location([place.continent_name, place.country_name, place.state_name, place.city])+'||'+place.city if place.state_name && place.city
-        return encode_location([place.continent_name, place.country_name, place.state_name])+'||'+place.state_name if place.state_name
-        return encode_location([place.continent_name, place.country_name])+'||'+place.country_name if place.country_name
-        return encode_location(place.continent_name)+'||'+place.continent_name if place.continent_name
-      end
+      ary = political_division(place)
+      ary.count.times.map { |i| encode_location(ary.slice(0, i+1)) } unless ary.nil?
     end
 
     def location_for_search(place)
@@ -187,7 +180,11 @@ class Place < ActiveRecord::Base
     end
 
     def political_division(place)
-      [place.continent_name, place.country_name, place.state_name, place.city].compact if place.present?
+      unless place.nil?
+        neighborhood = place.neighborhood
+        neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
+        [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
+      end
     end
 
     private
@@ -233,11 +230,12 @@ class Place < ActiveRecord::Base
         address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
         {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
       end
-      local_references = local_results.map{|p| p.reference}.compact
+      local_references = local_results.map{|p| [p.reference, p.place.place_id]}.flatten.compact
+      puts local_references.inspect
 
       google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
       if google_results && google_results['results'].present?
-        results += google_results['results'].reject{|p| local_references.include?(p['reference']) }.map{|p| {value: p['name'] + ', ' + p['formatted_address'].to_s, label: p['name'] + ', ' + p['formatted_address'].to_s, id: "#{p['reference']}||#{p['id']}"} }
+        results += google_results['results'].reject{|p| local_references.include?(p['reference']) || local_references.include?(p['id']) }.map{|p| {value: p['name'] + ', ' + p['formatted_address'].to_s, label: p['name'] + ', ' + p['formatted_address'].to_s, id: "#{p['reference']}||#{p['id']}"} }
       end
       results
     end
@@ -273,7 +271,7 @@ class Place < ActiveRecord::Base
             elsif component['types'].include?('route')
               self.route = component['long_name']
             elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
-              sublocality = component['long_name']
+              self.neighborhood = component['long_name']
             end
           end
         end
@@ -297,6 +295,7 @@ class Place < ActiveRecord::Base
           end
         end
 
+        sublocality = self.neighborhood
         sublocality ||= self.route if types.include?('establishment')
         sublocality ||= self.zipcode if types.include?('establishment')
 

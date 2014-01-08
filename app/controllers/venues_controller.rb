@@ -74,9 +74,8 @@ class VenuesController < FilteredController
           f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:sampled][:min], selected_max: search_params[:sampled][:max] )
           f.push(label: "Venue Score", name: :venue_score, min: 0, max: max_venue_score.to_i, selected_min: search_params[:venue_score][:min], selected_max: search_params[:venue_score][:max] )
           f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent][:min], selected_max: search_params[:spent][:max] )
-
-
         end
+
         # Prices
         prices = [
             build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),

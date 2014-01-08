@@ -38,19 +38,6 @@ module FacetsHelper
     {label: 'Brands', items: brands}
   end
 
-  def build_locations_bucket(search)
-    locations = {}
-    counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
-    locations = Place.where(id: counts.keys.uniq).load_organized(current_company.id, counts)
-
-    first_five = (search.facet(:place).rows.map{|x| id, name = x.value.split('||'); [Base64.strict_encode64(x.value), name, x.count, :place]} + locations[:areas].map{|a| [a.id, a.name, a.events_count, :area]}).sort{|a,b| b[3] <=> a[3] }.first(5)
-
-    first_five = first_five.map{|x| build_facet_item({label: x[1], id: x[0], count: x[2], name: x[3]}) }.first(5)
-    items = locations[:locations].sort{|a, b| a[:label] <=> b[:label] }
-    {label: 'Locations', top_items: first_five, items: items}
-  end
-
-
   def build_areas_bucket(search)
     counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
     places = Place.where(id: counts.keys.uniq).all
@@ -104,7 +91,6 @@ module FacetsHelper
 
       f.push build_facet( Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
       f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
-      #f.push build_locations_bucket(facet_search)
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )
 

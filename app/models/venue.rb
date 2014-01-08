@@ -60,10 +60,6 @@ class Venue < ActiveRecord::Base
       Place.locations_for_index(place)
     end
 
-    string :place do
-      Place.location_for_index(place)
-    end
-
     integer :campaign_ids, multiple: true do
       campaigns.map(&:id)
     end
@@ -281,18 +277,7 @@ class Venue < ActiveRecord::Base
         with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
       end
 
-      if params.has_key?(:place) and params[:place].present?
-        place_paths = []
-        params[:place].each do |place|
-          # The location comes BASE64 encoded as a pair "id||name"
-          # The ID is a md5 encoded string that is indexed on Solr
-          (id, name) = Base64.decode64(place).split('||')
-          place_paths.push id
-        end
-        if place_paths.size > 0
-          with(:locations, place_paths)
-        end
-      end
+      with(:locations, params[:locations]) if params.has_key?(:locations) and params[:locations].present?
 
       with(:locations, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
 
@@ -315,7 +300,6 @@ class Venue < ActiveRecord::Base
 
       if include_facets
         facet :place_id
-        facet :place
         facet :campaign_ids
       end
 
