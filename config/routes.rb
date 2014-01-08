@@ -20,6 +20,7 @@ Brandscopic::Application.routes.draw do
           resources :photos, only: [:index, :create, :update]
           resources :event_expenses, only: [:index, :create]
           resources :tasks, only: [:index]
+          resources :comments, only: [:index]
           member do
             get :results
             get :members
