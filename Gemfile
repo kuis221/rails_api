@@ -38,7 +38,7 @@ gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
 gem 'progress_bar'
-gem 'unicorn'
+gem 'puma'
 gem "geocoder"
 gem "nested_form"
 gem 'axlsx'
