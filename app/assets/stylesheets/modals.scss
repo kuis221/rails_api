@@ -1,37 +1,37 @@
 /*-- COLOR PALETTE --*/
-@app_bg: #ececec;
-@approved:#90bf43;
-@assigned: #d6d64b;
-@borders: #d3d3d3;
-@brand:#989898;
-@buttons:#de4d43;
-@buttons-hover:#cc4137;
-@completed: #90bf43;
-@grey_one:#dfdfdf;
-@grey_three:#7a7a7a;
-@header:#363636;
-@menu:#4f4f4f;
-@text:#666666;
-@unassigned:#3e9ccf;
-@user_menu:#c0c0c0;
-@valid: #90bf43;
+$app_bg: #ececec;
+$approved:#90bf43;
+$assigned: #d6d64b;
+$borders: #d3d3d3;
+$brand: #989898;
+$buttons: #de4d43;
+$buttons-hover: #cc4137;
+$completed: #90bf43;
+$grey_one: #dfdfdf;
+$grey_three: #7a7a7a;
+$header: #363636;
+$menu: #4f4f4f;
+$text: #666666;
+$unassigned: #3e9ccf;
+$user_menu: #c0c0c0;
+$valid: #90bf43;
 
 /*-- FONT FAMILY STYLES --*/
-@baseFontFamily:'Lato', sans-serif;
+$baseFontFamily: 'Lato', sans-serif;
 
 //MODALS
 
 ul.select2-results{
-	color: @text;
+	color: $text;
 	margin: 0;
 	padding:0 !important;
 	width: 398px;
 	.select2-highlighted{
-		background: @brand;
+		background: $brand;
 	}
 }
 .select2-drop {
-	border: 1px solid @user_menu !important;
+	border: 1px solid $user_menu !important;
 	border-radius: 4px !important;
 	margin-top: 4px !important;
 }
@@ -52,7 +52,7 @@ ul.select2-results{
 					}
 					input[type="number"] {
 						background-color: white !important;
-						border:1px solid @user_menu !important;
+						border:1px solid $user_menu !important;
 						box-shadow: none !important;
 						margin-right: 0 !important;
 						width: 158px;
@@ -124,9 +124,9 @@ ul.select2-results{
 			padding-top: 5px !important;
 			width: 398px !important;
 			.select2-search-choice{
-				background-color: @user_menu !important;
+				background-color: $user_menu !important;
 				background-image: none !important;
-				border: 1px solid @user_menu !important;
+				border: 1px solid $user_menu !important;
 				box-shadow: none;
 				color: white;
 				padding: 5px 5px 5px 18px;
@@ -358,7 +358,7 @@ ul.select2-results{
 				}
 				.hidden-field{
 					.add-on{
-						background-color: @brand;
+						background-color: $brand;
 						border:0 !important;
 						border-radius: 0px 4px 4px 0px;
 						color: white;
@@ -385,7 +385,7 @@ ul.select2-results{
 				width: 400px;
 			}
 			label{
-				color: @text;
+				color: $text;
 				font-size: 13px;
 				&.control-label{
 					font-size: 16px;
@@ -397,7 +397,7 @@ ul.select2-results{
 			}
 			legend{
 				border:0;
-				color:@text;
+				color:$text;
 				font-size: 16px;
 				font-weight: bold;
 				margin-bottom: 10px;
@@ -417,7 +417,7 @@ ul.select2-results{
 				&.competitive{
 					margin: 25px 0 25px 0;
 					.titles{
-						color: @brand;
+						color: $brand;
 						margin: 0 0 15px 245px;
 						width:315px;
 						span{
@@ -450,7 +450,7 @@ ul.select2-results{
 				&.conversion{
 					margin: 25px 0 60px 0;
 					.titles{
-						color: @brand;
+						color: $brand;
 						margin:0 0 15px 240px;
 						width: 67%;
 						span{
@@ -480,7 +480,7 @@ ul.select2-results{
 				&.recommend{
 					margin: 25px 0 60px 0;
 					.titles{
-						color: @brand;
+						color: $brand;
 						margin:0 0 15px 245px;
 						width:80%;
 						span{
@@ -533,7 +533,7 @@ ul.select2-results{
 					}
 				}
 				span.checked{
-					border: 4px solid @grey_three;
+					border: 4px solid $grey_three;
 					background-image: none !important;
 					display: block;
 					height: 15px;
@@ -545,7 +545,7 @@ ul.select2-results{
 					border-radius: 15px;
 				}
 				span.checked:after{
-					color: @grey_three;
+					color: $grey_three;
 					content: "\2022";
 					font-size: 25px;
 					bottom: 22px;
@@ -576,7 +576,7 @@ ul.select2-results{
 		}
 		.close, button.close:before, a.close:before{
 			content: "\e019";
-			color: @user_menu;
+			color: $user_menu;
 		  	display: inline-block;
 		  	font-family: 'icons';
 			font-size: 14px;
@@ -609,7 +609,7 @@ ul.select2-results{
 			}
 			input[type="number"] {
 				background-color: white !important;
-				border:1px solid @user_menu !important;
+				border:1px solid $user_menu !important;
 				box-shadow: none !important;
 				margin-right: 0 !important;
 				margin-top: 3px !important;
@@ -677,9 +677,9 @@ ul.select2-results{
 		input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"]{
 			background-color: white !important;
 			background-image: none !important;
-			border: 1px solid @user_menu;
+			border: 1px solid $user_menu;
 			box-shadow: none;
-			font-family: @baseFontFamily;
+			font-family: $baseFontFamily;
 			height: 30px;
 			margin-bottom: 0;
 			padding-left: 10px;
@@ -696,9 +696,9 @@ ul.select2-results{
 		textarea{
 			background-color: white !important;
 			background-image: none !important;
-			border: 1px solid @user_menu;
+			border: 1px solid $user_menu;
 			box-shadow: none;
-			font-family: @baseFontFamily;
+			font-family: $baseFontFamily;
 			height: 78px;
 			margin-bottom: 0;
 			padding-top: 9px;
@@ -707,21 +707,21 @@ ul.select2-results{
 				&.input-xlarge{width:385px;}
 				&.input-xxlarge{width:540px;}
 				&.valid{
-					color: @text;
+					color: $text;
 					font-size: 13px;
 				}
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
-		  color: @grey_three;
+		  color: $grey_three;
 		}
 		input:-ms-input-placeholder,
 		textarea:-ms-input-placeholder {
-		  color: @grey_three;
+		  color: $grey_three;
 		}
 		input::-webkit-input-placeholder,
 		textarea::-webkit-input-placeholder {
-		  color: @grey_three;
+		  color: $grey_three;
 		}
 		.chosen-campaign{
 			.control-group{
@@ -744,7 +744,7 @@ ul.select2-results{
 		}
 		.controls{
 			input[type="text"]{
-				color: @text !important;
+				color: $text !important;
 				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date{
 					background: url('calendar.svg') no-repeat left !important;
 					text-align: right;
@@ -760,10 +760,10 @@ ul.select2-results{
 		.error{
 			.controls{
 				input[type="text"], input[type="email"]{
-					border: 1px solid @buttons !important;
+					border: 1px solid $buttons !important;
 				}
 				.chzn-single{
-					border: 1px solid @buttons !important;
+					border: 1px solid $buttons !important;
 				}
 				.chzn-drop{
 					input[type="text"]{
@@ -803,7 +803,7 @@ ul.select2-results{
 			}
 		}
 		label{
-			color: @brand;
+			color: $brand;
 			font-size: 11px;
 		}
 		.to{
@@ -833,23 +833,23 @@ ul.select2-results{
 		width: 245px;
 		li{
 			&:hover{
-				background: @brand !important;
+				background: $brand !important;
 			}
 			&.highlighted {
-				background: @brand !important;
+				background: $brand !important;
 				background-image: none !important;
 			}
 		}
 	}
 	&.chzn-choices{
 		background: white !important;
-		border: 1px solid @user_menu;
+		border: 1px solid $user_menu;
 	}
 }
 
 .chzn-container-active{
 	.chzn-choices{
-		border:1px solid @user_menu !important;
+		border:1px solid $user_menu !important;
 		box-shadow: none !important;
 	}
 		.chzn-drop{
@@ -860,7 +860,7 @@ ul.select2-results{
 .chzn-container-multi{
 	.chzn-choices{
 		background-image: none !important;
-		border:1px solid @user_menu !important;
+		border:1px solid $user_menu !important;
 		height: 40px !important;
 		padding-top: 6px !important;
 		width: 555px !important;
@@ -868,7 +868,7 @@ ul.select2-results{
 		-moz-border-radius: 4px !important;
 		border-radius: 4px !important;
 		li.search-choice{
-			color:@text !important;
+			color:$text !important;
 			background:none !important;
 			border:0 !important;
 			box-shadow: none !important;
@@ -876,7 +876,7 @@ ul.select2-results{
 		}
 	}
 	.chzn-drop{
-		border: 1px solid @user_menu !important;
+		border: 1px solid $user_menu !important;
 		box-shadow: none !important;
 		top:45px !important;
 		width: 555px !important;
@@ -889,7 +889,7 @@ ul.select2-results{
 			}
 			li.highlighted{
 				background-image: none;
-				background-color: @brand;
+				background-color: $brand;
 			}
 		}
 	}
@@ -898,9 +898,9 @@ ul.select2-results{
 .chzn-container-single{
 	.chzn-single{
 		background:white !important;
-		border: 1px solid @user_menu !important;
+		border: 1px solid $user_menu !important;
 		box-shadow: none !important;
-		color: @text !important;
+		color: $text !important;
 		height: 37px !important;
 		outline:0;
 		width:242px;
@@ -909,7 +909,7 @@ ul.select2-results{
 		}
 	}
 	.chzn-drop{
-		border: 1px solid @user_menu !important;
+		border: 1px solid $user_menu !important;
 		-webkit-border-radius: 6px !important;
 	    border-radius: 6px !important;
 		box-shadow:none;
@@ -922,7 +922,7 @@ ul.select2-results{
 				padding: 8px 6px !important;
 			}
 			li.highlighted{
-				background-color: @brand;
+				background-color: $brand;
 				background-image: none;
 			}
 		}
@@ -940,7 +940,7 @@ ul.select2-results{
 }
 
 .divider{
-	color:@user_menu;
+	color:$user_menu;
 	font-size: 16px;
 	margin: 40px 0;
 	text-align: center;
@@ -949,7 +949,7 @@ ul.select2-results{
 // CAMPAIGNS MODALS
 
 .campaigns-modals{
-	color: @brand;
+	color: $brand;
 	#select-areas-table-wrapper .link-list {
 		ul#areas-list{
 			min-height: 82px;
@@ -972,13 +972,13 @@ ul.select2-results{
 // DATEPICKER STYLES
 
 .ui-widget{
-	font-family: @baseFontFamily;
+	font-family: $baseFontFamily;
 	width: 190px;
 }
 
 .ui-widget-header{
-	background:@brand;
-	border:@brand;
+	background:$brand;
+	border:$brand;
 }
 
 .ui-corner-all{
@@ -987,7 +987,7 @@ ul.select2-results{
 }
 
 .ui-datepicker{
-	border:1px solid @user_menu;
+	border:1px solid $user_menu;
 	a{
 		color: red;
 	}
@@ -997,7 +997,7 @@ ul.select2-results{
 		left: 10px;
 		display: inline-block;
 		border-right: 10px solid transparent;
-		border-bottom: 10px solid @brand;
+		border-bottom: 10px solid $brand;
 		border-left: 10px solid transparent;
 		content: '';
 	}
@@ -1009,14 +1009,14 @@ ul.select2-results{
 	td{
 		&.ui-datepicker-today{
 			a{
-				color:@grey_three;
+				color:$grey_three;
 				font-weight: bold !important;
 				opacity: 1;
 			}
 		}
 	}
 	th{
-		color: @grey_three;
+		color: $grey_three;
 		padding: 4px 0 0 0;
 	}
 	.ui-datepicker-title{
@@ -1077,9 +1077,9 @@ ul.select2-results{
 .ui-datepicker-calendar{
 	.ui-datepicker-other-month{
 		.ui-state-default, .ui-widget-content .ui-state-default{
-			color: @user_menu!important;
+			color: $user_menu!important;
 			&:hover{
-				color: @menu !important;
+				color: $menu !important;
 			}
 		}
 	}
@@ -1105,20 +1105,20 @@ ul.select2-results{
 }
 
 .ui-timepicker-list{
-	border: 1px solid @user_menu;
+	border: 1px solid $user_menu;
 	-webkit-border-radius: 6px !important;
 	border-radius: 6px !important;
 	box-shadow: none;
 	width:112px !important;
 	li{
-		color: @text;
+		color: $text;
 		padding: 3px 0 3px 32px;
 		&:hover{
-			background-color: @brand !important;
+			background-color: $brand !important;
 			color: white !important;
 		}
 		&.ui-timepicker-selected{
-			background-color: @brand !important;
+			background-color: $brand !important;
 			color: white !important;
 		}
 	}
@@ -1130,19 +1130,19 @@ ul.select2-results{
 .ui-state-default, .ui-widget-content .ui-state-default{
 	background: white !important;
 	border:0;
-	color: @menu;
+	color: $menu;
 	font-size: 11px;
 	font-weight: normal;
 	opacity: 0.8;
 	text-align: center;
 	&:hover{
-		background:@grey_one !important;
+		background:$grey_one !important;
 		-webkit-border-radius: 3px;
     	border-radius: 3px;
 	}
 }
 .ui-state-disabled, .ui-widget-content .ui-state-disabled{
-	color: @user_menu;
+	color: $user_menu;
 }
 
 .ui-icon, .ui-widget-content .ui-icon{
@@ -1155,11 +1155,11 @@ ul.select2-results{
 // ERROR
 .control-group.error{
 	.control-label{
-		color:@brand;
+		color:$brand;
 		display: inline-block;
 	}
     .help-inline {
-    	color:@buttons;
+    	color:$buttons;
 		font-size: 11px;
 		margin-bottom: 2px;
 	}
@@ -1168,7 +1168,7 @@ ul.select2-results{
 // VALID
 
 .valid{
-	color: @valid;
+	color: $valid;
 	font-size: 11px;
 	margin-bottom: 2px;
 }

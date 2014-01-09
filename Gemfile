@@ -57,7 +57,6 @@ gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
 gem "oink"
-gem 'therubyracer', :platforms => :ruby
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -68,7 +67,6 @@ group :assets do
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 
   gem 'uglifier', '>= 1.0.3'
-  gem "less-rails", ">= 2.2.6"
   gem 'jquery-fileupload-rails'
 end
 
