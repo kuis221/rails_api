@@ -39,4 +39,6 @@ Brandscopic::Application.configure do
 
   ENV["REDISTOGO_URL"] = 'redis://localhost:9999'
 
+  config.cache_store = :null_store
+
 end

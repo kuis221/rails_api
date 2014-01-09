@@ -31,6 +31,7 @@ wb.add_worksheet(name: "Events") do |sheet|
                    event.status,
                    event.event_status],
                   :style => [row_data_text,
+                             row_data_text,
                              row_data_date,
                              row_data_date,
                              row_data_text,
