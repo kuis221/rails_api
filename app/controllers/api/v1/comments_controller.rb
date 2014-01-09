@@ -35,12 +35,12 @@ class Api::V1::CommentsController < Api::V1::ApiController
     [
       {
         "id": 18,
-        "name": "Comment text #1"
+        "content": "Comment text #1"
         "created_at": "2014-01-07T12:52:22-08:00"
       },
       {
         "id": 19,
-        "name": "Comment text #2"
+        "content": "Comment text #2"
         "created_at": "2014-01-07T12:54:35-08:00"
       }
     ]
@@ -48,4 +48,47 @@ class Api::V1::CommentsController < Api::V1::ApiController
   def index
     @comments = parent.comments.sort_by {|c| c.id}
   end
+
+  api :POST, '/api/v1/events/:event_id/comments', 'Create a new comment for an event'
+  param :event_id, :number, required: true, desc: "Event ID"
+  param :comment, Hash, required: true, :action_aware => true do
+    param :content, String, required: true, desc: "Comment text"
+  end
+  description <<-EOS
+  Allows to create a comment for an existing event.
+  EOS
+  example <<-EOS
+  POST /api/v1/events/192/comments.json?auth_token=AJHshslaA.sdd&company_id=1
+  DATA:
+  {
+    comment: {
+      content: 'Text for the first comment'
+    }
+  }
+
+  RESPONSE:
+  {
+    {
+      "id": 20,
+      "content": "Text for the first comment"
+      "created_at": "2014-01-07T10:16:39-08:00"
+    }
+  }
+  EOS
+  def create
+    create! do |success, failure|
+      success.json { render :show }
+      failure.json { render json: resource.errors }
+    end
+  end
+
+  protected
+
+    def build_resource_params
+      [permitted_params || {}]
+    end
+
+    def permitted_params
+      params.permit(comment: [:content])[:comment]
+    end
 end
