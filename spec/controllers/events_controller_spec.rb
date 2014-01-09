@@ -127,7 +127,7 @@ describe EventsController do
           get 'test_export'
           woorbook_from_response do |oo|
             oo.last_row.should == 1
-            1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS"]
+            1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS"]
           end
         end
       end
@@ -142,7 +142,7 @@ describe EventsController do
           get 'test_export'
           woorbook_from_response do |oo|
             oo.last_row.should == 2
-            1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved"]
+            1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved"]
           end
         end
       end

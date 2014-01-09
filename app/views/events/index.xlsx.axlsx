@@ -7,6 +7,7 @@ row_data_date = wb.styles.add_style sz: 11, :format_code => 'mm/dd/yy hh:mm AM/P
 
 wb.add_worksheet(name: "Events") do |sheet|
 	sheet.add_row ['CAMPAIGN NAME',
+                 'AREA',
                  'START',
                  'END',
                  'VENUE NAME',
@@ -19,6 +20,7 @@ wb.add_worksheet(name: "Events") do |sheet|
 
   each_collection_item do |event|
     sheet.add_row [event.campaign_name,
+                   area_for_event(event),
                    Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
                    Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC'),
                    event.place_name,

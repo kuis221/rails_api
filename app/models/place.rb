@@ -231,7 +231,6 @@ class Place < ActiveRecord::Base
         {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
       end
       local_references = local_results.map{|p| [p.reference, p.place.place_id]}.flatten.compact
-      puts local_references.inspect
 
       google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
       if google_results && google_results['results'].present?
