@@ -57,10 +57,14 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
-gem "oink"
 gem 'therubyracer', :platforms => :ruby
 gem "spring", group: :development
 gem "spring-commands-rspec", group: :development
+
+#For memory debugging
+gem "oink"
+gem "rack-leakin"
+
 
 # Gems used only for assets and not required
 # in production environments by default.
