@@ -1,3 +1,4 @@
+# encoding: utf-8
 class UpdateAgeKpiSegments < ActiveRecord::Migration
   def up
     add_column :kpis_segments, :ordering, :integer, limit: 3

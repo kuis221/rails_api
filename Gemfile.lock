@@ -158,9 +158,6 @@ GEM
       has_scope (~> 0.5.0)
       responders (~> 0.9)
     journey (1.0.4)
-    jquery-fileupload-rails (0.4.1)
-      actionpack (>= 3.1)
-      railties (>= 3.1)
     jquery-rails (2.3.0)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
@@ -301,11 +298,6 @@ GEM
     ruby-ole (1.2.11.7)
     ruby-progressbar (1.2.0)
     rubyzip (0.9.9)
-    s3_direct_upload (0.1.6)
-      coffee-rails (>= 3.2.1)
-      jquery-fileupload-rails (~> 0.4.1)
-      rails (>= 3.2)
-      sass-rails (>= 3.2.5)
     sass (3.2.12)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -433,7 +425,6 @@ DEPENDENCIES
   google_places
   has_scope
   inherited_resources
-  jquery-fileupload-rails
   jquery-rails
   kgio
   launchy
@@ -464,7 +455,6 @@ DEPENDENCIES
   rspec-mocks
   rspec-rails (~> 2.0)
   rubyzip
-  s3_direct_upload
   sass-rails (~> 3.2.3)
   shoulda
   simple-navigation

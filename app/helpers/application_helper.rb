@@ -142,7 +142,7 @@ module ApplicationHelper
         else
           the_date = start_at.strftime('%^a <b>%b %e, %Y</b>'+options[:date_separator]).html_safe
         end
-        the_date + "#{start_at.strftime('%l:%M %p').strip} – #{end_at.strftime('%l:%M %p').strip}".html_safe
+        the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
       end
     end
   end

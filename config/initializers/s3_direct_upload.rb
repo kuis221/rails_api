@@ -1,3 +1,7 @@
+require 's3_direct_upload'
+
+ActionView::Base.send(:include, S3DirectUpload::UploadHelper) if defined?(ActionView::Base)
+
 S3DirectUpload.config do |c|
   c.access_key_id     = S3_CONFIGS['access_key_id']
   c.secret_access_key = S3_CONFIGS['secret_access_key']
