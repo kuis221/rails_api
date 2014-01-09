@@ -44,7 +44,8 @@ class Company < ActiveRecord::Base
       if admin_email
         role = self.roles.create({name: 'Super Admin', is_admin: true}, without_protection: true)
         if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
-          new_company_user = self.company_users.create({role_id: role.id, user: user}, without_protection: true)
+          new_company_user = self.company_users.build({role_id: role.id, user: user}, without_protection: true)
+          new_company_user.save validate: false
           UserMailer.company_existing_admin_invitation(user, self).deliver
         else
           new_user = User.create({email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true}, as: :admin)
