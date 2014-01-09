@@ -32,7 +32,6 @@ jQuery ->
 						for i in $(e).children()
 						#finds what element is not fully shown
 							if ($(i).offset().left + $(i).width() > arrowRightLeft)
-								alert($(i).attr('class'))
 								error_gap = $(i).width()
 								first_element = $(i).offset().left
 								break
