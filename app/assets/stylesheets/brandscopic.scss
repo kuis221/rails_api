@@ -5856,20 +5856,25 @@ ul#reports-list {
 // TESTS ADJUSTMENTS FOR GALLERY 
 
 .gallery {
-  margin-bottom: 8px;
   position: relative;
 }
 
 .gallery ul{
+	margin-bottom:0;
   margin-left:0;
   width: 100%;
 }
 
 .gallery ul > li{
   border-bottom: 0 !important;
-  display: inline-block;
-  list-style: none;
-  width: 33.33333333%
+	padding: 8px 10px;
+	box-sizing: border-box;
+	display: inline-block;
+	list-style: none;
+  width: 33.33333333%;
+  &:last-child{
+  	padding-bottom: 0;
+  }
 }
 
 .gallery ul > li > a > img{
