@@ -68,7 +68,7 @@ class Area < ActiveRecord::Base
   def place_in_scope?(place)
     if place.present?
       political_location = Place.political_division(place).join('/')
-      locations.include?(political_location)
+      locations.any?{|location| political_location.include?(location) }
     else
       false
     end
