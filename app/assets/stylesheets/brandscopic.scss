@@ -3306,8 +3306,14 @@ ul{
 	}
 
 .fancybox-wrap {
+	left:107px;
 	.fancybox-skin{
 		background-color: white;
+		padding: 60px 190px 60px 0px !important;
+		width: auto;
+		height: auto;
+		display: block !important;
+		float: left !important;
 	}
 	.fancybox-title {
 		font-family: $baseFontFamily;
