@@ -692,15 +692,22 @@
 	}
 }
 
-/*-- GALERÍA DE IMÁGENES 
+/*-- GALERÍA DE IMÁGENES -- */
 
-@media (min-width: 620px) {
-	.thumbnail-container{
-		.thumbnails img{
-			width: 50%;
-		}
-		.thumbnail-toolbar{
-			width: 50%;
-		}
+@media (max-width: 1100px) {
+	.gallery ul > li{
+		width:25%;
 	}
-}--*/
+}
+
+@media (max-width: 762px) {
+	.gallery ul > li{
+		width: 33.33333333%;
+	}
+}
+
+@media (max-width: 620px) {
+	.gallery ul > li{
+		width: 50%;
+	}
+}

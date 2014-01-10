@@ -11,3 +11,4 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
       = link_to image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s), photo.file.url(:medium), rel: 'photo-gallery', class: 'fancybox', caption: render(partial: 'results/photos/photo_info', locals: {photo: photo, show_date_details:show_date_details}).gsub(/"/, '&quot;').html_safe
     - else
       .image-loading-container
+    
