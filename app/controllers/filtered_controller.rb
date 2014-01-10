@@ -68,7 +68,7 @@ class FilteredController < InheritedResources::Base
 
     def export_list(export)
       @_export = export
-      @_params = @search_params = export.params
+      @_params = @search_params = export.params.merge(per_page: 100)
       @solr_search = resource_class.do_search(@search_params)
       @collection_count = @solr_search.total
       @total_pages = @solr_search.results.total_pages
@@ -122,7 +122,6 @@ class FilteredController < InheritedResources::Base
     def total_pages
       @total_pages ||= (collection_count.to_f/items_per_page.to_f).ceil
     end
-
 
     # Autocomplete helper methods
     def autocomplete_buckets(list)
