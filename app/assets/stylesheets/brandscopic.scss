@@ -9,7 +9,7 @@
 		url('/assets/font/icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
-}
+} 
 
 @font-face {
 	font-family: 'rabioheadregular';
@@ -5851,4 +5851,29 @@ ul#reports-list {
 			-webkit-font-smoothing: antialiased;
 		}
 	}
+}
+
+// TESTS ADJUSTMENTS FOR GALLERY 
+
+.gallery {
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.gallery ul{
+  margin-left:0;
+  width: 100%;
+}
+
+.gallery ul > li{
+  border-bottom: 0 !important;
+  display: inline-block;
+  list-style: none;
+  width: 33.33333333%
+}
+
+.gallery ul > li > a > img{
+  display: block;
+  margin: 1px 2px;
+  width: 100%;
 }
