@@ -5871,6 +5871,7 @@ ul#reports-list {
 	padding: 8px 10px;
 	box-sizing: border-box;
 	display: inline-block;
+	position:relative;
 	list-style: none;
 	width: 20%;
 	ul.thumbnail-toolbar{
@@ -5879,14 +5880,18 @@ ul#reports-list {
 	&:hover{
 		ul.thumbnail-toolbar{
 			background-color: rgba(0, 0, 0, 0.6);
+			bottom:8px;
 			display: block;
 			position: absolute;
 			height: 35px;
 			list-style-type: none;
-			margin:85px 0;
 			overflow:hidden;
-			width: 180px;
-			li a{
+			width: -webkit-calc(100% - 20px);
+			width: -moz-calc(100% - 20px);
+			width: calc(100% - 20px);
+			li{
+				padding:0;
+			  a{
 			    color: white;
 			    float: right;
 			    margin: 10px;
@@ -5897,16 +5902,16 @@ ul#reports-list {
 			    	margin: 0 5px 12px 12px;
 			    	position: relative;
 			    	&:before{
-				       	color: $grey_one;
-						content: "\e00b" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+				      color: $grey_one;
+							content: "\e00b" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
 			    	}
 			    }
 			    &.icon-remove-circle{
@@ -5914,8 +5919,21 @@ ul#reports-list {
 			    	margin: 10px;
 			    	position: relative;
 			    	&:before{
-				        color: $grey_one;
-						content: "\e011" !important;
+				      color: $grey_one;
+							content: "\e011" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
+			    }
+			    &.icon-ok-circle:before{
+				    color: $grey_one;
+						content: "\e00d" !important;
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
@@ -5925,19 +5943,7 @@ ul#reports-list {
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 					}
-			    }
-			    &.icon-ok-circle:before{
-			        color: $grey_one;
-					content: "\e00d" !important;
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 15px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-			    }
+			  }
 			}
 		}
 	}
