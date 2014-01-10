@@ -38,8 +38,21 @@ describe Api::V1::CommentsController do
                          'id' => comment2.id,
                          'content' => 'Comment #2',
                          'created_at' => '2013-08-23T09:15:00-07:00'
-                        }
-                       ]
+                        }]
+    end
+  end
+
+  describe "POST 'create'" do
+    let(:event) {FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)}
+    it "create a new comment for an existing event" do
+      expect {
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, comment: {content: 'The very new comment'}, format: :json
+      }.to change(Comment, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('show')
+      comment = Comment.last
+      comment.content.should == 'The very new comment'
+      event.comments.should == [comment]
     end
   end
 end

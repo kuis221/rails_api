@@ -283,7 +283,7 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-1)
 
-      event.reload
+      event = Event.find(event.id)
       event.result_for_kpi(kpi1).display_value.should == 'Dos'
 
       event.results.count.should == 1

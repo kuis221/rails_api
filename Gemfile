@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.0.0'
+ruby '2.1.0'
 
 gem 'rails', '3.2.16'
 gem "rack-timeout"
@@ -38,7 +38,7 @@ gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
 gem 'progress_bar'
-gem 'unicorn'
+gem 'puma'
 gem "geocoder"
 gem "nested_form"
 gem 'axlsx'
@@ -47,7 +47,6 @@ gem 'rubyzip'
 gem 'redis'
 gem "resque", :require => "resque/server"
 gem 'resque-loner'
-gem 's3_direct_upload'
 gem 'unread'
 gem 'strong_parameters'
 gem 'apipie-rails'
@@ -56,8 +55,11 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
+
+#For memory debugging
 gem "oink"
-gem 'therubyracer', :platforms => :ruby
+gem "rack-leakin"
+
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -68,8 +70,6 @@ group :assets do
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 
   gem 'uglifier', '>= 1.0.3'
-  gem "less-rails", ">= 2.2.6"
-  gem 'jquery-fileupload-rails'
 end
 
 gem 'jquery-rails'

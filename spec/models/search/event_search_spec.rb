@@ -45,13 +45,13 @@ describe Event, search: true do
     Event.do_search(company_id: 1, user: [user3.id,user4.id]).results.should =~ [event, event2]
 
     # Search for a specific Event's place
-    place_id = "#{Place.location_for_index(place)}||#{place.name}"
-    place2_id = "#{Place.location_for_index(place2)}||#{place2.name}"
+    place_id = Place.encode_location(Place.political_division(place))
+    place2_id = Place.encode_location(Place.political_division(place2))
     Event.do_search(company_id: 1, q: "place,#{place.id}").results.should =~ [event]
     Event.do_search(company_id: 1, q: "place,#{place2.id}").results.should =~ [event2]
-    Event.do_search(company_id: 1, place: [Base64.encode64(place_id)]).results.should =~ [event]
-    Event.do_search(company_id: 1, place: [Base64.encode64(place2_id)]).results.should =~ [event2]
-    Event.do_search(company_id: 1, place: [Base64.encode64(place_id), Base64.encode64(place2_id)]).results.should =~ [event, event2]
+    Event.do_search(company_id: 1, location: [place_id]).results.should =~ [event]
+    Event.do_search(company_id: 1, location: [place2_id]).results.should =~ [event2]
+    Event.do_search(company_id: 1, location: [place_id, place2_id]).results.should =~ [event, event2]
 
     # Search for brands associated to the Events
     Event.do_search(company_id: 1, q: "brand,#{brand.id}").results.should =~ [event, event2]

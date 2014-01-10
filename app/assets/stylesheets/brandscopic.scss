@@ -23,41 +23,41 @@
 }
 
 /*-- COLOR PALETTE --*/
-@app_bg: #ececec;
-@assigned: #d6d64b;
-@borders: #d3d3d3;
-@brand:#989898;
-@buttons:#de4d43;
-@buttons-border: #acacac;
-@buttons-hover:#cc4137;
-@btnHover: #d6d6d6;
-@complete: #90bf43;
-@grey_one:#dfdfdf;
-@grey_two:#ececec;
-@grey_three:#7a7a7a;
-@header:#363636;
-@menu:#4f4f4f;
-@stars:#cfc53e;
-@text:#666666;
-@due_today:#3e9ccf;
-@user_menu:#c0c0c0;
-@venues_blue:#3e9ccf;
-@late:#de4d43;
-@submitted:#3e9ccf;
-@approved:#90bf43;
-@rejected:#de4d43;
-@alert_red: #de4d43;
-@alert_blue: #3e9ccf;
-@alert_grey: #7a7a7a;
+$app_bg: #ececec;
+$assigned: #d6d64b;
+$borders: #d3d3d3;
+$brand:#989898;
+$buttons:#de4d43;
+$buttons-border: #acacac;
+$buttons-hover:#cc4137;
+$btnHover: #d6d6d6;
+$complete: #90bf43;
+$grey_one:#dfdfdf;
+$grey_two:#ececec;
+$grey_three:#7a7a7a;
+$header:#363636;
+$menu:#4f4f4f;
+$stars:#cfc53e;
+$text:#666666;
+$due_today:#3e9ccf;
+$user_menu:#c0c0c0;
+$venues_blue:#3e9ccf;
+$late:#de4d43;
+$submitted:#3e9ccf;
+$approved:#90bf43;
+$rejected:#de4d43;
+$alert_red: #de4d43;
+$alert_blue: #3e9ccf;
+$alert_grey: #7a7a7a;
 
 /*-- FONT FAMILY STYLES --*/
-@baseFontFamily:'Lato', sans-serif;
+$baseFontFamily:'Lato', sans-serif;
 
 
-.box-sizing(@value){
-  box-sizing: @value;
-  -moz-box-sizing: @value;
-  -webkit-box-sizing: @value;
+@mixin box-sizing($value){
+  box-sizing: $value;
+  -moz-box-sizing: $value;
+  -webkit-box-sizing: $value;
 }
 
 
@@ -91,10 +91,10 @@ body.events.show{
 			&.error{
 				.controls{
 					input[type="text"]{
-						border-color: @alert_red !important;
+						border-color: $alert_red !important;
 					}
 					span.add-on{
-						background-color: @alert_red;
+						background-color: $alert_red;
 					}
 				}
 			}
@@ -144,25 +144,25 @@ ul.nav {
 	}
 	#analysis, #dashboard, #events, #tasks, #venues, #results {
 		a:hover{
-		background-color: @text;
-		color:@user_menu;
+		background-color: $text;
+		color:$user_menu;
 		}
 		a.active:hover{
-			background-color: @app_bg;
-			color:@grey_three;
+			background-color: $app_bg;
+			color:$grey_three;
 			&:before{
-				color:@grey_three;
+				color:$grey_three;
 			}
 		}
 		a:hover:before{
-			color: @user_menu;
+			color: $user_menu;
 		}
 		a:active{
-			background-color: @app_bg;
-			color:@grey_three;
+			background-color: $app_bg;
+			color:$grey_three;
 		}
 		a:active:before{
-			color:@grey_three;
+			color:$grey_three;
 		}
 	}
 }
@@ -172,10 +172,10 @@ ul.nav {
 }
 
 a{
-	color:@text;
+	color:$text;
   	outline: 0;
   	&:focus{
-  		color:@text;
+  		color:$text;
   		outline:0;
   	}
 }
@@ -185,7 +185,7 @@ a{
 }
 
 input{
-	font-family: @baseFontFamily;
+	font-family: $baseFontFamily;
 }
 select,
 textarea,
@@ -204,8 +204,8 @@ input[type="url"],
 input[type="search"],
 input[type="color"],
 .uneditable-input {
-	background-color: @grey_one !important;
-	border: @grey_one;
+	background-color: $grey_one !important;
+	border: $grey_one;
 	font-size: 13px;
 	height: 33px;
 	margin-bottom: 0;
@@ -227,26 +227,26 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 // PROGRESS BAR
 .counter{
-	color: @brand !important;
+	color: $brand !important;
 }
 .text-success{
 	.counter{
-		color: @complete!important;
+		color: $complete!important;
 	}
 }
 .text-error{
 	.counter{
-		color: @buttons !important;
+		color: $buttons !important;
 	}
 }
 .progress{
-	background-color: @grey_one !important;
+	background-color: $grey_one !important;
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
 	width: 220px !important;
 	.bar{
-		background-color: @due_today!important;
+		background-color: $due_today!important;
 		background-image: none !important;
 		box-shadow: none !important;
 		&.bar-success {
@@ -264,28 +264,28 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	&.active{
 		.bar{
-			background-color: @app_bg !important;
+			background-color: $app_bg !important;
 			background-image: none !important;
 			box-shadow: none !important;
 		}
 	}
 	&.progress-danger{
 		.bar{
-			background-color: @buttons!important;
+			background-color: $buttons!important;
 			background-image: none !important;
 			box-shadow: none !important;
 		}
 	}
 	&.progress-info{
 		.bar{
-			background-color: @brand !important;
+			background-color: $brand !important;
 			background-image: none !important;
 			box-shadow: none !important;
 		}
 	}
 	&.progress-success{
 		.bar{
-			background-color: @complete !important;
+			background-color: $complete !important;
 			background-image: none !important;
 			box-shadow: none !important;
 		}
@@ -325,16 +325,16 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
     	text-decoration: underline !important;
     }
     &.alert-info, &.alert-grey{
-    	background-color: @brand;
+    	background-color: $brand;
     	&.submitted{
-    		background-color: @venues_blue;
+    		background-color: $venues_blue;
     	}
     }
     &.alert-danger, &.alert-info{
     	margin-bottom: 30px;
     }
     &.alert-success{
-    	background-color: @complete;
+    	background-color: $complete;
     }
 }
 
@@ -345,12 +345,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 
 .alert-danger, .alert-error {
-	background-color: @buttons;
+	background-color: $buttons;
 	color: white;
 }
 
 .collection-list-description {
-	background-color: @brand;
+	background-color: $brand;
 	box-shadow: none;
 	color: white;
 	font-size: 16px;
@@ -385,7 +385,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 /*-- Datepick Sidebar -- */
 a.edit:after{
 	background-color: none;
-	color: @app_bg;
+	color: $app_bg;
 	content: "\e006";
 	font-family: 'icons';
 	font-size: 15px;
@@ -438,11 +438,11 @@ a.datepick-cmd{
 	text-indent: 200%;
 }
 a.datepick-cmd:hover{
-	background-color: @brand;
+	background-color: $brand;
 }
 
 .checker{
-	background-color: @grey_one;
+	background-color: $grey_one;
 	display: inline-block;
 	float:left;
 	height: 20px;
@@ -453,7 +453,7 @@ a.datepick-cmd:hover{
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	span.checked{
-		background-color: @brand;
+		background-color: $brand;
 		display: block;
 		height: 20px;
 		margin: 0 15px 0 0;
@@ -509,13 +509,13 @@ a.datepick-cmd:hover{
 	margin-bottom: 10px;
 }
 .datepick-month td .datepick-other-month {
-	color:@user_menu;
+	color:$user_menu;
 }
 .datepick-month{
 	border: 0;
 	width: 208px;
 	table{
-		border: 1px solid @user_menu;
+		border: 1px solid $user_menu;
 		display: block;
 		padding: 5px 8px 7px 8px;
 		width: auto;
@@ -530,7 +530,7 @@ a.datepick-cmd:hover{
 	th{
 		background-color: white;
 		border: 0;
-		color:@grey_three;
+		color:$grey_three;
 		font-size: 12px;
 		font-weight: bold;
 		padding-top: 5px;
@@ -539,20 +539,20 @@ a.datepick-cmd:hover{
 		padding: 2px 4px;
 	}
 	a{
-		color:@menu;
+		color:$menu;
 		font-size: 12px;
 		opacity:0.8;
 		padding: 1px 2px;
 		filter:alpha(opacity=80); /* For IE8 and earlier */
 		&.datepick-today{
-			color: @grey_three;
+			color: $grey_three;
 			font-size: 12px;
 			font-weight: bold;
 			opacity:1;
 			background-color: white !important;
 		}
 		&.datepick-event{
-			color: @buttons;
+			color: $buttons;
 			font-weight: bold;
 		}
 		&:focus{
@@ -563,22 +563,22 @@ a.datepick-cmd:hover{
 		display: block;
 		width: 100%;
 		padding: 1px 2px;
-		background-color: @grey_one !important;
-		color: @text;
+		background-color: $grey_one !important;
+		color: $text;
 		text-decoration: none;
 		-webkit-border-radius: 3px;
     	border-radius: 3px;
 	}
 }
 .datepick-month td .datepick-selected {
-	background-color: @brand !important;
+	background-color: $brand !important;
 	color: white;
 }
 .datepick-month td, .datepick-month a, .datepick-weekend {
 	background-color: white !important;
 }
 .datepick-month-header{
-	background-color:@brand;
+	background-color:$brand;
 	color: white;
 	font-weight: normal;
 	height:25px;
@@ -611,37 +611,37 @@ a.more-options-link:after{
  	top:4px;
 }
 body{
-	color:@text;
-	font-family: @baseFontFamily;
+	color:$text;
+	font-family: $baseFontFamily;
 	font-size: 13px;
 	font-weight: 400;
 }
 body.empty-layout{
-	background: @text;
-	color: @brand;
+	background: $text;
+	color: $brand;
 	a{
-		color:@brand;
+		color:$brand;
 	}
 	h2{
 		color:white;
 	}
 }
 body.app-layout{
-	background: @app_bg url('bg.png') repeat-y left;
+	background: $app_bg url('bg.png') repeat-y left;
 	padding-top: 41px;
 }
 
 .btn{
-	background-color: @user_menu;
+	background-color: $user_menu;
 	background-image: none;
 	border: 0;
-	font-family: @baseFontFamily;
+	font-family: $baseFontFamily;
 	padding: 7px 17px;
 	text-shadow:none;
 	&.active{
 		&.list, &.map, &.calendar{
 			&:after{
-				color: @user_menu;
+				color: $user_menu;
 			}
 		}
 	}
@@ -663,7 +663,7 @@ body.app-layout{
 		outline:0;
 	}
 	&:hover{
-		background-color: @btnHover;
+		background-color: $btnHover;
 		border: 0;
 		box-shadow: none;
 	}
@@ -743,14 +743,14 @@ body.app-layout{
 		border: 0;
 		box-shadow: none;
 		&.list{
-			border-right:1px solid @buttons-border;
+			border-right:1px solid $buttons-border;
 		}
 		&.calendar{
-			border-left: 1px solid @buttons-border;
-			border-right: 1px solid @buttons-border;
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
 		}
 		&.map{
-			border-left: 1px solid @buttons-border;
+			border-left: 1px solid $buttons-border;
 		}
 	}
 }
@@ -760,13 +760,13 @@ body.app-layout{
 }
 
 .btn.active{
-	background-color: @brand;
+	background-color: $brand;
 	border: 0;
 	box-shadow: none;
 	-webkit-font-smoothing: antialiased;
 }
 .btn-primary{
-	background-color: @buttons !important;
+	background-color: $buttons !important;
 	background-image:none !important;
 	border: 0;
 	box-shadow: none;
@@ -776,10 +776,10 @@ body.app-layout{
 	text-decoration: none !important;
 	text-shadow:none;
     &:hover{
-		background-color: @buttons-hover !important;
+		background-color: $buttons-hover !important;
     }
     &:active{
-    	background-color: @buttons-hover;
+    	background-color: $buttons-hover;
     	box-shadow: none;
     }
 }
@@ -791,7 +791,7 @@ body.app-layout{
 }
 
 .btn-info{
-	background-color: @user_menu !important;
+	background-color: $user_menu !important;
 	color: white !important;
 	font-size: 13px;
 	font-weight: bold;
@@ -809,7 +809,7 @@ body.app-layout{
 		}
 	}
 	&:hover{
-		background-color: @brand !important;
+		background-color: $brand !important;
 	}
 }
 
@@ -835,7 +835,7 @@ p{
 
 /*-- Login styles --*/
 .login_box{
-	background-color: @menu;
+	background-color: $menu;
 	margin: 10% auto 0 auto !important;
 	padding: 20px 20px 40px 20px;
 	text-align: center;
@@ -985,7 +985,7 @@ p{
     		margin-bottom: 0;
     	}
     	label{
-    		color: @brand;
+    		color: $brand;
     		display:block;
     		padding: 0 0 2px 10px;
     		text-align: left;
@@ -1004,15 +1004,15 @@ p{
 	}
 	input:-moz-placeholder,
 	textarea:-moz-placeholder {
-	  color: @grey_three;
+	  color: $grey_three;
 	}
 	input:-ms-input-placeholder,
 	textarea:-ms-input-placeholder {
-	  color: @grey_three;
+	  color: $grey_three;
 	}
 	input::-webkit-input-placeholder,
 	textarea::-webkit-input-placeholder {
-	  color: @grey_three;
+	  color: $grey_three;
 	}
 	.brand{
 		background-image: url('brand.svg');
@@ -1021,7 +1021,7 @@ p{
 		height:65px;
 	}
 	.btn-primary{
-		font-family: @baseFontFamily;
+		font-family: $baseFontFamily;
 		font-size: 15px;
 		box-shadow: none;
 		height: 42px;
@@ -1037,12 +1037,12 @@ p{
 		margin: 0px;
 	}
 	h2{
-		color: @user_menu !important;
+		color: $user_menu !important;
 		font-size: 24px;
 		margin: 48px 0 28px 0;
 	}
 	label{
-		color:@user_menu;
+		color:$user_menu;
 		display: none;
 	}
 	p{
@@ -1066,17 +1066,17 @@ footer{
 	padding-top: 10px;
 	text-align: center;
 	a{
-		color: @user_menu;
+		color: $user_menu;
 		font-weight: normal;
 		&:hover{
-			color: @user_menu;
+			color: $user_menu;
 		}
 	}
 }
 header{
 	&.navbar-inverse {
 		.navbar-inner {
-			background-color: @header;
+			background-color: $header;
 			padding: 0;
 			background-image: none;
 		}
@@ -1103,22 +1103,22 @@ h1, h2, h3{
 }
 
 li.dropdown a{
-	color:@user_menu;
+	color:$user_menu;
 }
 .nav{
 	margin-bottom: 0;
 }
 
 .nav>li>a:focus{
-	background-color: @menu;
-	color:@grey_three;
+	background-color: $menu;
+	color:$grey_three;
 }
 
 .nav-tabs{
 	border-bottom: 0;
 }
 .nav-tabs li a{
-	background-color: @brand;
+	background-color: $brand;
 	border: 0;
 	color: white;
 	text-align: center;
@@ -1127,15 +1127,15 @@ li.dropdown a{
 .nav-tabs li a:hover{
 	background-color: white;
 	border-bottom: 0;
-	color: @brand;
+	color: $brand;
 }
 .nav-tabs>.active>a{
-	color: @brand;
+	color: $brand;
 	border-left: 0;
 	border-right: 0;
 	border-top: 0;
 	&:hover{
-		color: @brand;
+		color: $brand;
 		border-left:0;
 		border-right: 0;
 		border-top: 0;
@@ -1153,7 +1153,7 @@ li.dropdown a{
 	.nav {
 		margin: 0;
 		li>a{
-			color: @user_menu;
+			color: $user_menu;
 			padding-left: 12px;
 			padding-right: 12px;
 		}
@@ -1164,9 +1164,9 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
-			background-color: @menu;
+			background-color: $menu;
 			border-radius: 0;
-			color: @user_menu;
+			color: $user_menu;
 			height: 19px;
 			margin-top:0;
 			padding-top: 14px;
@@ -1176,60 +1176,60 @@ li.dropdown a{
 		.active ul li.active a,
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
-			background-color: @header !important;
+			background-color: $header !important;
 			background-image: none;
 		}
 		.nav-pills>.active>a,
 		.nav-pills>.active>a:hover,
 		.nav-pills>.active>a:focus {
-			background-color: @menu;
+			background-color: $menu;
 		}
 
 	}
 }
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
-	background-color: @menu;
+	background-color: $menu;
 	border-radius: 0;
-	color: @user_menu;
+	color: $user_menu;
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
 
 .dropdown-menu>.active>a{
-	background-color: @header;
+	background-color: $header;
 	background-image: none;
 	&:hover{
-		background-color: @header;
+		background-color: $header;
 		background-image: none;
 	}
 }
 .nav-pills>.active>a{
-	background-color: @menu;
+	background-color: $menu;
 	border-radius: 0;
-	color: @user_menu;
+	color: $user_menu;
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
 .nav-pills>.active>a:hover{
-	background-color: @menu;
+	background-color: $menu;
 	border-radius: 0;
-	color: @user_menu;
+	color: $user_menu;
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
 }
 .nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
-	background-color: @menu;
+	background-color: $menu;
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
-	background-color: @header !important;
+	background-color: $header !important;
 	background-image:none;
 }
 li#help_menu{
 	.single-link:before{
-		color: @user_menu;
+		color: $user_menu;
 		content: "\e025";
 	  	display: inline-block;
 	  	font-family: 'icons';
@@ -1276,7 +1276,7 @@ li.dropdown#user_menu{
 
 .nav-stacked{
 	li a{
-		color:@grey_three;
+		color:$grey_three;
 		font-weight: bold;
 		padding: 28px 0 20px 0;
 		height:40px;
@@ -1288,7 +1288,7 @@ li.dropdown#user_menu{
   li{
     position: relative;
     &.active{
-      background-color: @app_bg;
+      background-color: $app_bg;
       &:first-child:before{
       	content:"";
       }
@@ -1334,7 +1334,7 @@ label{
 	.checker{
 		margin:1px 5px 0 -30px;
 		span.checked{
-			background-color: @brand;
+			background-color: $brand;
 			margin: 0;
 		}
 		span.checked:after{
@@ -1346,17 +1346,17 @@ label{
   text-align: right;
   text-decoration: underline;
   a{
-  	color: @user_menu;
+  	color: $user_menu;
   }
   a:hover{
-    color: @text;
+    color: $text;
   }
 }
 .form-facet-filters{
 	margin-bottom: 20px;
 }
 .menu{
-	background-color: @menu;
+	background-color: $menu;
 	float: left;
 	font-size: 11px;
 	text-align: center;
@@ -1369,7 +1369,7 @@ label{
 }
 li#admin{
 	ul.dropdown-menu{
-	background-color: @menu;
+	background-color: $menu;
 	box-shadow: none;
 	margin-top: 12px;
 	min-width: 148px;
@@ -1383,17 +1383,17 @@ li#notifications{
 	}
 
 	&.has-grey-notifications {
-		.dropdown-toggle { background-color:  @alert_grey; }
+		.dropdown-toggle { background-color:  $alert_grey; }
 	}
 	&.has-blue-notifications {
-		.dropdown-toggle { background-color:  @alert_blue; }
+		.dropdown-toggle { background-color:  $alert_blue; }
 	}
 	&.has-red-notifications {
-		.dropdown-toggle { background-color: @alert_red; }
+		.dropdown-toggle { background-color: $alert_red; }
 	}
 
 	.dropdown-menu{
-		background-color: @grey_one;
+		background-color: $grey_one;
 		border: 0;
 		box-shadow: none;
 		margin-top: 22px;
@@ -1401,7 +1401,7 @@ li#notifications{
 		left: -181px;
 		padding: 5px 5px 10px 5px;
 		h5{
-			color: @brand;
+			color: $brand;
 			font-size: 13px;
 			font-weight: bold;
 			padding-left: 10px;
@@ -1409,7 +1409,7 @@ li#notifications{
 		}
 		&:before {
 			left: 199px;
-			border-bottom: 10px solid @grey_one;
+			border-bottom: 10px solid $grey_one;
 		}
 		ul {
 			border-collapse: collapse;
@@ -1423,19 +1423,19 @@ li#notifications{
 				vertical-align: middle;
 				background-color: #fff;
 				height: 65px;
-				border-top: 1px solid @borders;
+				border-top: 1px solid $borders;
 
 				&:first-child{
 					border-top: 0;
 				}
 				&.red {
-					border-left: 5px solid @alert_red;
+					border-left: 5px solid $alert_red;
 				}
 				&.blue {
-					border-left: 5px solid @alert_blue;
+					border-left: 5px solid $alert_blue;
 				}
 				&.grey {
-					border-left: 5px solid @alert_grey;
+					border-left: 5px solid $alert_grey;
 				}
 
 				.alert-message{
@@ -1444,15 +1444,15 @@ li#notifications{
 				}
 
 				&:hover{
-					background-color: @app_bg;
+					background-color: $app_bg;
 					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
-						color:@brand;
+						color:$brand;
 					}
 				}
 
 				// Icons
 				a{
-					color: @text;
+					color: $text;
 					font-size: 11px;
 					display: table-cell;
 					vertical-align: middle;
@@ -1492,14 +1492,14 @@ li#notifications{
 }
 li#user_menu{
 	ul.dropdown-menu{
-		background-color: @menu;
+		background-color: $menu;
 		box-shadow: none;
 		margin-top: 12px;
 		min-width: 148px;
 		left: -48px;
 		li#users:last-child{
 			a:after{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e013";
 			font-family: 'icons';
 			font-size: 14px;
@@ -1523,7 +1523,7 @@ li#user_menu{
 	left: 114px;
 	display: inline-block;
 	border-right: 10px solid transparent;
-	border-bottom: 10px solid @menu;
+	border-bottom: 10px solid $menu;
 	border-left: 10px solid transparent;
 	content: '';
 }
@@ -1533,7 +1533,7 @@ li#user_menu{
 	left: 114px;
 	display: inline-block;
 	border-right: 10px solid transparent;
-	border-bottom: 10px solid @menu;
+	border-bottom: 10px solid $menu;
 	border-left: 10px solid transparent;
 	content: '';
 }
@@ -1620,9 +1620,9 @@ ul.kpis-list{
 
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
- 	border:1px solid @borders;
+ 	border:1px solid $borders;
  	//clear: both;
- 	color: @brand;
+ 	color: $brand;
  	font-size: 12px;
     margin: 13px 0 0 0;
     padding: 0;
@@ -1639,7 +1639,7 @@ ul.kpis-list{
     	}
     }
     a:hover{
-    	color: @text;
+    	color: $text;
     	text-decoration: none;
     }
 	b{
@@ -1658,24 +1658,24 @@ ul.kpis-list{
   		padding: 0;
   		margin:0;
   		li{
-  			color: @text;
+  			color: $text;
   			&.complete > span.task-list {
-  				border-left: 5px solid @complete !important;
+  				border-left: 5px solid $complete !important;
   			}
   			&.late > span.task-list {
-  				border-left: 5px solid @buttons;
+  				border-left: 5px solid $buttons;
   			}
   			&.due > span.task-list {
-  				border-left: 5px solid @due_today;
+  				border-left: 5px solid $due_today;
   			}
 				&.inactive{
 					a{
-  					color:@user_menu;
+  					color:$user_menu;
 					}
   			}
 				&:hover{
 					&.inactive a{
-						color:@text;
+						color:$text;
 					}
 				}
   		}
@@ -1709,7 +1709,7 @@ ul.kpis-list{
 	    		}
 	    		&:last-child{
 	    			.add:before{
-		        	color: @brand;
+		        	color: $brand;
 							content: "\e021";
 					  	display: inline-block;
 					  	font-family: 'icons';
@@ -1744,7 +1744,7 @@ ul.kpis-list{
 	    		}
 	    		&:last-child{
 	    			.add:before{
-		        	  	color: @brand;
+		        	  	color: $brand;
 						content: "\e021";
 					  	display: inline-block;
 					  	font-family: 'icons';
@@ -1793,7 +1793,7 @@ ul.kpis-list{
     }
 		ul#events-list{
 			li{
-				color: @text;
+				color: $text;
 				min-height: 70px;
 				padding: 9px 0 0 15px;
 
@@ -1804,16 +1804,16 @@ ul.kpis-list{
 				}
 
 				&.late {
-					border-left: 5px solid @late;
+					border-left: 5px solid $late;
 				}
 				&.submitted {
-					border-left: 5px solid @submitted;
+					border-left: 5px solid $submitted;
 				}
 				&.approved {
-					border-left: 5px solid @approved;
+					border-left: 5px solid $approved;
 				}
 				&.rejected {
-					border-left: 5px solid @rejected;
+					border-left: 5px solid $rejected;
 				}
 			}
 			span.event-item {
@@ -1838,17 +1838,17 @@ ul.kpis-list{
 	}
     ul#tasks-list{
     	li{
-    		color: @text;
+    		color: $text;
     		min-height:70px;
 
   			&.complete > span.task-list {
-  				border-left: 5px solid @complete !important;
+  				border-left: 5px solid $complete !important;
   			}
   			&.late > span.task-list {
-  				border-left: 5px solid @buttons;
+  				border-left: 5px solid $buttons;
   			}
   			&.due > span.task-list {
-  				border-left: 5px solid @due_today;
+  				border-left: 5px solid $due_today;
   			}
     		span.task-list{
     			height: 80px;
@@ -2066,7 +2066,7 @@ ul.kpis-list{
     				}
     			}
     			.score{
-						color: @venues_blue;
+						color: $venues_blue;
     				margin-right: 15px;
     				width: 45px;
     				text-align: center;
@@ -2098,8 +2098,8 @@ ul.kpis-list{
 
     }
     li{
-    	border-top:1px solid @borders;
-    	color:@brand;
+    	border-top:1px solid $borders;
+    	color:$brand;
     	min-height: 83px;
     	list-style:none;
     	margin: 0;
@@ -2116,7 +2116,7 @@ ul.kpis-list{
       &>a{
         display: block;
         padding: 13px 15px 11px 15px;
-        .box-sizing(border-box);
+        @include box-sizing(border-box);
         width: 100%;
         min-height: 100%;
       }
@@ -2184,18 +2184,18 @@ ul.kpis-list{
 			top:8px;
 		}
 		&:hover{
-			background-color: @grey_one;
+			background-color: $grey_one;
 			a:hover:after{
-				color: @grey_three;
+				color: $grey_three;
 			}
 			.edit:after, .enable:after, .disable:after, .load-comments-link:after, .preview:after{
-				color:@brand;
+				color:$brand;
 			}
 			.checker{
-				background-color: @user_menu;
+				background-color: $user_menu;
 			}
 			span.checked{
-				background-color: @brand
+				background-color: $brand
 			}
 		}
 	}
@@ -2274,14 +2274,14 @@ ul{
 }
 .search-filter-label,
 input.search-query {
-  background-color: @brand !important;
+  background-color: $brand !important;
   background-image: url('search.svg');
   background-position: center right;
   background-repeat: no-repeat;
-  border:@brand;
+  border:$brand;
   box-shadow: none;
   color: white;
-  font-family: @baseFontFamily;
+  font-family: $baseFontFamily;
   height:27px;
   margin-bottom: 10px;
   padding-right: 8px;
@@ -2311,7 +2311,7 @@ input.search-query:focus{
 .ui-widget-content{
 	background-image: none;
 	border: 0;
-	color: @text;
+	color: $text;
 	position: relative;
 	padding: 5px 0;
 	&.ui-corner-all{
@@ -2320,7 +2320,7 @@ input.search-query:focus{
 	}
 }
 ul.ui-widget-content{
-	background: @brand !important;
+	background: $brand !important;
 	margin-top: 10px;
 }
 .ui-menu{
@@ -2329,11 +2329,11 @@ ul.ui-widget-content{
 			margin: 0 0 0 2px !important;
 			width: 98% !important;
 			a{
-				color: @menu;
+				color: $menu;
 				font-weight: normal !important;
 				padding: 7px 10px;
 				&:active, &:hover{
-					background-color: @menu !important;
+					background-color: $menu !important;
 					background-image: none !important;
 					border:0;
 					color:white;
@@ -2350,7 +2350,7 @@ ul.ui-widget-content{
 			}
 		}
 		&.ui-autocomplete-category{
-			color:@text;
+			color:$text;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
 			text-transform: uppercase;
@@ -2360,7 +2360,7 @@ ul.ui-widget-content{
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
-		background-color: @menu !important;
+		background-color: $menu !important;
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
@@ -2388,7 +2388,7 @@ textarea::-webkit-input-placeholder {
 	font-size: 22px;
 	padding: 10px 0 0 25px;
 	a {
-		color: @brand;
+		color: $brand;
 		text-decoration: none;
 	}
 }
@@ -2469,7 +2469,7 @@ overflow: hidden;
 	top: 0;
 	left: 0;
 	width: 100%;
-	background-color: @menu;
+	background-color: $menu;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	border-radius: 7px 7px 0px 0px;
@@ -2487,14 +2487,14 @@ overflow: hidden;
 		width: 99%;
 		padding: 10px 0 7px 16px;
 		text-decoration: none;
-		color: @grey_one;
+		color: $grey_one;
 	}
 	.close {
 		opacity: 1;
 		position: relative;
 		text-shadow:none;
 		&:after{
-			color: @grey_one;
+			color: $grey_one;
 			content: "\e019";
 			display: block;
 			font-family: 'icons';
@@ -2531,17 +2531,17 @@ overflow: hidden;
  			}
  			&:hover{
  				&:before{
- 					color:@app_bg;
+ 					color:$app_bg;
  				}
  			}
 		}
 		&.edit{
 			&:after{
-				color:@brand;
+				color:$brand;
 			}
 			&:hover{
 				&:after{
- 					color:@app_bg;
+ 					color:$app_bg;
  				}
  			}
 		}
@@ -2657,9 +2657,9 @@ body.company_users{
 	}
 
 	.campaigns-group {
-		border: 1px solid @grey_one;
+		border: 1px solid $grey_one;
 		.campaigns-group-header {
-			border-bottom: 1px solid @grey_one;
+			border-bottom: 1px solid $grey_one;
 			padding: 5px;
 			width: auto;
 			.switch-toggle{
@@ -2684,7 +2684,7 @@ body.company_users{
 
 body.events.index {
 	#map-canvas {
-		border:1px solid @user_menu;
+		border:1px solid $user_menu;
 		height: 500px;
 		margin-top: 15px;
 	}
@@ -2708,7 +2708,7 @@ body.dashboard.index {
 	}
 
 	#map-canvas {
-		border:1px solid @user_menu;
+		border:1px solid $user_menu;
 		height: 500px;
 		margin-top: 15px;
 	}
@@ -2782,7 +2782,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 	}
 
 	.team-member:before{
-    	color: @user_menu;
+    	color: $user_menu;
 		content: "\e024" !important;
 		display: block;
 		font-family: 'icons';
@@ -2794,7 +2794,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 	}
 
 	.team:before{
-    	color: @user_menu;
+    	color: $user_menu;
 		content: "\e023" !important;
 		display: block;
 		font-family: 'icons';
@@ -2806,7 +2806,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 	}
 
 	  .area-place:before{
-	    color: @user_menu;
+	    color: $user_menu;
 	    content: "\e02c" !important;
 	    display: block;
 	    font-family: 'icons';
@@ -2929,7 +2929,7 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 }
 
 #asset_upload_dialog {
-	color: @user_menu;
+	color: $user_menu;
 	p{
 	margin-bottom: 0;
 		&.small{
@@ -2955,15 +2955,15 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 		}
 	}
 	#drop-zone {
-		border: 1px dashed @user_menu;
+		border: 1px dashed $user_menu;
 		-webkit-border-radius: 4px;
     	border-radius: 4px;
-		color: @user_menu;
+		color: $user_menu;
 		font-size: 16px;
 		text-align: center;
 		padding: 20px;
 		&.dragging {
-			border-color: @buttons;
+			border-color: $buttons;
 		}
 	}
 	.selecting-panel{
@@ -2974,19 +2974,19 @@ body.events.show, body.company_users.show, body.teams.show, body.areas.show, bod
 		height: 250px;
 		max-height: 250px;
 		overflow: auto;
-		border: 1px solid @grey_one;
-		color: @grey_three;
+		border: 1px solid $grey_one;
+		color: $grey_three;
 
 		.progress {
 			height: 50px;
 			width: 100% !important;
 			position: relative;
 			background-color: #fff !important;
-			border-bottom: 1px solid @grey_one;
+			border-bottom: 1px solid $grey_one;
 			margin-bottom: 0;
 			.bar {
 				background-image: none !important;
-				background-color: @grey_two;
+				background-color: $grey_two;
 				box-shadow: none;
 				-webkit-box-shadow: none;
 				-moz-box-shadow: none;
@@ -3134,7 +3134,7 @@ ul.thumbnails{
 				    	margin: 0 5px 12px 12px;
 				    	position: relative;
 				    	&:before{
-					       	color: @grey_one;
+					       	color: $grey_one;
 							content: "\e00b" !important;
 							display: inline-block;
 							font-family: 'icons';
@@ -3151,7 +3151,7 @@ ul.thumbnails{
 				    	margin: 10px;
 				    	position: relative;
 				    	&:before{
-					        color: @grey_one;
+					        color: $grey_one;
 							content: "\e011" !important;
 							display: inline-block;
 							font-family: 'icons';
@@ -3164,7 +3164,7 @@ ul.thumbnails{
 						}
 				    }
 				    &.icon-ok-circle:before{
-				        color: @grey_one;
+				        color: $grey_one;
 						content: "\e00d" !important;
 						display: inline-block;
 						font-family: 'icons';
@@ -3203,7 +3203,7 @@ ul.thumbnails{
 				ul.thumbnail-toolbar{
 					li a{
 					    &.icon-remove-circle:before{
-					    	color: @grey_one;
+					    	color: $grey_one;
 							content: "\e011" !important;
 							display: inline-block;
 							font-family: 'icons';
@@ -3215,7 +3215,7 @@ ul.thumbnails{
 							-webkit-font-smoothing: antialiased;
 					    }
 					    &.photo-download-link.icon-plus:before{
-							color: @grey_one;
+							color: $grey_one;
 							content: "\f067" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
@@ -3228,7 +3228,7 @@ ul.thumbnails{
 							-webkit-font-smoothing: antialiased;
 					    }
 					    &.photo-download-link.icon-minus:before{
-							color: @grey_one;
+							color: $grey_one;
 							content: "\f068" !important;
 						  	display: inline-block;
 						  	font-family: FontAwesome;
@@ -3310,7 +3310,7 @@ ul{
 		background-color: white;
 	}
 	.fancybox-title {
-		font-family: @baseFontFamily;
+		font-family: $baseFontFamily;
 		position: absolute;
 		z-index: 99999;
 		bottom: 0px;
@@ -3350,7 +3350,7 @@ ul{
 			a{
 				opacity:1;
 				&.icon-download:before{
-        	  	color: @grey_one;
+        	  	color: $grey_one;
 				content: "\e00b" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
@@ -3362,7 +3362,7 @@ ul{
 				-webkit-font-smoothing: antialiased;
 				}
 			&.icon-remove-circle:before{
-        	  	color: @grey_one;
+        	  	color: $grey_one;
 				content: "\e011" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
@@ -3374,7 +3374,7 @@ ul{
 				-webkit-font-smoothing: antialiased;
         		}
         	&.icon-ok-circle:before{
-        	  	color: @grey_one;
+        	  	color: $grey_one;
 				content: "\e00d" !important;
 			  	display: inline-block;
 			  	font-family: 'icons';
@@ -3410,7 +3410,7 @@ ul{
 			opacity: 0.6;
 			&:hover {
 				opacity: 1.0;
-				color: @text;
+				color: $text;
 			}
 		}
 	}
@@ -3477,7 +3477,7 @@ body.roles{
 		margin-left: 20px;
 		&.category{
 			.span2{
-				color: @brand;
+				color: $brand;
 				padding-bottom: 15px;
 				text-align: center;
 			}
@@ -3501,7 +3501,7 @@ body.roles{
 	.span12, .span12:first-child {
 		margin-left: 20px;
 		&.category {
-			background-color: @brand;
+			background-color: $brand;
 			.span2 {
 				color: #FFFFFF;
 				padding-bottom: 10px;
@@ -3523,10 +3523,10 @@ body.roles{
 #areas-places {
 	.accordion-toggle {
 		&.icon-chevron-down, &.icon-chevron-right {
-			color: @grey_three;
+			color: $grey_three;
 		}
 		b {
-			color: @text;
+			color: $text;
 			font-size: 16px;
 			margin-left: 5px;
 		}
@@ -3621,7 +3621,7 @@ body.roles{
 			}
 
 			.create-box {
-				.box-sizing(border-box);
+				@include box-sizing(border-box);
 				float: left;
 				text-align: center;
 				width: 55%;
@@ -3635,7 +3635,7 @@ body.roles{
 
 
 	#venue-score{
-		color: @venues_blue;
+		color: $venues_blue;
     width: 100px;
 	}
 
@@ -3652,10 +3652,10 @@ body.roles{
 		i{
 			font-size: 16px;
 			&.icon-star{
-				color: @stars;
+				color: $stars;
 			}
 			&.icon-star-empty:before{
-				color:@user_menu;
+				color:$user_menu;
 				content: "\f005";
 			}
 		}
@@ -3663,7 +3663,7 @@ body.roles{
 			margin-bottom: 5px;
 		}
 		.review-date{
-			color:  @brand;
+			color:  $brand;
 			font-size: 11px;
 			margin-bottom: 15px;
 		}
@@ -3690,7 +3690,7 @@ body.roles{
 		background-image: url('search2.svg');
 		background-position: center right;
 		background-repeat: no-repeat;
-		border: 1px solid @user_menu;
+		border: 1px solid $user_menu;
 		box-shadow: none;
 		padding: 2px 15px;
 		-webkit-border-radius: 20px;
@@ -3698,13 +3698,13 @@ body.roles{
     	width:65% !important;
 	}
 	input:-moz-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 	input:-ms-input-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 	input::-webkit-input-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 
 
@@ -3753,7 +3753,7 @@ body.roles{
 			max-width: 480px;
 			.highcharts-axis-labels{
 				text{
-					font-family: @baseFontFamily !important;
+					font-family: $baseFontFamily !important;
 				}
 			}
 			.highcharts-container{
@@ -3859,7 +3859,7 @@ body.roles{
 				margin-left: 50%;
 				float: left;
 				a.icon-angle-left:before{
-					color:@user_menu;
+					color:$user_menu;
 					content: "\e01c";
 				  	display: inline-block;
 				  	font-family: 'icons';
@@ -3877,7 +3877,7 @@ body.roles{
 				float: right;
 				width: 15px;
 				a.icon-angle-right:before{
-					color:@user_menu;
+					color:$user_menu;
 					content: "\e01d";
 				  	display: inline-block;
 				  	font-family: 'icons';
@@ -3912,7 +3912,7 @@ body.roles{
 				margin-top: 3px;
 			}
 			.events-box {
-				.box-sizing(border-box);
+				@include box-sizing(border-box);
 				float: left;
 				padding-left: 10px;
 				text-align: center;
@@ -3972,7 +3972,7 @@ body.roles{
 
 		.event-data-row {
 			.event-info {
-				.box-sizing(border-box);
+				@include box-sizing(border-box);
 				float: left;
 				width: 55%;
 			}
@@ -3996,7 +3996,7 @@ body.roles{
 
 		#expenses-totals {
 			padding: 15px 0px;
-			border:1px solid @borders;
+			border:1px solid $borders;
 			border-bottom:0;
 			height: 50px;
 			.pull-right{
@@ -4018,7 +4018,7 @@ body.roles{
 
 #gender-graph{
 	.female{
-		color: @venues_blue;
+		color: $venues_blue;
 		display: inline-block;
 		margin: 0 0 25px 60px;
 		.gender{
@@ -4044,7 +4044,7 @@ body.roles{
 		}
 	}
 	.male{
-		color: @venues_blue;
+		color: $venues_blue;
 		display: inline-block;
 		margin: 0 90px 25px 80px;
 		.gender{
@@ -4084,7 +4084,7 @@ body.roles{
 
 // Maps on venue and event details
 #venue-map-canvas{
-	border:1px solid @user_menu;
+	border:1px solid $user_menu;
 	display:block;
 	margin: 20px -15px 30px -15px;
 	height: 500px;
@@ -4104,13 +4104,13 @@ table.table td.comments-container {
 }
 .task-comments{
 	background-color: white;
-	border-top: 1px solid @borders;
+	border-top: 1px solid $borders;
 	vertical-align: top;
 	&:hover{
 		background-color: white;
 	}
 	p{
-		color:@menu;
+		color:$menu;
 	}
 }
 
@@ -4125,9 +4125,9 @@ table.table td.comments-container {
 	position: relative;
 	width: 95%;
 	.btn{
-		background-color: @user_menu;
+		background-color: $user_menu;
 		&:hover{
-			background-color: @brand;
+			background-color: $brand;
 		}
 	}
 	.control-group{
@@ -4136,8 +4136,8 @@ table.table td.comments-container {
 	}
 	textarea{
 		background-color: white !important;
-		border:1px solid @user_menu;
-		color: @user_menu;
+		border:1px solid $user_menu;
+		color: $user_menu;
 		display: inline-block;
 		font-weight: 300;
 		min-height: 75px;
@@ -4155,15 +4155,15 @@ table.table td.comments-container {
 	}
 	input:-moz-placeholder,
 	textarea:-moz-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 	input:-ms-input-placeholder,
 	textarea:-ms-input-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 	input::-webkit-input-placeholder,
 	textarea::-webkit-input-placeholder {
-	  color: @user_menu;
+	  color: $user_menu;
 	}
 	input[type="submit"].btn {
 		color: white;
@@ -4172,7 +4172,7 @@ table.table td.comments-container {
 // Comments List
 .comment-row{
 	margin: 20px 0 0 62px;
-	color:@text;
+	color:$text;
     			width: 60%;
 	p{
 		font-size: 12px;
@@ -4182,7 +4182,7 @@ table.table td.comments-container {
 		font-size: 13px;
 	}
 	.date{
-		color: @brand;
+		color: $brand;
 		font-size: 11px;
 	}
 }
@@ -4304,8 +4304,8 @@ svg{
 
 /* back to top link */
 .totop {
-  background-color: @header;
-  color: @user_menu;
+  background-color: $header;
+  color: $user_menu;
   font-size: 12px;
   padding-top: 4px;
   position: fixed;
@@ -4320,7 +4320,7 @@ svg{
   border-radius: 6px 6px 0px 0px;
 
   a,  a:visited {
-  	color: @user_menu;
+  	color: $user_menu;
     display: block;
     font-weight: 400;
     height: 38px;
@@ -4329,12 +4329,12 @@ svg{
     text-decoration:  none;
     width: 35px;
     &:hover{
-  		color: @user_menu;
+  		color: $user_menu;
     }
   }
 
   a:before{
-  	color: @user_menu;
+  	color: $user_menu;
 	content: "\e012";
   	display: block;
   	font-family: 'icons';
@@ -4517,7 +4517,7 @@ body.campaigns{
 			margin-top: 22px;
 		}
 		.worked_events{
-			color: @venues_blue;
+			color: $venues_blue;
 			font-size: 11px;
 			.number{
 				font-size: 16px;
@@ -4550,7 +4550,7 @@ body.campaigns{
 			width: 158px !important;
 		}
 		span.add-on{
-			background-color: @user_menu;
+			background-color: $user_menu;
 			border:0 !important;
 			border-radius: 0px 4px 4px 0px;
 			color: white;
@@ -4562,7 +4562,7 @@ body.campaigns{
 			width: 40px;
 		}
 		label.control-label{
-			color:@brand;
+			color:$brand;
 		 	display: inline-block;
 		 	font-size: 11px;
 		 	float: right;
@@ -4602,7 +4602,7 @@ body.campaigns{
 		margin: 0 50px 35px 20px;
 		width: 25%;
 		a{
-			color: @menu;
+			color: $menu;
 			float: left;
 			overflow: hidden;
 			position: relative;
@@ -4640,13 +4640,13 @@ body.campaigns{
 	}
 	.link-list{
 		a{
-			color:@text;
+			color:$text;
 		}
 	}
 	.links-data{
 		a{
 			&.edit:after{
-				color: @brand;
+				color: $brand;
 				font-size: 17px;
 				top: 2px;
 			}
@@ -4660,7 +4660,7 @@ body.campaigns{
 					}
 				}
 				&.icon-check-sign{
-					color: @brand;
+					color: $brand;
 					font-size: 20px;
 					margin-left: 10px;
 					position: relative;
@@ -4673,7 +4673,7 @@ body.campaigns{
 	.area-user{
 		&:before{
 			content: "\e02e";
-			color: @user_menu;
+			color: $user_menu;
 			display: block;
 			font-family: 'icons';
 			font-size: 16px;
@@ -4688,7 +4688,7 @@ body.campaigns{
 	.place{
 		&:before{
 			content: "\e02c";
-			color: @user_menu;
+			color: $user_menu;
 			display: block;
 			font-family: 'icons';
 			font-size: 21px;
@@ -4703,14 +4703,14 @@ body.campaigns{
 	#post-event-form-builder{
 		legend{
 			border:0;
-			color: @text;
+			color: $text;
 			font-size: 16px;
 		}
 	}
 
 	.results-surveys{
 		a.edit:after{
-			color:@brand;
+			color:$brand;
 			top:0;
 		}
 		h3{
@@ -4723,7 +4723,7 @@ body.campaigns{
 	}
 	ul#event-surveys-list{
 		li{
-			color:@text;
+			color:$text;
 			span{
 				&:first-child{
 					margin: 22px 0 0 20px;
@@ -4781,11 +4781,11 @@ body.campaigns{
 		}
 	}
 	a{
-		color: @venues_blue;
+		color: $venues_blue;
 		text-decoration: none;
 		&.icon-plus-sign:before{
 			content: "\e021";
-			color: @brand;
+			color: $brand;
 			display: inline-block;
 			font-family: 'icons';
 			font-size: 21px;
@@ -4793,7 +4793,7 @@ body.campaigns{
 		}
 		&.icon-calendar:before{
 			content: "\e031";
-			color: @brand;
+			color: $brand;
 			display: inline-block;
 			font-family: 'icons';
 			font-size: 17px;
@@ -4839,7 +4839,7 @@ body.campaigns{
 	input[type="text"], textarea{
 		background-color: white !important;
 		background-image: none !important;
-		border:1px solid @user_menu !important;
+		border:1px solid $user_menu !important;
 		box-shadow: none;
 		width: 380px;
 		&:focus{
@@ -4863,7 +4863,7 @@ body.campaigns{
 			font-weight: 400;
 		}
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e022";
 			font-family: 'icons';
 			font-size: 19px;
@@ -4877,7 +4877,7 @@ body.campaigns{
 	}
 	.email-data{
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e02f";
 			font-family: 'icons';
 			font-size: 19px;
@@ -4893,7 +4893,7 @@ body.campaigns{
 	.place-data{
 		width: 500px;
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e02c";
 			font-family: 'icons';
 			font-size: 22px;
@@ -4912,7 +4912,7 @@ body.campaigns{
 	}
 	.phone-data{
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e02d";
 			font-family: 'icons';
 			font-size: 18px;
@@ -4927,7 +4927,7 @@ body.campaigns{
 	}
 	.time-data{
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e01f";
 			font-family: 'icons';
 			font-size: 22px;
@@ -4942,7 +4942,7 @@ body.campaigns{
 	}
 	.description-data{
 		&:before{
-			color: @user_menu;
+			color: $user_menu;
 			content: "\e02b";
 			font-family: 'icons';
 			font-size: 22px;
@@ -5008,7 +5008,7 @@ div.chardinjs-tooltip
 
 a, i{
 	&.icon-ok-circle:before{
-		color: @brand;
+		color: $brand;
 		content: "\e00d";
 		display: inline-block;
 		font-family: 'icons';
@@ -5016,7 +5016,7 @@ a, i{
 		position: relative;
 	}
 	&.icon-plus-sign:before{
-		color: @brand;
+		color: $brand;
 		content: "\e021";
 		display: inline-block;
 		font-family: 'icons';
@@ -5024,7 +5024,7 @@ a, i{
 		position: relative;
 	}
 	&.icon-calendar:before{
-		color: @brand;
+		color: $brand;
 		content: "\e031";
 		display: inline-block;
 		font-family: 'icons';
@@ -5032,7 +5032,7 @@ a, i{
 		position: relative;
 	}
 	&.icon-remove-circle:before, &.icon-remove-sign:before{
-		color: @brand;
+		color: $brand;
 		content: "\e011";
 		display: inline-block;
 		font-family: 'icons';
@@ -5151,7 +5151,7 @@ a, i{
 			padding: 0;
 
 			div.score {
-				color: @venues_blue;
+				color: $venues_blue;
 				font-size: 11px;
 				width: 70px;
 				display: inline-block;
@@ -5168,7 +5168,7 @@ a, i{
 			}
 
 			div.info {
-				color: @text;
+				color: $text;
 				display: inline-block;
 				font-size: 12px;
 				h4 {
@@ -5200,7 +5200,7 @@ a, i{
 		span.name {
 			width: 90px;
 			float: left;
-			color: @venues_blue;
+			color: $venues_blue;
 		}
 
 		.container-kpi-trend{
@@ -5216,7 +5216,7 @@ a, i{
 				width: 100px;
 				right: -110px;
 				top: 2px;
-				color: @venues_blue;
+				color: $venues_blue;
 			}
 		}
 
@@ -5239,7 +5239,7 @@ a, i{
 				}
 
 				.bar-remaining {
-					color: @venues_blue;
+					color: $venues_blue;
 				}
 			}
 
@@ -5304,7 +5304,7 @@ a, i{
 	a.toggle-off-btn {
 		text-align: right;
 		padding-right: 10px;
-		background-color: @user_menu;
+		background-color: $user_menu;
 		span {
 			float: left;
 		}
@@ -5373,12 +5373,12 @@ a, i{
 
 			.kpi-segment-group:hover,
 			.kpi-goal:hover {
-				background-color: @grey_one;
+				background-color: $grey_one;
 				-webkit-border-radius: 4px;
 				-moz-border-radius: 4px;
 				border-radius: 4px;
 				input {
-					background-color: @grey_one;
+					background-color: $grey_one;
 				}
 			}
 
@@ -5400,16 +5400,16 @@ a, i{
 					display: block;
 					border: 1px solid white !important;
 					&:hover, &.active{
-						border: 1px solid @user_menu !important;
+						border: 1px solid $user_menu !important;
 					}
 					&:-moz-placeholder{
-					  color: @grey_three;
+					  color: $grey_three;
 					}
 					&:-ms-input-placeholder{
-					  color: @grey_three;
+					  color: $grey_three;
 					}
 					&::-webkit-input-placeholder {
-					  color: @grey_three;
+					  color: $grey_three;
 					}
 				}
 
@@ -5423,7 +5423,7 @@ a, i{
 
 			.error {
 				input {
-					border: 1px solid @buttons !important;
+					border: 1px solid $buttons !important;
 				}
 			}
 
@@ -5448,7 +5448,7 @@ a, i{
 				background-color: #fff;
 			}
 			a {
-				color: @grey_three;
+				color: $grey_three;
 				font-size: 30px;
 				&.arrow {
 					margin: 0 20px;
@@ -5471,7 +5471,7 @@ a, i{
 }
 
 .report-kpi-chart-name {
-	color: @venues_blue;
+	color: $venues_blue;
 	float: left;
 	margin-top: 22px;
 	width:85px;
@@ -5495,7 +5495,7 @@ a, i{
 		}
 
 		.bar-remaining {
-			color: @venues_blue;
+			color: $venues_blue;
 		}
 	}
 	span.legend {
@@ -5503,7 +5503,7 @@ a, i{
 		right: 0px;
 		top: -20px;
 		text-align: right;
-		color: @user_menu;
+		color: $user_menu;
 	}
 
 	span.total {
@@ -5511,7 +5511,7 @@ a, i{
 		width: 100px;
 		right: -110px;
 		top: 2px;
-		color: @venues_blue;
+		color: $venues_blue;
 	}
 }
 
@@ -5576,7 +5576,7 @@ body.campaigns_report, body.staff_report {
 	}
 
 	.chart-header{
-		color: @user_menu;
+		color: $user_menu;
 		margin-top: 40px;
 		text-align: center;
 	}
@@ -5623,7 +5623,7 @@ body{
 
 // Modal Table List
 .scroll-table-content {
-  border: 1px solid @borders;
+  border: 1px solid $borders;
   margin: 20px 0 10px 0;
   max-height: 197px;
   overflow: auto;
@@ -5643,11 +5643,11 @@ body{
 	  		}
 	  	}
 			a {
-				color: @venues_blue;
+				color: $venues_blue;
 				text-decoration: none;
 				&.icon-plus-sign:before {
 					content: "\e021";
-					color: @brand;
+					color: $brand;
 					display: block;
 					font-family: 'icons';
 					font-size: 21px;
@@ -5661,7 +5661,7 @@ body{
 // TOOLTIP STYLES
 
 .tooltip-inner{
-    background-color:@grey_three;
+    background-color:$grey_three;
     opacity: 1;
     z-index: 90;
 }
@@ -5669,7 +5669,7 @@ body{
 .tooltip .tooltip-arrow{
     border-left:5px solid transparent;
     border-right:5px solid transparent;
-    border-top:5px solid @grey_three;
+    border-top:5px solid $grey_three;
     opacity: 0.5;
 }
 
@@ -5678,30 +5678,30 @@ body{
 
 ::-webkit-scrollbar{
   width: 10px;
-  background: @app_bg;
+  background: $app_bg;
 }
 ::-webkit-scrollbar-button{
   width:8px;
   height: 5px;
 }
 ::-webkit-scrollbar-track{
-  background:@app_bg;
-  border:thin solid @app_bg;
+  background:$app_bg;
+  border:thin solid $app_bg;
   -webkit-box-shadow: 0;
   -webkit-border-radius: 10px;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb{
-  background: @brand;
+  background: $brand;
   -webkit-box-shadow: 0;
 
-  border:thin solid @brand;
+  border:thin solid $brand;
   border-radius: 10px;
   height: 5px;
   -webkit-border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover{
-    background: @brand;
+    background: $brand;
 }
 /* Pseudo-clase */
 ::-webkit-scrollbar-thumb:window-inactive {
@@ -5795,7 +5795,7 @@ table td.sub-level-1 {
 		padding: 5px 0;
 		li{
 			label:hover{
-				background-color: @brand;
+				background-color: $brand;
 				color: white;
 			}
 		}

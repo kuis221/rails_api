@@ -34,7 +34,7 @@ feature "Events", js: true, search: true do
             # First Row
             within("li:nth-child(1)") do
               expect(page).to have_content('WED Aug 21')
-              expect(page).to have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content('10:00 AM - 11:00 AM')
               expect(page).to have_content(events[0].place_name)
               expect(page).to have_content('Campaign FY2012')
             end
@@ -237,7 +237,7 @@ feature "Events", js: true, search: true do
 
             within("ul#events-list li:nth-child(1)") do
               expect(page).to have_content('WED Aug 21')
-              expect(page).to have_content('10:00 AM – 11:00 AM')
+              expect(page).to have_content('10:00 AM - 11:00 AM')
             end
           end
         end
@@ -325,14 +325,14 @@ feature "Events", js: true, search: true do
             click_button 'Save'
           end
           ensure_modal_was_closed
-          expect(page).to have_content('10:00 PM – 11:00 PM')
+          expect(page).to have_content('10:00 PM - 11:00 PM')
         end
 
         # Check that the event's time is displayed with the same time in a different tiem zone
         Time.use_zone('America/Los_Angeles') do
           visit events_path
           within("ul#events-list") do
-            expect(page).to have_content('10:00 PM – 11:00 PM')
+            expect(page).to have_content('10:00 PM - 11:00 PM')
           end
         end
       end
@@ -349,7 +349,7 @@ feature "Events", js: true, search: true do
       expect(page).to have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
         expect(page).to have_content('WED Aug 28')
-        expect(page).to have_content('8:00 PM – 11:00 PM')
+        expect(page).to have_content('8:00 PM - 11:00 PM')
       end
     end
 
@@ -376,7 +376,7 @@ feature "Events", js: true, search: true do
 
         within('.calendar-data') do
           expect(page).to have_content('WED Aug 21')
-          expect(page).to have_content('10:00 AM – 11:00 AM')
+          expect(page).to have_content('10:00 AM - 11:00 AM')
         end
       end
     end

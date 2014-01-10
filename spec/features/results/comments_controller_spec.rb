@@ -35,7 +35,7 @@ feature "Results Comments Page", js: true, search: true  do
         # First Row
         within("li:nth-child(1)") do
           expect(page).to have_content('First Campaign')
-          expect(page).to have_content('WED Aug 21, 2013 8:00 PM – 11:00 PM')
+          expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
           expect(page).to have_content('Place 1, New York City, NY, 12345')
           expect(page).to have_content('Comment #1')
           expect(page).to have_content('Aug 22 @ 11:59 AM')
@@ -43,7 +43,7 @@ feature "Results Comments Page", js: true, search: true  do
         # Second Row
         within("li:nth-child(2)") do
           expect(page).to have_content('First Campaign')
-          expect(page).to have_content('WED Aug 21, 2013 8:00 PM – 11:00 PM')
+          expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
           expect(page).to have_content('Place 1, New York City, NY, 12345')
           expect(page).to have_content('Comment #2')
           expect(page).to have_content('Aug 23 @ 9:15 AM')

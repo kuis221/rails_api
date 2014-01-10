@@ -152,7 +152,7 @@ describe ApplicationHelper do
 
     it "should one date and both hours if the end day is the same as the start day" do
       Timecop.freeze(Time.zone.local(2013, 9, 1, 12, 0)) do
-        assert_dom_equal 'FRI <b>Jul 26</b><br />3:00 AM – 9:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
+        assert_dom_equal 'FRI <b>Jul 26</b><br />3:00 AM - 9:00 AM', helper.format_date_range(Time.zone.local(2013, 07, 26, 3, 0), Time.zone.local(2013, 07, 26, 9, 0))
       end
     end
   end

@@ -43,7 +43,6 @@ class Event < ActiveRecord::Base
 
   has_many :surveys,  inverse_of: :event
 
-
   # Events-Users relationship
   has_many :memberships, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
@@ -149,10 +148,6 @@ class Event < ActiveRecord::Base
     integer :place_id
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
-
-    string :place do
-      Place.location_for_index(place) if place_id
-    end
 
     string :location, multiple: true do
       locations_for_index
@@ -438,22 +433,13 @@ class Event < ActiveRecord::Base
               with(:team_ids, team_ids) if team_ids.any?
             end
           end
-          if params.has_key?(:place) and params[:place].present?
-            place_paths = []
-            params[:place].each do |place|
-              # The location comes BASE64 encoded as a pair "id||name"
-              # The ID is a md5 encoded string that is indexed on Solr
-              (id, name) = Base64.decode64(place).split('||')
-              place_paths.push id
-            end
-            if place_paths.size > 0
-              with(:location, place_paths)
-            end
-          end
-          with(:campaign_id, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
+
+          with :location,    params[:location] if params.has_key?(:location) and params[:location].present?
+          with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
 
           # We are using two options to allow searching by active/inactive in combination with approved/late/rejected/submitted
-          with(:status, params[:status]) if params.has_key?(:status) and params[:status].present? # For the active state
+          with :status,      params[:status] if params.has_key?(:status) and params[:status].present? # For the active state
+
           if params.has_key?(:event_status) and params[:event_status].present? # For the event status
             event_status = params[:event_status].dup
             late = event_status.delete('Late')
@@ -545,7 +531,6 @@ class Event < ActiveRecord::Base
 
           if include_facets
             facet :campaign_id
-            facet :place
             facet :place_id
             facet :user_ids
             facet :team_ids

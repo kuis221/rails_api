@@ -41,13 +41,13 @@ describe AttachedAsset, search: true do
     AttachedAsset.do_search(company_id: 1, campaign: [campaign.id, campaign2.id]).results.should =~ [asset, asset2]
 
     # Search for a specific Attached Asset's place
-    place_id = "#{Place.location_for_index(place)}||#{place.name}"
-    place2_id = "#{Place.location_for_index(place2)}||#{place2.name}"
+    place_id = Place.encode_location(Place.political_division(place))
+    place2_id = Place.encode_location(Place.political_division(place2))
     AttachedAsset.do_search(company_id: 1, q: "venue,#{venue.id}").results.should =~ [asset]
     AttachedAsset.do_search(company_id: 1, q: "venue,#{venue2.id}").results.should =~ [asset2]
-    AttachedAsset.do_search(company_id: 1, place: [Base64.encode64(place_id)]).results.should =~ [asset]
-    AttachedAsset.do_search(company_id: 1, place: [Base64.encode64(place2_id)]).results.should =~ [asset2]
-    AttachedAsset.do_search(company_id: 1, place: [Base64.encode64(place_id), Base64.encode64(place2_id)]).results.should =~ [asset, asset2]
+    AttachedAsset.do_search(company_id: 1, location: [place_id]).results.should =~ [asset]
+    AttachedAsset.do_search(company_id: 1, location: [place2_id]).results.should =~ [asset2]
+    AttachedAsset.do_search(company_id: 1, location: [place_id, place2_id]).results.should =~ [asset, asset2]
 
     # Search for Attached Assets on a given date range
     AttachedAsset.do_search(company_id: 1, start_date: '02/21/2013', end_date: '02/23/2013').results.should =~ [asset]

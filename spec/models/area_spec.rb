@@ -118,7 +118,6 @@ describe Area do
       area.place_in_scope?(bar).should be_false
     end
 
-
     it "should return false if the place is a state and the are has cities of that state" do
       california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
       area = FactoryGirl.create(:area)
@@ -126,6 +125,14 @@ describe Area do
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state:'California', country:'US')
 
       area.place_in_scope?(california).should be_false
+    end
+
+    it "should return true if the place is a neighborhood and the area includes the city" do
+      neighborhood = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, neighborhood: 'South Central Houston', city: 'Houston', state:'Texas', country:'US')
+      area = FactoryGirl.create(:area)
+      area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Houston', state:'Texas', country:'US')
+
+      area.place_in_scope?(neighborhood).should be_true
     end
   end
 end

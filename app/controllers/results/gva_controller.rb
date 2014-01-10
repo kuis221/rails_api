@@ -50,7 +50,7 @@ class Results::GvaController < ApplicationController
         where(kpi_id: Kpi.events.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
-          params.merge!({place: [Base64.encode64(Place.location_for_index(goal.goalable))]}) if goal.goalable.is_a?(Place)
+          params.merge!({location: [Place.encode_location(Place.political_division(goal.goalable))]}) if goal.goalable.is_a?(Place)
           search = Event.do_search(params, true)
           status_facets = search.facet(:status).rows
           submitted = status_facets.detect{|f| f.value == :submitted}.try(&:count) || 0
@@ -72,7 +72,7 @@ class Results::GvaController < ApplicationController
         where(kpi_id: Kpi.promo_hours.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
-          params.merge!({place: [Base64.encode64(Place.location_for_index(goal.goalable))]})   if goal.goalable.is_a?(Place)
+          params.merge!({location: [Place.encode_location(Place.political_division(goal.goalable))]})   if goal.goalable.is_a?(Place)
           submitted = Event.do_search(params.merge(event_status: ['Submitted']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           executed = Event.do_search(params.merge(event_status: ['Executed']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           scheduled = Event.do_search(params.merge(event_status: ['Scheduled']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
@@ -84,7 +84,7 @@ class Results::GvaController < ApplicationController
     def filter_event_ids
       params = {company_id: current_company.id, campaign: [campaign.id], status: ['Active'], current_company_user: current_company_user, per_page: 100000}
       params.merge!({area: area.id}) unless area.nil?
-      params.merge!({place: [Base64.encode64(Place.location_for_index(place))]}) unless place.nil?
+      params.merge!({location: [Place.encode_location(Place.political_division(place))]}) unless place.nil?
       Event.do_search(params).hits.map(&:primary_key)
     end
 end

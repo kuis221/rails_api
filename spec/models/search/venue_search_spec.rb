@@ -26,11 +26,11 @@ describe Venue, search: true do
     Venue.do_search(company_id: 2).results.should =~ [company2_venue]
 
     # Search for a specific Venue's place
-    place_id = "#{Place.location_for_index(place)}||#{place.name}"
-    place2_id = "#{Place.location_for_index(place2)}||#{place2.name}"
-    Venue.do_search(company_id: 1, place: [Base64.encode64(place_id)]).results.should =~ [venue]
-    Venue.do_search(company_id: 1, place: [Base64.encode64(place2_id)]).results.should =~ [venue2]
-    Venue.do_search(company_id: 1, place: [Base64.encode64(place_id), Base64.encode64(place2_id)]).results.should =~ [venue, venue2]
+    place_id = Place.encode_location(Place.political_division(place))
+    place2_id = Place.encode_location(Place.political_division(place2))
+    Venue.do_search(company_id: 1, locations: [place_id]).results.should =~ [venue]
+    Venue.do_search(company_id: 1, locations: [place2_id]).results.should =~ [venue2]
+    Venue.do_search(company_id: 1, locations: [place_id, place2_id]).results.should =~ [venue, venue2]
 
     # Search for campaigns associated to the Venues
     Venue.do_search(company_id: 1, campaign: campaign.id).results.should =~ [venue]
