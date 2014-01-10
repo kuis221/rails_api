@@ -58,7 +58,7 @@ class ListExport < ActiveRecord::Base
     file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
       :secure => true,
       :expires => 300, # 5 minutes
-      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s unless file.nil?
   end
 
   def export_list
