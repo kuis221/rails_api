@@ -21,6 +21,7 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
+#  neighborhood           :string(255)
 #
 
 require 'spec_helper'
