@@ -21,6 +21,7 @@ Brandscopic::Application.routes.draw do
           resources :event_expenses, only: [:index, :create]
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
+          resources :surveys, only: [:index, :create]
           member do
             get :results
             get :members
