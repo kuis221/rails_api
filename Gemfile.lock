@@ -217,7 +217,6 @@ GEM
     polyglot (0.3.3)
     populator (1.0.0)
     pr_geohash (1.0.0)
-    process_memory (0.0.1)
     progress_bar (1.0.0)
       highline (~> 1.6.1)
       options (~> 2.3.0)
@@ -230,9 +229,6 @@ GEM
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
-    rack-leakin (0.0.1)
-      process_memory
-      rack
     rack-protection (1.5.0)
       rack
     rack-ssl (1.3.3)
@@ -448,7 +444,6 @@ DEPENDENCIES
   quiet_assets (>= 1.0.1)
   rabl
   rack-cache
-  rack-leakin
   rack-timeout
   rails (= 3.2.16)
   redis

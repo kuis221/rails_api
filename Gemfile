@@ -58,7 +58,6 @@ gem 'kgio'
 
 #For memory debugging
 gem "oink"
-gem "rack-leakin"
 
 
 # Gems used only for assets and not required
