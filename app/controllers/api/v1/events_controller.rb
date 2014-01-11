@@ -43,7 +43,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     *Facets*
 
-    Faceting is a feature of Solr that determines the number of documents that match a given search and an additional criterion
+    Faceting is a feature of Solr that determines the number of documents that match a given search and an additional criteria
 
     When <page> is "1", the result will include a list of facets scoped on the following search params
 

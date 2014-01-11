@@ -38,7 +38,7 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [] do
+        resources :venues, only: [:index] do
           get :search, on: :collection
         end
 
