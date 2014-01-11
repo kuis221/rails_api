@@ -46,7 +46,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     ]
   EOS
   def index
-    @comments = parent.comments.sort_by {|c| c.id}
+    @comments = parent.comments.order(:id)
   end
 
   api :POST, '/api/v1/events/:event_id/comments', 'Create a new comment for an event'
