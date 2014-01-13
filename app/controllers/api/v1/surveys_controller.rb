@@ -158,6 +158,136 @@ class Api::V1::SurveysController < Api::V1::ApiController
     @surveys = parent.surveys
   end
 
+
+  api :POST, '/api/v1/events/:event_id/surveys', 'Create a new survey for a event'
+  param :survey, Hash, required: true, :action_aware => true do
+    param :surveys_answers_attributes, Hash, required: true do
+      param :kpi_id, [6,7,8], desc: 'The kpi_id of this answer. "6" for gender, "7" for age or "8" for ethnicity. (if this is an answer that is related to a kpi.)'
+      param :brand_id, :number, desc: 'The ID of the brand for this answer, if this is an answer that is related to a brand.'
+      param :question_id, [1,2,3,4], desc: 'The number of the question for this answer.'
+      param :answer, String, desc: 'The value for this answer'
+    end
+  end
+  description <<-EOS
+  An answer have to have a one of the following convinations:
+  * kpi_id and answer
+  * brand_id, question_id and answer
+  EOS
+  example <<-EOS
+  POST /api/v1/events/1322/surveys
+  DATA:
+  {
+    "surveys_answers_attributes": [
+      {"kpi_id"=> 6, "answer"=> 9},
+      {"kpi_id"=> 7, "answer"=> 387},
+      {"kpi_id"=> 8, "answer"=> },
+      {"brand_id"=>brand1.to_param, "question_id"=>"1", "answer"=>"aware"},
+      {"brand_id"=>brand2.to_param, "question_id"=>"1", "answer"=>"aware"},
+      {"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>"4"},
+      {"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>"5"},
+      {"brand_id"=>brand1.to_param, "question_id"=>"3", "answer"=>"2"},
+      {"brand_id"=>brand2.to_param, "question_id"=>"3", "answer"=>"2"},
+      {"brand_id"=>brand1.to_param, "question_id"=>"4", "answer"=>"3"},
+      {"brand_id"=>brand2.to_param, "question_id"=>"4", "answer"=>"4"}
+    ]
+  }
+
+  RESPONSE:
+  {
+     "id":1,
+     "active":true,
+     "created_at":"2014-01-13T15:19:30-08:00",
+     "updated_at":"2014-01-13T15:19:30-08:00",
+     "surveys_answers":[
+        {
+           "id":1,
+           "kpi_id":6,
+           "question_id":null,
+           "brand_id":null,
+           "answer":"10"
+        },
+        {
+           "id":2,
+           "kpi_id":7,
+           "question_id":null,
+           "brand_id":null,
+           "answer":"5"
+        },
+        {
+           "id":3,
+           "kpi_id":8,
+           "question_id":null,
+           "brand_id":null,
+           "answer":"11"
+        },
+        {
+           "id":4,
+           "kpi_id":null,
+           "question_id":1,
+           "brand_id":1,
+           "answer":"aware"
+        },
+        {
+           "id":5,
+           "kpi_id":null,
+           "question_id":1,
+           "brand_id":2,
+           "answer":"aware"
+        },
+        {
+           "id":6,
+           "kpi_id":null,
+           "question_id":2,
+           "brand_id":1,
+           "answer":""
+        },
+        {
+           "id":7,
+           "kpi_id":null,
+           "question_id":2,
+           "brand_id":2,
+           "answer":""
+        },
+        {
+           "id":8,
+           "kpi_id":null,
+           "question_id":3,
+           "brand_id":1,
+           "answer":"2"
+        },
+        {
+           "id":9,
+           "kpi_id":null,
+           "question_id":3,
+           "brand_id":2,
+           "answer":"2"
+        },
+        {
+           "id":10,
+           "kpi_id":null,
+           "question_id":4,
+           "brand_id":1,
+           "answer":"3"
+        },
+        {
+           "id":11,
+           "kpi_id":null,
+           "question_id":4,
+           "brand_id":2,
+           "answer":"4"
+        }
+     ]
+  }
+  EOS
+  def create
+    create! do |success, failure|
+      success.json { render :show }
+      success.xml { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
   protected
 
     def build_resource_params
@@ -165,6 +295,6 @@ class Api::V1::SurveysController < Api::V1::ApiController
     end
 
     def permitted_params
-      params.permit(survey: [:content])[:comment]
+      params.permit(survey: {surveys_answers_attributes: [:id, :brand_id, :question_id, :answer, :kpi_id]})[:survey]
     end
 end
