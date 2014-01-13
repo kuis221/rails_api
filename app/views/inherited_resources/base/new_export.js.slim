@@ -16,6 +16,9 @@
         clearInterval(downloadInterval);
         downloadDialog.modal('hide');
         window.location = response.url;
+      } else if (response.status == 'failed') {
+        clearInterval(downloadInterval);
+        downloadDialog.modal('hide');
       } else {
         $('#export-progress-bar .bar').css({width: response.progress + '%'})
       }

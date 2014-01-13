@@ -58,7 +58,7 @@ class ListExport < ActiveRecord::Base
     file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
       :secure => true,
       :expires => 300, # 5 minutes
-      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s unless file_file_name.nil? || file.nil? || file.s3_object(style_name).nil?
   end
 
   def export_list
@@ -80,6 +80,7 @@ class ListExport < ActiveRecord::Base
     buffer = controller.send(:export_list, self)
     tmp_filename = "#{Rails.root}/tmp/#{name}.#{export_format}"
     File.open(tmp_filename, 'w'){|f| f.write(buffer) }
+    buffer = nil
     self.file = File.open(tmp_filename)
 
 

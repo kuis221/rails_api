@@ -130,7 +130,7 @@ class CompanyUsersController < FilteredController
   def export_status
     url = nil
     export = ListExport.find_by_id_and_company_user_id(params[:download_id], current_company_user.id)
-    url = export.download_url if export.completed?
+    url = export.download_url if export.completed? && export.file_file_name
     respond_to do |format|
       format.json { render json:  {status: export.aasm_state, progress: export.progress, url: url} }
     end

@@ -238,7 +238,7 @@ describe Kpi do
         }.to change(Kpi, :count).by(-1)
       }.to change(EventResult, :count).by(-2)
 
-      event.reload
+      event = Event.find(event.id)
       event.result_for_kpi(kpi1).map(&:value).should == [10, 90]
 
       event.results.count.should == 2

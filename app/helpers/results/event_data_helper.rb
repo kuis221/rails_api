@@ -27,8 +27,9 @@ module Results
       # Returns an array of nils that need to be populated by the event
       # where the key is the id of the field + the id of the segment id if the field is segmentable
       def empty_values_hash
-        @_values_hash ||= Hash[*custom_fields_to_export.map{|id, field| field.is_segmented? ? field.kpi.kpis_segments.map{|s| ["#{id}-#{s.id}", nil]} : [id.to_s, nil]}.flatten]
-        @_values_hash.dup
+        @empty_values_hash ||= Hash[*custom_fields_to_export.map{|id, field| field.is_segmented? ? field.kpi.kpis_segments.map{|s| ["#{id}-#{s.id}", nil]} : [id.to_s, nil]}.flatten]
+        @empty_values_hash.each{|k,v| @empty_values_hash[k] = nil }
+        @empty_values_hash
       end
 
       # Returns and array of Form Field IDs that are assigned to a campaign
@@ -50,7 +51,9 @@ module Results
             end
           end
 
-          fields_scope = CampaignFormField.joins('LEFT JOIN kpis on kpis.id=campaign_form_fields.kpi_id').where('campaign_form_fields.kpi_id is null or kpis.module=?', 'custom')
+          fields_scope = CampaignFormField.joins('LEFT JOIN kpis on kpis.id=campaign_form_fields.kpi_id').
+                                    where(kpis: {company_id: current_company_user.company_id}).
+                                    where('campaign_form_fields.kpi_id is null or kpis.module=?', 'custom')
           fields_scope = fields_scope.where(campaign_id: campaign_ids) unless current_company_user.is_admin? and campaign_ids.empty?
           Hash[fields_scope.map{|field| [field.id, field]}]
         end

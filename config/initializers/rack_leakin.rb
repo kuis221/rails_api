@@ -1,5 +1,5 @@
 Rails.application.config.middleware.use Rack::Leakin
-Rack::Leakin.threshold = 20480 # 20MB
+Rack::Leakin.threshold = ENV['LEAK_THRESHOLD'] || 20480
 
 # Send notifications to airbrak/errbit
 Rack::Leakin.handler = lambda do |env, beginning, ending|
