@@ -4592,6 +4592,30 @@ body.campaigns{
 	.box_event_data{
 		form {
 			margin-bottom: 30px;
+			.box_custom, .box_consumer_reach, .box_demographics {
+				label {
+					display: inline-block;
+					&.radio {
+						display: block;
+					}
+					&.percentage {
+						margin-right: 5px;
+						width: 326px;
+						&.with_message {
+							width: 125px;
+						}
+					}
+				}
+				.percentage {
+					width: 573px;
+					.help-inline {
+						margin-top: 12px;
+						float: right;
+						width: 201px;
+						padding-left: 0;
+					}
+				}
+			}
 		}
 	}
 	#event-documents-list{
