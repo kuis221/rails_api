@@ -8,6 +8,17 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
           li= link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
       li= link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
-      = link_to image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s), photo.file.url(:medium), rel: 'photo-gallery', class: 'fancybox', caption: render(partial: 'results/photos/photo_info', locals: {photo: photo, show_date_details:show_date_details}).gsub(/"/, '&quot;').html_safe
+      = link_to "#myModal", 'data-toggle' => 'modal' do
+          = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
     - else
       .image-loading-container
+
+// MODAL FOR ABOUT US
+
+#myModal.modal.hide.fade
+  button.close data-dismiss="modal" aria-hidden="true" ×
+  .span12
+    p NOVIGGO
+  .span12
+    p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex  ea commodo consequat.
+    p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex  ea commodo consequat.
