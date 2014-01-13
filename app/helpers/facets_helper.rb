@@ -43,8 +43,7 @@ module FacetsHelper
     places = Place.where(id: counts.keys.uniq).all
     list = {label: :root, items: [], id: nil, path: nil}
 
-    areas = Area.scoped_by_company_id(current_company.id).order(:name).active
-
+    areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active
     Place.unscoped do
       places.each do |p|
         parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
