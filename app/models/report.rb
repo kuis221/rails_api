@@ -69,6 +69,7 @@ class Report < ActiveRecord::Base
     self.succeed!
     rescue Exception => e
       self.fail!
+      raise e
   end
 
   # This method should be implemented by the child class
