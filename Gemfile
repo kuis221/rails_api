@@ -58,6 +58,7 @@ gem 'kgio'
 
 #For memory debugging
 gem "oink"
+#gem "allocation_stats"
 
 
 # Gems used only for assets and not required

@@ -52,11 +52,11 @@ class Role < ActiveRecord::Base
   end
 
   def permission_for(action, subject_class, subject = nil)
-    permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build({action: action, subject_class: subject_class.to_s, subject_id: subject}, without_protection: true)
+    cached_permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build({action: action, subject_class: subject_class.to_s, subject_id: subject}, without_protection: true)
   end
 
   def has_permission?(action, subject_class)
-    permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+    cached_permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
   end
 
 
