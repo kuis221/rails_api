@@ -31,9 +31,11 @@ describe Api::V1::UsersController do
         "email" => user.email,
         "phone_number" => user.phone_number,
         "street_address" => user.street_address,
+        "unit_number"=>"Unit Number 456",
         "city" => user.city,
         "state" => user.state,
         "zip_code" => user.zip_code,
+        "time_zone"=>"Pacific Time (US & Canada)",
         "country" => user.country_name}]
     end
 
@@ -51,7 +53,6 @@ describe Api::V1::UsersController do
       )
     end
 
-
     it "should return only active users" do
       role = user.company_users.first.role
       inactive_user = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company: company, role: role, active: false)
@@ -65,6 +66,19 @@ describe Api::V1::UsersController do
         "id" => user.company_users.first.id,
         "role_name" => role.name
       )
+    end
+  end
+
+  describe "PUT 'update'" do
+    let(:the_user){ FactoryGirl.create(:company_user, company_id: company.to_param) }
+    it "should update the user profile attributes" do
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: {user_attributes: {first_name: 'Updated Name', last_name: 'Updated Last Name'}}, format: :json
+      assigns(:user).should == the_user
+
+      response.should be_success
+      the_user.reload
+      the_user.first_name.should == 'Updated Name'
+      the_user.last_name.should == 'Updated Last Name'
     end
   end
 
