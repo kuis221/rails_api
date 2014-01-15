@@ -50,12 +50,16 @@ module Results
               campaign_ids = current_company_user.accessible_campaign_ids
             end
           end
-
-          fields_scope = CampaignFormField.joins('LEFT JOIN kpis on kpis.id=campaign_form_fields.kpi_id').
-                                    where(kpis: {company_id: current_company_user.company_id}).
-                                    where('campaign_form_fields.kpi_id is null or kpis.module=?', 'custom')
-          fields_scope = fields_scope.where(campaign_id: campaign_ids) unless current_company_user.is_admin? and campaign_ids.empty?
-          Hash[fields_scope.map{|field| [field.id, field]}]
+          if campaign_ids.any?
+            fields_scope = CampaignFormField.joins('LEFT JOIN kpis on kpis.id=campaign_form_fields.kpi_id').
+                                      where(kpis: {company_id: current_company_user.company_id}).
+                                      where('campaign_form_fields.kpi_id is null or kpis.module=?', 'custom').
+                                      order('campaign_form_fields.name ASC')
+            fields_scope = fields_scope.where(campaign_id: campaign_ids) unless current_company_user.is_admin? and campaign_ids.empty?
+            Hash[fields_scope.map{|field| [field.id, field]}]
+          else
+            {}
+          end
         end
         @kpis_to_export
       end
