@@ -1,11 +1,8 @@
 require 'spec_helper'
 
 describe DashboardHelper do
-  before(:all) do
-    Kpi.destroy_all
-    Kpi.create_global_kpis
-  end
   before do
+    Kpi.create_global_kpis
     @company = FactoryGirl.create(:company)
     @current_company_user = FactoryGirl.create(:company_user, company: @company, role: FactoryGirl.create(:role, is_admin: true))
     helper.stub(:current_company) { @company }
