@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140109185805) do
+ActiveRecord::Schema.define(:version => 20140115210126) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -492,6 +492,8 @@ ActiveRecord::Schema.define(:version => 20140109185805) do
     t.integer "placeable_id"
     t.string  "placeable_type"
   end
+
+  add_index "placeables", ["placeable_id", "placeable_type"], :name => "index_placeables_on_placeable_id_and_placeable_type"
 
   create_table "places", :force => true do |t|
     t.string   "name"
