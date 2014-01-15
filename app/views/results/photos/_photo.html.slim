@@ -8,7 +8,7 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
           li= link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
       li= link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
-      = link_to "#myModal", 'data-toggle' => 'modal' do
+      = link_to ".gallery-modal", 'data-toggle' => 'modal' do
           = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
     - else
       .image-loading-container
@@ -16,7 +16,9 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
 // MODAL FOR ABOUT US
 
 .gallery-modal.modal.hide.fade
-  button.close data-dismiss="modal" aria-hidden="true" ×
+  .photo-container
+    button.close data-dismiss="modal" aria-hidden="true" ×
+    p hola esto es un test
   .slider
     .gallery-carousel.carousel.slide
       / Carousel items
@@ -28,6 +30,6 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
           .row
             = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
       / Carousel nav
-      a.carousel-control.left data-slide= "prev" href= "#myCarousel"
-      a.carousel-control.right data-slide= "next" href= "#myCarousel"
+      a.carousel-control.left data-slide= "prev" href= ".gallery-carousel"
+      a.carousel-control.right data-slide= "next" href= ".gallery-carousel"
 
