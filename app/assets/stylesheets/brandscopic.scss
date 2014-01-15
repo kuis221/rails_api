@@ -6001,7 +6001,61 @@ ul#reports-list {
 		display: inline-block;
 		float: right;
 		height: 400px;
+		padding: 35px 20px;
 		width: 320px;
+		.close{
+			color: white;
+			top: 4px;
+			right: 9px;
+			position: absolute;
+			opacity: 1;
+			text-shadow: none;
+		}
+		.description{
+			width: 290px;
+			.place-data, .calendar-data{
+				position: relative;
+				&:before{
+					color: white;
+					display: inline-block;
+					left: -28px;
+					position:absolute;
+					width: auto;
+				}
+			}
+			.calendar-data:before{
+				top:4px;
+			}
+			p{
+				display: inline-block;
+			}
+		}
+		.tags{
+			.typeahead{
+				background-color: $header;
+				border: 1px solid white;
+				box-sizing: border-box;
+				color: white;
+				display: block;
+				height: 36px;
+				margin: 15px auto 0 auto;
+				padding:0 10px;
+				width: 280px;
+				&:focus{
+					outline:0;
+				}
+			}
+			.tag{
+				border: 1px solid white;
+				color: white;
+				display: inline-block;
+				margin: 0 7px 6px 0;
+				padding: 3px 7px;
+				-webkit-border-radius: 3px;
+				-moz-border-radius: 3px;
+				border-radius: 3px;
+			}
+		}
 	}
 	.slider{
 		float: left;
