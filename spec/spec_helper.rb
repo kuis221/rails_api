@@ -64,7 +64,7 @@ RSpec.configure do |config|
 
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :deletion
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.logger = Rails.logger
   end
@@ -77,13 +77,13 @@ RSpec.configure do |config|
     DeferredGarbageCollection.reconsider
   end
 
-  config.before(:each) do
-    if example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-  end
+  # config.before(:each) do
+  #   if example.metadata[:js]
+  #     DatabaseCleaner.strategy = :truncation
+  #   else
+  #     DatabaseCleaner.strategy = :transaction
+  #   end
+  # end
 
   config.before(:each) do
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
