@@ -15,10 +15,19 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
 
 // MODAL FOR ABOUT US
 
-#myModal.modal.hide.fade
+.gallery-modal.modal.hide.fade
   button.close data-dismiss="modal" aria-hidden="true" ×
   .slider
-    p NOVIGGO
-    .span12
-      p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex  ea commodo consequat.
-      p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex  ea commodo consequat.
+    .gallery-carousel.carousel.slide
+      / Carousel items
+      .carousel-inner
+        .active.item
+          .row
+            = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+        .item
+          .row
+            = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+      / Carousel nav
+      a.carousel-control.left data-slide= "prev" href= "#myCarousel"
+      a.carousel-control.right data-slide= "next" href= "#myCarousel"
+
