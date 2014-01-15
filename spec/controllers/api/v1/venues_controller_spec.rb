@@ -76,6 +76,19 @@ describe Api::V1::VenuesController do
     end
   end
 
+  describe "GET 'show'" do
+    before do
+      Kpi.create_global_kpis
+    end
+
+    let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil)) }
+
+    it "returns http success" do
+      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: venue.to_param
+      response.should be_success
+      response.should render_template('show')
+    end
+  end
 
   describe "GET 'search'", search: true do
     it "return a list of events" do
