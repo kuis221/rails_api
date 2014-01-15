@@ -182,7 +182,7 @@ describe PlacesController do
       }.to_not change(Campaign, :count)
     end
 
-    it "should call the method update_area_denominators" do
+    it "should call the method update_common_denominators" do
       area.places << place
 
       Area.any_instance.should_receive(:update_common_denominators)

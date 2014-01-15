@@ -47,7 +47,7 @@ class Report::Kpi < Report
           csv << [
             place.td_linx_code, #TD Linx
             brands,         # Brand
-            nil,            # Date
+            the_month.to_formatted_s(:year_month),            # Date
             impressions = sum_results(place_events_cm, impressions_field),     # Cm # Consumer Impressions
             samples = sum_results(place_events_cm, sampled_field),             # Cm # Consumers Sampled
             impressions + samples,                                             # Cm Total Consumers
