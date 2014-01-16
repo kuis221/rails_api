@@ -1,12 +1,12 @@
 - show_date_details ||= true
 li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
-    ul.thumbnail-toolbar
+    .thumbnail-toolbar
       - if can? :deactivate_photo, Event
         - if photo.active?
-          li= link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo'), title: 'Deactivate'
+          = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo'), title: 'Deactivate'
         - else
-          li= link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
-      li= link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
+          = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
+      = link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
       = link_to ".gallery-modal", 'data-toggle' => 'modal' do
           = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)

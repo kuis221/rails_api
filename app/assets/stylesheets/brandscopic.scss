@@ -3110,11 +3110,11 @@ ul.thumbnails{
 		overflow: auto;
 	}
 	.thumbnail{
-		ul.thumbnail-toolbar{
+		.thumbnail-toolbar{
 			display: none;
 		}
 		&:hover{
-			ul.thumbnail-toolbar{
+			.thumbnail-toolbar{
 				background-color: rgba(0, 0, 0, 0.6);
 				display: block;
 				position: absolute;
@@ -3131,19 +3131,19 @@ ul.thumbnails{
 				    text-decoration: none;
 				    &.photo-download-link{
 				    	float:right;
-				    	margin: 0 5px 12px 12px;
+				    	margin: 10px 5px 12px 12px;
 				    	position: relative;
 				    	&:before{
-					       	color: $grey_one;
-							content: "\e00b" !important;
-							display: inline-block;
-							font-family: 'icons';
-							font-size: 15px;
-							position: relative;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
+					      color: $grey_one;
+								content: "\e00b" !important;
+								display: inline-block;
+								font-family: 'icons';
+								font-size: 15px;
+								position: relative;
+								speak: none;
+								text-align: center;
+								vertical-align: middle;
+								-webkit-font-smoothing: antialiased;
 				    	}
 				    }
 				    &.icon-remove-circle{
@@ -3151,8 +3151,21 @@ ul.thumbnails{
 				    	margin: 10px;
 				    	position: relative;
 				    	&:before{
-					        color: $grey_one;
-							content: "\e011" !important;
+					      color: $grey_one;
+								content: "\e011" !important;
+								display: inline-block;
+								font-family: 'icons';
+								font-size: 15px;
+								position: relative;
+								speak: none;
+								text-align: center;
+								vertical-align: middle;
+								-webkit-font-smoothing: antialiased;
+						}
+				    }
+				    &.icon-ok-circle:before{
+				      color: $grey_one;
+							content: "\e00d" !important;
 							display: inline-block;
 							font-family: 'icons';
 							font-size: 15px;
@@ -3161,19 +3174,6 @@ ul.thumbnails{
 							text-align: center;
 							vertical-align: middle;
 							-webkit-font-smoothing: antialiased;
-						}
-				    }
-				    &.icon-ok-circle:before{
-				        color: $grey_one;
-						content: "\e00d" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
 				    }
 				}
 			}
@@ -3187,7 +3187,7 @@ ul.thumbnails{
 
 }
 
-// Photo list - results photos styles
+/* Photo list - results photos styles
 .photo-list{
 	.selected-for-download {
 		img {
@@ -3247,6 +3247,8 @@ ul.thumbnails{
 		}
 	}
 }
+
+*/
 
 // Photo list for venues an details boxes
 #event-photos{
@@ -5904,11 +5906,11 @@ ul#reports-list {
 	position:relative;
 	list-style: none;
 	width: 20%;
-	ul.thumbnail-toolbar{
+	.thumbnail-toolbar{
 		display: none;
 	}
 	&:hover{
-		ul.thumbnail-toolbar{
+		.thumbnail-toolbar{
 			background-color: rgba(0, 0, 0, 0.6);
 			bottom:8px;
 			display: block;
@@ -5919,8 +5921,6 @@ ul#reports-list {
 			width: -webkit-calc(100% - 20px);
 			width: -moz-calc(100% - 20px);
 			width: calc(100% - 20px);
-			li{
-				padding:0;
 			  a{
 			    color: white;
 			    float: right;
@@ -5929,7 +5929,7 @@ ul#reports-list {
 			    text-decoration: none;
 			    &.photo-download-link{
 			    	float:right;
-			    	margin: 0 5px 12px 12px;
+			    	margin: 10px 5px 12px 12px;
 			    	position: relative;
 			    	&:before{
 				      color: $grey_one;
@@ -5974,7 +5974,6 @@ ul#reports-list {
 						-webkit-font-smoothing: antialiased;
 					}
 			  }
-			}
 		}
 	}
 }
