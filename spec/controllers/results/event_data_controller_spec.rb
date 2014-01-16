@@ -100,10 +100,10 @@ describe Results::EventDataController do
 
     it "should include the event data results only for the given campaign" do
       Kpi.create_global_kpis
-      custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI')
+      custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI', company: @company)
       campaign.assign_all_global_kpis
       campaign.add_kpi custom_kpi
-      area = FactoryGirl.create(:area, name: 'Angeles Area' , company: @company)
+      area = FactoryGirl.create(:area, name: 'Angeles Area', company: @company)
       area.places << FactoryGirl.create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality'])
       campaign.areas << area
       place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')

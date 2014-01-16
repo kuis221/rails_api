@@ -17,7 +17,6 @@
 #
 
 # for storing a group of options, such as found in a pie chart
-include ActionView::Helpers::TagHelper
 class Metric::Multivalue < Metric
   has_many :metric_options, :foreign_key => :metric_id, :dependent => :destroy,  :order => "id ASC"
   accepts_nested_attributes_for :metric_options, :allow_destroy => false, :reject_if => proc { |attributes| attributes['name'].blank? }

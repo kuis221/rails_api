@@ -1,0 +1,40 @@
+= form_tag fix_admin_place_path(resource), method: :put, remote: true, name: "fix_place_form" do
+  div style="float:left"
+    - input_name = "fix"
+    - if @suggested.any?
+      - @suggested.each_with_index do |suggestion, index|
+        label
+          div style="float:left;"
+            = radio_button(input_name, "selection", suggestion.id || suggestion.reference, checked: (index == 0))
+          div style="float:left;padding-left: 10px;"
+            b= suggestion.name
+            - unless suggestion.street.nil? || suggestion.street.empty?
+              br
+              = suggestion.street
+            br
+            = [suggestion.city, suggestion.state, suggestion.zipcode].compact.join(', ')
+            br
+          div style="width:100%;clear:both"
+
+    div
+      label
+        div style="float:left;"
+          = radio_button(input_name, "selection", 'manual')
+        div style="float:left;padding-left: 10px;"
+          | Search for a place:
+          = text_field_tag 'fix[place_reference]', nil,  class: 'places-autocomplete', 'data-hidden' => '#fix_selection_manual'
+
+    div style="width:100%;clear:both"
+
+    div
+      label
+        div style="float:left;"
+          = radio_button(input_name, "selection", 'account', checked: @suggested.empty?)
+        div style="float:left;padding-left: 10px;"
+          i Create a new venue with the account's info
+
+  div style="float: left"
+    .buttons
+      = submit_tag "Update"
+
+    
