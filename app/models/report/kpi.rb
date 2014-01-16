@@ -38,7 +38,7 @@ class Report::Kpi < Report
         sampled_field = campaign.form_field_for_kpi(::Kpi.samples)
         show_progress(i+=1, total)
         brands = campaign.brands.map(&:name).to_sentence
-        scoped_events = Event.scoped_by_campaign_id(campaign.id).active.approved
+        scoped_events = ::Event.scoped_by_campaign_id(campaign.id).active.approved
         places = Place.where(id: scoped_events.select('DISTINCT(place_id) as place_id'))
         places.each do |place|
           place_events = scoped_events.scoped_by_place_id(place)
@@ -47,7 +47,7 @@ class Report::Kpi < Report
           csv << [
             place.td_linx_code, #TD Linx
             brands,         # Brand
-            nil,            # Date
+            the_month.to_formatted_s(:year_month),            # Date
             impressions = sum_results(place_events_cm, impressions_field),     # Cm # Consumer Impressions
             samples = sum_results(place_events_cm, sampled_field),             # Cm # Consumers Sampled
             impressions + samples,                                             # Cm Total Consumers
@@ -78,7 +78,6 @@ class Report::Kpi < Report
   end
 
   def the_month
-    p params[:month].to_i
     @month ||= Date.new(params[:year].to_i, params[:month].to_i)
   end
 

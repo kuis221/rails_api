@@ -12,11 +12,9 @@ gem 'pg'
 gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
 gem "cancan", ">= 1.6.8"
-gem "slim"
 gem "slim-rails"
 gem "annotate", ">=2.5.0",  :group => :development
 gem "quiet_assets", ">= 1.0.1", :group => :development
-gem 'thin'
 gem 'simple_form'
 gem 'inherited_resources'
 gem 'has_scope'
@@ -38,7 +36,7 @@ gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
 gem 'progress_bar'
-gem 'puma'
+gem 'unicorn'
 gem "geocoder"
 gem "nested_form"
 gem 'axlsx'
@@ -58,7 +56,7 @@ gem 'kgio'
 
 #For memory debugging
 gem "oink"
-gem "rack-leakin"
+#gem "allocation_stats"
 
 
 # Gems used only for assets and not required

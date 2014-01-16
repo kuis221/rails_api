@@ -99,8 +99,7 @@ class Event < ActiveRecord::Base
 
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
-
-  #after_create :add_team_members
+  after_commit :index_venue
 
   delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -665,10 +664,6 @@ class Event < ActiveRecord::Base
         event_data.save
       end
 
-      if place_id.present?
-        Resque.enqueue(VenueIndexer, venue.id)
-      end
-
       if place_id_changed?
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
@@ -679,6 +674,12 @@ class Event < ActiveRecord::Base
 
       if active_changed?
         Sunspot.index self.tasks
+      end
+    end
+
+    def index_venue
+      if place_id.present?
+        Resque.enqueue(VenueIndexer, venue.id)
       end
     end
 

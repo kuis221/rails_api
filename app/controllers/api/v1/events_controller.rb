@@ -674,7 +674,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     @contacts = resource.contacts
   end
 
-
   api :GET, '/api/v1/events/:id/assignable_contacts', "Get a list of contacts+users that can be associated to the event as a contact"
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
@@ -710,7 +709,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def assignable_contacts
     @contacts =  ContactEvent.contactables_for_event(resource)
   end
-
 
   api :POST, '/api/v1/events/:id/contacts', 'Assocciate a contact to the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'

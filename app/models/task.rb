@@ -192,7 +192,7 @@ class Task < ActiveRecord::Base
           facet :status do
             row(:late) do
               with(:statusm, 'Incomplete')
-              with(:due_at).less_than(Date.yesterday)
+              with(:due_at).less_than(Date.yesterday.beginning_of_day)
             end
             row(:unassigned) do
               with(:statusm, 'Unassigned')
