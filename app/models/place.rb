@@ -332,6 +332,8 @@ class Place < ActiveRecord::Base
 
     def spot
       @spot ||= client.spot(reference) if reference.present?
+    rescue GooglePlaces::NotFoundError
+      @spot = false
     end
 
     def client
