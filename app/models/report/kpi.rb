@@ -30,7 +30,7 @@ class Report::Kpi < Report
       total = campaigns.count
       start_year = the_month.year-1
       start_year += 1 unless the_month.month < 7
-      fytd_start = Date.new(start_year, Date::MONTHNAMES.index('July')).beginning_of_month
+      fytd_start = Date.new(start_year, Date::MONTHNAMES.index('July')).beginning_of_month.beginning_of_day
       fytd_end = Date.new(start_year+1, Date::MONTHNAMES.index('June')).end_of_month.end_of_day
 
       campaigns.find_each(batch_size: 10) do |campaign|
@@ -38,12 +38,12 @@ class Report::Kpi < Report
         sampled_field = campaign.form_field_for_kpi(::Kpi.samples)
         show_progress(i+=1, total)
         brands = campaign.brands.map(&:name).to_sentence
-        scoped_events = Event.scoped_by_campaign_id(campaign.id).active.approved
+        scoped_events = ::Event.scoped_by_campaign_id(campaign.id).active.approved
         places = Place.where(id: scoped_events.select('DISTINCT(place_id) as place_id'))
         places.each do |place|
           place_events = scoped_events.scoped_by_place_id(place)
           place_events_fytd = place_events.between_dates(fytd_start, fytd_end)
-          place_events_cm = place_events.between_dates(the_month.beginning_of_month, the_month.end_of_month)
+          place_events_cm = place_events.between_dates(the_month.beginning_of_month.beginning_of_day, the_month.end_of_month.end_of_day)
           csv << [
             place.td_linx_code, #TD Linx
             brands,         # Brand
@@ -71,14 +71,13 @@ class Report::Kpi < Report
 
   def campaigns
     @campaigns ||= begin
-      campaigns = Campaign.accessible_by_user(company_user)
+      campaigns = Campaign.active.accessible_by_user(company_user)
       campaigns = campaigns.where(id: params[:campaign_id]) if params[:campaign_id].present? && params[:campaign_id].map(&:to_i).select{|id| id > 0 }.any?
       campaigns
     end
   end
 
   def the_month
-    p params[:month].to_i
     @month ||= Date.new(params[:year].to_i, params[:month].to_i)
   end
 
