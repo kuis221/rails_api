@@ -98,4 +98,45 @@ module FacetsHelper
     end
   end
 
+  # Returns the facets for the venuesah  controller
+  def venues_facets
+    @facet_search ||= Array.new.tap do |f|
+      # select what params should we use for the facets search
+      facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q current_company_user location company_id).include?(k)})
+      facet_search = Venue.do_search(facet_params, true)
+
+      if rows = facet_search.stats.first.rows
+        max_events       = rows.detect{|r| r.stat_field == 'events_count_is' }.try(:value) || 0
+        max_promo_hours  = rows.detect{|r| r.stat_field == 'promo_hours_es' }.try(:value) || 0
+        max_impressions  = rows.detect{|r| r.stat_field == 'impressions_is' }.try(:value) || 0
+        max_interactions = rows.detect{|r| r.stat_field == 'interactions_is' }.try(:value) || 0
+        max_sampled      = rows.detect{|r| r.stat_field == 'sampled_is' }.try(:value) || 0
+        max_spent        = rows.detect{|r| r.stat_field == 'spent_es' }.try(:value) || 0
+        max_venue_score  = rows.detect{|r| r.stat_field == 'venue_score_is' }.try(:value) || 0
+
+        f.push(label: "Events", name: :events_count, min: 0, max: max_events.to_i, selected_min: search_params[:events_count].try(:[],:min), selected_max: search_params[:events_count].try(:[],:max) )
+        f.push(label: "Impressions", name: :impressions, min: 0, max: max_impressions.to_i, selected_min: search_params[:impressions].try(:[],:min), selected_max: search_params[:impressions].try(:[],:max) )
+        f.push(label: "Interactions", name: :interactions, min: 0, max: max_interactions.to_i, selected_min: search_params[:interactions].try(:[],:min), selected_max: search_params[:interactions].try(:[],:max) )
+        f.push(label: "Promo Hours", name: :promo_hours, min: 0, max: max_promo_hours.to_i, selected_min: search_params[:promo_hours].try(:[],:min), selected_max: search_params[:promo_hours].try(:[],:max) )
+        f.push(label: "Samples", name: :sampled, min: 0, max: max_sampled.to_i, selected_min: search_params[:sampled].try(:[],:min), selected_max: search_params[:sampled].try(:[],:max) )
+        f.push(label: "Venue Score", name: :venue_score, min: 0, max: max_venue_score.to_i, selected_min: search_params[:venue_score].try(:[],:min), selected_max: search_params[:venue_score].try(:[],:max) )
+        f.push(label: "$ Spent", name: :spent, min: 0, max: max_spent.to_i, selected_min: search_params[:spent].try(:[],:min), selected_max: search_params[:spent].try(:[],:max) )
+      end
+
+      # Prices
+      prices = [
+          build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),
+          build_facet_item({label: '$$', id: '2', name: :price, count: 1, ordering: 2}),
+          build_facet_item({label: '$$$', id: '3', name: :price, count: 1, ordering: 3}),
+          build_facet_item({label: '$$$$', id: '4', name: :price, count: 1, ordering: 3})
+      ]
+      f.push(label: "Price", items: prices )
+
+      f.push build_areas_bucket(facet_search)
+      #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
+      f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_ids).rows)
+      f.push build_brands_bucket(facet_search.facet(:campaign_ids).rows)
+    end
+  end
+
 end

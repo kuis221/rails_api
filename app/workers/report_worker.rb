@@ -4,11 +4,6 @@ class ReportWorker
 
   def self.perform(report_id)
     report = Report.find(report_id)
-    begin
-      report.generate_report
-    rescue  Exception => e
-      report.fail!
-      raise e
-    end
+    report.generate_report
   end
 end

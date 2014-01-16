@@ -89,7 +89,7 @@ describe Results::EventDataController do
 
       with_routing do |map|
         map.draw { get ':controller/:action' }
-        get 'test_export'
+        get 'test_export', campaign: [campaign.id]
         woorbook_from_response do |oo|
           1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('A CUSTOM KPI')
           1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should include(9876)
@@ -100,7 +100,7 @@ describe Results::EventDataController do
 
     it "should include the event data results only for the given campaign" do
       Kpi.create_global_kpis
-      custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI')
+      custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI', company: @company)
       campaign.assign_all_global_kpis
       campaign.add_kpi custom_kpi
       area = FactoryGirl.create(:area, name: 'Angeles Area' , company: @company)
@@ -153,7 +153,7 @@ describe Results::EventDataController do
 
       with_routing do |map|
         map.draw { get ':controller/:action' }
-        get 'test_export'
+        get 'test_export', campaign: [campaign.id, campaign2.id]
         woorbook_from_response do |oo|
           1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('A CUSTOM KPI')
           1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('ANOTHER KPI')
@@ -204,7 +204,7 @@ describe Results::EventDataController do
 
       with_routing do |map|
         map.draw { get ':controller/:action' }
-        get 'test_export'
+        get 'test_export', campaign: [campaign.id]
         woorbook_from_response do |oo|
           1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('MY KPI: UNO')
           1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('MY KPI: DOS')

@@ -50,7 +50,7 @@ feature "Results Expenses Page", js: true, search: true  do
       expect(page).to have_content('TOTAL:$30.00')
     end
 
-    scenario "GET index should display a table with the expenses" do
+    scenario "clicking on the expense item should redirect the user to the event" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.expenses)
       event = FactoryGirl.build(:approved_event, campaign: campaign, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm')

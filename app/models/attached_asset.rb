@@ -36,7 +36,7 @@ class AttachedAsset < ActiveRecord::Base
   validate :valid_file_format?
 
   before_validation :set_upload_attributes
-  after_create :queue_processing
+  after_commit :queue_processing, on: :create
   before_post_process :post_process_required?
 
   validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }

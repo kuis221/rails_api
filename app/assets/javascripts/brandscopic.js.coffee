@@ -91,8 +91,12 @@ jQuery ->
 
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label")
+				label.addClass('with_message')
 				if label.length > 0
-					error.insertAfter label
+					if typeof element.data('segmentFieldId') isnt "undefined"
+						error.insertBefore label
+					else
+						error.insertAfter label
 				else
 					error.insertAfter element
 
@@ -263,7 +267,7 @@ jQuery ->
 
 	askForTimeZoneChange = (browserTimeZone) ->
 		$.get '/users/time_zone_change.js', {time_zone: browserTimeZone}
- 
+
 	# For images previews on hover
 	$(document).delegate("a[data-preview-url]", 'mouseenter mouseleave', (e) ->
 
