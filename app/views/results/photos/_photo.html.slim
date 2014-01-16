@@ -16,8 +16,8 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
 // MODAL FOR ABOUT US
 
 .gallery-modal.modal.hide.fade
-  .photo-container
-    button.close data-dismiss="modal" aria-hidden="true" ×
+  .panel
+    button.close data-dismiss="modal" aria-hidden="true"
     .description
       h3 Jameson Black Barrel FY13
       .calendar-data
@@ -31,13 +31,29 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
         br 5555, Union Street, San Francisco, CA 94110
     .mini-slider
       p here goes the mini slider
+      .gallery-carousel.small.carousel.slide
+        / Carousel items
+        .carousel-inner
+          .active.item
+            .row
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+          .item
+            .row
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+        / Carousel nav
+        a.carousel-control.left data-slide= "prev" href= ".gallery-carousel"
+        a.carousel-control.right data-slide= "next" href= ".gallery-carousel"
     .tags
-      span.tag-img
-      .tag 2013
-      .tag jameson
-      .tag jaskot
-      .tag whiskey
-      .tag chicago-team
+      .list
+        .tag 2013
+        .tag jameson
+        .tag jaskot
+        .tag whiskey
+        .tag chicago-team
       input.typeahead 
   .slider
     .gallery-carousel.carousel.slide

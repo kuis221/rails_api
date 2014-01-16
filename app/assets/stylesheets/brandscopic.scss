@@ -367,12 +367,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
     	right: 25px;
     	text-shadow:none;
     	&:after{
-			color: white;
-			content: "\e019";
-		  	display: block;
-		  	font-family: 'icons';
-			font-size: 12px;
-			left: 0;
+				color: white;
+				content: "\e019";
+			  display: block;
+			  font-family: 'icons';
+				font-size: 12px;
+				left: 0;
 		  	position: absolute;
 		  	speak:none;
 		  	text-indent: 0;
@@ -407,28 +407,28 @@ a.edit:after{
 .datepick-cmd-prev:after{
 	color: white;
 	content: "\e003";
-  	display: block;
-  	font-family: 'icons';
+	display: block;
+	font-family: 'icons';
 	font-size: 9px;
 	left: 0;
-  	position: absolute;
-  	speak:none;
-  	text-indent: 0;
-  	top:1px;
-  	-webkit-font-smoothing: antialiased;
+	position: absolute;
+	speak:none;
+	text-indent: 0;
+	top:1px;
+	-webkit-font-smoothing: antialiased;
 }
 .datepick-cmd-next:after{
 	color: white;
 	content: "\e002";
-  	display: block;
-  	font-family: 'icons';
+	display: block;
+	font-family: 'icons';
 	font-size: 9px;
 	left: 6px;
-  	position: absolute;
-  	speak:none;
-  	text-indent: 0;
-  	top:1px;
-  	-webkit-font-smoothing: antialiased;
+	position: absolute;
+	speak:none;
+	text-indent: 0;
+	top:1px;
+	-webkit-font-smoothing: antialiased;
 }
 a.datepick-cmd{
 	display: inline-block;
@@ -5981,6 +5981,102 @@ ul#reports-list {
 
 /*-- STYLES FOR THE NEW GALLERY MODAL --*/
 
+.slider{
+	a.carousel-control{
+		opacity: 0;
+	}
+	&:hover{
+		a.carousel-control{
+			background-color: #050505;
+			opacity: 0.75;	
+			&.right:before{
+				content: "\e601";
+				margin-left: 4px;
+			}
+			&.left:before{
+				content: "\e602";
+			}
+			&.right:before, &.left:before{
+				color: white;
+				display: block;
+		  	font-family: 'icons';
+		  	font-size: 40px;
+				line-height: 63px;
+				padding-left: 11px;
+				opacity: 0.5;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+	}
+}
+.gallery-carousel{
+	.row{
+		margin-left: 0;
+	}
+	img{
+		margin: auto 0;
+		width: 520px;
+	}
+	&.small{
+		.carousel-control{
+			background-color: transparent;
+			top:40%;
+			&.right{
+				right: -15px;
+				&:before{
+					content: "\e601";
+					margin-left: 4px;
+				}
+			}
+			&.left{
+				left: 0;
+				&:before{
+					content: "\e602";
+					padding-right:10px;
+				}
+			}
+			&.right:before, &.left:before{
+				color: white;
+				display: block;
+		  	font-family: 'icons';
+		  	font-size: 25px;
+				line-height: 53px;
+				opacity: 1;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+		.carousel-inner{
+			margin-left: 30px;
+			width: 261px;
+		}
+		img{
+			display: inline-block;
+			width:85px;
+			&:first-of-type{
+				margin-right: 3px;
+			}
+			&:last-of-type{
+				margin-left: 3px;
+			}
+		}
+	}
+	.carousel-control{
+		border:0;
+		border-radius: 0;
+		-webkit-border-radius: 0;
+		-moz-border-radius: 0;
+		height: 64px;
+		width: 47px;
+		top: 50%;
+		&.left{
+			left: 0;
+		}
+		&.right{
+			right: 0;
+		}
+	}
+}
+
 .gallery ul > li > a > img{
   display: block;
   width: 100%;
@@ -5995,7 +6091,7 @@ ul#reports-list {
 	box-shadow:none;
 	left: 37%;
 	width:auto;
-	.photo-container{
+	.panel{
 		background-color: $header;
 		color: white;
 		display: inline-block;
@@ -6005,32 +6101,66 @@ ul#reports-list {
 		width: 320px;
 		.close{
 			color: white;
-			top: 4px;
-			right: 9px;
-			position: absolute;
+			top: 7px;
 			opacity: 1;
-			text-shadow: none;
+			right: 20px;;
+			position: absolute;
+			&:before{
+				content: "\e019";
+				display: block;
+				font-family: 'icons';
+				font-size: 12px;
+				font-weight: normal;
+				display: inline-block;
+				position:absolute;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+		h3{
+			font-size: 20px;
+			line-height: 23px
 		}
 		.description{
-			width: 290px;
+			width: 320px;
 			.place-data, .calendar-data{
 				position: relative;
+				width: 290px;
 				&:before{
-					color: white;
+					color: $grey_one;
 					display: inline-block;
 					left: -28px;
 					position:absolute;
 					width: auto;
+					-webkit-font-smoothing: antialiased;
 				}
 			}
 			.calendar-data:before{
 				top:4px;
+			}
+			.place-data:before{
+				left: -26px;
 			}
 			p{
 				display: inline-block;
 			}
 		}
 		.tags{
+			margin-left: 30px;
+			position: relative;
+			&:before{
+				content: "\e600";
+				color: white;
+				display: inline-block;
+				font-family: 'icons';
+				font-size: 16px;
+				left: -29px;
+				top: 2px;
+				position: absolute;
+				-webkit-font-smoothing: antialiased;
+			}
+			.list{
+				margin-bottom: 15px;
+			}
 			.typeahead{
 				background-color: $header;
 				border: 1px solid white;
@@ -6038,7 +6168,6 @@ ul#reports-list {
 				color: white;
 				display: block;
 				height: 36px;
-				margin: 15px auto 0 auto;
 				padding:0 10px;
 				width: 280px;
 				&:focus{
@@ -6047,10 +6176,10 @@ ul#reports-list {
 			}
 			.tag{
 				border: 1px solid white;
-				color: white;
+				color: $grey_one;
 				display: inline-block;
 				margin: 0 7px 6px 0;
-				padding: 3px 7px;
+				padding: 2px 7px 3px;
 				-webkit-border-radius: 3px;
 				-moz-border-radius: 3px;
 				border-radius: 3px;
