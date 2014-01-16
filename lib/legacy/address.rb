@@ -28,4 +28,8 @@ class Legacy::Address < Legacy::Record
   def single_line
     [street_address, supplemental_address, city, state, postal_code].compact.join(' ')
   end
+
+  def state_name
+    Country.new('US').states[state]['name'] if state
+  end
 end
