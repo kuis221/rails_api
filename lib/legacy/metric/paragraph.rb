@@ -17,8 +17,8 @@
 #
 
 # for storing free text
-include ActionView::Helpers::TagHelper
-include ActionView::Helpers::TextHelper
+# include ActionView::Helpers::TagHelper
+# include ActionView::Helpers::TextHelper
 class Metric::Paragraph < Metric
   def form_options
     super.merge({:as => :text})
