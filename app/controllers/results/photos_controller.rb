@@ -45,7 +45,7 @@ class Results::PhotosController < FilteredController
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_campaign_bucket facet_search
-        f.push build_brands_bucket(facet_search.facet(:campaign).rows)
+        f.push build_brands_bucket
         f.push build_areas_bucket(facet_search)
         f.push build_status_bucket facet_search
       end

@@ -197,26 +197,26 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
       end
-      
+
       scenario "clear filters should also exclude reset the default dates filter" do
         campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
         past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
         today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
         Sunspot.commit
-        
+
         visit events_path
         expect(page).to have_content('1 Active event taking place today and in the future')
         expect(page).to have_selector('ul#events-list li', count: 1)
-        
+
         click_link 'Clear filters'
         expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
-        
+
         filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
         expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
       end
-      
+
       feature "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
@@ -243,6 +243,47 @@ feature "Events", js: true, search: true do
         end
       end
       feature "filters" do
+        scenario "Users must be able to filter on all brands they have permissions to access " do
+          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          tomorrow = today+1.day
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          brands = [
+            FactoryGirl.create(:brand, name: 'Cacique'),
+            FactoryGirl.create(:brand, name: 'Smirnoff'),
+          ]
+          FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
+          ev1.campaign.brands << brands.first
+          ev2.campaign.brands << brands.last
+          @company_user.brands << brands
+          Sunspot.commit
+          visit events_path
+          expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+
+          filter_section('BRANDS').unicheck('Cacique')
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_no_content('Another Campaign April 03')
+          end
+          filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
+          filter_section('BRANDS').unicheck('Smirnoff')
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+        end
+
         scenario "Users must be able to filter on all areas they have permissions to access " do
           today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
           tomorrow = today+1.day
@@ -260,13 +301,11 @@ feature "Events", js: true, search: true do
             @company_user.areas << area
           end
           Sunspot.commit
-          
+
           visit events_path
           expect(page).to have_filter_section(title: 'AREAS', options: ['Gran Area Metropolitana', 'Zona Norte'])
-          
         end
       end
-      
     end
   end
 
