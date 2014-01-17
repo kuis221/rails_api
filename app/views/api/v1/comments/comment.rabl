@@ -1,1 +1,1 @@
-attributes :id, :content, :created_at
+attributes :id, :content, :created_by_id, :created_at

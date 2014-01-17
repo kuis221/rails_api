@@ -27,6 +27,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     Each item have the following attributes:
     * *id*: the comment id
     * *name*: the comment text
+    * *created_by_id*: the user ID for the comment creator
     * *created_at*: the date and time of creation for the comment
   EOS
   example <<-EOS
@@ -36,11 +37,13 @@ class Api::V1::CommentsController < Api::V1::ApiController
       {
         "id": 18,
         "content": "Comment text #1"
+        "created_by_id": 1,
         "created_at": "2014-01-07T12:52:22-08:00"
       },
       {
         "id": 19,
         "content": "Comment text #2"
+        "created_by_id": 2,
         "created_at": "2014-01-07T12:54:35-08:00"
       }
     ]
@@ -71,6 +74,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     {
       "id": 20,
       "content": "Text for the first comment"
+      "created_by_id": 1,
       "created_at": "2014-01-07T10:16:39-08:00"
     }
   }
