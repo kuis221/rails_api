@@ -601,6 +601,21 @@ describe Event do
       data.interactions.should == 101
       data.samples.should == 102
     end
+
+    it "should reindex all the tasks of the event when a event is deactivated" do
+      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      event = FactoryGirl.create(:event, company_id: 1, campaign: campaign)
+      user = FactoryGirl.create(:company_user, company_id: 1)
+      other_user = FactoryGirl.create(:company_user, company_id: 1)
+      event.users << user
+      event.users << other_user
+
+      tasks = [FactoryGirl.create(:task, event: event)]
+
+      Sunspot.should_receive(:index).with(event)
+      Sunspot.should_receive(:index).with(tasks)
+      event.deactivate!
+    end
   end
 
   describe "#activate" do

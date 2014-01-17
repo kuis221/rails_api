@@ -5392,9 +5392,10 @@ a, i{
 		}
 		.goals {
 			float: right;
-			position: relative;
+			position: absolute;
 			overflow: hidden;
-			width: 71%;
+			left: 350px;
+			right: 0;
 			height: 100px;
 
 			.goals-inner {

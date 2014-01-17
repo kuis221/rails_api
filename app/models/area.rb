@@ -20,7 +20,7 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
   has_many :placeables, as: :placeable, inverse_of: :placeable #, after_add: :update_common_denominators, after_remove: :update_common_denominators
@@ -30,7 +30,7 @@ class Area < ActiveRecord::Base
 
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
-
+  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.area_ids) }
   serialize :common_denominators
 
   before_save :initialize_common_denominators
@@ -50,9 +50,8 @@ class Area < ActiveRecord::Base
     integer :company_id
   end
 
-
   def locations
-    @locations ||= begin
+    @locations ||= Rails.cache.fetch("area_locations_#{id}") do
       list_places = places.select{|p| !p.types.nil? && (p.types & ['sublocality', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
       list_places.map{|place| [place.continent_name, place.country_name, place.state_name, place.city, (place.types.present? && place.types.include?('sublocality') ? place.name : nil)].compact.join('/') }.uniq
     end

@@ -51,6 +51,8 @@ class Place < ActiveRecord::Base
   attr_accessor :is_custom_place
   before_create :fetch_place_data
 
+  after_save :clear_cache
+
   serialize :types
 
   def street
@@ -330,9 +332,17 @@ class Place < ActiveRecord::Base
 
     def spot
       @spot ||= client.spot(reference) if reference.present?
+    rescue GooglePlaces::NotFoundError
+      @spot = false
     end
 
     def client
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+    end
+
+    def clear_cache
+      Placeable.where(place_id: id).each do |placeable|
+        placeable.update_associated_resources
+      end
     end
 end

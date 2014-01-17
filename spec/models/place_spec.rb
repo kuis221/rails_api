@@ -130,7 +130,6 @@ describe Place do
     end
   end
 
-
   describe "#locations_for_index" do
     it "returns only the continent and country" do
       country = FactoryGirl.create(:place, name: 'United States', types: ['country'], route: nil, street_number: nil, city: nil, state:nil, country:'US')

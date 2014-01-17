@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Results::EventDataHelper do
+  let(:campaign) { FactoryGirl.create(:campaign, company_id: 1, name: 'Test Campaign FY01') }
   before do
     helper.stubs(:current_company_user).returns(FactoryGirl.build(:company_user))
-    @search_params = {}
+    helper.stubs(:params).returns({campaign: [campaign.id]})
   end
 
   describe "#custom_fields_to_export_values and #custom_fields_to_export_headers" do
     it "returns all the segments results in order" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, name: 'Test Campaign FY01')
       kpi = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'My KPI')
       kpi.kpis_segments.build(text: 'Uno')
       kpi.kpis_segments.build(text: 'Dos')
@@ -26,7 +26,6 @@ describe Results::EventDataHelper do
     end
 
     it "correctly include segmented kpis and non-segmented kpis together" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, name: 'Test Campaign FY01')
       kpi = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'My KPI')
       kpi.kpis_segments.build(text: 'Uno')
       kpi.kpis_segments.build(text: 'Dos')
@@ -47,20 +46,20 @@ describe Results::EventDataHelper do
       results.last.value = '445566'
       event.save
 
-      helper.custom_fields_to_export_values(event).should == [112233, 445566, nil]
+      helper.custom_fields_to_export_values(event).should == [nil, 112233, 445566]
 
       event.result_for_kpi(kpi2).value = '666666'
       event.save
 
-      helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS', 'A CUSTOM KPI']
-      helper.custom_fields_to_export_values(event).should == [112233, 445566, 666666]
+      helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS']
+      helper.custom_fields_to_export_values(event).should == [666666, 112233, 445566]
     end
 
     it "returns nil for the fields that doesn't apply to the event's campaign" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, name: 'Test Campaign FY01')
-      kpi = FactoryGirl.create(:kpi, company_id: 1, name: 'A Custom KPI')
-
       campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      helper.stubs(:params).returns({campaign: [campaign.id,campaign2.id]})
+
+      kpi = FactoryGirl.create(:kpi, company_id: 1, name: 'A Custom KPI')
       kpi2 = FactoryGirl.create(:kpi, company_id: 1, name: 'Another KPI')
 
       campaign.add_kpi kpi
@@ -81,7 +80,6 @@ describe Results::EventDataHelper do
     end
 
     it "returns the segment name for count kpis" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, name: 'Test Campaign FY01')
       kpi = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'count', name: 'Are you Great?')
       answer = kpi.kpis_segments.build(text: 'Yes')
       kpi.kpis_segments.build(text: 'No')

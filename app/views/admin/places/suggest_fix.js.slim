@@ -1,0 +1,11 @@
+|
+  $row = $('#legacy_data_migration_#{@migration.id}');
+  $('#'+$row.attr('id') + '_fix').remove();
+  colspan =  $row.find('td').length;
+  $('<tr>', {id: $row.attr('id') + '_fix'}).append($('<td>').attr('colspan', colspan).html('#{j render partial: "suggest_fix"}')).insertAfter($row);
+  $('.places-autocomplete').placesAutocomplete({
+    select: function(){
+      $('#fix_selection_manual')[0].checked=true;
+    }
+  });
+  

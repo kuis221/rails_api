@@ -1,0 +1,20 @@
+columns do
+  column span: 8 do
+    paginated_collection(assigns[:migrations].page(params[:page]), download_links: false) do
+      table_for assigns[:migrations], sortable: true, :class => 'index_table' do
+        column(:id){ |migration| migration.local_id }
+        column('Place'){ |migration| "#{migration.local.name}<br />#{migration.local.street}<br />#{migration.local.city}, #{migration.local.state}, #{migration.local.zipcode}".html_safe }
+        column('Account'){ |migration| "#{migration.remote.name}<br />#{migration.remote.address.street}<br />#{migration.remote.address.city}, #{migration.remote.address.state}, #{migration.remote.address.postal_code}".html_safe }
+        column('# Events'){ |migration| Event.joins('INNER JOIN data_migrations ON data_migrations.local_type=\'Event\' AND data_migrations.local_id=events.id').where(place_id: migration.local_id).count }
+        column('Actions') do |migration|
+          link_to 'Fix', suggest_fix_admin_place_path(migration.local_id), remote: true
+        end
+      end
+    end
+  end
+  column span: 3  do
+    panel "Filters" do
+      render partial: 'migrated_venues_filters'
+    end
+  end
+end
