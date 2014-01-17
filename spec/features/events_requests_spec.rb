@@ -242,6 +242,31 @@ feature "Events", js: true, search: true do
           end
         end
       end
+      feature "filters" do
+        scenario "Users must be able to filter on all brands they have permissions to access " do
+          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          tomorrow = today+1.day
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          brands = [
+            FactoryGirl.create(:brand, name: 'Cacique'),
+            FactoryGirl.create(:brand, name: 'Cacique2'),
+          ]
+          brands.each do |brand|
+            ev1.campaign.brands << brand
+            ev2.campaign.brands << brand
+            @company_user.brands << brand
+          end
+          Sunspot.commit
+          visit events_path
+          expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Cacique2'])
+          
+        end
+      end
     end
   end
 
