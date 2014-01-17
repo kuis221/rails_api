@@ -77,6 +77,23 @@ describe Api::V1::VenuesController do
   end
 
 
+  describe "GET 'photos'", search: true do
+    it "returns http success" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+      place = FactoryGirl.create(:place, name: 'Casa de Doña Lela', formatted_address: '1234 Tres Rios', is_custom_place: true, reference: nil)
+      event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
+      photos = FactoryGirl.create_list(:photo, 3, attachable: event)
+      Sunspot.commit
+
+      get 'photos', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.to_param
+      result = JSON.parse(response.body)
+      response.should be_success
+      response.should render_template('photos')
+
+      result.count.should == 3
+    end
+  end
+
   describe "GET 'search'", search: true do
     it "return a list of events" do
       campaign = FactoryGirl.create(:campaign, company: company)

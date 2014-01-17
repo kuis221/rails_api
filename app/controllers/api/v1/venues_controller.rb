@@ -282,10 +282,67 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     collection
   end
 
+  api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+    Returns a mixed list of photos uploaded from the app + photos obtained from Google that are associated to the venue
+
+    Each photo has the following attributes:
+    * For photos uploaded from the app:
+      * *id*: the photo id
+      * *file_file_name*: the photo's file name
+      * *file_content_type*: the photo's file type
+      * *file_file_size*: the photos's file size
+      * *created_at*: the photo's uploading date
+      * *active*: the photo's status
+      * *file_small*: the small photos's url
+      * *file_medium*: the medium photos's url
+      * *file_original*: the original photos's url
+      * *type*: the photo's type. In this case it should be 'brandscopic'
+
+    * For photos from Google:
+      * *photo_reference*: the photo reference id
+      * *width*: the photo's width
+      * *height*: the photo's height
+      * *html_attributions*: the photo's attributions
+      * *file_small*: the small photos's url
+      * *file_original*: the original photos's url
+      * *type*: the photo's type. In this case it should be 'google'
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/286/photos
+  [
+      {
+          "id": 14,
+          "file_file_name": "Folder.jpg",
+          "file_content_type": "image/jpeg",
+          "file_file_size": 9694,
+          "created_at": "2013-09-11T16:03:38-07:00",
+          "active": true,
+          "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/small/Folder.jpg?1378940624",
+          "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/medium/Folder.jpg?1378940624",
+          "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/original/Folder.jpg?1378940624",
+          "type": "brandscopic"
+      },
+      {
+          "photo_reference": "CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak",
+          "width": 486,
+          "height": 648,
+          "html_attributions": [
+              "From a Google User"
+          ],
+          "file_small": "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&sensor=true&key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44",
+          "file_original": "https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&sensor=true&key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44",
+          "type": "google"
+      }
+  ]
+  EOS
+  def photos
+    @photos = resource.photos
+  end
 
   api :GET, '/api/v1/venues/search', "Search for a list of venues matching a term"
   param :term, String, :desc => "The search term", required: true
-
   description <<-EOS
     Returns a list of venues matching the search +term+ ordered by relevance limited to 10 results.
 
@@ -294,7 +351,6 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     * *value*: the description of the venue, including the name and address
     * *label*: this exactly the same as +value+
   EOS
-
   example <<-EOS
   [{
       "value":"Bar None, 1980 Union Street, San Francisco, CA, United States",
