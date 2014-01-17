@@ -9,7 +9,7 @@ Brandscopic::Application.routes.draw do
         delete 'sessions' => 'sessions#destroy'
 
         get '/companies' => 'users#companies'
-        resources :users, only: [:index] do
+        resources :users, only: [:index, :update] do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
