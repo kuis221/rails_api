@@ -41,6 +41,7 @@ jQuery ->
 			else
 				move = false
 		if move
+			move = if move is '-=1' then 0 else move
 			$scroller.data('moving', true)
 			$scroller.animate { left: move }, 300, => 
 				scrollerPosition = $scroller.position()
