@@ -92,14 +92,13 @@ describe Api::V1::UsersController do
 
     it "user have to enter the phone number, country, state, city, street address and zip code information when editing his profile" do
       put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: {user_attributes: {first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :json
-      response.should_not be_success
-      assigns(:user).errors.count.should > 0
-      assigns(:user).errors['user.phone_number'].should == ["can't be blank"]
-      assigns(:user).errors['user.country'].should == ["can't be blank"]
-      assigns(:user).errors['user.state'].should == ["can't be blank"]
-      assigns(:user).errors['user.city'].should == ["can't be blank"]
-      assigns(:user).errors['user.street_address'].should == ["can't be blank"]
-      assigns(:user).errors['user.zip_code'].should == ["can't be blank"]
+      result = JSON.parse(response.body)
+      result['user.phone_number'].should == ["can't be blank"]
+      result['user.country'].should == ["can't be blank"]
+      result['user.state'].should == ["can't be blank"]
+      result['user.city'].should == ["can't be blank"]
+      result['user.street_address'].should == ["can't be blank"]
+      result['user.zip_code'].should == ["can't be blank"]
     end
   end
 
