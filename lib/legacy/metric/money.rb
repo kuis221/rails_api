@@ -17,16 +17,15 @@
 #
 
 # For storing monetary values, with decimal place
-include ActionView::Helpers::NumberHelper
 class Metric::Money < Metric
   def form_options
     super.merge({:hint => 'Dollars and cents', :wrapper_html => {:class => :monetary}})
   end
   def format_result(result)
-    number_to_currency(result.value)
+    ActionController::Base.helpers.number_to_currency(result.value)
   end
   def format_total(total)
-    number_to_currency(total)
+    ActionController::Base.helpers.number_to_currency(total)
   end
   def format_pdf(pdf, result)
     if result && result.print_values?

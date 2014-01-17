@@ -62,7 +62,7 @@ module Brandscopic
 
     config.assets.initialize_on_precompile = false
 
-    config.assets.precompile += %w[admin/active_admin.css admin/active_admin.js]
+    config.assets.precompile += %w[admin/active_admin.css admin/active_admin.js jquery.placesAutocomplete.js]
 
     config.cache_store = :dalli_store
 

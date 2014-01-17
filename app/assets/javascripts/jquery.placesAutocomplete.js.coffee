@@ -1,5 +1,6 @@
 $.widget 'nmk.placesAutocomplete', {
 	options: {
+		select: false
 	},
 
 	_create: () ->
@@ -10,6 +11,8 @@ $.widget 'nmk.placesAutocomplete', {
 				select: ( event, ui ) =>
 					$(@element.data('hidden')).val ui.item.id
 					@value = ui.item.label
+					if typeof @options.select is 'function'
+						@options.select();
 		})
 
 

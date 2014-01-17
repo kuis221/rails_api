@@ -1,0 +1,4 @@
+|
+  $row = $('#legacy_data_migration_#{@migration.id}');
+  $('#'+$row.attr('id') + '_fix').remove();
+  $row.find('td.place').html('#{@migration.local.name}<br />#{@migration.local.street}<br />#{@migration.local.city}, #{@migration.local.state}, #{@migration.local.zipcode}')
