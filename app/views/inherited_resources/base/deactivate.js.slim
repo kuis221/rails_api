@@ -7,8 +7,6 @@
     $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
 
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
-    - show_date_details = (respond_to?(:parent?) && parent? ? false : true  )
-    | $('#photo-details-toolbar').replaceWith('#{escape_javascript(render(partial: 'results/photos/photo_info', locals: {photo: resource, show_date_details: show_date_details}))}');
     - if resource.attachable_type == 'Event'
       | $('#photos-thumbs ##{resource_class}_#{resource.id}').remove();
 
