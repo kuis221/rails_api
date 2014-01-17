@@ -32,11 +32,13 @@ describe Api::V1::CommentsController do
       result.should == [{
                          'id' => comment1.id,
                          'content' => 'Comment #1',
+                         'created_by_id' => comment1.created_by_id,
                          'created_at' => '2013-08-22T11:59:00-07:00'
                         },
                         {
                          'id' => comment2.id,
                          'content' => 'Comment #2',
+                         'created_by_id' => comment2.created_by_id,
                          'created_at' => '2013-08-23T09:15:00-07:00'
                         }]
     end
