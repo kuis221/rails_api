@@ -63,8 +63,12 @@ module PlacesHelper
         else
           "#{day_name} Closed"
         end
-      end.join('<br />').html_safe
+      end
     end
+  end
+
+  def place_opening_hours_formatted(opening_hours)
+    place_opening_hours(opening_hours).join('<br />').html_safe
   end
 
   private

@@ -39,7 +39,7 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [:index] do
+        resources :venues, only: [:index, :show] do
           get :search, on: :collection
           member do
             get :photos
