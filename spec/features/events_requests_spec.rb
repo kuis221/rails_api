@@ -197,7 +197,26 @@ feature "Events", js: true, search: true do
         expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
         expect(page).to have_selector('ul#events-list li', count: 2)
       end
-
+      
+      scenario "clear filters should also exclude reset the default dates filter" do
+        campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
+        past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        Sunspot.commit
+        
+        visit events_path
+        expect(page).to have_content('1 Active event taking place today and in the future')
+        expect(page).to have_selector('ul#events-list li', count: 1)
+        
+        click_link 'Clear filters'
+        expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
+        expect(page).to have_selector('ul#events-list li', count: 2)
+        
+        filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
+        expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
+        expect(page).to have_selector('ul#events-list li', count: 2)
+      end
+      
       feature "with timezone support turned ON" do
         before do
           @company.update_column(:timezone_support, true)
