@@ -67,7 +67,7 @@ module PlacesHelper
     end
   end
 
-  def place_opening_hours_formated(opening_hours)
+  def place_opening_hours_formatted(opening_hours)
     place_opening_hours(opening_hours).join('<br />').html_safe
   end
 
