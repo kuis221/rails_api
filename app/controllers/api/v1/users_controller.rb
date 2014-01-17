@@ -7,20 +7,22 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
   def_param_group :user do
     param :company_user, Hash, required: true, :action_aware => true do
-      param :first_name, String, required: true, desc: "User's first name"
-      param :last_name, String, required: true, desc: "User's last name"
-      param :email, String, required: true, desc: "User's email address"
-      param :phone_number, String, required: true, desc: "User's phone number"
-      param :password, String, required: false, desc: "User's password"
-      param :password_confirmation, String, required: false, desc: "User's password confirmation"
-      param :street_address, String, required: true, desc: "User's street address 1"
-      param :unit_number, String, required: false, desc: "User's street address 2"
-      param :country, String, required: true, desc: "User's country code, eg: US, UK, AR"
-      param :state, String, required: true, desc: "User's state code, eg: CA, TX"
-      param :city, String, required: true, desc: "User's city"
-      param :zip_code, String, required: true, desc: "User's ZIP code"
-      param :time_zone, String, required: true, desc: "User's time zone"
-      param :id, :number, required: true, desc: "User ID"
+      param :user_attributes, Hash, required: true, :action_aware => true do
+        param :first_name, String, required: true, desc: "User's first name"
+        param :last_name, String, required: true, desc: "User's last name"
+        param :email, String, required: true, desc: "User's email address"
+        param :phone_number, String, required: true, desc: "User's phone number"
+        param :password, String, required: false, desc: "User's password"
+        param :password_confirmation, String, required: false, desc: "User's password confirmation"
+        param :street_address, String, required: true, desc: "User's street address 1"
+        param :unit_number, String, required: false, desc: "User's street address 2"
+        param :country, String, required: true, desc: "User's country code, eg: US, UK, AR"
+        param :state, String, required: true, desc: "User's state code, eg: CA, TX"
+        param :city, String, required: true, desc: "User's city"
+        param :zip_code, String, required: true, desc: "User's ZIP code"
+        param :time_zone, String, required: true, desc: "User's time zone"
+        param :id, :number, required: true, desc: "User ID"
+      end
     end
   end
 

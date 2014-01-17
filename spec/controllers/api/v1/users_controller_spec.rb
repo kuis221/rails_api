@@ -80,6 +80,27 @@ describe Api::V1::UsersController do
       the_user.first_name.should == 'Updated Name'
       the_user.last_name.should == 'Updated Last Name'
     end
+
+    it "must update the user password" do
+      old_password = the_user.user.encrypted_password
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: {user_attributes: {password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :json
+      assigns(:user).should == the_user
+      response.should be_success
+      the_user.reload
+      the_user.user.encrypted_password.should_not == old_password
+    end
+
+    it "user have to enter the phone number, country, state, city, street address and zip code information when editing his profile" do
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: {user_attributes: {first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :json
+      response.should_not be_success
+      assigns(:user).errors.count.should > 0
+      assigns(:user).errors['user.phone_number'].should == ["can't be blank"]
+      assigns(:user).errors['user.country'].should == ["can't be blank"]
+      assigns(:user).errors['user.state'].should == ["can't be blank"]
+      assigns(:user).errors['user.city'].should == ["can't be blank"]
+      assigns(:user).errors['user.street_address'].should == ["can't be blank"]
+      assigns(:user).errors['user.zip_code'].should == ["can't be blank"]
+    end
   end
 
   describe "POST 'new_password'" do
