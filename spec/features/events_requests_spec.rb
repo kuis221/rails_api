@@ -262,9 +262,6 @@ feature "Events", js: true, search: true do
             @company_user.brands << brand
           end
           Sunspot.commit
-          
-          puts @company_user.brands.inspect
-          
           visit events_path
           expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Cacique2'])
           
