@@ -26,7 +26,7 @@ feature "Photos", search: true, js: true do
         within visible_modal do
           attach_file "file", 'spec/fixtures/photo.jpg'
           expect(upload_queue).to have_file_in_queue('photo.jpg')
-          wait_for_ajax(15) # For the image to upload to S3
+          wait_for_ajax(30) # For the image to upload to S3
           find('#btn-upload-ok').click
         end
         ensure_modal_was_closed
