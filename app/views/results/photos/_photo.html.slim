@@ -12,7 +12,7 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
           = image_tag photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s, data: {\
                 title: photo.attachable.campaign_name,\
                 date: format_date_range(photo.attachable.start_at, photo.attachable.end_at,{date_separator: '<br>'}),\
-                address: photo.attachable.place_name_with_location\
+                address: photo.attachable.place_name_with_location('<br>')\
               }
     - else
       .image-loading-container
