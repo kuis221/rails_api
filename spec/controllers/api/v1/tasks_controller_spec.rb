@@ -75,4 +75,37 @@ describe Api::V1::TasksController do
     end
   end
 
+  describe "GET 'comments'" do
+    it "returns the list of comments for the task" do
+      event = FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company))
+      task = FactoryGirl.create(:task, event: event)
+      comment1 = FactoryGirl.create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+      comment2 = FactoryGirl.create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+      event.save
+      Sunspot.commit
+
+      get 'comments', auth_token: user.authentication_token, company_id: company.to_param, id: task.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.count.should == 2
+      result.should == [{
+                         'id' => comment1.id,
+                         'content' => 'Comment #1',
+                         'created_at' => '2013-08-22T11:59:00-07:00',
+                         'created_by' => {
+                           'id' => comment1.created_by_id,
+                           'full_name' => comment1.user.full_name
+                          }
+                        },
+                        {
+                         'id' => comment2.id,
+                         'content' => 'Comment #2',
+                         'created_at' => '2013-08-23T09:15:00-07:00',
+                         'created_by' => {
+                           'id' => comment2.created_by_id,
+                           'full_name' => comment2.user.full_name
+                          }
+                        }]
+    end
+  end
 end
