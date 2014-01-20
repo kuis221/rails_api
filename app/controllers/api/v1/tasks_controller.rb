@@ -136,8 +136,13 @@ class Api::V1::TasksController < Api::V1::FilteredController
     Each item have the following attributes:
     * *id*: the comment id
     * *name*: the comment text
-    * *created_by_id*: the user ID for the comment creator
     * *created_at*: the date and time of creation for the comment
+    * *created_by:* information of the creator of the comment
+
+       This will contain a list with the following attributes:
+
+       * *id:* the user ID for the comment creator
+       * *full_name:* the name for the comment creator
   EOS
   example <<-EOS
     An example with comments for an event in the response
@@ -146,14 +151,20 @@ class Api::V1::TasksController < Api::V1::FilteredController
       {
         "id": 10,
         "content": "Comment #1 - Task 353",
-        "created_by_id": 2,
-        "created_at": "2013-10-03T08:42:32-07:00"
+        "created_at": "2013-10-03T08:42:32-07:00",
+        "created_by": {
+          "id": 2,
+          "full_name": "Test User"
+        }
       },
       {
         "id": 11,
         "content": "Comment #2 - Task 353",
-        "created_by_id": 2,
-        "created_at": "2013-10-03T08:42:38-07:00"
+        "created_at": "2013-10-03T08:42:38-07:00",
+        "created_by": {
+          "id": 2,
+          "full_name": "Test User"
+        }
       }
     ]
   EOS
