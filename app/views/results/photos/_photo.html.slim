@@ -8,64 +8,11 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
           = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
       = link_to '', photo.download_url, class: 'icon-plus photo-download-link', id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
-      = link_to ".gallery-modal", 'data-toggle' => 'modal' do
-          = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
+      = link_to photo.file.url(:medium), 'data-toggle' => 'gallery' do
+          = image_tag photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s, data: {\
+                title: photo.attachable.campaign_name,\
+                date: format_date_range(photo.attachable.start_at, photo.attachable.end_at,{date_separator: '<br>'}),\
+                address: photo.attachable.place_name_with_location\
+              }
     - else
       .image-loading-container
-
-// MODAL FOR ABOUT US
-
-.gallery-modal.modal.hide.fade
-  .panel
-    button.close data-dismiss="modal" aria-hidden="true"
-    .description
-      h3 Jameson Black Barrel FY13
-      .calendar-data
-        p
-        | FRI, Jun 1
-        br 11:00 PM to 12:00 PM
-
-      .place-data
-        p 
-        | Bar None
-        br 5555, Union Street, San Francisco, CA 94110
-    .mini-slider
-      p here goes the mini slider
-      .gallery-carousel.small.carousel.slide
-        / Carousel items
-        .carousel-inner
-          .active.item
-            .row
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-          .item
-            .row
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-              = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-        / Carousel nav
-        a.carousel-control.left data-slide= "prev" href= ".gallery-carousel"
-        a.carousel-control.right data-slide= "next" href= ".gallery-carousel"
-    .tags
-      .list
-        .tag 2013
-        .tag jameson
-        .tag jaskot
-        .tag whiskey
-        .tag chicago-team
-      input.typeahead 
-  .slider
-    .gallery-carousel.carousel.slide
-      / Carousel items
-      .carousel-inner
-        .active.item
-          .row
-            = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-        .item
-          .row
-            = image_tag(photo.file.url(:small), id: 'thumbnail_'+photo.id.to_s)
-      / Carousel nav
-      a.carousel-control.left data-slide= "prev" href= ".gallery-carousel"
-      a.carousel-control.right data-slide= "next" href= ".gallery-carousel"
-
