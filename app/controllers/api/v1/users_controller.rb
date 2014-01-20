@@ -5,10 +5,32 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
   defaults resource_class: CompanyUser
 
+  def_param_group :user do
+    param :company_user, Hash, required: true, :action_aware => true do
+      param :user_attributes, Hash, required: true, :action_aware => true do
+        param :first_name, String, required: true, desc: "User's first name"
+        param :last_name, String, required: true, desc: "User's last name"
+        param :email, String, required: true, desc: "User's email address"
+        param :phone_number, String, required: true, desc: "User's phone number"
+        param :password, String, required: false, desc: "User's password"
+        param :password_confirmation, String, required: false, desc: "User's password confirmation"
+        param :street_address, String, required: true, desc: "User's street address 1"
+        param :unit_number, String, required: false, desc: "User's street address 2"
+        param :country, String, required: true, desc: "User's country code, eg: US, UK, AR"
+        param :state, String, required: true, desc: "User's state code, eg: CA, TX"
+        param :city, String, required: true, desc: "User's city"
+        param :zip_code, String, required: true, desc: "User's ZIP code"
+        param :time_zone, String, required: true, desc: "User's time zone"
+        param :id, :number, required: true, desc: "User ID"
+      end
+    end
+  end
+
   resource_description do
     short 'Users'
     formats ['json', 'xml']
     error 404, "Missing"
+    error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
     description <<-EOS
 
@@ -43,13 +65,14 @@ class Api::V1::UsersController < Api::V1::FilteredController
     * *first_name*: the user's first name
     * *last_name*: the user's last name
     * *full_name*: the user's full name
+    * *role_name*: the user's role name
     * *email*: the user's email address
     * *street_address*: the user's street name and number
     * *city*: the user's city name
     * *state*: the user's state code
-    * *country*: the user's country
     * *zip_code*: the user's ZIP code
-    * *role_name*: the user's role name
+    * *time_zone*: the user's time zone
+    * *country*: the user's country
   EOS
   example <<-EOS
     A list of users for company id 1:
@@ -66,8 +89,9 @@ class Api::V1::UsersController < Api::V1::FilteredController
             "street_address": "1st Young st.,",
             "city": "Toronto",
             "state": "ON",
-            "country": "Canada",
-            "zip_code": "Canada"
+            "zip_code": "54783",
+            "time_zone"=>"Pacific Time (US & Canada)",
+            "country": "Canada"
         }
     ]
   EOS
@@ -87,8 +111,9 @@ class Api::V1::UsersController < Api::V1::FilteredController
             "street_address": "1st Young st.,",
             "city": "Toronto",
             "state": "ON",
-            "country": "Canada",
-            "zip_code": "Canada"
+            "zip_code": "54783",
+            "time_zone"=>"Pacific Time (US & Canada)",
+            "country": "Canada"
         }
     ]
   EOS
@@ -97,6 +122,80 @@ class Api::V1::UsersController < Api::V1::FilteredController
       collection
     else
       failure
+    end
+  end
+
+  api :PUT, '/api/v1/users/:id', 'Update a user\'s details'
+  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
+  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
+  param :id, :number, required: true, desc: "Company User ID"
+  param_group :user
+  param :team_ids, Array, required: false, desc: "Teams that the user belongs"
+  param :role_id, :number, required: false, desc: "User's role ID"
+  description <<-EOS
+  Updates the user's data and returns all the user's updated info.
+  EOS
+  example <<-EOS
+    PUT /api/v1/users/140?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    DATA:
+    {
+        company_user: {
+            user_attributes: {
+                "first_name"=>"Trinity",
+                "last_name"=>"Blue",
+                "email"=>"trinity@matrix.com",
+                "phone_number"=>"+1 233 245 4332",
+                "password"=>"Pass12345",
+                "password_confirmation"=>"Pass12345",
+                "street_address"=>"1120 N Street",
+                "unit_number"=>"Room #101",
+                "country"=>"US",
+                "city"=>"Beberly Hills",
+                "state"=>"CA",
+                "zip_code"=>"90210",
+                "time_zone"=>"Pacific Time (US & Canada)",
+                "id"=>"136"
+            },
+            "team_ids"=>["19", "20"],
+            "role_id"=>"21"
+        }
+    }
+
+    RESPONSE:
+    {
+        "id": 140,
+        "first_name": "Trinity",
+        "last_name": "Blue",
+        "full_name": "Trinity Blue",
+        "email": "trinity@matrix.com",
+        "phone_number": "+1 233 245 4332",
+        "street_address": "1120 N Street",
+        "unit_number": "Room #101",
+        "city": "Beberly Hills",
+        "state": "CA",
+        "zip_code": "90210",
+        "time_zone"=>"Pacific Time (US & Canada)",
+        "country": "United States",
+        "role": {
+            "id": 21,
+            "name": "My Custom Role"
+        },
+        "teams": [
+            {
+                "id": 19,
+                "name": "Team #1"
+            },
+            {
+                "id": 20,
+                "name": "Team #2"
+            }
+        ]
+    }
+  EOS
+  def update
+    update! do |success, failure|
+      success.json { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
     end
   end
 
@@ -268,6 +367,14 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
 
   private
+    def permitted_params
+      allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }
+      if params[:id].present? && can?(:super_update, CompanyUser.find(params[:id]))
+        allowed[:company_user] += [:role_id, {team_ids: []}]
+      end
+      params.permit(allowed)[:company_user]
+    end
+
     def search_params
       super
       @search_params[:status] = ['Active']
