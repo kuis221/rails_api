@@ -38,7 +38,7 @@ $.widget 'nmk.photoGallery', {
 
 	setTags: (tags) ->
 		@tags.html ''
-		@tags.append($('<div class="tag">').text(tag)) for tag in tags
+		@tags.append($('<div class="tag">').text(tag).prepend($('<span class="close">'))) for tag in tags
 
 	buildCarousels: (currentImage) ->
 		i = index = 0
