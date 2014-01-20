@@ -5981,7 +5981,13 @@ ul#reports-list {
 
 /*-- STYLES FOR THE NEW GALLERY MODAL --*/
 
+.modal-backdrop, .modal-backdrop.fade.in {
+	opacity: 0.96;
+	filter: alpha(opacity=80);
+}
+
 .slider{
+	height:470px;
 	a.carousel-control{
 		opacity: 0;
 	}
@@ -6010,6 +6016,7 @@ ul#reports-list {
 	}
 }
 .gallery-carousel{
+	height: 470px;
 	.row{
 		margin-left: 0;
 	}
@@ -6017,10 +6024,17 @@ ul#reports-list {
 		margin: auto 0;
 		width: 520px;
 	}
+	&.carousel{
+		display: table-cell;
+		vertical-align: middle;
+		margin-bottom: 0;
+	}
 	&.small{
+		height: auto;
+		margin-bottom: 20px;
 		.carousel-control{
 			background-color: transparent;
-			top:40%;
+			top: 37%;
 			&.right{
 				right: -15px;
 				&:before{
