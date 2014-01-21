@@ -9,6 +9,7 @@
   :slashes => "%m/%d/%Y",
   :numeric => "%Y%m%d",
   :slashes_inverted => "%d/%m/%Y",
+  :ymd => "%Y/%m/%d",
   :full_calendar => "%Y-%m-%d %H:%M:00",
   :filename => "%Y-%m-%d-%k-%M"
 })
@@ -17,5 +18,6 @@
   :slashes => "%m/%d/%Y",
   :default => '%m/%d/%Y',
   :year_month => '%Y-%m',
+  :ymd => "%Y/%m/%d",
   :numeric => "%Y%m%d"
 })

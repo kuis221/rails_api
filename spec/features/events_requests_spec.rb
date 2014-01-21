@@ -21,9 +21,9 @@ feature "Events", js: true, search: true do
     end
     feature "GET index" do
       let(:events){[
-        FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
-        FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
-      ]}
+          FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: @company),
+          FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
+        ]}
       scenario "should display a list of events" do
         Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
@@ -242,6 +242,70 @@ feature "Events", js: true, search: true do
           end
         end
       end
+      feature "filters" do
+        scenario "Users must be able to filter on all brands they have permissions to access " do
+          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          tomorrow = today+1.day
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          brands = [
+            FactoryGirl.create(:brand, name: 'Cacique'),
+            FactoryGirl.create(:brand, name: 'Smirnoff'),
+          ]
+          FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
+          ev1.campaign.brands << brands.first
+          ev2.campaign.brands << brands.last
+          @company_user.brands << brands
+          Sunspot.commit
+          visit events_path
+          expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+
+          filter_section('BRANDS').unicheck('Cacique')
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaign FY2012')
+            expect(page).to have_no_content('Another Campaign April 03')
+          end
+          filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
+          filter_section('BRANDS').unicheck('Smirnoff')
+
+          within("ul#events-list") do
+            expect(page).to have_no_content('Campaign FY2012')
+            expect(page).to have_content('Another Campaign April 03')
+          end
+        end
+
+        scenario "Users must be able to filter on all areas they have permissions to access " do
+          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          tomorrow = today+1.day
+          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+          areas = [
+            FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
+            FactoryGirl.create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: @company)
+          ]
+          areas.each do |area|
+            @company_user.areas << area
+          end
+          Sunspot.commit
+
+          visit events_path
+          expect(page).to have_filter_section(title: 'AREAS', options: ['Gran Area Metropolitana', 'Zona Norte'])
+        end
+      end
     end
   end
 
@@ -266,9 +330,9 @@ feature "Events", js: true, search: true do
     scenario "allows to edit a event" do
       FactoryGirl.create(:campaign, company: @company, name: 'ABSOLUT Vodka FY2013')
       event = FactoryGirl.create(:event,
-          start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
-          start_time: '8:00 PM', end_time: '11:00 PM',
-          campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+        start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
+        start_time: '8:00 PM', end_time: '11:00 PM',
+        campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
       Sunspot.commit
 
       visit events_path
@@ -299,9 +363,9 @@ feature "Events", js: true, search: true do
         date = 3.days.from_now.to_s(:slashes)
         Time.use_zone('America/Guatemala') do
           event = FactoryGirl.create(:event,
-              start_date: date, end_date: date,
-              start_time: '8:00 PM', end_time: '11:00 PM',
-              campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
+            start_date: date, end_date: date,
+            start_time: '8:00 PM', end_time: '11:00 PM',
+            campaign: FactoryGirl.create(:campaign, name: 'ABSOLUT Vodka FY2012', company: @company), company: @company)
         end
 
         Sunspot.commit
@@ -342,9 +406,9 @@ feature "Events", js: true, search: true do
   feature "/events/:event_id", :js => true do
     scenario "GET show should display the event details page" do
       event = FactoryGirl.create(:event,
-          start_date: '08/28/2013', end_date: '08/28/2013',
-          start_time: '8:00 PM', end_time: '11:00 PM',
-          campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
+        start_date: '08/28/2013', end_date: '08/28/2013',
+        start_time: '8:00 PM', end_time: '11:00 PM',
+        campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: @company), company: @company)
       visit event_path(event)
       expect(page).to have_selector('h2', text: 'Campaign FY2012')
       within('.calendar-data') do
@@ -364,8 +428,8 @@ feature "Events", js: true, search: true do
         # Create a event with the time zone "Central America"
         Time.use_zone('Central America') do
           event = FactoryGirl.create(:event,
-              start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am',
-              campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
+            start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am',
+            campaign: FactoryGirl.create(:campaign, company: @company), company: @company)
         end
 
         # Just to make sure the current user is not in the same timezone
@@ -633,25 +697,25 @@ feature "Events", js: true, search: true do
     scenario "should allow the user to fill the event data" do
       Kpi.create_global_kpis
       event = FactoryGirl.create(:event,
-          start_date: Date.yesterday.to_s(:slashes),
-          end_date: Date.yesterday.to_s(:slashes),
-          campaign: FactoryGirl.create(:campaign, company: @company),
-          company: @company )
+        start_date: Date.yesterday.to_s(:slashes),
+        end_date: Date.yesterday.to_s(:slashes),
+        campaign: FactoryGirl.create(:campaign, company: @company),
+        company: @company )
       event.campaign.assign_all_global_kpis
 
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Integer field', kpi_type: 'number', capture_mechanism: 'integer')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Decimal field', kpi_type: 'number', capture_mechanism: 'decimal')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Currency field', kpi_type: 'number', capture_mechanism: 'currency')
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Radio field', kpi_type: 'count', capture_mechanism: 'radio', kpis_segments: [
-        FactoryGirl.create(:kpis_segment, text: 'Radio Option 1'),
-        FactoryGirl.create(:kpis_segment, text: 'Radio Option 2')
-      ])
+          FactoryGirl.create(:kpis_segment, text: 'Radio Option 1'),
+          FactoryGirl.create(:kpis_segment, text: 'Radio Option 2')
+        ])
 
       event.campaign.add_kpi FactoryGirl.create(:kpi, name: 'Checkbox field', kpi_type: 'count', capture_mechanism: 'checkbox', kpis_segments: [
-        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 1'),
-        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 2'),
-        FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
-      ])
+          FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 1'),
+          FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 2'),
+          FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
+        ])
 
       Sunspot.commit
 

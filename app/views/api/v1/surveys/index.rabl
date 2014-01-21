@@ -1,3 +1,3 @@
 collection @surveys
 
-extends "api/v1/comments/comment"
+extends "api/v1/surveys/survey"

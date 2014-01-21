@@ -106,7 +106,7 @@ describe EventsController do
           FactoryGirl.create(:event, company: @company, start_date: '02/15/2013', end_date: '02/15/2013')
           get 'index'
           response.should be_success
-          assigns(:calendar_highlights).should == {2013=>{1=>{23=>1}, 2=>{15=>1}}}
+          assigns(:calendar_highlights).should == { 2013 => { 1 => { 23 => 1, 24 => 1 }, 2 => { 15 => 1 } } }
         end
       end
 

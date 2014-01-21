@@ -30,7 +30,7 @@ class Area < ActiveRecord::Base
 
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
-
+  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.area_ids) }
   serialize :common_denominators
 
   before_save :initialize_common_denominators

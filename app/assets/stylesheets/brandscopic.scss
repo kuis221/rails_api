@@ -100,6 +100,23 @@ body.events.show{
 			}
 		}
 	}
+
+	.event-contact {
+		a.edit {
+			display: none;
+			margin-right: 3px;
+			&:after {
+				color: #989898;
+				top: 0;
+				font-size: 16px;
+			}
+		}
+		&:hover {
+			a.edit {
+				display: inline-block;
+			}
+		}
+	}
 }
 
 .navbar-fixed-top {
@@ -1609,13 +1626,6 @@ ul.kpis-list{
 		margin: 20px 0 50px 0;
 		position: relative;
 	}
-	.sparkline {
-		display:none;
-		margin: 0 3px 0 5px;
-		canvas{
-			margin-top: 1px;
-		}
-	}
 }
 
 /*-- LISTS OF ELEMENTS - EVENTS --*/
@@ -2739,7 +2749,7 @@ body.dashboard.index {
 }
 
 
-body.events.show, body.company_users.show, body.teams.show, body.areas.show, body.brand_portfolios.show, body.areas.show {
+body.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		margin: 0 -12% 0 0;
@@ -5384,9 +5394,10 @@ a, i{
 		}
 		.goals {
 			float: right;
-			position: relative;
+			position: absolute;
 			overflow: hidden;
-			width: 71%;
+			left: 350px;
+			right: 0;
 			height: 100px;
 
 			.goals-inner {

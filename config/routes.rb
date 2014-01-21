@@ -9,7 +9,7 @@ Brandscopic::Application.routes.draw do
         delete 'sessions' => 'sessions#destroy'
 
         get '/companies' => 'users#companies'
-        resources :users, only: [:index] do
+        resources :users, only: [:index, :update] do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
@@ -39,8 +39,11 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [:index] do
+        resources :venues, only: [:index, :show] do
           get :search, on: :collection
+          member do
+            get :photos
+          end
         end
 
         resources :countries, only: [:index] do
@@ -50,6 +53,9 @@ Brandscopic::Application.routes.draw do
         resources :contacts, only: [:index, :create, :update]
 
         resources :tasks, only: [] do
+          member do
+            get :comments
+          end
           collection do
             get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
             get :team, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
