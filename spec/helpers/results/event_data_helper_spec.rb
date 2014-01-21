@@ -5,6 +5,7 @@ describe Results::EventDataHelper do
   before do
     helper.stubs(:current_company_user).returns(FactoryGirl.build(:company_user))
     helper.stubs(:params).returns({campaign: [campaign.id]})
+    Kpi.create_global_kpis
   end
 
   describe "#custom_fields_to_export_values and #custom_fields_to_export_headers" do
@@ -97,6 +98,36 @@ describe Results::EventDataHelper do
       helper.custom_fields_to_export_headers.should == ['ARE YOU GREAT?']
       helper.custom_fields_to_export_values(event).should == ['Yes']
       helper.custom_fields_to_export_values(event2).should == ['Yes']
+    end
+
+
+
+    it "returns custom kpis grouped on the same column" do
+      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      helper.stubs(:params).returns({campaign: [campaign.id,campaign2.id]})
+
+      kpi = FactoryGirl.create(:kpi, company_id: 1, name: 'A Custom KPI')
+      kpi2 = FactoryGirl.create(:kpi, company_id: 1, name: 'Another KPI')
+
+      campaign.add_kpi kpi
+      campaign2.add_kpi kpi
+      campaign.add_kpi kpi2
+      campaign2.add_kpi kpi2
+
+      event = FactoryGirl.build(:approved_event, company_id: 1, campaign: campaign)
+      event.result_for_kpi(kpi).value = '1111'
+      event.result_for_kpi(kpi2).value = '2222'
+      event.save
+
+      event2 = FactoryGirl.build(:approved_event, company_id: 1, campaign: campaign2)
+      event2.result_for_kpi(kpi).value = '3333'
+      event2.result_for_kpi(kpi2).value = '4444'
+      event2.save
+
+      helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'ANOTHER KPI']
+
+      helper.custom_fields_to_export_values(event).should == [1111, 2222]
+      helper.custom_fields_to_export_values(event2).should == [3333, 4444]
     end
   end
 end
