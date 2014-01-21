@@ -1,0 +1,44 @@
+.main.no-margin
+  .pull-left
+    = button_to 'Create', new_results_report_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Report
+
+  .tab-content
+    .link-list
+      ul#reports-list
+        - if can?(:gva_report, Campaign)
+          li id="report_event_status"
+            = link_to results_gva_path, title: 'Event Details' do
+              span.report-item
+                b Event Status
+                p View progress of event and promo hours against goals
+
+        - if can?(:index_results, EventExpense)
+          li id="report_event_expenses"
+            = link_to results_expenses_path, title: 'Expenses' do
+              span.report-item
+                b Expenses
+                p View expenses by event
+
+
+        - if can?(:gva_report, Campaign)
+          li id="report_gva"
+            = link_to results_gva_path, title: 'Goals vs. Actual' do
+              span.report-item
+                b Goals vs. Actual
+                p View results relative to campaign goals
+
+
+        - if can?(:index_photo_results, AttachedAsset)
+          li id="report_photos"
+            = link_to results_photos_path, title: 'Photos' do
+              span.report-item
+                b Photos
+                p View photos by event
+
+
+        - if can?(:index_results, Survey)
+          li id="report_surveys"
+            = link_to results_surveys_path, title: 'Surveys' do
+              span.report-item
+                b Surveys
+                p View survey results by event

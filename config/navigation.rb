@@ -39,19 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
 
-    options = []
-    options.push([:event_data, 'Event Data', results_event_data_path, highlights_on: %r(/results/event_data) ]) if can?(:index_results, EventData)
-    options.push([:comments, 'Comments', results_comments_path, highlights_on: %r(/results/comments) ]) if can?(:index_results, Comment)
-    options.push([:photos, 'Photos', results_photos_path, highlights_on: %r(/results/photos) ]) if can?(:index_photo_results, AttachedAsset)
-    options.push([:expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses)]) if can?(:index_results, EventExpense)
-    options.push([:surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys)]) if can?(:index_results, Survey)
-    options.push([:gva, 'Goals vs. Actual', results_gva_path, highlights_on: %r(/results/gva)]) if can?(:gva_report, Campaign)
-
-    unless options.empty?
-      primary.item :results, 'Results', options.first[2], highlights_on: %r(/results) do |secondary|
-        options.each {|option| secondary.item *option }
-      end
-    end
+    primary.item :results, 'Results', results_reports_url, highlights_on: %r(/results)
 
     options = []
     options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)]) if can?(:show_analysis, Campaign )

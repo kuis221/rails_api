@@ -1,9 +1,6 @@
-= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
-
 .tab-content
   #list-view.tab-pane.active
     .details_box.first
-
       = simple_form_for :report, url: results_gva_path, remote: true do |f|
         = f.input_field :campaign_id, collection: @campaigns, wrapper: false, class: 'chosen-enabled no-validate'
 

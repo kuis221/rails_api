@@ -1,5 +1,4 @@
 Brandscopic::Application.routes.draw do
-
   apipie
 
   namespace :api do
@@ -115,6 +114,8 @@ Brandscopic::Application.routes.draw do
     end
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
+
+    resources :reports, only: [:index, :new, :create, :edit, :update]
 
     # For The KPI report
     get :kpi_report, to: 'kpi_report#index'

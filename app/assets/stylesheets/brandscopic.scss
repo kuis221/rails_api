@@ -1572,6 +1572,9 @@ li#user_menu{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	&.no-margin {
+		margin-right: 0px;
+	}
 }
 #select-areas-table-wrapper{
 	.link-list{
