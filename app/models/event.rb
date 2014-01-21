@@ -581,7 +581,7 @@ class Event < ActiveRecord::Base
             end
           end
 
-          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :desc)
+          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :asc)
           paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
 
           yield self if block_given?
