@@ -43,6 +43,7 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
           member do
             get :photos
+            get :comments
           end
         end
 
