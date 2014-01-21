@@ -44,6 +44,10 @@ module Results
         @kpis_to_export ||= begin
           campaign_ids = []
           campaign_ids = params[:campaign] if params[:campaign] && params[:campaign].any?
+          if params[:q].present? && match = /\Acampaign,([0-9]+)/.match(params[:q])
+            campaign_ids+= [match[1]]
+          end
+          campaign_ids = campaign_ids.uniq.compact
           unless current_company_user.is_admin?
             if campaign_ids.any?
               campaign_ids = campaign_ids.map(&:to_i) & current_company_user.accessible_campaign_ids
