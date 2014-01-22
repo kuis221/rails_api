@@ -1,8 +1,8 @@
 wb = xlsx_package.workbook
 
 row_header = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thin, :color =>"FFFF0000", :edges => [:bottom]}
-row_totals = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
-row_totals_number = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :right}, :border => {:style => :thick, :color =>"FFFF0000", :edges => [:bottom]}
+row_totals = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :center}
+row_totals_number = wb.styles.add_style sz: 11, b: true, alignment: {horizontal: :right}
 row_data_text = wb.styles.add_style sz: 11, alignment: {horizontal: :left}
 row_data_number = wb.styles.add_style sz: 11, alignment: {horizontal: :right}
 row_data_currency = wb.styles.add_style :num_fmt => 5

@@ -484,10 +484,16 @@ class Event < ActiveRecord::Base
           if params[:start_date].present? and params[:end_date].present?
             d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
             d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-            with start_at_field, d1..d2
+            any_of do
+              with start_at_field, d1..d2
+              with end_at_field, d1..d2
+            end
           elsif params[:start_date].present?
             d = Timeliness.parse(params[:start_date], zone: :current)
-            with start_at_field, d.beginning_of_day..d.end_of_day
+            all_of do
+              with(start_at_field).less_than(d.end_of_day)
+              with(end_at_field).greater_than(d.beginning_of_day)
+            end
           end
 
           if params.has_key?(:q) and params[:q].present?
@@ -575,7 +581,7 @@ class Event < ActiveRecord::Base
             end
           end
 
-          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :desc)
+          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :asc)
           paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
 
           yield self if block_given?
