@@ -6,8 +6,8 @@
     .scroll-table-content
       .link-list
         ul#contacts-list
-          li.loading-spinner
-
+          li.placeholder
+            span Use the box above to look for contacts
 
     .row-fluid
       .span12
@@ -19,15 +19,16 @@
       = link_to 'Close', '', class: 'btn btn-cancel'
 
 javascript:
-  $('ul#contacts-list').load('#{list_event_contact_events_path}');
+  var contactRequest = false;
   $('#contact-search-box').on('keyup', function () {
+    if (contactRequest) {
+      contactRequest.abort();
+    }
     var value = $(this).val();
-    $("#contacts-list > li:not(.empty-list-message)").each(function() {
-      if ($(this).text().toLowerCase().search(value) > -1) {
-        $(this).show();
-      }
-      else {
-        $(this).hide();
-      }
+    contactRequest = $.ajax({
+        url: '#{list_event_contact_events_path}?term='+escape(value),
+        success: function(data){
+          $('ul#contacts-list').html(data);
+        }
     });
   });

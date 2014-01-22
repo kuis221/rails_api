@@ -676,6 +676,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :GET, '/api/v1/events/:id/assignable_contacts', "Get a list of contacts+users that can be associated to the event as a contact"
   param :id, :number, required: true, desc: "Event ID"
+  param :term, String, required: false, desc: "A search term to filter the list of contacts/events"
   description <<-EOS
     Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
 
@@ -700,14 +701,32 @@ class Api::V1::EventsController < Api::V1::FilteredController
           "type": "contact"
       },{
           "id": 268,
+          "full_name": "Jonh Connor",
+          "title": "Human Soldier",
+          "type": "user"
+      }
+    ]
+  EOS
+
+  example <<-EOS
+    An example with a term search
+    GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1&term=ruiz
+    [
+      {
+          "id": 268,
           "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "type": "contact"
+      },{
+          "id": 268,
+          "full_name": "Bryan Ruiz",
           "title": "Field Ambassador",
           "type": "user"
       }
     ]
   EOS
   def assignable_contacts
-    @contacts =  ContactEvent.contactables_for_event(resource)
+    @contacts =  ContactEvent.contactables_for_event(resource, params[:term])
   end
 
   api :POST, '/api/v1/events/:id/contacts', 'Assocciate a contact to the event'

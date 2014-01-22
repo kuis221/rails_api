@@ -406,7 +406,7 @@ describe Api::V1::EventsController do
     end
   end
 
-  describe "GET 'assignable_contacts'" do
+  describe "GET 'assignable_contacts'", search: true do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of contacts that are not assined to the event" do
       contacts = [
@@ -417,6 +417,8 @@ describe Api::V1::EventsController do
       associated_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
       FactoryGirl.create(:contact_event, event: event, contactable: associated_contact)   # this contact should not be returned on the list
       FactoryGirl.create(:contact_event, event: event, contactable: user.company_users.first) # Also associate the current user so it's not returned in the results
+
+      Sunspot.commit
 
       get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
@@ -434,6 +436,7 @@ describe Api::V1::EventsController do
         FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
       ]
       company_user = user.company_users.first
+      Sunspot.commit
 
       get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
@@ -443,6 +446,23 @@ describe Api::V1::EventsController do
         {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'},
         {"id"=>contacts.last.id, "full_name"=>"Pedro Guerra", "title"=>"Coach", 'type' => 'contact'},
         {"id"=>company_user.id, "full_name"=>company_user.full_name, "title"=>company_user.role_name, 'type' => 'user'},
+      ]
+    end
+
+    it "returns results match a search term" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
+      ]
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, term: 'luis', format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'}
       ]
     end
   end

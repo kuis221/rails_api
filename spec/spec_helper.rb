@@ -9,7 +9,6 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rails'
-require 'sunspot_test/rspec'
 require 'capybara/poltergeist'
 require 'database_cleaner'
 require 'capybara-screenshot/rspec'
@@ -126,13 +125,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
   Capybara.default_wait_time = 4
-
-  SunspotTest.solr_startup_timeout = 60 # will wait 60 seconds for the solr process to start
 
   Devise.stretches = 1
   #Rails.logger.level = 4

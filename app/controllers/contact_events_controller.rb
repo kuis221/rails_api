@@ -16,7 +16,7 @@ class ContactEventsController < InheritedResources::Base
   end
 
   def list
-    @contacts = ContactEvent.contactables_for_event(parent)
+    @contacts = ContactEvent.contactables_for_event(parent, params[:term])
     render layout: false
   end
 
