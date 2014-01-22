@@ -72,7 +72,7 @@ describe TeamsController do
       }.should_not change(Team, :count)
       response.should render_template(:create)
       response.should render_template(:form_dialog)
-      assigns(:team).errors.count > 0
+      assigns(:team).errors.count.should > 0
     end
   end
 

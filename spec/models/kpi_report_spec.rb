@@ -1,9 +1,8 @@
 # == Schema Information
 #
-# Table name: reports
+# Table name: kpi_reports
 #
 #  id                :integer          not null, primary key
-#  type              :string(255)
 #  company_user_id   :integer
 #  params            :text
 #  aasm_state        :string(255)
@@ -18,6 +17,6 @@
 
 require 'spec_helper'
 
-describe Report do
+describe KpiReport do
   it { should belong_to(:company_user) }
 end

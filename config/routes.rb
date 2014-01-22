@@ -115,12 +115,12 @@ Brandscopic::Application.routes.draw do
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
 
-    resources :reports, only: [:index, :new, :create, :edit, :update]
+    resources :reports, only: [:index, :new, :create, :edit, :update, :show]
 
     # For The KPI report
-    get :kpi_report, to: 'kpi_report#index'
-    post :kpi_report, to: 'kpi_report#report'
-    get :kpi_report_status, to: 'kpi_report#status'
+    get :kpi_report, to: 'kpi_reports#index'
+    post :kpi_report, to: 'kpi_reports#report'
+    get :kpi_report_status, to: 'kpi_reports#status'
   end
 
   namespace :analysis do
