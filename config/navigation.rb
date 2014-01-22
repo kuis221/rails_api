@@ -39,7 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
 
-    primary.item :results, 'Results', results_reports_url, highlights_on: %r(/results)
+    primary.item :results, 'Results', results_reports_path, highlights_on: %r(/results)
 
     options = []
     options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)]) if can?(:show_analysis, Campaign )

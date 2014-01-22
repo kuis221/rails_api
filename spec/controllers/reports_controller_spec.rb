@@ -9,8 +9,10 @@ describe Results::ReportsController do
   end
   describe "GET 'index'" do
     it "returns http success" do
+      report.reload
       get 'index'
       response.should be_success
+      expect(assigns(:reports)).to eql [report]
     end
   end
 
@@ -60,6 +62,19 @@ describe Results::ReportsController do
     end
   end
 
+  describe "GET 'deactivate'" do
+    it "deactivates an active report" do
+      report.update_attribute(:active, true)
+      get 'deactivate', id: report.to_param, format: :js
+      response.should be_success
+      report.reload.active?.should be_false
+    end
 
-
+    it "activates an inactive report" do
+      report.update_attribute(:active, false)
+      get 'activate', id: report.to_param, format: :js
+      response.should be_success
+      report.reload.active?.should be_true
+    end
+  end
 end

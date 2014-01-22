@@ -19,4 +19,14 @@ class Report < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true, numericality: true
+
+  scope :active, -> { where(active: true) }
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 end

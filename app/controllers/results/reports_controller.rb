@@ -1,6 +1,11 @@
 class Results::ReportsController < InheritedResources::Base
   respond_to :js, only: [:new, :create]
+
+  # This helper provide the methods to activate/deactivate the resource
+  include DeactivableHelper
+
   def index
+    @reports = current_company.reports
   end
 
   private

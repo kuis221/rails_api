@@ -5,6 +5,7 @@
 - else
   |
     $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
+    var element = $('##{resource_class}_#{resource.id}');
 
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
     - show_date_details = (respond_to?(:parent?) && parent? ? false : true  )
@@ -16,11 +17,13 @@
     | $('##{resource_class}_#{resource.id}').remove();
 
   |
-    active_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Active"]').prop('checked');
-    inactive_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Inactive"]').prop('checked');
-    if ((active_checked != inactive_checked) ||
-        (typeof active_checked === 'undefined' && typeof inactive_checked === 'undefined')) {
-      $('##{resource_class}_#{resource.id}').remove();
+    if (element.length && !element.data('no-remove-on-deactivate')) {
+      active_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Active"]').prop('checked');
+      inactive_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Inactive"]').prop('checked');
+      if ($(active_checked != inactive_checked) ||
+          (typeof active_checked === 'undefined' && typeof inactive_checked === 'undefined')) {
+        element.remove();
+      }
     }
 
   - unless resource.is_a?(AttachedAsset) || resource.is_a?(Task)

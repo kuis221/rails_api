@@ -23,6 +23,7 @@ class Company < ActiveRecord::Base
   has_many :day_parts, dependent: :destroy
   has_many :contacts, dependent: :destroy
   has_many :kpis, dependent: :destroy
+  has_many :reports, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create

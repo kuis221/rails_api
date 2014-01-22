@@ -185,10 +185,11 @@ module ApplicationHelper
     link_to_if allowed, name, options, html_options
   end
 
-  def link_to_deactivate(model)
+  def link_to_deactivate(model, opts={})
+    opts[:url] ||= [:deactivate, model]
     model_sytem_name = model.class.name.underscore
     humanized_name = model.class.model_name.human.downcase
-    link_to '', [:deactivate, model], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
+    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
   end
 
   def active_class(item)
