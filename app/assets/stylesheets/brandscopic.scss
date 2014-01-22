@@ -2316,6 +2316,19 @@ input.search-query:focus{
     color: white;
     opacity: 1;
     text-shadow: 0px 0px;
+	    i{
+	    	display: none;
+	    }
+	    &:before{
+			content: "\e011";
+			font-family: 'icons';
+			font-size: 16px;
+			font-weight: normal;
+			position: relative;
+			top: -2px;
+			color: white;
+			-webkit-font-smoothing: antialiased;
+	    }
 	}
 }
 .ui-widget-content{
