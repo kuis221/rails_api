@@ -107,6 +107,32 @@ describe Api::V1::VenuesController do
     end
   end
 
+  describe "GET 'comments'" do
+    it "returns the list of comments for the venue" do
+      place = FactoryGirl.create(:place, name: 'Bar Prueba', is_custom_place: true, reference: nil)
+      event = FactoryGirl.create(:approved_event, company: company, campaign: FactoryGirl.create(:campaign, company: company), place: place)
+      comment1 = FactoryGirl.create(:comment, content: 'Comment #1', commentable: event, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+      comment2 = FactoryGirl.create(:comment, content: 'Comment #2', commentable: event, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+
+      get 'comments', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.id, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.count.should == 2
+      result.should == [{
+                         'id' => comment2.id,
+                         'content' => 'Comment #2',
+                         'created_at' => '2013-08-23T09:15:00-07:00',
+                         'type' => 'brandscopic'
+                        },
+                        {
+                         'id' => comment1.id,
+                         'content' => 'Comment #1',
+                         'created_at' => '2013-08-22T11:59:00-07:00',
+                         'type' => 'brandscopic'
+                        }]
+    end
+  end
+
   describe "GET 'search'", search: true do
     it "return a list of events" do
       campaign = FactoryGirl.create(:campaign, company: company)
