@@ -1821,21 +1821,21 @@ ul.kpis-list{
 				width: 100%;
 			}
 		}
-	ul#my-tasks-list{
-		li{
-			.task-list{
-				min-height: 63px;
-				padding: 20px 0 0 0;
-				width: 100%;
-				span{
-					&.title{
-						margin-left: 18px;
-						width: 60%;
+		ul#my-tasks-list{
+			li{
+				.task-list{
+					min-height: 63px;
+					padding: 20px 0 0 0;
+					width: 100%;
+					span{
+						&.title{
+							margin-left: 18px;
+							width: 60%;
+						}
 					}
 				}
 			}
 		}
-	}
     ul#tasks-list{
     	li{
     		color: $text;
