@@ -30,25 +30,22 @@ module FacetsHelper
   def build_brands_bucket
     brands = Brand.includes(:campaigns).where(campaigns: {id: current_company_user.accessible_campaign_ids}).order('brands.name ASC').map do |b|
       build_facet_item({label: b.name, id: b.id, name: :brand})
-    
+
     end
     {label: 'Brands', items: brands}
   end
 
   def build_areas_bucket(search)
     counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
-    places = Place.where(id: counts.keys.uniq).all
+    places = current_company_user.places
     list = {label: :root, items: [], id: nil, path: nil}
 
-    areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active
-    Place.unscoped do
-      places.each do |p|
-        parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
-        areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
-      end
+    areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active.all
+
+    places.each do |p|
+      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)).select{|a| a.place_in_locations?(p) }).sort_by(&:name)
     end
 
-    areas.reject!{|a| a.events_count.nil? || !a.events_count}
     areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
     {label: 'Areas', items: areas}
   end
