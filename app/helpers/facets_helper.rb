@@ -36,7 +36,6 @@ module FacetsHelper
   end
 
   def build_areas_bucket(search)
-    counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
     places = current_company_user.places
     list = {label: :root, items: [], id: nil, path: nil}
 
