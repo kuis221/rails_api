@@ -23,8 +23,9 @@ class Api::V1::ContactsController < Api::V1::ApiController
   resource_description do
     short 'Contacts'
     formats ['json', 'xml']
-    error 404, "Missing"
-    error 500, "Server crashed for some reason"
+    error 406, "The server cannot return data in the requested format"
+    error 404, "The requested resource was not found"
+    error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS

@@ -126,7 +126,7 @@ describe Api::V1::EventsController do
       result.value = 321
       event.save
 
-      put 'update',  auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id, value: '987'}]}
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id.to_s, value: '987'}]}, format: :json
       result.reload
       result.value.should == 987
     end

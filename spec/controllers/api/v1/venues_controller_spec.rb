@@ -84,7 +84,7 @@ describe Api::V1::VenuesController do
     let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil)) }
 
     it "returns http success" do
-      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: venue.to_param
+      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: venue.to_param, format: :json
       response.should be_success
       response.should render_template('show')
     end
@@ -98,7 +98,7 @@ describe Api::V1::VenuesController do
       photos = FactoryGirl.create_list(:photo, 3, attachable: event)
       Sunspot.commit
 
-      get 'photos', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.to_param
+      get 'photos', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.to_param, format: :json
       result = JSON.parse(response.body)
       response.should be_success
       response.should render_template('photos')
