@@ -3,6 +3,11 @@
 FactoryGirl.define do
   factory :company do
     sequence(:name) {|n| "Company #{n}"}
-    sequence(:admin_email) {|n| "testadminuser#{n}@brandscopic.com"}
+    no_create_admin true
+
+    factory :company_with_user do
+      no_create_admin false
+      sequence(:admin_email) { |n| "testadminuser#{n}@brandscopic.com" }
+    end
   end
 end

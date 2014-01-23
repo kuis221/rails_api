@@ -6,7 +6,6 @@ feature "Users", :js => true do
     Warden.test_mode!
     @company = FactoryGirl.create(:company, name: 'ABC inc.')
     @user = FactoryGirl.create(:user, company_id: @company.id, role_id: FactoryGirl.create(:role, company: @company).id)
-    @company = @user.companies.first
     @company_user = @user.company_users.first
     sign_in @user
   end
@@ -52,7 +51,7 @@ feature "Users", :js => true do
         Sunspot.commit
         visit company_users_path
         within("ul#users-list") do
-          hover_and_click "li:nth-child(2)", 'Deactivate'
+          hover_and_click "li#company_user_#{user.company_users.first.id}", 'Deactivate'
         end
 
         confirm_prompt 'Are you sure you want to deactivate this user?'

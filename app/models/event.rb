@@ -76,6 +76,7 @@ class Event < ActiveRecord::Base
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
+  validate :valid_campaign?
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
@@ -239,7 +240,11 @@ class Event < ActiveRecord::Base
   end
 
   def venue
-    @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id) unless place_id.nil?
+    unless place_id.nil?
+      @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+      @venue.place = self.place if self.association(:place).loaded?
+    end
+    @venue
   end
 
   def contacts
@@ -603,6 +608,15 @@ class Event < ActiveRecord::Base
   end
 
   private
+    def valid_campaign?
+      if self.campaign_id.present? && (new_record? || campaign_id_changed?)
+        campaigns = Campaign.where(company_id: self.company_id)
+        campaigns = campaigns.accessible_by_user(User.current.current_company_user) if User.current.present? && User.current.current_company_user.present?
+        unless campaigns.where(id: self.campaign_id).count > 0
+          errors.add :campaign_id, 'is not a valid'
+        end
+      end
+    end
 
     # Copy some errors to the attributes used on the forms so the user
     # can see them

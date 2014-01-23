@@ -635,7 +635,7 @@ feature "Events", js: true, search: true do
 
 
     scenario "allows to create a new task for the event and mark it as completed" do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company))
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
       company_user = user.company_users.first
       event.users << @company_user

@@ -8,7 +8,7 @@ describe "User" do
     subject(:ability){ Ability.new(user) }
     let(:user){ nil }
     let(:company) { FactoryGirl.create(:company) }
-    let(:event){ FactoryGirl.create(:event,  campaign_id: campaign.id, place_id: place.id) }
+    let(:event){ FactoryGirl.create(:event, campaign: campaign, company: company, place_id: place.id) }
     let(:place){ FactoryGirl.create(:place) }
     let(:campaign){ FactoryGirl.create(:campaign, company: company) }
 
@@ -30,16 +30,16 @@ describe "User" do
       it { should_not be_able_to(:manage, FactoryGirl.create(:brand))}
 
       it { should be_able_to(:create, Event) }
-      it { should be_able_to(:manage, FactoryGirl.create(:event, company_id: company.id)) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:event, company_id: company.id + 1 )) }
+      it { should be_able_to(:manage, FactoryGirl.create(:event, campaign: campaign, company: company)) }
+      it { should_not be_able_to(:manage, FactoryGirl.create(:event)) }
 
       it { should be_able_to(:create, Team) }
       it { should be_able_to(:manage, FactoryGirl.create(:team, company_id: company.id)) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:team, company_id: company.id + 1 )) }
 
       it { should be_able_to(:create, Task) }
-      it { should be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id + 1 ))) }
+      it { should be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event, campaign: campaign, company: company))) }
+      it { should_not be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event))) }
 
       it { should be_able_to(:create, Area) }
       it { should be_able_to(:manage, FactoryGirl.create(:area, company_id: company.id)) }
@@ -76,18 +76,18 @@ describe "User" do
       it { should be_able_to(:create, Place) }
 
       it { should be_able_to(:create, EventExpense) }
-      it { should be_able_to(:manage, FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, company_id: company.id))) }
+      it { should be_able_to(:manage, FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, campaign: campaign, company: company))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, company_id: company.id + 1))) }
 
       it { should be_able_to(:create, Comment) }
-      it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, company_id: company.id))) }
+      it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, company_id: company.id + 1))) }
-      it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id)))) }
+      it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, campaign: campaign, company: company)))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id + 1)))) }
 
 
       it { should be_able_to(:create, AttachedAsset) }
-      it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id))) }
+      it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1))) }
 
     end
@@ -96,9 +96,7 @@ describe "User" do
       let(:company_user){ FactoryGirl.create(:company_user, company: company, place_ids: [place.id], campaign_ids: [campaign.id], role: FactoryGirl.create(:role, is_admin: false), user: FactoryGirl.create(:user,  current_company: company)) }
       let(:user){ company_user.user }
 
-
       it { should be_able_to(:notifications, CompanyUser) }
-
 
       describe "Campaign permissions" do
         it "should be able to activate kpis if has the :activate_kpis permission" do
@@ -532,7 +530,8 @@ describe "User" do
         end
 
         it "should be able to list comments in a task if has the permission :index_team_comments on Task and the tasks is for a event where the user is part of the team" do
-          event = FactoryGirl.create(:event, place: FactoryGirl.create(:place))
+          company_user.places << place
+          event = FactoryGirl.create(:event, campaign: campaign, company: company, place: place)
           event.users << company_user
           task = FactoryGirl.create(:task, event: event)
           ability.should_not be_able_to(:index_team_comments, Task)

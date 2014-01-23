@@ -135,7 +135,7 @@ RSpec.configure do |config|
 end
 
 def sign_in_as_user
-  company = FactoryGirl.create(:company)
+  company = FactoryGirl.create(:company_with_user)
   #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
   role = company.roles.first
   User.current = user = company.company_users.first.user
