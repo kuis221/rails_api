@@ -149,6 +149,36 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
 
+  description <<-EOS
+  Returns the event's details, including the actions that a user can perform on this
+  event according to the user's permissions and the KPIs that are enabled for the event's campaign.
+
+  The possible attributes returned are:
+  * *id*: the event's ID
+  * *start_date*: the event's start date in the format mm/dd/yyyy
+  * *start_time*: the event's start time in 12 hours format
+  * *end_date*: the event's end date in the format mm/dd/yyyy
+  * *end_time*: the event's end time in 12 hours format
+  * *status*: the event's active state, can be Active or Inactive
+  * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
+  * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
+  * *place*: On object with the event's venue information with the following attributes
+    * *id*: the venue's id
+    * *name*: the venue's name
+    * *latitude*: the venue's latitude
+    * *longitude*: the venue's longitude
+    * *formatted_address*: the venue's formatted address
+    * *country*: the venue's country
+    * *state*: the venue's state
+    * *city*: the venue's city
+    * *route*: the venue's route
+    * *street_number*: the venue's street_number
+    * *zipcode*: the venue's zipcode
+  * *campaign*: On object with the event's campaign information with the following attributes
+    * *id*: the campaign's id
+    * *name*: the campaign's name
+  EOS
+
   example <<-EOS
   {
       "id": 5486,
@@ -158,6 +188,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "end_time": "10:00 PM",
       "status": "Active",
       "event_status": "Unsent",
+      "actions": [
+          "enter post event data",
+          "upload photos",
+          "conduct surveys",
+          "enter expenses",
+          "gather comments"
+      ],
       "place": {
           "id": 2624,
           "name": "Kelly's Pub Too",
