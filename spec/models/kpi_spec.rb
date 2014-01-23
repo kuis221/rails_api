@@ -32,10 +32,11 @@ describe Kpi do
 
 
   describe "merge_fields" do
+    let(:company) { FactoryGirl.create(:company) }
     it "should merge the two fields into one by updating the master kpi" do
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
-      campaigns = FactoryGirl.create_list(:campaign, 2, company_id: 1)
+      campaigns = FactoryGirl.create_list(:campaign, 2, company: company)
       expect {
         campaigns.each{|c| c.add_kpi(kpi1); c.add_kpi(kpi2); }
       }.to change(CampaignFormField, :count).by(4)
@@ -58,7 +59,7 @@ describe Kpi do
     it "should update the events results by keeping the value of the master kpi" do
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
-      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign.add_kpi(kpi1)
@@ -66,7 +67,7 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event = FactoryGirl.create(:event, campaign: campaign, company_id: 1)
+      event = FactoryGirl.create(:event, campaign: campaign, company: company)
       expect {
         result = event.result_for_kpi(kpi1)
         result.value = 100
@@ -94,8 +95,8 @@ describe Kpi do
     it "should merge two kpis that are in different campaigns kpi" do
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
-      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
-      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign1 = FactoryGirl.create(:campaign, company: company)
+      campaign2 = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign1.add_kpi(kpi1)
@@ -103,8 +104,8 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
-      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      event1 = FactoryGirl.create(:event, campaign: campaign1, company: company)
+      event2 = FactoryGirl.create(:event, campaign: campaign2, company: company)
       expect {
         result = event1.result_for_kpi(kpi1)
         result.value = 100
@@ -145,8 +146,8 @@ describe Kpi do
     it "should merge two kpis that are in different campaigns kpi and one campaign has both of them" do
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
-      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
-      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign1 = FactoryGirl.create(:campaign, company: company)
+      campaign2 = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign1.add_kpi(kpi1)
@@ -155,8 +156,8 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(3)
 
       # Enter results for both Kpis for a event
-      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
-      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      event1 = FactoryGirl.create(:event, campaign: campaign1, company: company)
+      event2 = FactoryGirl.create(:event, campaign: campaign2, company: company)
       expect {
         result = event1.result_for_kpi(kpi1)
         result.value = 100
@@ -198,17 +199,17 @@ describe Kpi do
     end
 
     it "correctly merge the values for events of fields of the type :percentage" do
-      kpi1 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'My KPI')
+      kpi1 = FactoryGirl.build(:kpi, company: company, kpi_type: 'percentage', name: 'My KPI')
       kpi1.kpis_segments.build(text: 'Uno')
       kpi1.kpis_segments.build(text: 'Dos')
       kpi1.save
 
-      kpi2 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'Other KPI')
+      kpi2 = FactoryGirl.build(:kpi, company: company, kpi_type: 'percentage', name: 'Other KPI')
       kpi2.kpis_segments.build(text: 'Uno')
       kpi2.kpis_segments.build(text: 'Dos')
       kpi2.save
 
-      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign.add_kpi(kpi1)
@@ -216,7 +217,7 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event = FactoryGirl.create(:event, campaign: campaign, company_id: 1)
+      event = FactoryGirl.create(:event, campaign: campaign, company: company)
       expect {
         results = event.result_for_kpi(kpi1)
         results.first.value = '10'
@@ -245,17 +246,17 @@ describe Kpi do
     end
 
     it "correctly merge the values for events of fields of the type :count" do
-      kpi1 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'count', name: 'My KPI')
+      kpi1 = FactoryGirl.build(:kpi, company: company, kpi_type: 'count', name: 'My KPI')
       kpi1.kpis_segments.build(text: 'Uno')
       kpi1.kpis_segments.build(text: 'Dos')
       kpi1.save
 
-      kpi2 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'count', name: 'Other KPI')
+      kpi2 = FactoryGirl.build(:kpi, company: company, kpi_type: 'count', name: 'Other KPI')
       kpi2.kpis_segments.build(text: 'Uno')
       kpi2.kpis_segments.build(text: 'Dos')
       kpi2.save
 
-      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign.add_kpi(kpi1)
@@ -263,7 +264,7 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event = FactoryGirl.create(:event, campaign: campaign, company_id: 1)
+      event = FactoryGirl.create(:event, campaign: campaign, company: company)
       expect {
         result = event.result_for_kpi(kpi1)
         result.value = result.form_field.kpi.kpis_segments.detect{|s| s.text == 'Uno'}.id
@@ -290,18 +291,18 @@ describe Kpi do
     end
 
     it "correctly merge the values for events of fields of the type :count when the kpis are in differnet campaigns" do
-      kpi1 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'count', name: 'My KPI')
+      kpi1 = FactoryGirl.build(:kpi, company: company, kpi_type: 'count', name: 'My KPI')
       kpi1.kpis_segments.build(text: 'Uno')
       kpi1.kpis_segments.build(text: 'Dos')
       kpi1.save
 
-      kpi2 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'count', name: 'Other KPI')
+      kpi2 = FactoryGirl.build(:kpi, company: company, kpi_type: 'count', name: 'Other KPI')
       kpi2.kpis_segments.build(text: 'Uno')
       kpi2.kpis_segments.build(text: 'Dos')
       kpi2.save
 
-      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
-      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign1 = FactoryGirl.create(:campaign)
+      campaign2 = FactoryGirl.create(:campaign)
 
       expect {
         campaign1.add_kpi(kpi1)
@@ -309,8 +310,8 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
-      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      event1 = FactoryGirl.create(:event, campaign: campaign1)
+      event2 = FactoryGirl.create(:event, campaign: campaign2)
       expect {
         result = event1.result_for_kpi(kpi1)
         result.value = result.form_field.kpi.kpis_segments.detect{|s| s.text == 'Uno'}.id
@@ -340,18 +341,18 @@ describe Kpi do
 
 
     it "correctly merge the values for events of fields of the type :percentage when the kpis are in differnet campaigns" do
-      kpi1 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'My KPI')
+      kpi1 = FactoryGirl.build(:kpi, company: company, kpi_type: 'percentage', name: 'My KPI')
       kpi1.kpis_segments.build(text: 'Uno')
       kpi1.kpis_segments.build(text: 'Dos')
       kpi1.save
 
-      kpi2 = FactoryGirl.build(:kpi, company_id: 1, kpi_type: 'percentage', name: 'Other KPI')
+      kpi2 = FactoryGirl.build(:kpi, company: company, kpi_type: 'percentage', name: 'Other KPI')
       kpi2.kpis_segments.build(text: 'Uno')
       kpi2.kpis_segments.build(text: 'Dos')
       kpi2.save
 
-      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
-      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign1 = FactoryGirl.create(:campaign, company: company)
+      campaign2 = FactoryGirl.create(:campaign, company: company)
 
       expect {
         campaign1.add_kpi(kpi1)
@@ -359,8 +360,8 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
-      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      event1 = FactoryGirl.create(:event, campaign: campaign1, company: company)
+      event2 = FactoryGirl.create(:event, campaign: campaign2, company: company)
       expect {
         results = event1.result_for_kpi(kpi1)
         results.first.value = '33'
@@ -394,8 +395,8 @@ describe Kpi do
       Kpi.create_global_kpis
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
-      campaign1 = FactoryGirl.create(:campaign, company_id: 1)
-      campaign2 = FactoryGirl.create(:campaign, company_id: 1)
+      campaign1 = FactoryGirl.create(:campaign, company: company)
+      campaign2 = FactoryGirl.create(:campaign, company: company)
 
       campaign1.assign_all_global_kpis
 
@@ -405,8 +406,8 @@ describe Kpi do
       }.to change(CampaignFormField, :count).by(2)
 
       # Enter results for both Kpis for a event
-      event1 = FactoryGirl.create(:event, campaign: campaign1, company_id: 1)
-      event2 = FactoryGirl.create(:event, campaign: campaign2, company_id: 1)
+      event1 = FactoryGirl.create(:event, campaign: campaign1, company: company)
+      event2 = FactoryGirl.create(:event, campaign: campaign2, company: company)
       expect {
         result = event1.result_for_kpi(kpi1)
         result.value = 100

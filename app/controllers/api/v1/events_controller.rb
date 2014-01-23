@@ -2,9 +2,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   resource_description do
     short 'Events'
     formats ['json', 'xml']
-    error 404, "Missing"
     error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    error 404, "The requested resource was not found"
+    error 406, "The server cannot return data in the requested format"
+    error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -148,6 +149,36 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
 
+  description <<-EOS
+  Returns the event's details, including the actions that a user can perform on this
+  event according to the user's permissions and the KPIs that are enabled for the event's campaign.
+
+  The possible attributes returned are:
+  * *id*: the event's ID
+  * *start_date*: the event's start date in the format mm/dd/yyyy
+  * *start_time*: the event's start time in 12 hours format
+  * *end_date*: the event's end date in the format mm/dd/yyyy
+  * *end_time*: the event's end time in 12 hours format
+  * *status*: the event's active state, can be Active or Inactive
+  * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
+  * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
+  * *place*: On object with the event's venue information with the following attributes
+    * *id*: the venue's id
+    * *name*: the venue's name
+    * *latitude*: the venue's latitude
+    * *longitude*: the venue's longitude
+    * *formatted_address*: the venue's formatted address
+    * *country*: the venue's country
+    * *state*: the venue's state
+    * *city*: the venue's city
+    * *route*: the venue's route
+    * *street_number*: the venue's street_number
+    * *zipcode*: the venue's zipcode
+  * *campaign*: On object with the event's campaign information with the following attributes
+    * *id*: the campaign's id
+    * *name*: the campaign's name
+  EOS
+
   example <<-EOS
   {
       "id": 5486,
@@ -157,6 +188,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "end_time": "10:00 PM",
       "status": "Active",
       "event_status": "Unsent",
+      "actions": [
+          "enter post event data",
+          "upload photos",
+          "conduct surveys",
+          "enter expenses",
+          "gather comments"
+      ],
       "place": {
           "id": 2624,
           "name": "Kelly's Pub Too",
@@ -197,8 +235,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
   param_group :event
-  def update(active = nil)
-    self.active = active unless active.nil?
+  def update
     update! do |success, failure|
       success.json { render :show }
       success.xml  { render :show }
@@ -676,6 +713,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :GET, '/api/v1/events/:id/assignable_contacts', "Get a list of contacts+users that can be associated to the event as a contact"
   param :id, :number, required: true, desc: "Event ID"
+  param :term, String, required: false, desc: "A search term to filter the list of contacts/events"
   description <<-EOS
     Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
 
@@ -700,14 +738,32 @@ class Api::V1::EventsController < Api::V1::FilteredController
           "type": "contact"
       },{
           "id": 268,
+          "full_name": "Jonh Connor",
+          "title": "Human Soldier",
+          "type": "user"
+      }
+    ]
+  EOS
+
+  example <<-EOS
+    An example with a term search
+    GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1&term=ruiz
+    [
+      {
+          "id": 268,
           "full_name": "Trinity Ruiz",
+          "title": "Bartender",
+          "type": "contact"
+      },{
+          "id": 268,
+          "full_name": "Bryan Ruiz",
           "title": "Field Ambassador",
           "type": "user"
       }
     ]
   EOS
   def assignable_contacts
-    @contacts =  ContactEvent.contactables_for_event(resource)
+    @contacts =  ContactEvent.contactables_for_event(resource, params[:term])
   end
 
   api :POST, '/api/v1/events/:id/contacts', 'Assocciate a contact to the event'
@@ -777,8 +833,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
     def permitted_params
       parameters = {}
       allowed = []
-      allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :active, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
-      allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, :id]}] if can?(:edit_data, Event)
+      allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
+      allowed += [:summary, {results_attributes: [:value, :id]}] if can?(:edit_data, Event)
+      allowed += [:active] if can?(:deactivate, Event)
       parameters = params.require(:event).permit(*allowed)
       parameters
     end

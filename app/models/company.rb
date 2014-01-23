@@ -11,6 +11,7 @@
 
 class Company < ActiveRecord::Base
   attr_accessor :admin_email
+  attr_accessor :no_create_admin
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -26,7 +27,7 @@ class Company < ActiveRecord::Base
   has_many :reports, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
-  validates :admin_email, presence: true, on: :create
+  validates :admin_email, presence: true, on: :create, unless: :no_create_admin
 
   validates_format_of :admin_email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true
 

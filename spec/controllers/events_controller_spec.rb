@@ -210,9 +210,10 @@ describe EventsController do
     end
 
     describe "POST 'create'" do
+      let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
       it "should not render form_dialog if no errors" do
         lambda {
-          post 'create', event: {campaign_id: 1, start_date: '05/23/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm'}, format: :js
+          post 'create', event: {campaign_id: campaign.id, start_date: '05/23/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
         response.should be_success
         response.should render_template(:create)
@@ -230,33 +231,32 @@ describe EventsController do
 
       it "should assign current_user's company_id to the new event" do
         lambda {
-          post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+          post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
         assigns(:event).company_id.should == @company.id
       end
 
       it "should create the event with the correct dates" do
         lambda {
-          post 'create', event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
+          post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
         event = Event.last
         event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
         event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
         event.promo_hours.should == 1
       end
-
     end
-
 
     describe "PUT 'update'" do
       let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
       let(:event){ FactoryGirl.create(:event, company: @company, campaign: campaign) }
       it "must update the event attributes" do
-        put 'update', id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+        new_campaign = FactoryGirl.create(:campaign, company: @company)
+        put 'update', id: event.to_param, event: {campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         assigns(:event).should == event
         response.should be_success
         event.reload
-        event.campaign_id.should == 111
+        event.campaign_id.should == new_campaign.id
         event.start_at.should == Time.zone.parse('2020-05-21 12:00:00')
         event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
       end

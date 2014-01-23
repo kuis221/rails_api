@@ -5,7 +5,7 @@ FactoryGirl.define do
     sequence(:name) {|n| "Campaign #{n}" }
     description "Test Campaign description"
     aasm_state "active"
-    company_id 1
+    association :company
     created_by_id 1
     updated_by_id 1
 
