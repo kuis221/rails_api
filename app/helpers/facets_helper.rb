@@ -40,9 +40,8 @@ module FacetsHelper
     list = {label: :root, items: [], id: nil, path: nil}
 
     areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active.all
-
     places.each do |p|
-      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)).select{|a| a.place_in_locations?(p) }).sort_by(&:name)
+      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) }).sort_by(&:name)
     end
 
     areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }

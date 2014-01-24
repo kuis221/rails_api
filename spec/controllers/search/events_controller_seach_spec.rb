@@ -159,7 +159,9 @@ describe EventsController, search: true do
   describe "As NOT Super User" do
     before(:each) do
       @company = FactoryGirl.create(:company)
-      @company_user = FactoryGirl.create(:company_user, company: @company, user: FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', current_company: @company), role: FactoryGirl.create(:role, is_admin: false, company: @company))
+      @company_user = FactoryGirl.create(:company_user,
+              company: @company,
+              role: FactoryGirl.create(:role, is_admin: false, company: @company))
       @user = @company_user.user
       sign_in @user
     end
@@ -170,33 +172,72 @@ describe EventsController, search: true do
 
         #Assigned area with a common place, it should be in the filters
         area = FactoryGirl.create(:area, name: 'Austin', company: @company)
-        area.places << FactoryGirl.create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: ['locality', 'political'], formatted_address: "Bee Cave, TX 78738, USA", latitude: 30.306098, longitude: -97.9523768, street_number: nil, route: nil, zipcode: "78738", administrative_level_1: "TX", administrative_level_2: "Travis", neighborhood: nil)
+        area.places << FactoryGirl.create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: ['locality', 'political'])
         @company_user.areas << area
 
         #Unassigned area with a common place, it should be in the filters
         area_unassigned = FactoryGirl.create(:area, name: 'San Antonio', company: @company)
-        area_unassigned.places << FactoryGirl.create(:place, name: "Schertz", types: ["locality", "political"], formatted_address: "Schertz, TX, USA", latitude: 29.5521737, longitude: -98.269734, street_number: nil, route: nil, zipcode: nil, city: "Schertz", state: "Texas", country: "US", administrative_level_1: "TX", administrative_level_2: "Guadalupe", neighborhood: nil)
+        area_unassigned.places << FactoryGirl.create(:place, name: "Schertz", types: ["locality", "political"], city: "Schertz", state: "Texas", country: "US")
 
         #Unassigned area with not common place, it should not be in the filters
         area_not_in_filter = FactoryGirl.create(:area, name: 'Miami', company: @company)
-        area_not_in_filter.places << FactoryGirl.create(:place, name: "Doral", types: ["locality", "political"], formatted_address: "Doral, FL, USA", latitude: 25.8195424, longitude: -80.3553302, street_number: nil, route: nil, zipcode: nil, city: "Doral", state: "Florida", country: "US", administrative_level_1: "FL", administrative_level_2: "Miami-Dade", neighborhood: nil)
+        area_not_in_filter.places << FactoryGirl.create(:place, name: "Doral", types: ["locality", "political"], city: "Doral", state: "Florida", country: "US")
 
         #Assigned area with not common place, it should be in the filters
         @company_user.areas << FactoryGirl.create(:area, name: 'San Francisco', company: @company)
 
         #Assigned place, itis the responsible for the common areas in the filters
-        @company_user.places << FactoryGirl.create(:place, name: "Texas", types: ["administrative_area_level_1", "political"], formatted_address: "Texas, USA", latitude: 31.9685988, longitude: -99.9018131, street_number: nil, route: nil, zipcode: nil, city: nil, state: "Texas", country: "US", administrative_level_1: "TX", administrative_level_2: nil, neighborhood: nil)
-        Sunspot.commit
+        @company_user.places << FactoryGirl.create(:place, name: "Texas", types: ["administrative_area_level_1", "political"], city: nil, state: "Texas", country: "US")
 
         get 'filters', format: :json
         response.should be_success
 
         filters = JSON.parse(response.body)
-        filters['filters'][2]['items'].count.should == 3
+        areas_filters = filters['filters'].detect{|f| f['label'] == 'Areas'}
+        expect(areas_filters['items'].count).to eql 3
 
-        filters['filters'][2]['items'].first['label'].should == 'Austin'
-        filters['filters'][2]['items'].second['label'].should == 'San Antonio'
-        filters['filters'][2]['items'].third['label'].should == 'San Francisco'
+        expect(areas_filters['items'].first['label']).to eql 'Austin'
+        expect(areas_filters['items'].second['label']).to eql 'San Antonio'
+        expect(areas_filters['items'].third['label']).to eql 'San Francisco'
+      end
+
+      describe "when a user only a place assiged to it" do
+        it "returns all the areas that have at least one place inside" do
+          @company_user.role.permission_for(:view_list, Event).save
+
+          #This is one area that have one place inside US
+          area = FactoryGirl.create(:area, name: 'Austin', company: @company)
+          area.places << FactoryGirl.create(:place, name: 'Bee Cave',
+                city: 'Bee Cave', state: 'Texas',
+                country: 'US', types: ['locality', 'political'] )
+
+          #This is another area that have one place inside US
+          area = FactoryGirl.create(:area, name: 'San Antonio', company: @company)
+          area.places << FactoryGirl.create(:place, name: "Schertz",
+                types: ["locality", "political"], city: "Schertz", state: "Texas", country: "US")
+
+          #This area doesn't  have one place in US
+          area = FactoryGirl.create(:area, name: 'Centro America', company: @company)
+          area.places << FactoryGirl.create(:place, name: "Costa Rica",
+                types: ["country", "political"], city: "Schertz", state: nil, country: "CR")
+
+
+          #The user have US as the allowed places
+          @company_user.places << FactoryGirl.create(:place,
+                name: "United States", types: ["country", "political"],
+                city: nil, state: nil, country: "US")
+
+          get 'filters', format: :json
+          response.should be_success
+
+          filters = JSON.parse(response.body)
+
+          # It should return the first two areas
+          areas_filters = filters['filters'].detect{|f| f['label'] == 'Areas'}
+          expect(areas_filters['items'].count).to eql 2
+          expect(areas_filters['items'].first['label']).to eql 'Austin'
+          expect(areas_filters['items'].second['label']).to eql 'San Antonio'
+        end
       end
     end
   end
