@@ -15,9 +15,10 @@ ul.goalable-list
       .goals
         .goals-inner
           - kpis.each do |kpi|
-            - if kpi.is_segmented?
+            - if kpi.is_segmented? || (kpi.kpi_type == 'count' && kpi.kpis_segments.count > 1)
               - segment_goals =  goals.for_kpis_segments(kpi)
               .kpi-segment-group
+                span class="goal-title"= kpi.name.upcase
                 - kpi.kpis_segments.each do |segment|
                   - goal = segment_goals.detect{|g| g.kpis_segment_id == segment.id}
                   span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''}" id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}"
@@ -27,6 +28,7 @@ ul.goalable-list
             - else
               - goal = kpi_goals.detect{|g| g.kpi_id == kpi.id && g.kpis_segment_id.nil?}
               span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}"
+                span class="goal-title"
                 label
                   input.kpi-goal-field class="#{kpi.kpi_type} #{kpi.capture_mechanism}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
                   span.kpi-name= kpi.name.upcase
