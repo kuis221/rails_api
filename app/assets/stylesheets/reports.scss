@@ -41,13 +41,13 @@ ul.reports-list {
 		margin-bottom: 10px;
 		height: 100px;
 		overflow: auto;
-		&#report-fields-outer {
+		&#report-fields {
 			height: 300px;
 		}
 
-		ul {
+		&> ul {
 			margin:0;
-			height: 100%;
+			min-height: 100%;
 		}
 
 		li {

@@ -32,8 +32,6 @@ class Kpi < ActiveRecord::Base
 
   COMPLETE_TYPE_OPTIONS = CUSTOM_TYPE_OPTIONS.keys + OUT_BOX_TYPE_OPTIONS
 
-  attr_accessible :name, :description, :kpi_type, :capture_mechanism, :kpis_segments_attributes, :goals_attributes
-
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, numericality: true, allow_nil: true
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}

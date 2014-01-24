@@ -31,9 +31,10 @@ feature "Reports", js: true do
     end
   end
 
-  scenario "allows the user to activate/deactivate teams" do
-    FactoryGirl.create(:report, name: 'Events by Venue', description: 'a resume of events by venue', active: true, company: @company)
-    Sunspot.commit
+  scenario "allows the user to activate/deactivate reports" do
+    FactoryGirl.create(:report, name: 'Events by Venue',
+      description: 'a resume of events by venue',
+      active: true, company: @company)
 
     visit results_reports_path
 
@@ -51,8 +52,46 @@ feature "Reports", js: true do
     end
   end
 
+  feature "build view" do
+    before do
+      @report = FactoryGirl.create(:report, name: 'Events by Venue',
+        description: 'a resume of events by venue',
+        active: true, company: @company)
+    end
+
+    scenario "search for fields in the fields list" do
+      FactoryGirl.create(:kpi, name: 'ABC KPI', company: @company)
+
+      visit results_report_path(@report)
+
+      within report_fields do
+        expect(page).to have_content('ABC KPI')
+      end
+
+      fill_in 'field_search', with: 'XYZ'
+
+      within report_fields do
+        expect(page).to have_no_content('ABC KPI')
+      end
+
+      fill_in 'field_search', with: 'ABC'
+
+      within report_fields do
+        expect(page).to have_content('ABC KPI')
+      end
+    end
+  end
+
 
   def reports_list
     "ul#custom-reports-list"
+  end
+
+  def report_fields
+    "#report-fields"
+  end
+
+  def field_search_box
+    "#field-search-input"
   end
 end
