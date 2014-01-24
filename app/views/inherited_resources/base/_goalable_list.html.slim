@@ -15,7 +15,7 @@ ul.goalable-list
       .goals
         .goals-inner
           - kpis.each do |kpi|
-            - if kpi.is_segmented? || (kpi.kpi_type == 'count' && kpi.kpis_segments.count > 1)
+            - if kpi.is_segmented? || kpi.kpi_type == 'count'
               - segment_goals =  goals.for_kpis_segments(kpi)
               .kpi-segment-group
                 span class="goal-title"= kpi.name.upcase
