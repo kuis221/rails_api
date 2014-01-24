@@ -186,7 +186,7 @@ feature "Events", js: true, search: true do
       scenario "first filter should make the list show events in the past" do
         campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
         past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
         Sunspot.commit
 
         visit events_path
@@ -201,7 +201,7 @@ feature "Events", js: true, search: true do
       scenario "clear filters should also exclude reset the default dates filter" do
         campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
         past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
         Sunspot.commit
 
         visit events_path
