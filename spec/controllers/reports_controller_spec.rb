@@ -12,7 +12,7 @@ describe Results::ReportsController do
       report.reload
       get 'index'
       response.should be_success
-      expect(assigns(:reports)).to eql [report]
+      expect(assigns(:reports)).to match_array [report]
     end
   end
 

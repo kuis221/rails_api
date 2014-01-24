@@ -46,9 +46,7 @@ feature "Reports", js: true do
     confirm_prompt "Are you sure you want to deactivate this report?"
 
     within reports_list do
-      hover_and_click 'li', 'Activate'
-      find('li').hover
-      expect(page).to have_link('Deactivate')
+      expect(page).to have_no_content('Events by Venue')
     end
   end
 
