@@ -5874,28 +5874,3 @@ table td.sub-level-1 {
 		padding: 10px;
 	}
 }
-
-// REPORTS
-ul.reports-list {
-	.report-item {
-		padding: 10px;
-		min-width: 30%;
-	}
-	.report-status {
-		padding: 10px;
-	}
-	a.download {
-		position: relative;
-		&:before{
-			content: "\e00b" !important;
-			display: inline-block;
-			font-family: 'icons';
-			font-size: 15px;
-			position: relative;
-			speak: none;
-			text-align: center;
-			vertical-align: middle;
-			-webkit-font-smoothing: antialiased;
-		}
-	}
-}

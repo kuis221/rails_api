@@ -1,0 +1,58 @@
+// REPORTS
+ul.reports-list {
+	.report-item {
+		padding: 10px;
+		min-width: 30%;
+	}
+	.report-status {
+		padding: 10px;
+	}
+	a.download {
+		position: relative;
+		&:before{
+			content: "\e00b" !important;
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 15px;
+			position: relative;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+}
+
+#report-builder {
+	#field-search-input {
+		width: 195px;
+		background-image: url("search2.svg") !important;
+		background-position: center right;
+		background-repeat: no-repeat;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+		padding-left: 2%;
+		padding-right: 2%;
+	}
+
+	.field-list {
+		border: 1px solid #ccc;
+		padding: 5px;
+		margin-bottom: 10px;
+		height: 100px;
+		overflow: auto;
+		&#report-fields-outer {
+			height: 300px;
+		}
+
+		ul {
+			margin:0;
+			height: 100%;
+		}
+
+		li {
+			list-style: none;
+			cursor: pointer;
+		}
+	}
+}

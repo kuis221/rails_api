@@ -1,0 +1,8 @@
+input type="search" id="field-search-input"
+#report-fields-outer.field-list
+  - available_field_list.each do |group_name, items|
+    b= group_name
+    ul#report-fields.draggable-list
+      - items.each do |id, name|
+        li id="#{id}"= name
+

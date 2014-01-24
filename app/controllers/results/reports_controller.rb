@@ -5,7 +5,7 @@ class Results::ReportsController < InheritedResources::Base
   include DeactivableHelper
 
   def index
-    @reports = current_company.reports
+    @reports = current_company.reports.active.order('reports.name ASC')
   end
 
   private

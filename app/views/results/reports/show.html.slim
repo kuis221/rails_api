@@ -1,2 +1,19 @@
-.main
-  | This is the preview zone
+#report-builder
+  #resource-filter-column.sidebar
+    = render 'fields_list'
+
+    p Drag fields between areas
+    = render 'filters_list'
+
+    = render 'columns_list'
+    
+    = render 'rows_list'
+
+    = render 'values_list'
+
+  .main
+    | This is the preview zone
+
+
+javascript:
+  $('#report-builder').reportBuilder()

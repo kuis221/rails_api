@@ -597,6 +597,17 @@ class Event < ActiveRecord::Base
     def total_promo_hours_for_places(places)
       where(place_id: places).sum(:promo_hours)
     end
+
+    def report_fields
+      {
+        start_date:   { title: 'Start date' },
+        start_time:   { title: 'Start time' },
+        end_date:     { title: 'End date' },
+        end_time:     { title: 'Start time' },
+        active:       { title: 'Active State' },
+        event_status: { title: 'Event Status' }
+      }
+    end
   end
 
   def start_at

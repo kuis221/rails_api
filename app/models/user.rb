@@ -227,6 +227,19 @@ class User < ActiveRecord::Base
 
   class << self
 
+    def report_fields
+      {
+        first_name:     { title: 'First Name' },
+        last_name:      { title: 'Last Name' },
+        email:          { title: 'Email' },
+        country:        { title: 'Country' },
+        state:          { title: 'State' },
+        city:           { title: 'City' },
+        street1:        { title: 'Street 1' },
+        street2:        { title: 'Street 2' }
+      }
+    end
+
     # Find a user by its confirmation token and try to confirm it.
     # If no user is found, returns a new user with an error.
     # If the user is already confirmed, create an error for the user

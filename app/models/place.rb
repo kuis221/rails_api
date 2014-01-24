@@ -124,32 +124,6 @@ class Place < ActiveRecord::Base
   end
 
   class << self
-    def load_organized(company_id, counts)
-      places = find(:all)
-      list = {label: :root, items: [], id: nil, path: nil}
-
-      areas = Area.scoped_by_company_id(company_id).active
-
-      Place.unscoped do
-        places.each do |p|
-          parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
-
-          areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
-          create_structure(list, parents)
-        end
-      end
-
-      areas = areas.select{|a| a.events_count.present? && a.events_count > 0}
-
-      areas.each do |area|
-        p  = create_structure(list, area.common_denominators || [])
-        p[:items] ||= []
-        p[:items].push({label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'})
-      end
-
-      {locations: simplify_list(list[:items]), areas: areas}
-    end
-
     def encode_location(path)
       path = path.compact.join('/') if path.is_a?(Array)
       Digest::MD5.hexdigest(path.downcase)
@@ -190,38 +164,13 @@ class Place < ActiveRecord::Base
       end
     end
 
-    private
-      def create_structure(list, parents)
-        groups = ['Continents', 'Countries', 'States', 'Cities']
-        p = list
-        i = 1
-        parents.each do |label|
-          if p[:items].nil? || (c = p[:items].select{|i| i[:label] == label}.first).nil?
-            location_id = Base64.strict_encode64(encode_location(parents[0..i-1]) + '||' + label)
-            c = {id: location_id, name: :place, label: label, group: groups[i-1], items: nil, count: 1}
-            p[:items] ||= []
-            p[:items].push c
-          end
-          i += 1
-          p = c
-        end
-        p
-      end
-
-      def simplify_list(items)
-        if items and items.size == 1
-          if items[0][:items]
-            simplify_list(items[0][:items])
-          else
-            items
-          end
-        elsif items
-          items.each do |item|
-            item[:items] = simplify_list(item[:items])
-          end
-          items
-        end
-      end
+    def report_fields
+      {
+        name:   { title: 'Name' },
+        street1:   { title: 'Street 1' },
+        street2:     { title: 'Street 2' }
+      }
+    end
   end
 
 
