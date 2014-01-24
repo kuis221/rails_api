@@ -505,6 +505,7 @@ feature "Events", js: true, search: true do
 
       click_js_link 'Add Contact'
       within visible_modal do
+        fill_in 'contact-search-box', with: 'Pab'
         expect(page).to have_selector("li#contact-company_user-#{company_user.id}")
         expect(page).to have_content('Pablo')
         expect(page).to have_content('Baltodano')
@@ -539,6 +540,7 @@ feature "Events", js: true, search: true do
 
       click_js_link 'Add Contact'
       within visible_modal do
+        fill_in 'contact-search-box', with: 'Gui'
         expect(page).to have_selector("li#contact-contact-#{contact.id}")
         expect(page).to have_content('Guillermo')
         expect(page).to have_content('Vargas')

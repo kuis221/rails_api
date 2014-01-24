@@ -380,6 +380,49 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     @photos = resource.photos
   end
 
+  api :GET, '/api/v1/venues/:id/comments', "Get a list of comments for a Venue"
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+    Returns a list of comments associated to a given venue.
+
+    Each item have the following attributes:
+    * For comments uploaded from the app:
+      * *id*: the comment id
+      * *content*: the comment text
+      * *created_at*: the date and time of creation for the comment
+      * *type:* the comment's type. In this case it should be 'brandscopic'
+
+    * For comments from Google:
+      * *rating*: the rating from the user for the venue
+      * *text*: the comment text
+      * *author_name*: the name of the creator of the comment
+      * *time*: the date and time of creation for the comment
+      * *type*: the comments's type. In this case it should be 'google'
+
+  EOS
+  example <<-EOS
+    An example with comments for an venue in the response
+    GET: /api/v1/venues/92/comments.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+        "id": 1,
+        "content": "User Comment #1",
+        "created_at": "2013-09-10T08:04:57-07:00",
+        "type": "brandscopic"
+      },
+      {
+        "rating": 2,
+        "text": "Tater tots and Korean tacos at a bar with candle light after dark... Good west side sports bar.",
+        "author_name": "Howard Tung",
+        "time": "2013-08-31T03:43:55+00:00",
+        "type": "google"
+      }
+    ]
+  EOS
+  def comments
+    @comments = resource.reviews
+  end
+
   api :GET, '/api/v1/venues/search', "Search for a list of venues matching a term"
   param :term, String, :desc => "The search term", required: true
   description <<-EOS
