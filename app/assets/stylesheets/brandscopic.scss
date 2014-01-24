@@ -4599,10 +4599,14 @@ body.campaigns{
 			margin-bottom: 50px;
 		}
 	}
-	.box_event_data{
+	&.box_event_data{
 		form {
 			margin-bottom: 30px;
 			.box_custom, .box_consumer_reach, .box_demographics {
+				.help-inline {
+					padding-left: 0;
+					margin-bottom: 0;
+				}
 				label {
 					display: inline-block;
 					&.radio {
@@ -4622,7 +4626,6 @@ body.campaigns{
 						margin-top: 12px;
 						float: right;
 						width: 201px;
-						padding-left: 0;
 					}
 				}
 			}
