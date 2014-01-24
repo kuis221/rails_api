@@ -75,6 +75,17 @@ class Area < ActiveRecord::Base
     end
   end
 
+  # True for "North America/United States/Texas" in ["North America/United States/Texas/Austin", "North America/United States/Texas/Bee Cave"
+  # False for "North America/United States/Chicago" in ["North America/United States/Texas/Austin", "North America/United States/Texas/Bee Cave"
+  def place_in_locations?(place)
+    if place.present?
+      political_location = Place.political_division(place).join('/')
+      locations.any?{|location| location.include?(political_location) }
+    else
+      false
+    end
+  end
+
   def activate!
     update_attribute :active, true
   end
