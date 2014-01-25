@@ -58,9 +58,9 @@ describe Campaign do
     describe "#first_event" do
       before(:each) do
         @campaign = FactoryGirl.create(:campaign)
-        @first_event = FactoryGirl.create(:event, campaign_id: @campaign.id, start_date: '05/02/2019', start_time: '10:00am', end_date: '05/02/2019', end_time: '06:00pm', company_id: 1)
-        @second_event = FactoryGirl.create(:event, campaign_id: @campaign.id, start_date: '05/03/2019', start_time: '08:00am', end_date: '05/03/2019', end_time: '12:00pm', company_id: 1)
-        @third_event = FactoryGirl.create(:event, campaign_id: @campaign.id, start_date: '05/04/2019', start_time: '01:00pm', end_date: '05/04/2019', end_time: '03:00pm', company_id: 1)
+        @first_event = FactoryGirl.create(:event, company: @campaign.company, campaign: @campaign, start_date: '05/02/2019', start_time: '10:00am', end_date: '05/02/2019', end_time: '06:00pm')
+        @second_event = FactoryGirl.create(:event, company: @campaign.company, campaign: @campaign, start_date: '05/03/2019', start_time: '08:00am', end_date: '05/03/2019', end_time: '12:00pm')
+        @third_event = FactoryGirl.create(:event, company: @campaign.company, campaign: @campaign, start_date: '05/04/2019', start_time: '01:00pm', end_date: '05/04/2019', end_time: '03:00pm')
         @campaign.reload
       end
 

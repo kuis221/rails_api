@@ -35,6 +35,21 @@ class Contact < ActiveRecord::Base
 
   validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
 
+
+  searchable do
+    integer :id
+    integer :company_id
+    text :name, stored: true do
+      full_name
+    end
+    string :name do
+      full_name
+    end
+    string :status do
+      'Active'
+    end
+  end
+
   def full_name
     [first_name, last_name].join(' ').strip
   end

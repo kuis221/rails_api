@@ -2,8 +2,8 @@
 - custom_kpis = resource.campaign.custom_kpis
 
 - if can?(:view_data, resource)
-  #event-results-form.details_box
-    #event-results-container.box_event_data
+  #event-results-form
+    #event-results-container.details_box.box_event_data
       = render partial: 'results_event_data', locals: {active_kpis: active_kpis, custom_kpis: custom_kpis}
 
 - if can?(:photos, resource) && active_kpis.include?(Kpi.photos)

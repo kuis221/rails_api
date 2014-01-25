@@ -43,6 +43,7 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
           member do
             get :photos
+            get :comments
           end
         end
 
@@ -50,7 +51,7 @@ Brandscopic::Application.routes.draw do
           get :states, on: :member
         end
 
-        resources :contacts, only: [:index, :create, :update]
+        resources :contacts, only: [:index, :create, :update, :show]
 
         resources :tasks, only: [] do
           member do
