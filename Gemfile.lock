@@ -265,6 +265,8 @@ GEM
       vegas (~> 0.1.2)
     resque-loner (1.2.1)
       resque (~> 1.0)
+    resque-timeout (1.0.0)
+      resque (~> 1.0)
     resque_spec (0.14.2)
       resque (>= 1.19.0)
       rspec-core (>= 2.5.0)
@@ -446,6 +448,7 @@ DEPENDENCIES
   redis
   resque
   resque-loner
+  resque-timeout
   resque_spec
   roo
   rspec

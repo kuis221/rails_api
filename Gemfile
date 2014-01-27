@@ -53,6 +53,7 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
+gem 'resque-timeout'
 
 #For memory debugging
 gem "oink"

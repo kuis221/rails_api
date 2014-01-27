@@ -63,6 +63,7 @@ RSpec.configure do |config|
   #config.include Capybara::DSL, :type => :request
   config.include SignHelper, :type => :feature
   config.include RequestsHelper, :type => :feature
+  config.include BrandscopiSpecHelpers
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :deletion
