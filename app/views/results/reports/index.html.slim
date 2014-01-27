@@ -35,7 +35,7 @@
               span.pull-right
                 a.share
                 a.edit
-                a.disable
+                a.disable 
 
 
         - if can?(:index_photo_results, AttachedAsset)
@@ -62,7 +62,7 @@
                 a.disable
 
     - if @reports.any?
-      h2 User Added Reports
+      h3 USER ADDED REPORTS
       .link-list
         ul#custom-reports-list.reports-list
           = render @reports
