@@ -5386,7 +5386,7 @@ a, i{
 			vertical-align: middle;
 			display: inline-block;
 		}
-		height: 100px;
+		height: 110px;
 		width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
@@ -5398,13 +5398,20 @@ a, i{
 			white-space: nowrap;
 			width: 200px;
 		}
+		.goal-title {
+			display: block;
+			font-size: 11px;
+			margin-top: 5px;
+			min-height: 20px;
+			text-align: center;
+		}
 		.goals {
 			float: right;
 			position: absolute;
 			overflow: hidden;
 			left: 350px;
 			right: 0;
-			height: 100px;
+			height: 110px;
 
 			.goals-inner {
 				position: absolute;
@@ -5425,7 +5432,7 @@ a, i{
 
 			.kpi-goal {
 				margin: 0 3px;
-				padding: 10px 10px 5px 10px;
+				padding: 5px 10px 5px 10px;
 				display: inline-block;
 
 				&.kpi-competitive_analysis{

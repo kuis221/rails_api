@@ -21,6 +21,7 @@ Brandscopic::Application.routes.draw do
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
           resources :surveys, only: [:index, :create]
+          get :autocomplete, on: :collection
           member do
             get :results
             get :members

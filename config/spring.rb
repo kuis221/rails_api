@@ -14,3 +14,7 @@ module Spring
     Spring::Commands::Rake.environment_matchers[/^spec($|:)/] = "test"
   end
 end
+
+Spring.after_fork do
+  Sunspot.session = Sunspot::Rails.build_session if defined?(Sunspot::Queue) && Sunspot.session.is_a?(Sunspot::Queue::SessionProxy)
+end
