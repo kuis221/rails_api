@@ -186,7 +186,7 @@ feature "Events", js: true, search: true do
       scenario "first filter should make the list show events in the past" do
         campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
         past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
         Sunspot.commit
 
         visit events_path
@@ -201,7 +201,7 @@ feature "Events", js: true, search: true do
       scenario "clear filters should also exclude reset the default dates filter" do
         campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: @company)
         past_event  = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes))
+        today_event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
         Sunspot.commit
 
         visit events_path
@@ -246,51 +246,51 @@ feature "Events", js: true, search: true do
         scenario "Users must be able to filter on all brands they have permissions to access " do
           today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
           tomorrow = today+1.day
-          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
-            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
-          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
-            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
-          brands = [
-            FactoryGirl.create(:brand, name: 'Cacique'),
-            FactoryGirl.create(:brand, name: 'Smirnoff'),
-          ]
-          FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
-          ev1.campaign.brands << brands.first
-          ev2.campaign.brands << brands.last
-          @company_user.brands << brands
-          Sunspot.commit
-          visit events_path
-          expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
+          Timecop.travel(today) do
+            ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+              campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+              place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+            ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+              campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+              place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+            brands = [
+              FactoryGirl.create(:brand, name: 'Cacique'),
+              FactoryGirl.create(:brand, name: 'Smirnoff'),
+            ]
+            FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
+            ev1.campaign.brands << brands.first
+            ev2.campaign.brands << brands.last
+            @company_user.brands << brands
+            Sunspot.commit
+            visit events_path
+            expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
 
-          within("ul#events-list") do
-            expect(page).to have_content('Campaign FY2012')
-            expect(page).to have_content('Another Campaign April 03')
-          end
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+            end
 
-          filter_section('BRANDS').unicheck('Cacique')
+            filter_section('BRANDS').unicheck('Cacique')
 
-          within("ul#events-list") do
-            expect(page).to have_content('Campaign FY2012')
-            expect(page).to have_no_content('Another Campaign April 03')
-          end
-          filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
-          filter_section('BRANDS').unicheck('Smirnoff')
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+            end
+            filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
+            filter_section('BRANDS').unicheck('Smirnoff')
 
-          within("ul#events-list") do
-            expect(page).to have_no_content('Campaign FY2012')
-            expect(page).to have_content('Another Campaign April 03')
+            within("ul#events-list") do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+            end
           end
         end
 
         scenario "Users must be able to filter on all areas they have permissions to access " do
-          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
-          tomorrow = today+1.day
-          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+          ev1 = FactoryGirl.create(:event, company: @company, active: true,
             campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
             place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
-          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+          ev2 = FactoryGirl.create(:event, company: @company, active: true,
             campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
             place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
           areas = [
@@ -635,7 +635,7 @@ feature "Events", js: true, search: true do
 
 
     scenario "allows to create a new task for the event and mark it as completed" do
-      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign), company: @company)
+      event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: @company))
       user = FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
       company_user = user.company_users.first
       event.users << @company_user

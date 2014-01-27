@@ -66,10 +66,11 @@ describe Api::V1::EventsController do
   end
 
   describe "POST 'create'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
     it "should assign current_user's company_id to the new event" do
       place = FactoryGirl.create(:place)
       lambda {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       }.should change(Event, :count).by(1)
       assigns(:event).company_id.should == company.id
     end
@@ -77,10 +78,10 @@ describe Api::V1::EventsController do
     it "should create the event with the correct dates" do
       place = FactoryGirl.create(:place)
       lambda {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       }.should change(Event, :count).by(1)
       event = Event.last
-      event.campaign_id.should == 1
+      event.campaign_id.should == campaign.id
       event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
       event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
       event.place_id.should == place.id
@@ -92,12 +93,13 @@ describe Api::V1::EventsController do
     let(:campaign){ FactoryGirl.create(:campaign, company: company) }
     let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
     it "must update the event attributes" do
+      new_campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       assigns(:event).should == event
       response.should be_success
       event.reload
-      event.campaign_id.should == 111
+      event.campaign_id.should == new_campaign.id
       event.start_at.should == Time.zone.parse('2020-05-21 12:00:00')
       event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
       event.place_id.should == place.id
@@ -126,7 +128,7 @@ describe Api::V1::EventsController do
       result.value = 321
       event.save
 
-      put 'update',  auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id, value: '987'}]}
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id.to_s, value: '987'}]}, format: :json
       result.reload
       result.value.should == 987
     end

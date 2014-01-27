@@ -1,19 +1,25 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :event do
-    campaign_id 1
     start_date "01/23/2019"
     start_time "10:00am"
     end_date "01/23/2019"
     end_time "12:00pm"
-    company_id 1
     aasm_state 'unsent'
     active true
 
     ignore do
       results false
       expenses []
+    end
+
+    # To keep the associations between campaign and company correct
+    after(:build) do |event, evaluator|
+      if event.company.present?
+        event.campaign ||= FactoryGirl.create(:campaign, company: event.company)
+      end
+      event.campaign ||= FactoryGirl.create(:campaign)
+      event.company ||= event.campaign.company if event.campaign.present?
     end
 
     before(:create) do |event, evaluator|

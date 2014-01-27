@@ -22,6 +22,7 @@ Brandscopic::Application.routes.draw do
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
           resources :surveys, only: [:index, :create]
+          get :autocomplete, on: :collection
           member do
             get :results
             get :members
@@ -51,7 +52,7 @@ Brandscopic::Application.routes.draw do
           get :states, on: :member
         end
 
-        resources :contacts, only: [:index, :create, :update]
+        resources :contacts, only: [:index, :create, :update, :show]
 
         resources :tasks, only: [] do
           member do

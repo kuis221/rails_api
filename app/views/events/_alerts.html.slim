@@ -27,7 +27,7 @@
       .alert.alert-danger
         == "Your event has #{pluralize(late_tasks, 'late task')}. <a href=\"#event-tasks\"  class=\"smooth-scroll\">Click here</a> to complete."
 
-    - if (today_tasks = resource.tasks.due_today.count) > 0
+    - if today_tasks > 0
       .alert.alert-gray
         == "Your event has #{(today_tasks > 1) ? today_tasks.to_s+' tasks that are' : ' one task that is'} due today. <a href=\"#event-tasks\" class=\"smooth-scroll\">Click here</a> to complete."
 

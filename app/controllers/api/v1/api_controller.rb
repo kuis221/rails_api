@@ -7,6 +7,7 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
+  before_filter :ensure_valid_request
   before_filter :cors_preflight_check
   after_filter :set_access_control_headers
 
@@ -49,7 +50,6 @@ class Api::V1::ApiController < ActionController::Base
         }
       end
     end
-
 
     def invalid_company
       respond_to do |format|
@@ -103,19 +103,24 @@ class Api::V1::ApiController < ActionController::Base
       headers['Access-Control-Max-Age'] = '86400'
     end
 
-  def cors_preflight_check
-    if request.method == 'OPTIONS'
-      unless Rails.env.production?
-        headers['Access-Control-Allow-Origin'] = '*'
-      else
-        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+    def cors_preflight_check
+      if request.method == 'OPTIONS'
+        unless Rails.env.production?
+          headers['Access-Control-Allow-Origin'] = '*'
+        else
+          headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+        end
+        headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
+        headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+        headers['Access-Control-Max-Age'] = '86400'
+        render :text => '', :content_type => 'text/plain'
       end
-      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
-      headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
-      headers['Access-Control-Max-Age'] = '86400'
-      render :text => '', :content_type => 'text/plain'
     end
-  end
+
+    def ensure_valid_request
+      return if ['json', 'xml'].include?(params[:format]) || request.headers["Accept"] =~ /json|xml/
+      render :nothing => true, :status => 406
+    end
 end
 
 

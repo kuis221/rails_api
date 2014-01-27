@@ -28,7 +28,7 @@ class ListExport < ActiveRecord::Base
 
   aasm do
     state :new, :initial => true
-    state :queued, before_enter: :queue_process
+    state :queued, after_enter: :queue_process
     state :processing
     state :completed
     state :failed

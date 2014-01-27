@@ -23,8 +23,9 @@ class Api::V1::ContactsController < Api::V1::ApiController
   resource_description do
     short 'Contacts'
     formats ['json', 'xml']
-    error 404, "Missing"
-    error 500, "Server crashed for some reason"
+    error 406, "The server cannot return data in the requested format"
+    error 404, "The requested resource was not found"
+    error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -74,6 +75,34 @@ class Api::V1::ContactsController < Api::V1::ApiController
   EOS
   def index
     @contacts = current_company.contacts.order('contacts.first_name, contacts.last_name')
+  end
+
+
+  api :GET, '/api/v1/contacts/:id', 'Return a contact\'s details'
+  param :id, :number, required: true, desc: "Contact ID"
+
+  example <<-EOS
+  {
+      "id": 268,
+      "first_name": "Trinity",
+      "last_name": "Blue",
+      "full_name": "Trinity Blue",
+      "title": "MBN Supervisor",
+      "email": "trinity@matrix.com",
+      "phone_number": "+1 233 245 4332",
+      "stree1": "1st Young st.,",
+      "stree2": "2nd floor, #34",
+      "street_address": "1st Young st., 2nd floor, #34"",
+      "city": "Toronto",
+      "state": "ON",
+      "country": "Canada",
+      "zip_code": "12345"
+  }
+  EOS
+  def show
+    if resource.present?
+      render
+    end
   end
 
   api :POST, '/api/v1/contacts', 'Create a new contact'
