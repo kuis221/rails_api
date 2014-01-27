@@ -146,6 +146,83 @@ class Api::V1::EventsController < Api::V1::FilteredController
     collection
   end
 
+  api :GET, '/api/v1/events/autocomplete', 'Return a list of results grouped by categories'
+  param :q, String, required: true, desc: "The search term"
+  description <<-EOS
+  Returns a list of results matching the searched term grouped in the following categories
+  * *Campaigns*: Includes categories
+  * *Brands*: Includes brands and brand portfolios
+  * *Places*: Includes venues and areas
+  * *Peope*: Includes users and teams
+  EOS
+  example <<-EOS
+  GET: /api/v1/events/autocomplete.json?auth_token=XXssU!suwq92-1&company_id=2&q=jam
+  [
+      {
+          "label": "Campaigns",
+          "value": []
+      },
+      {
+          "label": "Brands",
+          "value": [
+              {
+                  "label": "<i>Jam</i>eson LOCALS",
+                  "value": "13",
+                  "type": "brand"
+              },
+              {
+                  "label": "<i>Jam</i>eson Whiskey",
+                  "value": "8",
+                  "type": "brand"
+              }
+          ]
+      },
+      {
+          "label": "Places",
+          "value": [
+              {
+                  "label": "<i>Jam</i>es' Beach",
+                  "value": "2386",
+                  "type": "venue"
+              },
+              {
+                  "label": "<i>Jam</i>es' Beach",
+                  "value": "374",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Joyce",
+                  "value": "377",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Royal Palm",
+                  "value": "825",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Chicago",
+                  "value": "2203",
+                  "type": "venue"
+              }
+          ]
+      },
+      {
+          "label": "People",
+          "value": []
+      }
+  ]
+  EOS
+  def autocomplete
+    buckets = autocomplete_buckets({
+      campaigns: [Campaign],
+      brands: [Brand, BrandPortfolio],
+      places: [Venue, Area],
+      people: [CompanyUser, Team]
+    })
+    render :json => buckets.flatten
+  end
+
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
 

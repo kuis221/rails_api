@@ -53,6 +53,7 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
+gem 'resque-timeout'
 
 #For memory debugging
 gem "oink"
@@ -77,7 +78,7 @@ group :test, :development do
   gem "spring-commands-rspec"
   gem "factory_girl_rails", "~> 4.3"
   gem "rspec"
-  gem "rspec-rails", "~> 2.0"
+  gem "rspec-rails" #, "~> 2.0"
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
