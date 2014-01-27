@@ -2133,7 +2133,7 @@ ul.kpis-list{
         width: 100%;
         min-height: 100%;
       }
-    	.edit, .enable, .disable, .preview {
+    	.edit, .enable, .disable, .share, .preview {
     		height: 30px;
 			display: inline-block;
     	}
@@ -2196,12 +2196,25 @@ ul.kpis-list{
 			text-shadow:none;
 			top:8px;
 		}
+		.share:after{
+			color:white;
+			content: "\e628";
+			font-family: 'icons';
+			font-size: 19px;
+			margin-right: 2px;
+			position: relative;
+			speak: none;
+			text-align: center;
+			text-shadow: none;
+			top: 3px;
+			-webkit-font-smoothing: antialiased;
+		}
 		&:hover{
 			background-color: $grey_one;
 			a:hover:after{
 				color: $grey_three;
 			}
-			.edit:after, .enable:after, .disable:after, .load-comments-link:after, .preview:after{
+			.edit:after, .enable:after, .disable:after, .share:after, .load-comments-link:after, .preview:after{
 				color:$brand;
 			}
 			.checker{
@@ -5517,6 +5530,8 @@ a, i{
 		}
 	}
 }
+
+/*-- REPORTS --*/
 
 .report-kpi-chart-name {
 	color: $venues_blue;

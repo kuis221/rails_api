@@ -1,8 +1,21 @@
 // REPORTS
 ul.reports-list {
+	li{
+		display: table;
+		float: none;
+		
+		width: 100%;
+	}
 	.report-item {
-		padding: 10px;
-		min-width: 30%;
+		display: table-cell;
+		float: none;
+		padding: 0 10px;
+		vertical-align: middle;
+		a{
+			p{
+				margin: 0;
+			}
+		}
 	}
 	.report-status {
 		padding: 10px;
