@@ -22,7 +22,6 @@ describe DashboardHelper do
 
     it "should return all values in zero when there are campaigns but no events" do
       campaign = FactoryGirl.create(:campaign, company: @company)
-
       Sunspot.commit
       stats = helper.kpi_trends_stats(Kpi.events)
       stats[:goal].should  == 0
@@ -32,7 +31,6 @@ describe DashboardHelper do
       stats[:remaining_percentage].should  == 0
       stats[:today_percentage].should  == 0
     end
-
 
     it "should return all values in zero when there are no approved events" do
       campaign = FactoryGirl.create(:campaign, company: @company)

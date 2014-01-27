@@ -1,6 +1,8 @@
 require 'sunspot_test/rspec'
 
 RSpec.configure do |c|
+  SunspotTest.solr_startup_timeout = 60
+
   c.before(:each) do
     SunspotTest.stub
   end
