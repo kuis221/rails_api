@@ -32,6 +32,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :area, Array, :desc => "A list of areas to filter the results"
   param :user, Array, :desc => "A list of users to filter the results"
   param :team, Array, :desc => "A list of teams to filter the results"
+  param :brand, Array, :desc => "A list of brands to filter the results"
+  param :brand_porfolio, Array, :desc => "A list of brand portfolios to filter the results"
   param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
   param :event_status, ['Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
   param :page, :number, :desc => "The number of the page, Default: 1"
@@ -918,7 +920,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     def permitted_search_params
-      params.permit({campaign: []}, {status: []}, {event_status: []})
+      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
     end
 
     def load_contactable_from_request
