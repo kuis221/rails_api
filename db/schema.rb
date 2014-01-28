@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140121200658) do
+ActiveRecord::Schema.define(:version => 20140124202736) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -325,17 +325,6 @@ ActiveRecord::Schema.define(:version => 20140121200658) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -607,6 +596,21 @@ ActiveRecord::Schema.define(:version => 20140121200658) do
 
   add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
+
+  create_table "td_linxes", :force => true do |t|
+    t.string   "store_code"
+    t.string   "retailer_dba_name"
+    t.string   "retailer_address"
+    t.string   "retailer_city"
+    t.string   "retailer_state"
+    t.string   "retailer_trade_channel"
+    t.string   "license_type"
+    t.string   "fixed_address"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  add_index "td_linxes", ["store_code"], :name => "index_td_linxes_on_store_code", :unique => true
 
   create_table "teamings", :force => true do |t|
     t.integer "team_id"

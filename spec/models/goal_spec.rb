@@ -25,6 +25,7 @@ describe Goal do
   it { should validate_presence_of(:goalable_type) }
 
   it { should validate_numericality_of(:goalable_id) }
+  it { should validate_numericality_of(:kpi_id) }
   it { should validate_numericality_of(:kpis_segment_id) }
   it { should validate_numericality_of(:value) }
 
@@ -32,4 +33,14 @@ describe Goal do
   it { should belong_to(:parent) }
   it { should belong_to(:kpi) }
   it { should belong_to(:kpis_segment) }
+
+
+  describe "set_kpi_id" do
+    it "should set the kpi_id if nill and the kpis_segment_id is set" do
+      segment = FactoryGirl.create(:kpis_segment, kpi: FactoryGirl.create(:kpi))
+      goal = Goal.new(kpis_segment_id: segment.id)
+      goal.valid?
+      expect(goal.kpi_id).to eql segment.kpi_id
+    end
+  end
 end
