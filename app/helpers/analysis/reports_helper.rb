@@ -158,12 +158,14 @@ module Analysis
     end
 
     def each_events_goal
-      approved_totals = @events_scope.joins(:results).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
-                          .select('sum(scalar_value) as total_value, event_results.kpi_id, event_results.kpis_segment_id')
-                          .group('event_results.kpi_id, event_results.kpis_segment_id')
-      submitted_totals = @events_scope.joins(:results).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
-                          .select('sum(scalar_value) as total_value, event_results.kpi_id, event_results.kpis_segment_id')
-                          .group('event_results.kpi_id, event_results.kpis_segment_id')
+      fields_select = 'case when kpis.kpi_type=\'count\' then CAST(nullif(value, \'\') AS integer) else event_results.kpis_segment_id END AS kpis_segment_id, sum(scalar_value) as total_value, count(event_results.id) as total_count, event_results.kpi_id'
+      approved_totals = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
+                          .select(fields_select)
+                          .group('1, event_results.kpi_id')
+      submitted_totals = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
+                          .select(fields_select)
+                          .group('1, event_results.kpi_id')
+
 
       goals_result = {}
       @goals.each do |goal|
@@ -173,25 +175,23 @@ module Analysis
           goal_scope = goal_scope.where('events.end_at <= ?', goal.start_date.end_of_day) if goal.due_date.present?
         end
 
-        if goal.kpis_segment_id.nil?
-          # Handle special kpis types
-          completed = get_total_by_status(goal_scope, goal, approved_totals, 'approved')
-          submitted = get_total_by_status(goal_scope, goal, submitted_totals, ['submitted', 'rejected'])
+        # Handle special kpis types
+        completed = get_total_by_status(goal_scope, goal, approved_totals, 'approved')
+        submitted = get_total_by_status(goal_scope, goal, submitted_totals, ['submitted', 'rejected'])
 
-          if completed.nil?
-            goals_result[goal.id] = {goal: goal, completed_percentage: 0, remaining_percentage: 100, remaining_count: goal.value || 0, total_count: 0, submitted: submitted}
+        if completed.nil?
+          goals_result[goal.id] = {goal: goal, completed_percentage: 0, remaining_percentage: 100, remaining_count: goal.value || 0, total_count: 0, submitted: submitted}
+        else
+          goal_value = goal.value || 0
+          total_count = completed
+          remaining_count =  goal_value - completed
+          if goal_value != 0
+            completed_percentage = completed * 100 / goal_value
           else
-            goal_value = goal.value || 0
-            total_count = completed
-            remaining_count =  goal_value - completed
-            if goal_value != 0
-              completed_percentage = completed * 100 / goal_value
-            else
-              completed_percentage = 0
-            end
-            remaining_percentage = 100 - completed_percentage
-            goals_result[goal.id] = {goal: goal, completed_percentage: completed_percentage, remaining_percentage: remaining_percentage, remaining_count: remaining_count, total_count: total_count, submitted: submitted}
+            completed_percentage = 0
           end
+          remaining_percentage = 100 - completed_percentage
+          goals_result[goal.id] = {goal: goal, completed_percentage: completed_percentage, remaining_percentage: remaining_percentage, remaining_count: remaining_count, total_count: total_count, submitted: submitted}
         end
       end
       goals_result
@@ -219,11 +219,15 @@ module Analysis
         end
 
         unless data.nil?
-          case goal.kpi.capture_mechanism
-          when 'integer'
-            data.total_value.to_i
-          when 'decimal'
-            data.total_value.to_f
+          if goal.kpis_segment_id.nil?
+            case goal.kpi.capture_mechanism
+            when 'integer'
+              data.total_value.to_i
+            when 'decimal'
+              data.total_value.to_f
+            end
+          else
+            data.total_count.to_i
           end
         end
       end
