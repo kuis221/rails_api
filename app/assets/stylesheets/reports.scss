@@ -3,18 +3,20 @@ ul.reports-list {
 	li{
 		display: table;
 		float: none;
-		
 		width: 100%;
+		a{	
+			float: left;
+			padding: 0;
+		}
 	}
 	.report-item {
 		display: table-cell;
 		float: none;
-		padding: 0 10px;
+		height: 83px;
+		padding: 0 30px 0 10px !important;
 		vertical-align: middle;
-		a{
-			p{
-				margin: 0;
-			}
+		p{
+			margin: 0;
 		}
 	}
 	.report-status {
