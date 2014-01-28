@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140115210126) do
+ActiveRecord::Schema.define(:version => 20140124202736) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -412,6 +412,19 @@ ActiveRecord::Schema.define(:version => 20140115210126) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
+  create_table "kpi_reports", :force => true do |t|
+    t.integer  "company_user_id"
+    t.text     "params"
+    t.string   "aasm_state"
+    t.integer  "progress"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
   create_table "kpis", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -529,17 +542,12 @@ ActiveRecord::Schema.define(:version => 20140115210126) do
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "reports", :force => true do |t|
-    t.string   "type"
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.integer "company_id"
+    t.string  "name"
+    t.text    "description"
+    t.boolean "active",        :default => true
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
   end
 
   create_table "roles", :force => true do |t|
@@ -588,6 +596,21 @@ ActiveRecord::Schema.define(:version => 20140115210126) do
 
   add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
+
+  create_table "td_linxes", :force => true do |t|
+    t.string   "store_code"
+    t.string   "retailer_dba_name"
+    t.string   "retailer_address"
+    t.string   "retailer_city"
+    t.string   "retailer_state"
+    t.string   "retailer_trade_channel"
+    t.string   "license_type"
+    t.string   "fixed_address"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  add_index "td_linxes", ["store_code"], :name => "index_td_linxes_on_store_code", :unique => true
 
   create_table "teamings", :force => true do |t|
     t.integer "team_id"
