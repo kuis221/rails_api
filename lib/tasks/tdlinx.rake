@@ -80,7 +80,7 @@ namespace :tdlinx do
           Place.where("td_linx_code IS NULL or td_linx_code=''").each do |place|
             place_address = build_address([fix_address(place.street), fix_city(place.city), place.state])
             #Compare place and tdlinx record addresses
-            result = TdLinx.where(fixed_address: place_address)
+            result = TdLinx.where('lower(fixed_address)=?', place_address.downcase)
 
             if result.present?
               #Clean place names
@@ -89,11 +89,9 @@ namespace :tdlinx do
               p "#{place.name} ==> #{fixed_place_name}"
               p "#{result.first.retailer_dba_name} ==> #{fixed_tdlinx_name}"
 
-              if (fixed_place_name.include? fixed_tdlinx_name) || (fixed_tdlinx_name.include? fixed_place_name)
-                p "Similar venues!"
+              if fixed_place_name.include?(fixed_tdlinx_name) || fixed_tdlinx_name.include?(fixed_place_name)
                 if place.update_column('td_linx_code', result.first.store_code)
                   c = c+1
-                  p "Place #{place.id} TDLinx code was updated"
                 end
               else
                 different_names << [place.name, place_address, '', 'Brandscopic DB']
