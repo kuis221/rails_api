@@ -30,7 +30,6 @@ describe KpisController do
       expect {
         post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number'}, format: :js
          response.should be_success
-         puts assigns(:kpi).errors.inspect
       }.to change(Kpi, :count).by(1)
       response.should be_success
       response.should render_template(:create)
