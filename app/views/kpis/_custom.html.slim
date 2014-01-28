@@ -15,21 +15,23 @@
     .control-group
       .controls
         = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium'
-        = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
-          label
-            = gf.hidden_field :goalable_id, value: @campaign.id
-            = gf.hidden_field :goalable_type, value: 'Campaign'
-            = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+        - unless resource.new_record?
+          = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
+            label
+              = gf.hidden_field :goalable_id, value: @campaign.id
+              = gf.hidden_field :goalable_type, value: 'Campaign'
+              = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
         = kf.link_to_remove "Remove"
 
   p= f.link_to_add "Add a segment", :kpis_segments
 
-#kpigoal-fields.row-fluid style="display: none"
-  = f.fields_for :goals, @campaign.goals.for_kpis([resource]).first, wrapper: false do |gf|
-    = gf.hidden_field :goalable_id, value: @campaign.id
-    = gf.hidden_field :goalable_type, value: 'Campaign'
-    = gf.hidden_field :kpi_id, value: resource.id
-    = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}
+- unless resource.new_record?
+  #kpigoal-fields.row-fluid style="display: none"
+    = f.fields_for :goals, @campaign.goals.for_kpis([resource]).first, wrapper: false do |gf|
+      = gf.hidden_field :goalable_id, value: @campaign.id
+      = gf.hidden_field :goalable_type, value: 'Campaign'
+      = gf.hidden_field :kpi_id, value: resource.id
+      = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}
 
 .row-fluid
   = f.input :capture_mechanism, as: :select, input_html: {class: 'input-medium chosen-enabled'}, collection: resource.kpi_type.blank? ? [] : Kpi::CUSTOM_TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}

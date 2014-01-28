@@ -11,7 +11,7 @@ class Results::GvaController < ApplicationController
 
   def report
     authorize_actions
-
+    # Yeah, I know!: TODO: refactor this to not send a list of event ids in the queries :s
     @events_scope = Event.where(id: filter_event_ids)
     if area
       @goals = area.goals.in(campaign)
@@ -20,7 +20,7 @@ class Results::GvaController < ApplicationController
     else
       @goals = campaign.goals.base
     end
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi).all
+    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi)
   end
 
   private

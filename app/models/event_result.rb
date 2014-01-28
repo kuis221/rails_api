@@ -15,7 +15,8 @@
 
 class EventResult < ActiveRecord::Base
 	belongs_to :event
-	belongs_to :kpis_segment
+  belongs_to :kpis_segment
+	belongs_to :kpi
 	belongs_to :form_field, class_name: 'CampaignFormField'
 
   attr_accessible :form_field_id, :kpis_segment_id, :kpi_id, :value
