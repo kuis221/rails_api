@@ -52,7 +52,7 @@ namespace :tdlinx do
       CSV.foreach("#{Rails.root}/db/TDLinx.csv", :headers => true) do |row|
         if row['store_code'].present?
           row['retailer_address'] = fix_address(row['retailer_address'])
-          row['retailer_city'] = fix_city(row['retailer_city']).capitalize
+          row['retailer_city'] = fix_city(row['retailer_city']).split.map(&:capitalize).join(' ')
           row['fixed_address'] = build_address([ fix_address(row['retailer_address']), row['retailer_city'], usa_states[row['retailer_state']]['name'] ])
           begin
             if TdLinx.create!(row.to_hash)
@@ -71,14 +71,18 @@ namespace :tdlinx do
     task :codes => :environment do
       include CommonMethods
 
-      c=0
+      company = Company.find(2) #Legacy
+      c = 0
       CSV.open("tmp/Venues-Not-Found.csv", "wb") do |not_found|
-        not_found << ["Id", "Name", "Address"]
+        not_found << ["Id", "Name", "Address", "Areas", "Campaigns"]
         CSV.open("tmp/Venues-Different-Names.csv", "wb") do |different_names|
-          different_names << ["Name", "Address", "TDLinx Code", "Source"]
+          different_names << ["Brandscopic Name", "Brandscopic Address", "List Name", "List Address", "TDLinx Code", "Areas", "Campaigns"]
 
-          Place.where("td_linx_code IS NULL or td_linx_code=''").each do |place|
+          Place.where("td_linx_code IS NULL or td_linx_code=''").joins(:venues).where('venues.company_id = 2').each do |place|
             place_address = build_address([fix_address(place.street), fix_city(place.city), place.state])
+            areas = company.areas.select{|a| a.place_in_scope?(place) }.map(&:name).join(', ')
+            campaigns = Campaign.select('DISTINCT campaigns.name').joins(:events).where(events: {place_id: place.id}).map(&:name).join(', ')
+
             #Compare place and tdlinx record addresses
             result = TdLinx.where('lower(fixed_address)=?', place_address.downcase)
 
@@ -94,13 +98,11 @@ namespace :tdlinx do
                   c = c+1
                 end
               else
-                different_names << [place.name, place_address, '', 'Brandscopic DB']
-                different_names << [result.first.retailer_dba_name, result.first.fixed_address, result.first.store_code, "External"]
-                different_names << []
+                different_names << [place.name, place_address, result.first.retailer_dba_name, result.first.fixed_address, result.first.store_code, areas, campaigns]
               end
               p "---------------------------------------------"
             else
-              not_found << [place.id, place.name, place_address]
+              not_found << [place.id, place.name, place_address, areas, campaigns]
             end
           end
           p "#{c} places were updated"
