@@ -631,13 +631,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ).sort{|a, b| a.name <=> b.name}
   end
 
-  api :POST, '/api/v1/events/:id/members', 'Assocciate a user or team to the event\'s team'
+  api :POST, '/api/v1/events/:id/members', 'Assocciate an user or team to the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
   param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
 
   example <<-EOS
-    Adding a user to the event members
+    Adding an user to the event members
     POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     DATA:
     {
@@ -648,30 +648,31 @@ class Api::V1::EventsController < Api::V1::FilteredController
     RESPONSE:
     {
       'success': true,
-      'info': "Contact successfully added to event",
+      'info': "Member successfully added to event",
       'data': {}
     }
   EOS
 
   example <<-EOS
-    Adding a contact to the event members
+    Adding a team to the event members
     POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     DATA:
     {
       'memberable_id': 1,
-      'memberable_type': 'contact'
+      'memberable_type': 'team'
     }
 
     RESPONSE:
     {
       'success': true,
-      'info': "Contact successfully added to event",
+      'info': "Member successfully added to event",
       'data': {}
     }
   EOS
   def add_member
     memberable = build_memberable_from_request
     if memberable.save
+      resource.solr_index
       result = { :success => true,
                  :info => "Member successfully added to event",
                  :data => {} }
@@ -690,6 +691,60 @@ class Api::V1::EventsController < Api::V1::FilteredController
         format.json { render json: memberable.errors, status: :unprocessable_entity }
         format.xml { render xml: memberable.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
+  param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
+  param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be deleted as a member'
+  example <<-EOS
+    Deleting an user from the event members
+    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Member successfully deleted from event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Deleting a team to from the event members
+    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'team'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Member successfully deleted from event",
+      'data': {}
+    }
+  EOS
+  def delete_member
+    memberable = find_memberable_from_request
+    if memberable.present?
+      if memberable.destroy
+        resource.solr_index
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Member successfully deleted from event",
+                          :data => {}
+                        }
+      else
+        render json: memberable.errors, status: :unprocessable_entity
+      end
+    else
+      record_not_found
     end
   end
 
@@ -934,6 +989,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
         resource.teamings.build({team: current_company.teams.find(params[:memberable_id])}, without_protection: true)
       else
         resource.memberships.build({company_user: current_company.company_users.find(params[:memberable_id])}, without_protection: true)
+      end
+    end
+
+    def find_memberable_from_request
+      if params[:memberable_type] == 'team'
+        Teaming.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
+      else
+        Membership.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
       end
     end
 

@@ -27,6 +27,7 @@ Brandscopic::Application.routes.draw do
             get :results
             get :members
             post :members, to: "events#add_member"
+            delete :members, to: "events#delete_member"
             get :assignable_members
             get :contacts
             post :contacts, to: "events#add_contact"
