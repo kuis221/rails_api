@@ -453,7 +453,7 @@ describe Api::V1::EventsController do
       member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
 
       expect {
-        post :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
       }.to change(Membership, :count).by(0)
       event.reload
       event.users.should == []
