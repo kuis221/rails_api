@@ -1,3 +1,5 @@
+@import "brandscopic.scss";
+
 // REPORTS
 ul.reports-list {
 	li{
@@ -40,14 +42,21 @@ ul.reports-list {
 
 #report-builder {
 	#field-search-input {
-		width: 195px;
+		background-color: white !important;
+		border: 1px solid $user_menu;
+		height: 37px;
+		width: 209px;
 		background-image: url("search2.svg") !important;
 		background-position: center right;
 		background-repeat: no-repeat;
 		-webkit-border-radius: 20px;
+		box-sizing: border-box;
 		border-radius: 20px;
-		padding-left: 2%;
-		padding-right: 2%;
+		padding-left: 7%;
+		padding-right: 17%;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
 	}
 
 	.field-list {
@@ -58,6 +67,7 @@ ul.reports-list {
 		overflow: auto;
 		&#report-fields {
 			height: 300px;
+			margin-top: 10px;
 		}
 
 		&> ul {
