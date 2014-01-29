@@ -994,9 +994,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     def find_memberable_from_request
       if params[:memberable_type] == 'team'
-        Teaming.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
+        resource.teamings.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
       else
-        Membership.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
+        resource.memberships.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
       end
     end
 
