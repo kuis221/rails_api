@@ -987,7 +987,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     def find_contactable_from_request
       contactable_type = params[:contactable_type] == 'user' ? 'CompanyUser' : 'Contact'
-      ContactEvent.where(event_id: params[:id], contactable_id: params[:contactable_id], contactable_type: contactable_type).first
+      resource.contact_events.where(contactable_id: params[:contactable_id], contactable_type: contactable_type).first
     end
 
     def build_memberable_from_request
