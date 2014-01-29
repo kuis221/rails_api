@@ -500,14 +500,31 @@ describe Api::V1::EventsController do
   describe "DELETE 'delete_contact'" do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
 
-    it "should remove a contact from the event" do
+    it "should remove a contact (type = user) from the event" do
+      contact_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+      another_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'user', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a contact (type = contact) from the event" do
       contact_to_delete = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
       another_contact = user.company_users.first
       FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
       FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
 
       expect {
-        post :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
       }.to change(ContactEvent, :count).by(-1)
       event.contacts.should == [another_contact]
 
@@ -521,7 +538,7 @@ describe Api::V1::EventsController do
       contact = FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company)
 
       expect {
-        post :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
       }.to change(ContactEvent, :count).by(0)
 
       event.contacts.should == []
