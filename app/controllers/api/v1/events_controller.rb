@@ -695,7 +695,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
-  param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
+  param :memberable_id, :number, required: true, desc: 'The ID of team/user to be deleted as a member'
   param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be deleted as a member'
   example <<-EOS
     Deleting an user from the event members
