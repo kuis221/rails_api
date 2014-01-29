@@ -715,7 +715,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-    Deleting a team to from the event members
+    Deleting a team from the event members
     DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     DATA:
     {

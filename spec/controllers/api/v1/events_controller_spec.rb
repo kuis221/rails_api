@@ -408,6 +408,64 @@ describe Api::V1::EventsController do
     end
   end
 
+  describe "DELETE 'delete_member'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a member (type = user) from the event" do
+      member_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      another_member = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      event.users << member_to_delete
+      event.teams << another_member
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(-1)
+      event.reload
+      event.users.should == []
+      event.teams.should == [another_member]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a member (type = team) from the event" do
+      member_to_delete = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      another_member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      event.users << another_member
+      event.teams << member_to_delete
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
+      }.to change(Teaming, :count).by(-1)
+      event.reload
+      event.users.should == [another_member]
+      event.teams.should == []
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the member is not found" do
+      member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+
+      expect {
+        post :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(0)
+      event.reload
+      event.users.should == []
+      event.teams.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
+
   describe "GET 'assignable_contacts'", search: true do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of contacts that are not assined to the event" do
