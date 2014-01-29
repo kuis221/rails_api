@@ -496,4 +496,40 @@ describe Api::V1::EventsController do
       result.should == { 'success' => true, 'info' => "Contact successfully added to event", 'data' => {} }
     end
   end
+
+  describe "DELETE 'delete_contact'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a contact from the event" do
+      contact_to_delete = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      another_contact = user.company_users.first
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        post :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the contact is not found" do
+      contact = FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company)
+
+      expect {
+        post :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(0)
+
+      event.contacts.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
 end
