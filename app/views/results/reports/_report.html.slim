@@ -5,5 +5,8 @@ li id="report_#{report.id}"
       p= report.description
 
 	span.pull-right
+		a.share
+    a.edit
+    a.disable
 	  = link_to_deactivate report, url: deactivate_results_report_path(report)
 	  = link_to '', activate_results_report_path(report), remote: true, class: 'enable', title: I18n.t('confirmation.activate') unless report.active?
