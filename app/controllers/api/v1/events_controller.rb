@@ -907,6 +907,60 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  api :DELETE, '/api/v1/events/:id/contacts', 'Delete a contact from the event'
+  param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be deleted as a contact'
+  param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be deleted as a contact'
+  example <<-EOS
+    Deleting an user from the event contacts
+    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully deleted from event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Deleting a contact from the event contacts
+    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'contact'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully deleted from event",
+      'data': {}
+    }
+  EOS
+  def delete_contact
+    contact = find_contactable_from_request
+    if contact.present?
+      if contact.destroy
+        resource.solr_index
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Contact successfully deleted from event",
+                          :data => {}
+                        }
+      else
+        render json: contact.errors, status: :unprocessable_entity
+      end
+    else
+      record_not_found
+    end
+  end
+
   protected
 
     def permitted_params
@@ -929,6 +983,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
       else
         current_company.contacts.find(params[:contactable_id])
       end
+    end
+
+    def find_contactable_from_request
+      contactable_type = params[:contactable_type] == 'user' ? 'CompanyUser' : 'Contact'
+      resource.contact_events.where(contactable_id: params[:contactable_id], contactable_type: contactable_type).first
     end
 
     def build_memberable_from_request
