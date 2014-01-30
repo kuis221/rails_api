@@ -343,7 +343,7 @@ describe Event do
     end
   end
 
-  describe "venue reindexing" do
+  describe "venue reindexing", strategy: :deletion do
     before do
       ResqueSpec.reset!
     end
