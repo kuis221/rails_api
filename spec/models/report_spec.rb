@@ -1,18 +1,18 @@
 # == Schema Information
 #
-# Table name: kpi_reports
+# Table name: reports
 #
-#  id                :integer          not null, primary key
-#  company_user_id   :integer
-#  params            :text
-#  aasm_state        :string(255)
-#  progress          :integer
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id            :integer          not null, primary key
+#  company_id    :integer
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  created_by_id :integer
+#  updated_by_id :integer
+#  rows          :text
+#  columns       :text
+#  values        :text
+#  filters       :text
 #
 
 require 'spec_helper'

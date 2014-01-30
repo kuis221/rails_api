@@ -55,6 +55,7 @@ feature "Reports", js: true do
       @report = FactoryGirl.create(:report, name: 'Events by Venue',
         description: 'a resume of events by venue',
         active: true, company: @company)
+      page.driver.resize(1024, 1500)
     end
 
     scenario "search for fields in the fields list" do
@@ -78,6 +79,70 @@ feature "Reports", js: true do
         expect(page).to have_content('ABC KPI')
       end
     end
+
+    scenario "drag fields to the different field lists" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #3', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
+
+      visit results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      within ".sidebar" do
+        find("li", text: 'Kpi #1').drag_to field_list('columns')
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        find("li", text: 'Kpi #2').drag_to field_list('rows')
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        find("li", text: 'Kpi #3').drag_to field_list('filters')
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        find("li", text: 'Kpi #4').drag_to field_list('values')
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+      end
+
+      # Save the report and reload page to make sure they were correctly saved
+      click_js_button "Save"
+      wait_for_ajax
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      visit results_report_path(@report)
+
+      within ".sidebar" do
+        # Each KPI should be in the correct list
+        expect(field_list('columns')).to have_content('Kpi #1')
+        expect(field_list('rows')).to have_content('Kpi #2')
+        expect(field_list('filters')).to have_content('Kpi #3')
+        expect(field_list('values')).to have_content('Kpi #4')
+
+        # and they should not be in the source fields lists
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+        expect(field_list('fields')).to have_content('Kpi #5')
+      end
+    end
+
+    scenario "drag fields outside the list to remove it" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      find("li", text: 'Kpi #1').drag_to field_list('columns')
+      find_button('Save') # The button should become active
+
+      # Drag the field to outside the list make check it's removed from the columns list
+      # and visible in the source fields list
+      field_list('columns').find("li", text: 'Kpi #1').drag_to find('#report-container')
+      expect(field_list('columns')).to have_no_content('Kpi #1')
+      expect(field_list('fields')).to have_content('Kpi #1')
+    end
   end
 
 
@@ -91,5 +156,9 @@ feature "Reports", js: true do
 
   def field_search_box
     "#field-search-input"
+  end
+
+  def field_list(name)
+    find("#report-#{name}")
   end
 end

@@ -166,7 +166,7 @@ class Place < ActiveRecord::Base
 
     def report_fields
       {
-        name:   { title: 'Name' },
+        place_name:   { title: 'Name' },
         street1:   { title: 'Street 1' },
         street2:     { title: 'Street 2' }
       }

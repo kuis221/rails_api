@@ -604,7 +604,7 @@ class Event < ActiveRecord::Base
         start_time:   { title: 'Start time' },
         end_date:     { title: 'End date' },
         end_time:     { title: 'Start time' },
-        active:       { title: 'Active State' },
+        event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }
       }
     end

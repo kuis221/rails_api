@@ -3,7 +3,6 @@ ul.reports-list {
 	li{
 		display: table;
 		float: none;
-		
 		width: 100%;
 	}
 	.report-item {
@@ -22,7 +21,7 @@ ul.reports-list {
 	}
 	a.download {
 		position: relative;
-		&:before{
+		&:before {
 			content: "\e00b" !important;
 			display: inline-block;
 			font-family: 'icons';
@@ -37,6 +36,15 @@ ul.reports-list {
 }
 
 #report-builder {
+	.report-overlay {
+		background: url(/assets/loading.gif) no-repeat center center;
+	}
+	#report-container {
+		min-height: 200px;
+	}
+	.btn[disabled=disabled] {
+		opacity: 0.5;
+	}
 	#field-search-input {
 		width: 195px;
 		background-image: url("search2.svg") !important;
@@ -48,24 +56,37 @@ ul.reports-list {
 		padding-right: 2%;
 	}
 
+	.draggable-list {
+		overflow:auto;
+	}
+
 	.field-list {
 		border: 1px solid #ccc;
 		padding: 5px;
 		margin-bottom: 10px;
 		height: 100px;
 		overflow: auto;
-		&#report-fields {
-			height: 300px;
-		}
-
 		&> ul {
 			margin:0;
+		}
+		&#report-fields {
+			height: 300px;
+			ul {
+				margin-bottom: 10px;
+			}
+		}
+		.sortable-list {
 			min-height: 100%;
 		}
 
 		li {
 			list-style: none;
 			cursor: pointer;
+			border-radius: 3px;
 		}
+	}
+
+	.report-field:hover, .ui-draggable-dragging {
+		background-color: #ccc;
 	}
 }

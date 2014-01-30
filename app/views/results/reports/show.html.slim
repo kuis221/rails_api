@@ -12,8 +12,20 @@
     = render 'values_list'
 
   .main
-    | This is the preview zone
+    button.btn.btn-primary.btn-save-report disabled="disabled" Save
+    button.btn.btn-cancel.btn-cancel-report Exit
+
+    #report-container
+      | This is the preview zone
+
+  .clearfix
 
 
 javascript:
-  $('#report-builder').reportBuilder()
+  $('#report-builder').reportBuilder({
+    id: #{resource.id},
+    rows: #{(resource.rows || []).to_json.html_safe},
+    columns: #{(resource.columns || []).to_json.html_safe},
+    values: #{(resource.values || []).to_json.html_safe},
+    filters: #{(resource.filters || []).to_json.html_safe}
+  });

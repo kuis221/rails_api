@@ -1,5 +1,5 @@
 class Results::ReportsController < InheritedResources::Base
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :edit, :update]
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -13,6 +13,12 @@ class Results::ReportsController < InheritedResources::Base
       [permitted_params || {}]
     end
     def permitted_params
-      params.permit(report: [:name, :description])[:report]
+      params.permit(report: [
+        :name, :description,
+        { rows: [:field, :label, :aggregate] },
+        { columns: [:field, :label, :aggregate] },
+        { values: [:field, :label, :aggregate] },
+        { filters: [:field, :label, :aggregate] }
+      ])[:report]
     end
 end

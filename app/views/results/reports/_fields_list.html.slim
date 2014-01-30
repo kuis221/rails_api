@@ -4,5 +4,5 @@ input type="search" id="field-search-input" name="field_search" title="Field Sea
     b= group_name
     ul.draggable-list
       - items.each do |id, name|
-        li id="#{id}"= name
+        li.report-field id="#{id}" data-field-id="#{id}"= name
 
