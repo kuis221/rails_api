@@ -385,10 +385,10 @@ class Event < ActiveRecord::Base
     end
   end
 
+  # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    results_for(campaign.form_fields) if campaign.present?
-    results.all?{|r| r.valid? }
+    results_for(campaign.form_fields).all?{|r| r.valid? } if campaign.present?
   end
 
   def method_missing(method_name, *args)
