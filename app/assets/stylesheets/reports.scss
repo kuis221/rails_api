@@ -39,8 +39,15 @@ ul.reports-list {
 	.report-overlay {
 		background: url(/assets/loading.gif) no-repeat center center;
 	}
+	.report-placeholder {
+		border: 1px solid #ccc;
+		color: #ccc;
+		padding: 100px 0;
+		text-align: center;
+	}
 	#report-container {
 		min-height: 200px;
+		margin-top: 20px;
 	}
 	.btn[disabled=disabled] {
 		opacity: 0.5;

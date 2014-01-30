@@ -1,0 +1,11 @@
+table
+  tr
+    th Place Name
+    th SUM OF IMPRESSIONS
+    th SUM OF INTERACTIONS
+
+  - report.fetch_page(1).each do |row|
+    tr
+      td= row['name']
+      td= row['impressions']
+      td= row['interactions']

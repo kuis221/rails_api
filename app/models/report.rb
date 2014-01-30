@@ -41,6 +41,21 @@ class Report < ActiveRecord::Base
     update_attribute :active, false
   end
 
+  def can_be_generated?
+    rows.try(:any?) && (values.try(:any?) || columns.try(:any?))
+  end
+
+  def fetch_page(page=1)
+    ActiveRecord::Base.connection.select_all("SELECT *
+      FROM crosstab('
+              SELECT place_name, ''impressions'', sum(scalar_value) from report_rows where kpi_id=3 GROUP BY 1
+          UNION ALL
+              SELECT place_name, ''interactions'', sum(scalar_value) from report_rows where kpi_id=4 GROUP BY 1
+          ORDER BY 1
+      ') AS ct(name varchar, impressions numeric, interactions numeric) LIMIT 30"
+    )
+  end
+
   protected
     def format_fields
       ['rows', 'columns', 'values', 'filters'].each do |attribute|

@@ -8,6 +8,10 @@ class Results::ReportsController < InheritedResources::Base
     @reports = current_company.reports.active.order('reports.name ASC')
   end
 
+  def preview
+    @preview = Report.new(permitted_params)
+  end
+
   private
     def build_resource_params
       [permitted_params || {}]

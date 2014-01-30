@@ -122,6 +122,7 @@ Brandscopic::Application.routes.draw do
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
       get :deactivate, on: :member
       get :activate, on: :member
+      post :preview, on: :member
     end
 
     # For The KPI report

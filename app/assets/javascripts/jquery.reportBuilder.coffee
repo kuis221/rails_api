@@ -69,14 +69,7 @@ $.widget 'nmk.reportBuilder',
 		$.ajax
 			url: "/results/reports/#{@id}.js",
 			type: 'PUT',
-			data: {
-				report: {
-					columns: @_getColumns(),
-					rows: @_getRows(),
-					filters: @_getFilters(),
-					values: @_getValues()
-				}
-			},
+			data: @_reportFormData(),
 			success: () =>
 				@element.find('.btn-save-report').attr('disabled', true)
 				@saved = true
@@ -84,8 +77,12 @@ $.widget 'nmk.reportBuilder',
 	refreshReportPreview: () ->
 		# Simulate the report is updating
 		@_showOverlay()
-		setTimeout () =>
-			@_hideOverlay()
+		$.ajax
+			url: "/results/reports/#{@id}/preview.js",
+			type: 'POST',
+			data: @_reportFormData(),
+			complete:
+				@_hideOverlay()
 		, 1000
 
 	reportModified: () ->
@@ -146,3 +143,13 @@ $.widget 'nmk.reportBuilder',
 	_hideOverlay: () ->
 		@preview.css opacity: 1
 		@reportOverlay.hide()
+
+	_reportFormData: () ->
+		{ 
+			report: {
+				columns: @_getColumns(),
+				rows: @_getRows(),
+				filters: @_getFilters(),
+				values: @_getValues()
+			}
+		}
