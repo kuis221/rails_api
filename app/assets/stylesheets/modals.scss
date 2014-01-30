@@ -703,13 +703,13 @@ ul.select2-results{
 			margin-bottom: 0;
 			padding-top: 9px;
 			width: 100px;
-				&.input-large{width:210px;}
-				&.input-xlarge{width:385px;}
-				&.input-xxlarge{width:540px;}
-				&.valid{
-					color: $text;
-					font-size: 13px;
-				}
+			&.input-large{width:210px;}
+			&.input-xlarge{width:385px;}
+			&.input-xxlarge{width:540px;}
+			&.valid{
+				color: $text;
+				font-size: 13px;
+			}
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
@@ -1171,6 +1171,9 @@ ul.select2-results{
 	color: $valid;
 	font-size: 11px;
 	margin-bottom: 2px;
+}
+textarea.valid {
+	color: $text;
 }
 
 .modal-footer{
