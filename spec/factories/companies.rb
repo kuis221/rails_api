@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: companies
+#
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  timezone_support :boolean
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do

@@ -408,6 +408,64 @@ describe Api::V1::EventsController do
     end
   end
 
+  describe "DELETE 'delete_member'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a member (type = user) from the event" do
+      member_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      another_member = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      event.users << member_to_delete
+      event.teams << another_member
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(-1)
+      event.reload
+      event.users.should == []
+      event.teams.should == [another_member]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a member (type = team) from the event" do
+      member_to_delete = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      another_member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      event.users << another_member
+      event.teams << member_to_delete
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
+      }.to change(Teaming, :count).by(-1)
+      event.reload
+      event.users.should == [another_member]
+      event.teams.should == []
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the member is not found" do
+      member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(0)
+      event.reload
+      event.users.should == []
+      event.teams.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
+
   describe "GET 'assignable_contacts'", search: true do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of contacts that are not assined to the event" do
@@ -494,6 +552,146 @@ describe Api::V1::EventsController do
       response.should be_success
       result = JSON.parse(response.body)
       result.should == { 'success' => true, 'info' => "Contact successfully added to event", 'data' => {} }
+    end
+  end
+
+  describe "DELETE 'delete_contact'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a contact (type = user) from the event" do
+      contact_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+      another_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'user', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a contact (type = contact) from the event" do
+      contact_to_delete = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      another_contact = user.company_users.first
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the contact is not found" do
+      contact = FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(0)
+
+      event.contacts.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
+
+  describe "GET 'autocomplete'", search: true do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: '', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      buckets.map{|b| b['label']}.should == ['Campaigns', 'Brands', 'Places', 'People']
+    end
+
+    it "should return the users in the People Bucket" do
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gu', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the teams in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Spurs', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'sp', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+    end
+
+    it "should return the teams and users in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Valladolid', company_id: company.id)
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'va', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the campaigns in the Campaigns Bucket" do
+      campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
+      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+    end
+
+    it "should return the brands in the Brands Bucket" do
+      brand = FactoryGirl.create(:brand, name: 'Cacique')
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
+      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+    end
+
+    it "should return the venues in the Places Bucket" do
+      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+      venue = FactoryGirl.create(:venue, company_id: company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'mot', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
+      places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
     end
   end
 end

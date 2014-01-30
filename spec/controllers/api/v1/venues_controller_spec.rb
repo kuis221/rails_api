@@ -6,7 +6,7 @@ describe Api::V1::VenuesController do
 
 
   describe "GET 'index'", search: true do
-    it "return a list of venues" do
+    it "return a list of venues", strategy: :deletion do
       campaign = FactoryGirl.create(:campaign, company: company)
       place1 = FactoryGirl.create(:place)
       place2 = FactoryGirl.create(:place)
@@ -30,7 +30,7 @@ describe Api::V1::VenuesController do
       ]
     end
 
-    it "return a list of venues filtered by campaign id" do
+    it "return a list of venues filtered by campaign id", strategy: :deletion do
       with_resque do
         campaign = FactoryGirl.create(:campaign, company: company)
         other_campaign = FactoryGirl.create(:campaign, company: company)
@@ -47,10 +47,9 @@ describe Api::V1::VenuesController do
         result['results'].count.should == 1
         expect(result['results'].first).to include({'id' => venue.id})
       end
-
     end
 
-    it "return the facets for the search" do
+    it "return the facets for the search", strategy: :deletion do
       with_resque do
         campaign = FactoryGirl.create(:campaign, company: company)
         place = FactoryGirl.create(:place)

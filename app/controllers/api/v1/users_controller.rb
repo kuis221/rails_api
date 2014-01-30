@@ -125,6 +125,56 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
+
+  api :GET, '/api/v1/users/:id', 'Return a user\'s details'
+  param :id, :number, required: true, desc: "User ID"
+  description <<-EOS
+    Returns the details of a give user
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *role*:
+        * *id*: the role id
+        * *name*: the role name
+      * *teams*: A list of the teams that the user belongs to
+        * *id*: the team's id
+        * *name*: the team's name
+  EOS
+  example <<-EOS
+  {
+      "id": 1,
+      "first_name": "Admin",
+      "last_name": "User",
+      "full_name": "Admin User",
+      "email": "admin@brandscopic.com",
+      "phone_number": null,
+      "street_address": null,
+      "unit_number": null,
+      "city": "San Francisco",
+      "state": "CA",
+      "zip_code": null,
+      "time_zone": "Buenos Aires",
+      "country": "United States",
+      "role": {
+          "id": 1,
+          "name": "Super Admin"
+      },
+      "teams": []
+  }
+  EOS
+  def show
+    if resource.present?
+      render
+    end
+  end
+
   api :PUT, '/api/v1/users/:id', 'Update a user\'s details'
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"

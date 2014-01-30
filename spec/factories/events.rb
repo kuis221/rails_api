@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: events
+#
+#  id            :integer          not null, primary key
+#  campaign_id   :integer
+#  company_id    :integer
+#  start_at      :datetime
+#  end_at        :datetime
+#  aasm_state    :string(255)
+#  created_by_id :integer
+#  updated_by_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  active        :boolean          default(TRUE)
+#  place_id      :integer
+#  promo_hours   :decimal(6, 2)    default(0.0)
+#  reject_reason :text
+#  summary       :text
+#  timezone      :string(255)
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 FactoryGirl.define do
   factory :event do

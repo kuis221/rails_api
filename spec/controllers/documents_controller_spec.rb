@@ -9,7 +9,7 @@ describe DocumentsController do
   let(:event) {FactoryGirl.create(:event, company: @company)}
   let(:document) {FactoryGirl.create(:document, attachable: event)}
 
-  describe "POST 'create'" do
+  describe "POST 'create'", strategy: :deletion do
     it "queue a job for processing the photos" do
       ResqueSpec.reset!
       AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))

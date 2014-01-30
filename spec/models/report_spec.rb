@@ -15,9 +15,19 @@
 #  filters       :text
 #
 
+<<<<<<< HEAD
+#  rows          :text
+#  columns       :text
+#  values        :text
+#  filters       :text
+=======
+>>>>>>> development
+#
+
 require 'spec_helper'
 
 describe Report do
+<<<<<<< HEAD
   it { should validate_presence_of(:name) }
 
   describe "#activate" do
@@ -39,4 +49,6 @@ describe Report do
       report.active.should be_false
     end
   end
+=======
+>>>>>>> development
 end

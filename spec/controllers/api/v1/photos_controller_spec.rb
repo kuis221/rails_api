@@ -74,7 +74,7 @@ describe Api::V1::PhotosController do
     end
   end
 
-  describe "POST 'create'" do
+  describe "POST 'create'", strategy: :deletion  do
     let(:event) {FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company))}
     it "queue a job for processing the photos" do
       ResqueSpec.reset!

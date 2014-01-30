@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: date_items
+#
+#  id                :integer          not null, primary key
+#  date_range_id     :integer
+#  start_date        :date
+#  end_date          :date
+#  recurrence        :boolean          default(FALSE)
+#  recurrence_type   :string(255)
+#  recurrence_period :integer
+#  recurrence_days   :string(255)
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do

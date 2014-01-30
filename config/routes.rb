@@ -8,7 +8,7 @@ Brandscopic::Application.routes.draw do
         delete 'sessions' => 'sessions#destroy'
 
         get '/companies' => 'users#companies'
-        resources :users, only: [:index, :update] do
+        resources :users, only: [:index, :update, :show] do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
@@ -26,9 +26,11 @@ Brandscopic::Application.routes.draw do
             get :results
             get :members
             post :members, to: "events#add_member"
+            delete :members, to: "events#delete_member"
             get :assignable_members
             get :contacts
             post :contacts, to: "events#add_contact"
+            delete :contacts, to: "events#delete_contact"
             get :assignable_contacts
           end
         end
