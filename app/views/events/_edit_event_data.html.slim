@@ -41,16 +41,16 @@ javascript:
       var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger'))
       var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error'))
       var progressBarItem = $('#progress-bar-field-' + segmentFieldId)
+      var progressBarError = $('#progress-error-' + segmentFieldId)
 
       progressBarItem
           .removeClass('text-success text-error text-info').addClass(textClass)
           .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
           .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
+      progressBarError.empty()
       if (total > 100) {
-        progressBarItem.before('<div id="progress-error-' + segmentFieldId + '" class="control-group error"><span class="help-inline">A field could not exceed 100%</span></div>')
-      } else {
-        progressBarItem.prev('div#progress-error-' + segmentFieldId).remove().end()
+        progressBarError.append('<span class="help-inline">Field cannot exceed 100%</span></div>')
       }
 
       $("#total-field-" + segmentFieldId).val(total)
