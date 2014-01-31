@@ -103,6 +103,42 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     end
   end
 
+  api :GET, '/api/v1/events/:event_id/photos/form', "Returns a list of requred fields for making a POST to S3"
+  description <<-EOS
+  This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
+  /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
+  /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
+
+  The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
+  EOS
+  example <<-EOS
+  {
+      "fields": {
+          "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
+          "key": null,
+          "policy": "ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS",
+          "signature": "Q8TG16PD850JapPweQGAaK/o4NE=",
+          "Secure": "true"
+      }
+  }
+  EOS
+  def form
+    if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
+      bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
+      form = bucket.presigned_post.where(:key).starts_with("uploads/")
+      data = { fields: form.fields }
+      respond_to do |format|
+        format.json { render json: data }
+        format.xml { render xml: data }
+      end
+    else
+      respond_to do |format|
+        format.json {  render :status => 401, json: {} }
+        format.xml { render :status => 401, xml: {} }
+      end
+    end
+  end
+
   protected
 
     def build_resource_params

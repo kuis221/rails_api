@@ -16,12 +16,16 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :events, only: [:index, :show, :create, :update] do
-          resources :photos, only: [:index, :create, :update]
-          resources :event_expenses, only: [:index, :create]
+          resources :photos, only: [:index, :create, :update] do
+            get :form, on: :collection
+          end
+          resources :event_expenses, only: [:index, :create] do
+            get :form, on: :collection
+          end
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
-          resources :surveys, only: [:index, :create]
-          get :autocomplete, on: :collection
+          resources :surveys,  only: [:index, :create]
+          get :autocomplete,   on: :collection
           member do
             get :results
             get :members
@@ -34,6 +38,7 @@ Brandscopic::Application.routes.draw do
             get :assignable_contacts
           end
         end
+
         # To allow CORS for any API action
         match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
 

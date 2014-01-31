@@ -703,13 +703,13 @@ ul.select2-results{
 			margin-bottom: 0;
 			padding-top: 9px;
 			width: 100px;
-				&.input-large{width:210px;}
-				&.input-xlarge{width:385px;}
-				&.input-xxlarge{width:540px;}
-				&.valid{
-					color: $text;
-					font-size: 13px;
-				}
+			&.input-large{width:210px;}
+			&.input-xlarge{width:385px;}
+			&.input-xxlarge{width:540px;}
+			&.valid{
+				color: $text;
+				font-size: 13px;
+			}
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
@@ -738,7 +738,7 @@ ul.select2-results{
 				width: auto;
 			}
 		}
-		.control-group.event_start_date, 
+		.control-group.event_start_date,
 		.control-group.event_end_date {
 			margin-right: 17px;
 		}
@@ -1172,6 +1172,10 @@ ul.select2-results{
 	font-size: 11px;
 	margin-bottom: 2px;
 }
+textarea.valid {
+	color: $text;
+	font-size: 13px;
+}
 
 .modal-footer{
 	background-color: white;
@@ -1219,12 +1223,12 @@ div#spin{
    display: block;
    height: 45px !important;
    width: 125px !important;
-   overflow: hidden; 
+   overflow: hidden;
 }
-           
+
 .assistly-widget a:hover {
-   background-position: 2px -44px !important;         
+   background-position: 2px -44px !important;
 }
-          
+
 
 

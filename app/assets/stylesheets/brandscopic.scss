@@ -4622,10 +4622,24 @@ body.campaigns{
 	&.box_event_data{
 		form {
 			margin-bottom: 30px;
-			.box_custom, .box_consumer_reach, .box_demographics {
+			.box_custom, .box_consumer_reach, .box_demographics, .event_summary {
+				.segment-label {
+					margin-bottom: 0;
+				}
+				.segment-error-label {
+					margin-bottom: 0;
+					min-height: 22px
+				}
 				.help-inline {
 					padding-left: 0;
 					margin-bottom: 0;
+					&.segment-title-label {
+						padding-left: 5px;
+					}
+					i.icon-ok-circle:before {
+						color: $approved;
+						font-size: 16px;
+					}
 				}
 				label {
 					display: inline-block;
