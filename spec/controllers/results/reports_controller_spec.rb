@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe Results::ReportsController do
-  let(:report){ FactoryGirl.create(:report, company: @company) }
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
     @company_user = @user.current_company_user
   end
+
+  let(:report){ FactoryGirl.create(:report, company: @company) }
+
   describe "GET 'index'" do
     it "returns http success" do
       report.reload
@@ -75,6 +77,18 @@ describe Results::ReportsController do
       get 'activate', id: report.to_param, format: :js
       response.should be_success
       report.reload.active?.should be_true
+    end
+  end
+
+  describe "PUT 'update'" do
+    it "must update the report attributes" do
+      t = FactoryGirl.create(:report, company: @company)
+      put 'update', id: report.to_param, report: {name: 'Test Report', description: 'Test Report description'}
+      assigns(:report).should == report
+      response.should redirect_to([:results, report])
+      report.reload
+      report.name.should == 'Test Report'
+      report.description.should == 'Test Report description'
     end
   end
 end
