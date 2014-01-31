@@ -103,7 +103,6 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     end
   end
 
-
   api :GET, '/api/v1/events/:event_id/photos/form', "Returns a list of requred fields for making a POST to S3"
   description <<-EOS
   This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
