@@ -110,10 +110,13 @@ $.widget 'nmk.reportBuilder',
 		formFields = []
 		formFields.push $('<div class="control-group">').
 							append($('<label class="control-label">').text('Label'),
-								   $('<div class="controls">').append(
-								   		$('<input type="text" name="report-field-label">').
-								   			on('keyup', (e) -> field.label = this.value; fieldElement.find('.field-label').text(this.value) )
-								   	)
+								$('<div class="controls">').append(
+									$('<input type="text" name="report-field-label">').val(field.label).
+										on 'keyup', (e) => 
+											field.label = e.target.value
+											fieldElement.find('.field-label').text(e.target.value)
+											@fieldSettings.changed = true
+								)
 							)
 
 		if listName in ['report-values']
@@ -127,7 +130,9 @@ $.widget 'nmk.reportBuilder',
 													$('<option value="max">Max</option>').attr('selected', field.aggregate is 'max'),
 													$('<option value="min">Min</option>').attr('selected', field.aggregate is 'min')
 												])
-												.on('change', (e) -> field.aggregate = $(this).val() )
+												.on 'change', (e) =>
+													field.aggregate = $(e.target).val()
+													@fieldSettings.changed = true
 										)
 								)
 
@@ -135,6 +140,7 @@ $.widget 'nmk.reportBuilder',
 			.append(formFields)
 			.appendTo(@element)
 		@fieldSettings.fieldElement = fieldElement
+		@fieldSettings.changed = false
 		@_placeFieldSettings()
 		@fieldSettings.find('select').chosen()
 		@fieldSettings.show()
@@ -145,7 +151,8 @@ $.widget 'nmk.reportBuilder',
 		@fieldSettings.on 'click', -> false
 
 	closeFieldSettings: () ->
-		@reportModified()
+		if @fieldSettings.changed is true
+			@reportModified()
 		$(document).off 'click.reportFieldSettings'
 		@fieldSettings.remove()
 		@fieldSettings = null
