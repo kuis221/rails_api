@@ -99,9 +99,9 @@ jQuery ->
 					if typeof element.data('segmentFieldId') isnt "undefined"
 						error.insertBefore label
 					else
-						error.insertAfter label
+						error.addClass('segment-title-label').insertAfter label
 				else
-					error.insertAfter element
+					error.addClass('segment-title-label').insertAfter element
 
 			focusInvalid: false,
 			invalidHandler: (form, validator) ->
@@ -115,7 +115,7 @@ jQuery ->
 				, 1000
 			success: (element) ->
 				element
-					.addClass('valid').text('OK!')
+					.addClass('valid').prepend('<i class="icon-ok-circle"></i>')
 					.closest('.control-group').removeClass('error')
 		}
 
@@ -402,7 +402,7 @@ jQuery ->
 
 	$.validator.addMethod("segment-field", (value, element) ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
-	, "Should not exceed 100%");
+	, " ");
 
 	$.validator.addMethod("optional", (value, element) ->
 		return true;
