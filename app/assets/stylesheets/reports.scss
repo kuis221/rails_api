@@ -81,6 +81,9 @@ ul.reports-list {
 			ul {
 				margin-bottom: 10px;
 			}
+			.field-settings-btn {
+				display: none;
+			}
 		}
 		.sortable-list {
 			min-height: 100%;
@@ -93,7 +96,39 @@ ul.reports-list {
 		}
 	}
 
+	.report-field {
+		padding-right: 25px;
+		position: relative;
+		overflow: visible;
+		.field-label {
+			float: left;
+		}
+		.field-settings-btn {
+			cursor: pointer;
+			float: right;
+			margin-right: -15px;
+			font-size: 20px;
+		}
+	}
+
 	.report-field:hover, .ui-draggable-dragging {
 		background-color: #ccc;
+	}
+
+	.report-field-settigns {
+		padding: 8px;
+		background-color: #ccc;
+		width: 198px;
+		border-radius: 5px;
+		input, select {
+			width: 90%;
+			background-color: #fff !important;
+		}
+
+		.chzn-container-single {
+			.chzn-single {
+				width: 90%;
+			}
+		}
 	}
 }

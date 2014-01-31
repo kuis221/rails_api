@@ -161,7 +161,6 @@ window.FormBuilder = {
 					if not @modules[kpi.module]?
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 
-
 		@
 
 	formFields: () ->

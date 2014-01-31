@@ -59,11 +59,18 @@ $.widget 'nmk.reportBuilder',
 		@element.find('.btn-save-report').on 'click', () =>
 			@saveForm()
 
+
 		@_setListItems 'rows', @options.rows
 		@_setListItems 'columns', @options.columns
 		@_setListItems 'values', @options.values
 		@_setListItems 'filters', @options.filters
 
+		@element.on 'click', '.field-settings-btn', (e) =>
+			@showFieldSettings $(e.target).closest('.report-field')
+			e.stopPropagation()
+			false
+
+		@element
 
 	saveForm: () ->
 		$.ajax
@@ -90,6 +97,68 @@ $.widget 'nmk.reportBuilder',
 		@refreshReportPreview()
 		@saved = false
 
+	showFieldSettings: (fieldElement) ->
+		if @fieldSettings?
+			if @fieldSettings.fieldElement[0] is fieldElement[0]
+				return @closeFieldSettings()
+			else
+				@closeFieldSettings()
+
+		field = fieldElement.data('field')
+		listName = fieldElement.closest('ul').attr('id')
+
+		formFields = []
+		formFields.push $('<div class="control-group">').
+							append($('<label class="control-label">').text('Label'),
+								   $('<div class="controls">').append(
+								   		$('<input type="text" name="report-field-label">').
+								   			on('keyup', (e) -> field.label = this.value; fieldElement.find('.field-label').text(this.value) )
+								   	)
+							)
+
+		if listName in ['report-values']
+			formFields.push $('<div class="control-group">').
+								append(	$('<label class="control-label">').text('Summarize by'),
+										$('<div class="controls">').append(
+											$('<select name="report-field-sorting">').append([
+													$('<option value="count">Count</option>').attr('selected', field.aggregate is 'count'),
+													$('<option value="sum">Sum</option>').attr('selected', field.aggregate is 'sum'),
+													$('<option value="avg">Average</option>').attr('selected', field.aggregate is 'avg'),
+													$('<option value="max">Max</option>').attr('selected', field.aggregate is 'max'),
+													$('<option value="min">Min</option>').attr('selected', field.aggregate is 'min')
+												])
+												.on('change', (e) -> field.aggregate = $(this).val() )
+										)
+								)
+
+		@fieldSettings = $('<div class="report-field-settigns">').hide()
+			.append(formFields)
+			.appendTo(@element)
+		@fieldSettings.fieldElement = fieldElement
+		@_placeFieldSettings()
+		@fieldSettings.find('select').chosen()
+		@fieldSettings.show()
+
+		$(document).on 'click.reportFieldSettings', =>
+			@closeFieldSettings()
+
+		@fieldSettings.on 'click', -> false
+
+	closeFieldSettings: () ->
+		@reportModified()
+		$(document).off 'click.reportFieldSettings'
+		@fieldSettings.remove()
+		@fieldSettings = null
+
+	_placeFieldSettings: () ->
+		element = @fieldSettings.fieldElement
+		leftFix = -parseInt((@fieldSettings.outerWidth()-element.outerWidth())/2)
+		@fieldSettings.css({
+			position: 'absolute', 
+			top: element.position().top+element.outerHeight(),
+			left: element.position().left+leftFix
+		})
+
 	_getColumns: () -> 
 		$.map $('#report-columns li', @element), (column, i) =>
 			@_getColumnProperties column
@@ -108,24 +177,30 @@ $.widget 'nmk.reportBuilder',
 
 	_getColumnProperties: (column) ->
 		$col = $(column)
-		{field: $col.data('field-id'), label: $col.text(), aggregate: 'sum' }
+		field = $col.data('field')
+		{field: $col.data('field-id'), label: label: field.label, aggregate: field.aggregate }
 
 	_getRowProperties: (row) ->
 		$row = $(row)
-		{field: $row.data('field-id'), label: $row.text(), aggregate: 'sum' }
+		field = $row.data('field')
+		{field: $row.data('field-id'), label: label: field.label, aggregate: field.aggregate }
 
 	_getFilterProperties: (filter) ->
 		$filter = $(filter)
-		{field: $filter.data('field-id'), label: $filter.text(), aggregate: 'sum' }
+		field = $filter.data('field')
+		{field: $filter.data('field-id'), label: field.label, aggregate: field.aggregate }
 
 	_getValueProperties: (value) ->
 		$value = $(value)
-		{field: $value.data('field-id'), label: $value.text(), aggregate: 'sum' }
+		field = $value.data('field')
+		{field: $value.data('field-id'), label: field.label, aggregate: field.aggregate }
 
 	_setListItems: (list_name, items) ->
 		list = $("#report-#{list_name}", @element)
 		for item in items
-			list.append $('<li>').addClass('report-field field-in-report').data('field-id', item.field).data('field', item).text(item.label)
+			li = $("#report-fields li[data-field-id=\"#{item.field}\"]").clone()
+			li.find('.field-label').text(item.label)
+			list.append li.data('field-id', item.field).data('field', item)
 			$("#report-fields li[data-field-id=\"#{item.field}\"]").hide()
 		true
 
