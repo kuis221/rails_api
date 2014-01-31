@@ -50,6 +50,30 @@ feature "Reports", js: true do
     end
   end
 
+  scenario "allows the user to edit reports name and description" do
+    report = FactoryGirl.create(:report, name: 'My Report',
+      description: 'Description of my report',
+      active: true, company: @company)
+
+    visit results_reports_path
+
+    within reports_list do
+      expect(page).to have_content('My Report')
+      hover_and_click 'li', 'Edit'
+    end
+
+    within("form#edit_report_#{report.id}") do
+      fill_in 'Name', with: 'Edited Report Name'
+      fill_in 'Description', with: 'Edited Report Description'
+      click_js_button 'Save'
+    end
+
+    within reports_list do
+      expect(page).to have_selector('b', text: 'Edited Report Name')
+      expect(page).to have_selector('p', text: 'Edited Report Description')
+    end
+  end
+
   feature "build view" do
     before do
       @report = FactoryGirl.create(:report, name: 'Events by Venue',

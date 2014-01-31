@@ -82,7 +82,6 @@ describe Results::ReportsController do
 
   describe "PUT 'update'" do
     it "must update the report attributes" do
-      t = FactoryGirl.create(:report, company: @company)
       put 'update', id: report.to_param, report: {name: 'Test Report', description: 'Test Report description'}
       assigns(:report).should == report
       response.should redirect_to([:results, report])
