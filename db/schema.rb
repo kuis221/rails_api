@@ -257,13 +257,6 @@ ActiveRecord::Schema.define(:version => 20140129182630) do
     t.datetime "updated_at",   :null => false
   end
 
-  create_table "ct", :id => false, :force => true do |t|
-    t.integer "id",        :null => false
-    t.text    "rowid"
-    t.text    "attribute"
-    t.text    "value"
-  end
-
   create_table "data_migrations", :force => true do |t|
     t.integer  "remote_id"
     t.string   "remote_type"
