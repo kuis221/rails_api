@@ -112,6 +112,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
   EOS
   example <<-EOS
+  GET /api/v1/events/123/photos/form.json?company_id=1&auth_token=XXsikw982okds93
   {
       "fields": {
           "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
@@ -119,14 +120,15 @@ class Api::V1::PhotosController < Api::V1::FilteredController
           "policy": "ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS",
           "signature": "Q8TG16PD850JapPweQGAaK/o4NE=",
           "Secure": "true"
-      }
+      },
+      "url": "https://bucket-name.s3.amazonaws.com/"
   }
   EOS
   def form
     if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
       form = bucket.presigned_post.where(:key).starts_with("uploads/")
-      data = { fields: form.fields }
+      data = { fields: form.fields, url: "https://#{S3_CONFIGS['bucket_name']}.s3.amazonaws.com/" }
       respond_to do |format|
         format.json { render json: data }
         format.xml { render xml: data }
