@@ -7,8 +7,11 @@ class EventResultsValidator < Apipie::Validator::BaseValidator
 
   def validate(value)
     return false if value.nil?
-    return false if !value.is_a?(Array)
-    value.all?{|r| r.keys.sort == ['id', 'value'] && (r['id'].is_a?(Integer) || r['id'] =~ /\A[0-9]+\z/)}
+    if value.is_a?(Hash) && value.all?{|k, v| v.keys.sort == ['id', 'value'] && (v['id'].is_a?(Integer) || v['id'] =~ /\A[0-9]+\z/)}
+      true
+    elsif value.is_a?(Array) && value.all?{|v| v.keys.sort == ['id', 'value'] && (v['id'].is_a?(Integer) || v['id'] =~ /\A[0-9]+\z/)}
+      true
+    end
   end
 
   def self.build(param_description, argument, options, block)
