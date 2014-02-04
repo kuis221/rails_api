@@ -22,6 +22,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_time, String, required: true, desc: "Event's end time"
       param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
+      param :summary, String, desc: "Event's summary"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
     end
   end
@@ -459,6 +460,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     results = @fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
+      result[:module] = field.kpi.module unless field.kpi.nil?
+      result[:module] ||= 'custom'
       if field.field_type == 'percentage'
         result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value}}})
       else
@@ -474,14 +477,24 @@ class Api::V1::EventsController < Api::V1::FilteredController
       result
     end
 
+    grouped = []
+    group=nil
+    results.each do |result|
+      if group.nil? || result[:module] != group[:module]
+        group = {module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
+        grouped.push group
+      end
+      group[:fields].push result
+    end
+
     respond_to do |format|
         format.json {
           render :status => 200,
-                 :json => results
+                 :json => grouped
         }
         format.xml {
           render :status => 200,
-                 :xml => results.to_xml(root: 'results')
+                 :xml => grouped.to_xml(root: 'results')
         }
     end
   end

@@ -203,7 +203,7 @@ describe Api::V1::EventsController do
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       fields = JSON.parse(response.body)
-      expect(fields.first).to include(
+      expect(fields.first['fields']).to include(
           'name' => 'Age',
           'field_type' => 'percentage',
           'segments' => [
