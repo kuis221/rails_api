@@ -120,6 +120,14 @@ class Area < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def update_common_denominators(area)
+      area.send(:update_common_denominators)
+      Rails.cache.delete("area_locations_#{area.id}")
+      area.campaign_ids.each do |id|
+        Rails.cache.delete("campaign_locations_#{id}")
+      end
+    end
   end
 
   protected

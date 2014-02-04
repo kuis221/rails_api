@@ -262,6 +262,10 @@ class AttachedAsset < ActiveRecord::Base
         self.file_file_size     = direct_upload_head.content_length
         self.file_content_type  = direct_upload_head.content_type
         self.file_updated_at    = direct_upload_head.last_modified
+
+        if self.file_content_type == 'binary/octet-stream'
+          self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
+        end
       end
     rescue AWS::S3::Errors::NoSuchKey => e
       tries -= 1
