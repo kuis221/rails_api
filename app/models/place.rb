@@ -53,6 +53,8 @@ class Place < ActiveRecord::Base
 
   after_save :clear_cache
 
+  after_commit :reindex_associated
+
   serialize :types
 
   def street
@@ -343,6 +345,13 @@ class Place < ActiveRecord::Base
     def clear_cache
       Placeable.where(place_id: id).each do |placeable|
         placeable.update_associated_resources
+      end
+    end
+
+    def reindex_associated
+      Venue.where(place_id: id).reindex
+      self.areas.each do |area|
+        Area.update_common_denominators(area)
       end
     end
 end
