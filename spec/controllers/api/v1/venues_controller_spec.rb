@@ -26,7 +26,7 @@ describe Api::V1::VenuesController do
       expect(result['results'].first.keys).to match_array ["avg_impressions", "avg_impressions_cost",
         "avg_impressions_hour", "city", "country", "events_count", "formatted_address", "id", "impressions",
         "interactions", "latitude", "longitude", "name", "promo_hours", "sampled", "score", "spent", "state",
-        "zipcode"
+        "zipcode", "td_linx_code"
       ]
     end
 

@@ -44,7 +44,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
           "Saturday 4:00 PM - 1:00 AM",
           "Sunday 4:00 PM - 1:00 AM",
           "Monday 10:30 AM - 1:00 AM"
-      ]
+      ],
+      "td_linx_code": '2238273'
   }
   EOS
   def show
@@ -269,7 +270,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "220.0",
               "avg_impressions_hour": "220.0",
-              "avg_impressions_cost": "0.67"
+              "avg_impressions_cost": "0.67",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1835,
@@ -290,7 +292,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "123.0",
               "avg_impressions_hour": "123.75",
-              "avg_impressions_cost": "1.83"
+              "avg_impressions_cost": "1.83",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1401,
@@ -311,7 +314,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "250.0",
               "avg_impressions_hour": "250.0",
-              "avg_impressions_cost": "0.86"
+              "avg_impressions_cost": "0.86",
+              "td_linx_code": "12312312"
           },
           ....
       ]

@@ -327,9 +327,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
-  Returns a list of form fields based on the event's campaign. Each campaign can have a
-  different set of fields that have to be capture for its events. a field returned by the
-  API consists on the following attributes:
+  Returns a list of form fields based on the event's campaign. The fields are grouped by category/module.
+  Each category have the followign attributes:
+  * *module*: the module's id
+  * *label*: the module's label
+  * *fields*: a list of fields for the module, the definition of this list is described below.
+
+  Each campaign can have a different set of fields that have to be capture for its events. a field returned
+  by the API consists on the following attributes:
 
   * *id:* the id of the field that have to be used later save the results. Please see the documentation
     for saving a devent. This is not included for "percentage" fields as such fields have to be sent to
@@ -376,79 +381,371 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   example  <<-EOS
     A response with all the different kind of fields
+    GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&company_id=1
     [
         {
-            "id": 80,
-            "value": "5",
-            "name": "Impressions",
-            "ordering": 1,
-            "field_type": "number",
-            "options": {
-                "capture_mechanism": "integer",
-                "predefined_value": "",
-                "required": "true"
-            }
-        },
-        {
-            "id":81,
-            "value":null,
-            "name":"Banner Displayed",
-            "segments":[
+            "module": "demographics",
+            "fields": [
                 {
-                  "id":93,
-                  "text":"Yes"
+                    "name": "Gender",
+                    "ordering": 0,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer",
+                        "predefined_value": ""
+                    },
+                    "description": "Number of consumers who try a product sample",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160068,
+                            "text": "Female",
+                            "value": 60
+                        },
+                        {
+                            "id": 160069,
+                            "text": "Male",
+                            "value": 40
+                        }
+                    ]
                 },
                 {
-                  "id":94,
-                  "text":"No"
-                }
-            ],
-            "ordering":2,
-            "field_type":"count",
-            "options":{
-               "capture_mechanism":"radio"
-            }
-        },
-        {
-            "value": "30",
-            "name": "Gender",
-            "ordering": 3,
-            "field_type": "percentage",
-            "segments":[
-                {
-                  "id":84,
-                  "text":"Female",
-                  "value": 55
+                    "name": "Age",
+                    "ordering": 26,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Percentage of attendees who are within a certain age range",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160070,
+                            "text": "< 12",
+                            "value": null
+                        },
+                        {
+                            "id": 160071,
+                            "text": "12 – 17",
+                            "value": null
+                        },
+                        {
+                            "id": 331155,
+                            "text": "18 – 20",
+                            "value": null
+                        },
+                        {
+                            "id": 160072,
+                            "text": "21 – 24",
+                            "value": 0
+                        },
+                        {
+                            "id": 160073,
+                            "text": "25 – 34",
+                            "value": 0
+                        },
+                        {
+                            "id": 160074,
+                            "text": "35 – 44",
+                            "value": 0
+                        },
+                        {
+                            "id": 160075,
+                            "text": "45 – 54",
+                            "value": 0
+                        },
+                        {
+                            "id": 160076,
+                            "text": "55 – 64",
+                            "value": 0
+                        },
+                        {
+                            "id": 160077,
+                            "text": "65+",
+                            "value": null
+                        }
+                    ]
                 },
                 {
-                  "id":85,
-                  "text":"Male",
-                  "value": 45
+                    "name": "Ethnicity/Race",
+                    "ordering": 27,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Percentage of attendees who are of a certain ethnicity or race",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160078,
+                            "text": "Asian",
+                            "value": 0
+                        },
+                        {
+                            "id": 160079,
+                            "text": "Black / African American",
+                            "value": 0
+                        },
+                        {
+                            "id": 160080,
+                            "text": "Hispanic / Latino",
+                            "value": 0
+                        },
+                        {
+                            "id": 160081,
+                            "text": "Native American",
+                            "value": null
+                        },
+                        {
+                            "id": 160082,
+                            "text": "White",
+                            "value": 0
+                        }
+                    ]
                 }
             ],
-            "options": {
-                "capture_mechanism": "integer"
-            }
+            "label": "Demographics"
         },
         {
-            "id": 80,
-            "value": "5",
-            "name": "Manager Name",
-            "ordering": 4,
-            "field_type": "text",
-            "options": {
-                "capture_mechanism": null
-            }
+            "module": "consumer_reach",
+            "fields": [
+                {
+                    "name": "Impressions",
+                    "ordering": 7,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Total number of consumers who come in contact with an event",
+                    "module": "consumer_reach",
+                    "id": 160065,
+                    "value": 40
+                },
+                {
+                    "name": "Interactions",
+                    "ordering": 8,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Total number of consumers who directly interact with an event",
+                    "module": "consumer_reach",
+                    "id": 160067,
+                    "value": 35
+                },
+                {
+                    "name": "Samples",
+                    "ordering": 9,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Number of consumers who try a product sample",
+                    "module": "consumer_reach",
+                    "id": 160066,
+                    "value": 35
+                }
+            ],
+            "label": "Consumer Reach"
         },
         {
-            "id": 80,
-            "value": "5",
-            "name": "Manager Comments",
-            "ordering": 4,
-            "field_type": "textarea",
-            "options": {
-                "capture_mechanism": null
-            }
+            "module": "custom",
+            "fields": [
+                {
+                    "name": "$ Discretionary Funds (New Jersey Only)",
+                    "ordering": 11,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160083,
+                    "value": 0
+                },
+                {
+                    "name": "# Drink Coupons Distributed",
+                    "ordering": 14,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160086,
+                    "value": 0
+                },
+                {
+                    "name": "# T-Shirts Distributed",
+                    "ordering": 15,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "",
+                    "module": "custom",
+                    "id": 160087,
+                    "value": 5
+                },
+                {
+                    "name": "Name Of Bloody recipe submitted",
+                    "ordering": 15,
+                    "field_type": "text",
+                    "options": {
+                        "capture_mechanism": null
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160088,
+                    "value": "Surf n' Turf"
+                },
+                {
+                    "name": "Point of Sale Presence (describe, do not list)",
+                    "ordering": 15,
+                    "field_type": "textarea",
+                    "options": {
+                        "capture_mechanism": null
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160089,
+                    "value": "Banner was placed at the entrance of venue. FA' wore uniforms while sampling along with Absolut table. Table tents with Bloody recipe placed throughout the venue. Patrons were handed bloody samples in Absolut branded sample cups "
+                },
+                {
+                    "name": "ABSOLUT Bloody on Drink Menu",
+                    "ordering": 16,
+                    "field_type": "count",
+                    "options": {
+                        "capture_mechanism": "radio"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "segments": [
+                        {
+                            "id": 302,
+                            "text": "Yes"
+                        },
+                        {
+                            "id": 303,
+                            "text": "No"
+                        }
+                    ],
+                    "id": 160090,
+                    "value": 302
+                },
+                {
+                    "name": "ABSOLUT Bloody Regular Price",
+                    "ordering": 17,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "currency"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160091,
+                    "value": "0.0"
+                },
+                {
+                    "name": "ABSOLUT Bloody Featured",
+                    "ordering": 18,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "currency"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160092,
+                    "value": null
+                },
+                {
+                    "name": "% Consumers Age 21-29",
+                    "ordering": 19,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160093,
+                    "value": 75
+                },
+                {
+                    "name": "% General Market",
+                    "ordering": 20,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160094,
+                    "value": 100
+                },
+                {
+                    "name": "# Trade Interactions",
+                    "ordering": 21,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Number of members of the trade with whom you interacted during execution.",
+                    "module": "custom",
+                    "id": 160095,
+                    "value": 10
+                },
+                {
+                    "name": "# Bottles Depleted",
+                    "ordering": 22,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "decimal"
+                    },
+                    "description": "The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.",
+                    "module": "custom",
+                    "id": 160096,
+                    "value": "1.5"
+                },
+                {
+                    "name": "# FA Hours",
+                    "ordering": 23,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "decimal"
+                    },
+                    "description": "Total number of FA hours for which we will be invoiced. Time should include travel and set-up time for all FAs working the event.",
+                    "module": "custom",
+                    "id": 160098,
+                    "value": "1.5"
+                },
+                {
+                    "name": " # Table Tents Dist.",
+                    "ordering": 24,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "",
+                    "module": "custom",
+                    "id": 251164,
+                    "value": 10
+                },
+                {
+                    "name": "# Posters",
+                    "ordering": 25,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Number of posters displayed during execution.",
+                    "module": "custom",
+                    "id": 251841,
+                    "value": 1
+                }
+            ],
+            "label": "Custom"
         }
     ]
   EOS
@@ -481,8 +778,12 @@ class Api::V1::EventsController < Api::V1::FilteredController
     group=nil
     results.each do |result|
       if group.nil? || result[:module] != group[:module]
-        group = {module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
-        grouped.push group
+        group = { module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
+        if result[:module] != 'custom' && exising = grouped.detect{|g| g[:module] == result[:module]} # Try to find the module in the current list
+          group = exising
+        else
+          grouped.push group
+        end
       end
       group[:fields].push result
     end
