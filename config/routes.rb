@@ -120,6 +120,7 @@ Brandscopic::Application.routes.draw do
     post :gva, to: 'gva#report'
 
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
+      get :build, on: :member
       get :deactivate, on: :member
       get :activate, on: :member
       post :preview, on: :member

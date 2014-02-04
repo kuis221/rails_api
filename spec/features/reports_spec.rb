@@ -74,6 +74,57 @@ feature "Reports", js: true do
     end
   end
 
+  feature "run view" do
+    before do
+      @report = FactoryGirl.create(:report, name: 'My Report',
+        description: 'Description of my report',
+        active: true, company: @company)
+      page.driver.resize(1024, 1500)
+    end
+
+    scenario "allows the user to modify an existing custom report" do
+      pending("should be fixed")
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit results_report_path(@report)
+
+      click_button 'Edit'
+
+      expect(current_path).to eql(build_results_report_path(@report))
+
+      within ".sidebar" do
+        find("li", text: 'Kpi #1').drag_to field_list('columns')
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+      end
+
+      click_button 'Save'
+
+      expect(current_path).to eql(build_results_report_path(@report))
+    end
+
+    scenario "allows the user to cancel changes an existing custom report" do
+      pending("should be fixed")
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit results_report_path(@report)
+
+      click_button 'Edit'
+
+      expect(current_path).to eql(build_results_report_path(@report))
+
+      within ".sidebar" do
+        find("li", text: 'Kpi #1').drag_to field_list('columns')
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+      end
+
+      click_button 'Exit'
+
+      confirm_prompt "All changes will be lost. Are you sure you want to exit?"
+
+      expect(current_path).to eql(results_report_path(@report))
+    end
+  end
+
   feature "build view" do
     before do
       @report = FactoryGirl.create(:report, name: 'Events by Venue',
@@ -85,7 +136,7 @@ feature "Reports", js: true do
     scenario "search for fields in the fields list" do
       FactoryGirl.create(:kpi, name: 'ABC KPI', company: @company)
 
-      visit results_report_path(@report)
+      visit build_results_report_path(@report)
 
       within report_fields do
         expect(page).to have_content('ABC KPI')
@@ -111,7 +162,7 @@ feature "Reports", js: true do
       FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
 
-      visit results_report_path(@report)
+      visit build_results_report_path(@report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
@@ -132,7 +183,7 @@ feature "Reports", js: true do
       wait_for_ajax
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
-      visit results_report_path(@report)
+      visit build_results_report_path(@report)
 
       within ".sidebar" do
         # Each KPI should be in the correct list
@@ -153,7 +204,7 @@ feature "Reports", js: true do
     scenario "drag fields outside the list to remove it" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit results_report_path(@report)
+      visit build_results_report_path(@report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
