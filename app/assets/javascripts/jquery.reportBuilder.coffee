@@ -26,6 +26,8 @@ $.widget 'nmk.reportBuilder',
 			receive: (event, ui) =>
 				if ui.helper?
 					ui.item.addClass('hidden').hide()
+					field = {field: ui.item.data('field-id'), label: ui.item.find('.field-label').text(), aggregate: 'sum'}
+					$(event.target).find('li[data-field-id="'+ui.item.data('field-id')+'"]').data('field', field)
 				true
 			update: (event, ui) =>
 				@reportModified()
@@ -58,6 +60,10 @@ $.widget 'nmk.reportBuilder',
 
 		@element.find('.btn-save-report').on 'click', () =>
 			@saveForm()
+
+		$(window).on 'beforeunload', =>
+			if not @saved
+				'All changes will be lost. Are you sure you want to exit?'
 
 
 		@_setListItems 'rows', @options.rows
@@ -185,22 +191,22 @@ $.widget 'nmk.reportBuilder',
 	_getColumnProperties: (column) ->
 		$col = $(column)
 		field = $col.data('field')
-		{field: $col.data('field-id'), label: label: field.label, aggregate: field.aggregate }
+		{field: $col.data('field-id'), label: label: field.label }
 
 	_getRowProperties: (row) ->
 		$row = $(row)
 		field = $row.data('field')
-		{field: $row.data('field-id'), label: label: field.label, aggregate: field.aggregate }
+		{field: $row.data('field-id'), label: label: field.label }
 
 	_getFilterProperties: (filter) ->
 		$filter = $(filter)
 		field = $filter.data('field')
-		{field: $filter.data('field-id'), label: field.label, aggregate: field.aggregate }
+		{field: $filter.data('field-id'), label: field.label }
 
 	_getValueProperties: (value) ->
 		$value = $(value)
 		field = $value.data('field')
-		{field: $value.data('field-id'), label: field.label, aggregate: field.aggregate }
+		{field: $value.data('field-id'), label: field.label, aggregate: if field.aggregate? then field.aggregate else 'sum' }
 
 	_setListItems: (list_name, items) ->
 		list = $("#report-#{list_name}", @element)

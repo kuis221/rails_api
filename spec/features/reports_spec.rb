@@ -83,7 +83,6 @@ feature "Reports", js: true do
     end
 
     scenario "allows the user to modify an existing custom report" do
-      pending("should be fixed")
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
       visit results_report_path(@report)
@@ -103,7 +102,6 @@ feature "Reports", js: true do
     end
 
     scenario "allows the user to cancel changes an existing custom report" do
-      pending("should be fixed")
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
       visit results_report_path(@report)
@@ -117,9 +115,8 @@ feature "Reports", js: true do
         expect(field_list('fields')).to have_no_content('Kpi #1')
       end
 
-      click_button 'Exit'
-
-      confirm_prompt "All changes will be lost. Are you sure you want to exit?"
+      page.execute_script('$(window).off("beforeunload")') # Prevent the alert as there is no way to test it
+      click_link 'Exit'
 
       expect(current_path).to eql(results_report_path(@report))
     end
