@@ -17,6 +17,10 @@ module Results
       }
     end
 
+    def report_column_label(column)
+      column['label']
+    end
+
     private
       def model_report_fields(klass)
         klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title]]}

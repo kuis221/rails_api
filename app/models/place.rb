@@ -168,13 +168,16 @@ class Place < ActiveRecord::Base
 
     def report_fields
       {
-        place_name:   { title: 'Name' },
-        street1:   { title: 'Street 1' },
-        street2:     { title: 'Street 2' }
+        name:          { title: 'Name' },
+        street_number: { title: 'Street 1' },
+        route:         { title: 'Street 2' },
+        city:          { title: 'City' },
+        state:         { title: 'State' },
+        country:       { title: 'Country' },
+        zipcode:       { title: 'Zip code' }
       }
     end
   end
-
 
   class << self
     # Combine search results from Google API and Existing places

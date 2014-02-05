@@ -191,12 +191,12 @@ $.widget 'nmk.reportBuilder',
 	_getColumnProperties: (column) ->
 		$col = $(column)
 		field = $col.data('field')
-		{field: $col.data('field-id'), label: label: field.label }
+		{field: $col.data('field-id'), label: field.label }
 
 	_getRowProperties: (row) ->
 		$row = $(row)
 		field = $row.data('field')
-		{field: $row.data('field-id'), label: label: field.label }
+		{field: $row.data('field-id'), label: field.label }
 
 	_getFilterProperties: (filter) ->
 		$filter = $(filter)
