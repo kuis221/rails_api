@@ -25,7 +25,6 @@
               a.edit
               a.disable
 
-
         - if can?(:gva_report, Campaign)
           li id="report_gva"
             = link_to results_gva_path, title: 'Goals vs. Actual' do
@@ -37,18 +36,15 @@
               a.edit
               a.disable 
 
-
         - if can?(:index_photo_results, AttachedAsset)
           li id="report_photos"
             = link_to results_photos_path, title: 'Photos' do
               .span10.report-item
                 b Photos
-                p View photos by event
             span.pull-right
               a.share
               a.edit
               a.disable
-
 
         - if can?(:index_results, Survey)
           li id="report_surveys"

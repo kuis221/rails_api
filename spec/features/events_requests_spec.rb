@@ -88,7 +88,7 @@ feature "Events", js: true, search: true do
       end
 
       scenario "should allow allow filter events by date range" do
-        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
         tomorrow = today+1.day
         Timecop.travel(today) do
           FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -128,7 +128,7 @@ feature "Events", js: true, search: true do
 
           expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
 
-          select_filter_calendar_day("26")
+          select_filter_calendar_day("18")
           find('#collection-list-filters').should have_content('Another Campaign April 03')
           within("ul#events-list") do
             expect(page).to have_no_content('Another Campaign April 03')
@@ -137,7 +137,7 @@ feature "Events", js: true, search: true do
 
           expect(page).to have_content("1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012")
 
-          select_filter_calendar_day("26", "27")
+          select_filter_calendar_day("18", "19")
           within("ul#events-list") do
             expect(page).to have_content('Another Campaign April 03')
             expect(page).to have_content('Campaign FY2012')
@@ -148,7 +148,7 @@ feature "Events", js: true, search: true do
       end
 
       scenario "Filters are preserved upon navigation" do
-        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
         tomorrow = today+1.day
         Timecop.travel(today) do
           ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -162,7 +162,7 @@ feature "Events", js: true, search: true do
           visit events_path
 
           filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-          select_filter_calendar_day("26")
+          select_filter_calendar_day("18")
 
           within("ul#events-list") do
             click_js_link('Event Details')
@@ -244,53 +244,53 @@ feature "Events", js: true, search: true do
       end
       feature "filters" do
         scenario "Users must be able to filter on all brands they have permissions to access " do
-          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today+1.day
-          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-            campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
-            place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
-          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-            campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
-            place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
-          brands = [
-            FactoryGirl.create(:brand, name: 'Cacique'),
-            FactoryGirl.create(:brand, name: 'Smirnoff'),
-          ]
-          FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
-          ev1.campaign.brands << brands.first
-          ev2.campaign.brands << brands.last
-          @company_user.brands << brands
-          Sunspot.commit
-          visit events_path
-          expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
+          Timecop.travel(today) do
+            ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+              campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
+              place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
+            ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+              campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
+              place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
+            brands = [
+              FactoryGirl.create(:brand, name: 'Cacique'),
+              FactoryGirl.create(:brand, name: 'Smirnoff'),
+            ]
+            FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
+            ev1.campaign.brands << brands.first
+            ev2.campaign.brands << brands.last
+            @company_user.brands << brands
+            Sunspot.commit
+            visit events_path
+            expect(page).to have_filter_section(title: 'BRANDS', options: ['Cacique', 'Smirnoff'])
 
-          within("ul#events-list") do
-            expect(page).to have_content('Campaign FY2012')
-            expect(page).to have_content('Another Campaign April 03')
-          end
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+            end
 
-          filter_section('BRANDS').unicheck('Cacique')
+            filter_section('BRANDS').unicheck('Cacique')
 
-          within("ul#events-list") do
-            expect(page).to have_content('Campaign FY2012')
-            expect(page).to have_no_content('Another Campaign April 03')
-          end
-          filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
-          filter_section('BRANDS').unicheck('Smirnoff')
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+            end
+            filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
+            filter_section('BRANDS').unicheck('Smirnoff')
 
-          within("ul#events-list") do
-            expect(page).to have_no_content('Campaign FY2012')
-            expect(page).to have_content('Another Campaign April 03')
+            within("ul#events-list") do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+            end
           end
         end
 
         scenario "Users must be able to filter on all areas they have permissions to access " do
-          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
-          tomorrow = today+1.day
-          ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+          ev1 = FactoryGirl.create(:event, company: @company, active: true,
             campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: @company),
             place: FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US'))
-          ev2 = FactoryGirl.create(:event, start_date: tomorrow.to_s(:slashes), company: @company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+          ev2 = FactoryGirl.create(:event, company: @company, active: true,
             campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company),
             place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
           areas = [

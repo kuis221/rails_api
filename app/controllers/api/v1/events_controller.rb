@@ -22,6 +22,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_time, String, required: true, desc: "Event's end time"
       param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
+      param :summary, String, desc: "Event's summary"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
     end
   end
@@ -32,6 +33,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :area, Array, :desc => "A list of areas to filter the results"
   param :user, Array, :desc => "A list of users to filter the results"
   param :team, Array, :desc => "A list of teams to filter the results"
+  param :brand, Array, :desc => "A list of brands to filter the results"
+  param :brand_porfolio, Array, :desc => "A list of brand portfolios to filter the results"
   param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
   param :event_status, ['Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
   param :page, :number, :desc => "The number of the page, Default: 1"
@@ -146,6 +149,83 @@ class Api::V1::EventsController < Api::V1::FilteredController
     collection
   end
 
+  api :GET, '/api/v1/events/autocomplete', 'Return a list of results grouped by categories'
+  param :q, String, required: true, desc: "The search term"
+  description <<-EOS
+  Returns a list of results matching the searched term grouped in the following categories
+  * *Campaigns*: Includes categories
+  * *Brands*: Includes brands and brand portfolios
+  * *Places*: Includes venues and areas
+  * *Peope*: Includes users and teams
+  EOS
+  example <<-EOS
+  GET: /api/v1/events/autocomplete.json?auth_token=XXssU!suwq92-1&company_id=2&q=jam
+  [
+      {
+          "label": "Campaigns",
+          "value": []
+      },
+      {
+          "label": "Brands",
+          "value": [
+              {
+                  "label": "<i>Jam</i>eson LOCALS",
+                  "value": "13",
+                  "type": "brand"
+              },
+              {
+                  "label": "<i>Jam</i>eson Whiskey",
+                  "value": "8",
+                  "type": "brand"
+              }
+          ]
+      },
+      {
+          "label": "Places",
+          "value": [
+              {
+                  "label": "<i>Jam</i>es' Beach",
+                  "value": "2386",
+                  "type": "venue"
+              },
+              {
+                  "label": "<i>Jam</i>es' Beach",
+                  "value": "374",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Joyce",
+                  "value": "377",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Royal Palm",
+                  "value": "825",
+                  "type": "venue"
+              },
+              {
+                  "label": "The <i>Jam</i>es Chicago",
+                  "value": "2203",
+                  "type": "venue"
+              }
+          ]
+      },
+      {
+          "label": "People",
+          "value": []
+      }
+  ]
+  EOS
+  def autocomplete
+    buckets = autocomplete_buckets({
+      campaigns: [Campaign],
+      brands: [Brand, BrandPortfolio],
+      places: [Venue, Area],
+      people: [CompanyUser, Team]
+    })
+    render :json => buckets.flatten
+  end
+
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
   param :id, :number, required: true, desc: "Event ID"
 
@@ -247,9 +327,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
-  Returns a list of form fields based on the event's campaign. Each campaign can have a
-  different set of fields that have to be capture for its events. a field returned by the
-  API consists on the following attributes:
+  Returns a list of form fields based on the event's campaign. The fields are grouped by category/module.
+  Each category have the followign attributes:
+  * *module*: the module's id
+  * *label*: the module's label
+  * *fields*: a list of fields for the module, the definition of this list is described below.
+
+  Each campaign can have a different set of fields that have to be capture for its events. a field returned
+  by the API consists on the following attributes:
 
   * *id:* the id of the field that have to be used later save the results. Please see the documentation
     for saving a devent. This is not included for "percentage" fields as such fields have to be sent to
@@ -296,79 +381,371 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   example  <<-EOS
     A response with all the different kind of fields
+    GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&company_id=1
     [
         {
-            "id": 80,
-            "value": "5",
-            "name": "Impressions",
-            "ordering": 1,
-            "field_type": "number",
-            "options": {
-                "capture_mechanism": "integer",
-                "predefined_value": "",
-                "required": "true"
-            }
-        },
-        {
-            "id":81,
-            "value":null,
-            "name":"Banner Displayed",
-            "segments":[
+            "module": "demographics",
+            "fields": [
                 {
-                  "id":93,
-                  "text":"Yes"
+                    "name": "Gender",
+                    "ordering": 0,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer",
+                        "predefined_value": ""
+                    },
+                    "description": "Number of consumers who try a product sample",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160068,
+                            "text": "Female",
+                            "value": 60
+                        },
+                        {
+                            "id": 160069,
+                            "text": "Male",
+                            "value": 40
+                        }
+                    ]
                 },
                 {
-                  "id":94,
-                  "text":"No"
-                }
-            ],
-            "ordering":2,
-            "field_type":"count",
-            "options":{
-               "capture_mechanism":"radio"
-            }
-        },
-        {
-            "value": "30",
-            "name": "Gender",
-            "ordering": 3,
-            "field_type": "percentage",
-            "segments":[
-                {
-                  "id":84,
-                  "text":"Female",
-                  "value": 55
+                    "name": "Age",
+                    "ordering": 26,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Percentage of attendees who are within a certain age range",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160070,
+                            "text": "< 12",
+                            "value": null
+                        },
+                        {
+                            "id": 160071,
+                            "text": "12 – 17",
+                            "value": null
+                        },
+                        {
+                            "id": 331155,
+                            "text": "18 – 20",
+                            "value": null
+                        },
+                        {
+                            "id": 160072,
+                            "text": "21 – 24",
+                            "value": 0
+                        },
+                        {
+                            "id": 160073,
+                            "text": "25 – 34",
+                            "value": 0
+                        },
+                        {
+                            "id": 160074,
+                            "text": "35 – 44",
+                            "value": 0
+                        },
+                        {
+                            "id": 160075,
+                            "text": "45 – 54",
+                            "value": 0
+                        },
+                        {
+                            "id": 160076,
+                            "text": "55 – 64",
+                            "value": 0
+                        },
+                        {
+                            "id": 160077,
+                            "text": "65+",
+                            "value": null
+                        }
+                    ]
                 },
                 {
-                  "id":85,
-                  "text":"Male",
-                  "value": 45
+                    "name": "Ethnicity/Race",
+                    "ordering": 27,
+                    "field_type": "percentage",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Percentage of attendees who are of a certain ethnicity or race",
+                    "module": "demographics",
+                    "segments": [
+                        {
+                            "id": 160078,
+                            "text": "Asian",
+                            "value": 0
+                        },
+                        {
+                            "id": 160079,
+                            "text": "Black / African American",
+                            "value": 0
+                        },
+                        {
+                            "id": 160080,
+                            "text": "Hispanic / Latino",
+                            "value": 0
+                        },
+                        {
+                            "id": 160081,
+                            "text": "Native American",
+                            "value": null
+                        },
+                        {
+                            "id": 160082,
+                            "text": "White",
+                            "value": 0
+                        }
+                    ]
                 }
             ],
-            "options": {
-                "capture_mechanism": "integer"
-            }
+            "label": "Demographics"
         },
         {
-            "id": 80,
-            "value": "5",
-            "name": "Manager Name",
-            "ordering": 4,
-            "field_type": "text",
-            "options": {
-                "capture_mechanism": null
-            }
+            "module": "consumer_reach",
+            "fields": [
+                {
+                    "name": "Impressions",
+                    "ordering": 7,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Total number of consumers who come in contact with an event",
+                    "module": "consumer_reach",
+                    "id": 160065,
+                    "value": 40
+                },
+                {
+                    "name": "Interactions",
+                    "ordering": 8,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Total number of consumers who directly interact with an event",
+                    "module": "consumer_reach",
+                    "id": 160067,
+                    "value": 35
+                },
+                {
+                    "name": "Samples",
+                    "ordering": 9,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "",
+                        "predefined_value": ""
+                    },
+                    "description": "Number of consumers who try a product sample",
+                    "module": "consumer_reach",
+                    "id": 160066,
+                    "value": 35
+                }
+            ],
+            "label": "Consumer Reach"
         },
         {
-            "id": 80,
-            "value": "5",
-            "name": "Manager Comments",
-            "ordering": 4,
-            "field_type": "textarea",
-            "options": {
-                "capture_mechanism": null
-            }
+            "module": "custom",
+            "fields": [
+                {
+                    "name": "$ Discretionary Funds (New Jersey Only)",
+                    "ordering": 11,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160083,
+                    "value": 0
+                },
+                {
+                    "name": "# Drink Coupons Distributed",
+                    "ordering": 14,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160086,
+                    "value": 0
+                },
+                {
+                    "name": "# T-Shirts Distributed",
+                    "ordering": 15,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "",
+                    "module": "custom",
+                    "id": 160087,
+                    "value": 5
+                },
+                {
+                    "name": "Name Of Bloody recipe submitted",
+                    "ordering": 15,
+                    "field_type": "text",
+                    "options": {
+                        "capture_mechanism": null
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160088,
+                    "value": "Surf n' Turf"
+                },
+                {
+                    "name": "Point of Sale Presence (describe, do not list)",
+                    "ordering": 15,
+                    "field_type": "textarea",
+                    "options": {
+                        "capture_mechanism": null
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160089,
+                    "value": "Banner was placed at the entrance of venue. FA' wore uniforms while sampling along with Absolut table. Table tents with Bloody recipe placed throughout the venue. Patrons were handed bloody samples in Absolut branded sample cups "
+                },
+                {
+                    "name": "ABSOLUT Bloody on Drink Menu",
+                    "ordering": 16,
+                    "field_type": "count",
+                    "options": {
+                        "capture_mechanism": "radio"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "segments": [
+                        {
+                            "id": 302,
+                            "text": "Yes"
+                        },
+                        {
+                            "id": 303,
+                            "text": "No"
+                        }
+                    ],
+                    "id": 160090,
+                    "value": 302
+                },
+                {
+                    "name": "ABSOLUT Bloody Regular Price",
+                    "ordering": 17,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "currency"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160091,
+                    "value": "0.0"
+                },
+                {
+                    "name": "ABSOLUT Bloody Featured",
+                    "ordering": 18,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "currency"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160092,
+                    "value": null
+                },
+                {
+                    "name": "% Consumers Age 21-29",
+                    "ordering": 19,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160093,
+                    "value": 75
+                },
+                {
+                    "name": "% General Market",
+                    "ordering": 20,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": null,
+                    "module": "custom",
+                    "id": 160094,
+                    "value": 100
+                },
+                {
+                    "name": "# Trade Interactions",
+                    "ordering": 21,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Number of members of the trade with whom you interacted during execution.",
+                    "module": "custom",
+                    "id": 160095,
+                    "value": 10
+                },
+                {
+                    "name": "# Bottles Depleted",
+                    "ordering": 22,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "decimal"
+                    },
+                    "description": "The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.",
+                    "module": "custom",
+                    "id": 160096,
+                    "value": "1.5"
+                },
+                {
+                    "name": "# FA Hours",
+                    "ordering": 23,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "decimal"
+                    },
+                    "description": "Total number of FA hours for which we will be invoiced. Time should include travel and set-up time for all FAs working the event.",
+                    "module": "custom",
+                    "id": 160098,
+                    "value": "1.5"
+                },
+                {
+                    "name": " # Table Tents Dist.",
+                    "ordering": 24,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "",
+                    "module": "custom",
+                    "id": 251164,
+                    "value": 10
+                },
+                {
+                    "name": "# Posters",
+                    "ordering": 25,
+                    "field_type": "number",
+                    "options": {
+                        "capture_mechanism": "integer"
+                    },
+                    "description": "Number of posters displayed during execution.",
+                    "module": "custom",
+                    "id": 251841,
+                    "value": 1
+                }
+            ],
+            "label": "Custom"
         }
     ]
   EOS
@@ -380,6 +757,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     results = @fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
+      result[:module] = field.kpi.module unless field.kpi.nil?
+      result[:module] ||= 'custom'
       if field.field_type == 'percentage'
         result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value}}})
       else
@@ -395,14 +774,28 @@ class Api::V1::EventsController < Api::V1::FilteredController
       result
     end
 
+    grouped = []
+    group=nil
+    results.each do |result|
+      if group.nil? || result[:module] != group[:module]
+        group = { module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
+        if result[:module] != 'custom' && exising = grouped.detect{|g| g[:module] == result[:module]} # Try to find the module in the current list
+          group = exising
+        else
+          grouped.push group
+        end
+      end
+      group[:fields].push result
+    end
+
     respond_to do |format|
         format.json {
           render :status => 200,
-                 :json => results
+                 :json => grouped
         }
         format.xml {
           render :status => 200,
-                 :xml => results.to_xml(root: 'results')
+                 :xml => grouped.to_xml(root: 'results')
         }
     end
   end
@@ -554,13 +947,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ).sort{|a, b| a.name <=> b.name}
   end
 
-  api :POST, '/api/v1/events/:id/members', 'Assocciate a user or team to the event\'s team'
+  api :POST, '/api/v1/events/:id/members', 'Assocciate an user or team to the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
   param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
 
   example <<-EOS
-    Adding a user to the event members
+    Adding an user to the event members
     POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     DATA:
     {
@@ -571,30 +964,31 @@ class Api::V1::EventsController < Api::V1::FilteredController
     RESPONSE:
     {
       'success': true,
-      'info': "Contact successfully added to event",
+      'info': "Member successfully added to event",
       'data': {}
     }
   EOS
 
   example <<-EOS
-    Adding a contact to the event members
+    Adding a team to the event members
     POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
     DATA:
     {
       'memberable_id': 1,
-      'memberable_type': 'contact'
+      'memberable_type': 'team'
     }
 
     RESPONSE:
     {
       'success': true,
-      'info': "Contact successfully added to event",
+      'info': "Member successfully added to event",
       'data': {}
     }
   EOS
   def add_member
     memberable = build_memberable_from_request
     if memberable.save
+      resource.solr_index
       result = { :success => true,
                  :info => "Member successfully added to event",
                  :data => {} }
@@ -613,6 +1007,60 @@ class Api::V1::EventsController < Api::V1::FilteredController
         format.json { render json: memberable.errors, status: :unprocessable_entity }
         format.xml { render xml: memberable.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
+  param :memberable_id, :number, required: true, desc: 'The ID of team/user to be deleted as a member'
+  param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be deleted as a member'
+  example <<-EOS
+    Deleting an user from the event members
+    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Member successfully deleted from event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Deleting a team from the event members
+    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'memberable_id': 1,
+      'memberable_type': 'team'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Member successfully deleted from event",
+      'data': {}
+    }
+  EOS
+  def delete_member
+    memberable = find_memberable_from_request
+    if memberable.present?
+      if memberable.destroy
+        resource.solr_index
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Member successfully deleted from event",
+                          :data => {}
+                        }
+      else
+        render json: memberable.errors, status: :unprocessable_entity
+      end
+    else
+      record_not_found
     end
   end
 
@@ -828,6 +1276,60 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  api :DELETE, '/api/v1/events/:id/contacts', 'Delete a contact from the event'
+  param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be deleted as a contact'
+  param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be deleted as a contact'
+  example <<-EOS
+    Deleting an user from the event contacts
+    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'user'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully deleted from event",
+      'data': {}
+    }
+  EOS
+
+  example <<-EOS
+    Deleting a contact from the event contacts
+    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DATA:
+    {
+      'contactable_id': 1,
+      'contactable_type': 'contact'
+    }
+
+    RESPONSE:
+    {
+      'success': true,
+      'info': "Contact successfully deleted from event",
+      'data': {}
+    }
+  EOS
+  def delete_contact
+    contact = find_contactable_from_request
+    if contact.present?
+      if contact.destroy
+        resource.solr_index
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Contact successfully deleted from event",
+                          :data => {}
+                        }
+      else
+        render json: contact.errors, status: :unprocessable_entity
+      end
+    else
+      record_not_found
+    end
+  end
+
   protected
 
     def permitted_params
@@ -841,7 +1343,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     def permitted_search_params
-      params.permit({campaign: []}, {status: []}, {event_status: []})
+      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
     end
 
     def load_contactable_from_request
@@ -852,11 +1354,24 @@ class Api::V1::EventsController < Api::V1::FilteredController
       end
     end
 
+    def find_contactable_from_request
+      contactable_type = params[:contactable_type] == 'user' ? 'CompanyUser' : 'Contact'
+      resource.contact_events.where(contactable_id: params[:contactable_id], contactable_type: contactable_type).first
+    end
+
     def build_memberable_from_request
       if params[:memberable_type] == 'team'
         resource.teamings.build({team: current_company.teams.find(params[:memberable_id])}, without_protection: true)
       else
         resource.memberships.build({company_user: current_company.company_users.find(params[:memberable_id])}, without_protection: true)
+      end
+    end
+
+    def find_memberable_from_request
+      if params[:memberable_type] == 'team'
+        resource.teamings.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
+      else
+        resource.memberships.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
       end
     end
 

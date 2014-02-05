@@ -53,6 +53,8 @@ class Place < ActiveRecord::Base
 
   after_save :clear_cache
 
+  after_commit :reindex_associated
+
   serialize :types
 
   def street
@@ -166,13 +168,16 @@ class Place < ActiveRecord::Base
 
     def report_fields
       {
-        name:   { title: 'Name' },
-        street1:   { title: 'Street 1' },
-        street2:     { title: 'Street 2' }
+        name:          { title: 'Name' },
+        street_number: { title: 'Street 1' },
+        route:         { title: 'Street 2' },
+        city:          { title: 'City' },
+        state:         { title: 'State' },
+        country:       { title: 'Country' },
+        zipcode:       { title: 'Zip code' }
       }
     end
   end
-
 
   class << self
     # Combine search results from Google API and Existing places
@@ -292,6 +297,13 @@ class Place < ActiveRecord::Base
     def clear_cache
       Placeable.where(place_id: id).each do |placeable|
         placeable.update_associated_resources
+      end
+    end
+
+    def reindex_associated
+      Venue.where(place_id: id).reindex
+      self.areas.each do |area|
+        Area.update_common_denominators(area)
       end
     end
 end

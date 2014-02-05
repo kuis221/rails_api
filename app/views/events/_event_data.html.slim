@@ -17,11 +17,12 @@
         h2= field.name
         = render partial: 'event_data', locals: {fields: field.fields, f: f, current_module: "section"}
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
-        .control-group
+        .control-group.segment-label
           label.field-label
             b= field.name
           = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
         - if field.field_type == 'percentage'
+          .control-group.error.segment-error-label id="progress-error-#{field.id}"
           .percentage-progress-bar id="progress-bar-field-#{field.id}"
             .progress.progress-info
               .bar

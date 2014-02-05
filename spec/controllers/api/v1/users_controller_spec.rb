@@ -69,6 +69,37 @@ describe Api::V1::UsersController do
     end
   end
 
+  describe "GET 'show'" do
+    let(:the_user){ FactoryGirl.create(:company_user, company_id: company.to_param) }
+    it "should return the user's info" do
+      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, format: :json
+      assigns(:user).should == the_user
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == {
+        "id" => the_user.id,
+        "first_name" => the_user.first_name,
+        "last_name" => the_user.last_name,
+        "full_name" => the_user.full_name,
+        "email" => the_user.email,
+        "phone_number" => the_user.phone_number,
+        "street_address" => the_user.street_address,
+        "unit_number"=> the_user.unit_number,
+        "city" => the_user.city,
+        "state" => the_user.state,
+        "zip_code" => the_user.zip_code,
+        "time_zone"=> the_user.time_zone,
+        "country" => the_user.country_name,
+        "role" => {
+            "id" => the_user.role.id,
+            "name" => the_user.role.name
+        },
+        "teams" => []
+      }
+    end
+  end
+
   describe "PUT 'update'" do
     let(:the_user){ FactoryGirl.create(:company_user, company_id: company.to_param) }
     it "should update the user profile attributes" do

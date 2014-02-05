@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: tasks
+#
+#  id              :integer          not null, primary key
+#  event_id        :integer
+#  title           :string(255)
+#  due_at          :datetime
+#  completed       :boolean          default(FALSE)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  created_by_id   :integer
+#  updated_by_id   :integer
+#  active          :boolean          default(TRUE)
+#  company_user_id :integer
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do

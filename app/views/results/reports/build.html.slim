@@ -1,0 +1,30 @@
+#report-builder
+  #resource-filter-column.sidebar
+    = render 'fields_list'
+
+    p Drag fields between areas
+    = render 'filters_list'
+
+    = render 'columns_list'
+
+    = render 'rows_list'
+
+    = render 'values_list'
+
+  .main
+    button.btn.btn-primary.btn-save-report disabled="disabled" Save
+    = link_to 'Exit', results_report_path(resource), method: :get, title: 'Exit', form_class: "btn-cancel-report-form", class: 'btn btn-cancel btn-cancel-report'
+
+    #report-container
+      | This is the preview zone
+
+  .clearfix
+
+javascript:
+  $('#report-builder').reportBuilder({
+    id: #{resource.id},
+    rows: #{(resource.rows || []).to_json.html_safe},
+    columns: #{(resource.columns || []).to_json.html_safe},
+    values: #{(resource.values || []).to_json.html_safe},
+    filters: #{(resource.filters || []).to_json.html_safe}
+  });

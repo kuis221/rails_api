@@ -26,7 +26,7 @@ ul.reports-list {
 	}
 	a.download {
 		position: relative;
-		&:before{
+		&:before {
 			content: "\e00b" !important;
 			display: inline-block;
 			font-family: 'icons';
@@ -41,6 +41,22 @@ ul.reports-list {
 }
 
 #report-builder {
+	.report-overlay {
+		background: url(/assets/loading.gif) no-repeat center center;
+	}
+	.report-placeholder {
+		border: 1px solid #ccc;
+		color: #ccc;
+		padding: 100px 0;
+		text-align: center;
+	}
+	#report-container {
+		min-height: 200px;
+		margin-top: 20px;
+	}
+	.btn[disabled=disabled] {
+		opacity: 0.5;
+	}
 	#field-search-input {
 		background-color: white !important;
 		border: 1px solid $user_menu;
@@ -59,25 +75,77 @@ ul.reports-list {
 		box-shadow: none;
 	}
 
+	.draggable-list {
+		overflow:auto;
+	}
+
 	.field-list {
 		border: 1px solid #ccc;
 		padding: 5px;
 		margin-bottom: 10px;
 		height: 100px;
 		overflow: auto;
+		&> ul {
+			margin:0;
+		}
 		&#report-fields {
 			height: 300px;
 			margin-top: 10px;
+			ul {
+				margin-bottom: 10px;
+			}
+			.field-settings-btn {
+				display: none;
+			}
 		}
-
-		&> ul {
-			margin:0;
+		.sortable-list {
 			min-height: 100%;
 		}
 
 		li {
 			list-style: none;
 			cursor: pointer;
+			border-radius: 3px;
 		}
+	}
+
+	.report-field {
+		padding-right: 25px;
+		position: relative;
+		overflow: visible;
+		.field-label {
+			float: left;
+		}
+		.field-settings-btn {
+			cursor: pointer;
+			float: right;
+			margin-right: -15px;
+			font-size: 20px;
+		}
+	}
+
+	.report-field:hover, .ui-draggable-dragging {
+		background-color: #ccc;
+	}
+
+	.report-field-settigns {
+		padding: 8px;
+		background-color: #ccc;
+		width: 198px;
+		border-radius: 5px;
+		input, select {
+			width: 90%;
+			background-color: #fff !important;
+		}
+
+		.chzn-container-single {
+			.chzn-single {
+				width: 90%;
+			}
+		}
+	}
+
+	.btn-cancel-report-form {
+		display: inline-block;
 	}
 }

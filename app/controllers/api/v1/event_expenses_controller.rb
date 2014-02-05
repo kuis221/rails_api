@@ -144,6 +144,44 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     end
   end
 
+  api :GET, '/api/v1/events/:event_id/event_expenses/form', "Returns a list of requred fields for uploading a file to S3"
+  description <<-EOS
+  This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
+  /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
+  /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
+
+  The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
+  EOS
+  example <<-EOS
+  GET /api/v1/events/123/event_expenses/form.json?company_id=1&auth_token=XXsikw982okds93
+  {
+      "fields": {
+          "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
+          "key": null,
+          "policy": "ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS",
+          "signature": "Q8TG16PD850JapPweQGAaK/o4NE=",
+          "Secure": "true"
+      },
+      "url": "https://bucket-name.s3.amazonaws.com/"
+  }
+  EOS
+  def form
+    if parent.campaign.active_field_types.include?('expenses') && can?(:expenses, parent) && can?(:create_expense, parent)
+      bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
+      form = bucket.presigned_post.where(:key).starts_with("uploads/")
+      data = { fields: form.fields, url: "https://#{S3_CONFIGS['bucket_name']}.s3.amazonaws.com/"  }
+      respond_to do |format|
+        format.json { render json: data }
+        format.xml { render xml: data }
+      end
+    else
+      respond_to do |format|
+        format.json {  render :status => 401, json: {} }
+        format.xml { render :status => 401, xml: {} }
+      end
+    end
+  end
+
   protected
 
     def build_resource_params

@@ -1,19 +1,16 @@
 #report-builder
   #resource-filter-column.sidebar
-    = render 'fields_list'
-
-    p Drag fields between areas
-    = render 'filters_list'
-
-    = render 'columns_list'
-    
-    = render 'rows_list'
-
-    = render 'values_list'
+    #collection-list-filters
+      | Sidebar
 
   .main
-    | This is the preview zone
+    .pull-left
+      = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
+    .text-right
+      button.btn.download.xlsx-download-link data-url="#{}" title="Download"
 
-javascript:
-  $('#report-builder').reportBuilder()
+    #report-container
+      | This is the run report mode
+
+  .clearfix
