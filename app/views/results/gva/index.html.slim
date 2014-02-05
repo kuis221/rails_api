@@ -1,6 +1,6 @@
 .tab-content
   #list-view.tab-pane.active
-    .details_box.first
+    .details_box
       = simple_form_for :report, url: results_gva_path, remote: true do |f|
         = f.input_field :campaign_id, collection: @campaigns, wrapper: false, class: 'chosen-enabled no-validate'
 

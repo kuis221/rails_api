@@ -1,11 +1,12 @@
 li id="report_#{report.id}"
-  span.report-item
-    = link_to results_report_path(report), title: report.name do
+  = link_to results_report_path(report), title: report.name do
+  	.span10.report-item
       b= report.name
       p= report.description
 
-    span.pull-right
-      a.share
-      = link_to '', edit_results_report_path(report), remote: true, class: 'edit', title: 'Edit'
-      = link_to_deactivate report, url: deactivate_results_report_path(report)
-      = link_to '', activate_results_report_path(report), remote: true, class: 'enable', title: I18n.t('confirmation.activate') unless report.active?
+  span.pull-right
+    a.share
+    = link_to '', edit_results_report_path(report), remote: true, class: 'edit', title: 'Edit'
+    = link_to_deactivate report, url: deactivate_results_report_path(report)
+    = link_to '', activate_results_report_path(report), remote: true, class: 'enable', title: I18n.t('confirmation.activate') unless report.active?
+
