@@ -85,7 +85,7 @@ class Report < ActiveRecord::Base
         group_by = rows.each_with_index.map{|r, i| i+1 }.join(', ')
         values.each_with_index.map do |value, i|
           value_field = value['field']
-          s = add_joins_scopes(company.events, value)
+          s = add_joins_scopes(company.events.active, value)
           if m = /\Akpi:([0-9]+)\z/.match(value['field'])
             if Kpi.promo_hours.id == m[1].to_i
               value_field = value_aggregate_sql(value['aggregate'], 'promo_hours')
