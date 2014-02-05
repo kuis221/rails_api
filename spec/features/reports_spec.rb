@@ -62,7 +62,7 @@ feature "Reports", js: true do
       hover_and_click 'li', 'Edit'
     end
 
-    within("form#edit_report_#{report.id}") do
+    within visible_modal do
       fill_in 'Name', with: 'Edited Report Name'
       fill_in 'Description', with: 'Edited Report Description'
       click_js_button 'Save'
@@ -87,7 +87,7 @@ feature "Reports", js: true do
 
       visit results_report_path(@report)
 
-      click_button 'Edit'
+      click_link 'Edit'
 
       expect(current_path).to eql(build_results_report_path(@report))
 
@@ -106,7 +106,7 @@ feature "Reports", js: true do
 
       visit results_report_path(@report)
 
-      click_button 'Edit'
+      click_link 'Edit'
 
       expect(current_path).to eql(build_results_report_path(@report))
 

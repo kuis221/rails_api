@@ -76,6 +76,8 @@ $.widget 'nmk.reportBuilder',
 			e.stopPropagation()
 			false
 
+		@refreshReportPreview()
+
 		@element
 
 	saveForm: () ->

@@ -5,7 +5,7 @@
 
   .main
     .pull-left
-      = button_to 'Edit', build_results_report_path(resource), {method: :get, class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
+      = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
     .text-right
       button.btn.download.xlsx-download-link data-url="#{}" title="Download"
