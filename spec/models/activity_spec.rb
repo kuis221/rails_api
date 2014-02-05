@@ -16,5 +16,13 @@
 require 'spec_helper'
 
 describe Activity do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:activity_type) }
+  it { should belong_to(:activitable) }
+  it { should belong_to(:company_user) }
+
+  it { should validate_presence_of(:activity_type_id) }
+  it { should validate_presence_of(:company_user_id) }
+  it { should validate_presence_of(:activity_date) }
+  it { should validate_numericality_of(:activity_type_id) }
+  it { should validate_numericality_of(:company_user_id) }
 end

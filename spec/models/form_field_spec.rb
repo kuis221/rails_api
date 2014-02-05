@@ -17,5 +17,10 @@
 require 'spec_helper'
 
 describe FormField do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:fieldable) }
+
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:type) }
+  it { should validate_presence_of(:ordering) }
+  it { should validate_numericality_of(:ordering) }
 end

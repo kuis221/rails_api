@@ -12,5 +12,6 @@
 require 'spec_helper'
 
 describe ActivityTypeCampaign do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:activity_type) }
+  it { should belong_to(:campaign) }
 end

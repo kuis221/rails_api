@@ -14,5 +14,10 @@
 require 'spec_helper'
 
 describe ActivityType do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:company) }
+  it { should have_many(:form_fields) }
+
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:company_id) }
+  it { should validate_numericality_of(:company_id) }
 end

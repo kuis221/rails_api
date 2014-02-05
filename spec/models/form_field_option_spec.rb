@@ -13,5 +13,11 @@
 require 'spec_helper'
 
 describe FormFieldOption do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:form_field) }
+
+  it { should validate_presence_of(:form_field_id) }
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:ordering) }
+  it { should validate_numericality_of(:form_field_id) }
+  it { should validate_numericality_of(:ordering) }
 end
