@@ -115,7 +115,7 @@ jQuery ->
 				, 1000
 			success: (element) ->
 				element
-					.addClass('valid').append('<span class="ok-message-text">OK!</span><span class="ok-message-icon"></span>')
+					.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
 		}
 

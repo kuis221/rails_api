@@ -4617,11 +4617,10 @@ body.campaigns{
 						padding-left: 5px;
 					}
 					span {
-						&.ok-message-text {
-						    display: inline-block;
-						    text-indent: -9999px;
+						&.ok-message span {
+						    display: none;
 						}
-						&.ok-message-icon:before {
+						&.ok-message:before {
 							color: $approved;
 							font-size: 16px;
 							content: "\e00d";
