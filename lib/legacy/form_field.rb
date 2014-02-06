@@ -16,7 +16,7 @@
 #  updated_at       :datetime
 #
 
-class FormField < Legacy::Record
+class Legacy::FormField < Legacy::Record
   belongs_to    :form_template
   belongs_to    :metric
 
