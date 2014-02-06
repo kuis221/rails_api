@@ -19,7 +19,6 @@ describe "User" do
     context "when it is a super user" do
       let(:user){ FactoryGirl.create(:company_user,  company: company, role: FactoryGirl.create(:role, is_admin: true), user: FactoryGirl.create(:user,  current_company: company)).user }
 
-
       it{ should_not be_able_to(:manage, Company) }
       it{ should_not be_able_to(:create, Company) }
       it{ should_not be_able_to(:edit, Company) }
@@ -85,10 +84,13 @@ describe "User" do
       it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, campaign: campaign, company: company)))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id + 1)))) }
 
-
       it { should be_able_to(:create, AttachedAsset) }
       it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
       it { should_not be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1))) }
+
+      it { should be_able_to(:create, Activity) }
+      it { should be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: company.id), activitable: FactoryGirl.create(:venue, place: place, company: company), company_user: FactoryGirl.create(:company_user,  company: company))) }
+      it { should_not be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: company.id), activitable: FactoryGirl.create(:venue, place: place, company_id: company.id + 1), company_user: FactoryGirl.create(:company_user,  company: company))) }
 
     end
 

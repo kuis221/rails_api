@@ -19,7 +19,7 @@ FactoryGirl.define do
   factory :activity do
     activity_type nil
     activitable nil
-    active false
+    active true
     company_user nil
     activity_date "2014-02-04 16:09:32"
   end

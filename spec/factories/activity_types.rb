@@ -15,9 +15,9 @@
 
 FactoryGirl.define do
   factory :activity_type do
-    name "MyString"
-    description "MyText"
-    active false
-    company nil
+    sequence(:name) {|n| "Activity Type #{n}" }
+    description "Activity Type description"
+    active true
+    company 1
   end
 end
