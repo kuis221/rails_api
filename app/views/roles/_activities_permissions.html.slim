@@ -22,5 +22,5 @@
         .span2
           = permission_checkbox(f, :deactivate, Activity)
 
-  = hidden_field_tag :partial, :activity_permissions
+  = hidden_field_tag :partial, :activities_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
