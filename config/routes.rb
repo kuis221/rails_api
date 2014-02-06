@@ -13,6 +13,7 @@ Brandscopic::Application.routes.draw do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
+            get :notifications
           end
         end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140124202736) do
+ActiveRecord::Schema.define(:version => 20140206222315) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -412,6 +412,19 @@ ActiveRecord::Schema.define(:version => 20140124202736) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
+  create_table "kpi_reports", :force => true do |t|
+    t.integer  "company_user_id"
+    t.text     "params"
+    t.string   "aasm_state"
+    t.integer  "progress"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
   create_table "kpis", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -476,6 +489,7 @@ ActiveRecord::Schema.define(:version => 20140124202736) do
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
     t.text     "message_params"
+    t.text     "extra_params"
   end
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
@@ -529,17 +543,16 @@ ActiveRecord::Schema.define(:version => 20140124202736) do
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "reports", :force => true do |t|
-    t.string   "type"
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.integer "company_id"
+    t.string  "name"
+    t.text    "description"
+    t.boolean "active",        :default => true
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.text    "rows"
+    t.text    "columns"
+    t.text    "values"
+    t.text    "filters"
   end
 
   create_table "roles", :force => true do |t|

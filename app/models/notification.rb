@@ -11,26 +11,28 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  message_params  :text
+#  extra_params    :text
 #
 
 class Notification < ActiveRecord::Base
   belongs_to :company_user
-  attr_accessible :icon, :level, :message, :message_params, :path
+  attr_accessible :icon, :level, :message, :message_params, :extra_params, :path
 
   serialize :message_params
+  serialize :extra_params
 
 
   def self.new_campaign(user, campaign)
     path = Rails.application.routes.url_helpers.campaign_path(campaign)
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign')
+      notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign', extra_params: {campaign_id: campaign.id})
     end
   end
 
   def self.new_event(user, event)
     path = Rails.application.routes.url_helpers.event_path(event)
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event')
+      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event', extra_params: {event_id: event.id})
     end
   end
 
@@ -44,7 +46,7 @@ class Notification < ActiveRecord::Base
     end
 
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task')
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', extra_params: {task_id: task.id})
     end
   end
 end
