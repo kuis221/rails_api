@@ -1,4 +1,5 @@
 class Api::V1::VenuesController < Api::V1::FilteredController
+  include PlacesHelper::CreatePlace
 
   resource_description do
     short 'Venues'
@@ -11,6 +12,19 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     description <<-EOS
 
     EOS
+  end
+
+  def_param_group :venue do
+    param :venue, Hash, required: true, :action_aware => true do
+      param :name, String, required: true, desc: "The Venue name"
+      param :types, String, required: true, desc: "A comma separated string with one or more of the possible types venue types. See venues#types for more info"
+      param :street_number, String, required: true, desc: "The Venue street_number (address 1)"
+      param :route, String, required: false, desc: "The Venue's route (address 2)"
+      param :country, String, required: true, desc: "The Venue country code. Eg. US"
+      param :city, String, required: true, desc: "The Venue city"
+      param :state, String, required: true, desc: "The Venue state"
+      param :zipcode, String, required: true, desc: "The Venue's zipcode"
+    end
   end
 
   api :GET, '/api/v1/venues/:id', 'Return a venue\'s details'
@@ -325,6 +339,63 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     collection
   end
 
+  api :POST, '/api/v1/venues', 'Creates a new venue'
+  param_group :venue
+  see 'venues#types'
+  def create
+    if create_place(permitted_params, true)
+      @venue = @place
+      respond_to do |format|
+        format.json { render :show }
+        format.xml { render :show }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @place.errors, status: :unprocessable_entity }
+        format.xml { render xml: @place.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  api :GET, '/api/v1/venues/types', "Get a list of possible venue types"
+  description <<-EOS
+  Returns a list of valid venue types that can be used to generate a dropdown when
+  creating a new venue
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&company_id=1
+  [
+      {
+          "name": "Accounts",
+          "value": "accounts"
+      },
+      {
+          "name": "Airport",
+          "value": "airport"
+      },
+      {
+          "name": "Amusement Park",
+          "value": "amusement_park"
+      },
+      {
+          "name": "Aquarium",
+          "value": "aquarium"
+      },
+      {
+          "name": "Art Gallery",
+          "value": "art_gallery"
+      },
+      ...
+  ]
+  EOS
+  def types
+    types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
+    respond_to do |format|
+      format.json { render json: types }
+      format.xml { render xml: types }
+    end
+  end
+
   api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
   param :id, :number, required: true, desc: "Venue ID"
   description <<-EOS
@@ -456,6 +527,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    end
     def permitted_search_params
       params.permit({campaign: []}, :location, :radius)
     end
