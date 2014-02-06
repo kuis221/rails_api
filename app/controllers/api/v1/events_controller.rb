@@ -28,6 +28,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events', "Search for a list of events"
+  param :start_date, String, :desc => "A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY."
+  param :end_date, String, :desc => "A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY."
   param :campaign, Array, :desc => "A list of campaign ids to filter the results"
   param :place, Array, :desc => "A list of places to filter the results"
   param :area, Array, :desc => "A list of areas to filter the results"
@@ -1343,7 +1345,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     def permitted_search_params
-      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
+      params.permit(:start_date, :end_date, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
     end
 
     def load_contactable_from_request

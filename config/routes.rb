@@ -12,6 +12,7 @@ Brandscopic::Application.routes.draw do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
+            get :notifications
           end
         end
 
@@ -46,8 +47,9 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [:index, :show] do
+        resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
+          get :types, on: :collection
           member do
             get :photos
             get :comments
