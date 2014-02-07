@@ -752,12 +752,12 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def results
-    @fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
+    fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
 
     # Save the results so they are returned with an ID
-    resource.all_results_for(@fields).each{|r| r.save(validate: false) if r.new_record? }
+    resource.all_results_for(fields).each{|r| r.save(validate: false) if r.new_record? }
 
-    results = @fields.map do |field|
+    results = fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
       result[:module] = field.kpi.module unless field.kpi.nil?
       result[:module] ||= 'custom'

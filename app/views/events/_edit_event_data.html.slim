@@ -4,7 +4,7 @@
     h3 EVENT DATA
 
     - fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
-    = simple_form_for(resource, remote: true) do |f|
+    = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
       = f.error_notification
 
       = f.input :summary

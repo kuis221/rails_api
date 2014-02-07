@@ -877,6 +877,47 @@ feature "Events", js: true, search: true do
       expect(page).to have_no_content("The sum of the segments should be 100%")
     end
 
+    scenario "the entered data should be saved automatically when submitting the event recap" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
+
+      campaign.add_kpi kpi
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      fill_in 'Test Field', with: '98765'
+
+      click_js_link "submit"
+
+      expect(page).to have_content("Your post event report has been submitted for approval.")
+      expect(page).to have_content("98765 TEST FIELD")
+    end
+
+    scenario "should not submit the event data if there are validation errors" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
+
+      field = campaign.add_kpi(kpi)
+      field.options[:required] = 'true'
+      field.save
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_link "submit"
+
+      expect(find_field('Test Field')).to have_error('This field is required.')
+
+      expect(page).to have_no_content("Your post event report has been submitted for approval.")
+    end
+
   end
 
 end
