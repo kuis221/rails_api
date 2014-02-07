@@ -241,6 +241,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *start_time*: the event's start time in 12 hours format
   * *end_date*: the event's end date in the format mm/dd/yyyy
   * *end_time*: the event's end time in 12 hours format
+  * *summary*: the event's summary
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
@@ -270,6 +271,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "end_time": "10:00 PM",
       "status": "Active",
       "event_status": "Unsent",
+      "summary": "This is a test summary",
       "actions": [
           "enter post event data",
           "upload photos",
