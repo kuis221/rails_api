@@ -818,6 +818,65 @@ feature "Events", js: true, search: true do
 
       expect(page).to have_content('Edited summary content')
     end
+
+    scenario "should allow 0 for not required percentage fields" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage',
+        kpis_segments: [ FactoryGirl.create(:kpis_segment, text: 'Male'),
+                         FactoryGirl.create(:kpis_segment, text: 'Female') ] )
+
+      campaign.add_kpi kpi
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_button "Save"
+
+      expect(page).to have_no_content("The sum of the segments should be 100%")
+    end
+
+    scenario "should NOT allow 0 or less for the sum of required percentage fields" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage',
+        kpis_segments: [ FactoryGirl.create(:kpis_segment, text: 'Male'),
+                         FactoryGirl.create(:kpis_segment, text: 'Female') ] )
+
+      field = campaign.add_kpi(kpi)
+      field.options[:required] = 'true'
+      field.save
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_button "Save"
+
+      expect(find_field('Male')).to have_error('This field is required.')
+      expect(find_field('Female')).to have_error('This field is required.')
+
+      fill_in('Male', with: 35)
+      fill_in('Female', with: 30)
+
+      within "#event-results-form" do
+        expect(page).to have_content('65%')
+      end
+
+      click_js_button "Save"
+
+      expect(page).to have_content("The sum of the segments should be 100%")
+
+      fill_in('Female', with: 65)
+
+      click_js_button "Save"
+
+      expect(page).to have_no_content("The sum of the segments should be 100%")
+    end
+
   end
 
 end

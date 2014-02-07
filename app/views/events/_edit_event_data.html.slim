@@ -1,6 +1,6 @@
 - allow_cancel ||= false
 #event-results-form
-  #event-results-form.details_box.box_event_data
+  .details_box.box_event_data
     h3 EVENT DATA
 
     - fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
@@ -53,7 +53,7 @@ javascript:
         progressBarError.append('<span class="help-inline">Field cannot exceed 100%</span></div>')
       }
 
-      $("#total-field-" + segmentFieldId).val(total)
+      $("#total-field-" + segmentFieldId).val(total ? total : '')
     })
     $('.segment-field').keyup();
   });
