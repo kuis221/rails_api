@@ -134,10 +134,15 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_campaign_ids
-    # TODO: memcache this
-    @accessible_campaign_ids ||= (campaign_ids +
-    Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).map(&:id) +
-    Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).map(&:id)).uniq
+    @accessible_campaign_ids ||= if is_admin?
+      company.campaign_ids
+    else
+      (
+        campaign_ids +
+        Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).map(&:id) +
+        Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).map(&:id)
+      ).uniq
+    end
   end
 
   def accessible_locations
