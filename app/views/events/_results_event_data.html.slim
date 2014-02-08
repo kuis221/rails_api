@@ -101,8 +101,8 @@
 
 
 - if event_data
-  javascript:
-    if (#{active_kpis.include?(Kpi.age)}) {
+  - if active_kpis.include?(Kpi.age)
+    javascript:
       $('#age-graph').highcharts({
           chart: { type: 'bar' },
           title: { text: null },
@@ -166,48 +166,48 @@
 
           }]
       });
-    }
 
-    if (#{resource.demographics_graph_data[:ethnicity].values.max} > 0) {
-        $('#ethnicity-graph').highcharts({
-              colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
-              chart: {
-                  type: 'pie'
-              },
-              title: { text: null },
-              credits: { enabled: false },
-              yAxis: {
-                  title: { text: null }
-              },
-              plotOptions: {
-                  pie: {
-                      shadow: false
-                  },
-                  series: {
-                    enableMouseTracking: false,
-                  }
-              },
-              tooltip: {
-                  enabled: false
-              },
-              series: [{
-                  name: 'Ethnicity',
-                  data: #{resource.demographics_graph_data[:ethnicity].map{|k,v|[k, v.round]}.to_json.html_safe},
-                  size: '60%',
-                  innerSize: '30%',
-                  distance: -10,
-                  dataLabels: {
-                      crop: false,
-                      formatter: function() {
-                          // display only if larger than 1
-                          return '<span style="font-size:15px;">'+ this.y +'%</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
-                      },
-                      color: '#3E9CCF'
-                  }
-              }]
-        });
-    }
+  - if active_kpis.include?(Kpi.ethnicity) && resource.demographics_graph_data[:ethnicity].values.max > 0
+    javascript:
+      $('#ethnicity-graph').highcharts({
+            colors: ['#B1D7EC', '#8CC5E3', '#65B0D8', '#3D9DD0'],
+            chart: {
+                type: 'pie'
+            },
+            title: { text: null },
+            credits: { enabled: false },
+            yAxis: {
+                title: { text: null }
+            },
+            plotOptions: {
+                pie: {
+                    shadow: false
+                },
+                series: {
+                  enableMouseTracking: false,
+                }
+            },
+            tooltip: {
+                enabled: false
+            },
+            series: [{
+                name: 'Ethnicity',
+                data: #{resource.demographics_graph_data[:ethnicity].map{|k,v|[k, v.round]}.to_json.html_safe},
+                size: '60%',
+                innerSize: '30%',
+                distance: -10,
+                dataLabels: {
+                    crop: false,
+                    formatter: function() {
+                        // display only if larger than 1
+                        return '<span style="font-size:15px;">'+ this.y +'%</span><br /><div style="width: 50px">'+ this.point.name+'</div>';
+                    },
+                    color: '#3E9CCF'
+                }
+            }]
+      });
 
+  javascript:
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');
     });

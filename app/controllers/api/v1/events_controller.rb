@@ -241,6 +241,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *start_time*: the event's start time in 12 hours format
   * *end_date*: the event's end date in the format mm/dd/yyyy
   * *end_time*: the event's end time in 12 hours format
+  * *summary*: the event's summary
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
@@ -270,6 +271,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "end_time": "10:00 PM",
       "status": "Active",
       "event_status": "Unsent",
+      "summary": "This is a test summary",
       "actions": [
           "enter post event data",
           "upload photos",
@@ -752,12 +754,12 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def results
-    @fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
+    fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
 
     # Save the results so they are returned with an ID
-    resource.all_results_for(@fields).each{|r| r.save(validate: false) if r.new_record? }
+    resource.all_results_for(fields).each{|r| r.save(validate: false) if r.new_record? }
 
-    results = @fields.map do |field|
+    results = fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
       result[:module] = field.kpi.module unless field.kpi.nil?
       result[:module] ||= 'custom'
@@ -1338,7 +1340,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       parameters = {}
       allowed = []
       allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
-      allowed += [:summary, {results_attributes: [:value, :id]}] if can?(:edit_data, Event)
+      allowed += [:summary, {results_attributes: [:value, :id, {value: []}]}] if can?(:edit_data, Event)
       allowed += [:active] if can?(:deactivate, Event)
       parameters = params.require(:event).permit(*allowed)
       parameters

@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.form_has_changed
 //= require jquery-migrate-1.2.1
 //= require jquery-ui-1.10.4.custom
 //= require s3_direct_upload

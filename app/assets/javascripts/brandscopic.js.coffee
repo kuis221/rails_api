@@ -77,6 +77,8 @@ jQuery ->
 			e.stopPropagation()
 			smoothScrollTo($(this.hash))
 
+		$('form[data-watch-changes]').watchChanges();
+
 	window.smoothScrollTo = (element) ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 
@@ -133,8 +135,15 @@ jQuery ->
 
 	attachPluginsToElements()
 
+
 	$(document).ajaxComplete (e) ->
 		attachPluginsToElements()
+
+
+	$(window).on 'beforeunload', ->
+		unSavedForms = $('form[data-watch-changes]').filter((index) -> $(this).hasChanged(); )
+		if unSavedForms.length
+			unSavedForms.data('prompt-message') || "Your form data has not been saved."
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
@@ -516,7 +525,7 @@ jQuery ->
 
 		false
 
-# Hack to use bootsbox confirm dialog
+# Hack to use bootbox's confirm dialog
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')
 	if !message

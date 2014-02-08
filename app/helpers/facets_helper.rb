@@ -28,9 +28,8 @@ module FacetsHelper
   end
 
   def build_brands_bucket
-    brands = Brand.includes(:campaigns).where(campaigns: {id: current_company_user.accessible_campaign_ids}).order('brands.name ASC').map do |b|
+    brands = Brand.joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).order('brands.name ASC').map do |b|
       build_facet_item({label: b.name, id: b.id, name: :brand})
-
     end
     {label: 'Brands', items: brands}
   end
