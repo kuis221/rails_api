@@ -209,14 +209,13 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
-    tries ||= 5
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
     if post_process_required?
       self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]%# "))
     else
-      paperclip_file_path = file.path(:original).sub(%r{^/},'')
+      paperclip_file_path = file.path(:original).sub(%r{\A/},'')
       s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     end
 
@@ -224,14 +223,6 @@ class AttachedAsset < ActiveRecord::Base
     save
 
     s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
-  rescue AWS::S3::Errors::RequestTimeout
-    tries -= 1
-    if tries > 0
-      sleep(3)
-      retry
-    else
-      false
-    end
   end
 
   protected
@@ -253,7 +244,6 @@ class AttachedAsset < ActiveRecord::Base
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
       if new_record? and self.file_file_name.nil?
-        tries ||= 5
         direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
         direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
@@ -267,23 +257,17 @@ class AttachedAsset < ActiveRecord::Base
           self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
         end
       end
-    rescue AWS::S3::Errors::NoSuchKey => e
-      tries -= 1
-      if tries > 0
-        sleep(3)
-        retry
-      else
-        false
-      end
     end
 
     # Queue file processing
     def queue_processing
-      if direct_upload_url.present?
-        if post_process_required?
-          Resque.enqueue(AssetsUploadWorker, id)
-        else
-          transfer_and_cleanup
+      unless processed?
+        if direct_upload_url.present?
+          if post_process_required?
+            Resque.enqueue(AssetsUploadWorker, id)
+          else
+            transfer_and_cleanup
+          end
         end
       end
     end

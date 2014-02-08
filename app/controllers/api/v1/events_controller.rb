@@ -1340,7 +1340,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       parameters = {}
       allowed = []
       allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
-      allowed += [:summary, {results_attributes: [:value, :id]}] if can?(:edit_data, Event)
+      allowed += [:summary, {results_attributes: [:value, :id, {value: []}]}] if can?(:edit_data, Event)
       allowed += [:active] if can?(:deactivate, Event)
       parameters = params.require(:event).permit(*allowed)
       parameters
