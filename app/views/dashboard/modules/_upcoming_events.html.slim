@@ -15,6 +15,8 @@
     #map-view.tab-pane
       #map-canvas.google-map
 
+  .text-right
+    = link_to 'View All', events_path, class: 'btn btn-info icon-angle-right-after'
 
 - @events = upcomming_events_list
 javascript:
