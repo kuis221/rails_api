@@ -39,4 +39,17 @@ describe Report do
       report.active.should be_false
     end
   end
+
+
+  describe "#fetch_page" do
+    it "works whit start_date as a row" do
+      report = FactoryGirl.build(:report,
+        rows:   [{"field"=>"event:start_date", "label"=>"Start date"}],
+        values: [{"field"=>"kpi:3", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      p report.rows
+      page = report.fetch_page
+      puts page
+    end
+  end
 end

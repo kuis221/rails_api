@@ -90,13 +90,12 @@ $.widget 'nmk.reportBuilder',
 				@saved = true
 
 	refreshReportPreview: () ->
-		# Simulate the report is updating
 		@_showOverlay()
 		$.ajax
 			url: "/results/reports/#{@id}/preview.js",
 			type: 'POST',
 			data: @_reportFormData(),
-			complete:
+			complete: () =>
 				@_hideOverlay()
 		, 1000
 

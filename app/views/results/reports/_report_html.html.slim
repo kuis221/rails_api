@@ -1,15 +1,15 @@
-table
+table.report-table
   tr
     th 
-    th colspan="#{report.values.count}" Values
+    th colspan="#{@report.values.count}" Values
 
   tr
     th Row Labels
-    - report.values.each do |value|
+    - @report.values.each do |value|
       th= report_column_label(value)
 
-  - report.fetch_page(1).each do |row|
-    tr
-      td= row['row_labels']
-      - report.values.each do |value|
-        td= row[report.field_to_sql_name(value['field'])]
+  - each_grouped_report_row do |row_label, row_level, values|
+    tr class="level_#{row_level}"
+      td class="row_label"= row_label
+      - values.each do |k, value|
+        td= value

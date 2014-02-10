@@ -599,10 +599,11 @@ class Event < ActiveRecord::Base
     end
 
     def report_fields
+      timezone = Company.current.present? && Company.current.timezone_support? ? 'timezone' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
-        start_date:   { title: 'Start date' },
+        start_date:   { title: 'Start date', column: -> { "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE #{timezone}, 'YYYY/MM/DD')" } },
         start_time:   { title: 'Start time' },
-        end_date:     { title: 'End date' },
+        end_date:     { title: 'End date', column: -> { "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE #{timezone}, 'YYYY/MM/DD')" } },
         end_time:     { title: 'Start time' },
         event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }

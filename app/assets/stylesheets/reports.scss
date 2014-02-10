@@ -50,10 +50,6 @@ ul.reports-list {
 		padding: 100px 0;
 		text-align: center;
 	}
-	#report-container {
-		min-height: 200px;
-		margin-top: 20px;
-	}
 	.btn[disabled=disabled] {
 		opacity: 0.5;
 	}
@@ -147,5 +143,18 @@ ul.reports-list {
 
 	.btn-cancel-report-form {
 		display: inline-block;
+	}
+}
+
+#report-container {
+	min-height: 200px;
+	margin-top: 20px;
+	.report-table {
+		.level_1 .row_label {
+			padding-left: 10px;
+		}
+		.level_2 .row_label {
+			padding-left: 20px;
+		}
 	}
 }

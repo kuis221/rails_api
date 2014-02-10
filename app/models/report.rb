@@ -61,13 +61,17 @@ class Report < ActiveRecord::Base
     rows.try(:any?) && (values.try(:any?) || columns.try(:any?))
   end
 
-  def fetch_page(page=1)
+  def fetch_page(params={})
+    params[:offset] ||= 0
     values_columns = values.map{|f| field_to_sql_name(f['field']) + ' numeric' }.join(', ')
+    select_cols = rows.each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
+    select_cols += values.map{|f| field_to_sql_name(f['field']) }
+
     ActiveRecord::Base.connection.select_all("
-      SELECT *
+      SELECT #{select_cols.join(', ')}
       FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t")}\n\tORDER BY 1
       ', 'select m from generate_series(1,#{values.count}) m')
-      AS ct(row_labels varchar, #{values_columns}) ORDER BY 1 ASC LIMIT 30"
+      AS ct(row_labels varchar[], #{values_columns}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}"
     )
   end
 
@@ -96,8 +100,8 @@ class Report < ActiveRecord::Base
               s = s.where('kpi_id=?', m[1].to_i)
             end
           end
-          s = s.select("#{rows_columns}, #{i+1}, #{value_field}").group('1')
-          s.to_sql
+          s = s.select("ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}], #{i+1}, #{value_field}").group('1')
+          s.to_sql.gsub(/'/, "''")
         end
       end
     end
@@ -119,11 +123,13 @@ class Report < ActiveRecord::Base
     end
 
     def rows_columns
-      @rows_columns ||= rows.map do |f|
+      @rows_columns ||= Hash[rows.map do |f|
         if m = /\A(.*):(.*)\z/.match(f['field'])
-          "#{m[1].pluralize}.#{m[2]} as #{m[1]}_#{m[2]}"
+          klass = m[1].classify.constantize
+          definition = klass.report_fields[m[2].to_sym]
+          definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
         end
-      end.compact.join(', ')
+      end.compact]
     end
 
     def value_aggregate_sql(aggregate, field)

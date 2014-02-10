@@ -21,9 +21,43 @@ module Results
       column['label']
     end
 
+    def each_grouped_report_row(results=nil, row_number=0, &block)
+      results ||= @report.fetch_page
+      row_field = @report.field_to_sql_name(@report.rows[row_number]['field'])
+      previous_label = nil
+      results.each do |row|
+        if row_number < @report.rows.count-1
+          row_label = row[row_field]
+          if row_label != previous_label
+            group = results.select{|r|r[row_field] == row_label}
+            values = get_row_values(group, row_field, row_label)
+            yield row_label, row_number, values
+            each_grouped_report_row(group, row_number+1, &block)
+          end
+          previous_label = row_label
+        else
+          values = row.reject{|k,v| !report_values_names.include?(k) }
+          p values
+          yield row[row_field], row_number, values
+        end
+      end
+    end
+
     private
       def model_report_fields(klass)
         klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title]]}
+      end
+
+      def get_row_values(group, row_field, row_label)
+        values = Hash[report_values_names.map{|name| [name, 0]}]
+        group.each do |row|
+          report_values_names.map{|name| values[name] += row[name].to_f unless row[name].nil? }
+        end
+        values
+      end
+
+      def report_values_names
+        @report_values_names ||= @report.values.map{|v| @report.field_to_sql_name(v['field']) }
       end
   end
 end

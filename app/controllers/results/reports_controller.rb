@@ -9,7 +9,7 @@ class Results::ReportsController < InheritedResources::Base
   end
 
   def preview
-    @preview = Report.new(permitted_params.merge(company_id: current_company.id, name: resource.name))
+    @report = Report.new(permitted_params.merge(company_id: current_company.id, name: resource.name))
   end
 
   def build

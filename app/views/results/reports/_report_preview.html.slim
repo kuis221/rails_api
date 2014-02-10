@@ -1,5 +1,5 @@
-- if report.can_be_generated?
-  = render partial: 'report_html', locals: {report: report}
+- if @report.can_be_generated?
+  = render partial: 'report_html'
 - else
   div.report-placeholder
     p Drag and drop filters, columns, rows and values to create your report.
