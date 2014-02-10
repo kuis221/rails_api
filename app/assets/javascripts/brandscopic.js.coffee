@@ -405,9 +405,16 @@ jQuery ->
 		return $.trim(value) == '' || /^[0-9]+$/.test(value);
 	, "Please enter an integer number");
 
-	$.validator.addMethod("segment-total", (value, element) ->
-		return ($.trim(value) == '' && (value == '0' || value == '')) || value == '100';
-	, "The sum of the segments should be 100%");
+	$.validator.addMethod("segmentTotalRequired", (value, element) ->
+		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
+	, "Field should sum 100%");
+
+	$.validator.addMethod("segmentTotalMax", (value, element) ->
+		intVal = parseInt(value);
+		return ($.trim(value) == '' || intVal <= 100);
+	, "Field cannot exceed 100%");
+
+	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));

@@ -247,7 +247,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	color: $brand !important;
 }
 .text-success{
-	.counter{
+	color: $complete!important;
+	.counter {
 		color: $complete!important;
 	}
 }
@@ -4605,10 +4606,12 @@ body.campaigns{
 			.box_custom, .box_consumer_reach, .box_demographics, .event_summary {
 				.segment-label {
 					margin-bottom: 0;
+
 				}
 				.segment-error-label {
 					margin-bottom: 0;
-					min-height: 22px
+					min-height: 22px;
+					display: block;
 				}
 				.help-inline {
 					padding-left: 0;
@@ -4616,20 +4619,15 @@ body.campaigns{
 					&.segment-title-label {
 						padding-left: 5px;
 					}
+
+
+				}
+				.control-group.percentage {
 					span {
 						&.ok-message span {
-						    display: none;
-						}
-						&.ok-message:before {
-							color: $approved;
-							font-size: 16px;
-							content: "\e00d";
-							display: inline-block;
-							font-family: 'icons';
-							position: relative;
+							display: none;
 						}
 					}
-
 				}
 				label {
 					display: inline-block;

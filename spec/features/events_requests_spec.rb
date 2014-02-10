@@ -861,20 +861,17 @@ feature "Events", js: true, search: true do
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
+      expect(page).to have_content("Field should sum 100%")
 
       within "#event-results-form" do
         expect(page).to have_content('65%')
       end
 
-      click_js_button "Save"
-
-      expect(page).to have_content("The sum of the segments should be 100%")
-
       fill_in('Female', with: 65)
 
       click_js_button "Save"
 
-      expect(page).to have_no_content("The sum of the segments should be 100%")
+      expect(page).to have_no_content("Field should sum 100%")
     end
 
     scenario "the entered data should be saved automatically when submitting the event recap" do
