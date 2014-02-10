@@ -78,14 +78,19 @@ feature "Campaigns", js: true, search: true do
       within("form#new_campaign") do
         fill_in 'Name', with: 'new campaign name'
         fill_in 'Description', with: 'new campaign description'
+        fill_in 'Start date', with: '01/22/2013'
+        fill_in 'End date', with: '01/22/2014'
         select_from_chosen('Test portfolio', from: 'Brand portfolios', match: :first)
         click_js_button 'Create'
       end
       ensure_modal_was_closed
 
       find('h2', text: 'new campaign name') # Wait for the page to load
+      campaign = Campaign.last
       expect(page).to have_selector('h2', text: 'new campaign name')
       expect(page).to have_selector('div.description-data', text: 'new campaign description')
+      expect(campaign.start_date).to eql Date.parse('2013-01-22')
+      expect(campaign.end_date).to eql Date.parse('2014-01-22')
     end
   end
 

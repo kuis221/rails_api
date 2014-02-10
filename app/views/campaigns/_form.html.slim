@@ -7,6 +7,13 @@
       = f.input :name, input_html: {class: 'input-xlarge'}
 
     .row-fluid
+      .span12
+        .span6
+          = f.input :start_date, :as => :date_picker
+        .span6
+          = f.input :end_date, :as => :date_picker
+
+    .row-fluid
       = f.input :brands_list
     .row-fluid
       = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-xlarge chosen-enabled', multiple: true}

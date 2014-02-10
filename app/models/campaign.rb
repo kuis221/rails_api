@@ -32,6 +32,15 @@ class Campaign < ActiveRecord::Base
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
+  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
+  validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
+  validates :end_date, presence: true, if: :start_date
+  validates :start_date, presence: true, if: :end_date
+
+  validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true
+  validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true
+
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
