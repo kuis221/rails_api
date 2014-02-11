@@ -8,20 +8,26 @@ cal_days_labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 $.widget 'nmk.eventsCalendar', {
 	options: {
+		day: null,
 		month: null,
 		year: null,
 		eventsUrl: null,
-		renderMonthDay: null
+		renderMonthDay: null,
+		showMonthControls: true,
+		mode: 'month',
+		weeks: 2
 	},
 
 	_create: () ->
 		@element.addClass('eventsCalendar')
 
 		cal_current_date = new Date()
+		@day   = if (isNaN(@options.day) || @options.day == null) then cal_current_date.getDate() else @options.day
 		@month = if (isNaN(@options.month) || @options.month == null) then cal_current_date.getMonth() else @options.month
 		@year  = if (isNaN(@options.year) || @options.year == null) then cal_current_date.getFullYear() else @options.year
 
-		@_addControls()
+		if @options.mode == 'month'
+			@_addControls()
 		@calendar = $('<div>').appendTo @element
 		@_drawCalendar()
 
@@ -53,6 +59,12 @@ $.widget 'nmk.eventsCalendar', {
 			@_moveMonth(1)
 
 	_drawCalendar: () ->
+		if @options.mode is 'weeks'
+			@_drawWeeksCalendar()
+		else
+			@_drawMonthCalendar()
+
+	_drawMonthCalendar: () ->
 		# get first day of the calendar
 		@firstDay = @lastDay = currentDay = new Date(@year, @month, 1)
 		startingDay = @firstDay.getDay()
@@ -110,6 +122,55 @@ $.widget 'nmk.eventsCalendar', {
 
 		@
 
+	_drawWeeksCalendar: () ->
+		# get first day of the calendar
+		@firstDay = @lastDay = currentDay = new Date(@year, @month, @day)
+		startingDay = @firstDay.getDay()
+
+		# Creates an array with all the days (twice) of the week starting Monday ending Sunday
+		cal_days = cal_days_labels.concat(cal_days_labels)
+
+		html = '<table class="calendar-table">'
+		html += '<thead>'
+		html += '<tr class="calendar-header">'
+		for i in [0..6]
+			html += "<th class=\"calendar-header-day\">#{cal_days[i+@firstDay.getDay()]}</th>"
+		html += '</tr></thead><tbody>'
+
+		# fill in the days
+		# this loop is for is weeks (rows)
+		for i in [0..@options.weeks-1]
+			html += '<tr>'
+			# this loop is for weekdays (cells)
+			for j in [0..6]
+				dayTitle = "#{cal_days[currentDay.getDay()]} #{cal_months_labels[currentDay.getMonth()].substring(0,3)} #{currentDay.getDate()}"
+				html += "<td class=\"calendar-day\" id=\"#{currentDay.getFullYear()}_#{currentDay.getMonth()+1}_#{currentDay.getDate()}\"><div class=\"calendar-cell-wrapper\">"
+				html += "<div class=\"calendar-day-events-container\"><a href=\"#\" class=\"close\"></a><span class=\"daytitle\">#{dayTitle}</span></div>"
+				html += "<div class=\"calendar-view-more\"></div>"
+				html += "<div class=\"calendar-month-day\">"
+				if @options.renderMonthDay
+					html += @options.renderMonthDay(currentDay)
+				else
+					html += currentDay.getDate()
+				html += "</div>"
+				currentDay = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()+1)
+				html += '</div></td>'
+
+			if currentDay.getMonth() != @month
+				break
+			else
+				@lastDay = currentDay
+				html += '</tr>'
+
+		html += '</tbody></table>'
+
+		@calendar.html html
+
+		if @options.eventsUrl
+			@loadEvents()
+
+		@
+
 	_updateMonthName: () ->
 		# do the header
 		monthName = cal_months_labels[@month]
@@ -132,7 +193,7 @@ $.widget 'nmk.eventsCalendar', {
 
 			for cell in @calendar.find('td.calendar-day')
 				elements = $('.calendar-event', cell)
-				diff = elements.length - 5
+				diff = elements.length - 6
 				if diff > 0
 					$('.calendar-view-more', cell).html "<a href=\"#\">+#{diff} More</a>"
 
