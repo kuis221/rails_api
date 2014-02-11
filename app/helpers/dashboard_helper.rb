@@ -27,7 +27,7 @@ module DashboardHelper
     AttachedAsset.do_search({company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
   end
 
-  def upcomming_events_list
+  def upcoming_events_list
     Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc, start_date: Time.zone.now.strftime("%m/%d/%Y"), end_date: Time.zone.now + 10.years}, event_status: ['Active']).results
   end
 
