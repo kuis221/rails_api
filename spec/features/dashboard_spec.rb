@@ -31,6 +31,20 @@ feature "Dashboard", search: true, js: true do
       Sunspot.commit
     end
 
+    feature "Events List View" do
+      scenario "should display a list of upcoming events" do
+        Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
+          visit root_path
+          within upcoming_events_module do
+            expect(all('li').count).to eql 3
+            expect(page).to have_content('Jameson + Kahlua Rum Campaign')
+            expect(page).to have_content('Mama Walker\'s + Martel Campaign')
+            expect(page).to have_content('Paddy Irish Whiskey Campaign')
+          end
+        end
+      end
+    end
+
     feature "Events Calendar View" do
       scenario "should start with today's day and show 2 weeks" do
         # Today is Tuesday, Jan 11
@@ -145,4 +159,5 @@ feature "Dashboard", search: true, js: true do
   def upcoming_events_module
     find('div#upcomming-events-module')
   end
+
 end
