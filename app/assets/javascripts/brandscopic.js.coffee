@@ -47,7 +47,7 @@ jQuery ->
 			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 	attachPluginsToElements = () ->
-		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
+		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
 		$('input.timepicker').timepicker()
 		$('.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true})
