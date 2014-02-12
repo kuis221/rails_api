@@ -1,0 +1,35 @@
+#form-container
+  = simple_form_for [parent, resource], remote: true do |f|
+    = f.error_notification
+    = resource.errors.full_messages.join("<br />").html_safe
+
+    .form-inputs
+      .large-inputs
+        = f.input :activity_type_id, collection: current_company.activity_types.active, input_html: {class: 'chosen-enabled'}
+
+    - if resource.activity_type.present?
+      - resource.results_for_type.each do |result|
+        = f.simple_fields_for :results, result do |rf|
+          .large-inputs
+            = rf.input :value, result.form_field.field_options(result)
+            = rf.input :form_field_id, as: :hidden, wrapper: false
+      .row-fluid
+        .span8
+          = f.input :company_user_id, label: 'User', collection: @users, input_html: {class: 'chosen-enabled'}
+        .span4
+          = f.input :activity_date, as: :date_picker, label: 'Date'
+
+      .form-actions
+        = f.button :submit, 'Create', id: 'create-activity-btn', class: 'btn btn-primary'
+        = "&nbsp;".html_safe
+        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+    - else
+      .form-actions
+        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('#activity_activity_type_id').off('change').on('change', function(e){
+    if ( $(this).val() ){
+      $('#form-container').load("#{url_for([:form, parent, :activities])}?activity[activity_type_id]="+$(this).val());
+    }
+  });

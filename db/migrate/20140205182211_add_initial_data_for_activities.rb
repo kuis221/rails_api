@@ -26,7 +26,7 @@ class AddInitialDataForActivities < ActiveRecord::Migration
         ['Permanent', 'Seasonal', 'Temporary'].each_with_index do |ffo_name, index|
           ff.options.create({name: ffo_name, ordering: index+1}, without_protection: true)
         end
-        FormField.create({name: 'Description (Cocktail name, cocktail recipe, price, cocktail inspiration (if applicable))', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::TextArea', ordering: 2, required: true}, without_protection: true)
+        FormField.create({name: 'Description (Cocktail name, recipe, price, inspiration (if applicable))', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::TextArea', ordering: 2, required: true}, without_protection: true)
 
       when 'Staff Training'
         FormField.create({name: 'Brief description', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::TextArea', ordering: 1, required: true}, without_protection: true)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140205182211) do
+ActiveRecord::Schema.define(:version => 20140210181637) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -42,6 +42,18 @@ ActiveRecord::Schema.define(:version => 20140205182211) do
   add_index "activities", ["activitable_id", "activitable_type"], :name => "index_activities_on_activitable_id_and_activitable_type"
   add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
   add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
+
+  create_table "activity_results", :force => true do |t|
+    t.integer  "activity_id"
+    t.integer  "form_field_id"
+    t.text     "value"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
+  add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
+  add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
 
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"

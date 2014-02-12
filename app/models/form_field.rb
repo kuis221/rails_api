@@ -24,4 +24,12 @@ class FormField < ActiveRecord::Base
   validates :name, presence: true
   validates :type, presence: true
   validates :ordering, presence: true, numericality: true
+
+  def field_options(result)
+    {as: :string}
+  end
+
+  def field_classes
+    ['input-xlarge']
+  end
 end
