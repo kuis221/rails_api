@@ -165,6 +165,27 @@ module DashboardHelper
     end
   end
 
+  def campaign_overview_data
+    @campaign_overview_data ||= begin
+      current_company.campaigns.active.order(:name).map do |campaign|
+        {
+          campaign: campaign
+        }
+      end
+    end
+  end
+
+
+  def weeks_in_month(date)
+    week = date.beginning_of_week+1.week
+    weeks = []
+    while week.month == date.month
+      weeks.push week
+      week += 1.week
+    end
+    weeks
+  end
+
   private
     def get_totals_for_kpi(kpi, totals)
       case kpi

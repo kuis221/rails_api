@@ -183,4 +183,25 @@
 			}
 		}
 	}
+
+	#campaign-overview-module {
+		#campaign-overview-table {
+			.campaigns-header {
+				height: 47px;
+			}
+			.month-name {
+				background-color: $brand;
+				color: #fff;
+			}
+			.week {
+				float: left;
+				width: 25%;
+			}
+			.weeks-5 {
+				.week {
+					width: 20%;
+				}
+			}
+		}
+	}
 }

@@ -8,6 +8,9 @@
 - if can? :upcomings_events_module, :dashboard
   = render 'dashboard/modules/upcoming_events'
 
+- if can? :campaign_overview, :dashboard
+  = render 'dashboard/modules/campaign_overview'
+
 - if can? :incomplete_tasks_module, :dashboard
   = render 'dashboard/modules/incomplete_tasks'
 
