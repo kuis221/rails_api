@@ -29,6 +29,7 @@ class Venue < ActiveRecord::Base
   belongs_to :place
 
   has_many :events, through: :place
+  has_many :activities, as: :activitable
 
   include Normdist
 

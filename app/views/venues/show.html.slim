@@ -44,6 +44,12 @@
         #venue-areas.row-fluid
           = render partial: 'areas', locals: {areas: resource.place.areas}
 
+  - if resource.persisted?
+    #venue-activities.details_box
+      h3 ACTIVITIES
+      .tools-icons
+        = link_to '', new_venue_activity_path(resource), remote: true, class: 'add-activity-venue icon-plus-sign', title: 'New Activity'
+
 - if resource.events_count.present? && resource.events_count > 0
   - if can?(:view_score, resource) || can?(:view_kpis, resource)
     .details_box

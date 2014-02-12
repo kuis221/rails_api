@@ -17,4 +17,6 @@ class ActivityType < ActiveRecord::Base
 
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
+
+  scope :active, lambda{ where(active: true) }
 end

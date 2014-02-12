@@ -18,6 +18,8 @@ class Activity < ActiveRecord::Base
   belongs_to :activitable, polymorphic: true
   belongs_to :company_user
 
+  has_many :results, class_name: 'ActivityResult'
+
   validates :activity_type_id, numericality: true, presence: true
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
@@ -26,4 +28,12 @@ class Activity < ActiveRecord::Base
   validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
   delegate :company_id, to: :activitable
+
+  accepts_nested_attributes_for :results
+
+  def results_for_type
+    activity_type.form_fields.map do |field|
+      results.select{|r| (r.form_field_id) == field.id}.first || results.build({form_field_id: field.id})
+    end
+  end
 end
