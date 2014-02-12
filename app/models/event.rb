@@ -236,7 +236,7 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0
+    campaign.present? && (results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0)
   end
 
   def venue

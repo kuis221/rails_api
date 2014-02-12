@@ -21,6 +21,8 @@ describe Venue, search: true do
     company2_event = FactoryGirl.create(:event, company: company2, place: company2_place)
     company2_venue = company2_event.venue
 
+    Venue.reindex
+
     Sunspot.commit
 
     # Search for all Venues on a given Company
@@ -53,6 +55,7 @@ describe Venue, search: true do
       end
 
       venue.save
+      Venue.reindex
       Sunspot.commit
 
       Venue.do_search(company_id: company.id, option => {min: 1, max: 5}).results.should =~ [venue]
@@ -81,6 +84,7 @@ describe Venue, search: true do
       venue_sf2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in SF1', city: 'San Francisco', state: 'CA', country: 'US', types: ['establishment']), company: company)
       venue_la  = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, name: 'Place in LA',  city: 'Los Angeles', state: 'CA', country: 'US', types: ['establishment']), company: company)
 
+      Venue.reindex
       Sunspot.commit
 
       result = Venue.do_search(company_id: company.id, campaign: [campaign.id])
