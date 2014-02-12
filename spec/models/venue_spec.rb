@@ -62,6 +62,7 @@ describe Venue do
       place4 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.931795, longitude: -84.044348),
         avg_impressions_hour: 167, avg_impressions_cost: 142)
 
+      Venue.reindex
       Sunspot.commit
 
       place1.compute_scoring
