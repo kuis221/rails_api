@@ -244,6 +244,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *summary*: the event's summary
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
+  * *have_data*: returns true if data have been entered for the event, otherwise, returns false
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
   * *place*: On object with the event's venue information with the following attributes
     * *id*: the venue's id
@@ -272,6 +273,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "status": "Active",
       "event_status": "Unsent",
       "summary": "This is a test summary",
+      "have_data": true,
       "actions": [
           "enter post event data",
           "upload photos",
@@ -357,6 +359,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   * *description:* the field's description
 
+  * *goal:* the goal for this field on the event's campaign (only present if +fied_type+ is NOT "count" or "percentage", for such fields the goal is specified on the segment level)
+
   * *segments:* when the +fied_type+ is either "count" or "percentage", this will enumerate the possible
     options for the "count" fields or the different subfields for the "percentage" fields.
 
@@ -367,6 +371,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *text:* the label/text for the option/sub-field
 
     * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100
+
+    * *goal:* the goal for this segment on the event's campaign
 
   * *options:* specific options for this field, depending of the field_type these can be:
 
@@ -762,12 +768,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
     results = fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
       result[:module] = field.kpi.module unless field.kpi.nil?
+      result[:goal] = resource.kpi_goals[field.kpi_id] unless ['percentage', 'count'].include?(field.field_type)
       result[:module] ||= 'custom'
       if field.field_type == 'percentage'
-        result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value}}})
+        result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
       else
         if field.field_type == 'count'
-          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text}}})
+          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
         end
         r = resource.results_for([field]).first
         result.merge!({id: r.id, value: r.value})

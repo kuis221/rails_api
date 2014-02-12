@@ -16,6 +16,10 @@ node :event_status do |event|
   end
 end
 
+node :have_data do |event|
+  event.has_event_data?
+end
+
 child(venue: :place) do
   attributes :id, :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
 end
