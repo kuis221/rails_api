@@ -167,14 +167,44 @@ module DashboardHelper
 
   def campaign_overview_data
     @campaign_overview_data ||= begin
-      current_company.campaigns.active.order(:name).map do |campaign|
-        {
-          campaign: campaign
-        }
+      data = {}
+      prefix = ''
+      prefix = 'local_' if Company.current.present? && Company.current.timezone_support?
+      start_date = Date.today.beginning_of_month
+      start_date = start_date.next_week unless start_date.wday == 1
+      start_week_number = start_date.strftime("%U").to_i+1
+      Rails.logger.debug "\n\n\n\n"
+      Event.active.between_dates(start_date.beginning_of_day, (Date.today.beginning_of_month+4.months).end_of_month.end_of_day).
+            accessible_by_user(current_company_user).
+            where(campaign_id: dashboard_accessible_campaigns.map(&:id)).
+            group('1, 2, 3').
+            select("events.campaign_id, EXTRACT(WEEK FROM #{prefix}start_at) as week_start, EXTRACT(WEEK FROM #{prefix}end_at) as week_end").
+            each do |event|
+          (event.week_start..event.week_end).each do |week|
+            data[event.campaign_id] ||= {}
+            data[event.campaign_id][week.to_i]=true if start_week_number <= week.to_i
+          end
       end
+      Rails.logger.debug "\n\n\n\n"
+      data
     end
   end
 
+  def dashboard_accessible_campaigns
+    @dashboard_accessible_campaigns ||= current_company.campaigns.active.accessible_by_user(current_company_user).order(:name)
+  end
+
+  def campaing_cell_clasess(campaign, week)
+    clasess = []
+    week_number = week.strftime("%U").to_i+1
+    clasess.push 'in-range' if campaign.has_date_range? && campaign.end_date > week && campaign.start_date < week.end_of_week
+    if campaign_overview_data[campaign.id].present? && campaign_overview_data[campaign.id][week_number]
+      clasess.push 'with-events'
+      clasess.push 'first-in-series' unless campaign_overview_data[campaign.id][week_number-1].present? && campaign_overview_data[campaign.id][week_number-1]
+      clasess.push 'last-in-series' unless campaign_overview_data[campaign.id][week_number+1]
+    end
+    clasess.join(' ')
+  end
 
   def weeks_in_month(date)
     week = date.beginning_of_week+1.week

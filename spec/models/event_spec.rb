@@ -89,6 +89,46 @@ describe Event do
     end
   end
 
+  describe "#accessible_by" do
+    before do
+      @event = FactoryGirl.create(:event, campaign: campaign, place: place)
+    end
+
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
+    let(:place) {FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles')}
+    let(:area) {FactoryGirl.create(:area, company: company)}
+    let(:company_user) {FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, is_admin: false, company: company))}
+
+    it "should return empty if the user doesn't have campaigns nor places" do
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return empty if the user have access to the campaing but not the place" do
+       company_user.campaigns << campaign
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return the event if the user have the place directly assigned to the user" do
+      company_user.campaigns << campaign
+      company_user.places << place
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user have access to an area that includes the place" do
+      company_user.campaigns << campaign
+      area.places << place
+      company_user.areas << area
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user has access to the city" do
+      company_user.campaigns << campaign
+      company_user.places << FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles', types: ['locality'])
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+  end
+
   describe "end_after_start validation" do
     subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
 

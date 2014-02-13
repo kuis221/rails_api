@@ -60,7 +60,16 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date| where("end_at > ? AND start_at < ?", start_date, end_date) }
+  scope :between_dates, lambda {|start_date, end_date|
+    prefix = ''
+    if Company.current.present? && Company.current.timezone_support?
+      prefix = 'local_'
+      start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
+      end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
+    end
+    where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
+  }
+
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
@@ -70,7 +79,11 @@ class Event < ActiveRecord::Base
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids) }
+  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids+[0]) }
+
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
+
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select locations_places.place_id FROM locations_places where id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
   track_who_does_it
 
@@ -730,6 +743,8 @@ class Event < ActiveRecord::Base
     def set_event_timezone
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
+        self.local_start_at = Timeliness.parse(read_attribute(:start_at).in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone) if read_attribute(:start_at)
+        self.local_end_at = Timeliness.parse(read_attribute(:end_at).in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone) unless read_attribute(:end_at).nil?
       end
     end
 

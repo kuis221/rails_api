@@ -186,16 +186,86 @@
 
 	#campaign-overview-module {
 		#campaign-overview-table {
-			.campaigns-header {
-				height: 47px;
+			border: 1px solid $grey_two;
+			.row-fluid {
+				height: 30px;
+			}
+
+			.span4 span {
+				margin-left: 15px;
+			}
+			a {
+				color: $text;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+
+			.campaigns-header, .header-row {
+				height: 60px;
+			}
+			.header-row {
+				border-bottom: 1px solid $grey_two;				
 			}
 			.month-name {
 				background-color: $brand;
 				color: #fff;
 			}
+			.row {
+				margin-left: -33px;
+			}
+			.campaigns-header {
+				border-right: 1px solid $grey_two;
+				span {
+					margin-top: 20px;
+					display: block;
+				}
+			}
+			.month>.row, .campaign-name {
+				border-right: 1px solid $grey_two;
+				height: 30px;
+			}
+			.header-row {
+				.month>.row.month-name {
+					border-right: none;
+					span {
+						margin-left: 10px;
+					}
+				}
+			}
 			.week {
 				float: left;
 				width: 25%;
+				span.week-marker {
+					height: 10px;
+					border-radius: 5px;
+					width: 10px;
+					display: block;
+					margin: 5px auto 0 auto;
+				}
+				&.in-range span.week-marker {
+					background-color: $grey_one;
+				}
+				&.in-range:hover span.week-marker {
+					background-color: $grey_three;
+				}
+				&.with-events span.week-marker {
+					background-color: $blue;
+					width: 100%;
+					border-radius: 0px;
+					margin: 5px 0 0 0;
+				}
+				&.with-events.first-in-series span.week-marker {
+					border-top-left-radius: 5px;
+					border-bottom-left-radius: 5px;
+				}
+				&.with-events.last-in-series span.week-marker {
+					border-top-right-radius: 5px;
+					border-bottom-right-radius: 5px;
+				}
+				&.with-events:hover span.week-marker {
+					background-color: $blue_hover;
+				}
 			}
 			.weeks-5 {
 				.week {

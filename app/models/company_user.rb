@@ -148,8 +148,8 @@ class CompanyUser < ActiveRecord::Base
   def accessible_locations
     @accessible_locations ||= Rails.cache.fetch("user_accessible_locations_#{self.id}", expires_in: 10.minutes) do
       (
-        areas.joins(:places).pluck('places.location_id') +
-        places.pluck('places.location_id')
+        areas.joins(:places).where(places: { is_location: true }).pluck('places.location_id') +
+        places.where(places: { is_location: true }).pluck('places.location_id')
       ).uniq.compact
     end
   end
