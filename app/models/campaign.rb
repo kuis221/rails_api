@@ -160,14 +160,17 @@ class Campaign < ActiveRecord::Base
 
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
-    Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+    place.locations.pluck('locations.id').any?{|location| accessible_locations.include?(location)} ||
     places.map(&:id).include?(place.id) ||
     areas.map(&:place_ids).flatten.include?(place.id)
   end
 
   def accessible_locations
     Rails.cache.fetch("campaign_locations_#{id}") do
-      (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+      (
+        areas.reorder(nil).joins(:places).where(places: {is_location: true}).pluck('places.location_id') +
+        places.where(is_location: true).reorder(nil).pluck('places.location_id')
+      ).map(&:to_i)
     end
   end
 

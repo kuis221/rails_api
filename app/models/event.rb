@@ -149,7 +149,7 @@ class Event < ActiveRecord::Base
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       locations_for_index
     end
 
@@ -317,7 +317,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    Place.locations_for_index(place)
+    place.locations.pluck('locations.id') if place.present?
   end
 
   def kpi_goals
@@ -515,13 +515,13 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } + [0] )
+              with :location, Area.find(value).locations.map(&:id) + [0]
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+          with(:location, Area.where(id: params[:area]).map(&:id).flatten + [0]) if params[:area].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")

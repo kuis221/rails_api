@@ -146,13 +146,21 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_locations
-    # TODO: memcache this
-    @accessible_locations ||= (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+    @accessible_locations ||= Rails.cache.fetch("user_accessible_locations_#{self.id}", expires_in: 10.minutes) do
+      (
+        areas.joins(:places).pluck('places.location_id') +
+        places.pluck('places.location_id')
+      ).uniq.compact
+    end
   end
 
   def accessible_places
-    # TODO: memcache this
-    @accessible_places ||= (place_ids + areas.map{|a| a.places.map{|p| p.id}}).flatten.uniq
+    @accessible_places ||= Rails.cache.fetch("user_accessible_places_#{self.id}", expires_in: 10.minutes) do
+      (
+        place_ids +
+        Place.joins(:areas).where(areas: {id: self.areas.pluck('areas.id')}).pluck('places.id')
+      ).flatten.uniq
+    end
   end
 
   def allowed_to_access_place?(place)
@@ -160,7 +168,7 @@ class CompanyUser < ActiveRecord::Base
     (
       place.present? &&
       (
-        Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+        place.locations.pluck('locations.id').any?{|location| accessible_locations.include?(location)} ||
         accessible_places.include?(place.id)
       )
     )

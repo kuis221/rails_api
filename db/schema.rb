@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140210202029) do
+ActiveRecord::Schema.define(:version => 20140212220518) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -469,6 +469,17 @@ ActiveRecord::Schema.define(:version => 20140210202029) do
 
   add_index "list_exports", ["company_user_id"], :name => "index_list_exports_on_user_id"
 
+  create_table "locations", :force => true do |t|
+    t.string "path", :limit => 500
+  end
+
+  add_index "locations", ["path"], :name => "index_locations_on_path", :unique => true
+
+  create_table "locations_places", :force => true do |t|
+    t.integer "location_id"
+    t.integer "place_id"
+  end
+
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"
     t.integer  "memberable_id"
@@ -510,6 +521,7 @@ ActiveRecord::Schema.define(:version => 20140210202029) do
     t.string  "placeable_type"
   end
 
+  add_index "placeables", ["place_id"], :name => "index_placeables_on_place_id"
   add_index "placeables", ["placeable_id", "placeable_type"], :name => "index_placeables_on_placeable_id_and_placeable_type"
 
   create_table "places", :force => true do |t|
@@ -532,6 +544,8 @@ ActiveRecord::Schema.define(:version => 20140210202029) do
     t.string   "administrative_level_2"
     t.string   "td_linx_code"
     t.string   "neighborhood"
+    t.integer  "location_id"
+    t.boolean  "is_location"
   end
 
   add_index "places", ["reference"], :name => "index_places_on_reference"

@@ -1,6 +1,7 @@
 module PlacesHelper
   module CreatePlace
     def create_place(attributes, add_new_place)
+      attributes[:types] = attributes[:types].split(',') if attributes[:types].present?
       @place = Place.new(attributes)
       if current_company_user.allowed_to_access_place?(@place)
         reference_value = attributes[:reference]

@@ -193,8 +193,8 @@ describe Campaign do
 
     it "should return true if the place is part of any of the campaigns" do
       area = FactoryGirl.create(:area)
-      place = FactoryGirl.create(:place)
-      other_place = FactoryGirl.create(:place)
+      place = FactoryGirl.create(:place, country: 'CR')
+      other_place = FactoryGirl.create(:place, country: 'US')
       area.places << other_place
       campaign.areas << area
 
@@ -206,8 +206,8 @@ describe Campaign do
     end
 
     it "should return true if the place is part of any city of an area associated to the campaign" do
-      area = FactoryGirl.create(:area)
-      city = FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
+      area =  FactoryGirl.create(:area)
+      city =  FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       place = FactoryGirl.create(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
       other_city = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
       area.places << other_city
@@ -218,9 +218,8 @@ describe Campaign do
       # Assign San Francisco to the area
       area.places << city
 
-      # Because the campaing cache the locations, create a new object with the same campaign ID
-      campaign_reloaded  = Campaign.find(campaign.id)
-      campaign_reloaded.place_allowed_for_event?(place).should be_true
+      # Because the campaing cache the locations, load a new object with the same campaign ID
+      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
     end
   end
 

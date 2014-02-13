@@ -30,11 +30,9 @@ describe Venue, search: true do
     Venue.do_search(company_id: company2.id).results.should =~ [company2_venue]
 
     # Search for a specific Venue's place
-    place_id = Place.encode_location(Place.political_division(place))
-    place2_id = Place.encode_location(Place.political_division(place2))
-    Venue.do_search(company_id: company.id, locations: [place_id]).results.should =~ [venue]
-    Venue.do_search(company_id: company.id, locations: [place2_id]).results.should =~ [venue2]
-    Venue.do_search(company_id: company.id, locations: [place_id, place2_id]).results.should =~ [venue, venue2]
+    Venue.do_search(company_id: company.id, locations: [place.location_id]).results.should =~ [venue]
+    Venue.do_search(company_id: company.id, locations: [place2.location_id]).results.should =~ [venue2]
+    Venue.do_search(company_id: company.id, locations: [place.location_id, place2.location_id]).results.should =~ [venue, venue2]
 
     # Search for campaigns associated to the Venues
     Venue.do_search(company_id: company.id, campaign: campaign.id).results.should =~ [venue]
@@ -76,7 +74,7 @@ describe Venue, search: true do
   describe "search by campaing" do
     it "should include any venue that is part of the campaign scope" do
       company = FactoryGirl.create(:company)
-      sf = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political'])
+      sf = FactoryGirl.create(:place, city: 'San Francisco', state: 'CA', country: 'US', types: ['political', 'locality'])
       campaign = FactoryGirl.create(:campaign, company: company)
       campaign.places << sf
 
