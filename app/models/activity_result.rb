@@ -17,11 +17,18 @@ class ActivityResult < ActiveRecord::Base
   validate :valid_value?
   validates :form_field_id, numericality: true, presence: true
 
+  before_save :prepare_for_store
+
   private
     def valid_value?
       return if form_field.nil?
-      if form_field.required == true && (value.nil? || (value.is_a?(String) && value.empty?))
+      if form_field.required? && (value.nil? || (value.is_a?(String) && value.empty?))
         errors.add(:value, I18n.translate('errors.messages.blank'))
       end
+    end
+
+    def prepare_for_store
+      self.value = form_field.store_value(value)
+      true
     end
 end
