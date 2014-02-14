@@ -7,6 +7,7 @@ currency = wb.styles.add_style :num_fmt => 5
 
 wb.add_worksheet(name: "Venues") do |sheet|
 	sheet.add_row ['VENUE NAME',
+                 'TD LINX CODE',
                  'ADDRESS',
                  'CITY',
                  'STATE',
@@ -14,16 +15,16 @@ wb.add_worksheet(name: "Venues") do |sheet|
                  'PROMO HOURS COUNT',
                  'TOTAL $ SPENT'], :style => row_header
 
-  
-  each_collection_item do |venue|    
+
+  each_collection_item do |venue|
     sheet.add_row [venue.name,
+                   venue.td_linx_code,
                    venue.formatted_address,
                    venue.city,
                    venue.state,
                    venue.events_count,
                    venue.promo_hours,
-                   venue.spent], :style => [row_data_text,row_data_text,row_data_text,row_data_text,row_data_number,row_data_number,currency]
+                   venue.spent], :style => [row_data_text,row_data_text,row_data_text,row_data_text,row_data_text,row_data_number,row_data_number,currency]
 
   end
-  sheet.add_row ["nada"], :style => row_data_text
 end

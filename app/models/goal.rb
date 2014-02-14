@@ -25,6 +25,7 @@ class Goal < ActiveRecord::Base
 
   validates :goalable_id, presence: true, numericality: true
   validates :goalable_type, presence: true
+  validates :kpi_id, numericality: true, presence: true
   validates :kpis_segment_id, numericality: true, allow_nil: true
   validates :value, numericality: true, allow_nil: true
 
@@ -33,4 +34,14 @@ class Goal < ActiveRecord::Base
 
   scope :in, lambda{|parent| where(parent_type: parent.class.name, parent_id: parent.id) }
   scope :base, lambda{ where('parent_type is null') }
+
+  before_validation :set_kpi_id
+
+  protected
+
+    def set_kpi_id
+      if self.kpi_id.nil? && self.kpis_segment_id.present?
+        self.kpi_id = self.kpis_segment.try(:kpi_id)
+      end
+    end
 end

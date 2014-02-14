@@ -52,7 +52,7 @@ describe Api::V1::EventExpensesController do
     end
   end
 
-  describe "POST 'create'" do
+  describe "POST 'create'", strategy: :deletion do
     let(:event) {FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)}
     it "create an expense and queue a job for processing the attached expense file" do
       ResqueSpec.reset!

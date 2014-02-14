@@ -3,7 +3,9 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 require 'simplecov'
-SimpleCov.start "rails"
+SimpleCov.start "rails" do
+  add_filter 'lib/legacy'
+end
 
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
@@ -81,7 +83,9 @@ RSpec.configure do |config|
 
   # config.before(:each) do
   #   if example.metadata[:js]
-  #     DatabaseCleaner.strategy = :truncation
+  #     DatabaseCleaner.strategy = :deletion
+  #   elsif example.metadata[:strategy]
+  #     DatabaseCleaner.strategy = example.metadata[:strategy]
   #   else
   #     DatabaseCleaner.strategy = :transaction
   #   end

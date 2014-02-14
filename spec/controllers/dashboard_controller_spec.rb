@@ -16,15 +16,6 @@ describe DashboardController do
     response.should render_template('kpi_trends')
     response.should render_template('upcoming_events')
     response.should render_template('venue_performance')
-  end
-
-  it "should render all modules" do
-    get 'index'
-    response.should be_success
-    response.should render_template('demographics')
-    response.should render_template('incomplete_tasks')
-    response.should render_template('kpi_trends')
-    response.should render_template('upcoming_events')
-    response.should render_template('venue_performance')
+    response.should render_template('campaign_overview')
   end
 end

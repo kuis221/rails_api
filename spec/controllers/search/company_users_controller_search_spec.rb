@@ -92,7 +92,7 @@ describe CompanyUsersController, search: true do
       response.should be_success
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => event_path(event, notifid: Notification.last.id), "unread" => true, "icon" => "icon-notification-event"})
+      notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => event_path(event, notifid: Notification.last.id), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event", "event_id" => event.id})
     end
 
     it "should return a notification if the user have a late event recap" do
@@ -105,7 +105,7 @@ describe CompanyUsersController, search: true do
       response.should be_success
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+      notifications.should include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_late"})
     end
 
     it "should NOT return a notification if the user is not part of the event's team" do
@@ -130,7 +130,7 @@ describe CompanyUsersController, search: true do
       response.should be_success
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+      notifications.should include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_pending"})
     end
 
     it "should return a notification if the user have a due event recap" do
@@ -143,7 +143,7 @@ describe CompanyUsersController, search: true do
       response.should be_success
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event"})
+      notifications.should include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_due"})
     end
 
     it "should return a notification if the user has is assigned to a task that is late" do
@@ -155,7 +155,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"You have one late task", "level"=>"red", "url"=>"/tasks/mine?end_date=&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+      notifications.should include({"message"=>"You have one late task", "level"=>"red", "url"=>"/tasks/mine?end_date=&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&user%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"user_tasks_late"})
     end
 
     it "should return a notification if the user is part of the event's team that have a late task" do
@@ -168,7 +168,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"Your team has one late task", "level"=>"red", "url"=>"/tasks/my_teams?end_date=&not_assigned_to%5B%5D=#{@company_user.id}&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&team_members%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+      notifications.should include({"message"=>"Your team has one late task", "level"=>"red", "url"=>"/tasks/my_teams?end_date=&not_assigned_to%5B%5D=#{@company_user.id}&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&team_members%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"team_tasks_late"})
     end
 
     it "should return a notification if the user is part of the event's team and a new task is created on that event" do
@@ -181,7 +181,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+      notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_team_task", "task_id" => task.id})
     end
 
     it "should return a notification if there is a new task for the user" do
@@ -192,7 +192,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"You have been assigned a task: The task title", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task"})
+      notifications.should include({"message"=>"You have been assigned a task: The task title", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task", "task_id" => task.id})
     end
 
     it "should return a notification if there is a new comment for a user's task" do
@@ -203,7 +203,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"Your task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment"})
+      notifications.should include({"message"=>"Your task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"user_task_comments", "task_id"=>task.id})
     end
 
     it "should return a notification if there is a new comment for a user's team task" do
@@ -215,7 +215,7 @@ describe CompanyUsersController, search: true do
       get 'notifications', id: @company_user.to_param, format: :json
 
       notifications = JSON.parse(response.body)
-      notifications.should include({"message"=>"Your team's task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment"})
+      notifications.should include({"message"=>"Your team's task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"team_task_comments", "task_id"=>task.id})
     end
   end
 end

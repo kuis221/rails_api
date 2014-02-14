@@ -15,7 +15,8 @@
 
 class EventResult < ActiveRecord::Base
 	belongs_to :event
-	belongs_to :kpis_segment
+  belongs_to :kpis_segment
+	belongs_to :kpi
 	belongs_to :form_field, class_name: 'CampaignFormField'
 
   attr_accessible :form_field_id, :kpis_segment_id, :kpi_id, :value
@@ -67,7 +68,7 @@ class EventResult < ActiveRecord::Base
       else
         self.attributes['value']
       end
-    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present?
+    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'].respond_to?(:to_i)
       self.attributes['value'].to_i if self.attributes['value'].present?
     else
       self.attributes['value']
@@ -106,7 +107,7 @@ class EventResult < ActiveRecord::Base
       end
 
       if form_field.field_type == 'count' && value.present? && value != ''
-        if value.present? && capture_mechanism == 'radio' && !form_field.kpi.kpis_segment_ids.include?(value)
+        if value.present? && capture_mechanism == 'radio' && (!value.is_a?(Integer) || !form_field.kpi.kpis_segment_ids.include?(value))
           errors.add(:value, I18n.translate('errors.result.invalid'))
         end
 

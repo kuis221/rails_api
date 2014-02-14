@@ -1,4 +1,5 @@
 class Api::V1::UsersController < Api::V1::FilteredController
+  include UsersHelper
 
   skip_before_filter :verify_authenticity_token,
                      :if => Proc.new { |c| c.request.format == 'application/json' }
@@ -125,6 +126,56 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
+
+  api :GET, '/api/v1/users/:id', 'Return a user\'s details'
+  param :id, :number, required: true, desc: "User ID"
+  description <<-EOS
+    Returns the details of a give user
+      * *id*: the user id
+      * *first_name*: the user's first name
+      * *last_name*: the user's last name
+      * *full_name*: the user's full name
+      * *email*: the user's email address
+      * *street_address*: the user's street name and number
+      * *city*: the user's city name
+      * *state*: the user's state code
+      * *country*: the user's country
+      * *zip_code*: the user's ZIP code
+      * *role*:
+        * *id*: the role id
+        * *name*: the role name
+      * *teams*: A list of the teams that the user belongs to
+        * *id*: the team's id
+        * *name*: the team's name
+  EOS
+  example <<-EOS
+  {
+      "id": 1,
+      "first_name": "Admin",
+      "last_name": "User",
+      "full_name": "Admin User",
+      "email": "admin@brandscopic.com",
+      "phone_number": null,
+      "street_address": null,
+      "unit_number": null,
+      "city": "San Francisco",
+      "state": "CA",
+      "zip_code": null,
+      "time_zone": "Buenos Aires",
+      "country": "United States",
+      "role": {
+          "id": 1,
+          "name": "Super Admin"
+      },
+      "teams": []
+  }
+  EOS
+  def show
+    if resource.present?
+      render
+    end
+  end
+
   api :PUT, '/api/v1/users/:id', 'Update a user\'s details'
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
@@ -233,11 +284,99 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
+  api :GET, '/api/v1/notifications', "Get a list of user's notifications"
+  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
+  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
+
+  description <<-EOS
+  Returns a list of notifications for the current user with the following atttibutes:
+
+  * *message*: A human readable description of the notification.
+  * *level*: Indicates the level of the notification. Possible options are: "red", "grey" and "blue"
+  * *icon*: An string that could be used to identify what icon to use for the notification
+  * *type*: The type of notification, the possible options are:
+    * *event_recaps_due*: At least one event is due
+    * *event_recaps_late*: At least one event is late
+    * *event_recaps_pending*: There is at least one event that is waiting for approval
+    * *event_recaps_rejected*: There is at least one event that was rejected
+    * *team_tasks_late*: The user's team have late tasks
+    * *user_tasks_late*: The user have late tasks
+    * *user_task_comments*: One or more user's team tasks have a commment
+    * *team_task_comments*: One or more user tasks have a commment
+    * *new_event*: The user have been assigned to a event
+    * *new_campaign*: The user have been assigned to a campaign
+    * *new_team_task*: The user's team have been assigned to a task
+    * *new_task*: The user have been assigned to a task
+  * *event_id*: when the notification is about a single event, this indicates the event's ID
+  * *campaign_id*: when the notification is about a single campaign, this indicates the campaign's ID
+  * *task_id*: when the notification is about a single task, this indicates the task's ID
+
+  EOS
+
+  example <<-EOS
+  GET /api/v1/notifications.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+  [
+      {
+          "message": "There is one late event recap",
+          "level": "red",
+          "icon": "icon-notification-event",
+          "type": "event_recaps_late"
+      },
+      {
+          "message": "You have one late task",
+          "level": "red",
+          "icon": "icon-notification-task",
+          "type": "user_tasks_late"
+      },
+      {
+          "message": "You have a new event",
+          "level": "grey",
+          "icon": "icon-notification-event",
+          "type": "new_event",
+          "event_id": 5262
+      },
+      {
+          "message": "You have a new campaign",
+          "level": "grey",
+          "icon": "icon-notification-campaign",
+          "type": "new_campaign",
+          "campaign_id": 31
+      },
+      {
+          "message": "You have been assigned a task: Pick up t-shirts",
+          "level": "grey",
+          "icon": "icon-notification-task",
+          "type": "new_task",
+          "task_id": 187
+      }
+  ]
+  EOS
+  def notifications
+    if current_user.present?
+      notifications = notifications_for_company_user(current_company_user).map{|n| n.delete(:url); n.delete(:unread); n }
+
+      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      respond_to do |format|
+        format.json {
+          render :status => 200,
+                 :json => notifications
+        }
+        format.xml {
+          render :status => 200,
+                 :xml => notifications.to_xml(root: 'notifications')
+        }
+      end
+    else
+      failure
+    end
+  end
+
+
   api :GET, '/api/v1/permissions', "Get a list of the user's permissions"
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   example <<-EOS
-    GET /api/v1/permissions?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/permissions.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
 
     ['events', 'events_create', 'venues', 'tasks']
   EOS

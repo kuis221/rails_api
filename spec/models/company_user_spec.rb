@@ -84,32 +84,45 @@ describe CompanyUser do
   end
 
   describe "#accessible_campaign_ids" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1) }
-    let(:brand)     { FactoryGirl.create(:brand) }
-    let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:portfolio) { FactoryGirl.create(:brand_portfolio) }
+    describe "as a non admin user" do
+      let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+      let(:brand)     { FactoryGirl.create(:brand) }
+      let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
+      let(:portfolio) { FactoryGirl.create(:brand_portfolio) }
 
-    it "should return the ids of campaigns assigend to the user" do
-      user.campaigns << campaign
-      user.accessible_campaign_ids.should == [campaign.id]
+      it "should return the ids of campaigns assigend to the user" do
+        user.campaigns << campaign
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand assigend to the user" do
+        campaign.brands << brand
+        user.brands << brand
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand assigend to the user" do
+        campaign.brands << brand
+        user.brands << brand
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand portfolio assigned to the user" do
+        campaign.brand_portfolios << portfolio
+        user.brand_portfolios << portfolio
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+    end
+    describe "as an admin user" do
+      let(:user)      { FactoryGirl.create(:company_user, company: FactoryGirl.create(:company)) }
+
+      it "should return the ids of campaigns assigend to the user" do
+        campaigns = FactoryGirl.create_list(:campaign, 3, company: user.company)
+        other_campaigns = FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
+        expect(user.accessible_campaign_ids).to match_array campaigns.map(&:id)
+      end
+
     end
 
-    it "should return the ids of campaigns of a brand assigend to the user" do
-      campaign.brands << brand
-      user.brands << brand
-      user.accessible_campaign_ids.should == [campaign.id]
-    end
-
-    it "should return the ids of campaigns of a brand assigend to the user" do
-      campaign.brands << brand
-      user.brands << brand
-      user.accessible_campaign_ids.should == [campaign.id]
-    end
-
-    it "should return the ids of campaigns of a brand portfolio assigned to the user" do
-      campaign.brand_portfolios << portfolio
-      user.brand_portfolios << portfolio
-      user.accessible_campaign_ids.should == [campaign.id]
-    end
   end
 end

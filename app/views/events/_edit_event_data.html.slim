@@ -1,10 +1,10 @@
 - allow_cancel ||= false
 #event-results-form
-  #event-results-form.details_box.box_event_data
+  .details_box.box_event_data
     h3 EVENT DATA
 
     - fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
-    = simple_form_for(resource, remote: true) do |f|
+    = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
       = f.error_notification
 
       = f.input :summary
@@ -41,19 +41,18 @@ javascript:
       var progressClass = (total == 100 ? 'progress-success' : (total < 100 ? 'progress-info' : 'progress-danger'))
       var textClass = (total == 100 ? 'text-success' : (total < 100 ? 'text-info' : 'text-error'))
       var progressBarItem = $('#progress-bar-field-' + segmentFieldId)
+      var progressBarError = $('#progress-error-' + segmentFieldId)
 
       progressBarItem
           .removeClass('text-success text-error text-info').addClass(textClass)
           .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
           .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
-      if (total > 100) {
-        progressBarItem.before('<div id="progress-error-' + segmentFieldId + '" class="control-group error"><span class="help-inline">A field could not exceed 100%</span></div>')
-      } else {
-        progressBarItem.prev('div#progress-error-' + segmentFieldId).remove().end()
-      }
 
-      $("#total-field-" + segmentFieldId).val(total)
+      $("#total-field-" + segmentFieldId).val(total ? total : '')
+      if (e.keyCode) {
+        $("#total-field-" + segmentFieldId).valid()
+      }
     })
     $('.segment-field').keyup();
   });

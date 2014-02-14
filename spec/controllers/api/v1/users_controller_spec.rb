@@ -69,6 +69,37 @@ describe Api::V1::UsersController do
     end
   end
 
+  describe "GET 'show'" do
+    let(:the_user){ FactoryGirl.create(:company_user, company_id: company.to_param) }
+    it "should return the user's info" do
+      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, format: :json
+      assigns(:user).should == the_user
+
+      response.should be_success
+      result = JSON.parse(response.body)
+      result.should == {
+        "id" => the_user.id,
+        "first_name" => the_user.first_name,
+        "last_name" => the_user.last_name,
+        "full_name" => the_user.full_name,
+        "email" => the_user.email,
+        "phone_number" => the_user.phone_number,
+        "street_address" => the_user.street_address,
+        "unit_number"=> the_user.unit_number,
+        "city" => the_user.city,
+        "state" => the_user.state,
+        "zip_code" => the_user.zip_code,
+        "time_zone"=> the_user.time_zone,
+        "country" => the_user.country_name,
+        "role" => {
+            "id" => the_user.role.id,
+            "name" => the_user.role.name
+        },
+        "teams" => []
+      }
+    end
+  end
+
   describe "PUT 'update'" do
     let(:the_user){ FactoryGirl.create(:company_user, company_id: company.to_param) }
     it "should update the user profile attributes" do
@@ -174,6 +205,25 @@ describe Api::V1::UsersController do
     end
   end
 
+  describe "GET 'notifications'" do
+    let(:company) { user.company_users.first.company }
+    it "should return failure for invalid authorization token" do
+      get 'notifications', auth_token: 'XXXXXXXXXXXXXXXX',company_id: company.id, format: :json
+      response.response_code.should == 401
+      result = JSON.parse(response.body)
+      result['success'].should == false
+      result['info'].should == 'Invalid auth token'
+      result['data'].should be_empty
+    end
+    it "should return empty list if the user has no notifications" do
+      get 'notifications', auth_token: user.authentication_token, company_id: company.id, format: :json
+
+      response.should be_success
+      notifications = JSON.parse(response.body)
+      notifications.should =~ []
+    end
+  end
+
   describe "GET 'permissions'" do
     let(:company) { user.company_users.first.company }
     it "should return failure for invalid authorization token" do
@@ -208,7 +258,7 @@ describe Api::V1::UsersController do
     end
 
     it "should return empty list if the user has no permissions" do
-      role = FactoryGirl.create(:non_admin_role, company: company,)
+      role = FactoryGirl.create(:non_admin_role, company: company)
       non_admin = FactoryGirl.create(:user, company_users: [FactoryGirl.create(:company_user, company: company, role: role)])
 
       get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json

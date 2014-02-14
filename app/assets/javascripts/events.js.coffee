@@ -14,10 +14,27 @@ jQuery ->
     e.preventDefault();
     return false
 
+
+  $('.submit-event-data-link').on 'ajax:before.event_data', () ->
+    link = $(this)
+    form = $('form.event-data-form')
+    if form.length
+      if form.valid()
+        $(document).off('ajaxComplete.event_data').on 'ajaxComplete.event_data', (event, xhr, settings) ->
+          $(document).off('ajaxComplete.event_data')
+          $('.submit-event-data-link').off('ajax:before.event_data')
+          link.trigger('click')
+        form.submit()
+      false
+    else
+      true
+
+
   mapIsVisible = false
   calendarIsVisible = false
   calendarCreated = false
   # EVENTS INDEX
+
 
   $('#toggle-events-view a').on 'click', ->
     $('#toggle-events-view a').removeClass 'active'

@@ -1,10 +1,16 @@
 - remote ||= false
 = simple_form_for(@campaign, remote: remote || false) do |f|
-  = f.error_notification
 
   .form-inputs
     .row-fluid
       = f.input :name, input_html: {class: 'input-xlarge'}
+
+    .row-fluid
+      .span12
+        .span6
+          = f.input :start_date, :as => :date_picker
+        .span6
+          = f.input :end_date, :as => :date_picker
 
     .row-fluid
       = f.input :brands_list

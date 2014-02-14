@@ -25,7 +25,7 @@ feature "Events", js: true, search: true do
           FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
         ]}
       scenario "should display a list of events" do
-        Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
+        Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
           visit events_path
@@ -88,7 +88,7 @@ feature "Events", js: true, search: true do
       end
 
       scenario "should allow allow filter events by date range" do
-        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
         tomorrow = today+1.day
         Timecop.travel(today) do
           FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -128,7 +128,7 @@ feature "Events", js: true, search: true do
 
           expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
 
-          select_filter_calendar_day("26")
+          select_filter_calendar_day("18")
           find('#collection-list-filters').should have_content('Another Campaign April 03')
           within("ul#events-list") do
             expect(page).to have_no_content('Another Campaign April 03')
@@ -137,7 +137,7 @@ feature "Events", js: true, search: true do
 
           expect(page).to have_content("1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012")
 
-          select_filter_calendar_day("26", "27")
+          select_filter_calendar_day("18", "19")
           within("ul#events-list") do
             expect(page).to have_content('Another Campaign April 03')
             expect(page).to have_content('Campaign FY2012')
@@ -148,7 +148,7 @@ feature "Events", js: true, search: true do
       end
 
       scenario "Filters are preserved upon navigation" do
-        today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+        today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
         tomorrow = today+1.day
         Timecop.travel(today) do
           ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -162,7 +162,7 @@ feature "Events", js: true, search: true do
           visit events_path
 
           filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-          select_filter_calendar_day("26")
+          select_filter_calendar_day("18")
 
           within("ul#events-list") do
             click_js_link('Event Details')
@@ -244,7 +244,7 @@ feature "Events", js: true, search: true do
       end
       feature "filters" do
         scenario "Users must be able to filter on all brands they have permissions to access " do
-          today = Time.zone.local(Time.now.year, Time.now.month, 26, 12, 00)
+          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today+1.day
           Timecop.travel(today) do
             ev1 = FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: @company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
@@ -818,6 +818,103 @@ feature "Events", js: true, search: true do
 
       expect(page).to have_content('Edited summary content')
     end
+
+    scenario "should allow 0 for not required percentage fields" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage',
+        kpis_segments: [ FactoryGirl.create(:kpis_segment, text: 'Male'),
+                         FactoryGirl.create(:kpis_segment, text: 'Female') ] )
+
+      campaign.add_kpi kpi
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_button "Save"
+
+      expect(page).to have_no_content("The sum of the segments should be 100%")
+    end
+
+    scenario "should NOT allow 0 or less for the sum of required percentage fields" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage',
+        kpis_segments: [ FactoryGirl.create(:kpis_segment, text: 'Male'),
+                         FactoryGirl.create(:kpis_segment, text: 'Female') ] )
+
+      field = campaign.add_kpi(kpi)
+      field.options[:required] = 'true'
+      field.save
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_button "Save"
+
+      expect(find_field('Male')).to have_error('This field is required.')
+      expect(find_field('Female')).to have_error('This field is required.')
+
+      fill_in('Male', with: 35)
+      fill_in('Female', with: 30)
+      expect(page).to have_content("Field should sum 100%")
+
+      within "#event-results-form" do
+        expect(page).to have_content('65%')
+      end
+
+      fill_in('Female', with: 65)
+
+      click_js_button "Save"
+
+      expect(page).to have_no_content("Field should sum 100%")
+    end
+
+    scenario "the entered data should be saved automatically when submitting the event recap" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
+
+      campaign.add_kpi kpi
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      fill_in 'Test Field', with: '98765'
+
+      click_js_link "submit"
+
+      expect(page).to have_content("Your post event report has been submitted for approval.")
+      expect(page).to have_content("98765 TEST FIELD")
+    end
+
+    scenario "should not submit the event data if there are validation errors" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
+
+      field = campaign.add_kpi(kpi)
+      field.options[:required] = 'true'
+      field.save
+
+      event = FactoryGirl.create(:event,
+        start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+        campaign: campaign )
+
+      visit event_path(event)
+
+      click_js_link "submit"
+
+      expect(find_field('Test Field')).to have_error('This field is required.')
+
+      expect(page).to have_no_content("Your post event report has been submitted for approval.")
+    end
+
   end
 
 end

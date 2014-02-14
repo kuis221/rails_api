@@ -17,15 +17,16 @@
         h2= field.name
         = render partial: 'event_data', locals: {fields: field.fields, f: f, current_module: "section"}
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
-        .control-group
+        .control-group.segment-label
           label.field-label
             b= field.name
-          = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'
-        - if field.field_type == 'percentage'
-          .percentage-progress-bar id="progress-bar-field-#{field.id}"
-            .progress.progress-info
-              .bar
-            .counter
+          = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'+ (field.is_required? ? '' : ' optional')
+          - if field.field_type == 'percentage'
+            span.help-inline.error.segment-error-label for="total-field-#{field.id}" id="progress-error-#{field.id}"
+            .percentage-progress-bar id="progress-bar-field-#{field.id}"
+              .progress.progress-info
+                .bar
+              .counter
         = render partial: 'event_data', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
       - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module)
         = ff.hidden_field :form_field_id

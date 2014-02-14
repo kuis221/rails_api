@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: company_users
+#
+#  id               :integer          not null, primary key
+#  company_id       :integer
+#  user_id          :integer
+#  role_id          :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  active           :boolean          default(TRUE)
+#  last_activity_at :datetime
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do

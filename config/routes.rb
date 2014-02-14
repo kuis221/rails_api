@@ -9,30 +9,38 @@ Brandscopic::Application.routes.draw do
         delete 'sessions' => 'sessions#destroy'
 
         get '/companies' => 'users#companies'
-        resources :users, only: [:index, :update] do
+        resources :users, only: [:index, :update, :show] do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
+            get :notifications
           end
         end
 
         resources :events, only: [:index, :show, :create, :update] do
-          resources :photos, only: [:index, :create, :update]
-          resources :event_expenses, only: [:index, :create]
+          resources :photos, only: [:index, :create, :update] do
+            get :form, on: :collection
+          end
+          resources :event_expenses, only: [:index, :create] do
+            get :form, on: :collection
+          end
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
-          resources :surveys, only: [:index, :create]
-          get :autocomplete, on: :collection
+          resources :surveys,  only: [:index, :create]
+          get :autocomplete,   on: :collection
           member do
             get :results
             get :members
             post :members, to: "events#add_member"
+            delete :members, to: "events#delete_member"
             get :assignable_members
             get :contacts
             post :contacts, to: "events#add_contact"
+            delete :contacts, to: "events#delete_contact"
             get :assignable_contacts
           end
         end
+
         # To allow CORS for any API action
         match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
 
@@ -40,8 +48,9 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [:index, :show] do
+        resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
+          get :types, on: :collection
           member do
             get :photos
             get :comments
