@@ -21,7 +21,7 @@
       .clearfix
 
     - dashboard_accessible_campaigns.each do |campaign|
-      - if campaign_overview_data[campaign.id].present?
+      - if campaign_overview_data[campaign.id].present? || campaign.in_date_range?(Date.today.beginning_of_month, Date.today.beginning_of_month+4.months)
         .row-fluid
           .span4.campaign-name
             span= link_to campaign.name, events_path(start_date: '', campaign: [campaign.id], status: ['Active'])

@@ -146,6 +146,10 @@ class Campaign < ActiveRecord::Base
     start_date.present? && end_date.present?
   end
 
+  def in_date_range?(s, e)
+    has_date_range? && (e >= start_date && s < end_date)
+  end
+
   def staff
     (staff_users+teams).sort_by &:name
   end
