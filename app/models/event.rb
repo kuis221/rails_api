@@ -743,8 +743,8 @@ class Event < ActiveRecord::Base
     def set_event_timezone
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
-        self.local_start_at = Timeliness.parse(read_attribute(:start_at).in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone) if read_attribute(:start_at)
-        self.local_end_at = Timeliness.parse(read_attribute(:end_at).in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone) unless read_attribute(:end_at).nil?
+        self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
+        self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
       end
     end
 

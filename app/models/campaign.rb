@@ -342,6 +342,20 @@ class Campaign < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def promo_hours_graph_data
+      q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+          select('campaigns.id, campaigns.name, goals.value as goal,\'PROMO HOURS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
+          order('campaigns.name, campaigns.id').group('1, 2, 3, 4, 5').to_sql.gsub(/'/,"''")
+      promo_hours_data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+
+      q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+          select('campaigns.id, campaigns.name, goals.value as goal,\'EVENTS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, COUNT(events.id)').
+          order('campaigns.name, campaigns.id').group('1, 2, 3, 4, 5').to_sql.gsub(/'/,"''")
+      events_data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+
+      (promo_hours_data + events_data).sort{|a, b| a['name'] <=> b['name'] }
+    end
   end
 
 end

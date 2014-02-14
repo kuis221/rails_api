@@ -80,20 +80,33 @@ module DashboardHelper
     end
   end
 
-  def kpi_trend_chart_bar(kpi)
-    unless kpi.nil?
-      totals = kpi_trends_stats(kpi)
-      content_tag(:div, class: 'chart-bar') do
-        content_tag(:div, '', class: 'today-line-indicator has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:executed]) : number_with_delimiter(totals[:executed])} executed", style: "left: #{totals[:executed_percentage]}%") +
-        content_tag(:div, class: 'progress') do
-          content_tag(:div, class: 'bar has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:completed]) : number_with_delimiter(totals[:completed])} completed", style: "width: #{[100, totals[:completed_percentage]].min}%;") do
-            content_tag(:span, "#{totals[:completed_percentage]}%", class: :percentage)
-          end +
-          content_tag(:div, class: 'bar bar-remaining has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:remaining]) : number_with_delimiter(totals[:remaining])} remaining", style: "width: #{totals[:remaining_percentage]}%;") do
-            content_tag(:span, "#{totals[:remaining_percentage]}%", class: :percentage)
-          end
-        end +
-        content_tag(:span, kpi.currency? ? number_to_currency(totals[:goal]) : number_with_delimiter(totals[:goal]), class: :total)
+  def campaing_promo_hours_chart(campaign)
+    goal = campaign['goal'].to_f
+    executed = campaign['executed'].to_f
+    executed_percentage = (executed.to_f*100/goal).to_i rescue 0
+    executed_percentage = [100, executed_percentage].min
+    scheduled = campaign['scheduled'].to_f
+    scheduled_percentage = (scheduled*100/goal).to_i rescue 0
+    scheduled_percentage = [scheduled_percentage, (100-executed_percentage)].min
+    remaining_percentage = 100-executed_percentage-scheduled_percentage
+    remaining = [0, goal-(scheduled+executed)].max
+    content_tag(:div, class: 'chart-bar') do
+      content_tag(:div, '', class: 'today-line-indicator', style: "left: 30%") +
+      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{executed_percentage}%") +
+      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{executed_percentage+scheduled_percentage}%") +
+      content_tag(:div, '', class: 'bar-indicator goal-indicator', style: "left: 100%") +
+      content_tag(:div, class: 'progress') do
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, executed_percentage].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{scheduled_percentage}%;") +
+        content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{remaining_percentage}%;")
+      end +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(executed, strip_insignificant_zeros: true)}</b> EXECUTED".html_safe), class: 'executed-label', style: "margin-left: #{executed_percentage}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(scheduled, strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-scheduled_percentage-executed_percentage}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(goal, strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
+      content_tag(:div, class: 'remaining-label') do
+        content_tag(:b, number_with_precision(remaining, strip_insignificant_zeros: true)) +
+        content_tag(:span, campaign['kpi'], class: 'kpi-name') +
+        content_tag(:span, 'REMAINING')
       end
     end
   end
@@ -173,7 +186,6 @@ module DashboardHelper
       start_date = Date.today.beginning_of_month
       start_date = start_date.next_week unless start_date.wday == 1
       start_week_number = start_date.strftime("%U").to_i+1
-      Rails.logger.debug "\n\n\n\n"
       Event.active.between_dates(start_date.beginning_of_day, (Date.today.beginning_of_month+4.months).end_of_month.end_of_day).
             accessible_by_user(current_company_user).
             where(campaign_id: dashboard_accessible_campaigns.map(&:id)).
@@ -185,13 +197,17 @@ module DashboardHelper
             data[event.campaign_id][week.to_i]=true if start_week_number <= week.to_i
           end
       end
-      Rails.logger.debug "\n\n\n\n"
       data
     end
   end
 
   def dashboard_accessible_campaigns
     @dashboard_accessible_campaigns ||= current_company.campaigns.active.accessible_by_user(current_company_user).order(:name)
+  end
+
+  # Returns a list of campaigns accessible for the current with promo hours goal
+  def dashboard_promo_hours_graph_data
+    Campaign.active.accessible_by_user(current_company_user).promo_hours_graph_data
   end
 
   def campaing_cell_clasess(campaign, week)

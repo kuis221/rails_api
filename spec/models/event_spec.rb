@@ -896,9 +896,11 @@ describe Event do
       Time.use_zone('America/New_York') do
         event = FactoryGirl.create(:event)
         event.timezone.should == "America/New_York"
+        expect(event.local_start_at.utc.strftime('%Y-%m-%d %H:%M:%S')).to eql event.read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S')
       end
       Time.use_zone("America/Guatemala") do
         event = Event.last
+        event.local_start_at
         event.start_date = '01/22/2019'
         event.valid?  # this will trigger the after_validation call
         event.timezone.should == "America/Guatemala"

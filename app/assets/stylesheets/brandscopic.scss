@@ -238,7 +238,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		background-image: none !important;
 		box-shadow: none !important;
 		&.bar-success {
-			background-color: #91BF43 !important;
+			background-color: $green !important;
 		}
 		&.bar-warning {
 			background-color: #faa732 !important;

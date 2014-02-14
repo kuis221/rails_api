@@ -125,35 +125,35 @@
 
 
 	#kpis-trends-bars {
-		max-width: 400px;
-		span.name {
-			width: 90px;
-			float: left;
-			color: $venues_blue;
+		margin-right: 350px;
+		.name {
+			display: inline-block;
+			margin-right: 20px;
 		}
-
 		.container-kpi-trend{
 			margin-top: 50px;
+			margin-left: 20px;
 		}
 
 		.kpi-trend {
-			height: 44px;
+			margin-bottom: 30px;
 			overflow: visible;
 
-			span.total {
+			.goal-label {
+				white-space: nowrap;
 				position: absolute;
-				width: 100px;
-				right: -110px;
-				top: 2px;
-				color: $venues_blue;
+				right: 0;
+				top: -30px;
+				div {
+					margin-left: 50%;
+				}
 			}
 		}
 
 		.chart-bar {
 			position: relative;
 			display: inline-block;
-			width: 70%;
-			max-width: 300px;
+			width: 100%;
 			.progress {
 				width: auto !important;
 				height: 25px;
@@ -166,7 +166,9 @@
 						line-height: 26px
 					}
 				}
-
+				.bar-executed {
+					background-color: $green !important;
+				}
 				.bar-remaining {
 					color: $venues_blue;
 				}
@@ -175,11 +177,55 @@
 			.today-line-indicator {
 				position: absolute;
 				width: 2px;
-				background-color: #347a99;
+				opacity: 0.6;
+				background-color: $grey_three;
 				height: 30px;
 				top: -3px;
-				border:1px solid #347a99;
+				border:1px solid $grey_three;
 				border-radius: 2px;
+			}
+			.bar-indicator {
+				position: absolute;
+				width: 3px;
+				background-color: $grey_three;
+				height: 35px;
+				&.goal-indicator{
+					top: -10px;
+				}
+			}
+			.executed-label {
+				white-space: nowrap;
+				display: inline-block;
+				div {
+					margin-left: -50%;
+				}
+			}
+			.scheduled-label {
+				white-space: nowrap;
+				display: inline-block;
+				text-align: right;
+				margin-left: -50%;
+				div {
+					margin-right: -50%;
+				}
+			}
+			.remaining-label {
+				position: absolute;
+				right: -350px;
+				width: 300px;
+				top: 0;
+				b {
+					display: inline-block;
+					height: 40px;
+					font-size: 20px;
+					float: left;
+					width: 150px;
+					text-align: right;
+					margin-right: 10px
+				}
+				span {
+					display: block;
+				}
 			}
 		}
 	}
