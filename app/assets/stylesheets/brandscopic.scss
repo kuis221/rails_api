@@ -5927,14 +5927,25 @@ ul#reports-list {
 	box-shadow:none;
 	left: 37%;
 	width:auto;
-	.panel{
+	.gallery-modal-inner{
+		position: relative;
+	}
+	.panel-bg, .panel {
+		width: 320px;
+		padding: 35px 20px;
 		background-color: $header;
+	}
+	.panel-bg {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		top: 0;
+	}
+	.panel{
 		color: white;
 		display: inline-block;
 		float: right;
-		height: 400px;
-		padding: 35px 20px;
-		width: 320px;
+		min-height: 400px;
 		.close{
 			color: white;
 			top: 7px;

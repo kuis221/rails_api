@@ -4,7 +4,8 @@ $.widget 'nmk.photoGallery', {
 		month: null,
 		year: null,
 		eventsUrl: null,
-		renderMonthDay: null
+		renderMonthDay: null,
+		includeTags: false
 	},
 
 	_create: () ->
@@ -25,7 +26,8 @@ $.widget 'nmk.photoGallery', {
 		@setTitle $image.data('title')
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
-		@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
+		if @options.includeTags
+			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
 
 	setTitle: (title) ->
 		@title.html title
@@ -87,14 +89,16 @@ $.widget 'nmk.photoGallery', {
 		@date = $('<div class="calendar-data">')
 
 		@gallery = $('<div class="gallery-modal modal hide fade">').append(
-						$('<div class="panel">').
-							append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
-							append(
-								$('<div class="description">').append( @title ).append( @date ).append( @address ),
-								$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') )
-								$('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">'))
-							),
-						$('<div class="slider">').append( @carousel = @_createCarousel() )
+						$('<div class="gallery-modal-inner">').append($('<div class="panel-bg">')).append(
+							$('<div class="panel">').
+								append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
+								append(
+									$('<div class="description">').append( @title ).append( @date ).append( @address ),
+									$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') )
+									(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
+								),
+							$('<div class="slider">').append( @carousel = @_createCarousel() )
+						).append($('<div class="clearfix">'))
 					)
 
 		@gallery.insertAfter @element
