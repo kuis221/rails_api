@@ -16,7 +16,7 @@
           .row.month-weeks class="weeks-#{weeks.count}"
             - weeks.each do |week|
               .week
-                = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes)) do
+                = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), status: ['Active']) do
                   span= week.strftime('%-m/%e')
       .clearfix
 
@@ -24,7 +24,7 @@
       - if campaign_overview_data[campaign.id].present?
         .row-fluid
           .span4.campaign-name
-            span= link_to campaign.name, events_path(start_date: '', campaign: [campaign.id])
+            span= link_to campaign.name, events_path(start_date: '', campaign: [campaign.id], status: ['Active'])
           - (0..3).each do |i|
             .span2.month class="month-#{i+1}"
               - date = (Date.today.beginning_of_month+i.months)
@@ -32,7 +32,7 @@
               .row.month-weeks class="weeks-#{weeks.count}"
                 - weeks.each do |week|
                   .week class="#{campaing_cell_clasess(campaign, week)}"
-                    = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), campaign: [campaign.id]) do
+                    = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), campaign: [campaign.id], status: ['Active']) do
                       span.week-marker
       
     .clearfix

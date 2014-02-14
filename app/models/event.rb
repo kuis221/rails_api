@@ -83,7 +83,7 @@ class Event < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
 
-  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select locations_places.place_id FROM locations_places where id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
   track_who_does_it
 
