@@ -59,8 +59,6 @@ feature "Venues Section", js: true, search: true do
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
 
-      Sunspot.commit
-
       visit venue_path(venue)
 
       expect(page).to_not have_content('Activity Type #1')

@@ -338,7 +338,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :brands, only: [:index]
+  resources :brands do
+    resources :marques, only: [:index]
+  end
 
   resources :areas do
     get :autocomplete, on: :collection

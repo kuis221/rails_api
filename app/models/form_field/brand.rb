@@ -14,8 +14,8 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Number < FormField
+class FormField::Brand < FormField
   def field_options(result)
-    {as: :string, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, required: (self.required? ? 'required' : nil)}}
+    {as: :select, collection: ::Brand.for_company_campaigns(Company.current), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled activity-brand-list'), required: (self.required? ? 'required' : nil)}}
   end
 end

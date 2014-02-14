@@ -44,12 +44,6 @@
         #venue-areas.row-fluid
           = render partial: 'areas', locals: {areas: resource.place.areas}
 
-  - if resource.persisted?
-    #venue-activities.details_box
-      h3 ACTIVITIES
-      .tools-icons
-        = link_to '', new_venue_activity_path(resource), remote: true, class: 'add-activity-venue icon-plus-sign', title: 'New Activity'
-
 - if resource.events_count.present? && resource.events_count > 0
   - if can?(:view_score, resource) || can?(:view_kpis, resource)
     .details_box
@@ -120,6 +114,14 @@
     - if resource.persisted?
       #venue-events-container
         = render partial: 'upcoming_events'
+
+- if resource.persisted?
+  #venue-activities.details_box
+    h3 ACTIVITIES
+    - if can?(:create, Activity)
+      .pull-left
+        = link_to 'Create', new_venue_activity_path(resource), remote: true, class: 'btn btn-primary', title: 'New Activity'
+
 
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box

@@ -93,6 +93,12 @@ class Ability
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
 
+      can :index, Brand
+
+      can :index, Marque
+
+      can :form, Activity if can?(:create, Activity)
+
       can :places, Campaign do |campaign|
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end

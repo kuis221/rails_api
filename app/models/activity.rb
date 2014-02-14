@@ -6,6 +6,7 @@
 #  activity_type_id :integer
 #  activitable_id   :integer
 #  activitable_type :string(255)
+#  campaign_id      :integer
 #  active           :boolean          default(TRUE)
 #  company_user_id  :integer
 #  activity_date    :datetime
@@ -17,6 +18,7 @@ class Activity < ActiveRecord::Base
   belongs_to :activity_type
   belongs_to :activitable, polymorphic: true
   belongs_to :company_user
+  belongs_to :campaign
 
   has_many :results, class_name: 'ActivityResult'
 
@@ -27,13 +29,24 @@ class Activity < ActiveRecord::Base
   validates :activity_date, presence: true
   validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
+  after_initialize :set_default_values
+
   delegate :company_id, to: :activitable
 
   accepts_nested_attributes_for :results
 
   def results_for_type
     activity_type.form_fields.map do |field|
-      results.select{|r| (r.form_field_id) == field.id}.first || results.build({form_field_id: field.id})
+      results.detect{|r| r.form_field_id == field.id} || results.build({form_field_id: field.id})
     end
   end
+
+  private
+    # Sets the default date (today) and user for new records
+    def set_default_values
+      if new_record?
+        self.activity_date ||= Date.today
+        self.company_user_id ||= User.current.current_company_user.id if User.current.present?
+      end
+    end
 end
