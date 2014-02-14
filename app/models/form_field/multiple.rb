@@ -14,8 +14,8 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Number < FormField
+class FormField::Multiple < FormField
   def field_options(result)
-    {as: :string, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, required: (self.required? ? 'required' : nil)}}
+    {as: :select, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: 'activity-' + self.name.downcase + '-list', multiple: true, required: (self.required? ? 'required' : nil)}}
   end
 end

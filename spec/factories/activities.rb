@@ -6,6 +6,7 @@
 #  activity_type_id :integer
 #  activitable_id   :integer
 #  activitable_type :string(255)
+#  campaign_id      :integer
 #  active           :boolean          default(TRUE)
 #  company_user_id  :integer
 #  activity_date    :datetime

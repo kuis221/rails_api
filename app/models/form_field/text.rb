@@ -16,6 +16,6 @@
 
 class FormField::Text < FormField
   def field_options(result)
-    {as: :string, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required == true ? 'required' : nil)}}
+    {as: :string, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, required: (self.required? ? 'required' : nil)}}
   end
 end

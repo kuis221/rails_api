@@ -3,6 +3,7 @@ class CreateActivities < ActiveRecord::Migration
     create_table :activities do |t|
       t.references :activity_type
       t.references :activitable, polymorphic: true
+      t.references :campaign
       t.boolean :active, default: true
       t.references :company_user
       t.datetime :activity_date

@@ -5,9 +5,14 @@
 
     .form-inputs
       .large-inputs
-        = f.input :activity_type_id, collection: current_company.activity_types.active, input_html: {class: 'chosen-enabled'}
+        = f.input :activity_type_id, collection: current_company.activity_types.active.order(:name), input_html: {class: 'chosen-enabled'}
 
     - if resource.activity_type.present?
+      .large-inputs
+        - if parent.is_a?(Venue)
+          = f.input :campaign_id, collection: current_company.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
+        - else
+          = f.input :campaign_id, as: :hidden, wrapper: false, value: parent.campaign_id
       - resource.results_for_type.each do |result|
         = f.simple_fields_for :results, result do |rf|
           .large-inputs
@@ -33,3 +38,37 @@ javascript:
       $('#form-container').load("#{url_for([:form, parent, :activities])}?activity[activity_type_id]="+$(this).val());
     }
   });
+
+  $('#activity_campaign_id').change(function() {
+    brands = $('.activity-brand-list');
+    brands.empty();
+    if (selectedOption = this.value) {
+      $.get('/campaigns/'+selectedOption+'/brands.json', function(options) {
+        for(var i in options) {
+            brands.append($("<option/>", {
+                value: options[i].id,
+                text: options[i].name
+            }));
+        }
+        brands.trigger('liszt:updated')
+      });
+    }
+  });
+
+  $('.activity-brand-list').change(function() {
+    marques = $('select.activity-marque-list');
+    marques.empty();
+    if (selectedOption = this.value) {
+      $.get('/brands/'+selectedOption+'/marques.json', function(options) {
+        for(var i in options) {
+            marques.append($("<option/>", {
+                value: options[i].id,
+                text: options[i].name
+            }));
+        }
+        marques.select2();
+      });
+    }
+  });
+
+  $('select.activity-marque-list').select2();

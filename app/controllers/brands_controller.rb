@@ -19,4 +19,8 @@ class BrandsController < FilteredController
     def permitted_params
       params.permit(brand: [:name])[:brand]
     end
+
+    def authorize_actions
+      authorize! :index, resource_class
+    end
 end

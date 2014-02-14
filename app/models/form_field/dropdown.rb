@@ -16,6 +16,6 @@
 
 class FormField::Dropdown < FormField
   def field_options(result)
-    {as: :select, collection: self.options, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled'), required: (self.required == true ? 'required' : nil)}}
+    {as: :select, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled activity-' + self.name.downcase + '-list'), required: (self.required? ? 'required' : nil)}}
   end
 end
