@@ -16,8 +16,6 @@
 #  updated_at  :datetime
 #
 
-# For storing two numbers and calculating their sum (tab + tip)
-include ActionView::Helpers::NumberHelper
 class Metric::Tab < Metric
   TAB   = 0 # ew. constants :(
   TIP   = 1
@@ -25,7 +23,7 @@ class Metric::Tab < Metric
 
   def format_result(result)
     value = cast_value(result.value)
-    "tab #{number_to_currency value[TAB]} + tip #{number_to_currency value[TIP]} = #{number_to_currency value[TAB] + value[TIP]}"
+    "tab #{ActionController::Base.helpers.number_to_currency value[TAB]} + tip #{ActionController::Base.helpers.number_to_currency value[TIP]} = #{ActionController::Base.helpers.number_to_currency value[TAB] + value[TIP]}"
   end
   def format_total(total)
     number_to_currency(total)
@@ -59,7 +57,7 @@ class Metric::Tab < Metric
     else
       result.errors.add(:values, 'tab must be a number')
     end
-    
+
     if value_is_float?(values[TIP])
       result.errors.add(:values, 'tip cannot be negative') if values[TIP].to_f<0
     else

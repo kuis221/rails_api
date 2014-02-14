@@ -19,6 +19,7 @@ require 'open-uri'
 require 'json'
 
 class Legacy::Account < Legacy::Record
+  self.table_name = "legacy_accounts"
   has_many      :events
 
   has_many :data_migrations, as: :remote
@@ -40,21 +41,25 @@ class Legacy::Account < Legacy::Record
   end
 
   def find_place_on_api
-    place = nil
+    place = find_options_in_api(1).first
+  end
+
+  def find_options_in_api(max=5)
+    options = []
     if address.present?
-      address_txt = URI::encode("#{address.street_address}, #{address.city}, #{address.state}")
+      address_txt = URI::encode("#{address.street_address}, #{address.city}, #{address.state} #{address.postal_code}").strip
       result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if result['results'].count > 0
         location = result['results'].first['geometry']['location']
-        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: name, :radius => 1000)
+        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], name: name, :radius => 3000)
+        spots += Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: name, :radius => 1000) if spots.empty?
 
         if spots.any?
-          spot = spots.first
-          place = ::Place.load_by_place_id(spot.id, spot.reference)
+          options = spots.first(max).map { |spot| ::Place.load_by_place_id(spot.id, spot.reference) }
         end
       end
-      place
     end
+    options
   end
 
   def state_name

@@ -16,17 +16,18 @@ feature "Venues Section", js: true, search: true do
       campaign = FactoryGirl.create(:campaign, company: @company)
       venues = []
       with_resque do
-        event = FactoryGirl.create(:event, company: @company, campaign: campaign,
+        event = FactoryGirl.create(:event, campaign: campaign,
           place: FactoryGirl.create(:place, name: 'Bar Benito'),
           results: {impressions: 35, interactions: 65, samples: 15},
           expenses: [{name: 'Expense 1', amount: 1000}])
 
-        event = FactoryGirl.create(:event, company: @company, campaign: campaign,
+        event = FactoryGirl.create(:event, campaign: campaign,
           place: FactoryGirl.create(:place, name: 'Bar Camelas'),
           results: {impressions: 35, interactions: 65, samples: 15},
           expenses: [{name: 'Expense 1', amount: 2000}])
       end
 
+      Venue.reindex
       Sunspot.commit
 
       visit venues_path
@@ -45,6 +46,4 @@ feature "Venues Section", js: true, search: true do
       end
     end
   end
-
-
 end

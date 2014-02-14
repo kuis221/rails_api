@@ -29,7 +29,8 @@ describe Venue do
   it { should belong_to(:company) }
 
   describe "compute_stats" do
-    let(:venue) { FactoryGirl.create(:venue, company_id: 1, place: FactoryGirl.create(:place)) }
+    let(:company) { FactoryGirl.create(:company) }
+    let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place)) }
 
     it "return succeed if there are no events for this venue" do
       venue.compute_stats.should be_true
@@ -37,9 +38,9 @@ describe Venue do
 
     it "count the number of events for the company" do
       venue.save
-      e = FactoryGirl.create(:event, company_id: 1, place_id: venue.place_id, start_date: "01/23/2019", end_date: "01/23/2019", start_time: '8:00am', end_time: '11:00am')
-      FactoryGirl.create(:event, company_id: 1, place_id: FactoryGirl.create(:place).id) # Create another event for other place
-      FactoryGirl.create(:event, company_id: 2, place_id: venue.place_id) # Create another event for other company
+      e = FactoryGirl.create(:event, place_id: venue.place_id, company: company, start_date: "01/23/2019", end_date: "01/23/2019", start_time: '8:00am', end_time: '11:00am')
+      FactoryGirl.create(:event, company: company, place_id: FactoryGirl.create(:place).id) # Create another event for other place
+      FactoryGirl.create(:event, place_id: venue.place_id) # Create another event for other company
 
       venue.compute_stats
       venue.reload
@@ -61,6 +62,7 @@ describe Venue do
       place4 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.931795, longitude: -84.044348),
         avg_impressions_hour: 167, avg_impressions_cost: 142)
 
+      Venue.reindex
       Sunspot.commit
 
       place1.compute_scoring
@@ -86,13 +88,13 @@ describe Venue do
     end
 
     describe "#overall_graphs_data" do
-      let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
-      let(:venue) { FactoryGirl.create(:venue, company_id: 1, place: FactoryGirl.create(:place)) }
+      let(:campaign) { FactoryGirl.create(:campaign) }
+      let(:venue) { FactoryGirl.create(:venue, company_id: campaign.company_id, place: FactoryGirl.create(:place)) }
 
       it "should correctly count the amounts for :age, :gender and :ethnicity" do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, company_id: 1, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
           gender_male: 35,
           gender_female: 65,
@@ -121,10 +123,10 @@ describe Venue do
       it "should correctly distribute the promo hours for events happening in the same day" do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, company_id: 1, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event, impressions: 100)
 
-        event = FactoryGirl.create(:event, company_id: 1, campaign: campaign, place_id: venue.place_id, start_date: "01/24/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '10:00pm')
+        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/24/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '10:00pm')
         set_event_results(event, impressions: 50)
 
         data = venue.overall_graphs_data
@@ -141,7 +143,7 @@ describe Venue do
       it "should correctly distribute the promo hours for events happening in more than one day" do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, company_id: 1, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '03:00am')
+        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '03:00am')
         event.event_expenses.create(amount: 1000, name: 'Test expense')
         set_event_results(event, impressions: 100)
 

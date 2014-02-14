@@ -14,16 +14,17 @@ class Placeable < ActiveRecord::Base
 
   delegate :company_id, to: :placeable
 
-  after_create :update_area_denominators
-  before_destroy :update_area_denominators
+  after_create :update_associated_resources
+  before_destroy :update_associated_resources
 
-  protected
-    def update_area_denominators
-      if placeable.is_a?(Area)
-        placeable.send(:update_common_denominators)
-        placeable.campaign_ids.each do |id|
-          Rails.cache.delete("campaign_locations_#{id}")
-        end
-      end
+  def update_associated_resources
+    if placeable.is_a?(Area)
+      Area.update_common_denominators(placeable)
+    elsif placeable.is_a?(CompanyUser)
+      Rails.cache.delete("user_accessible_locations_#{placeable.id}")
+      Rails.cache.delete("user_accessible_places_#{placeable.id}")
+    elsif placeable.is_a?(Campaign)
+      Rails.cache.delete("campaign_locations_#{placeable.id}")
     end
+  end
 end

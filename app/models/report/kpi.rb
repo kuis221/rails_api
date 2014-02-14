@@ -2,18 +2,13 @@
 #
 # Table name: reports
 #
-#  id                :integer          not null, primary key
-#  type              :string(255)
-#  company_user_id   :integer
-#  params            :text
-#  aasm_state        :string(255)
-#  progress          :integer
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id            :integer          not null, primary key
+#  company_id    :integer
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 require 'report'
@@ -30,7 +25,7 @@ class Report::Kpi < Report
       total = campaigns.count
       start_year = the_month.year-1
       start_year += 1 unless the_month.month < 7
-      fytd_start = Date.new(start_year, Date::MONTHNAMES.index('July')).beginning_of_month
+      fytd_start = Date.new(start_year, Date::MONTHNAMES.index('July')).beginning_of_month.beginning_of_day
       fytd_end = Date.new(start_year+1, Date::MONTHNAMES.index('June')).end_of_month.end_of_day
 
       campaigns.find_each(batch_size: 10) do |campaign|
@@ -43,11 +38,11 @@ class Report::Kpi < Report
         places.each do |place|
           place_events = scoped_events.scoped_by_place_id(place)
           place_events_fytd = place_events.between_dates(fytd_start, fytd_end)
-          place_events_cm = place_events.between_dates(the_month.beginning_of_month, the_month.end_of_month)
+          place_events_cm = place_events.between_dates(the_month.beginning_of_month.beginning_of_day, the_month.end_of_month.end_of_day)
           csv << [
             place.td_linx_code, #TD Linx
             brands,         # Brand
-            nil,            # Date
+            the_month.to_formatted_s(:year_month),            # Date
             impressions = sum_results(place_events_cm, impressions_field),     # Cm # Consumer Impressions
             samples = sum_results(place_events_cm, sampled_field),             # Cm # Consumers Sampled
             impressions + samples,                                             # Cm Total Consumers
@@ -71,7 +66,7 @@ class Report::Kpi < Report
 
   def campaigns
     @campaigns ||= begin
-      campaigns = Campaign.accessible_by_user(company_user)
+      campaigns = Campaign.active.accessible_by_user(company_user)
       campaigns = campaigns.where(id: params[:campaign_id]) if params[:campaign_id].present? && params[:campaign_id].map(&:to_i).select{|id| id > 0 }.any?
       campaigns
     end

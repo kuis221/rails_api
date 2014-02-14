@@ -20,7 +20,7 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
   has_many :placeables, as: :placeable, inverse_of: :placeable #, after_add: :update_common_denominators, after_remove: :update_common_denominators
@@ -30,7 +30,7 @@ class Area < ActiveRecord::Base
 
   scope :active, lambda{ where(active: true) }
   scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
-
+  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.area_ids) }
   serialize :common_denominators
 
   before_save :initialize_common_denominators
@@ -50,11 +50,11 @@ class Area < ActiveRecord::Base
     integer :company_id
   end
 
-
+  # Returns a list of locations ids that are associated to the area
   def locations
-    @locations ||= begin
-      list_places = places.select{|p| !p.types.nil? && (p.types & ['sublocality', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
-      list_places.map{|place| [place.continent_name, place.country_name, place.state_name, place.city, (place.types.present? && place.types.include?('sublocality') ? place.name : nil)].compact.join('/') }.uniq
+    @locations ||= Rails.cache.fetch("area_locations_#{id}") do
+      Location.joins('INNER JOIN places ON places.location_id=locations.id').
+        where(places: {id: self.places, is_location: true}).group('locations.id')
     end
   end
 
@@ -66,11 +66,22 @@ class Area < ActiveRecord::Base
   end
 
   # If place is in /North America/United States/California/Los Angeles and the area
-  # par
+  # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
     if place.present?
-      political_location = Place.political_division(place).join('/')
-      locations.any?{|location| political_location.include?(location) }
+      political_location = Place.political_division(place).join('/').downcase
+      locations.any?{|location| political_location.include?(location.path) }
+    else
+      false
+    end
+  end
+
+  # True for "North America/United States/Texas" in ["North America/United States/Texas/Austin", "North America/United States/Texas/Bee Cave"
+  # False for "North America/United States/Chicago" in ["North America/United States/Texas/Austin", "North America/United States/Texas/Bee Cave"
+  def place_in_locations?(place)
+    if place.present?
+      political_location = Place.political_division(place).join('/').downcase
+      locations.any?{|location| location.path.include?(political_location) }
     else
       false
     end
@@ -108,6 +119,14 @@ class Area < ActiveRecord::Base
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
+
+    def update_common_denominators(area)
+      area.send(:update_common_denominators)
+      Rails.cache.delete("area_locations_#{area.id}")
+      area.campaign_ids.each do |id|
+        Rails.cache.delete("campaign_locations_#{id}")
       end
     end
   end

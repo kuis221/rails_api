@@ -28,7 +28,7 @@
           = 'TD Linx Code ' + resource.place.td_linx_code
       - if resource.opening_hours
         .time-data
-          = place_opening_hours(resource.opening_hours)
+          = place_opening_hours_formatted(resource.opening_hours)
       / .description-data
       /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
 
@@ -64,35 +64,27 @@
                   .live-stats
                     span= resource.events_count
                     = (resource.events_count == 1 ? " Event" : " Events")
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_with_delimiter(resource.promo_hours)
                     = (resource.promo_hours == 1 ? " Promo Hour" : " Promo Hours")
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_with_delimiter(resource.impressions)
                     = (resource.impressions == 1 ? " Impression" : " Impressions")
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_with_delimiter(resource.interactions)
                     = " Interactions"
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_with_delimiter(resource.sampled)
                     = " Sampled"
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                   .live-stats-2
                     span= number_with_delimiter(resource.avg_impressions.round)
                     = " Impressions/Event"
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_with_delimiter(resource.avg_impressions_hour.round)
                     = " Impressions/Promo Hour"
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
                     br>/
                     span= number_to_currency(resource.avg_impressions_cost, precision: 2)
                     = " Cost/Impression"
-                    span.sparkline data-sparkline="bar" data-values="0,#{30.times.map{ 3 + Random.rand(6) }.join(',')}"
 
       - if resource.persisted? && can?(:view_kpis, resource)
         #demographics.row-fluid
@@ -115,11 +107,11 @@
     h3 EVENTS
     - if can?(:show, Venue) && can?(:create, Event)
       .pull-left
-        - if resource.persisted? 
+        - if resource.persisted?
           = link_to 'Create', new_venue_event_path(resource), {remote: true, class: 'btn btn-primary', :id => 'new-event-btn'}
         - else
           = link_to 'Create', new_event_path(event: {place_reference: "#{resource.place.reference}||#{resource.place.place_id}"}, place_reference_display_name: "#{resource.place.name}, #{resource.place.city}, #{resource.place.state}"), {remote: true, class: 'btn btn-primary', :id => 'new-event-btn'}
-    - if resource.persisted? 
+    - if resource.persisted?
       #venue-events-container
         = render partial: 'upcoming_events'
 

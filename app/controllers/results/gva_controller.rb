@@ -11,7 +11,7 @@ class Results::GvaController < ApplicationController
 
   def report
     authorize_actions
-
+    # Yeah, I know!: TODO: refactor this to not send a list of event ids in the queries :s
     @events_scope = Event.where(id: filter_event_ids)
     if area
       @goals = area.goals.in(campaign)
@@ -20,7 +20,7 @@ class Results::GvaController < ApplicationController
     else
       @goals = campaign.goals.base
     end
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi).all
+    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi)
   end
 
   private
@@ -56,11 +56,10 @@ class Results::GvaController < ApplicationController
           submitted = status_facets.detect{|f| f.value == :submitted}.try(&:count) || 0
           executed  = status_facets.detect{|f| f.value == :executed}.try(&:count) || 0
           scheduled = status_facets.detect{|f| f.value == :scheduled}.try(&:count) || 0
-          stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed}
+          stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed - scheduled}
       end
       stats.sort
     end
-
 
     # Returns an array of areas/places with the statistics by event status compared to the area or place's goals
     def event_status_stats_for_promo_hours
@@ -76,7 +75,7 @@ class Results::GvaController < ApplicationController
           submitted = Event.do_search(params.merge(event_status: ['Submitted']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           executed = Event.do_search(params.merge(event_status: ['Executed']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           scheduled = Event.do_search(params.merge(event_status: ['Scheduled']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
-          stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed}
+          stats[goal.goalable.name] = {goal: goal, scheduled: scheduled, executed: executed, remaining: goal.value - executed - scheduled}
       end
       stats.sort
     end

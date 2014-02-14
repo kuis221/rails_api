@@ -38,6 +38,22 @@ describe Api::V1::ContactsController do
     end
   end
 
+  describe "GET 'show'" do
+    it "should return the contact details" do
+      get 'show', id: contact.id, company_id: company.id, auth_token: user.authentication_token, format: :json
+      expect(response).to render_template('show')
+      result = JSON.parse(response.body)
+      expect(result['id']).to eql contact.id
+      expect(result['first_name']).to eql contact.first_name
+    end
+
+    it "should return 404 if the contact doesn't exists" do
+      get 'show', id: 999, company_id: company.id, auth_token: user.authentication_token, format: :json
+      expect(response.code).to eql '404'
+      expect(response).to_not render_template('show')
+    end
+  end
+
   describe "#create" do
     it "should create a new contact" do
       expect {

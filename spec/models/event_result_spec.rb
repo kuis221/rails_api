@@ -68,6 +68,8 @@ describe EventResult do
     it { should allow_value(nil).for(:value) }
     it { should allow_value('').for(:value) }
     it { should allow_value(@segment.id).for(:value) }
+    it { should allow_value(@segment.id.to_s).for(:value) }
+    it { should_not allow_value([@segment.id]).for(:value) }
     it { should_not allow_value(987654).for(:value).with_message('is not valid') }
   end
 

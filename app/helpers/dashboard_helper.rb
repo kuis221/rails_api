@@ -27,8 +27,8 @@ module DashboardHelper
     AttachedAsset.do_search({company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
   end
 
-  def upcomming_events_list
-    Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc, start_date: Time.zone.now.strftime("%m/%d/%Y"), end_date: Time.zone.now + 10.years}).results
+  def upcoming_events_list
+    Event.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc, start_date: Time.zone.now.strftime("%m/%d/%Y"), end_date: Time.zone.now + 10.years, event_status: ['Active']}).results
   end
 
   def my_incomplete_tasks
@@ -47,53 +47,29 @@ module DashboardHelper
     Venue.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :venue_score, venue_score: {min: 0}, sorting_dir: :asc }).results
   end
 
-  def kpi_trends_stats(kpi)
-    @kpi_trends_totals ||= {}
-    @kpi_trends_totals[kpi.id] ||= Hash.new.tap do |data|
-      campaigns_scope = current_company.campaigns.with_goals_for(kpi)
-      campaigns_scope = campaigns_scope.where(id: current_company_user.accessible_campaign_ids) unless current_company_user.is_admin?
-      campaign_ids =  campaigns_scope.select('campaigns.id').map(&:id)
-
-      data[:goal] = campaigns_scope.sum('goals.value').to_i
-      data[:completed] = get_totals_for_kpi(kpi, kpis_completed_totals(campaign_ids))
-      data[:executed] = get_totals_for_kpi(kpi, kpis_executed_totals(campaign_ids))
-      data[:remaining] = 0
-      data[:remaining] = [data[:goal] - data[:completed], 0].max if data[:completed]
-      data[:completed_percentage] = 0
-      data[:remaining_percentage] = 0
-      data[:today_percentage] =  0
-      data[:executed_percentage] =  0
-
-      if data[:goal] > 0
-        data[:completed_percentage] = (data[:completed] * 100 / data[:goal]).round
-        data[:remaining_percentage] = [100 - data[:completed_percentage], 0].max
-        data[:executed_percentage] = (data[:executed] * 100 / data[:goal]).round
-
-        # dates_result = campaigns_scope.select('min(first_event_at) as first_event_at, max(last_event_at) as last_event_at').first
-        # if dates_result.first_event_at && dates_result.last_event_at
-        #   total_days = ((dates_result.last_event_at  - dates_result.first_event_at).to_i / 86400).round
-        #   today_days = ((Time.now  - dates_result.first_event_at).to_i / 86400).round
-        #   data[:today_percentage] = today_days * 100 / total_days if total_days > 0
-        # end
-
-      end
+  def campaing_promo_hours_chart(c)
+    remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
+    today_bar_indicator = ''.html_safe
+    if c['today_percentage']
+      today_bar_indicator = content_tag(:div, '', class: 'today-line-indicator', style: "left: #{c['today_percentage']}%")
     end
-  end
-
-  def kpi_trend_chart_bar(kpi)
-    unless kpi.nil?
-      totals = kpi_trends_stats(kpi)
-      content_tag(:div, class: 'chart-bar') do
-        content_tag(:div, '', class: 'today-line-indicator has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:executed]) : number_with_delimiter(totals[:executed])} executed", style: "left: #{totals[:executed_percentage]}%") +
-        content_tag(:div, class: 'progress') do
-          content_tag(:div, class: 'bar has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:completed]) : number_with_delimiter(totals[:completed])} completed", style: "width: #{[100, totals[:completed_percentage]].min}%;") do
-            content_tag(:span, "#{totals[:completed_percentage]}%", class: :percentage)
-          end +
-          content_tag(:div, class: 'bar bar-remaining has-tooltip', 'data-toggle' => "tooltip", title: "#{kpi.currency? ? number_to_currency(totals[:remaining]) : number_with_delimiter(totals[:remaining])} remaining", style: "width: #{totals[:remaining_percentage]}%;") do
-            content_tag(:span, "#{totals[:remaining_percentage]}%", class: :percentage)
-          end
-        end +
-        content_tag(:span, kpi.currency? ? number_to_currency(totals[:goal]) : number_with_delimiter(totals[:goal]), class: :total)
+    content_tag(:div, class: 'chart-bar') do
+      today_bar_indicator +
+      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{c['executed_percentage']}%") +
+      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{c['executed_percentage']+c['scheduled_percentage']}%") +
+      content_tag(:div, '', class: 'bar-indicator goal-indicator', style: "left: 100%") +
+      content_tag(:div, class: 'progress') do
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
+        content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
+      end +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['executed'], strip_insignificant_zeros: true)}</b> EXECUTED".html_safe), class: 'executed-label', style: "margin-left: #{c['executed_percentage']}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-c['scheduled_percentage']-c['executed_percentage']}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
+      content_tag(:div, class: 'remaining-label') do
+        content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true)) +
+        content_tag(:span, c['kpi'], class: 'kpi-name') +
+        content_tag(:span, 'REMAINING')
       end
     end
   end
@@ -163,6 +139,60 @@ module DashboardHelper
         totals['cost_sample'] = 0
       end
     end
+  end
+
+  def campaign_overview_data
+    @campaign_overview_data ||= begin
+      data = {}
+      prefix = ''
+      prefix = 'local_' if Company.current.present? && Company.current.timezone_support?
+      start_date = Date.today.beginning_of_month
+      start_date = start_date.next_week unless start_date.wday == 1
+      start_week_number = start_date.strftime("%U").to_i+1
+      Event.active.between_dates(start_date.beginning_of_day, (Date.today.beginning_of_month+4.months).end_of_month.end_of_day).
+            accessible_by_user(current_company_user).
+            where(campaign_id: dashboard_accessible_campaigns.map(&:id)).
+            group('1, 2, 3').
+            select("events.campaign_id, EXTRACT(WEEK FROM #{prefix}start_at) as week_start, EXTRACT(WEEK FROM #{prefix}end_at) as week_end").
+            each do |event|
+          (event.week_start..event.week_end).each do |week|
+            data[event.campaign_id] ||= {}
+            data[event.campaign_id][week.to_i]=true if start_week_number <= week.to_i
+          end
+      end
+      data
+    end
+  end
+
+  def dashboard_accessible_campaigns
+    @dashboard_accessible_campaigns ||= current_company.campaigns.active.accessible_by_user(current_company_user).order(:name)
+  end
+
+  # Returns a list of campaigns accessible for the current with promo hours goal
+  def dashboard_promo_hours_graph_data
+    Campaign.active.accessible_by_user(current_company_user).promo_hours_graph_data
+  end
+
+  def campaing_cell_clasess(campaign, week)
+    clasess = []
+    week_number = week.strftime("%U").to_i+1
+    clasess.push 'in-range' if campaign.has_date_range? && campaign.end_date > week && campaign.start_date < week.end_of_week
+    if campaign_overview_data[campaign.id].present? && campaign_overview_data[campaign.id][week_number]
+      clasess.push 'with-events'
+      clasess.push 'first-in-series' unless campaign_overview_data[campaign.id][week_number-1].present? && campaign_overview_data[campaign.id][week_number-1]
+      clasess.push 'last-in-series' unless campaign_overview_data[campaign.id][week_number+1]
+    end
+    clasess.join(' ')
+  end
+
+  def weeks_in_month(date)
+    week = date.beginning_of_week+1.week
+    weeks = []
+    while week.month == date.month
+      weeks.push week
+      week += 1.week
+    end
+    weeks
   end
 
   private

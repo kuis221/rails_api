@@ -27,32 +27,22 @@ module FacetsHelper
     @facets ||= respond_to?("#{controller_name}_facets") ? send("#{controller_name}_facets") : []
   end
 
-  def build_brands_bucket(campaigns)
-    campaigns_counts = Hash[campaigns.map{|x| [x.value.to_i, x.count] }]
-    brands = {}
-    Campaign.includes(:brands).where(id: campaigns_counts.keys).each do |campaign|
-      campaing_brands = Hash[campaign.brands.map{|b| [b.id, build_facet_item({label: b.name, id: b.id, name: :brand, count: campaigns_counts[campaign.id]})] }]
-      brands.merge!(campaing_brands){|k,a1,a2|  a1.merge({count: (a1[:count] + a2[:count])}) }
+  def build_brands_bucket
+    brands = Brand.select('brands.id, brands.name').joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).group('brands.id, brands.name').order('brands.name ASC').map do |b|
+      build_facet_item({label: b.name, id: b.id, name: :brand})
     end
-    brands = brands.values.sort{|a, b| a[:label] <=> b[:label] }
     {label: 'Brands', items: brands}
   end
 
   def build_areas_bucket(search)
-    counts = Hash[search.facet(:place_id).rows.map{|x| [x.value, x.count] }]
-    places = Place.where(id: counts.keys.uniq).all
+    places = current_company_user.places
     list = {label: :root, items: [], id: nil, path: nil}
 
-    areas = Area.scoped_by_company_id(current_company.id).order(:name).active
-
-    Place.unscoped do
-      places.each do |p|
-        parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
-        areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
-      end
+    areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active.all
+    places.each do |p|
+      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) }).sort_by(&:name)
     end
 
-    areas.reject!{|a| a.events_count.nil? || !a.events_count}
     areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
     {label: 'Areas', items: areas}
   end
@@ -77,10 +67,10 @@ module FacetsHelper
   end
 
   def build_campaign_bucket(facet_search)
-      items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
-      items = items.sort{|a, b| a[:label] <=> b[:label]}
-      {label: 'Campaigns', items: items}
-    end
+    items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
+    items = items.sort{|a, b| a[:label] <=> b[:label]}
+    {label: 'Campaigns', items: items}
+  end
 
   # Returns the facets for the events controller
   def events_facets
@@ -90,7 +80,7 @@ module FacetsHelper
       facet_search = resource_class.do_search(facet_params, true)
 
       f.push build_facet( Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
-      f.push build_brands_bucket(facet_search.facet(:campaign_id).rows)
+      f.push build_brands_bucket
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )
 
@@ -126,17 +116,17 @@ module FacetsHelper
 
       # Prices
       prices = [
-          build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),
-          build_facet_item({label: '$$', id: '2', name: :price, count: 1, ordering: 2}),
-          build_facet_item({label: '$$$', id: '3', name: :price, count: 1, ordering: 3}),
-          build_facet_item({label: '$$$$', id: '4', name: :price, count: 1, ordering: 3})
+        build_facet_item({label: '$', id: '1', name: :price, count: 1, ordering: 1}),
+        build_facet_item({label: '$$', id: '2', name: :price, count: 1, ordering: 2}),
+        build_facet_item({label: '$$$', id: '3', name: :price, count: 1, ordering: 3}),
+        build_facet_item({label: '$$$$', id: '4', name: :price, count: 1, ordering: 3})
       ]
       f.push(label: "Price", items: prices )
 
       f.push build_areas_bucket(facet_search)
       #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
       f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_ids).rows)
-      f.push build_brands_bucket(facet_search.facet(:campaign_ids).rows)
+      f.push build_brands_bucket
     end
   end
 

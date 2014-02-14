@@ -1,4 +1,5 @@
 class Api::V1::VenuesController < Api::V1::FilteredController
+  include PlacesHelper::CreatePlace
 
   resource_description do
     short 'Venues'
@@ -13,6 +14,59 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     EOS
   end
 
+  def_param_group :venue do
+    param :venue, Hash, required: true, :action_aware => true do
+      param :name, String, required: true, desc: "The Venue name"
+      param :types, String, required: true, desc: "A comma separated string with one or more of the possible types venue types. See venues#types for more info"
+      param :street_number, String, required: true, desc: "The Venue street_number (address 1)"
+      param :route, String, required: false, desc: "The Venue's route (address 2)"
+      param :country, String, required: true, desc: "The Venue country code. Eg. US"
+      param :city, String, required: true, desc: "The Venue city"
+      param :state, String, required: true, desc: "The Venue state"
+      param :zipcode, String, required: true, desc: "The Venue's zipcode"
+    end
+  end
+
+  api :GET, '/api/v1/venues/:id', 'Return a venue\'s details'
+  param :id, :number, required: true, desc: "Venue ID"
+  example <<-EOS
+  {
+      "id": 2,
+      "name": "Island Creek Oyster Bar",
+      "formatted_address": "500 Commonwealth Avenue, Boston, MA, United States",
+      "latitude": 42.348774,
+      "longitude": -71.094994,
+      "zipcode": "02215",
+      "city": "Boston",
+      "state": "Massachusetts",
+      "country": "US",
+      "events_count": 11,
+      "promo_hours": "204.0",
+      "impressions": 814,
+      "interactions": 1554,
+      "sampled": 683,
+      "spent": "1600.0",
+      "score": 42,
+      "avg_impressions": "74.0",
+      "avg_impressions_hour": "3.99",
+      "avg_impressions_cost": "1.97",
+      "opening_hours": [
+          "Tuesday 4:00 PM - 1:00 AM",
+          "Wednesday 4:00 PM - 1:00 AM",
+          "Thursday 4:00 PM - 1:00 AM",
+          "Friday 4:00 PM - 1:00 AM",
+          "Saturday 4:00 PM - 1:00 AM",
+          "Sunday 4:00 PM - 1:00 AM",
+          "Monday 10:30 AM - 1:00 AM"
+      ],
+      "td_linx_code": '2238273'
+  }
+  EOS
+  def show
+    if resource.present?
+      render
+    end
+  end
 
   api :GET, '/api/v1/venues', "Search for a list of venues"
   param :location, String, :desc => "A pair of latitude and longitude seperated by a comma. This will make the list to include only those that are in a radius of +radius+ kilometers."
@@ -230,7 +284,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "220.0",
               "avg_impressions_hour": "220.0",
-              "avg_impressions_cost": "0.67"
+              "avg_impressions_cost": "0.67",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1835,
@@ -251,7 +306,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "123.0",
               "avg_impressions_hour": "123.75",
-              "avg_impressions_cost": "1.83"
+              "avg_impressions_cost": "1.83",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1401,
@@ -272,7 +328,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "250.0",
               "avg_impressions_hour": "250.0",
-              "avg_impressions_cost": "0.86"
+              "avg_impressions_cost": "0.86",
+              "td_linx_code": "12312312"
           },
           ....
       ]
@@ -282,10 +339,167 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     collection
   end
 
+  api :POST, '/api/v1/venues', 'Creates a new venue'
+  param_group :venue
+  see 'venues#types'
+  def create
+    if create_place(permitted_params, true)
+      @venue = @place
+      respond_to do |format|
+        format.json { render :show }
+        format.xml { render :show }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @place.errors, status: :unprocessable_entity }
+        format.xml { render xml: @place.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  api :GET, '/api/v1/venues/types', "Get a list of possible venue types"
+  description <<-EOS
+  Returns a list of valid venue types that can be used to generate a dropdown when
+  creating a new venue
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&company_id=1
+  [
+      {
+          "name": "Accounts",
+          "value": "accounts"
+      },
+      {
+          "name": "Airport",
+          "value": "airport"
+      },
+      {
+          "name": "Amusement Park",
+          "value": "amusement_park"
+      },
+      {
+          "name": "Aquarium",
+          "value": "aquarium"
+      },
+      {
+          "name": "Art Gallery",
+          "value": "art_gallery"
+      },
+      ...
+  ]
+  EOS
+  def types
+    types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
+    respond_to do |format|
+      format.json { render json: types }
+      format.xml { render xml: types }
+    end
+  end
+
+  api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+    Returns a mixed list of photos uploaded from the app + photos obtained from Google that are associated to the venue
+
+    Each photo has the following attributes:
+    * For photos uploaded from the app:
+      * *id*: the photo id
+      * *file_file_name*: the photo's file name
+      * *file_content_type*: the photo's file type
+      * *file_file_size*: the photos's file size
+      * *created_at*: the photo's uploading date
+      * *active*: the photo's status
+      * *file_small*: the small photos's url
+      * *file_medium*: the medium photos's url
+      * *file_original*: the original photos's url
+      * *type*: the photo's type. In this case it should be 'brandscopic'
+
+    * For photos from Google:
+      * *photo_reference*: the photo reference id
+      * *width*: the photo's width
+      * *height*: the photo's height
+      * *html_attributions*: the photo's attributions
+      * *file_small*: the small photos's url
+      * *file_original*: the original photos's url
+      * *type*: the photo's type. In this case it should be 'google'
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/286/photos
+  [
+      {
+          "id": 14,
+          "file_file_name": "Folder.jpg",
+          "file_content_type": "image/jpeg",
+          "file_file_size": 9694,
+          "created_at": "2013-09-11T16:03:38-07:00",
+          "active": true,
+          "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/small/Folder.jpg?1378940624",
+          "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/medium/Folder.jpg?1378940624",
+          "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/original/Folder.jpg?1378940624",
+          "type": "brandscopic"
+      },
+      {
+          "photo_reference": "CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak",
+          "width": 486,
+          "height": 648,
+          "html_attributions": [
+              "From a Google User"
+          ],
+          "file_small": "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&sensor=true&key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44",
+          "file_original": "https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&sensor=true&key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44",
+          "type": "google"
+      }
+  ]
+  EOS
+  def photos
+    @photos = resource.photos
+  end
+
+  api :GET, '/api/v1/venues/:id/comments', "Get a list of comments for a Venue"
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+    Returns a list of comments associated to a given venue.
+
+    Each item have the following attributes:
+    * For comments uploaded from the app:
+      * *id*: the comment id
+      * *content*: the comment text
+      * *created_at*: the date and time of creation for the comment
+      * *type:* the comment's type. In this case it should be 'brandscopic'
+
+    * For comments from Google:
+      * *rating*: the rating from the user for the venue
+      * *text*: the comment text
+      * *author_name*: the name of the creator of the comment
+      * *time*: the date and time of creation for the comment
+      * *type*: the comments's type. In this case it should be 'google'
+
+  EOS
+  example <<-EOS
+    An example with comments for an venue in the response
+    GET: /api/v1/venues/92/comments.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    [
+      {
+        "id": 1,
+        "content": "User Comment #1",
+        "created_at": "2013-09-10T08:04:57-07:00",
+        "type": "brandscopic"
+      },
+      {
+        "rating": 2,
+        "text": "Tater tots and Korean tacos at a bar with candle light after dark... Good west side sports bar.",
+        "author_name": "Howard Tung",
+        "time": "2013-08-31T03:43:55+00:00",
+        "type": "google"
+      }
+    ]
+  EOS
+  def comments
+    @comments = resource.reviews
+  end
 
   api :GET, '/api/v1/venues/search', "Search for a list of venues matching a term"
   param :term, String, :desc => "The search term", required: true
-
   description <<-EOS
     Returns a list of venues matching the search +term+ ordered by relevance limited to 10 results.
 
@@ -294,7 +508,6 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     * *value*: the description of the venue, including the name and address
     * *label*: this exactly the same as +value+
   EOS
-
   example <<-EOS
   [{
       "value":"Bar None, 1980 Union Street, San Francisco, CA, United States",
@@ -314,6 +527,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    end
     def permitted_search_params
       params.permit({campaign: []}, :location, :radius)
     end

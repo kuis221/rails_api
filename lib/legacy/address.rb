@@ -18,10 +18,18 @@
 #
 
 class Legacy::Address < Legacy::Record
+  self.table_name = "legacy_addresses"
   belongs_to  :addressable, :polymorphic => true
 
+  def street
+    [street_address, supplemental_address].compact.join(' ')
+  end
 
   def single_line
     [street_address, supplemental_address, city, state, postal_code].compact.join(' ')
+  end
+
+  def state_name
+    Country.new('US').states[state]['name'] if state
   end
 end

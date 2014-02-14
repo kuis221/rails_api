@@ -26,12 +26,12 @@ child @events => 'results' do
     end
   end
 
-  child(:place) do
+  child(venue: :place) do
     attributes :id, :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
   end
 
-  child :campaign do
-    attributes :id, :name
+  node :campaign do |e|
+    {id: e.campaign_id, name: e.campaign_name}
   end
 end
 

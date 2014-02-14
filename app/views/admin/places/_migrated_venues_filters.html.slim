@@ -1,0 +1,20 @@
+#search_filter_partial.panel_contents
+  = form_tag migrated_venues_admin_places_path, method: :get, class: "filter_form", name: "search_filters" do
+    .filter_form_field.filter_string.select_and_search
+      = label_tag('q[local_place_type_name_contains]', "Name", :class=>" label")
+      = select_tag "", options_for_select([["Contains","local_place_type_name_contains"],
+              ["Equals","local_place_type_name_equals"],
+              ["Starts with","local_place_type_name_starts_with"],
+              ["Ends with","local_place_type_name_ends_with"]], params[:q].present? ? params[:q].detect{|k, v| k =~ /\Alocal_place_type_name/}.try(:first) : nil)
+
+      = text_field_tag('q[local_place_type_name_contains]', params[:q].present? ? params[:q].detect{|k, v| k =~ /\Alocal_place_type_name/}.try(:last) : '')
+
+    .filter_form_field.filter_boolean
+      label for="q_zip_diferent" Different Zip Code
+      = check_box_tag "q[different_zipcode]", 1, params[:q].present? && params[:q].has_key?(:different_zipcode)
+
+    .buttons
+      = submit_tag('Filter')
+      a.clear_filters_btn href="#" Clear Filters
+      input id="order" type="hidden" value="id_desc" name="order"
+      input id="scope" type="hidden" name="scope"

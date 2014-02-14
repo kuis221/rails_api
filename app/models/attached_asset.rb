@@ -36,7 +36,7 @@ class AttachedAsset < ActiveRecord::Base
   validate :valid_file_format?
 
   before_validation :set_upload_attributes
-  after_create :queue_processing
+  after_commit :queue_processing, on: :create
   before_post_process :post_process_required?
 
   validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
@@ -89,7 +89,7 @@ class AttachedAsset < ActiveRecord::Base
       Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event' && attachable.place_id
     end
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
   end
@@ -209,14 +209,13 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
-    tries ||= 5
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
     if post_process_required?
       self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]%# "))
     else
-      paperclip_file_path = file.path(:original).sub(%r{^/},'')
+      paperclip_file_path = file.path(:original).sub(%r{\A/},'')
       s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     end
 
@@ -224,14 +223,6 @@ class AttachedAsset < ActiveRecord::Base
     save
 
     s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
-  rescue AWS::S3::Errors::RequestTimeout
-    tries -= 1
-    if tries > 0
-      sleep(3)
-      retry
-    else
-      false
-    end
   end
 
   protected
@@ -253,7 +244,6 @@ class AttachedAsset < ActiveRecord::Base
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
       if new_record? and self.file_file_name.nil?
-        tries ||= 5
         direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
         direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
@@ -262,24 +252,22 @@ class AttachedAsset < ActiveRecord::Base
         self.file_file_size     = direct_upload_head.content_length
         self.file_content_type  = direct_upload_head.content_type
         self.file_updated_at    = direct_upload_head.last_modified
-      end
-    rescue AWS::S3::Errors::NoSuchKey => e
-      tries -= 1
-      if tries > 0
-        sleep(3)
-        retry
-      else
-        false
+
+        if self.file_content_type == 'binary/octet-stream'
+          self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
+        end
       end
     end
 
     # Queue file processing
     def queue_processing
-      if direct_upload_url.present?
-        if post_process_required?
-          Resque.enqueue(AssetsUploadWorker, id)
-        else
-          transfer_and_cleanup
+      unless processed?
+        if direct_upload_url.present?
+          if post_process_required?
+            Resque.enqueue(AssetsUploadWorker, id)
+          else
+            transfer_and_cleanup
+          end
         end
       end
     end

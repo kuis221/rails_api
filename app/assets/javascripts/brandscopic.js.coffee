@@ -47,7 +47,7 @@ jQuery ->
 			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 	attachPluginsToElements = () ->
-		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
+		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
 		$('input.timepicker').timepicker()
 		$('.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true})
@@ -77,6 +77,8 @@ jQuery ->
 			e.stopPropagation()
 			smoothScrollTo($(this.hash))
 
+		$('form[data-watch-changes]').watchChanges();
+
 	window.smoothScrollTo = (element) ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 
@@ -86,6 +88,9 @@ jQuery ->
 			errorClass: 'help-inline',
 			errorElement: 'span',
 			ignore: '.no-validate',
+			onfocusout: ( element, event ) ->
+				if !this.checkable(element)
+					this.element(element)
 			highlight: (element) ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 
@@ -96,9 +101,9 @@ jQuery ->
 					if typeof element.data('segmentFieldId') isnt "undefined"
 						error.insertBefore label
 					else
-						error.insertAfter label
+						error.addClass('segment-title-label').insertAfter label
 				else
-					error.insertAfter element
+					error.addClass('segment-title-label').insertAfter element
 
 			focusInvalid: false,
 			invalidHandler: (form, validator) ->
@@ -112,7 +117,7 @@ jQuery ->
 				, 1000
 			success: (element) ->
 				element
-					.addClass('valid').text('OK!')
+					.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
 		}
 
@@ -130,8 +135,15 @@ jQuery ->
 
 	attachPluginsToElements()
 
+
 	$(document).ajaxComplete (e) ->
 		attachPluginsToElements()
+
+
+	$(window).on 'beforeunload', ->
+		unSavedForms = $('form[data-watch-changes]').filter((index) -> $(this).hasChanged(); )
+		if unSavedForms.length
+			unSavedForms.data('prompt-message') || "Your form data has not been saved."
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
@@ -143,11 +155,6 @@ jQuery ->
 			dataType: "script"
 		}
 		false
-
-	$('[data-sparkline]').each (index, elm) ->
-		$elm = $(elm)
-		values = $elm.data('values').split(",")
-		$elm.sparkline values, { type: $elm.data('sparkline'), barWidth: 1, barSpacing: 1, barColor: '#3E9CCF', height: '20px' }
 
 	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
 	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
@@ -387,24 +394,35 @@ jQuery ->
 		$('body,html').animate {scrollTop: 0}, 500
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
-		return this.optional(element) || /[A-Z]/.test(value);
+		return $.trim(value) == '' || /[A-Z]/.test(value);
 	, "Should have at least one upper case letter");
 
 	$.validator.addMethod("onedigit", (value, element) ->
-		return this.optional(element) || /[0-9]/.test(value);
+		return $.trim(value) == '' || /[0-9]/.test(value);
 	, "Should have at least one digit");
 
 	$.validator.addMethod("integer", (value, element) ->
-		return this.optional(element) || /^[0-9]+$/.test(value);
+		return $.trim(value) == '' || /^[0-9]+$/.test(value);
 	, "Please enter an integer number");
 
-	$.validator.addMethod("segment-total", (value, element) ->
-		return (this.optional(element) && (value == '0' || value == '')) || value == '100';
-	, "The sum of the segments should be 100%");
+	$.validator.addMethod("segmentTotalRequired", (value, element) ->
+		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
+	, "Field should sum 100%");
+
+	$.validator.addMethod("segmentTotalMax", (value, element) ->
+		intVal = parseInt(value);
+		return ($.trim(value) == '' || intVal <= 100);
+	, "Field cannot exceed 100%");
+
+	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
-	, "Should not exceed 100%");
+	, " ");
+
+	$.validator.addMethod("optional", (value, element) ->
+		return true;
+	, "");
 
 	$.validator.addMethod("matchconfirmation", (value, element) ->
 		return value == $("#user_password").val();
@@ -514,7 +532,7 @@ jQuery ->
 
 		false
 
-# Hack to use bootsbox confirm dialog
+# Hack to use bootbox's confirm dialog
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')
 	if !message

@@ -78,18 +78,23 @@ feature "Campaigns", js: true, search: true do
       within("form#new_campaign") do
         fill_in 'Name', with: 'new campaign name'
         fill_in 'Description', with: 'new campaign description'
+        fill_in 'Start date', with: '01/22/2013'
+        fill_in 'End date', with: '01/22/2014'
         select_from_chosen('Test portfolio', from: 'Brand portfolios', match: :first)
         click_js_button 'Create'
       end
       ensure_modal_was_closed
 
       find('h2', text: 'new campaign name') # Wait for the page to load
+      campaign = Campaign.last
       expect(page).to have_selector('h2', text: 'new campaign name')
       expect(page).to have_selector('div.description-data', text: 'new campaign description')
+      expect(campaign.start_date).to eql Date.parse('2013-01-22')
+      expect(campaign.end_date).to eql Date.parse('2014-01-22')
     end
   end
 
-  feature "/campaigns/:campaign_id", :js => true do
+  feature "Campaign details page", :js => true do
     scenario "GET show should display the campaign details page" do
       campaign = FactoryGirl.create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
       visit campaign_path(campaign)
@@ -163,5 +168,41 @@ feature "Campaigns", js: true, search: true do
         expect(page).to have_no_content('San Francisco Area')
       end
     end
+
+    feature "Create custom KPIs", search: false do
+      scenario "Add Custom count KPI and set goals" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+        visit campaign_path(campaign)
+
+        click_js_link 'Add Custom KPI'
+
+        within visible_modal do
+          fill_in 'Name', with: 'My Custom KPI'
+          fill_in 'Description', with: 'my custom kpi description'
+          select_from_chosen('Count', from: 'Kpi type', match: :first)
+          click_js_link 'Add a segment'
+          fill_in 'Segment name', with: 'Option 1'
+          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          click_js_button 'Create'
+        end
+        ensure_modal_was_closed
+
+        kpi = Kpi.last
+        within "#custom-kpis" do
+          expect(page).to have_content('My Custom KPI')
+          hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+        end
+        within visible_modal do
+          fill_in 'Goal', with: '223311'
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        within "#custom-kpis" do
+          expect(page).to have_content('223311.0')
+        end
+      end
+    end
+
   end
 end

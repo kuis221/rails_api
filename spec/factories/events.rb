@@ -1,19 +1,47 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
+# == Schema Information
+#
+# Table name: events
+#
+#  id            :integer          not null, primary key
+#  campaign_id   :integer
+#  company_id    :integer
+#  start_at      :datetime
+#  end_at        :datetime
+#  aasm_state    :string(255)
+#  created_by_id :integer
+#  updated_by_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  active        :boolean          default(TRUE)
+#  place_id      :integer
+#  promo_hours   :decimal(6, 2)    default(0.0)
+#  reject_reason :text
+#  summary       :text
+#  timezone      :string(255)
+#
 
+# Read about factories at https://github.com/thoughtbot/factory_girl
 FactoryGirl.define do
   factory :event do
-    campaign_id 1
     start_date "01/23/2019"
     start_time "10:00am"
     end_date "01/23/2019"
     end_time "12:00pm"
-    company_id 1
     aasm_state 'unsent'
     active true
 
     ignore do
       results false
       expenses []
+    end
+
+    # To keep the associations between campaign and company correct
+    after(:build) do |event, evaluator|
+      if event.company.present?
+        event.campaign ||= FactoryGirl.create(:campaign, company: event.company)
+      end
+      event.campaign ||= FactoryGirl.create(:campaign)
+      event.company ||= event.campaign.company if event.campaign.present?
     end
 
     before(:create) do |event, evaluator|
@@ -43,8 +71,8 @@ FactoryGirl.define do
 
     factory :due_event do
       aasm_state 'unsent'
-      start_date Date.yesterday.to_s(:slashes)
-      end_date Date.yesterday.to_s(:slashes)
+      start_date { Date.yesterday.to_s(:slashes) }
+      end_date { Date.yesterday.to_s(:slashes) }
     end
 
     factory :late_event do

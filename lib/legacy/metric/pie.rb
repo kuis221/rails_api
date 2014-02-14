@@ -16,8 +16,6 @@
 #  updated_at  :datetime
 #
 
-# for storing a group of options, such as found in a pie chart
-include ActionView::Helpers::TagHelper
 include OpenURI
 class Metric::Pie < Metric
   has_many :metric_options, :foreign_key => :metric_id, :dependent => :destroy
@@ -27,7 +25,7 @@ class Metric::Pie < Metric
     @collection ||= metric_options.map { |o| [o.name, o.id] }
   end
   def format_result(result)
-    tag(:img, :src => chart_url(result.value)) if result.value
+    ActionController::Base.helpers.tag(:img, :src => chart_url(result.value)) if result.value
   end
   def format_pdf(pdf, result)
     w = pdf.bounds.width.to_i

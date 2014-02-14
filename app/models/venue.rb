@@ -32,7 +32,7 @@ class Venue < ActiveRecord::Base
 
   include Normdist
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, to: :place
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, :td_linx_code, to: :place
 
   searchable do
     integer :place_id
@@ -56,8 +56,8 @@ class Venue < ActiveRecord::Base
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
 
-    string :locations, multiple: true do
-      Place.locations_for_index(place)
+    integer :locations, multiple: true do
+      place.locations.pluck('locations.id') if place.present?
     end
 
     integer :campaign_ids, multiple: true do
@@ -266,10 +266,15 @@ class Venue < ActiveRecord::Base
       end
 
       if params.has_key?(:campaign) and params[:campaign].present?
-        locations = Campaign.where(company_id: params[:company_id], id: params[:campaign]).map{|c| c.accessible_locations }.flatten.uniq.compact
+        locations = places = []
+        Campaign.where(company_id: params[:company_id], id: params[:campaign]).each do |c|
+          locations += c.accessible_locations
+          places += c.place_ids
+        end
         any_of do
           with(:campaign_ids, params[:campaign])
-          with(:locations, locations) if locations.any?
+          with(:locations, locations.uniq.compact) if locations.any?
+          with(:place_id, places.uniq.compact) if places.any?
         end
       end
 

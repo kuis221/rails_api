@@ -2,22 +2,16 @@
 #
 # Table name: reports
 #
-#  id                :integer          not null, primary key
-#  type              :string(255)
-#  company_user_id   :integer
-#  params            :text
-#  aasm_state        :string(255)
-#  progress          :integer
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id            :integer          not null, primary key
+#  company_id    :integer
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 require 'spec_helper'
 
 describe Report do
-  it { should belong_to(:company_user) }
 end

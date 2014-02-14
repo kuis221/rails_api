@@ -49,6 +49,7 @@
         = render 'contacts'
       = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:create_contacts, resource)
 
+  - resource.results.each{|r| r.errors.clear}
   - if resource.has_event_data? && !resource.rejected?
     = render 'show_results'
   - elsif resource.happens_today? || resource.in_past?

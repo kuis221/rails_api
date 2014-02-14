@@ -4,6 +4,8 @@ $grey_three:#7a7a7a;
 $user_menu:#c0c0c0;
 
 .eventsCalendar {
+	margin-top: 10px;
+
 	.calendar-table {
 		width: 100%;
 		border-collapse: collapse;
@@ -15,8 +17,8 @@ $user_menu:#c0c0c0;
 			background-color: #989898;
 			color: #fff;
 			text-transform:uppercase;
-			padding: 5px;
 			text-align: left;
+			padding: 5px 0 5px 10px;
 		}
 		td.calendar-day {
 			border: 1px solid #CCC;
@@ -29,13 +31,28 @@ $user_menu:#c0c0c0;
 
 			.calendar-day-events-container {
 				position: absolute;
-				height: 100px;
+				height: 105px;
 				width: 95%;
 				overflow: hidden;
 				top: 0;
 				padding: 3px;
+				color: $brand;
+				font-size: 11px;
+				line-height: 17px;
 
 				h4 {
+					display: none;
+				}
+
+				.calendar-event-name{
+					display: block;
+					margin-left: 15px;
+					margin-top: -19px;
+					a, a:hover{
+						color: $brand;
+					}
+				}
+				.daytitle {
 					display: none;
 				}
 			}
@@ -48,21 +65,37 @@ $user_menu:#c0c0c0;
 			.calendar-view-more {
 				position: absolute;
 				bottom: 0;
+				a, a:hover{
+					color: $user_menu;
+					font-size: 11px;
+					margin: 0px 0px 5px 5px;
+					text-decoration: none;
+				}
 			}
 			.calendar-event-bullet {
 				font-size: 20px;
 			}
-			&.expanded {	
+			&.expanded {
+				.daytitle{
+					display: block;
+					font-size: 13px;
+					margin-bottom: 5px;
+				}
 				.calendar-day-events-container {
 					height: auto;
 					width: 190%;
 					border: 1px solid #ccc;
 					background-color: #fff;
 					z-index: 2;
+					overflow: visible;
 					h4 {
 						display: inline;
 						color: #ccc;
 					}
+				}
+
+				.calendar-view-more{ 
+					display: none;
 				}
 
 				.close {
@@ -98,24 +131,6 @@ $user_menu:#c0c0c0;
 			float: right;
 		}
 	}
-}
-
-#calendar-canvas {
-	margin-top: 10px;
-
-	.calendar-day{
-		&.expanded{
-			.daytitle{
-				display: block;
-				font-size: 13px;
-				margin-bottom: 5px;
-			}		
-		}
-	}
-
-	.calendar-table th{
-		padding: 5px 0 5px 10px;
-	}
 
 	a{
 		&.cal-day-link, &.cal-day-link:hover{
@@ -124,33 +139,6 @@ $user_menu:#c0c0c0;
 		}
 		&.icon-angle-right:before, &.icon-angle-right:before{
 			left: 10px;
-		}
-	}
-
-	.calendar-day-events-container{
-		color: $brand;
-		font-size: 11px;
-		line-height: 17px;
-		height: 105px;
-		.calendar-event-name{
-			display: block;
-			margin-left: 15px;
-			margin-top: -19px;
-			a, a:hover{
-				color: $brand;
-			}
-		}
-		.daytitle{
-			display: none;
-		}
-	}
-
-	.calendar-view-more{
-		a, a:hover{
-			color: $user_menu;
-			font-size: 11px;
-			margin: 0px 0px 5px 5px;
-			text-decoration: none;
 		}
 	}
 

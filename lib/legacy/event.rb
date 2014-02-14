@@ -22,6 +22,7 @@
 #
 
 class Legacy::Event < Legacy::Record
+  self.table_name = "legacy_events"
   belongs_to    :program
   belongs_to    :account
   has_one       :event_recap

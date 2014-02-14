@@ -60,7 +60,16 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date| where("end_at > ? AND start_at < ?", start_date, end_date) }
+  scope :between_dates, lambda {|start_date, end_date|
+    prefix = ''
+    if Company.current.present? && Company.current.timezone_support?
+      prefix = 'local_'
+      start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
+      end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
+    end
+    where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
+  }
+
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
@@ -70,12 +79,17 @@ class Event < ActiveRecord::Base
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids) }
+  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids+[0]) }
+
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
+
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
   track_who_does_it
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
+  validate :valid_campaign?
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true
@@ -99,8 +113,7 @@ class Event < ActiveRecord::Base
 
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
-
-  #after_create :add_team_members
+  after_commit :index_venue
 
   delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -149,7 +162,7 @@ class Event < ActiveRecord::Base
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       locations_for_index
     end
 
@@ -236,11 +249,15 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    results.count > 0
+    campaign.present? && (results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0)
   end
 
   def venue
-    @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id) unless place_id.nil?
+    unless place_id.nil?
+      @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+      @venue.place = self.place if self.association(:place).loaded?
+    end
+    @venue
   end
 
   def contacts
@@ -313,7 +330,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    Place.locations_for_index(place)
+    place.locations.pluck('locations.id') if place.present?
   end
 
   def kpi_goals
@@ -324,7 +341,7 @@ class Event < ActiveRecord::Base
         campaign.goals.base.each do |goal|
           if goal.kpis_segment_id.present?
             @goals[goal.kpi_id] ||= {}
-            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events unless goal.value.nil?
+            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
           else
             @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
           end
@@ -381,10 +398,10 @@ class Event < ActiveRecord::Base
     end
   end
 
+  # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    results_for(campaign.form_fields) if campaign.present?
-    results.all?{|r| r.valid? }
+    all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
   end
 
   def method_missing(method_name, *args)
@@ -485,10 +502,16 @@ class Event < ActiveRecord::Base
           if params[:start_date].present? and params[:end_date].present?
             d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
             d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-            with start_at_field, d1..d2
+            any_of do
+              with start_at_field, d1..d2
+              with end_at_field, d1..d2
+            end
           elsif params[:start_date].present?
             d = Timeliness.parse(params[:start_date], zone: :current)
-            with start_at_field, d.beginning_of_day..d.end_of_day
+            all_of do
+              with(start_at_field).less_than(d.end_of_day)
+              with(end_at_field).greater_than(d.beginning_of_day)
+            end
           end
 
           if params.has_key?(:q) and params[:q].present?
@@ -505,13 +528,13 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } + [0] )
+              with :location, Area.find(value).locations.map(&:id) + [0]
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+          with(:location, Area.where(id: params[:area]).map(&:id).flatten + [0]) if params[:area].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
@@ -576,7 +599,7 @@ class Event < ActiveRecord::Base
             end
           end
 
-          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :desc)
+          order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :asc)
           paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
 
           yield self if block_given?
@@ -598,6 +621,15 @@ class Event < ActiveRecord::Base
   end
 
   private
+    def valid_campaign?
+      if self.campaign_id.present? && (new_record? || campaign_id_changed?)
+        campaigns = Campaign.where(company_id: self.company_id)
+        campaigns = campaigns.accessible_by_user(User.current.current_company_user) if User.current.present? && User.current.current_company_user.present?
+        unless campaigns.where(id: self.campaign_id).count > 0
+          errors.add :campaign_id, 'is not a valid'
+        end
+      end
+    end
 
     # Copy some errors to the attributes used on the forms so the user
     # can see them
@@ -665,10 +697,6 @@ class Event < ActiveRecord::Base
         event_data.save
       end
 
-      if place_id.present?
-        Resque.enqueue(VenueIndexer, venue.id)
-      end
-
       if place_id_changed?
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
@@ -679,6 +707,12 @@ class Event < ActiveRecord::Base
 
       if active_changed?
         Sunspot.index self.tasks
+      end
+    end
+
+    def index_venue
+      if place_id.present?
+        Resque.enqueue(VenueIndexer, venue.id)
       end
     end
 
@@ -709,6 +743,8 @@ class Event < ActiveRecord::Base
     def set_event_timezone
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
+        self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
+        self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
       end
     end
 

@@ -66,10 +66,11 @@ describe Api::V1::EventsController do
   end
 
   describe "POST 'create'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
     it "should assign current_user's company_id to the new event" do
       place = FactoryGirl.create(:place)
       lambda {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       }.should change(Event, :count).by(1)
       assigns(:event).company_id.should == company.id
     end
@@ -77,10 +78,10 @@ describe Api::V1::EventsController do
     it "should create the event with the correct dates" do
       place = FactoryGirl.create(:place)
       lambda {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: 1, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       }.should change(Event, :count).by(1)
       event = Event.last
-      event.campaign_id.should == 1
+      event.campaign_id.should == campaign.id
       event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
       event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
       event.place_id.should == place.id
@@ -92,12 +93,13 @@ describe Api::V1::EventsController do
     let(:campaign){ FactoryGirl.create(:campaign, company: company) }
     let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
     it "must update the event attributes" do
+      new_campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: 111, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       assigns(:event).should == event
       response.should be_success
       event.reload
-      event.campaign_id.should == 111
+      event.campaign_id.should == new_campaign.id
       event.start_at.should == Time.zone.parse('2020-05-21 12:00:00')
       event.end_at.should == Time.zone.parse('2020-05-22 13:00:00')
       event.place_id.should == place.id
@@ -126,7 +128,7 @@ describe Api::V1::EventsController do
       result.value = 321
       event.save
 
-      put 'update',  auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id, value: '987'}]}
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: {"0" => {id: result.id.to_s, value: '987'}}}, format: :json
       result.reload
       result.value.should == 987
     end
@@ -151,15 +153,15 @@ describe Api::V1::EventsController do
       event.save
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
 
-      fields = JSON.parse(response.body)
+      groups = JSON.parse(response.body)
       response.should be_success
-      expect(fields.first).to include(
+      expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => '# of cats',
           'field_type' => 'number',
           'value' => 321
         )
-      expect(fields.first.keys).to_not include('segments')
+      expect(groups.first['fields'].first.keys).to_not include('segments')
     end
 
     it "should return the segments for count fields" do
@@ -175,16 +177,16 @@ describe Api::V1::EventsController do
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
-      fields = JSON.parse(response.body)
-      expect(fields.first).to include(
+      groups = JSON.parse(response.body)
+      expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => 'Are you tall?',
           'field_type' => 'count',
           'value' => segments.first.id,
           'description' => 'some description to show',
           'segments' => [
-              {'id' => segments.first.id, 'text' => 'Yes'},
-              {'id' => segments.last.id, 'text' => 'No'}
+              {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
+              {'id' => segments.last.id, 'text' => 'No', 'goal' => nil}
           ]
         )
     end
@@ -200,17 +202,17 @@ describe Api::V1::EventsController do
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
-      fields = JSON.parse(response.body)
-      expect(fields.first).to include(
+      groups = JSON.parse(response.body)
+      expect(groups.first["fields"].first).to include(
           'name' => 'Age',
           'field_type' => 'percentage',
           'segments' => [
-              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil},
-              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil}
+              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
+              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 
-      expect(fields.first.keys).to_not include('id', 'value')
+      expect(groups.first['fields'].first.keys).to_not include('id', 'value')
     end
   end
 
@@ -228,8 +230,8 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
-        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+        {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
+        {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
       ]
     end
 
@@ -273,9 +275,9 @@ describe Api::V1::EventsController do
 
         result.should == [
           {"id"=>@teams.first.id, "name"=>"A team", "description"=>"team 1 description", "type"=>"team"},
-          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
           {"id"=>@teams.last.id, "name"=>"Team 2", "description"=>"team 2 description", "type"=>"team"},
-          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
         ]
       end
 
@@ -285,8 +287,8 @@ describe Api::V1::EventsController do
         result = JSON.parse(response.body)
 
         result.should == [
-          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"},
-          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "country"=>"Costa Rica", "type"=>"user"}
+          {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
         ]
       end
 
@@ -332,7 +334,7 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "country"=>"Costa Rica", "type"=>"user"}
+        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "unit_number"=>"Unit Number 456", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
       ]
     end
   end
@@ -406,7 +408,65 @@ describe Api::V1::EventsController do
     end
   end
 
-  describe "GET 'assignable_contacts'" do
+  describe "DELETE 'delete_member'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a member (type = user) from the event" do
+      member_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      another_member = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      event.users << member_to_delete
+      event.teams << another_member
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(-1)
+      event.reload
+      event.users.should == []
+      event.teams.should == [another_member]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a member (type = team) from the event" do
+      member_to_delete = FactoryGirl.create(:team, name: 'A team', description: 'team 1 description')
+      another_member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+      event.users << another_member
+      event.teams << member_to_delete
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
+      }.to change(Teaming, :count).by(-1)
+      event.reload
+      event.users.should == [another_member]
+      event.teams.should == []
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Member successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the member is not found" do
+      member = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Test', last_name: 'User', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: company), company: company)
+
+      expect {
+        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+      }.to change(Membership, :count).by(0)
+      event.reload
+      event.users.should == []
+      event.teams.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
+
+  describe "GET 'assignable_contacts'", search: true do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of contacts that are not assined to the event" do
       contacts = [
@@ -417,6 +477,8 @@ describe Api::V1::EventsController do
       associated_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
       FactoryGirl.create(:contact_event, event: event, contactable: associated_contact)   # this contact should not be returned on the list
       FactoryGirl.create(:contact_event, event: event, contactable: user.company_users.first) # Also associate the current user so it's not returned in the results
+
+      Sunspot.commit
 
       get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
@@ -434,6 +496,7 @@ describe Api::V1::EventsController do
         FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
       ]
       company_user = user.company_users.first
+      Sunspot.commit
 
       get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
@@ -443,6 +506,23 @@ describe Api::V1::EventsController do
         {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'},
         {"id"=>contacts.last.id, "full_name"=>"Pedro Guerra", "title"=>"Coach", 'type' => 'contact'},
         {"id"=>company_user.id, "full_name"=>company_user.full_name, "title"=>company_user.role_name, 'type' => 'user'},
+      ]
+    end
+
+    it "returns results match a search term" do
+      contacts = [
+        FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company),
+        FactoryGirl.create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Coach', company: company)
+      ]
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, term: 'luis', format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result.should =~ [
+        {"id"=>contacts.first.id, "full_name"=>"Luis Perez", "title"=>"Field Ambassador", 'type' => 'contact'}
       ]
     end
   end
@@ -472,6 +552,146 @@ describe Api::V1::EventsController do
       response.should be_success
       result = JSON.parse(response.body)
       result.should == { 'success' => true, 'info' => "Contact successfully added to event", 'data' => {} }
+    end
+  end
+
+  describe "DELETE 'delete_contact'" do
+    let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
+
+    it "should remove a contact (type = user) from the event" do
+      contact_to_delete = FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+      another_contact = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'user', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "should remove a contact (type = contact) from the event" do
+      contact_to_delete = FactoryGirl.create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: "juan@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador')
+      another_contact = user.company_users.first
+      FactoryGirl.create(:contact_event, event: event, contactable: contact_to_delete)
+      FactoryGirl.create(:contact_event, event: event, contactable: another_contact)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(-1)
+      event.contacts.should == [another_contact]
+
+      response.should be_success
+      response.response_code.should == 200
+      result = JSON.parse(response.body)
+      result.should == { 'success' => true, 'info' => "Contact successfully deleted from event", 'data' => {} }
+    end
+
+    it "return 404 if the contact is not found" do
+      contact = FactoryGirl.create(:contact, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street1: 'ABC', street2: '1', zip_code: 12345, title: 'Field Ambassador', company: company)
+
+      expect {
+        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+      }.to change(ContactEvent, :count).by(0)
+
+      event.contacts.should == []
+
+      response.should_not be_success
+      response.response_code.should == 404
+      result = JSON.parse(response.body)
+      result.should == { 'success' => false, 'info' => "Record not found", 'data' => {} }
+    end
+  end
+
+  describe "GET 'autocomplete'", search: true do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: '', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      buckets.map{|b| b['label']}.should == ['Campaigns', 'Brands', 'Places', 'People']
+    end
+
+    it "should return the users in the People Bucket" do
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gu', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the teams in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Spurs', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'sp', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+    end
+
+    it "should return the teams and users in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Valladolid', company_id: company.id)
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'va', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the campaigns in the Campaigns Bucket" do
+      campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
+      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+    end
+
+    it "should return the brands in the Brands Bucket" do
+      brand = FactoryGirl.create(:brand, name: 'Cacique')
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
+      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+    end
+
+    it "should return the venues in the Places Bucket" do
+      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+      venue = FactoryGirl.create(:venue, company_id: company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'mot', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
+      places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
     end
   end
 end

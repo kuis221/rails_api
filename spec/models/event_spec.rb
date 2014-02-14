@@ -46,9 +46,9 @@ describe Event do
 
   describe "event results validations" do
     it "should not allow submitting the event if the resuls are not valid" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign = FactoryGirl.create(:campaign)
       field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
-      event = FactoryGirl.create(:event, campaign: campaign, company_id: 1)
+      event = FactoryGirl.create(:event, campaign: campaign)
 
       expect {
         event.submit
@@ -86,6 +86,46 @@ describe Event do
         @event.reject
         @event.should be_rejected
       end
+    end
+  end
+
+  describe "#accessible_by" do
+    before do
+      @event = FactoryGirl.create(:event, campaign: campaign, place: place)
+    end
+
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
+    let(:place) {FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles')}
+    let(:area) {FactoryGirl.create(:area, company: company)}
+    let(:company_user) {FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, is_admin: false, company: company))}
+
+    it "should return empty if the user doesn't have campaigns nor places" do
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return empty if the user have access to the campaing but not the place" do
+       company_user.campaigns << campaign
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return the event if the user have the place directly assigned to the user" do
+      company_user.campaigns << campaign
+      company_user.places << place
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user have access to an area that includes the place" do
+      company_user.campaigns << campaign
+      area.places << place
+      company_user.areas << area
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user has access to the city" do
+      company_user.campaigns << campaign
+      company_user.places << FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles', types: ['locality'])
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
     end
   end
 
@@ -151,7 +191,7 @@ describe Event do
 
     it "should update campaign's first_event_id and first_event_at attributes" do
       campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true).should be_true
-      event = FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
+      event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
       campaign.reload
       campaign.first_event_id.should == event.id
       campaign.first_event_at.should == Time.zone.parse('2013-01-01 01:00:00')
@@ -159,7 +199,7 @@ describe Event do
 
     it "should update campaign's first_event_id and first_event_at attributes" do
       campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true).should be_true
-      event = FactoryGirl.create(:event, campaign: campaign, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
+      event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
       campaign.reload
       campaign.last_event_id.should == event.id
       campaign.last_event_at.should == Time.zone.parse('2013-02-01 01:00:00')
@@ -168,7 +208,7 @@ describe Event do
 
   describe "#kpi_goals" do
     let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign, company: campaign.company) }
 
     it "should not fail if there are not goals nor KPIs for the campaign" do
       event.kpi_goals.should == {}
@@ -200,7 +240,7 @@ describe Event do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
       #Create another event for the campaign
-      FactoryGirl.create(:event, campaign: campaign)
+      FactoryGirl.create(:event, campaign: campaign, company: campaign.company)
       goals = campaign.goals.for_kpis([Kpi.impressions])
       goals.each{|g| g.value = 100; g.save}
       event.kpi_goals.should == {Kpi.impressions.id => 50}
@@ -343,12 +383,12 @@ describe Event do
     end
   end
 
-  describe "venue reindexing" do
+  describe "venue reindexing", strategy: :deletion do
     before do
       ResqueSpec.reset!
     end
     let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:event)    { FactoryGirl.create(:event, campaign: campaign) }
+    let(:event)    { FactoryGirl.create(:event, campaign: campaign, company: campaign.company) }
 
     it "should queue a job to update venue details after a event have been updated if the event data have changed" do
       Kpi.create_global_kpis
@@ -456,7 +496,7 @@ describe Event do
 
 
   describe "#demographics_graph_data" do
-    let(:event) { FactoryGirl.create(:event, company_id: 1, campaign: FactoryGirl.create(:campaign, company_id: 1)) }
+    let(:event) { FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign)) }
     it "should return the correct results" do
       Kpi.create_global_kpis
       event.campaign.assign_all_global_kpis
@@ -490,24 +530,24 @@ describe Event do
   end
 
   describe "after_remove_member" do
-    let(:event) {FactoryGirl.create(:event, company_id: 1)}
+    let(:event) {FactoryGirl.create(:event)}
     it "should be called after removign a user from the event" do
-      user = FactoryGirl.create(:company_user, company_id: 1)
+      user = FactoryGirl.create(:company_user, company_id: event.company_id)
       event.users << user
       event.should_receive(:after_remove_member).with(user)
       event.users.delete(user)
     end
 
     it "should be called after removign a team from the event" do
-      team = FactoryGirl.create(:team, company_id: 1)
+      team = FactoryGirl.create(:team, company_id: event.company_id)
       event.teams << team
       event.should_receive(:after_remove_member).with(team)
       event.teams.delete(team)
     end
 
     it "should reindex all the tasks of the event" do
-      user = FactoryGirl.create(:company_user, company_id: 1)
-      other_user = FactoryGirl.create(:company_user, company_id: 1)
+      user = FactoryGirl.create(:company_user, company_id: event.company_id)
+      other_user = FactoryGirl.create(:company_user, company_id: event.company_id)
       event.users << user
       event.users << other_user
 
@@ -529,10 +569,10 @@ describe Event do
     end
 
     it "should unassign all the tasks assigned to any user of the team" do
-      team_user1 = FactoryGirl.create(:company_user, company_id: 1)
-      team_user2 = FactoryGirl.create(:company_user, company_id: 1)
-      other_user = FactoryGirl.create(:company_user, company_id: 1)
-      team = FactoryGirl.create(:team, company_id: 1)
+      team_user1 = FactoryGirl.create(:company_user, company_id: event.company_id)
+      team_user2 = FactoryGirl.create(:company_user, company_id: event.company_id)
+      other_user = FactoryGirl.create(:company_user, company_id: event.company_id)
+      team = FactoryGirl.create(:team, company_id: event.company_id)
       team.users << [team_user1, team_user2]
       event.teams << team
       event.users << team_user2
@@ -560,8 +600,8 @@ describe Event do
 
   describe "reindex_associated" do
     it "should update the campaign first and last event dates " do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, first_event_id: nil, last_event_at: nil, first_event_at: nil, last_event_at: nil)
-      event = FactoryGirl.build(:event, company_id: 1, campaign: campaign, start_date: '01/23/2019', end_date: '01/25/2019')
+      campaign = FactoryGirl.create(:campaign, first_event_id: nil, last_event_at: nil, first_event_at: nil, last_event_at: nil)
+      event = FactoryGirl.build(:event, campaign: campaign, start_date: '01/23/2019', end_date: '01/25/2019')
       campaign.should_receive(:first_event=).with(event)
       campaign.should_receive(:last_event=).with(event)
       event.save
@@ -569,16 +609,16 @@ describe Event do
 
 
     it "should update only the first event" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, first_event_at: Time.zone.local(2013, 07, 26, 12, 13), last_event_at: Time.zone.local(2013, 07, 29, 14, 13))
-      event = FactoryGirl.build(:event, company_id: 1, campaign: campaign, start_date: '07/24/2013', end_date: '07/24/2013')
+      campaign = FactoryGirl.create(:campaign, first_event_at: Time.zone.local(2013, 07, 26, 12, 13), last_event_at: Time.zone.local(2013, 07, 29, 14, 13))
+      event = FactoryGirl.build(:event, campaign: campaign, start_date: '07/24/2013', end_date: '07/24/2013')
       campaign.should_receive(:first_event=).with(event)
       campaign.should_not_receive(:last_event=)
       event.save
     end
 
     it "should update only the last event" do
-      campaign = FactoryGirl.create(:campaign, company_id: 1, first_event_at: Time.zone.local(2013, 07, 26, 12, 13), last_event_at: Time.zone.local(2013, 07, 29, 14, 13))
-      event = FactoryGirl.build(:event, company_id: 1, campaign: campaign, start_date: '07/30/2013', end_date: '07/30/2013')
+      campaign = FactoryGirl.create(:campaign, first_event_at: Time.zone.local(2013, 07, 26, 12, 13), last_event_at: Time.zone.local(2013, 07, 29, 14, 13))
+      event = FactoryGirl.build(:event, campaign: campaign, start_date: '07/30/2013', end_date: '07/30/2013')
       campaign.should_not_receive(:first_event=)
       campaign.should_receive(:last_event=).with(event)
       event.save
@@ -586,9 +626,9 @@ describe Event do
 
     it "should create a new event data for the event" do
       Kpi.create_global_kpis
-      campaign = FactoryGirl.create(:campaign, company_id: 1)
+      campaign = FactoryGirl.create(:campaign)
       campaign.assign_all_global_kpis
-      event = FactoryGirl.create(:event, company_id: 1, campaign: campaign)
+      event = FactoryGirl.create(:event, campaign: campaign)
       expect{
         set_event_results(event,
           impressions: 100,
@@ -600,6 +640,21 @@ describe Event do
       data.impressions.should == 100
       data.interactions.should == 101
       data.samples.should == 102
+    end
+
+    it "should reindex all the tasks of the event when a event is deactivated" do
+      campaign = FactoryGirl.create(:campaign)
+      event = FactoryGirl.create(:event, campaign: campaign)
+      user = FactoryGirl.create(:company_user, company: campaign.company)
+      other_user = FactoryGirl.create(:company_user, company: campaign.company)
+      event.users << user
+      event.users << other_user
+
+      tasks = [FactoryGirl.create(:task, event: event)]
+
+      Sunspot.should_receive(:index).with(event)
+      Sunspot.should_receive(:index).with(tasks)
+      event.deactivate!
     end
   end
 
@@ -625,8 +680,8 @@ describe Event do
 
 
   describe "#result_for_kpi" do
-    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
     it "should return a new instance of EventResult if the event has not results for the given kpi" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
@@ -644,8 +699,8 @@ describe Event do
 
 
   describe "#results_for_kpis" do
-    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
     it "should return a new instance of EventResult if the event has not results for the given kpi" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
@@ -666,8 +721,8 @@ describe Event do
 
 
   describe "#results_for" do
-    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
 
     it "should return empty array if no fields given" do
       Kpi.create_global_kpis
@@ -713,8 +768,8 @@ describe Event do
   end
 
   describe "#segments_results_for" do
-    let(:campaign) { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign, company_id: 1) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
 
     it "should return empty array if the fields is not segmented" do
       Kpi.create_global_kpis
@@ -747,7 +802,7 @@ describe Event do
       campaign = FactoryGirl.create(:campaign)
       campaign.places << place_LA
 
-      event = FactoryGirl.build(:event, campaign: campaign, place: place_SF)
+      event = FactoryGirl.build(:event, campaign: campaign, company: campaign.company, place: place_SF)
       event.valid?.should be_false
       event.errors[:place_reference].should include('is not valid for this campaign')
 
@@ -758,7 +813,7 @@ describe Event do
     it "should not validate place if the event's place haven't changed" do
       campaign = FactoryGirl.create(:campaign)
 
-      event = FactoryGirl.create(:event, campaign: campaign, place: place_SF)
+      event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, place: place_SF)
       event.save.should be_true
 
       campaign.places << place_LA
@@ -773,7 +828,7 @@ describe Event do
       User.current = user
 
       campaign = FactoryGirl.create(:campaign, company: company)
-      event = FactoryGirl.build(:event, campaign: campaign, place: nil)
+      event = FactoryGirl.build(:event, campaign: campaign, company: company, place: nil)
       event.valid?.should be_true
     end
 
@@ -799,7 +854,9 @@ describe Event do
       User.current = user
 
       campaign = FactoryGirl.create(:campaign, company: company)
-      event = FactoryGirl.build(:event, campaign: campaign, place: place_SF)
+      user.current_company_user.campaigns << campaign
+
+      event = FactoryGirl.build(:event, campaign: campaign, company: company, place: place_SF)
       event.valid?.should be_false
       event.errors[:place_reference].should include('is not part of your authorized locations')
 
@@ -816,7 +873,7 @@ describe Event do
       # An example: an admin created a event without a place, but another user (not admin) is trying to approve the event
       company = FactoryGirl.create(:company)
       campaign = FactoryGirl.create(:campaign, company: company)
-      event = FactoryGirl.create(:event, campaign: campaign, place: nil)
+      event = FactoryGirl.create(:event, campaign: campaign, company: company, place: nil)
 
       # The user is autorized to L.A. only
       user = FactoryGirl.create(:company_user, place_ids: [place_LA.id], company: company, role: FactoryGirl.create(:role, is_admin: false)).user
@@ -839,9 +896,11 @@ describe Event do
       Time.use_zone('America/New_York') do
         event = FactoryGirl.create(:event)
         event.timezone.should == "America/New_York"
+        expect(event.local_start_at.utc.strftime('%Y-%m-%d %H:%M:%S')).to eql event.read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S')
       end
       Time.use_zone("America/Guatemala") do
         event = Event.last
+        event.local_start_at
         event.start_date = '01/22/2019'
         event.valid?  # this will trigger the after_validation call
         event.timezone.should == "America/Guatemala"

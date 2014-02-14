@@ -84,32 +84,109 @@ describe CompanyUser do
   end
 
   describe "#accessible_campaign_ids" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1) }
-    let(:brand)     { FactoryGirl.create(:brand) }
+    describe "as a non admin user" do
+      let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+      let(:brand)     { FactoryGirl.create(:brand) }
+      let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
+      let(:portfolio) { FactoryGirl.create(:brand_portfolio) }
+
+      it "should return the ids of campaigns assigend to the user" do
+        user.campaigns << campaign
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand assigend to the user" do
+        campaign.brands << brand
+        user.brands << brand
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand assigend to the user" do
+        campaign.brands << brand
+        user.brands << brand
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+
+      it "should return the ids of campaigns of a brand portfolio assigned to the user" do
+        campaign.brand_portfolios << portfolio
+        user.brand_portfolios << portfolio
+        user.accessible_campaign_ids.should == [campaign.id]
+      end
+    end
+    describe "as an admin user" do
+      let(:user)      { FactoryGirl.create(:company_user, company: FactoryGirl.create(:company)) }
+
+      it "should return the ids of campaigns assigend to the user" do
+        campaigns = FactoryGirl.create_list(:campaign, 3, company: user.company)
+        other_campaigns = FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
+        expect(user.accessible_campaign_ids).to match_array campaigns.map(&:id)
+      end
+
+    end
+  end
+
+  describe "#allowed_to_access_place?" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
     let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
-    let(:portfolio) { FactoryGirl.create(:brand_portfolio) }
+    let(:place)  { FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles') }
 
-    it "should return the ids of campaigns assigend to the user" do
-      user.campaigns << campaign
-      user.accessible_campaign_ids.should == [campaign.id]
+    it "should return false if the user doesn't places associated" do
+      expect(user.allowed_to_access_place?(place)).to be_false
     end
 
-    it "should return the ids of campaigns of a brand assigend to the user" do
-      campaign.brands << brand
-      user.brands << brand
-      user.accessible_campaign_ids.should == [campaign.id]
+    it "should return true if the user has access to the city" do
+      user.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      expect(user.allowed_to_access_place?(place)).to be_true
     end
 
-    it "should return the ids of campaigns of a brand assigend to the user" do
-      campaign.brands << brand
-      user.brands << brand
-      user.accessible_campaign_ids.should == [campaign.id]
+    it "should return true if the user has access to an area that includes the place's city" do
+      city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area = FactoryGirl.create(:area, company_id: 1)
+      area.places << city
+      user.areas << area
+      expect(user.allowed_to_access_place?(place)).to be_true
     end
+  end
 
-    it "should return the ids of campaigns of a brand portfolio assigned to the user" do
-      campaign.brand_portfolios << portfolio
-      user.brand_portfolios << portfolio
-      user.accessible_campaign_ids.should == [campaign.id]
+  describe "#accessible_places" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    it "should return the id of the places assocaited to the user" do
+      FactoryGirl.create(:place)
+      place = FactoryGirl.create(:place)
+      FactoryGirl.create(:place)
+      user.places << place
+      expect(user.accessible_places).to include(place.id)
     end
+    it "should return the id of the places of areas associated to the user" do
+      FactoryGirl.create(:place)
+      place = FactoryGirl.create(:place)
+      FactoryGirl.create(:place)
+      FactoryGirl.create(:area, company_id: user.company_id)
+      area = FactoryGirl.create(:area, company_id: user.company_id)
+      area.places << place
+      user.areas << area
+      expect(user.accessible_places).to include(place.id)
+    end
+  end
+
+  describe "#accessible_locations" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+     it "should return the location id of the city" do
+        city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+        user.places << city
+        expect(user.accessible_locations).to include(city.location_id)
+     end
+     it "should return the location id of the city if belongs to an user's area" do
+        city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+        area = FactoryGirl.create(:area, company_id: user.company_id)
+        area.places << city
+        user.areas << area
+        expect(user.accessible_locations).to include(city.location_id)
+     end
+     it "should not include the location id of the venues" do
+        bar = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['establishment', 'bar'])
+        user.places << bar
+        expect(user.accessible_locations).to be_empty
+     end
   end
 end

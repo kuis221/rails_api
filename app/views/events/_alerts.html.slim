@@ -1,7 +1,7 @@
 - submit_link = false
-- if can?(:submit, resource) && resource.may_submit?
-  - submit_link = link_to 'submit', submit_event_path(format: :js), method: :put, remote: true
-
+- if can?(:submit, resource) && (resource.unsent? || resource.rejected?)
+  - submit_link = link_to 'submit', submit_event_path(format: :js), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'submitting'}
+r
 // Event is scheduled on a place that is not longer part of the campaign
 - unless resource.place.nil? || resource.campaign.place_allowed_for_event?(resource.place)
   .alert.alert-danger
@@ -27,7 +27,7 @@
       .alert.alert-danger
         == "Your event has #{pluralize(late_tasks, 'late task')}. <a href=\"#event-tasks\"  class=\"smooth-scroll\">Click here</a> to complete."
 
-    - if (today_tasks = resource.tasks.due_today.count) > 0
+    - if today_tasks > 0
       .alert.alert-gray
         == "Your event has #{(today_tasks > 1) ? today_tasks.to_s+' tasks that are' : ' one task that is'} due today. <a href=\"#event-tasks\" class=\"smooth-scroll\">Click here</a> to complete."
 
@@ -58,7 +58,7 @@
 
 - elsif resource.rejected?
   .alert.alert-danger
-    - resubmit_link = link_to 'resubmit', submit_event_path(format: :js), method: :put, remote: true
+    - resubmit_link = link_to 'resubmit', submit_event_path(format: :js), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'resubmitting'}
     == "Your post event report form has been rejected for the following reasons:"
     br>/
     p #{resource.reject_reason}
