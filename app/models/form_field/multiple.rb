@@ -18,4 +18,12 @@ class FormField::Multiple < FormField
   def field_options(result)
     {as: :select, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: 'activity-' + self.name.downcase + '-list', multiple: true, required: (self.required? ? 'required' : nil)}}
   end
+
+  def store_value(value)
+    if value.is_a?(Array)
+      value.reject(&:empty?).join(',')
+    else
+      value
+    end
+  end
 end

@@ -17,7 +17,7 @@ class ActivityResult < ActiveRecord::Base
   validate :valid_value?
   validates :form_field_id, numericality: true, presence: true
 
-  before_save :format_multiple
+  before_save :prepare_for_store
 
   private
     def valid_value?
@@ -27,10 +27,8 @@ class ActivityResult < ActiveRecord::Base
       end
     end
 
-    def format_multiple
-      if self.form_field.type == 'FormField::Multiple' && self.value.present?
-        self.value = self.value.reject(&:empty?).join(',')
-      end
+    def prepare_for_store
+      self.value = form_field.store_value(value)
       true
     end
 end

@@ -32,4 +32,8 @@ class FormField < ActiveRecord::Base
   def field_classes
     ['input-xlarge']
   end
+
+  def store_value(value)
+    value
+  end
 end
