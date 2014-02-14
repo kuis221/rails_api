@@ -223,4 +223,194 @@ describe Campaign do
     end
   end
 
+  describe "#promo_hours_graph_data" do
+    before(:each) do
+      Kpi.create_global_kpis
+    end
+    it "should return empty when there are no campaigns and events" do
+      stats = Campaign.promo_hours_graph_data
+      expect(stats).to be_empty
+    end
+
+    it "should return empty when there are campaigns but no goals" do
+      campaign = FactoryGirl.create(:campaign)
+      stats = Campaign.promo_hours_graph_data
+      expect(stats).to be_empty
+    end
+
+    it "should the stats for events kpi if the campaign has goals" do
+      campaign = FactoryGirl.create(:campaign, name: 'TestCmp1')
+      campaign.goals.for_kpi(Kpi.events).value = 10
+      campaign.save
+
+      event = FactoryGirl.create(:approved_event, campaign: campaign)
+
+      stats = Campaign.promo_hours_graph_data
+      expect(stats.count).to eql 1
+      expect(stats.first['id']).to eql campaign.id
+      expect(stats.first['name']).to eql 'TestCmp1'
+      expect(stats.first['kpi']).to eql 'EVENTS'
+      expect(stats.first['goal']).to eql 10.0
+      expect(stats.first['executed']).to eql 1.0
+      expect(stats.first['scheduled']).to eql 0.0
+      expect(stats.first['remaining']).to eql 9.0
+      expect(stats.first['executed_percentage']).to eql 10
+      expect(stats.first['scheduled_percentage']).to eql 0
+      expect(stats.first['remaining_percentage']).to eql 90
+    end
+
+    it "should the stats for promo_hours kpi if the campaign has goals" do
+      campaign = FactoryGirl.create(:campaign, name: 'TestCmp1')
+      campaign.goals.for_kpi(Kpi.promo_hours).value = 10
+      campaign.save
+
+      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+
+      stats = Campaign.promo_hours_graph_data
+      expect(stats.count).to eql 1
+      expect(stats.first['id']).to eql campaign.id
+      expect(stats.first['name']).to eql 'TestCmp1'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql 10.0
+      expect(stats.first['executed']).to eql 3.0
+      expect(stats.first['scheduled']).to eql 0.0
+      expect(stats.first['remaining']).to eql 7.0
+      expect(stats.first['executed_percentage']).to eql 30
+      expect(stats.first['scheduled_percentage']).to eql 0
+      expect(stats.first['remaining_percentage']).to eql 70
+    end
+
+    it "should the stats for promo_hours and events kpi if the campaign has goals for both kpis" do
+      campaign = FactoryGirl.create(:campaign, name: 'TestCmp1')
+      campaign.goals.for_kpi(Kpi.promo_hours).value = 10
+      campaign.goals.for_kpi(Kpi.events).value = 5
+      campaign.save
+
+      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+
+      stats = Campaign.promo_hours_graph_data
+      expect(stats.count).to eql 2
+      expect(stats.first['id']).to eql campaign.id
+      expect(stats.first['name']).to eql 'TestCmp1'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql 10.0
+      expect(stats.first['executed']).to eql 3.0
+      expect(stats.first['scheduled']).to eql 0.0
+      expect(stats.first['remaining']).to eql 7.0
+      expect(stats.first['executed_percentage']).to eql 30
+      expect(stats.first['scheduled_percentage']).to eql 0
+      expect(stats.first['remaining_percentage']).to eql 70
+
+      expect(stats.last['id']).to eql campaign.id
+      expect(stats.last['name']).to eql 'TestCmp1'
+      expect(stats.last['kpi']).to eql 'EVENTS'
+      expect(stats.last['goal']).to eql 5.0
+      expect(stats.last['executed']).to eql 1.0
+      expect(stats.last['scheduled']).to eql 0.0
+      expect(stats.last['remaining']).to eql 4.0
+      expect(stats.last['executed_percentage']).to eql 20
+      expect(stats.last['scheduled_percentage']).to eql 0
+      expect(stats.last['remaining_percentage']).to eql 80
+    end
+
+    it "should count rejected, new and submitted events as scheduled" do
+      campaign = FactoryGirl.create(:campaign, name: 'TestCmp1')
+      campaign.goals.for_kpi(Kpi.promo_hours).value = 10
+      campaign.goals.for_kpi(Kpi.events).value = 5
+      campaign.save
+
+      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      event = FactoryGirl.create(:rejected_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      event = FactoryGirl.create(:submitted_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+
+      stats = Campaign.promo_hours_graph_data
+      expect(stats.count).to eql 2
+      expect(stats.first['id']).to eql campaign.id
+      expect(stats.first['name']).to eql 'TestCmp1'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql 10.0
+      expect(stats.first['executed']).to eql 3.0
+      expect(stats.first['scheduled']).to eql 3.0
+      expect(stats.first['remaining']).to eql 4.0
+      expect(stats.first['executed_percentage']).to eql 30
+      expect(stats.first['scheduled_percentage']).to eql 30
+      expect(stats.first['remaining_percentage']).to eql 40
+
+      expect(stats.last['id']).to eql campaign.id
+      expect(stats.last['name']).to eql 'TestCmp1'
+      expect(stats.last['kpi']).to eql 'EVENTS'
+      expect(stats.last['goal']).to eql 5.0
+      expect(stats.last['executed']).to eql 1.0
+      expect(stats.last['scheduled']).to eql 3.0
+      expect(stats.last['remaining']).to eql 1.0
+      expect(stats.last['executed_percentage']).to eql 20
+      expect(stats.last['scheduled_percentage']).to eql 60
+      expect(stats.last['remaining_percentage']).to eql 20
+    end
+
+    it "should set the today values correctly" do
+      campaign = FactoryGirl.create(:campaign, name: 'TestCmp1', start_date: '01/01/2014', end_date: '02/01/2014')
+      campaign.goals.for_kpi(Kpi.promo_hours).value = 10
+      campaign.goals.for_kpi(Kpi.events).value = 5
+      campaign.save
+
+      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+
+      Timecop.travel Date.new(2014, 01, 15) do
+        stats = Campaign.promo_hours_graph_data
+        expect(stats.count).to eql 2
+        expect(stats.first['kpi']).to eql 'PROMO HOURS'
+        expect(stats.first['today']).to eql 4.838709677419355
+        expect(stats.first['today_percentage']).to eql 48
+
+        expect(stats.last['kpi']).to eql 'EVENTS'
+        expect(stats.last['today']).to eql 2.4193548387096775
+        expect(stats.last['today_percentage']).to eql 48
+      end
+
+      Timecop.travel Date.new(2014, 01, 25) do
+        stats = Campaign.promo_hours_graph_data
+        expect(stats.count).to eql 2
+        expect(stats.first['kpi']).to eql 'PROMO HOURS'
+        expect(stats.first['today']).to eql 8.064516129032258
+        expect(stats.first['today_percentage']).to eql 80
+
+        expect(stats.last['kpi']).to eql 'EVENTS'
+        expect(stats.last['today']).to eql 4.032258064516129
+        expect(stats.last['today_percentage']).to eql 80
+      end
+
+      # When the campaing end date is before the current date
+      Timecop.travel Date.new(2014, 02, 25) do
+        stats = Campaign.promo_hours_graph_data
+        expect(stats.count).to eql 2
+        expect(stats.first['kpi']).to eql 'PROMO HOURS'
+        expect(stats.first['today']).to eql 10.0
+        expect(stats.first['today_percentage']).to eql 100
+
+        expect(stats.last['kpi']).to eql 'EVENTS'
+        expect(stats.last['today']).to eql 5.0
+        expect(stats.last['today_percentage']).to eql 100
+      end
+
+
+      # When the campaing start date is after the current date
+      Timecop.travel Date.new(2013, 12, 25) do
+        stats = Campaign.promo_hours_graph_data
+        expect(stats.count).to eql 2
+        expect(stats.first['kpi']).to eql 'PROMO HOURS'
+        expect(stats.first['today']).to eql 0
+        expect(stats.first['today_percentage']).to eql 0
+
+        expect(stats.last['kpi']).to eql 'EVENTS'
+        expect(stats.last['today']).to eql 0
+        expect(stats.last['today_percentage']).to eql 0
+      end
+    end
+  end
+
 end

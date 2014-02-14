@@ -343,18 +343,50 @@ class Campaign < ActiveRecord::Base
       end
     end
 
+    # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
-      q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
-          select('campaigns.id, campaigns.name, goals.value as goal,\'PROMO HOURS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
-          order('campaigns.name, campaigns.id').group('1, 2, 3, 4, 5').to_sql.gsub(/'/,"''")
-      promo_hours_data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      # q = with_goals_for([Kpi.promo_hours, Kpi.events]).joins(:events).where(events: {active: true}).
+      #     select('ARRAY[campaigns.id, goals.kpi_id] as id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, COUNT(events.id) as events_count,CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
+      #     order('1, 2').group('1, 2, 3, 4, 5, 7').to_sql.gsub(/'/,"''")
+      # data = ActiveRecord::Base.connection.select_all("SELECT id[1] as id, name, start_date, end_date, id[2] as kpi_id, goal, events_count, executed, scheduled  FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int[], name varchar, start_date date, end_date date, goal numeric, events_count int, executed numeric, scheduled numeric)")
 
-      q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
-          select('campaigns.id, campaigns.name, goals.value as goal,\'EVENTS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, COUNT(events.id)').
-          order('campaigns.name, campaigns.id').group('1, 2, 3, 4, 5').to_sql.gsub(/'/,"''")
-      events_data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+     q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+         select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'PROMO HOURS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
+         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+     data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
 
-      (promo_hours_data + events_data).sort{|a, b| a['name'] <=> b['name'] }
+     q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+         select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'EVENTS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, COUNT(events.id)').
+         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+     data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data.sort!{|a, b| a['name'] <=> b['name'] }
+
+      data.each do |r|
+        r['id'] = r['id'].to_i
+        r['goal'] = r['goal'].to_f
+        r['executed'] = r['executed'].to_f
+        r['scheduled'] = r['scheduled'].to_f
+        r['remaining'] = [0, r['goal']-(r['scheduled'].+r['executed'])].max
+        r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
+        r['executed_percentage'] = [100, r['executed_percentage']].min
+        r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
+        r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
+        r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
+        if r['start_date'] && r['end_date'] && r['goal'] > 0
+          r['start_date'] = Timeliness.parse(r['start_date']).to_date
+          r['end_date'] = Timeliness.parse(r['end_date']).to_date
+          days = (r['end_date']-r['start_date']).to_i
+          if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
+            r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
+          elsif Date.today > r['end_date']
+            r['today'] = r['goal']
+          else
+            r['today'] = 0
+          end
+          r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
+        end
+      end
+      data
     end
   end
 

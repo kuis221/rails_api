@@ -47,65 +47,24 @@ module DashboardHelper
     Venue.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :venue_score, venue_score: {min: 0}, sorting_dir: :asc }).results
   end
 
-  def kpi_trends_stats(kpi)
-    @kpi_trends_totals ||= {}
-    @kpi_trends_totals[kpi.id] ||= Hash.new.tap do |data|
-      campaigns_scope = current_company.campaigns.with_goals_for(kpi)
-      campaigns_scope = campaigns_scope.where(id: current_company_user.accessible_campaign_ids) unless current_company_user.is_admin?
-      campaign_ids =  campaigns_scope.select('campaigns.id').map(&:id)
-
-      data[:goal] = campaigns_scope.sum('goals.value').to_i
-      data[:completed] = get_totals_for_kpi(kpi, kpis_completed_totals(campaign_ids))
-      data[:executed] = get_totals_for_kpi(kpi, kpis_executed_totals(campaign_ids))
-      data[:remaining] = 0
-      data[:remaining] = [data[:goal] - data[:completed], 0].max if data[:completed]
-      data[:completed_percentage] = 0
-      data[:remaining_percentage] = 0
-      data[:today_percentage] =  0
-      data[:executed_percentage] =  0
-
-      if data[:goal] > 0
-        data[:completed_percentage] = (data[:completed] * 100 / data[:goal]).round
-        data[:remaining_percentage] = [100 - data[:completed_percentage], 0].max
-        data[:executed_percentage] = (data[:executed] * 100 / data[:goal]).round
-
-        # dates_result = campaigns_scope.select('min(first_event_at) as first_event_at, max(last_event_at) as last_event_at').first
-        # if dates_result.first_event_at && dates_result.last_event_at
-        #   total_days = ((dates_result.last_event_at  - dates_result.first_event_at).to_i / 86400).round
-        #   today_days = ((Time.now  - dates_result.first_event_at).to_i / 86400).round
-        #   data[:today_percentage] = today_days * 100 / total_days if total_days > 0
-        # end
-
-      end
-    end
-  end
-
-  def campaing_promo_hours_chart(campaign)
-    goal = campaign['goal'].to_f
-    executed = campaign['executed'].to_f
-    executed_percentage = (executed.to_f*100/goal).to_i rescue 0
-    executed_percentage = [100, executed_percentage].min
-    scheduled = campaign['scheduled'].to_f
-    scheduled_percentage = (scheduled*100/goal).to_i rescue 0
-    scheduled_percentage = [scheduled_percentage, (100-executed_percentage)].min
-    remaining_percentage = 100-executed_percentage-scheduled_percentage
-    remaining = [0, goal-(scheduled+executed)].max
+  def campaing_promo_hours_chart(c)
+    remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
     content_tag(:div, class: 'chart-bar') do
       content_tag(:div, '', class: 'today-line-indicator', style: "left: 30%") +
-      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{executed_percentage}%") +
-      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{executed_percentage+scheduled_percentage}%") +
+      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{c['executed_percentage']}%") +
+      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{c['executed_percentage']+c['scheduled_percentage']}%") +
       content_tag(:div, '', class: 'bar-indicator goal-indicator', style: "left: 100%") +
       content_tag(:div, class: 'progress') do
-        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, executed_percentage].min}%;") +
-        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{scheduled_percentage}%;") +
-        content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{remaining_percentage}%;")
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
+        content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(executed, strip_insignificant_zeros: true)}</b> EXECUTED".html_safe), class: 'executed-label', style: "margin-left: #{executed_percentage}%") +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(scheduled, strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-scheduled_percentage-executed_percentage}%") +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(goal, strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['executed'], strip_insignificant_zeros: true)}</b> EXECUTED".html_safe), class: 'executed-label', style: "margin-left: #{c['executed_percentage']}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-c['scheduled_percentage']-c['executed_percentage']}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
       content_tag(:div, class: 'remaining-label') do
-        content_tag(:b, number_with_precision(remaining, strip_insignificant_zeros: true)) +
-        content_tag(:span, campaign['kpi'], class: 'kpi-name') +
+        content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true)) +
+        content_tag(:span, c['kpi'], class: 'kpi-name') +
         content_tag(:span, 'REMAINING')
       end
     end

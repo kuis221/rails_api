@@ -123,6 +123,10 @@
 		}
 	}
 
+	#kpis-trends-module {
+		overflow: hidden;
+	}
+
 
 	#kpis-trends-bars {
 		margin-right: 350px;
@@ -196,6 +200,7 @@
 			.executed-label {
 				white-space: nowrap;
 				display: inline-block;
+				margin-right: 50%;
 				div {
 					margin-left: -50%;
 				}
