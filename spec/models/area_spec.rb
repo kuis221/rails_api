@@ -48,7 +48,7 @@ describe Area do
     it "should return the locations for continent, country, state and city" do
       place = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
       area.places << place
-      area.locations.should == ["North America/United States/California/Los Angeles"]
+      expect(area.locations.map(&:path)).to match_array ["north america/united states/california/los angeles"]
     end
 
     it "should not return duplicated elements" do
@@ -56,7 +56,7 @@ describe Area do
       place2 = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
       area.places << place
       area.places << place2
-      area.locations.should == ["North America/United States/California/Los Angeles"]
+      expect(area.locations.map(&:path)).to match_array ["north america/united states/california/los angeles"]
     end
 
     it "should all the paths for all place" do
@@ -64,13 +64,19 @@ describe Area do
       place2 = FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       area.places << place
       area.places << place2
-      area.locations.should == ["North America/United States/California/Los Angeles", "North America/United States/California/San Francisco"]
+      expect(area.locations.map(&:path)).to match_array ["north america/united states/california/los angeles", "north america/united states/california/san francisco"]
     end
 
     it "should result the neighborhood on the path if the place has the type sublocality" do
       place = FactoryGirl.create(:place, name:'Beverly Hills', types: ['sublocality'], city: 'Los Angeles', state: 'California', country: 'US')
       area.places << place
-      area.locations.should == ["North America/United States/California/Los Angeles/Beverly Hills"]
+      expect(area.locations.map(&:path)).to match_array ["north america/united states/california/los angeles/beverly hills"]
+    end
+
+    it "should not include establishments as locations" do
+      place = FactoryGirl.create(:place, name: 'Guille\'s Place', types: ['establishment'], city: 'Los Angeles', state: 'California', country: 'US')
+      area.places << place
+      expect(area.locations).to be_empty
     end
   end
 
@@ -114,11 +120,10 @@ describe Area do
       bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'San Francisco', state:'California', country:'US')
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
-
       area.place_in_scope?(bar).should be_false
     end
 
-    it "should return false if the place is a state and the are has cities of that state" do
+    it "should return false if the place is a state and the area has cities of that state" do
       california = FactoryGirl.create(:place, types: ['locality'], route:nil, street_number: nil, city: nil, state:'California', country:'US')
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')

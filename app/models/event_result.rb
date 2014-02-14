@@ -68,7 +68,7 @@ class EventResult < ActiveRecord::Base
       else
         self.attributes['value']
       end
-    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present?
+    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'].respond_to?(:to_i)
       self.attributes['value'].to_i if self.attributes['value'].present?
     else
       self.attributes['value']
@@ -107,7 +107,7 @@ class EventResult < ActiveRecord::Base
       end
 
       if form_field.field_type == 'count' && value.present? && value != ''
-        if value.present? && capture_mechanism == 'radio' && !form_field.kpi.kpis_segment_ids.include?(value)
+        if value.present? && capture_mechanism == 'radio' && (!value.is_a?(Integer) || !form_field.kpi.kpis_segment_ids.include?(value))
           errors.add(:value, I18n.translate('errors.result.invalid'))
         end
 

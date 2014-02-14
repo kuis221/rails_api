@@ -26,6 +26,7 @@
  *= require 'brandscopic.datepick.css'
  *= require 'brandscopic'
  *= require 'modals'
+ *= require 'dashboard'
  *= require 'date_ranges'
  *= require 'day_parts'
  *= require 'campaigns'

@@ -1,4 +1,5 @@
 class Api::V1::VenuesController < Api::V1::FilteredController
+  include PlacesHelper::CreatePlace
 
   resource_description do
     short 'Venues'
@@ -11,6 +12,19 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     description <<-EOS
 
     EOS
+  end
+
+  def_param_group :venue do
+    param :venue, Hash, required: true, :action_aware => true do
+      param :name, String, required: true, desc: "The Venue name"
+      param :types, String, required: true, desc: "A comma separated string with one or more of the possible types venue types. See venues#types for more info"
+      param :street_number, String, required: true, desc: "The Venue street_number (address 1)"
+      param :route, String, required: false, desc: "The Venue's route (address 2)"
+      param :country, String, required: true, desc: "The Venue country code. Eg. US"
+      param :city, String, required: true, desc: "The Venue city"
+      param :state, String, required: true, desc: "The Venue state"
+      param :zipcode, String, required: true, desc: "The Venue's zipcode"
+    end
   end
 
   api :GET, '/api/v1/venues/:id', 'Return a venue\'s details'
@@ -44,7 +58,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
           "Saturday 4:00 PM - 1:00 AM",
           "Sunday 4:00 PM - 1:00 AM",
           "Monday 10:30 AM - 1:00 AM"
-      ]
+      ],
+      "td_linx_code": '2238273'
   }
   EOS
   def show
@@ -269,7 +284,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "220.0",
               "avg_impressions_hour": "220.0",
-              "avg_impressions_cost": "0.67"
+              "avg_impressions_cost": "0.67",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1835,
@@ -290,7 +306,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "123.0",
               "avg_impressions_hour": "123.75",
-              "avg_impressions_cost": "1.83"
+              "avg_impressions_cost": "1.83",
+              "td_linx_code": "12312312"
           },
           {
               "id": 1401,
@@ -311,7 +328,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
               "score": 93,
               "avg_impressions": "250.0",
               "avg_impressions_hour": "250.0",
-              "avg_impressions_cost": "0.86"
+              "avg_impressions_cost": "0.86",
+              "td_linx_code": "12312312"
           },
           ....
       ]
@@ -319,6 +337,63 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def index
     collection
+  end
+
+  api :POST, '/api/v1/venues', 'Creates a new venue'
+  param_group :venue
+  see 'venues#types'
+  def create
+    if create_place(permitted_params, true)
+      @venue = @place
+      respond_to do |format|
+        format.json { render :show }
+        format.xml { render :show }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @place.errors, status: :unprocessable_entity }
+        format.xml { render xml: @place.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  api :GET, '/api/v1/venues/types', "Get a list of possible venue types"
+  description <<-EOS
+  Returns a list of valid venue types that can be used to generate a dropdown when
+  creating a new venue
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&company_id=1
+  [
+      {
+          "name": "Accounts",
+          "value": "accounts"
+      },
+      {
+          "name": "Airport",
+          "value": "airport"
+      },
+      {
+          "name": "Amusement Park",
+          "value": "amusement_park"
+      },
+      {
+          "name": "Aquarium",
+          "value": "aquarium"
+      },
+      {
+          "name": "Art Gallery",
+          "value": "art_gallery"
+      },
+      ...
+  ]
+  EOS
+  def types
+    types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
+    respond_to do |format|
+      format.json { render json: types }
+      format.xml { render xml: types }
+    end
   end
 
   api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
@@ -452,6 +527,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    end
     def permitted_search_params
       params.permit({campaign: []}, :location, :radius)
     end

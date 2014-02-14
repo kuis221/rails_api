@@ -45,13 +45,11 @@ describe Event, search: true do
     Event.do_search(company_id: company.id, user: [user3.id,user4.id]).results.should =~ [event, event2]
 
     # Search for a specific Event's place
-    place_id = Place.encode_location(Place.political_division(place))
-    place2_id = Place.encode_location(Place.political_division(place2))
     Event.do_search(company_id: company.id, q: "place,#{place.id}").results.should =~ [event]
     Event.do_search(company_id: company.id, q: "place,#{place2.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, location: [place_id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, location: [place2_id]).results.should =~ [event2]
-    Event.do_search(company_id: company.id, location: [place_id, place2_id]).results.should =~ [event, event2]
+    Event.do_search(company_id: company.id, location: [place.location_id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, location: [place2.location_id]).results.should =~ [event2]
+    Event.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results.should =~ [event, event2]
 
     # Search for brands associated to the Events
     Event.do_search(company_id: company.id, q: "brand,#{brand.id}").results.should =~ [event, event2]

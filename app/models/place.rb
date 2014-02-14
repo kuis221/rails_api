@@ -39,6 +39,8 @@ class Place < ActiveRecord::Base
   has_many :events
   has_many :placeables
   has_many :venues, dependent: :destroy
+  has_and_belongs_to_many :locations, autosave: true
+  belongs_to :location, autosave: true
 
   with_options through: :placeables, :source => :placeable do |place|
     place.has_many :areas, :source_type => 'Area'
@@ -52,6 +54,10 @@ class Place < ActiveRecord::Base
   before_create :fetch_place_data
 
   after_save :clear_cache
+
+  before_save :update_locations
+
+  after_commit :reindex_associated
 
   serialize :types
 
@@ -123,62 +129,19 @@ class Place < ActiveRecord::Base
     list_photos.slice(0, 10)
   end
 
+  def update_locations
+    ary = Place.political_division(self)
+    paths = ary.count.times.map { |i| ary.slice(0, i+1).compact.join('/').downcase }
+    self.locations = paths.map{|path| Location.find_or_create_by_path(path) }
+    self.location = Location.find_or_create_by_path(paths.last)
+    self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
+    true
+  end
+
   class << self
-    def load_organized(company_id, counts)
-      places = find(:all)
-      list = {label: :root, items: [], id: nil, path: nil}
-
-      areas = Area.scoped_by_company_id(company_id).active
-
-      Place.unscoped do
-        places.each do |p|
-          parents = [p.continent_name, p.country_name, p.state_name, p.city].compact
-
-          areas.each{|area| area.count_events(p, parents, counts[p.id])} if counts.has_key?(p.id) && counts[p.id] > 0
-          create_structure(list, parents)
-        end
-      end
-
-      areas = areas.select{|a| a.events_count.present? && a.events_count > 0}
-
-      areas.each do |area|
-        p  = create_structure(list, area.common_denominators || [])
-        p[:items] ||= []
-        p[:items].push({label: area.name, id: area.id, count: 1, name: :area, group: 'Areas'})
-      end
-
-      {locations: simplify_list(list[:items]), areas: areas}
-    end
-
-    def encode_location(path)
-      path = path.compact.join('/') if path.is_a?(Array)
-      Digest::MD5.hexdigest(path.downcase)
-    end
-
     def load_by_place_id(place_id, reference)
       Place.find_or_initialize_by_place_id({place_id: place_id, reference: reference}, without_protection: true) do |p|
         p.send(:fetch_place_data)
-      end
-    end
-
-    # Returns a list of the different locations where the place belongs to, so, if the place
-    # is in Los Angeles, CA, it will return:
-    # ["460491fc520f4dbfcff22d1a45f6b056", "cdbe9fe33896a9afa77c66177551fa54", "e6694f45ba1b5e30c99e64ae676c2240", "e4f529bbd3bfe9699536ec957be40fa1"]
-    # where
-    # * "North America" ==> 460491fc520f4dbfcff22d1a45f6b056
-    # * "North America/United States" ==> cdbe9fe33896a9afa77c66177551fa54
-    # * "North America/United States/California"  ==> e6694f45ba1b5e30c99e64ae676c2240
-    # * "North America/United States/California/Los Angeles" ==> e4f529bbd3bfe9699536ec957be40fa1
-    #
-    def locations_for_index(place)
-      ary = political_division(place)
-      ary.count.times.map { |i| encode_location(ary.slice(0, i+1)) } unless ary.nil?
-    end
-
-    def location_for_search(place)
-      unless place.nil?
-        return nil if place.types.present? && place.types.include?('establishment')
-        return encode_location(political_division(place))
       end
     end
 
@@ -189,41 +152,7 @@ class Place < ActiveRecord::Base
         [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
       end
     end
-
-    private
-      def create_structure(list, parents)
-        groups = ['Continents', 'Countries', 'States', 'Cities']
-        p = list
-        i = 1
-        parents.each do |label|
-          if p[:items].nil? || (c = p[:items].select{|i| i[:label] == label}.first).nil?
-            location_id = Base64.strict_encode64(encode_location(parents[0..i-1]) + '||' + label)
-            c = {id: location_id, name: :place, label: label, group: groups[i-1], items: nil, count: 1}
-            p[:items] ||= []
-            p[:items].push c
-          end
-          i += 1
-          p = c
-        end
-        p
-      end
-
-      def simplify_list(items)
-        if items and items.size == 1
-          if items[0][:items]
-            simplify_list(items[0][:items])
-          else
-            items
-          end
-        elsif items
-          items.each do |item|
-            item[:items] = simplify_list(item[:items])
-          end
-          items
-        end
-      end
   end
-
 
   class << self
     # Combine search results from Google API and Existing places
@@ -343,6 +272,13 @@ class Place < ActiveRecord::Base
     def clear_cache
       Placeable.where(place_id: id).each do |placeable|
         placeable.update_associated_resources
+      end
+    end
+
+    def reindex_associated
+      Venue.where(place_id: id).reindex
+      self.areas.each do |area|
+        Area.update_common_denominators(area)
       end
     end
 end

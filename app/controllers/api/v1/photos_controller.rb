@@ -127,8 +127,8 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   def form
     if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
-      form = bucket.presigned_post(acl: 'public-read').where(:key).starts_with("uploads/")
-      data = { fields: form.fields, url: "https://#{S3_CONFIGS['bucket_name']}.s3.amazonaws.com/" }
+      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).where(:key).starts_with("uploads/")
+      data = { fields: form.fields, url: "https://s3.amazonaws.com/#{S3_CONFIGS['bucket_name']}/" }
       respond_to do |format|
         format.json { render json: data }
         format.xml { render xml: data }

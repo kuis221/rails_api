@@ -165,7 +165,41 @@ class Api::V1::SurveysController < Api::V1::ApiController
       param :kpi_id, [6,7,8], desc: 'The kpi_id of this answer. "6" for gender, "7" for age or "8" for ethnicity. (if this is an answer that is related to a kpi.)'
       param :brand_id, :number, desc: 'The ID of the brand for this answer, if this is an answer that is related to a brand.'
       param :question_id, [1,2,3,4], desc: 'The number of the question for this answer.'
-      param :answer, String, desc: 'The value for this answer'
+      param :answer, String, desc: <<-EOS
+      The value for this answer. Depending of what is this for, the value can be one of the following:
+
+      For the Age KPI:
+      * *1*: < 12
+      * *2*: 12 – 17
+      * *387*: 18 – 20
+      * *3*: 21 – 24
+      * *4*: 25 – 34
+      * *5*: 35 – 44
+      * *6*: 45 – 54
+      * *7*: 55 – 64
+      * *8*: 65+
+
+
+      For the ethnicity KPI:
+      * *11*: Asian
+      * *12*: Black / African American
+      * *13*: Hispanic / Latino
+      * *14*: Native American
+      * *15*: White
+
+      For the gender KPI:
+      * *9*: Female
+      * *10*: Male
+
+      For Question #1:
+      Can be any of: ["purchased", "aware", "unaware"]
+
+      For Question #2:
+      Can be any of: [1, 2, 3, 4, 5]
+
+      For Question #3:
+      Can be any of: [1, 2, 3, 4, 5]
+      EOS
     end
   end
   description <<-EOS
@@ -176,7 +210,7 @@ class Api::V1::SurveysController < Api::V1::ApiController
   example <<-EOS
   POST /api/v1/events/1322/surveys
   DATA:
-  {
+  "survey": {
     "surveys_answers_attributes": [
       {"kpi_id"=> 6, "answer"=> 9},
       {"kpi_id"=> 7, "answer"=> 387},

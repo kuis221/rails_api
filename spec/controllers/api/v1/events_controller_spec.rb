@@ -153,15 +153,15 @@ describe Api::V1::EventsController do
       event.save
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
 
-      fields = JSON.parse(response.body)
+      groups = JSON.parse(response.body)
       response.should be_success
-      expect(fields.first).to include(
+      expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => '# of cats',
           'field_type' => 'number',
           'value' => 321
         )
-      expect(fields.first.keys).to_not include('segments')
+      expect(groups.first['fields'].first.keys).to_not include('segments')
     end
 
     it "should return the segments for count fields" do
@@ -177,16 +177,16 @@ describe Api::V1::EventsController do
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
-      fields = JSON.parse(response.body)
-      expect(fields.first).to include(
+      groups = JSON.parse(response.body)
+      expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => 'Are you tall?',
           'field_type' => 'count',
           'value' => segments.first.id,
           'description' => 'some description to show',
           'segments' => [
-              {'id' => segments.first.id, 'text' => 'Yes'},
-              {'id' => segments.last.id, 'text' => 'No'}
+              {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
+              {'id' => segments.last.id, 'text' => 'No', 'goal' => nil}
           ]
         )
     end
@@ -202,17 +202,17 @@ describe Api::V1::EventsController do
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
-      fields = JSON.parse(response.body)
-      expect(fields.first['fields']).to include(
+      groups = JSON.parse(response.body)
+      expect(groups.first["fields"].first).to include(
           'name' => 'Age',
           'field_type' => 'percentage',
           'segments' => [
-              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil},
-              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil}
+              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
+              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 
-      expect(fields.first.keys).to_not include('id', 'value')
+      expect(groups.first['fields'].first.keys).to_not include('id', 'value')
     end
   end
 

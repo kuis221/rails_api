@@ -60,7 +60,16 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date| where("end_at > ? AND start_at < ?", start_date, end_date) }
+  scope :between_dates, lambda {|start_date, end_date|
+    prefix = ''
+    if Company.current.present? && Company.current.timezone_support?
+      prefix = 'local_'
+      start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
+      end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
+    end
+    where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
+  }
+
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
     joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
@@ -70,7 +79,11 @@ class Event < ActiveRecord::Base
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids) }
+  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids+[0]) }
+
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
+
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select locations_places.place_id FROM locations_places where id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
   track_who_does_it
 
@@ -149,7 +162,7 @@ class Event < ActiveRecord::Base
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       locations_for_index
     end
 
@@ -236,7 +249,7 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    results.count > 0
+    campaign.present? && (results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0)
   end
 
   def venue
@@ -317,7 +330,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    Place.locations_for_index(place)
+    place.locations.pluck('locations.id') if place.present?
   end
 
   def kpi_goals
@@ -328,7 +341,7 @@ class Event < ActiveRecord::Base
         campaign.goals.base.each do |goal|
           if goal.kpis_segment_id.present?
             @goals[goal.kpi_id] ||= {}
-            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events unless goal.value.nil?
+            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
           else
             @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
           end
@@ -388,7 +401,7 @@ class Event < ActiveRecord::Base
   # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    results_for(campaign.form_fields).all?{|r| r.valid? } if campaign.present?
+    all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
   end
 
   def method_missing(method_name, *args)
@@ -515,13 +528,13 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } + [0] )
+              with :location, Area.find(value).locations.map(&:id) + [0]
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+          with(:location, Area.where(id: params[:area]).map(&:id).flatten + [0]) if params[:area].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
@@ -730,6 +743,8 @@ class Event < ActiveRecord::Base
     def set_event_timezone
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
+        self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
+        self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
       end
     end
 

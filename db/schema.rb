@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140210181637) do
+ActiveRecord::Schema.define(:version => 20140213191256) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -222,6 +222,8 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
     t.integer  "last_event_id"
     t.datetime "first_event_at"
     t.datetime "last_event_at"
+    t.date     "start_date"
+    t.date     "end_date"
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
@@ -428,14 +430,16 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.boolean  "active",                                      :default => true
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
+    t.boolean  "active",                                       :default => true
     t.integer  "place_id"
-    t.decimal  "promo_hours",   :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "promo_hours",    :precision => 6, :scale => 2, :default => 0.0
     t.text     "reject_reason"
     t.text     "summary"
     t.string   "timezone"
+    t.datetime "local_start_at"
+    t.datetime "local_end_at"
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
@@ -484,19 +488,6 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
-  create_table "kpi_reports", :force => true do |t|
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-  end
-
   create_table "kpis", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -538,6 +529,17 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
 
   add_index "list_exports", ["company_user_id"], :name => "index_list_exports_on_user_id"
 
+  create_table "locations", :force => true do |t|
+    t.string "path", :limit => 500
+  end
+
+  add_index "locations", ["path"], :name => "index_locations_on_path", :unique => true
+
+  create_table "locations_places", :force => true do |t|
+    t.integer "location_id"
+    t.integer "place_id"
+  end
+
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"
     t.integer  "memberable_id"
@@ -561,6 +563,7 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
     t.text     "message_params"
+    t.text     "extra_params"
   end
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
@@ -578,6 +581,7 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
     t.string  "placeable_type"
   end
 
+  add_index "placeables", ["place_id"], :name => "index_placeables_on_place_id"
   add_index "placeables", ["placeable_id", "placeable_type"], :name => "index_placeables_on_placeable_id_and_placeable_type"
 
   create_table "places", :force => true do |t|
@@ -600,6 +604,8 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
     t.string   "administrative_level_2"
     t.string   "td_linx_code"
     t.string   "neighborhood"
+    t.integer  "location_id"
+    t.boolean  "is_location"
   end
 
   add_index "places", ["reference"], :name => "index_places_on_reference"
@@ -614,16 +620,17 @@ ActiveRecord::Schema.define(:version => 20140210181637) do
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "reports", :force => true do |t|
-    t.integer "company_id"
-    t.string  "name"
-    t.text    "description"
-    t.boolean "active",        :default => true
-    t.integer "created_by_id"
-    t.integer "updated_by_id"
-    t.text    "rows"
-    t.text    "columns"
-    t.text    "values"
-    t.text    "filters"
+    t.string   "type"
+    t.integer  "company_user_id"
+    t.text     "params"
+    t.string   "aasm_state"
+    t.integer  "progress"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "roles", :force => true do |t|

@@ -1,6 +1,6 @@
 object @event
 
-attributes :id, :start_date, :start_time, :end_date, :end_time, :status
+attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :summary
 
 node :event_status do |event|
   if event.unsent?
@@ -14,6 +14,10 @@ node :event_status do |event|
   else
     event.event_status
   end
+end
+
+node :have_data do |event|
+  event.has_event_data?
 end
 
 child(venue: :place) do

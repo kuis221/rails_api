@@ -47,7 +47,7 @@ jQuery ->
 			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 	attachPluginsToElements = () ->
-		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true})
+		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
 		$('input.timepicker').timepicker()
 		$('.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true})
@@ -76,6 +76,8 @@ jQuery ->
 			e.preventDefault()
 			e.stopPropagation()
 			smoothScrollTo($(this.hash))
+
+		$('form[data-watch-changes]').watchChanges();
 
 	window.smoothScrollTo = (element) ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
@@ -115,7 +117,7 @@ jQuery ->
 				, 1000
 			success: (element) ->
 				element
-					.addClass('valid').prepend('<i class="icon-ok-circle"></i>')
+					.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
 		}
 
@@ -133,8 +135,15 @@ jQuery ->
 
 	attachPluginsToElements()
 
+
 	$(document).ajaxComplete (e) ->
 		attachPluginsToElements()
+
+
+	$(window).on 'beforeunload', ->
+		unSavedForms = $('form[data-watch-changes]').filter((index) -> $(this).hasChanged(); )
+		if unSavedForms.length
+			unSavedForms.data('prompt-message') || "Your form data has not been saved."
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
@@ -396,9 +405,16 @@ jQuery ->
 		return $.trim(value) == '' || /^[0-9]+$/.test(value);
 	, "Please enter an integer number");
 
-	$.validator.addMethod("segment-total", (value, element) ->
-		return ($.trim(value) == '' && (value == '0' || value == '')) || value == '100';
-	, "The sum of the segments should be 100%");
+	$.validator.addMethod("segmentTotalRequired", (value, element) ->
+		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
+	, "Field should sum 100%");
+
+	$.validator.addMethod("segmentTotalMax", (value, element) ->
+		intVal = parseInt(value);
+		return ($.trim(value) == '' || intVal <= 100);
+	, "Field cannot exceed 100%");
+
+	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
@@ -516,7 +532,7 @@ jQuery ->
 
 		false
 
-# Hack to use bootsbox confirm dialog
+# Hack to use bootbox's confirm dialog
 $.rails.allowAction = (element) ->
 	message = element.data('confirm')
 	if !message
