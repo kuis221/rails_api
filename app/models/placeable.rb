@@ -26,5 +26,6 @@ class Placeable < ActiveRecord::Base
     elsif placeable.is_a?(Campaign)
       Rails.cache.delete("campaign_locations_#{placeable.id}")
     end
+    true
   end
 end

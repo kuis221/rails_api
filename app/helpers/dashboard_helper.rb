@@ -47,6 +47,10 @@ module DashboardHelper
     Venue.do_search({company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :venue_score, venue_score: {min: 0}, sorting_dir: :asc }).results
   end
 
+  def recent_comments_list
+    Comment.for_user_accessible_events(current_company_user).includes(commentable: [:campaign, :place]).order('comments.created_at DESC').limit(9)
+  end
+
   def campaing_promo_hours_chart(c)
     remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
     today_bar_indicator = ''.html_safe
