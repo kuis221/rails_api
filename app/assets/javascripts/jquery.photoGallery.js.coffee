@@ -89,7 +89,7 @@ $.widget 'nmk.photoGallery', {
 		@date = $('<div class="calendar-data">')
 
 		@gallery = $('<div class="gallery-modal modal hide fade">').append(
-						$('<div class="gallery-modal-inner">').append($('<div class="panel-bg">')).append(
+						$('<div class="gallery-modal-inner">').append(
 							$('<div class="panel">').
 								append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
 								append(
@@ -97,11 +97,21 @@ $.widget 'nmk.photoGallery', {
 									$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') )
 									(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
 								),
-							$('<div class="slider">').append( @carousel = @_createCarousel() )
+							$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) )
 						).append($('<div class="clearfix">'))
 					)
 
+
 		@gallery.insertAfter @element
+
+		@gallery.on 'shown', () =>
+			@_updateSizes()
+
+		# Just some shortcuts
+		@slider = @gallery.find('.slider')
+		@sliderInner = @gallery.find('.slider-inner')
+		@panel = @gallery.find('.panel')
+
 
 		@miniCarousel.carousel({interval: false})
 		@carousel.carousel({interval: false})
@@ -109,21 +119,36 @@ $.widget 'nmk.photoGallery', {
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
 			image = item.data('image')
-			@fillPhotoData(image)
-			@miniCarousel.carousel(parseInt(item.data('index')/3))
+			@fillPhotoData image
+			@miniCarousel.carousel parseInt(item.data('index')/3)
+			@_updateSizes()
 
 		@gallery
 
 
 	_createCarousel: (carouselClass='') ->
 		id = "gallery-#{@_generateUid()}"
-		$('<div id="'+id+'" class="gallery-carousel carousel slide">').addClass(carouselClass).append(
+		$('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append(
 			$('<div class="carousel-inner">'),
 			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'">'),
 			$('<a class="carousel-control right" data-slide="next" href="#'+id+'">')
 		)
 
+	_updateSizes: () ->
+		# If the current image's height is greater than the carousel's height then
+		# changes the carousel's height to that height but only if it's not higher than
+		# the windows height, in that case the image is resized to that
+		image = @carousel.find('.active img')
+		imageHeight = image.height()
+		if $(window).height() < imageHeight
+			image.css({height: @slider.height()+'px'})
+		else
+			image.css({height: 'auto'})
 
+		@slider.css({height: Math.max(imageHeight, @slider.height())+'px'})
+		@panel.css({height: (@slider.outerHeight()-parseInt(@panel.css('padding-top'))-parseInt(@panel.css('padding-bottom')))+'px'})
+
+		@sliderInner.css({height: imageHeight+'px'})
 
 	_generateUid: () ->
 		d = new Date()
