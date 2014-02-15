@@ -6,7 +6,7 @@
         - recent_comments_list.each do |comment|
           li.comment id="dashboard-comment-#{comment.id}"
             .comment-content
-              = truncate(comment.content, length: 90, omission: '...')
+              = comment.content
             .comment-footer
               = [comment.commentable.start_at.strftime('%b %-d'),comment.commentable.end_at.strftime('%b %-d')].uniq.join(' - ')
               = ", "
