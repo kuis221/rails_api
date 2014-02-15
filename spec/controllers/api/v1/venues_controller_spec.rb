@@ -150,7 +150,7 @@ describe Api::V1::VenuesController do
       response.should be_success
       result = JSON.parse(response.body)
       result.count.should == 2
-      result.should == [{
+      expect(result).to match_array [{
                          'id' => comment2.id,
                          'content' => 'Comment #2',
                          'created_at' => '2013-08-23T09:15:00-07:00',

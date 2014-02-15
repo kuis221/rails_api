@@ -73,7 +73,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
-  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}) }
+  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
   scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
   scope :active, lambda { where(aasm_state: 'active') }
 
@@ -144,6 +144,10 @@ class Campaign < ActiveRecord::Base
 
   def has_date_range?
     start_date.present? && end_date.present?
+  end
+
+  def in_date_range?(s, e)
+    has_date_range? && (e >= start_date && s < end_date)
   end
 
   def staff

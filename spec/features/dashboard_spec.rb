@@ -156,8 +156,22 @@ feature "Dashboard", search: true, js: true do
     end
   end
 
+  describe "recent comments module" do
+    scenario "should display only 9 comments" do
+      FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event, company: @company))
+      visit root_path
+      within recent_comments_module do
+        expect(all('.comment').count).to eql 9
+      end
+    end
+  end
+
   def upcoming_events_module
     find('div#upcomming-events-module')
+  end
+
+  def recent_comments_module
+    find('div#recent-comments-module')
   end
 
 end

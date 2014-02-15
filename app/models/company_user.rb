@@ -150,7 +150,7 @@ class CompanyUser < ActiveRecord::Base
       (
         areas.joins(:places).where(places: { is_location: true }).pluck('places.location_id') +
         places.where(places: { is_location: true }).pluck('places.location_id')
-      ).uniq.compact
+      ).uniq.compact.map(&:to_i)
     end
   end
 
@@ -158,7 +158,7 @@ class CompanyUser < ActiveRecord::Base
     @accessible_places ||= Rails.cache.fetch("user_accessible_places_#{self.id}", expires_in: 10.minutes) do
       (
         place_ids +
-        Place.joins(:areas).where(areas: {id: self.areas.pluck('areas.id')}).pluck('places.id')
+        self.areas.joins(:places).pluck('places.id')
       ).flatten.uniq
     end
   end

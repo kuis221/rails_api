@@ -325,4 +325,51 @@
 			}
 		}
 	}
+
+	#recent-comments-module {
+		padding-bottom: 60px;
+		#recent-comments-list {
+			margin-bottom: 20px;
+		}
+		.comment {
+			border: 1px solid $grey_one;
+			height: 200px;
+			position: relative;
+			margin-bottom: 10px;
+
+			.comment-content {
+				font-size: 15px;
+			}
+			.comment-footer {
+				position: absolute;
+				bottom: 0px;
+				color: $grey_one;
+			}
+			.comment-actions {
+				position: absolute;
+				bottom: 0px;
+				display: none;
+				background-color: $grey_three;
+				width: 100%;
+				padding: 7px 0;
+				text-align: right;
+				color: #fff;
+				.icon-remove-sign:before {
+					color: #fff;
+					font-size: 15px;
+				}
+				a {
+					margin-right: 10px;
+				}
+				.edit:after {
+					top: 0;
+				}
+			}
+			&:hover {
+				.comment-actions {
+					display: block;
+				}
+			}
+		}
+	}
 }
