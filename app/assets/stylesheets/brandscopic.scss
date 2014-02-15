@@ -5960,18 +5960,21 @@ ul#reports-list {
 	.gallery-modal-inner{
 		position: relative;
 	}
-	.panel-bg, .panel {
+	.slider {
+		position: relative;
+		.slider-inner {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			bottom: 0px;
+			right: 0px;
+			margin: auto;
+		}
+	}
+	.panel{
 		width: 320px;
 		padding: 35px 20px;
 		background-color: $header;
-	}
-	.panel-bg {
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		top: 0;
-	}
-	.panel{
 		color: white;
 		display: inline-block;
 		float: right;
