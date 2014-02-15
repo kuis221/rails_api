@@ -115,13 +115,9 @@
       #venue-events-container
         = render partial: 'upcoming_events'
 
-- if resource.persisted?
+- if resource.persisted? && can?(:show, Activity)
   #venue-activities.details_box
-    h3 ACTIVITIES
-    - if can?(:create, Activity)
-      .pull-left
-        = link_to 'Create', new_venue_activity_path(resource), remote: true, class: 'btn btn-primary', title: 'New Activity'
-
+    = render 'activities'
 
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box

@@ -1,0 +1,8 @@
+#activities-container
+  h3 ACTIVITIES
+  - if can?(:create, Activity)
+    = link_to 'Create', new_venue_activity_path(resource), remote: true, class: 'btn btn-primary', title: 'New Activity'
+
+  .link-list
+    ul#activities-list
+      = render resource.activities
