@@ -578,6 +578,10 @@ ActiveRecord::Schema.define(:version => 20140213191256) do
     t.boolean "active",        :default => true
     t.integer "created_by_id"
     t.integer "updated_by_id"
+    t.text    "rows"
+    t.text    "columns"
+    t.text    "values"
+    t.text    "filters"
   end
 
   create_table "roles", :force => true do |t|
