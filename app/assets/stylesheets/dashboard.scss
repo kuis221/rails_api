@@ -130,9 +130,18 @@
 
 	#kpis-trends-bars {
 		margin-right: 350px;
+		a{
+			color:$grey_three;
+			&:hover{
+				text-decoration: underline;
+			}
+		}
 		.name {
 			display: inline-block;
+			font-size: 16px;
+			font-weight: bold;
 			margin-right: 20px;
+			margin-bottom: 15px;
 		}
 		.container-kpi-trend{
 			margin-top: 50px;
@@ -215,21 +224,26 @@
 				}
 			}
 			.remaining-label {
+				color:$grey_three;
 				position: absolute;
 				right: -350px;
 				width: 300px;
-				top: 0;
+				top: 5px;
 				b {
 					display: inline-block;
-					height: 40px;
-					font-size: 20px;
+					font-size: 22px;
 					float: left;
 					width: 150px;
 					text-align: right;
-					margin-right: 10px
+					margin-right: 10px;
+					line-height: 33px;
 				}
 				span {
 					display: block;
+				}
+				.kpi-name{
+					color: $user_menu;
+					line-height: 9px;
 				}
 			}
 		}
@@ -245,7 +259,6 @@
 			.span4 span {
 				margin-left: 15px;
 				display: block;
-				margin-top:10px;
 			}
 			a {
 				color: $text;
@@ -265,6 +278,17 @@
 				background-color: $brand;
 				color: #fff;
 				line-height: 31px;
+			}
+			.month-weeks{
+				&.date{ 
+					.week{
+						margin-top: 5px;
+					}
+				}
+				.week{
+					margin-top: 5px;
+					text-align: center;
+				}
 			}
 			.campaigns-header {
 				border-right: 1px solid $grey_two;

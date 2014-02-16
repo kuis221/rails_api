@@ -13,7 +13,7 @@
             .span12
               span= date.strftime('%^b')
 
-          .row.month-weeks class="weeks-#{weeks.count}"
+          .row.month-weeks class="date weeks-#{weeks.count}"
             - weeks.each do |week|
               .week
                 = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), status: ['Active']) do
