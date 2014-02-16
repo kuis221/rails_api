@@ -256,9 +256,14 @@
 				height: 30px;
 			}
 
+			.span2.month{
+				width: 161px !important;
+			}
+
 			.span4 span {
 				margin-left: 15px;
 				display: block;
+				margin-top: 5px;
 			}
 			a {
 				color: $text;
@@ -270,6 +275,9 @@
 
 			.campaigns-header, .header-row {
 				height: 60px;
+			}
+			.campaigns-header, .campaign-name{
+				width: 31.55%;
 			}
 			.header-row {
 				border-bottom: 1px solid $grey_two;				
@@ -283,7 +291,6 @@
 				&.date{ 
 					.week{
 						margin-top: 5px;
-						margin-left: 10px;
 					}
 				}
 				.week{
@@ -337,14 +344,12 @@
 				&.with-events.first-in-series span.week-marker {
 					border-top-left-radius: 5px;
 					border-bottom-left-radius: 5px;
-					padding-left: 10px;	
-					box-sizing: border-box;
+					margin-left: 10px;
 				}
 				&.with-events.last-in-series span.week-marker {
 					border-top-right-radius: 5px;
 					border-bottom-right-radius: 5px;
-					padding-left: 10px;	
-					box-sizing: border-box;
+					width: 20%;
 				}
 				&.with-events:hover span.week-marker {
 					background-color: $blue_hover;
