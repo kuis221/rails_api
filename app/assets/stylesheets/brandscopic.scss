@@ -1905,7 +1905,7 @@ ul.kpis-list{
 				width: 100%;
 			}
 		}
-		ul#my-tasks-list{
+		ul#my-tasks-list, ul#team-tasks-list{
 			li{
 				.task-list{
 					min-height: 63px;
@@ -1915,6 +1915,9 @@ ul.kpis-list{
 						&.title{
 							margin-left: 18px;
 							width: 60%;
+						}
+						&.task-completed{
+							vertical-align: bottom;
 						}
 					}
 				}
