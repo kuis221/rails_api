@@ -257,7 +257,7 @@
 			}
 
 			.span2.month{
-				width: 161px !important;
+				width: 161.6px !important;
 			}
 
 			.span4 span {
@@ -346,10 +346,12 @@
 					border-bottom-left-radius: 5px;
 					margin-left: 10px;
 				}
-				&.with-events.last-in-series span.week-marker {
-					border-top-right-radius: 5px;
-					border-bottom-right-radius: 5px;
+				&.with-events.last-in-series {
 					width: 20%;
+					span.week-marker {
+						border-top-right-radius: 5px;
+						border-bottom-right-radius: 5px;
+					}
 				}
 				&.with-events:hover span.week-marker {
 					background-color: $blue_hover;
