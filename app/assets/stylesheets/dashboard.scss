@@ -164,6 +164,7 @@
 		}
 
 		.chart-bar {
+			color: $brand;
 			position: relative;
 			display: inline-block;
 			width: 100%;
@@ -190,10 +191,9 @@
 			.today-line-indicator {
 				position: absolute;
 				width: 2px;
-				opacity: 0.6;
 				background-color: $grey_three;
-				height: 30px;
-				top: -3px;
+				height: 34px;
+				top: -5px;
 				border:1px solid $grey_three;
 				border-radius: 2px;
 			}
@@ -224,19 +224,19 @@
 				}
 			}
 			.remaining-label {
-				color:$grey_three;
+				color:$brand;
 				position: absolute;
 				right: -350px;
 				width: 300px;
-				top: 5px;
+				top: 3px;
 				b {
 					display: inline-block;
-					font-size: 22px;
+					font-size: 28px;
 					float: left;
 					width: 150px;
 					text-align: right;
 					margin-right: 10px;
-					line-height: 33px;
+					line-height: 28px;
 				}
 				span {
 					display: block;
