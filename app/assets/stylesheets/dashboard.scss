@@ -283,6 +283,7 @@
 				&.date{ 
 					.week{
 						margin-top: 5px;
+						margin-left: 10px;
 					}
 				}
 				.week{
@@ -336,10 +337,14 @@
 				&.with-events.first-in-series span.week-marker {
 					border-top-left-radius: 5px;
 					border-bottom-left-radius: 5px;
+					padding-left: 10px;	
+					box-sizing: border-box;
 				}
 				&.with-events.last-in-series span.week-marker {
 					border-top-right-radius: 5px;
 					border-bottom-right-radius: 5px;
+					padding-left: 10px;	
+					box-sizing: border-box;
 				}
 				&.with-events:hover span.week-marker {
 					background-color: $blue_hover;

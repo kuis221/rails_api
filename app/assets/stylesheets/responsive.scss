@@ -704,9 +704,12 @@
 	}
 }
 
-@media (max-width: 1195px) {
+@media (max-width: 1199px) {
 	.dashboard.index #recent-comments-module .comments-area ul > li{
 		width: 23%;
+	}
+	.dashboard.index #campaign-overview-module #campaign-overview-table .month-name{
+		margin-left: -23px;
 	}
 }
 
@@ -719,6 +722,9 @@
 @media (max-width: 1095px) {
 	.dashboard.index #recent-comments-module .comments-area ul > li{
 		width: 22.8%;
+	}
+	.dashboard.index #campaign-overview-module #campaign-overview-table .month-name{
+		margin-left: -21px;
 	}
 }
 
