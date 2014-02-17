@@ -18,6 +18,7 @@ $.widget 'nmk.photoGallery', {
 			@gallery.modal 'show'
 			@buildCarousels e.target
 			@fillPhotoData e.target
+			@_updateSizes()
 			false
 		@
 

@@ -5870,7 +5870,6 @@ ul#reports-list {
 	}
 }
 .gallery-carousel{
-	height: 470px;
 	.row{
 		margin-left: 0;
 	}
@@ -5879,8 +5878,6 @@ ul#reports-list {
 		width: 520px;
 	}
 	&.carousel{
-		display: table-cell;
-		vertical-align: middle;
 		margin-bottom: 0;
 	}
 	&.small{
@@ -5960,6 +5957,7 @@ ul#reports-list {
 	box-shadow:none;
 	left: 37%;
 	width:auto;
+	top: 10px !important;
 	.gallery-modal-inner{
 		position: relative;
 	}
