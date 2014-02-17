@@ -1,0 +1,10 @@
+li id="activity_#{activity.id}"
+  span.data
+    = format_date(activity.activity_date)
+    br>/
+    = activity.company_user.full_name
+  span.name= activity.activity_type.name
+  span.links.pull-right
+    = link_to '', '/', remote: true, class: 'edit' if can?(:edit, activity)
+    = "&nbsp;".html_safe
+    = link_to '', '/', remote: true, class: 'disable', title: I18n.t('confirmation.activate') if can?(:deactivate, activity)
