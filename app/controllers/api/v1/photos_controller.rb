@@ -126,9 +126,8 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   EOS
   def form
     if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
-      bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
-      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).where(:key).starts_with("uploads/")
-      data = { fields: form.fields, url: "https://s3.amazonaws.com/#{S3_CONFIGS['bucket_name']}/" }
+      uploader = S3DirectUpload::UploadHelper::S3Uploader.new({})
+      data = { fields: uploader.fields, url: uploader.url }
       respond_to do |format|
         format.json { render json: data }
         format.xml { render xml: data }
@@ -140,6 +139,22 @@ class Api::V1::PhotosController < Api::V1::FilteredController
       end
     end
   end
+  # def form
+  #   if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
+  #     bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
+  #     form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).where(:key).starts_with("uploads/")
+  #     data = { fields: form.fields, url: "https://s3.amazonaws.com/#{S3_CONFIGS['bucket_name']}/" }
+  #     respond_to do |format|
+  #       format.json { render json: data }
+  #       format.xml { render xml: data }
+  #     end
+  #   else
+  #     respond_to do |format|
+  #       format.json {  render :status => 401, json: {} }
+  #       format.xml { render :status => 401, xml: {} }
+  #     end
+  #   end
+  # end
 
   protected
 

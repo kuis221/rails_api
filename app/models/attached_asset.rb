@@ -51,6 +51,7 @@ class AttachedAsset < ActiveRecord::Base
 
     string :file_file_name
     integer :file_file_size
+    boolean :processed
 
     integer :attachable_id
 
@@ -92,6 +93,7 @@ class AttachedAsset < ActiveRecord::Base
     integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
+
   end
 
   def activate!

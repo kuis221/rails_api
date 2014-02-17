@@ -113,7 +113,12 @@ $.widget 'nmk.photoGallery', {
 		@gallery.insertAfter @element
 
 		@gallery.on 'shown', () =>
-			@_updateSizes()
+				@_updateSizes()
+				$(window).on 'resize.gallery', =>
+					@_updateSizes()
+			.on 'hidden', () =>
+				$(window).off 'resize.gallery'
+
 
 		# Just some shortcuts
 		@slider = @gallery.find('.slider')
@@ -138,8 +143,8 @@ $.widget 'nmk.photoGallery', {
 		id = "gallery-#{@_generateUid()}"
 		$('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append(
 			$('<div class="carousel-inner">'),
-			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'">'),
-			$('<a class="carousel-control right" data-slide="next" href="#'+id+'">')
+			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><span></span></a>'),
+			$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><span></span></a>')
 		)
 
 	_updateSizes: () ->
@@ -148,6 +153,21 @@ $.widget 'nmk.photoGallery', {
 		# the windows height, in that case the image is resized to that
 		image = @carousel.find('.active img')
 		imageHeight = image.height()
+
+		# Get image natural size
+		imageNatural = @getNatural(image[0])
+
+		# Set the slider/images widths based on the  available space and image dimensions
+		windowWidth = $(window).width()
+		maxSliderWidth = windowWidth-@panel.outerWidth()-20
+		if imageNatural.width > image.width()
+			sliderWidth = Math.min(maxSliderWidth, imageNatural.width)
+			@slider.css({width: sliderWidth+'px'})
+			#image.css({width: Math.min(sliderWidth, imageNatural.width)+'px'})
+		else if @slider.width() > maxSliderWidth 
+			@slider.css({width: maxSliderWidth+'px'})
+
+
 		if $(window).height() < imageHeight
 			image.css({height: @slider.height()+'px'})
 		else
@@ -158,7 +178,13 @@ $.widget 'nmk.photoGallery', {
 
 		@sliderInner.css({height: imageHeight+'px'})
 
-		@gallery.css({top: Math.max(10, parseInt(($(window).height()-@gallery.outerHeight())/2) )})
+		modalWidth = Math.min(@panel.outerWidth()+@slider.outerWidth(), windowWidth-20)
+
+		@gallery.css({
+			top: Math.max(10, parseInt(($(window).height()-@gallery.outerHeight())/2) )+'px',
+			width: modalWidth+'px',
+			left: parseInt((windowWidth-modalWidth)/2)+'px'
+		})
 
 		@
 
@@ -166,4 +192,9 @@ $.widget 'nmk.photoGallery', {
 		d = new Date()
 		m = d.getMilliseconds() + ""
 		++d + m + (if ++photoGalleryCounter == 10000 then (photoGalleryCounter = 1) else photoGalleryCounter)
+
+	getNatural: (element) ->
+		img = new Image()
+		img.src = element.src
+		{ width: img.width, height: img.height }
 }
