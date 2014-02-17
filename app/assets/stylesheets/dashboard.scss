@@ -256,11 +256,22 @@
 				padding: 0;
 				border: 0;
 			}
+			th{
+				font-weight: 400;
+				padding: 0 8px;
+			}
+			tr:last-of-type{
+				td.campaign-name{
+					padding-bottom:12px;
+				}
+			}
 			tr:hover td {
 				background-color: transparent!important;
 			}
 			.campaigns-header, .campaign-name{
 				width: 100%;
+				padding-left: 16px;
+				padding-top: 8px;
 			}
 			.row-fluid {
 				height: 30px;
@@ -303,8 +314,9 @@
 			}
 			.campaigns-header {
 				border-right: 1px solid $grey_two;
+				padding-left:16px;
 				span {
-					margin-top: 20px;
+					margin-top: 13px;
 					display: block;
 				}
 			}
@@ -411,6 +423,7 @@
 					}
 					.comment-footer {
 						position: absolute;
+						letter-spacing: -0.2px;
 						bottom: 6px;
 						color: $brand;
 						font-size: 11px;

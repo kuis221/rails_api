@@ -814,7 +814,6 @@
 	.dashboard.index #recent-comments-module .comments-area ul > li{
 		width: 46%;
 	}
-
 	.gallery ul > li {
 		width: 50%;
 	}
@@ -841,5 +840,100 @@
 @media (max-width: 508px) {
 	.dashboard.index #recent-comments-module .comments-area ul > li{
 		width: 44%;
+	}
+}
+
+/*-- MEDIA QUERIES FOR MOZILLA -- IMAGE GALLERIES AND COMMENTS --*/
+
+@media only screen and (min-width:400px) and (max-width: 620px){
+	.mozilla{
+		.gallery ul > li {
+			width: 45%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+		    width: 45%;
+		}
+	}
+}
+
+@media only screen and (min-width:621px) and (max-width: 759px){
+	.mozilla{
+		.gallery ul > li {
+			width: 29.8%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+		    width: 29.8%;
+		}
+	}
+}
+
+@media only screen and (min-width:621px) and (max-width: 672px){
+	.mozilla{
+		.gallery ul > li {
+			width: 29.4%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+		    width: 29.4%;
+		}
+	}
+}
+
+@media only screen and (min-width:760px) and (max-width: 780px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+		    width: 21.9%;
+		}
+	}
+}
+
+@media only screen and (min-width:780px) and (max-width: 900px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22.5%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+		    width: 22%;
+		}
+	}
+}
+
+@media only screen and (min-width:782px) and (max-width: 854px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22.4%;
+		}
+	}
+}
+
+@media only screen and (min-width:780px) and (max-width: 824px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22.2%;
+		}
+	}
+}
+
+@media only screen and (min-width:900px) and (max-width: 1024px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22.6%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+			width: 22.4%;
+		}
+	}
+}
+
+@media only screen and (min-width:1025px) and (max-width: 2600px){
+	.mozilla{
+		.gallery ul > li {
+			width: 22.7%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+			width: 22.5%;
+		}
 	}
 }
