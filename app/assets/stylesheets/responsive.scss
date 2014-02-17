@@ -971,4 +971,37 @@
 	}
 }
 
+@media only screen and (min-width:1398px) and (max-width: 1600px){
+	.mozilla{
+		.gallery ul > li {
+			width: 18.46%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+			width: 18.3%;
+		}
+	}
+}
+
+@media only screen and (min-width:1600px) and (max-width: 1900px){
+	.mozilla{
+		.gallery ul > li {
+			width: 18.7%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+			width: 18.6%;
+		}
+	}
+}
+
+@media only screen and (min-width:1601px) and (max-width: 1671px){
+	.mozilla{
+		.gallery ul > li {
+			width: 18.6%;
+		}
+		.dashboard.index #recent-comments-module .comments-area ul > li {
+			width: 18.5%;
+		}
+	}
+}
+
 
