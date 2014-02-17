@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -23,6 +24,34 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
+--
+-- Name: postgres_fdw; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgres_fdw WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgres_fdw; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgres_fdw IS 'foreign-data wrapper for remote PostgreSQL servers';
+
+
+--
 -- Name: tablefunc; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -34,6 +63,17 @@ CREATE EXTENSION IF NOT EXISTS tablefunc WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION tablefunc IS 'functions that manipulate whole tables, including crosstab';
+
+
+--
+-- Name: legacy_prod; Type: SERVER; Schema: -; Owner: -
+--
+
+CREATE SERVER legacy_prod FOREIGN DATA WRAPPER postgres_fdw OPTIONS (
+    dbname 'legacy_dev',
+    host '127.0.0.1',
+    port '5432'
+);
 
 
 SET search_path = public, pg_catalog;
@@ -76,6 +116,142 @@ CREATE SEQUENCE active_admin_comments_id_seq
 --
 
 ALTER SEQUENCE active_admin_comments_id_seq OWNED BY active_admin_comments.id;
+
+
+--
+-- Name: activities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE activities (
+    id integer NOT NULL,
+    activity_type_id integer,
+    activitable_id integer,
+    activitable_type character varying(255),
+    campaign_id integer,
+    active boolean DEFAULT true,
+    company_user_id integer,
+    activity_date timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE activities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE activities_id_seq OWNED BY activities.id;
+
+
+--
+-- Name: activity_results; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE activity_results (
+    id integer NOT NULL,
+    activity_id integer,
+    form_field_id integer,
+    value text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: activity_results_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE activity_results_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: activity_results_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE activity_results_id_seq OWNED BY activity_results.id;
+
+
+--
+-- Name: activity_type_campaigns; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE activity_type_campaigns (
+    id integer NOT NULL,
+    activity_type_id integer,
+    campaign_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: activity_type_campaigns_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE activity_type_campaigns_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: activity_type_campaigns_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE activity_type_campaigns_id_seq OWNED BY activity_type_campaigns.id;
+
+
+--
+-- Name: activity_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE activity_types (
+    id integer NOT NULL,
+    name character varying(255),
+    description text,
+    active boolean DEFAULT true,
+    company_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: activity_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE activity_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: activity_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE activity_types_id_seq OWNED BY activity_types.id;
 
 
 --
@@ -988,40 +1164,6 @@ ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
 
 
 --
--- Name: documents; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE documents (
-    id integer NOT NULL,
-    name character varying(255),
-    created_by_id integer,
-    updated_by_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    event_id integer
-);
-
-
---
--- Name: documents_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE documents_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: documents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE documents_id_seq OWNED BY documents.id;
-
-
---
 -- Name: event_data; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1180,6 +1322,76 @@ ALTER SEQUENCE events_id_seq OWNED BY events.id;
 
 
 --
+-- Name: form_field_options; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE form_field_options (
+    id integer NOT NULL,
+    form_field_id integer,
+    name character varying(255),
+    ordering integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: form_field_options_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE form_field_options_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_field_options_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE form_field_options_id_seq OWNED BY form_field_options.id;
+
+
+--
+-- Name: form_fields; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE form_fields (
+    id integer NOT NULL,
+    fieldable_id integer,
+    fieldable_type character varying(255),
+    name character varying(255),
+    type character varying(255),
+    settings text,
+    ordering integer,
+    required boolean,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: form_fields_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE form_fields_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_fields_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE form_fields_id_seq OWNED BY form_fields.id;
+
+
+--
 -- Name: goals; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1217,44 +1429,6 @@ CREATE SEQUENCE goals_id_seq
 --
 
 ALTER SEQUENCE goals_id_seq OWNED BY goals.id;
-
-
---
--- Name: kpi_reports; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE kpi_reports (
-    id integer NOT NULL,
-    company_user_id integer,
-    params text,
-    aasm_state character varying(255),
-    progress integer,
-    file_file_name character varying(255),
-    file_content_type character varying(255),
-    file_file_size integer,
-    file_updated_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: kpi_reports_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE kpi_reports_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: kpi_reports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE kpi_reports_id_seq OWNED BY kpi_reports.id;
 
 
 --
@@ -1327,6 +1501,83 @@ CREATE SEQUENCE kpis_segments_id_seq
 --
 
 ALTER SEQUENCE kpis_segments_id_seq OWNED BY kpis_segments.id;
+
+
+--
+-- Name: legacy_accounts; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_accounts (
+    id integer NOT NULL,
+    name character varying(255),
+    td_linx_code character varying(255),
+    url character varying(255),
+    description text,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    neighborhood character varying(255)
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'accounts'
+);
+
+
+--
+-- Name: legacy_addresses; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_addresses (
+    id integer NOT NULL,
+    addressable_id integer,
+    addressable_type character varying(255),
+    street_address character varying(255),
+    supplemental_address character varying(255),
+    city character varying(255),
+    state character varying(255),
+    postal_code integer,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'addresses'
+);
+
+
+--
+-- Name: legacy_events; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_events (
+    id integer NOT NULL,
+    program_id integer,
+    account_id integer,
+    start_at timestamp without time zone,
+    end_at timestamp without time zone,
+    notes text,
+    staff character varying(255),
+    deactivation_reason character varying(255),
+    event_type_id integer,
+    confirmed boolean DEFAULT true,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    drink_special boolean DEFAULT false NOT NULL,
+    market_id integer
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'events'
+);
 
 
 --
@@ -1426,6 +1677,38 @@ CREATE SEQUENCE locations_places_id_seq
 --
 
 ALTER SEQUENCE locations_places_id_seq OWNED BY locations_places.id;
+
+
+--
+-- Name: marques; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE marques (
+    id integer NOT NULL,
+    brand_id integer,
+    name character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: marques_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE marques_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: marques_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE marques_id_seq OWNED BY marques.id;
 
 
 --
@@ -1650,16 +1933,17 @@ ALTER SEQUENCE read_marks_id_seq OWNED BY read_marks.id;
 
 CREATE TABLE reports (
     id integer NOT NULL,
-    company_id integer,
-    name character varying(255),
-    description text,
-    active boolean DEFAULT true,
-    created_by_id integer,
-    updated_by_id integer,
-    rows text,
-    columns text,
-    "values" text,
-    filters text
+    type character varying(255),
+    company_user_id integer,
+    params text,
+    aasm_state character varying(255),
+    progress integer,
+    file_file_name character varying(255),
+    file_content_type character varying(255),
+    file_file_size integer,
+    file_updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2059,6 +2343,34 @@ ALTER TABLE ONLY active_admin_comments ALTER COLUMN id SET DEFAULT nextval('acti
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY activities ALTER COLUMN id SET DEFAULT nextval('activities_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY activity_results ALTER COLUMN id SET DEFAULT nextval('activity_results_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY activity_type_campaigns ALTER COLUMN id SET DEFAULT nextval('activity_type_campaigns_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY activity_types ALTER COLUMN id SET DEFAULT nextval('activity_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY admin_users ALTER COLUMN id SET DEFAULT nextval('admin_users_id_seq'::regclass);
 
 
@@ -2241,13 +2553,6 @@ ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY documents ALTER COLUMN id SET DEFAULT nextval('documents_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY event_data ALTER COLUMN id SET DEFAULT nextval('event_data_id_seq'::regclass);
 
 
@@ -2276,14 +2581,21 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY goals ALTER COLUMN id SET DEFAULT nextval('goals_id_seq'::regclass);
+ALTER TABLE ONLY form_field_options ALTER COLUMN id SET DEFAULT nextval('form_field_options_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY kpi_reports ALTER COLUMN id SET DEFAULT nextval('kpi_reports_id_seq'::regclass);
+ALTER TABLE ONLY form_fields ALTER COLUMN id SET DEFAULT nextval('form_fields_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY goals ALTER COLUMN id SET DEFAULT nextval('goals_id_seq'::regclass);
 
 
 --
@@ -2319,6 +2631,13 @@ ALTER TABLE ONLY locations ALTER COLUMN id SET DEFAULT nextval('locations_id_seq
 --
 
 ALTER TABLE ONLY locations_places ALTER COLUMN id SET DEFAULT nextval('locations_places_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY marques ALTER COLUMN id SET DEFAULT nextval('marques_id_seq'::regclass);
 
 
 --
@@ -2434,11 +2753,43 @@ ALTER TABLE ONLY venues ALTER COLUMN id SET DEFAULT nextval('venues_id_seq'::reg
 
 
 --
--- Name: active_admin_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY activities
+    ADD CONSTRAINT activities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: activity_results_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY activity_results
+    ADD CONSTRAINT activity_results_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: activity_type_campaigns_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY activity_type_campaigns
+    ADD CONSTRAINT activity_type_campaigns_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: activity_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY activity_types
+    ADD CONSTRAINT activity_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admin_notes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY active_admin_comments
-    ADD CONSTRAINT active_admin_comments_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT admin_notes_pkey PRIMARY KEY (id);
 
 
 --
@@ -2650,14 +3001,6 @@ ALTER TABLE ONLY delayed_jobs
 
 
 --
--- Name: documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY documents
-    ADD CONSTRAINT documents_pkey PRIMARY KEY (id);
-
-
---
 -- Name: event_data_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2690,6 +3033,22 @@ ALTER TABLE ONLY events
 
 
 --
+-- Name: form_field_options_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY form_field_options
+    ADD CONSTRAINT form_field_options_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_fields_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY form_fields
+    ADD CONSTRAINT form_fields_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: goals_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2706,11 +3065,11 @@ ALTER TABLE ONLY kpis
 
 
 --
--- Name: kpis_segments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: kpisegments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY kpis_segments
-    ADD CONSTRAINT kpis_segments_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT kpisegments_pkey PRIMARY KEY (id);
 
 
 --
@@ -2735,6 +3094,14 @@ ALTER TABLE ONLY locations
 
 ALTER TABLE ONLY locations_places
     ADD CONSTRAINT locations_places_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: marques_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY marques
+    ADD CONSTRAINT marques_pkey PRIMARY KEY (id);
 
 
 --
@@ -2789,24 +3156,8 @@ ALTER TABLE ONLY read_marks
 -- Name: reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY kpi_reports
-    ADD CONSTRAINT reports_pkey PRIMARY KEY (id);
-
-
---
--- Name: reports_pkey1; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
 ALTER TABLE ONLY reports
-    ADD CONSTRAINT reports_pkey1 PRIMARY KEY (id);
-
-
---
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY roles
-    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT reports_pkey PRIMARY KEY (id);
 
 
 --
@@ -2858,6 +3209,14 @@ ALTER TABLE ONLY teams
 
 
 --
+-- Name: user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT user_groups_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2899,6 +3258,69 @@ CREATE INDEX index_active_admin_comments_on_author_type_and_author_id ON active_
 --
 
 CREATE INDEX index_active_admin_comments_on_namespace ON active_admin_comments USING btree (namespace);
+
+
+--
+-- Name: index_activities_on_activitable_id_and_activitable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activities_on_activitable_id_and_activitable_type ON activities USING btree (activitable_id, activitable_type);
+
+
+--
+-- Name: index_activities_on_activity_type_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activities_on_activity_type_id ON activities USING btree (activity_type_id);
+
+
+--
+-- Name: index_activities_on_company_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activities_on_company_user_id ON activities USING btree (company_user_id);
+
+
+--
+-- Name: index_activity_results_on_activity_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_results_on_activity_id ON activity_results USING btree (activity_id);
+
+
+--
+-- Name: index_activity_results_on_activity_id_and_form_field_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_results_on_activity_id_and_form_field_id ON activity_results USING btree (activity_id, form_field_id);
+
+
+--
+-- Name: index_activity_results_on_form_field_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_results_on_form_field_id ON activity_results USING btree (form_field_id);
+
+
+--
+-- Name: index_activity_type_campaigns_on_activity_type_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_type_campaigns_on_activity_type_id ON activity_type_campaigns USING btree (activity_type_id);
+
+
+--
+-- Name: index_activity_type_campaigns_on_campaign_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_type_campaigns_on_campaign_id ON activity_type_campaigns USING btree (campaign_id);
+
+
+--
+-- Name: index_activity_types_on_company_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_activity_types_on_company_id ON activity_types USING btree (company_id);
 
 
 --
@@ -3070,13 +3492,6 @@ CREATE INDEX index_contact_events_on_event_id ON contact_events USING btree (eve
 
 
 --
--- Name: index_documents_on_event_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_documents_on_event_id ON documents USING btree (event_id);
-
-
---
 -- Name: index_event_data_on_event_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3133,6 +3548,20 @@ CREATE INDEX index_events_on_place_id ON events USING btree (place_id);
 
 
 --
+-- Name: index_form_field_options_on_form_field_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_form_field_options_on_form_field_id ON form_field_options USING btree (form_field_id);
+
+
+--
+-- Name: index_form_fields_on_fieldable_id_and_fieldable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_form_fields_on_fieldable_id_and_fieldable_type ON form_fields USING btree (fieldable_id, fieldable_type);
+
+
+--
 -- Name: index_goals_on_goalable_id_and_goalable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3172,6 +3601,13 @@ CREATE INDEX index_list_exports_on_user_id ON list_exports USING btree (company_
 --
 
 CREATE UNIQUE INDEX index_locations_on_path ON locations USING btree (path);
+
+
+--
+-- Name: index_marques_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_marques_on_brand_id ON marques USING btree (brand_id);
 
 
 --
@@ -3478,8 +3914,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130712194507');
 
 INSERT INTO schema_migrations (version) VALUES ('20130712233955');
 
-INSERT INTO schema_migrations (version) VALUES ('20130713010431');
-
 INSERT INTO schema_migrations (version) VALUES ('20130714161604');
 
 INSERT INTO schema_migrations (version) VALUES ('20130715151824');
@@ -3524,8 +3958,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130820233224');
 
 INSERT INTO schema_migrations (version) VALUES ('20130822161255');
 
-INSERT INTO schema_migrations (version) VALUES ('20130823003049');
-
 INSERT INTO schema_migrations (version) VALUES ('20130824182224');
 
 INSERT INTO schema_migrations (version) VALUES ('20130826223112');
@@ -3549,8 +3981,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130903040128');
 INSERT INTO schema_migrations (version) VALUES ('20130903152234');
 
 INSERT INTO schema_migrations (version) VALUES ('20130903152532');
-
-INSERT INTO schema_migrations (version) VALUES ('20130903173511');
 
 INSERT INTO schema_migrations (version) VALUES ('20130904202830');
 
@@ -3606,15 +4036,23 @@ INSERT INTO schema_migrations (version) VALUES ('20140109185805');
 
 INSERT INTO schema_migrations (version) VALUES ('20140115210126');
 
-INSERT INTO schema_migrations (version) VALUES ('20140121200658');
-
 INSERT INTO schema_migrations (version) VALUES ('20140124202736');
 
-INSERT INTO schema_migrations (version) VALUES ('20140129182630');
+INSERT INTO schema_migrations (version) VALUES ('20140204211220');
 
-INSERT INTO schema_migrations (version) VALUES ('20140204220306');
+INSERT INTO schema_migrations (version) VALUES ('20140204215421');
+
+INSERT INTO schema_migrations (version) VALUES ('20140204215955');
+
+INSERT INTO schema_migrations (version) VALUES ('20140204220932');
+
+INSERT INTO schema_migrations (version) VALUES ('20140204221214');
+
+INSERT INTO schema_migrations (version) VALUES ('20140205182211');
 
 INSERT INTO schema_migrations (version) VALUES ('20140206222315');
+
+INSERT INTO schema_migrations (version) VALUES ('20140210181637');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210202029');
 
@@ -3623,6 +4061,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140212144618');
 INSERT INTO schema_migrations (version) VALUES ('20140212191723');
 
 INSERT INTO schema_migrations (version) VALUES ('20140212220518');
+
+INSERT INTO schema_migrations (version) VALUES ('20140212231328');
 
 INSERT INTO schema_migrations (version) VALUES ('20140213191256');
 
