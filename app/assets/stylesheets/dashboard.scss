@@ -252,6 +252,16 @@
 	#campaign-overview-module {
 		#campaign-overview-table {
 			border: 1px solid $grey_two;
+			td {
+				padding: 0;
+				border: 0;
+			}
+			tr:hover td {
+				background-color: transparent!important;
+			}
+			.campaigns-header, .campaign-name{
+				width: 100%;
+			}
 			.row-fluid {
 				height: 30px;
 			}
@@ -271,13 +281,6 @@
 					color: $brand;
 					text-decoration: underline;
 				}
-			}
-
-			.campaigns-header, .header-row {
-				height: 60px;
-			}
-			.campaigns-header, .campaign-name{
-				width: 31.55%;
 			}
 			.header-row {
 				border-bottom: 1px solid $grey_two;				
@@ -305,10 +308,7 @@
 					display: block;
 				}
 			}
-			.month>.row, .campaign-name {
-				border-right: 1px solid $grey_two;
-				height: 30px;
-			}
+
 			.header-row {
 				.month>.row.month-name {
 					border-right: none;
@@ -318,10 +318,15 @@
 				}
 			}
 			.week {
-				float: left;
-				width: 25%;
-				display: block;
-				margin-top: 10px;
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				text-align: center;
+				padding: 5px 0px;
+				position: relative;
+				&.week-0 {
+					border-left: 1px solid $grey_two;
+				}
 				span.week-marker {
 					height: 10px;
 					border-radius: 5px;
@@ -339,12 +344,13 @@
 					background-color: $blue;
 					width: 100%;
 					border-radius: 0px;
-					margin: 5px 0 0 0;
+					margin: 5px -1 0 -1;
+					position:absolute;
+					width: 42px;		
 				}
 				&.with-events.first-in-series span.week-marker {
 					border-top-left-radius: 5px;
 					border-bottom-left-radius: 5px;
-					margin-left: 10px;
 				}
 				&.with-events.last-in-series {
 					width: 20%;
