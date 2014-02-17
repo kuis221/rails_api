@@ -5957,7 +5957,7 @@ ul#reports-list {
 	box-shadow:none;
 	left: 37%;
 	width:auto;
-	top: 10px !important;
+	top: 50px !important;
 	.gallery-modal-inner{
 		position: relative;
 	}
@@ -6000,11 +6000,12 @@ ul#reports-list {
 		h3{
 			font-size: 20px;
 			line-height: 23px;
-			margin-bottom: 30px;
+			margin-bottom: 30px !important;
 			font-weight: bold;
 			position: relative;
 		}
 		.description{
+			height: 200px;
 			width: 320px;
 			.place-data, .calendar-data{
 				position: relative;
