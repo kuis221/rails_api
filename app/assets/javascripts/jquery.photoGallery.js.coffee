@@ -89,6 +89,13 @@ $.widget 'nmk.photoGallery', {
 		@address = $('<div class="place-data">')
 		@date = $('<div class="calendar-data">')
 
+		if @gallery
+			@gallery.remove();
+			@gallery.off('shown')
+
+		if @carousel
+			@carousel.off('slid').remove()
+
 		@gallery = $('<div class="gallery-modal modal hide fade">').append(
 						$('<div class="gallery-modal-inner">').append(
 							$('<div class="panel">').
@@ -150,6 +157,10 @@ $.widget 'nmk.photoGallery', {
 		@panel.css({height: (@slider.outerHeight()-parseInt(@panel.css('padding-top'))-parseInt(@panel.css('padding-bottom')))+'px'})
 
 		@sliderInner.css({height: imageHeight+'px'})
+
+		@gallery.css({top: Math.max(10, parseInt(($(window).height()-@gallery.outerHeight())/2) )})
+
+		@
 
 	_generateUid: () ->
 		d = new Date()
