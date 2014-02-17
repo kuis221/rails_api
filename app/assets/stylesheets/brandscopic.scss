@@ -5787,16 +5787,16 @@ ul#reports-list {
 			    	margin: 11px 5px 12px 12px;
 			    	position: relative;
 			    	&:before{
-				      color: $grey_one;
-							content: "\e00b" !important;
-							display: inline-block;
-							font-family: 'icons';
-							font-size: 15px;
-							position: relative;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
+				      	color: $grey_one;
+						content: "\e00b" !important;
+						display: inline-block;
+						font-family: 'icons';
+						font-size: 15px;
+						position: relative;
+						speak: none;
+						text-align: center;
+						vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
 			    	}
 			    }
 			    &.icon-remove-circle{
@@ -5804,21 +5804,8 @@ ul#reports-list {
 			    	margin: 10px;
 			    	position: relative;
 			    	&:before{
-				      color: $grey_one;
-							content: "\e011" !important;
-							display: inline-block;
-							font-family: 'icons';
-							font-size: 15px;
-							position: relative;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
-						}
-			    }
-			    &.icon-ok-circle:before{
-				    color: $grey_one;
-						content: "\e00d" !important;
+				        color: $grey_one;
+						content: "\e011" !important;
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
@@ -5828,7 +5815,20 @@ ul#reports-list {
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 					}
-			  }
+			    }
+			    &.icon-ok-circle:before{
+				    color: $grey_one;
+					content: "\e00d" !important;
+					display: inline-block;
+					font-family: 'icons';
+					font-size: 15px;
+					position: relative;
+					speak: none;
+					text-align: center;
+					vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
+			}
 		}
 	}
 }
@@ -5859,8 +5859,8 @@ ul#reports-list {
 			&.right:before, &.left:before{
 				color: white;
 				display: block;
-		  	font-family: 'icons';
-		  	font-size: 40px;
+			  	font-family: 'icons';
+			  	font-size: 40px;
 				line-height: 63px;
 				padding-left: 11px;
 				opacity: 0.5;
@@ -5904,8 +5904,8 @@ ul#reports-list {
 			&.right:before, &.left:before{
 				color: white;
 				display: block;
-		  	font-family: 'icons';
-		  	font-size: 25px;
+			  	font-family: 'icons';
+			  	font-size: 25px;
 				line-height: 53px;
 				opacity: 1;
 				-webkit-font-smoothing: antialiased;
