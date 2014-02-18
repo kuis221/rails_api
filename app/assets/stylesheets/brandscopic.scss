@@ -5870,6 +5870,7 @@ ul#reports-list {
 	}
 }
 .gallery-carousel{
+	height: 100%;
 	.row{
 		margin-left: 0;
 	}
@@ -5879,6 +5880,7 @@ ul#reports-list {
 	&.carousel{
 		margin-bottom: 0;
 		text-align: center;
+		//height: 100%;
 	}
 	&.small{
 		display: block;
@@ -5957,9 +5959,79 @@ ul#reports-list {
 	-webkit-box-shadow: none;
 	box-shadow:none;
 	width:auto;
-	margin-left: 0 !important;
-
 	min-width: 780px; // .slider min-width + .panel width + .panel padding
+
+	// INITIAL VALUES, these will be overrided by JS based on image/windows sizes
+	width: 780px;
+	margin-left: -390px;
+	left: 50%;
+	.slider {
+		width: 300px;
+		height: 400px;
+		.gallery-carousel {
+			.carousel-control{
+				top: 0;
+				height: 100%;
+				background-color: transparent;
+				&:before {
+					content: '';
+				}
+				span {
+					height: 64px;
+					width: 47px;
+					background-color: #050505;
+					display: block;
+					top: 50%;
+					margin-top: -32px;
+					background-color: #050505;
+					position: absolute;
+				}
+				&.left{
+					left: 0;
+					width: 20%;
+					span:before {
+						content: "\e602";
+						font-family: 'icons';
+						display:block;
+						line-height: 63px;
+						font-size: 40px;
+						color: #fff;
+						opacity: 0.5;
+					}
+					&:hover span:before {
+						opacity: 0.8;
+					}
+				}
+				&.right{
+					right: 0;
+					width: 80%;
+					span {
+						right: 0;
+						&:before {
+							content: "\e601";
+							font-family: 'icons';
+							display:block;
+							line-height: 63px;
+							font-size: 40px;
+							color: #fff;
+							margin-left: 4px;
+							opacity: 0.5;
+						}
+					}
+					&:hover span:before {
+						opacity: 0.8;
+					}
+				}
+			}
+		}
+		&:hover {
+			.left:before, .right:before {
+				content: '' !important;
+			}
+		}
+	}
+	// END OF THE INITIAL VALUES
+
 	.gallery-modal-inner{
 		position: relative;
 	}
@@ -5967,8 +6039,6 @@ ul#reports-list {
 		position: relative;
 		float: left;
 		min-width: 400px;
-		width: 800px;   // These two are the initial values
-		height: 500px;
 		.slider-inner {
 			position: absolute;
 			top: 0px;

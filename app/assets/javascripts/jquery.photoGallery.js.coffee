@@ -18,7 +18,6 @@ $.widget 'nmk.photoGallery', {
 			@gallery.modal 'show'
 			@buildCarousels e.target
 			@fillPhotoData e.target
-			@_updateSizes()
 			false
 		@
 
@@ -67,7 +66,7 @@ $.widget 'nmk.photoGallery', {
 
 			row.append($('<img>').attr('src', image.src).data('image',image).data('index', index))
 			carousel.append $('<div class="item">').
-					 append($('<div class="row">').append($('<img>').attr('src', link.href))).
+					 append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
 					 data('image',image).
 					 data('index', index).
 					 addClass(if currentImage == image then 'active' else '')
@@ -113,7 +112,7 @@ $.widget 'nmk.photoGallery', {
 		@gallery.insertAfter @element
 
 		@gallery.on 'shown', () =>
-				@_updateSizes()
+				@_showImage()
 				$(window).on 'resize.gallery', =>
 					@_updateSizes()
 			.on 'hidden', () =>
@@ -132,11 +131,27 @@ $.widget 'nmk.photoGallery', {
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
 			image = item.data('image')
+			@_showImage()
 			@fillPhotoData image
 			@miniCarousel.carousel parseInt(item.data('index')/3)
-			@_updateSizes()
 
 		@gallery
+
+	_showImage: () ->
+		item = $('.item.active', @slider)
+		image = item.find('img')
+		if typeof image.attr('src') == 'undefined' || image.attr('src') == ''
+			image.css({opacity: 0}).attr('src', image.data('src')).on 'load', (e) =>
+				$(e.target).css({opacity: 1})
+				@_updateSizes()
+		else
+			@_updateSizes()
+
+		# Preload the next image
+		nextItem = item.next('.item')
+		if nextItem.length
+			img = new Image()
+			img.src = nextItem.find('img').data('src')
 
 
 	_createCarousel: (carouselClass='') ->
@@ -152,39 +167,52 @@ $.widget 'nmk.photoGallery', {
 		# changes the carousel's height to that height but only if it's not higher than
 		# the windows height, in that case the image is resized to that
 		image = @carousel.find('.active img')
-		imageHeight = image.height()
 
 		# Get image natural size
 		imageNatural = @getNatural(image[0])
 
 		# Set the slider/images widths based on the  available space and image dimensions
+		minSliderWidth = parseInt(@slider.css('min-width'))
+		maxSliderHeight = windowHeight-20
 		windowWidth = $(window).width()
+		windowHeight = $(window).height()
 		maxSliderWidth = windowWidth-@panel.outerWidth()-20
-		if imageNatural.width > image.width()
-			sliderWidth = Math.min(maxSliderWidth, imageNatural.width)
-			@slider.css({width: sliderWidth+'px'})
-			#image.css({width: Math.min(sliderWidth, imageNatural.width)+'px'})
-		else if @slider.width() > maxSliderWidth 
-			@slider.css({width: maxSliderWidth+'px'})
+		maxSliderHeight = windowHeight-20
+		sliderWidth = @slider.width()
+		sliderHeight = @slider.height()
+
+		imageWidth = Math.min(maxSliderWidth, imageNatural.width)
+		imageHeight = Math.min(maxSliderHeight, imageNatural.height)
+
+		if imageWidth < minSliderWidth && imageNatural.width > minSliderWidth
+			imageWidth = minSliderWidth
+
+		if imageWidth < imageNatural.width
+			proportion = imageWidth/imageNatural.width
+			newHeight = parseInt(imageNatural.height*proportion)
+			if newHeight > imageHeight
+				proportion = imageHeight/imageNatural.height
+				imageWidth = parseInt(imageNatural.width*proportion)
+			else
+				imageHeight = newHeight
+
+		sliderWidth = Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth))
+		sliderHeight = Math.min(maxSliderHeight, Math.max(sliderHeight, imageHeight))
 
 
-		if $(window).height() < imageHeight
-			image.css({height: @slider.height()+'px'})
-		else
-			image.css({height: 'auto'})
+		modalWidth = Math.min(@panel.outerWidth()+sliderWidth, windowWidth-10)
 
-		@slider.css({height: Math.max(imageHeight, @slider.height())+'px'})
-		@panel.css({height: (@slider.outerHeight()-parseInt(@panel.css('padding-top'))-parseInt(@panel.css('padding-bottom')))+'px'})
+		@gallery.css({
+			top: Math.max(10, parseInt(($(window).height()-Math.max(@panel.outerHeight(), sliderHeight))/2) )+'px',
+			width: modalWidth+'px',
+			'margin-left': -parseInt(modalWidth/2)+'px'
+		})
+		@slider.css({width: sliderWidth+'px', height: sliderHeight+'px'})
+		image.css({width: imageWidth+'px', height: imageHeight+'px'})
 
 		@sliderInner.css({height: imageHeight+'px'})
 
-		modalWidth = Math.min(@panel.outerWidth()+@slider.outerWidth(), windowWidth-20)
-
-		@gallery.css({
-			top: Math.max(10, parseInt(($(window).height()-@gallery.outerHeight())/2) )+'px',
-			width: modalWidth+'px',
-			left: parseInt((windowWidth-modalWidth)/2)+'px'
-		})
+		@panel.css({height: (@slider.outerHeight()-parseInt(@panel.css('padding-top'))-parseInt(@panel.css('padding-bottom')))+'px'})
 
 		@
 

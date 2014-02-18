@@ -24,10 +24,18 @@ class AttachedAsset < ActiveRecord::Base
 
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
-  has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
-    :small => "180x120#",
-    :medium => "700x700"
-  }})
+  has_attached_file :file, PAPERCLIP_SETTINGS.merge({
+    :styles => {
+      :small => '',
+      :thumbnail => '',
+      :medium => '800x800'
+    },
+    :convert_options => {
+      :small => '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+      :thumbnail => '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+      :medium => '-quality 85 -strip'
+    }
+  })
 
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
