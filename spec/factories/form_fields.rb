@@ -19,9 +19,9 @@
 FactoryGirl.define do
   factory :form_field do
     fieldable nil
-    name "MyString"
-    type ""
-    settings "MyText"
+    sequence(:name) {|n| "Form Field #{n}" }
+    type nil
+    settings nil
     ordering 1
     required false
   end
