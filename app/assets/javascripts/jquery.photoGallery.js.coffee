@@ -115,8 +115,22 @@ $.widget 'nmk.photoGallery', {
 				@_showImage()
 				$(window).on 'resize.gallery', =>
 					@_updateSizes()
+				$(document).on 'keyup.gallery', (e) =>
+					if e.which is 39
+						$('.carousel').carousel('next');
+						e.preventDefault();
+						false
+					else if e.which is 37
+						$('.carousel').carousel('prev');
+						e.preventDefault();
+						false
+					else if e.which is 27
+						@gallery.modal 'hide'
+						e.preventDefault();
+						false
 			.on 'hidden', () =>
 				$(window).off 'resize.gallery'
+				$(document).off 'keyup.gallery'
 
 
 		# Just some shortcuts
@@ -172,7 +186,8 @@ $.widget 'nmk.photoGallery', {
 		imageNatural = @getNatural(image[0])
 
 		# Set the slider/images widths based on the  available space and image dimensions
-		minSliderWidth = parseInt(@slider.css('min-width'))
+		minSliderWidth = parseInt(@slider.css('min-width')) or 400
+		minSliderHeight = parseInt(@slider.css('min-height')) or 470
 		maxSliderHeight = windowHeight-20
 		windowWidth = $(window).width()
 		windowHeight = $(window).height()
@@ -187,17 +202,21 @@ $.widget 'nmk.photoGallery', {
 		if imageWidth < minSliderWidth && imageNatural.width > minSliderWidth
 			imageWidth = minSliderWidth
 
+		if imageHeight < minSliderHeight && imageNatural.height > minSliderHeight
+			imageHeight = minSliderHeight
+
 		if imageWidth < imageNatural.width
 			proportion = imageWidth/imageNatural.width
 			newHeight = parseInt(imageNatural.height*proportion)
-			if newHeight > imageHeight
-				proportion = imageHeight/imageNatural.height
-				imageWidth = parseInt(imageNatural.width*proportion)
-			else
-				imageHeight = newHeight
+			imageHeight = newHeight
 
-		sliderWidth = Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth))
-		sliderHeight = Math.min(maxSliderHeight, Math.max(sliderHeight, imageHeight))
+		if imageHeight < imageNatural.height
+			proportion = imageHeight/imageNatural.height
+			imageWidth = parseInt(imageNatural.width*proportion)
+
+
+		sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth)))
+		sliderHeight = Math.max(minSliderHeight, Math.min(maxSliderHeight, Math.max(sliderHeight, imageHeight)))
 
 
 		modalWidth = Math.min(@panel.outerWidth()+sliderWidth, windowWidth-10)
