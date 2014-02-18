@@ -194,10 +194,18 @@
 				position: absolute;
 				width: 2px;
 				background-color: $grey_three;
-				height: 34px;
+				height: 29px;
 				top: -5px;
 				border:1px solid $grey_three;
 				border-radius: 2px;
+				&.green{
+					background-color: $dark_green;
+					border-color: $dark_green;
+				}
+				&.blue{
+					background-color: $dark_blue;
+					border-color: $dark_blue;
+				}
 			}
 			.bar-indicator {
 				position: absolute;
