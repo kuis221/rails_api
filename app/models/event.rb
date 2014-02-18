@@ -534,7 +534,7 @@ class Event < ActiveRecord::Base
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map(&:id).flatten + [0]) if params[:area].present?
+          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]) if params[:area].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
