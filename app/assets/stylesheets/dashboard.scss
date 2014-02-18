@@ -132,6 +132,7 @@
 		margin-right: 350px;
 		a{
 			color:$grey_three;
+			font-size: 13px;
 			&:hover{
 				text-decoration: underline;
 			}
@@ -149,7 +150,8 @@
 		}
 
 		.kpi-trend {
-			margin-bottom: 30px;
+			font-size: 12px;
+			margin-bottom: 18px;
 			overflow: visible;
 
 			.goal-label {
@@ -170,7 +172,7 @@
 			width: 100%;
 			.progress {
 				width: auto !important;
-				height: 25px;
+				height: 20px;
 				.bar {
 					text-align: right;
 					text-shadow:none;
@@ -199,28 +201,35 @@
 			}
 			.bar-indicator {
 				position: absolute;
-				width: 3px;
-				background-color: $grey_three;
-				height: 35px;
+				width: 2px;
+				background-color: #959595;
+				height: 30px;
 				&.goal-indicator{
 					top: -10px;
 				}
 			}
 			.executed-label {
+				float: left;
+				font-size: 12px;
 				white-space: nowrap;
-				display: inline-block;
 				margin-right: 50%;
 				div {
 					margin-left: -50%;
+					b{
+						font-size: 14px;
+					}
 				}
 			}
 			.scheduled-label {
+				float: left;
+				font-size: 12px;
 				white-space: nowrap;
-				display: inline-block;
 				text-align: right;
 				margin-left: -50%;
 				div {
-					margin-right: -50%;
+					b{
+						font-size: 14px;
+					}
 				}
 			}
 			.remaining-label {
@@ -228,18 +237,20 @@
 				position: absolute;
 				right: -350px;
 				width: 300px;
-				top: 3px;
+				top: -2px;
 				b {
 					display: inline-block;
 					font-size: 28px;
+					font-weight: 400;
 					float: left;
 					width: 150px;
 					text-align: right;
 					margin-right: 10px;
-					line-height: 28px;
+					line-height: 25px;
 				}
 				span {
 					display: block;
+					line-height: 19px;
 				}
 				.kpi-name{
 					color: $user_menu;

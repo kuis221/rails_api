@@ -23,6 +23,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
+--
 -- Name: tablefunc; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -988,40 +1002,6 @@ ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
 
 
 --
--- Name: documents; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE documents (
-    id integer NOT NULL,
-    name character varying(255),
-    created_by_id integer,
-    updated_by_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    event_id integer
-);
-
-
---
--- Name: documents_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE documents_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: documents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE documents_id_seq OWNED BY documents.id;
-
-
---
 -- Name: event_data; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1217,44 +1197,6 @@ CREATE SEQUENCE goals_id_seq
 --
 
 ALTER SEQUENCE goals_id_seq OWNED BY goals.id;
-
-
---
--- Name: kpi_reports; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE kpi_reports (
-    id integer NOT NULL,
-    company_user_id integer,
-    params text,
-    aasm_state character varying(255),
-    progress integer,
-    file_file_name character varying(255),
-    file_content_type character varying(255),
-    file_file_size integer,
-    file_updated_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: kpi_reports_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE kpi_reports_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: kpi_reports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE kpi_reports_id_seq OWNED BY kpi_reports.id;
 
 
 --
@@ -1650,16 +1592,17 @@ ALTER SEQUENCE read_marks_id_seq OWNED BY read_marks.id;
 
 CREATE TABLE reports (
     id integer NOT NULL,
-    company_id integer,
-    name character varying(255),
-    description text,
-    active boolean DEFAULT true,
-    created_by_id integer,
-    updated_by_id integer,
-    rows text,
-    columns text,
-    "values" text,
-    filters text
+    type character varying(255),
+    company_user_id integer,
+    params text,
+    aasm_state character varying(255),
+    progress integer,
+    file_file_name character varying(255),
+    file_content_type character varying(255),
+    file_file_size integer,
+    file_updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2241,13 +2184,6 @@ ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY documents ALTER COLUMN id SET DEFAULT nextval('documents_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY event_data ALTER COLUMN id SET DEFAULT nextval('event_data_id_seq'::regclass);
 
 
@@ -2277,13 +2213,6 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 --
 
 ALTER TABLE ONLY goals ALTER COLUMN id SET DEFAULT nextval('goals_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY kpi_reports ALTER COLUMN id SET DEFAULT nextval('kpi_reports_id_seq'::regclass);
 
 
 --
@@ -2434,11 +2363,11 @@ ALTER TABLE ONLY venues ALTER COLUMN id SET DEFAULT nextval('venues_id_seq'::reg
 
 
 --
--- Name: active_admin_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: admin_notes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY active_admin_comments
-    ADD CONSTRAINT active_admin_comments_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT admin_notes_pkey PRIMARY KEY (id);
 
 
 --
@@ -2650,14 +2579,6 @@ ALTER TABLE ONLY delayed_jobs
 
 
 --
--- Name: documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY documents
-    ADD CONSTRAINT documents_pkey PRIMARY KEY (id);
-
-
---
 -- Name: event_data_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2706,11 +2627,11 @@ ALTER TABLE ONLY kpis
 
 
 --
--- Name: kpis_segments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: kpisegments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY kpis_segments
-    ADD CONSTRAINT kpis_segments_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT kpisegments_pkey PRIMARY KEY (id);
 
 
 --
@@ -2789,24 +2710,8 @@ ALTER TABLE ONLY read_marks
 -- Name: reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY kpi_reports
-    ADD CONSTRAINT reports_pkey PRIMARY KEY (id);
-
-
---
--- Name: reports_pkey1; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
 ALTER TABLE ONLY reports
-    ADD CONSTRAINT reports_pkey1 PRIMARY KEY (id);
-
-
---
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY roles
-    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT reports_pkey PRIMARY KEY (id);
 
 
 --
@@ -2855,6 +2760,14 @@ ALTER TABLE ONLY teamings
 
 ALTER TABLE ONLY teams
     ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT user_groups_pkey PRIMARY KEY (id);
 
 
 --
@@ -3067,13 +2980,6 @@ CREATE INDEX index_contact_events_on_contactable_id_and_contactable_type ON cont
 --
 
 CREATE INDEX index_contact_events_on_event_id ON contact_events USING btree (event_id);
-
-
---
--- Name: index_documents_on_event_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_documents_on_event_id ON documents USING btree (event_id);
 
 
 --
@@ -3478,8 +3384,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130712194507');
 
 INSERT INTO schema_migrations (version) VALUES ('20130712233955');
 
-INSERT INTO schema_migrations (version) VALUES ('20130713010431');
-
 INSERT INTO schema_migrations (version) VALUES ('20130714161604');
 
 INSERT INTO schema_migrations (version) VALUES ('20130715151824');
@@ -3524,8 +3428,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130820233224');
 
 INSERT INTO schema_migrations (version) VALUES ('20130822161255');
 
-INSERT INTO schema_migrations (version) VALUES ('20130823003049');
-
 INSERT INTO schema_migrations (version) VALUES ('20130824182224');
 
 INSERT INTO schema_migrations (version) VALUES ('20130826223112');
@@ -3549,8 +3451,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130903040128');
 INSERT INTO schema_migrations (version) VALUES ('20130903152234');
 
 INSERT INTO schema_migrations (version) VALUES ('20130903152532');
-
-INSERT INTO schema_migrations (version) VALUES ('20130903173511');
 
 INSERT INTO schema_migrations (version) VALUES ('20130904202830');
 
@@ -3606,21 +3506,13 @@ INSERT INTO schema_migrations (version) VALUES ('20140109185805');
 
 INSERT INTO schema_migrations (version) VALUES ('20140115210126');
 
-INSERT INTO schema_migrations (version) VALUES ('20140121200658');
-
 INSERT INTO schema_migrations (version) VALUES ('20140124202736');
-
-INSERT INTO schema_migrations (version) VALUES ('20140129182630');
-
-INSERT INTO schema_migrations (version) VALUES ('20140204220306');
 
 INSERT INTO schema_migrations (version) VALUES ('20140206222315');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210202029');
 
 INSERT INTO schema_migrations (version) VALUES ('20140212144618');
-
-INSERT INTO schema_migrations (version) VALUES ('20140212191723');
 
 INSERT INTO schema_migrations (version) VALUES ('20140212220518');
 
