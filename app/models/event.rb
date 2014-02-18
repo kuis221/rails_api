@@ -528,13 +528,23 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with :location, Area.find(value).locations.map(&:id) + [0]
+              any_of do
+                with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+                with :location, Area.find(value).locations.map(&:id) + [0]
+              end
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]) if params[:area].present?
+          if params[:area].present?
+            any_of do
+              with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+              with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
+            end
+          end
+
+          with :place_id, params[:place] if params[:place].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
