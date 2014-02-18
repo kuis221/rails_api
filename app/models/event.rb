@@ -544,6 +544,8 @@ class Event < ActiveRecord::Base
             end
           end
 
+          with :place_id, params[:place] if params[:place].present?
+
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
             stat(:impressions, :type => "sum")

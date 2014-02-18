@@ -54,6 +54,9 @@ describe Event, search: true do
     # Search for a specific Event's place
     Event.do_search(company_id: company.id, q: "place,#{place.id}").results.should =~ [event]
     Event.do_search(company_id: company.id, q: "place,#{place2.id}").results.should =~ [event2]
+    Event.do_search(company_id: company.id, place: [place.id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, place: [place2.id]).results.should =~ [event2]
+    Event.do_search(company_id: company.id, place: [place.id, place2.id]).results.should =~ [event, event2]
     Event.do_search(company_id: company.id, location: [place.location_id]).results.should =~ [event]
     Event.do_search(company_id: company.id, location: [place2.location_id]).results.should =~ [event2]
     Event.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results.should =~ [event, event2]
