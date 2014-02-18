@@ -209,7 +209,7 @@
 				}
 			}
 			.executed-label {
-				float: left;
+				display: inline-block;
 				font-size: 12px;
 				white-space: nowrap;
 				margin-right: 50%;
@@ -221,12 +221,13 @@
 				}
 			}
 			.scheduled-label {
-				float: left;
+				display: inline-block;
 				font-size: 12px;
 				white-space: nowrap;
 				text-align: right;
 				margin-left: -50%;
 				div {
+					margin-right: -50%;
 					b{
 						font-size: 14px;
 					}

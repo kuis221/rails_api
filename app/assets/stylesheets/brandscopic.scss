@@ -6012,6 +6012,12 @@ ul#reports-list {
 			margin-bottom: 30px !important;
 			font-weight: bold;
 			position: relative;
+			a {
+				color: #fff;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 		}
 		.description{
 			height: 200px;

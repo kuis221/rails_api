@@ -24,14 +24,14 @@ $.widget 'nmk.photoGallery', {
 
 	fillPhotoData: (currentImage) ->
 		$image = $(currentImage)
-		@setTitle $image.data('title')
+		@setTitle $image.data('title'), $image.data('url')
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
 		if @options.includeTags
 			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
 
-	setTitle: (title) ->
-		@title.html title
+	setTitle: (title, url) ->
+		@title.html $('<a>').attr('href', url).text(title)
 
 	setDate: (date) ->
 		@date.html date

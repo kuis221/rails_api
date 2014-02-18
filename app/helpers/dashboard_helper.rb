@@ -68,7 +68,7 @@ module DashboardHelper
         content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['executed'], strip_insignificant_zeros: true)}</b> EXECUTED".html_safe), class: 'executed-label', style: "margin-left: #{c['executed_percentage']}%") +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-c['scheduled_percentage']-c['executed_percentage']-3}%") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b> SCHEDULED".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100-c['scheduled_percentage']-c['executed_percentage']}%") +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
       content_tag(:div, class: 'remaining-label') do
         content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true)) +
