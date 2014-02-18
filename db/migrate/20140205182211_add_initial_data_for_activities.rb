@@ -6,7 +6,7 @@ class AddInitialDataForActivities < ActiveRecord::Migration
       case at_name
       when 'POS Placement'
         FormField.create({name: 'Brand', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Brand', ordering: 1, required: false}, without_protection: true)
-        FormField.create({name: 'Marque', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Multiple', ordering: 2, required: false}, without_protection: true)
+        FormField.create({name: 'Marque', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Marque', ordering: 2, required: false, settings: {'multiple' => true}}, without_protection: true)
         ff = FormField.create({name: 'Placement Type', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Dropdown', ordering: 3, required: false}, without_protection: true)
         ['Chalk board', 'Mirror', 'Rail mat', 'Wearable', 'Church key', 'Napkin caddie', 'Other'].each_with_index do |ffo_name, index|
           ff.options.create({name: ffo_name, ordering: index+1}, without_protection: true)
@@ -31,7 +31,7 @@ class AddInitialDataForActivities < ActiveRecord::Migration
 
       when 'Menu Placement'
         FormField.create({name: 'Brand', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Brand', ordering: 1, required: false}, without_protection: true)
-        FormField.create({name: 'Marque', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Multiple', ordering: 2, required: false}, without_protection: true)
+        FormField.create({name: 'Marque', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Marque', ordering: 2, required: false, settings: {'multiple' => true}}, without_protection: true)
         ff = FormField.create({name: 'Placement Type', fieldable_id: at.id, fieldable_type: 'ActivityType', type: 'FormField::Dropdown', ordering: 3, required: false}, without_protection: true)
         ['Permanent', 'Seasonal', 'Temporary'].each_with_index do |ffo_name, index|
           ff.options.create({name: ffo_name, ordering: index+1}, without_protection: true)

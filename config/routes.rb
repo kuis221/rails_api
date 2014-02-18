@@ -155,7 +155,7 @@ Brandscopic::Application.routes.draw do
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
       resources :events, only: [:new, :create]
-      resources :activities, only: [:new, :create] do
+      resources :activities, only: [:new, :create, :edit, :update] do
         get :form, on: :collection
       end
     end

@@ -19,6 +19,14 @@ class ActivityResult < ActiveRecord::Base
 
   before_save :prepare_for_store
 
+  def value
+    if form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
+      self.attributes['value'].try(:split, ',')
+    else
+      self.attributes['value']
+    end
+  end
+
   private
     def valid_value?
       return if form_field.nil?

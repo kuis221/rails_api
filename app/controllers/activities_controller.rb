@@ -1,12 +1,17 @@
 class ActivitiesController < FilteredController
   belongs_to :venue, polymorphic: true
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :edit, :update]
+
+  helper_method :assignable_users
 
   def form
     @activity = Activity.new(permitted_params)
-    @users = current_company.company_users.active.joins(:user).order('users.first_name ASC')
     @brands = Brand.accessible_by_user(current_company_user.id).order(:name)
     render layout: false
+  end
+
+  def assignable_users
+    current_company.company_users.active.joins(:user).order('users.first_name ASC')
   end
 
   protected

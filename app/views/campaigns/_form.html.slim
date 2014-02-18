@@ -9,6 +9,7 @@
     .row-fluid
       = f.input :brands_list
     .row-fluid
+      - p current_company.brand_portfolios.active
       = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-xlarge chosen-enabled', multiple: true}
 
     .row-fluid
