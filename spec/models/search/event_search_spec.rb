@@ -26,6 +26,9 @@ describe Event, search: true do
     area = FactoryGirl.create(:area, company: company)
     area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
 
+    area2 = FactoryGirl.create(:area, company: company)
+    area2.places << place
+
     # Create a Campaign and an Event on company 2
     company2_campaign = FactoryGirl.create(:campaign)
     company2_event = FactoryGirl.create(:event, company: company2_campaign.company, campaign: company2_campaign)
@@ -58,6 +61,8 @@ describe Event, search: true do
     # Search for a events in an area
     Event.do_search(company_id: company.id, q: "area,#{area.id}").results.should =~ [event]
     Event.do_search(company_id: company.id, area: [area.id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, q: "area,#{area2.id}").results.should =~ [event]
+    Event.do_search(company_id: company.id, area: [area2.id]).results.should =~ [event]
 
     # Search for brands associated to the Events
     Event.do_search(company_id: company.id, q: "brand,#{brand.id}").results.should =~ [event, event2]
