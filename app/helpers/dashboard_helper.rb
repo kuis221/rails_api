@@ -153,7 +153,7 @@ module DashboardHelper
       start_date = Date.today.beginning_of_month
       start_date = start_date.next_week unless start_date.wday == 1
       start_week_number = start_date.strftime("%U").to_i+1
-      Event.active.between_dates(start_date.beginning_of_day, (Date.today.beginning_of_month+4.months).end_of_month.end_of_day).
+      Event.active.between_dates(start_date.beginning_of_day, (Date.today.beginning_of_month+@campaign_overview_months.months).end_of_month.end_of_day).
             accessible_by_user(current_company_user).
             where(campaign_id: dashboard_accessible_campaigns.map(&:id)).
             group('1, 2, 3').

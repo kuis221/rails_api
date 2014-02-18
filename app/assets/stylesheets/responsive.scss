@@ -1005,3 +1005,23 @@
 }
 
 
+@media only screen and (max-width:1500px) {
+	table#campaign-overview-table.table .month-6 {
+		display: none;
+	}
+}
+@media only screen and (max-width:1300px) {
+	table#campaign-overview-table.table .month-5 {
+		display: none;
+	}
+}
+@media only screen and (max-width:1100px) {
+	table#campaign-overview-table.table .month-4 {
+		display: none;
+	}
+}
+@media only screen and (max-width:800px) {
+	table#campaign-overview-table.table .month-3 {
+		display: none;
+	}
+}
