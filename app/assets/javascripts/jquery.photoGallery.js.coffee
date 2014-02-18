@@ -46,8 +46,6 @@ $.widget 'nmk.photoGallery', {
 		i = index = 0
 		active = false
 		row = null
-		if @miniCarousel
-			@miniCarousel.remove()
 
 		miniCarousel = @miniCarousel.find('.carousel-inner')
 		carousel = @carousel.find('.carousel-inner')
@@ -81,6 +79,8 @@ $.widget 'nmk.photoGallery', {
 			@carousel.carousel index
 
 		@miniCarousel.appendTo @gallery.find('.mini-slider')
+
+		@miniCarousel.carousel 'pause'
 
 
 	_createGalleryModal: () ->
