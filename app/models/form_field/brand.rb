@@ -16,7 +16,7 @@
 
 class FormField::Brand < FormField
   def field_options(result)
-    brands = result.activity.campaign ? result.activity.campaign.brands : ::Brand.for_company_campaigns(Company.current).uniq_by(&:id)
-    {as: :select, collection: brands, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled activity-brand-list'), required: (self.required? ? 'required' : nil)}}
+    brands = result.id && result.activity.campaign ? result.activity.campaign.brands : ::Brand.for_company_campaigns(Company.current).uniq_by(&:id)
+    {as: :select, collection: brands, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled form-field-brand'), required: (self.required? ? 'required' : nil)}}
   end
 end

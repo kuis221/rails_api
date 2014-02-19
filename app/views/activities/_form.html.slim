@@ -25,7 +25,7 @@
           = f.input :activity_date, input_html: {value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
 
       .form-actions
-        = f.button :submit, id: 'create-activity-btn', class: 'btn btn-primary'
+        = f.button :submit, id: 'create-activity-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
         = "&nbsp;".html_safe
         = f.button :button, 'Cancel', class: 'btn btn-cancel'
     - else
@@ -40,8 +40,11 @@ javascript:
   });
 
   $('#activity_campaign_id').change(function() {
-    brands = $('.activity-brand-list');
+    brands = $('.form-field-brand');
+    marques = $('select.form-field-marque');
     brands.empty();
+    marques.empty();
+    marques.select2('data', null, false);
     if (selectedOption = this.value) {
       $.get('/campaigns/'+selectedOption+'/brands.json', function(options) {
         for(var i in options) {
@@ -55,8 +58,8 @@ javascript:
     }
   });
 
-  $('.activity-brand-list').change(function() {
-    marques = $('select.activity-marque-list');
+  $('.form-field-brand').change(function() {
+    marques = $('select.form-field-marque');
     marques.empty();
     if (selectedOption = this.value) {
       $.get('/brands/'+selectedOption+'/marques.json', function(options) {
@@ -71,4 +74,4 @@ javascript:
     }
   });
 
-  $('select.activity-marque-list').select2();
+  $('select.form-field-marque').select2();
