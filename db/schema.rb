@@ -28,6 +28,55 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
   add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
 
+  create_table "activities", :force => true do |t|
+    t.integer  "activity_type_id"
+    t.integer  "activitable_id"
+    t.string   "activitable_type"
+    t.integer  "campaign_id"
+    t.boolean  "active",           :default => true
+    t.integer  "company_user_id"
+    t.datetime "activity_date"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+  end
+
+  add_index "activities", ["activitable_id", "activitable_type"], :name => "index_activities_on_activitable_id_and_activitable_type"
+  add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
+  add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
+
+  create_table "activity_results", :force => true do |t|
+    t.integer  "activity_id"
+    t.integer  "form_field_id"
+    t.text     "value"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
+  add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
+  add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+
+  create_table "activity_type_campaigns", :force => true do |t|
+    t.integer  "activity_type_id"
+    t.integer  "campaign_id"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "activity_type_campaigns", ["activity_type_id"], :name => "index_activity_type_campaigns_on_activity_type_id"
+  add_index "activity_type_campaigns", ["campaign_id"], :name => "index_activity_type_campaigns_on_campaign_id"
+
+  create_table "activity_types", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.boolean  "active",      :default => true
+    t.integer  "company_id"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "activity_types", ["company_id"], :name => "index_activity_types_on_company_id"
+
   create_table "admin_users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
     t.string   "encrypted_password",     :default => "", :null => false
@@ -327,17 +376,6 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "documents", :force => true do |t|
-    t.string   "name"
-    t.integer  "created_by_id"
-    t.integer  "updated_by_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "event_id"
-  end
-
-  add_index "documents", ["event_id"], :name => "index_documents_on_event_id"
-
   create_table "event_data", :force => true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                              :default => 0
@@ -406,7 +444,32 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
+  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
+
+  create_table "form_field_options", :force => true do |t|
+    t.integer  "form_field_id"
+    t.string   "name"
+    t.integer  "ordering"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
+
+  create_table "form_fields", :force => true do |t|
+    t.integer  "fieldable_id"
+    t.string   "fieldable_type"
+    t.string   "name"
+    t.string   "type"
+    t.text     "settings"
+    t.integer  "ordering"
+    t.boolean  "required"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"
 
   create_table "goals", :force => true do |t|
     t.integer  "kpi_id"
@@ -491,6 +554,15 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
     t.integer "location_id"
     t.integer "place_id"
   end
+
+  create_table "marques", :force => true do |t|
+    t.integer  "brand_id"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "marques", ["brand_id"], :name => "index_marques_on_brand_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"
