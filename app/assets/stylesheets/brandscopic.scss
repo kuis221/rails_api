@@ -2405,6 +2405,7 @@ input.search-query:focus{
 			top: -2px;
 			color: white;
 			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing:grayscale;
 	    }
 	}
 }
