@@ -168,7 +168,7 @@ class Campaign < ActiveRecord::Base
 
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
-    place.locations.pluck('locations.id').any?{|location| accessible_locations.include?(location)} ||
+    place.location_ids.any?{|location| accessible_locations.include?(location)} ||
     places.map(&:id).include?(place.id) ||
     areas.map(&:place_ids).flatten.include?(place.id)
   end

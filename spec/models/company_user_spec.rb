@@ -146,6 +146,15 @@ describe CompanyUser do
       user.areas << area
       expect(user.allowed_to_access_place?(place)).to be_true
     end
+
+    it "should work with places that are not yet saved" do
+      place = FactoryGirl.build(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area = FactoryGirl.create(:area, company_id: 1)
+      area.places << city
+      user.areas << area
+      expect(user.allowed_to_access_place?(place)).to be_true
+    end
   end
 
   describe "#accessible_places" do
