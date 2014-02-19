@@ -222,17 +222,14 @@ class AttachedAsset < ActiveRecord::Base
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
+    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     if post_process_required?
-      self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]%#` "))
-    else
-      paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-      s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+      file.reprocess!
     end
-
     self.processed = true
-    save
 
-    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete if save
   end
 
   protected
