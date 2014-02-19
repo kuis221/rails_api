@@ -25,7 +25,7 @@ feature "Events", js: true, search: true do
           FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: @company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: @company)
         ]}
       scenario "should display a list of events" do
-        Timecop.freeze(Time.zone.local(2013, 07, 21, 12, 01)) do
+        Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
           events.size  # make sure users are created before
           Sunspot.commit
           visit events_path
@@ -861,20 +861,17 @@ feature "Events", js: true, search: true do
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
+      expect(page).to have_content("Field should sum 100%")
 
       within "#event-results-form" do
         expect(page).to have_content('65%')
       end
 
-      click_js_button "Save"
-
-      expect(page).to have_content("The sum of the segments should be 100%")
-
       fill_in('Female', with: 65)
 
       click_js_button "Save"
 
-      expect(page).to have_no_content("The sum of the segments should be 100%")
+      expect(page).to have_no_content("Field should sum 100%")
     end
 
     scenario "the entered data should be saved automatically when submitting the event recap" do

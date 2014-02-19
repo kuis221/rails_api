@@ -118,16 +118,15 @@
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box
     h3 GALLERY
-    .large-photo-list
-      ul.thumbnails#photos-thumbs
+    .gallery
+      ul
         - resource.photos.each do |photo|
           - if photo.is_a?(AttachedAsset)
             = render partial: 'results/photos/photo', locals: {photo: photo}
           - else
-            li.span2.google-image
-              div.thumbnail-container.thumbnail
-                a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
-                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+            li.photo-item
+              a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
+                = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
 
 - if can?(:view_comments, resource) && resource.reviews.count > 0
   #venue-comments.details_box

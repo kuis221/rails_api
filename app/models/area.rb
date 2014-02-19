@@ -50,10 +50,11 @@ class Area < ActiveRecord::Base
     integer :company_id
   end
 
+  # Returns a list of locations ids that are associated to the area
   def locations
     @locations ||= Rails.cache.fetch("area_locations_#{id}") do
-      list_places = places.select{|p| !p.types.nil? && (p.types & ['sublocality', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
-      list_places.map{|place| [place.continent_name, place.country_name, place.state_name, place.city, (place.types.present? && place.types.include?('sublocality') ? place.name : nil)].compact.join('/') }.uniq
+      Location.joins('INNER JOIN places ON places.location_id=locations.id').
+        where(places: {id: self.places, is_location: true}).group('locations.id')
     end
   end
 
@@ -65,11 +66,11 @@ class Area < ActiveRecord::Base
   end
 
   # If place is in /North America/United States/California/Los Angeles and the area
-  # par
+  # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
     if place.present?
-      political_location = Place.political_division(place).join('/')
-      locations.any?{|location| political_location.include?(location) }
+      political_location = Place.political_division(place).join('/').downcase
+      locations.any?{|location| political_location.include?(location.path) }
     else
       false
     end
@@ -79,8 +80,8 @@ class Area < ActiveRecord::Base
   # False for "North America/United States/Chicago" in ["North America/United States/Texas/Austin", "North America/United States/Texas/Bee Cave"
   def place_in_locations?(place)
     if place.present?
-      political_location = Place.political_division(place).join('/')
-      locations.any?{|location| location.include?(political_location) }
+      political_location = Place.political_division(place).join('/').downcase
+      locations.any?{|location| location.path.include?(political_location) }
     else
       false
     end

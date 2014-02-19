@@ -46,6 +46,4 @@ feature "Venues Section", js: true, search: true do
       end
     end
   end
-
-
 end

@@ -185,8 +185,8 @@ describe Api::V1::EventsController do
           'value' => segments.first.id,
           'description' => 'some description to show',
           'segments' => [
-              {'id' => segments.first.id, 'text' => 'Yes'},
-              {'id' => segments.last.id, 'text' => 'No'}
+              {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
+              {'id' => segments.last.id, 'text' => 'No', 'goal' => nil}
           ]
         )
     end
@@ -207,8 +207,8 @@ describe Api::V1::EventsController do
           'name' => 'Age',
           'field_type' => 'percentage',
           'segments' => [
-              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil},
-              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil}
+              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
+              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 

@@ -39,6 +39,8 @@ class Place < ActiveRecord::Base
   has_many :events
   has_many :placeables
   has_many :venues, dependent: :destroy
+  has_and_belongs_to_many :locations, autosave: true
+  belongs_to :location, autosave: true
 
   with_options through: :placeables, :source => :placeable do |place|
     place.has_many :areas, :source_type => 'Area'
@@ -52,6 +54,8 @@ class Place < ActiveRecord::Base
   before_create :fetch_place_data
 
   after_save :clear_cache
+
+  before_save :update_locations
 
   after_commit :reindex_associated
 
@@ -77,8 +81,8 @@ class Place < ActiveRecord::Base
     @the_country ||= Country.new(country) if country
   end
 
-  def name_with_location
-    [self.name, self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')
+  def name_with_location(sep=', ')
+    [self.name, [self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')].join(sep)
   end
 
   def update_info_from_api
@@ -125,36 +129,19 @@ class Place < ActiveRecord::Base
     list_photos.slice(0, 10)
   end
 
-  class << self
-    def encode_location(path)
-      path = path.compact.join('/') if path.is_a?(Array)
-      Digest::MD5.hexdigest(path.downcase)
-    end
+  def update_locations
+    ary = Place.political_division(self)
+    paths = ary.count.times.map { |i| ary.slice(0, i+1).compact.join('/').downcase }
+    self.locations = paths.map{|path| Location.find_or_create_by_path(path) }
+    self.location = Location.find_or_create_by_path(paths.last)
+    self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
+    true
+  end
 
+  class << self
     def load_by_place_id(place_id, reference)
       Place.find_or_initialize_by_place_id({place_id: place_id, reference: reference}, without_protection: true) do |p|
         p.send(:fetch_place_data)
-      end
-    end
-
-    # Returns a list of the different locations where the place belongs to, so, if the place
-    # is in Los Angeles, CA, it will return:
-    # ["460491fc520f4dbfcff22d1a45f6b056", "cdbe9fe33896a9afa77c66177551fa54", "e6694f45ba1b5e30c99e64ae676c2240", "e4f529bbd3bfe9699536ec957be40fa1"]
-    # where
-    # * "North America" ==> 460491fc520f4dbfcff22d1a45f6b056
-    # * "North America/United States" ==> cdbe9fe33896a9afa77c66177551fa54
-    # * "North America/United States/California"  ==> e6694f45ba1b5e30c99e64ae676c2240
-    # * "North America/United States/California/Los Angeles" ==> e4f529bbd3bfe9699536ec957be40fa1
-    #
-    def locations_for_index(place)
-      ary = political_division(place)
-      ary.count.times.map { |i| encode_location(ary.slice(0, i+1)) } unless ary.nil?
-    end
-
-    def location_for_search(place)
-      unless place.nil?
-        return nil if place.types.present? && place.types.include?('establishment')
-        return encode_location(political_division(place))
       end
     end
 

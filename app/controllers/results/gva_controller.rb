@@ -20,7 +20,7 @@ class Results::GvaController < ApplicationController
     else
       @goals = campaign.goals.base
     end
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi)
+    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi)
   end
 
   private
@@ -50,7 +50,8 @@ class Results::GvaController < ApplicationController
         where(kpi_id: Kpi.events.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
-          params.merge!({location: [Place.encode_location(Place.political_division(goal.goalable))]}) if goal.goalable.is_a?(Place)
+          params.merge!({location: [goal.goalable.location_id]}) if goal.goalable.is_a?(Place) && goal.goalable.is_location?
+          params.merge!({place: [goal.goalable.id]})   if goal.goalable.is_a?(Place) && !goal.goalable.is_location?
           search = Event.do_search(params, true)
           status_facets = search.facet(:status).rows
           submitted = status_facets.detect{|f| f.value == :submitted}.try(&:count) || 0
@@ -71,7 +72,8 @@ class Results::GvaController < ApplicationController
         where(kpi_id: Kpi.promo_hours.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
-          params.merge!({location: [Place.encode_location(Place.political_division(goal.goalable))]})   if goal.goalable.is_a?(Place)
+          params.merge!({location: [goal.goalable.location_id]})   if goal.goalable.is_a?(Place) && goal.goalable.is_location?
+          params.merge!({place: [goal.goalable.id]})   if goal.goalable.is_a?(Place) && !goal.goalable.is_location?
           submitted = Event.do_search(params.merge(event_status: ['Submitted']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           executed = Event.do_search(params.merge(event_status: ['Executed']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
           scheduled = Event.do_search(params.merge(event_status: ['Scheduled']), true).stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
@@ -83,7 +85,8 @@ class Results::GvaController < ApplicationController
     def filter_event_ids
       params = {company_id: current_company.id, campaign: [campaign.id], status: ['Active'], current_company_user: current_company_user, per_page: 100000}
       params.merge!({area: area.id}) unless area.nil?
-      params.merge!({location: [Place.encode_location(Place.political_division(place))]}) unless place.nil?
+      params.merge!({location: [place.location_id]}) if place.present? && place.is_location?
+      params.merge!({place: [place.id]}) if place.present? && !place.is_location?
       Event.do_search(params).hits.map(&:primary_key)
     end
 end
