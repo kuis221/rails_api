@@ -529,7 +529,7 @@ class Event < ActiveRecord::Base
               with :place_id, Venue.find(value).place_id
             when 'area'
               any_of do
-                with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+                with :place_id, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
                 with :location, Area.find(value).locations.map(&:id) + [0]
               end
             else
