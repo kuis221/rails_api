@@ -732,33 +732,30 @@
 
 // IMAGE GALLERY THUMBNAILS SIZES DEPENDING ON THE WINDOW SIZE
 
-@media only screen and (max-width:1292px) and (min-width:1042px) {
+@media only screen and (min-width:1292px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 20%;
 	}
 }
-@media only screen and (max-width:1042px) and (min-width:792px) {
+@media only screen and (max-width:1291px) and (min-width:1041px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 25%;
 	}
 }
-@media only screen and (max-width:792px) and (min-width:620px) {
+@media only screen and (max-width:1041px) and (min-width:791px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 33.3333%;
 	}
 }
-@media only screen and (max-width:620px) {
+@media only screen and (max-width:791px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 50%;
 	}
 }
-
-
-
 
 
 @media only screen and (max-width:1500px) {
