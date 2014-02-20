@@ -22,6 +22,7 @@ class EventResult < ActiveRecord::Base
   attr_accessible :form_field_id, :kpis_segment_id, :kpi_id, :value
 
   before_save :set_scalar_value
+  before_validation :clean_up_invalid_values
 
   validate :valid_value?
 
@@ -60,7 +61,7 @@ class EventResult < ActiveRecord::Base
   end
 
   def value
-    if form_field.field_type == 'count' && capture_mechanism == 'checkbox'
+    if form_field.present? && form_field.field_type == 'count' && capture_mechanism == 'checkbox'
       if self.attributes['value'].is_a?(String)
         self.attributes['value'].try(:split, ',').try(:map , &:to_i)
       elsif self.attributes['value'].is_a?(Numeric)
@@ -68,8 +69,8 @@ class EventResult < ActiveRecord::Base
       else
         self.attributes['value']
       end
-    elsif form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'].respond_to?(:to_i)
-      self.attributes['value'].to_i if self.attributes['value'].present?
+    elsif form_field.present? && form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'] != '' && self.attributes['value'].respond_to?(:to_i)
+      self.attributes['value'].to_i
     else
       self.attributes['value']
     end
@@ -92,6 +93,10 @@ class EventResult < ActiveRecord::Base
       end
     end
 
+    def clean_up_invalid_values
+      self.value = nil if (self.value == 0 || self.value == '0') && form_field.field_type == 'count'
+    end
+
     def is_numeric_field?
       form_field.present? && ['percentage', 'number'].include?(form_field.field_type)
     end
@@ -106,7 +111,7 @@ class EventResult < ActiveRecord::Base
         errors.add(:value, I18n.translate('errors.messages.blank'))
       end
 
-      if form_field.field_type == 'count' && value.present? && value != ''
+      if form_field.field_type == 'count' && value.present? && value != '' && value != '0'
         if value.present? && capture_mechanism == 'radio' && (!value.is_a?(Integer) || !form_field.kpi.kpis_segment_ids.include?(value))
           errors.add(:value, I18n.translate('errors.result.invalid'))
         end
