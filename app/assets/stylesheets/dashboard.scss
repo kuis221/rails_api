@@ -129,7 +129,6 @@
 
 
 	#kpis-trends-bars {
-		margin-right: 350px;
 		a{
 			color:$grey_three;
 			font-size: 13px;
@@ -166,10 +165,9 @@
 		}
 
 		.chart-bar {
+			margin-right: 350px;
 			color: $brand;
 			position: relative;
-			display: inline-block;
-			width: 100%;
 			.progress {
 				width: auto !important;
 				height: 20px;
@@ -416,15 +414,16 @@
 				margin-left:0;
 				width: 100%;
 				&> li{
-				  	border: 1px solid $grey_one;
-					margin: 8px 10px;
-					box-sizing: border-box;
 					display: inline-block;
-					height: 180px;
-					position:relative;
-					list-style: none;
-					vertical-align: top;
-					width: 18.2%;
+					.comment-inner {
+						border: 1px solid $grey_one;
+						box-sizing: border-box;
+						height: 180px;
+						position:relative;
+						list-style: none;
+						vertical-align: top;
+						margin: 8px 5px;
+					}
 					.comment-content {
 						color:$text;
 						font-size: 16px;

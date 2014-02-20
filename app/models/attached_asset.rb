@@ -28,7 +28,7 @@ class AttachedAsset < ActiveRecord::Base
     :styles => {
       :small => '',
       :thumbnail => '',
-      :medium => '800x800'
+      :medium => '800x800>'
     },
     :convert_options => {
       :small => '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
@@ -141,7 +141,8 @@ class AttachedAsset < ActiveRecord::Base
     def do_search(params, include_facets=false)
       options = {include: {:attachable => [:campaign, :place] }}
       solr_search(options) do
-        with(:company_id, params[:company_id])
+        with :company_id, params[:company_id]
+        with :processed, true
 
         company_user = params[:current_company_user]
         if company_user.present?
