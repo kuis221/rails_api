@@ -111,7 +111,7 @@ class Event < ActiveRecord::Base
 
   after_validation :set_event_timezone
 
-  before_save :set_promo_hours, :check_results_changed
+  before_save :set_promo_hours, :check_results_changed, :add_current_company_user
   after_save :reindex_associated
   after_commit :index_venue
 
@@ -191,7 +191,7 @@ class Event < ActiveRecord::Base
     double :ethnicity_native_american, stored: true
     double :ethnicity_white, stored: true
   end
-
+  
   def activate!
     update_attribute :active, true
   end
@@ -781,6 +781,10 @@ class Event < ActiveRecord::Base
     #     end
     #   end
     # end
+    
+    def add_current_company_user
+      self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present?
+    end
 end
 
 
