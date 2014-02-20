@@ -38,7 +38,7 @@ class Comment < ActiveRecord::Base
 
   scope :not_from, lambda{|user| where(['comments.created_by_id<>?', user]) }
 
-  scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id = commentable_id and commentable_type=\'Event\' and ec.id in ('+Event.select('id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql+')') }
+  scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id = commentable_id and commentable_type=\'Event\' and ec.id in ('+Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql+')') }
 
   after_create :reindex_event
 

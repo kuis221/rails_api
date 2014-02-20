@@ -123,6 +123,7 @@ feature "Areas", js: true, search: true do
         fill_in 'Description', with: 'edited area description'
         click_js_button 'Save'
       end
+      ensure_modal_was_closed
 
       expect(page).to have_selector('h2', text: 'edited area name')
       expect(page).to have_selector('div.description-data', text: 'edited area description')
