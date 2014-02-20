@@ -215,7 +215,7 @@ describe EventsController do
         lambda {
           post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
-        assigns(:event).users.first.id.should == @user.id
+        assigns(:event).users.last.user.id.should == @user.id
       end
 
       it "should create the event with the correct dates" do
