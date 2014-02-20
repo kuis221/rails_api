@@ -20,6 +20,13 @@ class EventsController < FilteredController
 
   skip_load_and_authorize_resource only: :update
   before_filter :authorize_update, only: :update
+  
+  after_filter :add_current_company_user, only: :create
+  
+  def add_current_company_user
+    memberable = resource.memberships.build({company_user: current_company.company_users.find(current_company_user.id)}, without_protection: true)
+    memberable.save
+  end
 
   def autocomplete
     buckets = autocomplete_buckets({
