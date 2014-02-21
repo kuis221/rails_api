@@ -1,0 +1,30 @@
+#recent-comments-module.details_box
+  h3 RECENT COMMENTS
+  #recent-comments-list
+    .comments-area
+      ul
+        - recent_comments_list.each do |comment|
+          li.comment id="dashboard-comment-#{comment.id}"
+            .comment-inner
+              = link_to event_path(comment.commentable) do
+                .comment-content
+                  = comment.content
+                .comment-footer
+                  = [comment.commentable.start_at.strftime('%b %-d'),comment.commentable.end_at.strftime('%b %-d')].uniq.join(' - ')
+                  = ", "
+                  = comment.commentable.campaign_name
+                  = ", "
+                  = "#{comment.commentable.place_name}, #{comment.commentable.place.present? ? (comment.commentable.place.city || comment.commentable.place.state): ''}"
+              .comment-actions
+                = link_to '', edit_event_comment_path(comment.commentable_id, comment), remote: true, class: 'edit' if can?(:edit_comment, Event)
+                = link_to(content_tag(:i,'', class: 'icon-remove-sign'),  event_comment_path(comment.commentable_id, comment.to_param), class: 'remove-comment-btn', title: 'Remove', remote: true, method: :delete, data: {confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'comment')}) if can?(:deactivate_comment, Event)
+
+  .pull-right
+    = link_to 'View All', results_comments_path, class: 'btn btn-info icon-angle-right-after'
+
+  javascript:
+    $(document).off('comments:change.dashboard, comments:deleted.dashboard').on('comments:change.dashboard, comments:deleted.dashboard', function(){
+      $.get('/dashboard/modules/recent_comments', function(response){
+        $('#recent-comments-module').replaceWith(response);
+      })
+    })

@@ -24,10 +24,18 @@ class AttachedAsset < ActiveRecord::Base
 
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
-  has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
-    :small => "180x120#",
-    :medium => "700x700"
-  }})
+  has_attached_file :file, PAPERCLIP_SETTINGS.merge({
+    :styles => {
+      :small => '',
+      :thumbnail => '',
+      :medium => '800x800>'
+    },
+    :convert_options => {
+      :small => '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+      :thumbnail => '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+      :medium => '-quality 85 -strip'
+    }
+  })
 
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
@@ -51,6 +59,7 @@ class AttachedAsset < ActiveRecord::Base
 
     string :file_file_name
     integer :file_file_size
+    boolean :processed
 
     integer :attachable_id
 
@@ -89,9 +98,10 @@ class AttachedAsset < ActiveRecord::Base
       Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event' && attachable.place_id
     end
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
+
   end
 
   def activate!
@@ -131,7 +141,8 @@ class AttachedAsset < ActiveRecord::Base
     def do_search(params, include_facets=false)
       options = {include: {:attachable => [:campaign, :place] }}
       solr_search(options) do
-        with(:company_id, params[:company_id])
+        with :company_id, params[:company_id]
+        with :processed, true
 
         company_user = params[:current_company_user]
         if company_user.present?
@@ -209,29 +220,17 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
-    tries ||= 5
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
+    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     if post_process_required?
-      self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]%# "))
-    else
-      paperclip_file_path = file.path(:original).sub(%r{^/},'')
-      s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+      file.reprocess!
     end
-
     self.processed = true
-    save
 
-    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
-  rescue AWS::S3::Errors::RequestTimeout
-    tries -= 1
-    if tries > 0
-      sleep(3)
-      retry
-    else
-      false
-    end
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete if save
   end
 
   protected
@@ -253,7 +252,6 @@ class AttachedAsset < ActiveRecord::Base
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
       if new_record? and self.file_file_name.nil?
-        tries ||= 5
         direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
         direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
@@ -262,24 +260,22 @@ class AttachedAsset < ActiveRecord::Base
         self.file_file_size     = direct_upload_head.content_length
         self.file_content_type  = direct_upload_head.content_type
         self.file_updated_at    = direct_upload_head.last_modified
-      end
-    rescue AWS::S3::Errors::NoSuchKey => e
-      tries -= 1
-      if tries > 0
-        sleep(3)
-        retry
-      else
-        false
+
+        if self.file_content_type == 'binary/octet-stream'
+          self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
+        end
       end
     end
 
     # Queue file processing
     def queue_processing
-      if direct_upload_url.present?
-        if post_process_required?
-          Resque.enqueue(AssetsUploadWorker, id)
-        else
-          transfer_and_cleanup
+      unless processed?
+        if direct_upload_url.present?
+          if post_process_required?
+            Resque.enqueue(AssetsUploadWorker, id)
+          else
+            transfer_and_cleanup
+          end
         end
       end
     end

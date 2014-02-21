@@ -130,43 +130,43 @@ describe Place do
     end
   end
 
-  describe "#locations_for_index" do
+  describe "#locations" do
     it "returns only the continent and country" do
       country = FactoryGirl.create(:place, name: 'United States', types: ['country'], route: nil, street_number: nil, city: nil, state:nil, country:'US')
-      expect(Place.locations_for_index(country)).to match_array([
-        Place.encode_location(['North America']),
-        Place.encode_location(['North America', 'United States'])
+      expect(country.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states'
       ])
     end
 
     it "returns the state, continent and country" do
       country = FactoryGirl.create(:place, name: 'California', types: ['administrative_area_level_1'], route: nil, street_number: nil, city: nil, state:'California', country:'US')
-      expect(Place.locations_for_index(country)).to match_array([
-        Place.encode_location(['North America']),
-        Place.encode_location(['North America', 'United States']),
-        Place.encode_location(['North America', 'United States', 'California'])
+      expect(country.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states',
+        'north america/united states/california'
       ])
     end
 
     it "returns the citym state, continent and country" do
       country = FactoryGirl.create(:place, name: 'Los Angeles', types: ['locality'], route: nil, street_number: nil, city: 'Los Angeles', state:'California', country:'US')
-      expect(Place.locations_for_index(country)).to match_array([
-        Place.encode_location(['North America']),
-        Place.encode_location(['North America', 'United States']),
-        Place.encode_location(['North America', 'United States', 'California']),
-        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles'])
+      expect(country.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states',
+        'north america/united states/california',
+        'north america/united states/california/los angeles'
       ])
     end
 
 
     it "returns the citym state, continent and country" do
       country = FactoryGirl.create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil, street_number: nil, city: 'Los Angeles', state:'California', country:'US')
-      expect(Place.locations_for_index(country)).to match_array([
-        Place.encode_location(['North America']),
-        Place.encode_location(['North America', 'United States']),
-        Place.encode_location(['North America', 'United States', 'California']),
-        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles']),
-        Place.encode_location(['North America', 'United States', 'California', 'Los Angeles', 'Beverly Hills'])
+      expect(country.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states',
+        'north america/united states/california',
+        'north america/united states/california/los angeles',
+        'north america/united states/california/los angeles/beverly hills'
       ])
     end
   end

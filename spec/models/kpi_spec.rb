@@ -128,7 +128,6 @@ describe Kpi do
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
-      result.reload
       result.value.should == 100
 
       field1 = event1.campaign.form_field_for_kpi(kpi1)
@@ -136,7 +135,6 @@ describe Kpi do
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
-      result.reload
       result.value.should == 200
       field2 = event2.campaign.form_field_for_kpi(kpi1)
       field2.should == result.form_field

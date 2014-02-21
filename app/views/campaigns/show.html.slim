@@ -7,9 +7,12 @@
       = resource.brands.map(&:name).to_sentence
 
     span
-      - if resource.first_event_at || resource.last_event_at
+      - if resource.has_date_range? || resource.first_event_at || resource.last_event_at
         .calendar-data
-          = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
+          - if resource.has_date_range?
+            = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
+          - else
+            = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
       - if resource.description
         .description-data

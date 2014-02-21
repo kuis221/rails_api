@@ -1,0 +1,482 @@
+@import "variables";
+
+// DASHBOARD STYLES
+
+.dashboard.index {
+	#gender-graph{
+		margin-top: 40px;
+	}
+
+	h3{
+		margin-bottom: 20px;
+	}
+
+	.kpi-trends-stats{
+		margin-top: 115px;
+	}
+
+	#map-canvas {
+		border:1px solid $user_menu;
+		height: 500px;
+		margin-top: 15px;
+	}
+
+	p{
+		max-width: 340px;
+		&.help-block {
+			width: auto;
+		}
+	}
+
+	.modal-header{
+		h3{
+			margin-bottom: 0px;
+		}
+	}
+
+	.help-title{
+		p{
+			width: auto;
+		}
+	}
+
+	#upcomming-events-module {
+		.tab-content {
+			margin-bottom: 20px;
+		}
+	}
+
+	#incomplete-tasks-module {
+
+		.link-list{
+			margin-bottom: 20px;
+		}
+
+		.tab-content {
+			width: auto;
+		}
+		.details_box {
+			border-top-left-radius: 0;
+		}
+	}
+
+	#venue-performance-module {
+		.link-list{
+			border: 0;
+			margin-top: 30px;
+			li {
+				border: 0;
+				a{
+					padding-left: 0;
+					&:hover{
+						background-color: white;
+					}
+				}
+			}
+		}
+		.score-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			div.score {
+				color: $venues_blue;
+				font-size: 11px;
+				width: 70px;
+				display: inline-block;
+				float: left;
+				height: 100%;
+				 span {
+				 	font-size: 35px;
+				 	font-weight: 200;
+				 	display: block;
+				 	clear: both;
+				 	line-height: 35px;
+				 	margin-left: -2px;
+				 }
+			}
+
+			div.info {
+				color: $text;
+				display: inline-block;
+				font-size: 12px;
+				h4 {
+					font-size: 16px;
+					font-weight: normal;
+					margin: 0 0 5px 0;
+				}
+			}
+		}
+		.span6{
+			margin-top: 25px;
+		}
+	}
+
+	#age-graph {
+		width: 480px;
+		height: 270px;
+	}
+
+	#demographics-module{
+		.span6.ethnicity{
+			margin: 0;
+		}
+	}
+
+	#kpis-trends-module {
+		overflow: hidden;
+	}
+
+
+	#kpis-trends-bars {
+		a{
+			color:$grey_three;
+			font-size: 13px;
+			&:hover{
+				text-decoration: underline;
+			}
+		}
+		.name {
+			display: inline-block;
+			font-size: 16px;
+			font-weight: bold;
+			margin-right: 20px;
+			margin-bottom: 15px;
+		}
+		.container-kpi-trend{
+			margin-top: 50px;
+			margin-left: 20px;
+		}
+
+		.kpi-trend {
+			font-size: 12px;
+			margin-bottom: 18px;
+			overflow: visible;
+
+			.goal-label {
+				white-space: nowrap;
+				position: absolute;
+				right: 0;
+				top: -30px;
+				div {
+					margin-left: 50%;
+				}
+			}
+		}
+
+		.chart-bar {
+			margin-right: 350px;
+			color: $brand;
+			position: relative;
+			.progress {
+				width: auto !important;
+				height: 20px;
+				.bar {
+					text-align: right;
+					text-shadow:none;
+					span.percentage {
+						margin-left: 10px;
+						margin-right: 10px;
+						line-height: 26px
+					}
+				}
+				.bar-executed {
+					background-color: $green !important;
+				}
+				.bar-remaining {
+					color: $venues_blue;
+				}
+			}
+
+			.today-line-indicator {
+				position: absolute;
+				width: 2px;
+				background-color: $grey_three;
+				height: 29px;
+				top: -5px;
+				border:1px solid $grey_three;
+				border-radius: 2px;
+				&.green{
+					background-color: $dark_green;
+					border-color: $dark_green;
+				}
+				&.blue{
+					background-color: $dark_blue;
+					border-color: $dark_blue;
+				}
+			}
+			.bar-indicator {
+				position: absolute;
+				width: 2px;
+				background-color: #959595;
+				height: 30px;
+				&.goal-indicator{
+					top: -10px;
+				}
+			}
+			.executed-label {
+				display: inline-block;
+				font-size: 12px;
+				white-space: nowrap;
+				margin-right: 50%;
+				div {
+					margin-left: -50%;
+					b{
+						font-size: 14px;
+					}
+				}
+			}
+			.scheduled-label {
+				display: inline-block;
+				font-size: 12px;
+				white-space: nowrap;
+				text-align: right;
+				margin-left: -50%;
+				div {
+					margin-right: -50%;
+					b{
+						font-size: 14px;
+					}
+				}
+			}
+			.remaining-label {
+				color:$brand;
+				position: absolute;
+				right: -350px;
+				width: 300px;
+				top: -2px;
+				b {
+					display: inline-block;
+					font-size: 28px;
+					font-weight: 400;
+					float: left;
+					width: 150px;
+					text-align: right;
+					margin-right: 10px;
+					line-height: 25px;
+				}
+				span {
+					display: block;
+					line-height: 19px;
+				}
+				.kpi-name{
+					color: $user_menu;
+					line-height: 9px;
+				}
+			}
+		}
+	}
+
+	#campaign-overview-module {
+		#campaign-overview-table {
+			border: 1px solid $grey_two;
+			td {
+				padding: 0;
+				border: 0;
+			}
+			th{
+				font-weight: 400;
+				padding: 0 8px;
+			}
+			tr:last-of-type{
+				td.campaign-name{
+					padding-bottom:12px;
+				}
+			}
+			tr:hover td {
+				background-color: transparent!important;
+			}
+			.campaigns-header, .campaign-name{
+				width: 100%;
+				padding-left: 16px;
+				padding-top: 8px;
+			}
+			.row-fluid {
+				height: 30px;
+			}
+
+			.span2.month{
+				width: 161.6px !important;
+			}
+
+			.span4 span {
+				margin-left: 15px;
+				display: block;
+				margin-top: 5px;
+			}
+			a {
+				color: $text;
+				&:hover {
+					color: $brand;
+					text-decoration: underline;
+				}
+			}
+			.header-row {
+				border-bottom: 1px solid $grey_two;				
+			}
+			.month-name {
+				background-color: $brand;
+				color: #fff;
+				line-height: 31px;
+			}
+			.month-weeks{
+				&.date{ 
+					.week{
+						margin-top: 5px;
+					}
+				}
+				.week{
+					margin-top: 5px;
+					text-align: center;
+				}
+			}
+			.campaigns-header {
+				border-right: 1px solid $grey_two;
+				padding-left:16px;
+				span {
+					margin-top: 13px;
+					display: block;
+				}
+			}
+
+			.header-row {
+				.month>.row.month-name {
+					border-right: none;
+					span {
+						margin-left: 10px;
+					}
+				}
+			}
+			.week {
+				width: 40px;
+				min-width: 40px;
+				max-width: 40px;
+				text-align: center;
+				padding: 5px 0px;
+				position: relative;
+				&.week-0 {
+					border-left: 1px solid $grey_two;
+				}
+				span.week-marker {
+					height: 10px;
+					border-radius: 5px;
+					width: 10px;
+					display: block;
+					margin: 5px auto 0 auto;
+				}
+				&.in-range span.week-marker {
+					background-color: $grey_one;
+				}
+				&.in-range:hover span.week-marker {
+					background-color: $grey_three;
+				}
+				&.with-events span.week-marker {
+					background-color: $blue;
+					width: 100%;
+					border-radius: 0px;
+					margin: 5px -1 0 -1;
+					position:absolute;
+					width: 42px;		
+				}
+				&.with-events.first-in-series span.week-marker {
+					border-top-left-radius: 5px;
+					border-bottom-left-radius: 5px;
+				}
+				&.with-events.last-in-series {
+					width: 20%;
+					span.week-marker {
+						border-top-right-radius: 5px;
+						border-bottom-right-radius: 5px;
+					}
+				}
+				&.with-events:hover span.week-marker {
+					background-color: $blue_hover;
+				}
+			}
+			.weeks-5 {
+				.week {
+					width: 20%;
+				}
+			}
+		}
+	}
+
+	#recent-comments-module {
+		padding-bottom: 60px;
+		#recent-comments-list {
+			margin-bottom: 20px;
+		}
+		.comments-area{
+			margin: 0 -10px;
+  			position: relative;
+  			ul{
+  				margin-bottom:0;
+				margin-left:0;
+				width: 100%;
+				&> li{
+					display: inline-block;
+					.comment-inner {
+						border: 1px solid $grey_one;
+						box-sizing: border-box;
+						height: 180px;
+						position:relative;
+						list-style: none;
+						vertical-align: top;
+						margin: 8px 5px;
+					}
+					.comment-content {
+						color:$text;
+						font-size: 16px;
+						font-weight: bold;
+						line-height: 25px;
+						padding: 10px 15px;
+						display: block; 
+					  display: -webkit-box;
+					  max-width: 400px;
+					  height: 95px; 
+					  margin: 0 auto;
+					  -webkit-line-clamp: 4;
+					  -webkit-box-orient: vertical;
+					  overflow: hidden;
+					  text-overflow: ellipsis;
+					}
+					.comment-footer {
+						position: absolute;
+						letter-spacing: -0.2px;
+						bottom: 6px;
+						color: $brand;
+						font-size: 11px;
+						line-height: 16px;
+						padding: 0 15px;
+					}
+					.comment-actions {
+						position: absolute;
+						bottom: 0px;
+						display: none;
+						background-color: $grey_three;
+						width: 100%;
+						padding: 13px 0 7px 0;
+						text-align: right;
+						color: #fff;
+						opacity: 0.85;
+						.icon-remove-sign:before {
+							color: #fff;
+							font-size: 15px;
+						}
+						a {
+							margin-right: 10px;
+						}
+						.edit:after {
+							top: 0;
+						}
+					}
+					&:hover {
+						.comment-actions {
+							display: block;
+						}
+					}
+				}
+  		}
+		}
+	}
+}

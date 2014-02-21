@@ -613,7 +613,7 @@ window.FormBuilder.CountField = (options) ->
 					$('<option value="checkbox">Checkbox</option>')
 				]).val(@options.options.capture_mechanism).on 'change', (e) =>
 						input = $(e.target)
-						@options.capture_mechanism = input.val()
+						@options.options.capture_mechanism = input.val()
 						@renderInput()
 			]),
 

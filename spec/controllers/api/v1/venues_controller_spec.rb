@@ -26,7 +26,7 @@ describe Api::V1::VenuesController do
       expect(result['results'].first.keys).to match_array ["avg_impressions", "avg_impressions_cost",
         "avg_impressions_hour", "city", "country", "events_count", "formatted_address", "id", "impressions",
         "interactions", "latitude", "longitude", "name", "promo_hours", "sampled", "score", "spent", "state",
-        "zipcode"
+        "zipcode", "td_linx_code"
       ]
     end
 
@@ -106,6 +106,39 @@ describe Api::V1::VenuesController do
     end
   end
 
+  describe "GET 'types'", search: true do
+    it "should return a list of types" do
+      get :types, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+      expect(result).to include('name' => 'Accounts', 'value' => 'accounts')
+    end
+  end
+
+  describe "POST 'create'" do
+    it "should create a new place that is no found in google places" do
+      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+      GooglePlaces::Client.any_instance.should_receive(:spots).and_return([])
+      GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(opening_hours: {}))
+      HTTParty.should_receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
+      Api::V1::VenuesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+      expect {
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, venue: {name: "Guille's place", street_number: 'Tirrases', route: 'La Colina', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR', types: 'bar,restaurant'}, format: :json
+        expect(response).to be_success
+      }.to change(Place, :count).by(1)
+      place = Place.last
+      expect(place.name).to eql "Guille's place"
+      expect(place.street_number).to eql 'Tirrases'
+      expect(place.route).to eql 'La Colina'
+      expect(place.city).to eql 'Curridabat'
+      expect(place.state).to eql 'San Jose'
+      expect(place.zipcode).to eql '12345'
+      expect(place.country).to eql 'CR'
+      expect(place.latitude).to eql 1.2322
+      expect(place.longitude).to eql -3.23455
+    end
+  end
+
   describe "GET 'comments'" do
     it "returns the list of comments for the venue" do
       place = FactoryGirl.create(:place, name: 'Bar Prueba', is_custom_place: true, reference: nil)
@@ -117,7 +150,7 @@ describe Api::V1::VenuesController do
       response.should be_success
       result = JSON.parse(response.body)
       result.count.should == 2
-      result.should == [{
+      expect(result).to match_array [{
                          'id' => comment2.id,
                          'content' => 'Comment #2',
                          'created_at' => '2013-08-23T09:15:00-07:00',

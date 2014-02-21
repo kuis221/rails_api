@@ -91,7 +91,7 @@ class CampaignsController < FilteredController
 
   protected
     def permitted_params
-      params.permit(campaign: [:name, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]
+      params.permit(campaign: [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]
     end
 
     def normalize_brands(brands)

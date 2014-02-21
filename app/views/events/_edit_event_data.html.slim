@@ -1,10 +1,10 @@
 - allow_cancel ||= false
 #event-results-form
-  #event-results-form.details_box.box_event_data
+  .details_box.box_event_data
     h3 EVENT DATA
 
     - fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
-    = simple_form_for(resource, remote: true) do |f|
+    = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
       = f.error_notification
 
       = f.input :summary
@@ -48,12 +48,11 @@ javascript:
           .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
           .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
-      progressBarError.empty()
-      if (total > 100) {
-        progressBarError.append('<span class="help-inline">Field cannot exceed 100%</span></div>')
-      }
 
-      $("#total-field-" + segmentFieldId).val(total)
+      $("#total-field-" + segmentFieldId).val(total ? total : '')
+      if (e.keyCode) {
+        $("#total-field-" + segmentFieldId).valid()
+      }
     })
     $('.segment-field').keyup();
   });

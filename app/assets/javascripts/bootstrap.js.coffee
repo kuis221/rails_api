@@ -2,6 +2,7 @@ jQuery ->
   $("a[rel=popover]").popover()
   $(".tooltip").tooltip()
   $("a[rel=tooltip]").tooltip()
+  $("div.gallery").photoGallery()
 
   $(document).on 'click', (e) ->
     $('.has-popover').each () ->

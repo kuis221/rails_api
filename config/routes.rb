@@ -13,6 +13,7 @@ Brandscopic::Application.routes.draw do
           collection do
             match 'password/new_password', to: 'users#new_password', via: :post
             get :permissions
+            get :notifications
           end
         end
 
@@ -47,8 +48,9 @@ Brandscopic::Application.routes.draw do
           get :all, on: :collection
         end
 
-        resources :venues, only: [:index, :show] do
+        resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
+          get :types, on: :collection
           member do
             get :photos
             get :comments
@@ -370,6 +372,10 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
     end
+  end
+
+  resources :dashboard, only: [] do
+    match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}
   end
 
   root :to => 'dashboard#index'

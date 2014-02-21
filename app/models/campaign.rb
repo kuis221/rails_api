@@ -1,5 +1,4 @@
 # == Schema Information
-# == Schema Information
 #
 # Table name: campaigns
 #
@@ -33,6 +32,15 @@ class Campaign < ActiveRecord::Base
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
+  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
+  validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
+  validates :end_date, presence: true, if: :start_date
+  validates :start_date, presence: true, if: :end_date
+
+  validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
+  validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
+
   # Campaigns-Brands relationship
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
@@ -65,7 +73,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
-  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}) }
+  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
   scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
   scope :active, lambda { where(aasm_state: 'active') }
 
@@ -134,6 +142,14 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  def has_date_range?
+    start_date.present? && end_date.present?
+  end
+
+  def in_date_range?(s, e)
+    has_date_range? && (e >= start_date && s < end_date)
+  end
+
   def staff
     (staff_users+teams).sort_by &:name
   end
@@ -152,14 +168,17 @@ class Campaign < ActiveRecord::Base
 
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
-    Place.locations_for_index(place).any?{|location| accessible_locations.include?(location)} ||
+    place.location_ids.any?{|location| accessible_locations.include?(location)} ||
     places.map(&:id).include?(place.id) ||
     areas.map(&:place_ids).flatten.include?(place.id)
   end
 
   def accessible_locations
     Rails.cache.fetch("campaign_locations_#{id}") do
-      (areas.map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + places.map{|p| Place.location_for_search(p) }).compact
+      (
+        areas.reorder(nil).joins(:places).where(places: {is_location: true}).pluck('places.location_id') +
+        places.where(is_location: true).reorder(nil).pluck('places.location_id')
+      ).map(&:to_i)
     end
   end
 
@@ -326,6 +345,52 @@ class Campaign < ActiveRecord::Base
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
+    end
+
+    # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
+    def promo_hours_graph_data
+      # q = with_goals_for([Kpi.promo_hours, Kpi.events]).joins(:events).where(events: {active: true}).
+      #     select('ARRAY[campaigns.id, goals.kpi_id] as id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, COUNT(events.id) as events_count,CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
+      #     order('1, 2').group('1, 2, 3, 4, 5, 7').to_sql.gsub(/'/,"''")
+      # data = ActiveRecord::Base.connection.select_all("SELECT id[1] as id, name, start_date, end_date, id[2] as kpi_id, goal, events_count, executed, scheduled  FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int[], name varchar, start_date date, end_date date, goal numeric, events_count int, executed numeric, scheduled numeric)")
+
+     q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+         select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'PROMO HOURS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
+         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+     data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+
+     q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+         select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'EVENTS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, COUNT(events.id)').
+         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+     data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data.sort!{|a, b| a['name'] <=> b['name'] }
+
+      data.each do |r|
+        r['id'] = r['id'].to_i
+        r['goal'] = r['goal'].to_f
+        r['executed'] = r['executed'].to_f
+        r['scheduled'] = r['scheduled'].to_f
+        r['remaining'] = [0, r['goal']-(r['scheduled'].+r['executed'])].max
+        r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
+        r['executed_percentage'] = [100, r['executed_percentage']].min
+        r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
+        r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
+        r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
+        if r['start_date'] && r['end_date'] && r['goal'] > 0
+          r['start_date'] = Timeliness.parse(r['start_date']).to_date
+          r['end_date'] = Timeliness.parse(r['end_date']).to_date
+          days = (r['end_date']-r['start_date']).to_i
+          if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
+            r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
+          elsif Date.today > r['end_date']
+            r['today'] = r['goal']
+          else
+            r['today'] = 0
+          end
+          r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
+        end
+      end
+      data
     end
   end
 

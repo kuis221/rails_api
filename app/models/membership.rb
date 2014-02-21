@@ -19,9 +19,11 @@ class Membership < ActiveRecord::Base
 
   after_create :create_notifications
   after_create :update_tasks
+  after_create :clear_cache
 
   after_destroy :delete_notifications
   after_destroy :update_tasks
+  after_destroy :clear_cache
 
   validates :memberable_id, presence: true
   validates :memberable_type, presence: true
@@ -50,5 +52,13 @@ class Membership < ActiveRecord::Base
         Sunspot.index(memberable.tasks)
         Sunspot.index(memberable)
       end
+    end
+
+    def clear_cache
+      if memberable.is_a?(Area)
+        Rails.cache.delete("user_accessible_locations_#{company_user_id}")
+        Rails.cache.delete("user_accessible_places_#{company_user_id}")
+      end
+      true
     end
 end

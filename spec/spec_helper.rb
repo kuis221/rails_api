@@ -68,9 +68,11 @@ RSpec.configure do |config|
   config.include BrandscopiSpecHelpers
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :deletion
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.logger = Rails.logger
+
+    ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS tablefunc;')
   end
 
   config.before(:all) do
@@ -81,15 +83,15 @@ RSpec.configure do |config|
     DeferredGarbageCollection.reconsider
   end
 
-  config.before(:each) do
-    if example.metadata[:js]
-      DatabaseCleaner.strategy = :deletion
-    elsif example.metadata[:strategy]
-      DatabaseCleaner.strategy = example.metadata[:strategy]
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-  end
+  # config.before(:each) do
+  #   if example.metadata[:js]
+  #     DatabaseCleaner.strategy = :deletion
+  #   elsif example.metadata[:strategy]
+  #     DatabaseCleaner.strategy = example.metadata[:strategy]
+  #   else
+  #     DatabaseCleaner.strategy = :transaction
+  #   end
+  # end
 
   config.before(:each) do
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
