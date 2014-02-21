@@ -62,17 +62,19 @@ class Report < ActiveRecord::Base
   end
 
   def fetch_page(params={})
-    params[:offset] ||= 0
-    values_columns = values.map{|f| field_to_sql_name(f['field']) + ' numeric' }.join(', ')
-    select_cols = rows.each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
-    select_cols += values.map{|f| field_to_sql_name(f['field']) }
+    if can_be_generated?
+      params[:offset] ||= 0
+      values_columns = values.map{|f| field_to_sql_name(f['field']) + ' numeric' }.join(', ')
+      select_cols = (rows+columns).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
+      select_cols += values.map{|f| field_to_sql_name(f['field']) }
 
-    ActiveRecord::Base.connection.select_all("
-      SELECT #{select_cols.join(', ')}
-      FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t")}\n\tORDER BY 1
-      ', 'select m from generate_series(1,#{values.count}) m')
-      AS ct(row_labels varchar[], #{values_columns}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}"
-    )
+      ActiveRecord::Base.connection.select_all("
+        SELECT #{select_cols.join(', ')}
+        FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t")}\n\tORDER BY 1
+        ', 'select m from generate_series(1,#{values.count}) m')
+        AS ct(row_labels varchar[], #{values_columns}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}"
+      )
+    end
   end
 
   def field_to_sql_name(field_name)
@@ -81,7 +83,9 @@ class Report < ActiveRecord::Base
 
   protected
     def format_field(value)
-      value.map{|k, v| v.to_h } if value.is_a?(ActionController::Parameters)
+      v = value
+      v = v.map{|k, v| v.to_h } if value.is_a?(ActionController::Parameters)
+      v
     end
 
     def values_sql
@@ -113,8 +117,14 @@ class Report < ActiveRecord::Base
     def add_joins_scopes(s, value)
       fields = [[value], rows, columns, filters].compact.inject{|sum,x| sum + x }
       s = s.joins(:results)  if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
-      if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
-        s = s.joins(:place)
+
+      s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
+
+      # Join with users/teams table
+      if fields.any?{|v| User.report_fields.map{|k,v| "user:#{k}" }.include?(v['field'])}
+        s = s.joins_for_user_teams
+      elsif fields.any?{|v| Team.report_fields.map{|k,v| "team:#{k}" }.include?(v['field'])}
+        s = s.joins(:teams)
       end
       s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
 
@@ -123,7 +133,7 @@ class Report < ActiveRecord::Base
     end
 
     def rows_columns
-      @rows_columns ||= Hash[rows.map do |f|
+      @rows_columns ||= Hash[(rows+columns).map do |f|
         if m = /\A(.*):(.*)\z/.match(f['field'])
           klass = m[1].classify.constantize
           definition = klass.report_fields[m[2].to_sym]

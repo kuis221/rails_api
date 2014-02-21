@@ -45,7 +45,7 @@ module CapybaraBrandscopicHelpers
   def select_from_chosen(item_text, options)
     field = find_field(options[:from], visible: false)
     field.find('option', text: item_text, visible: false, match: :first).select_option
-    page.execute_script("$('##{field[:id]}').trigger('liszt\:updated').trigger('change')")
+    page.execute_script("$('##{field[:id]}').trigger('liszt\:updated')")
   end
 
   def select_filter_calendar_day(day1, day2=nil)

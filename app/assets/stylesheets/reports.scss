@@ -150,11 +150,28 @@ ul.reports-list {
 	min-height: 200px;
 	margin-top: 20px;
 	.report-table {
+		border: thin solid #ececec;
 		.level_1 .row_label {
-			padding-left: 10px;
+			padding-left: 20px;
 		}
 		.level_2 .row_label {
-			padding-left: 20px;
+			padding-left: 40px;
+		}
+		.level_3 .row_label {
+			padding-left: 60px;
+		}
+		.level_4 .row_label {
+			padding-left: 80px;
+		}
+
+		td {
+			border: 0;
+		}
+
+		&.multi-row {
+			tr.level_0 {
+				border: thin solid #ececec;
+			}
 		}
 	}
 }

@@ -129,6 +129,32 @@ describe Event do
     end
   end
 
+  describe "with_user_in_team" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:user) { FactoryGirl.create(:company_user, company: campaign.company) }
+    it "should return empty if the user is not assiged to any event" do
+      expect(Event.with_user_in_team(user)).to be_empty
+    end
+
+    it "should return all the events where a user is assigned as part of the event team" do
+      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
+      events.each{|e| e.users << user }
+      FactoryGirl.create(:event, campaign: campaign)
+
+      expect(Event.with_user_in_team(user)).to match_array(events)
+    end
+
+    it "should return all the events where a user is part of a team that is assigned to the event" do
+      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
+      team = FactoryGirl.create(:team, company: campaign.company)
+      team.users << user
+      events.each{|e| e.teams << team }
+      FactoryGirl.create(:event, campaign: campaign)
+
+      expect(Event.with_user_in_team(user)).to match_array(events)
+    end
+  end
+
   describe "end_after_start validation" do
     subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
 

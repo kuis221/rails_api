@@ -1,15 +1,17 @@
-table.report-table
+- row_levels_count = @report.rows.count
+table.table.report-table class="#{row_levels_count > 1 ? 'multi-row' : ''}"
   tr
-    th 
-    th colspan="#{@report.values.count}" Values
-
-  tr
-    th Row Labels
+    th
     - @report.values.each do |value|
       th= report_column_label(value)
 
   - each_grouped_report_row do |row_label, row_level, values|
-    tr class="level_#{row_level}"
-      td class="row_label"= row_label
+    tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}"
+      td class="row_label"
+        - if row_level+1 < row_levels_count
+          a href="#" class="icon-minus report-collapse-button"
+        = row_label
       - values.each do |k, value|
         td= value
+
+

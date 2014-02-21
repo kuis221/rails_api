@@ -36,7 +36,7 @@ module Results
           end
           previous_label = row_label
         else
-          values = row.reject{|k,v| !report_values_names.include?(k) }
+          values = row.reject{|k,v| !report_columns_names.include?(k) }
           p values
           yield row[row_field], row_number, values
         end
@@ -49,14 +49,15 @@ module Results
       end
 
       def get_row_values(group, row_field, row_label)
-        values = Hash[report_values_names.map{|name| [name, 0]}]
+        values = Hash[report_columns_names.map{|name| [name, 0]}]
         group.each do |row|
-          report_values_names.map{|name| values[name] += row[name].to_f unless row[name].nil? }
+          report_columns_names.map{|name| values[name] += row[name].to_f unless row[name].nil? }
         end
         values
       end
 
-      def report_values_names
+      # Return the names of the expected names from the SQL query for the report values and columns
+      def report_columns_names
         @report_values_names ||= @report.values.map{|v| @report.field_to_sql_name(v['field']) }
       end
   end

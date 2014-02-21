@@ -65,6 +65,19 @@ $.widget 'nmk.reportBuilder',
 			if not @saved
 				'All changes will be lost. Are you sure you want to exit?'
 
+		@preview.on 'click', '.report-collapse-button', (e) =>
+			$(e.target).toggleClass('icon-minus').toggleClass('icon-plus')
+			collapsed = $(e.target).hasClass('icon-plus')
+			row = $(e.target).closest('tr')
+			level = row.data('level')
+			next = row.next('tr')
+			while next.data('level') > level
+				if collapsed
+					next.hide()
+				else
+					next.show()
+				next = next.next('tr')		
+
 
 		@_setListItems 'rows', @options.rows
 		@_setListItems 'columns', @options.columns

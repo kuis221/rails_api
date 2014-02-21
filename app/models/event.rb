@@ -72,8 +72,7 @@ class Event < ActiveRecord::Base
 
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
-    joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
-    where('t.team_id in (?) OR m.company_user_id IN (?)', user.team_ids, user) }
+    joins_for_user_teams.where('company_users.id in (?)', user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
   scope :with_team, lambda{|team|
     joins(:teamings).
@@ -84,6 +83,14 @@ class Event < ActiveRecord::Base
   scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
 
   scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
+
+  scope :joins_for_user_teams, -> {
+      joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
+      joins('LEFT JOIN teams ON teams.id=teamings.team_id').
+      joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teams.id AND memberable_type=\'Team\')').
+      joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id').
+      joins('LEFT JOIN users ON users.id=company_users.user_id')
+  }
 
   track_who_does_it
 
@@ -622,12 +629,13 @@ class Event < ActiveRecord::Base
     end
 
     def report_fields
+      prefix = if Company.current.present? && Company.current.timezone_support? then 'local_' else '' end
       timezone = Company.current.present? && Company.current.timezone_support? ? 'timezone' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
-        start_date:   { title: 'Start date', column: -> { "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE #{timezone}, 'YYYY/MM/DD')" } },
+        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
         start_time:   { title: 'Start time' },
-        end_date:     { title: 'End date', column: -> { "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE #{timezone}, 'YYYY/MM/DD')" } },
-        end_time:     { title: 'Start time' },
+        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
+        end_time:     { title: 'End time' },
         event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }
       }
