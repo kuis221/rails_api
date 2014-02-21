@@ -42,11 +42,11 @@ javascript:
   $('#activity_campaign_id').change(function() {
     brands = $('.form-field-brand');
     marques = $('select.form-field-marque');
-    brands.empty();
-    marques.empty();
-    marques.select2('data', null, false);
     if (selectedOption = this.value) {
       $.get('/campaigns/'+selectedOption+'/brands.json', function(options) {
+        brands.empty();
+        marques.empty();
+        marques.select2('data', null, false);
         for(var i in options) {
             brands.append($("<option/>", {
                 value: options[i].id,
@@ -60,9 +60,9 @@ javascript:
 
   $('.form-field-brand').change(function() {
     marques = $('select.form-field-marque');
-    marques.empty();
     if (selectedOption = this.value) {
       $.get('/brands/'+selectedOption+'/marques.json', function(options) {
+        marques.empty();
         for(var i in options) {
             marques.append($("<option/>", {
                 value: options[i].id,
