@@ -81,8 +81,8 @@ class Place < ActiveRecord::Base
     @the_country ||= Country.new(country) if country
   end
 
-  def name_with_location
-    [self.name, self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')
+  def name_with_location(sep=', ')
+    [self.name, [self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')].join(sep)
   end
 
   def update_info_from_api
@@ -136,6 +136,15 @@ class Place < ActiveRecord::Base
     self.location = Location.find_or_create_by_path(paths.last)
     self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
     true
+  end
+
+  def location_ids
+    if new_record?
+      update_locations unless locations.any?
+      locations.map(&:id)
+    else
+      locations.pluck('locations.id')
+    end
   end
 
   class << self

@@ -24,10 +24,18 @@ class AttachedAsset < ActiveRecord::Base
 
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
-  has_attached_file :file, PAPERCLIP_SETTINGS.merge({:styles => {
-    :small => "180x120#",
-    :medium => "700x700"
-  }})
+  has_attached_file :file, PAPERCLIP_SETTINGS.merge({
+    :styles => {
+      :small => '',
+      :thumbnail => '',
+      :medium => '800x800>'
+    },
+    :convert_options => {
+      :small => '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+      :thumbnail => '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+      :medium => '-quality 85 -strip'
+    }
+  })
 
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
@@ -51,6 +59,7 @@ class AttachedAsset < ActiveRecord::Base
 
     string :file_file_name
     integer :file_file_size
+    boolean :processed
 
     integer :attachable_id
 
@@ -92,6 +101,7 @@ class AttachedAsset < ActiveRecord::Base
     integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
+
   end
 
   def activate!
@@ -131,7 +141,8 @@ class AttachedAsset < ActiveRecord::Base
     def do_search(params, include_facets=false)
       options = {include: {:attachable => [:campaign, :place] }}
       solr_search(options) do
-        with(:company_id, params[:company_id])
+        with :company_id, params[:company_id]
+        with :processed, true
 
         company_user = params[:current_company_user]
         if company_user.present?
@@ -212,17 +223,14 @@ class AttachedAsset < ActiveRecord::Base
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
 
+    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     if post_process_required?
-      self.file = URI.parse(URI.encode(direct_upload_url.strip, "[]%# "))
-    else
-      paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-      s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+      file.reprocess!
     end
-
     self.processed = true
-    save
 
-    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete
+    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete if save
   end
 
   protected

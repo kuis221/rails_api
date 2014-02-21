@@ -123,6 +123,79 @@ describe CompanyUser do
       end
 
     end
+  end
 
+  describe "#allowed_to_access_place?" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:campaign)  { FactoryGirl.create(:campaign, company_id: 1) }
+    let(:place)  { FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles') }
+
+    it "should return false if the user doesn't places associated" do
+      expect(user.allowed_to_access_place?(place)).to be_false
+    end
+
+    it "should return true if the user has access to the city" do
+      user.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      expect(user.allowed_to_access_place?(place)).to be_true
+    end
+
+    it "should return true if the user has access to an area that includes the place's city" do
+      city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area = FactoryGirl.create(:area, company_id: 1)
+      area.places << city
+      user.areas << area
+      expect(user.allowed_to_access_place?(place)).to be_true
+    end
+
+    it "should work with places that are not yet saved" do
+      place = FactoryGirl.build(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area = FactoryGirl.create(:area, company_id: 1)
+      area.places << city
+      user.areas << area
+      expect(user.allowed_to_access_place?(place)).to be_true
+    end
+  end
+
+  describe "#accessible_places" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    it "should return the id of the places assocaited to the user" do
+      FactoryGirl.create(:place)
+      place = FactoryGirl.create(:place)
+      FactoryGirl.create(:place)
+      user.places << place
+      expect(user.accessible_places).to include(place.id)
+    end
+    it "should return the id of the places of areas associated to the user" do
+      FactoryGirl.create(:place)
+      place = FactoryGirl.create(:place)
+      FactoryGirl.create(:place)
+      FactoryGirl.create(:area, company_id: user.company_id)
+      area = FactoryGirl.create(:area, company_id: user.company_id)
+      area.places << place
+      user.areas << area
+      expect(user.accessible_places).to include(place.id)
+    end
+  end
+
+  describe "#accessible_locations" do
+    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+     it "should return the location id of the city" do
+        city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+        user.places << city
+        expect(user.accessible_locations).to include(city.location_id)
+     end
+     it "should return the location id of the city if belongs to an user's area" do
+        city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+        area = FactoryGirl.create(:area, company_id: user.company_id)
+        area.places << city
+        user.areas << area
+        expect(user.accessible_locations).to include(city.location_id)
+     end
+     it "should not include the location id of the venues" do
+        bar = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['establishment', 'bar'])
+        user.places << bar
+        expect(user.accessible_locations).to be_empty
+     end
   end
 end

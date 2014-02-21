@@ -38,31 +38,33 @@
 
 = render partial: 'help_tutorial'
 
-javascript:
-  $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: :events)}',
-    'filtersUrl': '#{filters_path(controller: :events)}',
-    'listContainer' : '#events-list',
-    'sorting': 'start_at',
-    'sorting_dir': 'asc',
-    'includeCalendars': true,
-    'calendarHighlights': #{calendar_highlights.to_json.html_safe},
-    'selectDefaultDate': false,
-    'selectDefaultDateRange': false,
-    'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
-    'onChange': function(filterBox){
-      $(document).trigger('events-filter:changed')
-    },
-    'onItemsLoad': function(response, page){
-      if (response.find('div[data-content="filters-description"]').length > 0){
-        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
+- if can?(:view_list, Event)
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{items_path(controller: :events)}',
+      'filtersUrl': '#{filters_path(controller: :events)}',
+      'listContainer' : '#events-list',
+      'sorting': 'start_at',
+      'sorting_dir': 'asc',
+      'includeCalendars': true,
+      'calendarHighlights': #{calendar_highlights.to_json.html_safe},
+      'selectDefaultDate': false,
+      'selectDefaultDateRange': false,
+      'includeAutoComplete': true,
+      'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+      'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+      'onChange': function(filterBox){
+        $(document).trigger('events-filter:changed')
+      },
+      'onItemsLoad': function(response, page){
+        if (response.find('div[data-content="filters-description"]').length > 0){
+          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
+        }
       }
-    }
-  });
+    });
 
+javascript:
   $(document).on('events:change', function(){
     $.get('#{calendar_dates_events_path(format: :json)}', function(response) {
       $('#collection-list-filters').filteredList('setCalendarHighlights', response)

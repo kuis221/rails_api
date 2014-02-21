@@ -20,8 +20,12 @@ class Placeable < ActiveRecord::Base
   def update_associated_resources
     if placeable.is_a?(Area)
       Area.update_common_denominators(placeable)
+    elsif placeable.is_a?(CompanyUser)
+      Rails.cache.delete("user_accessible_locations_#{placeable.id}")
+      Rails.cache.delete("user_accessible_places_#{placeable.id}")
     elsif placeable.is_a?(Campaign)
       Rails.cache.delete("campaign_locations_#{placeable.id}")
     end
+    true
   end
 end

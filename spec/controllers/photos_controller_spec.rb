@@ -52,7 +52,6 @@ describe PhotosController do
       get 'deactivate', event_id: event.to_param, id: photo.to_param, format: :js
       response.should be_success
       photo.reload.active?.should be_false
-      response.should render_template('results/photos/_photo_info')
     end
   end
 
@@ -64,7 +63,6 @@ describe PhotosController do
       get 'activate',  event_id: event.to_param, id: photo.to_param, format: :js
       response.should be_success
       photo.reload.active?.should be_true
-      response.should render_template('results/photos/_photo_info')
     end
   end
 

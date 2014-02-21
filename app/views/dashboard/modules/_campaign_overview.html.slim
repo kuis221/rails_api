@@ -1,38 +1,35 @@
+- months = @campaign_overview_months-1
 #campaign-overview-module.details_box
   h3 CAMPAIGN OVERVIEW
 
-  div#campaign-overview-table
-    .row-fluid.header-row
-      .span4.campaigns-header 
+  table#campaign-overview-table.table
+    tr.header-row
+      th.campaigns-header rowspan=2
         span CAMPAIGNS
-      - (0..3).each do |i|
-        .span2.month class="month-#{i+1}"
-          - date = (Date.today.beginning_of_month+i.months)
-          - weeks = weeks_in_month(date)
-          .row.month-name
-            .span12
-              span= date.strftime('%^b')
-
-          .row.month-weeks class="weeks-#{weeks.count}"
-            - weeks.each do |week|
-              .week
-                = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes)) do
-                  span= week.strftime('%-m/%e')
-      .clearfix
+      - (0..months).each do |i|
+        - date = (Date.today.beginning_of_month+i.months)
+        - weeks = weeks_in_month(date)
+        th.month.month-name class="month-#{i+1}" colspan="#{weeks.count}"
+          span= date.strftime('%^b')
+    tr.header-row        
+      - (0..months).each do |i|
+        - date = (Date.today.beginning_of_month+i.months)
+        - weeks_in_month(date).each_with_index do |week, index|
+            th.week class="week-#{index} month-#{i+1}"
+              = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), status: ['Active']) do
+                span= week.strftime('%-m/%e')
 
     - dashboard_accessible_campaigns.each do |campaign|
-      - if campaign_overview_data[campaign.id].present?
-        .row-fluid
-          .span4.campaign-name
-            span= link_to campaign.name, events_path(start_date: '', campaign: [campaign.id])
-          - (0..3).each do |i|
-            .span2.month class="month-#{i+1}"
-              - date = (Date.today.beginning_of_month+i.months)
-              - weeks = weeks_in_month(date)
-              .row.month-weeks class="weeks-#{weeks.count}"
-                - weeks.each do |week|
-                  .week class="#{campaing_cell_clasess(campaign, week)}"
-                    = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), campaign: [campaign.id]) do
-                      span.week-marker
+      - if campaign_overview_data[campaign.id].present? || campaign.in_date_range?(Date.today.beginning_of_month, Date.today.beginning_of_month+4.months)
+        tr
+          td.campaign-name
+            span= link_to campaign.name, events_path(start_date: '', campaign: [campaign.id], status: ['Active'])
+          - (0..months).each do |i|
+            - date = (Date.today.beginning_of_month+i.months)
+            - weeks = weeks_in_month(date)
+            - weeks.each_with_index do |week, index|
+              td.week class="#{campaing_cell_clasess(campaign, week)} week-#{index} month-#{i+1}"
+                = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), campaign: [campaign.id], status: ['Active']) do
+                  span.week-marker
       
     .clearfix

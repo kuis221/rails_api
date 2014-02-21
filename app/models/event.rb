@@ -83,7 +83,7 @@ class Event < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
 
-  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select locations_places.place_id FROM locations_places where id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
   track_who_does_it
 
@@ -528,13 +528,23 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with :location, Area.find(value).locations.map(&:id) + [0]
+              any_of do
+                with :place_id, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+                with :location, Area.find(value).locations.map(&:id) + [0]
+              end
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map(&:id).flatten + [0]) if params[:area].present?
+          if params[:area].present?
+            any_of do
+              with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+              with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
+            end
+          end
+
+          with :place_id, params[:place] if params[:place].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")

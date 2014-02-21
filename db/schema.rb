@@ -444,6 +444,7 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
+  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "form_field_options", :force => true do |t|
@@ -488,6 +489,19 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
+
+  create_table "kpi_reports", :force => true do |t|
+    t.integer  "company_user_id"
+    t.text     "params"
+    t.string   "aasm_state"
+    t.integer  "progress"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
 
   create_table "kpis", :force => true do |t|
     t.string   "name"
@@ -630,17 +644,16 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "reports", :force => true do |t|
-    t.string   "type"
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.integer "company_id"
+    t.string  "name"
+    t.text    "description"
+    t.boolean "active",        :default => true
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.text    "rows"
+    t.text    "columns"
+    t.text    "values"
+    t.text    "filters"
   end
 
   create_table "roles", :force => true do |t|

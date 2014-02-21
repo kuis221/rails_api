@@ -2,7 +2,7 @@
   .permissions
     .row-fluid
       .span7
-        .span5 KPI trends
+        .span5 Event Status
         .span2
           = permission_checkbox(f, :kpi_trends_module, Symbol, 'dashboard')
 
@@ -16,10 +16,10 @@
         .span2
           = permission_checkbox(f, :campaign_overview, Symbol, 'dashboard')
 
-      .span7
-        .span5 Demographics
-        .span2
-          = permission_checkbox(f, :demographics_module, Symbol, 'dashboard')
+      / .span7
+      /   .span5 Demographics
+      /   .span2
+      /     = permission_checkbox(f, :demographics_module, Symbol, 'dashboard')
 
       .span7
         .span5 Incomplete tasks
@@ -35,6 +35,11 @@
         .span5 Recent photos
         .span2
           = permission_checkbox(f, :recent_photos_module, Symbol, 'dashboard')
+
+      .span7
+        .span5 Recent comments
+        .span2
+          = permission_checkbox(f, :recent_comments_module, Symbol, 'dashboard')
 
   = hidden_field_tag :partial, :dashboard_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

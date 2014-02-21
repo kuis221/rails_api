@@ -221,6 +221,19 @@ describe Campaign do
       # Because the campaing cache the locations, load a new object with the same campaign ID
       Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
     end
+
+    it "should work with places that are not yet saved" do
+      area =  FactoryGirl.create(:area)
+      city =  FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
+      place = FactoryGirl.build(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
+      campaign.areas << area
+
+      # Assign San Francisco to the area
+      area.places << city
+
+      # Because the campaing cache the locations, load a new object with the same campaign ID
+      campaign.place_allowed_for_event?(place).should be_true
+    end
   end
 
   describe "#promo_hours_graph_data" do
@@ -410,6 +423,34 @@ describe Campaign do
         expect(stats.last['today']).to eql 0
         expect(stats.last['today_percentage']).to eql 0
       end
+    end
+  end
+
+  describe "#in_date_range?" do
+    it "returns true if both dates are inside the start/end dates" do
+      campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 1, 23))).to be_true
+    end
+
+    it "returns true if start date is inside the start/end dates" do
+      campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 6, 23))).to be_true
+    end
+
+    it "returns true if end date is inside the start/end dates" do
+      campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2014, 1, 23))).to be_true
+    end
+
+    it "returns false if both dates are after the end date" do
+      campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
+      expect(campaign.in_date_range?(Date.new(2014, 3, 3), Date.new(2014, 3, 23))).to be_false
+    end
+
+
+    it "returns false if both dates are before the start date" do
+      campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2013, 2, 23))).to be_false
     end
   end
 

@@ -7,3 +7,6 @@
   |
     $('##{parent.class.name.underscore}_#{resource.class.name.underscore}_#{resource.id}').remove();
     $('##{parent.class.name.underscore}-#{resource.class.name.underscore}-#{resource.id}').remove();
+
+|
+  $(document).trigger('#{resource.class.name.pluralize.underscore}:deleted');
