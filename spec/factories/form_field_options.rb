@@ -15,7 +15,7 @@
 FactoryGirl.define do
   factory :form_field_option do
     form_field nil
-    name "MyString"
+    sequence(:name) {|n| "Form Field Option #{n}" }
     ordering 1
   end
 end

@@ -14,8 +14,18 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Marque < FormField
+class FormField::Marque < FormField::Dropdown
   def field_options(result)
-    {as: :select, collection: ::Brand.for_company_campaigns(Company.current), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled activity-brand-list'), required: (self.required? ? 'required' : nil)}}
+    marques = []
+    if result.id
+      ff_brand = FormField.where(type: 'FormField::Brand', fieldable_id: fieldable_id, fieldable_type: fieldable_type)
+      if ff_brand.present?
+        brand = ActivityResult.where(activity_id: result.activity_id, form_field_id: ff_brand.first.id)
+        if brand.present?
+          marques = ::Marque.where(brand_id: brand.first.value)
+        end
+      end
+    end
+    {as: :select, collection: marques, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: 'form-field-marque', multiple: self.multiple?, required: (self.required? ? 'required' : nil)}}
   end
 end

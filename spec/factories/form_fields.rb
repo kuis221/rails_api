@@ -19,10 +19,22 @@
 FactoryGirl.define do
   factory :form_field do
     fieldable nil
-    name "MyString"
-    type ""
-    settings "MyText"
+    sequence(:name) {|n| "Form Field #{n}" }
+    type nil
+    settings nil
     ordering 1
     required false
+  end
+
+  factory :form_field_brand, :class => FormField::Brand do |f|
+    sequence(:name) {|n| "Form Field Brand #{n}" }
+    type "FormField::Brand"
+    ordering 1
+  end
+
+  factory :form_field_marque, :class => FormField::Marque do |f|
+    sequence(:name) {|n| "Form Field Marque #{n}" }
+    type "FormField::Marque"
+    ordering 1
   end
 end

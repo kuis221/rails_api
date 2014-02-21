@@ -128,6 +128,7 @@ en:
         goal: "Edit Goal"
         day_item: "Edit Time"
         contact_event: "Edit Contact"
+        activity: "Edit Activity"
 
   form_builder:
     modules:

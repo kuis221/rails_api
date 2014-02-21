@@ -19,6 +19,8 @@ class FormField < ActiveRecord::Base
 
   has_many :options, class_name: 'FormFieldOption', dependent: :destroy
 
+  serialize :settings
+
   validates :fieldable_id, presence: true, numericality: true
   validates :fieldable_type, presence: true
   validates :name, presence: true

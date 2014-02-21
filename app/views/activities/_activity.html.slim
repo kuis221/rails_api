@@ -5,6 +5,6 @@ li id="activity_#{activity.id}"
     = activity.company_user.full_name
   span.name= activity.activity_type.name
   span.links.pull-right
-    = link_to '', '/', remote: true, class: 'edit' if can?(:edit, activity)
+    = link_to '', edit_venue_activity_path(activity.activitable_id, activity), remote: true, class: 'edit', title: 'Edit' if can?(:edit, Activity)
     = "&nbsp;".html_safe
-    = link_to '', '/', remote: true, class: 'disable', title: I18n.t('confirmation.activate') if can?(:deactivate, activity)
+    = link_to '', '/', remote: true, class: 'disable', title: I18n.t('confirmation.activate') if can?(:deactivate, Activity)

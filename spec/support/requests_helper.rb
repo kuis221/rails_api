@@ -45,7 +45,22 @@ module CapybaraBrandscopicHelpers
   def select_from_chosen(item_text, options)
     field = find_field(options[:from], visible: false)
     field.find('option', text: item_text, visible: false, match: :first).select_option
-    page.execute_script("$('##{field[:id]}').trigger('liszt\:updated').trigger('change')")
+    page.execute_script("$('##{field[:id]}').trigger('liszt\:updated')")
+  end
+
+  def select2(item_text, options)
+    select_name = options[:from]
+    select2_container = first("label", text: select_name).find(:xpath, '..').find(".select2-container")
+    if select2_container['class'].include?('select2-container-multi')
+      select2_container.find(".select2-choices").click
+    else
+      select2_container.find(".select2-choice").click
+    end
+
+    [item_text].flatten.each do |value|
+      select2_container.find(:xpath, "a[contains(concat(' ',normalize-space(@class),' '),' select2-choice ')] | ul[contains(concat(' ',normalize-space(@class),' '),' select2-choices ')]").trigger('click')
+      find(:xpath, "//body").find(".select2-drop li", text: value).click
+    end
   end
 
   def select_filter_calendar_day(day1, day2=nil)
