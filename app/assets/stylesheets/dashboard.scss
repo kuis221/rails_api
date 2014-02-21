@@ -401,6 +401,13 @@
 		}
 	}
 
+	#recent-photos-module {
+		padding-bottom: 60px;
+		ul#photos-thumbs {
+			margin-bottom: 15px;
+		}
+	}
+
 	#recent-comments-module {
 		padding-bottom: 60px;
 		#recent-comments-list {
@@ -422,7 +429,7 @@
 						position:relative;
 						list-style: none;
 						vertical-align: top;
-						margin: 8px 5px;
+						margin: 5px 5px;
 					}
 					.comment-content {
 						color:$text;
