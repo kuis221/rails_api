@@ -49,6 +49,22 @@ class Report < ActiveRecord::Base
     write_attribute :filters, format_field(value)
   end
 
+  def rows
+    read_attribute(:rows) || []
+  end
+
+  def columns
+    read_attribute(:columns) || []
+  end
+
+  def values
+    read_attribute(:values) || []
+  end
+
+  def filters
+    read_attribute(:filters) || []
+  end
+
   def activate!
     update_attribute :active, true
   end

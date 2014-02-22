@@ -63,9 +63,7 @@ describe Report do
       event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
       report = FactoryGirl.create(:report,
         company: company,
-        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
-        values:  [],
-        columns: []
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}]
       )
       page = report.fetch_page
       expect(report.rows).to_not be_empty
@@ -80,8 +78,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -98,8 +95,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"user:first_name", "label"=>"First Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -119,8 +115,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"user:first_name", "label"=>"First Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -138,8 +133,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"team:name", "label"=>"Team"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -170,8 +164,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"team:name", "label"=>"Team"}, {"field"=>"user:first_name", "label"=>"Team"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -190,8 +183,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"user:last_name", "label"=>"Last Name"}, {"field"=>"user:first_name", "label"=>"First Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -208,8 +200,7 @@ describe Report do
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"event:start_date", "label"=>"Start date"}, {"field"=>"user:first_name", "label"=>"First Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}],
-        columns: []
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
