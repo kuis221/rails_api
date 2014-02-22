@@ -51,6 +51,6 @@ class SurveyResultsValidator < Apipie::Validator::BaseValidator
   end
 
   def description
-    "Must be a list of results [id, value]."
+    "Must be a list of answers [id, answer]."
   end
 end
