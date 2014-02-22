@@ -18,15 +18,15 @@ class Report::Kpi < Report
     CSV.generate do |csv|
       csv << ['TD Linx','Brand','Date', 'Cm # Consumer Impressions', 'Cm # Consumers Sampled', 'Cm Total Consumers',
               'Cm Promo Hours', 'Cm # Events', 'Cm Bar Spend', 'Fytd # Consumer Impressions',
-              'Fytd # Consumers Sampled', 'Fytd Total Consumers', 'Fytd Promo Hours Fytd',
-              '# Events Fytd', 'Bar Spend', 'Area', 'Venue', 'Program']
+              'Fytd # Consumers Sampled', 'Fytd Total Consumers', 'Fytd Promo Hours',
+              'Fytd # Events', 'Bar Spend', 'Area', 'Venue', 'Program']
 
       i = 0
       total = campaigns.count
       start_year = the_month.year-1
       start_year += 1 unless the_month.month < 7
       fytd_start = Date.new(start_year, Date::MONTHNAMES.index('July')).beginning_of_month.beginning_of_day
-      fytd_end = Date.new(start_year+1, Date::MONTHNAMES.index('June')).end_of_month.end_of_day
+      fytd_end = Date.new(start_year+1, Date::MONTHNAMES.index(the_month_name)).end_of_month.end_of_day
 
       campaigns.find_each(batch_size: 10) do |campaign|
         impressions_field = campaign.form_field_for_kpi(::Kpi.impressions)
@@ -75,6 +75,11 @@ class Report::Kpi < Report
   def the_month
     @month ||= Date.new(params[:year].to_i, params[:month].to_i)
   end
+  
+  def the_month_name
+    @month_name ||= Date.new(params[:year].to_i, params[:month].to_i).strftime("%B")
+  end
+  
 
   def sum_expenses(s)
     s.joins(:event_expenses).sum('event_expenses.amount')

@@ -138,6 +138,15 @@ class Place < ActiveRecord::Base
     true
   end
 
+  def location_ids
+    if new_record?
+      update_locations unless locations.any?
+      locations.map(&:id)
+    else
+      locations.pluck('locations.id')
+    end
+  end
+
   class << self
     def load_by_place_id(place_id, reference)
       Place.find_or_initialize_by_place_id({place_id: place_id, reference: reference}, without_protection: true) do |p|

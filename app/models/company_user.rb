@@ -168,7 +168,7 @@ class CompanyUser < ActiveRecord::Base
     (
       place.present? &&
       (
-        place.locations.pluck('locations.id').any?{|location| accessible_locations.include?(location)} ||
+        place.location_ids.any?{|location| accessible_locations.include?(location)} ||
         accessible_places.include?(place.id)
       )
     )
