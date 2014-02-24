@@ -137,8 +137,10 @@ class Report < ActiveRecord::Base
       s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
 
       # Join with users/teams table
-      if fields.any?{|v| User.report_fields.map{|k,v| "user:#{k}" }.include?(v['field'])}
+      include_roles = fields.any?{|v| Role.report_fields.map{|k,v| "role:#{k}" }.include?(v['field'])}
+      if fields.any?{|v| User.report_fields.map{|k,v| "user:#{k}" }.include?(v['field'])} || include_roles
         s = s.joins_for_user_teams
+        s = s.joins('INNER JOIN roles ON roles.id=company_users.role_id') if include_roles
       elsif fields.any?{|v| Team.report_fields.map{|k,v| "team:#{k}" }.include?(v['field'])}
         s = s.joins(:teams)
       end

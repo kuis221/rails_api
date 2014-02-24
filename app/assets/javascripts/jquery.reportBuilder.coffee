@@ -41,8 +41,17 @@ $.widget 'nmk.reportBuilder',
 		$('body').droppable
 			accept: ".sortable-list li"
 			drop: ( event, ui ) =>
-				$("#report-fields li[data-field-id=\"#{ui.draggable.data('field-id')}\"]").removeClass('hidden').show()
-				ui.draggable.remove()
+				elements = ui.draggable
+				if ui.draggable.data('field-id') is 'values'
+					elements = $('#report-values').find('li')
+					ui.draggable.remove()
+				
+				for element in elements
+					$("#report-fields li[data-field-id=\"#{$(element).data('field-id')}\"]").removeClass('hidden').show()
+					element.remove()
+
+				if $('#report-values').find('li').length == 1
+					$('#report-columns').find('li[data-field-id=values]').remove()
 
 		@element.find(".draggable-list li").draggable
 			connectToSortable: ".sortable-list",
@@ -80,14 +89,18 @@ $.widget 'nmk.reportBuilder',
 
 
 		@_setListItems 'rows', @options.rows
-		@_setListItems 'columns', @options.columns
 		@_setListItems 'values', @options.values
+		@_setListItems 'columns', @options.columns
 		@_setListItems 'filters', @options.filters
+		@_addValuesToColumns()
 
 		@element.on 'click', '.field-settings-btn', (e) =>
 			@showFieldSettings $(e.target).closest('.report-field')
 			e.stopPropagation()
 			false
+
+		@element.find('#report-values').on 'sortreceive', () =>
+			@_addValuesToColumns()
 
 		@refreshReportPreview()
 
@@ -225,10 +238,13 @@ $.widget 'nmk.reportBuilder',
 	_setListItems: (list_name, items) ->
 		list = $("#report-#{list_name}", @element)
 		for item in items
-			li = $("#report-fields li[data-field-id=\"#{item.field}\"]").clone()
-			li.find('.field-label').text(item.label)
-			list.append li.data('field-id', item.field).data('field', item)
-			$("#report-fields li[data-field-id=\"#{item.field}\"]").hide()
+			if item.field == 'values'
+				@_addValuesToColumns()
+			else
+				li = $("#report-fields li[data-field-id=\"#{item.field}\"]").clone()
+				li.find('.field-label').text(item.label)
+				list.append li.data('field-id', item.field).data('field', item)
+				$("#report-fields li[data-field-id=\"#{item.field}\"]").hide()
 		true
 
 	_showOverlay: () ->
@@ -255,3 +271,12 @@ $.widget 'nmk.reportBuilder',
 				values: @_getValues()
 			}
 		}
+
+	_addValuesToColumns: () ->
+		if $('#report-values li', @element).length > 0
+			values = @_getColumns().filter (field) -> field.field == 'values'
+
+			if values.length is 0
+				field = {label: 'Values'}
+				li = $('<li data-field-id="values">').append($('<div class="field-label">').text('Values')).data('field', field)
+				@element.find('#report-columns').append li

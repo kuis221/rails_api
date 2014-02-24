@@ -208,5 +208,21 @@ describe Report do
         {"event_start_date"=>"2019/01/23", "user_first_name"=>"Nicole", "kpi_#{Kpi.impressions.id}"=>"100.00"}
       ]
     end
+
+    it "returns a line for each role" do
+      user = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, name: 'Market Manager'))
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 300}) # Another event
+      event.users << user
+      report = FactoryGirl.create(:report,
+        company: company,
+        rows:    [{"field"=>"role:name", "label"=>"Role"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"role_name"=>"Market Manager", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+      ]
+    end
   end
 end

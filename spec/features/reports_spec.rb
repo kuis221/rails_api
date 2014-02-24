@@ -171,8 +171,10 @@ feature "Reports", js: true do
         expect(field_list('fields')).to have_no_content('Kpi #2')
         find("li", text: 'Kpi #3').drag_to field_list('filters')
         expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('columns')).to have_no_content('Values')
         find("li", text: 'Kpi #4').drag_to field_list('values')
         expect(field_list('fields')).to have_no_content('Kpi #4')
+        expect(field_list('columns')).to have_content('Values')
       end
 
       # Save the report and reload page to make sure they were correctly saved
@@ -185,6 +187,7 @@ feature "Reports", js: true do
       within ".sidebar" do
         # Each KPI should be in the correct list
         expect(field_list('columns')).to have_content('Kpi #1')
+        expect(field_list('columns')).to have_content('Values')
         expect(field_list('rows')).to have_content('Kpi #2')
         expect(field_list('filters')).to have_content('Kpi #3')
         expect(field_list('values')).to have_content('Kpi #4')

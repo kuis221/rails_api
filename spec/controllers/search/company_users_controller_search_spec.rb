@@ -109,7 +109,6 @@ describe CompanyUsersController, search: true do
     end
 
     it "should NOT return a notification if the user is not part of the event's team" do
-      event = FactoryGirl.create(:late_event, company: @company)
       Sunspot.commit
 
       get 'notifications', id: @company_user.to_param, format: :json
