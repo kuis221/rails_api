@@ -29,11 +29,21 @@ class Activity < ActiveRecord::Base
   validates :activity_date, presence: true
   validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
+  scope :active, lambda{ where(active: true) }
+
   after_initialize :set_default_values
 
   delegate :company_id, to: :activitable
 
   accepts_nested_attributes_for :results
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 
   def results_for_type
     activity_type.form_fields.map do |field|

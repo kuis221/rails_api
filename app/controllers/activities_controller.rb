@@ -2,6 +2,8 @@ class ActivitiesController < FilteredController
   belongs_to :venue, polymorphic: true
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  include DeactivableHelper
+
   helper_method :assignable_users
 
   def form

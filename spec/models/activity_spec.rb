@@ -26,4 +26,24 @@ describe Activity do
   it { should validate_presence_of(:activity_date) }
   it { should validate_numericality_of(:activity_type_id) }
   it { should validate_numericality_of(:company_user_id) }
+
+  describe "#activate" do
+    let(:activity) { FactoryGirl.build(:activity, active: false) }
+
+    it "should return the active value as true" do
+      activity.activate!
+      activity.reload
+      activity.active.should be_true
+    end
+  end
+
+  describe "#deactivate" do
+    let(:activity) { FactoryGirl.build(:activity, active: false) }
+
+    it "should return the active value as false" do
+      activity.deactivate!
+      activity.reload
+      activity.active.should be_false
+    end
+  end
 end
