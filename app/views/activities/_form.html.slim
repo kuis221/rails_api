@@ -46,6 +46,7 @@ javascript:
       $.get('/campaigns/'+selectedOption+'/brands.json', function(options) {
         brands.empty();
         marques.empty();
+        brands.append($("<option/>", {value: '', text: '', selected: true}));
         marques.select2('data', null, false);
         for(var i in options) {
             brands.append($("<option/>", {
