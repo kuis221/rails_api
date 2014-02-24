@@ -28,55 +28,6 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
   add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
 
-  create_table "activities", :force => true do |t|
-    t.integer  "activity_type_id"
-    t.integer  "activitable_id"
-    t.string   "activitable_type"
-    t.integer  "campaign_id"
-    t.boolean  "active",           :default => true
-    t.integer  "company_user_id"
-    t.datetime "activity_date"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-  end
-
-  add_index "activities", ["activitable_id", "activitable_type"], :name => "index_activities_on_activitable_id_and_activitable_type"
-  add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
-  add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
-
-  create_table "activity_results", :force => true do |t|
-    t.integer  "activity_id"
-    t.integer  "form_field_id"
-    t.text     "value"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
-
-  add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
-  add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
-  add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
-
-  create_table "activity_type_campaigns", :force => true do |t|
-    t.integer  "activity_type_id"
-    t.integer  "campaign_id"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
-  end
-
-  add_index "activity_type_campaigns", ["activity_type_id"], :name => "index_activity_type_campaigns_on_activity_type_id"
-  add_index "activity_type_campaigns", ["campaign_id"], :name => "index_activity_type_campaigns_on_campaign_id"
-
-  create_table "activity_types", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.boolean  "active",      :default => true
-    t.integer  "company_id"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
-  end
-
-  add_index "activity_types", ["company_id"], :name => "index_activity_types_on_company_id"
-
   create_table "admin_users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
     t.string   "encrypted_password",     :default => "", :null => false
@@ -444,32 +395,7 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
-  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
-
-  create_table "form_field_options", :force => true do |t|
-    t.integer  "form_field_id"
-    t.string   "name"
-    t.integer  "ordering"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
-
-  add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
-
-  create_table "form_fields", :force => true do |t|
-    t.integer  "fieldable_id"
-    t.string   "fieldable_type"
-    t.string   "name"
-    t.string   "type"
-    t.text     "settings"
-    t.integer  "ordering"
-    t.boolean  "required"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"
 
   create_table "goals", :force => true do |t|
     t.integer  "kpi_id"
@@ -489,19 +415,6 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
-
-  create_table "kpi_reports", :force => true do |t|
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-  end
 
   create_table "kpis", :force => true do |t|
     t.string   "name"
@@ -554,15 +467,6 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
     t.integer "location_id"
     t.integer "place_id"
   end
-
-  create_table "marques", :force => true do |t|
-    t.integer  "brand_id"
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "marques", ["brand_id"], :name => "index_marques_on_brand_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "company_user_id"
@@ -644,16 +548,17 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "reports", :force => true do |t|
-    t.integer "company_id"
-    t.string  "name"
-    t.text    "description"
-    t.boolean "active",        :default => true
-    t.integer "created_by_id"
-    t.integer "updated_by_id"
-    t.text    "rows"
-    t.text    "columns"
-    t.text    "values"
-    t.text    "filters"
+    t.string   "type"
+    t.integer  "company_user_id"
+    t.text     "params"
+    t.string   "aasm_state"
+    t.integer  "progress"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "roles", :force => true do |t|

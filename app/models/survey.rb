@@ -14,7 +14,7 @@
 class Survey < ActiveRecord::Base
   belongs_to :event
 
-  has_many :surveys_answers, autosave: true
+  has_many :surveys_answers, autosave: true, inverse_of: :survey
 
   accepts_nested_attributes_for :surveys_answers
 
