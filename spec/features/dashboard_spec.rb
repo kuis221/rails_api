@@ -1,37 +1,44 @@
 require 'spec_helper'
 
 feature "Dashboard", search: true, js: true do
+  let(:company) { FactoryGirl.create(:company) }
+  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+  let(:company_user) { user.company_users.first }
+  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:permissions) { [] }
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
+    add_permissions permissions
+    sign_in user
   end
 
   after do
     Warden.test_reset!
   end
 
-  feature "upcoming events module" do
-    before do
-      campaign1 = FactoryGirl.create(:campaign,  company: @company,
+  shared_examples_for 'a user that can view the upcoming events module' do
+    let(:campaign1) { FactoryGirl.create(:campaign,  company: company,
         name: 'Jameson + Kahlua Rum Campaign',
-        brands_list: 'Jameson,Kahlua Rum')
-      campaign2 = FactoryGirl.create(:campaign, company: @company,
-        name: 'Mama Walker\'s + Martel Campaign',
-        brands_list: 'Mama Walker\'s,Martel')
-      campaign3 = FactoryGirl.create(:campaign, company: @company,
-        name: 'Paddy Irish Whiskey Campaign',
-        brands_list: 'Paddy Irish Whiskey')
+        brands_list: 'Jameson,Kahlua Rum,Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka') }
 
-      FactoryGirl.create(:event, campaign: campaign1, start_date: '01/14/2014', end_date: '01/15/2014')
-      FactoryGirl.create(:event, campaign: campaign2, start_date: '01/27/2014', end_date: '01/27/2014')
-      FactoryGirl.create(:event, campaign: campaign3, start_date: '01/14/2014', end_date: '01/14/2014')
-      Sunspot.commit
-    end
+    let(:campaign2) { FactoryGirl.create(:campaign, company: company,
+      name: 'Mama Walker\'s + Martel Campaign',
+      brands_list: 'Mama Walker\'s,Martel') }
+
+    let(:campaign3) { FactoryGirl.create(:campaign, company: company,
+      name: 'Paddy Irish Whiskey Campaign',
+      brands_list: 'Paddy Irish Whiskey') }
+
+    let(:events) {[
+      FactoryGirl.create(:event, campaign: campaign1, place: place, start_date: '01/14/2014', end_date: '01/15/2014'),
+      FactoryGirl.create(:event, campaign: campaign2, place: place, start_date: '01/27/2014', end_date: '01/27/2014'),
+      FactoryGirl.create(:event, campaign: campaign3, place: place, start_date: '01/14/2014', end_date: '01/14/2014') ]}
+
 
     feature "Events List View" do
+      before { events.count; Sunspot.commit } # Create the events
       scenario "should display a list of upcoming events" do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
@@ -46,6 +53,8 @@ feature "Dashboard", search: true, js: true do
     end
 
     feature "Events Calendar View" do
+      before { events.count; Sunspot.commit } # Create the events
+
       scenario "should start with today's day and show 2 weeks" do
         # Today is Tuesday, Jan 11
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
@@ -86,6 +95,7 @@ feature "Dashboard", search: true, js: true do
       end
 
       scenario "clicking on the day should take the user to the event list for that day" do
+
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
 
@@ -132,11 +142,9 @@ feature "Dashboard", search: true, js: true do
 
       scenario "a day with more than 6 brands should display a 'more' link" do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
-
-          campaign = FactoryGirl.create(:campaign, company: @company,
-            name: 'Paddy Irish Whiskey Campaign',
-            brands_list: 'Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka')
-          FactoryGirl.create(:event, campaign: campaign, start_date: '01/14/2014', end_date: '01/14/2014')
+          FactoryGirl.create(:event,
+              campaign: campaign1, place: place,
+              start_date: '01/14/2014', end_date: '01/14/2014')
           Sunspot.commit
 
           visit root_path
@@ -156,13 +164,29 @@ feature "Dashboard", search: true, js: true do
     end
   end
 
-  describe "recent comments module" do
-    scenario "should display only 9 comments" do
-      FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event, company: @company))
-      visit root_path
-      within recent_comments_module do
-        expect(all('.comment').count).to eql 9
+  feature "Admin User" do
+    let(:role) { FactoryGirl.create(:role, company: company) }
+
+    it_behaves_like "a user that can view the upcoming events module"
+
+    describe "recent comments module" do
+      scenario "should display only 9 comments" do
+        FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event, company: company))
+        visit root_path
+        within recent_comments_module do
+          expect(all('.comment').count).to eql 9
+        end
       end
+    end
+  end
+
+  feature "Non Admin User", js: true, search: true do
+    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+
+    it_should_behave_like "a user that can view the upcoming events module" do
+      before { company_user.campaigns << [campaign, campaign1, campaign2, campaign3] }
+      before { company_user.places << FactoryGirl.create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
+      let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
     end
   end
 
@@ -172,6 +196,12 @@ feature "Dashboard", search: true, js: true do
 
   def recent_comments_module
     find('div#recent-comments-module')
+  end
+
+  def add_permissions(permissions)
+    permissions.each do |p|
+      company_user.role.permissions.create({action: p[0], subject_class: p[1], subject_id: p[2]}, without_protection: true)
+    end
   end
 
 end

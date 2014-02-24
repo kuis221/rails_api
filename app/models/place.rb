@@ -22,6 +22,8 @@
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
 #  neighborhood           :string(255)
+#  location_id            :integer
+#  is_location            :boolean
 #
 
 require "base64"
@@ -136,6 +138,15 @@ class Place < ActiveRecord::Base
     self.location = Location.find_or_create_by_path(paths.last)
     self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
     true
+  end
+
+  def location_ids
+    if new_record?
+      update_locations unless locations.any?
+      locations.map(&:id)
+    else
+      locations.pluck('locations.id')
+    end
   end
 
   class << self

@@ -37,6 +37,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
               "created_at": "2013-11-19T00:49:24-08:00",
               "active": true,
               "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/small/SV-T101-P005-111413.JPG?1384851148",
+              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/thumbnail/SV-T101-P005-111413.JPG?1384851148",
               "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/medium/SV-T101-P005-111413.JPG?1384851148",
               "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/original/SV-T101-P005-111413.JPG?1384851148"
           },
@@ -48,6 +49,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
               "created_at": "2013-11-19T00:49:16-08:00",
               "active": true,
               "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/small/SV-T101-P001-111413.JPG?1384851145",
+              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/thumbnail/SV-T101-P001-111413.JPG?1384851145",
               "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/medium/SV-T101-P001-111413.JPG?1384851145",
               "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/original/SV-T101-P001-111413.JPG?1384851145"
           }

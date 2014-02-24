@@ -57,10 +57,11 @@ describe Api::V1::TasksController do
 
     it "return a list of tasks for the user's team" do
       tasks = FactoryGirl.create_list(:task, 2, event: event)
+      another_event = FactoryGirl.create(:event, company: company,user_ids:[])
+      another_event.users = []
       # Create some more tasks that should not be returned by the response
-      FactoryGirl.create_list(:task, 2, event: event, company_user: company_user)
-      FactoryGirl.create_list(:task, 2, event: FactoryGirl.create(:event, company: company))
-      event.users << company_user
+      FactoryGirl.create_list(:task, 2, event: another_event)
+      another_event.users.delete company_user
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, scope: 'teams', format: :json

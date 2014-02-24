@@ -199,20 +199,30 @@ $.widget 'nmk.photoGallery', {
 		imageWidth = Math.min(maxSliderWidth, imageNatural.width)
 		imageHeight = Math.min(maxSliderHeight, imageNatural.height)
 
+		if imageWidth is 0
+			debugger
+
+		console.log "1: #{imageWidth}x#{imageHeight}"
+
 		if imageWidth < minSliderWidth && imageNatural.width > minSliderWidth
 			imageWidth = minSliderWidth
+		console.log "2: #{imageWidth}x#{imageHeight}"
+
 
 		if imageHeight < minSliderHeight && imageNatural.height > minSliderHeight
 			imageHeight = minSliderHeight
+		console.log "3: #{imageWidth}x#{imageHeight}"
 
 		if imageWidth < imageNatural.width
 			proportion = imageWidth/imageNatural.width
 			newHeight = parseInt(imageNatural.height*proportion)
 			imageHeight = newHeight
+		console.log "4: #{imageWidth}x#{imageHeight}"
 
 		if imageHeight < imageNatural.height
 			proportion = imageHeight/imageNatural.height
 			imageWidth = parseInt(imageNatural.width*proportion)
+		console.log "5: #{imageWidth}x#{imageHeight}"
 
 
 		sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth)))
@@ -241,7 +251,10 @@ $.widget 'nmk.photoGallery', {
 		++d + m + (if ++photoGalleryCounter == 10000 then (photoGalleryCounter = 1) else photoGalleryCounter)
 
 	getNatural: (element) ->
-		img = new Image()
-		img.src = element.src
-		{ width: img.width, height: img.height }
+		if typeof element.naturalWidth == 'undefined'
+			img = new Image()
+			img.src = element.src
+			{ width: img.width, height: img.height }
+		else
+			{ width: element.naturalWidth, height: element.naturalHeight }
 }

@@ -15,6 +15,8 @@
 #  last_event_id  :integer
 #  first_event_at :datetime
 #  last_event_at  :datetime
+#  start_date     :date
+#  end_date       :date
 #
 
 class Campaign < ActiveRecord::Base
@@ -168,7 +170,7 @@ class Campaign < ActiveRecord::Base
 
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
-    place.locations.pluck('locations.id').any?{|location| accessible_locations.include?(location)} ||
+    place.location_ids.any?{|location| accessible_locations.include?(location)} ||
     places.map(&:id).include?(place.id) ||
     areas.map(&:place_ids).flatten.include?(place.id)
   end

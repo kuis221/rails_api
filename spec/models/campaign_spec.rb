@@ -15,6 +15,8 @@
 #  last_event_id  :integer
 #  first_event_at :datetime
 #  last_event_at  :datetime
+#  start_date     :date
+#  end_date       :date
 #
 
 require 'spec_helper'
@@ -220,6 +222,19 @@ describe Campaign do
 
       # Because the campaing cache the locations, load a new object with the same campaign ID
       Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
+    end
+
+    it "should work with places that are not yet saved" do
+      area =  FactoryGirl.create(:area)
+      city =  FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
+      place = FactoryGirl.build(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
+      campaign.areas << area
+
+      # Assign San Francisco to the area
+      area.places << city
+
+      # Because the campaing cache the locations, load a new object with the same campaign ID
+      campaign.place_allowed_for_event?(place).should be_true
     end
   end
 

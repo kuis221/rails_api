@@ -34,7 +34,7 @@ feature "Photos", search: true, js: true do
         photo = AttachedAsset.last
         # Check that the image appears on the page
         within gallery_box do
-          src = photo.file.url(:small, timestamp: false)
+          src = photo.file.url(:thumbnail, timestamp: false)
           expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
         end
       end
@@ -46,7 +46,6 @@ feature "Photos", search: true, js: true do
 
       # Check that the image appears on the page
       within gallery_box do
-        src = photo.file.url(:small, timestamp: false)
         expect(page).to have_selector('li')
         hover_and_click 'li', 'Deactivate'
       end

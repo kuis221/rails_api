@@ -7,6 +7,11 @@ describe Api::V1::SurveysController do
   let(:place) { FactoryGirl.create(:place) }
   let(:event) {FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)}
 
+  before do
+    Kpi.create_global_kpis
+    campaign.add_kpi Kpi.surveys
+  end
+
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
@@ -32,10 +37,8 @@ describe Api::V1::SurveysController do
     end
   end
 
-
   describe "POST 'create'" do
     it "should create the new survey" do
-      Kpi.create_global_kpis
       brand1 = FactoryGirl.create(:brand)
       brand2 = FactoryGirl.create(:brand)
 

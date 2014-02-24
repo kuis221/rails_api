@@ -19,7 +19,7 @@ describe Api::V1::PhotosController do
       result['results'].count.should == 3
       result['total'].should == 3
       result['page'].should == 1
-      result['results'].first.keys.should =~ ["id", "file_content_type", "file_file_name", "file_file_size", "created_at", "active", "file_medium", "file_original", "file_small"]
+      result['results'].first.keys.should =~ ["id", "file_content_type", "file_file_name", "file_file_size", "created_at", "active", "file_medium", "file_thumbnail", "file_original", "file_small"]
     end
 
     it "return a list of photos filtered by brand id" do
