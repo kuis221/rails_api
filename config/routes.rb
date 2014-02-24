@@ -159,6 +159,10 @@ Brandscopic::Application.routes.draw do
       resources :events, only: [:new, :create]
       resources :activities, only: [:new, :create, :edit, :update] do
         get :form, on: :collection
+        member do
+          get :deactivate
+          get :activate
+        end
       end
     end
   end

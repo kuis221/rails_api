@@ -444,7 +444,6 @@ ActiveRecord::Schema.define(:version => 20140214174405) do
   end
 
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
-  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "form_field_options", :force => true do |t|
