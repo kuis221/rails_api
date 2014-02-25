@@ -303,6 +303,10 @@ Brandscopic::Application.routes.draw do
       get 'list', on: :collection
     end
 
+    resources :activities, only: [:new, :create] do
+      get :form, on: :collection
+    end
+
     member do
       get :deactivate
       get :activate

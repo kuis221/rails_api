@@ -1,5 +1,5 @@
 class ActivitiesController < FilteredController
-  belongs_to :venue, polymorphic: true
+  belongs_to :venue, :event, polymorphic: true
   respond_to :js, only: [:new, :create, :edit, :update]
 
   include DeactivableHelper

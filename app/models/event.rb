@@ -37,6 +37,7 @@ class Event < ActiveRecord::Base
     end
   end
   has_many :event_expenses, inverse_of: :event, autosave: true
+  has_many :activities, as: :activitable, :order => 'activity_date ASC'
   has_one :event_data, autosave: true
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
