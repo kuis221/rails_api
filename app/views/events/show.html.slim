@@ -55,6 +55,10 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
+  - if can?(:show, Activity)
+    #event-activities.details_box
+      = render 'activities'
+
   - if can_tasks
     #event-tasks.details_box.smaller
 

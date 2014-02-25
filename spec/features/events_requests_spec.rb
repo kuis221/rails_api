@@ -929,9 +929,48 @@ feature 'Events section' do
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
 
+      scenario 'allows the user to add an activity to an Event' do
+        FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+        campaign = FactoryGirl.create(:campaign, company: company)
+        event = FactoryGirl.create(:event, campaign: campaign, company: company)
+        brand1 = FactoryGirl.create(:brand, name: 'Brand #1')
+        brand2 = FactoryGirl.create(:brand, name: 'Brand #2')
+        FactoryGirl.create(:marque, name: 'Marque #1 for Brand #2', brand: brand2)
+        FactoryGirl.create(:marque, name: 'Marque #2 for Brand #2', brand: brand2)
+        FactoryGirl.create(:marque, name: 'Marque alone', brand: brand1)
+        campaign.brands << brand1
+        campaign.brands << brand2
+
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
+        FactoryGirl.create(:form_field, name: 'Brand', type: 'FormField::Brand', fieldable: activity_type, ordering: 1)
+        FactoryGirl.create(:form_field, name: 'Marque', type: 'FormField::Marque', fieldable: activity_type, ordering: 2, settings: {'multiple' => true})
+        FactoryGirl.create(:form_field, name: 'Form Field #1', type: 'FormField::Number', fieldable: activity_type, ordering: 3)
+        dropdown_field = FactoryGirl.create(:form_field, name: 'Form Field #2', type: 'FormField::Dropdown', fieldable: activity_type, ordering: 4)
+        FactoryGirl.create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
+        FactoryGirl.create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
+
+        visit event_path(event)
+
+        expect(page).to_not have_content('Activity Type #1')
+
+        click_js_link('New Activity')
+
+        within visible_modal do
+          select_from_chosen('Activity Type #1', from: 'Activity type')
+          select_from_chosen('Brand #2', from: 'Brand')
+          select2("Marque #1 for Brand #2", from: "Marque")
+          fill_in 'Form Field #1', with: '122'
+          select_from_chosen('Dropdown option #2', from: 'Form Field #2')
+          select_from_chosen('Juanito Bazooka', from: 'User')
+          fill_in 'Date', with: '05/16/2013'
+          click_js_button 'Create'
+        end
+
+        ensure_modal_was_closed
+      end
+
     end
   end
-
 
   def event_list_item(event)
     "li#event_#{event.id}"
