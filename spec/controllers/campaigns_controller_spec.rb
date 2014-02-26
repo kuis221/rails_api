@@ -463,7 +463,6 @@ describe CampaignsController do
   end
 
   describe "POST 'add_kpi'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
     let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
 
     it "should associate the kpi to the campaign" do
@@ -508,9 +507,35 @@ describe CampaignsController do
       result.reload.form_field_id.should == field.id
     end
   end
+  
+  describe "POST 'activity_type'" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: @company) }
+    
+    it "should associate the kpi to the campaign" do
+      expect {
+        post 'add_activity_type', id: campaign.id,activity_type_id: activity_type.id, format: :json
+      }.to change(ActivityTypeCampaign, :count).by(1)
+    end
+    
+    it "should NOT associate the activity_type to the campaign if the campaing already have it assgined" do
+      expect {
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+      }.to_not change(ActivityTypeCampaign, :count)
+    end
+  end
+  
+  describe "DELETE 'remove_activity_type'" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: @company) }
+    it "should disassociate the activity_type from the campaign" do
+      campaign.activity_types << activity_type
+      expect {
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+      }.to change(ActivityTypeCampaign, :count).by(-1)
+      response.should be_success
+    end
+  end
 
   describe "DELETE 'remove_kpi'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
     let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
 
     it "should disassociate the kpi from the campaign" do
@@ -521,5 +546,5 @@ describe CampaignsController do
       response.should be_success
     end
   end
-
+  
 end

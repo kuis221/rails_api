@@ -5218,6 +5218,43 @@ a, i{
 			display: none;
 		}
 	}
+  	a.toggle-on-btn-activity-type {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+		.on{
+			float: left;
+			line-height: 20px;
+		}
+	}
+	a.toggle-off-btn-activity-type {
+		text-align: right;
+		padding-right: 10px;
+		background-color: $user_menu;
+		span {
+			float: left;
+		}
+		.off{
+			line-height: 20px;
+		}
+	}
+	&.inactive{
+		.toggle-on-btn-activity-type {
+			display: none;
+		}
+		.toggle-off-btn-activity-type {
+			display: block;
+		}
+	}
+	&.active{
+		.toggle-on-btn-activity-type {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+	}
 }
 
 .goalable-errors{

@@ -230,6 +230,8 @@ Brandscopic::Application.routes.draw do
       post :update_post_event_form
       post :kpi, to: :add_kpi
       delete :kpi, to: :remove_kpi
+      post :activity_type, to: :add_activity_type
+      delete :activity_type, to: :remove_activity_type
       get :deactivate
       get :activate
       get :kpis
