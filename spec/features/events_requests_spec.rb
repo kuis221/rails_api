@@ -983,6 +983,41 @@ feature 'Events section' do
         end
       end
 
+      scenario 'allows the user to edit an activity from an Event' do
+        FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+        campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
+        event = FactoryGirl.create(:event, campaign: campaign, company: company)
+        brand = FactoryGirl.create(:brand, name: 'Unique Brand')
+        FactoryGirl.create(:marque, name: 'Marque #1 for Brand', brand: brand)
+        FactoryGirl.create(:marque, name: 'Marque #2 for Brand', brand: brand)
+        campaign.brands << brand
+
+        activity = FactoryGirl.create(:activity,
+          activity_type: FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company),
+          activitable: event,
+          campaign: campaign,
+          company_user: company_user,
+          activity_date: "08/21/2014"
+        )
+
+        visit event_path(event)
+
+        hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
+
+        within visible_modal do
+          select_from_chosen('Juanito Bazooka', from: 'User')
+          fill_in 'Date', with: '05/16/2013'
+          click_js_button 'Save'
+        end
+
+        ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content('Juanito Bazooka')
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+        end
+      end
     end
   end
 

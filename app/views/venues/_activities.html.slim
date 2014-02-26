@@ -5,4 +5,4 @@
 
   .link-list
     ul#activities-list
-      = render resource.activities.active
+      = render partial: 'activities/activity', collection: resource.activities.active, locals: {parent: resource}
