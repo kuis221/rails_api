@@ -162,7 +162,7 @@ class Api::V1::SurveysController < Api::V1::ApiController
   end
 
 
-  api :GET, '/api/v1/events/:event_id/surveys', "Get the details for an Event's survey"
+  api :GET, '/api/v1/events/:event_id/surveys/:id', "Get the details for an Event's survey"
   param :event_id, :number, required: true, desc: "Event ID"
   description <<-EOS
     Return the attributes and results for a survey
