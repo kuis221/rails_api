@@ -49,7 +49,7 @@ feature "Venues Section", js: true, search: true do
   end
 
   feature "/research/venues/:venue_id", :js => true do
-    scenario 'allows the user to add an activity to a Venue and see it displayed in the Activities list' do
+    scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it' do
       Kpi.create_global_kpis
       venue = FactoryGirl.create(:venue, company: @company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil))
       FactoryGirl.create(:user, company: @company, first_name: 'Juanito', last_name: 'Bazooka')
@@ -80,6 +80,7 @@ feature "Venues Section", js: true, search: true do
         select_from_chosen('Activity Type #1', from: 'Activity type')
         select_from_chosen('Campaign #1', from: 'Campaign')
         select_from_chosen('Brand #2', from: 'Brand')
+        wait_for_ajax
         select2("Marque #1 for Brand #2", from: "Marque")
         fill_in 'Form Field #1', with: '122'
         select_from_chosen('Dropdown option #2', from: 'Form Field #2')
@@ -94,6 +95,13 @@ feature "Venues Section", js: true, search: true do
         expect(page).to have_content('Juanito Bazooka')
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
+        click_js_link('Deactivate')
+      end
+
+      confirm_prompt 'Are you sure you want to deactivate this activity?'
+
+      within("#activities-list") do
+        expect(page).to have_no_selector('li')
       end
     end
 

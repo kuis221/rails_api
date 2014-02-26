@@ -13,7 +13,7 @@ class ActivitiesController < FilteredController
   end
 
   def assignable_users
-    current_company.company_users.active.joins(:user).order('users.first_name ASC, users.last_name ASC')
+    current_company.company_users.active.joins(:user).includes(:user).order('users.first_name ASC, users.last_name ASC')
   end
 
   protected
