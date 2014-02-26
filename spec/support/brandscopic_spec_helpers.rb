@@ -39,7 +39,7 @@ module BrandscopiSpecHelpers
     event.save if autosave
   end
 
-  def whithout_current_user
+  def without_current_user
     user = User.current
     User.current = nil
     yield
