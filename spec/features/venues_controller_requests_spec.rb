@@ -80,6 +80,7 @@ feature "Venues Section", js: true, search: true do
         select_from_chosen('Activity Type #1', from: 'Activity type')
         select_from_chosen('Campaign #1', from: 'Campaign')
         select_from_chosen('Brand #2', from: 'Brand')
+        wait_for_ajax
         select2("Marque #1 for Brand #2", from: "Marque")
         fill_in 'Form Field #1', with: '122'
         select_from_chosen('Dropdown option #2', from: 'Form Field #2')
