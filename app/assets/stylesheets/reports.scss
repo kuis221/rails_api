@@ -79,7 +79,7 @@ ul.reports-list {
 		border: 1px solid #ccc;
 		padding: 5px;
 		margin-bottom: 10px;
-		height: 100px;
+		height: 70px;
 		overflow: auto;
 		&> ul {
 			margin:0;
@@ -149,6 +149,7 @@ ul.reports-list {
 #report-container {
 	min-height: 200px;
 	margin-top: 20px;
+	overflow: auto;
 	.report-table {
 		border: thin solid #ececec;
 		.level_1 .row_label {
@@ -164,8 +165,20 @@ ul.reports-list {
 			padding-left: 80px;
 		}
 
+		th {
+			text-align: right;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+
 		td {
 			border: 0;
+			text-align: right;
+
+			&.row_label {
+				white-space: nowrap;
+				text-align: left;
+			}
 		}
 
 		&.multi-row {

@@ -233,6 +233,10 @@ feature "Reports", js: true do
     "#field-search-input"
   end
 
+  def report_preview
+    "#field-search-input"
+  end
+
   def field_list(name)
     find("#report-#{name}")
   end

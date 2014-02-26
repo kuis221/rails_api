@@ -77,13 +77,14 @@ describe Report do
         results: {impressions: 200, interacitons: 150})
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-          {"event_start_date"=>"2014/01/01", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-          {"event_start_date"=>"2014/01/12", "kpi_#{Kpi.impressions.id}"=>"200.00"}
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
       ]
     end
 
@@ -94,13 +95,14 @@ describe Report do
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"user:first_name", "label"=>"First Name"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"user_first_name"=>"Nadia", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"user_first_name"=>"Nicole", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+        {"user_first_name"=>"Nadia", "values" => [100.00]},
+        {"user_first_name"=>"Nicole", "values" => [100.00]}
       ]
     end
 
@@ -114,14 +116,15 @@ describe Report do
       event.teams << team
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"user:first_name", "label"=>"First Name"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"user_first_name"=>"Nadia", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"user_first_name"=>"Nicole", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"user_first_name"=>nil, "kpi_#{Kpi.impressions.id}"=>"300.00"}
+        {"user_first_name"=>"Nadia", "values" => [100.00]},
+        {"user_first_name"=>"Nicole", "values" => [100.00]},
+        {"user_first_name"=>nil, "values" => [300.00]}
       ]
     end
 
@@ -132,12 +135,13 @@ describe Report do
       event.teams << team
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"team:name", "label"=>"Team"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"team_name"=>"Power Rangers", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+        {"team_name"=>"Power Rangers", "values" => [100.00]}
       ]
     end
 
@@ -163,15 +167,16 @@ describe Report do
       FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 150})
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"team:name", "label"=>"Team"}, {"field"=>"user:first_name", "label"=>"Team"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"team_name"=>"Power Rangers", "user_first_name"=>"Green", "kpi_#{Kpi.impressions.id}"=>"300.00"},
-        {"team_name"=>"Transformers", "user_first_name"=>nil, "kpi_#{Kpi.impressions.id}"=>"200.00"},
-        {"team_name"=>nil, "user_first_name"=>"Green", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"team_name"=>nil, "user_first_name"=>nil, "kpi_#{Kpi.impressions.id}"=>"300.00"}
+        {"team_name"=>"Power Rangers", "user_first_name"=>"Green", "values" => [300.00]},
+        {"team_name"=>"Transformers", "user_first_name"=>nil, "values" => [200.00]},
+        {"team_name"=>nil, "user_first_name"=>"Green", "values" => [100.00]},
+        {"team_name"=>nil, "user_first_name"=>nil, "values" => [300.00]}
       ]
     end
 
@@ -182,13 +187,14 @@ describe Report do
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"user:last_name", "label"=>"Last Name"}, {"field"=>"user:first_name", "label"=>"First Name"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"user_last_name"=>"Aldana", "user_first_name"=>"Nadia", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"user_last_name"=>"Aldana", "user_first_name"=>"Nicole", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+        {"user_last_name"=>"Aldana", "user_first_name"=>"Nadia", "values" => [100.00]},
+        {"user_last_name"=>"Aldana", "user_first_name"=>"Nicole", "values" => [100.00]}
       ]
     end
 
@@ -199,13 +205,14 @@ describe Report do
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"event:start_date", "label"=>"Start date"}, {"field"=>"user:first_name", "label"=>"First Name"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"event_start_date"=>"2019/01/23", "user_first_name"=>"Nadia", "kpi_#{Kpi.impressions.id}"=>"100.00"},
-        {"event_start_date"=>"2019/01/23", "user_first_name"=>"Nicole", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+        {"event_start_date"=>"2019/01/23", "user_first_name"=>"Nadia", "values" => [100.00]},
+        {"event_start_date"=>"2019/01/23", "user_first_name"=>"Nicole", "values" => [100.00]}
       ]
     end
 
@@ -216,13 +223,54 @@ describe Report do
       event.users << user
       report = FactoryGirl.create(:report,
         company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"role:name", "label"=>"Role"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"role_name"=>"Market Manager", "kpi_#{Kpi.impressions.id}"=>"100.00"}
+        {"role_name"=>"Market Manager", "values" => [100.00]}
       ]
+    end
+
+    describe "with columns" do
+      it "returns all the values grouped by venue state" do
+        place_in_ca = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
+        place_in_tx = FactoryGirl.create(:place, city: 'Houston', state: 'Texas')
+        FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          place: place_in_ca, results: {impressions: 100, interacitons: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          place: place_in_tx, results: {impressions: 200, interacitons: 150})
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"},
+                    {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"avg"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"event_start_date"=>"2014/01/01", "place_state"=>"California", "values" => [nil, nil, 100.00, 0.0]},
+            {"event_start_date"=>"2014/01/12", "place_state"=>"Texas", "values" => [200.00, 0.0, nil, nil]}
+        ]
+      end
+
+      it "returns a line for each team  when adding a team field as a row and the team is part of the event" do
+        team = FactoryGirl.create(:team, name: 'Power Rangers', company: company)
+        event = FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
+          results: {impressions: 100, interacitons: 50})
+        event.teams << team
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"team:name", "label"=>"Team"}, {"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+          {"event_start_date"=>"2014/01/01", "team_name"=>"Power Rangers", "values" => [100.00]}
+        ]
+      end
     end
   end
 end

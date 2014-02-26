@@ -1,17 +1,17 @@
 - row_levels_count = @report.rows.count
 table.table.report-table class="#{row_levels_count > 1 ? 'multi-row' : ''}"
-  tr
-    th
-    - @report.values.each do |value|
-      th= report_column_label(value)
-
+  - build_report_header_cols(@report.report_columns_hash)
+  - @report_header_cols_rows.each_with_index do |row, index|
+    - p "#{index} != #{@report.columns.index{|v| v['field'] == 'values' }}"
+    - if @report.values.count > 1 || index != @report.columns.index{|v| v['field'] == 'values' }
+      tr
+        th
+        = row.join.html_safe
   - each_grouped_report_row do |row_label, row_level, values|
     tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}"
       td class="row_label"
         - if row_level+1 < row_levels_count
           a href="#" class="icon-minus report-collapse-button"
         = row_label
-      - values.each do |k, value|
+      - values.each do |value|
         td= value
-
-

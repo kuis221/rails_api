@@ -226,7 +226,6 @@ class User < ActiveRecord::Base
   end
 
   class << self
-
     def report_fields
       {
         first_name:     { title: 'First Name' },
