@@ -507,7 +507,7 @@ feature 'Events section' do
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
-        all('#event-team-members .team-member').count.should == 0
+        all('#event-team-members .team-member').count.should == 1
       end
 
 
@@ -929,7 +929,7 @@ feature 'Events section' do
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
 
-      scenario 'allows the user to add an activity to an Event' do
+      scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
         FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
         campaign = FactoryGirl.create(:campaign, company: company)
         event = FactoryGirl.create(:event, campaign: campaign, company: company)
@@ -958,6 +958,7 @@ feature 'Events section' do
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
           select_from_chosen('Brand #2', from: 'Brand')
+          wait_for_ajax
           select2("Marque #1 for Brand #2", from: "Marque")
           fill_in 'Form Field #1', with: '122'
           select_from_chosen('Dropdown option #2', from: 'Form Field #2')
@@ -967,8 +968,56 @@ feature 'Events section' do
         end
 
         ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content('Juanito Bazooka')
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+          click_js_link('Deactivate')
+        end
+
+        confirm_prompt 'Are you sure you want to deactivate this activity?'
+
+        within("#activities-list") do
+          expect(page).to have_no_selector('li')
+        end
       end
 
+      scenario 'allows the user to edit an activity from an Event' do
+        FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+        campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
+        event = FactoryGirl.create(:event, campaign: campaign, company: company)
+        brand = FactoryGirl.create(:brand, name: 'Unique Brand')
+        FactoryGirl.create(:marque, name: 'Marque #1 for Brand', brand: brand)
+        FactoryGirl.create(:marque, name: 'Marque #2 for Brand', brand: brand)
+        campaign.brands << brand
+
+        activity = FactoryGirl.create(:activity,
+          activity_type: FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company),
+          activitable: event,
+          campaign: campaign,
+          company_user: company_user,
+          activity_date: "08/21/2014"
+        )
+
+        visit event_path(event)
+
+        hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
+
+        within visible_modal do
+          select_from_chosen('Juanito Bazooka', from: 'User')
+          fill_in 'Date', with: '05/16/2013'
+          click_js_button 'Save'
+        end
+
+        ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content('Juanito Bazooka')
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+        end
+      end
     end
   end
 

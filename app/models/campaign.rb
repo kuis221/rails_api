@@ -15,6 +15,8 @@
 #  last_event_id  :integer
 #  first_event_at :datetime
 #  last_event_at  :datetime
+#  start_date     :date
+#  end_date       :date
 #
 
 class Campaign < ActiveRecord::Base
@@ -374,7 +376,7 @@ class Campaign < ActiveRecord::Base
         r['goal'] = r['goal'].to_f
         r['executed'] = r['executed'].to_f
         r['scheduled'] = r['scheduled'].to_f
-        r['remaining'] = [0, r['goal']-(r['scheduled'].+r['executed'])].max
+        r['remaining'] = [0, r['goal']-(r['scheduled']+r['executed'])].max
         r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
         r['executed_percentage'] = [100, r['executed_percentage']].min
         r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0

@@ -28,12 +28,13 @@ describe Analysis::StaffReportController do
     end
 
     it "should assign the correct scope to @events_scope" do
-      events = FactoryGirl.create_list(:approved_event, 3, company: @company, user_ids: [@company_user.id])
-      FactoryGirl.create(:event, company: @company, user_ids: [@company_user.id]) # Unapproved event
+      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      events = FactoryGirl.create_list(:approved_event, 3, company: @company, user_ids:[company_user.id])
+      FactoryGirl.create(:event, company: @company) # Unapproved event
       FactoryGirl.create(:approved_event, company: @company)
       FactoryGirl.create(:approved_event, company_id: @company.id+1)
 
-      get 'report', report: { user_id: @company_user.to_param }, format: :js
+      get 'report', report: { user_id: company_user.to_param }, format: :js
 
       response.should be_success
       assigns(:events_scope).should =~ events
