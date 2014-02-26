@@ -39,6 +39,14 @@ module BrandscopiSpecHelpers
     event.save if autosave
   end
 
+  def whithout_current_user
+    user = User.current
+    User.current = nil
+    yield
+  ensure
+    User.current = user
+  end
+
   def woorbook_from_last_export
     export = ListExport.last
     export.should_receive(:save).any_number_of_times.and_return(true)
