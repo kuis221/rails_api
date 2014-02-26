@@ -958,6 +958,7 @@ feature 'Events section' do
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
           select_from_chosen('Brand #2', from: 'Brand')
+          wait_for_ajax
           select2("Marque #1 for Brand #2", from: "Marque")
           fill_in 'Form Field #1', with: '122'
           select_from_chosen('Dropdown option #2', from: 'Form Field #2')
@@ -967,6 +968,12 @@ feature 'Events section' do
         end
 
         ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content('Juanito Bazooka')
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+        end
       end
 
     end

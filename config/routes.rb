@@ -305,6 +305,10 @@ Brandscopic::Application.routes.draw do
 
     resources :activities, only: [:new, :create] do
       get :form, on: :collection
+      member do
+        get :deactivate
+        get :activate
+      end
     end
 
     member do
