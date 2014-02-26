@@ -6,7 +6,7 @@ describe SurveysController do
     @company = @user.current_company
 
     Kpi.create_global_kpis
-    campaign.assign_all_global_kpis
+    campaign.add_kpi Kpi.surveys
   end
 
   let(:campaign) {FactoryGirl.create(:campaign, company: @company)}
@@ -32,6 +32,10 @@ describe SurveysController do
       brand1 = FactoryGirl.create(:brand)
       brand2 = FactoryGirl.create(:brand)
 
+      field = campaign.form_field_for_kpi (Kpi.surveys)
+      field.options['brands'] = [brand1.id, brand2.id]
+      field.save
+
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample
       ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
@@ -43,8 +47,8 @@ describe SurveysController do
             "2"=>{"kpi_id"=>Kpi.ethnicity.id, "question_id"=>"1", "answer"=>ethnicity_answer.id},
             "3"=>{"brand_id"=>brand1.to_param, "question_id"=>"1", "answer"=>"aware"},
             "4"=>{"brand_id"=>brand2.to_param, "question_id"=>"1", "answer"=>"aware"},
-            "5"=>{"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>""},
-            "6"=>{"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>""},
+            "5"=>{"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>"10"},
+            "6"=>{"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>"20"},
             "7"=>{"brand_id"=>brand1.to_param, "question_id"=>"3", "answer"=>"2"},
             "8"=>{"brand_id"=>brand2.to_param, "question_id"=>"3", "answer"=>"2"},
             "9"=>{"brand_id"=>brand1.to_param, "question_id"=>"4", "answer"=>"3"},

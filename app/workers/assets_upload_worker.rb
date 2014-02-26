@@ -3,7 +3,6 @@ class AssetsUploadWorker
   @queue = :upload
 
   def self.perform(asset_id)
-    Resque::Plugins::Timeout.switch = :off
     tries ||= 3
     asset = AttachedAsset.find(asset_id)
     asset.transfer_and_cleanup
