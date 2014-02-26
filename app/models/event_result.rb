@@ -94,7 +94,7 @@ class EventResult < ActiveRecord::Base
     end
 
     def clean_up_invalid_values
-      self.value = nil if (self.value == 0 || self.value == '0') && form_field.field_type == 'count'
+      self.value = nil if (self.value == 0 || self.value == '0') && form_field.present? && form_field.field_type == 'count'
     end
 
     def is_numeric_field?

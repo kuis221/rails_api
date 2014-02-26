@@ -228,8 +228,9 @@ describe Api::V1::EventsController do
       get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
       result = JSON.parse(response.body)
-
+      log_company_user = user.company_users.first
       result.should =~ [
+        {"id"=>log_company_user.id, "first_name"=>log_company_user.first_name, "last_name"=>log_company_user.last_name, "full_name"=>log_company_user.full_name, "role_name"=>'Super Admin', "email"=>user.email, "phone_number"=>'(506) 22124578', "street_address"=>'Street Address 123', "unit_number"=>'Unit Number 456', "city"=>'Curridabat', "state"=>'SJ', "zip_code"=>"90210", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
         {"id"=>users.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
         {"id"=>users.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
       ]
@@ -242,15 +243,16 @@ describe Api::V1::EventsController do
         FactoryGirl.create(:team, name: 'Team B', description: 'team 2 description')
       ]
       event.teams << teams
-
+      company_user = user.company_users.first
       get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
       result = JSON.parse(response.body)
-
+      company_user = user.company_users.first
       result.should =~ [
         {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description", "type"=>"team"},
         {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description", "type"=>"team"},
-        {"id"=>teams.first.id, "name"=>"Team C", "description"=>"team 3 description", "type"=>"team"}
+        {"id"=>teams.first.id, "name"=>"Team C", "description"=>"team 3 description", "type"=>"team"},
+        {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "unit_number"=>"Unit Number 456", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
       ]
     end
 
@@ -272,12 +274,13 @@ describe Api::V1::EventsController do
         get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
         response.should be_success
         result = JSON.parse(response.body)
-
-        result.should == [
+        company_user = user.company_users.first
+        result.should =~ [
           {"id"=>@teams.first.id, "name"=>"A team", "description"=>"team 1 description", "type"=>"team"},
           {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
           {"id"=>@teams.last.id, "name"=>"Team 2", "description"=>"team 2 description", "type"=>"team"},
-          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "unit_number"=>"Unit Number 456", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
         ]
       end
 
@@ -285,10 +288,11 @@ describe Api::V1::EventsController do
         get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, type: 'user', format: :json
         response.should be_success
         result = JSON.parse(response.body)
-
-        result.should == [
+        company_user = user.company_users.first
+        result.should =~ [
           {"id"=>@users.first.id, "first_name"=>"A", "last_name"=>"User", "full_name"=>"A User", "role_name"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
-          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
+          {"id"=>@users.last.id, "first_name"=>"User", "last_name"=>"2", "full_name"=>"User 2", "role_name"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"(506) 22124578", "street_address"=>"ABC 1", "unit_number"=>"#123 2nd floor", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"12345", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"},
+          {"id"=>company_user.id, "first_name"=>"Test", "last_name"=>"User", "full_name"=>"Test User", "role_name"=>"Super Admin", "email"=>user.email, "phone_number"=>"(506) 22124578", "street_address"=>"Street Address 123", "unit_number"=>"Unit Number 456", "city"=>"Curridabat", "state"=>"SJ", "zip_code"=>"90210", "time_zone"=>"Pacific Time (US & Canada)", "country"=>"Costa Rica", "type"=>"user"}
         ]
       end
 
@@ -374,7 +378,6 @@ describe Api::V1::EventsController do
       result.should =~ [
         {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description", 'type' => 'team'},
         {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description", 'type' => 'team'},
-        {"id"=>company_user.id, "name"=>company_user.full_name, "description"=>company_user.role_name, 'type' => 'user'},
         {"id"=>teams.first.id, "name"=>"Z Team", "description"=>"team 3 description", 'type' => 'team'}
       ]
     end
@@ -396,11 +399,11 @@ describe Api::V1::EventsController do
     end
 
     it "should add a user to the event's team" do
-      company_user = user.company_users.first
+      company_user = FactoryGirl.create(:company_user, company_id: company.to_param)
       expect {
         post :add_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: company_user.id, memberable_type: 'user', format: :json
-      }.to change(Membership, :count).by(1)
-      event.users.should == [company_user]
+      }.to change(Membership, :count).by(2)
+      event.users.should =~ [user.company_users.first, company_user]
 
       response.should be_success
       result = JSON.parse(response.body)
@@ -421,7 +424,7 @@ describe Api::V1::EventsController do
         delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
       }.to change(Membership, :count).by(-1)
       event.reload
-      event.users.should == []
+      event.users.should == [user.company_users.first]
       event.teams.should == [another_member]
 
       response.should be_success
@@ -440,7 +443,7 @@ describe Api::V1::EventsController do
         delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
       }.to change(Teaming, :count).by(-1)
       event.reload
-      event.users.should == [another_member]
+      event.users.should =~ [another_member, user.company_users.first]
       event.teams.should == []
 
       response.should be_success
@@ -454,9 +457,9 @@ describe Api::V1::EventsController do
 
       expect {
         delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
-      }.to change(Membership, :count).by(0)
+      }.to change(Membership, :count).by(1)
       event.reload
-      event.users.should == []
+      event.users.should == [user.company_users.first]
       event.teams.should == []
 
       response.should_not be_success

@@ -15,6 +15,8 @@
 #  last_event_id  :integer
 #  first_event_at :datetime
 #  last_event_at  :datetime
+#  start_date     :date
+#  end_date       :date
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
