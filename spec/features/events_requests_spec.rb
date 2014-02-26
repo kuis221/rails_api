@@ -929,7 +929,7 @@ feature 'Events section' do
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
 
-      scenario 'allows the user to add an activity to an Event' do
+      scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
         FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
         campaign = FactoryGirl.create(:campaign, company: company)
         event = FactoryGirl.create(:event, campaign: campaign, company: company)
@@ -973,6 +973,13 @@ feature 'Events section' do
           expect(page).to have_content('Juanito Bazooka')
           expect(page).to have_content('THU May 16')
           expect(page).to have_content('Activity Type #1')
+          click_js_link('Deactivate')
+        end
+
+        confirm_prompt 'Are you sure you want to deactivate this activity?'
+
+        within("#activities-list") do
+          expect(page).to have_no_selector('li')
         end
       end
 
