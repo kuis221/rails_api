@@ -53,7 +53,7 @@ class CampaignsController < FilteredController
   end
   
     def remove_activity_type
-      activity_type = ActivityType.find(params[:activity_type_id])
+      current_company.activity_types.find(params[:activity_type_id])
       if resource.activity_types.include?(activity_type)
         resource.activity_types.delete(activity_type) 
       else
@@ -63,7 +63,7 @@ class CampaignsController < FilteredController
   end
 
   def add_activity_type
-    activity_type = ActivityType.find(params[:activity_type_id])
+    current_company.activity_types.find(params[:activity_type_id])
     unless resource.activity_types.include?(activity_type)
       resource.activity_types << activity_type
     else

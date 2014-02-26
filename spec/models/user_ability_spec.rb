@@ -111,6 +111,17 @@ describe "User" do
           ability.should be_able_to(:add_kpi, campaign)
           ability.should be_able_to(:remove_kpi, campaign)
         end
+        
+        it "should be able to activate activity types if has the :activate_kpis permission" do
+          campaign = FactoryGirl.create(:campaign, company: company)
+          ability.should_not be_able_to(:add_activity_type, campaign)
+          ability.should_not be_able_to(:remove_activity_type, campaign)
+
+          user.role.permission_for(:activate_kpis, Campaign).save
+
+          ability.should be_able_to(:add_activity_type, campaign)
+          ability.should be_able_to(:remove_activity_type, campaign)
+        end
       end
 
 
