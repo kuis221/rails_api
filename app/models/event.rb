@@ -2,22 +2,24 @@
 #
 # Table name: events
 #
-#  id            :integer          not null, primary key
-#  campaign_id   :integer
-#  company_id    :integer
-#  start_at      :datetime
-#  end_at        :datetime
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  active        :boolean          default(TRUE)
-#  place_id      :integer
-#  promo_hours   :decimal(6, 2)    default(0.0)
-#  reject_reason :text
-#  summary       :text
-#  timezone      :string(255)
+#  id             :integer          not null, primary key
+#  campaign_id    :integer
+#  company_id     :integer
+#  start_at       :datetime
+#  end_at         :datetime
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  active         :boolean          default(TRUE)
+#  place_id       :integer
+#  promo_hours    :decimal(6, 2)    default(0.0)
+#  reject_reason  :text
+#  summary        :text
+#  timezone       :string(255)
+#  local_start_at :datetime
+#  local_end_at   :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -121,6 +123,7 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
+  before_create :add_current_company_user
 
   delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -801,6 +804,10 @@ class Event < ActiveRecord::Base
     #     end
     #   end
     # end
+
+    def add_current_company_user
+      self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
+    end
 end
 
 

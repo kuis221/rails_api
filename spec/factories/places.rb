@@ -22,6 +22,8 @@
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
 #  neighborhood           :string(255)
+#  location_id            :integer
+#  is_location            :boolean
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

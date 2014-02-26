@@ -25,7 +25,7 @@ Brandscopic::Application.routes.draw do
           end
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
-          resources :surveys,  only: [:index, :create, :update] do
+          resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
           end
           get :autocomplete,   on: :collection
@@ -46,7 +46,10 @@ Brandscopic::Application.routes.draw do
         match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
-          get :all, on: :collection
+          collection do
+            get :all
+            get :overall_stats
+          end
         end
 
         resources :venues, only: [:index, :show, :create] do

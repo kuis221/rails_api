@@ -507,7 +507,7 @@ feature 'Events section' do
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
-        all('#event-team-members .team-member').count.should == 0
+        all('#event-team-members .team-member').count.should == 1
       end
 
 

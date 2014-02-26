@@ -97,7 +97,7 @@ class CampaignsController < FilteredController
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|
-          b = Brand.find_or_create_by_name(b).id unless b =~ /^[0-9]$/
+          b = Brand.find_or_create_by_name(b).id unless  b.is_a?(Integer) || b =~ /\A[0-9]+\z/
           brands[index] = b.to_i
         end
       end

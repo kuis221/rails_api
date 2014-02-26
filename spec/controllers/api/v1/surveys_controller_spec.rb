@@ -9,13 +9,13 @@ describe Api::V1::SurveysController do
 
   before do
     Kpi.create_global_kpis
-    campaign.add_kpi Kpi.surveys
   end
 
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
+      campaign.add_kpi Kpi.surveys
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
-      response.response_code.should == 401
+      expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
       result['success'].should == false
       result['info'].should == 'Invalid auth token'
@@ -23,10 +23,9 @@ describe Api::V1::SurveysController do
     end
 
     it "returns the list of surveys for the event" do
+      campaign.add_kpi Kpi.surveys
       survey1 = FactoryGirl.create(:survey, event: event)
       survey2 = FactoryGirl.create(:survey, event: event)
-      event.save
-      Sunspot.commit
 
       get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
       response.should be_success
@@ -35,6 +34,32 @@ describe Api::V1::SurveysController do
       expect(result.first).to include({'id' => survey1.id})
       expect(result.last).to  include({'id' => survey2.id})
     end
+    it "should return error if the campaign doest have the surveys module enabled" do
+      get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      expect(response.response_code).to eql 402
+    end
+  end
+
+  describe "GET 'show'" do
+    it "should return failure for invalid authorization token" do
+      campaign.add_kpi Kpi.surveys
+      get :show, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, id: 1, format: :json
+      expect(response.response_code).to eql 401
+      result = JSON.parse(response.body)
+      result['success'].should == false
+      result['info'].should == 'Invalid auth token'
+      result['data'].should be_empty
+    end
+
+    it "returns the list of surveys for the event" do
+      campaign.add_kpi Kpi.surveys
+      survey = FactoryGirl.create(:survey, event: event)
+
+      get :show, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, id: survey.id, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+      expect(result).to include({'id' => survey.id})
+    end
   end
 
   describe "POST 'create'" do
@@ -42,10 +67,15 @@ describe Api::V1::SurveysController do
       brand1 = FactoryGirl.create(:brand)
       brand2 = FactoryGirl.create(:brand)
 
+      # Assign the surveys kpi and brands to the campaign
+      field = campaign.add_kpi(Kpi.surveys)
+      field.options['brands'] = [brand1.id, brand2.id]
+      field.save
+
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample
       ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
-      lambda {
+      expect {
         post 'create', company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, survey: {
           "surveys_answers_attributes"=>{
             "0"=> {"kpi_id"=>Kpi.gender.id, "answer"=>gender_answer.id},
@@ -53,15 +83,15 @@ describe Api::V1::SurveysController do
             "2"=> {"kpi_id"=>Kpi.ethnicity.id, "answer"=>ethnicity_answer.id},
             "3"=> {"brand_id"=>brand1.to_param, "question_id"=>"1", "answer"=>"aware"},
             "4"=> {"brand_id"=>brand2.to_param, "question_id"=>"1", "answer"=>"aware"},
-            "5"=> {"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>""},
-            "6"=> {"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>""},
+            "5"=> {"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>"10"},
+            "6"=> {"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>"20"},
             "7"=> {"brand_id"=>brand1.to_param, "question_id"=>"3", "answer"=>"2"},
             "8"=> {"brand_id"=>brand2.to_param, "question_id"=>"3", "answer"=>"2"},
             "9"=> {"brand_id"=>brand1.to_param, "question_id"=>"4", "answer"=>"3"},
             "10"=>{"brand_id"=>brand2.to_param, "question_id"=>"4", "answer"=>"4"}
           },
         }, format: :json
-      }.should change(Survey, :count).by(1)
+      }.to change(Survey, :count).by(1)
 
       survey = Survey.last
       survey.age.should == age_answer.text
@@ -74,7 +104,32 @@ describe Api::V1::SurveysController do
       survey = Survey.last
       survey.event_id.should == event.id
     end
+
+    it "should return error if the campaign doest have the surveys module enabled" do
+      brand1 = FactoryGirl.create(:brand)
+      brand2 = FactoryGirl.create(:brand)
+
+      age_answer = Kpi.age.kpis_segments.sample
+      gender_answer = Kpi.gender.kpis_segments.sample
+      ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
+      expect {
+        post 'create', company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, survey: {
+          "surveys_answers_attributes"=>{
+            "0"=> {"kpi_id"=>Kpi.gender.id, "answer"=>gender_answer.id},
+            "1"=> {"kpi_id"=>Kpi.age.id, "answer"=>age_answer.id},
+            "2"=> {"kpi_id"=>Kpi.ethnicity.id, "answer"=>ethnicity_answer.id},
+            "3"=> {"brand_id"=>brand1.to_param, "question_id"=>"1", "answer"=>"aware"},
+            "4"=> {"brand_id"=>brand2.to_param, "question_id"=>"1", "answer"=>"aware"},
+            "5"=> {"brand_id"=>brand1.to_param, "question_id"=>"2", "answer"=>"10"},
+            "6"=> {"brand_id"=>brand2.to_param, "question_id"=>"2", "answer"=>"20"},
+            "7"=> {"brand_id"=>brand1.to_param, "question_id"=>"3", "answer"=>"2"},
+            "8"=> {"brand_id"=>brand2.to_param, "question_id"=>"3", "answer"=>"2"},
+            "9"=> {"brand_id"=>brand1.to_param, "question_id"=>"4", "answer"=>"3"},
+            "10"=>{"brand_id"=>brand2.to_param, "question_id"=>"4", "answer"=>"4"}
+          },
+        }, format: :json
+      }.to_not change(Survey, :count)
+      expect(response.response_code).to eql 402
+    end
   end
-
-
 end

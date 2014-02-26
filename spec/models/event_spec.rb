@@ -2,22 +2,24 @@
 #
 # Table name: events
 #
-#  id            :integer          not null, primary key
-#  campaign_id   :integer
-#  company_id    :integer
-#  start_at      :datetime
-#  end_at        :datetime
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  active        :boolean          default(TRUE)
-#  place_id      :integer
-#  promo_hours   :decimal(6, 2)    default(0.0)
-#  reject_reason :text
-#  summary       :text
-#  timezone      :string(255)
+#  id             :integer          not null, primary key
+#  campaign_id    :integer
+#  company_id     :integer
+#  start_at       :datetime
+#  end_at         :datetime
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  active         :boolean          default(TRUE)
+#  place_id       :integer
+#  promo_hours    :decimal(6, 2)    default(0.0)
+#  reject_reason  :text
+#  summary        :text
+#  timezone       :string(255)
+#  local_start_at :datetime
+#  local_end_at   :datetime
 #
 
 require 'spec_helper'
