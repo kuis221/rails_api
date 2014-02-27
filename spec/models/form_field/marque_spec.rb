@@ -34,6 +34,7 @@ describe FormField::Marque do
     it "should return empty marques for brands with not associated marques" do
       brand = FactoryGirl.create(:brand)
       campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company: Company.current)
+      campaign.activity_types << @activity_type
       venue = FactoryGirl.create(:venue, place: FactoryGirl.create(:place), company: Company.current)
       activity = FactoryGirl.create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
       ff_brand = FactoryGirl.create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)
@@ -50,6 +51,7 @@ describe FormField::Marque do
       marque1 = FactoryGirl.create(:marque, brand: brand)
       marque2 = FactoryGirl.create(:marque, brand: brand)
       campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company: Company.current)
+      campaign.activity_types << @activity_type
       venue = FactoryGirl.create(:venue, place: FactoryGirl.create(:place), company: Company.current)
       activity = FactoryGirl.create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
       ff_brand = FactoryGirl.create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)

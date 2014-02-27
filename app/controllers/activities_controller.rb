@@ -4,7 +4,7 @@ class ActivitiesController < FilteredController
 
   include DeactivableHelper
 
-  helper_method :assignable_users
+  helper_method :assignable_users, :activity_types
 
   def form
     @activity = Activity.new(permitted_params)
@@ -12,11 +12,19 @@ class ActivitiesController < FilteredController
     render layout: false
   end
 
-  def assignable_users
-    current_company.company_users.active.joins(:user).includes(:user).order('users.first_name ASC, users.last_name ASC')
-  end
-
   protected
+    def assignable_users
+      current_company.company_users.active.joins(:user).includes(:user).order('users.first_name ASC, users.last_name ASC')
+    end
+
+    def activity_types
+      if parent.is_a?(Event)
+        parent.campaign.activity_types.order('activity_types.name ASC')
+      else
+        current_company.activity_types.active.order(:name)
+      end
+    end
+
     def permitted_params
       params.permit(activity: [:activity_type_id, {results_attributes: [:id, :form_field_id, :value, value: []]}, :campaign_id, :company_user_id, :activity_date])[:activity]
     end

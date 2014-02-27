@@ -8,6 +8,7 @@ describe "User" do
     subject(:ability){ Ability.new(user) }
     let(:user){ nil }
     let(:company) { FactoryGirl.create(:company) }
+    let(:other_company) { FactoryGirl.create(:company) }
     let(:event){ FactoryGirl.create(:event, campaign: campaign, company: company, place_id: place.id) }
     let(:place){ FactoryGirl.create(:place) }
     let(:campaign){ FactoryGirl.create(:campaign, company: company) }
@@ -90,7 +91,7 @@ describe "User" do
 
       it { should be_able_to(:create, Activity) }
       it { should be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: company.id), activitable: FactoryGirl.create(:venue, place: place, company: company), company_user: FactoryGirl.create(:company_user,  company: company))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: company.id), activitable: FactoryGirl.create(:venue, place: place, company_id: company.id + 1), company_user: FactoryGirl.create(:company_user,  company: company))) }
+      it { should_not be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: other_company.id), activitable: FactoryGirl.create(:venue, place: place, company_id: other_company.id ), company_user: FactoryGirl.create(:company_user,  company_id: other_company.id))) }
 
     end
 
@@ -111,7 +112,7 @@ describe "User" do
           ability.should be_able_to(:add_kpi, campaign)
           ability.should be_able_to(:remove_kpi, campaign)
         end
-        
+
         it "should be able to activate activity types if has the :activate_kpis permission" do
           campaign = FactoryGirl.create(:campaign, company: company)
           ability.should_not be_able_to(:add_activity_type, campaign)

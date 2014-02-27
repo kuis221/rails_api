@@ -22,7 +22,10 @@ class Activity < ActiveRecord::Base
 
   has_many :results, class_name: 'ActivityResult'
 
-  validates :activity_type_id, numericality: true, presence: true
+  validates :activity_type_id, numericality: true, presence: true,
+    :inclusion => { :in => proc { |activity| activity.campaign.present? ? activity.campaign.activity_type_ids : (activity.company.present? ? activity.company.activity_type_ids : []) } }
+
+  validates :campaign_id, presence: true, numericality: true, if: -> (activitable) { activitable_type == 'Event' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
@@ -33,9 +36,11 @@ class Activity < ActiveRecord::Base
 
   after_initialize :set_default_values
 
-  delegate :company_id, to: :activitable
+  delegate :company_id, :company, to: :activitable, allow_nil: true
 
   accepts_nested_attributes_for :results
+
+  before_validation :delegate_campaign_id_from_event
 
   def activate!
     update_attribute :active, true
@@ -57,6 +62,13 @@ class Activity < ActiveRecord::Base
       if new_record?
         self.activity_date ||= Date.today
         self.company_user_id ||= User.current.current_company_user.id if User.current.present?
+      end
+    end
+
+    def delegate_campaign_id_from_event
+      if activitable.is_a?(Event)
+        self.campaign = activitable.campaign
+        self.campaign_id = activitable.campaign_id
       end
     end
 end

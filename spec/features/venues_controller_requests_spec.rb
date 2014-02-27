@@ -70,6 +70,8 @@ feature "Venues Section", js: true, search: true do
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
 
+      campaign.activity_types << activity_type
+
       visit venue_path(venue)
 
       expect(page).to_not have_content('Activity Type #1')
@@ -115,8 +117,11 @@ feature "Venues Section", js: true, search: true do
       FactoryGirl.create(:marque, name: 'Marque #2 for Brand', brand: brand)
       campaign.brands << brand
 
+      activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
+      campaign.activity_types << activity_type
+
       activity = FactoryGirl.create(:activity,
-        activity_type: FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company),
+        activity_type: activity_type,
         activitable: venue,
         campaign: campaign,
         company_user: @company_user,

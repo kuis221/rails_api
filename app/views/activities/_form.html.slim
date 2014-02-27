@@ -1,36 +1,42 @@
 #form-container
-  = simple_form_for [parent, resource], remote: true do |f|
-    = f.error_notification
-    = resource.errors.full_messages.join("<br />").html_safe
+    = simple_form_for [parent, resource], remote: true do |f|
+      - if activity_types.any?
+        = f.error_notification
+        = resource.errors.full_messages.join("<br />").html_safe
 
-    .form-inputs
-      .large-inputs
-        = f.input :activity_type_id, collection: current_company.activity_types.active.order(:name), input_html: {class: 'chosen-enabled'}, disabled: (resource.new_record? ? false : true)
-
-    - if resource.activity_type.present?
-      .large-inputs
-        - if parent.is_a?(Venue)
-          = f.input :campaign_id, collection: current_company.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
-        - else
-          = f.input :campaign_id, as: :hidden, wrapper: false, value: parent.campaign_id
-      - resource.results_for_type.each do |result|
-        = f.simple_fields_for :results, result do |rf|
+        .form-inputs
           .large-inputs
-            = rf.input :value, result.form_field.field_options(result)
-            = rf.input :form_field_id, as: :hidden, wrapper: false
-      .row-fluid
-        .span8
-          = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
-        .span4
-          = f.input :activity_date, input_html: {value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+            = f.input :activity_type_id, collection: activity_types, input_html: {class: 'chosen-enabled'}, disabled: (resource.new_record? ? false : true)
 
-      .form-actions
-        = f.button :submit, id: 'create-activity-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
-        = "&nbsp;".html_safe
-        = f.button :button, 'Cancel', class: 'btn btn-cancel'
-    - else
-      .form-actions
-        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+        - if resource.activity_type.present?
+          .large-inputs
+            - if parent.is_a?(Venue)
+              = f.input :campaign_id, collection: current_company.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
+            - else
+              = f.input :campaign_id, as: :hidden, wrapper: false, value: parent.campaign_id
+          - resource.results_for_type.each do |result|
+            = f.simple_fields_for :results, result do |rf|
+              .large-inputs
+                = rf.input :value, result.form_field.field_options(result)
+                = rf.input :form_field_id, as: :hidden, wrapper: false
+          .row-fluid
+            .span8
+              = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+            .span4
+              = f.input :activity_date, input_html: {value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+
+          .form-actions
+            = f.button :submit, id: 'create-activity-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+            = "&nbsp;".html_safe
+            = f.button :button, 'Cancel', class: 'btn btn-cancel'
+        - else
+          .form-actions
+            = f.button :button, 'Cancel', class: 'btn btn-cancel'
+      - else
+        p There are not activity types available.
+
+        .form-actions
+          = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
   $('#activity_activity_type_id').off('change').on('change', function(e){

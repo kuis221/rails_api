@@ -7,6 +7,7 @@ feature 'Events section' do
   let(:company_user) { user.company_users.first }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
+  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -929,10 +930,18 @@ feature 'Events section' do
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
 
+      scenario 'should not display the activities section if the campaigns have no activity types assigned' do
+        visit event_path(event)
+        expect(page).to have_no_selector('h3', text: 'ACTIVITIES')
+
+        campaign.activity_types << FactoryGirl.create(:activity_type, company: company)
+
+        visit event_path(event)
+        expect(page).to have_selector('h3', text: 'ACTIVITIES')
+      end
+
       scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
         FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
-        campaign = FactoryGirl.create(:campaign, company: company)
-        event = FactoryGirl.create(:event, campaign: campaign, company: company)
         brand1 = FactoryGirl.create(:brand, name: 'Brand #1')
         brand2 = FactoryGirl.create(:brand, name: 'Brand #2')
         FactoryGirl.create(:marque, name: 'Marque #1 for Brand #2', brand: brand2)
@@ -948,6 +957,8 @@ feature 'Events section' do
         dropdown_field = FactoryGirl.create(:form_field, name: 'Form Field #2', type: 'FormField::Dropdown', fieldable: activity_type, ordering: 4)
         FactoryGirl.create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
         FactoryGirl.create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
+
+        campaign.activity_types << activity_type
 
         visit event_path(event)
 
@@ -985,15 +996,16 @@ feature 'Events section' do
 
       scenario 'allows the user to edit an activity from an Event' do
         FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
-        campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
-        event = FactoryGirl.create(:event, campaign: campaign, company: company)
         brand = FactoryGirl.create(:brand, name: 'Unique Brand')
         FactoryGirl.create(:marque, name: 'Marque #1 for Brand', brand: brand)
         FactoryGirl.create(:marque, name: 'Marque #2 for Brand', brand: brand)
         campaign.brands << brand
 
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
+        campaign.activity_types << activity_type
+
         activity = FactoryGirl.create(:activity,
-          activity_type: FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company),
+          activity_type: activity_type,
           activitable: event,
           campaign: campaign,
           company_user: company_user,

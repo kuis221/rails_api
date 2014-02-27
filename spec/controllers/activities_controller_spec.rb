@@ -5,6 +5,7 @@ describe ActivitiesController do
     @user = sign_in_as_user
     @company = @user.companies.first
     @company_user = @user.company_users.first
+    campaign.activity_types << activity_type
   end
 
   let(:activity_type) {FactoryGirl.create(:activity_type, company: @company)}
@@ -65,7 +66,8 @@ describe ActivitiesController do
     let(:another_campaign) {FactoryGirl.create(:campaign, company: @company)}
 
     it "must update the activity attributes" do
-      put 'update', venue_id: venue.to_param, id: activity.to_param, activity: {campaign_id: another_campaign.to_param, company_user_id: another_user.to_param, activity_date: '12/31/2013'}, format: :js
+      another_campaign.activity_types << activity_type
+      put 'update', venue_id: venue.to_param, id: activity.to_param, activity: {campaign_id: another_campaign.id, company_user_id: another_user.id, activity_date: '12/31/2013'}, format: :js
       assigns(:activity).should == activity
       response.should be_success
       activity.reload

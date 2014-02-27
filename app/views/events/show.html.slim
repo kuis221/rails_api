@@ -55,7 +55,7 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  - if can?(:show, Activity)
+  - if can?(:show, Activity) && resource.campaign.activity_types.any?
     #event-activities.details_box
       = render 'activities'
 
