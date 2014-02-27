@@ -193,12 +193,24 @@ $.widget 'nmk.reportBuilder',
 
 	_placeFieldSettings: () ->
 		element = @fieldSettings.fieldElement
+		sidebar = @element.find('.sidebar')
 		leftFix = -parseInt((@fieldSettings.outerWidth()-element.outerWidth())/2)
-		@fieldSettings.css({
-			position: 'absolute', 
-			top: element.position().top+element.outerHeight(),
-			left: element.position().left+leftFix
-		})
+		left = element.position().left
+		if sidebar.css('position') is 'fixed'
+			top = element.offset().top+element.outerHeight()
+			if top+@fieldSettings.outerHeight()+100 > $(window).height()
+				top = $(window).height() - @fieldSettings.outerHeight() - 100
+			@fieldSettings.css({
+				position: 'fixed', 
+				top: top,
+				left: element.offset().left+leftFix
+			})
+		else
+			@fieldSettings.css({
+				position: 'absolute', 
+				top: element.position().top+element.outerHeight(),
+				left: element.position().left+leftFix
+			})
 
 	_getColumns: () -> 
 		$.map $('#report-columns li', @element), (column, i) =>
