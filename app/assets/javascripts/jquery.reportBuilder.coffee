@@ -46,11 +46,12 @@ $.widget 'nmk.reportBuilder',
 					elements = $('#report-values').find('li')
 					ui.draggable.remove()
 				
-				for element in elements
+				for element in elements.get()
 					$("#report-fields li[data-field-id=\"#{$(element).data('field-id')}\"]").removeClass('hidden').show()
-					element.remove()
+					$(element).remove()
 
-				if $('#report-values').find('li').length == 1
+				# For some reason, the count is returning 
+				if $('#report-values').find('li:not(.ui-sortable-placeholder)').length == 0
 					$('#report-columns').find('li[data-field-id=values]').remove()
 
 		@element.find(".draggable-list li").draggable

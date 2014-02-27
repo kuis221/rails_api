@@ -636,9 +636,9 @@ class Event < ActiveRecord::Base
       timezone = Company.current.present? && Company.current.timezone_support? ? 'timezone' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
         start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
-        start_time:   { title: 'Start time' },
-        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
-        end_time:     { title: 'End time' },
+        start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" } },
+        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" } },
+        end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" } },
         event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }
       }

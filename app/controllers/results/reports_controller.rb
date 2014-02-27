@@ -26,6 +26,6 @@ class Results::ReportsController < InheritedResources::Base
         { columns: [:field, :label, :aggregate] },
         { values: [:field, :label, :aggregate] },
         { filters: [:field, :label, :aggregate] }
-      ])[:report]
+      ])[:report] || {}
     end
 end

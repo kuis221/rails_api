@@ -160,12 +160,12 @@ class Report < ActiveRecord::Base
             s = add_joins_scopes(base_events_scope, value)
             if m = /\Akpi:([0-9]+)\z/.match(value['field'])
               if Kpi.promo_hours.id == m[1].to_i
-                value_field = value_aggregate_sql(value['aggregate'], 'promo_hours')
+                value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
               elsif Kpi.events.id == m[1].to_i
                 value_field = value_aggregate_sql(value['aggregate'], '1')
               else
-                value_field = value_aggregate_sql(value['aggregate'], 'scalar_value')
-                s = s.where('kpi_id=?', m[1].to_i)
+                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+                s = s.where('event_results.kpi_id=?', m[1].to_i)
               end
             end
             s.select("ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}], #{i+1}, #{value_field}").group('1').to_sql
@@ -181,7 +181,7 @@ class Report < ActiveRecord::Base
     def add_joins_scopes(s, field_list)
       field_list = [field_list] unless field_list.is_a?(Array)
       fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
-      s = s.joins(:results)  if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
+      s = s.joins(:results) if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
 
       s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
 
@@ -195,6 +195,12 @@ class Report < ActiveRecord::Base
       end
       s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
 
+      [rows,columns].compact.inject{|sum,x| sum + x }.compact.each do |f|
+        if m = /\Akpi:([0-9]+)\z/.match(f['field'])
+          s = s.joins("INNER JOIN event_results er_kpi_#{m[1]} ON er_kpi_#{m[1]}.event_id = events.id AND er_kpi_#{m[1]}.kpi_id=#{m[1]}")
+        end
+      end
+
       fields = [rows, columns].compact.inject{|sum,x| sum + x }
       s
     end
@@ -206,7 +212,9 @@ class Report < ActiveRecord::Base
     end
 
     def table_column_for_field(f)
-      if m = /\A(.*):(.*)\z/.match(f['field'])
+      if m = /\Akpi:([0-9]+)\z/.match(f['field'])
+        ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
+      elsif m = /\A(.*):([a-z_]+)\z/.match(f['field'])
         klass = m[1].classify.constantize
         definition = klass.report_fields[m[2].to_sym]
         definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])

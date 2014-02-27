@@ -128,6 +128,7 @@ feature "Reports", js: true do
         description: 'a resume of events by venue',
         active: true, company: @company)
       page.driver.resize(1024, 1500)
+      Kpi.create_global_kpis
     end
 
     scenario "search for fields in the fields list" do
@@ -165,13 +166,13 @@ feature "Reports", js: true do
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
       within ".sidebar" do
-        find("li", text: 'Kpi #1').drag_to field_list('columns')
+        expect(field_list('columns')).to have_no_content('Values')
+        find("li", text: 'Kpi #1').drag_to field_list('values')
         expect(field_list('fields')).to have_no_content('Kpi #1')
         find("li", text: 'Kpi #2').drag_to field_list('rows')
         expect(field_list('fields')).to have_no_content('Kpi #2')
         find("li", text: 'Kpi #3').drag_to field_list('filters')
         expect(field_list('fields')).to have_no_content('Kpi #3')
-        expect(field_list('columns')).to have_no_content('Values')
         find("li", text: 'Kpi #4').drag_to field_list('values')
         expect(field_list('fields')).to have_no_content('Kpi #4')
         expect(field_list('columns')).to have_content('Values')
@@ -183,10 +184,9 @@ feature "Reports", js: true do
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
       visit build_results_report_path(@report)
-
       within ".sidebar" do
         # Each KPI should be in the correct list
-        expect(field_list('columns')).to have_content('Kpi #1')
+        expect(field_list('values')).to have_content('Kpi #1')
         expect(field_list('columns')).to have_content('Values')
         expect(field_list('rows')).to have_content('Kpi #2')
         expect(field_list('filters')).to have_content('Kpi #3')
@@ -218,6 +218,46 @@ feature "Reports", js: true do
       expect(field_list('columns')).to have_no_content('Kpi #1')
       expect(field_list('fields')).to have_content('Kpi #1')
     end
+
+    scenario "adding a value should automatically add the 'Values' column and removing it should remove the values" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit build_results_report_path(@report)
+
+      find("li", text: 'Kpi #1').drag_to field_list('values')
+
+      # A "Values" field should have been created in the columns list
+      expect(field_list('columns')).to have_content('Values')
+      expect(field_list('values')).to have_content('Kpi #1')
+
+      # Drop out the "Values" field from the columns and make sure the values are removed
+      # from the values list
+      field_list('columns').find("li", text: 'Values').drag_to find('#report-container')
+      expect(field_list('columns')).to have_no_content('Values')
+      expect(field_list('values')).to have_no_content('Kpi #1')
+    end
+
+    feature "preview" do
+      it "should display a preview as the user make changes on the report" do
+        FactoryGirl.create(:event, company: @company, results: {impressions: 100})
+        visit build_results_report_path(@report)
+
+        expect(find(report_preview)).to have_content('Drag and drop filters, columns, rows and values to create your report.')
+
+        field_list('fields').find("li", text: 'Impression').drag_to field_list('values')
+        field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
+
+        expect(find(report_preview)).to have_content('Drag and drop filters, columns, rows and values to create your report.')
+
+        field_list('fields').find('li[data-field-id="place:name"]').drag_to field_list('rows')
+
+        within report_preview do
+          expect(page).to have_no_content('Drag and drop filters, columns, rows and values to create your report.')
+          expect(page).to have_selector('th', text: 'IMPRESSIONS')
+          expect(page).to have_selector('th', text: 'INTERACTIONS')
+        end
+      end
+    end
   end
 
 
@@ -234,7 +274,7 @@ feature "Reports", js: true do
   end
 
   def report_preview
-    "#field-search-input"
+    "#report-container"
   end
 
   def field_list(name)

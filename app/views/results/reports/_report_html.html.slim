@@ -1,9 +1,8 @@
-- row_levels_count = @report.rows.count
+- row_levels_count = resource.rows.count
 table.table.report-table class="#{row_levels_count > 1 ? 'multi-row' : ''}"
-  - build_report_header_cols(@report.report_columns_hash)
+  - build_report_header_cols(resource.report_columns_hash)
   - @report_header_cols_rows.each_with_index do |row, index|
-    - p "#{index} != #{@report.columns.index{|v| v['field'] == 'values' }}"
-    - if @report.values.count > 1 || index != @report.columns.index{|v| v['field'] == 'values' }
+    - if resource.values.count > 1 || index != resource.columns.index{|v| v['field'] == 'values' }
       tr
         th
         = row.join.html_safe

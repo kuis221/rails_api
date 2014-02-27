@@ -48,7 +48,7 @@ describe Report do
       Kpi.create_global_kpis
     end
     it "returns nil if report has no rows, values and columns" do
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [],
@@ -60,7 +60,7 @@ describe Report do
     end
 
     it "returns nil if report has rows but not values and columns" do
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       report = FactoryGirl.create(:report,
         company: company,
         rows:    [{"field"=>"event:start_date", "label"=>"Start date"}]
@@ -72,9 +72,9 @@ describe Report do
 
     it "returns a line for each different day where a event happens" do
       FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
-        results: {impressions: 100, interacitons: 50})
+        results: {impressions: 100, interactions: 50})
       FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
-        results: {impressions: 200, interacitons: 150})
+        results: {impressions: 200, interactions: 150})
       report = FactoryGirl.create(:report,
         company: company,
         columns: [{"field"=>"values", "label"=>"Values"}],
@@ -91,7 +91,7 @@ describe Report do
     it "returns a line for each event's user when adding a user field as a row" do
       user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
       user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
@@ -110,8 +110,8 @@ describe Report do
       user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
       user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))
       team = FactoryGirl.create(:team, company: company)
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
-      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 300}) # Another event
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300}) # Another event
       team.users << [user1, user2]
       event.teams << team
       report = FactoryGirl.create(:report,
@@ -130,8 +130,8 @@ describe Report do
 
     it "returns a line for each team  when adding a team field as a row and the team is part of the event" do
       team = FactoryGirl.create(:team, name: 'Power Rangers', company: company)
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
-      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 300}) # Another event
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300}) # Another event
       event.teams << team
       report = FactoryGirl.create(:report,
         company: company,
@@ -152,19 +152,19 @@ describe Report do
       team.users << user
 
       # A event with members but no teams
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       event.users << user
 
       # A event with a team without members
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 200, interacitons: 100})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 200, interactions: 100})
       event.teams << team2
 
       # A event with a team with members
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 150})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 150})
       event.teams << team
 
       # A event without teams or members
-      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 150})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 150})
       report = FactoryGirl.create(:report,
         company: company,
         columns: [{"field"=>"values", "label"=>"Values"}],
@@ -183,7 +183,7 @@ describe Report do
     it "returns the values for each report's row" do
       user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
       user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
@@ -201,7 +201,7 @@ describe Report do
     it "correctly handles multiple rows with fields from the event and users" do
       user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
       user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       event.users << [user1, user2]
       report = FactoryGirl.create(:report,
         company: company,
@@ -218,8 +218,8 @@ describe Report do
 
     it "returns a line for each role" do
       user = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, name: 'Market Manager'))
-      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interacitons: 50})
-      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interacitons: 300}) # Another event
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300}) # Another event
       event.users << user
       report = FactoryGirl.create(:report,
         company: company,
@@ -233,14 +233,54 @@ describe Report do
       ]
     end
 
+    it "should accept kpis as rows" do
+      FactoryGirl.create(:event, campaign: campaign,
+        results: {impressions: 123, interactions: 50})
+
+      FactoryGirl.create(:event, campaign: campaign,
+        results: {impressions: 321, interactions: 25})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"kpi_#{Kpi.interactions.id}"=>"25", "values" => [321.0]},
+        {"kpi_#{Kpi.interactions.id}"=>"50", "values" => [123.0]}
+      ]
+    end
+
+    it "should accept kpis as columns" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 1'),
+        results: {impressions: 123, interactions: 50})
+
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 2'),
+        results: {impressions: 321, interactions: 25})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}, {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        rows:    [{"field"=>"place:name", "label"=>"Interactions"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>"Bar 1", "kpi_#{Kpi.interactions.id}"=>"50", "values" => [nil, 123.0]},
+        {"place_name"=>"Bar 2", "kpi_#{Kpi.interactions.id}"=>"25", "values" => [321.0, nil]}
+      ]
+    end
+
     describe "with columns" do
       it "returns all the values grouped by venue state" do
         place_in_ca = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
         place_in_tx = FactoryGirl.create(:place, city: 'Houston', state: 'Texas')
         FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
-          place: place_in_ca, results: {impressions: 100, interacitons: 50})
+          place: place_in_ca, results: {impressions: 100, interactions: 50})
         FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
-          place: place_in_tx, results: {impressions: 200, interacitons: 150})
+          place: place_in_tx, results: {impressions: 200, interactions: 150})
         report = FactoryGirl.create(:report,
           company: company,
           columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
@@ -250,15 +290,15 @@ describe Report do
         )
         page = report.fetch_page
         expect(page).to eql [
-            {"event_start_date"=>"2014/01/01", "place_state"=>"California", "values" => [nil, nil, 100.00, 0.0]},
-            {"event_start_date"=>"2014/01/12", "place_state"=>"Texas", "values" => [200.00, 0.0, nil, nil]}
+            {"event_start_date"=>"2014/01/01", "place_state"=>"California", "values" => [nil, nil, 100.00, 50.0]},
+            {"event_start_date"=>"2014/01/12", "place_state"=>"Texas", "values" => [200.00, 150.0, nil, nil]}
         ]
       end
 
       it "returns a line for each team  when adding a team field as a row and the team is part of the event" do
         team = FactoryGirl.create(:team, name: 'Power Rangers', company: company)
         event = FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
-          results: {impressions: 100, interacitons: 50})
+          results: {impressions: 100, interactions: 50})
         event.teams << team
         report = FactoryGirl.create(:report,
           company: company,
