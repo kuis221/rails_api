@@ -95,7 +95,7 @@ class Report < ActiveRecord::Base
 
       empty_values = Hash[report_columns.map{|k| [k, nil]}]
 
-      key_fields = (rows+columns).compact.map{|f| field_to_sql_name(f['field']) } - ['values']
+      key_fields = rows.compact.map{|f| field_to_sql_name(f['field']) } - ['values']
       column_fields = columns.map{|f| field_to_sql_name(f['field']) }
       value_fields = Hash[values.map{|f| [field_to_sql_name(f['field']), f['label']] }]
       rows = []
@@ -107,7 +107,7 @@ class Report < ActiveRecord::Base
             row['values'] = values.values
             rows.push row
           end
-          row=result.reject{|k,v| value_fields.keys.include?(k) }
+          row=result.select{|k,v| key_fields.include?(k) }
           values = empty_values.dup
         end
         value_fields.each do |name, label|
@@ -184,6 +184,7 @@ class Report < ActiveRecord::Base
       s = s.joins(:results) if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
 
       s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
+      s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.map{|k,v| "campaign:#{k}" }.include?(v['field'])}
 
       # Join with users/teams table
       include_roles = fields.any?{|v| Role.report_fields.map{|k,v| "role:#{k}" }.include?(v['field'])}

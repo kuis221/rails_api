@@ -43,7 +43,7 @@ describe Report do
 
   describe "#fetch_page" do
     let(:company) { FactoryGirl.create(:company) }
-    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
     before do
       Kpi.create_global_kpis
     end
@@ -233,6 +233,29 @@ describe Report do
       ]
     end
 
+    it "returns a line for each campaign" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'Texas', city: 'Houston'),
+        results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'California', city: 'Los Angeles'),
+        results: {impressions: 200, interactions: 75})
+      FactoryGirl.create(:event, place: FactoryGirl.create(:place, state: 'California', city: 'San Francisco'),
+        campaign: FactoryGirl.create(:campaign, name: 'Ron Centenario FY12', company: company),
+        results: {impressions: 300, interactions: 150})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[200.0, 100.0]},
+       {"campaign_name"=>"Ron Centenario FY12", "values"=>[300.0, nil]}
+      ]
+
+      expect(report.report_columns).to eql ["California||Impressions", "Texas||Impressions"]
+    end
+
     it "should accept kpis as rows" do
       FactoryGirl.create(:event, campaign: campaign,
         results: {impressions: 123, interactions: 50})
@@ -268,8 +291,8 @@ describe Report do
       )
       page = report.fetch_page
       expect(page).to eql [
-        {"place_name"=>"Bar 1", "kpi_#{Kpi.interactions.id}"=>"50", "values" => [nil, 123.0]},
-        {"place_name"=>"Bar 2", "kpi_#{Kpi.interactions.id}"=>"25", "values" => [321.0, nil]}
+        {"place_name"=>"Bar 1", "values" => [nil, 123.0]},
+        {"place_name"=>"Bar 2", "values" => [321.0, nil]}
       ]
     end
 
@@ -290,8 +313,8 @@ describe Report do
         )
         page = report.fetch_page
         expect(page).to eql [
-            {"event_start_date"=>"2014/01/01", "place_state"=>"California", "values" => [nil, nil, 100.00, 50.0]},
-            {"event_start_date"=>"2014/01/12", "place_state"=>"Texas", "values" => [200.00, 150.0, nil, nil]}
+            {"event_start_date"=>"2014/01/01", "values" => [nil, nil, 100.00, 50.0]},
+            {"event_start_date"=>"2014/01/12", "values" => [200.00, 150.0, nil, nil]}
         ]
       end
 
@@ -308,7 +331,7 @@ describe Report do
         )
         page = report.fetch_page
         expect(page).to eql [
-          {"event_start_date"=>"2014/01/01", "team_name"=>"Power Rangers", "values" => [100.00]}
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]}
         ]
       end
     end
