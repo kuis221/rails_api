@@ -1,5 +1,5 @@
 = link_to "Add Staff", new_member_campaign_path(resource), remote: true, class: 'btn btn-primary', title: 'Add Staff'
-= render layout: 'goalable_list', locals: { goalables: resource.staff, kpis: resource.active_kpis } do |goalable|
+= render layout: 'goalable_list', locals: { goalables: resource.staff, kpis: resource.active_kpis, activity_types: [] } do |goalable|
   - if resource.users.include?(goalable)
     - if goalable.is_a?(CompanyUser)
       = link_to '',  delete_member_campaign_path(resource.to_param, member_id: goalable.to_param), remote: true, method: :delete, remote: true, class: 'icon-remove-sign delete-buttton'

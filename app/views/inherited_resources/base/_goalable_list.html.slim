@@ -3,7 +3,7 @@ ul.goalable-list
   - goalables.each do |goalable|
     - goals = goalable.goals.in(resource)
     - kpi_goals = goals.for_kpis(kpis)
-    - activity_type_goals = goals.for_activity_types(activity_types) if defined?(activity_types)
+    - activity_type_goals = goals.for_activity_types(activity_types)
     li id="goal-#{goalable.class.name.underscore}-#{goalable.id}"
       .goalable-name= goalable.name
       .goals-controls
@@ -15,32 +15,32 @@ ul.goalable-list
           = yield goalable
       .goals
         .goals-inner
-          - kpis.each do |kpi|
-            - if kpi.is_segmented? || kpi.kpi_type == 'count'
-              - segment_goals =  goals.for_kpis_segments(kpi)
-              .kpi-segment-group
-                span class="goal-title"= kpi.name.upcase
-                - kpi.kpis_segments.each do |segment|
-                  - goal = segment_goals.detect{|g| g.kpis_segment_id == segment.id}
-                  span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : ''}" id="kpi-goal-#{goalable.id}-#{kpi.id}-#{segment.id}"
-                    label
-                      input.kpi-goal-field class="#{kpi.kpi_type}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-segment-kpi-id="#{segment.id}" data-id="#{goal.id}" data-parent-id="#{resource.id}"  data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
-                      span.kpi-name= segment.text.upcase
-            - else
-              - goal = kpi_goals.detect{|g| g.kpi_id == kpi.id && g.kpis_segment_id.nil?}
-              span class="kpi-goal #{kpi.module ? ('kpi-' + kpi.module) : '' }" id="kpi-goal-#{goalable.id}-#{kpi.id}"
+          - (kpis+activity_types).sort_by(&:name).each do |item|
+            - if item.is_a?(Kpi)
+              - if item.is_segmented? || item.kpi_type == 'count'
+                - segment_goals =  goals.for_kpis_segments(item)
+                .kpi-segment-group
+                  span class="goal-title"= item.name.upcase
+                  - item.kpis_segments.each do |segment|
+                    - goal = segment_goals.detect{|g| g.kpis_segment_id == segment.id}
+                    span class="kpi-goal #{item.module ? ('kpi-' + item.module) : ''}" id="kpi-goal-#{goalable.id}-#{item.id}-#{segment.id}"
+                      label
+                        input.kpi-goal-field class="#{item.kpi_type}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{item.id}" data-kpi-name="#{item.name}" data-segment-kpi-id="#{segment.id}" data-id="#{goal.id}" data-parent-id="#{resource.id}"  data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
+                        span.kpi-name= segment.text.upcase
+              - else
+                - goal = kpi_goals.detect{|g| g.kpi_id == item.id && g.kpis_segment_id.nil?}
+                span class="kpi-goal #{item.module ? ('kpi-' + item.module) : '' }" id="kpi-goal-#{goalable.id}-#{item.id}"
+                  span class="goal-title"
+                  label
+                    input.kpi-goal-field class="#{item.kpi_type} #{item.capture_mechanism}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{item.id}" data-kpi-name="#{item.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
+                    span.kpi-name= item.name.upcase
+            - elsif item.is_a?(ActivityType)
+              - goal = activity_type_goals.detect{|g| g.activity_type_id == item.id}
+              span class="activity-type-goal" id="activity-type-goal-#{goalable.id}-#{item.id}"
                 span class="goal-title"
                 label
-                  input.kpi-goal-field class="#{kpi.kpi_type} #{kpi.capture_mechanism}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
-                  span.kpi-name= kpi.name.upcase
-          - if defined?(activity_types)
-            - activity_types.each do |activity_type|
-              - goal = activity_type_goals.detect{|g| g.activity_type_id == activity_type.id}
-              span class="activity-type-goal" id="activity-type-goal-#{goalable.id}-#{activity_type.id}"
-                span class="goal-title"
-                label
-                  input.activity-type-goal-field class="integer" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-activity-type-id="#{activity_type.id}" data-activity-type-name="#{activity_type.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
-                  span.kpi-name= activity_type.name.upcase
+                  input.activity-type-goal-field class="integer" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-activity-type-id="#{item.id}" data-activity-type-name="#{item.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
+                  span.activity-type-name= item.name.upcase
 
 javascript:
   $('ul.goalable-list').find('.kpi-goal-field, .activity-type-goal-field').each(function(index, field) {

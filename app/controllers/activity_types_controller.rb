@@ -1,5 +1,5 @@
 class ActivityTypesController < FilteredController
-  before_filter :load_campaign, only: [:new, :update, :edit, :create]
+  before_filter :load_campaign, only: [:edit, :update]
   respond_to :js, only: [:edit, :update]
 
   def load_campaign
