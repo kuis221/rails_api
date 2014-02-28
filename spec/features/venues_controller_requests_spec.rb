@@ -59,8 +59,7 @@ feature "Venues Section", js: true, search: true do
       FactoryGirl.create(:marque, name: 'Marque #1 for Brand #2', brand: brand2)
       FactoryGirl.create(:marque, name: 'Marque #2 for Brand #2', brand: brand2)
       FactoryGirl.create(:marque, name: 'Marque alone', brand: brand1)
-      campaign.brands << brand1
-      campaign.brands << brand2
+      campaign.brands << [brand1, brand2]
 
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
       FactoryGirl.create(:form_field, name: 'Brand', type: 'FormField::Brand', fieldable: activity_type, ordering: 1)
