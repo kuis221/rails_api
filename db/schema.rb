@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140225153028) do
+ActiveRecord::Schema.define(:version => 20140227205714) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -443,9 +443,7 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.datetime "local_end_at"
   end
 
-  add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
-  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "form_field_options", :force => true do |t|
@@ -476,8 +474,8 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.integer  "kpi_id"
     t.integer  "kpis_segment_id"
     t.decimal  "value"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.integer  "goalable_id"
     t.string   "goalable_type"
     t.integer  "parent_id"
@@ -485,6 +483,7 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.string   "title"
     t.date     "start_date"
     t.date     "due_date"
+    t.integer  "activity_type_id"
   end
 
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
@@ -633,10 +632,7 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.boolean  "is_location"
   end
 
-  add_index "places", ["city"], :name => "index_places_on_city"
-  add_index "places", ["country"], :name => "index_places_on_country"
   add_index "places", ["reference"], :name => "index_places_on_reference"
-  add_index "places", ["state"], :name => "index_places_on_state"
 
   create_table "read_marks", :force => true do |t|
     t.integer  "readable_id"
