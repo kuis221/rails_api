@@ -24,7 +24,7 @@ class ActivityType < ActiveRecord::Base
   has_many :campaigns, through: :activity_type_campaigns
 
   # Goals relationships
-  has_one :goal, dependent: :destroy
+  has_one :goal, conditions: { parent_id: nil }, dependent: :destroy
 
   accepts_nested_attributes_for :goal
 
