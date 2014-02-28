@@ -68,6 +68,7 @@ javascript:
   $('.form-field-brand').off('change').on('change', function() {
     if (selectedOption = this.value) {
       $.get('/brands/'+selectedOption+'/marques.json', function(options) {
+        console.log(JSON.stringify(options));
         marques = $('select.form-field-marque');
         marques.empty();
         for(var i in options) {
