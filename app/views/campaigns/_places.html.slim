@@ -1,6 +1,6 @@
 - if can?(:add_place, resource)
   = link_to "Add Places", new_campaign_placeable_path(resource), remote: true, class: 'btn btn-primary', title: 'Add Staff'
-= render layout: 'goalable_list', locals: { goalables: resource.areas_and_places, kpis: resource.active_kpis } do |goalable|
+= render layout: 'goalable_list', locals: { goalables: resource.areas_and_places, kpis: resource.active_kpis, activity_types: resource.activity_types } do |goalable|
   - if can?(:remove_place, resource)
     - if goalable.is_a?(Area)
       = link_to '',  remove_area_campaign_placeables_path(resource, area: goalable.id), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Area'
