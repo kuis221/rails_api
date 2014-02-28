@@ -151,6 +151,14 @@ feature "Reports", js: true do
       within report_fields do
         expect(page).to have_content('ABC KPI')
       end
+
+      fill_in 'field_search', with: 'venue'
+      within report_fields do
+        expect(page).to have_no_content('ABC')
+        expect(page).to have_content('Name')
+        expect(page).to have_content('State')
+        expect(page).to have_content('City')
+      end
     end
 
     scenario "drag fields to the different field lists" do
@@ -171,10 +179,13 @@ feature "Reports", js: true do
         expect(field_list('fields')).to have_no_content('Kpi #1')
         find("li", text: 'Kpi #2').drag_to field_list('rows')
         expect(field_list('fields')).to have_no_content('Kpi #2')
+        find('li[data-group="Venue"]', text: 'Name').drag_to field_list('rows')
+        expect(field_list('rows')).to have_content('Venue Name')
         find("li", text: 'Kpi #3').drag_to field_list('filters')
         expect(field_list('fields')).to have_no_content('Kpi #3')
         find("li", text: 'Kpi #4').drag_to field_list('values')
         expect(field_list('fields')).to have_no_content('Kpi #4')
+        expect(field_list('values')).to have_content('Sum of Kpi #4')
         expect(field_list('columns')).to have_content('Values')
       end
 
@@ -190,7 +201,7 @@ feature "Reports", js: true do
         expect(field_list('columns')).to have_content('Values')
         expect(field_list('rows')).to have_content('Kpi #2')
         expect(field_list('filters')).to have_content('Kpi #3')
-        expect(field_list('values')).to have_content('Kpi #4')
+        expect(field_list('values')).to have_content('Sum of Kpi #4')
 
         # and they should not be in the source fields lists
         expect(field_list('fields')).to have_no_content('Kpi #1')
@@ -199,6 +210,21 @@ feature "Reports", js: true do
         expect(field_list('fields')).to have_no_content('Kpi #4')
         expect(field_list('fields')).to have_content('Kpi #5')
       end
+    end
+
+    scenario "user can change the aggregation method for values" do
+      visit build_results_report_path(@report)
+      field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
+      field_list('values').find('.field-settings-btn').click
+      within ".report-field-settings" do
+        select_from_chosen('Average', from: 'Summarize by')
+        find_field('Label').value.should == 'Average of Impressions'
+      end
+      find('body').click
+      click_button 'Save'
+      wait_for_ajax
+      @report.reload
+      expect(@report.values.first).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
     end
 
     scenario "drag fields outside the list to remove it" do

@@ -14,7 +14,7 @@ $.widget 'nmk.reportBuilder',
 		@element.find('#field-search-input').on 'keyup', (e) =>
 			value = $(e.target).val().toLowerCase();
 			for li in @element.find("#report-fields li:not(.hidden)")
-				if $(li).text().toLowerCase().search(value) > -1
+				if "#{$(li).data('group')} #{$(li).text()}".toLowerCase().search(value) > -1
 					$(li).show()
 				else
 					$(li).hide()
@@ -26,8 +26,13 @@ $.widget 'nmk.reportBuilder',
 			receive: (event, ui) =>
 				if ui.helper?
 					ui.item.addClass('hidden').hide()
-					field = {field: ui.item.data('field-id'), label: ui.item.find('.field-label').text(), aggregate: 'sum'}
-					$(event.target).find('li[data-field-id="'+ui.item.data('field-id')+'"]').data('field', field)
+					label = ui.item.find('.field-label').text()
+					if ui.item.data('group') isnt 'KPIs'
+						label = "#{ui.item.data('group')} #{label}"
+					if $(event.target).attr('id') is 'report-values'
+						label = "Sum of #{label}"
+					field = {field: ui.item.data('field-id'), label: label, aggregate: 'sum'}
+					$(event.target).find('li[data-field-id="'+ui.item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
 				true
 			update: (event, ui) =>
 				@reportModified()
@@ -86,8 +91,7 @@ $.widget 'nmk.reportBuilder',
 					next.hide()
 				else
 					next.show()
-				next = next.next('tr')		
-
+				next = next.next('tr')
 
 		@_setListItems 'rows', @options.rows
 		@_setListItems 'values', @options.values
@@ -143,9 +147,9 @@ $.widget 'nmk.reportBuilder',
 
 		formFields = []
 		formFields.push $('<div class="control-group">').
-							append($('<label class="control-label">').text('Label'),
+							append($('<label class="control-label" for="report-field-label">').text('Label'),
 								$('<div class="controls">').append(
-									$('<input type="text" name="report-field-label">').val(field.label).
+									$('<input type="text" name="report-field-label" id="report-field-label">').val(field.label).
 										on 'keyup', (e) => 
 											field.label = e.target.value
 											fieldElement.find('.field-label').text(e.target.value)
@@ -155,9 +159,9 @@ $.widget 'nmk.reportBuilder',
 
 		if listName in ['report-values']
 			formFields.push $('<div class="control-group">').
-								append(	$('<label class="control-label">').text('Summarize by'),
+								append(	$('<label class="control-label" for="report-field-aggregate">').text('Summarize by'),
 										$('<div class="controls">').append(
-											$('<select name="report-field-sorting">').append([
+											$('<select name="report-field-aggregate" id="report-field-aggregate">').append([
 													$('<option value="count">Count</option>').attr('selected', field.aggregate is 'count'),
 													$('<option value="sum">Sum</option>').attr('selected', field.aggregate is 'sum'),
 													$('<option value="avg">Average</option>').attr('selected', field.aggregate is 'avg'),
@@ -165,12 +169,17 @@ $.widget 'nmk.reportBuilder',
 													$('<option value="min">Min</option>').attr('selected', field.aggregate is 'min')
 												])
 												.on 'change', (e) =>
-													field.aggregate = $(e.target).val()
+													$select = if e.target.tagName is 'OPTION' then  $(e.target).parent() else $(e.target)
+													field.aggregate = $select.val()
+													label_field = @fieldSettings.find('input[name="report-field-label"]')
+													label = label_field.val()
+													label = label.replace(/(sum|count|average|max|min) of/i, $('option[value='+$select.val()+']', $select).text() + " of")
+													label_field.val(label).trigger('keyup')
 													@fieldSettings.changed = true
 										)
 								)
 
-		@fieldSettings = $('<div class="report-field-settigns">').hide()
+		@fieldSettings = $('<div class="report-field-settings">').hide()
 			.append(formFields)
 			.appendTo(@element)
 		@fieldSettings.fieldElement = fieldElement
@@ -257,7 +266,7 @@ $.widget 'nmk.reportBuilder',
 				li = $("#report-fields li[data-field-id=\"#{item.field}\"]").clone()
 				li.find('.field-label').text(item.label)
 				list.append li.data('field-id', item.field).data('field', item)
-				$("#report-fields li[data-field-id=\"#{item.field}\"]").hide()
+				$("#report-fields li[data-field-id=\"#{item.field}\"]").addClass('hidden').hide()
 		true
 
 	_showOverlay: () ->
