@@ -82,22 +82,35 @@ class Report < ActiveRecord::Base
   def fetch_page(params={})
     if can_be_generated?
       params[:offset] ||= 0
-      values_columns = values.map{|f| field_to_sql_name(f['field']) + ' numeric' }.join(', ')
       select_cols = (rows+columns.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
-      select_cols += values.map{|f| field_to_sql_name(f['field']) }
+      value_fields = {}
+      values_columns = values.map do |f|
+        if (m = /\Akpi:([0-9]+)\z/.match(f['field'])) && (kpi = load_kpi(m[1])) && kpi.is_segmented?
+          kpi.kpis_segments.map do|s|
+            name = "kpi_#{kpi.id}_#{s.id}"
+            select_cols.push name
+            value_fields[name] = "#{f['label']}: #{s.text}"
+            "#{name} numeric"
+          end
+        else
+          name = field_to_sql_name(f['field'])
+          select_cols.push name
+          value_fields[name] = "#{f['label']}"
+          "#{name} numeric"
+        end
+      end.flatten
 
       results = ActiveRecord::Base.connection.select_all("
         SELECT #{select_cols.join(', ')}
-        FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1
-        ', 'select m from generate_series(1,#{values.count}) m')
-        AS ct(row_labels varchar[], #{values_columns}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}
+        FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
+          'select m from generate_series(1,#{values_columns.count}) m')
+        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}
       ")
 
       empty_values = Hash[report_columns.map{|k| [k, nil]}]
 
       key_fields = rows.compact.map{|f| field_to_sql_name(f['field']) } - ['values']
       column_fields = columns.map{|f| field_to_sql_name(f['field']) }
-      value_fields = Hash[values.map{|f| [field_to_sql_name(f['field']), f['label']] }]
       rows = []
       row = values = previous_key =nil
       results.each do |result|
@@ -154,30 +167,38 @@ class Report < ActiveRecord::Base
     def values_sql
       @values_sql ||= begin
         unless values.nil? || rows.nil? || rows.empty?
-          group_by = rows.each_with_index.map{|r, i| i+1 }.join(', ')
-          values.each_with_index.map do |value, i|
+          i = 0
+          rows_field = "ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}]"
+          values.map do |value|
             value_field = value['field']
-            s = add_joins_scopes(base_events_scope, value)
+            s = add_joins_scopes(base_events_scope, value).group('1')
             if m = /\Akpi:([0-9]+)\z/.match(value['field'])
-              if Kpi.promo_hours.id == m[1].to_i
-                value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
-              elsif Kpi.events.id == m[1].to_i
-                value_field = value_aggregate_sql(value['aggregate'], '1')
-              else
+              kpi = load_kpi(m[1])
+              if kpi.is_segmented?
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                s = s.where('event_results.kpi_id=?', m[1].to_i)
+                kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and kpis_segments.id=?', kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+              else
+                if Kpi.promo_hours.id == m[1].to_i
+                  value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
+                elsif Kpi.events.id == m[1].to_i
+                  value_field = value_aggregate_sql(value['aggregate'], '1')
+                else
+                  value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+                  s = s.where('event_results.kpi_id=?', m[1].to_i)
+                end
+                s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
               end
             elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
               if value['aggregate'] == 'count'
                 value_field = value_aggregate_sql(value['aggregate'], get_column_name_from(value)[0])
               else
-                value_field = value_aggregate_sql(value['aggregate'], '0')
+                value_field = '0'
               end
+              s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
             else
-              value_field = false
+              nil
             end
-            s.select("ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}], #{i+1}, #{value_field}").group('1').to_sql if value_field
-          end
+          end.flatten
         end
       end
     end
@@ -203,6 +224,16 @@ class Report < ActiveRecord::Base
         s = s.joins(:teams)
       end
       s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
+
+      # For segmented KPIs, we also need to join with the segments table
+      field_list.each do |f|
+        if m = /\Akpi:([0-9]+)\z/.match(f['field'])
+          kpi = load_kpi(m[1])
+          if kpi.is_segmented?
+            s = s.joins('INNER JOIN kpis_segments ON kpis_segments.kpi_id=event_results.kpi_id and event_results.kpis_segment_id=kpis_segments.id')
+          end
+        end
+      end
 
       [rows,columns].compact.inject{|sum,x| sum + x }.compact.each do |f|
         if m = /\Akpi:([0-9]+)\z/.match(f['field'])
@@ -246,16 +277,18 @@ class Report < ActiveRecord::Base
     end
 
     def scoped_columns(s, c, prefix='', index=0)
-      self.columns_values ||= {}
-      self.columns_values[index] ||= []
       begin
         if c.any? && column = c.first
           if column['field'] == 'values'
-            self.columns_values[index] += values.map{|v| v['label']}
-            values.map{|v| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}||")}
+            values.map do |v|
+              if (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && (kpi = load_kpi(m[1])) && kpi.is_segmented?
+                kpi.kpis_segments.map{|segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
+              else
+                scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}||")
+              end
+            end
           else
             values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{table_column_for_field(column)[0]}) as value"))
-            self.columns_values[index] += values
             values.map do |v|
               scoped_columns(s.where(table_column_for_field(column)[0] => v), c.slice(1, c.count), "#{prefix}#{v}||", index+1)
             end
@@ -268,6 +301,11 @@ class Report < ActiveRecord::Base
 
     def base_events_scope
       company.events.active
+    end
+
+    def load_kpi(id)
+      @_kpis ||= {}
+      @_kpis[id.to_i] ||= Kpi.find(id)
     end
 
 end

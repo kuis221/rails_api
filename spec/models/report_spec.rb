@@ -288,6 +288,32 @@ describe Report do
       ]
     end
 
+    it "should work when adding segmented fields as a value" do
+      event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', kpis_segments: [
+        FactoryGirl.build(:kpis_segment, text: 'Segment 1', ordering: 1),
+        FactoryGirl.build(:kpis_segment, text: 'Segment 2', ordering: 2)
+      ])
+      campaign.add_kpi kpi
+      results = event.result_for_kpi(kpi)
+      results.first.value = 25
+      results.second.value = 75
+      event.save # Save the event results
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{kpi.id}", "label"=>"Segmented Field", "aggregate"=>"avg"}]
+      )
+
+      page = report.fetch_page
+      expect(report.report_columns).to eql ["Segmented Field: Segment 1", "Segmented Field: Segment 2"]
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[25.0, 75.0]}
+      ]
+    end
+
     it "should accept kpis as rows" do
       FactoryGirl.create(:event, campaign: campaign,
         results: {impressions: 123, interactions: 50})
