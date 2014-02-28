@@ -23,6 +23,18 @@ module GoalableModel
             goal
           end
         end
+
+        def for_activity_types(activity_types)
+          activity_types.map do |activity_type|
+            for_activity_type(activity_type)
+          end
+        end
+
+        def for_activity_type(activity_type)
+          goal = all.select{|r| r.activity_type_id == activity_type.id}.first || self.build({activity_type: activity_type, value: nil}, without_protection: true)
+          goal.activity_type = activity_type
+          goal
+        end
       end
     end
   end

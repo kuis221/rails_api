@@ -129,6 +129,7 @@ en:
         day_item: "Edit Time"
         contact_event: "Edit Contact"
         activity: "Edit Activity"
+        activity_type: "Edit Activity Type"
 
   form_builder:
     modules:

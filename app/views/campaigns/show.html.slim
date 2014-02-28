@@ -102,6 +102,10 @@ javascript:
     window.location.reload(true);
   });
 
+  $(document).on('activity_types:change', function(){
+    window.location.reload(true);
+  });
+
   $(document).on('members:change teams:change', function(){
     $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
   });

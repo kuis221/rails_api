@@ -34,6 +34,30 @@ describe Goal do
   it { should belong_to(:kpi) }
   it { should belong_to(:kpis_segment) }
 
+  context do
+    before { subject.activity_type_id = 1 }
+    it { should_not validate_presence_of(:kpi_id) }
+    it { should_not validate_numericality_of(:kpi_id) }
+  end
+
+  context do
+    before { subject.activity_type_id = nil }
+    it { should validate_presence_of(:kpi_id) }
+    it { should validate_numericality_of(:kpi_id) }
+  end
+
+  context do
+    before { subject.kpi_id = 1 }
+    it { should_not validate_presence_of(:activity_type_id) }
+    it { should_not validate_numericality_of(:activity_type_id) }
+  end
+
+  context do
+    before { subject.kpi_id = nil }
+    it { should validate_presence_of(:activity_type_id) }
+    it { should validate_numericality_of(:activity_type_id) }
+  end
+
 
   describe "set_kpi_id" do
     it "should set the kpi_id if nill and the kpis_segment_id is set" do
