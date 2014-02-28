@@ -26,9 +26,9 @@ class Goal < ActiveRecord::Base
 
   validates :goalable_id, presence: true, numericality: true
   validates :goalable_type, presence: true
-  validates :kpi_id, numericality: true, presence: true, if: "activity_type_id.blank?"
+  validates :kpi_id, numericality: true, presence: true, unless: :activity_type_id
   validates :kpis_segment_id, numericality: true, allow_nil: true
-  validates :activity_type_id, numericality: true, if: "kpi_id.blank?"
+  validates :activity_type_id, numericality: true, presence: true, unless: :kpi_id
   validates :value, numericality: true, allow_nil: true
 
   validates_datetime :start_date, allow_nil: true, allow_blank: true
