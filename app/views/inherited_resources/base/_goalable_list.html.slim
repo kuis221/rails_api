@@ -3,7 +3,7 @@ ul.goalable-list
   - goalables.each do |goalable|
     - goals = goalable.goals.in(resource)
     - kpi_goals = goals.for_kpis(kpis)
-    - activity_type_goals = goals.for_activity_types(activity_types)
+    - activity_type_goals = goals.for_activity_types(activity_types) if defined?(activity_types)
     li id="goal-#{goalable.class.name.underscore}-#{goalable.id}"
       .goalable-name= goalable.name
       .goals-controls
@@ -33,13 +33,14 @@ ul.goalable-list
                 label
                   input.kpi-goal-field class="#{kpi.kpi_type} #{kpi.capture_mechanism}" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-kpi-id="#{kpi.id}" data-kpi-name="#{kpi.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
                   span.kpi-name= kpi.name.upcase
-          - activity_types.each do |activity_type|
-            - goal = activity_type_goals.detect{|g| g.activity_type_id == activity_type.id}
-            span class="activity-type-goal" id="activity-type-goal-#{goalable.id}-#{activity_type.id}"
-              span class="goal-title"
-              label
-                input.activity-type-goal-field class="integer" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-activity-type-id="#{activity_type.id}" data-activity-type-name="#{activity_type.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
-                span.kpi-name= activity_type.name.upcase
+          - if defined?(activity_types)
+            - activity_types.each do |activity_type|
+              - goal = activity_type_goals.detect{|g| g.activity_type_id == activity_type.id}
+              span class="activity-type-goal" id="activity-type-goal-#{goalable.id}-#{activity_type.id}"
+                span class="goal-title"
+                label
+                  input.activity-type-goal-field class="integer" placeholder="- -" type="text" data-goalable-id="#{goalable.id}" data-goalable-type="#{goalable.class.name}" data-activity-type-id="#{activity_type.id}" data-activity-type-name="#{activity_type.name}" data-id="#{goal.id}" data-parent-id="#{resource.id}" data-parent-type="#{resource.class.name}" value="#{goal.value}" data-value="#{goal.value}"
+                  span.kpi-name= activity_type.name.upcase
 
 javascript:
   $('ul.goalable-list').find('.kpi-goal-field, .activity-type-goal-field').each(function(index, field) {
