@@ -288,7 +288,7 @@ describe Report do
       ]
     end
 
-    it "should work when adding segmented fields as a value" do
+    it "should work when adding percentage KPIs as a value" do
       event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
       kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', kpis_segments: [
         FactoryGirl.build(:kpis_segment, text: 'Segment 1', ordering: 1),
@@ -311,6 +311,39 @@ describe Report do
       expect(report.report_columns).to eql ["Segmented Field: Segment 1", "Segmented Field: Segment 2"]
       expect(page).to eql [
        {"campaign_name"=>"Guaro Cacique 2013", "values"=>[25.0, 75.0]}
+      ]
+    end
+
+    it "should work when adding count KPIs as a value" do
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'count', kpis_segments: [
+        FactoryGirl.build(:kpis_segment, text: 'Yes', ordering: 1),
+        FactoryGirl.build(:kpis_segment, text: 'No', ordering: 2)
+      ])
+      campaign.add_kpi kpi
+
+      event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
+      event.result_for_kpi(kpi).value = kpi.kpis_segments.first.id
+      event.save # Save the event results
+
+      event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
+      event.result_for_kpi(kpi).value = kpi.kpis_segments.second.id
+      event.save # Save the event results
+
+      event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
+      event.result_for_kpi(kpi).value = kpi.kpis_segments.second.id
+      event.save # Save the event results
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{kpi.id}", "label"=>"Count Field", "aggregate"=>"count"}]
+      )
+
+      page = report.fetch_page
+      expect(report.report_columns).to eql ["Count Field: Yes", "Count Field: No"]
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[1.0, 2.0]}
       ]
     end
 
