@@ -65,7 +65,7 @@ describe GoalsController do
       goal.due_date.should   == Time.zone.local(2013, 01, 31).to_date
     end
 
-    it "should create an activity type goal for a place in a given campaign" do
+    it "should create an activity type goal for an area in a given campaign" do
       lambda {
         post 'create', goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: area.id, goalable_type: 'Area', value: '55', activity_type_id: activity_type.id}, format: :json
       }.should change(Goal, :count).by(1)
@@ -77,6 +77,21 @@ describe GoalsController do
       goal.parent.should == campaign
       goal.goalable.should == area
       goal.value.should == 55
+      goal.activity_type_id.should == activity_type.id
+    end
+
+    it "should create an activity type goal for a company user in a given campaign" do
+      lambda {
+        post 'create', goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: company_user.id, goalable_type: 'CompanyUser', value: '66', activity_type_id: activity_type.id}, format: :json
+      }.should change(Goal, :count).by(1)
+      response.should be_success
+      response.should render_template(:create)
+      response.should_not render_template(:form_dialog)
+
+      goal = Goal.last
+      goal.parent.should == campaign
+      goal.goalable.should == company_user
+      goal.value.should == 66
       goal.activity_type_id.should == activity_type.id
     end
 
@@ -135,7 +150,7 @@ describe GoalsController do
       goal.kpi_id.should == kpi.id
     end
 
-    it "should update an activity type goal for a place in a given campaign" do
+    it "should update an activity type goal for an area in a given campaign" do
       area_goal = FactoryGirl.create(:goal, goalable: area)
       area_goal.save
       expect {
@@ -150,6 +165,23 @@ describe GoalsController do
       area_goal.goalable.should == area
       area_goal.value.should == 78
       area_goal.activity_type_id.should == activity_type.id
+    end
+
+    it "should update an activity type goal for a company user in a given campaign" do
+      user_goal = FactoryGirl.create(:goal, goalable: company_user)
+      user_goal.save
+      expect {
+        post 'update', id: user_goal.to_param, goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: company_user.id, goalable_type: 'CompanyUser', value: '88', activity_type_id: activity_type.id}, format: :json
+      }.to_not change(Goal, :count)
+      response.should be_success
+      response.should render_template(:update)
+      response.should_not render_template(:form_dialog)
+
+      user_goal.reload
+      user_goal.parent.should == campaign
+      user_goal.goalable.should == company_user
+      user_goal.value.should == 88
+      user_goal.activity_type_id.should == activity_type.id
     end
   end
 
