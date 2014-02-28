@@ -22,11 +22,13 @@ class Goal < ActiveRecord::Base
   belongs_to :parent, polymorphic: true
   belongs_to :kpi
   belongs_to :kpis_segment
+  belongs_to :activity_type
 
   validates :goalable_id, presence: true, numericality: true
   validates :goalable_type, presence: true
-  validates :kpi_id, numericality: true, presence: true
+  validates :kpi_id, numericality: true, presence: true, unless: :activity_type_id
   validates :kpis_segment_id, numericality: true, allow_nil: true
+  validates :activity_type_id, numericality: true, presence: true, unless: :kpi_id
   validates :value, numericality: true, allow_nil: true
 
   validates_datetime :start_date, allow_nil: true, allow_blank: true

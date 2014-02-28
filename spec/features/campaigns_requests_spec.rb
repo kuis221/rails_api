@@ -192,10 +192,12 @@ feature "Campaigns", js: true, search: true do
           expect(page).to have_content('My Custom KPI')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
         end
+
         within visible_modal do
           fill_in 'Goal', with: '223311'
           click_js_button 'Save'
         end
+
         ensure_modal_was_closed
 
         within "#custom-kpis" do
@@ -204,5 +206,29 @@ feature "Campaigns", js: true, search: true do
       end
     end
 
+    feature "Activity Types", search: false do
+      scenario "Set goals for Activity Types" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
+
+        visit campaign_path(campaign)
+
+        within "#custom-kpis" do
+          expect(page).to have_content('Activity Type #1')
+          hover_and_click('li#campaign-activity-type-'+activity_type.id.to_s, 'Edit')
+        end
+
+        within visible_modal do
+          fill_in 'Goal', with: '123'
+          click_js_button 'Save'
+        end
+
+        ensure_modal_was_closed
+
+        within "#custom-kpis" do
+          expect(page).to have_content('123.0')
+        end
+      end
+    end
   end
 end

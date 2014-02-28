@@ -14,7 +14,6 @@
 class ActivityType < ActiveRecord::Base
   belongs_to :company
   has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
-  has_many :activity_type_campaigns
   has_many :companies, through: :activity_type_campaigns
 
   validates :name, presence: true
@@ -23,6 +22,11 @@ class ActivityType < ActiveRecord::Base
   # Campaign relationships
   has_many :activity_type_campaigns
   has_many :campaigns, through: :activity_type_campaigns
+
+  # Goals relationships
+  has_one :goal, dependent: :destroy
+
+  accepts_nested_attributes_for :goal
 
   scope :active, lambda{ where(active: true) }
 end
