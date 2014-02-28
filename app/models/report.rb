@@ -167,8 +167,16 @@ class Report < ActiveRecord::Base
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
                 s = s.where('event_results.kpi_id=?', m[1].to_i)
               end
+            elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
+              if value['aggregate'] == 'count'
+                value_field = value_aggregate_sql(value['aggregate'], get_column_name_from(value)[0])
+              else
+                value_field = value_aggregate_sql(value['aggregate'], '0')
+              end
+            else
+              value_field = false
             end
-            s.select("ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}], #{i+1}, #{value_field}").group('1').to_sql
+            s.select("ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}], #{i+1}, #{value_field}").group('1').to_sql if value_field
           end
         end
       end
@@ -216,6 +224,12 @@ class Report < ActiveRecord::Base
       if m = /\Akpi:([0-9]+)\z/.match(f['field'])
         ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
       elsif m = /\A(.*):([a-z_]+)\z/.match(f['field'])
+        get_column_name_from f
+      end
+    end
+
+    def get_column_name_from(f)
+      if m = /\A(.*):([a-z_]+)\z/.match(f['field'])
         klass = m[1].classify.constantize
         definition = klass.report_fields[m[2].to_sym]
         definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])

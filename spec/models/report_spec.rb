@@ -256,6 +256,38 @@ describe Report do
       expect(report.report_columns).to eql ["California||Impressions", "Texas||Impressions"]
     end
 
+    it "should work when adding a table field as a value with the aggregation method 'count'" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'Texas', city: 'Houston'),
+        results: {impressions: 100, interactions: 50})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"place:name", "label"=>"Venue Name", "aggregate"=>"count"}]
+      )
+
+      page = report.fetch_page
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[1.0]}
+      ]
+    end
+
+    it "should work when adding a table field as a value with the aggregation method 'sum'" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'Texas', city: 'Houston'),
+        results: {impressions: 100, interactions: 50})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"place:name", "label"=>"Venue Name", "aggregate"=>"sum"}]
+      )
+
+      page = report.fetch_page
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[0.0]}
+      ]
+    end
+
     it "should accept kpis as rows" do
       FactoryGirl.create(:event, campaign: campaign,
         results: {impressions: 123, interactions: 50})
