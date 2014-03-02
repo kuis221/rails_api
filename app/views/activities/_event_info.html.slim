@@ -1,0 +1,3 @@
+- if event.class.name == 'Event'
+  h3 = 'EVENT INFO'
+  = format_date_range(event_date(event, :start_at), event_date(event, :end_at))
