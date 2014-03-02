@@ -2056,7 +2056,12 @@ ul.kpis-list{
     			&.name{
     				font-size: 16px;
     				margin:20px 0 0 0;
+            width: 45%;
     			}
+          &.event-item {
+            min-height: 82px;
+            width: 100%;
+          }
     		}
     	}
     }

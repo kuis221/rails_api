@@ -1,0 +1,11 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing activity details. Click to close.")
+  .details_box
+    h2.special = resource.activity_type.name
+    h3 = resource.campaign.name
+    .calendar-data
+      = format_date(event_date(resource, :activity_date))
+    .team-member
+      .full-name = resource.company_user.name
+    = render partial: 'event_info', locals: {event: resource.activitable}
+    = render 'details'

@@ -16,7 +16,7 @@ Brandscopic::Application.routes.draw do
             get :notifications
           end
         end
-
+        
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
@@ -52,7 +52,7 @@ Brandscopic::Application.routes.draw do
             get :overall_stats
           end
         end
-
+        
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
@@ -393,6 +393,8 @@ Brandscopic::Application.routes.draw do
       get :activate
     end
   end
+  
+  resources :activities, only: [:show]
 
   resources :dashboard, only: [] do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}
