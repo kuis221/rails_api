@@ -1,3 +1,5 @@
 - if event.class.name == 'Event'
   h3 = 'EVENT INFO'
-  = format_date_range(event_date(event, :start_at), event_date(event, :end_at))
+  = link_to "#{format_date(event_date(event, :start_at))} #{format_date(event_date(event, :end_at))}".html_safe , event_path(event)
+  = place_address(event.place, true)
+  br

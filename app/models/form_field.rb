@@ -38,4 +38,8 @@ class FormField < ActiveRecord::Base
   def store_value(value)
     value
   end
+  
+  def format_html
+    "FormField <br>".html_safe
+  end
 end

@@ -26,6 +26,10 @@ class ActivityResult < ActiveRecord::Base
       self.attributes['value']
     end
   end
+  
+  def to_html
+    form_field.format_html
+  end
 
   private
     def valid_value?

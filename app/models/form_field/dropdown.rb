@@ -30,4 +30,8 @@ class FormField::Dropdown < FormField
   def multiple?
     self.settings.present? && self.settings.has_key?('multiple') && self.settings['multiple']
   end
+  
+  def format_html
+    "dropdown <br>".html_safe
+  end
 end

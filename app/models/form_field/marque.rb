@@ -29,3 +29,7 @@ class FormField::Marque < FormField::Dropdown
     {as: :select, collection: marques, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: 'form-field-marque', multiple: self.multiple?, required: (self.required? ? 'required' : nil)}}
   end
 end
+
+def format_html
+  "Marque <br>".html_safe
+end

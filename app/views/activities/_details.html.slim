@@ -1,1 +1,4 @@
 h3 = 'DETAILS'
+- resource.results_for_type.each do |result|
+   b= result.form_field.name
+   = result.to_html

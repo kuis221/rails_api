@@ -18,4 +18,8 @@ class FormField::TextArea < FormField
   def field_options(result)
     {as: :text, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
   end
+  
+  def format_html
+    "text area <br>".html_safe
+  end
 end

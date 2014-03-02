@@ -36,9 +36,29 @@
 abbr[title]{
 	border:0;
 }
-.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
+.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .member-data{
 	margin:0 0 20px 30px;
 	width: 380px;
+}
+
+.member-data{
+  font-size: 12px;
+	b{
+		font-size:16px;
+		font-weight: 400;
+	}
+  &:before{
+		color: $user_menu;
+		content: "\e024" !important;
+		font-family: 'icons';
+		font-size: 19px;
+		position: absolute;
+		speak: none;
+		left: 28px;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 .calendar-data{
 	font-size: 12px;
@@ -2745,6 +2765,14 @@ table.table {
 	font-size: 12px;
 	text-align: center;
 	float: left;
+}
+
+body.activities{
+	.details_box{
+		h2{
+			margin-bottom: 10px;
+		}
+	}
 }
 
 body.company_users{

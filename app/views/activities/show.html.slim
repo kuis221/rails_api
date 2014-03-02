@@ -5,7 +5,8 @@
     h3 = resource.campaign.name
     .calendar-data
       = format_date(event_date(resource, :activity_date))
-    .team-member
-      .full-name = resource.company_user.name
+    .member-data
+      b = resource.company_user.name
+    br
     = render partial: 'event_info', locals: {event: resource.activitable}
     = render 'details'
