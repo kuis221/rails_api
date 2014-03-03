@@ -46,6 +46,7 @@ module CapybaraBrandscopicHelpers
     field = find_field(options[:from], visible: false)
     field.find('option', text: item_text, visible: false, match: :first).select_option
     page.execute_script("$('##{field[:id]}').trigger('liszt\:updated')")
+    wait_for_ajax
   end
 
   def select2(item_text, options)
@@ -61,6 +62,7 @@ module CapybaraBrandscopicHelpers
       select2_container.find(:xpath, "a[contains(concat(' ',normalize-space(@class),' '),' select2-choice ')] | ul[contains(concat(' ',normalize-space(@class),' '),' select2-choices ')]").trigger('click')
       find(:xpath, "//body").find(".select2-drop li", text: value).click
     end
+    wait_for_ajax
   end
 
   def select_filter_calendar_day(day1, day2=nil)

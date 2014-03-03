@@ -17,7 +17,7 @@
 class FormField < ActiveRecord::Base
   belongs_to :fieldable, polymorphic: true
 
-  has_many :options, class_name: 'FormFieldOption', dependent: :destroy
+  has_many :options, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field
 
   serialize :settings
 
