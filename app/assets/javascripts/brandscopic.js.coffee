@@ -172,9 +172,8 @@ jQuery ->
 		$(this).closest('form').submit()
 		false
 
-	$(document).delegate 'input.kpi-goal-field', 'blur', (e) ->
+	$(document).delegate 'input.kpi-goal-field, input.activity-type-goal-field', 'blur', (e) ->
 		$this = $(this)
-
 
 		id = $this.data('id')
 		# then check if the value is valid
@@ -202,6 +201,7 @@ jQuery ->
 					goal: {
 						kpi_id: $this.data('kpi-id'),
 						kpis_segment_id: $this.data('segment-kpi-id'),
+						activity_type_id: $this.data('activity-type-id'),
 						value: value,
 						goalable_id: $this.data('goalable-id'),
 						goalable_type: $this.data('goalable-type'),

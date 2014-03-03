@@ -52,7 +52,7 @@ describe ContactEventsController do
     it "loads the contact edit form if the contact record is invalid" do
       contact = Contact.new
       contact.save(validate: false).should be_true
-      contact.id.should > 1
+      expect(contact.persisted?).to be_true
       expect {
         post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
         response.should be_success

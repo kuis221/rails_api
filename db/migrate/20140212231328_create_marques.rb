@@ -7,9 +7,10 @@ class CreateMarques < ActiveRecord::Migration
       t.timestamps
     end
     add_index :marques, :brand_id
-
     # A couple of marques for Jameson Whiskey brand
-    execute "INSERT INTO marques (brand_id, name, created_at, updated_at) VALUES (8, 'Base', now(), now())"
-    execute "INSERT INTO marques (brand_id, name, created_at, updated_at) VALUES (8, 'Black Barrel', now(), now())"
+    if brand = Brand.find_by_name('Jameson Whiskey')
+      brand.marques.create({name: 'Base'}, without_protection: true)
+      brand.marques.create({name: 'Black Barrel'}, without_protection: true)
+    end
   end
 end

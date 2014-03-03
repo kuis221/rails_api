@@ -9,7 +9,7 @@
 		url('/assets/font/icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
-} 
+}
 
 @font-face {
 	font-family: 'rabioheadregular';
@@ -5037,7 +5037,7 @@ body.campaigns{
 	textarea{
 		height: 130px;
 	}
-	
+
 	.links-data{
 		margin: 0 0 0 30px;
 	}
@@ -5362,7 +5362,8 @@ a, i{
 			}
 
 			.kpi-segment-group:hover,
-			.kpi-goal:hover {
+			.kpi-goal:hover,
+			.activity-type-goal:hover {
 				background-color: $grey_one;
 				-webkit-border-radius: 4px;
 				-moz-border-radius: 4px;
@@ -5372,7 +5373,7 @@ a, i{
 				}
 			}
 
-			.kpi-goal {
+			.kpi-goal, .activity-type-goal {
 				margin: 0 3px;
 				padding: 5px 10px 5px 10px;
 				display: inline-block;
@@ -5404,7 +5405,7 @@ a, i{
 				}
 
 				label{
-					.kpi-name{
+					.kpi-name, .activity-type-name {
 						font-size: 11px;
 						padding: 14px 0 0 6px;
 					}
@@ -5849,7 +5850,7 @@ ul#reports-list {
 	}
 }
 
-// TESTS ADJUSTMENTS FOR GALLERY 
+// TESTS ADJUSTMENTS FOR GALLERY
 .gallery {
 	margin: 0 -10px;
 	position: relative;
@@ -5962,7 +5963,7 @@ ul#reports-list {
 	&:hover{
 		a.carousel-control{
 			background-color: #050505;
-			opacity: 0.75;	
+			opacity: 0.75;
 			&.right:before{
 				content: "\e601";
 				margin-left: 4px;

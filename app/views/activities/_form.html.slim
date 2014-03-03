@@ -43,17 +43,17 @@ javascript:
     }
   });
 
-  $('#activity_campaign_id').change(function() {
+  $('#activity_campaign_id').off('change').on('change', function() {
     brands = $('.form-field-brand');
     marques = $('select.form-field-marque');
     if (selectedOption = this.value) {
       $.get('/campaigns/'+selectedOption+'/brands.json', function(options) {
         brands.empty();
         marques.empty();
-        brands.append($("<option/>", {value: '', text: '', selected: true}));
+        brands.append($("<option>", {value: '', text: '', selected: true}));
         marques.select2('data', null, false);
         for(var i in options) {
-            brands.append($("<option/>", {
+            brands.append($("<option>", {
                 value: options[i].id,
                 text: options[i].name
             }));
@@ -63,13 +63,13 @@ javascript:
     }
   });
 
-  $('.form-field-brand').change(function() {
-    marques = $('select.form-field-marque');
+  $('.form-field-brand').off('change').on('change', function() {
     if (selectedOption = this.value) {
       $.get('/brands/'+selectedOption+'/marques.json', function(options) {
-        marques.empty();
+        marques = $('select.form-field-marque');
+        marques.empty().select2('destroy');
         for(var i in options) {
-            marques.append($("<option/>", {
+            marques.append($("<option>", {
                 value: options[i].id,
                 text: options[i].name
             }));
