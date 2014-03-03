@@ -1,5 +1,5 @@
 #form-container
-    = simple_form_for [parent, resource], remote: true do |f|
+    = simple_form_for [resource.new_record? ? parent : nil, resource], remote: true do |f|
       - if activity_types.any?
         = f.error_notification
         = resource.errors.full_messages.join("<br />").html_safe

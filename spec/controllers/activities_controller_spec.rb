@@ -80,14 +80,14 @@ describe ActivitiesController do
   describe "GET 'deactivate'" do
     it "deactivates an active activity for a venue" do
       activity.update_attribute(:active, true)
-      get 'deactivate', venue_id: venue.to_param, id: activity.to_param, format: :js
+      get 'deactivate', id: activity.to_param, format: :js
       response.should be_success
       activity.reload.active?.should be_false
     end
 
     it "activates an inactive activity for a venue" do
       activity.update_attribute(:active, false)
-      get 'activate', venue_id: venue.to_param, id: activity.to_param, format: :js
+      get 'activate', id: activity.to_param, format: :js
       response.should be_success
       activity.reload.active?.should be_true
     end
