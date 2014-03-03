@@ -28,8 +28,10 @@ class FormField::Marque < FormField::Dropdown
     end
     {as: :select, collection: marques, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: 'form-field-marque', multiple: self.multiple?, required: (self.required? ? 'required' : nil)}}
   end
-end
 
-def format_html
-  "Marque <br>".html_safe
+  def format_html(result)
+    unless result.value.nil? || result.value.empty?
+      ::Marque.where(id: result.value).pluck(:name).join(', ')
+    end
+  end
 end

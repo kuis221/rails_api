@@ -1,4 +1,5 @@
 h3 = 'DETAILS'
-- resource.results_for_type.each do |result|
-   b= result.form_field.name
-   = result.to_html
+dl.activity-results
+  - resource.results_for_type.each do |result|
+    dt class="#{result.form_field.css_class}"= result.form_field.name + ':'
+    dd class="#{result.form_field.css_class}"= result.to_html

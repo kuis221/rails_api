@@ -10,10 +10,8 @@
 
         - if resource.activity_type.present?
           .large-inputs
-            - if parent.is_a?(Venue)
+            - if resource.activitable_type == 'Venue'
               = f.input :campaign_id, collection: current_company.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
-            - else
-              = f.input :campaign_id, as: :hidden, wrapper: false, value: parent.campaign_id
           - resource.results_for_type.each do |result|
             = f.simple_fields_for :results, result do |rf|
               .large-inputs
@@ -41,7 +39,7 @@
 javascript:
   $('#activity_activity_type_id').off('change').on('change', function(e){
     if ( $(this).val() ){
-      $('#form-container').load("#{url_for([:form, parent, :activities])}?activity[activity_type_id]="+$(this).val());
+      $('#form-container').load("#{url_for([:form, resource.activitable, :activities])}?activity[activity_type_id]="+$(this).val());
     }
   });
 

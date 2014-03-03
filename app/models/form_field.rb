@@ -38,8 +38,12 @@ class FormField < ActiveRecord::Base
   def store_value(value)
     value
   end
-  
-  def format_html
-    "FormField <br>".html_safe
+
+  def format_html(result)
+    result.value
+  end
+
+  def css_class
+    self.class.name.underscore.gsub('/', '_')
   end
 end

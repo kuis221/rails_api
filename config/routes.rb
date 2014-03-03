@@ -16,7 +16,7 @@ Brandscopic::Application.routes.draw do
             get :notifications
           end
         end
-        
+
         resources :events, only: [:index, :show, :create, :update] do
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
@@ -52,7 +52,7 @@ Brandscopic::Application.routes.draw do
             get :overall_stats
           end
         end
-        
+
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
@@ -162,12 +162,8 @@ Brandscopic::Application.routes.draw do
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
       resources :events, only: [:new, :create]
-      resources :activities, only: [:new, :create, :edit, :update] do
+      resources :activities, only: [:new, :create] do
         get :form, on: :collection
-        member do
-          get :deactivate
-          get :activate
-        end
       end
     end
   end
@@ -311,12 +307,8 @@ Brandscopic::Application.routes.draw do
       get 'list', on: :collection
     end
 
-    resources :activities, only: [:new, :create, :edit, :update] do
+    resources :activities, only: [:new, :create] do
       get :form, on: :collection
-      member do
-        get :deactivate
-        get :activate
-      end
     end
 
     member do
@@ -393,8 +385,13 @@ Brandscopic::Application.routes.draw do
       get :activate
     end
   end
-  
-  resources :activities, only: [:show]
+
+  resources :activities, only: [:show, :edit, :update] do
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
 
   resources :dashboard, only: [] do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}

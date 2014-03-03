@@ -2242,13 +2242,13 @@ ul.kpis-list{
     		text-overflow:ellipsis;
     		white-space: nowrap;
     	}
-      &>a{
-        display: block;
-        padding: 13px 15px 11px 15px;
-        @include box-sizing(border-box);
-        width: 100%;
-        min-height: 100%;
-      }
+		&>a{
+			display: block;
+			padding: 13px 15px 11px 15px;
+			@include box-sizing(border-box);
+			width: 100%;
+			min-height: 100%;
+		}
     	.edit, .enable, .disable, .preview {
     		height: 30px;
 			display: inline-block;
@@ -2771,6 +2771,28 @@ body.activities{
 	.details_box{
 		h2{
 			margin-bottom: 10px;
+		}
+	}
+
+	dl.activity-results {
+		dt {
+			font-weight: normal;
+			display: inline-block;
+			float: left;
+			margin-right: 5px;
+			&.form_field_text_area {
+				float: none;
+				clear: both;
+			}
+		}
+		dd {
+			margin-bottom: 20px;
+			margin-left: 0px;
+			font-weight: bold;
+			&.form_field_text_area {
+				font-weight: normal;
+				margin-top: 10px;
+			}
 		}
 	}
 }

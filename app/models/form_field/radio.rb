@@ -18,8 +18,10 @@ class FormField::Radio < FormField
   def field_options(result)
     {as: :radio_buttons, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
   end
-  
-  def format_html
-    "radio <br>".html_safe
+
+  def format_html(result)
+    unless result.value.nil? || result.value.empty?
+      self.options.where(id: result.value).pluck(:name).join(', ')
+    end
   end
 end
