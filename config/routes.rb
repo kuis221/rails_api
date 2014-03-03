@@ -56,6 +56,7 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
           get :types, on: :collection
           member do
+            get :analysis
             get :photos
             get :comments
           end
