@@ -68,6 +68,47 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     end
   end
 
+  api :GET, '/api/v1/venues/:id/analysis', 'Return a venue\'s analysis information'
+  param :id, :number, required: true, desc: "Venue ID"
+  example <<-EOS
+  {
+      "id": 2,
+      "name": "Island Creek Oyster Bar",
+      "formatted_address": "500 Commonwealth Avenue, Boston, MA, United States",
+      "latitude": 42.348774,
+      "longitude": -71.094994,
+      "zipcode": "02215",
+      "city": "Boston",
+      "state": "Massachusetts",
+      "country": "US",
+      "events_count": 11,
+      "promo_hours": "204.0",
+      "impressions": 814,
+      "interactions": 1554,
+      "sampled": 683,
+      "spent": "1600.0",
+      "score": 42,
+      "avg_impressions": "74.0",
+      "avg_impressions_hour": "3.99",
+      "avg_impressions_cost": "1.97",
+      "opening_hours": [
+          "Tuesday 4:00 PM - 1:00 AM",
+          "Wednesday 4:00 PM - 1:00 AM",
+          "Thursday 4:00 PM - 1:00 AM",
+          "Friday 4:00 PM - 1:00 AM",
+          "Saturday 4:00 PM - 1:00 AM",
+          "Sunday 4:00 PM - 1:00 AM",
+          "Monday 10:30 AM - 1:00 AM"
+      ],
+      "td_linx_code": '2238273'
+  }
+  EOS
+  def analysis
+    if resource.present?
+      render
+    end
+  end
+
   api :GET, '/api/v1/venues', "Search for a list of venues"
   param :location, String, :desc => "A pair of latitude and longitude seperated by a comma. This will make the list to include only those that are in a radius of +radius+ kilometers."
   param :campaign, Array, :desc => "A list of campaign ids to filter the results"
