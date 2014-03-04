@@ -2,11 +2,14 @@
 - if can? :kpi_trends_module, :dashboard
   = render 'dashboard/modules/kpi_trends'
 
-- if can? :demographics_module, :dashboard
-  = render 'dashboard/modules/demographics'
+/ - if can? :demographics_module, :dashboard
+/   = render 'dashboard/modules/demographics'
 
 - if can? :upcomings_events_module, :dashboard
   = render 'dashboard/modules/upcoming_events'
+
+- if can? :campaign_overview, :dashboard
+  = render 'dashboard/modules/campaign_overview'
 
 - if can? :incomplete_tasks_module, :dashboard
   = render 'dashboard/modules/incomplete_tasks'
@@ -16,5 +19,8 @@
 
 - if can? :recent_photos_module, :dashboard
   = render 'dashboard/modules/recent_photos'
+
+- if can? :recent_comments_module, :dashboard
+  = render 'dashboard/modules/recent_comments'
 
 = render partial: 'help_tutorial'

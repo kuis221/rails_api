@@ -34,8 +34,8 @@ describe Kpi do
   describe "merge_fields" do
     let(:company) { FactoryGirl.create(:company) }
     it "should merge the two fields into one by updating the master kpi" do
-      kpi1 = FactoryGirl.create(:kpi)
-      kpi2 = FactoryGirl.create(:kpi)
+      kpi1 = FactoryGirl.create(:kpi, company: company)
+      kpi2 = FactoryGirl.create(:kpi, company: company)
       campaigns = FactoryGirl.create_list(:campaign, 2, company: company)
       expect {
         campaigns.each{|c| c.add_kpi(kpi1); c.add_kpi(kpi2); }
@@ -57,8 +57,8 @@ describe Kpi do
     end
 
     it "should update the events results by keeping the value of the master kpi" do
-      kpi1 = FactoryGirl.create(:kpi)
-      kpi2 = FactoryGirl.create(:kpi)
+      kpi1 = FactoryGirl.create(:kpi, company: company)
+      kpi2 = FactoryGirl.create(:kpi, company: company)
       campaign = FactoryGirl.create(:campaign, company: company)
 
       expect {
@@ -93,8 +93,8 @@ describe Kpi do
     end
 
     it "should merge two kpis that are in different campaigns kpi" do
-      kpi1 = FactoryGirl.create(:kpi)
-      kpi2 = FactoryGirl.create(:kpi)
+      kpi1 = FactoryGirl.create(:kpi, company: company)
+      kpi2 = FactoryGirl.create(:kpi, company: company)
       campaign1 = FactoryGirl.create(:campaign, company: company)
       campaign2 = FactoryGirl.create(:campaign, company: company)
 
@@ -128,7 +128,6 @@ describe Kpi do
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
-      result.reload
       result.value.should == 100
 
       field1 = event1.campaign.form_field_for_kpi(kpi1)
@@ -136,7 +135,6 @@ describe Kpi do
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
-      result.reload
       result.value.should == 200
       field2 = event2.campaign.form_field_for_kpi(kpi1)
       field2.should == result.form_field
@@ -144,8 +142,8 @@ describe Kpi do
 
 
     it "should merge two kpis that are in different campaigns kpi and one campaign has both of them" do
-      kpi1 = FactoryGirl.create(:kpi)
-      kpi2 = FactoryGirl.create(:kpi)
+      kpi1 = FactoryGirl.create(:kpi, company: company)
+      kpi2 = FactoryGirl.create(:kpi, company: company)
       campaign1 = FactoryGirl.create(:campaign, company: company)
       campaign2 = FactoryGirl.create(:campaign, company: company)
 

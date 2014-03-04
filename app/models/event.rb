@@ -2,22 +2,24 @@
 #
 # Table name: events
 #
-#  id            :integer          not null, primary key
-#  campaign_id   :integer
-#  company_id    :integer
-#  start_at      :datetime
-#  end_at        :datetime
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  active        :boolean          default(TRUE)
-#  place_id      :integer
-#  promo_hours   :decimal(6, 2)    default(0.0)
-#  reject_reason :text
-#  summary       :text
-#  timezone      :string(255)
+#  id             :integer          not null, primary key
+#  campaign_id    :integer
+#  company_id     :integer
+#  start_at       :datetime
+#  end_at         :datetime
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  active         :boolean          default(TRUE)
+#  place_id       :integer
+#  promo_hours    :decimal(6, 2)    default(0.0)
+#  reject_reason  :text
+#  summary        :text
+#  timezone       :string(255)
+#  local_start_at :datetime
+#  local_end_at   :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -60,17 +62,37 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date| where("end_at > ? AND start_at < ?", start_date, end_date) }
+  scope :between_dates, lambda {|start_date, end_date|
+    prefix = ''
+    if Company.current.present? && Company.current.timezone_support?
+      prefix = 'local_'
+      start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
+      end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
+    end
+    where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
+  }
+
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
-    joins('LEFT JOIN "teamings" t ON "t"."teamable_id" = "events"."id" AND "t"."teamable_type" = \'Event\' LEFT JOIN "memberships" m ON "m"."memberable_id" = "events"."id" AND "m"."memberable_type" = \'Event\'').
-    where('t.team_id in (?) OR m.company_user_id IN (?)', user.team_ids, user) }
+    joins_for_user_teams.where('company_users.id in (?)', user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
   scope :with_team, lambda{|team|
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids) }
+  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids+[0]) }
+
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
+
+  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
+
+  scope :joins_for_user_teams, -> {
+      joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
+      joins('LEFT JOIN teams ON teams.id=teamings.team_id').
+      joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teams.id AND memberable_type=\'Team\')').
+      joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id').
+      joins('LEFT JOIN users ON users.id=company_users.user_id')
+  }
 
   track_who_does_it
 
@@ -101,6 +123,7 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
+  before_create :add_current_company_user
 
   delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
@@ -149,7 +172,7 @@ class Event < ActiveRecord::Base
     integer :user_ids, multiple: true
     integer :team_ids, multiple: true
 
-    string :location, multiple: true do
+    integer :location, multiple: true do
       locations_for_index
     end
 
@@ -236,7 +259,7 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    results.count > 0
+    campaign.present? && (results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0)
   end
 
   def venue
@@ -317,7 +340,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    Place.locations_for_index(place)
+    place.locations.pluck('locations.id') if place.present?
   end
 
   def kpi_goals
@@ -328,7 +351,7 @@ class Event < ActiveRecord::Base
         campaign.goals.base.each do |goal|
           if goal.kpis_segment_id.present?
             @goals[goal.kpi_id] ||= {}
-            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value / total_campaign_events unless goal.value.nil?
+            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
           else
             @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
           end
@@ -388,7 +411,7 @@ class Event < ActiveRecord::Base
   # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    results_for(campaign.form_fields).all?{|r| r.valid? } if campaign.present?
+    all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
   end
 
   def method_missing(method_name, *args)
@@ -515,13 +538,23 @@ class Event < ActiveRecord::Base
             when 'venue'
               with :place_id, Venue.find(value).place_id
             when 'area'
-              with(:location, Area.find(value).locations.map{|location| Place.encode_location(location) } + [0] )
+              any_of do
+                with :place_id, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+                with :location, Area.find(value).locations.map(&:id) + [0]
+              end
             else
               with "#{attribute}_ids", value
             end
           end
 
-          with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+          if params[:area].present?
+            any_of do
+              with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+              with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
+            end
+          end
+
+          with :place_id, params[:place] if params[:place].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, :type => "sum")
@@ -599,11 +632,13 @@ class Event < ActiveRecord::Base
     end
 
     def report_fields
+      prefix = if Company.current.present? && Company.current.timezone_support? then 'local_' else '' end
+      timezone = Company.current.present? && Company.current.timezone_support? ? 'timezone' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
-        start_date:   { title: 'Start date' },
-        start_time:   { title: 'Start time' },
-        end_date:     { title: 'End date' },
-        end_time:     { title: 'Start time' },
+        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
+        start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" } },
+        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" } },
+        end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" } },
         event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }
       }
@@ -741,6 +776,8 @@ class Event < ActiveRecord::Base
     def set_event_timezone
       if new_record? || start_at_changed? || end_at_changed?
         self.timezone = Time.zone.tzinfo.identifier
+        self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
+        self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
       end
     end
 
@@ -767,6 +804,10 @@ class Event < ActiveRecord::Base
     #     end
     #   end
     # end
+
+    def add_current_company_user
+      self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
+    end
 end
 
 

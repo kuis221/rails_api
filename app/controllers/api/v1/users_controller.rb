@@ -1,4 +1,5 @@
 class Api::V1::UsersController < Api::V1::FilteredController
+  include UsersHelper
 
   skip_before_filter :verify_authenticity_token,
                      :if => Proc.new { |c| c.request.format == 'application/json' }
@@ -283,11 +284,99 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/permissions', "Get a list of the user's permissions"
+  api :GET, '/api/v1/users/notifications', "Get a list of user's notifications"
+  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
+  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
+
+  description <<-EOS
+  Returns a list of notifications for the current user with the following atttibutes:
+
+  * *message*: A human readable description of the notification.
+  * *level*: Indicates the level of the notification. Possible options are: "red", "grey" and "blue"
+  * *icon*: An string that could be used to identify what icon to use for the notification
+  * *type*: The type of notification, the possible options are:
+    * *event_recaps_due*: At least one event is due
+    * *event_recaps_late*: At least one event is late
+    * *event_recaps_pending*: There is at least one event that is waiting for approval
+    * *event_recaps_rejected*: There is at least one event that was rejected
+    * *team_tasks_late*: The user's team have late tasks
+    * *user_tasks_late*: The user have late tasks
+    * *user_task_comments*: One or more user's team tasks have a commment
+    * *team_task_comments*: One or more user tasks have a commment
+    * *new_event*: The user have been assigned to a event
+    * *new_campaign*: The user have been assigned to a campaign
+    * *new_team_task*: The user's team have been assigned to a task
+    * *new_task*: The user have been assigned to a task
+  * *event_id*: when the notification is about a single event, this indicates the event's ID
+  * *campaign_id*: when the notification is about a single campaign, this indicates the campaign's ID
+  * *task_id*: when the notification is about a single task, this indicates the task's ID
+
+  EOS
+
+  example <<-EOS
+  GET /api/v1/users/notifications.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+  [
+      {
+          "message": "There is one late event recap",
+          "level": "red",
+          "icon": "icon-notification-event",
+          "type": "event_recaps_late"
+      },
+      {
+          "message": "You have one late task",
+          "level": "red",
+          "icon": "icon-notification-task",
+          "type": "user_tasks_late"
+      },
+      {
+          "message": "You have a new event",
+          "level": "grey",
+          "icon": "icon-notification-event",
+          "type": "new_event",
+          "event_id": 5262
+      },
+      {
+          "message": "You have a new campaign",
+          "level": "grey",
+          "icon": "icon-notification-campaign",
+          "type": "new_campaign",
+          "campaign_id": 31
+      },
+      {
+          "message": "You have been assigned a task: Pick up t-shirts",
+          "level": "grey",
+          "icon": "icon-notification-task",
+          "type": "new_task",
+          "task_id": 187
+      }
+  ]
+  EOS
+  def notifications
+    if current_user.present?
+      notifications = notifications_for_company_user(current_company_user).map{|n| n.delete(:url); n.delete(:unread); n }
+
+      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      respond_to do |format|
+        format.json {
+          render :status => 200,
+                 :json => notifications
+        }
+        format.xml {
+          render :status => 200,
+                 :xml => notifications.to_xml(root: 'notifications')
+        }
+      end
+    else
+      failure
+    end
+  end
+
+
+  api :GET, '/api/v1/users/permissions', "Get a list of the user's permissions"
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   example <<-EOS
-    GET /api/v1/permissions?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/users/permissions.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
 
     ['events', 'events_create', 'venues', 'tasks']
   EOS

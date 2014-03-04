@@ -17,13 +17,66 @@ module Results
       }
     end
 
-    def report_column_label(column)
-      column['label']
+    def each_grouped_report_row(results=nil, row_number=0, &block)
+      results ||= resource.fetch_page
+      row_field = resource.field_to_sql_name(resource.rows[row_number]['field'])
+      previous_label = nil
+      results.each do |row|
+        if row_number < resource.rows.count-1
+          row_label = row[row_field]
+          if row_label != previous_label
+            group = results.select{|r|r[row_field] == row_label}
+            values = sum_row_values(group, resource.rows[row_number])
+            yield row_label, row_number, values
+            each_grouped_report_row(group, row_number+1, &block)
+          end
+          previous_label = row_label
+        else
+          yield row[row_field], row_number, row['values']
+        end
+      end
+    end
+
+    def build_report_header_cols(hash, index=0)
+      @report_header_cols_rows ||= []
+      @report_header_cols_rows[index] ||= []
+      @report_header_cols_rows[index] += hash.map do |k, children|
+        colspan = 1
+        if children.any?
+          colspan = count_column_children(children)
+          build_report_header_cols(children, index+1)
+        end
+        content_tag(:th, k, colspan: colspan)
+      end
     end
 
     private
+      def count_column_children(hash)
+        [hash.keys.count, hash.map{|k,h| count_column_children(h)}.sum].max  rescue 0
+      end
+
       def model_report_fields(klass)
         klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title]]}
+      end
+
+      def sum_row_values(group, row)
+        case row['aggregate']
+        when 'avg'
+          group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.reduce(:+).to_f / x.size}
+        when 'min'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.min }
+        when 'max'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.max }
+        when 'count'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.size }
+        else
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
+        end
+      end
+
+      # Return the names of the expected names from the SQL query for the report values and columns
+      def report_columns_names
+        @report_values_names ||= @report.values.map{|v| @report.field_to_sql_name(v['field']) }
       end
   end
 end

@@ -56,8 +56,8 @@ class Venue < ActiveRecord::Base
 
     latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
 
-    string :locations, multiple: true do
-      Place.locations_for_index(place)
+    integer :locations, multiple: true do
+      place.locations.pluck('locations.id') if place.present?
     end
 
     integer :campaign_ids, multiple: true do
@@ -266,10 +266,15 @@ class Venue < ActiveRecord::Base
       end
 
       if params.has_key?(:campaign) and params[:campaign].present?
-        locations = Campaign.where(company_id: params[:company_id], id: params[:campaign]).map{|c| c.accessible_locations }.flatten.uniq.compact
+        locations = places = []
+        Campaign.where(company_id: params[:company_id], id: params[:campaign]).each do |c|
+          locations += c.accessible_locations
+          places += c.place_ids
+        end
         any_of do
           with(:campaign_ids, params[:campaign])
-          with(:locations, locations) if locations.any?
+          with(:locations, locations.uniq.compact) if locations.any?
+          with(:place_id, places.uniq.compact) if places.any?
         end
       end
 
@@ -279,7 +284,7 @@ class Venue < ActiveRecord::Base
 
       with(:locations, params[:locations]) if params.has_key?(:locations) and params[:locations].present?
 
-      with(:locations, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+      with(:locations, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]  ) if params[:area].present?
 
       [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?

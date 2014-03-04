@@ -4,6 +4,7 @@ describe Event, search: true do
   after do
     Timecop.return
   end
+
   it "should search for events" do
     company = FactoryGirl.create(:company)
     # First populate the Database with some data
@@ -17,10 +18,16 @@ describe Event, search: true do
     user2 = FactoryGirl.create(:company_user, company: company, team_ids: [team.id, team2.id], role: FactoryGirl.create(:role))
     user3 = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role))
     user4 = FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role))
-    place = FactoryGirl.create(:place, city: 'Los Angeles')
+    place = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US')
     place2 = FactoryGirl.create(:place, city: 'Chicago')
     event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place, team_ids: [team.id], user_ids: [user3.id], start_date: "02/22/2013", end_date: "02/23/2013")
     event2 = FactoryGirl.create(:event, company: company, campaign: campaign2, place: place2, team_ids: [team.id, team2.id], user_ids: [user3.id, user4.id], start_date: "03/22/2013", end_date: "03/22/2013")
+
+    area = FactoryGirl.create(:area, company: company)
+    area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
+
+    area2 = FactoryGirl.create(:area, company: company)
+    area2.places << place
 
     # Create a Campaign and an Event on company 2
     company2_campaign = FactoryGirl.create(:campaign)
@@ -45,13 +52,20 @@ describe Event, search: true do
     Event.do_search(company_id: company.id, user: [user3.id,user4.id]).results.should =~ [event, event2]
 
     # Search for a specific Event's place
-    place_id = Place.encode_location(Place.political_division(place))
-    place2_id = Place.encode_location(Place.political_division(place2))
     Event.do_search(company_id: company.id, q: "place,#{place.id}").results.should =~ [event]
     Event.do_search(company_id: company.id, q: "place,#{place2.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, location: [place_id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, location: [place2_id]).results.should =~ [event2]
-    Event.do_search(company_id: company.id, location: [place_id, place2_id]).results.should =~ [event, event2]
+    Event.do_search(company_id: company.id, place: [place.id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, place: [place2.id]).results.should =~ [event2]
+    Event.do_search(company_id: company.id, place: [place.id, place2.id]).results.should =~ [event, event2]
+    Event.do_search(company_id: company.id, location: [place.location_id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, location: [place2.location_id]).results.should =~ [event2]
+    Event.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results.should =~ [event, event2]
+
+    # Search for a events in an area
+    Event.do_search(company_id: company.id, q: "area,#{area.id}").results.should =~ [event]
+    Event.do_search(company_id: company.id, area: [area.id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, q: "area,#{area2.id}").results.should =~ [event]
+    Event.do_search(company_id: company.id, area: [area2.id]).results.should =~ [event]
 
     # Search for brands associated to the Events
     Event.do_search(company_id: company.id, q: "brand,#{brand.id}").results.should =~ [event, event2]

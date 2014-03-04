@@ -11,8 +11,6 @@
               .span10.report-item
                 b Event Status
                 p View progress of event and promo hours against goals
-            span.pull-right
-              a.share
 
         - if can?(:index_results, EventExpense)
           li id="report_event_expenses"
@@ -20,10 +18,6 @@
               .span10.report-item
                 b Expenses
                 p View expenses by event
-            span.pull-right
-              a.share
-              a.edit
-              a.disable
 
         - if can?(:gva_report, Campaign)
           li id="report_gva"
@@ -31,20 +25,12 @@
               .span10.report-item
                 b Goals vs. Actual
                 p View results relative to campaign goals
-            span.pull-right
-              a.share
-              a.edit
-              a.disable 
 
         - if can?(:index_photo_results, AttachedAsset)
           li id="report_photos"
             = link_to results_photos_path, title: 'Photos' do
               .span10.report-item
                 b Photos
-            span.pull-right
-              a.share
-              a.edit
-              a.disable
 
         - if can?(:index_results, Survey)
           li id="report_surveys"
@@ -52,13 +38,9 @@
               .span10.report-item
                 b Surveys
                 p View survey results by event
-            span.pull-right
-              a.share
-              a.edit
-              a.disable
 
     - if @reports.any?
-      h3 USER ADDED REPORTS
+      h3 CUSTOM REPORTS
       .link-list
         ul#custom-reports-list.reports-list
           = render @reports

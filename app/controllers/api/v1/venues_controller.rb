@@ -1,4 +1,5 @@
 class Api::V1::VenuesController < Api::V1::FilteredController
+  include PlacesHelper::CreatePlace
 
   resource_description do
     short 'Venues'
@@ -11,6 +12,19 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     description <<-EOS
 
     EOS
+  end
+
+  def_param_group :venue do
+    param :venue, Hash, required: true, :action_aware => true do
+      param :name, String, required: true, desc: "The Venue name"
+      param :types, String, required: true, desc: "A comma separated string with one or more of the possible types venue types. See venues#types for more info"
+      param :street_number, String, required: true, desc: "The Venue street_number (address 1)"
+      param :route, String, required: false, desc: "The Venue's route (address 2)"
+      param :country, String, required: true, desc: "The Venue country code. Eg. US"
+      param :city, String, required: true, desc: "The Venue city"
+      param :state, String, required: true, desc: "The Venue state"
+      param :zipcode, String, required: true, desc: "The Venue's zipcode"
+    end
   end
 
   api :GET, '/api/v1/venues/:id', 'Return a venue\'s details'
@@ -49,6 +63,81 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   }
   EOS
   def show
+    if resource.present?
+      render
+    end
+  end
+
+  api :GET, '/api/v1/venues/:id/analysis', 'Return a venue\'s analysis information'
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+  This method returns the analysis informaction for a given venue. The result have the following attributes:
+  * *overview*: have the statistics for different KPIs (events, promo hours, impressions, interactions, sampled)
+  * *age*: the different results for each segment of the Age KPI
+  * *gender*: the different results for each segment of the Gender KPI
+  * *ethnicity*: the different results for each segment of the Ethnicity KPI
+  * *trends_by_week*: returns information about the performance of the venue on each different day of the week.
+    * *impressions_promo*: the average number of impressions per day of the week, where Monday is 0 and Sunday is 6
+    * *cost_impression*: the average cost per impression per day of the week, where Monday is 0 and Sunday is 6
+    * *narrative*: a brief narrative describing the performance of the venue based on these numbers.
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/3598/analysis.json?auth_token=XXXXXXXX&company_id=2
+  {
+      overview: {
+          events: 17,
+          promo_hours: "16.5",
+          impressions: 1389,
+          interactions: 980,
+          sampled: 810,
+          narrative: "The Fox Sports Bar & Grill is about average compared to similar venues in the area both in terms of popularity and cost per impression. Most venues will fallinto this category."
+      },
+      age: {
+          < 12: 0,
+          12 – 17: 0,
+          18 – 20: 0,
+          21 – 24: 48.125,
+          25 – 34: 34.6875,
+          35 – 44: 16.5625,
+          45 – 54: 0.625,
+          55 – 64: 0,
+          65+: 0
+      },
+      gender: {
+          Female: 49.375,
+          Male: 50.625
+      },
+      ethnicity: {
+          Asian: 3.4375,
+          Black / African American: 3.4375,
+          Hispanic / Latino: 84.6875,
+          Native American: 0,
+          White: 8.125
+      },
+      trends_by_week: {
+          narrative: "The Fox Sports Bar & Grill has had events on Thursday, Friday, and Saturday and has performed best on Saturday. Specifically, The Fox Sports Bar & Grill yields more impressions per hour on Saturday than on any other day of the week.",
+          impressions_promo: {
+              0: 0,
+              1: 0,
+              2: 0,
+              3: 11.84615384615384,
+              4: 13.61111111111111,
+              5: 22.5,
+              6: 0
+          },
+          cost_impression: {
+              0: 0,
+              1: 0,
+              2: 0,
+              3: 0.4082136231115823,
+              4: 0.4251700680272109,
+              5: 0.4166666666666667,
+              6: 0
+          }
+      }
+  }
+  EOS
+  def analysis
     if resource.present?
       render
     end
@@ -325,6 +414,63 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     collection
   end
 
+  api :POST, '/api/v1/venues', 'Creates a new venue'
+  param_group :venue
+  see 'venues#types'
+  def create
+    if create_place(permitted_params, true)
+      @venue = @place
+      respond_to do |format|
+        format.json { render :show }
+        format.xml { render :show }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @place.errors, status: :unprocessable_entity }
+        format.xml { render xml: @place.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  api :GET, '/api/v1/venues/types', "Get a list of possible venue types"
+  description <<-EOS
+  Returns a list of valid venue types that can be used to generate a dropdown when
+  creating a new venue
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&company_id=1
+  [
+      {
+          "name": "Accounts",
+          "value": "accounts"
+      },
+      {
+          "name": "Airport",
+          "value": "airport"
+      },
+      {
+          "name": "Amusement Park",
+          "value": "amusement_park"
+      },
+      {
+          "name": "Aquarium",
+          "value": "aquarium"
+      },
+      {
+          "name": "Art Gallery",
+          "value": "art_gallery"
+      },
+      ...
+  ]
+  EOS
+  def types
+    types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
+    respond_to do |format|
+      format.json { render json: types }
+      format.xml { render xml: types }
+    end
+  end
+
   api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
   param :id, :number, required: true, desc: "Venue ID"
   description <<-EOS
@@ -456,6 +602,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   protected
+    def permitted_params
+      params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    end
     def permitted_search_params
       params.permit({campaign: []}, :location, :radius)
     end

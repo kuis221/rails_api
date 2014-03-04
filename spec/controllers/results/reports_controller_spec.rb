@@ -23,7 +23,19 @@ describe Results::ReportsController do
       get 'new', format: :js
       response.should be_success
       response.should render_template('new')
-      response.should render_template('form')
+      response.should render_template('_form')
+    end
+  end
+
+  describe "GET 'preview'" do
+    let(:report) { FactoryGirl.create(:report, company: @company) }
+    it "returns http success" do
+      get 'preview', id: report.id, format: :js
+      response.should be_success
+      response.should render_template('preview')
+      response.should render_template('_report_preview')
+
+      expect(assigns(:report)).to be_new_record
     end
   end
 

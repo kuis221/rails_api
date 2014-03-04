@@ -91,13 +91,13 @@ class CampaignsController < FilteredController
 
   protected
     def permitted_params
-      params.permit(campaign: [:name, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]
+      params.permit(campaign: [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]
     end
 
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|
-          b = Brand.find_or_create_by_name(b).id unless b =~ /^[0-9]$/
+          b = Brand.find_or_create_by_name(b).id unless  b.is_a?(Integer) || b =~ /\A[0-9]+\z/
           brands[index] = b.to_i
         end
       end

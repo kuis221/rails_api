@@ -28,6 +28,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events', "Search for a list of events"
+  param :start_date, String, :desc => "A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY."
+  param :end_date, String, :desc => "A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY."
   param :campaign, Array, :desc => "A list of campaign ids to filter the results"
   param :place, Array, :desc => "A list of places to filter the results"
   param :area, Array, :desc => "A list of areas to filter the results"
@@ -35,8 +37,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :team, Array, :desc => "A list of teams to filter the results"
   param :brand, Array, :desc => "A list of brands to filter the results"
   param :brand_porfolio, Array, :desc => "A list of brand portfolios to filter the results"
-  param :status, ['Active', 'Inactive'], :desc => "A list of event status to filter the results"
-  param :event_status, ['Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'], :desc => "A list of event recap status to filter the results"
+  param :status, Array, :desc => "A list of event status to filter the results. The possible options are: 'Active', 'Inactive'"
+  param :event_status, Array, :desc => "A list of event recap status to filter the results. The possible options are: 'Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'"
   param :page, :number, :desc => "The number of the page, Default: 1"
   see "users#companies", "User companies"
 
@@ -239,8 +241,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *start_time*: the event's start time in 12 hours format
   * *end_date*: the event's end date in the format mm/dd/yyyy
   * *end_time*: the event's end time in 12 hours format
+  * *summary*: the event's summary
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
+  * *have_data*: returns true if data have been entered for the event, otherwise, returns false
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
   * *place*: On object with the event's venue information with the following attributes
     * *id*: the venue's id
@@ -268,6 +272,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "end_time": "10:00 PM",
       "status": "Active",
       "event_status": "Unsent",
+      "summary": "This is a test summary",
+      "have_data": true,
       "actions": [
           "enter post event data",
           "upload photos",
@@ -353,6 +359,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   * *description:* the field's description
 
+  * *goal:* the goal for this field on the event's campaign (only present if +fied_type+ is NOT "count" or "percentage", for such fields the goal is specified on the segment level)
+
   * *segments:* when the +fied_type+ is either "count" or "percentage", this will enumerate the possible
     options for the "count" fields or the different subfields for the "percentage" fields.
 
@@ -363,6 +371,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *text:* the label/text for the option/sub-field
 
     * *value:* (for percentage fields only) the current value for this segment, the sum for all fields' segments should be 100
+
+    * *goal:* the goal for this segment on the event's campaign
 
   * *options:* specific options for this field, depending of the field_type these can be:
 
@@ -750,20 +760,21 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def results
-    @fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
+    fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
 
     # Save the results so they are returned with an ID
-    resource.all_results_for(@fields).each{|r| r.save(validate: false) if r.new_record? }
+    resource.all_results_for(fields).each{|r| r.save(validate: false) if r.new_record? }
 
-    results = @fields.map do |field|
+    results = fields.map do |field|
       result = {name: field.name, ordering: field.ordering, field_type: field.field_type, options: field.options, description: nil}
       result[:module] = field.kpi.module unless field.kpi.nil?
+      result[:goal] = resource.kpi_goals[field.kpi_id] unless ['percentage', 'count'].include?(field.field_type)
       result[:module] ||= 'custom'
       if field.field_type == 'percentage'
-        result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value}}})
+        result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
       else
         if field.field_type == 'count'
-          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text}}})
+          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
         end
         r = resource.results_for([field]).first
         result.merge!({id: r.id, value: r.value})
@@ -1336,14 +1347,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
       parameters = {}
       allowed = []
       allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
-      allowed += [:summary, {results_attributes: [:value, :id]}] if can?(:edit_data, Event)
+      allowed += [:summary, {results_attributes: [:value, :id, {value: []}]}] if can?(:edit_data, Event)
       allowed += [:active] if can?(:deactivate, Event)
       parameters = params.require(:event).permit(*allowed)
       parameters
     end
 
     def permitted_search_params
-      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
+      params.permit(:start_date, :end_date, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
     end
 
     def load_contactable_from_request

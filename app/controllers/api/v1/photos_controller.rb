@@ -37,6 +37,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
               "created_at": "2013-11-19T00:49:24-08:00",
               "active": true,
               "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/small/SV-T101-P005-111413.JPG?1384851148",
+              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/thumbnail/SV-T101-P005-111413.JPG?1384851148",
               "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/medium/SV-T101-P005-111413.JPG?1384851148",
               "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/original/SV-T101-P005-111413.JPG?1384851148"
           },
@@ -48,6 +49,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
               "created_at": "2013-11-19T00:49:16-08:00",
               "active": true,
               "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/small/SV-T101-P001-111413.JPG?1384851145",
+              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/thumbnail/SV-T101-P001-111413.JPG?1384851145",
               "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/medium/SV-T101-P001-111413.JPG?1384851145",
               "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/original/SV-T101-P001-111413.JPG?1384851145"
           }
@@ -127,7 +129,9 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   def form
     if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
-      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).where(:key).starts_with("uploads/")
+      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).
+                  where(:key).starts_with("uploads/")
+                  #.where(:content_type).starts_with('image/')
       data = { fields: form.fields, url: "https://s3.amazonaws.com/#{S3_CONFIGS['bucket_name']}/" }
       respond_to do |format|
         format.json { render json: data }

@@ -2,22 +2,24 @@
 #
 # Table name: events
 #
-#  id            :integer          not null, primary key
-#  campaign_id   :integer
-#  company_id    :integer
-#  start_at      :datetime
-#  end_at        :datetime
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  active        :boolean          default(TRUE)
-#  place_id      :integer
-#  promo_hours   :decimal(6, 2)    default(0.0)
-#  reject_reason :text
-#  summary       :text
-#  timezone      :string(255)
+#  id             :integer          not null, primary key
+#  campaign_id    :integer
+#  company_id     :integer
+#  start_at       :datetime
+#  end_at         :datetime
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  active         :boolean          default(TRUE)
+#  place_id       :integer
+#  promo_hours    :decimal(6, 2)    default(0.0)
+#  reject_reason  :text
+#  summary        :text
+#  timezone       :string(255)
+#  local_start_at :datetime
+#  local_end_at   :datetime
 #
 
 require 'spec_helper'
@@ -86,6 +88,72 @@ describe Event do
         @event.reject
         @event.should be_rejected
       end
+    end
+  end
+
+  describe "#accessible_by" do
+    before do
+      @event = FactoryGirl.create(:event, campaign: campaign, place: place)
+    end
+
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
+    let(:place) {FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles')}
+    let(:area) {FactoryGirl.create(:area, company: company)}
+    let(:company_user) {FactoryGirl.create(:company_user, company: company, role: FactoryGirl.create(:role, is_admin: false, company: company))}
+
+    it "should return empty if the user doesn't have campaigns nor places" do
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return empty if the user have access to the campaing but not the place" do
+       company_user.campaigns << campaign
+      expect(Event.accessible_by_user(company_user)).to be_empty
+    end
+
+    it "should return the event if the user have the place directly assigned to the user" do
+      company_user.campaigns << campaign
+      company_user.places << place
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user have access to an area that includes the place" do
+      company_user.campaigns << campaign
+      area.places << place
+      company_user.areas << area
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+
+    it "should return the event if the user has access to the city" do
+      company_user.campaigns << campaign
+      company_user.places << FactoryGirl.create(:place, country: 'US', state:'California', city: 'Los Angeles', types: ['locality'])
+      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+    end
+  end
+
+  describe "with_user_in_team" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:user) { FactoryGirl.create(:company_user, company: campaign.company) }
+    it "should return empty if the user is not assiged to any event" do
+      expect(Event.with_user_in_team(user)).to be_empty
+    end
+
+    it "should return all the events where a user is assigned as part of the event team" do
+      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
+      events.each{|e| e.users << user }
+      FactoryGirl.create(:event, campaign: campaign)
+
+      expect(Event.with_user_in_team(user)).to match_array(events)
+    end
+
+    it "should return all the events where a user is part of a team that is assigned to the event" do
+      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
+      team = FactoryGirl.create(:team, company: campaign.company)
+      team.users << user
+      events.each{|e| e.teams << team }
+      FactoryGirl.create(:event, campaign: campaign)
+
+      expect(Event.with_user_in_team(user)).to match_array(events)
     end
   end
 
@@ -856,9 +924,11 @@ describe Event do
       Time.use_zone('America/New_York') do
         event = FactoryGirl.create(:event)
         event.timezone.should == "America/New_York"
+        expect(event.local_start_at.utc.strftime('%Y-%m-%d %H:%M:%S')).to eql event.read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S')
       end
       Time.use_zone("America/Guatemala") do
         event = Event.last
+        event.local_start_at
         event.start_date = '01/22/2019'
         event.valid?  # this will trigger the after_validation call
         event.timezone.should == "America/Guatemala"

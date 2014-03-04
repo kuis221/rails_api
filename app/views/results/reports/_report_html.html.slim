@@ -1,15 +1,39 @@
-table
-  tr
-    th 
-    th colspan="#{report.values.count}" Values
+- row_levels_count = resource.rows.count
+- build_report_header_cols(resource.report_columns_hash)
+.report-arrows
+  a.arrow.icon-angle-left href="#" data-direction="left"
+  a.arrow.icon-angle-right href="#" data-direction="right"
 
-  tr
-    th Row Labels
-    - report.values.each do |value|
-      th= report_column_label(value)
+.report-outer
+  .report-inner
+    table.table.report-table class="#{row_levels_count > 1 ? 'multi-row' : ''}"
+      thead
+        / This first row is used for setting the width
+        tr.cols-widths
+          td
+          - @report_header_cols_rows.last.each do |row|
+            td
 
-  - report.fetch_page(1).each do |row|
-    tr
-      td= row['row_labels']
-      - report.values.each do |value|
-        td= row[report.field_to_sql_name(value['field'])]
+        - @report_header_cols_rows.each_with_index do |row, index|
+          - if resource.values.count > 1 || index != resource.columns.index{|v| v['field'] == 'values' }
+            tr.row-headers class="#{if index == @report_header_cols_rows.count-1 then 'last-header' else '' end}"
+              td
+              = row.join.html_safe
+
+        tr.grand-total
+          td GRAND TOTAL:
+          - @report_header_cols_rows.last.each do |row|
+            th 1,234.5
+
+      tbody
+        - each_grouped_report_row do |row_label, row_level, values|
+          tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}"
+            td class="row_label"
+              - if row_level+1 < row_levels_count
+                a href="#" class="icon-minus report-collapse-button"
+              = row_label
+            - values.each do |value|
+              td= value
+
+javascript:
+  $('.report-table').reportTableScroller();

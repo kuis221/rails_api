@@ -4,6 +4,10 @@ node :file_small do |r|
   r.processed? ? r.file.url(:small) : nil
 end
 
+node :file_thumbnail do |r|
+  r.processed? ? r.file.url(:thumbnail) : nil
+end
+
 node :file_medium do |r|
   r.processed? ? r.file.url(:medium) : nil
 end

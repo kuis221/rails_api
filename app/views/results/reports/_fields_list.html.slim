@@ -4,7 +4,7 @@ input type="search" id="field-search-input" name="field_search" title="Field Sea
     b= group_name
     ul.draggable-list
       - items.each do |id, name|
-        li.report-field id="#{id}" data-field-id="#{id}"
+        li.report-field id="#{id}" data-field-id="#{id}" data-group="#{group_name}"
           .field-label= name
           i.field-settings-btn.icon-caret-down
           .clearfix
