@@ -115,7 +115,7 @@ describe EventsController do
         expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
         woorbook_from_last_export do |oo|
           oo.last_row.should == 1
-          1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS"]
+          1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS","URL"]
         end
       end
 
@@ -129,7 +129,7 @@ describe EventsController do
         expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
         woorbook_from_last_export do |oo|
           oo.last_row.should == 2
-          1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved", (event.teams + event.users).sort_by(&:name).map(&:name).join(', ')]
+          1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved", (event.teams + event.users).sort_by(&:name).map(&:name).join(', '), Rails.application.routes.url_helpers.event_url(event) ]
         end
       end
     end
