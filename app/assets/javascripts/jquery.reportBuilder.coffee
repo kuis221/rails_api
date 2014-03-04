@@ -106,6 +106,7 @@ $.widget 'nmk.reportBuilder',
 
 		@element.find('#report-values').on 'sortreceive', () =>
 			@_addValuesToColumns()
+			false
 
 		@refreshReportPreview()
 

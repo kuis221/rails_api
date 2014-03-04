@@ -203,9 +203,6 @@ $report_border_color: #ccc;
 						text-align: left;
 					}
 				}
-				td:first-child {
-					border-right: none 0px;
-				}
 				&:last-child td:first-child {
 					border-bottom: thin solid $report_border_color !important;
 				}
@@ -227,7 +224,11 @@ $report_border_color: #ccc;
 
 		&.multi-row {
 			tr.level_0 {
-				border: thin solid #ececec;
+				border-top: thin solid $report_border_color;
+				.row_label{ 
+					border-top: thin solid $report_border_color;
+					margin-top: -1px;
+				}
 			}
 		}
 	}
