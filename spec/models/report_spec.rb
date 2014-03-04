@@ -248,12 +248,34 @@ describe Report do
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
       page = report.fetch_page
+      expect(report.report_columns).to match_array ["California||Impressions", "Texas||Impressions"]
       expect(page).to eql [
        {"campaign_name"=>"Guaro Cacique 2013", "values"=>[200.0, 100.0]},
        {"campaign_name"=>"Ron Centenario FY12", "values"=>[300.0, nil]}
       ]
 
       expect(report.report_columns).to eql ["California||Impressions", "Texas||Impressions"]
+    end
+
+    it "should allow display values as a percentage of the column" do
+      campaign2 = FactoryGirl.create(:campaign, name: 'Other', company: company)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 100 })
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 200 })
+      FactoryGirl.create(:event, campaign: campaign2, results: { impressions: 100 })
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => 'perc_of_column'}]
+      )
+
+      page = report.fetch_page
+      expect(report.report_columns).to match_array ["% of column Impressions"]
+      expect(page).to eql [
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[75.0]},
+       {"campaign_name"=>"Other", "values"=>[25.0]}
+      ]
     end
 
     it "should work when adding a table field as a value with the aggregation method 'count'" do
@@ -403,9 +425,10 @@ describe Report do
                     {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"avg"}]
         )
         page = report.fetch_page
+        expect(report.report_columns).to match_array ["California||Impressions", "California||Interactions", "Texas||Impressions", "Texas||Interactions"]
         expect(page).to eql [
-            {"event_start_date"=>"2014/01/01", "values" => [nil, nil, 100.00, 50.0]},
-            {"event_start_date"=>"2014/01/12", "values" => [200.00, 150.0, nil, nil]}
+            {"event_start_date"=>"2014/01/01", "values" => [100.00, 50.0, nil, nil]},
+            {"event_start_date"=>"2014/01/12", "values" => [nil, nil, 200.00, 150.0]}
         ]
       end
 
