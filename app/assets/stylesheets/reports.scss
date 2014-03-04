@@ -1,4 +1,4 @@
-@import "brandscopic.scss";
+@import "variables.scss";
 
 // REPORTS
 ul.reports-list {
@@ -146,12 +146,23 @@ ul.reports-list {
 	}
 }
 
+
+$report_border_color: #ccc;
 #report-container {
 	min-height: 200px;
 	margin-top: 20px;
-	overflow: auto;
+	.report-outer {
+		position:relative;
+		border: thin solid $report_border_color;
+	}
+	.report-inner {
+		overflow-x:hidden;
+		overflow-y:visible;
+		margin-left:230px;
+		*margin-left: -230px;/*ie7*/
+	}
 	.report-table {
-		border: thin solid #ececec;
+		margin-bottom: 0px;
 		.level_1 .row_label {
 			padding-left: 20px;
 		}
@@ -162,29 +173,69 @@ ul.reports-list {
 			padding-left: 60px;
 		}
 		.level_4 .row_label {
-			padding-left: 80px;
+			padding-left: 70px;
 		}
+		thead {
+			border-bottom: thin solid $report_border_color;
+			tr {
+				border-bottom: none 0;
 
-		th {
-			text-align: right;
-			text-transform: uppercase;
-			white-space: nowrap;
+				&.cols-widths {
+					td {
+						line-height: 1px;
+						padding:0;
+						height:1;
+					}
+				}
+				th, td {
+					text-align: center;
+					text-transform: uppercase;
+					white-space: nowrap;
+					border-top: none 0 !important;
+					border-bottom: none 0 !important;
+				}
+				&.last-header, &.grand-total {
+					th, td { 
+						text-align: right;
+					}
+
+					td:first-child {
+						text-align: left;
+					}
+				}
+				td:first-child {
+					border-right: none 0px;
+				}
+				&:last-child td:first-child {
+					border-bottom: thin solid $report_border_color !important;
+				}
+			}
 		}
-
-		td {
+		tbody td {
 			border: 0;
 			text-align: right;
-
-			&.row_label {
-				white-space: nowrap;
-				text-align: left;
-			}
+		}
+		tr td:first-child {
+			white-space: nowrap;
+			text-align: left;
+			position:absolute;
+			*position: relative; /*ie7*/
+			left:0;
+			width:215px;
+			height: 20px;
 		}
 
 		&.multi-row {
 			tr.level_0 {
 				border: thin solid #ececec;
 			}
+		}
+	}
+
+	.report-arrows {
+		text-align: right;
+		a.disabled {
+			opacity: 0.5;
 		}
 	}
 }
