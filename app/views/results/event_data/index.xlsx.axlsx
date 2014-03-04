@@ -29,7 +29,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                  'BLACK/AFRICAN AMERICAN',
                  'HISPANIC/LATINO',
                  'NATIVE AMERICAN',
-                 'WHITE'] + custom_fields_to_export_headers, :style => row_header
+                 'WHITE',
+                 'TEAM MEMBERS'] + custom_fields_to_export_headers, :style => row_header
 
   sheet.add_row ['TOTALS',
                  number_with_delimiter(data_totals['events_count']).to_s + ' EVENTS',
@@ -51,7 +52,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                  number_to_percentage(data_totals['ethnicity_black'], precision: 2),
                  number_to_percentage(data_totals['ethnicity_hispanic'], precision: 2),
                  number_to_percentage(data_totals['ethnicity_native_american'], precision: 2),
-                 number_to_percentage(data_totals['ethnicity_white'], precision: 2)],
+                 number_to_percentage(data_totals['ethnicity_white'], precision: 2),
+                 ''],
                 :style => [row_totals,
                            row_totals,
                            row_totals,
@@ -95,7 +97,8 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                    number_to_percentage(event.ethnicity_black, precision: 2),
                    number_to_percentage(event.ethnicity_hispanic, precision: 2),
                    number_to_percentage(event.ethnicity_native_american, precision: 2),
-                   number_to_percentage(event.ethnicity_white, precision: 2)]+
+                   number_to_percentage(event.ethnicity_white, precision: 2),
+                   (event.teams + event.users).sort_by(&:name).map(&:name).join(', ')]+
                    custom_fields_to_export_values(event),
                   :style => [row_data_text,
                              row_data_text,
@@ -117,6 +120,7 @@ wb.add_worksheet(name: "Event Data") do |sheet|
                              row_data_number,
                              row_data_number,
                              row_data_number,
-                             row_data_number]
+                             row_data_number,
+                             row_data_text]
 	end
 end

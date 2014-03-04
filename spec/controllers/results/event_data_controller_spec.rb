@@ -42,8 +42,8 @@ describe Results::EventDataController do
       expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
       woorbook_from_last_export do |oo|
         oo.last_row.should == 2
-        1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["", "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "START", "END", "PROMO HOURS", "IMPRESSIONS", "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE"]
-        1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["TOTALS", "0 EVENTS", "", "", "", "", "", "", "", 0.0, 0.0, 0.0, 0.0, "$0.00", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%"]
+        1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["", "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "START", "END", "PROMO HOURS", "IMPRESSIONS", "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE", "TEAM MEMBERS"]
+        1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["TOTALS", "0 EVENTS", "", "", "", "", "", "", "", 0.0, 0.0, 0.0, 0.0, "$0.00", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%",""]
       end
     end
 
@@ -52,6 +52,8 @@ describe Results::EventDataController do
       campaign.assign_all_global_kpis
       place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
       event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
+      team = FactoryGirl.create(:team, company: @company)
+      event.teams << team
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
       set_event_results(event,
         impressions: 10, interactions: 11, samples: 12, gender_male: 40, gender_female: 60,
@@ -61,7 +63,7 @@ describe Results::EventDataController do
       expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
       woorbook_from_last_export do |oo|
         oo.last_row.should == 3
-        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%"]
+        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%", (event.teams + event.users).sort_by(&:name).map(&:name).join(', ')]
       end
     end
 
@@ -110,8 +112,8 @@ describe Results::EventDataController do
       expect { get 'index', campaign: [campaign.id], format: :xlsx }.to change(ListExport, :count).by(1)
       woorbook_from_last_export do |oo|
         oo.last_row.should == 3
-        1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["", "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "START", "END", "PROMO HOURS", "IMPRESSIONS", "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE","AGE: < 12", "AGE: 12 – 17", "AGE: 18 – 24", "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI"]
-        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%",nil, nil, nil, nil, nil, nil, nil, nil, 8899]
+        1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["", "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "START", "END", "PROMO HOURS", "IMPRESSIONS", "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE","TEAM MEMBERS","AGE: < 12", "AGE: 12 – 17", "AGE: 18 – 24", "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI"]
+        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%",(event.teams + event.users).sort_by(&:name).map(&:name).join(', '),nil, nil, nil, nil, nil, nil, nil, nil, 8899]
       end
     end
 
