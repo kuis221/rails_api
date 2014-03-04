@@ -158,7 +158,7 @@ $.widget 'nmk.reportBuilder',
 								)
 							)
 
-		if listName in ['report-values']
+		if listName in ['report-values', 'report-rows']
 			formFields.push $('<div class="control-group">').
 								append(	$('<label class="control-label" for="report-field-aggregate">').text('Summarize by'),
 										$('<div class="controls">').append(
@@ -172,11 +172,12 @@ $.widget 'nmk.reportBuilder',
 												.on 'change', (e) =>
 													$select = if e.target.tagName is 'OPTION' then  $(e.target).parent() else $(e.target)
 													field.aggregate = $select.val()
-													label_field = @fieldSettings.find('input[name="report-field-label"]')
-													label = label_field.val()
-													label = label.replace(/(sum|count|average|max|min) of/i, $('option[value='+$select.val()+']', $select).text() + " of")
-													label_field.val(label).trigger('keyup')
 													@fieldSettings.changed = true
+													if listName is 'report-values'
+														label_field = @fieldSettings.find('input[name="report-field-label"]')
+														label = label_field.val()
+														label = label.replace(/(sum|count|average|max|min) of/i, $('option[value='+$select.val()+']', $select).text() + " of")
+														label_field.val(label).trigger('keyup')
 										)
 								)
 
@@ -246,7 +247,7 @@ $.widget 'nmk.reportBuilder',
 	_getRowProperties: (row) ->
 		$row = $(row)
 		field = $row.data('field')
-		{field: $row.data('field-id'), label: field.label }
+		{field: $row.data('field-id'), label: field.label, aggregate: if field.aggregate? then field.aggregate else 'sum' }
 
 	_getFilterProperties: (filter) ->
 		$filter = $(filter)

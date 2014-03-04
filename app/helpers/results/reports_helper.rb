@@ -26,7 +26,7 @@ module Results
           row_label = row[row_field]
           if row_label != previous_label
             group = results.select{|r|r[row_field] == row_label}
-            values = sum_row_values(group)
+            values = sum_row_values(group, resource.rows[row_number])
             yield row_label, row_number, values
             each_grouped_report_row(group, row_number+1, &block)
           end
@@ -59,8 +59,19 @@ module Results
         klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title]]}
       end
 
-      def sum_row_values(group)
-        values = group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
+      def sum_row_values(group, row)
+        case row['aggregate']
+        when 'avg'
+          group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.reduce(:+).to_f / x.size}
+        when 'min'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.min }
+        when 'max'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.max }
+        when 'count'
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.size }
+        else
+          group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
+        end
       end
 
       # Return the names of the expected names from the SQL query for the report values and columns

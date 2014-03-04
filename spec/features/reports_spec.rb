@@ -223,8 +223,75 @@ feature "Reports", js: true do
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      @report.reload
-      expect(@report.values.first).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
+      expect(@report.reload.values.first).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
+    end
+
+    scenario "user can change the aggregation method for rows" do
+      campaign = FactoryGirl.create(:campaign, company: @company, name: 'My Super Campaign')
+      FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
+        results: {impressions: 100, interactions: 1000})
+      FactoryGirl.create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
+        results: {impressions: 50, interactions: 2000})
+      visit build_results_report_path(@report)
+      field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
+      field_list('fields').find('li[data-field-id="event:start_date"]').drag_to field_list('rows')
+      field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
+      field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
+
+      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('Average', from: 'Summarize by')
+        find_field('Label').value.should == 'Campaign Name'
+      end
+      find('body').click
+      click_button 'Save'
+      wait_for_ajax
+      expect(@report.reload.rows.first).to include("label"=>"Campaign Name", "aggregate" => 'avg', "field" => "campaign:name")
+
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('My Super Campaign')
+        expect(page).to have_content('75.0')
+        expect(page).to have_content('1500.0')
+      end
+
+      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('Max', from: 'Summarize by')
+      end
+      find('body').click
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('100.0')
+        expect(page).to have_content('2000.0')
+      end
+
+      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('Min', from: 'Summarize by')
+      end
+      find('body').click
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('50.0')
+        expect(page).to have_content('1000.0')
+      end
+
+      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('Sum', from: 'Summarize by')
+      end
+      find('body').click
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('150.0')
+        expect(page).to have_content('3000.0')
+      end
+
+      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('Count', from: 'Summarize by')
+      end
+      find('body').click
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('2')
+      end
     end
 
     scenario "drag fields outside the list to remove it" do
