@@ -2486,11 +2486,48 @@ textarea::-webkit-input-placeholder {
 }
 
 #company-name {
-	font-size: 22px;
+	font-size: 20px;
 	padding: 10px 0 0 25px;
 	a {
 		color: $brand;
 		text-decoration: none;
+		&.dropdown-toggle{
+			&:after{
+				content: "\e004";
+				color: $brand;
+				display: inline-block;
+				font-family: 'icons';
+				font-size: 12px;
+				left: 5px;
+				padding-bottom: 5px;
+				position: relative;
+				top: 5px;
+				speak: none;
+				text-align: center;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+	}
+	.caret{
+		display: none;
+	}
+	.dropdown.open{
+		li a{
+			color: silver;
+			font-size: 13px;
+		}
+		&>.dropdown-menu{
+			background-color: $menu;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			left: 73px;
+			margin: 20px 0 0;
+			&:before{
+				left: 160px;
+			}
+		}
 	}
 }
 
