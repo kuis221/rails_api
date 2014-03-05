@@ -41,6 +41,77 @@ describe Report do
   end
 
 
+  describe "#columns_totals" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    before do
+      Kpi.create_global_kpis
+    end
+
+    it "should return the totals for all the values" do
+      campaign2 = FactoryGirl.create(:campaign, name: 'Other', company: company)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 100 })
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 200 })
+      FactoryGirl.create(:event, campaign: campaign2, results: { impressions: 100 })
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => 'perc_of_column'}]
+      )
+
+      expect(report.report_columns).to match_array ["% of column Impressions"]
+      expect(report.columns_totals).to eql [400.0]
+    end
+
+    it "should return the totals for the value on each column" do
+      place_in_ca = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
+      place_in_tx = FactoryGirl.create(:place, city: 'Houston', state: 'Texas')
+      place_in_az = FactoryGirl.create(:place, city: 'Phoenix', state: 'Arizona')
+      campaign2 = FactoryGirl.create(:campaign, name: 'Other', company: company)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 100 }, place: place_in_ca)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 200 }, place: place_in_tx)
+      FactoryGirl.create(:event, campaign: campaign2, results: { impressions: 500 }, place: place_in_ca)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 50 }, place: place_in_az)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => 'perc_of_column'}]
+      )
+
+      expect(report.report_columns).to match_array ["Arizona||% of column Impressions", "California||% of column Impressions", "Texas||% of column Impressions"]
+      expect(report.columns_totals).to eql [50.0, 600.0, 200.0]
+    end
+
+    it "should return the totals for each value on each column" do
+      place_in_ca = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
+      place_in_tx = FactoryGirl.create(:place, city: 'Houston', state: 'Texas')
+      place_in_az = FactoryGirl.create(:place, city: 'Phoenix', state: 'Arizona')
+      campaign2 = FactoryGirl.create(:campaign, name: 'Other', company: company)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 100, interactions: 10 }, place: place_in_ca)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 200, interactions: 20 }, place: place_in_tx)
+      FactoryGirl.create(:event, campaign: campaign2, results: { impressions: 500, interactions: 50 }, place: place_in_ca)
+      FactoryGirl.create(:event, campaign: campaign,  results: { impressions: 50, interactions: 5 }, place: place_in_az)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum"}
+          ]
+      )
+
+      expect(report.report_columns).to match_array ["Arizona||Impressions", "Arizona||Interactions", "California||Impressions", "California||Interactions", "Texas||Impressions", "Texas||Interactions"]
+      expect(report.columns_totals).to eql [50.0, 5.0, 600.0, 60.0, 200.0, 20.0]
+    end
+  end
+
+
   describe "#fetch_page" do
     let(:company) { FactoryGirl.create(:company) }
     let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }

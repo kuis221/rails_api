@@ -22,8 +22,8 @@
 
         tr.grand-total
           td GRAND TOTAL:
-          - @report_header_cols_rows.last.each do |row|
-            th 1,234.5
+          - @report.columns_totals.each do |total|
+            th= number_with_delimiter total if total
 
       tbody
         - each_grouped_report_row do |row_label, row_level, values|

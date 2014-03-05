@@ -181,6 +181,28 @@ $.widget 'nmk.reportBuilder',
 										)
 								)
 
+		if listName in ['report-values']
+			formFields.push $('<div class="control-group">').
+								append(	$('<label class="control-label" for="report-field-display">').text('Display as'),
+										$('<div class="controls">').append(
+											$('<select name="report-field-display" id="report-field-display">').append([
+													$('<option value="count">No Calculation</option>').attr('selected', field.disply is 'normal'),
+													$('<option value="count">% of Column</option>').attr('selected', field.disply is 'perc_of_column'),
+													$('<option value="count">% of Row</option>').attr('selected', field.disply is 'perc_of_row'),
+													$('<option value="count">% of Total</option>').attr('selected', field.disply is 'perc_of_total')
+												])
+												.on 'change', (e) =>
+													$select = if e.target.tagName is 'OPTION' then  $(e.target).parent() else $(e.target)
+													field.aggregate = $select.val()
+													@fieldSettings.changed = true
+													if listName is 'report-values'
+														label_field = @fieldSettings.find('input[name="report-field-label"]')
+														label = label_field.val()
+														label = label.replace(/(sum|count|average|max|min) of/i, $('option[value='+$select.val()+']', $select).text() + " of")
+														label_field.val(label).trigger('keyup')
+										)
+								)
+
 		@fieldSettings = $('<div class="report-field-settings">').hide()
 			.append(formFields)
 			.appendTo(@element)
