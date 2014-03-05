@@ -168,7 +168,12 @@ class Report < ActiveRecord::Base
   end
 
   def columns_totals
-    fetch_results_for(columns).first['values']
+    results = fetch_results_for(columns)
+    if results.any?
+      results.first['values']
+    else
+      []
+    end
   end
 
   protected
