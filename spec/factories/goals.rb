@@ -27,5 +27,6 @@ FactoryGirl.define do
     title nil
     start_date nil
     due_date nil
+    activity_type_id nil
   end
 end

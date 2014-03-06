@@ -175,9 +175,11 @@ module Analysis
                           .select(fields_select_activities)
                           .group('2')
 
-      venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true})
+      if @campaign.present?
+        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true})
                           .select(fields_select_activities)
                           .group('2')
+      end
 
       goals_result = {}
       @goals.each do |goal|
@@ -193,7 +195,7 @@ module Analysis
           completed = get_total_by_status(goal_scope, goal, approved_totals_kpis, 'approved')
           submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted', 'rejected'])
         else
-          venues_activities = venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+          venues_activities = @campaign.present? ? venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0 : 0
           completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
           completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : nil
           submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i)
