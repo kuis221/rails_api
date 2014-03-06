@@ -1,6 +1,5 @@
 .details_box
   - if @campaign.events.count > 0
-    = render 'report_event_status'
     = render 'report_goals_actual'
   - else
-    p This campaign has no events
+    p.text-center This campaign has no events
