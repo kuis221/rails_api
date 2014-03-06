@@ -1244,9 +1244,12 @@ li.dropdown a{
 	.nav {
 		margin: 0;
 		li>a{
-			color: $user_menu;
+			color: $app_bg;
 			padding-left: 12px;
 			padding-right: 12px;
+		}
+		li#admin a, li#user_menu a{
+			color:$user_menu;
 		}
 		li.dropdown.open>.dropdown-toggle,
 		li.dropdown.active>.dropdown-toggle,
@@ -1583,14 +1586,19 @@ li#notifications{
 }
 li#user_menu{
 	ul.dropdown-menu{
-		background-color: $menu;
+		background-color: $alert_grey;
 		box-shadow: none;
 		margin-top: 12px;
 		min-width: 148px;
 		left: -48px;
+		li{
+			color: $app_bg;
+			a:hover{
+				color: white;
+			}
+		}
 		li#users:last-child{
 			a:after{
-			color: $user_menu;
 			content: "\e013";
 			font-family: 'icons';
 			font-size: 14px;
@@ -1605,6 +1613,9 @@ li#user_menu{
 			a:hover:after{
 			color: white;
 		    }
+		}
+		&:before{
+			border-bottom: 10px solid $alert_grey;
 		}
 	}
 }
@@ -2512,19 +2523,28 @@ textarea::-webkit-input-placeholder {
 	.caret{
 		display: none;
 	}
+	.dropdown-menu{
+		li a:hover{
+			background-color: $menu !important;
+		}
+	}
 	.dropdown.open{
 		li a{
-			color: silver;
+			color: $app_bg;
 			font-size: 13px;
+			&:hover{
+				color: white;
+			}
 		}
 		&>.dropdown-menu{
-			background-color: $menu;
+			background-color: $alert_grey;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
 			box-shadow: none;
 			left: 73px;
 			margin: 20px 0 0;
 			&:before{
+				border-bottom: 10px solid $alert_grey;
 				left: 160px;
 			}
 		}
