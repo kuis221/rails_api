@@ -1244,10 +1244,17 @@ li.dropdown a{
 	.nav {
 		margin: 0;
 		li>a{
-			color: $app_bg;
 			padding-left: 12px;
 			padding-right: 12px;
 		}
+		li#admin, li#user_menu{
+			ul.dropdown-menu{
+				li a{
+					color: $app_bg;
+				}
+			}
+		}
+
 		li#admin a, li#user_menu a{
 			color:$user_menu;
 		}
@@ -1270,7 +1277,7 @@ li.dropdown a{
 		.active ul li.active a,
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
-			background-color: $header !important;
+			background-color: $menu !important;
 			background-image: none;
 		}
 		.nav-pills>.active>a,
@@ -1463,11 +1470,14 @@ label{
 }
 li#admin{
 	ul.dropdown-menu{
-	background-color: $menu;
-	box-shadow: none;
-	margin-top: 12px;
-	min-width: 148px;
-	left: -107px;
+		background-color: $alert_grey;
+		box-shadow: none;
+		margin-top: 12px;
+		min-width: 148px;
+		left: -107px;
+		&:before{
+			border-bottom: 10px solid $alert_grey;
+		}
 	}
 }
 li#notifications{
@@ -1602,7 +1612,7 @@ li#user_menu{
 			content: "\e013";
 			font-family: 'icons';
 			font-size: 14px;
-			left:58px;
+			left:70px;
 			position: relative;
 			speak:none;
 			text-align: center;
@@ -2498,6 +2508,7 @@ textarea::-webkit-input-placeholder {
 
 #company-name {
 	font-size: 20px;
+	margin-bottom: 0;
 	padding: 10px 0 0 25px;
 	a {
 		color: $brand;
@@ -2524,6 +2535,7 @@ textarea::-webkit-input-placeholder {
 		display: none;
 	}
 	.dropdown-menu{
+		min-width:260px;
 		li a:hover{
 			background-color: $menu !important;
 		}
@@ -2538,14 +2550,15 @@ textarea::-webkit-input-placeholder {
 		}
 		&>.dropdown-menu{
 			background-color: $alert_grey;
+			border: $alert_grey;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
 			box-shadow: none;
-			left: 73px;
+			left: -13px;
 			margin: 20px 0 0;
 			&:before{
 				border-bottom: 10px solid $alert_grey;
-				left: 160px;
+				left: 222px;
 			}
 		}
 	}
