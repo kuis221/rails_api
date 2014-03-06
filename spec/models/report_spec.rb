@@ -58,7 +58,7 @@ describe Report do
         company: company,
         columns: [{"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => 'perc_of_column'}]
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum"}]
       )
 
       expect(report.report_columns).to match_array ["% of column Impressions"]
@@ -79,7 +79,7 @@ describe Report do
         company: company,
         columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
         rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
-        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => 'perc_of_column'}]
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"% of column Impressions", "aggregate"=>"sum", "display" => ''}]
       )
 
       expect(report.report_columns).to match_array ["Arizona||% of column Impressions", "California||% of column Impressions", "Texas||% of column Impressions"]

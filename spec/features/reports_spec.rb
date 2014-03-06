@@ -223,7 +223,7 @@ feature "Reports", js: true do
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      expect(@report.reload.values.first).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
+      expect(@report.reload.values.first.to_hash).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
     end
 
     scenario "user can change the aggregation method for rows" do
@@ -241,12 +241,12 @@ feature "Reports", js: true do
       field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
       within '.report-field-settings' do
         select_from_chosen('Average', from: 'Summarize by')
-        find_field('Label').value.should == 'Campaign Name'
+        expect(find_field('Label').value).to eql 'Campaign Name'
       end
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      expect(@report.reload.rows.first).to include("label"=>"Campaign Name", "aggregate" => 'avg', "field" => "campaign:name")
+      expect(@report.reload.rows.first.to_hash).to include("label"=>"Campaign Name", "aggregate" => 'avg', "field" => "campaign:name")
 
       within "#report-container tr.level_0" do
         expect(page).to have_content('My Super Campaign')
@@ -292,6 +292,33 @@ feature "Reports", js: true do
       within "#report-container tr.level_0" do
         expect(page).to have_content('2')
       end
+    end
+
+    scenario "user can change the calculation method for values" do
+      campaign = FactoryGirl.create(:campaign, company: @company, name: 'My Super Campaign')
+      FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
+        results: {impressions: 100, interactions: 1000})
+      FactoryGirl.create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
+        results: {impressions: 50, interactions: 2000})
+      visit build_results_report_path(@report)
+      field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
+      field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
+
+      field_list('values').find('li', text: 'Sum of Interactions').find('.field-settings-btn').click
+      within '.report-field-settings' do
+        select_from_chosen('% of Column', from: 'Display as')
+        expect(find_field('Label').value).to eql 'Sum of Interactions'
+      end
+      find('body').click
+      click_button 'Save'
+      wait_for_ajax
+      expect(@report.reload.values.first.to_hash).to include("label"=>"Sum of Interactions", "display" => 'perc_of_column', "field" => "kpi:#{Kpi.interactions.id}")
+
+      within "#report-container tr.level_0" do
+        expect(page).to have_content('My Super Campaign')
+        expect(page).to have_content('100.0')
+      end
+
     end
 
     scenario "drag fields outside the list to remove it" do

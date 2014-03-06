@@ -9,18 +9,21 @@ $.widget 'nmk.reportTableScroller',
 		@leftMargin
 
 		# Store the initial widths for each cell
+		@element.css({width: 'auto'}) # Make the cells to take their "natural/minimun" width
 		$.each @cols, (i, cell) =>
 			$(cell).data 'width', $(cell).width()
 			$(cell).data 'outer-width', $(cell).outerWidth()
 
 		$('.report-arrows a').on 'click.reportTableScroller', (e) =>
 			@adjustColumnsSize $(e.target).data('direction')
+			false
 
 		@adjustColumnsSize()
 		@element.css({'table-layout': 'fixed'})
 
-		$(window).on 'resize.reportTableScroller', (e) =>
+		$(window).off('resize.reportTableScroller').on 'resize.reportTableScroller', (e) =>
 			@adjustColumnsSize()
+			true
 
 	_destroy: () ->
 		$('.report-arrows a').off 'click.reportTableScroller'
