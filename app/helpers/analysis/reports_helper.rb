@@ -158,26 +158,46 @@ module Analysis
     end
 
     def each_events_goal
-      fields_select = 'case when kpis.kpi_type=\'count\' then CAST(nullif(value, \'\') AS integer) else event_results.kpis_segment_id END AS kpis_segment_id, sum(scalar_value) as total_value, count(event_results.id) as total_count, event_results.kpi_id'
-      approved_totals = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
-                          .select(fields_select)
+      fields_select_kpis = 'case when kpis.kpi_type=\'count\' then CAST(nullif(value, \'\') AS integer) else event_results.kpis_segment_id END AS kpis_segment_id, sum(scalar_value) as total_value, count(event_results.id) as total_count, event_results.kpi_id'
+      approved_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
+                          .select(fields_select_kpis)
                           .group('1, event_results.kpi_id')
-      submitted_totals = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
-                          .select(fields_select)
+      submitted_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
+                          .select(fields_select_kpis)
                           .group('1, event_results.kpi_id')
 
+      fields_select_activities = 'count(activities.id) as total_count, activities.activity_type_id'
+      approved_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: 'approved')
+                          .select(fields_select_activities)
+                          .group('2')
+
+      submitted_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: ['submitted', 'rejected'])
+                          .select(fields_select_activities)
+                          .group('2')
+
+      venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true})
+                          .select(fields_select_activities)
+                          .group('2')
 
       goals_result = {}
       @goals.each do |goal|
         goal_scope = @events_scope
-        if goal.start_date.present? || goal.due_date.present?
-          goal_scope = goal_scope.where('events.start_at > ?', goal.start_date.beginning_of_day) if goal.start_date.present?
-          goal_scope = goal_scope.where('events.end_at <= ?', goal.start_date.end_of_day) if goal.due_date.present?
-        end
 
-        # Handle special kpis types
-        completed = get_total_by_status(goal_scope, goal, approved_totals, 'approved')
-        submitted = get_total_by_status(goal_scope, goal, submitted_totals, ['submitted', 'rejected'])
+        if goal.kpi.present?
+          if goal.start_date.present? || goal.due_date.present?
+            goal_scope = goal_scope.where('events.start_at > ?', goal.start_date.beginning_of_day) if goal.start_date.present?
+            goal_scope = goal_scope.where('events.end_at <= ?', goal.start_date.end_of_day) if goal.due_date.present?
+          end
+
+          # Handle special kpis types
+          completed = get_total_by_status(goal_scope, goal, approved_totals_kpis, 'approved')
+          submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted', 'rejected'])
+        else
+          venues_activities = venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+          completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+          completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : nil
+          submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i)
+        end
 
         if completed.nil?
           goals_result[goal.id] = {goal: goal, completed_percentage: 0, remaining_percentage: 100, remaining_count: goal.value || 0, total_count: 0, submitted: submitted}

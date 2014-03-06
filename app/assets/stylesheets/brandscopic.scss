@@ -1705,7 +1705,6 @@ ul.kpis-list{
 }
 
 
-
 .kpi-trends-stats {
 	line-height: 30px;
 	font-size: 11px;
@@ -1719,6 +1718,156 @@ ul.kpis-list{
 		float: right;
 		margin: 20px 0 50px 0;
 		position: relative;
+	}
+}
+
+// Graphical visualization for Goals
+#kpis-trends-bars {
+	a{
+		color:$grey_three;
+		font-size: 13px;
+		&:hover{
+			text-decoration: underline;
+		}
+	}
+	.name {
+		display: inline-block;
+		font-size: 16px;
+		font-weight: bold;
+		margin-right: 20px;
+		margin-bottom: 15px;
+	}
+	.container-kpi-trend{
+		margin-top: 50px;
+		margin-left: 20px;
+	}
+
+	.kpi-trend {
+		font-size: 12px;
+		margin-bottom: 30px;
+		overflow: visible;
+
+		.goal-label {
+			white-space: nowrap;
+			position: absolute;
+			right: 0;
+			top: -30px;
+			div {
+				margin-left: 50%;
+			}
+		}
+	}
+
+	.chart-bar {
+		margin-right: 350px;
+		color: $brand;
+		position: relative;
+		.progress {
+			width: auto !important;
+			height: 20px;
+			.bar {
+				text-align: right;
+				text-shadow:none;
+				span.percentage {
+					margin-left: 10px;
+					margin-right: 10px;
+					line-height: 26px
+				}
+			}
+			.bar-executed {
+				background-color: $green !important;
+			}
+			.bar-remaining {
+				color: $venues_blue;
+			}
+		}
+
+		.today-line-indicator {
+			position: absolute;
+			width: 2px;
+			background-color: $grey_three;
+			height: 29px;
+			top: -5px;
+			border:1px solid $grey_three;
+			border-radius: 2px;
+			&.green{
+				background-color: $dark_green;
+				border-color: $dark_green;
+			}
+			&.blue{
+				background-color: $dark_blue;
+				border-color: $dark_blue;
+			}
+		}
+		.bar-indicator {
+			position: absolute;
+			width: 2px;
+			background-color: #959595;
+			height: 30px;
+			&.goal-indicator{
+				top: -10px;
+			}
+		}
+		.executed-label {
+			display: inline-block;
+			font-size: 12px;
+			white-space: nowrap;
+			margin-right: 50%;
+			div {
+				margin-left: -50%;
+				b{
+					font-size: 14px;
+				}
+			}
+		}
+		.scheduled-label {
+			display: inline-block;
+			font-size: 12px;
+			white-space: nowrap;
+			text-align: right;
+			margin-left: -50%;
+			div {
+				margin-right: -50%;
+				b{
+					font-size: 14px;
+				}
+			}
+		}
+		.remaining-label {
+			color:$brand;
+			position: absolute;
+			right: -350px;
+			width: 300px;
+			top: -2px;
+			&.percentage {
+				top: -21px;
+			}
+			b {
+				display: inline-block;
+				font-size: 28px;
+				font-weight: 400;
+				float: left;
+				width: 150px;
+				text-align: right;
+				margin-right: 10px;
+				line-height: 25px;
+				&.percentage {
+					line-height: 22px;
+				}
+			}
+			span {
+				display: block;
+				line-height: 19px;
+				&.percentage {
+					font-size: 14px;
+					line-height: 30px;
+				}
+			}
+			.kpi-name{
+				color: $user_menu;
+				line-height: 9px;
+			}
+		}
 	}
 }
 
