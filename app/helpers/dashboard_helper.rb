@@ -179,7 +179,7 @@ module DashboardHelper
 
   # Returns a list of campaigns accessible for the current with promo hours goal
   def dashboard_promo_hours_graph_data
-    Campaign.active.accessible_by_user(current_company_user).promo_hours_graph_data
+    current_company.campaigns.active.accessible_by_user(current_company_user).promo_hours_graph_data
   end
 
   def campaing_cell_clasess(campaign, week)

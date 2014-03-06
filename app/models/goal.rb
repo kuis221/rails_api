@@ -29,6 +29,8 @@ class Goal < ActiveRecord::Base
   validates :kpis_segment_id, numericality: true, allow_nil: true
   validates :value, numericality: true, allow_nil: true
 
+  validates :kpi_id, uniqueness: { scope: [:parent_id, :parent_type, :goalable_id, :goalable_type, :kpis_segment_id] }
+
   validates_datetime :start_date, allow_nil: true, allow_blank: true
   validates_datetime :due_date, allow_nil: true, allow_blank: true, :on_or_after => :start_date
 

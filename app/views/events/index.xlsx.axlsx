@@ -16,7 +16,9 @@ wb.add_worksheet(name: "Events") do |sheet|
                  'STATE',
                  'ZIP',
                  'ACTIVE STATE',
-                 'EVENT STATUS'], :style => row_header
+                 'EVENT STATUS',
+                 'TEAM MEMBERS',
+                 'URL'], :style => row_header
 
   each_collection_item do |event|
     sheet.add_row [event.campaign_name,
@@ -29,11 +31,14 @@ wb.add_worksheet(name: "Events") do |sheet|
                    event.place_state_name,
                    event.place_zipcode,
                    event.status,
-                   event.event_status],
+                   event.event_status,
+                   (event.teams + event.users).sort_by(&:name).map(&:name).join(', '),
+                   url_for_event(event) ],
                   :style => [row_data_text,
                              row_data_text,
                              row_data_date,
                              row_data_date,
+                             row_data_text,
                              row_data_text,
                              row_data_text,
                              row_data_text,
