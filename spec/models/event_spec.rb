@@ -62,6 +62,14 @@ describe Event do
     end
   end
 
+  describe "end_after_start validation" do
+    subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
+
+    it { should_not allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
+    it { should allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
+    it { should allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
+  end
+
   describe "states" do
     before(:each) do
       @event = FactoryGirl.create(:event)
@@ -131,13 +139,79 @@ describe Event do
     end
   end
 
-  describe "end_after_start validation" do
-    subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
+  describe "#in_areas" do
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
 
-    it { should_not allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
-    it { should allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
-    it { should allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
+    it "should include only events within the given areas" do
+      event_la = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+
+      event_sf = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area_sf.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+    it "should include events that are scheduled on places that are part of the areas" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
   end
+
+  describe "#in_places" do
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
+
+    it "should include events that are scheduled on the given places" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      expect(Event.in_places([place_la])).to match_array [event_la]
+      expect(Event.in_places([place_sf])).to match_array [event_sf]
+      expect(Event.in_places([place_la, place_sf])).to match_array [event_la, event_sf]
+    end
+
+
+    it "should include events that are scheduled within the given scope if the place is a locality" do
+      los_angeles = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      event_la = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+
+      san_francisco = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+      event_sf = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+
+      expect(Event.in_places([los_angeles])).to match_array [event_la]
+      expect(Event.in_places([san_francisco])).to match_array [event_sf]
+      expect(Event.in_places([los_angeles, san_francisco])).to match_array [event_la, event_sf]
+    end
+  end
+
 
   describe "#start_at attribute" do
     it "should be correctly set when assigning valid start_date and start_time" do

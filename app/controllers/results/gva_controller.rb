@@ -11,8 +11,7 @@ class Results::GvaController < ApplicationController
 
   def report
     authorize_actions
-    # Yeah, I know!: TODO: refactor this to not send a list of event ids in the queries :s
-    @events_scope = Event.where(id: filter_event_ids)
+    @events_scope = filter_events_scope
     if area
       @goals = area.goals.in(campaign)
     elsif place
@@ -84,11 +83,10 @@ class Results::GvaController < ApplicationController
       stats.sort
     end
 
-    def filter_event_ids
-      params = {company_id: current_company.id, campaign: [campaign.id], status: ['Active'], current_company_user: current_company_user, per_page: 100000}
-      params.merge!({area: area.id}) unless area.nil?
-      params.merge!({location: [place.location_id]}) if place.present? && place.is_location?
-      params.merge!({place: [place.id]}) if place.present? && !place.is_location?
-      Event.do_search(params).hits.map(&:primary_key)
+    def filter_events_scope
+      scope = Event.active.accessible_by_user(current_company_user).by_campaigns(campaign.id)
+      scope = scope.in_areas([area]) unless area.nil?
+      scope = scope.in_places([place]) unless place.nil?
+      scope
     end
 end
