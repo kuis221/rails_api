@@ -181,11 +181,13 @@ class Report < ActiveRecord::Base
   end
 
   def columns_totals
-    results = fetch_results_for(columns, apply_values_formatting: false)
-    if results.any?
-      results.first['values']
-    else
-      []
+    @columns_totals ||= begin
+      results = fetch_results_for(columns, apply_values_formatting: false)
+      if results.any?
+        results.first['values']
+      else
+        []
+      end
     end
   end
 
@@ -359,7 +361,11 @@ class Report::Field
   def apply_display_method(value, column_total)
     case display
     when 'perc_of_column'
-      value*100/column_total
+      if column_total.nil?  || column_total == 0
+        ''
+      else
+        value*100/column_total
+      end
     else
       value
     end
