@@ -1251,6 +1251,7 @@ li.dropdown a{
 			ul.dropdown-menu{
 				li a{
 					color: $app_bg;
+					font-weight: bold;
 				}
 			}
 		}
@@ -1602,7 +1603,6 @@ li#user_menu{
 		min-width: 186px;
 		left: -55px;
 		li{
-			color: $app_bg;
 			a:hover{
 				color: white;
 			}
@@ -2536,6 +2536,9 @@ textarea::-webkit-input-placeholder {
 	}
 	.dropdown-menu{
 		min-width:260px;
+		li a{
+			font-weight: bold;
+		}
 		li a:hover{
 			background-color: $menu !important;
 		}
