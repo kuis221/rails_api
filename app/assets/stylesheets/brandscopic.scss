@@ -1877,7 +1877,7 @@ ul.kpis-list{
  	//clear: both;
  	color: $brand;
  	font-size: 12px;
-    margin: 13px 0 0 0;
+    margin: 25px 0 0 0;
     padding: 0;
     position: relative;
     address{
@@ -2111,7 +2111,7 @@ ul.kpis-list{
     			width: 100%;
     			span{
 	    			&:first-child{
-	    			margin:20px 20px 0 0;
+	    			margin:30px 20px 0 0;
 	    			}
 	    			&:last-child{
 	    				float: right;
@@ -2597,6 +2597,14 @@ input.search-query:focus{
 			color: white;
 			-webkit-font-smoothing: antialiased;
 	    }
+	}
+	.term{
+		overflow: hidden;
+	  	text-overflow: ellipsis;
+	 	white-space: nowrap;
+		width: 170px;
+		float: left;
+		display: inline-block;
 	}
 }
 .ui-widget-content{
@@ -5190,6 +5198,11 @@ body.campaigns{
 				.control-group{
 					width:54%;
 				}
+			}
+		}
+		.pull-left{
+			a{
+				margin-top: 15px;
 			}
 		}
 	}
