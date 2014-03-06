@@ -1,5 +1,7 @@
-h3 = 'DETAILS'
-dl.activity-results
-  - resource.results_for_type.each do |result|
-    dt class="#{result.form_field.css_class}"= result.form_field.name + ':'
-    dd class="#{result.form_field.css_class}"= result.to_html
+- if !resource.results_for_type.map(&:value).reject(&:empty?).empty?
+  h3 = 'DETAILS'
+  dl.activity-results
+    - resource.results_for_type.each do |result|
+      - next if result.to_html.blank?
+      dt class="#{result.form_field.css_class}"= result.form_field.name + ':'
+      dd class="#{result.form_field.css_class}"= result.to_html
