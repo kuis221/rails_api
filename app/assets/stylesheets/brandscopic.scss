@@ -1180,6 +1180,11 @@ header{
 			padding-left: 0;
 			padding-right: 0;
 		}
+
+		.nav li a{
+			text-shadow: none;
+			color: white;
+		}
 	}
 }
 
@@ -1243,15 +1248,23 @@ li.dropdown a{
 	}
 	.nav {
 		margin: 0;
+		li.dropdown.open>.dropdown-toggle{
+			background-color: $menu;
+		}
 		li>a{
 			padding-left: 12px;
 			padding-right: 12px;
 		}
 		li#admin, li#user_menu{
 			ul.dropdown-menu{
+				border:1px solid #707070;
 				li a{
 					color: $app_bg;
 					font-weight: bold;
+					&:hover{
+						background-color: $header;
+						color: white;
+					}
 				}
 			}
 		}
@@ -1266,9 +1279,7 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
-			background-color: $menu;
 			border-radius: 0;
-			color: $user_menu;
 			height: 19px;
 			margin-top:0;
 			padding-top: 14px;
@@ -1278,7 +1289,6 @@ li.dropdown a{
 		.active ul li.active a,
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
-			background-color: $menu !important;
 			background-image: none;
 		}
 		.nav-pills>.active>a,
@@ -1292,7 +1302,6 @@ li.dropdown a{
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
 	background-color: $menu;
 	border-radius: 0;
-	color: $user_menu;
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
@@ -1326,7 +1335,6 @@ li.dropdown a{
 	background-color: $menu;
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
-	background-color: $header !important;
 	background-image:none;
 }
 li#help_menu{
@@ -1626,6 +1634,7 @@ li#user_menu{
 		}
 		&:before{
 			border-bottom: 10px solid $alert_grey;
+			left:152px;
 		}
 	}
 }
@@ -1642,7 +1651,7 @@ li#user_menu{
 .navbar .nav>li> .dropdown-menu:before{
 	position: absolute;
 	top: -8px;
-	left: 152px;
+	left: 114px;
 	display: inline-block;
 	border-right: 10px solid transparent;
 	border-bottom: 10px solid $menu;
@@ -2540,7 +2549,7 @@ textarea::-webkit-input-placeholder {
 			font-weight: bold;
 		}
 		li a:hover{
-			background-color: $menu !important;
+			background-color: $header !important;
 		}
 	}
 	.dropdown.open{
@@ -2553,7 +2562,7 @@ textarea::-webkit-input-placeholder {
 		}
 		&>.dropdown-menu{
 			background-color: $alert_grey;
-			border: $alert_grey;
+			border: 1px solid #707070;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
 			box-shadow: none;
