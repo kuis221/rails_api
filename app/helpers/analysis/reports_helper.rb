@@ -192,13 +192,13 @@ module Analysis
           end
 
           # Handle special kpis types
-          completed = get_total_by_status(goal_scope, goal, approved_totals_kpis, 'approved')
-          submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted', 'rejected'])
+          completed = get_total_by_status(goal_scope, goal, approved_totals_kpis, 'approved') || 0
+          submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted', 'rejected']) || 0
         else
           venues_activities = @campaign.present? ? venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0 : 0
           completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
           completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : nil
-          submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i)
+          submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
         end
 
         if completed.nil?

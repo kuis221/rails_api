@@ -26,6 +26,16 @@ class ActivitiesController < FilteredController
       end
     end
 
+    # Because there is no collection path, try to return a path
+    # based on the current activity or the events_path
+    def collection_path
+      if params[:id].present?
+        url_for(resource.activitable)
+      else
+        events_path
+      end
+    end
+
     def permitted_params
       params.permit(activity: [:activity_type_id, {results_attributes: [:id, :form_field_id, :value, value: []]}, :campaign_id, :company_user_id, :activity_date])[:activity]
     end

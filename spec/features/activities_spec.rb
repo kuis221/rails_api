@@ -5,7 +5,7 @@ feature 'Activities management' do
   let(:campaign) { FactoryGirl.create(:campaign, company: company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
   let(:permissions) { [] }
   let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company, place: place) }
 
@@ -18,14 +18,20 @@ feature 'Activities management' do
 
 
   shared_examples_for 'a user that view the activiy details' do
-    scenario "can see all the activity info", js: true do
-      activity = FactoryGirl.create(:activity,
+    let(:activity) { FactoryGirl.create(:activity,
         company_user: company_user, activitable: event,
-        activity_type: FactoryGirl.create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
-      visit event_path(event)
-      find('#activities-list').click_js_link 'Activity Details'
+        activity_type: FactoryGirl.create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id])) }
+
+    scenario "can see all the activity info", js: true do
+      visit activity_path(activity)
       expect(page).to have_selector('h2.special', text: 'Test ActivityType')
       expect(current_path).to eql activity_path(activity)
+    end
+
+    scenario "clicking on the close details bar should send the user to the event details view", js: true do
+      visit activity_path(activity)
+      click_link 'You are viewing activity details. Click to close.'
+      expect(current_path).to eql event_path(event)
     end
   end
 
@@ -136,7 +142,6 @@ feature 'Activities management' do
     end
 
     scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it' do
-      Kpi.create_global_kpis
       venue = FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil))
       FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
@@ -192,8 +197,19 @@ feature 'Activities management' do
       end
     end
 
+    scenario 'activities from events should be displayed within the venue' do
+      event_activity = FactoryGirl.create(:activity,
+        company_user: company_user, activitable: event,
+        activity_type: FactoryGirl.create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+
+      visit venue_path(event.venue)
+
+      within('#activities-list') do
+        expect(page).to have_content('Test ActivityType')
+      end
+    end
+
     scenario 'allows the user to edit an activity from a Venue' do
-      Kpi.create_global_kpis
       venue = FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil))
       FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)

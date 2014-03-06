@@ -157,12 +157,12 @@ javascript:
 - if resource.persisted?
   - if can?(:view_kpis, resource)
     javascript:
-      #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'}}
+      #{render partial: 'shared/ethnicity_graph', locals:{data: resource.overall_graphs_data[:ethnicity], container: '#overall-ethnicity-graph'} if resource.overall_graphs_data[:ethnicity].present?}
 
-      #{render partial: 'shared/age_graph', locals:{data: resource.overall_graphs_data[:age], container: '#overall-age-graph'}}
+      #{render partial: 'shared/age_graph', locals:{data: resource.overall_graphs_data[:age], container: '#overall-age-graph'} if resource.overall_graphs_data[:age].present?}
 
 
-  - if can?(:view_trends_day_week, resource)
+  - if resource.events_count.present? && resource.events_count > 0  && can?(:view_trends_day_week, resource)
     javascript:
       $('#trends-day-week-graph').highcharts({
           credits: { enabled: false },

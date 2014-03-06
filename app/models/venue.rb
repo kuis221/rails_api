@@ -29,7 +29,16 @@ class Venue < ActiveRecord::Base
   belongs_to :place
 
   has_many :events, through: :place
-  has_many :activities, as: :activitable, :order => 'activity_date ASC'
+  has_many :activities, as: :activitable, :order => 'activity_date ASC' do
+    def include_from_events
+      events_activities = Activity.
+        where(
+          activitable_type: 'Event',
+          events: {place_id: proxy_association.owner.place_id, company_id: proxy_association.owner.company_id}).
+        joins('INNER JOIN events ON events.id=activities.activitable_id').active
+      (all + events_activities).sort_by(&:activity_date)
+    end
+  end
 
   include Normdist
 
@@ -181,9 +190,11 @@ class Venue < ActiveRecord::Base
     results_scope = EventResult.scoped_by_place_id_and_company_id(place_id, company_id).for_active_events
     @overall_graphs_data = {}
     [:age, :gender, :ethnicity].each do |kpi|
-      results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
-      segments = Kpi.send(kpi).kpis_segments
-      @overall_graphs_data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+      if Kpi.send(kpi).present?
+        results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
+        segments = Kpi.send(kpi).kpis_segments
+        @overall_graphs_data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+      end
     end
 
     # First let the DB to do the math for the events that starts and ends the same day... (the easy part)

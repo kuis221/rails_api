@@ -11,9 +11,9 @@ describe Analysis::ReportsHelper do
       place = FactoryGirl.create(:place)
       activity_type1 = FactoryGirl.create(:activity_type, company: @company)
       activity_type2 = FactoryGirl.create(:activity_type, company: @company)
-      kpi_impressions = FactoryGirl.create(:kpi, name: 'Impressions', kpi_type: 'number', capture_mechanism: 'integer', ordering: 1, company: @company)
-      kpi_events = FactoryGirl.create(:kpi, name: 'Events', kpi_type: 'events_count', capture_mechanism: '', ordering: 2, company: @company)
-      kpi_interactions = FactoryGirl.create(:kpi, name: 'Interactions', kpi_type: 'number', capture_mechanism: 'integer', ordering: 3, company: @company)
+      kpi_impressions = FactoryGirl.create(:kpi, name: 'Impressions', kpi_type: 'number', capture_mechanism: 'integer', company: @company)
+      kpi_events = FactoryGirl.create(:kpi, name: 'Events', kpi_type: 'events_count', capture_mechanism: '', company: @company)
+      kpi_interactions = FactoryGirl.create(:kpi, name: 'Interactions', kpi_type: 'number', capture_mechanism: 'integer', company: @company)
 
       campaign = FactoryGirl.create(:campaign, company: @company)
       campaign.add_kpi kpi_impressions
@@ -43,45 +43,45 @@ describe Analysis::ReportsHelper do
 
       results = helper.each_events_goal
 
-      results[1][:goal].kpi_id.should == kpi_impressions.id
-      results[1][:goal].goalable_id.should == campaign.id
-      results[1][:completed_percentage].should == 50.0
-      results[1][:remaining_percentage].should == 50.0
-      results[1][:remaining_count].should == 50.0
-      results[1][:total_count].should == 50
-      results[1][:submitted].should be_nil
+      results[goals[0].id][:goal].kpi_id.should == kpi_impressions.id
+      results[goals[0].id][:goal].goalable_id.should == campaign.id
+      results[goals[0].id][:completed_percentage].should == 50.0
+      results[goals[0].id][:remaining_percentage].should == 50.0
+      results[goals[0].id][:remaining_count].should == 50.0
+      results[goals[0].id][:total_count].should == 50
+      results[goals[0].id][:submitted].should == 0
 
-      results[2][:goal].kpi_id.should == kpi_events.id
-      results[2][:goal].goalable_id.should == campaign.id
-      results[2][:completed_percentage].should == 5.0
-      results[2][:remaining_percentage].should == 95.0
-      results[2][:remaining_count].should == 19.0
-      results[2][:total_count].should == 1
-      results[2][:submitted].should == 0
+      results[goals[1].id][:goal].kpi_id.should == kpi_events.id
+      results[goals[1].id][:goal].goalable_id.should == campaign.id
+      results[goals[1].id][:completed_percentage].should == 5.0
+      results[goals[1].id][:remaining_percentage].should == 95.0
+      results[goals[1].id][:remaining_count].should == 19.0
+      results[goals[1].id][:total_count].should == 1
+      results[goals[1].id][:submitted].should == 0
 
-      results[3][:goal].kpi_id.should == kpi_interactions.id
-      results[3][:goal].goalable_id.should == campaign.id
-      results[3][:completed_percentage].should == 40.0
-      results[3][:remaining_percentage].should == 60.0
-      results[3][:remaining_count].should == 240.0
-      results[3][:total_count].should == 160
-      results[3][:submitted].should be_nil
+      results[goals[2].id][:goal].kpi_id.should == kpi_interactions.id
+      results[goals[2].id][:goal].goalable_id.should == campaign.id
+      results[goals[2].id][:completed_percentage].should == 40.0
+      results[goals[2].id][:remaining_percentage].should == 60.0
+      results[goals[2].id][:remaining_count].should == 240.0
+      results[goals[2].id][:total_count].should == 160
+      results[goals[2].id][:submitted].should == 0
 
-      results[4][:goal].activity_type_id.should == activity_type1.id
-      results[4][:goal].goalable_id.should == campaign.id
-      results[4][:completed_percentage].should == 20.0
-      results[4][:remaining_percentage].should == 80.0
-      results[4][:remaining_count].should == 4.0
-      results[4][:total_count].should == 1
-      results[4][:submitted].should be_nil
+      results[goals[3].id][:goal].activity_type_id.should == activity_type1.id
+      results[goals[3].id][:goal].goalable_id.should == campaign.id
+      results[goals[3].id][:completed_percentage].should == 20.0
+      results[goals[3].id][:remaining_percentage].should == 80.0
+      results[goals[3].id][:remaining_count].should == 4.0
+      results[goals[3].id][:total_count].should == 1
+      results[goals[3].id][:submitted].should == 0
 
-      results[5][:goal].activity_type_id.should == activity_type2.id
-      results[5][:goal].goalable_id.should == campaign.id
-      results[5][:completed_percentage].should == 10.0
-      results[5][:remaining_percentage].should == 90.0
-      results[5][:remaining_count].should == 9.0
-      results[5][:total_count].should == 1
-      results[5][:submitted].should be_nil
+      results[goals[4].id][:goal].activity_type_id.should == activity_type2.id
+      results[goals[4].id][:goal].goalable_id.should == campaign.id
+      results[goals[4].id][:completed_percentage].should == 10.0
+      results[goals[4].id][:remaining_percentage].should == 90.0
+      results[goals[4].id][:remaining_count].should == 9.0
+      results[goals[4].id][:total_count].should == 1
+      results[goals[4].id][:submitted].should == 0
     end
   end
 end

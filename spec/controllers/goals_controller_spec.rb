@@ -7,7 +7,6 @@ describe GoalsController do
   end
 
   let(:kpi) {FactoryGirl.create(:kpi, company: @company)}
-  let(:goal) {FactoryGirl.create(:goal, goalable: company_user)}
   let(:campaign) {FactoryGirl.create(:campaign, company: @company)}
   let(:company_user) {FactoryGirl.create(:company_user, company: @company)}
   let(:area) {FactoryGirl.create(:area, company: @company)}
@@ -107,6 +106,7 @@ describe GoalsController do
 
   describe "GET 'edit'" do
     it "returns http success" do
+      goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
       get 'edit', company_user_id: company_user.to_param, id: goal.to_param, format: :js
       response.should be_success
       assigns(:company_user).should == company_user
@@ -116,7 +116,7 @@ describe GoalsController do
 
   describe "PUT 'update'" do
     it "should update the goal attributes for the company user" do
-      goal.save
+      goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
       expect {
         put 'update', company_user_id: company_user.to_param, id: goal.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
       }.to_not change(Goal, :count)
@@ -135,7 +135,7 @@ describe GoalsController do
     end
 
     it "should update the goal value for the company user in a given campaign" do
-      goal.save
+      goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
       expect {
         put 'update', id: goal.to_param, goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: company_user.id, goalable_type: 'CompanyUser', value: '110', kpi_id: kpi.id}, format: :json
       }.to_not change(Goal, :count)
@@ -151,7 +151,7 @@ describe GoalsController do
     end
 
     it "should update an activity type goal for an area in a given campaign" do
-      area_goal = FactoryGirl.create(:goal, goalable: area)
+      area_goal = FactoryGirl.create(:goal, goalable: area, activity_type_id: activity_type.id)
       area_goal.save
       expect {
         post 'update', id: area_goal.to_param, goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: area.id, goalable_type: 'Area', value: '78', activity_type_id: activity_type.id}, format: :json
@@ -168,7 +168,7 @@ describe GoalsController do
     end
 
     it "should update an activity type goal for a company user in a given campaign" do
-      user_goal = FactoryGirl.create(:goal, goalable: company_user)
+      user_goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
       user_goal.save
       expect {
         post 'update', id: user_goal.to_param, goal: {parent_id: campaign.id, parent_type: 'Campaign', goalable_id: company_user.id, goalable_type: 'CompanyUser', value: '88', activity_type_id: activity_type.id}, format: :json
