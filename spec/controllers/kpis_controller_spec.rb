@@ -83,7 +83,7 @@ describe KpisController do
       response.should render_template(:update)
       response.should_not render_template(:form_dialog)
 
-      campaign.goals.for_kpi(kpi).value.should == 44
+      campaign.reload.goals.for_kpi(kpi).value.should == 44
     end
 
 

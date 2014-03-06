@@ -10,14 +10,14 @@ module GoalableModel
         end
 
         def for_kpi(kpi)
-          goal = all.select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || self.build({kpi: kpi, value: nil}, without_protection: true)
+          goal = select{|r| r.kpi_id == kpi.id  && r.kpis_segment_id.nil? }.first || self.build({kpi: kpi, value: nil}, without_protection: true)
           goal.kpi = kpi
           goal
         end
 
         def for_kpis_segments(kpi)
           kpi.kpis_segments.map do |segment|
-            goal = self.includes(:kpis_segment).select{|r|  r.kpis_segment_id == segment.id }.first || self.build({kpi: kpi, kpis_segment: segment, value: nil}, without_protection: true)
+            goal = select{|r|  r.kpis_segment_id == segment.id }.first || self.build({kpi: kpi, kpis_segment: segment, value: nil}, without_protection: true)
             goal.kpi = kpi
             goal.kpis_segment = segment
             goal

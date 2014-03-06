@@ -68,7 +68,7 @@ class Results::GvaController < ApplicationController
       stats = {}
       Goal.in(campaign).
         where('goals.value <> 0 and goals.value is not null').
-        where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids, campaign.place_ids).
+        where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids+[0], campaign.place_ids+[0]).
         where(kpi_id: Kpi.promo_hours.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
