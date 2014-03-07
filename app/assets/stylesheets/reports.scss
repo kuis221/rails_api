@@ -117,7 +117,7 @@ ul.reports-list {
 
 	.field-list {
 		border: 1px solid #ccc;
-		height: 90px;
+		height: 94px;
 		padding: 4px 10px;
 		margin-bottom: 10px;
 		overflow: auto;
@@ -135,15 +135,13 @@ ul.reports-list {
 				.field-label{
 					width: 90%;
 				}
-				li{
-					&:last-child{
-						margin-bottom: 0;
-					}
-				}
 			}
 			li{
 				margin: 3px 0;
 				padding: 3px 5px;
+				&:last-child{
+					margin-bottom: 0;
+				}
 			}
 		}
 		&#report-fields {
