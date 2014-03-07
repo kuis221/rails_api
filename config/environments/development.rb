@@ -35,8 +35,9 @@ Brandscopic::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-  Rails.application.routes.default_url_options[:host] = "localhost:5100"
-   
+  Rails.application.routes.default_url_options[:host] = "localhost"
+  Rails.application.routes.default_url_options[:port] = 5100
+
   config.action_mailer.default_url_options = {:host => "localhost:5100"}
 
   #Paperclip options

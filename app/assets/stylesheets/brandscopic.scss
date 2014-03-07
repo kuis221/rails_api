@@ -1200,6 +1200,11 @@ header{
 			padding-left: 0;
 			padding-right: 0;
 		}
+
+		.nav li a{
+			text-shadow: none;
+			color: white;
+		}
 	}
 }
 
@@ -1263,10 +1268,29 @@ li.dropdown a{
 	}
 	.nav {
 		margin: 0;
+		li.dropdown.open>.dropdown-toggle{
+			background-color: $menu;
+		}
 		li>a{
-			color: $user_menu;
 			padding-left: 12px;
 			padding-right: 12px;
+		}
+		li#admin, li#user_menu{
+			ul.dropdown-menu{
+				border:1px solid #707070;
+				li a{
+					color: $app_bg;
+					font-weight: bold;
+					&:hover{
+						background-color: $header;
+						color: white;
+					}
+				}
+			}
+		}
+
+		li#admin a, li#user_menu a{
+			color:$user_menu;
 		}
 		li.dropdown.open>.dropdown-toggle,
 		li.dropdown.active>.dropdown-toggle,
@@ -1275,9 +1299,7 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
-			background-color: $menu;
 			border-radius: 0;
-			color: $user_menu;
 			height: 19px;
 			margin-top:0;
 			padding-top: 14px;
@@ -1287,7 +1309,6 @@ li.dropdown a{
 		.active ul li.active a,
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
-			background-color: $header !important;
 			background-image: none;
 		}
 		.nav-pills>.active>a,
@@ -1301,7 +1322,6 @@ li.dropdown a{
 .nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
 	background-color: $menu;
 	border-radius: 0;
-	color: $user_menu;
 	height: 19px;
 	margin: 0 8px 0 0;
 	padding-top: 14px;
@@ -1335,7 +1355,6 @@ li.dropdown a{
 	background-color: $menu;
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
-	background-color: $header !important;
 	background-image:none;
 }
 li#help_menu{
@@ -1480,11 +1499,14 @@ label{
 }
 li#admin{
 	ul.dropdown-menu{
-	background-color: $menu;
-	box-shadow: none;
-	margin-top: 12px;
-	min-width: 148px;
-	left: -107px;
+		background-color: $alert_grey;
+		box-shadow: none;
+		margin-top: 12px;
+		min-width: 148px;
+		left: -107px;
+		&:before{
+			border-bottom: 10px solid $alert_grey;
+		}
 	}
 }
 li#notifications{
@@ -1603,18 +1625,22 @@ li#notifications{
 }
 li#user_menu{
 	ul.dropdown-menu{
-		background-color: $menu;
+		background-color: $alert_grey;
 		box-shadow: none;
 		margin-top: 12px;
-		min-width: 148px;
-		left: -48px;
+		min-width: 186px;
+		left: -55px;
+		li{
+			a:hover{
+				color: white;
+			}
+		}
 		li#users:last-child{
 			a:after{
-			color: $user_menu;
 			content: "\e013";
 			font-family: 'icons';
 			font-size: 14px;
-			left:58px;
+			left:108px;
 			position: relative;
 			speak:none;
 			text-align: center;
@@ -1625,6 +1651,10 @@ li#user_menu{
 			a:hover:after{
 			color: white;
 		    }
+		}
+		&:before{
+			border-bottom: 10px solid $alert_grey;
+			left:152px;
 		}
 	}
 }
@@ -2596,6 +2626,7 @@ input.search-query:focus{
 			top: -2px;
 			color: white;
 			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing:grayscale;
 	    }
 	}
 	.term{
@@ -2684,11 +2715,63 @@ textarea::-webkit-input-placeholder {
 }
 
 #company-name {
-	font-size: 22px;
+	font-size: 20px;
+	margin-bottom: 0;
 	padding: 10px 0 0 25px;
 	a {
 		color: $brand;
 		text-decoration: none;
+		&.dropdown-toggle{
+			&:after{
+				content: "\e004";
+				color: $brand;
+				display: inline-block;
+				font-family: 'icons';
+				font-size: 12px;
+				left: 5px;
+				padding-bottom: 5px;
+				position: relative;
+				top: 5px;
+				speak: none;
+				text-align: center;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+	}
+	.caret{
+		display: none;
+	}
+	.dropdown-menu{
+		min-width:260px;
+		li a{
+			font-weight: bold;
+		}
+		li a:hover{
+			background-color: $header !important;
+		}
+	}
+	.dropdown.open{
+		li a{
+			color: $app_bg;
+			font-size: 13px;
+			&:hover{
+				color: white;
+			}
+		}
+		&>.dropdown-menu{
+			background-color: $alert_grey;
+			border: 1px solid #707070;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			left: -13px;
+			margin: 20px 0 0;
+			&:before{
+				border-bottom: 10px solid $alert_grey;
+				left: 222px;
+			}
+		}
 	}
 }
 

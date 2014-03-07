@@ -65,9 +65,9 @@ Brandscopic::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-
-  config.action_controller.default_url_options = {:host => "stage.brandscopic.com"}
-  config.action_mailer.default_url_options = {:host => "stage.brandscopic.com"}
+  config.action_controller.default_url_options = {:host => ENV['HOST_DOMAIN']}
+  config.action_mailer.default_url_options = {:host => ENV['HOST_DOMAIN']}
+  Rails.application.routes.default_url_options[:host] = ENV['HOST_DOMAIN']
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
