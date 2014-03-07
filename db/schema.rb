@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140227205714) do
+ActiveRecord::Schema.define(:version => 20140405221111) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(:version => 20140227205714) do
     t.boolean  "active",            :default => true
     t.string   "direct_upload_url"
     t.boolean  "processed",         :default => false, :null => false
+    t.integer  "rating",            :default => 0
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"

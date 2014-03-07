@@ -357,6 +357,10 @@ Brandscopic::Application.routes.draw do
     resources :areas, only: [:new, :create]
   end
 
+  resources :attached_assets, only: [] do
+    put :rate, on: :member
+  end
+
   resources :date_ranges do
     get :autocomplete, on: :collection
     resources :date_items, path: 'dates', only: [:new, :create, :destroy]
