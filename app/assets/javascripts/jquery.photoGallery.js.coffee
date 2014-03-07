@@ -13,20 +13,22 @@ $.widget 'nmk.photoGallery', {
 		@_createGalleryModal()
 
 		$(document).on 'click', '.photoGallery a[data-toggle="gallery"]', (e) =>
+			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target 
 			e.stopPropagation()
 			e.preventDefault()
 			@gallery.modal 'show'
-			@buildCarousels e.target
-			@fillPhotoData e.target
+			@buildCarousels image
+			@fillPhotoData image
 			false
 		@
 
 	fillPhotoData: (currentImage) ->
 		$image = $(currentImage)
+		@image = $image
 		@setTitle $image.data('title'), $image.data('url')
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
-		@setRating($image.data('rating'), $image.data('id') )
+		@setRating $image.data('rating'), $image.data('id')
 		if @options.includeTags
 			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
 
@@ -34,18 +36,23 @@ $.widget 'nmk.photoGallery', {
 		@title.html $('<a>').attr('href', url).text(title)
 
 	setRating: (rating, asset_id) ->
-		$stars = new Array(5)
-		$i = 0
-		while $i < rating
-			$stars[$i] = @_createStar($i+1,true, asset_id)
-			$i++
-		while $i < 5
-			$stars[$i] = @_createStar($i+1,false, asset_id)
-			$i++
-			
-		@rating.html ''
-		@rating.append($stars[0],$stars[1],$stars[2],$stars[3],$stars[4])
-	
+		if 'view_rate' in @image.data('permissions')
+			can_rate = (if 'rate' in @image.data('permissions') then true else false)
+			$stars = new Array(5)
+			$i = 0
+			while $i < rating
+				$stars[$i] = @_createStar($i+1,true, asset_id, can_rate)
+				$i++
+			while $i < 5
+				$stars[$i] = @_createStar($i+1,false, asset_id, can_rate)
+				$i++
+
+			@rating.html ''
+			@rating.append $stars
+			@rating.show()
+		else
+			@rating.hide()
+
 	setDate: (date) ->
 		@date.html date
 
@@ -96,33 +103,35 @@ $.widget 'nmk.photoGallery', {
 
 		@miniCarousel.carousel 'pause'
 
-	_createStar: ($i,$is_full, $asset_id) ->
+	_createStar: ($i,$is_full, $asset_id, can_rate) ->
 		$klass = ""
 		if $is_full
 			$klass = "icon-star full"
 		else
-			$klass = "icon-star-empty empty"
-		$('<span class="'+$klass+'" style="color: gold" value="'+$i+'"/>')
-			.click (e) ->
-				$('.rating span').slice(0,$i).removeClass('empty').removeClass('icon-star-empty').addClass('icon-star').addClass('full').css('color', 'gold')
-				$('.rating span').slice($i,5).removeClass('full').removeClass('icon-star').addClass('empty').addClass('icon-star-empty').css('color', 'grey')
-				$.ajax "/attached_assets/"+$asset_id, {
+			$klass = "icon-star empty"
+		star = $('<span class="'+$klass+'" value="'+$i+'"/>')
+		if can_rate
+			star.click (e) =>
+				@image.data('rating', $i)
+				$.ajax "/attached_assets/"+$asset_id+'/rate', {
 					method: 'PUT',
-					data: { rate_value: $i},
+					data: { rating: $i},
 					dataType: 'json'
 				}
-			.mouseover (e) ->
-				$('.rating span').removeClass('icon-star').addClass('icon-star-empty').css('color', 'grey').css('cursor','pointer')
-				$('.rating span').slice(0,$i).css('color', 'gold')
+			.mouseover (e) =>
+				@rating.find('span').removeClass('empty').addClass('empty').css('cursor','pointer')
+				@rating.find('span').slice(0,$i).addClass('full').removeClass('empty')
+
+		star
 	
 	_createGalleryModal: () ->
 		@title = $('<h3>')
 		@address = $('<div class="place-data">')
 		@date = $('<div class="calendar-data">')
 		@rating = $('<div class="rating">')
-			.mouseleave (e) ->
-				$('.full').removeClass('icon-star-empty').addClass('icon-star').css('color', 'gold')
-				$('.empty').addClass('icon-star-empty').css('color', 'grey')
+			.mouseleave (e) =>
+				@rating.find('span').removeClass('full').addClass('empty')
+				@rating.find('span').slice(0,@image.data('rating')).addClass('full').removeClass('empty')
 
 		if @gallery
 			@gallery.remove();
@@ -134,7 +143,7 @@ $.widget 'nmk.photoGallery', {
 		@gallery = $('<div class="gallery-modal modal hide fade">').append(
 			$('<div class="gallery-modal-inner">').append(
 				$('<div class="panel">').
-					append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
+					append('<button class="close" data-dismiss="modal" aria-hidden="true" title="Close"></button>').
 					append(
 						$('<div class="description">').append( @title ).append( @date ).append( @address ),
 						$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
@@ -236,31 +245,20 @@ $.widget 'nmk.photoGallery', {
 		imageWidth = Math.min(maxSliderWidth, imageNatural.width)
 		imageHeight = Math.min(maxSliderHeight, imageNatural.height)
 
-		if imageWidth is 0
-			debugger
-
-		console.log "1: #{imageWidth}x#{imageHeight}"
-
 		if imageWidth < minSliderWidth && imageNatural.width > minSliderWidth
 			imageWidth = minSliderWidth
-		console.log "2: #{imageWidth}x#{imageHeight}"
-
 
 		if imageHeight < minSliderHeight && imageNatural.height > minSliderHeight
 			imageHeight = minSliderHeight
-		console.log "3: #{imageWidth}x#{imageHeight}"
 
 		if imageWidth < imageNatural.width
 			proportion = imageWidth/imageNatural.width
 			newHeight = parseInt(imageNatural.height*proportion)
 			imageHeight = newHeight
-		console.log "4: #{imageWidth}x#{imageHeight}"
 
 		if imageHeight < imageNatural.height
 			proportion = imageHeight/imageNatural.height
 			imageWidth = parseInt(imageNatural.width*proportion)
-		console.log "5: #{imageWidth}x#{imageHeight}"
-
 
 		sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth)))
 		sliderHeight = Math.max(minSliderHeight, Math.min(maxSliderHeight, Math.max(sliderHeight, imageHeight)))

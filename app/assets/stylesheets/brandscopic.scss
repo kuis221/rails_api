@@ -38,11 +38,17 @@ abbr[title]{
 }
 
 .rating{
-  margin-left: 8%;
-  span{
-    font-size: 20px;
-    margin-right: 2%;
-  }
+	margin-left: 8%;
+	span{
+		font-size: 20px;
+		margin-right: 2%;
+	}
+	.full {
+		color: #CBBB26;
+	}
+	.empty {
+		color: #5C5C5C;
+	}
 }
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
 	margin:0 0 20px 30px;

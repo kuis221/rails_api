@@ -55,12 +55,53 @@ feature "Photos", search: true, js: true do
     end
   end
 
+  feature "Photo Gallery" do
+    let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
+
+    scenario "can rate a photo" do
+      photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
+      visit event_path(event)
+
+      # Check that the image appears on the page
+      within gallery_box do
+        expect(page).to have_selector('li')
+        click_js_link 'View Photo'
+      end
+
+      within gallery_modal do
+        find('.rating span.full', match: :first)
+        expect(page.all(".rating span.full").count).to eql(2)
+        expect(page.all(".rating span.empty").count).to eql(3)
+        find('.rating span:nth-child(3)').click
+        wait_for_ajax
+        expect(photo.reload.rating).to eql 3
+        find('button.close').click
+      end
+      ensure_modal_was_closed
+
+      # Close the modal and reopened and make sure the stars are correctly
+      # highlithed
+      within gallery_box do
+        click_js_link 'View Photo'
+      end
+      within gallery_modal do
+        find('.rating span.full', match: :first)
+        expect(page.all(".rating span.full").count).to eql(3)
+        expect(page.all(".rating span.empty").count).to eql(2)
+      end
+    end
+  end
+
   def gallery_box
     find('.details_box.box_photos')
   end
 
   def upload_queue
     find('#uploads_container')
+  end
+
+  def gallery_modal
+    find('.gallery-modal')
   end
 
 end

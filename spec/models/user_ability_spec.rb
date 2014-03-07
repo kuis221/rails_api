@@ -19,7 +19,6 @@ describe "User" do
     context "when it is a super user" do
       let(:user){ FactoryGirl.create(:company_user,  company: company, role: FactoryGirl.create(:role, is_admin: true), user: FactoryGirl.create(:user,  current_company: company)).user }
 
-
       it{ should_not be_able_to(:manage, Company) }
       it{ should_not be_able_to(:create, Company) }
       it{ should_not be_able_to(:edit, Company) }
@@ -88,7 +87,8 @@ describe "User" do
 
       it { should be_able_to(:create, AttachedAsset) }
       it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
-      it { should be_able_to(:rate_photo, Event)}
+      it { should be_able_to(:rate, AttachedAsset)}
+      it { should be_able_to(:view_rate, AttachedAsset)}
       it { should_not be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1))) }
 
     end
@@ -274,7 +274,6 @@ describe "User" do
           ability.should be_able_to(:activate, photo)
         end
 
-
         it "should be able to create a photo in a event if has the permission :create_photo on Event" do
           photo = FactoryGirl.create(:photo, attachable: event)
           ability.should_not be_able_to(:create, photo)
@@ -285,7 +284,6 @@ describe "User" do
           ability.should be_able_to(:create, photo)
         end
 
-
         it "should be able to list photo in a event if has the permission :index_photos on Event" do
           ability.should_not be_able_to(:photos, event)
           ability.should_not be_able_to(:index_photos, event)
@@ -295,6 +293,25 @@ describe "User" do
 
           ability.should be_able_to(:photos, event)
           ability.should be_able_to(:index_photos, event)
+        end
+
+        it "should be able to view rate of the photo" do
+          asset = FactoryGirl.build(:photo, attachable: Event.new)
+          ability.should_not be_able_to(:view_rate, asset)
+
+          user.role.permission_for(:view_rate, AttachedAsset).save
+
+          ability.should be_able_to(:view_rate, asset)
+        end
+
+
+        it "should be able to rate a photo" do
+          asset = FactoryGirl.build(:photo, attachable: Event.new)
+          ability.should_not be_able_to(:rate, asset)
+
+          user.role.permission_for(:rate, AttachedAsset).save
+
+          ability.should be_able_to(:rate, asset)
         end
       end
 

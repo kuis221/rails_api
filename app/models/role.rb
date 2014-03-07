@@ -59,14 +59,14 @@ class Role < ActiveRecord::Base
     cached_permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
   end
 
-
   def cached_permissions
-    Rails.cache.fetch("role_permissions_#{id}") do
+    @cached_permissions ||= Rails.cache.fetch("role_permissions_#{id}") do
       permissions.all
     end
   end
 
   def clear_cached_permissions(permission)
+    @cached_permissions = nil
     Rails.cache.delete("role_permissions_#{id}")
   end
 
