@@ -1,0 +1,16 @@
+= simple_form_for :share, url: share_results_report_path(resource), method: :post do |f|
+
+  .share-option
+    = f.collection_radio_buttons :mode, [['owner', 'Just me']], :first, :last
+    .option-help Only I can run this report
+
+  .share-option
+    = f.collection_radio_buttons :mode, [['custom', 'Share with Users, Teams and Roles']], :first, :last
+    .option-help Share this report with specific users, teams and roles
+
+    = f.input :share_with, as: :select, collection: []
+
+  .share-option
+    = f.collection_radio_buttons :mode, [['everyone', 'Share with everyone']], :first, :last
+    .option-help Share this report with all users
+ 

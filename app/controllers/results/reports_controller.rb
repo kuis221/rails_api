@@ -1,5 +1,5 @@
 class Results::ReportsController < InheritedResources::Base
-  respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :js, only: [:new, :create, :edit, :update, :share]
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -13,6 +13,9 @@ class Results::ReportsController < InheritedResources::Base
   end
 
   def build
+  end
+
+  def share_form
   end
 
   private

@@ -12,8 +12,12 @@
     = render 'values_list'
 
   .main
+    .pull-right
+      = button_to 'Share', share_results_report_path(resource, format: :js), class: 'btn btn-share-report', remote: true, method: :get
+
     button.btn.btn-primary.btn-save-report disabled="disabled" Save
     = link_to 'Exit', results_report_path(resource), method: :get, title: 'Exit', form_class: "btn-cancel-report-form", class: 'btn btn-cancel btn-cancel-report'
+
 
     #report-container
       / This will be filled by AJAX
