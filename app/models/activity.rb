@@ -58,12 +58,21 @@ class Activity < ActiveRecord::Base
     end
   end
 
+  def results_for(fields)
+    fields.map do |field|
+      result = results.select{|r| r.form_field_id == field.id}.first || results.build({form_field_id: field.id}, without_protection: true)
+      result.form_field = field
+      result
+    end
+  end
+
   private
     # Sets the default date (today) and user for new records
     def set_default_values
       if new_record?
         self.activity_date ||= Date.today
         self.company_user_id ||= User.current.current_company_user.id if User.current.present?
+        self.campaign = activitable.campaign if activitable.is_a?(Event)
       end
     end
 
