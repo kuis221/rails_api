@@ -42,12 +42,12 @@ feature 'Activities management' do
 
     scenario 'should not display the activities section if the campaigns have no activity types assigned' do
       visit event_path(event)
-      expect(page).to have_no_selector('h3', text: 'ACTIVITIES')
+      expect(page).to_not have_css('#event-activities')
 
       campaign.activity_types << FactoryGirl.create(:activity_type, company: company)
 
       visit event_path(event)
-      expect(page).to have_selector('h3', text: 'ACTIVITIES')
+      expect(page).to have_css('#event-activities')
     end
 
     scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
