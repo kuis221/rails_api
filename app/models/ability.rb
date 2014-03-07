@@ -94,6 +94,8 @@ class Ability
       can :search, Place
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
+      
+      can :index, ActivityType if can?(:view_list, ActivityType)
 
       can :index, Brand
 

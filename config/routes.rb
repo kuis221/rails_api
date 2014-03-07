@@ -393,6 +393,10 @@ Brandscopic::Application.routes.draw do
       get :activate
     end
   end
+  
+  resources :activity_types  do
+    
+  end
 
   resources :dashboard, only: [] do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}
