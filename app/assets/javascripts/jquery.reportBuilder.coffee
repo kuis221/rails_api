@@ -106,7 +106,6 @@ $.widget 'nmk.reportBuilder',
 
 		@element.find('#report-values').on 'sortreceive', () =>
 			@_addValuesToColumns()
-			false
 
 		@refreshReportPreview()
 
@@ -178,6 +177,23 @@ $.widget 'nmk.reportBuilder',
 														label = label_field.val()
 														label = label.replace(/(sum|count|average|max|min) of/i, $('option[value='+$select.val()+']', $select).text() + " of")
 														label_field.val(label).trigger('keyup')
+										)
+								)
+
+		if listName in ['report-values']
+			formFields.push $('<div class="control-group">').
+								append(	$('<label class="control-label" for="report-field-display">').text('Display as'),
+										$('<div class="controls">').append(
+											$('<select name="report-field-display" id="report-field-display">').append([
+													$('<option value="">No Calculation</option>').attr('selected', field.display is ''),
+													$('<option value="perc_of_column">% of Column</option>').attr('selected', field.display is 'perc_of_column'),
+													$('<option value="perc_of_row">% of Row</option>').attr('selected', field.display is 'perc_of_row'),
+													$('<option value="perc_of_total">% of Total</option>').attr('selected', field.display is 'perc_of_total')
+												])
+												.on 'change', (e) =>
+													$select = if e.target.tagName is 'OPTION' then  $(e.target).parent() else $(e.target)
+													field.display = $select.val()
+													@fieldSettings.changed = true
 										)
 								)
 
@@ -257,7 +273,12 @@ $.widget 'nmk.reportBuilder',
 	_getValueProperties: (value) ->
 		$value = $(value)
 		field = $value.data('field')
-		{field: $value.data('field-id'), label: field.label, aggregate: if field.aggregate? then field.aggregate else 'sum' }
+		{
+			field: $value.data('field-id'), 
+			label: field.label, 
+			aggregate: if field.aggregate? then field.aggregate else 'sum',
+			display: if field.display? then field.display else ''
+		}
 
 	_setListItems: (list_name, items) ->
 		list = $("#report-#{list_name}", @element)

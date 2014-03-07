@@ -186,9 +186,8 @@ class Kpi < ActiveRecord::Base
         # Campaing A has KPI: "# impressions"
         # Campaing A has KPI: "# of impressions"
         campaings.each do |campaign|
-          kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) }
           kpi_keep = kpis.detect{|k| k.id == options['master_kpi'][campaign.id.to_s].to_i }
-          kpis_to_remove.reject!{|k| k.id == kpi_keep.id }
+          kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) && k.id != kpi_keep.id }
 
           if kpi_keep
             # If this campaing has at leas more than one

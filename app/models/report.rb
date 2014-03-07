@@ -52,19 +52,19 @@ class Report < ActiveRecord::Base
   end
 
   def rows
-    read_attribute(:rows) || []
+    load_fields(:rows)
   end
 
   def columns
-    read_attribute(:columns) || []
+    load_fields(:columns)
   end
 
   def values
-    read_attribute(:values) || []
+    load_fields(:values)
   end
 
   def filters
-    read_attribute(:filters) || []
+    load_fields(:filters)
   end
 
   def activate!
@@ -80,13 +80,24 @@ class Report < ActiveRecord::Base
   end
 
   def fetch_page(params={})
+    fetch_results_for((rows+columns).compact, params)
+  end
+
+  def fetch_results_for(fields, params={})
+    rows_columns = Hash[fields.map do |f|
+      table_column_for_field(f)
+    end.compact]
+
+    rows_columns = {'1' => 'col_name'} if rows_columns.empty?
+
+    params.reverse_merge! offset: 0, apply_values_formatting: true
+
     if can_be_generated?
-      params[:offset] ||= 0
-      select_cols = (rows+columns.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
+      select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
       value_fields = {}
       values_columns = values.map do |f|
         if (m = /\Akpi:([0-9]+)\z/.match(f['field'])) && (kpi = load_kpi(m[1])) && (kpi.is_segmented? || kpi.kpi_type == 'count')
-          kpi.kpis_segments.map do|s|
+          kpi.kpis_segments.map do |s|
             name = "kpi_#{kpi.id}_#{s.id}"
             select_cols.push name
             value_fields[name] = "#{f['label']}: #{s.text}"
@@ -102,7 +113,7 @@ class Report < ActiveRecord::Base
 
       results = ActiveRecord::Base.connection.select_all("
         SELECT #{select_cols.join(', ')}
-        FROM crosstab('\n\t#{values_sql.compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
+        FROM crosstab('\n\t#{values_sql(rows_columns).compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
           'select m from generate_series(1,#{values_columns.count}) m')
         AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}
       ")
@@ -118,9 +129,10 @@ class Report < ActiveRecord::Base
         if key != previous_key
           unless row.nil?
             row['values'] = values.values
+            row['values'] = apply_values_formatting(row['values']) if params[:apply_values_formatting]
             rows.push row
           end
-          row=result.select{|k,v| key_fields.include?(k) }
+          row = result.select{|k,v| key_fields.include?(k) }
           values = empty_values.dup
         end
         value_fields.each do |name, label|
@@ -131,10 +143,21 @@ class Report < ActiveRecord::Base
       end
       unless row.nil?
         row['values'] = values.values
+        row['values'] = apply_values_formatting(row['values']) if params[:apply_values_formatting]
         rows.push row
       end
       rows
     end
+  end
+
+  def apply_values_formatting(result_values)
+    step = values.count
+    values.each_with_index do |field, index|
+      (index..(result_values.count-1)).step(step).each do |i|
+        result_values[i] = field.apply_display_method(result_values[i], columns_totals[i])
+      end
+    end
+    result_values
   end
 
   def field_to_sql_name(field_name)
@@ -157,6 +180,15 @@ class Report < ActiveRecord::Base
     end
   end
 
+  def columns_totals
+    results = fetch_results_for(columns, apply_values_formatting: false)
+    if results.any?
+      results.first['values']
+    else
+      []
+    end
+  end
+
   protected
     def format_field(value)
       v = value
@@ -164,49 +196,47 @@ class Report < ActiveRecord::Base
       v
     end
 
-    def values_sql
-      @values_sql ||= begin
-        unless values.nil? || rows.nil? || rows.empty?
-          i = 0
-          rows_field = "ARRAY[#{rows_columns.keys.map{|k| k+'::text'}.join(', ')}]"
-          values.map do |value|
-            value_field = value['field']
-            s = add_joins_scopes(base_events_scope, value).group('1')
-            if m = /\Akpi:([0-9]+)\z/.match(value['field'])
-              kpi = load_kpi(m[1])
-              if kpi.is_segmented?
-                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.kpis_segment_id=?', kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
-              elsif kpi.kpi_type == 'count'
-                if value['aggregate'] == 'count'
-                  value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                else
-                  value_field = '0'
-                end
-                kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.value=?', kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
-              else
-                if Kpi.promo_hours.id == m[1].to_i
-                  value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
-                elsif Kpi.events.id == m[1].to_i
-                  value_field = value_aggregate_sql(value['aggregate'], '1')
-                else
-                  value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                  s = s.where('event_results.kpi_id=?', m[1].to_i)
-                end
-                s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-              end
-            elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
+    def values_sql(rc)
+      unless values.nil? || rows.nil? || rows.empty?
+        i = 0
+        rows_field = "ARRAY[#{rc.keys.map{|k| k+'::text'}.join(', ')}]"
+        values.map do |value|
+          value_field = value['field']
+          s = add_joins_scopes(base_events_scope, value).group('1')
+          if m = /\Akpi:([0-9]+)\z/.match(value['field'])
+            kpi = load_kpi(m[1])
+            if kpi.is_segmented?
+              value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+              kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.kpis_segment_id=?', kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+            elsif kpi.kpi_type == 'count'
               if value['aggregate'] == 'count'
-                value_field = value_aggregate_sql(value['aggregate'], get_column_name_from(value)[0])
+                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
               else
                 value_field = '0'
               end
-              s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+              kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.value=?', kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
             else
-              nil
+              if Kpi.promo_hours.id == m[1].to_i
+                value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
+              elsif Kpi.events.id == m[1].to_i
+                value_field = value_aggregate_sql(value['aggregate'], '1')
+              else
+                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+                s = s.where('event_results.kpi_id=?', m[1].to_i)
+              end
+              s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
             end
-          end.flatten
-        end
+          elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
+            if value['aggregate'] == 'count'
+              value_field = value_aggregate_sql(value['aggregate'], get_column_name_from(value)[0])
+            else
+              value_field = '0'
+            end
+            s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+          else
+            nil
+          end
+        end.flatten
       end
     end
 
@@ -217,7 +247,10 @@ class Report < ActiveRecord::Base
     def add_joins_scopes(s, field_list)
       field_list = [field_list] unless field_list.is_a?(Array)
       fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
-      s = s.joins(:results) if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
+      if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
+        # Include the event_results table in the join making sure that only
+        s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
+      end
 
       s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
       s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.map{|k,v| "campaign:#{k}" }.include?(v['field'])}
@@ -240,12 +273,6 @@ class Report < ActiveRecord::Base
 
       fields = [rows, columns].compact.inject{|sum,x| sum + x }
       s
-    end
-
-    def rows_columns
-      @rows_columns ||= Hash[(rows+columns).map do |f|
-        table_column_for_field(f)
-      end.compact]
     end
 
     def table_column_for_field(f)
@@ -285,7 +312,7 @@ class Report < ActiveRecord::Base
               end
             end
           else
-            values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{table_column_for_field(column)[0]}) as value"))
+            values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{table_column_for_field(column)[0]}) as value").order('1'))
             values.map do |v|
               scoped_columns(s.where(table_column_for_field(column)[0] => v), c.slice(1, c.count), "#{prefix}#{v}||", index+1)
             end
@@ -305,4 +332,56 @@ class Report < ActiveRecord::Base
       @_kpis[id.to_i] ||= Kpi.find(id)
     end
 
+    def load_fields(name)
+      fields = read_attribute(name)
+      if fields.nil?
+        []
+      else
+        fields.map{|r| Report::Field.new(self, name, r) }
+      end
+    end
+end
+
+
+class Report::Field
+  attr_accessor :type, :data, :report
+
+  def initialize(report, type, data)
+    @report = report
+    @type = type
+    @data = data
+  end
+
+  def [](key)
+    @data[key]
+  end
+
+  def apply_display_method(value, column_total)
+    case display
+    when 'perc_of_column'
+      value*100/column_total
+    else
+      value
+    end
+  end
+
+  def display
+    @data['display']
+  end
+
+  def field
+    @data['display']
+  end
+
+  def label
+    @data['label']
+  end
+
+  def aggregate
+    @data['label']
+  end
+
+  def to_hash
+    @data
+  end
 end

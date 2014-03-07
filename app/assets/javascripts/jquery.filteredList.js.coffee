@@ -349,19 +349,19 @@ $.widget 'nmk.filteredList', {
 		$div
 
 	_buildFilterOption: (option) ->
-		$label = $('<label>')
-		$input = $('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')})
-		$li = $('<li>')
+		$('<li>')
 			.on 'mouseover', (e) =>
-				$div_tmp = $li.find('.child_div')
+				li = $(e.target)
+				$div_tmp = li.find('.child_div')
 				if $div_tmp.hasClass('child_div') and $div_tmp.css('display') == 'none' and !$div_tmp.hasClass('checker')
 					$(".child_div").parent().css('height','8%')
 					$div_tmp.css('display','inline-block')
 					$div_tmp.find(".child_div").hide() # remove extra titles
-					$li.css('height','25%')
-					$li.siblings().find('.child_div').hide()
-
-		$li.append($label.append($input, option.label))
+					li.css('height','25%')
+					li.siblings().find('.child_div').hide()
+				li = null
+				true
+			.append $('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label)
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
@@ -423,6 +423,7 @@ $.widget 'nmk.filteredList', {
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
 		@_filtersChanged()
 		@initialized = true
+		defaultParams = null
 		false
 
 	_cleanSearchFilter: () ->
@@ -431,9 +432,6 @@ $.widget 'nmk.filteredList', {
 			@searchHiddenLabel.val ""
 			@acInput.show().val ""
 			@searchLabel.hide().find('span.term').text ''
-
-		#if @initialized
-			#@reloadFilters()
 
 		false
 
@@ -453,8 +451,7 @@ $.widget 'nmk.filteredList', {
 				if param.name is 'end_date'
 					@endDateInput.val param.value
 
-		container = $('<div class="dates-range-filter">').appendTo @form
-		container.datepick {
+		$('<div class="dates-range-filter">').appendTo(@form).datepick {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
@@ -504,6 +501,7 @@ $.widget 'nmk.filteredList', {
 		else
 			@startDateInput.val ''
 			@endDateInput.val ''
+		dates = null
 		true
 
 	_datesToString: (dates) ->
@@ -538,6 +536,9 @@ $.widget 'nmk.filteredList', {
 			if @options.onChange
 				@options.onChange(@)
 
+		data = null
+		@
+
 	_storeFilters: (data) ->
 		if typeof(Storage) isnt "undefined"
 			sessionStorage["filters#{@storageScope}"] = data
@@ -553,6 +554,7 @@ $.widget 'nmk.filteredList', {
 		filtersStr = ''
 		for filter in data
 			filtersStr += "&#{filter.name}=#{escape(filter.value)}"
+		data = null
 		filtersStr.replace(/^&/,"")
 
 	buildParams: (params=[]) ->
@@ -582,6 +584,7 @@ $.widget 'nmk.filteredList', {
 
 		if @jqxhr
 			@jqxhr.abort()
+			@jqxhr = null
 
 		@doneLoading = false
 		if page is 1
@@ -604,6 +607,12 @@ $.widget 'nmk.filteredList', {
 			@listContainer.css {height: ''}
 
 			@_pageLoaded(page, $items)
+
+			$items.remove()
+
+			$response = $items = null
+
+		params = null
 
 		true
 
@@ -651,11 +660,10 @@ $.widget 'nmk.filteredList', {
 				name = decodeURIComponent(pair[0])
 				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
 				if @options.includeCalendars and value and name in ['start_date', 'end_date']
-					date = @_parseDate(value)
 					if name is 'start_date' and value
-						dates[0] = date
+						dates[0] = @_parseDate(value)
 					else
-						dates[1] = date
+						dates[1] = @_parseDate(value)
 				else
 					field = @form.find("[name=\"#{name}\"]")
 					if field.length
@@ -670,6 +678,9 @@ $.widget 'nmk.filteredList', {
 				@selectCalendarDates dates[0], dates[1]
 			else
 				@_deselectDates()
+			dates = vars = null
+
+		query = null
 		if @searchHidden and @searchHidden.val()
 			@acInput.hide()
 			@searchLabel.show().find('.term').text @searchHiddenLabel.val()

@@ -22,6 +22,10 @@ module Results
     def area_for_event(event)
       campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ') unless event.place.nil?
     end
+    
+    def url_for_event(event)
+      Rails.application.routes.url_helpers.event_url(event)
+    end
 
     private
       # Returns an array of nils that need to be populated by the event

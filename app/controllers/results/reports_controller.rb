@@ -23,9 +23,9 @@ class Results::ReportsController < InheritedResources::Base
       params.permit(report: [
         :name, :description,
         { rows: [:field, :label, :aggregate] },
-        { columns: [:field, :label, :aggregate] },
-        { values: [:field, :label, :aggregate] },
-        { filters: [:field, :label, :aggregate] }
+        { columns: [:field, :label] },
+        { values: [:field, :label, :aggregate, :display] },
+        { filters: [:field, :label] }
       ])[:report] || {}
     end
 end
