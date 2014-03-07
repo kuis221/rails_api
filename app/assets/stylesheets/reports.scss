@@ -98,9 +98,9 @@ ul.reports-list {
 
 	.field-list {
 		border: 1px solid #ccc;
+		height: 90px;
 		padding: 4px 10px;
 		margin-bottom: 10px;
-		height: 337px;
 		overflow: auto;
 		&+p{
 			color: $user_menu;
@@ -109,27 +109,49 @@ ul.reports-list {
 			text-align: center;
 		}
 		&> ul {
-			margin:0;
+			margin: 7px -5px 30px -5px;
+			&#report-filters{
+				margin-bottom: 0;
+				margin-top: 0;
+				.field-label{
+					width: 90%;
+				}
+				li{
+					&:last-child{
+						margin-bottom: 0;
+					}
+				}
+			}
+			li{
+				margin: 3px 0;
+				padding: 3px 5px;
+			}
 		}
 		&#report-fields {
 			font-weight: bold;
+			height: 345px;
 			margin-top: 10px;
 			text-transform: uppercase;
 			ul {
-				margin: 7px -5px 30px -5px;
 				&:last-of-type{
 					margin-bottom: 10px;
-				}
-				li{
-					padding: 3px 5px;
 				}
 			}
 			.field-settings-btn {
 				display: none;
 			}
 		}
-		.sortable-list {
-			min-height: 100%;
+		&#report-filters-outer, &#report-columns-outer, &#report-rows-outer, &#report-values-outer{
+			margin-top: 5px;
+			margin-bottom: 20px;
+			ul{
+				margin-bottom: 0;
+				margin-top: 0;
+			}
+		}
+
+		&#report-values-outer{
+			margin-bottom: 0;
 		}
 
 		li {
@@ -149,7 +171,7 @@ ul.reports-list {
 		.field-settings-btn {
 			cursor: pointer;
 			float: right;
-			margin-right: -15px;
+			margin-right: 2px;
 			font-size: 20px;
 		}
 	}
