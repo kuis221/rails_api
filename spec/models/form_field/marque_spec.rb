@@ -24,8 +24,13 @@ describe FormField::Marque do
     end
 
     it "should return empty marques if it is a new record" do
+      campaign = FactoryGirl.create(:campaign, company: Company.current)
+      campaign.activity_types << @activity_type
+      event = FactoryGirl.create(:event, campaign: campaign)
+      activity = FactoryGirl.create(:activity, activity_type: @activity_type, activitable: event, campaign: campaign, company_user_id: 1)
+
       ff_marque = FormField::Marque.new
-      activity_result = ActivityResult.new(form_field: ff_marque)
+      activity_result = ActivityResult.new(form_field: ff_marque, activity: activity)
 
       options = ff_marque.field_options(activity_result)
       expect(options[:collection]).to be_empty

@@ -55,10 +55,6 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  - if can?(:show, Activity) && resource.campaign.activity_types.any?
-    #event-activities.details_box
-      = render 'activities'
-
   - if can_tasks
     #event-tasks.details_box.smaller
 
@@ -69,7 +65,6 @@
 
       #event-tasks-container
         = render partial: 'tasks', locals: {tasks: resource.tasks.active}
-
 
   - if can? :documents, resource
     #event-documents.details_box

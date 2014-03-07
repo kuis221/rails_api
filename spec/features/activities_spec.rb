@@ -7,7 +7,7 @@ feature 'Activities management' do
   let(:company_user) { user.company_users.first }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
   let(:permissions) { [] }
-  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company, place: place) }
+  let(:event) { FactoryGirl.create(:late_event, campaign: campaign, company: company, place: place) }
 
   before do
     Warden.test_mode!

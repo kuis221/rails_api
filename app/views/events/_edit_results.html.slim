@@ -8,6 +8,11 @@
   #event-expenses.details_box.box_expenses.smaller
     = render partial: 'expenses'
 
+/ Activities module
+- if can?(:show, Activity) && resource.campaign.activity_types.any?
+  #event-activities.details_box
+    = render 'activities'
+
 / Photos module
 - if active_kpis.include?(Kpi.photos) && can?(:photos, resource)
   #event-photos.details_box.box_photos

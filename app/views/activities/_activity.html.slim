@@ -1,7 +1,7 @@
 li id="activity_#{activity.id}"
   span.event-item
     / a href="#{activity_path(activity)}"
-    = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details') 
+    = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details')
       span.data
           = format_date(activity.activity_date)
           br>/
@@ -12,6 +12,6 @@ li id="activity_#{activity.id}"
       = "&nbsp;".html_safe
       - if can?(:deactivate, Activity)
         - if activity.active?
-          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'disable', title: 'Deactivate', confirm: I18n.t('confirmation.deactivate_confirm_message', model: resource.class.model_name.human.downcase)
+          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'disable', title: 'Deactivate', confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')
         - else
           = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'enable', title: 'Activate'
