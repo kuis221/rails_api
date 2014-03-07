@@ -88,6 +88,7 @@ describe "User" do
 
       it { should be_able_to(:create, AttachedAsset) }
       it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
+      it { should be_able_to(:rate_photo, Event)}
       it { should_not be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1))) }
 
     end

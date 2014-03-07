@@ -356,6 +356,8 @@ Brandscopic::Application.routes.draw do
     get :search, format: :json, on: :collection
     resources :areas, only: [:new, :create]
   end
+  
+  resources :attached_assets, only: [:update]
 
   resources :date_ranges do
     get :autocomplete, on: :collection

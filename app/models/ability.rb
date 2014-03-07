@@ -199,7 +199,16 @@ class Ability
       can [:deactivate, :activate], AttachedAsset do |asset|
         asset.attachable.is_a?(Event) && asset.asset_type == 'photo' && user.role.has_permission?(:deactivate_photo, Event) && can?(:show, asset.attachable)
       end
-
+      
+      can [:rate_photo], AttachedAsset do |asset|
+         #asset.asset_type == 'photo' && user.role.has_permission?(:edit_rate, Event)
+         true
+      end
+      
+      can [:view_rate], AttachedAsset do |asset|
+         #asset.asset_type == 'photo' && user.role.has_permission?(:index_rate, Event)
+         true
+      end
       # Event Expenses permissions
       can :expenses, Event do |event|
         user.role.has_permission?(:index_expenses, Event) && can?(:show, event)

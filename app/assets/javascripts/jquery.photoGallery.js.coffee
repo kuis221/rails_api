@@ -26,12 +26,26 @@ $.widget 'nmk.photoGallery', {
 		@setTitle $image.data('title'), $image.data('url')
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
+		@setRating($image.data('rating'), $image.data('id') )
 		if @options.includeTags
 			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
 
 	setTitle: (title, url) ->
 		@title.html $('<a>').attr('href', url).text(title)
 
+	setRating: (rating, asset_id) ->
+		$stars = new Array(5)
+		$i = 0
+		while $i < rating
+			$stars[$i] = @_createStar($i+1,true, asset_id)
+			$i++
+		while $i < 5
+			$stars[$i] = @_createStar($i+1,false, asset_id)
+			$i++
+			
+		@rating.html ''
+		@rating.append($stars[0],$stars[1],$stars[2],$stars[3],$stars[4])
+	
 	setDate: (date) ->
 		@date.html date
 
@@ -64,10 +78,10 @@ $.widget 'nmk.photoGallery', {
 
 			row.append($('<img>').attr('src', image.src).data('image',image).data('index', index))
 			carousel.append $('<div class="item">').
-					 append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
-					 data('image',image).
-					 data('index', index).
-					 addClass(if currentImage == image then 'active' else '')
+				append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
+				data('image',image).
+				data('index', index).
+				addClass(if currentImage == image then 'active' else '')
 			i+=1
 			index+=1
 		
@@ -82,11 +96,33 @@ $.widget 'nmk.photoGallery', {
 
 		@miniCarousel.carousel 'pause'
 
-
+	_createStar: ($i,$is_full, $asset_id) ->
+		$klass = ""
+		if $is_full
+			$klass = "icon-star full"
+		else
+			$klass = "icon-star-empty empty"
+		$('<span class="'+$klass+'" style="color: gold" value="'+$i+'"/>')
+			.click (e) ->
+				$('.rating span').slice(0,$i).removeClass('empty').removeClass('icon-star-empty').addClass('icon-star').addClass('full').css('color', 'gold')
+				$('.rating span').slice($i,5).removeClass('full').removeClass('icon-star').addClass('empty').addClass('icon-star-empty').css('color', 'grey')
+				$.ajax "/attached_assets/"+$asset_id, {
+					method: 'PUT',
+					data: { rate_value: $i},
+					dataType: 'json'
+				}
+			.mouseover (e) ->
+				$('.rating span').removeClass('icon-star').addClass('icon-star-empty').css('color', 'grey').css('cursor','pointer')
+				$('.rating span').slice(0,$i).css('color', 'gold')
+	
 	_createGalleryModal: () ->
 		@title = $('<h3>')
 		@address = $('<div class="place-data">')
 		@date = $('<div class="calendar-data">')
+		@rating = $('<div class="rating">')
+			.mouseleave (e) ->
+				$('.full').removeClass('icon-star-empty').addClass('icon-star').css('color', 'gold')
+				$('.empty').addClass('icon-star-empty').css('color', 'grey')
 
 		if @gallery
 			@gallery.remove();
@@ -96,38 +132,39 @@ $.widget 'nmk.photoGallery', {
 			@carousel.off('slid').remove()
 
 		@gallery = $('<div class="gallery-modal modal hide fade">').append(
-						$('<div class="gallery-modal-inner">').append(
-							$('<div class="panel">').
-								append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
-								append(
-									$('<div class="description">').append( @title ).append( @date ).append( @address ),
-									$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') )
-									(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
-								),
-							$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) )
-						).append($('<div class="clearfix">'))
-					)
+			$('<div class="gallery-modal-inner">').append(
+				$('<div class="panel">').
+					append('<button class="close" data-dismiss="modal" aria-hidden="true"></button>').
+					append(
+						$('<div class="description">').append( @title ).append( @date ).append( @address ),
+						$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
+						@rating,
+						(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
+					),
+				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) )
+			).append($('<div class="clearfix">'))
+			)
 
 
 		@gallery.insertAfter @element
 
 		@gallery.on 'shown', () =>
-				@_showImage()
-				$(window).on 'resize.gallery', =>
-					@_updateSizes()
-				$(document).on 'keyup.gallery', (e) =>
-					if e.which is 39
-						$('.carousel').carousel('next');
-						e.preventDefault();
-						false
-					else if e.which is 37
-						$('.carousel').carousel('prev');
-						e.preventDefault();
-						false
-					else if e.which is 27
-						@gallery.modal 'hide'
-						e.preventDefault();
-						false
+			@_showImage()
+			$(window).on 'resize.gallery', =>
+				@_updateSizes()
+			$(document).on 'keyup.gallery', (e) =>
+				if e.which is 39
+					$('.carousel').carousel('next');
+					e.preventDefault();
+					false
+				else if e.which is 37
+					$('.carousel').carousel('prev');
+					e.preventDefault();
+					false
+				else if e.which is 27
+					@gallery.modal 'hide'
+					e.preventDefault();
+					false
 			.on 'hidden', () =>
 				$(window).off 'resize.gallery'
 				$(document).off 'keyup.gallery'
