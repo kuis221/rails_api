@@ -2,12 +2,11 @@
   = resource_details_bar("You are viewing activity details. Click to close.")
   .details_box
     h2.special = resource.activity_type.name
-    p= resource.campaign.name
+    p.big= resource.campaign.name
     .calendar-data
       = format_date(event_date(resource, :activity_date))
     .member-data
       b= resource.company_user.name
-    br
     = render partial: 'event_info', locals: {event: resource.activitable}
     = render 'details'
 

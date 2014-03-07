@@ -1877,7 +1877,7 @@ ul.kpis-list{
  	//clear: both;
  	color: $brand;
  	font-size: 12px;
-    margin: 13px 0 0 0;
+    margin: 25px 0 0 0;
     padding: 0;
     position: relative;
     address{
@@ -2111,7 +2111,7 @@ ul.kpis-list{
     			width: 100%;
     			span{
 	    			&:first-child{
-	    			margin:20px 20px 0 0;
+	    			margin:30px 20px 0 0;
 	    			}
 	    			&:last-child{
 	    				float: right;
@@ -2598,6 +2598,14 @@ input.search-query:focus{
 			-webkit-font-smoothing: antialiased;
 	    }
 	}
+	.term{
+		overflow: hidden;
+	  	text-overflow: ellipsis;
+	 	white-space: nowrap;
+		width: 170px;
+		float: left;
+		display: inline-block;
+	}
 }
 .ui-widget-content{
 	background-image: none;
@@ -2918,12 +2926,35 @@ table.table {
 
 body.activities{
 	.details_box{
+		.event-info{
+			display: block;
+			margin-bottom: 50px;
+			b{
+				font-weight: normal;
+			}
+		}
 		h2{
 			margin-bottom: 10px;
+			&+p{
+				margin-bottom: 30px;
+			}
+		}
+		h3{
+			margin-bottom: 20px;
+			&:first-of-type{
+				margin-top: 50px;
+			}
+		}
+		.calendar-data{
+			margin-bottom: 10px;
+		}
+		.links-data{
+			margin-top: 35px;
 		}
 	}
 
 	dl.activity-results {
+		margin-top: 0;
 		dt {
 			font-weight: normal;
 			display: inline-block;
@@ -2933,14 +2964,18 @@ body.activities{
 				float: none;
 				clear: both;
 			}
+			&:last-of-type{
+				margin-top: 10px;
+			}
 		}
 		dd {
-			margin-bottom: 20px;
+			margin-bottom: 12px;
 			margin-left: 0px;
 			font-weight: bold;
 			&.form_field_text_area {
 				font-weight: normal;
 				margin-top: 10px;
+				width: 290px;
 			}
 		}
 	}
@@ -5137,6 +5172,12 @@ body.campaigns{
 			margin: 0 5px 0;
 			bottom: 3px;
 		}
+		&.underline{
+			color:$text;
+			&:hover{
+				text-decoration:underline;
+			}
+		}
 	}
 	&#event-tasks{
 		#event-tasks-container{
@@ -5157,6 +5198,11 @@ body.campaigns{
 				.control-group{
 					width:54%;
 				}
+			}
+		}
+		.pull-left{
+			a{
+				margin-top: 15px;
 			}
 		}
 	}
