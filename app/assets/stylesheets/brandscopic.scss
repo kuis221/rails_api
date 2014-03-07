@@ -2701,16 +2701,6 @@ overflow: hidden;
 	background-color: red;
 }
 
-table.table {
-	tbody {
-		tr {
-			&:hover td {
-				background-color: #49afcd !important;
-			}
-		}
-	}
-}
-
 .scroll-table-wrapper {
 	max-height: 200px;
 	overflow: auto;

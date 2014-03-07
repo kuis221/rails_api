@@ -250,6 +250,9 @@ $report_border_color: #ccc;
 		.level_4 .row_label {
 			padding-left: 70px;
 		}
+		tr:hover td{
+			background-color: transparent;
+		}
 		thead {
 			border-bottom: thin solid $report_border_color;
 			tr {
@@ -263,6 +266,7 @@ $report_border_color: #ccc;
 					}
 				}
 				th, td {
+					font-weight: normal;
 					text-align: center;
 					text-transform: uppercase;
 					white-space: nowrap;
@@ -302,6 +306,7 @@ $report_border_color: #ccc;
 				border-top: thin solid $report_border_color;
 				.row_label{ 
 					border-top: thin solid $report_border_color;
+					font-weight:bold;
 					margin-top: -1px;
 				}
 			}
