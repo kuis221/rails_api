@@ -3047,7 +3047,7 @@ body.activities{
 				float: none;
 				clear: both;
 			}
-			&:last-of-type{
+			&.form_field_text_area:last-of-type{
 				margin-top: 10px;
 			}
 		}
