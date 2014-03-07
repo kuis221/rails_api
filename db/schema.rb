@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140225153028) do
+ActiveRecord::Schema.define(:version => 20140405221111) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.boolean  "active",            :default => true
     t.string   "direct_upload_url"
     t.boolean  "processed",         :default => false, :null => false
+    t.integer  "rating",            :default => 0
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
@@ -476,8 +477,8 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.integer  "kpi_id"
     t.integer  "kpis_segment_id"
     t.decimal  "value"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.integer  "goalable_id"
     t.string   "goalable_type"
     t.integer  "parent_id"
@@ -485,6 +486,7 @@ ActiveRecord::Schema.define(:version => 20140225153028) do
     t.string   "title"
     t.date     "start_date"
     t.date     "due_date"
+    t.integer  "activity_type_id"
   end
 
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
