@@ -1608,8 +1608,9 @@ li#user_menu{
 		background-color: $alert_grey;
 		box-shadow: none;
 		margin-top: 12px;
-		min-width: 186px;
-		left: -55px;
+		width: 186px !important;
+		right: 8px !important;
+		left: auto !important;
 		li{
 			a:hover{
 				color: white;
