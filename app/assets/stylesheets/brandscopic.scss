@@ -2283,7 +2283,7 @@ ul.kpis-list{
 		}
 		.share:after{
 			color:white;
-			content: "\e628";
+			content: "\e603";
 			font-family: 'icons';
 			font-size: 19px;
 			margin-right: 2px;
@@ -5046,111 +5046,109 @@ div.chardinjs-tooltip
 // GENERAL ICONS
 
 a, i{
+	&:before{
+		display: inline-block;
+		font-family: 'icons';
+		position:relative;	
+		speak: none;	
+		-webkit-font-smoothing: antialiased;
+	}
 	&.icon-ok-circle:before{
 		color: $brand;
 		content: "\e00d";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-plus-sign:before{
 		color: $brand;
 		content: "\e021";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-calendar:before{
 		color: $brand;
 		content: "\e031";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 17px;
-		position: relative;
 	}
 	&.icon-remove-circle:before, &.icon-remove-sign:before{
 		color: $brand;
 		content: "\e011";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-angle-right:before, &.icon-angle-right-after:after{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e01d";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 26px;
-		position: relative;
 	}
 	&.icon-angle-left:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e01c";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 26px;
-		position: relative;
 	}
 	// Icons for notification center
 	&.icon-notification-event:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e00a";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-task:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e015";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-comment:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e010";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-campaign:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e00a";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-action:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e024";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-group:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e023";
-		display: inline-block;
-		font-family: 'icons';
 		font-size: 20px;
-		position: relative;
 	}
 	&.icon-notification-venue:before{
-		color: #c0c0c0;
+		color: $user_menu;
 		content: "\e018";
-		display: inline-block;
+		font-size: 20px;
+	}
+	&.table-view:before{
+		color: white;
+		content: "\e007";
+		font-size: 18px;
+		top: 1px;
+	}
+	&.charts:before{
+		color: white;
+		content: "\e604";
+		font-size: 18px;
+		top: 1px;	
+	}
+}
+
+button{
+	&.icon-share:before{
+		color: white;
+		content: "\e603";
 		font-family: 'icons';
 		font-size: 20px;
+		padding-left: 6px;
+		padding-right: 6px;
 		position: relative;
+		speak: none;
+		text-align: center;
+		text-shadow: none;
+		top: 1px;
+		-webkit-font-smoothing: antialiased;
 	}
+
 }
 
 

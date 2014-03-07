@@ -42,6 +42,25 @@ ul.reports-list {
 
 #report-builder {
 
+	.btn-save-report{
+		margin-right: 10px;
+	}
+
+	.btn-save-report, .btn-cancel-report{
+		box-sizing: border-box;
+		float: left;
+		width: 90px;
+	}
+
+	.buttons-zone{
+		.btn-group{
+			vertical-align: top;
+		}
+		.icon-share, .table-view, .charts{
+			padding: 6px 17px;
+		}
+	}
+
 	.report-overlay {
 		background: url(/assets/loading.gif) no-repeat center center;
 	}
@@ -206,7 +225,7 @@ ul.reports-list {
 $report_border_color: #ccc;
 #report-container {
 	min-height: 200px;
-	margin-top: 20px;
+	margin-top: 50px;
 	.report-outer {
 		position:relative;
 		border: thin solid $report_border_color;
