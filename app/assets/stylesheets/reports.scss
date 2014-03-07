@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import "variables.scss"; 
 
 // REPORTS
 ul.reports-list {
@@ -41,6 +41,7 @@ ul.reports-list {
 }
 
 #report-builder {
+
 	.report-overlay {
 		background: url(/assets/loading.gif) no-repeat center center;
 	}
@@ -49,6 +50,24 @@ ul.reports-list {
 		color: #ccc;
 		padding: 100px 0;
 		text-align: center;
+	}
+
+	.sidebar{
+		::-webkit-input-placeholder {
+		   color: $user_menu;
+		}
+
+		:-moz-placeholder { /* Firefox 18- */
+		   color: $user_menu;  
+		}
+
+		::-moz-placeholder {  /* Firefox 19+ */
+		   color: $user_menu;  
+		}
+
+		:-ms-input-placeholder {  
+		   color: $user_menu;  
+		}
 	}
 	.btn[disabled=disabled] {
 		opacity: 0.5;
@@ -72,23 +91,38 @@ ul.reports-list {
 	}
 
 	.draggable-list {
+		font-weight: normal;
 		overflow:auto;
+		text-transform: none;
 	}
 
 	.field-list {
 		border: 1px solid #ccc;
-		padding: 5px;
+		padding: 4px 10px;
 		margin-bottom: 10px;
-		height: 70px;
+		height: 337px;
 		overflow: auto;
+		&+p{
+			color: $user_menu;
+			padding-bottom:10px;
+			padding-top:20px;
+			text-align: center;
+		}
 		&> ul {
 			margin:0;
 		}
 		&#report-fields {
-			height: 200px;
+			font-weight: bold;
 			margin-top: 10px;
+			text-transform: uppercase;
 			ul {
-				margin-bottom: 10px;
+				margin: 7px -5px 30px -5px;
+				&:last-of-type{
+					margin-bottom: 10px;
+				}
+				li{
+					padding: 3px 5px;
+				}
 			}
 			.field-settings-btn {
 				display: none;
@@ -121,7 +155,7 @@ ul.reports-list {
 	}
 
 	.report-field:hover, .ui-draggable-dragging {
-		background-color: #ccc;
+		background-color: $grey_one;
 	}
 
 	.report-field-settings {
