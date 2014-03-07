@@ -123,7 +123,7 @@ describe Api::V1::VenuesController do
       HTTParty.should_receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
       Api::V1::VenuesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
       expect {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, venue: {name: "Guille's place", street_number: 'Tirrases', route: 'La Colina', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR', types: 'bar,restaurant'}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, venue: {name: "Guille's place", street_number: 'Tirrases', route: 'La Colina', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR', types: 'bar,restaurant'}, format: :json
         expect(response).to be_success
       }.to change(Place, :count).by(1)
       place = Place.last
@@ -131,7 +131,7 @@ describe Api::V1::VenuesController do
       expect(place.street_number).to eql 'Tirrases'
       expect(place.route).to eql 'La Colina'
       expect(place.city).to eql 'Curridabat'
-      expect(place.state).to eql 'San Jose'
+      expect(place.state).to eql 'San José'
       expect(place.zipcode).to eql '12345'
       expect(place.country).to eql 'CR'
       expect(place.latitude).to eql 1.2322

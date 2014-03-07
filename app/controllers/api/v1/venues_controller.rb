@@ -22,7 +22,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
       param :route, String, required: false, desc: "The Venue's route (address 2)"
       param :country, String, required: true, desc: "The Venue country code. Eg. US"
       param :city, String, required: true, desc: "The Venue city"
-      param :state, String, required: true, desc: "The Venue state"
+      param :state, String, required: true, desc: "The Venue state, use the full name and not the code. Eg \"California\" or \"Florida\" "
       param :zipcode, String, required: true, desc: "The Venue's zipcode"
     end
   end
