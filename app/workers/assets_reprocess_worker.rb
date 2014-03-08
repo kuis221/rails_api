@@ -1,7 +1,8 @@
 class AssetsReprocessWorker
   @queue = :migration
 
-  def self.perform(i, style)
-    a.file.reprocess! style
+  def self.perform(id, style)
+    asset = AttachedAsset.find(id)
+    asset.file.reprocess! style
   end
 end
