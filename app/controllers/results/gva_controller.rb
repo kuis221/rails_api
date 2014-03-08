@@ -13,15 +13,16 @@ class Results::GvaController < ApplicationController
     authorize_actions
     @events_scope = filter_events_scope
     if area
-      @goals = area.goals.in(campaign)
+      goals = area.goals.in(campaign)
     elsif place
-      @goals = place.goals.in(campaign)
+      goals = place.goals.in(campaign)
     else
-      @goals = campaign.goals.base
+      goals = campaign.goals.base
     end
-    #goals_activities = @goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).where('goals.value is not null and goals.value <> 0').includes(:activity_type)
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi).order('kpis.name ASC')
-    #@goals += goals_activities
+    goals = goals.where('goals.value is not null and goals.value <> 0')
+    goals_activities = goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).includes(:activity_type)
+    goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
+    @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? g.kpi.name : g.activity_type.name }
   end
 
   private
