@@ -1,0 +1,17 @@
+.row-fluid
+  .span12.category
+    .span2.title Metric
+    .span2.text-right.title Goal
+    .span2.text-right.title Actual
+    .span2.text-right.title Actual %
+    .span2.text-right.title Pending
+    .span2.text-right.title Pending %
+  - each_events_goal.each do |id, event_goal|
+    - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
+    .span12 class="#{cycle("", "dark-bg")}"
+      .span2 = event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text)
+      .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:goal].value, precision: 2) : number_with_delimiter(event_goal[:goal].value)
+      .span2.text-right = event_goal[:goal].kpi.currency? ? number_to_currency(event_goal[:total_count], precision: 2) : number_with_delimiter(event_goal[:total_count])
+      .span2.text-right = "#{event_goal[:completed_percentage].round}%"
+      .span2.text-right = (event_goal[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total.round(2)))
+      .span2.text-right = "#{(pending_and_total/event_goal[:goal].value * 100).round}%"

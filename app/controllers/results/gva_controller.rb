@@ -19,9 +19,9 @@ class Results::GvaController < ApplicationController
     else
       @goals = campaign.goals.base
     end
-    goals_activities = @goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).where('goals.value is not null and goals.value <> 0').includes(:activity_type)
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi)
-    @goals += goals_activities
+    #goals_activities = @goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).where('goals.value is not null and goals.value <> 0').includes(:activity_type)
+    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi).order('kpis.name ASC')
+    #@goals += goals_activities
   end
 
   private
