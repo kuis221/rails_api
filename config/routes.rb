@@ -163,6 +163,9 @@ Brandscopic::Application.routes.draw do
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
       resources :events, only: [:new, :create]
+      resources :activities, only: [:new, :create] do
+        get :form, on: :collection
+      end
     end
   end
 
@@ -217,6 +220,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
+    resources :activity_types, only: [:edit, :update]
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
@@ -229,6 +233,8 @@ Brandscopic::Application.routes.draw do
       post :update_post_event_form
       post :kpi, to: :add_kpi
       delete :kpi, to: :remove_kpi
+      post :activity_type, to: :add_activity_type
+      delete :activity_type, to: :remove_activity_type
       get :deactivate
       get :activate
       get :kpis
@@ -302,6 +308,10 @@ Brandscopic::Application.routes.draw do
       get 'list', on: :collection
     end
 
+    resources :activities, only: [:new, :create] do
+      get :form, on: :collection
+    end
+
     member do
       get :deactivate
       get :activate
@@ -341,7 +351,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :brands, only: [:index]
+  resources :brands do
+    resources :marques, only: [:index]
+  end
 
   resources :areas do
     get :autocomplete, on: :collection
@@ -373,6 +385,13 @@ Brandscopic::Application.routes.draw do
   resources :day_parts do
     get :autocomplete, on: :collection
     resources :day_items, path: 'days', only: [:new, :create, :destroy]
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
+
+  resources :activities, only: [:show, :edit, :update] do
     member do
       get :deactivate
       get :activate

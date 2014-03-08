@@ -19,7 +19,7 @@
 
 FactoryGirl.define do
   factory :goal do
-    kpi_id 1
+    kpi_id nil
     kpis_segment_id nil
     value 0
     goalable_type nil
@@ -27,5 +27,6 @@ FactoryGirl.define do
     title nil
     start_date nil
     due_date nil
+    activity_type_id nil
   end
 end

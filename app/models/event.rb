@@ -40,6 +40,11 @@ class Event < ActiveRecord::Base
     end
   end
   has_many :event_expenses, inverse_of: :event, autosave: true
+  has_many :activities, as: :activitable, order: 'activity_date ASC' do
+    def active
+      joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: {campaign_id: proxy_association.owner.campaign_id})
+    end
+  end
   has_one :event_data, autosave: true
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
@@ -87,6 +92,9 @@ class Event < ActiveRecord::Base
   scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
 
   scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
+
+  scope :in_areas, ->(areas) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', areas.map{|a| a.place_ids}.flatten.uniq+[0], areas.map{|a| a.locations.map(&:id)}.flatten.uniq+[0]) }
+  scope :in_places, ->(places) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil }.compact.uniq+[0]) }
 
   track_who_does_it
 

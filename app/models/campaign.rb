@@ -74,6 +74,10 @@ class Campaign < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+  
+  # Activity-Type relationships
+  has_many :activity_type_campaigns
+  has_many :activity_types, through: :activity_type_campaigns
 
   scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
   scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }

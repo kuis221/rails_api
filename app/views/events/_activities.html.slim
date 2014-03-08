@@ -1,0 +1,7 @@
+#activities-container
+  - if can?(:create, Activity)
+    = link_to 'New activity', new_event_activity_path(resource), remote: true, class: 'btn btn-primary', title: 'New Activity'
+
+  .link-list
+    ul#activities-list
+      = render partial: 'activities/activity', collection: resource.activities.active, locals: {parent: resource}

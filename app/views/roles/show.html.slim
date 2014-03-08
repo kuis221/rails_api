@@ -19,7 +19,7 @@
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
   - if can?(:edit, resource)
-  
+
       - unless resource.is_admin?
         ul#permissions-tabs.nav.nav-tabs
           li.active
@@ -36,6 +36,8 @@
             a href="#analysis_permissions" Analysis
           li
             a href="#campaigns_permissions" Campaigns
+          li
+            a href="#activities_permissions" Activities
           li
             a href="#admin_permissions" Admin
 
@@ -61,6 +63,9 @@
 
             #campaigns_permissions.tab-pane
               = render 'campaigns_permissions'
+
+            #activities_permissions.tab-pane
+              = render 'activities_permissions'
 
             #admin_permissions.tab-pane
               = render 'admin_permissions'
