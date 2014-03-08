@@ -1,7 +1,7 @@
 module PlacesHelper
   module CreatePlace
     def create_place(attributes, add_new_place)
-      attributes[:types] = attributes[:types].split(',') if attributes[:types].present?
+      attributes[:types] = attributes[:types].downcase.split(',') if attributes[:types].present?
 
       if attributes[:country] && attributes[:state]
         country = Country.new(attributes[:country])
