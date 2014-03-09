@@ -19,9 +19,7 @@ module TeamMembersHelper
     end
 
     def new_member
-      @users = company_users
-      @users = @users.where(['company_users.id not in (?)', resource.users]) unless resource.users.empty?
-      @staff = (@users + assignable_teams).sort_by &:name
+      @staff = assignable_staff_members
     end
 
     def add_members
@@ -72,20 +70,31 @@ module TeamMembersHelper
       end
 
       def company_users
-        @company_users ||= CompanyUser.active.scoped_by_company_id(current_company).includes(:user).where('users.invitation_accepted_at is not null').order('users.last_name ASC')
+        @company_users ||= CompanyUser.active.scoped_by_company_id(current_company).joins(:user, :role).where('users.invitation_accepted_at is not null')
       end
       def company_teams
         @company_teams ||= current_company.teams.active.order('teams.name ASC')
       end
 
       def assignable_teams
-        if resource.is_a?(Team)
-          @assignable_teams = []
+         @assignable_teams ||= if resource.is_a?(Team)
+          company_teams.where('0=1')
         else
-          @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
-            !resource.team_ids.include?(team.id)
-          end
+          company_teams.with_active_users(current_company).where('teams.id not in (?)', resource.team_ids+[0])
+          # @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
+          #   !resource.team_ids.include?(team.id)
+          # end
         end
+      end
+
+      def assignable_staff_members
+        users = company_users.where(['company_users.id not in (?)', resource.user_ids+[0]])
+        ActiveRecord::Base.connection.select_all("
+          #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}
+          UNION ALL
+          #{assignable_teams.select('teams.id, teams.name, teams.description, \'team\' as type').reorder(nil).to_sql}
+          ORDER BY name
+        ")
       end
   end
 

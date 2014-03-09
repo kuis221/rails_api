@@ -212,7 +212,7 @@ describe EventsController do
         }.should change(Event, :count).by(1)
         assigns(:event).company_id.should == @company.id
       end
-      
+
       it "should assign current_company_user to the new event" do
         lambda {
           post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
@@ -387,7 +387,7 @@ describe EventsController do
         event.reload
         response.should be_success
         assigns(:event).should == event
-        assigns(:users).should == [another_user]
+        assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
       end
 
       it 'should not load the users that are already assigned to the event' do
@@ -396,18 +396,20 @@ describe EventsController do
         get 'new_member', id: event.id, format: :js
         response.should be_success
         assigns(:event).should == event
-        assigns(:users).should == [another_user]
-        assigns(:staff).should == [another_user]
+        assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
       end
 
       it 'should load teams with active users' do
         @company_user.user.update_attributes({first_name: 'CDE', last_name: 'FGH'}, without_protection: true)
-        team = FactoryGirl.create(:team, name: 'ABC', company_id: @company.id)
+        team = FactoryGirl.create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
         other_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
         team.users << other_user
         get 'new_member', id: event.id, format: :js
         assigns(:assignable_teams).should == [team]
-        assigns(:staff).should == [team,other_user]
+        assigns(:staff).should == [
+          {'id' => team.id.to_s, 'name' => 'ABC', 'description' => 'A sample team', 'type' => 'team'},
+          {'id' => other_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}
+        ]
       end
     end
 

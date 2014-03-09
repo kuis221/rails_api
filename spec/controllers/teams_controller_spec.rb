@@ -130,7 +130,7 @@ describe TeamsController do
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:team).should == team
-      assigns(:users).should == [@company_user]
+      assigns(:staff).should == [{"id"=>@company_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}]
     end
 
     it 'correctly assign the users' do
@@ -147,7 +147,7 @@ describe TeamsController do
       FactoryGirl.create(:company_user, company_id: @company.id+1, role_id: @company_user.role_id, active: true) # user from other company
       get 'new_member', id: team.id, format: :js
       response.should be_success
-      assigns(:users).should =~ users
+      expect(assigns(:staff)).to  match_array users.map{|u| {'id' => u.id.to_s, 'name' => u.full_name, 'description' => u.role_name, 'type' => 'user'}}
     end
 
     it 'should not load the users that are already assigned ot the team' do
@@ -156,7 +156,7 @@ describe TeamsController do
       get 'new_member', id: team.id, format: :js
       response.should be_success
       assigns(:team).should == team
-      assigns(:users).should == [another_user]
+      assigns(:staff).should == [{"id"=>another_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}]
     end
   end
 

@@ -358,8 +358,8 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>users.first.id, "name"=>"Luis Perez",   "description"=>"Field Ambassador", 'type' => 'user'},
-        {"id"=>users.last.id,  "name"=>"Pedro Guerra", "description"=>"Coach", 'type' => 'user'}
+        {"id"=>users.first.id.to_s, "name"=>"Luis Perez",   "description"=>"Field Ambassador", 'type' => 'user'},
+        {"id"=>users.last.id.to_s,  "name"=>"Pedro Guerra", "description"=>"Coach", 'type' => 'user'}
       ]
     end
 
@@ -370,15 +370,16 @@ describe Api::V1::EventsController do
         FactoryGirl.create(:team, name: 'Team B', description: 'team 2 description', company: company)
       ]
       company_user = user.company_users.first
+      teams.each{|t| t.users << company_user}
 
       get :assignable_members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
       response.should be_success
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>teams.second.id, "name"=>"Team A", "description"=>"team 1 description", 'type' => 'team'},
-        {"id"=>teams.last.id, "name"=>"Team B", "description"=>"team 2 description", 'type' => 'team'},
-        {"id"=>teams.first.id, "name"=>"Z Team", "description"=>"team 3 description", 'type' => 'team'}
+        {"id"=>teams.second.id.to_s, "name"=>"Team A", "description"=>"team 1 description", 'type' => 'team'},
+        {"id"=>teams.last.id.to_s, "name"=>"Team B", "description"=>"team 2 description", 'type' => 'team'},
+        {"id"=>teams.first.id.to_s, "name"=>"Z Team", "description"=>"team 3 description", 'type' => 'team'}
       ]
     end
   end
