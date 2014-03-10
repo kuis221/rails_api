@@ -252,7 +252,7 @@ $report_border_color: #ccc;
 	.report-table {
 		margin-bottom: 0px;
 		.level_1 .row_label {
-			padding-left: 38px;
+			padding-left: 40px;
 		}
 		.level_2 .row_label {
 			padding-left: 40px;
@@ -295,11 +295,15 @@ $report_border_color: #ccc;
 						text-align: left;
 					}
 
+					th:last-child{
+						padding-right: 20px;
+					}
+
 				}
 
 				&.last-header{
 					th{
-						padding: 10px 10px 0 10px;
+						padding: 10px 8px 0 10px;
 					}
 				}
 				&.grand-total{
@@ -327,6 +331,10 @@ $report_border_color: #ccc;
 			height: 20px;
 		}
 
+		tr td:last-child{
+			padding-right: 20px;
+		}
+
 		&.multi-row {
 			tr.level_0 {
 				border-top: thin solid $report_border_color;
@@ -352,7 +360,7 @@ $report_border_color: #ccc;
 .icon-minus, .icon-plus{
 	display:inline-block;
 	height:20px;
-	margin-right:5px;
+	margin-right:10px;
 	width:10px;
 	&:hover{
 		color: $text !important;
