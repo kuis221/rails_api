@@ -214,17 +214,35 @@ ul.reports-list {
 
 	.report-field-settings {
 		padding: 8px;
-		background-color: #ccc;
-		width: 198px;
+		background-color: $grey_one;
+		width: 194px;
 		border-radius: 5px;
 		input, select {
-			width: 90%;
+			box-sizing: border-box;
+			width: 100%;
 			background-color: #fff !important;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none; 
+		}
+
+		.chzn-container{
+			width: 100% !important;
 		}
 
 		.chzn-container-single {
 			.chzn-single {
-				width: 90%;
+				border: 1px solid white;
+				box-sizing:border-box;
+				width: 100% !important;
+			}
+			.chzn-search input{
+				background-image:none;
+				bottom: 10px;
+				width: 70% !important;				
+			}
+			.chzn-drop{
+				width: 194px !important;
 			}
 		}
 	}
