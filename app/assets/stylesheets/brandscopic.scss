@@ -5121,6 +5121,9 @@ a, i{
 		font-size: 18px;
 		top: 1px;	
 	}
+	&.icon-minus:before, &.icon-plus:before{
+		font-family: FontAwesome !important;
+	}
 }
 
 button{
