@@ -44,6 +44,7 @@ en:
       brand_portfolio: "New Brand portfolio"
       date_range: "New Date range"
       day_part: "New Day part"
+      activity_type: "New Activity type"
     edit:
       team: "Edit Team"
       campaign: "Edit Campaign"

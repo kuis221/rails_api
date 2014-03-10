@@ -16,6 +16,13 @@ describe ActivityTypesController do
       response.should be_success
     end
   end
+  
+  describe "GET 'index'" do
+    it "returns http success" do
+      get 'index'
+      response.should be_success
+    end
+  end
 
   describe "PUT 'update'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
@@ -34,6 +41,13 @@ describe ActivityTypesController do
 
       campaign.goals.for_activity_types([activity_type]).first.value.should == 23
       assigns(:activity_type).should == activity_type
+    end
+  end
+  
+  describe "GET 'items'" do
+    it "responds to .json format" do
+      get 'items'
+      response.should be_success
     end
   end
 end

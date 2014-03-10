@@ -395,7 +395,11 @@ Brandscopic::Application.routes.draw do
   end
   
   resources :activity_types  do
-    
+    get :autocomplete, on: :collection
+    member do
+      get :deactivate
+      get :activate
+    end
   end
 
   resources :dashboard, only: [] do
