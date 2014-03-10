@@ -1,6 +1,7 @@
 class ActivityTypesController < FilteredController
-  before_filter :load_campaign, only: [:edit, :update]
-  respond_to :js, only: [:edit, :update]
+  before_filter :load_campaign, only: [:edit, :update, :set_goal]
+  respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
+  belongs_to :company, optional: true
   
   helper_method :describe_filters
 
@@ -15,9 +16,13 @@ class ActivityTypesController < FilteredController
     render :json => buckets.flatten
   end
   
+  def set_goal
+      @activity_type = ActivityType.find(params[:activity_type_id])
+    end
+  
   protected
   def permitted_params
-    params.permit(activity_type: [{goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]} ])[:activity_type]
+    params.permit(activity_type: [:name, :description, {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}])[:activity_type]
   end
     
   def facets

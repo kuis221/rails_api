@@ -14,5 +14,5 @@ li id="campaign-activity-type-#{activity_type.id}"
   span.kpi-goal
     span.value= resource.goals.base.for_activity_type(activity_type).value
   span.pull-right
-    = link_to '', edit_campaign_activity_type_path(resource, activity_type.id), remote: true, class: 'edit', title: 'Edit'
+    = link_to '', campaign_activity_type_set_goal_path(resource, activity_type.id), remote: true, class: 'edit', title: 'Edit'
   .clearfix

@@ -1,16 +1,11 @@
 - remote ||= false
-= simple_nested_form_for [@campaign, resource], remote: remote do |f|
+= simple_form_for(@activity_type, remote: remote || false) do |f|
   = f.error_notification
-  = resource.errors.full_messages.join("<br />").html_safe
 
   .form-inputs
-    = f.fields_for :goal, (if resource.goal.nil? then resource.build_goal else resource.goal end), wrapper: false do |gf|
-      = gf.input :value, label: 'Goal', :input_html => {class: 'input-medium'}
-      = gf.hidden_field :goalable_id, value: @campaign.id
-      = gf.hidden_field :goalable_type, value: 'Campaign'
-      = gf.hidden_field :activity_type_id, value: resource.id
+    = f.input :name, :input_html => {class: 'input-xlarge'}
+    = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
 
   .form-actions
-    = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
-    = "&nbsp;".html_safe
+    = f.button :submit, "New Activity type" ,class: 'btn-primary', disable_with: 'Please wait...'
     = f.button :button, 'Cancel', class: 'btn-cancel'

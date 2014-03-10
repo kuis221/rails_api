@@ -106,6 +106,7 @@ en:
         day_item: "New Time"
         contact_event: "New Contact"
         activity: "New Activity"
+        activity_type: "New Activity type"
       edit:
         company_user: "Edit User"
         event: "Edit Event"

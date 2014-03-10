@@ -1,4 +1,4 @@
-li id="role_#{activity_type.id}" class="#{active_class(activity_type)}"
+li id="activity_type_#{activity_type.id}" class="#{active_class(activity_type)}"
   = link_to_if_permitted :show, ActivityType, activity_type_path(activity_type) do
     span
       b= activity_type.name

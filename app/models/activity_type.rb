@@ -13,6 +13,7 @@
 
 class ActivityType < ActiveRecord::Base
   belongs_to :company
+  scoped_to_company
   has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
   has_many :companies, through: :activity_type_campaigns
 
