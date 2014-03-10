@@ -25,7 +25,7 @@ describe ListExport do
 
   describe "Results::EventDataController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
-      exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xlsx', params: {})
+      exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xls', params: {})
       Results::EventDataController.any_instance.should_receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3
@@ -42,7 +42,7 @@ describe ListExport do
 
   describe "EventsController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
-      exporter = ListExport.new(controller: 'EventsController', company_user: company_user, export_format: 'xlsx', params: {})
+      exporter = ListExport.new(controller: 'EventsController', company_user: company_user, export_format: 'xls', params: {})
       EventsController.any_instance.should_receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3

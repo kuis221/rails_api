@@ -1,7 +1,7 @@
 module Results
   module EventDataHelper
     def custom_fields_to_export_headers
-      custom_columns.values.map(&:upcase)
+      @_headers ||= custom_columns.values.map(&:upcase)
     end
 
     def custom_fields_to_export_values(event)
@@ -22,7 +22,16 @@ module Results
     def area_for_event(event)
       campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ') unless event.place.nil?
     end
-    
+
+    def team_member_for_event(event)
+      ActiveRecord::Base.connection.select_values("
+        #{event.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name' ).reorder(nil).to_sql}
+        UNION ALL
+        #{event.teams.select('teams.name').reorder(nil).to_sql}
+        ORDER BY name
+      ").join(', ')
+    end
+
     def url_for_event(event)
       Rails.application.routes.url_helpers.event_url(event)
     end

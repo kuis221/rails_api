@@ -56,16 +56,15 @@
     = render 'edit_results'
 
   - if can_tasks
-    #event-tasks.details_box.smaller
+    #event-tasks.details_box
 
       .pull-left
-        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
+        = link_to 'Create task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
       #event-tasks-counters.pull-right
         = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
 
       #event-tasks-container
         = render partial: 'tasks', locals: {tasks: resource.tasks.active}
-
 
   - if can? :documents, resource
     #event-documents.details_box

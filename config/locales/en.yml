@@ -105,6 +105,7 @@ en:
         day_item: "New Time"
         contact_event: "New Contact"
         report: "New Report"
+        activity: "New Activity"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -129,6 +130,8 @@ en:
         day_item: "Edit Time"
         contact_event: "Edit Contact"
         report: "Edit Report"
+        activity: "Edit Activity"
+        activity_type: "Edit Activity Type"
 
   form_builder:
     modules:
@@ -144,7 +147,7 @@ en:
 
   errors:
     result:
-      invalid: 'is not valid' 
+      invalid: 'is not valid'
 
   venue_types:
     accounts: "Accounts"
@@ -273,9 +276,9 @@ en:
     sublocality_level_1: "Sublocality level 1"
     subpremise: "Subpremise"
     transit_station: "Transit Station"
-    
+
   confirmation:
     deactivate: "Deactivate"
     activate: "Activate"
     deactivate_confirm_message: "Are you sure you want to deactivate this %{model}?"
-    
+

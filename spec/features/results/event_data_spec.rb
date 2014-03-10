@@ -13,7 +13,7 @@ feature "Results Comments Page", js: true, search: true  do
 
   let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
-  feature "export as xlsx" do
+  feature "export as xls" do
     scenario "should include any custom kpis from all the campaigns" do
       with_resque do
         kpi = FactoryGirl.create(:kpi, company: @company, name: 'A Custom KPI')

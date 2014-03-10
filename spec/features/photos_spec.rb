@@ -75,7 +75,7 @@ feature "Photos", search: true, js: true do
         find('.rating span:nth-child(3)').click
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
-        find('button.close').click
+        click_button 'Close'
       end
       ensure_modal_was_closed
 

@@ -1,0 +1,6 @@
+- if event.class.name == 'Event'
+  h3 = 'EVENT INFO'
+  .event-info
+	  = link_to event_path(event), {class: 'underline'} do
+	    = "#{format_date(event_date(event, :start_at))} – #{format_date(event_date(event, :end_at))},".html_safe
+	    = place_address(event.place, false, '<br />', ', ')

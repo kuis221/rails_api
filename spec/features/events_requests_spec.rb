@@ -7,6 +7,7 @@ feature 'Events section' do
   let(:company_user) { user.company_users.first }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
+  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -667,7 +668,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Create Task'
+        click_js_link 'Create task'
         within('form#new_task') do
           fill_in 'Title', with: 'Pick up the kidz at school'
           fill_in 'Due at', with: '05/16/2013'
@@ -936,7 +937,6 @@ feature 'Events section' do
 
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
-
     end
   end
 

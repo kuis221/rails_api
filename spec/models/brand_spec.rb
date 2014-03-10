@@ -20,4 +20,5 @@ describe Brand do
   it { should have_and_belong_to_many(:campaigns) }
   it { should have_many(:brand_portfolios_brands) }
   it { should have_many(:brand_portfolios) }
+  it { should have_many(:marques) }
 end

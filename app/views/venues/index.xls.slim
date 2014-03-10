@@ -1,0 +1,56 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
+    Style ss:ID="s4" ss:Name="Currency"
+      NumberFormat ss:Format='"$"#,##0.00'
+  Worksheet ss:Name="Venues"
+
+    Table
+      Column ss:Width="200"
+      Column ss:Width="100"
+      Column ss:Width="200"
+      Column ss:Width="150"
+      Column ss:Width="100"
+      Column ss:Width="150"
+      Column ss:Width="150"
+      Row ss:StyleID="s1"
+        Cell
+          Data ss:Type="String" VENUE NAME
+        Cell
+          Data ss:Type="String" TD LINX CODE
+        Cell
+          Data ss:Type="String" ADDRESS
+        Cell
+          Data ss:Type="String" CITY
+        Cell
+          Data ss:Type="String" STATE
+        Cell
+          Data ss:Type="String" EVENTS COUNT
+        Cell
+          Data ss:Type="String" PROMO HOURS COUNT
+        Cell
+          Data ss:Type="String" TOTAL $ SPENT
+
+      - each_collection_item do |venue|
+        Row
+          Cell
+            Data ss:Type="String"= venue.name
+          Cell
+            Data ss:Type="String"= venue.td_linx_code
+          Cell
+            Data ss:Type="String"= venue.formatted_address
+          Cell
+            Data ss:Type="String"= venue.city
+          Cell
+            Data ss:Type="String"= venue.state
+          Cell
+            Data ss:Type="Number"= venue.events_count
+          Cell
+            Data ss:Type="Number"= venue.promo_hours
+          Cell ss:StyleID="s4"
+            Data ss:Type="Number"= venue.spent

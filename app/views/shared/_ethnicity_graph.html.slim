@@ -1,5 +1,5 @@
 |
-  if (#{data.values.max} > 0) {
+  if (#{data.present? && data.values.max > 0}) {
       $('#{container}').highcharts({
             colors: ['#347a99','#218ebf', '#41AAD8', '#6ebde7', '#94d6ed'],
             chart: {

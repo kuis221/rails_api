@@ -123,6 +123,20 @@ window.FormBuilder = {
 			success: (reponse) =>
 				@_addFieldToForm reponse.field
 		}
+		
+	deactivateActivityType: (activity_type_id) ->
+		$.ajax "#{@options.url}/activity_type", {
+			method: 'DELETE',
+			data: {activity_type_id: activity_type_id},
+			dataType: 'json'
+		}
+
+	activateActivityType: (activity_type_id) ->
+		$.ajax "#{@options.url}/activity_type", {
+			method: 'POST',
+			data: {activity_type_id: activity_type_id},
+			dataType: 'json'
+		}
 
 
 	_findFieldByKpi: (kpi_id) ->
