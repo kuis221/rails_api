@@ -39,8 +39,6 @@ gem 'progress_bar'
 gem 'unicorn'
 gem "geocoder"
 gem "nested_form"
-gem 'axlsx'
-gem 'axlsx_rails'
 gem 'rubyzip'
 gem 'redis'
 gem "resque", :require => "resque/server"
@@ -96,7 +94,6 @@ group :test do
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
-  gem 'roo'
   gem 'simplecov', :require => false
   gem 'capybara-screenshot'
   gem 'fuubar'

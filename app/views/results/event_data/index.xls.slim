@@ -1,0 +1,139 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
+    Style ss:ID="s3" ss:Name="Hyperlink"
+      Font ss:Underline="Single" ss:Color="#0000D4"
+    Style ss:ID="s4" ss:Name="Currency"
+      NumberFormat ss:Format='"$"#,##0.00'
+    Style ss:ID="s5"
+      NumberFormat ss:Format="Percent"
+  Worksheet ss:Name="Event Data"
+
+    Table
+      Column ss:Width="160"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="150"
+      Column ss:Width="120"
+      Column ss:Width="120"
+      Column ss:Width="80"
+      Column ss:Width="80"
+      Column ss:Width="80"
+      Column ss:Width="80"
+      Column ss:Width="80"
+      Column ss:Width="180"
+      - custom_fields_to_export_headers.each do |h|
+        Column ss:Width="100"
+      Row ss:StyleID="s1"
+        Cell
+          Data ss:Type="String" CAMPAIGN NAME
+        Cell
+          Data ss:Type="String" VENUE NAME
+        Cell
+          Data ss:Type="String" ADDRESS
+        Cell
+          Data ss:Type="String" CITY
+        Cell
+          Data ss:Type="String" STATE
+        Cell 
+          Data ss:Type="String" ZIP
+        Cell
+          Data ss:Type="String" ACTIVE STATE
+        Cell
+          Data ss:Type="String" EVENT STATUS
+        Cell
+          Data ss:Type="String" TEAM MEMBERS
+        Cell
+          Data ss:Type="String" URL
+        Cell
+          Data ss:Type="String" START
+        Cell
+          Data ss:Type="String" END
+        Cell
+          Data ss:Type="String" PROMO HOURS
+        Cell
+          Data ss:Type="String" IMPRESSIONS
+        Cell
+          Data ss:Type="String" INTERACTIONS
+        Cell
+          Data ss:Type="String" SAMPLED
+        Cell
+          Data ss:Type="String" SPENT
+        Cell
+          Data ss:Type="String" FEMALE
+        Cell
+          Data ss:Type="String" MALE
+        Cell
+          Data ss:Type="String" ASIAN
+        Cell
+          Data ss:Type="String" BLACK/AFRICAN AMERICAN
+        Cell
+          Data ss:Type="String" HISPANIC/LATINO
+        Cell
+          Data ss:Type="String" NATIVE AMERICAN
+        Cell
+          Data ss:Type="String" WHITE
+        - custom_fields_to_export_headers.each do |h|
+          Cell
+            Data ss:Type="String"= h
+
+      - each_collection_item do |event|
+        Row
+          Cell
+            Data ss:Type="String"= event.campaign_name
+          Cell
+            Data ss:Type="String"= event.place_name
+          Cell
+            Data ss:Type="String"= strip_tags(event_place_address(event, false, ', ', ', '))
+          Cell
+            Data ss:Type="String"= event.place_city
+          Cell
+            Data ss:Type="String"= event.place_state
+          Cell
+            Data ss:Type="String"= event.place_zipcode
+          Cell
+            Data ss:Type="String"= event.status
+          Cell
+            Data ss:Type="String"= event.event_status
+          Cell
+            Data ss:Type="String"= team_member_for_event event
+          - link = url_for_event(event)
+          Cell ss:StyleID="s3" ss:HRef="#{link}"
+            Data ss:Type="String"= link
+          Cell ss:StyleID="s2"
+            Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          Cell ss:StyleID="s2"
+            Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          Cell
+            Data ss:Type="Number"= number_with_precision(event.promo_hours, precision: 1)
+          Cell
+            Data ss:Type="Number"= number_with_delimiter(event.impressions, precision: 1)
+          Cell
+            Data ss:Type="Number"= number_with_delimiter(event.interactions, precision: 1)
+          Cell
+            Data ss:Type="Number"= number_with_delimiter(event.samples, precision: 1)
+          Cell ss:StyleID="s4"
+            Data ss:Type="Number"= event.spent
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.gender_female/100) unless event.gender_female.nil?
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.gender_male/100) unless event.gender_male.nil?
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian, precision: 2) unless event.ethnicity_asian.nil? 
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_black, precision: 2) unless event.ethnicity_black.nil?
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_hispanic, precision: 2) unless event.ethnicity_hispanic.nil?
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_native_american, precision: 2) unless event.ethnicity_native_american.nil?
+          Cell ss:StyleID="s5"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_white, precision: 2) unless event.ethnicity_white.nil?
+          - custom_fields_to_export_values(event).each do |v|
+            Cell
+              Data ss:Type="String"= v

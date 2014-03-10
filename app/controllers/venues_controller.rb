@@ -3,7 +3,7 @@ class VenuesController < FilteredController
 
   helper_method :data_totals
 
-  respond_to :xlsx, only: :index
+  respond_to :xls, only: :index
 
   custom_actions member: [:select_areas, :add_areas]
 

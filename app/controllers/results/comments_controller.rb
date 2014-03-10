@@ -1,7 +1,7 @@
 class Results::CommentsController < FilteredController
 
   defaults :resource_class => ::Event
-  respond_to :xlsx, only: :index
+  respond_to :xls, only: :index
 
   private
 

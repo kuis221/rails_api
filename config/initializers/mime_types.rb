@@ -4,5 +4,4 @@
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register_alias "text/html", :iphone
 
-# For datatables
-Mime::Type.register "text/table", :table
+Mime::Type.register "application/xls", :xls

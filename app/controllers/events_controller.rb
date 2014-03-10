@@ -13,7 +13,8 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results, :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
-  respond_to :xlsx, only: :index
+  respond_to :xls, only: :index
+  respond_to :xls, only: :index
 
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
@@ -147,7 +148,7 @@ class EventsController < FilteredController
     def search_params
       @search_params ||= begin
         super
-        if request.format.xlsx?
+        if request.format.xls?
           @search_params[:sorting] = 'start_at'
           @search_params[:sorting_dir] = 'asc'
         end

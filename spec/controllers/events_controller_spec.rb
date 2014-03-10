@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'roo'
 
 describe EventsController do
   describe "as registered user" do
@@ -102,7 +101,7 @@ describe EventsController do
 
       it "queue the job for export the list" do
         expect{
-          get :index, format: :xlsx
+          get :index, format: :xls
         }.to change(ListExport, :count).by(1)
         export = ListExport.last
         ListExportWorker.should have_queued(export.id)
@@ -112,10 +111,13 @@ describe EventsController do
     describe "GET 'list_export'", search: true do
       let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
       it "should return an empty book with the correct headers" do
-        expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
-        woorbook_from_last_export do |oo|
-          oo.last_row.should == 1
-          1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS","URL"]
+        expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+        spreadsheet_from_last_export do |doc|
+          rows = doc.elements.to_a('//Row')
+          expect(rows.count).to eql 1
+          expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
+            "CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP",
+            "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS","URL"]
         end
       end
 
@@ -126,10 +128,14 @@ describe EventsController do
         event.teams << team
         Sunspot.commit
 
-        expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
-        woorbook_from_last_export do |oo|
-          oo.last_row.should == 2
-          1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved", "Test User, zteam", Rails.application.routes.url_helpers.event_url(event) ]
+        expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+        spreadsheet_from_last_export do |doc|
+          rows = doc.elements.to_a('//Row')
+          expect(rows.count).to eql 2
+          expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
+            "Test Campaign FY01", nil, "2019-01-23T10:00", "2019-01-23T12:00",
+            "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California",
+            "12345", "Active", "Approved", "Test User, zteam", "http://localhost:5100/events/#{event.id}" ]
         end
       end
     end

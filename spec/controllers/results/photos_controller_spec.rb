@@ -22,16 +22,6 @@ describe Results::PhotosController, search: true do
     end
   end
 
-  describe "GET 'index'" do
-    it "queue the job for export the list" do
-      expect{
-        get :index, format: :xlsx
-      }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      ListExportWorker.should have_queued(export.id)
-    end
-  end
-
   describe "GET 'autocomplete'", search: true do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
