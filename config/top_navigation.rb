@@ -40,6 +40,7 @@ SimpleNavigation::Configuration.run do |navigation|
     options.push([:brand_portfolios, 'Brand Portfolios', brand_portfolios_path, highlights_on: %r(^/brand_portfolios.*)]) if can?(:index, BrandPortfolio)
     options.push([:date_ranges, 'Date Ranges', date_ranges_path, highlights_on: %r(^/date_ranges.*)]) if can?(:index, DateRange)
     options.push([:day_parts, 'Day Parts', day_parts_path, highlights_on: %r(^/day_parts.*)]) if can?(:index, DayPart)
+    options.push([:day_parts, 'Active Types', activity_types_path, highlights_on: %r(^/active_types.*)]) if can?(:index, ActivityType)
 
     unless options.empty?
       primary.item :admin, '', options.first[2], link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
