@@ -13,6 +13,7 @@
 #  columns       :text
 #  values        :text
 #  filters       :text
+#  sharing       :string(255)      default("owner")
 #
 
 require 'spec_helper'

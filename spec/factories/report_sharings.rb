@@ -8,8 +8,9 @@
 #  shared_with_type :string(255)
 #
 
-class ReportSharing < ActiveRecord::Base
-  belongs_to :report
+# Read about factories at https://github.com/thoughtbot/factory_girl
 
-  belongs_to :shared_with, polymorphic: true
+FactoryGirl.define do
+  factory :report_sharing do
+  end
 end

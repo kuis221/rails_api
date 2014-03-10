@@ -131,6 +131,43 @@ feature "Reports", js: true do
       Kpi.create_global_kpis
     end
 
+    scenario "share a report" do
+      user = FactoryGirl.create(:company_user,
+        user: FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas'),
+        company: @company)
+      team = FactoryGirl.create(:team, name:'Los Fantasticos', company: @company)
+      role = FactoryGirl.create(:role, name: 'Super Hero', company: @company)
+
+      visit build_results_report_path(@report)
+      click_js_button 'Share'
+      within visible_modal do
+        expect(find_field('report_sharing_custom')['checked']).to be_false
+        expect(find_field('report_sharing_everyone')['checked']).to be_false
+        expect(find_field('report_sharing_owner')['checked']).to be_true
+        choose('Share with Users, Teams and Roles')
+        select_from_chosen('Guillermo Vargas', from: 'report_sharing_selections')
+        select_from_chosen('Los Fantasticos', from: 'report_sharing_selections')
+        select_from_chosen('Super Hero', from: 'report_sharing_selections')
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      click_js_button 'Share'
+      within visible_modal do
+        expect(page).to have_content('Guillermo Vargas')
+        expect(page).to have_content('Los Fantasticos')
+        expect(page).to have_content('Super Hero')
+        expect(find_field('report_sharing_custom')['checked']).to be_true
+        expect(find_field('report_sharing_everyone')['checked']).to be_false
+        expect(find_field('report_sharing_owner')['checked']).to be_false
+
+        choose('Share with everyone')
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+      expect(@report.reload.sharing).to eql 'everyone'
+    end
+
     scenario "search for fields in the fields list" do
       FactoryGirl.create(:kpi, name: 'ABC KPI', company: @company)
 

@@ -8,8 +8,8 @@
 #  shared_with_type :string(255)
 #
 
-class ReportSharing < ActiveRecord::Base
-  belongs_to :report
+require 'spec_helper'
 
-  belongs_to :shared_with, polymorphic: true
+describe ReportSharing do
+  pending "add some examples to (or delete) #{__FILE__}"
 end

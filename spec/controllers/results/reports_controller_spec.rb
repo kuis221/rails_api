@@ -101,5 +101,39 @@ describe Results::ReportsController do
       report.name.should == 'Test Report'
       report.description.should == 'Test Report description'
     end
+
+    it "must update the sharing attributes" do
+      put 'update', id: report.to_param, report: {sharing: 'everyone'}, format: :js
+      assigns(:report).should == report
+      expect(response).to render_template('update')
+      report.reload
+      expect(report.sharing).to eql 'everyone'
+    end
+
+    it "must update the sharing attributes" do
+      put 'update', id: report.to_param, report: {sharing: 'everyone'}, format: :js
+      expect(assigns(:report)).to eql report
+      expect(response).to render_template('update')
+      report.reload
+      expect(report.sharing).to eql 'everyone'
+    end
+
+    it "store the report sharing associations" do
+      user = FactoryGirl.create(:company_user, company: @company)
+      team = FactoryGirl.create(:team, company: @company)
+      role = FactoryGirl.create(:role, company: @company)
+      expect {
+        put 'update', id: report.to_param, report: {
+          sharing: 'custom',
+          sharing_selections: ["company_user:#{user.id}", "team:#{team.id}", "role:#{role.id}"]}, format: :js
+      }.to change(ReportSharing, :count).by(3)
+
+      expect(assigns(:report)).to eql report
+      expect(response).to render_template('update')
+      report.reload
+      expect(report.sharing).to eql 'custom'
+      expect(report.sharing_selections).to eql ["company_user:#{user.id}", "team:#{team.id}", "role:#{role.id}"]
+      expect(report.sharings.map(&:shared_with)).to match_array [user, team, role]
+    end
   end
 end

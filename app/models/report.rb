@@ -13,6 +13,7 @@
 #  columns       :text
 #  values        :text
 #  filters       :text
+#  sharing       :string(255)      default("owner")
 #
 
 class Report < ActiveRecord::Base
@@ -23,6 +24,7 @@ class Report < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, presence: true, numericality: true
+  validates :sharing, inclusion: { in: %w(owner everyone custom) }
 
   scope :active, -> { where(active: true) }
 
@@ -31,8 +33,7 @@ class Report < ActiveRecord::Base
   serialize :values
   serialize :filters
 
-  attr_accessor :columns_values
-
+  has_many :sharings, class_name: 'ReportSharing', inverse_of: :report, autosave: true
 
   # Override setter methods to format/clean the values
   def rows=(value)
@@ -81,6 +82,21 @@ class Report < ActiveRecord::Base
 
   def fetch_page(params={})
     fetch_results_for((rows+columns).compact, params)
+  end
+
+  def sharing_selections
+    self.sharings.map{|s| "#{s.shared_with_type.underscore}:#{s.shared_with_id}" }
+  end
+
+  def sharing_selections=(selections)
+    self.sharings.each{|s| s.mark_for_destruction unless selections.include?("#{s.shared_with_type.underscore}:#{s.shared_with_id}") }
+    selections.reject(&:empty?).map do |selection|
+      type, id = selection.split(':')
+      case type
+      when 'company_user', 'role', 'team'
+        self.sharings.find_or_initialize_by_shared_with_id_and_shared_with_type(shared_with_type: type.classify, shared_with_id: id)
+      end
+    end
   end
 
   def fetch_results_for(fields, params={})
