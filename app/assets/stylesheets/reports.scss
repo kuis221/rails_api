@@ -54,6 +54,7 @@ ul.reports-list {
 
 	.buttons-zone{
 		.btn-group{
+			margin-left: 20px;
 			vertical-align: top;
 		}
 		.icon-share, .table-view, .charts{
@@ -143,6 +144,20 @@ ul.reports-list {
 					margin-bottom: 0;
 				}
 			}
+		}
+		i.icon-caret-down:before{
+			content: "\e004";
+			display: inline-block;
+			font-family: 'icons';
+			font-size: 13px;
+			left: 5px;
+			padding-bottom: 5px;
+			position: relative;
+			top: 5px;
+			speak: none;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-font-smoothing: antialiased;
 		}
 		&#report-fields {
 			font-weight: bold;
