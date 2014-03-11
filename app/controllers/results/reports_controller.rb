@@ -1,11 +1,13 @@
 class Results::ReportsController < InheritedResources::Base
-  respond_to :js, only: [:new, :create, :edit, :update, :share]
+  respond_to :js, only: [:new, :create, :edit, :update, :share_form]
+
+  load_and_authorize_resource except: [:index]
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
   def index
-    @reports = current_company.reports.active.order('reports.name ASC')
+    @reports = current_company.reports.active.accessible_by_user(current_company_user).order('reports.name ASC')
   end
 
   def preview

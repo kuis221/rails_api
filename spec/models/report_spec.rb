@@ -41,6 +41,58 @@ describe Report do
     end
   end
 
+  describe "#accessible_by_user" do
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
+    let(:company) { FactoryGirl.create(:company)  }
+    before{ User.current = user.user }
+    it "should return all the reports created by the current user" do
+      report = FactoryGirl.create(:report, company: company)
+      expect(Report.accessible_by_user(user)).to match_array [report]
+    end
+
+    it "should return all the reports shared with everyone by the current user" do
+      report = FactoryGirl.create(:report, company: company, sharing: 'everyone')
+      other_user = FactoryGirl.create(:company_user, company: company)
+      expect(Report.accessible_by_user(user)).to match_array [report]
+      expect(Report.accessible_by_user(other_user)).to match_array [report]
+
+      # Should not return reports from other company
+      other_company_user = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company))
+      expect(Report.accessible_by_user(other_company_user)).to match_array []
+    end
+
+    it "should return reports shared with the user's role" do
+      report = FactoryGirl.create(:report, company: company,
+        sharing: 'custom', sharing_selections: ["role:#{user.role_id}"])
+      other_user = FactoryGirl.create(:company_user, company: company, role: user.role)
+      expect(Report.accessible_by_user(user)).to match_array [report]
+      expect(Report.accessible_by_user(other_user)).to match_array [report]
+    end
+
+    it "should return reports shared with the user's role" do
+      other_user = FactoryGirl.create(:company_user, company: company, role: user.role)
+      team = FactoryGirl.create(:team, company: company)
+      team.users << user
+      team.users << other_user
+      report = FactoryGirl.create(:report, company: company,
+        sharing: 'custom', sharing_selections: ["team:#{team.id}", 'company_user:9999999', 'role:9999999'])
+      report2 = FactoryGirl.create(:report, company: company)
+      other_team_user = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company))
+      expect(Report.accessible_by_user(user)).to match_array [report, report2]
+      expect(Report.accessible_by_user(other_user)).to match_array [report]
+    end
+
+    it "should return reports shared with the user" do
+      other_user = FactoryGirl.create(:company_user, company: company, role: user.role)
+      team = FactoryGirl.create(:team, company: company)
+      team.users << user
+      team.users << other_user
+      report = FactoryGirl.create(:report, company: company,
+        sharing: 'custom', sharing_selections: ["company_user:#{other_user.id}"])
+      expect(Report.accessible_by_user(user)).to match_array [report]
+      expect(Report.accessible_by_user(other_user)).to match_array [report]
+    end
+  end
 
   describe "#columns_totals" do
     let(:company) { FactoryGirl.create(:company) }

@@ -137,6 +137,15 @@ class Ability
         !user.current_company_user.allowed_to_access_place?(event.place)
       end
 
+      cannot [:show, :preview], Report do |report|
+        report.created_by_id != user.id &&
+        Report.accessible_by_user(user.current_company_user).where(id: report.id).count == 0
+      end
+
+      cannot [:edit, :update, :share_form, :build] do |report|
+        report.created_by_id != user.id
+      end
+
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
       end

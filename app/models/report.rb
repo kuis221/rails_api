@@ -28,6 +28,26 @@ class Report < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :accessible_by_user, ->(user) {
+    joins('LEFT JOIN report_sharings ON report_sharings.report_id=reports.id').
+    where(company_id: user.company_id).
+    where('reports.sharing=? OR
+       reports.created_by_id=? OR
+       (reports.sharing=? AND (
+            (report_sharings.shared_with_type=? AND report_sharings.shared_with_id=?) OR
+            (report_sharings.shared_with_type=? AND report_sharings.shared_with_id in (?)) OR
+            (report_sharings.shared_with_type=? AND report_sharings.shared_with_id=?))
+        )',
+       'everyone',
+       user.user_id,
+       'custom',
+          'CompanyUser', user.id,
+          'Team', user.team_ids+[0],
+          'Role', user.role_id
+       ).
+    group('reports.id')
+  }
+
   serialize :rows
   serialize :columns
   serialize :values
