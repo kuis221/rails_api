@@ -232,17 +232,40 @@ ul.reports-list {
 
 		.chzn-container-single {
 			.chzn-single {
-				border: 1px solid white;
+				border: 1px solid white !important;
 				box-sizing:border-box;
+				height: 34px !important;
 				width: 100% !important;
+				div b{
+					background: url("triangle-down.svg") no-repeat 0px 13px !important;
+				}
+				span{
+					line-height: 32px;
+				}
 			}
 			.chzn-search input{
 				background-image:none;
-				bottom: 10px;
+				bottom: 9px;
 				width: 70% !important;				
 			}
 			.chzn-drop{
 				width: 194px !important;
+			}
+			.chzn-results{
+				li.no-results{
+					background-color: $brand;
+					color: white;
+					margin-bottom: 5px;
+				}
+			}
+		}
+
+		label.control-label{
+			margin-bottom:5px;
+		}
+		.control-group{
+			&:last-of-type{
+				margin-bottom: 0;
 			}
 		}
 	}
