@@ -3,8 +3,6 @@ class ActivityTypesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
   belongs_to :company, optional: true
   
-  helper_method :describe_filters
-  
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
