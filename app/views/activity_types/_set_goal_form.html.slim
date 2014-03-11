@@ -1,5 +1,5 @@
 - remote ||= false
-= simple_nested_form_for [@campaign, resource], remote: remote do |f|
+= simple_form_for(resource, remote: remote || false) do |f|
   = f.error_notification
   = resource.errors.full_messages.join("<br />").html_safe
 

@@ -220,7 +220,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :activity_types, only: [ :update] do
+    resources :activity_types do
       get :set_goal
     end
     resources :placeables, only: [:new] do

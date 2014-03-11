@@ -1,5 +1,5 @@
 class ActivityTypesController < FilteredController
-  before_filter :load_campaign, only: [:edit, :update, :set_goal]
+  before_filter :load_campaign, only: [ :set_goal]
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
   belongs_to :company, optional: true
   
