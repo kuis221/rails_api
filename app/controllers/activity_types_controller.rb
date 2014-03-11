@@ -3,7 +3,6 @@ class ActivityTypesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
   belongs_to :company, optional: true
   
-  helper_method :describe_filters
 
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
