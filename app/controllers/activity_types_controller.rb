@@ -4,6 +4,9 @@ class ActivityTypesController < FilteredController
   belongs_to :company, optional: true
   
   helper_method :describe_filters
+  
+  # This helper provide the methods to activate/deactivate the resource
+  include DeactivableHelper
 
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])

@@ -53,5 +53,34 @@ feature "ActivityTypes", search: true, js: true do
       expect(page).to have_selector('h2', text: 'Activity Type name')
       expect(page).to have_selector('div.description-data', text: 'activity type description')
     end
+    
+    scenario "should allow user to deactivate activity types" do
+        FactoryGirl.create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
+        Sunspot.commit
+        visit activity_types_path
+
+        expect(page).to have_content('A Vinos ticos')
+        within("ul#activity_types-list li:nth-child(1)") do
+          click_js_link('Deactivate')
+        end
+        confirm_prompt 'Are you sure you want to deactivate this activity type?'
+
+        expect(page).to have_no_content('A Vinos ticos')
+      end
+
+      scenario "should allow user to activate activity type" do
+        FactoryGirl.create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
+        Sunspot.commit
+        visit activity_types_path
+
+        filter_section('ACTIVE STATE').unicheck('Inactive')
+        filter_section('ACTIVE STATE').unicheck('Active')
+
+        expect(page).to have_content('A Vinos ticos')
+        within("ul#activity_types-list li:nth-child(1)") do
+          click_js_link('Activate')
+        end
+        expect(page).to have_no_content('A Vinos ticos')
+      end
   end
 end

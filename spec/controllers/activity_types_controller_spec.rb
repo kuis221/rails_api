@@ -20,8 +20,7 @@ describe ActivityTypesController do
   describe "GET 'edit'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
-      get 'edit', campaign_id: campaign.to_param, id: activity_type.to_param, format: :js
-      assigns(:campaign).should == campaign
+      get 'edit', id: activity_type.to_param, format: :js
       response.should be_success
     end
   end
@@ -39,7 +38,7 @@ describe ActivityTypesController do
       activity_type.save
       expect {
         expect {
-          put 'update', campaign_id: campaign.to_param, id: activity_type.to_param,
+          put 'update', id: activity_type.to_param,
               activity_type: {goal_attributes:
                 {goalable_id: campaign.to_param, goalable_type: 'Campaign', activity_type_id: activity_type.to_param, value: 23}
               }, format: :js
@@ -89,6 +88,24 @@ describe ActivityTypesController do
       response.should render_template(:create)
       response.should render_template(:form_dialog)
       assigns(:activity_type).errors.count > 0
+    end
+  end
+  
+  describe "GET 'deactivate'" do
+    let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
+
+    it "deactivates an active brand_portfolio" do
+      activity_type.update_attribute(:active, true)
+      get 'deactivate', id: activity_type.to_param, format: :js
+      response.should be_success
+      activity_type.reload.active?.should be_false
+    end
+
+    it "activates an inactive brand_portfolio" do
+      activity_type.update_attribute(:active, false)
+      get 'activate', id: activity_type.to_param, format: :js
+      response.should be_success
+      activity_type.reload.active?.should be_true
     end
   end
 end
