@@ -36,5 +36,22 @@ feature "ActivityTypes", search: true, js: true do
         end
       end
     end
+    
+    scenario 'allows the user to create a new activity type' do
+      visit activity_types_path
+
+      click_js_button 'New Activity type'
+
+      within visible_modal do
+        fill_in 'Name', with: 'Activity Type name'
+        fill_in 'Description', with: 'activity type description'
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
+
+      find('h2', text: 'Activity Type name') # Wait for the page to load
+      expect(page).to have_selector('h2', text: 'Activity Type name')
+      expect(page).to have_selector('div.description-data', text: 'activity type description')
+    end
   end
 end
