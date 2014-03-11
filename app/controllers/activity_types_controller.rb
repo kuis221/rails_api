@@ -1,8 +1,6 @@
 class ActivityTypesController < FilteredController
   before_filter :load_campaign, only: [:edit, :update]
   respond_to :js, only: [:edit, :update]
-  
-  helper_method :describe_filters
 
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
