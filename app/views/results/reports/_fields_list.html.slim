@@ -1,7 +1,7 @@
 input type="search" id="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
 #report-fields.field-list
   - available_field_list.each do |group_name, items|
-    b= group_name
+    = group_name
     ul.draggable-list
       - items.each do |id, name|
         li.report-field id="#{id}" data-field-id="#{id}" data-group="#{group_name}"
