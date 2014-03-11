@@ -28,7 +28,6 @@ class ActivityType < ActiveRecord::Base
   has_one :goal, conditions: { parent_id: nil }, dependent: :destroy
 
   accepts_nested_attributes_for :goal
-  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
   scope :active, lambda{ where(active: true) }
   attr_accessor :partial_path
   
