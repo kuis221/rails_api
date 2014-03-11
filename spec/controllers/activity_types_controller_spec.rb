@@ -20,8 +20,7 @@ describe ActivityTypesController do
   describe "GET 'edit'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
-      get 'edit', campaign_id: campaign.to_param, id: activity_type.to_param, format: :js
-      assigns(:campaign).should == campaign
+      get 'edit', id: activity_type.to_param, format: :js
       response.should be_success
     end
   end
