@@ -278,29 +278,32 @@ describe CampaignsController do
   end
 
   describe "GET 'new_member" do
-    it 'should load all the company\'s users into @users' do
+    it 'should load all the company\'s users into @staff' do
       FactoryGirl.create(:user, company_id: @company.id+1)
       get 'new_member', id: campaign.id, format: :js
       response.should be_success
       assigns(:campaign).should == campaign
-      assigns(:users).should == [@company_user]
+      assigns(:staff).should == [{'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
     end
 
-    it 'should not load the users that are already assigned ot the campaign' do
+    it 'should not load the users that are already assigned to the campaign' do
       another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
       campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       response.should be_success
       assigns(:campaign).should == campaign
-      assigns(:users).should == [another_user]
+      assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
     end
 
     it 'should load teams with active users' do
-      team = FactoryGirl.create(:team, name:'123', company_id: @company.id)
+      team = FactoryGirl.create(:team, name:'ABC', description: 'A sample team', company_id: @company.id)
       team.users << @company_user
       get 'new_member', id: campaign.id, format: :js
       assigns(:assignable_teams).should == [team]
-      assigns(:staff).should == [team, @company_user]
+        assigns(:staff).should == [
+          {'id' => team.id.to_s, 'name' => 'ABC', 'description' => 'A sample team', 'type' => 'team'},
+          {'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}
+        ]
     end
 
     it 'should not load teams without assignable users' do
@@ -463,7 +466,6 @@ describe CampaignsController do
   end
 
   describe "POST 'add_kpi'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
     let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
 
     it "should associate the kpi to the campaign" do
@@ -509,8 +511,34 @@ describe CampaignsController do
     end
   end
 
+  describe "POST 'activity_type'" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: @company) }
+
+    it "should associate the kpi to the campaign" do
+      expect {
+        post 'add_activity_type', id: campaign.id,activity_type_id: activity_type.id, format: :json
+      }.to change(ActivityTypeCampaign, :count).by(1)
+    end
+
+    it "should NOT associate the activity_type to the campaign if the campaing already have it assgined" do
+      expect {
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+      }.to_not change(ActivityTypeCampaign, :count)
+    end
+  end
+
+  describe "DELETE 'remove_activity_type'" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: @company) }
+    it "should disassociate the activity_type from the campaign" do
+      campaign.activity_types << activity_type
+      expect {
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+      }.to change(ActivityTypeCampaign, :count).by(-1)
+      response.should be_success
+    end
+  end
+
   describe "DELETE 'remove_kpi'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
     let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
 
     it "should disassociate the kpi from the campaign" do

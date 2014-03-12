@@ -127,146 +127,6 @@
 		overflow: hidden;
 	}
 
-
-	#kpis-trends-bars {
-		a{
-			color:$grey_three;
-			font-size: 13px;
-			&:hover{
-				text-decoration: underline;
-			}
-		}
-		.name {
-			display: inline-block;
-			font-size: 16px;
-			font-weight: bold;
-			margin-right: 20px;
-			margin-bottom: 15px;
-		}
-		.container-kpi-trend{
-			margin-top: 50px;
-			margin-left: 20px;
-		}
-
-		.kpi-trend {
-			font-size: 12px;
-			margin-bottom: 18px;
-			overflow: visible;
-
-			.goal-label {
-				white-space: nowrap;
-				position: absolute;
-				right: 0;
-				top: -30px;
-				div {
-					margin-left: 50%;
-				}
-			}
-		}
-
-		.chart-bar {
-			margin-right: 350px;
-			color: $brand;
-			position: relative;
-			.progress {
-				width: auto !important;
-				height: 20px;
-				.bar {
-					text-align: right;
-					text-shadow:none;
-					span.percentage {
-						margin-left: 10px;
-						margin-right: 10px;
-						line-height: 26px
-					}
-				}
-				.bar-executed {
-					background-color: $green !important;
-				}
-				.bar-remaining {
-					color: $venues_blue;
-				}
-			}
-
-			.today-line-indicator {
-				position: absolute;
-				width: 2px;
-				background-color: $grey_three;
-				height: 29px;
-				top: -5px;
-				border:1px solid $grey_three;
-				border-radius: 2px;
-				&.green{
-					background-color: $dark_green;
-					border-color: $dark_green;
-				}
-				&.blue{
-					background-color: $dark_blue;
-					border-color: $dark_blue;
-				}
-			}
-			.bar-indicator {
-				position: absolute;
-				width: 2px;
-				background-color: #959595;
-				height: 30px;
-				&.goal-indicator{
-					top: -10px;
-				}
-			}
-			.executed-label {
-				display: inline-block;
-				font-size: 12px;
-				white-space: nowrap;
-				margin-right: 50%;
-				div {
-					margin-left: -50%;
-					b{
-						font-size: 14px;
-					}
-				}
-			}
-			.scheduled-label {
-				display: inline-block;
-				font-size: 12px;
-				white-space: nowrap;
-				text-align: right;
-				margin-left: -50%;
-				div {
-					margin-right: -50%;
-					b{
-						font-size: 14px;
-					}
-				}
-			}
-			.remaining-label {
-				color:$brand;
-				position: absolute;
-				right: -350px;
-				width: 300px;
-				top: -2px;
-				b {
-					display: inline-block;
-					font-size: 28px;
-					font-weight: 400;
-					float: left;
-					width: 150px;
-					text-align: right;
-					margin-right: 10px;
-					line-height: 25px;
-				}
-				span {
-					display: block;
-					line-height: 19px;
-				}
-				.kpi-name{
-					color: $user_menu;
-					line-height: 9px;
-				}
-			}
-		}
-	}
-
 	#campaign-overview-module {
 		#campaign-overview-table {
 			border: 1px solid $grey_two;
@@ -312,7 +172,7 @@
 				}
 			}
 			.header-row {
-				border-bottom: 1px solid $grey_two;				
+				border-bottom: 1px solid $grey_two;
 			}
 			.month-name {
 				background-color: $brand;
@@ -320,7 +180,7 @@
 				line-height: 31px;
 			}
 			.month-weeks{
-				&.date{ 
+				&.date{
 					.week{
 						margin-top: 5px;
 					}
@@ -376,7 +236,7 @@
 					border-radius: 0px;
 					margin: 5px -1 0 -1;
 					position:absolute;
-					width: 42px;		
+					width: 42px;
 				}
 				&.with-events.first-in-series span.week-marker {
 					border-top-left-radius: 5px;
@@ -401,6 +261,13 @@
 		}
 	}
 
+	#recent-photos-module {
+		padding-bottom: 60px;
+		ul#photos-thumbs {
+			margin-bottom: 15px;
+		}
+	}
+
 	#recent-comments-module {
 		padding-bottom: 60px;
 		#recent-comments-list {
@@ -422,7 +289,7 @@
 						position:relative;
 						list-style: none;
 						vertical-align: top;
-						margin: 8px 5px;
+						margin: 5px 5px;
 					}
 					.comment-content {
 						color:$text;
@@ -430,10 +297,10 @@
 						font-weight: bold;
 						line-height: 25px;
 						padding: 10px 15px;
-						display: block; 
+						display: block;
 					  display: -webkit-box;
 					  max-width: 400px;
-					  height: 95px; 
+					  height: 95px;
 					  margin: 0 auto;
 					  -webkit-line-clamp: 4;
 					  -webkit-box-orient: vertical;

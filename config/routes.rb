@@ -26,7 +26,9 @@ Brandscopic::Application.routes.draw do
           end
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create]
-          resources :surveys,  only: [:index, :create]
+          resources :surveys,  only: [:index, :create, :update, :show] do
+            get :brands, on: :collection
+          end
           get :autocomplete,   on: :collection
           member do
             get :results
@@ -42,16 +44,20 @@ Brandscopic::Application.routes.draw do
         end
 
         # To allow CORS for any API action
-        match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
+        match ':path1(/:path2(/:path3(/:path4)))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
-          get :all, on: :collection
+          collection do
+            get :all
+            get :overall_stats
+          end
         end
 
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
           member do
+            get :analysis
             get :photos
             get :comments
           end
@@ -157,6 +163,9 @@ Brandscopic::Application.routes.draw do
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
       resources :events, only: [:new, :create]
+      resources :activities, only: [:new, :create] do
+        get :form, on: :collection
+      end
     end
   end
 
@@ -211,6 +220,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
+    resources :activity_types, only: [:edit, :update]
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
@@ -223,6 +233,8 @@ Brandscopic::Application.routes.draw do
       post :update_post_event_form
       post :kpi, to: :add_kpi
       delete :kpi, to: :remove_kpi
+      post :activity_type, to: :add_activity_type
+      delete :activity_type, to: :remove_activity_type
       get :deactivate
       get :activate
       get :kpis
@@ -296,6 +308,10 @@ Brandscopic::Application.routes.draw do
       get 'list', on: :collection
     end
 
+    resources :activities, only: [:new, :create] do
+      get :form, on: :collection
+    end
+
     member do
       get :deactivate
       get :activate
@@ -335,7 +351,9 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :brands, only: [:index]
+  resources :brands do
+    resources :marques, only: [:index]
+  end
 
   resources :areas do
     get :autocomplete, on: :collection
@@ -351,6 +369,10 @@ Brandscopic::Application.routes.draw do
     resources :areas, only: [:new, :create]
   end
 
+  resources :attached_assets, only: [] do
+    put :rate, on: :member
+  end
+
   resources :date_ranges do
     get :autocomplete, on: :collection
     resources :date_items, path: 'dates', only: [:new, :create, :destroy]
@@ -363,6 +385,13 @@ Brandscopic::Application.routes.draw do
   resources :day_parts do
     get :autocomplete, on: :collection
     resources :day_items, path: 'days', only: [:new, :create, :destroy]
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
+
+  resources :activities, only: [:show, :edit, :update] do
     member do
       get :deactivate
       get :activate

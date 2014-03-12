@@ -51,6 +51,25 @@ class CampaignsController < FilteredController
       render text: ''
     end
   end
+  
+    def remove_activity_type
+      activity_type = current_company.activity_types.find(params[:activity_type_id])
+      if resource.activity_types.include?(activity_type)
+        resource.activity_types.delete(activity_type) 
+      else
+        render text: ''
+      end
+      
+  end
+
+  def add_activity_type
+    activity_type = current_company.activity_types.find(params[:activity_type_id])
+    unless resource.activity_types.include?(activity_type)
+      resource.activity_types << activity_type
+    else
+      render text: ''
+    end
+  end
 
   def new_date_range
     @date_ranges = current_company.date_ranges.where('date_ranges.id not in (?)', resource.date_range_ids + [0])
@@ -97,7 +116,7 @@ class CampaignsController < FilteredController
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|
-          b = Brand.find_or_create_by_name(b).id unless b =~ /^[0-9]$/
+          b = Brand.find_or_create_by_name(b).id unless  b.is_a?(Integer) || b =~ /\A[0-9]+\z/
           brands[index] = b.to_i
         end
       end

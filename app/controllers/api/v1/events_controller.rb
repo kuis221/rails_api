@@ -1,4 +1,6 @@
 class Api::V1::EventsController < Api::V1::FilteredController
+  extend TeamMembersHelper
+
   resource_description do
     short 'Events'
     formats ['json', 'xml']
@@ -952,10 +954,16 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def assignable_members
-    @members =  (
-      current_company.company_users.with_user_and_role.where('company_users.id not in (?)', resource.user_ids+[0]).all +
-      current_company.teams.where('teams.id not in (?)', resource.team_ids+[0])
-    ).sort{|a, b| a.name <=> b.name}
+    respond_to do |format|
+      format.json {
+        render :status => 200,
+               :json => assignable_staff_members
+      }
+      format.xml {
+        render :status => 200,
+               :xml => assignable_staff_members
+      }
+    end
   end
 
   api :POST, '/api/v1/events/:id/members', 'Assocciate an user or team to the event\'s team'

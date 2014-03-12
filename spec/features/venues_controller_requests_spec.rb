@@ -3,6 +3,7 @@ require 'spec_helper'
 feature "Venues Section", js: true, search: true do
   before do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    @company_user = @user.company_users.first
     sign_in @user
     @company = @user.companies.first
   end

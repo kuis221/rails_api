@@ -7,6 +7,7 @@ feature 'Events section' do
   let(:company_user) { user.company_users.first }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
+  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -215,37 +216,45 @@ feature 'Events section' do
         end
 
         scenario "first filter should make the list show events in the past" do
-          campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: company)
-          past_event  = FactoryGirl.create(:event, campaign: campaign, company: company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-          today_event = FactoryGirl.create(:event, campaign: campaign, company: company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
-          Sunspot.commit
+          Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
+            campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: company)
+            past_event  = FactoryGirl.create(:event, campaign: campaign, company: company,
+              start_date: '07/07/2013', end_date: '07/07/2013')
+            today_event = FactoryGirl.create(:event, campaign: campaign, company: company,
+              start_date: '07/21/2013', end_date:'07/21/2013')
+            Sunspot.commit
 
-          visit events_path
-          expect(page).to have_content('1 Active event taking place today and in the future')
-          expect(page).to have_selector('ul#events-list li', count: 1)
+            visit events_path
+            expect(page).to have_content('1 Active event taking place today and in the future')
+            expect(page).to have_selector('ul#events-list li', count: 1)
 
-          filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
-          expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
-          expect(page).to have_selector('ul#events-list li', count: 2)
+            filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
+            expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('ul#events-list li', count: 2)
+          end
         end
 
         scenario "clear filters should also exclude reset the default dates filter" do
-          campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: company)
-          past_event  = FactoryGirl.create(:event, campaign: campaign, company: company, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_date.to_s(:slashes))
-          today_event = FactoryGirl.create(:event, campaign: campaign, company: company, start_date: Time.zone.now.to_date.to_s(:slashes), end_date: Date.today.to_s(:slashes))
-          Sunspot.commit
+          Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
+            campaign    = FactoryGirl.create(:campaign, name: 'ABSOLUT BA FY14', company: company)
+            past_event  = FactoryGirl.create(:event, campaign: campaign, company: company,
+              start_date: '07/11/2013', end_date:'07/11/2013')
+            today_event = FactoryGirl.create(:event, campaign: campaign, company: company,
+              start_date: '07/21/2013', end_date: '07/21/2013')
+            Sunspot.commit
 
-          visit events_path
-          expect(page).to have_content('1 Active event taking place today and in the future')
-          expect(page).to have_selector('ul#events-list li', count: 1)
+            visit events_path
+            expect(page).to have_content('1 Active event taking place today and in the future')
+            expect(page).to have_selector('ul#events-list li', count: 1)
 
-          click_link 'Clear filters'
-          expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
-          expect(page).to have_selector('ul#events-list li', count: 2)
+            click_link 'Clear filters'
+            expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('ul#events-list li', count: 2)
 
-          filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
-          expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
-          expect(page).to have_selector('ul#events-list li', count: 2)
+            filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
+            expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('ul#events-list li', count: 2)
+          end
         end
 
         feature "with timezone support turned ON" do
@@ -507,7 +516,7 @@ feature 'Events section' do
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
-        all('#event-team-members .team-member').count.should == 0
+        all('#event-team-members .team-member').count.should == 1
       end
 
 
@@ -659,7 +668,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Create Task'
+        click_js_link 'Create task'
         within('form#new_task') do
           fill_in 'Title', with: 'Pick up the kidz at school'
           fill_in 'Due at', with: '05/16/2013'
@@ -928,10 +937,8 @@ feature 'Events section' do
 
         expect(page).to have_no_content("Your post event report has been submitted for approval.")
       end
-
     end
   end
-
 
   def event_list_item(event)
     "li#event_#{event.id}"

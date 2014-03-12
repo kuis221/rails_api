@@ -22,7 +22,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
       param :route, String, required: false, desc: "The Venue's route (address 2)"
       param :country, String, required: true, desc: "The Venue country code. Eg. US"
       param :city, String, required: true, desc: "The Venue city"
-      param :state, String, required: true, desc: "The Venue state"
+      param :state, String, required: true, desc: "The Venue state, use the full name and not the code. Eg \"California\" or \"Florida\" "
       param :zipcode, String, required: true, desc: "The Venue's zipcode"
     end
   end
@@ -63,6 +63,81 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   }
   EOS
   def show
+    if resource.present?
+      render
+    end
+  end
+
+  api :GET, '/api/v1/venues/:id/analysis', 'Return a venue\'s analysis information'
+  param :id, :number, required: true, desc: "Venue ID"
+  description <<-EOS
+  This method returns the analysis informaction for a given venue. The result have the following attributes:
+  * *overview*: have the statistics for different KPIs (events, promo hours, impressions, interactions, sampled)
+  * *age*: the different results for each segment of the Age KPI
+  * *gender*: the different results for each segment of the Gender KPI
+  * *ethnicity*: the different results for each segment of the Ethnicity KPI
+  * *trends_by_week*: returns information about the performance of the venue on each different day of the week.
+    * *impressions_promo*: the average number of impressions per day of the week, where Monday is 0 and Sunday is 6
+    * *cost_impression*: the average cost per impression per day of the week, where Monday is 0 and Sunday is 6
+    * *narrative*: a brief narrative describing the performance of the venue based on these numbers.
+  EOS
+  example <<-EOS
+  GET /api/v1/venues/3598/analysis.json?auth_token=XXXXXXXX&company_id=2
+  {
+      overview: {
+          events: 17,
+          promo_hours: "16.5",
+          impressions: 1389,
+          interactions: 980,
+          sampled: 810,
+          narrative: "The Fox Sports Bar & Grill is about average compared to similar venues in the area both in terms of popularity and cost per impression. Most venues will fallinto this category."
+      },
+      age: {
+          < 12: 0,
+          12 – 17: 0,
+          18 – 20: 0,
+          21 – 24: 48.125,
+          25 – 34: 34.6875,
+          35 – 44: 16.5625,
+          45 – 54: 0.625,
+          55 – 64: 0,
+          65+: 0
+      },
+      gender: {
+          Female: 49.375,
+          Male: 50.625
+      },
+      ethnicity: {
+          Asian: 3.4375,
+          Black / African American: 3.4375,
+          Hispanic / Latino: 84.6875,
+          Native American: 0,
+          White: 8.125
+      },
+      trends_by_week: {
+          narrative: "The Fox Sports Bar & Grill has had events on Thursday, Friday, and Saturday and has performed best on Saturday. Specifically, The Fox Sports Bar & Grill yields more impressions per hour on Saturday than on any other day of the week.",
+          impressions_promo: {
+              0: 0,
+              1: 0,
+              2: 0,
+              3: 11.84615384615384,
+              4: 13.61111111111111,
+              5: 22.5,
+              6: 0
+          },
+          cost_impression: {
+              0: 0,
+              1: 0,
+              2: 0,
+              3: 0.4082136231115823,
+              4: 0.4251700680272109,
+              5: 0.4166666666666667,
+              6: 0
+          }
+      }
+  }
+  EOS
+  def analysis
     if resource.present?
       render
     end

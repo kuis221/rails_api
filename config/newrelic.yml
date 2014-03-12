@@ -102,6 +102,9 @@ common: &default_settings
   audit_log:
     enabled: false
 
+  resque:
+    capture_params: true
+
   # Tells transaction tracer and error collector (when enabled)
   # whether or not to capture HTTP params.  When true, frameworks can
   # exclude HTTP parameters from being captured.

@@ -9,6 +9,10 @@
 #  active        :boolean          default(TRUE)
 #  created_by_id :integer
 #  updated_by_id :integer
+#  rows          :text
+#  columns       :text
+#  values        :text
+#  filters       :text
 #
 
 require 'spec_helper'

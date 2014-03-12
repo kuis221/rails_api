@@ -2,22 +2,24 @@
 #
 # Table name: events
 #
-#  id            :integer          not null, primary key
-#  campaign_id   :integer
-#  company_id    :integer
-#  start_at      :datetime
-#  end_at        :datetime
-#  aasm_state    :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  active        :boolean          default(TRUE)
-#  place_id      :integer
-#  promo_hours   :decimal(6, 2)    default(0.0)
-#  reject_reason :text
-#  summary       :text
-#  timezone      :string(255)
+#  id             :integer          not null, primary key
+#  campaign_id    :integer
+#  company_id     :integer
+#  start_at       :datetime
+#  end_at         :datetime
+#  aasm_state     :string(255)
+#  created_by_id  :integer
+#  updated_by_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  active         :boolean          default(TRUE)
+#  place_id       :integer
+#  promo_hours    :decimal(6, 2)    default(0.0)
+#  reject_reason  :text
+#  summary        :text
+#  timezone       :string(255)
+#  local_start_at :datetime
+#  local_end_at   :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -28,6 +30,7 @@ class Event < ActiveRecord::Base
 
   has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
   has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :active_photos, conditions: {asset_type: 'photo', active: true}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
@@ -37,6 +40,11 @@ class Event < ActiveRecord::Base
     end
   end
   has_many :event_expenses, inverse_of: :event, autosave: true
+  has_many :activities, as: :activitable, order: 'activity_date ASC' do
+    def active
+      joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: {campaign_id: proxy_association.owner.campaign_id})
+    end
+  end
   has_one :event_data, autosave: true
 
   has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
@@ -85,6 +93,9 @@ class Event < ActiveRecord::Base
 
   scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 
+  scope :in_areas, ->(areas) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', areas.map{|a| a.place_ids}.flatten.uniq+[0], areas.map{|a| a.locations.map(&:id)}.flatten.uniq+[0]) }
+  scope :in_places, ->(places) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil }.compact.uniq+[0]) }
+
   track_who_does_it
 
   #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
@@ -114,8 +125,10 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
+  before_create :add_current_company_user
 
-  delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :name, to: :campaign, prefix: true, allow_nil: true
+  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
@@ -404,23 +417,10 @@ class Event < ActiveRecord::Base
     all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
   end
 
-  def method_missing(method_name, *args)
-    matches = /(place|campaign)_(.*)/.match(method_name)
-    if matches && matches.length == 3
-      if read_attribute("#{matches[1]}_name")
-        read_attribute(method_name)
-      else
-        send(matches[1]).try(matches[2])
-      end
-    else
-      super
-    end
-  end
-
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
-      ss = solr_search do
+      ss = solr_search(include: [:campaign, :place]) do
         (start_at_field, end_at_field) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
           (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
@@ -781,7 +781,8 @@ class Event < ActiveRecord::Base
     #     end
     #   end
     # end
+
+    def add_current_company_user
+      self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
+    end
 end
-
-
-Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::EventDataAccessor, Event)

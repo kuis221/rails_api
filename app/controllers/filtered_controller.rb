@@ -30,8 +30,8 @@ class FilteredController < InheritedResources::Base
   end
 
   def index
-    if request.format.xlsx?
-      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xlsx', company_user: current_company_user}, without_protection: true)
+    if request.format.xls?
+      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xls', company_user: current_company_user}, without_protection: true)
       if @export.new?
         @export.queue!
       end
@@ -57,7 +57,7 @@ class FilteredController < InheritedResources::Base
 
     def authorize_actions
       if parent?
-        authorize! "index_#{resource_class.to_s.pluralize}", parent
+        authorize! "index_#{resource_class.to_s.pluralize.downcase}", parent
       else
         authorize! :index, resource_class
       end
@@ -76,7 +76,9 @@ class FilteredController < InheritedResources::Base
       @collection_results = @solr_search.results
       set_collection_ivar(@solr_search.results)
 
-      render_to_string :index, handlers: [:axlsx], formats: [:xlsx], layout: false
+      Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
+        render_to_string :index, handlers: [:slim], formats: [:xls], layout: false
+      end
     end
 
     def each_collection_item

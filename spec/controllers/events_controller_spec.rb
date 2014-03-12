@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'roo'
 
 describe EventsController do
   describe "as registered user" do
@@ -102,7 +101,7 @@ describe EventsController do
 
       it "queue the job for export the list" do
         expect{
-          get :index, format: :xlsx
+          get :index, format: :xls
         }.to change(ListExport, :count).by(1)
         export = ListExport.last
         ListExportWorker.should have_queued(export.id)
@@ -112,22 +111,31 @@ describe EventsController do
     describe "GET 'list_export'", search: true do
       let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
       it "should return an empty book with the correct headers" do
-        expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
-        woorbook_from_last_export do |oo|
-          oo.last_row.should == 1
-          1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should == ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS"]
+        expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+        spreadsheet_from_last_export do |doc|
+          rows = doc.elements.to_a('//Row')
+          expect(rows.count).to eql 1
+          expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
+            "CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP",
+            "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS","URL"]
         end
       end
 
       it "should include the event results" do
         place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
         event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
+        team = FactoryGirl.create(:team, company: @company, name: "zteam")
+        event.teams << team
         Sunspot.commit
 
-        expect { get 'index', format: :xlsx }.to change(ListExport, :count).by(1)
-        woorbook_from_last_export do |oo|
-          oo.last_row.should == 2
-          1.upto(oo.last_column).map{|col| oo.cell(2, col) }.should == ["Test Campaign FY01", "", "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0, "Active", "Approved"]
+        expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+        spreadsheet_from_last_export do |doc|
+          rows = doc.elements.to_a('//Row')
+          expect(rows.count).to eql 2
+          expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
+            "Test Campaign FY01", nil, "2019-01-23T10:00", "2019-01-23T12:00",
+            "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California",
+            "12345", "Active", "Approved", "Test User, zteam", "http://localhost:5100/events/#{event.id}" ]
         end
       end
     end
@@ -209,6 +217,13 @@ describe EventsController do
           post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
         }.should change(Event, :count).by(1)
         assigns(:event).company_id.should == @company.id
+      end
+
+      it "should assign current_company_user to the new event" do
+        lambda {
+          post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+        }.should change(Event, :count).by(1)
+        assigns(:event).users.last.user.id.should == @user.id
       end
 
       it "should create the event with the correct dates" do
@@ -295,7 +310,6 @@ describe EventsController do
     describe "DELETE 'delete_member' with a user" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it "should remove the team member from the event" do
-        event.users << @company_user
         lambda{
           delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
           response.should be_success
@@ -337,13 +351,14 @@ describe EventsController do
       end
 
       it "should unassign any tasks assigned the team users" do
-        team.users << @company_user
+        another_user = FactoryGirl.create(:company_user, company_id: 1)
+        team.users << another_user
         event.teams << team
         other_user = FactoryGirl.create(:company_user, company_id: 1)
-        user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
+        user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: another_user)
         other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user: other_user)
         delete 'delete_member', id: event.id, team_id: team.id, format: :js
-
+        event.reload
         user_tasks.each{|t| t.reload.company_user_id.should be_nil }
         other_tasks.each{|t| t.reload.company_user_id.should_not be_nil }
 
@@ -351,7 +366,6 @@ describe EventsController do
 
       it "should not unassign any tasks assigned the team users if the user is directly assigned to the event" do
         team.users << @company_user
-        event.users << @company_user
         event.teams << team
         other_user = FactoryGirl.create(:company_user, company_id: 1)
         user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
@@ -374,10 +388,12 @@ describe EventsController do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it 'should load all the company\'s users into @users' do
         FactoryGirl.create(:user, company_id: @company.id+1)
+        another_user = FactoryGirl.create(:company_user, company_id: @company.id,role_id: @company_user.role_id)
         get 'new_member', id: event.id, format: :js
+        event.reload
         response.should be_success
         assigns(:event).should == event
-        assigns(:users).should == [@company_user]
+        assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
       end
 
       it 'should not load the users that are already assigned to the event' do
@@ -386,17 +402,20 @@ describe EventsController do
         get 'new_member', id: event.id, format: :js
         response.should be_success
         assigns(:event).should == event
-        assigns(:users).should == [another_user]
-        assigns(:staff).should == [another_user]
+        assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
       end
 
       it 'should load teams with active users' do
         @company_user.user.update_attributes({first_name: 'CDE', last_name: 'FGH'}, without_protection: true)
-        team = FactoryGirl.create(:team, name: 'ABC', company_id: @company.id)
-        team.users << @company_user
+        team = FactoryGirl.create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
+        other_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
+        team.users << other_user
         get 'new_member', id: event.id, format: :js
         assigns(:assignable_teams).should == [team]
-        assigns(:staff).should == [team,@company_user]
+        assigns(:staff).should == [
+          {'id' => team.id.to_s, 'name' => 'ABC', 'description' => 'A sample team', 'type' => 'team'},
+          {'id' => other_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}
+        ]
       end
     end
 
@@ -405,13 +424,14 @@ describe EventsController do
       let(:event){ FactoryGirl.create(:event, company: @company) }
 
       it 'should assign the user to the event' do
+        other_user = FactoryGirl.create(:company_user, company_id: @company.id)
         lambda {
-          post 'add_members', id: event.id, member_id: @company_user.to_param, format: :js
+          post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
           response.should be_success
           assigns(:event).should == event
           event.reload
         }.should change(event.users, :count).by(1)
-        event.users.should == [@company_user]
+        event.users.should =~ [@company_user, other_user]
       end
 
       it 'should assign all the team to the event' do

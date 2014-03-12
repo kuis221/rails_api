@@ -83,6 +83,32 @@ module DashboardHelper
     end
   end
 
+  def gva_chart(g)
+    goal = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:goal].value, precision: 2) : number_with_delimiter(g[:goal].value)
+    actual = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:total_count], precision: 2) : number_with_delimiter(g[:total_count])
+    pending_and_total = (g[:submitted] || 0) + g[:total_count]
+    pending = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_delimiter(pending_and_total.round(2))
+    actual_percentage = g[:completed_percentage].round
+    pending_percentage = (pending_and_total/g[:goal].value * 100).round
+    content_tag(:div, class: 'chart-bar') do
+      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, actual_percentage].min}%") +
+      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{[100, pending_percentage].min}%") +
+      content_tag(:div, '', class: 'bar-indicator goal-indicator', style: "left: 100%") +
+      content_tag(:div, class: 'progress') do
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, actual_percentage].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{pending_percentage - actual_percentage}%;")
+      end +
+      content_tag(:div, content_tag(:div, "<b>#{actual}</b> ACTUAL".html_safe), class: 'executed-label', style: "margin-left: #{[100, actual_percentage].min}%") +
+      content_tag(:div, content_tag(:div, "<b>#{pending}</b> PENDING".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{100 - pending_percentage}%") +
+      content_tag(:div, content_tag(:div, "<b>#{goal}</b> GOAL".html_safe), class: 'goal-label') +
+      content_tag(:div, class: 'remaining-label percentage') do
+        content_tag(:b, "#{actual_percentage}%", class: 'percentage') +
+        content_tag(:span, "COMPLETE", class: 'percentage') +
+        content_tag(:b, "#{pending_percentage}%", class: 'percentage') +
+        content_tag(:span, 'PENDING', class: 'percentage')
+      end
+    end
+  end
 
   def kpis_completed_totals(campaign_ids=[])
     @kpis_completed_totals ||= {}
@@ -179,7 +205,7 @@ module DashboardHelper
 
   # Returns a list of campaigns accessible for the current with promo hours goal
   def dashboard_promo_hours_graph_data
-    Campaign.active.accessible_by_user(current_company_user).promo_hours_graph_data
+    current_company.campaigns.active.accessible_by_user(current_company_user).promo_hours_graph_data
   end
 
   def campaing_cell_clasess(campaign, week)

@@ -284,7 +284,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/notifications', "Get a list of user's notifications"
+  api :GET, '/api/v1/users/notifications', "Get a list of user's notifications"
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
 
@@ -314,7 +314,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-  GET /api/v1/notifications.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+  GET /api/v1/users/notifications.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
   [
       {
           "message": "There is one late event recap",
@@ -372,11 +372,11 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
 
-  api :GET, '/api/v1/permissions', "Get a list of the user's permissions"
+  api :GET, '/api/v1/users/permissions', "Get a list of the user's permissions"
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   example <<-EOS
-    GET /api/v1/permissions.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/users/permissions.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
 
     ['events', 'events_create', 'venues', 'tasks']
   EOS

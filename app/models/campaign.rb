@@ -15,6 +15,8 @@
 #  last_event_id  :integer
 #  first_event_at :datetime
 #  last_event_at  :datetime
+#  start_date     :date
+#  end_date       :date
 #
 
 class Campaign < ActiveRecord::Base
@@ -72,6 +74,10 @@ class Campaign < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+  
+  # Activity-Type relationships
+  has_many :activity_type_campaigns
+  has_many :activity_types, through: :activity_type_campaigns
 
   scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
   scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
@@ -169,8 +175,10 @@ class Campaign < ActiveRecord::Base
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
     place.location_ids.any?{|location| accessible_locations.include?(location)} ||
-    places.map(&:id).include?(place.id) ||
-    areas.map(&:place_ids).flatten.include?(place.id)
+    place.persisted? && (
+        places.map(&:id).include?(place.id) ||
+        areas.map(&:place_ids).flatten.include?(place.id)
+    )
   end
 
   def accessible_locations
@@ -370,7 +378,7 @@ class Campaign < ActiveRecord::Base
         r['goal'] = r['goal'].to_f
         r['executed'] = r['executed'].to_f
         r['scheduled'] = r['scheduled'].to_f
-        r['remaining'] = [0, r['goal']-(r['scheduled'].+r['executed'])].max
+        r['remaining'] = [0, r['goal']-(r['scheduled']+r['executed'])].max
         r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
         r['executed_percentage'] = [100, r['executed_percentage']].min
         r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0

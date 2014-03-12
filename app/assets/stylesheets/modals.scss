@@ -157,6 +157,9 @@ ul.select2-results{
 			.control-group{
 				label{
 					display: inline-block;
+					&.radio {
+						display: block;
+					}
 				}
 				&.campaign_brands_list, &.date_range_name,
 				&.date_range_description,
@@ -711,6 +714,22 @@ ul.select2-results{
 				font-size: 13px;
 			}
 		}
+		.large-inputs{
+			.control-group{
+				width: 400px;
+				textarea{
+					width: 386px;
+				}
+				.chzn-container-single{
+					.chzn-single{
+						width: 390px;
+					}
+					.chzn-drop{
+						width: 400px !important;
+					}
+				}
+			}
+		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
 		  color: $grey_three;
@@ -745,7 +764,7 @@ ul.select2-results{
 		.controls{
 			input[type="text"]{
 				color: $text !important;
-				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date{
+				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &#activity_activity_date{
 					background: url('calendar.svg') no-repeat left !important;
 					text-align: right;
 				}

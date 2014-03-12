@@ -11,7 +11,7 @@
   }], {'onEscape': false, animate: (!$.fx.off)})
 
   var downloadInterval = setInterval(function(){
-    $.get('#{export_status_url(@export.id, format: :json)}', function(response){
+    $.get('#{export_status_path(@export.id, format: :json)}', function(response){
       if (response.status == 'completed') {
         clearInterval(downloadInterval);
         downloadDialog.modal('hide');

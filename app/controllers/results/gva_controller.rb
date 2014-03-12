@@ -11,8 +11,7 @@ class Results::GvaController < ApplicationController
 
   def report
     authorize_actions
-    # Yeah, I know!: TODO: refactor this to not send a list of event ids in the queries :s
-    @events_scope = Event.where(id: filter_event_ids)
+    @events_scope = filter_events_scope
     if area
       @goals = area.goals.in(campaign)
     elsif place
@@ -20,7 +19,9 @@ class Results::GvaController < ApplicationController
     else
       @goals = campaign.goals.base
     end
-    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi)
+    #goals_activities = @goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).where('goals.value is not null and goals.value <> 0').includes(:activity_type)
+    @goals = @goals.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null and goals.value <> 0').includes(:kpi).order('kpis.name ASC')
+    #@goals += goals_activities
   end
 
   private
@@ -68,7 +69,7 @@ class Results::GvaController < ApplicationController
       stats = {}
       Goal.in(campaign).
         where('goals.value <> 0 and goals.value is not null').
-        where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids, campaign.place_ids).
+        where('(goals.goalable_type=\'Area\' and goals.goalable_id in (?)) or (goals.goalable_type=\'Place\' and goals.goalable_id in (?))', campaign.area_ids+[0], campaign.place_ids+[0]).
         where(kpi_id: Kpi.promo_hours.id).map do |goal|
           params = search_params.dup
           params.merge!({area: goal.goalable.id}) if goal.goalable.is_a?(Area)
@@ -82,11 +83,10 @@ class Results::GvaController < ApplicationController
       stats.sort
     end
 
-    def filter_event_ids
-      params = {company_id: current_company.id, campaign: [campaign.id], status: ['Active'], current_company_user: current_company_user, per_page: 100000}
-      params.merge!({area: area.id}) unless area.nil?
-      params.merge!({location: [place.location_id]}) if place.present? && place.is_location?
-      params.merge!({place: [place.id]}) if place.present? && !place.is_location?
-      Event.do_search(params).hits.map(&:primary_key)
+    def filter_events_scope
+      scope = Event.active.accessible_by_user(current_company_user).by_campaigns(campaign.id)
+      scope = scope.in_areas([area]) unless area.nil?
+      scope = scope.in_places([place]) unless place.nil?
+      scope
     end
 end

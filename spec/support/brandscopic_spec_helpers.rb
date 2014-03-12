@@ -39,11 +39,21 @@ module BrandscopiSpecHelpers
     event.save if autosave
   end
 
-  def woorbook_from_last_export
+  def without_current_user
+    user = User.current
+    User.current = nil
+    yield
+  ensure
+    User.current = user
+  end
+
+  def spreadsheet_from_last_export
+    require "rexml/document"
     export = ListExport.last
     export.should_receive(:save).any_number_of_times.and_return(true)
     File.should_receive(:delete) do |path|
-      yield Roo::Excelx.new(path)
+      file = File.new( path )
+      yield REXML::Document.new(file)
     end
     export.export_list
   end

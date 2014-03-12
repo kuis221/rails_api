@@ -10,6 +10,8 @@ class Ability
     alias_action :new_member, :to => :add_members
     alias_action :add_kpi, :to => :activate_kpis
     alias_action :remove_kpi, :to => :activate_kpis
+    alias_action :add_activity_type, :to => :activate_kpis
+    alias_action :remove_activity_type, :to => :activate_kpis
 
     # All users
 
@@ -92,6 +94,12 @@ class Ability
       can :search, Place
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
+
+      can :index, Brand
+
+      can :index, Marque
+
+      can :form, Activity if can?(:create, Activity)
 
       can :places, Campaign do |campaign|
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
@@ -205,6 +213,14 @@ class Ability
 
       can [:deactivate, :activate], AttachedAsset do |asset|
         asset.attachable.is_a?(Event) && asset.asset_type == 'photo' && user.role.has_permission?(:deactivate_photo, Event) && can?(:show, asset.attachable)
+      end
+
+      can :rate, AttachedAsset do |asset|
+        asset.asset_type == 'photo' && user.role.has_permission?(:edit_rate, AttachedAsset)
+      end
+
+      can :view_rate, AttachedAsset do |asset|
+        asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
       end
 
       # Event Expenses permissions

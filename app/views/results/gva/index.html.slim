@@ -5,9 +5,11 @@
     .details_box.first
 
       = simple_form_for :report, url: results_gva_path, remote: true do |f|
-        = f.input_field :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, class: 'chosen-enabled no-validate'
+        = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
 
   #report-container
+    .details_box
+      p.text-center Select a campaign from the list above
 
 javascript:
   jQuery(function(){

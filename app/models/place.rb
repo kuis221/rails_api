@@ -22,6 +22,8 @@
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
 #  neighborhood           :string(255)
+#  location_id            :integer
+#  is_location            :boolean
 #
 
 require "base64"
@@ -264,6 +266,8 @@ class Place < ActiveRecord::Base
         self.city.strip! unless self.city.nil?
         self.state.strip! unless self.city.nil?
         self.country.strip! unless self.city.nil?
+
+        update_locations
         self
       end
     end

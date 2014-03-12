@@ -179,7 +179,7 @@ class AttachedAsset < ActiveRecord::Base
 
         with(:location, params[:location]) if params.has_key?(:location) and params[:location].present?
 
-        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map{|location| Place.encode_location(location) }}.flatten + [0]  ) if params[:area].present?
+        with(:location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]  ) if params[:area].present?
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')

@@ -131,7 +131,6 @@ feature "DayParts", search: true, js: true do
       end
       ensure_modal_was_closed
       expect(page).to have_no_content('Old name')
-      page.find('h2', text: 'edited day part name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited day part name')
       expect(page).to have_selector('div.description-data', text: 'edited day part description')
     end
