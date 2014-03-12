@@ -1269,7 +1269,10 @@ div#spin{
 		.chzn-container-multi{
 			.chzn-choices, .chzn-drop, .chzn-results{
 				width: 440px !important;
-			}		
+			}	
+			.chzn-choices{
+				background: url('arrow.svg') no-repeat right !important;
+			}	
 		} 
 	}
 	div.option-help{
@@ -1283,6 +1286,7 @@ div#spin{
 		position: absolute;
 	}
 }
+
 
 
 
