@@ -1304,6 +1304,17 @@ li.dropdown a{
 			}
 		}
 
+		li#admin{
+			ul.dropdown-menu{
+				min-width:200px !important;
+				left: -161px;
+				width: 200px !important;
+				&:before{
+					left: 170px;
+				}
+			}
+		}
+
 		li#admin a, li#user_menu a{
 			color:$user_menu;
 		}
@@ -1670,7 +1681,7 @@ li#user_menu{
 		}
 		&:before{
 			border-bottom: 10px solid $alert_grey;
-			left:152px;
+			left:155px;
 		}
 	}
 }
