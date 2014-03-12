@@ -1,29 +1,33 @@
+- disabled = cannot?(:edit_custom_kpi, @campaign)
+
 .row-fluid
-  = f.input :name
+  = f.input :name, disabled: disabled
   #similar-kpi-message style="display: none"
     span id="duplicated-name"
 
 .row-fluid
-  = f.input :description, :input_html => {:rows => 1}
+  = f.input :description, :input_html => {:rows => 1}, disabled: disabled
 
 .row-fluid
-  = f.input :kpi_type, input_html: {class: 'input-medium chosen-enabled'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}
+  = f.input :kpi_type, input_html: {class: 'input-medium chosen-enabled'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}, disabled: disabled
 
 #kpisegment-fields.row-fluid style="display: none"
   - goals = @campaign.goals.for_kpis_segments(resource)
   = f.fields_for :kpis_segments do |kf|
     .control-group
       .controls
-        = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium'
+        = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium', disabled: disabled
         - unless resource.new_record?
           = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
             label
               = gf.hidden_field :goalable_id, value: @campaign.id
               = gf.hidden_field :goalable_type, value: 'Campaign'
+              = gf.hidden_field :kpis_segment_id
+              = gf.hidden_field :kpi_id, value: resource.id
               = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
         = kf.link_to_remove "Remove"
 
-  p= f.link_to_add "Add a segment", :kpis_segments
+  p= f.link_to_add "Add a segment", :kpis_segments unless disabled
 
 - unless resource.new_record?
   #kpigoal-fields.row-fluid style="display: none"
@@ -34,4 +38,4 @@
       = gf.input :value, label: 'Goal', input_html: {class: 'input-mini'}
 
 .row-fluid
-  = f.input :capture_mechanism, as: :select, input_html: {class: 'input-medium chosen-enabled'}, collection: resource.kpi_type.blank? ? [] : Kpi::CUSTOM_TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}
+  = f.input :capture_mechanism, as: :select, input_html: {class: 'input-medium chosen-enabled'}, collection: resource.kpi_type.blank? ? [] : Kpi::CUSTOM_TYPE_OPTIONS[resource.kpi_type].map{|o| [o.capitalize, o]}, disabled: disabled
