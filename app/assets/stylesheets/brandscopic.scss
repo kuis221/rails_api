@@ -1296,7 +1296,7 @@ li.dropdown a{
 					color: $app_bg;
 					font-weight: bold;
 					&:hover{
-						background-color: $header;
+						background-color: $menu;
 						color: white;
 					}
 				}
@@ -2763,7 +2763,7 @@ textarea::-webkit-input-placeholder {
 			font-weight: bold;
 		}
 		li a:hover{
-			background-color: $header !important;
+			background-color: $menu !important;
 		}
 	}
 	.dropdown.open{
