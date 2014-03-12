@@ -1304,9 +1304,19 @@ li.dropdown a{
 					color: $app_bg;
 					font-weight: bold;
 					&:hover{
-						background-color: $header;
+						background-color: $menu;
 						color: white;
 					}
+				}
+			}
+		}
+		li#admin{
+			ul.dropdown-menu{
+				min-width:200px !important;
+				left: -161px;
+				width: 200px !important;
+				&:before{
+					left: 170px;
 				}
 			}
 		}
@@ -2786,7 +2796,7 @@ textarea::-webkit-input-placeholder {
 			font-weight: bold;
 		}
 		li a:hover{
-			background-color: $header !important;
+			background-color: $menu !important;
 		}
 	}
 	.dropdown.open{
