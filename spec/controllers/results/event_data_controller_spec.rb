@@ -173,8 +173,8 @@ describe Results::EventDataController do
 
       event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
       results = event.result_for_kpi(kpi)
-      results.first.value = '112233'
-      results.last.value = '445566'
+      results.first.value = '63'
+      results.last.value = '27'
       event.save
 
       Sunspot.commit
@@ -183,8 +183,8 @@ describe Results::EventDataController do
       woorbook_from_last_export do |oo|
         1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('MY KPI: UNO')
         1.upto(oo.last_column).map{|col| oo.cell(1, col) }.should include('MY KPI: DOS')
-        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should include(112233)
-        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should include(445566)
+        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should include(63)
+        1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should include(27)
       end
     end
   end
