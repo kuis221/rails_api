@@ -44,7 +44,7 @@ Brandscopic::Application.routes.draw do
         end
 
         # To allow CORS for any API action
-        match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
+        match ':path1(/:path2(/:path3(/:path4)))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
           collection do
@@ -369,6 +369,10 @@ Brandscopic::Application.routes.draw do
   resources :places, only: [:create, :new] do
     get :search, format: :json, on: :collection
     resources :areas, only: [:new, :create]
+  end
+
+  resources :attached_assets, only: [] do
+    put :rate, on: :member
   end
 
   resources :date_ranges do

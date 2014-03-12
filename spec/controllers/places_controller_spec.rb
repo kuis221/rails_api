@@ -24,18 +24,19 @@ describe PlacesController do
       HTTParty.should_receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
       PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
       expect {
-        post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR'}, format: :js
+        post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
       }.to change(Place, :count).by(1)
       place = Place.last
       expect(place.name).to eql "Guille's place"
       expect(place.street_number).to eql '123 st'
       expect(place.route).to eql 'xyz 321'
       expect(place.city).to eql 'Curridabat'
-      expect(place.state).to eql 'San Jose'
+      expect(place.state).to eql 'San José'
       expect(place.zipcode).to eql '12345'
       expect(place.country).to eql 'CR'
       expect(place.latitude).to eql 1.2322
       expect(place.longitude).to eql -3.23455
+      expect(place.locations.count).to eql 4
 
       expect(area.places).to match_array([place])
     end
@@ -49,22 +50,63 @@ describe PlacesController do
         GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
         PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
         expect {
-          post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR'}, format: :js
+          post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
         }.to change(Place, :count).by(1)
         place = Place.last
         expect(place.name).to eql "APIs place name"
         expect(place.street_number).to eql '123 st'
         expect(place.route).to eql 'xyz 321'
         expect(place.city).to eql 'Curridabat'
-        expect(place.state).to eql 'San Jose'
+        expect(place.state).to eql 'San José'
         expect(place.zipcode).to eql '12345'
         expect(place.country).to eql 'CR'
         expect(place.place_id).to eql '123'
         expect(place.reference).to eql 'XYZ'
         expect(place.latitude).to eql 1.111
         expect(place.longitude).to eql 2.222
+        expect(place.locations.count).to eql 4
 
         area.places.should == [place]
+      end
+
+      it "creates the place and associate its to the campaign" do
+        GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(
+          name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
+          address_components: [
+            {'types' => ['country'],'short_name' => 'US', 'long_name' => 'United States'},
+            {'types' => ['administrative_area_level_1'],'short_name' => 'CA', 'long_name' => 'CA'},
+            {'types' => ['locality'],'short_name' => 'Manhattan Beach', 'long_name' => 'Manhattan Beach'},
+            {'types' => ['postal_code'],'short_name' => '12345', 'long_name' => '12345'},
+            {'types' => ['street_number'],'short_name' => '123 st', 'long_name' => '123 st'},
+            {'types' => ['route'],'short_name' => 'xyz 321', 'long_name' => 'xyz 321'}
+          ]
+        ))
+        # GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
+        # PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+        expect {
+          post 'create', campaign_id: campaign.id, place: {reference: 'XXXXXXXXXXX||YYYYYYYYYY'}, format: :js
+        }.to change(Place, :count).by(1)
+        place = Place.last
+        expect(place.name).to eql "APIs place name"
+        expect(place.formatted_address).to eql 'api fmt address'
+        expect(place.street_number).to eql '123 st'
+        expect(place.route).to eql 'xyz 321'
+        expect(place.city).to eql 'Manhattan Beach'
+        expect(place.state).to eql 'California'
+        expect(place.zipcode).to eql '12345'
+        expect(place.country).to eql 'US'
+        expect(place.place_id).to eql 'YYYYYYYYYY'
+        expect(place.reference).to eql 'XXXXXXXXXXX'
+        expect(place.latitude).to eql 1.111
+        expect(place.longitude).to eql 2.222
+        expect(place.types).to eql ['bar']
+        expect(place.locations.count).to eql 4
+        expect(place.locations.map(&:path)).to match_array [
+          "north america", "north america/united states", "north america/united states/california",
+          "north america/united states/california/manhattan beach"
+        ]
+
+        campaign.places.should == [place]
       end
 
       it "keeps the actual data if the place already exists on the DB" do
@@ -108,7 +150,7 @@ describe PlacesController do
     it "validates the address" do
       expect {
         post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'Costa Rica'}, format: :js
-      }.to_not change(Place,:count)
+      }.to_not change(Place, :count)
       expect(assigns(:place).errors[:base]).to include("The entered address doesn't seems to be valid")
       expect(response).to render_template('new_place_form')
     end

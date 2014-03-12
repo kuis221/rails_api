@@ -30,6 +30,7 @@ class Event < ActiveRecord::Base
 
   has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
   has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :active_photos, conditions: {asset_type: 'photo', active: true}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
@@ -126,7 +127,8 @@ class Event < ActiveRecord::Base
   after_commit :index_venue
   before_create :add_current_company_user
 
-  delegate :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :name, to: :campaign, prefix: true, allow_nil: true
+  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
@@ -415,23 +417,10 @@ class Event < ActiveRecord::Base
     all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
   end
 
-  def method_missing(method_name, *args)
-    matches = /(place|campaign)_(.*)/.match(method_name)
-    if matches && matches.length == 3
-      if read_attribute("#{matches[1]}_name")
-        read_attribute(method_name)
-      else
-        send(matches[1]).try(matches[2])
-      end
-    else
-      super
-    end
-  end
-
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
-      ss = solr_search do
+      ss = solr_search(include: [:campaign, :place]) do
         (start_at_field, end_at_field) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
           (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
@@ -797,6 +786,3 @@ class Event < ActiveRecord::Base
       self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
     end
 end
-
-
-Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::EventDataAccessor, Event)

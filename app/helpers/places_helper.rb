@@ -1,7 +1,17 @@
 module PlacesHelper
   module CreatePlace
     def create_place(attributes, add_new_place)
-      attributes[:types] = attributes[:types].split(',') if attributes[:types].present?
+      attributes[:types] = attributes[:types].downcase.split(',') if attributes[:types].present?
+
+      if attributes[:country] && attributes[:state]
+        country = Country.new(attributes[:country])
+        if country.valid? && country.states.has_key?(attributes[:state])
+          attributes[:state] = country.states[attributes[:state]]['name']
+        else
+          attributes[:state] = nil unless country.valid? && country.states.detect{|k,v| v['name'] == attributes[:state] }.present?
+        end
+      end
+
       @place = Place.new(attributes)
       if current_company_user.allowed_to_access_place?(@place)
         reference_value = attributes[:reference]
@@ -12,9 +22,13 @@ module PlacesHelper
 
             # If the place was not found in API, create it
             if spot.nil?
-              create_place_in_google_api(@place)
-              # Save the place on the database with the user's entered data
-              @place.save
+              if create_place_in_google_api(@place)
+                # Save the place on the database with the user's entered data
+                @place.save
+              else
+                @place.is_custom_place = true
+                @place.save
+              end
             else
               reference_value = spot.reference+'||'+spot.id
             end
@@ -62,7 +76,7 @@ module PlacesHelper
       address_txt = URI::encode([place.street_number,
                                  place.route,
                                  place.city,
-                                 place.state + ' ' + place.zipcode,
+                                 place.state.to_s + ' ' + place.zipcode,
                                  place.country].join(', '))
 
       data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)

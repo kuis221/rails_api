@@ -1,7 +1,7 @@
 class Results::ExpensesController < FilteredController
 
   defaults :resource_class => ::Event
-  respond_to :xlsx, only: :index
+  respond_to :xls, only: :index
 
   helper_method :expenses_total
 
