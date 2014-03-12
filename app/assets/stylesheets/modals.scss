@@ -1249,5 +1249,41 @@ div#spin{
    background-position: 2px -44px !important;
 }
 
+/*-- MODAL FOR SHARE -- REPORTT BUILDER --*/
+
+
+.share-option{
+	margin-bottom:30px;
+	position: relative;
+	label{
+		&.collection_radio_buttons{
+			color: $text;
+			font-size: 16px;
+			display:inline-block !important;
+			margin-left: 40px;
+		}
+	}
+	.control-group{
+		margin-top: 8px;
+		margin-left: 40px;
+		.chzn-container-multi{
+			.chzn-choices, .chzn-drop, .chzn-results{
+				width: 440px !important;
+			}		
+		} 
+	}
+	div.option-help{
+		color: $user_menu;
+		font-size: 13px;
+		display: block !important;
+		margin-left:40px;
+	}
+	.radio{
+		top: 9px;
+		position: absolute;
+	}
+}
+
+
 
 

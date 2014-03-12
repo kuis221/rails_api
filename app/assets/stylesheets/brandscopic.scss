@@ -5412,6 +5412,7 @@ a, i{
 }
 
 
+
 // Modal Table List
 
 .with-details-close-bar {
@@ -6588,3 +6589,62 @@ ul#reports-list {
 		-webkit-font-smoothing: antialiased;
 	}
 }
+
+/*-- RADIO BUTTONS STYLES --*/
+
+
+.radio{
+	display: inline-block;
+	margin: 0 15px 5px 0;
+	padding: 0;
+	width: 20px;
+	span{
+		background-image: none !important;
+		border: 4px solid #d7dcde;
+		display: block;
+		height: 15px;
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		border-radius: 15px;
+		width: 15px;
+		&.help-inline{
+			border: 0;
+			width: 120px;
+			margin-left: -3px;
+			margin-top: 21px;
+			display: block;
+		}
+	}
+	span.checked{
+		border: 4px solid $grey_three;
+		background-image: none !important;
+		display: block;
+		height: 15px;
+		margin: 0;
+		padding:0;
+		width: 15px;
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		border-radius: 15px;
+	}
+	span.checked:after{
+		color: $grey_three;
+		content: "\2022";
+		font-size: 25px;
+		bottom: 22px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		-webkit-font-smoothing: antialiased;
+	}
+	input[type="radio"] {
+		margin: 4px 0 0 0;
+		opacity:0;
+	}
+}
+.radio-group{
+	display:inline-block;
+	margin-bottom: 10px;
+}
+
