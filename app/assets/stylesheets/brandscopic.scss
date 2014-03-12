@@ -4821,7 +4821,7 @@ svg{
 
 // ANALYSIS
 
-.campaigns_report, .snapshot_report, .staff_report, .gva {
+.campaigns_report, .snapshot_report, .staff_report, .gva, .event_status {
 	.details_box{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
@@ -5789,6 +5789,13 @@ body.gva {
 		overflow: visible;
 	}
 }
+
+body.event_status {
+	.tab-content {
+		overflow: visible;
+	}
+}
+
 
 body.campaigns_report,
 body.staff_report  {
