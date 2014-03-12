@@ -202,7 +202,7 @@ class Campaign < ActiveRecord::Base
 
   def promo_hours_graph_data
     stats={}
-    queries = goals.where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(areas).map do |goal|
+    queries = goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(areas).map do |goal|
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE  WHEN events.aasm_state='approved' THEN 'executed' ELSE 'scheduled' END as status, #{group}").reorder(nil).group('1, 2, 3').to_sql
@@ -238,7 +238,7 @@ class Campaign < ActiveRecord::Base
       end
     end
 
-    stats.values
+    stats.values.sort{|a, b| a['name'] <=> b['name'] }
   end
 
   def brands_list
