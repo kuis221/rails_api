@@ -51,6 +51,7 @@ Brandscopic::Application.routes.draw do
             get :all
             get :overall_stats
           end
+          get :stats, on: :member
         end
 
         resources :venues, only: [:index, :show, :create] do
