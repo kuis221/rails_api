@@ -49,7 +49,7 @@ class Kpi < ActiveRecord::Base
   has_many :goals, dependent: :destroy
 
   accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
-  accepts_nested_attributes_for :goals
+  accepts_nested_attributes_for :goals, reject_if: :invalid_goal?
 
   scope :global, lambda{ where('company_id is null').order('ordering ASC') }
   scope :custom, lambda{|company| scoped_by_company_id(company).order('name ASC') }
@@ -285,6 +285,10 @@ class Kpi < ActiveRecord::Base
     kpis_segments.select{|s| s.marked_for_destruction? }.each do |segment|
       errors.add :base, 'cannot delete segments with results' if segment.has_results?
     end
+  end
+
+  def invalid_goal?(goal)
+    goal['kpis_segment_id'].nil? && ['count', 'percentage'].include?(kpi_type)
   end
 
 end

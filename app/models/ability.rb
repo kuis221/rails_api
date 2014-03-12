@@ -161,6 +161,19 @@ class Ability
         can?(:show, contact_event.event) && can?(:edit_contacts, contact_event.event)
       end
 
+      # Allow users to create kpis if have permissions to create custom kpis,
+      # the controller will decide what permissions can be modified based on those permissions
+      can [:new, :create], Kpi do |kpi|
+        can?(:edit, Campaign) && user.role.has_permission?(:create_custom_kpis, Campaign)
+      end
+
+      # Allow users to update kpis if have permissions to edit custom kpis or edit goals for the kpis,
+      # the controller will decide what permissions can be modified based on those permissions
+      can [:edit, :update], Kpi do |kpi|
+        can?(:show, Campaign) &&
+        (user.role.has_permission?(:edit_custom_kpi, Campaign) || user.role.has_permission?(:edit_kpi_goals, Campaign))
+      end
+
       # Tasks permissions
       can :tasks, Event do |event|
         user.role.has_permission?(:index_tasks, Event) && can?(:show, event)
