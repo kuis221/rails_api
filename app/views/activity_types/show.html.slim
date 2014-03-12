@@ -1,0 +1,24 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing activity type details. Click to close.", collection_path)
+
+  .details_box.padding-top-close-bar
+    h2= resource.name
+
+    - if resource.description.present?
+      .description-data
+        = resource.description
+
+    .links-data
+      = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:activate, resource)
+
+    // The is info will be displayed on the fixed bar when the window is scolled down to this position
+    .details-bar-info
+      h3= resource.name
+      = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:activate, resource)
+
+javascript:
+  $(document).on('activity_types:change', function(){
+    window.location.reload(true);
+  })

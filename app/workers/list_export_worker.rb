@@ -7,6 +7,8 @@ class ListExportWorker
     begin
       export.export_list
     rescue  Exception => e
+      Rails.logger.debug e.message
+      Rails.logger.debug e.backtrace.inspect
       export.fail!
       raise e
     end

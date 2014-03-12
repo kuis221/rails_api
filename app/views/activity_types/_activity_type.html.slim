@@ -1,18 +1,11 @@
-li id="campaign-activity-type-#{activity_type.id}"
-  span.on-off-switch
-    div class="switch-toggle #{resource.activity_types.include?(activity_type) ? 'active' : 'inactive'}"
-      a.btn.btn-small.toggle-on-btn-activity-type href="#" id="toggle-kpi-off-#{activity_type.id}" data-activity-type-id="#{activity_type.id}"
-        .on ON
-        span
-      a.btn.btn-small.toggle-off-btn-activity-type href="#" id="toggle-kpi-on-#{activity_type.id}" data-activity-type-id="#{activity_type.id}"
-        span
-        .off OFF
-  span.kpi-info
-    .kpi-name
-      = activity_type.name
-    = activity_type.description
-  span.kpi-goal
-    span.value= resource.goals.base.for_activity_type(activity_type).value
+li id="activity_type_#{activity_type.id}" class="#{active_class(activity_type)}"
+  = link_to_if_permitted :show, ActivityType, activity_type_path(activity_type) do
+    span
+      b= activity_type.name
+      span.description
+        = activity_type.description
   span.pull-right
-    = link_to '', edit_campaign_activity_type_path(resource, activity_type.id), remote: true, class: 'edit', title: 'Edit'
-  .clearfix
+    = link_to '', edit_activity_type_path(activity_type), remote: true, class: 'edit' if can?(:edit, ActivityType)
+    - if can?(:deactivate, ActivityType)
+      = link_to_deactivate activity_type
+      = link_to '', activate_activity_type_path(activity_type), remote: true, class: 'enable',title: I18n.t('confirmation.activate') unless activity_type.active?

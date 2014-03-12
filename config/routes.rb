@@ -44,13 +44,14 @@ Brandscopic::Application.routes.draw do
         end
 
         # To allow CORS for any API action
-        match ':path1(/:path2(/:path3))', via: :options, to: 'api#options'
+        match ':path1(/:path2(/:path3(/:path4)))', via: :options, to: 'api#options'
 
         resources :campaigns, only: [] do
           collection do
             get :all
             get :overall_stats
           end
+          get :stats, on: :member
         end
 
         resources :venues, only: [:index, :show, :create] do
@@ -223,7 +224,9 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :activity_types, only: [:edit, :update]
+    resources :activity_types do
+      get :set_goal
+    end
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
@@ -372,6 +375,10 @@ Brandscopic::Application.routes.draw do
     resources :areas, only: [:new, :create]
   end
 
+  resources :attached_assets, only: [] do
+    put :rate, on: :member
+  end
+
   resources :date_ranges do
     get :autocomplete, on: :collection
     resources :date_items, path: 'dates', only: [:new, :create, :destroy]
@@ -391,6 +398,14 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :activities, only: [:show, :edit, :update] do
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
+  
+  resources :activity_types  do
+    get :autocomplete, on: :collection
     member do
       get :deactivate
       get :activate

@@ -1,0 +1,48 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
+    Style ss:ID="s4" ss:Name="Currency"
+      NumberFormat ss:Format='"$"#,##0.00'
+  Worksheet ss:Name="Event Expenses"
+
+    Table
+      Column ss:Width="150"
+      Column ss:Width="120"
+      Column ss:Width="200"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Row ss:StyleID="s1"
+        Cell
+          Data ss:Type="String" CAMPAIGN NAME
+        Cell
+          Data ss:Type="String" VENUE NAME
+        Cell
+          Data ss:Type="String" ADDRESS
+        Cell
+          Data ss:Type="String" START DATE
+        Cell
+          Data ss:Type="String" END DATE
+        Cell
+          Data ss:Type="String" COMMENT
+
+      - each_collection_item do |event|
+        - event.event_expenses.each do |expense|
+          Row
+            Cell
+              Data ss:Type="String"= event.campaign_name
+            Cell
+              Data ss:Type="String"= event.place_name
+            Cell
+              Data ss:Type="String"= strip_tags(event_place_address(event, false, ', ', ', '))
+            Cell ss:StyleID="s2"
+              Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Cell ss:StyleID="s2"
+              Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Cell ss:StyleID="s4"
+              Data ss:Type="Number"= expense.amount

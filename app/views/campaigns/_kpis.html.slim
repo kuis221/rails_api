@@ -10,7 +10,7 @@
 
 .link-list
   ul#custom-kpis.kpis-list
-    = render (Kpi.custom(current_company) + current_company.activity_types.active).sort_by(&:name)
+    = render (Kpi.custom(current_company) + current_company.activity_types.active.each { |a|  a.partial_path = 'campaigns/activity_type'}).sort_by(&:name)
 
 
 - if can?(:activate_kpis, resource)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140227205714) do
+ActiveRecord::Schema.define(:version => 20140405221112) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(:version => 20140227205714) do
     t.boolean  "active",            :default => true
     t.string   "direct_upload_url"
     t.boolean  "processed",         :default => false, :null => false
+    t.integer  "rating",            :default => 0
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
@@ -648,6 +649,14 @@ ActiveRecord::Schema.define(:version => 20140227205714) do
 
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
+  create_table "report_sharings", :force => true do |t|
+    t.integer "report_id"
+    t.integer "shared_with_id"
+    t.string  "shared_with_type"
+  end
+
+  add_index "report_sharings", ["shared_with_id", "shared_with_type"], :name => "index_report_sharings_on_shared_with_id_and_shared_with_type"
+
   create_table "reports", :force => true do |t|
     t.integer "company_id"
     t.string  "name"
@@ -659,6 +668,7 @@ ActiveRecord::Schema.define(:version => 20140227205714) do
     t.text    "columns"
     t.text    "values"
     t.text    "filters"
+    t.string  "sharing",       :default => "owner"
   end
 
   create_table "roles", :force => true do |t|

@@ -36,8 +36,10 @@ class Goal < ActiveRecord::Base
   validates_datetime :start_date, allow_nil: true, allow_blank: true
   validates_datetime :due_date, allow_nil: true, allow_blank: true, :on_or_after => :start_date
 
+  scope :for_areas, lambda{|areas| where(goalable_type: 'Area', goalable_id: areas) }
   scope :in, lambda{|parent| where(parent_type: parent.class.name, parent_id: parent.id) }
   scope :base, lambda{ where('parent_type is null') }
+  scope :with_value, lambda{ where('value is not null and value <> 0') }
 
   before_validation :set_kpi_id
 

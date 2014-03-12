@@ -31,6 +31,8 @@ FactoryGirl.define do
     end_time "12:00pm"
     aasm_state 'unsent'
     active true
+    place_id nil
+    campaign_id nil
 
     ignore do
       results false
