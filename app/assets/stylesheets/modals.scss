@@ -1253,7 +1253,7 @@ div#spin{
 
 
 .share-option{
-	margin-bottom:30px;
+	margin-bottom:35px;
 	position: relative;
 	label{
 		&.collection_radio_buttons{
@@ -1266,6 +1266,7 @@ div#spin{
 	.control-group{
 		margin-top: 8px;
 		margin-left: 40px;
+		margin-bottom: 0;
 		.chzn-container-multi{
 			.chzn-choices, .chzn-drop, .chzn-results{
 				width: 440px !important;
