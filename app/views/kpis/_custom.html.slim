@@ -1,4 +1,4 @@
-- disabled = cannot?(:edit_custom_kpi, @campaign)
+- disabled = resource.new_record? ? cannot?(:create_custom_kpis, Campaign) : cannot?(:edit_custom_kpi, Campaign)
 
 .row-fluid
   = f.input :name, disabled: disabled

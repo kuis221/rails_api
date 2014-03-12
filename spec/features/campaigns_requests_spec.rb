@@ -2,11 +2,12 @@ require 'spec_helper'
 
 feature "Campaigns", js: true, search: true do
 
+  let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
+
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
+    @company = user.companies.first
+    sign_in user
   end
 
   after do
@@ -170,6 +171,23 @@ feature "Campaigns", js: true, search: true do
     end
 
     feature "Create custom KPIs", search: false do
+
+      feature "with a non admin user", search: false do
+        let(:company) { FactoryGirl.create(:company) }
+        let(:user){ FactoryGirl.create(:user, company: company, role_id: FactoryGirl.create(:non_admin_role, company: company).id) }
+        let(:company_user) { user.company_users.first }
+
+        scenario "User without permissions cannot add Custom KPIs" do
+          company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
+          company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
+
+          campaign = FactoryGirl.create(:campaign, company: company)
+          visit campaign_path(campaign)
+
+          expect(page).to_not have_content('Add Custom KPI')
+        end
+      end
+
       scenario "Add Custom count KPI and set goals" do
         campaign = FactoryGirl.create(:campaign, company: @company)
         visit campaign_path(campaign)
@@ -202,6 +220,108 @@ feature "Campaigns", js: true, search: true do
 
         within "#custom-kpis" do
           expect(page).to have_content('223311.0')
+        end
+      end
+    end
+
+    feature "Edit custom KPIs", search: false do
+
+      feature "with a non admin user", search: false do
+        let(:company) { FactoryGirl.create(:company) }
+        let(:user){ FactoryGirl.create(:user, company: company, role_id: FactoryGirl.create(:non_admin_role, company: company).id) }
+        let(:company_user) { user.company_users.first }
+        let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+        let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company) }
+
+        scenario "User without permissions cannot edit Custom KPIs" do
+          company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
+          company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
+
+          campaign.add_kpi(kpi)
+
+          visit campaign_path(campaign)
+
+          within "#custom-kpis" do
+            expect(page).to have_content('My Custom KPI')
+            hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+          end
+
+          within visible_modal do
+            expect(page).to have_content('You are not authorized to perform this action')
+          end
+        end
+
+        scenario "User without permissions to edit Custom KPIs and permission to edit goals" do
+          company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
+          company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
+          company_user.role.permissions.create({action: :edit_kpi_goals, subject_class: 'Campaign'}, without_protection: true)
+
+          campaign.add_kpi(kpi)
+          FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: 100)
+
+          visit campaign_path(campaign)
+
+          within "#custom-kpis" do
+            expect(page).to have_content('My Custom KPI')
+            expect(page).to have_content('100.0')
+            expect(page).to have_content('my custom kpi description')
+            hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+          end
+
+          within visible_modal do
+            find_field("Name", disabled: true)
+            find_field("Description", disabled: true)
+            find_field("Kpi type", visible: false, disabled: true)
+            find_field("Capture mechanism", visible: false, disabled: true)
+            fill_in 'Goal', with: '350'
+            click_js_button 'Save'
+          end
+          ensure_modal_was_closed
+
+          within "#custom-kpis" do
+            expect(page).to have_content('350.0')
+          end
+        end
+      end
+
+      scenario "Edit Custom KPI" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+        kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: @company)
+        campaign.add_kpi(kpi)
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: 100)
+
+        visit campaign_path(campaign)
+
+        within "#custom-kpis" do
+          expect(page).to have_content('My Custom KPI')
+          hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+        end
+
+        within visible_modal do
+          fill_in 'Name', with: 'My Modified KPI'
+          fill_in 'Description', with: 'my modified kpi description'
+          select_from_chosen('Count', from: 'Kpi type', match: :first)
+          click_js_link 'Add a segment'
+          fill_in 'Segment name', with: 'Option 1'
+          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        within "#custom-kpis" do
+          expect(page).to have_content('My Modified KPI')
+          expect(page).to have_content('my modified kpi description')
+          hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+        end
+
+        within visible_modal do
+          fill_in 'Goal', with: '350'
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        within "#custom-kpis" do
+          expect(page).to have_content('350.0')
         end
       end
     end

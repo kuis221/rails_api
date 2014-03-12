@@ -1,5 +1,5 @@
 class KpisController < FilteredController
-  before_filter :load_campaign, only: [:new, :update, :edit, :create]
+  prepend_before_filter :load_campaign, only: [:new, :update, :edit, :create]
   respond_to :js, only: [:new, :create, :edit, :update]
 
   def load_campaign
@@ -13,7 +13,7 @@ class KpisController < FilteredController
         {goals_attributes: [:id, :goalable_id, :goalable_type, :value, :kpis_segment_id, :kpi_id]}
       end
       segment_params = if is_custom
-        if can?(:edit_custom_kpis, @campaign)
+        if can?(:create_custom_kpis, @campaign) || can?(:edit_custom_kpi, @campaign)
           {kpis_segments_attributes: [:id, :text, :_destroy, goals_attributes]}
         else
           {kpis_segments_attributes: [:id, goals_attributes]}
@@ -25,7 +25,7 @@ class KpisController < FilteredController
 
       # Allow only certain params for global KPIs like impresssions, interactions, gender, etc
       if is_custom
-        if can?(:edit_custom_kpis, @campaign)
+        if can?(:create_custom_kpis, @campaign) || can?(:edit_custom_kpi, @campaign)
           params.permit(kpi: [:name, :description, :kpi_type, :capture_mechanism] + common_params)[:kpi]
         else
           params.permit(kpi: common_params)[:kpi]
