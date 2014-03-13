@@ -195,8 +195,8 @@ describe Results::EventDataController do
 
       event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
       results = event.result_for_kpi(kpi)
-      results.first.value = '112233'
-      results.last.value = '445566'
+      results.first.value = '63'
+      results.last.value = '27'
       event.save
 
       Sunspot.commit
@@ -206,7 +206,7 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('MY KPI: UNO', 'MY KPI: DOS')
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('112233', '445566')
+        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('63', '27')
       end
     end
   end

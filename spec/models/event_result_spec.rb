@@ -89,6 +89,44 @@ describe EventResult do
     it { should_not allow_value([1]).for(:value).with_message('is not valid') }
   end
 
+  describe "for percentage/integer fields" do
+    before do
+      @kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage')
+      @segments = FactoryGirl.create_list(:kpis_segment, 3, kpi: @kpi)
+      subject.form_field = FactoryGirl.create(:campaign_form_field, field_type: 'percentage', options: {capture_mechanism: 'integer'}, kpi: @kpi)
+      @kpi.reload
+    end
+    it { should allow_value(nil).for(:value) }
+    it { should allow_value('0').for(:value) }
+    it { should allow_value('').for(:value) }
+    it { should allow_value('10').for(:value) }
+    it { should allow_value('100').for(:value) }
+    it { should_not allow_value(889889).for(:value).with_message('should be a number between 0 and 100') }
+    it { should_not allow_value(10.9).for(:value).with_message('must be an integer') }
+    it { should_not allow_value('666666').for(:value).with_message('should be a number between 0 and 100') }
+    it { should_not allow_value([1]).for(:value).with_message('is not a number') }
+    it { should_not allow_value('abc').for(:value).with_message('is not a number') }
+  end
+
+  describe "for percentage/decimal fields" do
+    before do
+      @kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage')
+      @segments = FactoryGirl.create_list(:kpis_segment, 3, kpi: @kpi)
+      subject.form_field = FactoryGirl.create(:campaign_form_field, field_type: 'percentage', options: {capture_mechanism: 'decimal'}, kpi: @kpi)
+      @kpi.reload
+    end
+    it { should allow_value(nil).for(:value) }
+    it { should allow_value(10.9).for(:value) }
+    it { should allow_value('0').for(:value) }
+    it { should allow_value('').for(:value) }
+    it { should allow_value('10').for(:value) }
+    it { should allow_value('100').for(:value) }
+    it { should_not allow_value(889889).for(:value).with_message('should be a number between 0 and 100') }
+    it { should_not allow_value('666666').for(:value).with_message('should be a number between 0 and 100') }
+    it { should_not allow_value([1]).for(:value).with_message('is not a number') }
+    it { should_not allow_value('abc').for(:value).with_message('is not a number') }
+  end
+
   describe "display_value" do
     describe "for count/check fields" do
       before do

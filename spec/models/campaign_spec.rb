@@ -239,6 +239,150 @@ describe Campaign do
   end
 
   describe "#promo_hours_graph_data" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    before(:each) do
+      Kpi.create_global_kpis
+    end
+    it "should return the results for all areas on the campaign with goals" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      other_area = FactoryGirl.create(:area, company: company)
+      los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
+      area.places << los_angeles
+      other_area.places << los_angeles
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 20)
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 10)
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, city: 'Los Angeles', state: 'California'))
+      campaign.areas << [area, other_area]
+      stats = campaign.promo_hours_graph_data
+      expect(stats.count).to eql 2
+
+      expect(stats.first['id']).to eql area.id
+      expect(stats.first['name']).to eql 'California'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql 20.0
+      expect(stats.first['executed']).to eql 0.0
+      expect(stats.first['scheduled']).to eql 2.0
+      expect(stats.first['remaining']).to eql 18.0
+      expect(stats.first['executed_percentage']).to eql 0
+      expect(stats.first['scheduled_percentage']).to eql 10
+      expect(stats.first['remaining_percentage']).to eql 90
+      expect(stats.first.has_key?('today')).to be_false
+      expect(stats.first.has_key?('today_percentage')).to be_false
+
+
+      expect(stats.last['id']).to eql area.id
+      expect(stats.last['name']).to eql 'California'
+      expect(stats.last['kpi']).to eql 'EVENTS'
+      expect(stats.last['goal']).to eql 10.0
+      expect(stats.last['executed']).to eql 0.0
+      expect(stats.last['scheduled']).to eql 1.0
+      expect(stats.last['remaining']).to eql 9.0
+      expect(stats.last['executed_percentage']).to eql 0
+      expect(stats.last['scheduled_percentage']).to eql 10
+      expect(stats.last['remaining_percentage']).to eql 90
+      expect(stats.last.has_key?('today')).to be_false
+      expect(stats.last.has_key?('today_percentage')).to be_false
+    end
+
+    it "should return the results for all areas on the campaign with goals even if there are not events" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+      campaign.areas << area
+      stats = campaign.promo_hours_graph_data
+      expect(stats.count).to eql 1
+
+      expect(stats.first['id']).to eql area.id
+      expect(stats.first['name']).to eql 'California'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql 10.0
+      expect(stats.first['executed']).to eql 0.0
+      expect(stats.first['scheduled']).to eql 0.0
+      expect(stats.first['remaining']).to eql 10.0
+      expect(stats.first['executed_percentage']).to eql 0
+      expect(stats.first['scheduled_percentage']).to eql 0
+      expect(stats.first['remaining_percentage']).to eql 100
+      expect(stats.first.has_key?('today')).to be_false
+      expect(stats.first.has_key?('today_percentage')).to be_false
+    end
+
+    it "should set the today values correctly" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
+      campaign = FactoryGirl.create(:campaign, start_date: '01/01/2014', end_date: '02/01/2014', company: company)
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 5)
+      campaign.areas << area
+
+      some_bar_in_los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
+      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm',
+        campaign: campaign, place: some_bar_in_los_angeles)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm',
+        campaign: campaign, place: some_bar_in_los_angeles)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm',
+        campaign: campaign, place: some_bar_in_los_angeles)
+      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm',
+        campaign: campaign, place: some_bar_in_los_angeles)
+
+      Timecop.travel Date.new(2014, 01, 15) do
+        all_stats = campaign.promo_hours_graph_data
+        expect(all_stats.count).to eql 2
+        stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
+        expect(stats['today']).to eql 4.838709677
+        expect(stats['today_percentage']).to eql 48
+
+        stats = all_stats.detect{|r| r['kpi'] == 'EVENTS'}
+        expect(stats['kpi']).to eql 'EVENTS'
+        expect(stats['today']).to eql 2.419354839
+        expect(stats['today_percentage']).to eql 48
+      end
+
+      Timecop.travel Date.new(2014, 01, 25) do
+        all_stats = campaign.promo_hours_graph_data
+        expect(all_stats.count).to eql 2
+
+        stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
+        expect(stats['today'].to_s).to eql "8.064516129"
+        expect(stats['today_percentage']).to eql 80
+
+        stats = all_stats.detect{|r| r['kpi'] == 'EVENTS'}
+        expect(stats['today'].to_s).to eql "4.032258065"
+        expect(stats['today_percentage']).to eql 80
+      end
+
+      # When the campaing end date is before the current date
+      Timecop.travel Date.new(2014, 02, 25) do
+        all_stats = campaign.promo_hours_graph_data
+        expect(all_stats.count).to eql 2
+
+        stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
+        expect(stats['today']).to eql 10.0
+        expect(stats['today_percentage']).to eql 100
+
+        stats = all_stats.detect{|r| r['kpi'] == 'EVENTS'}
+        expect(stats['today']).to eql 5.0
+        expect(stats['today_percentage']).to eql 100
+      end
+
+
+      # When the campaing start date is after the current date
+      Timecop.travel Date.new(2013, 12, 25) do
+        all_stats = campaign.promo_hours_graph_data
+        expect(all_stats.count).to eql 2
+
+        stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
+        expect(stats['today']).to eql 0
+        expect(stats['today_percentage']).to eql 0
+
+        stats = all_stats.detect{|r| r['kpi'] == 'EVENTS'}
+        expect(stats['today']).to eql 0
+        expect(stats['today_percentage']).to eql 0
+      end
+    end
+  end
+
+  describe "self.promo_hours_graph_data" do
     before(:each) do
       Kpi.create_global_kpis
     end

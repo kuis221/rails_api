@@ -18,12 +18,13 @@ describe Results::EventDataHelper do
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
       results = event.result_for_kpi(kpi)
-      results.first.value = '112233'
-      results.last.value = '445566'
-      event.save
+      results.first.value = '88'
+      results.last.value = '22'
+      event.valid?
+      expect(event.save).to be_true
 
       helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [112233, 445566]
+      helper.custom_fields_to_export_values(event).should == [88, 22]
     end
 
     it "correctly include segmented kpis and non-segmented kpis together" do
@@ -43,17 +44,17 @@ describe Results::EventDataHelper do
       helper.custom_fields_to_export_values(event).should == [nil, nil, nil]
 
       results = event.result_for_kpi(kpi)
-      results.first.value = '112233'
-      results.last.value = '445566'
+      results.first.value = '66'
+      results.last.value = '34'
       event.save
 
-      helper.custom_fields_to_export_values(event).should == [nil, 112233, 445566]
+      helper.custom_fields_to_export_values(event).should == [nil, 66, 34]
 
       event.result_for_kpi(kpi2).value = '666666'
       event.save
 
       helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [666666, 112233, 445566]
+      helper.custom_fields_to_export_values(event).should == [666666, 66, 34]
     end
 
     it "returns nil for the fields that doesn't apply to the event's campaign" do
