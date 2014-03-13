@@ -28,6 +28,7 @@ class EventResult < ActiveRecord::Base
 
   validates :value, numericality: true, allow_nil: true, allow_blank: true, if: :allow_decimals?
   validates :value, numericality: { only_integer: true }, allow_nil: true, allow_blank: true, if: :is_numeric_field?, unless: :allow_decimals?
+  validates :value, inclusion: { in: 0..100, message: 'should be a number between 0 and 100' }, allow_nil: true, allow_blank: true, if: :is_segmented?
   validates :form_field_id, numericality: true, presence: true
   validates :kpi_id, numericality: true, allow_nil: true
   validates :kpis_segment_id, numericality: true, allow_nil: true
@@ -46,7 +47,7 @@ class EventResult < ActiveRecord::Base
   scope :age, lambda{ where(kpis_segment_id: Kpi.age.kpis_segment_ids) }
   scope :ethnicity, lambda{ where(kpis_segment_id: Kpi.ethnicity.kpis_segment_ids) }
 
-  delegate :is_numeric?, :capture_mechanism, to: :form_field, allow_nil: true
+  delegate :is_numeric?, :capture_mechanism, :is_segmented?, to: :form_field, allow_nil: true
 
   def display_value
     if form_field.field_type == 'count'
@@ -71,6 +72,8 @@ class EventResult < ActiveRecord::Base
       end
     elsif form_field.present? && form_field.is_numeric? && !form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'] != '' && self.attributes['value'].respond_to?(:to_i)
       self.attributes['value'].to_i
+    elsif form_field.present? && form_field.is_decimal? && self.attributes['value'].present? && self.attributes['value'] != '' && self.attributes['value'].respond_to?(:to_f)
+      self.attributes['value'].to_f
     else
       self.attributes['value']
     end

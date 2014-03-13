@@ -74,7 +74,7 @@ class Campaign < ActiveRecord::Base
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
-  
+
   # Activity-Type relationships
   has_many :activity_type_campaigns
   has_many :activity_types, through: :activity_type_campaigns
@@ -198,6 +198,47 @@ class Campaign < ActiveRecord::Base
       self.brands << brand unless existing_ids.include?(brand.id)
     end
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
+  end
+
+  def promo_hours_graph_data
+    stats={}
+    queries = chilren_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(areas).map do |goal|
+      name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
+      stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
+      events.active.in_areas([goal.goalable]).select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE  WHEN events.aasm_state='approved' THEN 'executed' ELSE 'scheduled' END as status, #{group}").reorder(nil).group('1, 2, 3').to_sql
+    end
+
+    ActiveRecord::Base.connection.select_all("
+      SELECT keys[1] as id, kpi, executed, scheduled FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 2, 1',
+        'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(keys varchar[], kpi varchar, executed numeric, scheduled numeric)").each do |result|
+      r = stats["#{result['id']}-#{result['kpi']}"]
+      r['executed'] = result['executed'].to_f if result['executed']
+      r['scheduled'] = result['scheduled'].to_f if result['scheduled']
+    end if queries.any?
+
+    stats.each do |k , r|
+      r['remaining'] = [0, r['goal']-(r['scheduled']+r['executed'])].max
+      r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
+      r['executed_percentage'] = [100, r['executed_percentage']].min
+      r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
+      r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
+      r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
+      if start_date && end_date && r['goal'] > 0
+        s = start_date.to_date
+        e = end_date.to_date
+        days = (e - s).to_i
+        if Date.today > s && Date.today < e && days > 0
+          r['today'] = ((Date.today-s).to_i+1) * r['goal'] / days
+        elsif Date.today > e
+          r['today'] = r['goal']
+        else
+          r['today'] = 0
+        end
+        r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
+      end
+    end
+
+    stats.values.sort{|a, b| a['name'] <=> b['name'] }
   end
 
   def brands_list
@@ -363,20 +404,15 @@ class Campaign < ActiveRecord::Base
 
     # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
-      # q = with_goals_for([Kpi.promo_hours, Kpi.events]).joins(:events).where(events: {active: true}).
-      #     select('ARRAY[campaigns.id, goals.kpi_id] as id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, COUNT(events.id) as events_count,CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
-      #     order('1, 2').group('1, 2, 3, 4, 5, 7').to_sql.gsub(/'/,"''")
-      # data = ActiveRecord::Base.connection.select_all("SELECT id[1] as id, name, start_date, end_date, id[2] as kpi_id, goal, events_count, executed, scheduled  FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int[], name varchar, start_date date, end_date date, goal numeric, events_count int, executed numeric, scheduled numeric)")
-
-     q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+      q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
          select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'PROMO HOURS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, SUM(events.promo_hours)').
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-     data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
 
-     q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+      q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
          select('campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal,\'EVENTS\' as kpi, CASE  WHEN events.aasm_state=\'approved\' THEN \'executed\' ELSE \'scheduled\' END as status, COUNT(events.id)').
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-     data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
       data.sort!{|a, b| a['name'] <=> b['name'] }
 
       data.each do |r|
@@ -407,5 +443,7 @@ class Campaign < ActiveRecord::Base
       data
     end
   end
+
+
 
 end

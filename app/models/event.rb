@@ -99,7 +99,17 @@ class Event < ActiveRecord::Base
       joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id').
       joins('LEFT JOIN users ON users.id=company_users.user_id')
   }
-  scope :in_areas, ->(areas) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', areas.map{|a| a.place_ids}.flatten.uniq+[0], areas.map{|a| a.locations.map(&:id)}.flatten.uniq+[0]) }
+  #scope :in_areas, ->(areas) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', areas.map{|a| a.place_ids}.flatten.uniq+[0], areas.map{|a| a.locations.map(&:id)}.flatten.uniq+[0]) }
+  scope :in_areas, ->(areas) {
+    ids = areas.map(&:id);
+    joins(:place).where(
+      'events.place_id in (
+          select place_id from placeables where placeable_type=\'Area\' and placeable_id in (?)
+        UNION
+          select place_id from locations_places where location_id in (select distinct places.location_id from places INNER JOIN placeables ON placeable_type=\'Area\' and placeable_id in (?) AND places.id=placeables.place_id WHERE places.is_location=?)
+      )', ids, ids, true
+      )
+  }
   scope :in_places, ->(places) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil }.compact.uniq+[0]) }
 
   track_who_does_it
