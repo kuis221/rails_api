@@ -11,6 +11,9 @@
       button.btn.download.xlsx-download-link data-url="#{}" title="Download"
 
     #report-container
-      | This is the run report mode
+      / This will be filled by AJAX
 
   .clearfix
+
+javascript:
+  $.get('#{results_report_path(resource, format: :js)}');

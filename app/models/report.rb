@@ -97,7 +97,7 @@ class Report < ActiveRecord::Base
   end
 
   def can_be_generated?
-    rows.try(:any?) && (values.try(:any?) || columns.try(:any?))
+    rows.try(:any?) && values.try(:any?) && columns.try(:any?)
   end
 
   def fetch_page(params={})
@@ -151,7 +151,7 @@ class Report < ActiveRecord::Base
         SELECT #{select_cols.join(', ')}
         FROM crosstab('\n\t#{values_sql(rows_columns).compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
           'select m from generate_series(1,#{values_columns.count}) m')
-        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}
+        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC LIMIT 100 OFFSET #{params[:offset]}
       ")
 
       empty_values = Hash[report_columns.map{|k| [k, nil]}]
@@ -230,7 +230,8 @@ class Report < ActiveRecord::Base
   protected
     def format_field(value)
       v = value
-      v = v.map{|k, v| v.to_h } if value.is_a?(ActionController::Parameters)
+      v = [] if v.nil? || v == ''
+      v = v.map{|k, v| v.to_h } if v.is_a?(ActionController::Parameters)
       v
     end
 

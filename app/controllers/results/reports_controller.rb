@@ -1,5 +1,5 @@
 class Results::ReportsController < InheritedResources::Base
-  respond_to :js, only: [:new, :create, :edit, :update, :share_form]
+  respond_to :js, only: [:new, :create, :edit, :update, :share_form, :show]
 
   load_and_authorize_resource except: [:index]
 

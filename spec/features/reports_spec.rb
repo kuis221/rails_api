@@ -5,6 +5,7 @@ feature "Reports", js: true do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
+    page.driver.resize(1024, 2500)
   end
 
   after do
@@ -79,7 +80,7 @@ feature "Reports", js: true do
       @report = FactoryGirl.create(:report, name: 'My Report',
         description: 'Description of my report',
         active: true, company: @company)
-      page.driver.resize(1024, 1500)
+
     end
 
     scenario "allows the user to modify an existing custom report" do
@@ -88,6 +89,7 @@ feature "Reports", js: true do
       visit results_report_path(@report)
 
       click_link 'Edit'
+
 
       expect(current_path).to eql(build_results_report_path(@report))
 
@@ -127,7 +129,6 @@ feature "Reports", js: true do
       @report = FactoryGirl.create(:report, name: 'Events by Venue',
         description: 'a resume of events by venue',
         active: true, company: @company)
-      page.driver.resize(1024, 1500)
       Kpi.create_global_kpis
     end
 

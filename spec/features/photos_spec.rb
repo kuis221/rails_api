@@ -72,7 +72,7 @@ feature "Photos", search: true, js: true do
         find('.rating span.full', match: :first)
         expect(page.all(".rating span.full").count).to eql(2)
         expect(page.all(".rating span.empty").count).to eql(3)
-        find('.rating span:nth-child(3)').click
+        find('.rating span:nth-child(3)').trigger('click')
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
         click_button 'Close'

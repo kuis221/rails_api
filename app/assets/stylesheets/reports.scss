@@ -190,6 +190,7 @@ ul.reports-list {
 			ul{
 				margin-bottom: 0;
 				margin-top: 0;
+				height:90%;
 			}
 		}
 
@@ -414,7 +415,7 @@ $report_border_color: #ccc;
 			margin-left: 20px;
 			color: #ccc;
 		}
-		li.user:after {
+		li.company_user:after {
 			content: "USER";
 		}
 		li.role:after {
