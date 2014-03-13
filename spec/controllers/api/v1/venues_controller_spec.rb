@@ -178,4 +178,91 @@ describe Api::V1::VenuesController do
       expect(result.first).to include("value"=>"Casa de Doña Lela, 1234 Tres Rios", "label"=> "Casa de Doña Lela, 1234 Tres Rios", "id"=>venue.place_id)
     end
   end
+
+
+  describe "GET 'autocomplete'", search: true do
+    it "should return the correct buckets in the right order" do
+      Sunspot.commit
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: '', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      buckets.map{|b| b['label']}.should == ['Campaigns', 'Brands', 'Areas', 'People']
+    end
+
+    it "should return the users in the People Bucket" do
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gu', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the teams in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Spurs', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'sp', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+    end
+
+    it "should return the teams and users in the People Bucket" do
+      team = FactoryGirl.create(:team, name: 'Valladolid', company_id: company.id)
+      user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'va', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      people_bucket = buckets.select{|b| b['label'] == 'People'}.first
+      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+    end
+
+    it "should return the campaigns in the Campaigns Bucket" do
+      campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: company.id)
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
+      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+    end
+
+    it "should return the brands in the Brands Bucket" do
+      brand = FactoryGirl.create(:brand, name: 'Cacique')
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
+      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+    end
+
+    it "should return the venues in the Places Bucket" do
+      area = FactoryGirl.create(:area, company_id: company.id, name: 'Guanacaste')
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gua', format: :json
+      response.should be_success
+
+      buckets = JSON.parse(response.body)
+      places_bucket = buckets.select{|b| b['label'] == 'Areas'}.first
+      places_bucket['value'].should == [{"label"=>"<i>Gua</i>nacaste", "value"=>area.id.to_s, "type"=>"area"}]
+    end
+  end
 end

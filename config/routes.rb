@@ -57,6 +57,7 @@ Brandscopic::Application.routes.draw do
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
+          get :autocomplete, on: :collection
           member do
             get :analysis
             get :photos
