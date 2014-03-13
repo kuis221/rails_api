@@ -6097,9 +6097,14 @@ ul#reports-list {
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
+				overflow: hidden;
+				height: 202px;
 				&> a > img{
 					display: block;
 					width: 100%;
+					height: auto;
+					min-height: 100%;
+					position: absolute;
 				}
 			}
 			&:hover{
