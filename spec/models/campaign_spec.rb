@@ -244,6 +244,20 @@ describe Campaign do
     before(:each) do
       Kpi.create_global_kpis
     end
+
+    it "should return empty if the campaign has no areas associated" do
+      stats = campaign.promo_hours_graph_data
+      expect(stats).to be_empty
+    end
+
+    it "should return empty if the campaign has areas but none have goals" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      campaign.areas << area
+      stats = campaign.promo_hours_graph_data
+
+      expect(stats).to be_empty
+    end
+
     it "should return the results for all areas on the campaign with goals" do
       area = FactoryGirl.create(:area, name: 'California', company: company)
       other_area = FactoryGirl.create(:area, company: company)

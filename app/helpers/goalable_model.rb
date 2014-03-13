@@ -36,6 +36,8 @@ module GoalableModel
           goal
         end
       end
+
+      receiver.has_many :chilren_goals, class_name: 'Goal', as: :parent
     end
   end
 end
