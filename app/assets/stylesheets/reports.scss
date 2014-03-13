@@ -57,7 +57,18 @@ ul.reports-list {
 			margin-left: 20px;
 			vertical-align: top;
 		}
-		.icon-share, .table-view, .charts{
+		form{
+			display: inline-block;
+		}
+		.icon-share{
+			background-image: url("share.svg");
+			background-size: 35%;
+			background-repeat: no-repeat;
+			background-position: 20px 7px;
+			width: 60px;
+			height: 35px;
+		}
+		.table-view, .charts{
 			padding: 6px 17px;
 		}
 	}
