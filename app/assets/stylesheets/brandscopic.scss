@@ -1295,7 +1295,7 @@ li.dropdown a{
 				li a{
 					color: $app_bg;
 					font-weight: bold;
-					padding: 6px 20px;
+					padding: 6px 15px;
 					&:hover{
 						background-color: $menu;
 						color: white;
@@ -2782,7 +2782,7 @@ textarea::-webkit-input-placeholder {
 		li a{
 			color: $app_bg;
 			font-size: 13px;
-			padding: 6px 20px;
+			padding: 6px 15px;
 			&:hover{
 				color: white;
 			}
