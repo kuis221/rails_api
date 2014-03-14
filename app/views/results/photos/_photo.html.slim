@@ -1,6 +1,6 @@
 - show_date_details ||= true
 li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
-  div.thumbnail-inner
+  div.thumbnail-inner 
     .thumbnail-toolbar
       - if can? :deactivate_photo, Event
         - if photo.active?
