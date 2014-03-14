@@ -46,3 +46,12 @@ javascript:
     doneLoading = true;
   });
 
+  var downloading = false;
+  $('.report-link').click(function(){
+    if (!downloading){
+      downloading = true;
+      $.get($(this).data('url'), function(){
+        downloading = false;
+      });
+    }
+  })

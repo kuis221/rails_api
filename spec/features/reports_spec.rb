@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'open-uri'
 
 feature "Reports", js: true do
   before do
@@ -131,7 +132,7 @@ feature "Reports", js: true do
       report = FactoryGirl.create(:report,
         company: @company,
         columns: [{"field"=>"values", "label"=>"Values"}],
-        rows:    [{"field"=>"place:name", "label"=>"Interactions"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
 
@@ -140,6 +141,25 @@ feature "Reports", js: true do
       expect(page).to have_content('GRAND TOTAL: 444.0')
       expect(page).to have_content('Bar 1 123.0')
       expect(page).to have_content('Bar 2 321.0')
+
+
+      # Export the report
+      with_resque do
+        expect {
+          click_js_button 'Download'
+          within visible_modal do
+            expect(page).to have_content('We are processing your request, the download will start soon...')
+          end
+          ensure_modal_was_closed
+        }.to change(ListExport, :count).by(1)
+      end
+
+      export = ListExport.last
+      csv_rows = CSV.parse(open(export.file.url).read)
+      expect(csv_rows[0]).to eql ['Venue Name', 'Impressions']
+      expect(csv_rows[1]).to eql ['Bar 1', '123.0']
+      expect(csv_rows[2]).to eql ['Bar 2', '321.0']
+      export.destroy
     end
   end
 

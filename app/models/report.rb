@@ -123,6 +123,19 @@ class Report < ActiveRecord::Base
     end
   end
 
+  def to_csv(&block)
+    CSV.generate do |csv|
+      csv << rows.map(&:label) +  report_columns.map{|c| c.gsub('||', '/')}
+      row_fields = rows.map(&:to_sql_name)
+      results = fetch_page
+      total = results.count
+      fetch_page.each_with_index do |row, i|
+        csv << row_fields.map{|n| row[n] } + row['values']
+        yield total, i if block_given? && i%50 == 0
+      end
+    end
+  end
+
   def offset
     ((@page || 1)-1) * 50
   end
@@ -137,7 +150,7 @@ class Report < ActiveRecord::Base
     params.reverse_merge! apply_values_formatting: true
 
     if can_be_generated?
-      select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
+      select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{f.to_sql_name}"}
       value_fields = {}
       values_columns = values.map do |f|
         if (m = /\Akpi:([0-9]+)\z/.match(f['field'])) && (kpi = load_kpi(m[1])) && (kpi.is_segmented? || kpi.kpi_type == 'count')
@@ -148,7 +161,7 @@ class Report < ActiveRecord::Base
             "#{name} numeric"
           end
         else
-          name = field_to_sql_name(f['field'])
+          name = f.to_sql_name
           select_cols.push name
           value_fields[name] = "#{f['label']}"
           "#{name} numeric"
@@ -164,8 +177,8 @@ class Report < ActiveRecord::Base
 
       empty_values = Hash[report_columns.map{|k| [k, nil]}]
 
-      key_fields = rows.compact.map{|f| field_to_sql_name(f['field']) } - ['values']
-      column_fields = columns.map{|f| field_to_sql_name(f['field']) }
+      key_fields = rows.compact.map{|f| f.to_sql_name } - ['values']
+      column_fields = columns.map{|f| f.to_sql_name }
       rows = []
       row = values = previous_key =nil
       results.each do |result|
@@ -202,10 +215,6 @@ class Report < ActiveRecord::Base
       end
     end
     result_values
-  end
-
-  def field_to_sql_name(field_name)
-    field_name.gsub(/:/,'_')
   end
 
   def report_columns
@@ -264,7 +273,7 @@ class Report < ActiveRecord::Base
         values.map do |value|
           value_field = value['field']
           s = add_joins_scopes(base_events_scope, value).group('1')
-          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0])
+          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && @page.present?
           if m = /\Akpi:([0-9]+)\z/.match(value['field'])
             kpi = load_kpi(m[1])
             if kpi.is_segmented?
@@ -424,6 +433,10 @@ class Report::Field
       definition = klass.report_fields[m[2].to_sym]
       definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
     end
+  end
+
+  def to_sql_name
+    field.gsub(/:/,'_')
   end
 
   def display

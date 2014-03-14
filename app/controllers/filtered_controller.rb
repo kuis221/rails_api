@@ -69,7 +69,7 @@ class FilteredController < InheritedResources::Base
 
     def export_list(export)
       @_export = export
-      @_params = @search_params = export.params.merge(per_page: 100)
+      @search_params = export.params.merge(per_page: 100)
       @solr_search = resource_class.do_search(@search_params)
       @collection_count = @solr_search.total
       @total_pages = @solr_search.results.total_pages
