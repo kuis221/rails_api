@@ -90,6 +90,57 @@ feature "Photos", search: true, js: true do
         expect(page.all(".rating span.empty").count).to eql(2)
       end
     end
+
+    scenario "a user can deactivate a photo" do
+      FactoryGirl.create(:photo, attachable: event)
+      visit event_path(event)
+
+      # Check that the image appears on the page
+      within gallery_box do
+        expect(page).to have_selector('li')
+        click_js_link 'View Photo'
+      end
+
+      # Deactivate the image from the link inside the gallery modal
+      within gallery_modal do
+        expect(page).to have_selector('a.photo-deactivate-link')
+        click_js_link 'Deactivate'
+      end
+
+      confirm_prompt "Are you sure you want to deactivate this photo?"
+
+      within gallery_modal do
+        expect(page).to have_no_selector('a.photo-deactivate-link')
+      end
+
+      expect(gallery_box).to have_no_selector('a.photo-deactivate-link')
+    end
+
+    scenario "a user can activate a photo" do
+      #This should be done from Photo Results section
+      event = FactoryGirl.create(:approved_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}}))
+      FactoryGirl.create(:photo, attachable: event, active: false)
+      event.save
+
+      Sunspot.commit
+
+      visit results_photos_path
+
+      filter_section('STATUS').unicheck('Inactive')
+
+      # Check that the image appears on the page
+      within find('.gallery.photoGallery') do
+        expect(page).to have_selector('li')
+        click_js_link 'View Photo'
+      end
+
+      # Activate the image from the link inside the gallery modal
+      within gallery_modal do
+        expect(page).to have_selector('a.icon-ok-circle')
+        click_js_link 'Activate'
+        expect(page).to have_no_selector('a.icon-remove-circle')
+      end
+    end
   end
 
   def gallery_box
