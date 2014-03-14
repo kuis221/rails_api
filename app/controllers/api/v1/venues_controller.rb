@@ -601,11 +601,69 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     render json: @venues.first(10)
   end
 
+
+  api :GET, '/api/v1/venues/autocomplete', 'Return a list of results grouped by categories'
+  param :q, String, required: true, desc: "The search term"
+  description <<-EOS
+  Returns a list of results matching the searched term grouped in the following categories
+  * *Campaigns*: Includes categories
+  * *Brands*: Includes brands and brand portfolios
+  * *Areas*: Includes areas
+  * *People*: Includes users and teams
+  EOS
+  example <<-EOS
+  GET: /api/v1/venues/autocomplete.json?auth_token=XXssU!suwq92-1&company_id=2&q=jam
+  [
+      {
+          "label": "Campaigns",
+          "value": []
+      },
+      {
+          "label": "Brands",
+          "value": [
+              {
+                  "label": "<i>Jam</i>eson LOCALS",
+                  "value": "13",
+                  "type": "brand"
+              },
+              {
+                  "label": "<i>Jam</i>eson Whiskey",
+                  "value": "8",
+                  "type": "brand"
+              }
+          ]
+      },
+      {
+          "label": "Places",
+          "value": [
+              {
+                  "label": "<i>Jam</i>aica",
+                  "value": "2386",
+                  "type": "area"
+              }
+          ]
+      },
+      {
+          "label": "People",
+          "value": []
+      }
+  ]
+  EOS
+  def autocomplete
+    buckets = autocomplete_buckets({
+      campaigns: [Campaign],
+      brands: [Brand, BrandPortfolio],
+      areas: [Area],
+      people: [CompanyUser, Team]
+    })
+    render :json => buckets.flatten
+  end
+
   protected
     def permitted_params
       params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
     end
     def permitted_search_params
-      params.permit({campaign: []}, :location, :radius)
+      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, :location, :radius)
     end
 end

@@ -54,7 +54,10 @@ $.widget 'nmk.photoGallery', {
 			@rating.hide()
 
 	setDate: (date) ->
-		@date.html date
+		if date
+			@date.html(date).show()
+		else
+			@date.html('').hide()
 
 	setAddress: (address) ->
 		@address.html address
