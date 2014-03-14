@@ -13,6 +13,7 @@ $.widget 'nmk.reportTableScroller',
 		$.each @cols, (i, cell) =>
 			$(cell).data 'width', $(cell).width()
 			$(cell).data 'outer-width', $(cell).outerWidth()
+		@element.css({width: '100%'})
 
 		$('.report-arrows a').on 'click.reportTableScroller', (e) =>
 			@adjustColumnsSize $(e.target).data('direction')

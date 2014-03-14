@@ -17,6 +17,11 @@ class Results::ReportsController < InheritedResources::Base
   def build
   end
 
+  def rows
+    resource.set_page params[:page].to_i
+    render layout: false
+  end
+
   def share_form
     @sharing_collection = ActiveRecord::Base.connection.select_all("
       #{current_company.company_users.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').active.joins(:user).to_sql}

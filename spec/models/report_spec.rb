@@ -574,4 +574,49 @@ describe Report do
       end
     end
   end
+
+  describe "#first_row_values_for_page" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    before do
+      Kpi.create_global_kpis
+    end
+    it "returns all the venues names" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'Texas', city: 'Houston'),
+        results: {impressions: 100})
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'California', city: 'Los Angeles'),
+        results: {impressions: 200})
+      FactoryGirl.create(:event, place: FactoryGirl.create(:place, state: 'California', city: 'San Francisco'),
+        campaign: FactoryGirl.create(:campaign, name: 'Ron Centenario FY12', company: company),
+        results: {impressions: 300})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      values = report.first_row_values_for_page
+      expect(values).to match_array ["Guaro Cacique 2013", "Ron Centenario FY12"]
+    end
+
+    it "returns all the campaign names" do
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Bar Texano', state: 'Texas', city: 'Houston'),
+        results: {impressions: 100})
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Texas Restaurant', state: 'California', city: 'Los Angeles'),
+        results: {impressions: 200})
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Texas Bar & Grill', state: 'California', city: 'San Francisco'),
+        results: {impressions: 300})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"campaign:name", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      values = report.first_row_values_for_page
+      expect(values).to match_array ["Bar Texano", "Texas Bar & Grill", 'Texas Restaurant']
+    end
+  end
 end

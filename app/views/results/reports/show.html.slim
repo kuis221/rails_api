@@ -8,12 +8,41 @@
       = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
     .text-right
-      button.btn.download.xlsx-download-link data-url="#{}" title="Download"
+      button.btn.download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"
 
     #report-container
       / This will be filled by AJAX
+    .report-loading-spinner
 
   .clearfix
 
 javascript:
-  $.get('#{results_report_path(resource, format: :js)}');
+  var doneLoading = false;
+  $.get('#{results_report_path(resource, format: :js)}', function(){
+    haveReachedTheEnd = ($('#report-container table').length == 0);
+    var infiniteScroller = $('#report-container').infiniteScrollHelper({
+      loadMore: function(page) {
+        if (!haveReachedTheEnd) {
+          doneLoading = false;
+          $('.report-loading-spinner').show();
+          $.get('#{rows_results_report_path(resource)}?page='+page, function(response){
+            $('.report-loading-spinner').hide();
+            if (response == '') {
+              haveReachedTheEnd = true
+            } else {
+              $('#report-container table tbody').append(response)
+              doneLoading=true
+            }
+          });
+        }
+        else {
+          false
+        }
+      },
+      doneLoading: function() {
+        return doneLoading;
+      }
+    });
+    doneLoading = true;
+  });
+

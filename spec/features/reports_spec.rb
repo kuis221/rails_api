@@ -76,22 +76,19 @@ feature "Reports", js: true do
   end
 
   feature "run view" do
-    before do
-      @report = FactoryGirl.create(:report, name: 'My Report',
+    let(:report) { FactoryGirl.create(:report, name: 'My Report',
         description: 'Description of my report',
-        active: true, company: @company)
-
-    end
+        active: true, company: @company) }
 
     scenario "allows the user to modify an existing custom report" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit results_report_path(@report)
+      visit results_report_path(report)
 
       click_link 'Edit'
 
 
-      expect(current_path).to eql(build_results_report_path(@report))
+      expect(current_path).to eql(build_results_report_path(report))
 
       within ".sidebar" do
         find("li", text: 'Kpi #1').drag_to field_list('columns')
@@ -100,17 +97,17 @@ feature "Reports", js: true do
 
       click_button 'Save'
 
-      expect(current_path).to eql(build_results_report_path(@report))
+      expect(current_path).to eql(build_results_report_path(report))
     end
 
     scenario "allows the user to cancel changes an existing custom report" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit results_report_path(@report)
+      visit results_report_path(report)
 
       click_link 'Edit'
 
-      expect(current_path).to eql(build_results_report_path(@report))
+      expect(current_path).to eql(build_results_report_path(report))
 
       within ".sidebar" do
         find("li", text: 'Kpi #1').drag_to field_list('columns')
@@ -120,7 +117,29 @@ feature "Reports", js: true do
       page.execute_script('$(window).off("beforeunload")') # Prevent the alert as there is no way to test it
       click_link 'Exit'
 
-      expect(current_path).to eql(results_report_path(@report))
+      expect(current_path).to eql(results_report_path(report))
+    end
+
+    scenario "should render the report" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 1'),
+        results: {impressions: 123, interactions: 50})
+
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 2'),
+        results: {impressions: 321, interactions: 25})
+
+      report = FactoryGirl.create(:report,
+        company: @company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Interactions"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+
+      visit results_report_path(report)
+
+      expect(page).to have_content('GRAND TOTAL: 444.0')
+      expect(page).to have_content('Bar 1 123.0')
+      expect(page).to have_content('Bar 2 321.0')
     end
   end
 
