@@ -130,8 +130,17 @@
           - else
             li.photo-item
               div.thumbnail-inner
-                a.fancybox data-fancybox-type='image' href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}" rel='photo-gallery'
-                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+                a data-toggle='gallery' title="View Photo" href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
+                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}", data: {\
+                      title:  resource.name,\
+                      url: '',\
+                      urls: [],\
+                      date: '',\
+                      address: strip_tags(place_address(resource.place, false, ', ', ', ')),\
+                      rating: nil,\
+                      permissions: [],\
+                      id: nil\
+                    }
 
 - if can?(:view_comments, resource) && resource.reviews.count > 0
   #venue-comments.details_box
