@@ -50,8 +50,8 @@ module DashboardHelper
   def recent_comments_list
     Comment.for_user_accessible_events(current_company_user).includes(commentable: [:campaign, :place]).order('comments.created_at DESC').limit(9)
   end
-
-  def campaing_promo_hours_chart(c)
+  
+  def campaign_promo_hours_chart(c)
     remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
     today_bar_indicator = ''.html_safe
     if c['today_percentage']
