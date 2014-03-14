@@ -1295,10 +1295,22 @@ li.dropdown a{
 				li a{
 					color: $app_bg;
 					font-weight: bold;
+					padding: 6px 15px;
 					&:hover{
-						background-color: $header;
+						background-color: $menu;
 						color: white;
 					}
+				}
+			}
+		}
+
+		li#admin{
+			ul.dropdown-menu{
+				min-width:200px !important;
+				left: -161px;
+				width: 200px !important;
+				&:before{
+					left: 170px;
 				}
 			}
 		}
@@ -1669,7 +1681,7 @@ li#user_menu{
 		}
 		&:before{
 			border-bottom: 10px solid $alert_grey;
-			left:152px;
+			left:155px;
 		}
 	}
 }
@@ -2763,13 +2775,14 @@ textarea::-webkit-input-placeholder {
 			font-weight: bold;
 		}
 		li a:hover{
-			background-color: $header !important;
+			background-color: $menu !important;
 		}
 	}
 	.dropdown.open{
 		li a{
 			color: $app_bg;
 			font-size: 13px;
+			padding: 6px 15px;
 			&:hover{
 				color: white;
 			}
@@ -2784,7 +2797,7 @@ textarea::-webkit-input-placeholder {
 			margin: 20px 0 0;
 			&:before{
 				border-bottom: 10px solid $alert_grey;
-				left: 222px;
+				left: 230px;
 			}
 		}
 	}
@@ -6084,9 +6097,14 @@ ul#reports-list {
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
+				overflow: hidden;
+				height: 202px;
 				&> a > img{
 					display: block;
 					width: 100%;
+					height: auto;
+					min-height: 100%;
+					position: absolute;
 				}
 			}
 			&:hover{
