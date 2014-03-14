@@ -164,7 +164,6 @@ describe Report do
     end
   end
 
-
   describe "#fetch_page" do
     let(:company) { FactoryGirl.create(:company) }
     let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
@@ -554,6 +553,12 @@ describe Report do
             {"event_start_date"=>"2014/01/01", "values" => [100.00, 50.0, nil, nil]},
             {"event_start_date"=>"2014/01/12", "values" => [nil, nil, 200.00, 150.0]}
         ]
+
+        # Test to_csv
+        csv = CSV.parse(report.to_csv)
+        expect(csv[0]).to eql ["Start date", "California/Impressions", "California/Interactions", "Texas/Impressions", "Texas/Interactions"]
+        expect(csv[1]).to eql ["2014/01/01", "100.0", "50.0", nil, nil]
+        expect(csv[2]).to eql ["2014/01/12", nil, nil, "200.0", "150.0"]
       end
 
       it "returns a line for each team  when adding a team field as a row and the team is part of the event" do
@@ -572,6 +577,64 @@ describe Report do
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
         ]
       end
+    end
+  end
+
+  describe "#first_row_values_for_page" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    before do
+      Kpi.create_global_kpis
+    end
+    it "returns all the venues names" do
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'Texas', city: 'Houston'),
+        results: {impressions: 100})
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, state: 'California', city: 'Los Angeles'),
+        results: {impressions: 200})
+      FactoryGirl.create(:event, place: FactoryGirl.create(:place, state: 'California', city: 'San Francisco'),
+        campaign: FactoryGirl.create(:campaign, name: 'Ron Centenario FY12', company: company),
+        results: {impressions: 300})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      values = report.first_row_values_for_page
+      expect(values).to match_array ["Guaro Cacique 2013", "Ron Centenario FY12"]
+
+      # Test to_csv
+      csv = CSV.parse(report.to_csv)
+      expect(csv[0]).to eql ['Campaign', 'California/Impressions', 'Texas/Impressions']
+      expect(csv[1]).to eql ['Guaro Cacique 2013', '200.0', '100.0']
+      expect(csv[2]).to eql ['Ron Centenario FY12', '300.0', nil]
+    end
+
+    it "returns all the campaign names" do
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Bar Texano', state: 'Texas', city: 'Houston'),
+        results: {impressions: 100})
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Texas Restaurant', state: 'California', city: 'Los Angeles'),
+        results: {impressions: 200})
+      FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, name: 'Texas Bar & Grill', state: 'California', city: 'San Francisco'),
+        results: {impressions: 300})
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"campaign:name", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      values = report.first_row_values_for_page
+      expect(values).to match_array ["Bar Texano", "Texas Bar & Grill", 'Texas Restaurant']
+
+      # Test to_csv
+      csv = CSV.parse(report.to_csv)
+      expect(csv[0]).to eql ['Venue', 'Guaro Cacique 2013/Impressions']
+      expect(csv[1]).to eql ["Bar Texano", '100.0']
+      expect(csv[2]).to eql ['Texas Bar & Grill', '300.0']
+      expect(csv[3]).to eql ['Texas Restaurant', '200.0']
     end
   end
 end

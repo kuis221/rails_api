@@ -80,19 +80,6 @@ $.widget 'nmk.reportBuilder',
 			if not @saved
 				'All changes will be lost. Are you sure you want to exit?'
 
-		@preview.on 'click', '.report-collapse-button', (e) =>
-			$(e.target).toggleClass('icon-minus').toggleClass('icon-plus')
-			collapsed = $(e.target).hasClass('icon-plus')
-			row = $(e.target).closest('tr')
-			level = row.data('level')
-			next = row.next('tr')
-			while next.data('level') > level
-				if collapsed
-					next.hide()
-				else
-					next.show()
-				next = next.next('tr')
-
 		@_setListItems 'rows', @options.rows
 		@_setListItems 'values', @options.values
 		@_setListItems 'columns', @options.columns
@@ -240,20 +227,24 @@ $.widget 'nmk.reportBuilder',
 			})
 
 	_getColumns: () -> 
-		$.map $('#report-columns li', @element), (column, i) =>
+		items =  $.map $('#report-columns li', @element), (column, i) =>
 			@_getColumnProperties column
+		if items.length then items else null
 
 	_getRows: () -> 
-		$.map $('#report-rows li', @element), (row, i) =>
+		items = $.map $('#report-rows li', @element), (row, i) =>
 			@_getRowProperties row
+		if items.length then items else null
 
 	_getFilters: () -> 
-		$.map $('#report-filters li', @element), (filter, i) =>
+		items = $.map $('#report-filters li', @element), (filter, i) =>
 			@_getFilterProperties filter
+		if items.length then items else null
 
 	_getValues: () -> 
-		$.map $('#report-values li', @element), (value, i) =>
+		items = $.map $('#report-values li', @element), (value, i) =>
 			@_getValueProperties value
+		if items.length then items else null
 
 	_getColumnProperties: (column) ->
 		$col = $(column)
@@ -319,7 +310,7 @@ $.widget 'nmk.reportBuilder',
 
 	_addValuesToColumns: () ->
 		if $('#report-values li', @element).length > 0
-			values = @_getColumns().filter (field) -> field.field == 'values'
+			values = (@_getColumns() || []).filter (field) -> field.field == 'values'
 
 			if values.length is 0
 				field = {label: 'Values'}

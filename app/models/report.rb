@@ -96,8 +96,12 @@ class Report < ActiveRecord::Base
     update_attribute :active, false
   end
 
+  def set_page(page)
+    @page = page
+  end
+
   def can_be_generated?
-    rows.try(:any?) && (values.try(:any?) || columns.try(:any?))
+    rows.try(:any?) && values.try(:any?) && columns.try(:any?)
   end
 
   def fetch_page(params={})
@@ -119,17 +123,34 @@ class Report < ActiveRecord::Base
     end
   end
 
+  def to_csv(&block)
+    CSV.generate do |csv|
+      csv << rows.map(&:label) +  report_columns.map{|c| c.gsub('||', '/')}
+      row_fields = rows.map(&:to_sql_name)
+      results = fetch_page
+      total = results.count
+      fetch_page.each_with_index do |row, i|
+        csv << row_fields.map{|n| row[n] } + row['values']
+        yield total, i if block_given? && i%50 == 0
+      end
+    end
+  end
+
+  def offset
+    ((@page || 1)-1) * 50
+  end
+
   def fetch_results_for(fields, params={})
     rows_columns = Hash[fields.map do |f|
-      table_column_for_field(f)
+      f.table_column
     end.compact]
 
     rows_columns = {'1' => 'col_name'} if rows_columns.empty?
 
-    params.reverse_merge! offset: 0, apply_values_formatting: true
+    params.reverse_merge! apply_values_formatting: true
 
     if can_be_generated?
-      select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{field_to_sql_name(f['field'])}"}
+      select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{f.to_sql_name}"}
       value_fields = {}
       values_columns = values.map do |f|
         if (m = /\Akpi:([0-9]+)\z/.match(f['field'])) && (kpi = load_kpi(m[1])) && (kpi.is_segmented? || kpi.kpi_type == 'count')
@@ -140,7 +161,7 @@ class Report < ActiveRecord::Base
             "#{name} numeric"
           end
         else
-          name = field_to_sql_name(f['field'])
+          name = f.to_sql_name
           select_cols.push name
           value_fields[name] = "#{f['label']}"
           "#{name} numeric"
@@ -151,13 +172,13 @@ class Report < ActiveRecord::Base
         SELECT #{select_cols.join(', ')}
         FROM crosstab('\n\t#{values_sql(rows_columns).compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
           'select m from generate_series(1,#{values_columns.count}) m')
-        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC LIMIT 30 OFFSET #{params[:offset]}
+        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC
       ")
 
       empty_values = Hash[report_columns.map{|k| [k, nil]}]
 
-      key_fields = rows.compact.map{|f| field_to_sql_name(f['field']) } - ['values']
-      column_fields = columns.map{|f| field_to_sql_name(f['field']) }
+      key_fields = rows.compact.map{|f| f.to_sql_name } - ['values']
+      column_fields = columns.map{|f| f.to_sql_name }
       rows = []
       row = values = previous_key =nil
       results.each do |result|
@@ -196,10 +217,6 @@ class Report < ActiveRecord::Base
     result_values
   end
 
-  def field_to_sql_name(field_name)
-    field_name.gsub(/:/,'_')
-  end
-
   def report_columns
      @report_columns ||= scoped_columns(add_joins_scopes(base_events_scope, values), columns)
   end
@@ -227,11 +244,26 @@ class Report < ActiveRecord::Base
     end
   end
 
+  def first_row_values_for_page
+    @first_row_values_for_page ||= add_joins_scopes(base_events_scope, values).order('1 ASC').
+    limit(50).offset(offset).
+    pluck('DISTINCT ' + rows.first.table_column[0])
+  end
+
   protected
     def format_field(value)
       v = value
-      v = v.map{|k, v| v.to_h } if value.is_a?(ActionController::Parameters)
+      v = [] if v.nil? || v == ''
+      v = v.map{|k, v| v.to_h } if v.is_a?(ActionController::Parameters)
       v
+    end
+
+    def add_page_conditions_to_scope(s)
+      if first_row_values_for_page.include?(nil)
+        s.where("#{rows.first.table_column[0]} in (?) OR #{rows.first.table_column[0]} IS NULL", first_row_values_for_page)
+      else
+        s.where("#{rows.first.table_column[0]} in (?)", first_row_values_for_page)
+      end
     end
 
     def values_sql(rc)
@@ -241,6 +273,7 @@ class Report < ActiveRecord::Base
         values.map do |value|
           value_field = value['field']
           s = add_joins_scopes(base_events_scope, value).group('1')
+          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && @page.present?
           if m = /\Akpi:([0-9]+)\z/.match(value['field'])
             kpi = load_kpi(m[1])
             if kpi.is_segmented?
@@ -266,7 +299,7 @@ class Report < ActiveRecord::Base
             end
           elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
             if value['aggregate'] == 'count'
-              value_field = value_aggregate_sql(value['aggregate'], get_column_name_from(value)[0])
+              value_field = value_aggregate_sql(value['aggregate'], value.table_column[0])
             else
               value_field = '0'
             end
@@ -313,22 +346,6 @@ class Report < ActiveRecord::Base
       s
     end
 
-    def table_column_for_field(f)
-      if m = /\Akpi:([0-9]+)\z/.match(f['field'])
-        ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
-      elsif m = /\A(.*):([a-z_]+)\z/.match(f['field'])
-        get_column_name_from f
-      end
-    end
-
-    def get_column_name_from(f)
-      if m = /\A(.*):([a-z_]+)\z/.match(f['field'])
-        klass = m[1].classify.constantize
-        definition = klass.report_fields[m[2].to_sym]
-        definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
-      end
-    end
-
     def value_aggregate_sql(aggregate, field)
       case aggregate.try(:downcase)
       when 'sum', 'count', 'min', 'max', 'avg'
@@ -350,9 +367,9 @@ class Report < ActiveRecord::Base
               end
             end
           else
-            values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{table_column_for_field(column)[0]}) as value").order('1'))
+            values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{column.table_column[0]}) as value").order('1'))
             values.map do |v|
-              scoped_columns(s.where(table_column_for_field(column)[0] => v), c.slice(1, c.count), "#{prefix}#{v}||", index+1)
+              scoped_columns(s.where(column.table_column[0] => v), c.slice(1, c.count), "#{prefix}#{v}||", index+1)
             end
           end
         else
@@ -364,6 +381,7 @@ class Report < ActiveRecord::Base
     def base_events_scope
       company.events.active
     end
+
 
     def load_kpi(id)
       @_kpis ||= {}
@@ -407,12 +425,26 @@ class Report::Field
     end
   end
 
+  def table_column
+    if m = /\Akpi:([0-9]+)\z/.match(field)
+      ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
+    elsif m = /\A(.*):([a-z_]+)\z/.match(field)
+      klass = m[1].classify.constantize
+      definition = klass.report_fields[m[2].to_sym]
+      definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
+    end
+  end
+
+  def to_sql_name
+    field.gsub(/:/,'_')
+  end
+
   def display
     @data['display']
   end
 
   def field
-    @data['display']
+    @data['field']
   end
 
   def label
@@ -420,7 +452,7 @@ class Report::Field
   end
 
   def aggregate
-    @data['label']
+    @data['aggregate']
   end
 
   def to_hash

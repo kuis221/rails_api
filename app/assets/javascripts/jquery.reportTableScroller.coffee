@@ -13,6 +13,7 @@ $.widget 'nmk.reportTableScroller',
 		$.each @cols, (i, cell) =>
 			$(cell).data 'width', $(cell).width()
 			$(cell).data 'outer-width', $(cell).outerWidth()
+		@element.css({width: '100%'})
 
 		$('.report-arrows a').on 'click.reportTableScroller', (e) =>
 			@adjustColumnsSize $(e.target).data('direction')
@@ -25,9 +26,23 @@ $.widget 'nmk.reportTableScroller',
 			@adjustColumnsSize()
 			true
 
+		@element.on 'click', '.report-collapse-button', (e) =>
+			$(e.target).toggleClass('icon-minus').toggleClass('icon-plus')
+			collapsed = $(e.target).hasClass('icon-plus')
+			row = $(e.target).closest('tr')
+			level = row.data('level')
+			next = row.next('tr')
+			while next.data('level') > level
+				if collapsed
+					next.hide()
+				else
+					next.show()
+				next = next.next('tr')
+		@
+
 	_destroy: () ->
 		$('.report-arrows a').off 'click.reportTableScroller'
-		$(window).on 'resize.reportTableScroller', @adjustColumnsSize
+		$(window).off 'resize.reportTableScroller'
 
 	adjustColumnsSize: (direction=false) ->
 		availableWidth = @element.parent().width()

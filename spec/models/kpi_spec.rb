@@ -30,6 +30,30 @@ describe Kpi do
   it { should accept_nested_attributes_for(:kpis_segments) }
   it { should accept_nested_attributes_for(:goals) }
 
+  describe "invalid_goal?" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    it "should return true if Goal kpis_segment_id is nil for a Kpi of type percentage" do
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', capture_mechanism: 'integer', company: company)
+      goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
+
+      kpi.invalid_goal?(goal).should be_true
+    end
+
+    it "should return false if Goal has a kpis_segment_id for a Kpi of type count" do
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company)
+      goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: 100)
+
+      kpi.invalid_goal?(goal).should be_false
+    end
+
+    it "should return false if Goal has a nil kpis_segment_id for a Kpi of type different to count or percentage" do
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'number', capture_mechanism: 'currency', company: company)
+      goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
+
+      kpi.invalid_goal?(goal).should be_false
+    end
+  end
 
   describe "merge_fields" do
     let(:company) { FactoryGirl.create(:company) }

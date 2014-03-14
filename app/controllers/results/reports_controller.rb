@@ -1,5 +1,5 @@
 class Results::ReportsController < InheritedResources::Base
-  respond_to :js, only: [:new, :create, :edit, :update, :share_form]
+  respond_to :js, only: [:new, :create, :edit, :update, :share_form, :show]
 
   load_and_authorize_resource except: [:index]
 
@@ -12,9 +12,27 @@ class Results::ReportsController < InheritedResources::Base
 
   def preview
     @report = Report.new(permitted_params.merge(company_id: current_company.id, name: resource.name))
+    @report.set_page(1)
   end
 
   def build
+  end
+
+  def show
+    if request.format.csv?
+      @export = ListExport.create({controller: self.class.name,  params: filter_params, export_format: :csv, company_user: current_company_user}, without_protection: true)
+      if @export.new?
+        @export.queue!
+      end
+      render action: :new_export, formats: [:js]
+    else
+      resource.set_page(1)
+    end
+  end
+
+  def rows
+    resource.set_page params[:page].to_i
+    render layout: false
   end
 
   def share_form
@@ -29,6 +47,10 @@ class Results::ReportsController < InheritedResources::Base
   end
 
   private
+    def export_list(export)
+      render_to_string(text: resource.to_csv {|total, i| export.update_column(:progress, (i*100/total).round) })
+    end
+
     def build_resource_params
       [permitted_params || {}]
     end
@@ -41,5 +63,24 @@ class Results::ReportsController < InheritedResources::Base
         { values: [:field, :label, :aggregate, :display] },
         { filters: [:field, :label] }
       ])[:report] || {}
+    end
+
+    def filter_params
+      params.permit(:id, {campaing: []}, {area: []})
+    end
+
+    def export_file_name
+      sanitize_filename resource.name
+    end
+
+    def sanitize_filename(filename)
+      filename.strip.tap do |name|
+       # NOTE: File.basename doesn't work right with Windows paths on Unix
+       # get only the filename, not the whole path
+       name.gsub!(/^.*(\\|\/)/, '')
+
+       # Strip out the non-ascii character
+       name.gsub!(/[^0-9A-Za-z.\-]/, '_')
+      end
     end
 end

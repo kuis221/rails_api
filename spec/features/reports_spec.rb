@@ -1,10 +1,12 @@
 require 'spec_helper'
+require 'open-uri'
 
 feature "Reports", js: true do
   before do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
+    page.driver.resize(1024, 2500)
   end
 
   after do
@@ -75,21 +77,19 @@ feature "Reports", js: true do
   end
 
   feature "run view" do
-    before do
-      @report = FactoryGirl.create(:report, name: 'My Report',
+    let(:report) { FactoryGirl.create(:report, name: 'My Report',
         description: 'Description of my report',
-        active: true, company: @company)
-      page.driver.resize(1024, 1500)
-    end
+        active: true, company: @company) }
 
     scenario "allows the user to modify an existing custom report" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit results_report_path(@report)
+      visit results_report_path(report)
 
       click_link 'Edit'
 
-      expect(current_path).to eql(build_results_report_path(@report))
+
+      expect(current_path).to eql(build_results_report_path(report))
 
       within ".sidebar" do
         find("li", text: 'Kpi #1').drag_to field_list('columns')
@@ -98,17 +98,17 @@ feature "Reports", js: true do
 
       click_button 'Save'
 
-      expect(current_path).to eql(build_results_report_path(@report))
+      expect(current_path).to eql(build_results_report_path(report))
     end
 
     scenario "allows the user to cancel changes an existing custom report" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit results_report_path(@report)
+      visit results_report_path(report)
 
       click_link 'Edit'
 
-      expect(current_path).to eql(build_results_report_path(@report))
+      expect(current_path).to eql(build_results_report_path(report))
 
       within ".sidebar" do
         find("li", text: 'Kpi #1').drag_to field_list('columns')
@@ -118,7 +118,48 @@ feature "Reports", js: true do
       page.execute_script('$(window).off("beforeunload")') # Prevent the alert as there is no way to test it
       click_link 'Exit'
 
-      expect(current_path).to eql(results_report_path(@report))
+      expect(current_path).to eql(results_report_path(report))
+    end
+
+    scenario "should render the report" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 1'),
+        results: {impressions: 123, interactions: 50})
+
+      FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 2'),
+        results: {impressions: 321, interactions: 25})
+
+      report = FactoryGirl.create(:report,
+        company: @company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+
+      visit results_report_path(report)
+
+      expect(page).to have_content('GRAND TOTAL: 444.0')
+      expect(page).to have_content('Bar 1 123.0')
+      expect(page).to have_content('Bar 2 321.0')
+
+
+      # Export the report
+      with_resque do
+        expect {
+          click_js_button 'Download'
+          within visible_modal do
+            expect(page).to have_content('We are processing your request, the download will start soon...')
+          end
+          ensure_modal_was_closed
+        }.to change(ListExport, :count).by(1)
+      end
+
+      export = ListExport.last
+      csv_rows = CSV.parse(open(export.file.url).read)
+      expect(csv_rows[0]).to eql ['Venue Name', 'Impressions']
+      expect(csv_rows[1]).to eql ['Bar 1', '123.0']
+      expect(csv_rows[2]).to eql ['Bar 2', '321.0']
+      export.destroy
     end
   end
 
@@ -127,7 +168,6 @@ feature "Reports", js: true do
       @report = FactoryGirl.create(:report, name: 'Events by Venue',
         description: 'a resume of events by venue',
         active: true, company: @company)
-      page.driver.resize(1024, 1500)
       Kpi.create_global_kpis
     end
 

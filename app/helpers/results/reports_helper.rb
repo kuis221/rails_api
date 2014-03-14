@@ -19,7 +19,7 @@ module Results
 
     def each_grouped_report_row(results=nil, row_number=0, &block)
       results ||= resource.fetch_page
-      row_field = resource.field_to_sql_name(resource.rows[row_number]['field'])
+      row_field = resource.rows[row_number].to_sql_name
       previous_label = nil
       results.each do |row|
         if row_number < resource.rows.count-1
