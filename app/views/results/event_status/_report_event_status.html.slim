@@ -5,8 +5,8 @@
     .container-kpi-trend
       - Campaign.where(id: @campaign.id).promo_hours_graph_data.each do |campaign|
         .kpi-trend
-        .name= 'Overall'
-        = campaign_promo_hours_chart(campaign)
+          .name= 'Overall'
+          = campaign_promo_hours_chart(campaign)
 
       - @campaign.promo_hours_graph_data.each do |campaign|
         .kpi-trend
