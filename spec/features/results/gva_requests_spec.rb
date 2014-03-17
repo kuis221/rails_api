@@ -5,15 +5,8 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
   let(:user) {FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)}
 
   before do
-    Kpi.destroy_all
-    Warden.test_mode!
     @company = user.companies.first
     sign_in user
-    Place.any_instance.stub(:fetch_place_data).and_return(true)
-  end
-
-  after do
-    Warden.test_reset!
   end
 
   feature "/results/gva", js: true, search: true  do
