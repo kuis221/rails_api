@@ -435,7 +435,7 @@ describe Report do
 
     it "should work when adding percentage KPIs as a value" do
       event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
-      kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', kpis_segments: [
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'percentage', kpis_segments: [
         FactoryGirl.build(:kpis_segment, text: 'Segment 1', ordering: 1),
         FactoryGirl.build(:kpis_segment, text: 'Segment 2', ordering: 2)
       ])
@@ -460,7 +460,7 @@ describe Report do
     end
 
     it "should work when adding count KPIs as a value" do
-      kpi = FactoryGirl.create(:kpi, kpi_type: 'count', kpis_segments: [
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'count', kpis_segments: [
         FactoryGirl.build(:kpis_segment, text: 'Yes', ordering: 1),
         FactoryGirl.build(:kpis_segment, text: 'No', ordering: 2)
       ])
@@ -577,6 +577,86 @@ describe Report do
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
         ]
       end
+    end
+  end
+
+  describe "filtering" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    before { Kpi.create_global_kpis }
+
+    it "can filter results by a range for numeric KPIs" do
+      campaign.assign_all_global_kpis
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'number')
+      campaign.add_kpi kpi
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+      event1.result_for_kpi(kpi).value = 200
+      event1.save
+
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"kpi:#{kpi.id}", "label"=>"A Numeric Filter"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"kpi:#{kpi.id}" => {'min' => '100', 'max' => '300'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+      ]
+    end
+
+    it "can filter results by a range for numeric KPIs" do
+      campaign.assign_all_global_kpis
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'count')
+      seg1 = FactoryGirl.create(:kpis_segment, kpi: kpi)
+      seg2 = FactoryGirl.create(:kpis_segment, kpi: kpi)
+      campaign.add_kpi kpi
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+      event1.result_for_kpi(kpi).value = seg1.id
+      event1.save
+
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150})
+      event2.result_for_kpi(kpi).value = seg2.id
+      event2.save
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"kpi:#{kpi.id}", "label"=>"A Numeric Filter"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"kpi:#{kpi.id}" => [seg1.id.to_s]}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+      ]
+
+      report.filter_params = {"kpi:#{kpi.id}" => [seg1.id.to_s, seg2.id.to_s]}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
     end
   end
 

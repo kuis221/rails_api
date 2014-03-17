@@ -142,7 +142,6 @@ feature "Reports", js: true do
       expect(page).to have_content('Bar 1 123.0')
       expect(page).to have_content('Bar 2 321.0')
 
-
       # Export the report
       with_resque do
         expect {

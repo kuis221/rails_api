@@ -1,5 +1,7 @@
 class Results::ReportsController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update, :share_form, :show]
+  respond_to :json, only: [:filters]
+  before_filter :set_report_params, only: [:show, :rows, :preview]
 
   load_and_authorize_resource except: [:index]
 
@@ -12,7 +14,6 @@ class Results::ReportsController < InheritedResources::Base
 
   def preview
     @report = Report.new(permitted_params.merge(company_id: current_company.id, name: resource.name))
-    @report.set_page(1)
   end
 
   def build
@@ -25,13 +26,10 @@ class Results::ReportsController < InheritedResources::Base
         @export.queue!
       end
       render action: :new_export, formats: [:js]
-    else
-      resource.set_page(1)
     end
   end
 
   def rows
-    resource.set_page params[:page].to_i
     render layout: false
   end
 
@@ -44,6 +42,12 @@ class Results::ReportsController < InheritedResources::Base
       #{current_company.teams.select('teams.id, teams.name, \'team\' as type').active.to_sql}
       ORDER BY name ASC
     ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+  end
+
+  def filters
+    respond_to do |format|
+      format.json { render json: {filters: resource.filters.map(&:as_filter) } }
+    end
   end
 
   private
@@ -66,7 +70,7 @@ class Results::ReportsController < InheritedResources::Base
     end
 
     def filter_params
-      params.permit(:id, {campaing: []}, {area: []})
+      params.permit(:id, *resource.filters.map{|f| f.allowed_filter_params } )
     end
 
     def export_file_name
@@ -82,5 +86,10 @@ class Results::ReportsController < InheritedResources::Base
        # Strip out the non-ascii character
        name.gsub!(/[^0-9A-Za-z.\-]/, '_')
       end
+    end
+
+    def set_report_params
+      resource.page = (params[:page].try(:to_i) || 1)
+      resource.filter_params = filter_params unless action_name == 'show'
     end
 end

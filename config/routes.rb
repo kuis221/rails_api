@@ -137,6 +137,7 @@ Brandscopic::Application.routes.draw do
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
       get :build, on: :member
       get :rows, on: :member
+      get :filters, on: :member
       get :share, to: 'reports#share_form', on: :member
       get :deactivate, on: :member
       get :activate, on: :member

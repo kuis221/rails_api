@@ -63,6 +63,9 @@ class Place < ActiveRecord::Base
 
   serialize :types
 
+  scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company} ) }
+
+
   def street
     "#{street_number} #{route}".strip
   end

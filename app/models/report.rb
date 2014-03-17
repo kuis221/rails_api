@@ -26,6 +26,8 @@ class Report < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
   validates :sharing, inclusion: { in: %w(owner everyone custom) }
 
+  attr_accessor :filter_params, :page
+
   scope :active, -> { where(active: true) }
 
   scope :accessible_by_user, ->(user) {
@@ -96,10 +98,6 @@ class Report < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def set_page(page)
-    @page = page
-  end
-
   def can_be_generated?
     rows.try(:any?) && values.try(:any?) && columns.try(:any?)
   end
@@ -137,7 +135,7 @@ class Report < ActiveRecord::Base
   end
 
   def offset
-    ((@page || 1)-1) * 50
+    ((page || 1)-1) * 50
   end
 
   def fetch_results_for(fields, params={})
@@ -153,17 +151,17 @@ class Report < ActiveRecord::Base
       select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{f.to_sql_name}"}
       value_fields = {}
       values_columns = values.map do |f|
-        if (m = /\Akpi:([0-9]+)\z/.match(f['field'])) && (kpi = load_kpi(m[1])) && (kpi.is_segmented? || kpi.kpi_type == 'count')
-          kpi.kpis_segments.map do |s|
-            name = "kpi_#{kpi.id}_#{s.id}"
+        if f.kpi.present? && (f.kpi.is_segmented? || f.kpi.kpi_type == 'count')
+          f.kpi.kpis_segments.map do |s|
+            name = "kpi_#{s.kpi_id}_#{s.id}"
             select_cols.push name
-            value_fields[name] = "#{f['label']}: #{s.text}"
+            value_fields[name] = "#{f.label}: #{s.text}"
             "#{name} numeric"
           end
         else
           name = f.to_sql_name
           select_cols.push name
-          value_fields[name] = "#{f['label']}"
+          value_fields[name] = "#{f.label}"
           "#{name} numeric"
         end
       end.flatten
@@ -250,6 +248,10 @@ class Report < ActiveRecord::Base
     pluck('DISTINCT ' + rows.first.table_column[0])
   end
 
+  def base_events_scope
+    company.events.active
+  end
+
   protected
     def format_field(value)
       v = value
@@ -272,28 +274,27 @@ class Report < ActiveRecord::Base
         rows_field = "ARRAY[#{rc.keys.map{|k| k+'::text'}.join(', ')}]"
         values.map do |value|
           value_field = value['field']
-          s = add_joins_scopes(base_events_scope, value).group('1')
-          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && @page.present?
-          if m = /\Akpi:([0-9]+)\z/.match(value['field'])
-            kpi = load_kpi(m[1])
-            if kpi.is_segmented?
+          s = add_filters_conditions(add_joins_scopes(base_events_scope, value).group('1'))
+          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && page.present?
+          if value.kpi.present?
+            if value.kpi.is_segmented?
               value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-              kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.kpis_segment_id=?', kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
-            elsif kpi.kpi_type == 'count'
+              value.kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.kpis_segment_id=?', value.kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+            elsif value.kpi.kpi_type == 'count'
               if value['aggregate'] == 'count'
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
               else
                 value_field = '0'
               end
-              kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.value=?', kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+              value.kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.value=?', value.kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
             else
-              if Kpi.promo_hours.id == m[1].to_i
+              if Kpi.promo_hours.id == value.kpi.id
                 value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
-              elsif Kpi.events.id == m[1].to_i
+              elsif Kpi.events.id == value.kpi.id
                 value_field = value_aggregate_sql(value['aggregate'], '1')
               else
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                s = s.where('event_results.kpi_id=?', m[1].to_i)
+                s = s.where('event_results.kpi_id=?', value.kpi.id)
               end
               s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
             end
@@ -311,14 +312,31 @@ class Report < ActiveRecord::Base
       end
     end
 
-    def values_conditions
-      "company_id=#{self.company.id}"
+    def add_filters_conditions(s)
+      if filter_params.present? && filter_params.any?
+        filters.each do |filter|
+          if filter_params.has_key?(filter.field)
+            if filter_params[filter.field].is_a?(Hash)
+              if filter_params[filter.field]['min'].to_i == 0
+                s = s.where("(#{filter.table_column[0]} BETWEEN ? AND ? OR #{filter.table_column[0]} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+              else
+                s = s.where("#{filter.table_column[0]} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+              end
+            elsif filter_params[filter.field].is_a?(Array)
+              s = s.where("#{filter.table_column[0]} IN (?)", filter_params[filter.field])
+            end
+          else
+            nil
+          end
+        end
+      end
+      s
     end
 
     def add_joins_scopes(s, field_list)
       field_list = [field_list] unless field_list.is_a?(Array)
       fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
-      if fields.any?{|v| (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && ![Kpi.events.id, Kpi.promo_hours.id].include?(m[1].to_i)}
+      if fields.any?{|v| v.kpi.present? && ![Kpi.events, Kpi.promo_hours].include?(v.kpi)}
         # Include the event_results table in the join making sure that only
         s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
       end
@@ -336,9 +354,15 @@ class Report < ActiveRecord::Base
       end
       s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
 
-      [rows,columns].compact.inject{|sum,x| sum + x }.compact.each do |f|
-        if m = /\Akpi:([0-9]+)\z/.match(f['field'])
-          s = s.joins("INNER JOIN event_results er_kpi_#{m[1]} ON er_kpi_#{m[1]}.event_id = events.id AND er_kpi_#{m[1]}.kpi_id=#{m[1]}")
+      [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
+        if f.kpi.present?
+          s = s.joins("INNER JOIN event_results er_kpi_#{f.kpi.id} ON er_kpi_#{f.kpi.id}.event_id = events.id AND er_kpi_#{f.kpi.id}.kpi_id=#{f.kpi.id}")
+        end
+      end
+
+      filters.each do |filter|
+        if filter.kpi.present? && filter_params && filter_params.has_key?(filter.field) && !filter_params[filter.field].empty?
+          s = s.joins("LEFT JOIN event_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.event_id = events.id AND er_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
         end
       end
 
@@ -360,8 +384,8 @@ class Report < ActiveRecord::Base
         if c.any? && column = c.first
           if column['field'] == 'values'
             values.map do |v|
-              if (m = /\Akpi:([0-9]+)\z/.match(v['field'])) && (kpi = load_kpi(m[1])) && (kpi.is_segmented? || kpi.kpi_type == 'count')
-                kpi.kpis_segments.map{|segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
+              if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
+                v.kpi.kpis_segments.map{|segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
               else
                 scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}||")
               end
@@ -376,16 +400,6 @@ class Report < ActiveRecord::Base
           [prefix.gsub(/\|\|\z/,'')]
         end
       end.flatten
-    end
-
-    def base_events_scope
-      company.events.active
-    end
-
-
-    def load_kpi(id)
-      @_kpis ||= {}
-      @_kpis[id.to_i] ||= Kpi.find(id)
     end
 
     def load_fields(name)
@@ -426,7 +440,7 @@ class Report::Field
   end
 
   def table_column
-    if m = /\Akpi:([0-9]+)\z/.match(field)
+    @table_column ||= if m = /\Akpi:([0-9]+)\z/.match(field)
       ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
     elsif m = /\A(.*):([a-z_]+)\z/.match(field)
       klass = m[1].classify.constantize
@@ -457,5 +471,42 @@ class Report::Field
 
   def to_hash
     @data
+  end
+
+  def kpi
+    @kpi ||= if m = /\Akpi:([0-9]+)\z/.match(field)
+      Kpi.where('company_id is null OR company_id = ?', @report.company_id).find(m[1])
+    end
+  end
+
+  # Returns the expect param format (for strong_parameters) for the filters
+  def allowed_filter_params
+    if kpi.present? && kpi.kpi_type == 'number'
+      {field => [:max, :min]}
+    else
+      {field => []}
+    end
+  end
+
+  def as_filter
+    if kpi.present?
+      if ['percentage', 'count'].include?(kpi.kpi_type)
+        options = kpi.kpis_segments.map do |segment|
+          {label: segment.text, id: segment.id, name: field}
+        end
+        { label: label, items: options }
+      else
+        result = @report.base_events_scope.joins(:results).where(event_results: {kpi_id: kpi.id}).select('MAX(event_results.scalar_value) as max_value, MIN(event_results.scalar_value) as min_value').first
+        min = result.min_value.to_f.truncate
+        max = result.max_value.to_f.ceil
+        { label: label, name: field, min: min, max: max, selected_min: min, selected_max: max }
+      end
+    elsif m = /\A(.*):([a-z_]+)\z/.match(field)
+      klass = m[1].classify.constantize
+      options = klass.in_company(@report.company_id).order("#{table_column[0]} ASC").pluck("DISTINCT #{table_column[0]}").map do |option|
+        {label: option, id: option, name: field}
+      end
+      { label: label, items: options }
+    end
   end
 end

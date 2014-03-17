@@ -26,8 +26,6 @@ $.widget 'nmk.filteredList', {
 				false
 		@form.data('serializedData', null)
 
-		@nextpagetoken  = false
-
 		if @options.includeAutoComplete
 			@_addAutocompleteBox()
 
@@ -521,7 +519,6 @@ $.widget 'nmk.filteredList', {
 		if @options.includeCalendars
 			@_setCalendarDatesFromCalendar()
 
-		@nextpagetoken = false
 		if @options.source
 			@reloadData
 		data = @_serializeFilters()
@@ -558,19 +555,15 @@ $.widget 'nmk.filteredList', {
 		filtersStr.replace(/^&/,"")
 
 	buildParams: (params=[]) ->
-		if @nextpagetoken
-			params = [{name: 'page', value: @nextpagetoken }]
-		else
-			data = @getFilters()
-			for param in data
-				params.push(param)
+		data = @getFilters()
+		for param in data
+			params.push(param)
 		params
 
 	paramsQueryString: () ->
 		@_serializeFilters()
 
 	reloadData: () ->
-		@nextpagetoken = false
 		@_loadPage 1
 		@
 
@@ -599,18 +592,18 @@ $.widget 'nmk.filteredList', {
 		@jqxhr = $.get @options.source, params, (response) =>
 			@listContainer.find('.loading-spinner').remove();
 			$response = $('<div>').append(response)
-			$items = $response.find('div[data-content="items"]')
+			$items = $response.find('[data-content="items"]')
 			if @options.onItemsLoad
-				@options.onItemsLoad($response, page)
+				@options.onItemsLoad $response, page
 
-			@listContainer.append($items.html())
+			@listContainer.append $items.find('>*')
+			@_pageLoaded page, $items
 			@listContainer.css {height: ''}
 
-			@_pageLoaded(page, $items)
-
+			$response.remove()
 			$items.remove()
-
-			$response = $items = null
+			$items = $response = null
+			true
 
 		params = null
 
@@ -621,14 +614,13 @@ $.widget 'nmk.filteredList', {
 		if @options.onItemsChange
 			@options.onItemsChange(response)
 
-		@nextpagetoken = response.data('next-page-token')
 		if page == 1
 			@totalPages = response.data('pages')
 
-			if (@totalPages > 1 || @nextpagetoken)  and !@infiniteScroller
+			if (@totalPages is undefined or @totalPages > 1) and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
-						if (page <= @totalPages || @nextpagetoken) && @doneLoading
+						if (@totalPages is undefined or page <= @totalPages) && @doneLoading
 							@_loadPage(page)
 						else
 							false
@@ -636,9 +628,14 @@ $.widget 'nmk.filteredList', {
 					doneLoading: =>
 						@doneLoading
 				}
-			else if @totalPages <= page and @infiniteScroller
+			else if (@totalPages <= page || response.find('>*').length is 0) and @infiniteScroller
 				@listContainer.infiniteScrollHelper 'destroy'
 				@infiniteScroller = false
+		else if @totalPages is undefined and response.find('>*').length is 0
+			# If the first page didn't provided a number of pages and the last request retorned not rows,
+			# then assume we reached the end and stop the infiniteScrollHelper
+			@listContainer.infiniteScrollHelper 'destroy'
+			@infiniteScroller = false
 
 	_parseQueryString: () ->
 		@initialized = false
