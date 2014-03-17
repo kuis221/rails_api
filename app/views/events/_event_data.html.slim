@@ -34,7 +34,7 @@
         = ff.hidden_field :kpis_segment_id
         - if ff.object.kpis_segment_id.nil? && field.kpi_id
           .row-fluid.kpi-field
-            .span4.kpi-field
+            .span8.kpi-field
               = ff.input :value, field.field_options(ff.object)
         - else
           = ff.input :value, field.field_options(ff.object)
