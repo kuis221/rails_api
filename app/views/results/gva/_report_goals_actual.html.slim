@@ -2,6 +2,9 @@
   - events_goal = each_events_goal
   - if events_goal.any?
       h3 GOALS VS. ACTUAL
+      .total-venues
+        b= total_accounts_for_events
+        .venues-title VENUES
       .container-kpi-trend
         - events_goal.each do |id, event_goal|
           .kpi-trend

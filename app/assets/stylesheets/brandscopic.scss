@@ -5740,6 +5740,32 @@ a, i{
 body.gva {
 	.tab-content {
 		overflow: visible;
+		#report-container {
+			.total-venues {
+				margin: 0 0 20px 40px;
+				color: #989898;
+				&:before{
+					content: "\e018";
+					font-family: 'icons';
+					font-size: 40px;
+					padding-top: 7px;
+					position: absolute;
+					speak: none;
+					left: 118px;
+					text-align: center;
+					vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
+				b {
+					font-size: 28px;
+				}
+				.venues-title {
+					font-size: 14px;
+					font-weight: 600;
+					line-height: 8px;
+				}
+			}
+		}
 	}
 }
 
@@ -5748,7 +5774,6 @@ body.event_status {
 		overflow: visible;
 	}
 }
-
 
 body.campaigns_report,
 body.staff_report  {
