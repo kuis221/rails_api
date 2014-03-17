@@ -4573,6 +4573,12 @@ table.table td.comments-container {
 	}
 }
 
+.photos{
+	.gallery{
+		margin-top: 12px !important;
+	}
+}
+
 // TASKS STYLES
 .tasks{
 	b{
@@ -6090,23 +6096,22 @@ ul#reports-list {
 			position:relative;
 			list-style: none;
 			width: 20%;
-			margin-bottom: 5px;
+			margin-bottom: 8px;
 			.thumbnail-toolbar{
 				display: none;
 			}
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
-				overflow: hidden;
-				height: 202px;
-				&> a > img{
-					display: block;
-					width: 100%;
-					height: auto;
-					min-height: 100%;
-					position: absolute;
-				}
 			}
+			&.photo-item{
+				/*img.google-images{
+					height: 100%;
+					position: absolute;
+					width: 100%;
+				}*/
+			}
+
 			&:hover{
 				.thumbnail-toolbar{
 					background-color: rgba(0, 0, 0, 0.6);
