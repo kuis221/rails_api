@@ -2002,6 +2002,8 @@ ul.kpis-list{
 		}
 	}
 	ul#areas-list{
+		height: 330px;
+		overflow-y: scroll;
 		li{
 			span{
 				&:first-child{
@@ -6105,11 +6107,9 @@ ul#reports-list {
 				position: relative;
 			}
 			&.photo-item{
-				/*img.google-images{
-					height: 100%;
-					position: absolute;
+				img.google-images{
 					width: 100%;
-				}*/
+				}
 			}
 
 			&:hover{
