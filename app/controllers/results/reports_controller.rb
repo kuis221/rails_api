@@ -14,6 +14,7 @@ class Results::ReportsController < InheritedResources::Base
 
   def preview
     @report = Report.new(permitted_params.merge(company_id: current_company.id, name: resource.name))
+    @report.page = 1
   end
 
   def build
