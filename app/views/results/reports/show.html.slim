@@ -3,8 +3,9 @@
     #collection-list-filters
 
   .main
-    .pull-left
-      = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
+    - if can?(:edit, resource)
+      .pull-left
+        = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
     .text-right
       button.btn.download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"

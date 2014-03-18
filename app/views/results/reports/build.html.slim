@@ -18,9 +18,10 @@
     .buttons-zone.pull-right
       = button_to '', share_results_report_path(resource, format: :js), class: 'btn btn-share-report icon-share', title: 'Share', remote: true, method: :get
 
-      .btn-group
-        a.btn.active.table-view
-        a.btn.charts
+      - if false # This is not implemented yet, so hide it
+        .btn-group
+          a.btn.active.table-view
+          a.btn.charts
 
     #report-container
       / This will be filled by AJAX
