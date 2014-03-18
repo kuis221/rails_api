@@ -48,7 +48,6 @@ module Analysis
 
       return data if result.nil? || result.first_event_at.nil? || result.first_event_at.empty? || result.qty_events == 0
 
-
       data['first_event_at'] = first_event_at = Timeliness.parse(result.first_event_at, zone: :current)
       data['last_event_at'] = last_event_at  = Timeliness.parse(result.last_event_at, zone: :current).end_of_day
 
@@ -143,7 +142,6 @@ module Analysis
         data['events_percentage_today'] = [100, data['expected_events_today'] * 100 / expected_total].min    # and what percentage does that represents
       end
 
-
       data['expected_promo_hours'] = expected_total =  promo_hours_goal > 0 ? promo_hours_goal : data['scheduled_promo_hours']
       data['remaining_promo_hours'] = expected_total - data['approved_promo_hours']
       data['remaining_promo_hours'] = 0 if data['remaining_promo_hours'] < 0
@@ -152,7 +150,6 @@ module Analysis
         data['expected_promo_hours_today'] = today_days * expected_total / total_days                                   # How many promo hours are expected to be completed today
         data['promo_hours_percentage_today'] = [100, data['expected_promo_hours_today'] * 100 / expected_total].min    # and what percentage does that represents
       end
-
 
       data
     end
@@ -236,7 +233,6 @@ module Analysis
                       .where(event_results: {kpi_id: goal.kpi_id})
                       .group('event_results.kpi_id').first
         else
-
           data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
         end
 
@@ -254,5 +250,9 @@ module Analysis
         end
       end
     end
-	end
+
+    def total_accounts_for_events
+      @events_scope.count('place_id', :distinct => true)
+    end
+  end
 end
