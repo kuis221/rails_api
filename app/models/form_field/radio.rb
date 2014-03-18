@@ -15,6 +15,8 @@
 #
 
 class FormField::Radio < FormField
+  has_many :options, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+
   def field_options(result)
     {as: :radio_buttons, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
   end
