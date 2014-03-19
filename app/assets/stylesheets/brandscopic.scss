@@ -1333,6 +1333,7 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
+			background-color: $menu;
 			border-radius: 0;
 			height: 19px;
 			margin-top:0;
@@ -1344,6 +1345,7 @@ li.dropdown a{
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
 			background-image: none;
+			background-color: $menu;
 		}
 		.nav-pills>.active>a,
 		.nav-pills>.active>a:hover,
