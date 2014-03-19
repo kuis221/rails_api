@@ -27,10 +27,10 @@ class ActivityType < ActiveRecord::Base
   # Goals relationships
   has_one :goal, conditions: { parent_id: nil }, dependent: :destroy
 
-  accepts_nested_attributes_for :goal
+  accepts_nested_attributes_for :goal, :form_fields
   scope :active, lambda{ where(active: true) }
   attr_accessor :partial_path
-  
+
   searchable do
     integer :id
 
@@ -56,24 +56,24 @@ class ActivityType < ActiveRecord::Base
   def status
     self.active? ? 'Active' : 'Inactive'
   end
-  
-    
+
+
   def to_partial_path
     partial_path
   end
-  
+
   def partial_path
     @partial_path || 'activity_types/activity_type'
   end
-  
+
   def autocomplete
     buckets = autocomplete_buckets({
         activity_types: [ActivityType]
       })
     render :json => buckets.flatten
   end
-    
-    
+
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)

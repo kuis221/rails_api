@@ -18,8 +18,9 @@ $.widget 'nmk.formBuilder', {
 			revert: true,
 			stop: (e, ui) =>
 				if ui.item.hasClass('ui-draggable')
-					ui.item.replaceWith @buildField({type: ui.item.data('type')})
-					@formWrapper.sortable "refresh"
+					fieldHtml = @buildField({type: ui.item.data('type')})
+					ui.item.replaceWith fieldHtml
+					applyFormUiFormatsTo fieldHtml
 		}
 
 		@fieldsWrapper.find('.field').draggable {
@@ -36,7 +37,7 @@ $.widget 'nmk.formBuilder', {
 			e.stopPropagation()
 			$field = $(e.target)
 			if not $field.hasClass('field')
-				$field = $($field.closest('.field, .section')[0])
+				$field = $field.closest('.field')
 			@_showFieldAttributes $field
 			false
 
@@ -50,6 +51,9 @@ $.widget 'nmk.formBuilder', {
 
 			false
 
+		@element.on 'click', '#save-report', (e) =>
+			@saveFields()
+
 		true
 
 	_loadForm: () ->
@@ -58,26 +62,35 @@ $.widget 'nmk.formBuilder', {
 				@_addFieldToForm field
 
 	_addFieldToForm: (field) ->
-		@formWrapper.append @buildField(field)
+		fieldHtml = @buildField(field)
+		@formWrapper.append fieldHtml
 		@formWrapper.sortable "refresh"
+		applyFormUiFormatsTo fieldHtml
 
 		field
 
 	buildField: (options) ->
 		className = options.type.replace('FormField::', '');
-		className = 'FormField.' + className
+		className = className+'Field'
 		eval "var field = new #{className}(options)"
-		field
+		field.render()
 
-	saveFields: (fields) ->
-		data = $.map fields, (fieldDiv, index) =>
-			$(fieldDiv).data('field').getSaveAttributes()
+	saveFields: () ->
+		data = {
+			form_fields_attributes: $.map @formFields(), (field, index) =>
+				field.getSaveAttributes()
+		}
 		@saveForm data
 
 	saveForm: (data) ->
-		$.post "#{@options.url}/update_post_event_form", {fields: data}, (response) =>
-			if response isnt 'OK'
-				bootbox.alert response
+		$.ajax {
+			url: "#{@options.url}",
+			method: 'put',
+			data: {activity_type: data},
+			success: (response) =>
+				if response isnt 'OK'
+					bootbox.alert response
+		}
 
 	formFields: () ->
 		$.map @formWrapper.find('.field'), (element, index) =>
@@ -89,8 +102,7 @@ $.widget 'nmk.formBuilder', {
 		$('#form-field-tabs a[href="#attributes"]').tab('show')
 		$field = field.data('field')
 		@attributesPanel.html('').append $('<div class="arrow-left">'), $field.attributesForm()
-		@attributesPanel.find('select').chosen()
-		@attributesPanel.find("input:checkbox, input:radio, input:file").uniform()
+		applyFormUiFormatsTo @attributesPanel
 
 		# Store the value of each text field to compare against on the blur event
 		$.each $('input[type=text]'), (index, elm) =>
@@ -105,209 +117,245 @@ $.widget 'nmk.formBuilder', {
 
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow @attributesPanel
-
-		# Apply events to fields for autosave
-		$('select', @attributesPanel).on 'change', =>
-			@saveFields [field]
-
-		$('input[type=text]', @attributesPanel).on 'blur', (e) =>
-			input = $(e.target)
-			if input.data('saved-value') != input.val()
-				input.data 'saved-value', input.val()
-				@saveFields [field]
-
-		$('input.select2-field', @attributesPanel).on 'change', (e) =>
-			input = $(e.target)
-			if input.data('saved-value') != input.val()
-				input.data 'saved-value', input.val()
-				@saveFields [field]
-
-		$('input[type=checkbox]', @attributesPanel).on 'change', =>
-			@saveFields [field]
-
-		$('.remove-option-btn', @attributesPanel).on 'click', (e) =>
-			option = $(e.target).closest('.controls')
-			option.find('input[type=hidden][name*="[_destroy]"]').val('1')
-			option.hide()
-			false
-
-		$('.add-option-btn', @attributesPanel).on 'click', (e) =>
-			option = $(e.target).closest('.controls')
-			newOption = $(e.target).closest('.controls').clone()
-			newOption.find('input[type=hidden][name*="[_destroy]"]').val('')
-			newOption.find('input[type=text][name*="[name]"]').val('')
-			newOption.find('input[type=hidden][name*="[id]"]').val('')
-			newOption.insertAfter(option)
-			false
-
 }
-FormField = {}
 
-FormField.TextArea = (attributes) ->
-	@attributes = $.extend({
-		name: 'Paragraph',
-		id: null,
-		required: false,
-		type: 'FormField::TextArea',
-		settings: {}
-	}, attributes)
 
-	@field =  $('<div class="field control-group" data-type="TextArea">').data('field', @).append [
-		$('<label class="control-label">').text(@attributes.name),
-		$('<div class="controls">').append($('<textarea readonly="readonly"></textarea>'))
-	]
+initializing = false
+fnTest = if /xyz/.test(() -> xyz) then /\b_super\b/ else /.*/
 
-	@attributes.settings ||= {}
+Class = () ->
+	@
 
-	@attributesForm = () ->
+Class.extend = (prop) ->
+	_super = this.prototype;
+
+	initializing = true;
+	prototype = new this();
+	initializing = false;
+
+	for name of prop
+		if typeof prop[name] == "function" && typeof _super[name] is "function" && fnTest.test(prop[name])
+			prototype[name] =  ((name, fn) ->
+				() ->
+					tmp = this._super;
+
+					this._super = _super[name];
+
+					ret = fn.apply(this, arguments);		
+					this._super = tmp;
+
+					return ret;
+			)(name, prop[name])
+		else
+			prototype[name] = prop[name]
+
+	Class = () ->
+		if !initializing && this.init
+			@init.apply(this, arguments);
+
+	Class.prototype = prototype;
+
+	Class.prototype.constructor = Class;
+
+	Class.extend = arguments.callee;
+
+	Class
+
+
+
+# Base class for all form field classes
+FormField = Class.extend {
+	getSaveAttributes: () ->
+		{id: @attributes.id, name: @attributes.name, type: @attributes.type, settings: @attributes.settings, options_attributes: @getOptionsAttributes()}
+
+	getId: () ->
+		@attributes.id
+
+	labelField: () ->
+		$('<div class="control-group">').append([
+			$('<label class="control-label">').text('Field label'),
+			$('<div class="controls">').append $('<input type="text" name="label">').val(@attributes.name).on 'keyup', (e) =>
+					input = $(e.target)
+					@attributes.name = input.val()
+					@refresh()
+		])
+
+	requiredField: () ->
+		$('<div class="control-group">').append([
+			$('<div class="controls">').append(
+				$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+						@attributes.required = (if e.target.checked then 'true' else 'false')
+				)
+			)
+		])
+
+	optionsField: () ->
+		$('<div class="control-group field-options">').append($('<label class="control-label">').text('Options')).append(
+			$.map @attributes.options, (option, index) =>
+				$('<div class="controls field-option">').data('option', option).append([
+					$('<input type="hidden" name="option['+index+'][id]">').val(option.id),
+					$('<input type="hidden" name="option['+index+'][_destroy]">'),
+					$('<input type="text" name="option['+index+'][name]">').val(option.name).on 'keyup', (e) =>
+						option = $(e.target).closest('.field-option').data('option')
+						option.name = $(e.target).val()
+						@refresh()
+					$('<div class="option-actions">').append(
+						# Button for adding a new option to the field
+						$('<a href="#" class="add-option-btn"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
+							option = $(e.target).closest('.field-option').data('option')
+							@attributes.options.splice(@attributes.options.indexOf(option)+1,0, {id: '', name: ''})
+							$('.field-options').replaceWith @optionsField()
+							@refresh()
+							false
+							
+						# Button for removing an option of the field
+						$('<a href="#" class="remove-option-btn"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+							option = $(e.target).closest('.field-option').data('option')
+							option._destroy = '1'
+							$('.field-options').replaceWith @optionsField()
+							@refresh()
+							false
+					)
+				]).css(display: (if option._destroy is '1' then 'none' else ''))
+		)
+
+	_readOptionsFromDom: (parent) ->
+		@attributes.options = $.map parent.find('.field-option'), (option, index) ->
+			{
+				id: $(option).find('input[type=hidden][name*="[id]"]').val(),
+				name: $(option).find('input[type=text][name*="[name]"]').val(),
+				_destroy: $(option).find('input[type=hidden][name*="[_destroy]"]').val(),
+				ordering: index
+			}
+
+	getOptionsAttributes: () ->
+		@attributes.options
+
+	render: () ->
+		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
+			.data('field', @)
+			.append @_renderField()
+
+	refresh: () ->
+		@field.html('').append(@_renderField())
+		applyFormUiFormatsTo @field
+		@
+
+	_renderField: () ->
+		''
+}
+
+TextAreaField = FormField.extend {
+	type: 'TextArea',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Paragraph',
+			id: null,
+			required: false,
+			type: 'FormField::TextArea',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<textarea readonly="readonly"></textarea>'))
+		]
+
+	attributesForm: () ->
 		[
 			$('<h4>').text('Paragraph'),
-			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Field label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@attributes.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@attributes.name = input.val()
-						@field.find('.control-label').text @attributes.name
-			]),
+			@labelField(),
+			@requiredField()
+		]
+}
 
-			$('<div class="control-group">').append([
-				$('<div class="controls">').append(
-					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
-						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
-							@attributes.required = (if e.target.checked then 'true' else 'false')
-					)
-				)
-			])
+DropdownField = FormField.extend {
+	type: 'Dropdown',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Dropdown',
+			id: null,
+			required: false,
+			type: 'FormField::Dropdown',
+			settings: {},
+			options: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1'}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<select>').append(
+				$.map @attributes.options, (option, index) =>
+					$('<option>').attr('value', option.id).text(option.name)
+			))
 		]
 
-	@getSaveAttributes = () ->
-		{id: @attributes.id, name: @attributes.name, field_type: 'text', attributes: @attributes.options}
-
-	@getId = () ->
-		@attributes.id
-
-	@field
-
-
-FormField.Dropdown = (attributes) ->
-	@attributes = $.extend({
-		name: 'Dropdown',
-		id: null,
-		required: false,
-		type: 'FormField::Dropdown',
-		settings: {},
-		options: []
-	}, attributes)
-
-	if @attributes.options.length is 0
-		@attributes.options = [{id: null, name: 'Option 1'}]
-
-	@field =  $('<div class="field control-group" data-type="Dropdown">').data('field', @).append [
-		$('<label class="control-label">').text(@attributes.name),
-		$('<div class="controls">').append($('<select>').append(
-			$.map @attributes.options, (option, index) =>
-				$('<option>').attr('value', option.id).text(option.name)
-		))
-	]
-
-	@attributes.settings ||= {}
-
-	@attributesForm = () ->
+	attributesForm: () ->
 		[
 			$('<h4>').text('Dropdown'),
-			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Field label'),
-				$('<div class="controls">').append $('<input type="text" name="label">').val(@attributes.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@attributes.name = input.val()
-						@field.find('.control-label').text @attributes.name
-			]),
-
-			$('<div class="control-group">').append([
-				$('<div class="controls">').append(
-					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
-						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
-							@attributes.required = (if e.target.checked then 'true' else 'false')
-					)
-				)
-			])
+			@labelField(),
+			@optionsField(),
+			@requiredField()
 		]
 
-	@getSaveAttributes = () ->
-		{id: @attributes.id, name: @attributes.name, field_type: 'text', attributes: @attributes.options}
+}
 
-	@getId = () ->
-		@attributes.id
+RadioField = FormField.extend {
+	type: 'Radio',
 
-	@field
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Single Choice',
+			id: null,
+			required: false,
+			type: 'FormField::Radio',
+			settings: {},
+			options: []
+		}, attributes)
 
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1'}]
 
-FormField.Radio = (attributes) ->
-	@attributes = $.extend({
-		name: 'Single Choice',
-		id: null,
-		required: false,
-		type: 'FormField::Radio',
-		settings: {},
-		options: []
-	}, attributes)
+		@attributes.settings ||= {}
 
-	if @attributes.options.length is 0
-		@attributes.options = [{id: null, name: 'Option 1'}]
+		@
 
-	@field =  $('<div class="field control-group" data-type="Radio">').data('field', @).append [
-		$('<label class="control-label">').text(@attributes.name),
-		$('<div class="controls">').append(
-			$.map @attributes.options, (option, index) =>
-				$('<label>').addClass('radio').append(
-					$('<input>').attr('type', 'radio').attr('value', option.id)
-				).append(' '+ option.name)
-		)
-	]
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$.map @attributes.options, (option, index) =>
+					$('<label>').addClass('radio').append(
+						$('<input>').attr('type', 'radio').attr('value', option.id)
+					).append(' '+ option.name)
+			)
+		]
 
-	@attributes.settings ||= {}
-
-	@attributesForm = () ->
+	attributesForm: () ->
 		[
 			$('<h4>').text('Single Choice'),
-			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Field label'),
-				$('<div class="controls">').append $('<input type="text" name="name">').val(@attributes.name).on 'keyup', (e) =>
-						input = $(e.target)
-						@attributes.name = input.val()
-						@field.find('.control-label').text @attributes.name
-			]),
-
-			$('<div class="control-group">').append($('<label class="control-label">').text('Options')).append(
-				$.map @attributes.options, (option, index) =>
-					$('<div class="controls field-options">').append([
-						$('<input type="hidden" name="option['+index+'][id]">').val(option.id),
-						$('<input type="hidden" name="option['+index+'][_destroy]">'),
-						$('<input type="text" name="option['+index+'][name]">').val(option.name).on 'keyup', (e) =>
-							input = $(e.target)
-							@attributes.name = input.val()
-							@field.find('.control-label').text @attributes.name
-						$('<div class="option-actions">').append(
-							$('<a href="#" class="add-option-btn"><i class="icon-plus-sign"></i></a>'),
-							$('<a href="#" class="remove-option-btn"><i class="icon-minus-sign"></i></a>')
-						)
-					])
-			),
-
-			$('<div class="control-group">').append([
-				$('<div class="controls">').append(
-					$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
-						$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
-							@attributes.required = (if e.target.checked then 'true' else 'false')
-					)
-				)
-			])
+			@labelField(),
+			@optionsField(),
+			@requiredField()
 		]
+}
 
-	@getSaveAttributes = () ->
-		{id: @attributes.id, name: @attributes.name, field_type: 'text', attributes: @attributes.options}
 
-	@getId = () ->
-		@attributes.id
-
-	@field
+applyFormUiFormatsTo = (element) ->
+	element.find('select').chosen()
+	element.find("input:checkbox, input:radio, input:file").uniform()

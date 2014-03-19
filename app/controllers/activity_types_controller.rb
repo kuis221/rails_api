@@ -1,7 +1,7 @@
 class ActivityTypesController < FilteredController
   before_filter :load_campaign, only: [ :set_goal]
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
-  respond_to :json, only: [:show]
+  respond_to :json, only: [:show, :update]
   belongs_to :company, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
@@ -24,7 +24,11 @@ class ActivityTypesController < FilteredController
 
   protected
   def permitted_params
-    params.permit(activity_type: [:name, :description, {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}])[:activity_type]
+    params.permit(activity_type: [
+      :name, :description,
+      {form_fields_attributes: [:id, :name, :_destroy, {options_attributes: [:id, :name, :_destroy, :ordering]}, :ordering]},
+      {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
+    ])[:activity_type]
   end
 
   def facets
