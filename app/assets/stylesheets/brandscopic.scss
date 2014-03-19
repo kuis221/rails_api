@@ -5005,7 +5005,7 @@ body.campaigns{
 				}
 			}
 			.percentage {
-				width: 573px;
+				width: 397px;
 				.help-inline {
 					margin-top: 12px;
 					float: right;
@@ -6115,6 +6115,8 @@ ul#reports-list {
 			position:relative;
 			list-style: none;
 			width: 20%;
+			height: 160px;
+			overflow: hidden;
 			margin-bottom: 8px;
 			.thumbnail-toolbar{
 				display: none;
@@ -6125,6 +6127,7 @@ ul#reports-list {
 			}
 			&.photo-item{
 				img.google-images{
+					min-height: 160px;
 					width: 100%;
 				}
 			}
