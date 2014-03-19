@@ -5,7 +5,7 @@
 
 / Expenses module
 - if active_kpis.include?(Kpi.expenses) && can?(:expenses, resource)
-  #event-expenses.details_box.box_expenses.smaller
+  #event-expenses.details_box.box_expenses
     = render partial: 'expenses'
 
 / Activities module
@@ -20,7 +20,7 @@
 
 / Surveys module
 - if active_kpis.include?(Kpi.surveys) && can?(:surveys, resource)
-  #event-surveys.details_box.box_expenses.smaller
+  #event-surveys.details_box.box_expenses
     = render partial: 'surveys'
 
 / Comments module
