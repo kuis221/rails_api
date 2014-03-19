@@ -1333,6 +1333,7 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
+			background-color: $menu;
 			border-radius: 0;
 			height: 19px;
 			margin-top:0;
@@ -1344,6 +1345,7 @@ li.dropdown a{
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
 			background-image: none;
+			background-color: $menu;
 		}
 		.nav-pills>.active>a,
 		.nav-pills>.active>a:hover,
@@ -2010,8 +2012,6 @@ ul.kpis-list{
 		}
 	}
 	ul#areas-list{
-		height: 330px;
-		overflow-y: scroll;
 		li{
 			span{
 				&:first-child{
@@ -5005,7 +5005,7 @@ body.campaigns{
 				}
 			}
 			.percentage {
-				width: 573px;
+				width: 397px;
 				.help-inline {
 					margin-top: 12px;
 					float: right;
@@ -6115,6 +6115,7 @@ ul#reports-list {
 			position:relative;
 			list-style: none;
 			width: 20%;
+			overflow: hidden;
 			margin-bottom: 8px;
 			.thumbnail-toolbar{
 				display: none;
@@ -6125,6 +6126,7 @@ ul#reports-list {
 			}
 			&.photo-item{
 				img.google-images{
+					min-height: 160px;
 					width: 100%;
 				}
 			}
