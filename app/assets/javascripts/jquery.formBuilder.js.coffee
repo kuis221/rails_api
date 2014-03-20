@@ -124,7 +124,7 @@ $.widget 'nmk.formBuilder', {
 		position = field.offset()
 		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
 
-		$(document).on 'click.fbuidler', (e) => 
+		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
 			@attributesPanel.hide()
 
@@ -154,7 +154,7 @@ Class.extend = (prop) ->
 
 					this._super = _super[name];
 
-					ret = fn.apply(this, arguments);		
+					ret = fn.apply(this, arguments);
 					this._super = tmp;
 
 					return ret;
@@ -221,7 +221,7 @@ FormField = Class.extend {
 							$('.field-options').replaceWith @optionsField()
 							@refresh()
 							false
-							
+
 						# Button for removing an option of the field
 						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
@@ -509,6 +509,65 @@ CheckboxField = FormField.extend {
 		]
 }
 
+DateField = FormField.extend {
+	type: 'Date',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Date',
+			id: null,
+			required: false,
+			type: 'FormField::Date',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="date" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Date'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
+TimeField = FormField.extend {
+	type: 'Time',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Time',
+			id: null,
+			required: false,
+			type: 'FormField::Time',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="time" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Time'),
+			@labelField(),
+			@requiredField()
+		]
+}
 
 applyFormUiFormatsTo = (element) ->
 	element.find('select').chosen()
