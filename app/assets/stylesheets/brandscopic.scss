@@ -6408,27 +6408,65 @@ ul#reports-list {
 			position: absolute;
 			top: 0px;
 			left: 0px;
-			bottom: 25px;
+			bottom: 0px;
 			right: 0px;
 			margin: auto;
 		}
 		.photo-toolbar {
-			display: block;
-			bottom: 0;
-			position: absolute;
-			right: 0;
-			a{
-				color: white;
-				float: right;
-				opacity: 1 !important;
-				text-decoration: none;
-				&.photo-download-link{
-					float:right;
-					margin: 15px 10px 8px;
-					position: relative;
-					&:before{
+			display: none;
+		}
+		&:hover{
+			.photo-toolbar {
+				background-color: rgba(0, 0, 0, 0.6);
+				bottom: 0;
+				display: block;
+				left: 0;
+				overflow:hidden;
+				position: absolute;
+				right: 0;
+				a{
+					color: white;
+					float: right;
+					margin: 10px;
+					opacity: 1 !important;
+					text-decoration: none;
+					&.photo-download-link{
+						float:right;
+						margin: 11px 5px 12px 12px;
+						position: relative;
+						&:before{
+							color: $grey_one;
+							content: "\e00b" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
+					}
+					&.icon-remove-circle{
+						float:right;
+						margin: 10px;
+						position: relative;
+						&:before{
+							color: $grey_one;
+							content: "\e011" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
+					}
+					&.icon-ok-circle:before{
 						color: $grey_one;
-						content: "\e00b" !important;
+						content: "\e00d" !important;
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
@@ -6438,35 +6476,6 @@ ul#reports-list {
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 					}
-				}
-				&.icon-remove-circle{
-					float:right;
-					margin: 14px 10px 8px;
-					position: relative;
-					&:before{
-						color: $grey_one;
-						content: "\e011" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
-					}
-				}
-				&.icon-ok-circle:before{
-					color: $grey_one;
-					content: "\e00d" !important;
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 15px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
 				}
 			}
 		}
