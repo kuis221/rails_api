@@ -29,7 +29,7 @@ feature "Reports", js: true do
       }.to change(Report, :count).by(1)
       report = Report.last
 
-      expect(current_path).to eql(results_report_path(report))
+      expect(current_path).to eql(build_results_report_path(report))
     end
   end
 
