@@ -764,11 +764,11 @@ ul.select2-results{
 		.controls{
 			input[type="text"]{
 				color: $text !important;
-				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &#activity_activity_date{
+				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
 					background: url('calendar.svg') no-repeat left !important;
 					text-align: right;
 				}
-				&#event_start_time, &#event_end_time{
+				&#event_start_time, &#event_end_time, &.field-type-time {
 					background: url('time.svg') no-repeat left !important;
 					padding-left:10px;
 					text-align: center;

@@ -16,6 +16,10 @@
 
 class FormField::Time < FormField
   def field_options(result)
-    {as: :time, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {as: :time_picker, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
+  end
+
+  def field_classes
+    ['field-type-time']
   end
 end
