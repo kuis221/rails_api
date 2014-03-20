@@ -12,8 +12,19 @@ $.widget 'nmk.photoGallery', {
 		@element.addClass('photoGallery')
 		@_createGalleryModal()
 
+		$(document).on 'attached_asset:activated', (e, id) =>
+			@image.data('status', true)
+			@gallery.find('a.photo-deactivate-link').replaceWith($('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+			true
+
+		$(document).on 'attached_asset:deactivated', (e, id) =>
+			@photoToolbar.html ''
+			$('.carousel', @gallery).carousel('next')
+			@gallery.find('[data-photo-id='+id+']').remove()
+			true
+
 		$(document).on 'click', '.photoGallery a[data-toggle="gallery"]', (e) =>
-			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target 
+			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target
 			e.stopPropagation()
 			e.preventDefault()
 			@gallery.modal 'show'
@@ -25,7 +36,7 @@ $.widget 'nmk.photoGallery', {
 	fillPhotoData: (currentImage) ->
 		$image = $(currentImage)
 		@image = $image
-		@setTitle $image.data('title'), $image.data('url')
+		@setTitle $image.data('title'), @image.data('urls').event
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
 		@setRating $image.data('rating'), $image.data('id')
@@ -86,15 +97,16 @@ $.widget 'nmk.photoGallery', {
 			if currentImage == image
 				active = true
 
-			row.append($('<img>').attr('src', image.src).data('image',image).data('index', index))
+			row.append($('<img>').attr('src', image.src).data('image',image).attr('data-photo-id', $(image).data('id')).data('index', index))
 			carousel.append $('<div class="item">').
+				attr('data-photo-id', $(image).data('id')).
 				append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
 				data('image',image).
 				data('index', index).
 				addClass(if currentImage == image then 'active' else '')
 			i+=1
 			index+=1
-		
+
 		miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
 
 
@@ -126,7 +138,7 @@ $.widget 'nmk.photoGallery', {
 				@rating.find('span').slice(0,$i).addClass('full').removeClass('empty')
 
 		star
-	
+
 	_createGalleryModal: () ->
 		@title = $('<h3>')
 		@address = $('<div class="place-data">')
@@ -153,7 +165,7 @@ $.widget 'nmk.photoGallery', {
 						@rating,
 						(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
 					),
-				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) )
+				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
 			).append($('<div class="clearfix">'))
 			)
 
@@ -194,8 +206,8 @@ $.widget 'nmk.photoGallery', {
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
 			image = item.data('image')
-			@_showImage()
 			@fillPhotoData image
+			@_showImage()
 			@miniCarousel.carousel parseInt(item.data('index')/3)
 
 		@gallery
@@ -210,12 +222,33 @@ $.widget 'nmk.photoGallery', {
 		else
 			@_updateSizes()
 
+		@_createPhotoToolbar()
+
 		# Preload the next image
 		nextItem = item.next('.item')
 		if nextItem.length
 			img = new Image()
 			img.src = nextItem.find('img').data('src')
 
+
+	_createPhotoToolbar: () ->
+		@photoToolbar.html ''
+		@photoToolbar.append(
+			urls = @image.data('urls')
+			(if 'deactivate_photo' in @image.data('permissions')
+				if @image.data('status') == true
+					$('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', urls.deactivate)
+				else
+					$('<a class="icon-ok-circle photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
+			else
+				null
+			),
+			(if 'index_photo_results' in @image.data('permissions')
+				$('<a class="icon-plus photo-download-link" title="Select Photo"></a>').attr('href', urls.download)
+			else
+				null
+			)
+		)
 
 	_createCarousel: (carouselClass='') ->
 		id = "gallery-#{@_generateUid()}"

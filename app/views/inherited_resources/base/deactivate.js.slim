@@ -26,3 +26,5 @@
 
   - unless resource.is_a?(AttachedAsset) || resource.is_a?(Task)
     | $('.active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j active_inactive_buttons(resource)}');
+
+  | $(document).trigger('#{resource_class}:#{resource.active? ? 'activated' : 'deactivated' }', [#{resource.id}]);

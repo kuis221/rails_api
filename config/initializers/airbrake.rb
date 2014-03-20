@@ -1,4 +1,4 @@
-if Rails.env.production? or Rails.env.staging?
+if Rails.env.production? or Rails.env.staging? or Rails.env.demo?
   require 'resque/failure/redis'
   require 'resque/failure/multiple'
   require 'resque/failure/airbrake'

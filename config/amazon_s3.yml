@@ -14,6 +14,10 @@ staging:
   bucket_name: brandscopic-stage
   <<: *base
 
+demo:
+  bucket_name: brandscopic-demo
+  <<: *base
+
 development:
   bucket_name: brandscopic-dev
   <<: *base

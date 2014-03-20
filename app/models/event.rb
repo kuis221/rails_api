@@ -29,33 +29,33 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
-  has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :active_photos, conditions: {asset_type: 'photo', active: true}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :teamings, :as => :teamable
+  has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :teamings, :as => :teamable, dependent: :destroy
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
-  has_many :results, class_name: 'EventResult', inverse_of: :event do
+  has_many :results, dependent: :destroy, class_name: 'EventResult', inverse_of: :event do
     def active
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
   end
-  has_many :event_expenses, inverse_of: :event, autosave: true
+  has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, as: :activitable, order: 'activity_date ASC' do
     def active
       joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: {campaign_id: proxy_association.owner.campaign_id})
     end
   end
-  has_one :event_data, autosave: true
+  has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
+  has_many :comments, dependent: :destroy, :as => :commentable, order: 'comments.created_at ASC'
 
-  has_many :surveys,  inverse_of: :event
+  has_many :surveys, dependent: :destroy,  inverse_of: :event
 
   # Events-Users relationship
-  has_many :memberships, :as => :memberable
+  has_many :memberships, dependent: :destroy, :as => :memberable
   has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
 
-  has_many :contact_events
+  has_many :contact_events, dependent: :destroy
 
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
