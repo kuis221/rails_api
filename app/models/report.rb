@@ -22,7 +22,7 @@ class Report < ActiveRecord::Base
 
   scoped_to_company
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true
   validates :company_id, presence: true, numericality: true
   validates :sharing, inclusion: { in: %w(owner everyone custom) }
 
