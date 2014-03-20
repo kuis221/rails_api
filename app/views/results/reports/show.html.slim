@@ -2,7 +2,8 @@
   #resource-filter-column.sidebar
     #collection-list-filters
 
-  .main
+  .main.with-details-close-bar
+    = resource_details_bar("You are viewing #{resource.name} report. Click to close.", collection_path)
     - if can?(:edit, resource)
       .pull-left
         = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}

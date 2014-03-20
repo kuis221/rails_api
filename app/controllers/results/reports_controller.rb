@@ -5,6 +5,8 @@ class Results::ReportsController < InheritedResources::Base
 
   load_and_authorize_resource except: [:index]
 
+  helper_method :resource_close_bar_url
+
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
@@ -92,5 +94,9 @@ class Results::ReportsController < InheritedResources::Base
     def set_report_params
       resource.page = (params[:page].try(:to_i) || 1)
       resource.filter_params = filter_params unless action_name == 'show'
+    end
+
+    def resource_close_bar_url
+      collection_path
     end
 end

@@ -596,7 +596,7 @@ $.widget 'nmk.filteredList', {
 			if @options.onItemsLoad
 				@options.onItemsLoad $response, page
 
-			@listContainer.append $items.find('>*')
+			@listContainer.append $items.html()
 			@_pageLoaded page, $items
 			@listContainer.css {height: ''}
 

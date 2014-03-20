@@ -42,6 +42,14 @@ ul.reports-list {
 
 #report-builder {
 
+	.with-details-close-bar {
+		padding-top: 60px;
+	}
+
+	#resource-close-details.affix {
+		right: 250px;
+	}
+
 	.btn-save-report{
 		margin-right: 10px;
 	}
