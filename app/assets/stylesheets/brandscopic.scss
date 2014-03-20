@@ -6408,7 +6408,7 @@ ul#reports-list {
 			position: absolute;
 			top: 0px;
 			left: 0px;
-			bottom: 0px;
+			bottom: 25px;
 			right: 0px;
 			margin: auto;
 		}
@@ -6420,12 +6420,11 @@ ul#reports-list {
 			a{
 				color: white;
 				float: right;
-				margin: 10px;
 				opacity: 1 !important;
 				text-decoration: none;
 				&.photo-download-link{
 					float:right;
-					margin: 11px 5px 12px 12px;
+					margin: 15px 10px 8px;
 					position: relative;
 					&:before{
 						color: $grey_one;
@@ -6442,7 +6441,7 @@ ul#reports-list {
 				}
 				&.icon-remove-circle{
 					float:right;
-					margin: 10px;
+					margin: 14px 10px 8px;
 					position: relative;
 					&:before{
 						color: $grey_one;
