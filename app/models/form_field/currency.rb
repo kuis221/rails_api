@@ -14,14 +14,8 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Radio < FormField
+class FormField::Currency < FormField
   def field_options(result)
-    {as: :radio_buttons, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
-  end
-
-  def format_html(result)
-    unless result.value.nil? || result.value.empty?
-      self.options.where(id: result.value).pluck(:name).join(', ')
-    end
+    {as: :decimal, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
   end
 end

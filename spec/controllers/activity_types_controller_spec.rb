@@ -16,7 +16,7 @@ describe ActivityTypesController do
       response.should be_success
     end
   end
-  
+
   describe "GET 'edit'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
@@ -24,7 +24,7 @@ describe ActivityTypesController do
       response.should be_success
     end
   end
-  
+
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'
@@ -50,22 +50,76 @@ describe ActivityTypesController do
       campaign.goals.for_activity_types([activity_type]).first.value.should == 23
       assigns(:activity_type).should == activity_type
     end
+
+    it "must allow create form fields" do
+      activity_type.save
+      expect {
+        expect {
+          put 'update', id: activity_type.to_param,
+              activity_type: {form_fields_attributes:
+                {id: nil, field_type: 'FormField::Text', name: 'Test Field', ordering: 0, required: true}
+              }, format: :json
+        }.to change(FormField, :count).by(1)
+      }.to_not change(ActivityType, :count)
+      field = FormField.last
+      expect(field.name).to eql 'Test Field'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_true
+      expect(field.type).to eql 'FormField::Text'
+    end
+
+    it "must allow update form fields" do
+      activity_type.save
+      field = FactoryGirl.create(:form_field, fieldable: activity_type,
+        type: 'FormField::Text', name: 'Test Field',
+        ordering: 0, required: true )
+      expect {
+        expect {
+          put 'update', id: activity_type.to_param,
+              activity_type: {form_fields_attributes:
+                {id: field.id, field_type: 'FormField::Text', name: 'New name', ordering: 0, required: false}
+              }, format: :json
+        }.to_not change(FormField, :count)
+      }.to_not change(ActivityType, :count)
+      field = FormField.last
+      expect(field.name).to eql 'New name'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_false
+      expect(field.type).to eql 'FormField::Text'
+    end
+
+    it "must allow create form fields with nested options" do
+      activity_type.save
+      expect {
+        expect {
+          expect {
+            put 'update', id: activity_type.to_param,
+                activity_type: {form_fields_attributes:
+                  {id: nil, field_type: 'FormField::Radio', name: 'Radio Field', ordering: 0, required: true,
+                    options_attributes: [{name: 'One Option', ordering: 0}, {name: 'Other Option', ordering: 1}] }
+                }, format: :json
+          }.to change(FormField, :count).by(1)
+        }.to change(FormFieldOption, :count).by(2)
+      }.to_not change(ActivityType, :count)
+      field = FormField.last
+      expect(field.options.map(&:name)).to eql ['One Option', 'Other Option']
+    end
   end
-  
+
   describe "GET 'items'" do
     it "responds to .json format" do
       get 'items'
       response.should be_success
     end
   end
-  
+
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', format: :js
       response.should be_success
     end
   end
-  
+
     describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       lambda {
@@ -90,7 +144,7 @@ describe ActivityTypesController do
       assigns(:activity_type).errors.count > 0
     end
   end
-  
+
   describe "GET 'deactivate'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
 

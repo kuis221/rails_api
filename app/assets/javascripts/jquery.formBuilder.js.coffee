@@ -2,7 +2,10 @@ $.widget 'nmk.formBuilder', {
 	options: {
 	},
 	_create: () ->
-		@formWrapper = @element.find('.form-wrapper')
+		@element.find('.form-wrapper').append(
+			@formWrapper = $('<div class="form-fields">'),
+			$('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>')
+		)
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
 		@attributesPanel = $('<div class="field-attributes-panel">').
@@ -21,12 +24,19 @@ $.widget 'nmk.formBuilder', {
 					fieldHtml = @buildField({type: ui.item.data('type')})
 					ui.item.replaceWith fieldHtml
 					applyFormUiFormatsTo fieldHtml
+
+				$.map @formWrapper.find("> div.field"), (field, index) =>
+					$(field).data('field').attributes.ordering = index
+
 		}
 
 		@fieldsWrapper.find('.field').draggable {
-			connectToSortable: ".form-wrapper",
+			connectToSortable: ".form-fields",
 			helper: (a, b) =>
 				@buildField({type: $(a.target).data('type')})
+			start: (e, ui) =>
+				ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
+				applyFormUiFormatsTo(ui.helper)
 			revert: "invalid"
 		}
 
@@ -58,6 +68,7 @@ $.widget 'nmk.formBuilder', {
 
 	_loadForm: () ->
 		$.getJSON "#{@options.url}", (response) =>
+			@formWrapper.find('.field').remove()
 			for field in response.form_fields
 				@_addFieldToForm field
 
@@ -88,8 +99,10 @@ $.widget 'nmk.formBuilder', {
 			method: 'put',
 			data: {activity_type: data},
 			success: (response) =>
-				if response isnt 'OK'
-					bootbox.alert response
+				if response.result isnt 'OK'
+					bootbox.alert response.message
+				else
+					@_loadForm()
 		}
 
 	formFields: () ->
@@ -162,19 +175,18 @@ Class.extend = (prop) ->
 	Class
 
 
-
 # Base class for all form field classes
 FormField = Class.extend {
 	getSaveAttributes: () ->
-		{id: @attributes.id, name: @attributes.name, type: @attributes.type, settings: @attributes.settings, options_attributes: @getOptionsAttributes()}
+		{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes() }
 
 	getId: () ->
 		@attributes.id
 
 	labelField: () ->
 		$('<div class="control-group">').append([
-			$('<label class="control-label">').text('Field label'),
-			$('<div class="controls">').append $('<input type="text" name="label">').val(@attributes.name).on 'keyup', (e) =>
+			$('<label class="control-label" for="field_name">').text('Field label'),
+			$('<div class="controls">').append $('<input type="text" id="field_name" name="name">').val(@attributes.name).on 'keyup', (e) =>
 					input = $(e.target)
 					@attributes.name = input.val()
 					@refresh()
@@ -184,7 +196,7 @@ FormField = Class.extend {
 		$('<div class="control-group">').append([
 			$('<div class="controls">').append(
 				$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
-					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required then ' checked="checked"' else '')+'">').on 'change', (e) =>
 						@attributes.required = (if e.target.checked then 'true' else 'false')
 				)
 			)
@@ -202,17 +214,21 @@ FormField = Class.extend {
 						@refresh()
 					$('<div class="option-actions">').append(
 						# Button for adding a new option to the field
-						$('<a href="#" class="add-option-btn"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
+						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
-							@attributes.options.splice(@attributes.options.indexOf(option)+1,0, {id: '', name: ''})
+							index = @attributes.options.indexOf(option)+1
+							@attributes.options.splice(index,0, {id: '', name: '', ordering: index})
 							$('.field-options').replaceWith @optionsField()
 							@refresh()
 							false
 							
 						# Button for removing an option of the field
-						$('<a href="#" class="remove-option-btn"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
-							option._destroy = '1'
+							if option.id isnt ''
+								option._destroy = '1'
+							else
+								@attributes.options.splice(@attributes.options.indexOf(option),1)
 							$('.field-options').replaceWith @optionsField()
 							@refresh()
 							false
@@ -242,8 +258,11 @@ FormField = Class.extend {
 		applyFormUiFormatsTo @field
 		@
 
-	_renderField: () ->
+	_renderField: ->
 		''
+
+	fieldType: ->
+		"FormField::#{@__proto__.type}"
 }
 
 TextAreaField = FormField.extend {
@@ -276,6 +295,96 @@ TextAreaField = FormField.extend {
 		]
 }
 
+TextField = FormField.extend {
+	type: 'Text',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Single line text',
+			id: null,
+			required: false,
+			type: 'FormField::TextArea',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="text" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Single line text'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
+NumberField = FormField.extend {
+	type: 'Number',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Number',
+			id: null,
+			required: false,
+			type: 'FormField::Number',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="number" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Number'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
+CurrencyField = FormField.extend {
+	type: 'Currency',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Price',
+			id: null,
+			required: false,
+			type: 'FormField::Number',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="number" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Price'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
 DropdownField = FormField.extend {
 	type: 'Dropdown',
 
@@ -290,7 +399,7 @@ DropdownField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1'}]
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
 
 		@attributes.settings ||= {}
 
@@ -301,7 +410,10 @@ DropdownField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append($('<select>').append(
 				$.map @attributes.options, (option, index) =>
-					$('<option>').attr('value', option.id).text(option.name)
+					if option._destroy is '1'
+						''
+					else
+						$('<option>').attr('value', option.id).text(option.name)
 			))
 		]
 
@@ -320,7 +432,7 @@ RadioField = FormField.extend {
 
 	init: (attributes) ->
 		@attributes = $.extend({
-			name: 'Single Choice',
+			name: 'Multiple Choice',
 			id: null,
 			required: false,
 			type: 'FormField::Radio',
@@ -329,7 +441,7 @@ RadioField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1'}]
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
 
 		@attributes.settings ||= {}
 
@@ -340,15 +452,57 @@ RadioField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
-					$('<label>').addClass('radio').append(
-						$('<input>').attr('type', 'radio').attr('value', option.id)
-					).append(' '+ option.name)
+					if option._destroy isnt '1'
+						$('<label>').addClass('radio').append(
+							$('<input>').attr('type', 'radio').attr('value', option.id)
+						).append(' '+ option.name)
 			)
 		]
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Single Choice'),
+			$('<h4>').text('Multiple Choice'),
+			@labelField(),
+			@optionsField(),
+			@requiredField()
+		]
+}
+
+CheckboxField = FormField.extend {
+	type: 'Checkbox',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Checkboxes',
+			id: null,
+			required: false,
+			type: 'FormField::Checkbox',
+			settings: {},
+			options: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$.map @attributes.options, (option, index) =>
+					if option._destroy isnt '1'
+						$('<label>').addClass('checkbox').append(
+							$('<input>').attr('type', 'checkbox').attr('value', option.id)
+						).append(' '+ option.name)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Checkboxes'),
 			@labelField(),
 			@optionsField(),
 			@requiredField()

@@ -93,3 +93,53 @@ RSpec::Matchers.define :have_photo_thumbnail do |photo|
     "has thumbnail for '#{photo.file_file_name}'"
   end
 end
+
+
+RSpec::Matchers.define :have_form_field do |name, filter={}|
+  match do |page|
+    @errors = []
+
+    found = false
+    page.all('.field').each do |wrapper|
+      label = wrapper.all('label.control-label', :text => name)
+      unless label.nil? || label.count == 0
+        found = true
+        if filter[:with_options].present?
+          filter[:with_options].each do |option|
+            elements = case wrapper['data-type']
+            when 'Radio'
+              wrapper.all(:field, option, type: 'radio')
+            when 'Checkbox'
+              wrapper.all(:field, option, type: 'checkbox')
+            else
+              # False because chosen hides the select and display a list instead
+              wrapper.all('option', option, visible: false)
+            end
+            if elements.count == 0
+              @errors.push "Cannot find \"#{option}\" for #{name}"
+            end
+          end
+        end
+      end
+    end
+    @errors.push "Form Field #{name} not found" unless found
+
+    @errors.empty?
+  end
+
+
+  failure_message_for_should do |actual|
+    message = @errors.join("\n")
+    message
+  end
+
+  failure_message_for_should_not do |actual|
+    message = @errors.join("\n")
+    message
+  end
+
+  description do
+    message = "has form field #{filter[:name]}"
+  end
+
+end

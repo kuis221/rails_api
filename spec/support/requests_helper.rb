@@ -145,10 +145,7 @@ module RequestsHelper
   def event_team_member(member)
     find('#event-team-members #event-member-'+member.id.to_s)
   end
-
 end
-
-
 
 module Capybara
   module Node

@@ -30,11 +30,13 @@
     .fields-wrapper
       h4 Drag fields to add
       .field data-type="Dropdown" Dropdown
-      .field data-type="Radio" Single Choice
+      .field data-type="Checkbox" Checkboxes
+      .field data-type="Radio" Multiple Choice
       .field data-type="TextArea" Paragraph
+      .field data-type="Number" Number
+      .field data-type="Currency" Price
+      .field data-type="Text" Single line text
 
-    .form-actions
-      button#save-report.btn.btn-primary Save
 javascript:
   jQuery(function(){
     $(document).on('activity_types:change', function(){

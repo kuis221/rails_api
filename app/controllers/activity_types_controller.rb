@@ -18,23 +18,32 @@ class ActivityTypesController < FilteredController
     render :json => buckets.flatten
   end
 
-  def set_goal
-      @activity_type = ActivityType.find(params[:activity_type_id])
+  def update
+    update! do |success, failure|
+      success.js { render }
+      success.json { render json: {result: 'OK' } }
+      failure.json { render json: {result: 'KO', message: resource.errors.full_messages.join('<br />') } }
     end
+  end
+
+  def set_goal
+    @activity_type = ActivityType.find(params[:activity_type_id])
+  end
 
   protected
-  def permitted_params
-    params.permit(activity_type: [
-      :name, :description,
-      {form_fields_attributes: [:id, :name, :_destroy, {options_attributes: [:id, :name, :_destroy, :ordering]}, :ordering]},
-      {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
-    ])[:activity_type]
-  end
 
-  def facets
-    @facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-      f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+    def permitted_params
+      params.permit(activity_type: [
+        :name, :description,
+        {form_fields_attributes: [:id, :name, :field_type, :ordering, :required, :_destroy, {options_attributes: [:id, :name, :_destroy, :ordering]}]},
+        {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
+      ])[:activity_type]
     end
-  end
+
+    def facets
+      @facets ||= Array.new.tap do |f|
+        # select what params should we use for the facets search
+        f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
+      end
+    end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "ActivityTypes", search: true, js: true do
+feature "ActivityTypes", js: true do
 
   before do
     Warden.test_mode!
@@ -14,7 +14,7 @@ feature "ActivityTypes", search: true, js: true do
     Warden.test_reset!
   end
 
-  feature "/activity_types" do
+  feature "/activity_types", search: true  do
     scenario "GET index should display a table with the day_parts" do
       activity_types = [
         FactoryGirl.create(:activity_type, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
@@ -36,7 +36,7 @@ feature "ActivityTypes", search: true, js: true do
         end
       end
     end
-    
+
     scenario 'allows the user to create a new activity type' do
       visit activity_types_path
 
@@ -53,7 +53,7 @@ feature "ActivityTypes", search: true, js: true do
       expect(page).to have_selector('h2', text: 'Activity Type name')
       expect(page).to have_selector('div.description-data', text: 'activity type description')
     end
-    
+
     scenario "should allow user to deactivate activity types" do
         FactoryGirl.create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
         Sunspot.commit
@@ -82,5 +82,366 @@ feature "ActivityTypes", search: true, js: true do
         end
         expect(page).to have_no_content('A Vinos ticos')
       end
+  end
+
+  feature "report builder" do
+    let (:activity_type) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: @company) }
+    scenario "user can add paragraph fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_area_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Paragraph')
+
+      within form_field_settings_for 'Paragraph' do
+        fill_in 'Field label', with: 'My Text Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Text Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Text Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::TextArea'
+
+      within form_field_settings_for 'My Text Field' do
+        expect(find_field('Field label').value).to eql 'My Text Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+    scenario "user can add single line text fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Single line text')
+
+      within form_field_settings_for 'Single line text' do
+        fill_in 'Field label', with: 'My Text Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Text Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Text Field'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_true
+      expect(field.type).to eql 'FormField::Text'
+
+      within form_field_settings_for 'My Text Field' do
+        expect(find_field('Field label').value).to eql 'My Text Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+    scenario "user can add numeric fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      number_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Number')
+
+      within form_field_settings_for 'Number' do
+        fill_in 'Field label', with: 'My Numeric Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Numeric Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Numeric Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Number'
+
+      within form_field_settings_for 'My Numeric Field' do
+        expect(find_field('Field label').value).to eql 'My Numeric Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+
+    scenario "user can add currency fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      price_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Price')
+
+      within form_field_settings_for 'Price' do
+        fill_in 'Field label', with: 'My Price Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Price Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Price Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Currency'
+
+      within form_field_settings_for 'My Price Field' do
+        expect(find_field('Field label').value).to eql 'My Price Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+    scenario "user can add radio fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      radio_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Multiple Choice',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Multiple Choice' do
+        fill_in 'Field label', with: 'My Radio Field'
+        fill_in 'option[0][name]', with: 'First Option'
+        click_js_link 'Add option after this' # Create another option
+        fill_in 'option[1][name]', with: 'Second Option'
+      end
+
+      expect(form_builder).to have_form_field('My Radio Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(2)
+      field = FormField.last
+      expect(field.name).to eql 'My Radio Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Radio'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Radio Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      within form_field_settings_for 'My Radio Field' do
+        # Remove the second option (the first one doesn't have the link)
+        click_js_link 'Remove this option'
+        expect(page).to have_no_content('Second Option')
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-1)
+    end
+
+    scenario "user can add checkbox fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      checkbox_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Checkboxes',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Checkboxes' do
+        fill_in 'Field label', with: 'My Checkbox Field'
+        fill_in 'option[0][name]', with: 'First Option'
+        click_js_link 'Add option after this' # Create another option
+        fill_in 'option[1][name]', with: 'Second Option'
+      end
+
+      expect(form_builder).to have_form_field('My Checkbox Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(2)
+      field = FormField.last
+      expect(field.name).to eql 'My Checkbox Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Checkbox'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Checkbox Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      within form_field_settings_for 'My Checkbox Field' do
+        # Remove the second option (the first one doesn't have the link)
+        click_js_link 'Remove this option'
+        expect(page).to have_no_content('Second Option')
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-1)
+    end
+
+    scenario "user can add dropdown fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      dropdown_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Dropdown',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Dropdown' do
+        fill_in 'Field label', with: 'My Dropdown Field'
+        fill_in 'option[0][name]', with: 'First Option'
+        click_js_link 'Add option after this' # Create another option
+        fill_in 'option[1][name]', with: 'Second Option'
+      end
+
+      expect(form_builder).to have_form_field('My Dropdown Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(2)
+      field = FormField.last
+      expect(field.name).to eql 'My Dropdown Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Dropdown'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Dropdown Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      within form_field_settings_for 'My Dropdown Field' do
+        # Remove the second option (the first one doesn't have the link)
+        click_js_link 'Remove this option'
+        expect(page).to have_no_content('Second Option')
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-1)
+    end
+  end
+
+  def text_area_field
+    find('.fields-wrapper .field', text: 'Paragraph')
+  end
+
+  def number_field
+    find('.fields-wrapper .field', text: 'Number')
+  end
+
+  def price_field
+    find('.fields-wrapper .field', text: 'Price')
+  end
+
+  def text_field
+    find('.fields-wrapper .field', text: 'Single line text')
+  end
+
+  def dropdown_field
+    find('.fields-wrapper .field', text: 'Dropdown')
+  end
+
+  def radio_field
+    find('.fields-wrapper .field', text: 'Multiple Choice')
+  end
+
+  def checkbox_field
+    find('.fields-wrapper .field', text: 'Checkboxes')
+  end
+
+  def form_builder
+    find('.form-fields')
+  end
+
+  def form_field_settings_for(field_name)
+    form_field(field_name).trigger 'click'
+    find('.field-attributes-panel')
+  end
+
+  def form_field(field_name)
+    field = nil
+    form_builder.all('.field').each do |wrapper|
+      field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
+    end
+    raise "Field #{field_name} not found" if field.nil?
+    field
   end
 end

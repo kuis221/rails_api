@@ -13,7 +13,6 @@
 class FormFieldOption < ActiveRecord::Base
   belongs_to :form_field
 
-  validates :form_field_id, numericality: true, presence: true
   validates :name, presence: true
   validates :ordering, presence: true, numericality: true
 end
