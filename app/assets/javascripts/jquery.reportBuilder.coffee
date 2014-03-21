@@ -109,6 +109,8 @@ $.widget 'nmk.reportBuilder',
 		@element
 
 	saveForm: () ->
+		button = @element.find('button.btn-save-report')
+		button.data('ujs:enable-with', button.text()).text(button.data('disable-with')).attr('disabled', true)
 		$.ajax
 			url: "/results/reports/#{@id}.js",
 			type: 'PUT',
@@ -116,6 +118,8 @@ $.widget 'nmk.reportBuilder',
 			success: () =>
 				@element.find('.btn-save-report').attr('disabled', true)
 				@saved = true
+			complete: () =>
+				button.text(button.data('ujs:enable-with'))
 
 	refreshReportPreview: () ->
 		@_showOverlay()
