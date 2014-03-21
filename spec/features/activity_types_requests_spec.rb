@@ -397,6 +397,74 @@ feature "ActivityTypes", js: true do
         }.to_not change(FormField, :count)
       }.to change(FormFieldOption, :count).by(-1)
     end
+
+    scenario "user can add date fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      date_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Date')
+
+      within form_field_settings_for 'Date' do
+        fill_in 'Field label', with: 'My Date Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Date Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Date Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Date'
+
+      within form_field_settings_for 'My Date Field' do
+        expect(find_field('Field label').value).to eql 'My Date Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+    scenario "user can add time fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      time_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Time')
+
+      within form_field_settings_for 'Time' do
+        fill_in 'Field label', with: 'My Time Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Time Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Time Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Time'
+
+      within form_field_settings_for 'My Time Field' do
+        expect(find_field('Field label').value).to eql 'My Time Field'
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
   end
 
   def text_area_field
@@ -425,6 +493,14 @@ feature "ActivityTypes", js: true do
 
   def checkbox_field
     find('.fields-wrapper .field', text: 'Checkboxes')
+  end
+
+  def date_field
+    find('.fields-wrapper .field', text: 'Date')
+  end
+
+  def time_field
+    find('.fields-wrapper .field', text: 'Time')
   end
 
   def form_builder
