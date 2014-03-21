@@ -317,13 +317,19 @@ class Report < ActiveRecord::Base
         filters.each do |filter|
           if filter_params.has_key?(filter.field)
             if filter_params[filter.field].is_a?(Hash)
-              if filter_params[filter.field]['min'].to_i == 0
-                s = s.where("(#{filter.table_column[0]} BETWEEN ? AND ? OR #{filter.table_column[0]} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
-              else
-                s = s.where("#{filter.table_column[0]} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+              if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
+                start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
+                end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
+                s = s.where("#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date )
+              elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
+                if filter_params[filter.field]['min'].to_i == 0
+                  s = s.where("(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                else
+                  s = s.where("#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                end
               end
             elsif filter_params[filter.field].is_a?(Array)
-              s = s.where("#{filter.table_column[0]} IN (?)", filter_params[filter.field])
+              s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])
             end
           else
             nil
@@ -443,9 +449,18 @@ class Report::Field
     @table_column ||= if m = /\Akpi:([0-9]+)\z/.match(field)
       ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
     elsif m = /\A(.*):([a-z_]+)\z/.match(field)
-      klass = m[1].classify.constantize
-      definition = klass.report_fields[m[2].to_sym]
-      definition[:column].nil? ? ["#{klass.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
+      definition = field_class.report_fields[m[2].to_sym]
+      definition[:column].nil? ? ["#{field_class.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
+    end
+  end
+
+  def filter_column
+    @table_column ||= if m = /\Akpi:([0-9]+)\z/.match(field)
+      "er_kpi_#{m[1]}.value"
+    elsif m = /\A(.*):([a-z_]+)\z/.match(field)
+      definition = field_class.report_fields[m[2].to_sym]
+      column = definition[:filter_column] || definition[:column]
+      column.nil? ? "#{field_class.table_name}.#{m[2]}" : ( column.respond_to?(:call) ? column.call :  column )
     end
   end
 
@@ -483,8 +498,13 @@ class Report::Field
   def allowed_filter_params
     if kpi.present? && kpi.kpi_type == 'number'
       {field => [:max, :min]}
-    else
-      {field => []}
+    elsif column_info
+      type = column_info.has_key?(:filter) ? column_info[:filter].call(self)[:type] : nil
+      if type == 'calendar'
+        {field => [:start, :end]}
+      else
+        {field => []}
+      end
     end
   end
 
@@ -492,7 +512,7 @@ class Report::Field
     if kpi.present?
       if ['percentage', 'count'].include?(kpi.kpi_type)
         options = kpi.kpis_segments.map do |segment|
-          {label: segment.text, id: segment.id, name: field}
+          { label: segment.text, id: segment.id, name: field }
         end
         { label: label, items: options }
       else
@@ -501,12 +521,33 @@ class Report::Field
         max = result.max_value.to_f.ceil
         { label: label, name: field, min: min, max: max, selected_min: min, selected_max: max }
       end
-    elsif m = /\A(.*):([a-z_]+)\z/.match(field)
-      klass = m[1].classify.constantize
-      options = klass.in_company(@report.company_id).order("#{table_column[0]} ASC").pluck("DISTINCT #{table_column[0]}").map do |option|
-        {label: option, id: option, name: field}
+    elsif column_info
+      if column_info.has_key?(:filter)
+        column_info[:filter].call(self)
+      else
+        options = field_class.in_company(@report.company_id).order("#{table_column[0]} ASC").pluck("DISTINCT #{table_column[0]}").map do |option|
+          { label: option, id: option, name: field }
+        end
+        { label: label, items: options }
       end
-      { label: label, items: options }
+    end
+  end
+
+  def column_info
+    @column_info ||= if field_class.present?
+      field_class.report_fields[field_attribute.to_sym]
+    end
+  end
+
+  def field_class
+    @klass ||= if m = /\A(.*):([a-z_]+)\z/.match(field)
+      m[1].classify.constantize
+    end
+  end
+
+  def field_attribute
+    @field_attribute ||= if m = /\A.*:([a-z_]+)\z/.match(field)
+      m[1]
     end
   end
 end

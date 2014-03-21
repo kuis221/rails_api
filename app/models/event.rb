@@ -641,9 +641,9 @@ class Event < ActiveRecord::Base
       prefix = if Company.current.present? && Company.current.timezone_support? then 'local_' else '' end
       timezone = Company.current.present? && Company.current.timezone_support? ? 'timezone' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
-        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" } },
+        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}start_at" }, filter: ->(field) { { name: 'event:start_date', type: 'calendar' } } },
         start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" } },
-        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" } },
+        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}end_at" }, filter: ->(field) { { name: 'event:end_date', type: 'calendar' } } },
         end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" } },
         event_active: { title: 'Active State' },
         event_status: { title: 'Event Status' }
