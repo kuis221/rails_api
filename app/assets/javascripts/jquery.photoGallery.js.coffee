@@ -5,7 +5,9 @@ $.widget 'nmk.photoGallery', {
 		year: null,
 		eventsUrl: null,
 		renderMonthDay: null,
-		includeTags: false
+		includeTags: true,
+		tags: null,
+		tags_list: null
 	},
 
 	_create: () ->
@@ -40,9 +42,17 @@ $.widget 'nmk.photoGallery', {
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
 		@setRating $image.data('rating'), $image.data('id')
-		if @options.includeTags
-			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
-
+		@setTagList $image.data('tags'), $image.data('tags_list')
+		if @options.includeTags #and 'index_tag' in @image.data('permissions')
+			@setTags @image.data('tags'), $image.data('id')
+			@image.data('tags', @current_tags)
+	
+	setTagList: (tags, tags_list) ->
+		#if 'view_rate' in @image.data('permissions')
+		@tags_list.select2('data',tags)
+		#$('select.form-select').select2({tags:tags_list})
+		$(".select2-search-choice").hide()
+		
 	setTitle: (title, url) ->
 		@title.html $('<a>').attr('href', url).text(title)
 
@@ -73,9 +83,35 @@ $.widget 'nmk.photoGallery', {
 	setAddress: (address) ->
 		@address.html address
 
-	setTags: (tags) ->
+	setTag: (tag) ->
+		if tag.added
+			#current_tags = @image.data('tags')
+			@current_tags = @current_tags.concat([tag.added])
+			#@image.data('tags', @current_tags)
+			$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag.added['id']+'/activate', {
+						method: 'GET',
+						dataType: 'script'
+					}
+			$(".select2-search-choice").hide()
+			@image.data('tags', @current_tags)
+	
+	setTags: (tags, photo_id) ->
+		@current_tags = tags
 		@tags.html ''
-		@tags.append($('<div class="tag">').text(tag).prepend($('<span class="close">'))) for tag in tags
+		@tags.append($('<div class="tag">').text(tag['text']).prepend(@setTagCloseButton(tag['id'], photo_id))) for tag in tags
+		@tags.show()
+		
+	setTagCloseButton: (tag_id, photo_id) ->
+		if 'deactivate_tag' in @image.data('permissions')
+			button = $('<button class="close">').on 'click', (e) => 
+				button.parent().hide()
+				@current_tags = @current_tags - @current_tags
+				$.ajax "/attached_assets/"+photo_id+'/tags/'+tag_id+'/deactivate', {
+						method: 'GET',
+						dataType: 'script'
+					}
+				#add call to remove the relationship among tags and photos.
+				#deactivate_photo_tag_path
 
 	buildCarousels: (currentImage) ->
 		i = index = 0
@@ -147,7 +183,13 @@ $.widget 'nmk.photoGallery', {
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('full').addClass('empty')
 				@rating.find('span').slice(0,@image.data('rating')).addClass('full').removeClass('empty')
-
+		#if 'create_tag' in @image.data('permissions')
+		@tags_list = $('<input id="tag_input" multiple="true" class="select2-field typeahead1">').text('Add tags')
+			.on "change", (e) =>
+				@setTag(e)
+		#else
+		#	@tags_list = ''
+			#@tags_list.val(e.added)
 		if @gallery
 			@gallery.remove();
 			@gallery.off('shown')
@@ -163,12 +205,12 @@ $.widget 'nmk.photoGallery', {
 						$('<div class="description">').append( @title ).append( @date ).append( @address ),
 						$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 						@rating,
-						(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
+						(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list) else null)
 					),
 				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
 			).append($('<div class="clearfix">'))
 			)
-
+		
 
 		@gallery.insertAfter @element
 

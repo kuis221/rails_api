@@ -1,0 +1,14 @@
+|
+  $("#attached_asset_#{@photo.id}").html("#{escape_javascript(raw render :partial => '/results/photos/photo', :object => @photo).html_safe }")
+  $('#tag_input').select2('data', #{raw((@photo.tags).to_json).html_safe})
+  $('#tag_input').select2({tags: #{raw(company_tags(@photo.tags).to_json).html_safe}})
+  $(".select2-search-choice").hide()
+  $('#list').append($('<div class="tag">').text("#{@tag.name}").prepend($('<button class="close">').click(function(){
+    $(this).parent().hide()
+    $.ajax({
+      url: "/attached_assets/#{@photo.id}/tags/#{@tag.id}/deactivate",
+      method: 'GET',
+      dataType: 'script'
+		})
+  })))
+  

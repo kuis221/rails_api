@@ -373,6 +373,12 @@ Brandscopic::Application.routes.draw do
 
   resources :attached_assets, only: [] do
     put :rate, on: :member
+    resources :tags, only: [] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
   end
 
   resources :date_ranges do

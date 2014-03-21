@@ -1,0 +1,6 @@
+|
+  $('#tag_input').select2({placeholder: 'Add tags',tags: #{raw(company_tags(@photo.tags).to_json).html_safe}})
+  $('#tag_input').select2('data',#{raw((@photo.tags).to_json).html_safe})
+  $("#attached_asset_#{@photo.id}").html("#{escape_javascript(raw render :partial => '/results/photos/photo', :object => @photo).html_safe }")
+  $(".select2-search-choice").hide()
+  

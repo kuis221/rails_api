@@ -86,6 +86,13 @@
         .span2
 
       .span12
+        .span3 Tags
+        .span2 = permission_checkbox(f, :index_tags, Tag)
+        .span2 = permission_checkbox(f, :create_tag, Tag)
+        .span2 = permission_checkbox(f, :edit_tag, Tag)
+        .span2 = permission_checkbox(f, :deactivate_tag, Tag)
+
+      .span12
         .span3 Expenses
         .span2 = permission_checkbox(f, :index_expenses, Event)
         .span2 = permission_checkbox(f, :create_expense, Event)

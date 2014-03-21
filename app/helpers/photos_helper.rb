@@ -108,4 +108,25 @@ module PhotosHelper
         status.to_sentence(last_word_connector: ' and ')
       end
     end
+    
+    def company_tags(assigned_tags)
+      tags_list = Array.new
+      tags = Tag.where(company_id: current_company).order('name ASC')
+      #tags = tags - assigned_tags
+      tags.each{ |t| tags_list << {'id' => t.id, 'text' => t.name}}
+      tags_list
+    end
+    
+    def to_select2_tag_format(obj)
+      if obj.class.name == 'Array' 
+        result = []
+        obj.each{|o| result << {'id' => o.id, 'text' => o.name}}
+        return result
+      else
+        return {'id' => obj.id, 'text' => obj.name}
+      end
+      
+    end
+    
+    
 end
