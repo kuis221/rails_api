@@ -41,6 +41,11 @@ ul.reports-list {
 }
 
 #report-builder {
+
+	a.btn.btn-cancel{
+		box-sizing:border-box;
+		-moz-box-sizing: border-box;
+	}
 	.with-details-close-bar {
 		padding-top: 60px;
 	}
