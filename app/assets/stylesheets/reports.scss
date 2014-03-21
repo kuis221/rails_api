@@ -453,8 +453,13 @@ $report_border_color: #ccc;
 
 	.report-arrows {
 		text-align: right;
-		a.disabled {
-			opacity: 0.5;
+		a{
+			.disabled {
+				opacity: 0.5;
+			}
+			&:hover{
+				text-decoration: none;
+			}
 		}
 	}
 }
