@@ -41,7 +41,6 @@ ul.reports-list {
 }
 
 #report-builder {
-
 	.with-details-close-bar {
 		padding-top: 60px;
 	}
@@ -161,6 +160,41 @@ ul.reports-list {
 				padding: 3px 5px;
 				&:last-child{
 					margin-bottom: 0;
+				}
+
+				&.ui-sortable-placeholder {
+					height: 2px;
+					opacity: 1;
+					background-color: $grey_three;
+					border-radius: 0;
+					visibility: visible !important;
+					padding: 0;
+					position: relative;
+					&:before {
+						content: "||";
+						letter-spacing: -2px;
+						top: -9px;
+						left: -1px;
+						position: absolute;
+						font-size: 6px;
+						font-weight: bolder;
+					}
+					&:after {
+						content: "||";
+						letter-spacing: -2px;
+						top: -9px;
+						right: 1px;
+						position: absolute;
+						font-size: 6px;
+						font-weight: bolder;
+					}
+				}
+
+				&.ui-sortable-helper, &.ui-draggable-dragging {
+					opacity: 0.5;
+					.field-settings-btn {
+						display: none;
+					}
 				}
 			}
 		}

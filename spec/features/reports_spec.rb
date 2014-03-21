@@ -302,6 +302,33 @@ feature "Reports", js: true do
       expect(@report.reload.values.first.to_hash).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
     end
 
+    scenario "'Values' must be added automatically to the columns when adding a value" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit build_results_report_path(@report)
+
+      within ".sidebar" do
+        expect(field_list('columns')).to have_no_content('Values')
+        find("li", text: 'Kpi #1').drag_to field_list('values')
+        expect(field_list('columns')).to have_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of values
+        field_list('columns').find("li", text: 'Values').drag_to field_list('values')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('values')).to have_no_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of rows
+        field_list('columns').find("li", text: 'Values').drag_to field_list('rows')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('rows')).to have_no_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of filters
+        field_list('columns').find("li", text: 'Values').drag_to field_list('filters')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('filters')).to have_no_content('Values')
+      end
+    end
+
     scenario "user can change the aggregation method for rows" do
       campaign = FactoryGirl.create(:campaign, company: @company, name: 'My Super Campaign')
       FactoryGirl.create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
