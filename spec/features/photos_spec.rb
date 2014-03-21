@@ -103,8 +103,7 @@ feature "Photos", search: true, js: true do
 
       # Deactivate the image from the link inside the gallery modal
       within gallery_modal do
-        expect(page).to have_selector('a.photo-deactivate-link')
-        click_js_link 'Deactivate'
+        hover_and_click('.slider', 'Deactivate')
       end
 
       confirm_prompt "Are you sure you want to deactivate this photo?"
@@ -136,9 +135,8 @@ feature "Photos", search: true, js: true do
 
       # Activate the image from the link inside the gallery modal
       within gallery_modal do
-        expect(page).to have_selector('a.icon-ok-circle')
-        click_js_link 'Activate'
-        expect(page).to have_no_selector('a.icon-remove-circle')
+        hover_and_click('.slider', 'Activate')
+        expect(page).to have_selector('a.icon-remove-circle')
       end
     end
   end

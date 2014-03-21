@@ -32,7 +32,9 @@ class EventExpense < ActiveRecord::Base
 
   private
     def update_event_data
-      Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
-      Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
+      if event.present?
+        Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
+        Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
+      end
     end
 end
