@@ -228,6 +228,11 @@ ul.select2-results{
 				}
 			}
 
+			#select-areas-table-wrapper .link-list{
+				height: 330px;
+				overflow-y: scroll;
+			}
+
 			.control-group{
 				label{
 					display: inline-block;
@@ -1285,6 +1290,9 @@ div#spin{
 	.radio{
 		top: 9px;
 		position: absolute;
+	}
+	.chzn-container-multi .chzn-choices {
+		height: auto !important;
 	}
 }
 

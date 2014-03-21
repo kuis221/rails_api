@@ -23,7 +23,13 @@ $.widget 'nmk.reportBuilder',
 		@reportOverlay = $('<div class="report-overlay">').hide().insertAfter(@preview)
 
 		@element.find('.sortable-list').sortable
+			forcePlaceholderSize: false,
 			receive: (event, ui) =>
+				if ui.item.data('field-id') is 'values'
+					$(ui.placeholder).addClass('ui-state-error')
+					$(ui.sender).sortable('cancel')
+					event.stopPropagation()
+
 				if ui.helper?
 					ui.item.addClass('hidden').hide()
 					label = ui.item.find('.field-label').text()
@@ -34,6 +40,9 @@ $.widget 'nmk.reportBuilder',
 					field = {field: ui.item.data('field-id'), label: label, aggregate: 'sum'}
 					$(event.target).find('li[data-field-id="'+ui.item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
 				true
+			over: (event, ui) =>
+				if ui.item.data('field-id') is 'values'
+					ui.placeholder.hide()
 			update: (event, ui) =>
 				@reportModified()
 				true
@@ -91,14 +100,17 @@ $.widget 'nmk.reportBuilder',
 			e.stopPropagation()
 			false
 
-		@element.find('#report-values').on 'sortreceive', () =>
-			@_addValuesToColumns()
+		@element.find('#report-values').on 'sortreceive', (event, ui) =>
+			if ui.item.data('field-id') isnt 'values'
+				@_addValuesToColumns()
 
 		@refreshReportPreview()
 
 		@element
 
 	saveForm: () ->
+		button = @element.find('button.btn-save-report')
+		button.data('ujs:enable-with', button.text()).text(button.data('disable-with')).attr('disabled', true)
 		$.ajax
 			url: "/results/reports/#{@id}.js",
 			type: 'PUT',
@@ -106,6 +118,8 @@ $.widget 'nmk.reportBuilder',
 			success: () =>
 				@element.find('.btn-save-report').attr('disabled', true)
 				@saved = true
+			complete: () =>
+				button.text(button.data('ujs:enable-with'))
 
 	refreshReportPreview: () ->
 		@_showOverlay()

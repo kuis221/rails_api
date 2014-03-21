@@ -12,15 +12,16 @@
     = render 'values_list'
 
   .main
-    button.btn.btn-primary.btn-save-report disabled="disabled" Save
+    button.btn.btn-primary.btn-save-report disabled="disabled" data-disable-with="Saving..." Save
     = link_to 'Exit', results_report_path(resource), method: :get, title: 'Exit', form_class: "btn-cancel-report-form", class: 'btn btn-cancel btn-cancel-report'
 
     .buttons-zone.pull-right
       = button_to '', share_results_report_path(resource, format: :js), class: 'btn btn-share-report icon-share', title: 'Share', remote: true, method: :get
 
-      .btn-group
-        a.btn.active.table-view
-        a.btn.charts
+      - if false # This is not implemented yet, so hide it
+        .btn-group
+          a.btn.active.table-view
+          a.btn.charts
 
     #report-container
       / This will be filled by AJAX

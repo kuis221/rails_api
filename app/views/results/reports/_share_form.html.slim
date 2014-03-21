@@ -9,7 +9,7 @@
     .option-help Share this report with specific users, teams and roles
 
     = f.input :sharing_selections, label: false do
-      = f.select :sharing_selections, @sharing_collection, {}, class: 'input-xlarge chosen-enabled', multiple: true
+      = f.select :sharing_selections, @sharing_collection, {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " ", disabled: (resource.sharing != 'custom')
 
 
   .share-option

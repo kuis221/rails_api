@@ -29,7 +29,7 @@ feature "Reports", js: true do
       }.to change(Report, :count).by(1)
       report = Report.last
 
-      expect(current_path).to eql(results_report_path(report))
+      expect(current_path).to eql(build_results_report_path(report))
     end
   end
 
@@ -141,7 +141,6 @@ feature "Reports", js: true do
       expect(page).to have_content('GRAND TOTAL: 444.0')
       expect(page).to have_content('Bar 1 123.0')
       expect(page).to have_content('Bar 2 321.0')
-
 
       # Export the report
       with_resque do
@@ -301,6 +300,33 @@ feature "Reports", js: true do
       click_button 'Save'
       wait_for_ajax
       expect(@report.reload.values.first.to_hash).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
+    end
+
+    scenario "'Values' must be added automatically to the columns when adding a value" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit build_results_report_path(@report)
+
+      within ".sidebar" do
+        expect(field_list('columns')).to have_no_content('Values')
+        find("li", text: 'Kpi #1').drag_to field_list('values')
+        expect(field_list('columns')).to have_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of values
+        field_list('columns').find("li", text: 'Values').drag_to field_list('values')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('values')).to have_no_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of rows
+        field_list('columns').find("li", text: 'Values').drag_to field_list('rows')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('rows')).to have_no_content('Values')
+
+        # The 'Values' field cannot be dragged to the list of filters
+        field_list('columns').find("li", text: 'Values').drag_to field_list('filters')
+        expect(field_list('columns')).to have_selector("li", text: 'Values', count: 1)
+        expect(field_list('filters')).to have_no_content('Values')
+      end
     end
 
     scenario "user can change the aggregation method for rows" do

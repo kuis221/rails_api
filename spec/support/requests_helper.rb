@@ -20,14 +20,14 @@ module CapybaraBrandscopicHelpers
   end
 
   def confirm_prompt(message)
-    within visible_modal do
+    within find('.modal.confirm-dialog.in', visible: true) do
       expect(page).to have_content(message)
       # For some reason, the click_link function doesn't always works, so we are using JS
       # for this instead
       #click_link("OK")
       page.execute_script("$('.bootbox.modal.confirm-dialog.in a.btn-primary').click()")
     end
-    ensure_modal_was_closed
+    expect(page).to have_no_selector('.modal.confirm-dialog.in', visible: true)
   end
 
   def click_js_link(locator, options={})

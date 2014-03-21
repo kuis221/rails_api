@@ -2,7 +2,7 @@ class FilteredController < InheritedResources::Base
   include FacetsHelper
   include AutocompleteHelper
 
-  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
+  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item, :resource_close_bar_url
   respond_to :json, only: :index
 
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
@@ -144,5 +144,9 @@ class FilteredController < InheritedResources::Base
 
     def sort_options
       {}
+    end
+
+    def resource_close_bar_url
+      session[:previous_page] || collection_path
     end
 end

@@ -1,2 +1,4 @@
 - if resource.can_be_generated?
-  = render 'report_rows'
+  table
+    tbody data-content="items"
+      = render 'report_rows'
