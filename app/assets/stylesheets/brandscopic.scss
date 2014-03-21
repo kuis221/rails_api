@@ -208,10 +208,24 @@ body.events.show{
 		}
 		#event-custom{
 			label.radio{
-				display: inline;
+				display: block;
+				font-size: 13px;
+				margin-bottom: 10px;
+				width: auto;
+				&:last-child{
+					margin-bottom: 20px;
+				}
+			}
+			.control-group.radio_buttons label.radio_buttons{
+				font-size: 13px;
+				margin-bottom: 10px;
+				&:first-of-type{
+					margin-top: 15px;
+				}
 			}
 			.radio{
 				margin-right: 10px;
+				margin-bottom: 3px;
 			}
 		}
 	}
@@ -3679,7 +3693,7 @@ ul{
 	left:107px;
 	.fancybox-skin{
 		background-color: white;
-		padding: 60px 190px 60px 0px !important;
+		padding: 60px;
 		width: auto;
 		height: auto;
 		display: block !important;
@@ -5050,7 +5064,6 @@ body.campaigns{
 		}
 	}
 	label{
-		font-size: 11px;
 		margin-bottom: 2px;
 	}
 	.link{
@@ -6704,11 +6717,11 @@ ul#reports-list {
 		background-image: none !important;
 		border: 4px solid #d7dcde;
 		display: block;
-		height: 15px;
+		height: 12px;
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
-		width: 15px;
+		width: 12px;
 		&.help-inline{
 			border: 0;
 			width: 120px;
@@ -6718,22 +6731,22 @@ ul#reports-list {
 		}
 	}
 	span.checked{
-		border: 4px solid $grey_three;
+		border: 4px solid $brand;
 		background-image: none !important;
 		display: block;
-		height: 15px;
+		height: 12px;
 		margin: 0;
 		padding:0;
-		width: 15px;
+		width: 12px;
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
 	}
 	span.checked:after{
-		color: $grey_three;
+		color: $brand;
 		content: "\2022";
-		font-size: 25px;
-		bottom: 22px;
+		font-size: 20px;
+		bottom: 23px;
 		position: relative;
 		speak:none;
 		text-align: center;
