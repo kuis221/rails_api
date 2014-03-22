@@ -468,6 +468,47 @@ RadioField = FormField.extend {
 		]
 }
 
+PercentageField = FormField.extend {
+	type: 'Percentage',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Percent',
+			id: null,
+			required: false,
+			type: 'FormField::Percentage',
+			settings: {},
+			options: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$.map @attributes.options, (option, index) =>
+					if option._destroy isnt '1'
+						$('<label>').addClass('percentage').append(
+							$('<input type="number" readonly="readonly">')
+						).append(' '+ option.name)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Percent'),
+			@labelField(),
+			@optionsField(),
+			@requiredField()
+		]
+}
+
 CheckboxField = FormField.extend {
 	type: 'Checkbox',
 
