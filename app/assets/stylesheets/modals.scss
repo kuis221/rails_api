@@ -228,6 +228,11 @@ ul.select2-results{
 				}
 			}
 
+			#select-areas-table-wrapper .link-list{
+				height: 330px;
+				overflow-y: scroll;
+			}
+
 			.control-group{
 				label{
 					display: inline-block;

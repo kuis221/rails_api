@@ -208,10 +208,24 @@ body.events.show{
 		}
 		#event-custom{
 			label.radio{
-				display: inline;
+				display: block;
+				font-size: 13px;
+				margin-bottom: 10px;
+				width: auto;
+				&:last-child{
+					margin-bottom: 20px;
+				}
+			}
+			.control-group.radio_buttons label.radio_buttons{
+				font-size: 13px;
+				margin-bottom: 10px;
+				&:first-of-type{
+					margin-top: 15px;
+				}
 			}
 			.radio{
 				margin-right: 10px;
+				margin-bottom: 3px;
 			}
 		}
 	}
@@ -1333,6 +1347,7 @@ li.dropdown a{
 		.dropdown-toggle:focus,
 		.single-link:hover,
 		.single-link:focus {
+			background-color: $menu;
 			border-radius: 0;
 			height: 19px;
 			margin-top:0;
@@ -1344,6 +1359,7 @@ li.dropdown a{
 		.dropdown-submenu:hover>a,
 		.dropdown-submenu:focus>a {
 			background-image: none;
+			background-color: $menu;
 		}
 		.nav-pills>.active>a,
 		.nav-pills>.active>a:hover,
@@ -2010,8 +2026,6 @@ ul.kpis-list{
 		}
 	}
 	ul#areas-list{
-		height: 330px;
-		overflow-y: scroll;
 		li{
 			span{
 				&:first-child{
@@ -3683,7 +3697,7 @@ ul{
 	left:107px;
 	.fancybox-skin{
 		background-color: white;
-		padding: 60px 190px 60px 0px !important;
+		padding: 60px;
 		width: auto;
 		height: auto;
 		display: block !important;
@@ -5009,7 +5023,7 @@ body.campaigns{
 				}
 			}
 			.percentage {
-				width: 573px;
+				width: 397px;
 				.help-inline {
 					margin-top: 12px;
 					float: right;
@@ -5054,7 +5068,6 @@ body.campaigns{
 		}
 	}
 	label{
-		font-size: 11px;
 		margin-bottom: 2px;
 	}
 	.link{
@@ -6151,6 +6164,7 @@ ul#reports-list {
 			position:relative;
 			list-style: none;
 			width: 20%;
+			overflow: hidden;
 			margin-bottom: 8px;
 			.thumbnail-toolbar{
 				display: none;
@@ -6161,6 +6175,7 @@ ul#reports-list {
 			}
 			&.photo-item{
 				img.google-images{
+					min-height: 160px;
 					width: 100%;
 				}
 			}
@@ -6447,40 +6462,60 @@ ul#reports-list {
 			margin: auto;
 		}
 		.photo-toolbar {
-			display: block;
-			bottom: 0;
-			position: absolute;
-			right: 0;
-			a{
-				color: white;
-				float: right;
-				margin: 10px;
-				opacity: 1 !important;
-				text-decoration: none;
-				&.photo-download-link{
-					float:right;
-					margin: 11px 5px 12px 12px;
-					position: relative;
-					&:before{
-						color: $grey_one;
-						content: "\e00b" !important;
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 15px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
-					}
-				}
-				&.icon-remove-circle{
-					float:right;
+			display: none;
+		}
+		&:hover{
+			.photo-toolbar {
+				background-color: rgba(0, 0, 0, 0.6);
+				bottom: 0;
+				display: block;
+				left: 0;
+				overflow:hidden;
+				position: absolute;
+				right: 0;
+				a{
+					color: white;
+					float: right;
 					margin: 10px;
-					position: relative;
-					&:before{
+					opacity: 1 !important;
+					text-decoration: none;
+					&.photo-download-link{
+						float:right;
+						margin: 11px 5px 12px 12px;
+						position: relative;
+						&:before{
+							color: $grey_one;
+							content: "\e00b" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
+					}
+					&.icon-remove-circle{
+						float:right;
+						margin: 10px;
+						position: relative;
+						&:before{
+							color: $grey_one;
+							content: "\e011" !important;
+							display: inline-block;
+							font-family: 'icons';
+							font-size: 15px;
+							position: relative;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;
+							-webkit-font-smoothing: antialiased;
+						}
+					}
+					&.icon-ok-circle:before{
 						color: $grey_one;
-						content: "\e011" !important;
+						content: "\e00d" !important;
 						display: inline-block;
 						font-family: 'icons';
 						font-size: 15px;
@@ -6490,18 +6525,6 @@ ul#reports-list {
 						vertical-align: middle;
 						-webkit-font-smoothing: antialiased;
 					}
-				}
-				&.icon-ok-circle:before{
-					color: $grey_one;
-					content: "\e00d" !important;
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 15px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
 				}
 			}
 		}
@@ -6738,11 +6761,11 @@ ul#reports-list {
 		background-image: none !important;
 		border: 4px solid #d7dcde;
 		display: block;
-		height: 15px;
+		height: 12px;
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
-		width: 15px;
+		width: 12px;
 		&.help-inline{
 			border: 0;
 			width: 120px;
@@ -6752,22 +6775,22 @@ ul#reports-list {
 		}
 	}
 	span.checked{
-		border: 4px solid $grey_three;
+		border: 4px solid $brand;
 		background-image: none !important;
 		display: block;
-		height: 15px;
+		height: 12px;
 		margin: 0;
 		padding:0;
-		width: 15px;
+		width: 12px;
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
 	}
 	span.checked:after{
-		color: $grey_three;
+		color: $brand;
 		content: "\2022";
-		font-size: 25px;
-		bottom: 22px;
+		font-size: 20px;
+		bottom: 23px;
 		position: relative;
 		speak:none;
 		text-align: center;
