@@ -2,12 +2,12 @@
 #
 # Table name: activity_results
 #
-#  id            :integer          not null, primary key
-#  activity_id   :integer
-#  form_field_id :integer
-#  value         :text
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                   :integer          not null, primary key
+#  activity_id          :integer
+#  form_field_id        :integer
+#  value                :text
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #
 
 class ActivityResult < ActiveRecord::Base
