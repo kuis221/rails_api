@@ -131,6 +131,8 @@ $.widget 'nmk.filteredList', {
 				@addFilterSection filter
 			else if filter.max? and filter.min?
 				@addSlider filter
+			else if filter.type is 'calendar'
+				@addCalendar filter
 
 
 	addSlider: (filter) ->
@@ -161,6 +163,35 @@ $.widget 'nmk.filteredList', {
 
 
 		@formFilters.append($filter)
+
+
+	addCalendar: (filter) ->
+		@formFilters.append(
+			$('<input type="hidden" name="'+filter.name+'[start]" class="no-validate">'),
+			$('<input type="hidden" name="'+filter.name+'[end]" class="no-validate">')
+		)
+
+		$('<div class="dates-range-filter">').data('filter', filter).appendTo(@formFilters).datepick
+			rangeSelect: true,
+			monthsToShow: 1,
+			changeMonth: false,
+			prevText: '<',
+			nextText: '>',
+			onDate: true,
+			showOtherMonths: true,
+			selectOtherMonths: true,
+			highlightClass: 'datepick-event',
+			daysHighlighted: @options.calendarHighlights,
+			renderer: $.extend(
+						{}, $.datepick.defaultRenderer,
+						{picker: '<div class="datepick">' +
+								'<div class="datepick-nav">{link:prev}{link:next}</div>{months}' +
+								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
+								'<div class="datepick-clear-fix"></div></div>'})
+			onSelect: (dates, e) =>
+				@formFilters.find('input[name="'+filter.name+'[start]"]').val @_formatDate(dates[0])
+				@formFilters.find('input[name="'+filter.name+'[end]"]').val @_formatDate(dates[1])
+				@_filtersChanged()
 
 
 	addCustomFilter: (name, value, reload=true) ->
@@ -539,7 +570,6 @@ $.widget 'nmk.filteredList', {
 	_storeFilters: (data) ->
 		if typeof(Storage) isnt "undefined"
 			sessionStorage["filters#{@storageScope}"] = data
-
 		@
 
 	_loadStoredFilters: () ->

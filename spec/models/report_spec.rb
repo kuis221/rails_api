@@ -617,7 +617,7 @@ describe Report do
       ]
     end
 
-    it "can filter results by a range for numeric KPIs" do
+    it "can filter results by selected kpi segments" do
       campaign.assign_all_global_kpis
       kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'count')
       seg1 = FactoryGirl.create(:kpis_segment, kpi: kpi)
@@ -653,6 +653,48 @@ describe Report do
       ]
 
       report.filter_params = {"kpi:#{kpi.id}" => [seg1.id.to_s, seg2.id.to_s]}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+    end
+
+    it "can filter results by a range of dates" do
+      campaign.assign_all_global_kpis
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'count')
+      seg1 = FactoryGirl.create(:kpis_segment, kpi: kpi)
+      seg2 = FactoryGirl.create(:kpis_segment, kpi: kpi)
+      campaign.add_kpi kpi
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+      event1.result_for_kpi(kpi).value = seg1.id
+      event1.save
+
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150})
+      event2.result_for_kpi(kpi).value = seg2.id
+      event2.save
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"event:start_date", "label"=>"Start Date"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_date" => {'start' => '01/01/2014', 'end' => '01/01/2014'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+      ]
+
+      report.filter_params = {"event:start_date" => {'start' => '01/01/2014', 'end' => '01/12/2014'}}
       expect(report.fetch_page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]},
           {"event_start_date"=>"2014/01/12", "values" => [200.00]}
