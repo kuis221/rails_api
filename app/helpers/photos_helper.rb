@@ -110,23 +110,17 @@ module PhotosHelper
     end
     
     def company_tags(assigned_tags)
-      tags_list = Array.new
+      result = []
       tags = Tag.where(company_id: current_company).order('name ASC')
-      #tags = tags - assigned_tags
-      tags.each{ |t| tags_list << {'id' => t.id, 'text' => t.name}}
-      tags_list
+      tags = tags - assigned_tags
+      tags.each{ |t| result << {'id' => t.id, 'text' => t.name}}
+      return result
     end
     
     def to_select2_tag_format(obj)
-      if obj.class.name == 'Array' 
-        result = []
-        obj.each{|o| result << {'id' => o.id, 'text' => o.name}}
-        return result
-      else
-        return {'id' => obj.id, 'text' => obj.name}
-      end
-      
+      result = []
+      obj.each{|o| result << {'id' => o.id, 'text' => o.name}}
+      return result
     end
-    
     
 end

@@ -20,22 +20,6 @@ class Tag < ActiveRecord::Base
   has_and_belongs_to_many :attached_assets
 
 
-  scope :accessible_by_user, lambda{|user| scoped }
+  #scope :accessible_by_user, lambda{|user| scoped }
 
-  searchable do
-    text :name, stored: true
-    string :name
-
-    integer :company_id do
-      -1
-    end
-
-    string :status do
-      'Active'
-    end
-
-    boolean :active do
-      true
-    end
-  end
 end

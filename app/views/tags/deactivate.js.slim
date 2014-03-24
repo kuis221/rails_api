@@ -1,6 +1,9 @@
-|
-  $('#tag_input').select2({placeholder: 'Add tags',tags: #{raw(company_tags(@photo.tags).to_json).html_safe}})
-  $('#tag_input').select2('data',#{raw((@photo.tags).to_json).html_safe})
-  $("#attached_asset_#{@photo.id}").html("#{escape_javascript(raw render :partial => '/results/photos/photo', :object => @photo).html_safe }")
+|  
+  //updating modal data
+  $('#tag_input').select2({tags: #{raw(company_tags(parent.tags).to_json).html_safe}})
+  $('#tag_input').select2('data', #{raw(to_select2_tag_format(parent.tags).to_json).html_safe}) 
   $(".select2-search-choice").hide()
+  // updating thumbnail
+  $("#thumbnail_#{parent.id}").attr("data-tags", '#{raw(to_select2_tag_format(parent.tags).to_json).html_safe}')
+  $("#thumbnail_#{parent.id}").attr("data-alltags", '#{raw(company_tags(parent.tags).to_json).html_safe}')
   

@@ -1,22 +1,17 @@
 class TagsController < InheritedResources::Base
- # actions :index, :new, :create
- # belongs_to :campaign, :brand_portfolio, optional: true
+  belongs_to :attached_asset
   respond_to :js, only: [:activate, :deactivate]
  
  def deactivate
-   @tag = Tag.find params[:id]
-   @photo = AttachedAsset.find params[:attached_asset_id]
-   @photo.tags.delete @tag
+   parent.tags.delete resource
  end
  
-  def activate
-   @tag = Tag.find_by_id params[:id]
-   if @tag.nil?
-     @tag = Tag.create(name: params[:id], company: current_company)
+ def activate
+   resource = current_company.tags.find_by_id params[:id]
+   if resource.nil?
+     resource = current_company.tags.create(name: params[:id])
    end
-   @photo = AttachedAsset.find params[:attached_asset_id]
-   @photo.tags << @tag
-   #render text: ''
+   parent.tags << resource
  end
 
   protected
@@ -24,7 +19,4 @@ class TagsController < InheritedResources::Base
       params.permit(tag: [:name, :id])[:tag]
     end
 
-    def authorize_actions
-      authorize! :index, resource_class
-    end
 end
