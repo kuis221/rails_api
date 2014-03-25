@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140405221112) do
+ActiveRecord::Schema.define(:version => 20140405221113) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -44,17 +44,8 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
   add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
   add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
 
-  create_table "activity_results", :force => true do |t|
-    t.integer  "activity_id"
-    t.integer  "form_field_id"
-    t.text     "value"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
-
-  add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
-  add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
-  add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+# Could not dump table "activity_results" because of following StandardError
+#   Unknown type 'hstore' for column 'hash_value'
 
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"
@@ -149,6 +140,14 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
+
+  create_table "attached_assets_tags", :force => true do |t|
+    t.integer "attached_asset_id"
+    t.integer "tag_id"
+  end
+
+  add_index "attached_assets_tags", ["attached_asset_id"], :name => "index_attached_assets_tags_on_attached_asset_id"
+  add_index "attached_assets_tags", ["tag_id"], :name => "index_attached_assets_tags_on_tag_id"
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
@@ -700,6 +699,15 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.text     "answer"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "tasks", :force => true do |t|

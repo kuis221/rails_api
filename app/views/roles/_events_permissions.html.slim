@@ -87,10 +87,10 @@
 
       .span12
         .span3 Tag photos
-        .span2 = permission_checkbox(f, :view_tag, Tag)
-        .span2 = permission_checkbox(f, :create_tag, Tag)
-        .span2 = permission_checkbox(f, :add_tag, Tag)
-        .span2 = permission_checkbox(f, :deactivate_tag, Tag)
+        .span2 = permission_checkbox(f, :index, Tag)
+        .span2 = permission_checkbox(f, :create, Tag)
+        .span2 = permission_checkbox(f, :activate, Tag)
+        .span2 = permission_checkbox(f, :deactivate, Tag)
 
       .span12
         .span3 Expenses

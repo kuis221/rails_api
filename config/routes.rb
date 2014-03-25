@@ -410,5 +410,7 @@ Brandscopic::Application.routes.draw do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}
   end
 
+  resources :tags, only: [:index]
+
   root :to => 'dashboard#index'
 end
