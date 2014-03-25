@@ -49,6 +49,10 @@ class FormField < ActiveRecord::Base
     self.class.name.underscore.gsub('/', '_')
   end
 
+  def is_hashed_value?
+    false
+  end
+
   # Allow to create new form fields from the report builder. Rails doesn't like mass-assignment of
   # the "type" attribute, so, after a basic validation, we assign this only for new fields
   def field_type=(type)

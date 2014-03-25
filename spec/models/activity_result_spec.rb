@@ -8,6 +8,8 @@
 #  value         :text
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  hash_value    :hstore
+#  scalar_value  :decimal(10, 2)   default(0.0)
 #
 
 require 'spec_helper'

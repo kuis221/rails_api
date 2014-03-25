@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140405221112) do
+ActiveRecord::Schema.define(:version => 20140405221113) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -48,15 +48,16 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.integer  "activity_id"
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
-    t.integer  "form_field_option_id"
+    t.datetime "created_at",                                                    :null => false
+    t.datetime "updated_at",                                                    :null => false
+    t.hstore   "hash_value"
+    t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
   end
 
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
   add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
   add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
-  add_index "activity_results", ["form_field_option_id"], :name => "index_activity_results_on_form_field_option_id"
+  add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value"
 
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"
@@ -151,6 +152,14 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
+
+  create_table "attached_assets_tags", :force => true do |t|
+    t.integer "attached_asset_id"
+    t.integer "tag_id"
+  end
+
+  add_index "attached_assets_tags", ["attached_asset_id"], :name => "index_attached_assets_tags_on_attached_asset_id"
+  add_index "attached_assets_tags", ["tag_id"], :name => "index_attached_assets_tags_on_tag_id"
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
@@ -446,7 +455,9 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.datetime "local_end_at"
   end
 
+  add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
+  add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "form_field_options", :force => true do |t|
@@ -635,7 +646,10 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.boolean  "is_location"
   end
 
+  add_index "places", ["city"], :name => "index_places_on_city"
+  add_index "places", ["country"], :name => "index_places_on_country"
   add_index "places", ["reference"], :name => "index_places_on_reference"
+  add_index "places", ["state"], :name => "index_places_on_state"
 
   create_table "read_marks", :force => true do |t|
     t.integer  "readable_id"
@@ -646,19 +660,26 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
 
   add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
-  create_table "reports", :id => false, :force => true do |t|
-    t.integer  "id",                :null => false
-    t.string   "type"
-    t.integer  "company_user_id"
-    t.text     "params"
-    t.string   "aasm_state"
-    t.integer  "progress"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+  create_table "report_sharings", :force => true do |t|
+    t.integer "report_id"
+    t.integer "shared_with_id"
+    t.string  "shared_with_type"
+  end
+
+  add_index "report_sharings", ["shared_with_id", "shared_with_type"], :name => "index_report_sharings_on_shared_with_id_and_shared_with_type"
+
+  create_table "reports", :force => true do |t|
+    t.integer "company_id"
+    t.string  "name"
+    t.text    "description"
+    t.boolean "active",        :default => true
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.text    "rows"
+    t.text    "columns"
+    t.text    "values"
+    t.text    "filters"
+    t.string  "sharing",       :default => "owner"
   end
 
   create_table "roles", :force => true do |t|
@@ -690,6 +711,15 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.text     "answer"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "tasks", :force => true do |t|

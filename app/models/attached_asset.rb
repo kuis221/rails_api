@@ -17,6 +17,7 @@
 #  active            :boolean          default(TRUE)
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
+#  rating            :integer          default(0)
 #
 
 class AttachedAsset < ActiveRecord::Base
