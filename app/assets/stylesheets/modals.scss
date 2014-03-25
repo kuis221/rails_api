@@ -1276,8 +1276,23 @@ div#spin{
 			.chzn-choices, .chzn-drop, .chzn-results{
 				width: 440px !important;
 			}	
+			.chzn-drop{
+				top: 38px !important;
+			}
 			.chzn-choices{
 				background: url('arrow.svg') no-repeat right !important;
+				padding-top: 3px !important;
+				padding-bottom: 3px !important;
+				li.search-choice{
+					background-image: none !important;
+					background-color: $brand !important;
+					color: white !important;
+					.search-choice-close{
+						background: url('cross.png') no-repeat right !important;
+						top: 5px !important;
+						right: 4px !important;
+					}
+				}
 			}	
 		} 
 	}
