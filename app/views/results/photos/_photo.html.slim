@@ -22,13 +22,20 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
                 address: photo.attachable.place_name_with_location('<br>'),\
                 status: photo.active?,\
                 rating: photo.rating,\
+                tags: (to_select2_tag_format(photo.tags).to_json),\
                 permissions: [\
                   if can?(:rate, photo) then 'rate' else nil end, \
                   if can?(:view_rate, photo) then 'view_rate' else nil end, \
                   if can?(:deactivate_photo, Event) then 'deactivate_photo' else nil end, \
-                  if can?(:index_photo_results, AttachedAsset) then 'index_photo_results' else nil end \
+                  if can?(:index_photo_results, AttachedAsset) then 'index_photo_results' else nil end, \
+                  if can?(:deactivate, Tag) then 'deactivate_tag' else nil end, \
+                  if can?(:create, Tag) then 'create_tag' else nil end, \
+                  if can?(:index, Tag) then 'view_tag' else nil end, \
+                  if can?(:activate, Tag) then 'add_tag' else nil end \
                 ].compact,\
                 id: photo.id\
               }
     - else
       .image-loading-container
+
+  

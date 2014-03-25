@@ -378,6 +378,12 @@ Brandscopic::Application.routes.draw do
 
   resources :attached_assets, only: [] do
     put :rate, on: :member
+    resources :tags, only: [] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
   end
 
   resources :date_ranges do
@@ -416,6 +422,8 @@ Brandscopic::Application.routes.draw do
   resources :dashboard, only: [] do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments/}
   end
+
+  resources :tags, only: [:index]
 
   root :to => 'dashboard#index'
 end
