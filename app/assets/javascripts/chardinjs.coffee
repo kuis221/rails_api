@@ -141,6 +141,8 @@ do ($ = window.jQuery, window) ->
       helper_layer.setAttribute "data-id", target.id if target.id
       helper_layer.className = "chardinjs-helper-layer chardinjs-#{@._get_position(element)} #{helper_class}"
 
+      helper_layer.onclick = => @.stop()
+
       @._position_helper_layer target
       @$el.get()[0].appendChild helper_layer
       tooltip_layer.className = "chardinjs-tooltip chardinjs-#{@._get_position(element)}"
