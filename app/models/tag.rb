@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: brands
+# Table name: Tag
 #
 #  id            :integer          not null, primary key
 #  name          :string(255)

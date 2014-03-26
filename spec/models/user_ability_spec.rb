@@ -630,6 +630,42 @@ describe "User" do
           ability.should be_able_to(:venue_performance_module, :dashboard)
         end
       end
+      
+      #   ______   ____   ____  _____
+      #  |      | /    | /    |/ ___/
+      #  |      ||  o  ||   __(   \_
+      #  |_|  |_||     ||  |  |\__  |
+      #    |  |  |  _  ||  |_ |/  \ |
+      #    |  |  |  |  ||     |\    |
+      #    |__|  |__|__||___,_| \___|
+      #
+      describe "Event photo tag permissions" do
+        it "should be able to deactivate a tag if has the permission :deactivate on Tag" do
+          tag = FactoryGirl.create(:tag)
+          ability.should_not be_able_to(:deactivate, tag)
+          
+          user.role.permission_for(:deactivate, Tag).save
+          
+          ability.should be_able_to(:deactivate, tag)
+        end
+        it "should be able to activate a tag if has the permission :activate on Tag" do
+          tag = FactoryGirl.create(:tag)
+          ability.should_not be_able_to(:activate, tag)
+          
+          user.role.permission_for(:activate, Tag).save
+          
+          ability.should be_able_to(:activate, tag)
+        end
+        
+        it "should NOT be able to activate a tag if has the permission :deactivate on Tag but not the :activate permission" do
+          tag = FactoryGirl.create(:tag)
+          ability.should_not be_able_to(:activate, tag)
+          
+          user.role.permission_for(:deactivate, Tag).save
+          
+          ability.should_not be_able_to(:activate, tag)
+        end
+      end
     end
 
   end

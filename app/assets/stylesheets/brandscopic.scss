@@ -6598,6 +6598,7 @@ ul#reports-list {
 						border-left-width-ltr-source: physical;
 						border-left-width-rtl-source: physical;
 						border-left-width-value: 4px;
+						color: $grey_one;
 						left: 1px;
 						right: 0;
 						top: 0;
@@ -6608,11 +6609,11 @@ ul#reports-list {
 				background-color: rgb(54,54,54);
 				border: 1px solid white;
 				box-sizing: border-box;
-				color: white;
+				color: $grey_one;
 				display: block;
-				height: 43px;
+				height: 36px;
 				padding:3px;
-				width: 280px;
+				width: 261px;
 				border-radius: 6px !important;
 				&:focus{
 					outline:0;
@@ -6628,7 +6629,8 @@ ul#reports-list {
 				border: 0px !important;
 				.select2-search-field{
 					input{
-						width: 235px !important;
+						width: 230px !important;
+						height: 25px;
 					}
 				}
 				&:after {
@@ -6638,7 +6640,7 @@ ul#reports-list {
 					font-size: 12px;
 					left: 5px;
 					position: relative;
-					top: 10px;
+					top: 7px;
 				}
 			}
 		}
@@ -6646,28 +6648,27 @@ ul#reports-list {
 }
 
 .select2-dropdown{
-  ul{width: 100%;}
-  border-radius: 4px;
-  .select2-results{
-    border-radius: 4px;
-    width: 100% !important;
-    li{
-      width: 100%;
-      border-radius: 4px;
-    }
-   background-color: rgb(54, 54, 54);
-   width: 100%;
-   .select2-results-selectable{
-     width: 90%;
-     border-radius: 4px;
-   }
-   .select2-highlighted {
-     background-color: rgb(0, 0, 0);
-     .select2-result-label{
-      
-    }
-   }
-  }
+	ul{width: 100%;}
+	border-radius: 4px;
+	.select2-results{
+		color: $grey_one;
+		border-radius: 4px;
+		width: 100% !important;
+		li{
+			width: 100%;
+			border-radius: 4px;
+		}
+		background-color: rgb(54, 54, 54);
+		width: 100%;
+		.select2-results-selectable{
+			width: 90%;
+			border-radius: 4px;
+		}
+		.select2-highlighted {
+			background-color: rgb(0, 0, 0);
+			color: $grey_one;
+		}
+	}
 }
 
 
