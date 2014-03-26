@@ -4,8 +4,7 @@ $.widget 'nmk.photoGallery', {
 		month: null,
 		year: null,
 		eventsUrl: null,
-		renderMonthDay: null,
-		includeTags: false
+		renderMonthDay: null
 	},
 
 	_create: () ->
@@ -40,8 +39,45 @@ $.widget 'nmk.photoGallery', {
 		@setDate $image.data('date')
 		@setAddress $image.data('address')
 		@setRating $image.data('rating'), $image.data('id')
-		if @options.includeTags
-			@setTags ['2013', 'jameson', 'jaskot', 'whiskey', 'chicago-team']
+		@setTagList $image.data('tags')
+
+	setTagList: (tags) ->
+		if 'view_tag' in @image.data('permissions')
+			if 'add_tag' in @image.data('permissions')
+				@createTagsControl tags
+			else
+				@tags_list.hide()
+			@setTags()
+		else
+			@tags.hide()
+			@tags_list.hide()
+			$('.tags').hide()
+
+	updateTags: (tags) ->
+		@tags_list.select2 $.extend(@_select2Options(), {tags: tags})
+		if @image
+			@tags_list.select2 'data', @image.data('tags')
+
+	createTagsControl: (tags, force=false) ->
+		if @tags_list.initialized? and !force
+			@tags_list.select2 'data', tags
+		else
+			$.get '/tags.json', (alltags) =>
+				@tags_list.initialized = true
+				#@tags_list.select2 $.extend(@_select2Options(), {tags: alltags, data: tags})
+				@tags_list.select2 $.extend(@_select2Options(), {tags: alltags})
+				@tags_list.select2('data', tags);
+
+	_select2Options: () ->
+		{
+			dropdownCssClass: 'select2-dropdown',
+			createSearchChoice: (term, data) =>
+				if 'create_tag' in @image.data('permissions')
+					{id: term, text: term}
+				else
+					return null
+		}
+
 
 	setTitle: (title, url) ->
 		@title.html $('<a>').attr('href', url).text(title)
@@ -73,9 +109,40 @@ $.widget 'nmk.photoGallery', {
 	setAddress: (address) ->
 		@address.html address
 
-	setTags: (tags) ->
+	setTag: (tag) ->
+		if tag.added
+			@addTag(tag.added)
+
+	addTag: (tag) ->
+		id = @image.data('id')
+		setTagCloseButton = @setTagCloseButton(tag, id)
+		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/activate', {
+			method: 'GET',
+			dataType: 'script',
+			success: (e) =>
+				@setTags()
+				@tags_list.select2('data', @image.data('tags'))
+			}
+
+	setTags: () ->
 		@tags.html ''
-		@tags.append($('<div class="tag">').text(tag).prepend($('<span class="close">'))) for tag in tags
+		if @image
+			@tags.append($('<div class="tag" id="tag_'+tag['id']+'">').text(tag['text']).prepend(@setTagCloseButton(tag))) for tag in @image.data('tags')
+		@tags.show()
+
+	setTagCloseButton: (tag) ->
+		if 'deactivate_tag' in @image.data('permissions')
+			button = $('<button class="close">').on 'click', (e) =>
+				@removeTag(tag)
+
+	removeTag: (tag) ->
+		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/deactivate', {
+			method: 'GET',
+			dataType: 'script',
+			success: (e) =>
+				$('#tag_'+tag['id']).remove()
+				@tags_list.select2('data', @image.data('tags'))
+		}
 
 	buildCarousels: (currentImage) ->
 		i = index = 0
@@ -148,6 +215,10 @@ $.widget 'nmk.photoGallery', {
 				@rating.find('span').removeClass('full').addClass('empty')
 				@rating.find('span').slice(0,@image.data('rating')).addClass('full').removeClass('empty')
 
+		@tags_list = $('<input id="tag_input" multiple="true" class="select2-field typeahead">').text('Add tags')
+			.on "change", (e) =>
+				@setTag(e)
+
 		if @gallery
 			@gallery.remove();
 			@gallery.off('shown')
@@ -163,11 +234,12 @@ $.widget 'nmk.photoGallery', {
 						$('<div class="description">').append( @title ).append( @date ).append( @address ),
 						$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 						@rating,
-						(if @options.includeTags then $('<div class="tags">').append( @tags = $('<div class="list">') , $('<input class="typeahead">')) else null)
+							$('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list)
 					),
 				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
 			).append($('<div class="clearfix">'))
-			)
+		)
+		@tags_list.initialized = null
 
 
 		@gallery.insertAfter @element
