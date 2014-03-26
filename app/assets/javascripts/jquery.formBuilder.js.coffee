@@ -515,6 +515,43 @@ PercentageField = FormField.extend {
 		]
 }
 
+PhotoField = FormField.extend {
+	type: 'Photo',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Photo',
+			id: null,
+			required: false,
+			type: 'FormField::Photo',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$('<div class="uploading-panel">').append(
+					$('<p>').append($('<a href="#">Browse</a>'), ' for an image located on your computer'),
+					$('<p class="divider">').text('OR'),
+					$('<p>').text('Drag and drop file here to upload'),
+					$('<p class="small">').text('Maximun upload file size: 10MB')
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Photo'),
+			@labelField(),
+			@requiredField()
+		]
+}
 
 SummationField = FormField.extend {
 	type: 'Summation',
