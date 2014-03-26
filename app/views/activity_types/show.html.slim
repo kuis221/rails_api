@@ -25,7 +25,7 @@
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
   .form-builder-wrapper
-    .form-wrapper
+    .form-wrapper.activity-form
 
     .fields-wrapper
       h4 Drag fields to add
@@ -41,6 +41,8 @@
       .field data-type="Date" Date
       .field data-type="Time" Time
       .field data-type="LikertScale" Likert scale
+      .field data-type="Brand" Brand
+      .field data-type="Marque" Marque
 
 javascript:
   jQuery(function(){

@@ -11,7 +11,14 @@
 			min-height: 300px;
 		}
 		.field {
-			width: 40%;
+			float: left;
+			clear: both;
+			padding: 10px;
+			border: 1px dashed #fff;
+			&:hover {
+				border: 1px dashed silver;
+				border-radius: 5px;
+			}
 		}
 	}
 	.fields-wrapper {
@@ -37,6 +44,21 @@
 	}
 	.radio {
 		width: auto;
+	}
+
+	// Make disabled form fields looks like they were enabled
+	.chzn-disabled {
+		opacity: 1 !important;
+	}
+	input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+		background-color: white !important;
+		background-image: none !important;
+		border: 1px solid silver;
+		box-shadow: none;
+		font-family: "Lato", sans-serif;
+		margin-bottom: 0;
+		padding-top: 9px;
+		cursor: auto;
 	}
 }
 

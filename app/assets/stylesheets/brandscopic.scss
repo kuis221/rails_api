@@ -6819,6 +6819,25 @@ ul#reports-list {
 	}
 }
 
+table.table.likert-scale-table {
+	width: auto;
+	th, td {
+		border-top: none;
+		text-align: center;
+	}
+	tbody tr:hover td {
+		background-color: transparent !important;
+	}
+	td {
+		&:first-child {
+			text-align: left;
+		}
+	}
+	th {
+		text-transform:uppercase;
+		font-weight: normal;
+	}
+}
 
 /*-- RADIO BUTTONS STYLES --*/
 

@@ -3,7 +3,7 @@ $.widget 'nmk.formBuilder', {
 	},
 	_create: () ->
 		@element.find('.form-wrapper').append(
-			@formWrapper = $('<div class="form-fields">'),
+			@formWrapper = $('<div class="form-fields clearfix">'),
 			$('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>')
 		)
 		@fieldsWrapper = @element.find('.fields-wrapper')
@@ -28,6 +28,7 @@ $.widget 'nmk.formBuilder', {
 				$.map @formWrapper.find("> div.field"), (field, index) =>
 					$(field).data('field').attributes.ordering = index
 
+				@formWrapper.find('.clearfix').appendTo(@formWrapper)
 		}
 
 		@fieldsWrapper.find('.field').draggable {
@@ -413,7 +414,7 @@ DropdownField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<select>').append(
+			$('<div class="controls">').append($('<select disabled="disabled">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy is '1'
 						''
@@ -592,7 +593,7 @@ LikertScaleField = FormField.extend {
 		[
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
-				$('<table>').append(
+				$('<table class="table likert-scale-table">').append(
 					$('<thead>').append(
 						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').text(option.name)))
 					)
@@ -655,6 +656,67 @@ CheckboxField = FormField.extend {
 			$('<h4>').text('Checkboxes'),
 			@labelField(),
 			@optionsField('option'),
+			@requiredField()
+		]
+}
+
+
+BrandField = FormField.extend {
+	type: 'Brand',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Brand',
+			id: null,
+			required: false,
+			type: 'FormField::Brand',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<select disabled="disabled">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Brand'),
+			@requiredField()
+		]
+}
+
+MarqueField = FormField.extend {
+	type: 'Brand',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Marque',
+			id: null,
+			required: false,
+			type: 'FormField::Marque',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<select disabled="disabled">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Marque'),
 			@requiredField()
 		]
 }

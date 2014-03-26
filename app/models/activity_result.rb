@@ -37,7 +37,7 @@ class ActivityResult < ActiveRecord::Base
     form_field.format_html self
   end
 
-  private
+  protected
     def valid_value?
       return if form_field.nil?
       if form_field.required? && (value.nil? || (value.is_a?(String) && value.empty?))
