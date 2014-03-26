@@ -8,6 +8,7 @@
 #  ordering      :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  option_type   :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
