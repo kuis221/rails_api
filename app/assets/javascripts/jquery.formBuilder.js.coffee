@@ -127,6 +127,7 @@ $.widget 'nmk.formBuilder', {
 
 		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
+			@formWrapper.find('.selected').removeClass('selected')
 			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
