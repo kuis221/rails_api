@@ -1819,7 +1819,7 @@ ul.kpis-list{
 		margin-bottom: 15px;
 	}
 	.container-kpi-trend{
-		margin-top: 50px;
+		margin-top: 30px;
 		margin-left: 20px;
 	}
 
@@ -1834,6 +1834,7 @@ ul.kpis-list{
 			right: 0;
 			top: -30px;
 			div {
+				b{ font-size: 14px; }
 				margin-left: 50%;
 			}
 		}
@@ -1846,6 +1847,7 @@ ul.kpis-list{
 		.progress {
 			width: auto !important;
 			height: 20px;
+			margin-bottom: 0px !important;
 			.bar {
 				text-align: right;
 				text-shadow:none;
@@ -1893,10 +1895,10 @@ ul.kpis-list{
 			display: inline-block;
 			font-size: 12px;
 			white-space: nowrap;
-			margin-right: 50%;
 			div {
-				margin-left: -50%;
+				margin-left: -120%;
 				b{
+				  color: rgb(139, 184, 65);
 					font-size: 14px;
 				}
 			}
@@ -1908,8 +1910,10 @@ ul.kpis-list{
 			text-align: right;
 			margin-left: -50%;
 			div {
-				margin-right: -50%;
+				margin-left: -120%;
+				margin-right: -15%;
 				b{
+				  color: rgb(58, 150, 197);
 					font-size: 14px;
 				}
 			}
@@ -4888,6 +4892,30 @@ body.campaigns{
 			margin-left: 17px;
 		}
 	}
+  .color_map{
+		margin-left:54%;
+		font-size: 12px;
+		color: rgb(152,152,152);
+		.executed{
+			margin: auto 5px 0 auto;
+			float:left;
+		}
+		span.bullet{
+			height: 10px;
+			border-radius: 5px;
+			width: 10px;
+			display: block;
+			margin: 5px 5px 0 auto;
+			float:left;
+			
+			&.executed{
+				background-color: rgb(139, 184, 65);
+			}
+			&.scheduled{
+				background-color: rgb(58, 150, 197);
+			}
+		}
+  }
 	.box_demographics, .box_consumer_reach{
 		h3{
 			margin-top: 30px;
@@ -5823,6 +5851,7 @@ body.campaigns_report, body.staff_report {
 			border: 3px solid #989898;
 			border-radius: 2px;
 			left: -6px;
+			z-index: 1;
 		}
 	}
 
