@@ -46,12 +46,13 @@ class ActivityResult < ActiveRecord::Base
     end
 
     def prepare_for_store
-      self.value = form_field.store_value(self.attributes['value'])
-      if form_field.present? && form_field.is_hashed_value?
-        (self.hash_value, self.value) = [self.attributes['value'], nil]
-      else
-        self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
+      unless form_field.nil?
+        self.value = form_field.store_value(self.attributes['value'])
+        if form_field.is_hashed_value?
+          (self.hash_value, self.value) = [self.attributes['value'], nil]
+        end
       end
+      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
       true
     end
 end
