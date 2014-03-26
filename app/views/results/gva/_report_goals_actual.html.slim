@@ -5,10 +5,27 @@
       .total-venues
         b= total_accounts_for_events
         .venues-title VENUES
-      .container-kpi-trend
-        - events_goal.each do |id, event_goal|
-          .kpi-trend
-            .name= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
-            = gva_chart(event_goal)
+      .captions
+        span.actual ACTUAL
+        span.pending PENDING
+      #gva-results.accordion
+        .accordion-group
+          .accordion-heading.collapsed
+            a href="#toggle-gva-result" class="accordion-toggle" data-parent="#gva-results" data-toggle="collapse"
+              b= 'Hola'
+          .accordion-body.collapse id="toggle-gva-result"
+            .accordion-inner.goals-actual
+              .container-kpi-trend
+                - events_goal.each do |id, event_goal|
+                  .kpi-trend
+                    .name= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
+                    = gva_chart(event_goal)
   - else
       p.text-center This campaign has no events Goal Vs. Actual stats
+
+javascript:
+  $('.collapse').on('show', function(){
+      $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded");
+  }).on('hide', function(){
+      $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed");
+  });

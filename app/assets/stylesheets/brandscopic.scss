@@ -1805,7 +1805,7 @@ ul.kpis-list{
 // Graphical visualization for Goals
 #kpis-trends-bars {
 	a{
-		color:$grey_three;
+		color:$text;
 		font-size: 13px;
 		&:hover{
 			text-decoration: underline;
@@ -1819,12 +1819,11 @@ ul.kpis-list{
 		margin-bottom: 15px;
 	}
 	.container-kpi-trend{
-		margin-top: 50px;
-		margin-left: 20px;
+		margin-top: 10px;
 	}
 
 	.kpi-trend {
-		font-size: 12px;
+		font-size: 16px;
 		margin-bottom: 30px;
 		overflow: visible;
 
@@ -4825,6 +4824,48 @@ svg{
 				}
 			}
 		}
+		&.tool-box{
+			padding-bottom: 60px;
+			.text-right{
+				margin-top: 22px;
+				#group-by-title{
+					vertical-align: middle;
+				}
+				.btn-group{
+					margin: 0 30px 0 5px;
+					.btn{
+						background-color: #FFFFFF;
+						border: 1px solid $user_menu !important;
+						box-shadow: none;
+						color: $text;
+						padding: 10px 17px;
+						width: 60px;
+						&.active{
+							background-color: $grey_one;
+							color: $brand;
+						}
+						&.campaign{
+							border-right: 1px solid $buttons-border;
+						}
+						&.place{
+							border-left: 1px solid $buttons-border;
+							border-right: 1px solid $buttons-border;
+							&:before{
+								display: none;
+							}
+						}
+						&.staff{
+							border-left: 1px solid $buttons-border;
+						}
+					}
+				}
+				.btn{
+					&.run-report{
+						height: 42px;
+					}
+				}
+			}
+		}
 		.chzn-container-single{
 			.chzn-search input{
 				bottom:12px;
@@ -5775,7 +5816,7 @@ body.gva {
 		overflow: visible;
 		#report-container {
 			.total-venues {
-				margin: 0 0 20px 40px;
+				margin: 0 0 0 40px;
 				color: #989898;
 				&:before{
 					content: "\e018";
@@ -5796,6 +5837,93 @@ body.gva {
 					font-size: 14px;
 					font-weight: 600;
 					line-height: 8px;
+				}
+			}
+			.captions{
+				margin-bottom: 30px;
+				text-align: right;
+				width: 95%;
+				span {
+					&.actual {
+						margin-right: 25px;
+						&:before {
+							content: '';
+							display: inline-block;
+							background: $green;
+							border-radius: 999px;
+							margin-right: 6px;
+							width: 11px;
+							line-height: 13px;
+							height: 11px;
+							vertical-align: baseline;
+						}
+					}
+					&.pending{
+						&:before {
+							content: '';
+							display: inline-block;
+							background: $due_today;
+							border-radius: 999px;
+							margin-right: 6px;
+							width: 11px;
+							line-height: 13px;
+							height: 11px;
+							vertical-align: baseline;
+						}
+					}
+				}
+			}
+			#gva-results{
+				a{
+					font-family: 'Lato', sans-serif !important;
+					text-decoration: none;
+				}
+				.accordion-group{
+					border: none;
+					.accordion-heading{
+						a{
+							font-size: 16px;
+						}
+						&.collapsed{
+							&:after{
+								content: "\e021";
+								float: right;
+								font-family: 'icons';
+								font-size: 15px;
+								padding-top: 13px;
+								position: absolute;
+								speak: none;
+								text-align: center;
+								vertical-align: middle;
+								-webkit-font-smoothing: antialiased;
+							}
+						}
+						&.expanded{
+							&:after{
+								content: "\e019";
+								float: right;
+								font-family: 'icons';
+								font-size: 15px;
+								padding-top: 13px;
+								position: absolute;
+								speak: none;
+								text-align: center;
+								vertical-align: middle;
+								-webkit-font-smoothing: antialiased;
+							}
+						}
+						.accordion-toggle{
+							display: inline-block;
+							padding: 8px 0;
+							width: 95%;
+						}
+					}
+					.accordion-body{
+						.accordion-inner{
+							border: none;
+							padding-left: 0;
+						}
+					}
 				}
 			}
 		}
