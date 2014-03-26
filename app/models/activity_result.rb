@@ -24,9 +24,9 @@ class ActivityResult < ActiveRecord::Base
   before_validation :prepare_for_store
 
   def value
-    if form_field.is_hashed_value?
+    if form_field.present? && form_field.is_hashed_value?
       self.attributes['hash_value']
-    elsif form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
+    elsif form_field.present? && form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
       self.attributes['value'].try(:split, ',')
     else
       self.attributes['value']
