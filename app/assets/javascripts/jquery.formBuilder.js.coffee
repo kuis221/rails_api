@@ -509,6 +509,56 @@ PercentageField = FormField.extend {
 		]
 }
 
+
+SummationField = FormField.extend {
+	type: 'Summation',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Summation',
+			id: null,
+			required: false,
+			type: 'FormField::Summation',
+			settings: {},
+			options: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$.map @attributes.options, (option, index) =>
+					if option._destroy isnt '1'
+						$('<div class="field-option">').append(
+							$('<label>').addClass('summation').text(option.name+ ' ').append(
+								$('<input type="number" readonly="readonly">')
+							)
+						)
+			).append(
+				$('<div class="field-option summation-total-field">').append(
+					$('<label>').addClass('summation').text('TOTAL: ').append(
+						$('<input type="number" readonly="readonly">')
+					)
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Summation'),
+			@labelField(),
+			@optionsField(),
+			@requiredField()
+		]
+}
+
 CheckboxField = FormField.extend {
 	type: 'Checkbox',
 
