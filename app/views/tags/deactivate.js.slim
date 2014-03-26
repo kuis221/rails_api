@@ -1,9 +1,3 @@
 |  
-  //updating modal data
-  $('#tag_input').select2({tags: #{raw(company_tags(parent.tags).to_json).html_safe}})
-  $('#tag_input').select2('data', #{raw(to_select2_tag_format(parent.tags).to_json).html_safe}) 
-  $(".select2-search-choice").hide()
-  // updating thumbnail
-  $("#thumbnail_#{parent.id}").attr("data-tags", '#{raw(to_select2_tag_format(parent.tags).to_json).html_safe}')
-  $("#thumbnail_#{parent.id}").attr("data-alltags", '#{raw(company_tags(parent.tags).to_json).html_safe}')
+  $("#thumbnail_#{parent.id}").data("tags", #{raw(to_select2_tag_format(parent.tags).to_json).html_safe});
   

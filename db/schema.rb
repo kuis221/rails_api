@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140405221112) do
+ActiveRecord::Schema.define(:version => 20140405221113) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -149,6 +149,14 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
+
+  create_table "attached_assets_tags", :force => true do |t|
+    t.integer "attached_asset_id"
+    t.integer "tag_id"
+  end
+
+  add_index "attached_assets_tags", ["attached_asset_id"], :name => "index_attached_assets_tags_on_attached_asset_id"
+  add_index "attached_assets_tags", ["tag_id"], :name => "index_attached_assets_tags_on_tag_id"
 
   create_table "brand_portfolios", :force => true do |t|
     t.string   "name"
@@ -700,6 +708,15 @@ ActiveRecord::Schema.define(:version => 20140405221112) do
     t.text     "answer"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "tasks", :force => true do |t|

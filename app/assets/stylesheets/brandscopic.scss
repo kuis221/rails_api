@@ -6412,6 +6412,9 @@ ul#reports-list {
 
 	.gallery-modal-inner{
 		position: relative;
+		.select2-container .select2-input {
+			border-width: 0px !important;
+		}
 	}
 	.slider {
 		position: relative;
@@ -6502,6 +6505,10 @@ ul#reports-list {
 		display: inline-block;
 		float: right;
 		min-height: 400px;
+
+		.select2-search-choice {
+			display: none;
+		}
 		.close{
 			color: white;
 			top: 7px;
