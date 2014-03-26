@@ -74,7 +74,7 @@ module CapybaraBrandscopicHelpers
     found = false
     all('label', text: option).each do |label|
       label.all('div.checker').each do |cb|
-        cb.click
+        cb.trigger('click')
         found = cb
       end
     end

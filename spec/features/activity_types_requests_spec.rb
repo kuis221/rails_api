@@ -720,6 +720,57 @@ feature "ActivityTypes", js: true do
         }.to_not change(FormField, :count)
       }.to change(FormFieldOption, :count).by(-2)
     end
+
+    scenario "user can remove a field from the form that was just added" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Single line text')
+
+      form_field_settings_for 'Single line text'
+      within form_builder.find('.field.selected') do
+        click_js_link 'Remove'
+      end
+
+      expect(form_builder).to_not have_form_field('Single line text')
+
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to_not change(FormField, :count)
+    end
+
+    scenario "user can remove an existing field from the form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Single line text')
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+
+      visit activity_type_path activity_type
+
+      expect(form_builder).to have_form_field('Single line text')
+
+      form_field_settings_for 'Single line text'
+      within form_builder.find('.field.selected') do
+        click_js_link 'Remove'
+      end
+
+      expect(form_builder).to_not have_form_field('Single line text')
+
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(-1)
+    end
   end
 
   def text_area_field
