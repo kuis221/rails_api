@@ -6614,6 +6614,8 @@ ul#reports-list {
 				margin-bottom: 15px;
 				
 				.tag{
+					font-size: 12px;
+					font-weight: 900;
 					border: 1px solid white;
 					color: $grey_one;
 					display: inline-block;
@@ -6638,11 +6640,11 @@ ul#reports-list {
 				background-color: rgb(54,54,54);
 				border: 1px solid white;
 				box-sizing: border-box;
-				color: $grey_one;
+				color: white;
 				display: block;
 				height: 36px;
 				padding:3px;
-				width: 261px;
+				width: 235px;
 				border-radius: 6px !important;
 				&:focus{
 					outline:0;
@@ -6657,19 +6659,27 @@ ul#reports-list {
 				background-image: none !important;
 				border: 0px !important;
 				.select2-search-field{
+					height: 20px;
+					.select2-input{
+						color: $grey_two !important;
+					}
 					input{
-						width: 230px !important;
-						height: 25px;
+						margin-left: 10px;
+						width: 193px !important;
+						color: $grey_two;
+						font-size: 12px;
+						height: 20px;
 					}
 				}
 				&:after {
 					content: "\e004";
 					display: inline-block;
 					font-family: "icons";
-					font-size: 12px;
+					font-size: 15px;
 					left: 5px;
 					position: relative;
 					top: 7px;
+					color: $grey_two;
 				}
 			}
 		}

@@ -28,7 +28,7 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
                   if can?(:view_rate, photo) then 'view_rate' else nil end, \
                   if can?(:deactivate_photo, Event) then 'deactivate_photo' else nil end, \
                   if can?(:index_photo_results, AttachedAsset) then 'index_photo_results' else nil end, \
-                  if can?(:deactivate, Tag) then 'deactivate_tag' else nil end, \
+                  if can?(:remove, Tag) then 'deactivate_tag' else nil end, \
                   if can?(:create, Tag) then 'create_tag' else nil end, \
                   if can?(:index, Tag) then 'view_tag' else nil end, \
                   if can?(:activate, Tag) then 'add_tag' else nil end \
