@@ -127,6 +127,7 @@ $.widget 'nmk.formBuilder', {
 
 		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
+			@formWrapper.find('.selected').removeClass('selected')
 			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
@@ -179,7 +180,10 @@ Class.extend = (prop) ->
 # Base class for all form field classes
 FormField = Class.extend {
 	getSaveAttributes: () ->
-		{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
+		if @attributes._destroy? && @attributes._destroy is true
+			{id: @attributes.id, _destroy: true }
+		else
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 
 	getId: () ->
 		@attributes.id
@@ -239,15 +243,6 @@ FormField = Class.extend {
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
 		)
 
-	_readOptionsFromDom: (parent) ->
-		@attributes.options = $.map parent.find('.field-option'), (option, index) ->
-			{
-				id: $(option).find('input[type=hidden][name*="[id]"]').val(),
-				name: $(option).find('input[type=text][name*="[name]"]').val(),
-				_destroy: $(option).find('input[type=hidden][name*="[_destroy]"]').val(),
-				ordering: index
-			}
-
 	getOptionsAttributes: () ->
 		@attributes.options
 
@@ -257,7 +252,15 @@ FormField = Class.extend {
 	render: () ->
 		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
 			.data('field', @)
-			.append @_renderField()
+			.append $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
+					@_renderField()
+
+	remove: () ->
+		if @attributes.id
+			@field.hide()
+			@attributes._destroy = true
+		else
+			@field.remove()
 
 	refresh: () ->
 		@field.html('').append(@_renderField())
@@ -729,7 +732,7 @@ BrandField = FormField.extend {
 }
 
 MarqueField = FormField.extend {
-	type: 'Brand',
+	type: 'Marque',
 
 	init: (attributes) ->
 		@attributes = $.extend({

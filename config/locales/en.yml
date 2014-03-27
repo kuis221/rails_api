@@ -276,6 +276,9 @@ en:
     sublocality_level_1: "Sublocality level 1"
     subpremise: "Subpremise"
     transit_station: "Transit Station"
+    
+  dashboard:
+    intro_message: "Track progress against event and promo hour goals for your campaigns"
 
   confirmation:
     deactivate: "Deactivate"

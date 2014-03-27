@@ -466,6 +466,70 @@ feature "ActivityTypes", js: true do
       end
     end
 
+    scenario "user can add brand fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      brand_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Brand')
+
+      within form_field_settings_for 'Brand' do
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('Brand')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'Brand'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Brand'
+
+      within form_field_settings_for 'Brand' do
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
+    scenario "user can add marque fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      marque_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Marque')
+
+      within form_field_settings_for 'Marque' do
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('Marque')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'Marque'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Marque'
+
+      within form_field_settings_for 'Marque' do
+        expect(find_field('Required')['checked']).to be_true
+      end
+    end
+
     scenario "user can add percentage fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
@@ -656,6 +720,57 @@ feature "ActivityTypes", js: true do
         }.to_not change(FormField, :count)
       }.to change(FormFieldOption, :count).by(-2)
     end
+
+    scenario "user can remove a field from the form that was just added" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Single line text')
+
+      form_field_settings_for 'Single line text'
+      within form_builder.find('.field.selected') do
+        click_js_link 'Remove'
+      end
+
+      expect(form_builder).to_not have_form_field('Single line text')
+
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to_not change(FormField, :count)
+    end
+
+    scenario "user can remove an existing field from the form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      text_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Single line text')
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+
+      visit activity_type_path activity_type
+
+      expect(form_builder).to have_form_field('Single line text')
+
+      form_field_settings_for 'Single line text'
+      within form_builder.find('.field.selected') do
+        click_js_link 'Remove'
+      end
+
+      expect(form_builder).to_not have_form_field('Single line text')
+
+      # Save the form, should not create any field
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(-1)
+    end
   end
 
   def text_area_field
@@ -692,6 +807,14 @@ feature "ActivityTypes", js: true do
 
   def time_field
     find('.fields-wrapper .field', text: 'Time')
+  end
+
+  def brand_field
+    find('.fields-wrapper .field', text: 'Brand')
+  end
+
+  def marque_field
+    find('.fields-wrapper .field', text: 'Marque')
   end
 
   def percentage_field

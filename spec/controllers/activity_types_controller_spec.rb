@@ -104,6 +104,21 @@ describe ActivityTypesController do
       field = FormField.last
       expect(field.options.map(&:name)).to eql ['One Option', 'Other Option']
     end
+
+    it "must allow remove form fields" do
+      activity_type.save
+      field = FactoryGirl.create(:form_field, fieldable: activity_type,
+        type: 'FormField::Text', name: 'Test Field',
+        ordering: 0, required: true )
+      expect {
+        expect {
+          put 'update', id: activity_type.to_param,
+              activity_type: {form_fields_attributes:
+                {id: field.id, _destroy: true}
+              }, format: :json
+        }.to change(FormField, :count).by(-1)
+      }.to_not change(ActivityType, :count)
+    end
   end
 
   describe "GET 'items'" do
