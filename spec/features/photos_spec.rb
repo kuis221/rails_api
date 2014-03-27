@@ -58,44 +58,6 @@ feature "Photos", js: true do
   feature "Photo Gallery" do
     let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
     
-    scenario "can tag a photo" do
-      tag1 = FactoryGirl.create(:tag, name: 'Tag1', company: @company)
-      tag2 = FactoryGirl.create(:tag, name: 'Tag2', company: @company)
-      photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
-      photo.tags << tag1
-      visit event_path(event)
-
-      # Check that the image appears on the page
-      within gallery_box do
-        expect(page).to have_selector('li')
-        click_js_link 'View Photo'
-      end
-
-      within gallery_modal do
-        #find('.select2-search-field', match: :first)
-        expect(page.all(".tag").count).to eql(1)
-        select2("tag2")
-        keypress = "var e = $.Event('keydown', { keyCode: 13 }); $('body').trigger(e);"
-        page.driver.execute_script(keypress)
-        #expect(page.all(".rating span.empty").count).to eql(3)
-        #find('.rating span:nth-child(3)').trigger('click')
-        wait_for_ajax
-        #expect(photo.reload.rating).to eql 3
-        click_button 'Close'
-      end
-      ensure_modal_was_closed
-
-      # Close the modal and reopened and make sure the tags are correctly
-      # highlithed
-      within gallery_box do
-        click_js_link 'View Photo'
-      end
-      within gallery_modal do
-        #find('.rating span.full', match: :first)
-        #expect(page.all(".rating span.full").count).to eql(3)
-        #expect(page.all(".rating span.empty").count).to eql(2)
-      end
-    end
     scenario "can rate a photo" do
       photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
       visit event_path(event)

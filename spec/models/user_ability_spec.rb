@@ -642,11 +642,11 @@ describe "User" do
       describe "Event photo tag permissions" do
         it "should be able to deactivate a tag if has the permission :deactivate on Tag" do
           tag = FactoryGirl.create(:tag)
-          ability.should_not be_able_to(:deactivate, tag)
+          ability.should_not be_able_to(:remove, tag)
           
-          user.role.permission_for(:deactivate, Tag).save
+          user.role.permission_for(:remove, Tag).save
           
-          ability.should be_able_to(:deactivate, tag)
+          ability.should be_able_to(:remove, tag)
         end
         it "should be able to activate a tag if has the permission :activate on Tag" do
           tag = FactoryGirl.create(:tag)
@@ -657,11 +657,11 @@ describe "User" do
           ability.should be_able_to(:activate, tag)
         end
         
-        it "should NOT be able to activate a tag if has the permission :deactivate on Tag but not the :activate permission" do
+        it "should NOT be able to activate a tag if has the permission :remove on Tag but not the :activate permission" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:activate, tag)
           
-          user.role.permission_for(:deactivate, Tag).save
+          user.role.permission_for(:remove, Tag).save
           
           ability.should_not be_able_to(:activate, tag)
         end
