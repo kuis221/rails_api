@@ -465,6 +465,197 @@ feature "ActivityTypes", js: true do
         expect(find_field('Required')['checked']).to be_true
       end
     end
+
+    scenario "user can add percentage fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      percentage_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Percent',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Percent' do
+        fill_in 'Field label', with: 'My Percent Field'
+        fill_in 'option[0][name]', with: 'First Option'
+        click_js_link 'Add option after this' # Create another option
+        fill_in 'option[1][name]', with: 'Second Option'
+      end
+
+      expect(form_builder).to have_form_field('My Percent Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(2)
+      field = FormField.last
+      expect(field.name).to eql 'My Percent Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Percentage'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Percent Field',
+        with_options: ['First Option', 'Second Option']
+      )
+
+      within form_field_settings_for 'My Percent Field' do
+        # Remove the second option (the first one doesn't have the link)
+        click_js_link 'Remove this option'
+        expect(page).to have_no_content('Second Option')
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-1)
+    end
+
+    scenario "user can add summation fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      summation_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Summation',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Summation' do
+        fill_in 'Field label', with: 'My Summation Field'
+        fill_in 'option[0][name]', with: 'First Option'
+        click_js_link 'Add option after this' # Create another option
+        fill_in 'option[1][name]', with: 'Second Option'
+      end
+
+      expect(form_builder).to have_form_field('My Summation Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(2)
+      field = FormField.last
+      expect(field.name).to eql 'My Summation Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::Summation'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Summation Field',
+        with_options: ['First Option', 'Second Option']
+      )
+
+      within form_field_settings_for 'My Summation Field' do
+        # Remove the second option (the first one doesn't have the link)
+        click_js_link 'Remove this option'
+        expect(page).to have_no_content('Second Option')
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-1)
+    end
+
+    scenario "user can add likert scale fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      likert_scale_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Likert scale',
+          with_options: ['Option 1']
+        )
+
+      within form_field_settings_for 'Likert scale' do
+        fill_in 'Field label', with: 'My Likert scale Field'
+
+        within '.field-options[data-type="statement"]' do
+          fill_in 'statement[0][name]', with: 'First Statement'
+          click_js_link 'Add option after this' # Create another option
+          fill_in 'statement[1][name]', with: 'Second Statement'
+        end
+
+        within '.field-options[data-type="option"]' do
+          fill_in 'option[0][name]', with: 'First Option'
+          click_js_link 'Add option after this' # Create another option
+          fill_in 'option[1][name]', with: 'Second Option'
+        end
+      end
+
+      expect(form_builder).to have_form_field('My Likert scale Field',
+          with_options: ['First Option', 'Second Option']
+        )
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to change(FormField, :count).by(1)
+      }.to change(FormFieldOption, :count).by(4)
+      field = FormField.last
+      expect(field.name).to eql 'My Likert scale Field'
+      expect(field.ordering).to eql 0
+      expect(field.type).to eql 'FormField::LikertScale'
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
+      expect(field.options.map(&:ordering)).to eql [0, 1]
+      expect(field.statements.map(&:name)).to eql ['First Statement', 'Second Statement']
+      expect(field.statements.map(&:ordering)).to eql [0, 1]
+
+      # Remove fields
+      expect(form_builder).to have_form_field('My Likert scale Field',
+        with_options: ['First Option', 'Second Option']
+      )
+
+      within form_field_settings_for 'My Likert scale Field' do
+        # Remove the second option (the first one doesn't have the link)
+        within '.field-options[data-type="option"]' do
+          click_js_link 'Remove this option'
+          expect(page).to have_no_content('Second Option')
+        end
+        within '.field-options[data-type="statement"]' do
+          click_js_link 'Remove this option'
+          expect(page).to have_no_content('Second Statement')
+        end
+      end
+
+      # Save the form
+      expect {
+        expect {
+          click_js_button 'Save'
+          wait_for_ajax
+        }.to_not change(FormField, :count)
+      }.to change(FormFieldOption, :count).by(-2)
+    end
   end
 
   def text_area_field
@@ -501,6 +692,18 @@ feature "ActivityTypes", js: true do
 
   def time_field
     find('.fields-wrapper .field', text: 'Time')
+  end
+
+  def percentage_field
+    find('.fields-wrapper .field', text: 'Percent')
+  end
+
+  def summation_field
+    find('.fields-wrapper .field', text: 'Summation')
+  end
+
+  def likert_scale_field
+    find('.fields-wrapper .field', text: 'Likert scale')
   end
 
   def form_builder

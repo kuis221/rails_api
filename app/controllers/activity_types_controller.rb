@@ -35,7 +35,10 @@ class ActivityTypesController < FilteredController
     def permitted_params
       params.permit(activity_type: [
         :name, :description,
-        {form_fields_attributes: [:id, :name, :field_type, :ordering, :required, :_destroy, {options_attributes: [:id, :name, :_destroy, :ordering]}]},
+        {form_fields_attributes: [
+          :id, :name, :field_type, :ordering, :required, :_destroy,
+          {options_attributes: [:id, :name, :_destroy, :ordering]},
+          {statements_attributes: [:id, :name, :_destroy, :ordering]}]},
         {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
       ])[:activity_type]
     end

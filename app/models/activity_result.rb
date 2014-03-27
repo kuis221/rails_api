@@ -24,9 +24,9 @@ class ActivityResult < ActiveRecord::Base
   before_validation :prepare_for_store
 
   def value
-    if form_field.is_hashed_value?
+    if form_field.present? && form_field.is_hashed_value?
       self.attributes['hash_value']
-    elsif form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
+    elsif form_field.present? && form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
       self.attributes['value'].try(:split, ',')
     else
       self.attributes['value']
@@ -37,7 +37,7 @@ class ActivityResult < ActiveRecord::Base
     form_field.format_html self
   end
 
-  private
+  protected
     def valid_value?
       return if form_field.nil?
       if form_field.required? && (value.nil? || (value.is_a?(String) && value.empty?))
@@ -46,12 +46,13 @@ class ActivityResult < ActiveRecord::Base
     end
 
     def prepare_for_store
-      self.value = form_field.store_value(self.attributes['value'])
-      if form_field.present? && form_field.is_hashed_value?
-        (self.hash_value, self.value) = [self.attributes['value'], nil]
-      else
-        self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
+      unless form_field.nil?
+        self.value = form_field.store_value(self.attributes['value'])
+        if form_field.is_hashed_value?
+          (self.hash_value, self.value) = [self.attributes['value'], nil]
+        end
       end
+      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
       true
     end
 end

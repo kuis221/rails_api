@@ -14,13 +14,13 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Percentage < FormField
+class FormField::LikertScale < FormField
   def field_options(result)
-    {as: :percentage, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {as: :likert_scale, collection: self.options.order(:ordering), statements: self.statements.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
   end
 
   def field_classes
-    [:number]
+    []
   end
 
   def is_hashed_value?

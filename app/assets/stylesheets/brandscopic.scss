@@ -175,6 +175,42 @@ abbr[title]{
 	}
 }
 
+.control-group.percentage{
+	width:390px;
+	input[type="text"]{
+		-webkit-border-radius: 4px 0px 0px 4px;
+		border-radius: 4px 0px 0px 4px;
+		width: 158px !important;
+	}
+	span.add-on{
+		background-color: $user_menu;
+		border:0 !important;
+		border-radius: 0px 4px 4px 0px;
+		color: white;
+		display: inline-block;
+		-webkit-border-radius: 0px 4px 4px 0px;
+		padding: 10px 5px 12px 4px;
+		text-align: center;
+		text-shadow:none !important;
+		width: 40px;
+	}
+	label.control-label{
+		color:$brand;
+		display: inline-block;
+		font-size: 11px;
+		margin-top: 12px;
+		margin-right: 5px;
+		width: 150px;
+	}
+}
+
+.control-group.percentage,
+.control-group.summation {
+	.help-inline.valid {
+		display: none !important;
+	}
+}
+
 /*-- EVENT DETAILS PAGES __*/
 
 body.events.show{
@@ -1820,7 +1856,7 @@ ul.kpis-list{
 		margin-bottom: 15px;
 	}
 	.container-kpi-trend{
-		margin-top: 40px;
+		margin-top: 30px;
 		margin-left: 20px;
 	}
 
@@ -1835,7 +1871,7 @@ ul.kpis-list{
 			right: 0;
 			top: -30px;
 			div {
-        b{ font-size: 14px; }
+				b{ font-size: 14px; }
 				margin-left: 50%;
 			}
 		}
@@ -1848,7 +1884,7 @@ ul.kpis-list{
 		.progress {
 			width: auto !important;
 			height: 9px;
-      margin-bottom: 0px !important;
+			margin-bottom: 0px !important;
 			.bar {
 				text-align: right;
 				text-shadow:none;
@@ -1905,7 +1941,7 @@ ul.kpis-list{
 			div {
 				margin-left: -120%;
 				b{
-          color: rgb(139, 184, 65);
+					color: rgb(139, 184, 65);
 					font-size: 14px;
 				}
 			}
@@ -1917,10 +1953,10 @@ ul.kpis-list{
 			text-align: right;
 			margin-left: -50%;
 			div {
-        margin-left: -120%;
+				margin-left: -120%;
 				margin-right: -15%;
 				b{
-          color: rgb(58, 150, 197);
+					color: rgb(58, 150, 197);
 					font-size: 14px;
 				}
 			}
@@ -4978,34 +5014,6 @@ body.campaigns{
 			}
 		}
 	}
-	.control-group.percentage{
-		width:390px;
-		input[type="text"]{
-			-webkit-border-radius: 4px 0px 0px 4px;
-			border-radius: 4px 0px 0px 4px;
-			width: 158px !important;
-		}
-		span.add-on{
-			background-color: $user_menu;
-			border:0 !important;
-			border-radius: 0px 4px 4px 0px;
-			color: white;
-			display: inline-block;
-			-webkit-border-radius: 0px 4px 4px 0px;
-			padding: 10px 5px 12px 4px;
-			text-align: center;
-			text-shadow:none !important;
-			width: 40px;
-		}
-		label.control-label{
-			color:$brand;
-			display: inline-block;
-			font-size: 11px;
-			float: right;
-			margin-top: 12px;
-			width: 150px;
-		}
-	}
 	.box_photos{
 		margin-bottom: 40px;
 		position: relative;
@@ -5038,10 +5046,10 @@ body.campaigns{
 				display: block;
 			}
 			.help-inline {
-				padding-left: 0;
 				margin-bottom: 0;
-				&.segment-title-label {
-					padding-left: 5px;
+				padding-left: 5px;
+				&.segment-title-label, &.segment-error-label {
+					padding-left: 0;
 				}
 			}
 			.control-group.percentage {
@@ -5058,18 +5066,11 @@ body.campaigns{
 				}
 				&.percentage {
 					margin-right: 5px;
-					width: 326px;
-					&.with_message {
-						width: 125px;
-					}
 				}
 			}
 			.percentage {
-				width: 397px;
-				.help-inline {
-					margin-top: 12px;
-					float: right;
-					width: 201px;
+				.help-inline.valid {
+					display: none !important;
 				}
 			}
 		}
@@ -6855,6 +6856,25 @@ ul#reports-list {
 	}
 }
 
+table.table.likert-scale-table {
+	width: auto;
+	th, td {
+		border-top: none;
+		text-align: center;
+	}
+	tbody tr:hover td {
+		background-color: transparent !important;
+	}
+	td {
+		&:first-child {
+			text-align: left;
+		}
+	}
+	th {
+		text-transform:uppercase;
+		font-weight: normal;
+	}
+}
 
 /*-- RADIO BUTTONS STYLES --*/
 

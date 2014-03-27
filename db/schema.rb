@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140405221113) do
+ActiveRecord::Schema.define(:version => 20140405221114) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -52,6 +52,8 @@ ActiveRecord::Schema.define(:version => 20140405221113) do
     t.datetime "updated_at",                                                    :null => false
     t.hstore   "hash_value"
     t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
@@ -466,8 +468,10 @@ ActiveRecord::Schema.define(:version => 20140405221113) do
     t.integer  "ordering"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.string   "option_type"
   end
 
+  add_index "form_field_options", ["form_field_id", "option_type"], :name => "index_form_field_options_on_form_field_id_and_option_type"
   add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
 
   create_table "form_fields", :force => true do |t|
