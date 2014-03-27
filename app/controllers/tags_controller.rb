@@ -1,12 +1,12 @@
 class TagsController < InheritedResources::Base
   authorize_resource
   belongs_to :attached_asset
-  respond_to :js, only: [:activate, :deactivate]
+  respond_to :js, only: [:activate, :remove]
   respond_to :json, only: [:index]
 
   helper_method :company_tags
 
-  def deactivate
+  def remove
     parent.tags.delete resource
   end
 
