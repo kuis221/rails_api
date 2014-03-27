@@ -9,6 +9,9 @@
       .scheduled
         span.bullet.scheduled
         = 'SCHEDULED'
+      .today
+        span.indicator.today
+        = 'TODAY'
     .container-kpi-trend
       - dashboard_promo_hours_graph_data.each do |campaign|
         .kpi-trend
