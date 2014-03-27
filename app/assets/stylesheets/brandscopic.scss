@@ -3104,6 +3104,31 @@ table.table {
 	float: left;
 }
 
+.activity-form{
+	.uploading-panel{
+		border: 1px dashed $user_menu;
+		border-radius: 4px 4px 4px 4px;
+		color: #C0C0C0;
+		font-size: 14px;
+		line-height: 15px;
+		padding: 20px 30px;
+		text-align: center;
+		width: 267px;
+
+		p{
+			&.divider{
+				margin: 25px 0;
+			}
+			&.small{
+				font-size: 11px;
+			}
+			a{
+				text-decoration: underline;
+			}
+		}
+	}
+}
+
 body.activities{
 	.details_box{
 		.event-info{
@@ -6657,7 +6682,7 @@ ul#reports-list {
 			}
 			.list{
 				margin-bottom: 15px;
-				
+
 				.tag{
 					border: 1px solid white;
 					color: $grey_one;
@@ -6738,7 +6763,7 @@ ul#reports-list {
    .select2-highlighted {
      background-color: rgb(0, 0, 0);
      .select2-result-label{
-      
+
     }
    }
   }
