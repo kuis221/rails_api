@@ -247,9 +247,6 @@ class Ability
         asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
       end
       
-      cannot :activate, Tag do
-        !user.current_company_user.role.has_permission?(:activate, Tag)
-      end
       
       # Event Expenses permissions
       can :expenses, Event do |event|

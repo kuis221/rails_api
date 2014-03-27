@@ -384,7 +384,7 @@ Brandscopic::Application.routes.draw do
     put :rate, on: :member
     resources :tags, only: [] do
       member do
-        get :deactivate
+        get :remove
         get :activate
       end
     end
