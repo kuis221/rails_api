@@ -268,6 +268,64 @@ describe Report do
       ]
     end
 
+    it "returns a line for each brand portfolio when adding a portfolio field as a row and the event is associated to any " do
+      campaign.assign_all_global_kpis
+      brand_portfolio1 = FactoryGirl.create(:brand_portfolio, name: 'BP1', company: company)
+      brand_portfolio2 = FactoryGirl.create(:brand_portfolio, name: 'BP2', company: company)
+      brand = FactoryGirl.create(:brand)
+      brand_portfolio1.brands << brand
+      brand_portfolio2.brands << brand
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+
+      campaign2 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign2,
+        results: {impressions: 200, interactions: 150})
+
+      campaign3 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign3,
+        results: {impressions: 300, interactions: 175})
+
+      # Campaign without brands or brand portfolios
+      campaign4 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign4,
+        results: {impressions: 350, interactions: 250})
+
+      # Make both campaigns to be related to the same brand
+      campaign.brand_portfolios << brand_portfolio1
+      campaign2.brands << brand
+      campaign3.brand_portfolios << brand_portfolio2
+      campaign2.brand_portfolios << brand_portfolio2
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"brand_portfolio:name", "label"=>"Portfolio"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"brand_portfolio_name"=>"BP1", "values"=>[300.0]}, 
+        {"brand_portfolio_name"=>"BP2", "values"=>[500.0]}, 
+        {"brand_portfolio_name"=>nil, "values"=>[350.0]}
+      ]
+
+      # Filter by a brand portfolio
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"brand_portfolio:name", "label"=>"Portfolio"}],
+        filters: [{"field"=>"brand_portfolio:name", "label"=>"Portfolio"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"brand_portfolio:name" => ['BP1']}
+      page = report.fetch_page
+      expect(page).to eql [
+        {"brand_portfolio_name"=>"BP1", "values"=>[300.0]}
+      ]
+    end
+
     it "should work when adding fields from users and teams" do
       user = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Green', last_name: 'Ranger'))
       team = FactoryGirl.create(:team, name: 'Power Rangers', company: company)
@@ -656,6 +714,68 @@ describe Report do
       expect(report.fetch_page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]},
           {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+    end
+
+
+    it "can filter results by brand portfolios" do
+      campaign.assign_all_global_kpis
+      brand_portfolio1 = FactoryGirl.create(:brand_portfolio, name: 'BP1', company: company)
+      brand_portfolio2 = FactoryGirl.create(:brand_portfolio, name: 'BP2', company: company)
+      brand = FactoryGirl.create(:brand)
+      brand_portfolio1.brands << brand
+      brand_portfolio2.brands << brand
+
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+
+      campaign2 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign2,
+        results: {impressions: 200, interactions: 150})
+
+      campaign3 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign3,
+        results: {impressions: 300, interactions: 175})
+
+      # Campaign without brands or brand portfolios
+      campaign4 = FactoryGirl.create(:campaign, company: company)
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign4,
+        results: {impressions: 350, interactions: 250})
+
+      # Make both campaigns to be related to the same brand
+      campaign.brand_portfolios << brand_portfolio1
+      campaign2.brands << brand
+      campaign3.brand_portfolios << brand_portfolio2
+      campaign2.brand_portfolios << brand_portfolio2
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"brand_portfolio:name", "label"=>"Brand Portfolio"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]},
+          {"event_start_date"=>"2014/01/13", "values" => [300.00]},
+          {"event_start_date"=>"2014/01/15", "values" => [350.00]}
+      ]
+
+      report.filter_params = {"brand_portfolio:name" => ['BP1']}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"brand_portfolio:name" => ['BP1', 'BP2']}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]},
+          {"event_start_date"=>"2014/01/13", "values" => [300.00]}
       ]
     end
 

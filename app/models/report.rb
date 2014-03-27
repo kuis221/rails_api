@@ -315,21 +315,25 @@ class Report < ActiveRecord::Base
     def add_filters_conditions(s)
       if filter_params.present? && filter_params.any?
         filters.each do |filter|
-          if filter_params.has_key?(filter.field)
-            if filter_params[filter.field].is_a?(Hash)
-              if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
-                start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
-                end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
-                s = s.where("#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date )
-              elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
-                if filter_params[filter.field]['min'].to_i == 0
-                  s = s.where("(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
-                else
-                  s = s.where("#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+          unless filter.model_name == 'brand_portfolio' # BrandPortfolios filters are handled directly in #add_joins_scopes
+            if filter_params.has_key?(filter.field)
+              if filter_params[filter.field].is_a?(Hash)
+                if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
+                  start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
+                  end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
+                  s = s.where("#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date )
+                elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
+                  if filter_params[filter.field]['min'].to_i == 0
+                    s = s.where("(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                  else
+                    s = s.where("#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                  end
                 end
+              elsif filter_params[filter.field].is_a?(Array)
+                s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])
               end
-            elsif filter_params[filter.field].is_a?(Array)
-              s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])
+            else
+              nil
             end
           else
             nil
@@ -341,24 +345,59 @@ class Report < ActiveRecord::Base
 
     def add_joins_scopes(s, field_list)
       field_list = [field_list] unless field_list.is_a?(Array)
-      fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
+      #fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
+      fields = [field_list, rows, columns, filters].flatten.compact
       if fields.any?{|v| v.kpi.present? && ![Kpi.events, Kpi.promo_hours].include?(v.kpi)}
         # Include the event_results table in the join making sure that only
         s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
       end
 
-      s = s.joins(:place) if fields.any?{|v| Place.report_fields.map{|k,v| "place:#{k}" }.include?(v['field'])}
-      s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.map{|k,v| "campaign:#{k}" }.include?(v['field'])}
+      s = s.joins(:place) if fields.any?{|v| v.model_name == 'place' }
+      s = s.joins(:campaign) if fields.any?{|v| v.model_name == 'campaign'}
 
       # Join with users/teams table
       include_roles = fields.any?{|v| Role.report_fields.map{|k,v| "role:#{k}" }.include?(v['field'])}
-      if fields.any?{|v| User.report_fields.map{|k,v| "user:#{k}" }.include?(v['field'])} || include_roles
+      if fields.any?{|v| v.model_name == 'user'} || include_roles
         s = s.joins_for_user_teams
         s = s.joins('INNER JOIN roles ON roles.id=company_users.role_id') if include_roles
-      elsif fields.any?{|v| Team.report_fields.map{|k,v| "team:#{k}" }.include?(v['field'])}
+      elsif fields.any?{|v| v.model_name == 'team'}
         s = s.joins(:teams)
       end
-      s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
+      #s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
+
+      # Join with brand_portfolios table
+      portfolio_filters = filters.select{|filter| filter.model_name == 'brand_portfolio' && is_filtered_by?(filter.field) }
+      if [field_list, rows, columns].flatten.compact.any?{|v| v.model_name == 'brand_portfolio' }
+        # This case is for when we are NOT filtering the list by brand portfolio but we DO have to fetch a portfolio field from the
+        # database (eg Portofio Name as a row/column)
+        s = s.joins(:campaign).joins("LEFT JOIN (
+                SELECT brand_portfolios_campaigns.campaign_id, brand_portfolios_campaigns.brand_portfolio_id
+                FROM brand_portfolios_campaigns 
+              UNION 
+                SELECT brands_campaigns.campaign_id, brand_portfolios_brands.brand_portfolio_id
+                FROM brand_portfolios_brands
+                INNER JOIN brands_campaigns ON brands_campaigns.brand_id = brand_portfolios_brands.brand_id
+              ) bpj ON bpj.campaign_id = campaigns.id
+              LEFT JOIN brand_portfolios ON brand_portfolios.id=bpj.brand_portfolio_id")
+
+        portfolio_filters.each{|filter| s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])}
+      elsif portfolio_filters.any?
+        # This case is for when we should filter the list by brand portfolio but doesn't have to fetch any portfolio field from the
+        # database (eg Portofio Name as a row/column)
+        conditions = "WHERE (#{portfolio_filters.map{|filter| filter.filter_column + ' IN ('+ filter_params[filter.field].map{|p| Event.sanitize(p) }.join(',')+')'}.join(' AND ')})"
+        s = s.joins(:campaign).joins("INNER JOIN (
+                SELECT brand_portfolios_campaigns.campaign_id
+                FROM brand_portfolios_campaigns 
+                INNER JOIN brand_portfolios ON brand_portfolios.id = brand_portfolios_campaigns.brand_portfolio_id
+                #{conditions}
+              UNION 
+                SELECT brands_campaigns.campaign_id
+                FROM brand_portfolios_brands
+                INNER JOIN brands_campaigns ON brands_campaigns.brand_id = brand_portfolios_brands.brand_id
+                INNER JOIN brand_portfolios ON brand_portfolios.id = brand_portfolios_brands.brand_portfolio_id
+                #{conditions}
+              ) bpj ON bpj.campaign_id = campaigns.id")
+      end
 
       [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
         if f.kpi.present?
@@ -366,6 +405,7 @@ class Report < ActiveRecord::Base
         end
       end
 
+      # For each filter, we need to create a special join with the event results table
       filters.each do |filter|
         if filter.kpi.present? && filter_params && filter_params.has_key?(filter.field) && !filter_params[filter.field].empty?
           s = s.joins("LEFT JOIN event_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.event_id = events.id AND er_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
@@ -415,6 +455,10 @@ class Report < ActiveRecord::Base
       else
         fields.map{|r| Report::Field.new(self, name, r) }
       end
+    end
+
+    def is_filtered_by?(field_name)
+      filter_params.present? && filter_params.has_key?(field_name) && filter_params[field_name].any?
     end
 end
 
@@ -491,6 +535,12 @@ class Report::Field
   def kpi
     @kpi ||= if m = /\Akpi:([0-9]+)\z/.match(field)
       Kpi.where('company_id is null OR company_id = ?', @report.company_id).find(m[1])
+    end
+  end
+
+  def model_name
+    @model_name ||= if m = /\A([a-z_]+):.*\z/.match(field)
+      m[1]
     end
   end
 
