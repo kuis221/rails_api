@@ -11,13 +11,12 @@ describe TagsController do
   
   
 
-  describe "GET 'deactivate'" do
+  describe "GET 'remove'" do
     
-    it "deactivates an active tag" do
+    it "removes an active tag from a photo" do
       @attached_asset.tags << @tag
-      get 'deactivate', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
+      get 'remove', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
       response.should be_success
-      #campaign.reload.active?.should be_false
     end
   end
 

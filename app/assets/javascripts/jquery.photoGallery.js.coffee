@@ -67,7 +67,7 @@ $.widget 'nmk.photoGallery', {
 				@tags_list.initialized = true
 				#@tags_list.select2 $.extend(@_select2Options(), {tags: alltags, data: tags})
 				@tags_list.select2 $.extend(@_select2Options(), {tags: alltags})
-				@tags_list.select2("container").find(".select2-input").attr("placeholder", "Add tags") 
+				@tags_list.select2("container").find(".select2-input").attr("placeholder", "Add tags")
 				@tags_list.select2('data', tags);
 
 	_select2Options: () ->
@@ -139,7 +139,7 @@ $.widget 'nmk.photoGallery', {
 				@removeTag(tag)
 
 	removeTag: (tag) ->
-		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/deactivate', {
+		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/remove', {
 			method: 'GET',
 			dataType: 'script',
 			success: (e) =>
