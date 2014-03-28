@@ -1816,8 +1816,10 @@ ul.kpis-list{
 		display: inline-block;
 		font-size: 13px;
 		font-weight: bold;
-		margin-right: 20px;
+		margin-right: 6px;
 		margin-bottom: 6px;
+		padding-top: 2px;
+		padding-left: 1px;
 	}
 	.container-kpi-trend{
 		margin-top: 30px;
@@ -1826,17 +1828,16 @@ ul.kpis-list{
 
 	.kpi-trend {
 		font-size: 12px;
-		margin-bottom: 30px;
+		margin-bottom: 18px;
 		overflow: visible;
 
 		.goal-label {
 			white-space: nowrap;
 			position: absolute;
 			right: 0;
-			top: -30px;
+			top: -25px;
 			div {
 				b{ font-size: 14px; }
-				margin-left: 50%;
 			}
 		}
 	}
@@ -1847,7 +1848,7 @@ ul.kpis-list{
 		position: relative;
 		.progress {
 			width: auto !important;
-			height: 9px;
+			height: 10px;
 			margin-bottom: 0px !important;
 			.bar {
 				text-align: right;
@@ -1871,7 +1872,7 @@ ul.kpis-list{
 			width: 0;
 			background-color: $grey_three;
 			height: 0;
-			top: -12px;
+			top: -10px;
 			&:before{
 				content: "\e004";
 				display: inline-block;
@@ -1904,6 +1905,8 @@ ul.kpis-list{
 			white-space: nowrap;
 			div {
 				margin-left: -120%;
+				margin-top: -2px;
+				float:left;
 				b{
 				  color: rgb(139, 184, 65);
 					font-size: 14px;
@@ -1917,10 +1920,12 @@ ul.kpis-list{
 			text-align: right;
 			margin-left: -50%;
 			div {
+				margin-top: -2px;
 				margin-left: -120%;
 				margin-right: -15%;
 				b{
-				  color: rgb(58, 150, 197);
+					top: -1px;
+					color: rgb(58, 150, 197);
 					font-size: 14px;
 				}
 			}
@@ -1928,16 +1933,16 @@ ul.kpis-list{
 		.remaining-label {
 			color:$brand;
 			position: absolute;
-			right: -350px;
+			right: -300px;
 			width: 300px;
-			top: -2px;
+			top: -13px;
 			&.percentage {
 				top: -21px;
 			}
 			b {
 				display: inline-block;
-				font-size: 28px;
-				font-weight: 400;
+				font-size: 24px;
+				font-weight: 900;
 				float: left;
 				width: 150px;
 				text-align: right;
@@ -4900,7 +4905,7 @@ body.campaigns{
 		}
 	}
 	.color_map{
-		margin-left:49%;
+		margin-left:49.2%;
 		font-size: 12px;
 		color: rgb(152,152,152);
 		.executed, .scheduled{

@@ -73,10 +73,10 @@ module DashboardHelper
         content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['executed'], strip_insignificant_zeros: true)}</b>".html_safe), class: 'executed-label', style: "margin-left: #{c['executed_percentage']}%; margin-right: #{ one_line ? 50: 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{101-c['scheduled_percentage']-c['executed_percentage']}%; margin-top:#{ one_line ? -7: 0}px") +
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{101-c['scheduled_percentage']-c['executed_percentage']}%; margin-top:#{ one_line ? -11: 0}px") +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
       content_tag(:div, class: 'remaining-label') do
-        content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true)) +
+        content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true, delimiter: ',')) +
         content_tag(:span, c['kpi'], class: 'kpi-name') +
         content_tag(:span, 'REMAINING')
       end
