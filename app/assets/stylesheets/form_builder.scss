@@ -15,9 +15,31 @@
 			clear: both;
 			padding: 10px;
 			border: 1px dashed #fff;
+			position: relative;
+			border-radius: 5px;
+			a.close {
+				display: none;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: $brand;
+				opacity: 1;
+			}
 			&:hover {
 				border: 1px dashed silver;
-				border-radius: 5px;
+			}
+			&.selected {
+				a.close {
+					display: inline-block;
+				}
+				background-color: $grey_one;
+				border: 1px solid $grey_one;
+				&:hover {
+					border: 1px solid $grey_one;
+				}
+				.radio span {
+					border: 4px solid #989898;
+				}
 			}
 			&.ui-sortable-placeholder {
 				height: 2px;
@@ -156,10 +178,10 @@
 	}
 
 	.arrow-left {
-		width: 0; 
-		height: 0; 
+		width: 0;
+		height: 0;
 		border-top: 10px solid transparent;
-		border-bottom: 10px solid transparent; 
+		border-bottom: 10px solid transparent;
 		border-right:10px solid #dfdfdf;
 		position: absolute;
 		top:40px;

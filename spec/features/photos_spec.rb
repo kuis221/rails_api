@@ -57,7 +57,7 @@ feature "Photos", js: true do
 
   feature "Photo Gallery" do
     let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
-
+    
     scenario "can rate a photo" do
       photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
       visit event_path(event)
