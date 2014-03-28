@@ -1826,16 +1826,17 @@ ul.kpis-list{
 
 	.kpi-trend {
 		font-size: 12px;
-		margin-bottom: 20px;
+		margin-bottom: 21px;
 		overflow: visible;
 
 		.goal-label {
 			white-space: nowrap;
 			position: absolute;
 			right: 0;
-			top: -30px;
+			top: -23px;
+			font-size: 11px;
 			div {
-				b{ font-size: 14px; }
+				b{ font-size: 13px; }
 				margin-left: 50%;
 			}
 		}
