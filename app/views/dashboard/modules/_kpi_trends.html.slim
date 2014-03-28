@@ -1,7 +1,17 @@
 #kpis-trends-module.details_box
   #kpis-trends-bars
     h3 EVENT STATUS
-
+    p = I18n.translate(:'dashboard.intro_message')
+    .color_map
+      .executed
+        span.bullet.executed 
+        = 'EXECUTED'
+      .scheduled
+        span.bullet.scheduled
+        = 'SCHEDULED'
+      .today
+        span.indicator.today
+        = 'TODAY'
     .container-kpi-trend
       - dashboard_promo_hours_graph_data.each do |campaign|
         .kpi-trend

@@ -25,7 +25,6 @@ ul.select2-results{
 	color: $text;
 	margin: 0;
 	padding:0 !important;
-	width: 398px;
 	.select2-highlighted{
 		background: $brand;
 	}
@@ -719,14 +718,14 @@ ul.select2-results{
 				font-size: 13px;
 			}
 		}
+		.input-append .add-on, .input-prepend .add-on {
+			height: 18px;
+		}
 		.large-inputs{
 			.control-group{
 				width: 400px;
 				textarea{
 					width: 386px;
-				}
-				&.percentage{
-					width: 280px;
 				}
 				.chzn-container-single{
 					.chzn-single{

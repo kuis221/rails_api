@@ -20,6 +20,10 @@ class FormField::Percentage < FormField
   end
 
   def field_classes
-    []
+    [:number]
+  end
+
+  def is_hashed_value?
+    true
   end
 end

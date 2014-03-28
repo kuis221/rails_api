@@ -17,11 +17,12 @@
 #  active            :boolean          default(TRUE)
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
+#  rating            :integer          default(0)
 #
 
 class AttachedAsset < ActiveRecord::Base
   track_who_does_it
-
+  has_and_belongs_to_many :tags, :order => 'name ASC', :autosave => true
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({

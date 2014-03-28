@@ -197,6 +197,42 @@ feature 'Activities management' do
       end
     end
 
+    scenario "user can insert data for percentage fields" do
+      activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
+      form_field = FactoryGirl.create(:form_field,
+        fieldable: activity_type, type: 'FormField::Percentage',
+        options: [FactoryGirl.create(:form_field_option, name: 'Option 1', ordering: 0), FactoryGirl.create(:form_field_option, name: 'Option 2', ordering: 1)])
+
+
+      campaign.activity_types << activity_type
+
+      visit event_path(event)
+
+      click_js_link('New Activity')
+
+      within visible_modal do
+        select_from_chosen('Activity Type #1', from: 'Activity type')
+        fill_in 'Option 1', with: '10'
+        fill_in 'Option 2', with: '90'
+        select_from_chosen(user.name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
+
+      within('#activities-list li') do
+        expect(page).to have_content(user.name)
+        expect(page).to have_content('THU May 16')
+        expect(page).to have_content('Activity Type #1')
+        click_js_link('Edit')
+      end
+
+      within visible_modal do
+        expect(find_field('Option 1').value).to eql '10'
+        expect(find_field('Option 2').value).to eql '90'
+      end
+    end
+
     scenario 'activities from events should be displayed within the venue' do
       event_activity = FactoryGirl.create(:activity,
         company_user: company_user, activitable: event,

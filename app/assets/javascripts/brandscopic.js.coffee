@@ -105,13 +105,13 @@ jQuery ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 
 			errorPlacement: (error, element) ->
-				label = element.closest(".control-group").find("label.control-label")
+				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 				label.addClass('with_message')
 				if label.length > 0
 					if typeof element.data('segmentFieldId') isnt "undefined"
-						error.insertBefore label
+						error.addClass('segment-title-label').insertBefore label
 					else
-						error.addClass('segment-title-label').insertAfter label
+						error.insertAfter label
 				else
 					error.addClass('segment-title-label').insertAfter element
 
@@ -126,8 +126,7 @@ jQuery ->
 					scrollTop: element.offset().top - 200
 				, 1000
 			success: (element) ->
-				element
-					.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
+				element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
 		}
 

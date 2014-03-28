@@ -3,7 +3,7 @@ $.widget 'nmk.formBuilder', {
 	},
 	_create: () ->
 		@element.find('.form-wrapper').append(
-			@formWrapper = $('<div class="form-fields">'),
+			@formWrapper = $('<div class="form-fields clearfix">'),
 			$('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>')
 		)
 		@fieldsWrapper = @element.find('.fields-wrapper')
@@ -28,6 +28,7 @@ $.widget 'nmk.formBuilder', {
 				$.map @formWrapper.find("> div.field"), (field, index) =>
 					$(field).data('field').attributes.ordering = index
 
+				@formWrapper.find('.clearfix').appendTo(@formWrapper)
 		}
 
 		@fieldsWrapper.find('.field').draggable {
@@ -126,6 +127,7 @@ $.widget 'nmk.formBuilder', {
 
 		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
+			@formWrapper.find('.selected').removeClass('selected')
 			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
@@ -178,7 +180,10 @@ Class.extend = (prop) ->
 # Base class for all form field classes
 FormField = Class.extend {
 	getSaveAttributes: () ->
-		{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes() }
+		if @attributes._destroy? && @attributes._destroy is true
+			{id: @attributes.id, _destroy: true }
+		else
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 
 	getId: () ->
 		@attributes.id
@@ -202,13 +207,15 @@ FormField = Class.extend {
 			)
 		])
 
-	optionsField: () ->
-		$('<div class="control-group field-options">').append($('<label class="control-label">').text('Options')).append(
-			$.map @attributes.options, (option, index) =>
+	optionsField: (type='option') ->
+		list = if type is 'statement' then @attributes.statements else @attributes.options
+		titles = {'option': 'Options', 'statement': 'Statements'}
+		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type])).append(
+			$.map list, (option, index) =>
 				$('<div class="controls field-option">').data('option', option).append([
-					$('<input type="hidden" name="option['+index+'][id]">').val(option.id),
-					$('<input type="hidden" name="option['+index+'][_destroy]">'),
-					$('<input type="text" name="option['+index+'][name]">').val(option.name).on 'keyup', (e) =>
+					$('<input type="hidden" name="'+type+'['+index+'][id]">').val(option.id),
+					$('<input type="hidden" name="'+type+'['+index+'][_destroy]">'),
+					$('<input type="text" name="'+type+'['+index+'][name]">').val(option.name).on 'keyup', (e) =>
 						option = $(e.target).closest('.field-option').data('option')
 						option.name = $(e.target).val()
 						@refresh()
@@ -216,9 +223,9 @@ FormField = Class.extend {
 						# Button for adding a new option to the field
 						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
-							index = @attributes.options.indexOf(option)+1
-							@attributes.options.splice(index,0, {id: '', name: '', ordering: index})
-							$('.field-options').replaceWith @optionsField()
+							index = list.indexOf(option)+1
+							list.splice(index,0, {id: '', name: '', ordering: index})
+							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
 							false
 
@@ -228,30 +235,32 @@ FormField = Class.extend {
 							if option.id isnt ''
 								option._destroy = '1'
 							else
-								@attributes.options.splice(@attributes.options.indexOf(option),1)
-							$('.field-options').replaceWith @optionsField()
+								list.splice(list.indexOf(option),1)
+							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
 							false
 					)
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
 		)
 
-	_readOptionsFromDom: (parent) ->
-		@attributes.options = $.map parent.find('.field-option'), (option, index) ->
-			{
-				id: $(option).find('input[type=hidden][name*="[id]"]').val(),
-				name: $(option).find('input[type=text][name*="[name]"]').val(),
-				_destroy: $(option).find('input[type=hidden][name*="[_destroy]"]').val(),
-				ordering: index
-			}
-
 	getOptionsAttributes: () ->
 		@attributes.options
+
+	getStatementsAttributes: () ->
+		@attributes.statements
 
 	render: () ->
 		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
 			.data('field', @)
-			.append @_renderField()
+			.append $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
+					@_renderField()
+
+	remove: () ->
+		if @attributes.id
+			@field.hide()
+			@attributes._destroy = true
+		else
+			@field.remove()
 
 	refresh: () ->
 		@field.html('').append(@_renderField())
@@ -408,7 +417,7 @@ DropdownField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<select>').append(
+			$('<div class="controls">').append($('<select disabled="disabled">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy is '1'
 						''
@@ -421,7 +430,7 @@ DropdownField = FormField.extend {
 		[
 			$('<h4>').text('Dropdown'),
 			@labelField(),
-			@optionsField(),
+			@optionsField('option'),
 			@requiredField()
 		]
 
@@ -463,7 +472,7 @@ RadioField = FormField.extend {
 		[
 			$('<h4>').text('Multiple Choice'),
 			@labelField(),
-			@optionsField(),
+			@optionsField('option'),
 			@requiredField()
 		]
 }
@@ -504,7 +513,148 @@ PercentageField = FormField.extend {
 		[
 			$('<h4>').text('Percent'),
 			@labelField(),
-			@optionsField(),
+			@optionsField('option'),
+			@requiredField()
+		]
+}
+
+PhotoField = FormField.extend {
+	type: 'Photo',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Photo',
+			id: null,
+			required: false,
+			type: 'FormField::Photo',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$('<div class="uploading-panel">').append(
+					$('<p>').append($('<a href="#">Browse</a>'), ' for an image located on your computer'),
+					$('<p class="divider">').text('OR'),
+					$('<p>').text('Drag and drop file here to upload'),
+					$('<p class="small">').text('Maximun upload file size: 10MB')
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Photo'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
+SummationField = FormField.extend {
+	type: 'Summation',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Summation',
+			id: null,
+			required: false,
+			type: 'FormField::Summation',
+			settings: {},
+			options: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$.map @attributes.options, (option, index) =>
+					if option._destroy isnt '1'
+						$('<div class="field-option">').append(
+							$('<label>').addClass('summation').text(option.name+ ' ').append(
+								$('<input type="number" readonly="readonly">')
+							)
+						)
+			).append(
+				$('<div class="field-option summation-total-field">').append(
+					$('<label>').addClass('summation').text('TOTAL: ').append(
+						$('<input type="number" readonly="readonly">')
+					)
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Summation'),
+			@labelField(),
+			@optionsField('option')
+			@requiredField()
+		]
+}
+
+LikertScaleField = FormField.extend {
+	type: 'LikertScale',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Likert scale',
+			id: null,
+			required: false,
+			type: 'FormField::LikertScale',
+			settings: {},
+			options: [],
+			statements: []
+		}, attributes)
+
+		if @attributes.options.length is 0
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+
+		if @attributes.statements.length is 0
+			@attributes.statements = [{id: null, name: 'Statement 1', ordering: 0}]
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$('<table class="table likert-scale-table">').append(
+					$('<thead>').append(
+						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').text(option.name)))
+					)
+				).append(
+					$('<tbody>').append(
+						$.map @attributes.statements, (statement, index) =>
+							$('<tr>').append($('<td>').text(statement.name)).append(
+								$.map @attributes.statements, (statement, index) =>
+									$('<td>').append($('<input type="radio">'))
+							)
+					)
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Likert scale'),
+			@labelField(),
+			@optionsField('statement'),
+			@optionsField('option'),
 			@requiredField()
 		]
 }
@@ -545,7 +695,68 @@ CheckboxField = FormField.extend {
 		[
 			$('<h4>').text('Checkboxes'),
 			@labelField(),
-			@optionsField(),
+			@optionsField('option'),
+			@requiredField()
+		]
+}
+
+
+BrandField = FormField.extend {
+	type: 'Brand',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Brand',
+			id: null,
+			required: false,
+			type: 'FormField::Brand',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<select disabled="disabled">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Brand'),
+			@requiredField()
+		]
+}
+
+MarqueField = FormField.extend {
+	type: 'Marque',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Marque',
+			id: null,
+			required: false,
+			type: 'FormField::Marque',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<select disabled="disabled">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Marque'),
 			@requiredField()
 		]
 }

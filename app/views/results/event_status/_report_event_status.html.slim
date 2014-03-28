@@ -1,7 +1,16 @@
 #kpis-trends-module.details_box
   #kpis-trends-bars
     h3 EVENT STATUS
-
+    .color_map
+      .executed
+        span.bullet.executed 
+        = 'EXECUTED'
+      .scheduled
+        span.bullet.scheduled
+        = 'SCHEDULED'
+      .today
+        span.indicator.today
+        = 'TODAY'
     .container-kpi-trend
       - Campaign.where(id: @campaign.id).promo_hours_graph_data.each do |campaign|
         .kpi-trend

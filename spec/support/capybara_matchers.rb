@@ -111,6 +111,10 @@ RSpec::Matchers.define :have_form_field do |name, filter={}|
               wrapper.all(:field, option, type: 'radio')
             when 'Checkbox'
               wrapper.all(:field, option, type: 'checkbox')
+            when 'Summation', 'Percentage'
+              wrapper.all(:field, option)
+            when 'LikertScale'
+              wrapper.all('th', option)
             else
               # False because chosen hides the select and display a list instead
               wrapper.all('option', option, visible: false)
