@@ -1807,17 +1807,17 @@ ul.kpis-list{
 #kpis-trends-bars {
 	a{
 		color:$grey_three;
-		font-size: 13px;
+		font-size: 12px;
 		&:hover{
 			text-decoration: underline;
 		}
 	}
 	.name {
 		display: inline-block;
-		font-size: 16px;
+		font-size: 13px;
 		font-weight: bold;
 		margin-right: 20px;
-		margin-bottom: 15px;
+		margin-bottom: 6px;
 	}
 	.container-kpi-trend{
 		margin-top: 30px;

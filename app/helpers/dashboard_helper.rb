@@ -67,7 +67,6 @@ module DashboardHelper
       today_bar_indicator +
       content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{c['executed_percentage']}%") +
       content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{c['executed_percentage']+c['scheduled_percentage']}%; height: #{one_line ? 40: 23}px") +
-      content_tag(:div, '', class: 'bar-indicator goal-indicator', style: "left: 100%") +
       content_tag(:div, class: 'progress') do
         content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
         content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
