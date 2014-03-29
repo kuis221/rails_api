@@ -37,7 +37,7 @@ class ActivitiesController < FilteredController
     end
 
     def permitted_params
-      params.permit(activity: [:activity_type_id, {results_attributes: [:id, :form_field_id, :value, value: []]}, :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
+      params.permit(activity: [:activity_type_id, {results_attributes: [:id, :form_field_id, :value, {value: []}, :_destroy]}, :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
         unless whielisted.nil? || whielisted[:results_attributes].nil?
           whielisted[:results_attributes].each do |k, value|
             value[:value] = params[:activity][:results_attributes][k][:value]

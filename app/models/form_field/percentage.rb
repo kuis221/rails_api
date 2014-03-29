@@ -26,4 +26,12 @@ class FormField::Percentage < FormField
   def is_hashed_value?
     true
   end
+
+  def format_html(result)
+    if result.value
+      options.map do |option|
+        "#{option.name}: #{result.value[option.id.to_s] || 0}%"
+      end.join('<br />').html_safe
+    end
+  end
 end

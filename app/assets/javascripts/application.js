@@ -31,6 +31,7 @@
 //= require jquery.detect_timezone
 //= require jquery.infinite-scroll-helper
 //= require jQAllRangeSliders-min
+//= require jquery.activityForm
 //= require jquery.datepick
 //= require jquery.eventsCalendar
 //= require jquery.fancybox

@@ -14,7 +14,10 @@ feature 'Activities management' do
     add_permissions permissions
     sign_in user
   end
-  after { Warden.test_reset! }
+  after do
+    AttachedAsset.destroy_all
+    Warden.test_reset!
+  end
 
 
   shared_examples_for 'a user that view the activiy details' do
@@ -230,6 +233,68 @@ feature 'Activities management' do
       within visible_modal do
         expect(find_field('Option 1').value).to eql '10'
         expect(find_field('Option 2').value).to eql '90'
+      end
+    end
+
+    scenario "user can attach a photo to an activity" do
+      activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
+      form_field = FactoryGirl.create(:form_field,
+        fieldable: activity_type, type: 'FormField::Photo')
+
+
+      campaign.activity_types << activity_type
+
+      with_resque do # So the image is processed
+        visit event_path(event)
+
+        click_js_link('New Activity')
+
+        within visible_modal do
+          select_from_chosen('Activity Type #1', from: 'Activity type')
+          attach_file "file", 'spec/fixtures/photo.jpg'
+          expect(page).to have_content('Uploading photo.jpg....')
+          wait_for_ajax(30) # For the image to upload to S3
+          expect(page).to have_content('File attached: photo.jpg')
+
+          select_from_chosen(user.name, from: 'User')
+          fill_in 'Date', with: '05/16/2013'
+          click_js_button 'Create'
+          wait_for_ajax(30)
+        end
+        ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content(user.name)
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+          click_js_link('Edit')
+        end
+
+        activity = Activity.last
+        photo = AttachedAsset.last
+        expect(photo.attachable).to be_a ActivityResult
+        expect(photo.file_file_name).to eql 'photo.jpg'
+
+        # Change the photo
+        within('#activities-list li') do
+          click_js_link('Edit')
+        end
+        within visible_modal do
+          expect(page).to have_content('File attached: photo.jpg')
+          click_js_link('Change')
+          attach_file "file", 'spec/fixtures/photo2.jpg'
+          expect(page).to have_content('Uploading photo2.jpg....')
+          wait_for_ajax(30) # For the image to upload to S3
+          expect(page).to have_content('File attached: photo2.jpg')
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        find('#activities-list li').click
+        expect(current_path).to eql activity_path(activity)
+        photo = AttachedAsset.last
+        src = photo.reload.file.url(:thumbnail, timestamp: false)
+        expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]")
       end
     end
 

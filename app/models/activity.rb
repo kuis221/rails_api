@@ -38,7 +38,7 @@ class Activity < ActiveRecord::Base
 
   delegate :company_id, :company, to: :activitable, allow_nil: true
 
-  accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :results, allow_destroy: true
 
   before_validation :delegate_campaign_id_from_event
 

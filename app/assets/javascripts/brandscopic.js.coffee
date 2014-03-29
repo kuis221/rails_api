@@ -62,7 +62,7 @@ jQuery ->
 		$('.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true})
 		$('.has-popover').popover({html: true})
-		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
+		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
 		$('.toggle-input .btn').click ->
 			$this = $(this);

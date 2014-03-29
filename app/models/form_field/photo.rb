@@ -22,4 +22,23 @@ class FormField::Photo < FormField
   def field_classes
     []
   end
+
+  def is_attachable?
+    true
+  end
+
+  def format_html(result)
+    if result.attached_asset.present? && result.attached_asset.processed?
+      "<img src=\"#{result.attached_asset.file.url(:thumbnail)}\" alt=\"\" />".html_safe
+    elsif result.attached_asset.present?
+      "The photo is being processed. It will be available soon.."
+    end
+  end
+
+  def validate_result(result)
+    super
+    if result.attached_asset.present? && !result.attached_asset.valid?
+      result.errors.add :value, "is not valid"
+    end
+  end
 end

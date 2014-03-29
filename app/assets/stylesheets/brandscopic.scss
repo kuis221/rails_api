@@ -3111,7 +3111,10 @@ table.table {
 }
 
 .activity-form{
-	.uploading-panel{
+	input.waiting-files {
+		width: auto !important;
+	}
+	.attachment-panel{
 		border: 1px dashed $user_menu;
 		border-radius: 4px 4px 4px 4px;
 		color: #C0C0C0;
@@ -3128,8 +3131,27 @@ table.table {
 			&.small{
 				font-size: 11px;
 			}
-			a{
+			a.file-browse {
 				text-decoration: underline;
+				position: relative;
+				overflow: hidden;
+				input[type=file] {
+					position: absolute;
+					top: 0;
+					right: 0;
+					margin: 0;
+					opacity: 0;
+					-ms-filter: 'alpha(opacity=0)';
+					font-size: 200px;
+					direction: ltr;
+					cursor: pointer;
+				}
+			}
+		}
+
+		.uploader { 
+			.filename, .action {
+				display: none;
 			}
 		}
 	}
@@ -3171,12 +3193,13 @@ body.activities{
 			display: inline-block;
 			float: left;
 			margin-right: 5px;
-			&.form_field_text_area {
+			&.form_field_photo,
+			&.form_field_text_area,
+			&.form_field_summation,
+			&.form_field_likert_scale,
+			&.form_field_percentage {
 				float: none;
 				clear: both;
-			}
-			&.form_field_text_area:last-of-type{
-				margin-top: 10px;
 			}
 		}
 		dd {

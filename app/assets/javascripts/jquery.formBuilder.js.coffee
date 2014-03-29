@@ -539,8 +539,8 @@ PhotoField = FormField.extend {
 		[
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
-				$('<div class="uploading-panel">').append(
-					$('<p>').append($('<a href="#">Browse</a>'), ' for an image located on your computer'),
+				$('<div class="attachment-panel">').append(
+					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for an image located on your computer'),
 					$('<p class="divider">').text('OR'),
 					$('<p>').text('Drag and drop file here to upload'),
 					$('<p class="small">').text('Maximun upload file size: 10MB')

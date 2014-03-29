@@ -55,6 +55,16 @@ class FormField < ActiveRecord::Base
     false
   end
 
+  def is_attachable?
+    false
+  end
+
+  def validate_result(result)
+    if required? && (result.value.nil? || (result.value.is_a?(String) && result.value.empty?))
+      result.errors.add(:value, I18n.translate('errors.messages.blank'))
+    end
+  end
+
   # Allow to create new form fields from the report builder. Rails doesn't like mass-assignment of
   # the "type" attribute, so, after a basic validation, we assign this only for new fields
   def field_type=(type)

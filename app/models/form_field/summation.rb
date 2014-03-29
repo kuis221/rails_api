@@ -26,4 +26,16 @@ class FormField::Summation < FormField
   def is_hashed_value?
     true
   end
+
+  def format_html(result)
+    if result.value
+      total = 0
+      (options.map do |option|
+        total += (result.value[option.id].to_i || 0)
+        "#{option.name}: #{result.value[option.id.to_s] || 0}"
+      end.join('<br /> ') +
+      "<br/>TOTAL: #{total}"
+      ).html_safe
+    end
+  end
 end

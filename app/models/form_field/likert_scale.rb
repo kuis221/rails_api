@@ -26,4 +26,12 @@ class FormField::LikertScale < FormField
   def is_hashed_value?
     true
   end
+
+  def format_html(result)
+    if result.value
+      statements.map do |statement|
+        "#{statement.name}: #{options.detect{|option| option.id.to_s == result.value[statement.id.to_s] }.try(:name)}"
+      end.join('<br /> ').html_safe
+    end
+  end
 end
