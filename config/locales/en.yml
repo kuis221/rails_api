@@ -54,6 +54,12 @@ en:
       date_range: "Edit Date range"
       day_part: "Edit Day part"
 
+  inputs:
+    attached_asset:
+      select_file: 
+        photo: '%{browse} for an image located on your computer'
+        attachment: '%{browse} for a file located on your computer'
+
   notifications:
     task_late_user:
       one: "You have one late task"

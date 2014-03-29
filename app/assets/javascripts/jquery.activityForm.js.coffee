@@ -92,7 +92,7 @@ $.widget 'nmk.activityForm', {
 		@element.find("select.form-field-marque").select2()
 
 		# Handle photo/attachment uploads
-		for form in @element.find('.attached_asset_upload_form')
+		$.each @element.find('.attached_asset_upload_form'), (index, form) ->
 			url = $(form).find('input[name=url]').val()
 			$(form).find("input[type=file]").fileupload(
 				url: url
@@ -104,8 +104,22 @@ $.widget 'nmk.activityForm', {
 					return
 
 				add: (e, data) ->
+					group = $(form).closest('.control-group').removeClass('error')
+					group.find('.help-inline').remove()
 					return false	if e.isDefaultPrevented()
-					if data.autoUpload or (data.autoUpload isnt false and $(this).fileupload("option", "autoUpload"))
+					uploadErrors = [];
+					acceptFileTypes  = RegExp($(form).data('accept-file-types'), "i") if $(form).data('accept-file-types')?
+					if acceptFileTypes && data.originalFiles[0]['type'].length && not acceptFileTypes.test(data.originalFiles[0]['type'])
+						uploadErrors.push('is not a valid file');
+
+					maxFileSize = $(form).data('max-file-size') if $(form).data('max-file-size')?
+					if maxFileSize && data.originalFiles[0]['size'] && data.originalFiles[0]['size'] > maxFileSize
+						uploadErrors.push('Filesize is too big');
+
+					if uploadErrors.length > 0
+						$('<span class="help-inline"></span>').text(uploadErrors[0]).insertAfter(group.find('label.control-label')[0])
+						group.addClass('error')
+					else if data.autoUpload or (data.autoUpload isnt false and $(this).fileupload("option", "autoUpload"))
 						data.process().done ->
 							$(form).data "jqXHR", data.submit()
 							return

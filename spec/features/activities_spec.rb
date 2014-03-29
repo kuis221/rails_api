@@ -251,8 +251,14 @@ feature 'Activities management' do
 
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
+
+          # Should validate the type of the image
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(page).to have_content('is not a valid file')
+
           attach_file "file", 'spec/fixtures/photo.jpg'
           expect(page).to have_content('Uploading photo.jpg....')
+          expect(page).to have_no_content('is not a valid file')
           wait_for_ajax(30) # For the image to upload to S3
           expect(page).to have_content('File attached: photo.jpg')
 
@@ -267,7 +273,6 @@ feature 'Activities management' do
           expect(page).to have_content(user.name)
           expect(page).to have_content('THU May 16')
           expect(page).to have_content('Activity Type #1')
-          click_js_link('Edit')
         end
 
         activity = Activity.last
@@ -287,6 +292,7 @@ feature 'Activities management' do
           wait_for_ajax(30) # For the image to upload to S3
           expect(page).to have_content('File attached: photo2.jpg')
           click_js_button 'Save'
+          wait_for_ajax(30)
         end
         ensure_modal_was_closed
 
@@ -295,6 +301,72 @@ feature 'Activities management' do
         photo = AttachedAsset.last
         src = photo.reload.file.url(:thumbnail, timestamp: false)
         expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]")
+      end
+    end
+
+    scenario "user can attach a document to an activity" do
+      activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
+      form_field = FactoryGirl.create(:form_field,
+        fieldable: activity_type, type: 'FormField::Attachment')
+
+
+      campaign.activity_types << activity_type
+
+      with_resque do # So the image is processed
+        visit event_path(event)
+
+        click_js_link('New Activity')
+
+        within visible_modal do
+          select_from_chosen('Activity Type #1', from: 'Activity type')
+
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(page).to have_content('Uploading file.pdf....')
+          expect(page).to have_no_content('is not a valid file')
+          wait_for_ajax(30) # For the file to upload to S3
+          expect(page).to have_content('File attached: file.pdf')
+
+          select_from_chosen(user.name, from: 'User')
+          fill_in 'Date', with: '05/16/2013'
+          click_js_button 'Create'
+          wait_for_ajax(30)
+        end
+        ensure_modal_was_closed
+
+        within('#activities-list li') do
+          expect(page).to have_content(user.name)
+          expect(page).to have_content('THU May 16')
+          expect(page).to have_content('Activity Type #1')
+        end
+
+        activity = Activity.last
+        photo = AttachedAsset.last
+        expect(photo.attachable).to be_a ActivityResult
+        expect(photo.file_file_name).to eql 'file.pdf'
+
+        find('#activities-list li').click
+        expect(current_path).to eql activity_path(activity)
+        file = AttachedAsset.last
+        src = file.reload.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+        expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
+
+        visit event_path(event)
+
+        # Remove the file
+        within('#activities-list li') do
+          click_js_link('Edit')
+        end
+        expect{
+          within visible_modal do
+            expect(page).to have_content('File attached: file.pdf')
+            click_js_link('Remove')
+            expect(page).to have_no_content('File attached')
+            click_js_button 'Save'
+            wait_for_ajax(30) # To wait for the file being deleted from S3
+          end
+          ensure_modal_was_closed
+        }.to change(AttachedAsset, :count).by(-1)
+
       end
     end
 

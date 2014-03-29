@@ -556,6 +556,44 @@ PhotoField = FormField.extend {
 		]
 }
 
+AttachmentField = FormField.extend {
+	type: 'Attachment',
+
+	init: (attributes) ->
+		@attributes = $.extend({
+			name: 'Attachment',
+			id: null,
+			required: false,
+			type: 'FormField::Attachment',
+			settings: {},
+			options: []
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append(
+				$('<div class="attachment-panel">').append(
+					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for a file located on your computer'),
+					$('<p class="divider">').text('OR'),
+					$('<p>').text('Drag and drop file here to upload'),
+					$('<p class="small">').text('Maximun upload file size: 10MB')
+				)
+			)
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Attachment'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
 SummationField = FormField.extend {
 	type: 'Summation',
 

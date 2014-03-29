@@ -106,6 +106,7 @@ jQuery ->
 
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
+				label = element.closest(".control-group").find("label.control-label") if label.length is 0
 				label.addClass('with_message')
 				if label.length > 0
 					if typeof element.data('segmentFieldId') isnt "undefined"

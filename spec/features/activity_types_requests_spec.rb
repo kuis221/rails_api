@@ -530,6 +530,66 @@ feature "ActivityTypes", js: true do
       end
     end
 
+    scenario "user can add photo fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      photo_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Photo')
+
+      within form_field_settings_for 'Photo' do
+        fill_in 'Field label', with: 'My Photo Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Photo Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Photo Field'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_true
+      expect(field.type).to eql 'FormField::Photo'
+    end
+
+    scenario "user can add attachement fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      attachment_field.drag_to form_builder
+
+      expect(form_builder).to have_form_field('Attachment')
+
+      within form_field_settings_for 'Attachment' do
+        fill_in 'Field label', with: 'My Attachment Field'
+        unicheck('Required')
+      end
+
+      expect(form_builder).to have_form_field('My Attachment Field')
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'My Attachment Field'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_true
+      expect(field.type).to eql 'FormField::Attachment'
+    end
+
     scenario "user can add percentage fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
@@ -819,6 +879,14 @@ feature "ActivityTypes", js: true do
 
   def percentage_field
     find('.fields-wrapper .field', text: 'Percent')
+  end
+
+  def photo_field
+    find('.fields-wrapper .field', text: 'Photo')
+  end
+
+  def attachment_field
+    find('.fields-wrapper .field', text: 'Attachment')
   end
 
   def summation_field
