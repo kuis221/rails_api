@@ -6622,7 +6622,7 @@ ul#reports-list {
 			position: relative;
 			&:before{
 				content: "\e600";
-				color: white;
+				color: $grey_one;
 				display: inline-block;
 				font-family: 'icons';
 				font-size: 16px;
@@ -6638,7 +6638,7 @@ ul#reports-list {
 					font-size: 11px;
 					font-weight: 900;
 					border: 1px solid white;
-					color: $grey_one;
+					color: white;
 					display: inline-block;
 					margin: 9px 7px 6px 0;
 					padding: 0px 7px 4px 5px;
@@ -6656,6 +6656,7 @@ ul#reports-list {
 						right: 0;
 						top: 0;
 						width: 15px;
+						text-shadow: 0 !important;
 						&:before{
 							content: "\e019";
 							display: block;
@@ -6666,13 +6667,14 @@ ul#reports-list {
 							position:absolute;
 							-webkit-font-smoothing: antialiased;
 							top: 0px;
+							text-shadow: none !important;
 						}
 					}
 				}
 			}
 			.typeahead{
 				background-color: rgb(54,54,54);
-				border: 1px solid white;
+				border: 1px solid $grey_one;
 				box-sizing: border-box;
 				color: $grey_two;
 				display: block;
