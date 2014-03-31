@@ -72,6 +72,25 @@
 			}
 		}
 	}
+	&.activity-form{
+		.fields-wrapper{
+			&>p{
+				color: $user_menu;
+				margin: 15px auto 30px auto;
+				text-align: center;
+			}
+			div{
+				&.ui-draggable{
+					&:hover{
+						background-color:$user_menu;
+						border: 1px solid $user_menu;
+						color: white;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+	}
 	.fields-wrapper {
 		background-color: #fff;
 		border-radius: 5px;

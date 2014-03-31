@@ -24,11 +24,11 @@
       = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
-  .form-builder-wrapper
+  .form-builder-wrapper.activity-form
     .form-wrapper.activity-form
 
     .fields-wrapper
-      h4 Drag fields to add
+      p Drag fields to add 
       .field data-type="Dropdown" Dropdown
       .field data-type="Checkbox" Checkboxes
       .field data-type="Radio" Multiple Choice
