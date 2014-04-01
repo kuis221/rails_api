@@ -664,6 +664,6 @@ class Api::V1::VenuesController < Api::V1::FilteredController
       params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
     end
     def permitted_search_params
-      params.permit({campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, :location, :radius)
+      params.permit(:page, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, :location, :radius)
     end
 end

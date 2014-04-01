@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Photos", search: true, js: true do
+feature "Photos", js: true do
 
   before do
     Warden.test_mode!
@@ -57,7 +57,7 @@ feature "Photos", search: true, js: true do
 
   feature "Photo Gallery" do
     let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
-
+    
     scenario "can rate a photo" do
       photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
       visit event_path(event)
@@ -115,7 +115,7 @@ feature "Photos", search: true, js: true do
       expect(gallery_box).to have_no_selector('a.photo-deactivate-link')
     end
 
-    scenario "a user can activate a photo" do
+    scenario "a user can activate a photo", search: true do
       #This should be done from Photo Results section
       event = FactoryGirl.create(:approved_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}}))
       FactoryGirl.create(:photo, attachable: event, active: false)
@@ -139,6 +139,47 @@ feature "Photos", search: true, js: true do
         expect(page).to have_selector('a.icon-remove-circle')
       end
     end
+
+    scenario "a user can tag photos" do
+      FactoryGirl.create(:photo, attachable: event)
+      visit event_path(event)
+
+      within gallery_box do
+        click_js_link 'View Photo'
+      end
+
+      within gallery_modal do
+        add_tag 'tag1'
+        expect(find('.tags .list')).to have_content 'tag1'
+
+        click_button 'Close'
+      end
+
+      within gallery_box do
+        click_js_link 'View Photo'
+      end
+
+      within gallery_modal do
+        within find('.tags .list .tag') do
+          expect(page).to have_content 'tag1'
+          find('button.close').trigger('click')
+          wait_for_ajax
+        end
+      end
+
+      within gallery_modal do
+        expect(page).to have_no_content 'tag1'
+        click_js_button 'Close'
+      end
+
+      within gallery_box do
+        click_js_link 'View Photo'
+      end
+
+      within gallery_modal do
+        expect(find('.tags .list')).to have_no_content 'tag1'
+      end
+    end
   end
 
   def gallery_box
@@ -151,6 +192,15 @@ feature "Photos", search: true, js: true do
 
   def gallery_modal
     find('.gallery-modal')
+  end
+
+  def add_tag(tag)
+    find('.select2-container').find(".select2-search-field").click
+    find("input.select2-input").set(tag)
+    page.execute_script(%|$("input.select2-input:visible").keyup();|)
+    [tag].flatten.each do |tag|
+      find(:xpath, "//body").find(".select2-results li", text: tag).click
+    end
   end
 
 end

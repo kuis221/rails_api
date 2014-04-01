@@ -30,6 +30,25 @@ describe Api::V1::VenuesController do
       ]
     end
 
+    it "second page should return no results", strategy: :deletion do
+      campaign = FactoryGirl.create(:campaign, company: company)
+      place1 = FactoryGirl.create(:place)
+      place2 = FactoryGirl.create(:place)
+      place3 = FactoryGirl.create(:place)
+      events = FactoryGirl.create(:event, company: company, campaign: campaign, place: place1)
+      events = FactoryGirl.create(:event, company: company, campaign: campaign, place: place2)
+      events = FactoryGirl.create(:event, company: company, campaign: campaign, place: place3)
+      Sunspot.commit
+      get :index, auth_token: user.authentication_token, page: 2, company_id: company.to_param, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      expect(result['results'].count).to eql 0
+      expect(result['total']).to eql 3
+      expect(result['page']).to eql 2
+      expect(result['results']).to be_empty
+    end
+
     it "return a list of venues filtered by campaign id", strategy: :deletion do
       with_resque do
         campaign = FactoryGirl.create(:campaign, company: company)
