@@ -16,6 +16,10 @@ class Results::GvaController < ApplicationController
       goals = area.goals.in(campaign)
     elsif place
       goals = place.goals.in(campaign)
+    elsif company_user
+      goals = company_user.goals.in(campaign)
+    elsif team
+      goals = team.goals.in(campaign)
     else
       goals = campaign.goals.base
     end
@@ -36,6 +40,14 @@ class Results::GvaController < ApplicationController
 
     def place
       @place ||= Place.find(params[:item_id]) if params[:item_type].present? && params[:item_type] == 'Place'
+    end
+
+    def company_user
+      @company_user ||= current_company.company_users.find(params[:item_id]) if params[:item_type].present? && params[:item_type] == 'CompanyUser'
+    end
+
+    def team
+      @team ||= current_company.teams.find(params[:item_id]) if params[:item_type].present? && params[:item_type] == 'Team'
     end
 
     def authorize_actions
@@ -88,6 +100,8 @@ class Results::GvaController < ApplicationController
       scope = Event.active.accessible_by_user(current_company_user).by_campaigns(campaign.id)
       scope = scope.in_areas([area]) unless area.nil?
       scope = scope.in_places([place]) unless place.nil?
+      scope = scope.with_user_in_team(company_user) unless company_user.nil?
+      scope = scope.with_team(team) unless team.nil?
       scope
     end
 end
