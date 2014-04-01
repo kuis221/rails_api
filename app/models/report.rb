@@ -292,6 +292,10 @@ class Report < ActiveRecord::Base
                 value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
               elsif Kpi.events.id == value.kpi.id
                 value_field = value_aggregate_sql(value['aggregate'], '1')
+              elsif Kpi.photos.id == value.kpi.id
+                value_field = value_aggregate_sql('COUNT', 'photos.id')
+              elsif Kpi.comments.id == value.kpi.id
+                value_field = value_aggregate_sql('COUNT', 'comments.id')
               else
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
                 s = s.where('event_results.kpi_id=?', value.kpi.id)
@@ -317,20 +321,28 @@ class Report < ActiveRecord::Base
         filters.each do |filter|
           unless filter.model_name == 'brand_portfolio' # BrandPortfolios filters are handled directly in #add_joins_scopes
             if filter_params.has_key?(filter.field)
+              condition = nil
               if filter_params[filter.field].is_a?(Hash)
                 if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
                   start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
                   end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
-                  s = s.where("#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date )
+                  condition = "#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date
                 elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
                   if filter_params[filter.field]['min'].to_i == 0
-                    s = s.where("(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                    condition = "(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max']
                   else
-                    s = s.where("#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max'] )
+                    condition = "#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max']
                   end
                 end
               elsif filter_params[filter.field].is_a?(Array)
-                s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])
+                condition = "#{filter.filter_column} IN (?)", filter_params[filter.field]
+              end
+              s = if condition[0] =~ /COUNT|SUM|AVG|MIN|MAX/
+                s.having(condition)
+              elsif condition
+                s.where(condition)
+              else
+                s
               end
             else
               nil
@@ -347,9 +359,19 @@ class Report < ActiveRecord::Base
       field_list = [field_list] unless field_list.is_a?(Array)
       #fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
       fields = [field_list, rows, columns, filters].flatten.compact
-      if fields.any?{|v| v.kpi.present? && ![Kpi.events, Kpi.promo_hours].include?(v.kpi)}
-        # Include the event_results table in the join making sure that only
+      fields_without_filters = [field_list, rows, columns].flatten.compact
+      if fields_without_filters.any?{|v| v.kpi.present? && ![Kpi.events.id, Kpi.promo_hours.id, Kpi.photos.id, Kpi.comments.id].include?(v.kpi.id)} ||
+         filters.any?{|filter| filter.kpi.present? && is_filtered_by?(filter.field) && ![Kpi.events.id, Kpi.promo_hours.id, Kpi.photos.id, Kpi.comments.id].include?(filter.kpi.id)}
+        # Include the form_fields table in the join making sure that only active kpis are counted
         s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
+      end
+
+      if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.photos.id}
+        s = s.joins("LEFT JOIN attached_assets photos ON photos.attachable_type='Event' AND photos.asset_type='photo' AND photos.attachable_id = events.id AND photos.active='t'")
+      end
+
+      if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.comments.id}
+        s = s.joins("LEFT JOIN comments ON comments.commentable_type='Event' AND comments.commentable_id = events.id")
       end
 
       s = s.joins(:place) if fields.any?{|v| v.model_name == 'place' }
@@ -372,8 +394,8 @@ class Report < ActiveRecord::Base
         # database (eg Portofio Name as a row/column)
         s = s.joins(:campaign).joins("LEFT JOIN (
                 SELECT brand_portfolios_campaigns.campaign_id, brand_portfolios_campaigns.brand_portfolio_id
-                FROM brand_portfolios_campaigns 
-              UNION 
+                FROM brand_portfolios_campaigns
+              UNION
                 SELECT brands_campaigns.campaign_id, brand_portfolios_brands.brand_portfolio_id
                 FROM brand_portfolios_brands
                 INNER JOIN brands_campaigns ON brands_campaigns.brand_id = brand_portfolios_brands.brand_id
@@ -387,10 +409,10 @@ class Report < ActiveRecord::Base
         conditions = "WHERE (#{portfolio_filters.map{|filter| filter.filter_column + ' IN ('+ filter_params[filter.field].map{|p| Event.sanitize(p) }.join(',')+')'}.join(' AND ')})"
         s = s.joins(:campaign).joins("INNER JOIN (
                 SELECT brand_portfolios_campaigns.campaign_id
-                FROM brand_portfolios_campaigns 
+                FROM brand_portfolios_campaigns
                 INNER JOIN brand_portfolios ON brand_portfolios.id = brand_portfolios_campaigns.brand_portfolio_id
                 #{conditions}
-              UNION 
+              UNION
                 SELECT brands_campaigns.campaign_id
                 FROM brand_portfolios_brands
                 INNER JOIN brands_campaigns ON brands_campaigns.brand_id = brand_portfolios_brands.brand_id
@@ -407,8 +429,14 @@ class Report < ActiveRecord::Base
 
       # For each filter, we need to create a special join with the event results table
       filters.each do |filter|
-        if filter.kpi.present? && filter_params && filter_params.has_key?(filter.field) && !filter_params[filter.field].empty?
-          s = s.joins("LEFT JOIN event_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.event_id = events.id AND er_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
+        if filter.kpi.present? && is_filtered_by?(filter.field)
+          if is_a_result_kpi?(filter.kpi)
+            s = s.joins("LEFT JOIN event_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.event_id = events.id AND er_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
+          elsif filter.kpi.id == Kpi.comments.id
+            s = s.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) filter_comments_join ON filter_comments_join.commentable_id = events.id")
+          elsif filter.kpi.id == Kpi.photos.id
+            s = s.joins("LEFT JOIN (SELECT count(attached_assets.id) quantity, attachable_id FROM attached_assets WHERE attachable_type='Event' AND asset_type='photo' GROUP BY attachable_id) filter_photos_join ON filter_photos_join.attachable_id = events.id")
+          end
         end
       end
 
@@ -423,6 +451,12 @@ class Report < ActiveRecord::Base
       else
         "SUM(#{field})"
       end
+    end
+
+    # Returns true if the KPI is a KPI which results are stored on the event_results table or
+    # false if it's a special kpi which result is obtained in a different way (like number of events, photos, etc)
+    def is_a_result_kpi?(kpi)
+      ![Kpi.events.id, Kpi.photos.id, Kpi.comments.id, Kpi.promo_hours.id].include?(kpi.id)
     end
 
     def scoped_columns(s, c, prefix='', index=0)
@@ -499,8 +533,18 @@ class Report::Field
   end
 
   def filter_column
-    @table_column ||= if m = /\Akpi:([0-9]+)\z/.match(field)
-      "er_kpi_#{m[1]}.value"
+    @table_column ||= if kpi.present?
+      if kpi.id == Kpi.events.id
+        "COUNT(events.id)"
+      elsif kpi.id == Kpi.promo_hours.id
+        "SUM(events.promo_hours)"
+      elsif kpi.id == Kpi.comments.id
+        "filter_comments_join.quantity"
+      elsif kpi.id == Kpi.photos.id
+        "filter_photos_join.quantity"
+      else
+        "er_kpi_#{kpi.id}.value"
+      end
     elsif m = /\A(.*):([a-z_]+)\z/.match(field)
       definition = field_class.report_fields[m[2].to_sym]
       column = definition[:filter_column] || definition[:column]
