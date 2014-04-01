@@ -1,31 +1,49 @@
 #kpis-trends-bars
   - events_goal = each_events_goal
-  - if events_goal.any?
-      h3 GOALS VS. ACTUAL
-      .total-venues
-        b= total_accounts_for_events
-        .venues-title VENUES
-      .captions
-        span.actual ACTUAL
-        span.pending PENDING
-      #gva-results.accordion
-        .accordion-group
-          .accordion-heading.collapsed
-            a href="#toggle-gva-result" class="accordion-toggle" data-parent="#gva-results" data-toggle="collapse"
-              b= 'Hola'
-          .accordion-body.collapse id="toggle-gva-result"
-            .accordion-inner.goals-actual
-              .container-kpi-trend
-                - events_goal.each do |id, event_goal|
-                  .kpi-trend
-                    .name= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
-                    = gva_chart(event_goal)
-  - else
-      p.text-center This campaign has no events Goal Vs. Actual stats
+  - if params[:report][:group_by].blank? || (params[:report][:group_by].present? && params[:report][:group_by] == 'campaign')
+    .details_box
+      - if events_goal.any?
+        = render partial: 'report_goals_actual_item_summary', locals: {item_name: @campaign.name}
+        = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
+      - else
+        p.text-center This campaign has no events Goal Vs. Actual stats
+  - elsif params[:report][:group_by].present?
+    #gva-results.accordion
+      - pairs = Goal.in(@campaign).map{|g| "#{g.goalable_type}#{g.goalable_id}"}
+      - if params[:report][:group_by] == 'place'
+        - items = @campaign.areas_and_places
+      - else
+        - items = @campaign.staff
+      - items = items.select{|item| pairs.include?("#{item.class.name}#{item.id}")}
+      - if items.present?
+        - items.each do |item|
+          .details_box
+            .accordion-group
+              .accordion-heading
+                a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
+                  = render partial: 'report_goals_actual_item_summary', locals: {item_name: item.name}
+                  span.pull-right.collapsed
+                span
+                  a href="#" class="remove-item" title="Remove #{item.name}"
+              .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
+                .accordion-inner.goals-actual
+      - else
+        .details_box
+          p.text-center This campaign has no stats for the selected grouping
 
 javascript:
   $('.collapse').on('show', function(){
-      $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded");
+    $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded").prop('title', 'Collapse');
   }).on('hide', function(){
-      $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed");
+    $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed").prop('title', 'Expand');
+  });
+
+  $('.remove-item').on('click', function(e){
+    $(this).closest(".details_box").remove();
+    e.preventDefault();
+  })
+
+  $('#gva-results').on('show', function(e){
+    $target = $(e.target);
+    $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} });
   });

@@ -4897,24 +4897,24 @@ svg{
 			}
 		}
 		&.tool-box{
-			padding-bottom: 60px;
+			color: $brand;
+			padding-bottom: 30px;
 			.text-right{
-				margin-top: 22px;
+				margin-top: 47px;
 				#group-by-title{
 					vertical-align: middle;
 				}
 				.btn-group{
 					margin: 0 30px 0 5px;
 					.btn{
-						background-color: #FFFFFF;
-						border: 1px solid $user_menu !important;
+						background-color: $user_menu;
 						box-shadow: none;
-						color: $text;
+						color: #FFFFFF;
+						font-weight: bold;
 						padding: 10px 17px;
 						width: 60px;
 						&.active{
-							background-color: $grey_one;
-							color: $brand;
+							background-color: $brand;
 						}
 						&.campaign{
 							border-right: 1px solid $buttons-border;
@@ -4931,11 +4931,10 @@ svg{
 						}
 					}
 				}
-				.btn{
-					&.run-report{
-						height: 42px;
-					}
-				}
+			}
+			h3{
+				color: $text;
+				margin: 0 0 25px;
 			}
 		}
 		.chzn-container-single{
@@ -5907,18 +5906,43 @@ body.gva {
 					line-height: 8px;
 				}
 			}
-			.captions{
-				margin-bottom: 30px;
-				text-align: right;
+			.item-summary{
+				display: inline-block;
 				width: 95%;
+				b{
+					font-size: 16px;
+					margin-top: 7px;
+				}
+				.goals-summary{
+					color: $due_today;
+					.goal-item{
+						display: inline-block;
+						margin-left: 35px;
+						text-align: left;
+						b{
+							font-size: 28px;
+							font-weight: 400;
+						}
+						.title{
+							font-size: 14px;
+							font-weight: 400;
+							line-height: 8px;
+						}
+					}
+
+				}
+			}
+			.captions{
+				margin: 40px 350px 20px 0;
+				text-align: right;
 				span {
+					margin-right: 25px;
 					&.actual {
-						margin-right: 25px;
 						&:before {
 							content: '';
 							display: inline-block;
 							background: $green;
-							border-radius: 999px;
+							border-radius: 5px;
 							margin-right: 6px;
 							width: 11px;
 							line-height: 13px;
@@ -5931,7 +5955,7 @@ body.gva {
 							content: '';
 							display: inline-block;
 							background: $due_today;
-							border-radius: 999px;
+							border-radius: 5px;
 							margin-right: 6px;
 							width: 11px;
 							line-height: 13px;
@@ -5939,49 +5963,89 @@ body.gva {
 							vertical-align: baseline;
 						}
 					}
+					&.today{
+						margin-right: 0;
+						&:before {
+							color: $brand;
+							content: "\e004";
+							font-family: "icons";
+							font-size: 16px;
+							position: relative;
+							top: 6px;
+						}
+					}
+
 				}
+			}
+			.container-kpi-trend{
+				margin-left: 0;
 			}
 			#gva-results{
 				a{
 					font-family: 'Lato', sans-serif !important;
 					text-decoration: none;
 				}
+				.details_box{
+					padding: 10px 15px 2px 27px;
+					p{
+						padding: 20px 27px 28px;
+					}
+				}
 				.accordion-group{
 					border: none;
 					.accordion-heading{
 						a{
-							font-size: 16px;
-						}
-						&.collapsed{
-							&:after{
-								content: "\e021";
-								float: right;
-								font-family: 'icons';
-								font-size: 15px;
-								padding-top: 13px;
-								position: absolute;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
+							font-size: 17px;
+							span{
+								&.collapsed{
+									&:after{
+										color: $user_menu;
+										content: "\f078";
+										font-family: 'FontAwesome';
+										font-size: 23px;
+										margin-top: 7px;
+										position: absolute;
+										speak: none;
+										text-align: center;
+										vertical-align: middle;
+										-webkit-font-smoothing: antialiased;
+									}
+								}
+								&.expanded{
+									&:after{
+										color: $user_menu;
+										content: "\f077";
+										font-family: 'FontAwesome';
+										font-size: 23px;
+										margin-top: 7px;
+										position: absolute;
+										speak: none;
+										text-align: center;
+										vertical-align: middle;
+										-webkit-font-smoothing: antialiased;
+									}
+								}
 							}
 						}
-						&.expanded{
-							&:after{
-								content: "\e019";
-								float: right;
-								font-family: 'icons';
-								font-size: 15px;
-								padding-top: 13px;
-								position: absolute;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
+						span{
+							.remove-item{
+								&:after{
+									color: $user_menu;
+									content: "\e019";
+									font-family: 'icons';
+									font-size: 18px;
+									margin-top: 17px;
+									position: absolute;
+									speak: none;
+									text-align: center;
+									vertical-align: middle;
+									-webkit-font-smoothing: antialiased;
+								}
 							}
 						}
 						.accordion-toggle{
 							display: inline-block;
+							margin-right: 40px;
 							padding: 8px 0;
 							width: 95%;
 						}

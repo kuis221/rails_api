@@ -3,42 +3,33 @@
 .tab-content
   #list-view.tab-pane.active
     .details_box.tool-box.first
-
+      h3 GOALS VS. ACTUAL
       .pull-left
         = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'gva-report' } do |f|
           = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
+          = f.hidden_field :group_by, value: params[:group_by].present? ? params[:group_by] : 'campaign'
 
       .text-right
         span#group-by-title GROUP BY:
         #group-by-criterion.btn-group
-          a.btn.active.campaign href="#" data-toggle="tab" title="Campaign" Campaign
-          a.btn.place href="#" data-toggle="tab" title="Place" Place
-          a.btn.staff href="#" data-toggle="tab" title="Staff" Staff
-        button.btn.btn-primary.run-report title="Run report" Run report
+          a.btn.active.campaign href="#" data-type="campaign" data-toggle="tab" title="Campaign" Campaign
+          a.btn.place href="#" data-type="place" data-toggle="tab" title="Place" Place
+          a.btn.staff href="#" data-type="staff" data-toggle="tab" title="Staff" Staff
 
   #report-container
     .details_box
       p.text-center Select a campaign from the list above
 
 javascript:
-  //jQuery(function(){
-    //$('#report_campaign_id').on('change', function(e){
-    //  if ( $(this).val() ){
-    //    $(this.form).submit();
-    //  }
-    //});
-    //$(window).ready(function(){
-    //  $('#report_campaign_id').change()
-    //})
-  //})
+  $('#report_campaign_id').on('change', function(e){
+    if ( $(this).val() ){
+      $(this.form).submit();
+    }
+  });
 
   $('#group-by-criterion a').on('click', function(e){
     $('#group-by-criterion a').removeClass('active');
     $(this).addClass('active');
-  });
-
-  $('.run-report').on('click', function(e){
-    if ( $('#report_campaign_id').val() ){
-      $('#gva-report').submit();
-    }
+    $("#report_group_by").val($(this).data('type'));
+    $('#report_campaign_id').trigger('change');
   });
