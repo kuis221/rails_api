@@ -288,6 +288,61 @@ feature "Reports", js: true do
       end
     end
 
+
+    scenario "user can add fields to the different field lists using the context menu" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #3', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
+
+      visit build_results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      within ".sidebar" do
+        expect(field_list('columns')).to have_no_content('Values')
+        within(field_context_menu 'Kpi #1') { click_js_link 'Add to Values' }
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        expect(field_list('values')).to have_content('Kpi #1')
+
+        within(field_context_menu 'Kpi #2') { click_js_link 'Add to Columns' }
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        expect(field_list('columns')).to have_content('Kpi #2')
+
+        within(field_context_menu 'Kpi #3') { click_js_link 'Add to Filters' }
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('filters')).to have_content('Kpi #3')
+
+        within(field_context_menu 'Kpi #4') { click_js_link 'Add to Rows' }
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+        expect(field_list('rows')).to have_content('Kpi #4')
+
+      end
+
+      # Save the report and reload page to make sure they were correctly saved
+      click_js_button "Save"
+      wait_for_ajax
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      visit build_results_report_path(@report)
+      within ".sidebar" do
+        # Each KPI should be in the correct list
+        expect(field_list('values')).to have_content('Sum of Kpi #1')
+        expect(field_list('columns')).to have_content('Values')
+        expect(field_list('columns')).to have_content('Kpi #2')
+        expect(field_list('filters')).to have_content('Kpi #3')
+        expect(field_list('rows')).to have_content('Kpi #4')
+
+        # and they should not be in the source fields lists
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+      end
+    end
+
     scenario "user can change the aggregation method for values" do
       visit build_results_report_path(@report)
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
@@ -502,5 +557,10 @@ feature "Reports", js: true do
 
   def field_list(name)
     find("#report-#{name}")
+  end
+
+  def field_context_menu(field_name)
+    find('.sidebar li.report-field', text: field_name).find('.field-settings-btn').click
+    find(:xpath, "//body").find("div.report-field-settings")
   end
 end

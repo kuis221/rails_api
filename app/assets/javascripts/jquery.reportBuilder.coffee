@@ -30,15 +30,9 @@ $.widget 'nmk.reportBuilder',
 					$(ui.sender).sortable('cancel')
 					event.stopPropagation()
 
+				# when it comes directly from the fields list
 				if ui.helper?
-					ui.item.addClass('hidden').hide()
-					label = ui.item.find('.field-label').text()
-					if ui.item.data('group') isnt 'KPIs'
-						label = "#{ui.item.data('group')} #{label}"
-					if $(event.target).attr('id') is 'report-values'
-						label = "Sum of #{label}"
-					field = {field: ui.item.data('field-id'), label: label, aggregate: 'sum'}
-					$(event.target).find('li[data-field-id="'+ui.item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
+					@addFieldToList ui.item, $(event.target)
 				true
 			over: (event, ui) =>
 				if ui.item.data('field-id') is 'values'
@@ -59,22 +53,21 @@ $.widget 'nmk.reportBuilder',
 				if ui.draggable.data('field-id') is 'values'
 					elements = $('#report-values').find('li')
 					ui.draggable.remove()
-				
+
 				for element in elements.get()
 					$("#report-fields li[data-field-id=\"#{$(element).data('field-id')}\"]").removeClass('hidden').show()
 					$(element).remove()
 
-				# For some reason, the count is returning 
 				if $('#report-values').find('li:not(.ui-sortable-placeholder)').length == 0
 					$('#report-columns').find('li[data-field-id=values]').remove()
 
 		@element.find(".draggable-list li").draggable
-			connectToSortable: ".sortable-list",
-			revert: "invalid",
-			helper: "clone",
-			containment: "#resource-filter-column", 
-			scroll: false,
-			# The next two events (start/drag) are only to fix this issue: 
+			connectToSortable: ".sortable-list"
+			revert: "invalid"
+			helper: "clone"
+			containment: "#resource-filter-column"
+			scroll: false
+			# The next two events (start/drag) are only to fix this issue:
 			#http://stackoverflow.com/questions/5791886/jquery-draggable-shows-helper-in-wrong-place-when-scrolled-down-page
 			start: () ->
 				$(this).data "startingScrollTop", $(this).parent().scrollTop()
@@ -95,8 +88,11 @@ $.widget 'nmk.reportBuilder',
 		@_setListItems 'filters', @options.filters
 		@_addValuesToColumns()
 
-		@element.on 'click', '.field-settings-btn', (e) =>
-			@showFieldSettings $(e.target).closest('.report-field')
+		@element.on 'click', '.report-field', (e) =>
+			if $(e.target).closest('.field-list').attr('id') is 'report-fields'
+				@showFieldContextMenu $(e.target).closest('.report-field')
+			else
+				@showFieldSettings $(e.target).closest('.report-field')
 			e.stopPropagation()
 			false
 
@@ -136,12 +132,63 @@ $.widget 'nmk.reportBuilder',
 		@refreshReportPreview()
 		@saved = false
 
+	showFieldContextMenu: (fieldElement) ->
+		if @fieldSettings?
+			if @fieldSettings.fieldElement[0] is fieldElement[0]
+				return @closeFieldSettings()
+			else
+				@closeFieldSettings()
+
+		fieldElement.addClass 'settings-open'
+
+		options = [
+			$('<a href="#" class="option">Add to Filters</a>').on 'click', () =>
+				$('#report-filters').append fieldElement.clone()
+				@addFieldToList fieldElement, $('#report-filters')
+				@reportModified()
+				@closeFieldSettings()
+
+			$('<a href="#" class="option">Add to Columns</a>').on 'click', () =>
+				$('#report-columns').append fieldElement.clone()
+				@addFieldToList fieldElement, $('#report-columns')
+				@reportModified()
+				@closeFieldSettings()
+
+			$('<a href="#" class="option">Add to Rows</a>').on 'click', () =>
+				$('#report-rows').append fieldElement.clone()
+				@addFieldToList fieldElement, $('#report-rows')
+				@reportModified()
+				@closeFieldSettings()
+
+			$('<a href="#" class="option">Add to Values</a>').on 'click', () =>
+				$('#report-values').append fieldElement.clone()
+				@addFieldToList fieldElement, $('#report-values')
+				@reportModified()
+				@closeFieldSettings()
+		]
+
+		@fieldSettings = $('<div class="report-field-settings"><div class="arrow-up"></div></div>').hide()
+			.append($('<div class="report-field-settings-inner">').append(options))
+			.appendTo(@element)
+		@fieldSettings.fieldElement = fieldElement
+		@fieldSettings.changed = false
+		@_placeFieldSettings()
+		@fieldSettings.show()
+
+		$(document).on 'click.reportFieldSettings', =>
+			@closeFieldSettings()
+
+		@fieldSettings.on 'click', -> false
+
+
 	showFieldSettings: (fieldElement) ->
 		if @fieldSettings?
 			if @fieldSettings.fieldElement[0] is fieldElement[0]
 				return @closeFieldSettings()
 			else
 				@closeFieldSettings()
+
+		fieldElement.addClass 'settings-open'
 
 		field = fieldElement.data('field')
 		listName = fieldElement.closest('ul').attr('id')
@@ -151,7 +198,7 @@ $.widget 'nmk.reportBuilder',
 							append($('<label class="control-label" for="report-field-label">').text('Label'),
 								$('<div class="controls">').append(
 									$('<input type="text" name="report-field-label" id="report-field-label">').val(field.label).
-										on 'keyup', (e) => 
+										on 'keyup', (e) =>
 											field.label = e.target.value
 											fieldElement.find('.field-label').text(e.target.value)
 											@fieldSettings.changed = true
@@ -198,8 +245,8 @@ $.widget 'nmk.reportBuilder',
 										)
 								)
 
-		@fieldSettings = $('<div class="report-field-settings">').hide()
-			.append(formFields)
+		@fieldSettings = $('<div class="report-field-settings"><div class="arrow-up"></div></div>').hide()
+			.append($('<div class="report-field-settings-inner">').append(formFields))
 			.appendTo(@element)
 		@fieldSettings.fieldElement = fieldElement
 		@fieldSettings.changed = false
@@ -215,12 +262,25 @@ $.widget 'nmk.reportBuilder',
 	closeFieldSettings: () ->
 		if @fieldSettings.changed is true
 			@reportModified()
+		@fieldSettings.fieldElement.removeClass 'settings-open'
 		$(document).off 'click.reportFieldSettings'
 		@fieldSettings.remove()
 		@fieldSettings = null
 
+
+	addFieldToList: (item, list) ->
+		item.addClass('hidden').hide()
+		label = item.find('.field-label').text()
+		if item.data('group') isnt 'KPIs'
+			label = "#{item.data('group')} #{label}"
+		if list.attr('id') is 'report-values'
+			label = "Sum of #{label}"
+		field = {field: item.data('field-id'), label: label, aggregate: 'sum'}
+		list.find('li[data-field-id="'+item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
+
 	_placeFieldSettings: () ->
 		element = @fieldSettings.fieldElement
+		@fieldSettings.css({width: @fieldSettings.fieldElement.outerWidth()+'px'})
 		sidebar = @element.find('.sidebar')
 		leftFix = -parseInt((@fieldSettings.outerWidth()-element.outerWidth())/2)
 		left = element.position().left
@@ -229,33 +289,33 @@ $.widget 'nmk.reportBuilder',
 			if top+@fieldSettings.outerHeight()+100 > $(window).height()
 				top = $(window).height() - @fieldSettings.outerHeight() - 100
 			@fieldSettings.css({
-				position: 'fixed', 
+				position: 'fixed',
 				top: top,
 				left: element.offset().left+leftFix
 			})
 		else
 			@fieldSettings.css({
-				position: 'absolute', 
-				top: element.position().top+element.outerHeight(),
+				position: 'absolute',
+				top: element.position().top+element.outerHeight()+10,
 				left: element.position().left+leftFix
 			})
 
-	_getColumns: () -> 
+	_getColumns: () ->
 		items =  $.map $('#report-columns li', @element), (column, i) =>
 			@_getColumnProperties column
 		if items.length then items else null
 
-	_getRows: () -> 
+	_getRows: () ->
 		items = $.map $('#report-rows li', @element), (row, i) =>
 			@_getRowProperties row
 		if items.length then items else null
 
-	_getFilters: () -> 
+	_getFilters: () ->
 		items = $.map $('#report-filters li', @element), (filter, i) =>
 			@_getFilterProperties filter
 		if items.length then items else null
 
-	_getValues: () -> 
+	_getValues: () ->
 		items = $.map $('#report-values li', @element), (value, i) =>
 			@_getValueProperties value
 		if items.length then items else null
@@ -279,8 +339,8 @@ $.widget 'nmk.reportBuilder',
 		$value = $(value)
 		field = $value.data('field')
 		{
-			field: $value.data('field-id'), 
-			label: field.label, 
+			field: $value.data('field-id'),
+			label: field.label,
 			aggregate: if field.aggregate? then field.aggregate else 'sum',
 			display: if field.display? then field.display else ''
 		}
@@ -299,7 +359,7 @@ $.widget 'nmk.reportBuilder',
 
 	_showOverlay: () ->
 		@preview.css opacity: 0.5
-		@reportOverlay.css 
+		@reportOverlay.css
 			position: 'absolute',
 			top: @preview.position().top+"px",
 			left: @preview.position().left+"px",
@@ -313,7 +373,7 @@ $.widget 'nmk.reportBuilder',
 		@reportOverlay.hide()
 
 	_reportFormData: () ->
-		{ 
+		{
 			report: {
 				columns: @_getColumns(),
 				rows: @_getRows(),

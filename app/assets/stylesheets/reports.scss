@@ -137,7 +137,7 @@ ul.reports-list {
 
 	.draggable-list {
 		font-weight: normal;
-		overflow:auto;
+		overflow:visible;
 		text-transform: none;
 	}
 
@@ -158,9 +158,6 @@ ul.reports-list {
 			&#report-filters{
 				margin-bottom: 0;
 				margin-top: 0;
-				.field-label{
-					width: 90%;
-				}
 			}
 			li{
 				margin: 3px 0;
@@ -229,9 +226,6 @@ ul.reports-list {
 					margin-bottom: 10px;
 				}
 			}
-			.field-settings-btn {
-				display: none;
-			}
 		}
 		&#report-filters-outer, &#report-columns-outer, &#report-rows-outer, &#report-values-outer{
 			margin-top: 5px;
@@ -260,6 +254,7 @@ ul.reports-list {
 		overflow: visible;
 		.field-label {
 			float: left;
+			width: 160px;
 		}
 		.field-settings-btn {
 			cursor: pointer;
@@ -269,15 +264,18 @@ ul.reports-list {
 		}
 	}
 
-	.report-field:hover, .ui-draggable-dragging {
+	.report-field:hover,  .report-field.settings-open, .ui-draggable-dragging {
 		background-color: $grey_one;
 	}
 
 	.report-field-settings {
-		padding: 8px;
-		background-color: $grey_one;
-		width: 194px;
-		border-radius: 5px;
+		width: 190px;
+		.report-field-settings-inner {
+			padding: 0px;
+			overflow: hidden;
+			background-color: $grey_one;
+			border-radius: 5px;
+		}
 		input, select {
 			box-sizing: border-box;
 			-moz-box-sizing: border-box;
@@ -286,6 +284,30 @@ ul.reports-list {
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
 			box-shadow: none; 
+		}
+
+		.arrow-up {
+			width: 0; 
+			height: 0; 
+			margin-left: 150px;
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+			border-bottom: 10px solid $grey_one;
+		}
+
+		a.option {
+			display: block;
+			padding: 10px;
+			&:hover {
+				text-decoration: none;
+				background-color: $grey_three;
+				color: #fff;
+			}
+		}
+
+		.control-group{
+			padding: 8px;
+			margin-bottom: 0;
 		}
 
 		.chzn-container{
