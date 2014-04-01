@@ -102,6 +102,9 @@ $.widget 'nmk.reportBuilder',
 
 		@refreshReportPreview()
 
+		$(window).bind "scroll resize DOMSubtreeModified", () =>
+			@_resizeSideBar()
+
 		@element
 
 	saveForm: () ->
@@ -381,6 +384,14 @@ $.widget 'nmk.reportBuilder',
 				values: @_getValues()
 			}
 		}
+
+	_resizeSideBar: () ->
+		sidebar = @element.find('.sidebar')
+		padding = parseInt(sidebar.css('padding-top')) + parseInt(sidebar.css('padding-bottom'))
+		sidebarHeight = Math.max(560, ($(window).height() - sidebar.position().top - padding - 10))
+		sidebar.css({height: sidebarHeight+'px', position: 'fixed', right: '10px'})
+
+		sidebar.find('#report-fields').css({height: sidebarHeight - sidebar.find('.fixed-height-lists').outerHeight() - parseInt(sidebar.css('padding-bottom')) })
 
 	_addValuesToColumns: () ->
 		if $('#report-values li', @element).length > 0

@@ -120,7 +120,7 @@ ul.reports-list {
 		background-color: white !important;
 		border: 1px solid $user_menu;
 		height: 37px;
-		width: 209px;
+		width: 190px;
 		background-image: url("search2.svg") !important;
 		background-position: center right;
 		background-repeat: no-repeat;
@@ -128,6 +128,8 @@ ul.reports-list {
 		box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		border-radius: 20px;
+		margin-left: -5px;
+		margin-bottom: 10px;
 		padding-left: 7%;
 		padding-right: 17%;
 		-webkit-box-shadow: none;
@@ -141,18 +143,19 @@ ul.reports-list {
 		text-transform: none;
 	}
 
+	p.drag-message{
+		color: $user_menu;
+		padding-bottom:10px;
+		padding-top:10px;
+		text-align: center;
+	}
+
 	.field-list {
 		border: 1px solid #ccc;
-		height: 94px;
+		height: 90px;
 		padding: 4px 10px;
 		margin-bottom: 10px;
 		overflow: auto;
-		&+p{
-			color: $user_menu;
-			padding-bottom:10px;
-			padding-top:20px;
-			text-align: center;
-		}
 		&> ul {
 			margin: 7px -5px 30px -5px;
 			&#report-filters{
@@ -219,7 +222,6 @@ ul.reports-list {
 		&#report-fields {
 			font-weight: bold;
 			height: 345px;
-			margin-top: 10px;
 			text-transform: uppercase;
 			ul {
 				&:last-of-type{
@@ -512,5 +514,11 @@ $report_border_color: #ccc;
 	&:hover{
 		color: $text !important;
 		text-decoration: none !important;;
+	}
+}
+
+@media (max-height: 810px) {
+	#report-builder .field-list { 
+		height: 55px;
 	}
 }
