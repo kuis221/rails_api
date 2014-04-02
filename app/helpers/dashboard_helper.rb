@@ -84,6 +84,10 @@ module DashboardHelper
   end
 
   def gva_chart(g)
+    today_bar_indicator = ''.html_safe
+    if g[:today_percentage]
+      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator", style: "left: #{g[:today_percentage] - 0.5}%")
+    end
     goal = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:goal].value, precision: 2) : number_with_precision(g[:goal].value, strip_insignificant_zeros: true)
     actual = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:total_count], precision: 2) : number_with_precision(g[:total_count], strip_insignificant_zeros: true)
     pending_and_total = (g[:submitted] || 0) + g[:total_count]
@@ -92,6 +96,7 @@ module DashboardHelper
     pending_percentage = (pending_and_total/g[:goal].value * 100).round
     one_line = (105-(pending_percentage - actual_percentage)) > 100 || pending_percentage >= 100 && pending_percentage >= 100
     content_tag(:div, class: 'chart-bar') do
+      today_bar_indicator +
       content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, actual_percentage].min}%") +
       content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{[100, pending_percentage].min}%; height: #{one_line ? 40: 23}px") +
       content_tag(:div, class: 'progress') do

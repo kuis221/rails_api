@@ -134,12 +134,13 @@ Brandscopic::Application.routes.draw do
     end
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
+    get :report_groups, to: 'gva#report_groups'
 
     # For The KPI report
     get :kpi_report, to: 'kpi_report#index'
     post :kpi_report, to: 'kpi_report#report'
     get :kpi_report_status, to: 'kpi_report#status'
-    
+
     get :event_status, to: 'event_status#index'
     post :event_status, to: 'event_status#report'
   end
@@ -410,7 +411,7 @@ Brandscopic::Application.routes.draw do
       get :activate
     end
   end
-  
+
   resources :activity_types  do
     get :autocomplete, on: :collection
     member do

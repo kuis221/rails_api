@@ -37,7 +37,7 @@ module GoalableModel
         end
       end
 
-      receiver.has_many :chilren_goals, class_name: 'Goal', as: :parent
+      receiver.has_many :children_goals, class_name: 'Goal', as: :parent
     end
   end
 end
