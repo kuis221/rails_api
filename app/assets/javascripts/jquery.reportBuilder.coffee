@@ -49,17 +49,7 @@ $.widget 'nmk.reportBuilder',
 		$('body').droppable
 			accept: ".sortable-list li"
 			drop: ( event, ui ) =>
-				elements = ui.draggable
-				if ui.draggable.data('field-id') is 'values'
-					elements = $('#report-values').find('li')
-					ui.draggable.remove()
-
-				for element in elements.get()
-					$("#report-fields li[data-field-id=\"#{$(element).data('field-id')}\"]").removeClass('hidden').show()
-					$(element).remove()
-
-				if $('#report-values').find('li:not(.ui-sortable-placeholder)').length == 0
-					$('#report-columns').find('li[data-field-id=values]').remove()
+				@removeField ui.draggable
 
 		@element.find(".draggable-list li").draggable
 			connectToSortable: ".sortable-list"
@@ -88,12 +78,20 @@ $.widget 'nmk.reportBuilder',
 		@_setListItems 'filters', @options.filters
 		@_addValuesToColumns()
 
-		@element.on 'click', '.report-field', (e) =>
-			if $(e.target).closest('.field-list').attr('id') is 'report-fields'
-				@showFieldContextMenu $(e.target).closest('.report-field')
-			else
-				@showFieldSettings $(e.target).closest('.report-field')
+		@element.on 'click', '.field-remove-btn', (e) =>
 			e.stopPropagation()
+			@removeField $(e.target).closest('.report-field')
+			@reportModified()
+			false
+
+		@element.on 'click', '.report-field', (e) =>
+			field = if $(e.target).hasClass('report-field') then $(e.target) else $(e.target).closest('.report-field')
+			if field.data('field-id') isnt 'values'
+				if field.closest('.field-list').attr('id') is 'report-fields'
+					@showFieldContextMenu field
+				else
+					@showFieldSettings field
+				e.stopPropagation()
 			false
 
 		@element.find('#report-values').on 'sortreceive', (event, ui) =>
@@ -129,6 +127,19 @@ $.widget 'nmk.reportBuilder',
 			complete: () =>
 				@_hideOverlay()
 		, 1000
+
+	removeField: (field) ->
+		elements = field
+		if field.data('field-id') is 'values'
+			elements = $('#report-values').find('li')
+			field.remove()
+
+		for element in elements.get()
+			$("#report-fields li[data-field-id=\"#{$(element).data('field-id')}\"]").removeClass('hidden').show()
+			$(element).remove()
+
+		if $('#report-values').find('li:not(.ui-sortable-placeholder)').length == 0
+			$('#report-columns').find('li[data-field-id=values]').remove()
 
 	reportModified: () ->
 		@element.find('.btn-save-report').attr('disabled', false)
@@ -249,7 +260,7 @@ $.widget 'nmk.reportBuilder',
 								)
 
 		@fieldSettings = $('<div class="report-field-settings"><div class="arrow-up"></div></div>').hide()
-			.append($('<div class="report-field-settings-inner">').append(formFields))
+			.append($('<div class="report-field-settings-inner">').append(formFields)).append($('<div class="arrow-down"></div>'))
 			.appendTo(@element)
 		@fieldSettings.fieldElement = fieldElement
 		@fieldSettings.changed = false
@@ -278,6 +289,7 @@ $.widget 'nmk.reportBuilder',
 			label = "#{item.data('group')} #{label}"
 		if list.attr('id') is 'report-values'
 			label = "Sum of #{label}"
+			@_addValuesToColumns()
 		field = {field: item.data('field-id'), label: label, aggregate: 'sum'}
 		list.find('li[data-field-id="'+item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
 
@@ -288,19 +300,22 @@ $.widget 'nmk.reportBuilder',
 		leftFix = -parseInt((@fieldSettings.outerWidth()-element.outerWidth())/2)
 		left = element.position().left
 		if sidebar.css('position') is 'fixed'
-			top = element.offset().top+element.outerHeight()
+			top = element.offset().top+element.outerHeight() - $(window).scrollTop()
 			if top+@fieldSettings.outerHeight()+100 > $(window).height()
-				top = $(window).height() - @fieldSettings.outerHeight() - 100
+				top = element.offset().top - @fieldSettings.outerHeight() - $(window).scrollTop() + 5
+				@fieldSettings.removeClass('on-bottom').addClass('on-top')
+			else
+				@fieldSettings.addClass('on-bottom').removeClass('on-top')
 			@fieldSettings.css({
 				position: 'fixed',
-				top: top,
-				left: element.offset().left+leftFix
+				top: top+'px',
+				left: (element.offset().left+leftFix)+'px'
 			})
 		else
 			@fieldSettings.css({
 				position: 'absolute',
-				top: element.position().top+element.outerHeight()+10,
-				left: element.position().left+leftFix
+				top: (element.position().top+element.outerHeight()+10)+'px',
+				left: (element.position().left+leftFix)+'px'
 			})
 
 	_getColumns: () ->
@@ -399,5 +414,9 @@ $.widget 'nmk.reportBuilder',
 
 			if values.length is 0
 				field = {label: 'Values'}
-				li = $('<li data-field-id="values">').append($('<div class="field-label">').text('Values')).data('field', field)
+				li = $('<li class="report-field" data-field-id="values">').append(
+					$('<a href="#" class="field-remove-btn icon-remove" title="Remove">'),
+					$('<div class="field-label">').text('Values'),
+					$('<div class="clearfix">')
+				).data('field', field)
 				@element.find('#report-columns').append li

@@ -156,6 +156,11 @@ ul.reports-list {
 		padding: 4px 10px;
 		margin-bottom: 10px;
 		overflow: auto;
+
+		span.group-name{
+			padding-left: 15px;
+		}
+
 		&> ul {
 			margin: 7px -5px 30px -5px;
 			&#report-filters{
@@ -203,6 +208,27 @@ ul.reports-list {
 						display: none;
 					}
 				}
+
+				.icon-remove:before {
+					content:"\e019";
+					font-size: 12px;
+					top: 5px;
+				}
+
+				.field-remove-btn {
+					float: left;
+					display: inline-block;
+					visibility: hidden;
+					margin-right: 3px;
+					&:hover {
+						text-decoration: none;
+					}
+				}
+				&:hover {
+					.field-remove-btn {
+						visibility: visible;
+					}
+				}
 			}
 		}
 		i.icon-caret-down:before{
@@ -226,6 +252,14 @@ ul.reports-list {
 			ul {
 				&:last-of-type{
 					margin-bottom: 10px;
+				}
+
+				li {
+					&:hover {
+						.field-remove-btn {
+							visibility: hidden;
+						}
+					}
 				}
 			}
 		}
@@ -256,16 +290,22 @@ ul.reports-list {
 		overflow: visible;
 		.field-label {
 			float: left;
-			width: 160px;
+			width: 145px;
 		}
 		.field-settings-btn {
 			cursor: pointer;
 			float: right;
 			margin-right: 2px;
 			font-size: 20px;
+			display: none;
 		}
 	}
 
+	.report-field:hover,  .report-field.settings-open {
+		.field-settings-btn {
+			display: inline-block;
+		}
+	}
 	.report-field:hover,  .report-field.settings-open, .ui-draggable-dragging {
 		background-color: $grey_one;
 	}
@@ -274,7 +314,6 @@ ul.reports-list {
 		width: 190px;
 		.report-field-settings-inner {
 			padding: 0px;
-			overflow: hidden;
 			background-color: $grey_one;
 			border-radius: 5px;
 		}
@@ -296,6 +335,20 @@ ul.reports-list {
 			border-right: 10px solid transparent;
 			border-bottom: 10px solid $grey_one;
 		}
+		.arrow-down {
+			width: 0;
+			height: 0;
+			margin-left: 150px;
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+			border-top: 10px solid $grey_one;
+		}
+		&.on-top {
+			.arrow-up {display: none; }
+		}
+		&.on-bottom {
+			.arrow-down {display: none; }
+		}
 
 		a.option {
 			display: block;
@@ -304,6 +357,14 @@ ul.reports-list {
 				text-decoration: none;
 				background-color: $grey_three;
 				color: #fff;
+			}
+			&:first-child {
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+			}
+			&:last-child {
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
 			}
 		}
 
@@ -321,7 +382,7 @@ ul.reports-list {
 				border: 1px solid white !important;
 				box-sizing:border-box;
 				height: 34px !important;
-				width: 100% !important;
+				width: auto !important;
 				div b{
 					background: url("triangle-down.svg") no-repeat 0px 13px !important;
 				}
@@ -335,7 +396,7 @@ ul.reports-list {
 				width: 70% !important;				
 			}
 			.chzn-drop{
-				width: 194px !important;
+				width: 184px !important;
 			}
 			.chzn-results{
 				li.no-results{

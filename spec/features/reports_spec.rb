@@ -306,6 +306,7 @@ feature "Reports", js: true do
         within(field_context_menu 'Kpi #1') { click_js_link 'Add to Values' }
         expect(field_list('fields')).to have_no_content('Kpi #1')
         expect(field_list('values')).to have_content('Kpi #1')
+        expect(field_list('columns')).to have_content('Values')
 
         within(field_context_menu 'Kpi #2') { click_js_link 'Add to Columns' }
         expect(field_list('fields')).to have_no_content('Kpi #2')
@@ -493,6 +494,24 @@ feature "Reports", js: true do
       # Drag the field to outside the list make check it's removed from the columns list
       # and visible in the source fields list
       field_list('columns').find("li", text: 'Kpi #1').drag_to find('#report-container')
+      expect(field_list('columns')).to have_no_content('Kpi #1')
+      expect(field_list('fields')).to have_content('Kpi #1')
+    end
+
+    scenario "user can remove a field by clicking on the X" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit build_results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      find("li", text: 'Kpi #1').drag_to field_list('columns')
+      find_button('Save') # The button should become active
+
+      # Drag the field to outside the list make check it's removed from the columns list
+      # and visible in the source fields list
+      hover_and_click "#report-columns li", 'Remove'
       expect(field_list('columns')).to have_no_content('Kpi #1')
       expect(field_list('fields')).to have_content('Kpi #1')
     end
