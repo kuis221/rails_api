@@ -206,11 +206,27 @@ module Analysis
           remaining_count =  goal_value - completed
           if goal_value != 0
             completed_percentage = completed * 100 / goal_value
+            submitted_percentage = submitted * 100 / goal_value
           else
-            completed_percentage = 0
+            completed_percentage = submitted_percentage = 0
           end
           remaining_percentage = 100 - completed_percentage
-          goals_result[goal.id] = {goal: goal, completed_percentage: completed_percentage, remaining_percentage: remaining_percentage, remaining_count: remaining_count, total_count: total_count, submitted: submitted}
+
+          today_percentage = today = nil
+          if @campaign.start_date && @campaign.end_date && goal_value
+            days = (@campaign.end_date-@campaign.start_date).to_i
+            if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
+              today = ((Date.today-@campaign.start_date).to_i+1) * goal_value / days
+            elsif Date.today > @campaign.end_date
+              today = goal_value
+            else
+              today = 0
+            end
+            today_percentage = [(today*100/goal_value).to_i, 100].min
+          end
+
+
+          goals_result[goal.id] = {goal: goal, completed_percentage: completed_percentage, remaining_percentage: remaining_percentage, remaining_count: remaining_count, total_count: total_count, submitted: submitted, submitted_percentage: submitted_percentage, today: today, today_percentage: today_percentage}
         end
       end
       goals_result

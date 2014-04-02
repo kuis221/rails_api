@@ -1,0 +1,34 @@
+#kpis-trends-bars
+  #gva-results.accordion
+    - if @goalables.present?
+      - @goalables.each do |item|
+        .details_box
+          .accordion-group
+            .accordion-heading
+              a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
+                = render partial: 'report_goals_actual_item_summary', locals: {item: item}
+                span.pull-right.collapsed
+              span
+                a href="#" class="remove-item" title="Remove #{item.name}"
+            .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
+              .accordion-inner.goals-actual
+    - else
+      .details_box
+        p.text-center This campaign has no stats for the selected grouping
+
+javascript:
+  $('.collapse').on('show', function(){
+    $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded").prop('title', 'Collapse');
+  }).on('hide', function(){
+    $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed").prop('title', 'Expand');
+  });
+
+  $('.remove-item').on('click', function(e){
+    $(this).closest(".details_box").remove();
+    e.preventDefault();
+  })
+
+  $('#gva-results').on('show', function(e){
+    $target = $(e.target);
+    $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} });
+  });

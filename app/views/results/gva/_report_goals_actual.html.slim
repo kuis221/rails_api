@@ -1,14 +1,8 @@
 #kpis-trends-bars
   - events_goal = each_events_goal
-  - if events_goal.any?
-      h3 GOALS VS. ACTUAL
-      .total-venues
-        b= total_accounts_for_events
-        .venues-title VENUES
-      .container-kpi-trend
-        - events_goal.each do |id, event_goal|
-          .kpi-trend
-            .name= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
-            = gva_chart(event_goal)
-  - else
+  .details_box
+    - if events_goal.any?
+      = render partial: 'report_goals_actual_item_summary', locals: {item: @campaign}
+      = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
+    - else
       p.text-center This campaign has no events Goal Vs. Actual stats
