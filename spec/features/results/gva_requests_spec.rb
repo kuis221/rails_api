@@ -17,8 +17,8 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
       scenario "should display the GvA stats for selected campaign and grouping" do
         company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
-        campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', company: company)
-        kpi = Kpi.interactions
+        campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
+        kpi = Kpi.samples
         campaign.add_kpi kpi
 
         place1 = FactoryGirl.create(:place, name: 'Place 1')
@@ -27,12 +27,11 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         company_user.places << place1
 
         FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
-        FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: kpi, value: 150)
         FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 50)
         FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 1)
+        FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: kpi, value: 150)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.events, value: 2)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.promo_hours, value: 4)
-        FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.samples, value: 100)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.expenses, value: 50)
 
         event1 = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place1)
@@ -48,10 +47,11 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         select_from_chosen('Test Campaign FY01', from: 'Campaign')
 
         within('.container-kpi-trend') do
-          expect(page).to have_content('Interactions')
+          expect(page).to have_content('Samples')
           expect(page).to have_content('25')
           expect(page).to have_content('45')
           expect(page).to have_content('100 GOAL')
+          expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
             expect(page).to have_content('25% COMPLETE')
             expect(page).to have_content('45% PENDING')
@@ -69,7 +69,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
             expect(page).to have_content('50% EVENTS')
             expect(page).to have_content('50% PROMO HOURS')
             expect(page).to have_content('0% EXPENSES')
-            expect(page).to have_content('0% SAMPLES')
+            expect(page).to have_content('17% SAMPLES')
           end
         end
 
@@ -77,11 +77,12 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
           click_js_link('Place 1')
         end
 
-        within('.container-kpi-trend .kpi-trend:nth-child(2)') do
-          expect(page).to have_content('Interactions')
+        within('.container-kpi-trend .kpi-trend:nth-child(3)') do
+          expect(page).to have_content('Samples')
           expect(page).to have_content('25')
           expect(page).to have_content('45')
           expect(page).to have_content('150 GOAL')
+          expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
             expect(page).to have_content('17% COMPLETE')
             expect(page).to have_content('30% PENDING')
@@ -96,9 +97,8 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         within('.item-summary') do
           expect(page).to have_content('Juanito Bazooka')
           within('.goals-summary') do
-            expect(page).to have_content('51% PROMO HOURS')
-            expect(page).to have_content('21% EXPENSES')
-            expect(page).to have_content('83% SAMPLES')
+            expect(page).to have_content('100% EVENTS')
+            expect(page).to have_content('50% SAMPLES')
           end
         end
 
@@ -107,10 +107,11 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         end
 
         within('.container-kpi-trend .kpi-trend:nth-child(2)') do
-          expect(page).to have_content('Interactions')
+          expect(page).to have_content('Samples')
           expect(page).to have_content('25')
           expect(page).to have_content('45')
           expect(page).to have_content('50 GOAL')
+          expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
             expect(page).to have_content('50% COMPLETE')
             expect(page).to have_content('90% PENDING')

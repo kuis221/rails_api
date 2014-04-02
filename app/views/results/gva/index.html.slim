@@ -21,11 +21,16 @@
       p.text-center Select a campaign from the list above
 
 javascript:
+  var currentView = null;
   submitForm = function() {
-    if ( $('#report_campaign_id').val() && $("#group_by").val() == 'campaign'){
-      $('form#gva-report').submit();
-    } else if ( $('#report_campaign_id').val() ) {
-      $('#report-container').load('#{results_report_groups_path}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
+    view =  $('#report_campaign_id').val() + $("#group_by").val();
+    if (view != currentView) {
+      currentView = view;
+      if ( $('#report_campaign_id').val() && $("#group_by").val() == 'campaign'){
+        $('form#gva-report').submit();
+      } else if ( $('#report_campaign_id').val() ) {
+        $('#report-container').load('#{results_report_groups_path}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
+      }
     }
   }
   $('#report_campaign_id').on('change', function(e){
@@ -61,3 +66,5 @@ javascript:
     }
     submitForm();
   });
+
+  submitForm();

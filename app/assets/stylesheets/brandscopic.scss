@@ -3147,7 +3147,7 @@ table.table {
 			}
 		}
 
-		.uploader { 
+		.uploader {
 			.filename, .action {
 				display: none;
 			}
@@ -5943,6 +5943,7 @@ body.gva {
 				}
 			}
 			.item-summary{
+				color: $text;
 				display: inline-block;
 				width: 95%;
 				b{
@@ -5950,10 +5951,11 @@ body.gva {
 					margin-top: 7px;
 				}
 				.goals-summary{
-					color: $due_today;
 					.goal-item{
+						color: $due_today;
 						display: inline-block;
 						margin-left: 35px;
+						min-width: 70px;
 						text-align: left;
 						b{
 							font-size: 28px;

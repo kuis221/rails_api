@@ -94,7 +94,7 @@ module DashboardHelper
     pending = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
     actual_percentage = g[:completed_percentage].round
     pending_percentage = (pending_and_total/g[:goal].value * 100).round
-    one_line = (105-(pending_percentage - actual_percentage)) > 100 || pending_percentage >= 100 && pending_percentage >= 100
+    one_line = (105-(pending_percentage - actual_percentage)) > 100 || pending_percentage >= 100 && actual_percentage >= 100
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
       content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, actual_percentage].min}%") +
