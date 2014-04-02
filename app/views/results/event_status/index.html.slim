@@ -3,7 +3,7 @@
 .tab-content
   #list-view.tab-pane.active
     .details_box.first
-
+      h3 EVENT STATUS
       = simple_form_for :report, url: results_event_status_path, remote: true do |f|
         = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
 
