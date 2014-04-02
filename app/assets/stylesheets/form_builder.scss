@@ -90,6 +90,21 @@
 				}
 			}
 		}
+		.form-fields{
+			[data-type="Dropdown"]{
+				label{
+					color: $brand;
+					margin-bottom: 5px;
+				}
+				&.selected{
+					.icon-remove-circle:before{
+						font-size: 18px !important;
+					}
+				}
+			}
+			[data-type="Dropdown"]{
+			}
+		}
 	}
 	.fields-wrapper {
 		background-color: #fff;
