@@ -296,6 +296,8 @@ class Report < ActiveRecord::Base
                 value_field = value_aggregate_sql('COUNT', 'photos.id')
               elsif Kpi.comments.id == value.kpi.id
                 value_field = value_aggregate_sql('COUNT', 'comments.id')
+              elsif Kpi.expenses.id == value.kpi.id
+                value_field = value_aggregate_sql(value['aggregate'], 'event_expenses.amount')
               else
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
                 s = s.where('event_results.kpi_id=?', value.kpi.id)
@@ -360,7 +362,7 @@ class Report < ActiveRecord::Base
       #fields = [field_list, rows, columns, filters].compact.inject{|sum,x| sum + x }
       fields = [field_list, rows, columns, filters].flatten.compact
       fields_without_filters = [field_list, rows, columns].flatten.compact
-      if fields_without_filters.any?{|v| v.kpi.present? && ![Kpi.events.id, Kpi.promo_hours.id, Kpi.photos.id, Kpi.comments.id].include?(v.kpi.id)} ||
+      if fields_without_filters.any?{|v| v.kpi.present? && is_a_result_kpi?(v.kpi)} ||
          filters.any?{|filter| filter.kpi.present? && is_filtered_by?(filter.field) && ![Kpi.events.id, Kpi.promo_hours.id, Kpi.photos.id, Kpi.comments.id].include?(filter.kpi.id)}
         # Include the form_fields table in the join making sure that only active kpis are counted
         s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
@@ -372,6 +374,10 @@ class Report < ActiveRecord::Base
 
       if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.comments.id}
         s = s.joins("LEFT JOIN comments ON comments.commentable_type='Event' AND comments.commentable_id = events.id")
+      end
+
+      if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.expenses.id}
+        s = s.joins("LEFT JOIN event_expenses ON event_expenses.event_id = events.id")
       end
 
       s = s.joins(:place) if fields.any?{|v| v.model_name == 'place' }
@@ -436,6 +442,8 @@ class Report < ActiveRecord::Base
             s = s.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) filter_comments_join ON filter_comments_join.commentable_id = events.id")
           elsif filter.kpi.id == Kpi.photos.id
             s = s.joins("LEFT JOIN (SELECT count(attached_assets.id) quantity, attachable_id FROM attached_assets WHERE attachable_type='Event' AND asset_type='photo' GROUP BY attachable_id) filter_photos_join ON filter_photos_join.attachable_id = events.id")
+          elsif filter.kpi.id == Kpi.expenses.id
+            s = s.joins("LEFT JOIN (SELECT SUM(event_expenses.amount) amount, event_id FROM event_expenses GROUP BY event_id) filter_expenses_join ON filter_expenses_join.event_id = events.id")
           end
         end
       end
@@ -456,7 +464,7 @@ class Report < ActiveRecord::Base
     # Returns true if the KPI is a KPI which results are stored on the event_results table or
     # false if it's a special kpi which result is obtained in a different way (like number of events, photos, etc)
     def is_a_result_kpi?(kpi)
-      ![Kpi.events.id, Kpi.photos.id, Kpi.comments.id, Kpi.promo_hours.id].include?(kpi.id)
+      ![Kpi.events.id, Kpi.photos.id, Kpi.comments.id, Kpi.expenses.id, Kpi.promo_hours.id].include?(kpi.id)
     end
 
     def scoped_columns(s, c, prefix='', index=0)
@@ -542,6 +550,8 @@ class Report::Field
         "filter_comments_join.quantity"
       elsif kpi.id == Kpi.photos.id
         "filter_photos_join.quantity"
+      elsif kpi.id == Kpi.expenses.id
+        "filter_expenses_join.amount"
       else
         "er_kpi_#{kpi.id}.value"
       end

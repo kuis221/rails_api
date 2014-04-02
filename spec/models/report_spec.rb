@@ -346,6 +346,71 @@ describe Report do
       ]
     end
 
+    it "returns the correct amount of expenses" do
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event_expense, event: event, amount: 160)
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300})
+      FactoryGirl.create(:event_expense, event: event, amount: 330)
+
+      campaign2 = FactoryGirl.create(:campaign, name: 'Zeta', company: company)
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 300, interactions: 300})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Expenses", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [490.00]},
+        {"campaign_name"=>campaign2.name, "values" => [0.00]}
+      ]
+
+      # With COUNT aggregation method
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Expenses", "aggregate"=>"count"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [2.00]},
+        {"campaign_name"=>campaign2.name, "values" => [0.00]}
+      ]
+
+      # With MIN aggregation method
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Expenses", "aggregate"=>"min"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [160.00]},
+        {"campaign_name"=>campaign2.name, "values" => [0.00]}
+      ]
+
+      # With MAX aggregation method
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Expenses", "aggregate"=>"max"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [330.00]},
+        {"campaign_name"=>campaign2.name, "values" => [0.00]}
+      ]
+    end
+
     it "returns a line for each brand portfolio when adding a portfolio field as a row and the event is associated to any " do
       campaign.assign_all_global_kpis
       brand_portfolio1 = FactoryGirl.create(:brand_portfolio, name: 'BP1', company: company)
@@ -960,6 +1025,57 @@ describe Report do
       page = report.fetch_page
       expect(page).to eql [
         {"campaign_name"=>campaign.name, "values" => [400.00]}
+      ]
+    end
+
+    it "can be filtered by amount of expenses" do
+      # Events on campaing
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event_expense, amount: 100, event: event)
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300})
+      FactoryGirl.create(:event_expense, amount: 200, event: event)
+
+      # Events on other campaing
+      campaign2 = FactoryGirl.create(:campaign, name: 'Zeta 2014', company: company)
+      campaign2.assign_all_global_kpis
+      event = FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event_expense, amount: 1000, event: event)
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 200, interactions: 100})
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 300, interactions: 300})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Comments"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]},
+        {"campaign_name"=>campaign2.name, "values" => [600.00]}
+      ]
+
+      # with filter
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.expenses.id}", "label"=>"Comments"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"kpi:#{Kpi.expenses.id}" => {'min' => '1', 'max' => '300'}}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]}
+      ]
+
+      report.filter_params = {"kpi:#{Kpi.expenses.id}" => {'min' => '1', 'max' => '1300'}}
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]},
+        {"campaign_name"=>"Zeta 2014", "values"=>[100.0]}
       ]
     end
 
