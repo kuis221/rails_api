@@ -1,0 +1,20 @@
+- data = @group_header_data["#{item.class.name}#{item.id}"] || {}
+.item-summary
+  b.pull-left= item.name
+  .goals-summary.text-right
+    - unless data['events'].nil?
+      .goal-item
+        b= "#{data['events'].round}%"
+        .title EVENTS
+    - unless data['promo_hours'].nil?
+      .goal-item
+        b= "#{data['promo_hours'].round}%"
+        .title PROMO HOURS
+    - unless data['expenses'].nil?
+      .goal-item
+        b= "#{data['expenses'].round}%"
+        .title EXPENSES
+    - unless data['samples'].nil?
+      .goal-item
+        b= "#{data['samples'].round}%"
+        .title SAMPLES
