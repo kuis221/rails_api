@@ -347,7 +347,7 @@ feature "Reports", js: true do
     scenario "user can change the aggregation method for values" do
       visit build_results_report_path(@report)
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
-      field_list('values').find('.field-settings-btn').click
+      field_list('values').find('li').click
       within ".report-field-settings" do
         select_from_chosen('Average', from: 'Summarize by')
         find_field('Label').value.should == 'Average of Impressions'
@@ -397,7 +397,7 @@ feature "Reports", js: true do
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Average', from: 'Summarize by')
         expect(find_field('Label').value).to eql 'Campaign Name'
@@ -413,7 +413,7 @@ feature "Reports", js: true do
         expect(page).to have_content('1500.0')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Max', from: 'Summarize by')
       end
@@ -423,7 +423,7 @@ feature "Reports", js: true do
         expect(page).to have_content('2000.0')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Min', from: 'Summarize by')
       end
@@ -433,7 +433,7 @@ feature "Reports", js: true do
         expect(page).to have_content('1000.0')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Sum', from: 'Summarize by')
       end
@@ -443,7 +443,7 @@ feature "Reports", js: true do
         expect(page).to have_content('3000.0')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Count', from: 'Summarize by')
       end
@@ -463,7 +463,7 @@ feature "Reports", js: true do
       field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
-      field_list('values').find('li', text: 'Sum of Interactions').find('.field-settings-btn').click
+      field_list('values').find('li', text: 'Sum of Interactions').click
       within '.report-field-settings' do
         select_from_chosen('% of Column', from: 'Display as')
         expect(find_field('Label').value).to eql 'Sum of Interactions'
@@ -579,7 +579,7 @@ feature "Reports", js: true do
   end
 
   def field_context_menu(field_name)
-    find('.sidebar li.report-field', text: field_name).find('.field-settings-btn').click
+    find('.sidebar li.report-field', text: field_name).click
     find(:xpath, "//body").find("div.report-field-settings")
   end
 end
