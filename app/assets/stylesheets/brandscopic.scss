@@ -1858,11 +1858,11 @@ ul.kpis-list{
 		padding-left: 1px;
 	}
 	.container-kpi-trend{
-		margin-top: 30px;
-		margin-left: 20px;
+		margin-top: 21px;
+		margin-left: 0px;
 	}
 
-	.kpi-trend {
+	.kpi-trend,.kpi-trend-overall {
 		font-size: 12px;
 		margin-bottom: 12px;
 		overflow: visible;
@@ -1874,6 +1874,24 @@ ul.kpis-list{
 			top: -25px;
 			div {
 				b{ font-size: 14px; }
+			}
+		}
+	}
+	.kpi-trend-overall {
+		margin-bottom: 37px !important;
+		.scheduled-indicator{  height: 42px !important; }
+		.executed-indicator{  height: 28px !important; }
+		.name{
+			font-size: 15px;
+		}
+		.progress{
+			height: 15px !important;
+		}
+		.remaining-label{
+			top: -7px !important;
+			span{
+				margin-top: -1px;
+				font-size: 11px;
 			}
 		}
 	}
@@ -1970,7 +1988,7 @@ ul.kpis-list{
 		.remaining-label {
 			color:$brand;
 			position: absolute;
-			right: -300px;
+			right: -285px;
 			width: 300px;
 			top: -13px;
 			&.percentage {
@@ -1990,8 +2008,10 @@ ul.kpis-list{
 				}
 			}
 			span {
+				margin-top: -1px;
 				display: block;
 				line-height: 19px;
+				font-size: 11px !important;
 				&.percentage {
 					font-size: 14px;
 					line-height: 30px;
@@ -4983,7 +5003,7 @@ body.campaigns{
 	background-color: white;
 	box-sizing: border-box;
 	margin-bottom: 10px;
-	padding: 30px 27px;
+	padding: 23px 27px 30px 25px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
@@ -4993,36 +5013,48 @@ body.campaigns{
 			margin-left: 17px;
 		}
 	}
+	p{
+		margin-bottom: -1px;
+	}
+
 	.map_header{
-		bottom: 20px;
-		margin-right: 350px;
-		color: $brand;
+		top: 5px;
+		bottom: 32px;
+		margin-right: 351px;
 		position: relative;
+		color: $brand;
+		height: 21px;
 		.color_map{
-			right: 0;
-			position: absolute;
-			font-size: 12px;
+			top: 1px;
+			float: right;
+			font-size: 11px;
 			color: rgb(152,152,152);
-			width: 226px;
-			.executed, .scheduled{
-				margin: auto 5px 0 auto;
+			.executed, .scheduled, .today{
 				float:left;
+			}
+			.scheduled{
+				margin: auto 18px 0 auto;
+			}
+			.executed{
+				margin: auto 17px 0 8px;
 			}
 			span.bullet{
 				height: 10px;
 				border-radius: 5px;
 				width: 10px;
 				display: block;
-				margin: 5px 5px 0 auto;
 				float:left;
 				&.executed{
+					margin: 6px 6px 0 auto;
 					background-color: rgb(139, 184, 65);
 				}
 				&.scheduled{
+					margin: 6px 7px 0 auto;
 					background-color: rgb(58, 150, 197);
 				}
 			}
 			span.indicator{
+				margin: 0 4px 0 auto;
 				&.today:before {
 					content: "\e004";
 					font-family: "icons";
@@ -5908,6 +5940,10 @@ body.gva {
 }
 
 body.event_status {
+  .details-box{
+      padding: 23px 27px 30px 25px;
+
+  }
 	.tab-content {
 		overflow: visible;
 	}
