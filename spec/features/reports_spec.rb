@@ -213,6 +213,9 @@ feature "Reports", js: true do
       visit build_results_report_path(@report)
 
       within report_fields do
+        expect(page).to have_content('VENUE')
+        expect(page).to have_content('USER')
+        expect(page).to have_content('TEAM')
         expect(page).to have_content('ABC KPI')
       end
 
@@ -220,17 +223,24 @@ feature "Reports", js: true do
 
       within report_fields do
         expect(page).to have_no_content('ABC KPI')
+        expect(page).to have_no_content('VENUE')
+        expect(page).to have_no_content('USER')
+        expect(page).to have_no_content('TEAM')
       end
 
       fill_in 'field_search', with: 'ABC'
 
       within report_fields do
         expect(page).to have_content('ABC KPI')
+        expect(page).to have_no_content('VENUE')
+        expect(page).to have_no_content('USER')
+        expect(page).to have_no_content('TEAM')
       end
 
       fill_in 'field_search', with: 'venue'
       within report_fields do
         expect(page).to have_no_content('ABC')
+        expect(page).to have_content('VENUE')
         expect(page).to have_content('Name')
         expect(page).to have_content('State')
         expect(page).to have_content('City')

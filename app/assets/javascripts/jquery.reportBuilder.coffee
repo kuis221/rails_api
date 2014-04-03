@@ -12,12 +12,7 @@ $.widget 'nmk.reportBuilder',
 		@id = @options.id
 		# Fields search input
 		@element.find('#field-search-input').on 'keyup', (e) =>
-			value = $(e.target).val().toLowerCase();
-			for li in @element.find("#report-fields li:not(.hidden)")
-				if "#{$(li).data('group')} #{$(li).text()}".toLowerCase().search(value) > -1
-					$(li).show()
-				else
-					$(li).hide()
+			@searchFieldList $(e.target).val().toLowerCase()
 
 		@preview = @element.find('#report-container')
 		@reportOverlay = $('<div class="report-overlay">').hide().insertAfter(@preview)
@@ -117,6 +112,22 @@ $.widget 'nmk.reportBuilder',
 			@_resizeSideBar()
 
 		@element
+
+	searchFieldList: (value) ->
+		for li in @element.find("#report-fields li:not(.hidden)")
+			if "#{$(li).data('group')} #{$(li).text()}".toLowerCase().search(value) > -1
+				$(li).show()
+			else
+				$(li).hide()
+		$('#report-fields ul.draggable-list').show()
+		for group in $('.group-name').get()
+			group_name = $(group).text()
+			if $('#report-fields .report-field[data-group="'+group_name+'"]:visible').length is 0
+				$(group).hide()
+				$('#report-fields ul.draggable-list[data-group="'+group_name+'"]').hide()
+			else
+				$(group).show()
+		true
 
 	saveForm: () ->
 		button = @element.find('button.btn-save-report')
