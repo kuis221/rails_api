@@ -47,6 +47,23 @@ ul.reports-list {
 		-moz-box-sizing: border-box;
 	}
 
+	.tooltip {
+		opacity: 1;
+		.tooltip-inner {
+			text-align: left;
+		}
+		b {
+			margin-top: 10px;
+			display: block;
+			color: $grey_one;
+			font-weight: normal;
+			&:first-child {
+				margin-top: 0px;
+			}
+		}
+		width: 156px;
+	}
+
 	.with-details-close-bar {
 		padding-top: 60px;
 	}

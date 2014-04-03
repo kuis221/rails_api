@@ -3,7 +3,7 @@ module Results
     def available_field_list
       kpis = Kpi.where("company_id=? OR company_id is null", current_company.id).order('company_id DESC, name ASC')
       {
-        'KPIs' => kpis.map{|kpi| ["kpi:#{kpi.id}", kpi.name]},
+        'KPIs' => kpis.map{|kpi| ["kpi:#{kpi.id}", kpi.name, kpi_tooltip(kpi)]},
         'Event' => model_report_fields(Event),
         'Task' => model_report_fields(Task),
         'Venue' => model_report_fields(Place),
@@ -56,7 +56,7 @@ module Results
       end
 
       def model_report_fields(klass)
-        klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title]]}
+        klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title], ""]}
       end
 
       def sum_row_values(group, row)
@@ -72,6 +72,18 @@ module Results
         else
           group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
         end
+      end
+
+      def kpi_tooltip(kpi)
+        tooltip = ''
+        tooltip = "<p>#{kpi.description}</p>" if kpi.description.present? && !kpi.description.empty?
+        tooltip << "<b>TYPE</b>"
+        tooltip << kpi.kpi_type.capitalize
+        if ['percentage', 'count'].include?(kpi.kpi_type)
+          tooltip << "<b>OPTIONS</b>"
+          tooltip << kpi.kpis_segments.map(&:text).join(', ')
+        end
+        tooltip
       end
 
       # Return the names of the expected names from the SQL query for the report values and columns

@@ -5974,17 +5974,25 @@ body{
 
 // TOOLTIP STYLES
 
-.tooltip-inner{
-	background-color:$grey_three;
-	opacity: 1;
-	z-index: 90;
-}
+.tooltip {
+	.tooltip-inner{
+		background-color:$grey_five;
+		opacity: 1;
+		z-index: 90;
+	}
 
-.tooltip .tooltip-arrow{
-	border-left:5px solid transparent;
-	border-right:5px solid transparent;
-	border-top:5px solid $grey_three;
-	opacity: 0.5;
+	.tooltip .tooltip-arrow{
+		border-left:5px solid transparent;
+		border-right:5px solid transparent;
+		border-top:5px solid $grey_five;
+		opacity: 0.5;
+	}
+	&.left{
+		.tooltip-arrow{
+			border-left-color: $grey_five;
+			border-top-color: transparent;
+		}
+	}
 }
 
 

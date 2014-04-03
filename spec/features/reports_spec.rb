@@ -238,8 +238,13 @@ feature "Reports", js: true do
     end
 
     scenario "drag fields to the different field lists" do
-      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
-      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company, description: 'This is the description for kpi#1', kpi_type: 'number')
+      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company, description: 'This is the description for kpi#2',
+        kpi_type: 'count', kpis_segments: [
+          FactoryGirl.create(:kpis_segment, text: 'First option'),
+          FactoryGirl.create(:kpis_segment, text: 'Second option')
+        ]
+      )
       FactoryGirl.create(:kpi, name: 'Kpi #3', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
@@ -248,6 +253,25 @@ feature "Reports", js: true do
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+
+      # Test the tooltip
+      find("li", text: 'Kpi #1').hover
+      within('.tooltip') do
+        expect(page).to have_content('This is the description for kpi#1')
+        expect(page).to have_content('TYPE')
+        expect(page).to have_content('Number')
+        expect(page).to have_no_content('OPTIONS')
+      end
+
+      find("li", text: 'Kpi #2').hover
+      within('.tooltip') do
+        expect(page).to have_content('This is the description for kpi#2')
+        expect(page).to have_content('TYPE')
+        expect(page).to have_content('Count')
+        expect(page).to have_content('OPTIONS')
+        expect(page).to have_content('First option, Second option')
+      end
 
       within ".sidebar" do
         expect(field_list('columns')).to have_no_content('Values')

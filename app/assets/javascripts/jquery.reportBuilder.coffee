@@ -78,6 +78,19 @@ $.widget 'nmk.reportBuilder',
 		@_setListItems 'filters', @options.filters
 		@_addValuesToColumns()
 
+		$('#report-fields .report-field').tooltip
+			html: true, container: @element, delay: 0, animation: false
+			placement: (tooltip, field) ->
+				window.setTimeout ->
+					$(tooltip).css
+						left: (parseInt($(tooltip).css('left'))-15)+'px'
+				10
+
+				return 'left';
+
+		# for field in $('#report-fields .report-field').get()
+		# 	$(field).data('tooltip').options.placement = 'left'
+
 		@element.on 'click', '.field-remove-btn', (e) =>
 			e.stopPropagation()
 			@removeField $(e.target).closest('.report-field')
