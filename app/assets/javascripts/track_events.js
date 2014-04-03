@@ -21,4 +21,4 @@ function tracking(type){
       ga('send', 'event', 'Support', 'Account Manager', 'email');
       break;
   }
-  }
+}
