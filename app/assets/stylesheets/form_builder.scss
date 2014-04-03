@@ -108,7 +108,13 @@
 					}
 				}
 			}
-			[data-type="Dropdown"]{
+			[data-type="Checkbox"]{
+				.checkbox{
+					padding-left:0;
+				}
+			}
+			[data-type="Radio"]{
+				
 			}
 		}
 	}
