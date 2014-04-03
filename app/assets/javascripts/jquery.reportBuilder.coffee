@@ -129,6 +129,7 @@ $.widget 'nmk.reportBuilder',
 		, 1000
 
 	removeField: (field) ->
+		@closeFieldSettings()
 		elements = field
 		if field.data('field-id') is 'values'
 			elements = $('#report-values').find('li')
@@ -157,25 +158,25 @@ $.widget 'nmk.reportBuilder',
 
 		options = [
 			$('<a href="#" class="option">Add to Filters</a>').on 'click', () =>
-				$('#report-filters').append fieldElement.clone()
+				$('#report-filters').append fieldElement.clone().removeClass('settings-open')
 				@addFieldToList fieldElement, $('#report-filters')
 				@reportModified()
 				@closeFieldSettings()
 
 			$('<a href="#" class="option">Add to Columns</a>').on 'click', () =>
-				$('#report-columns').append fieldElement.clone()
+				$('#report-columns').append fieldElement.clone().removeClass('settings-open')
 				@addFieldToList fieldElement, $('#report-columns')
 				@reportModified()
 				@closeFieldSettings()
 
 			$('<a href="#" class="option">Add to Rows</a>').on 'click', () =>
-				$('#report-rows').append fieldElement.clone()
+				$('#report-rows').append fieldElement.clone().removeClass('settings-open')
 				@addFieldToList fieldElement, $('#report-rows')
 				@reportModified()
 				@closeFieldSettings()
 
 			$('<a href="#" class="option">Add to Values</a>').on 'click', () =>
-				$('#report-values').append fieldElement.clone()
+				$('#report-values').append fieldElement.clone().removeClass('settings-open')
 				@addFieldToList fieldElement, $('#report-values')
 				@reportModified()
 				@closeFieldSettings()
@@ -274,6 +275,7 @@ $.widget 'nmk.reportBuilder',
 		@fieldSettings.on 'click', -> false
 
 	closeFieldSettings: () ->
+		return if not @fieldSettings?
 		if @fieldSettings.changed is true
 			@reportModified()
 		@fieldSettings.fieldElement.removeClass 'settings-open'
