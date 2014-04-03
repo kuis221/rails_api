@@ -75,19 +75,19 @@ class Report < ActiveRecord::Base
   end
 
   def rows
-    load_fields(:rows)
+    @rows ||= load_fields(:rows)
   end
 
   def columns
-    load_fields(:columns)
+    @columns ||= load_fields(:columns)
   end
 
   def values
-    load_fields(:values)
+    @values ||= load_fields(:values)
   end
 
   def filters
-    load_fields(:filters)
+    @filters ||= load_fields(:filters)
   end
 
   def activate!
@@ -243,13 +243,19 @@ class Report < ActiveRecord::Base
   end
 
   def first_row_values_for_page
-    @first_row_values_for_page ||= add_joins_scopes(base_events_scope, values).order('1 ASC').
-    limit(50).offset(offset).
-    pluck('DISTINCT ' + rows.first.table_column[0])
+    @first_row_values_for_page ||= add_filters_conditions(add_joins_scopes(base_events_scope, values)).order('1 ASC').
+    limit(50).offset(offset).group('1').
+    pluck(rows.first.table_column[0])
   end
 
   def base_events_scope
     company.events.active
+  end
+
+  def reload(options = nil)
+    super
+    @rows = @columns = @values = @filter = nil
+    self
   end
 
   protected
@@ -331,9 +337,9 @@ class Report < ActiveRecord::Base
                   condition = "#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date
                 elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
                   if filter_params[filter.field]['min'].to_i == 0
-                    condition = "(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'], filter_params[filter.field]['max']
+                    condition = "(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'].to_i, filter_params[filter.field]['max'].to_i
                   else
-                    condition = "#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'], filter_params[filter.field]['max']
+                    condition = "#{filter.filter_column} BETWEEN ? AND ?", filter_params[filter.field]['min'].to_i, filter_params[filter.field]['max'].to_i
                   end
                 end
               elsif filter_params[filter.field].is_a?(Array)
@@ -363,9 +369,9 @@ class Report < ActiveRecord::Base
       fields = [field_list, rows, columns, filters].flatten.compact
       fields_without_filters = [field_list, rows, columns].flatten.compact
       if fields_without_filters.any?{|v| v.kpi.present? && is_a_result_kpi?(v.kpi)} ||
-         filters.any?{|filter| filter.kpi.present? && is_filtered_by?(filter.field) && ![Kpi.events.id, Kpi.promo_hours.id, Kpi.photos.id, Kpi.comments.id].include?(filter.kpi.id)}
+         filters.any?{|filter| filter.kpi.present? && is_filtered_by?(filter.field) && is_a_result_kpi?(filter.kpi)}
         # Include the form_fields table in the join making sure that only active kpis are counted
-        s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id')
+        s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id AND event_results.kpi_id in (?)', field_list.select{|f| f.kpi.present? && is_a_result_kpi?(f.kpi) }.map{|f| f.kpi.id})
       end
 
       if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.photos.id}
@@ -380,15 +386,15 @@ class Report < ActiveRecord::Base
         s = s.joins("LEFT JOIN event_expenses ON event_expenses.event_id = events.id")
       end
 
-      s = s.joins(:place) if fields.any?{|v| v.model_name == 'place' }
-      s = s.joins(:campaign) if fields.any?{|v| v.model_name == 'campaign'}
+      s = s.joins(:place) if fields_without_filters.any?{|v| v.model_name == 'place' } || filters.any?{|v| v.model_name == 'place' && is_filtered_by?(v.field)}
+      s = s.joins(:campaign) if fields_without_filters.any?{|v| v.model_name == 'campaign'} || filters.any?{|v| v.model_name == 'campaign' && is_filtered_by?(v.field)}
 
       # Join with users/teams table
-      include_roles = fields.any?{|v| Role.report_fields.map{|k,v| "role:#{k}" }.include?(v['field'])}
-      if fields.any?{|v| v.model_name == 'user'} || include_roles
+      include_roles = fields_without_filters.any?{|v| v.model_name == 'role' } || filters.any?{|v| v.model_name == 'role' && is_filtered_by?(v.field)}
+      if fields.any?{|v| v.model_name == 'user'} || filters.any?{|v| v.model_name == 'user' && is_filtered_by?(v.field)}  || include_roles
         s = s.joins_for_user_teams
         s = s.joins('INNER JOIN roles ON roles.id=company_users.role_id') if include_roles
-      elsif fields.any?{|v| v.model_name == 'team'}
+      elsif fields.any?{|v| v.model_name == 'team'} || filters.any?{|v| v.model_name == 'team' && is_filtered_by?(v.field)}
         s = s.joins(:teams)
       end
       #s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
@@ -552,6 +558,8 @@ class Report::Field
         "filter_photos_join.quantity"
       elsif kpi.id == Kpi.expenses.id
         "filter_expenses_join.amount"
+      elsif kpi.kpi_type == 'number'
+        "er_kpi_#{kpi.id}.scalar_value"
       else
         "er_kpi_#{kpi.id}.value"
       end
@@ -600,7 +608,7 @@ class Report::Field
 
   # Returns the expect param format (for strong_parameters) for the filters
   def allowed_filter_params
-    if kpi.present? && kpi.kpi_type == 'number'
+    if kpi.present? && (kpi.kpi_type == 'number' || [Kpi.photos.id, Kpi.expenses.id, Kpi.comments.id, Kpi.events.id, Kpi.promo_hours.id].include?(kpi.id) )
       {field => [:max, :min]}
     elsif column_info
       type = column_info.has_key?(:filter) ? column_info[:filter].call(self)[:type] : nil
@@ -620,7 +628,19 @@ class Report::Field
         end
         { label: label, items: options }
       else
-        result = @report.base_events_scope.joins(:results).where(event_results: {kpi_id: kpi.id}).select('MAX(event_results.scalar_value) as max_value, MIN(event_results.scalar_value) as min_value').first
+        if kpi.id == Kpi.photos.id
+          result = @report.base_events_scope.joins("LEFT JOIN (SELECT count(attached_assets.id) quantity, attachable_id FROM attached_assets WHERE attachable_type='Event' AND asset_type='photo' GROUP BY attachable_id) photos ON photos.attachable_id = events.id").select('MAX(photos.quantity) as max_value, 0 as min_value').first
+        elsif kpi.id == Kpi.comments.id
+          result = @report.base_events_scope.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) comments ON comments.commentable_id = events.id").select('MAX(comments.quantity) as max_value, 0 as min_value').first
+        elsif kpi.id == Kpi.expenses.id
+          result = @report.base_events_scope.joins("LEFT JOIN (SELECT sum(event_expenses.amount) quantity, event_id FROM event_expenses GROUP BY event_id) expenses ON expenses.event_id = events.id").select('MAX(expenses.quantity) as max_value, 0 as min_value').first
+        elsif kpi.id == Kpi.events.id
+          result = @report.base_events_scope.select('count(events.id) as max_value, 0 as min_value').first
+        elsif kpi.id == Kpi.promo_hours.id
+          result = @report.base_events_scope.select('MAX(events.promo_hours) as max_value, 0 as min_value').first
+        else
+          result = @report.base_events_scope.joins(:results).where(event_results: {kpi_id: kpi.id}).select('MAX(event_results.scalar_value) as max_value, MIN(event_results.scalar_value) as min_value').first
+        end
         min = result.min_value.to_f.truncate
         max = result.max_value.to_f.ceil
         { label: label, name: field, min: min, max: max, selected_min: min, selected_max: max }

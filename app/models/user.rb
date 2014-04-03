@@ -95,6 +95,7 @@ class User < ActiveRecord::Base
 
   scope :active, where('invitation_accepted_at is not null')
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
+  scope :in_company, lambda{|company| active_in_company(company) }
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140405221113) do
+ActiveRecord::Schema.define(:version => 20140405221114) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -48,13 +48,16 @@ ActiveRecord::Schema.define(:version => 20140405221113) do
     t.integer  "activity_id"
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",                                                    :null => false
+    t.datetime "updated_at",                                                    :null => false
+    t.hstore   "hash_value"
+    t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
   end
 
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
   add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
   add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+  add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value"
 
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"
@@ -463,8 +466,10 @@ ActiveRecord::Schema.define(:version => 20140405221113) do
     t.integer  "ordering"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.string   "option_type"
   end
 
+  add_index "form_field_options", ["form_field_id", "option_type"], :name => "index_form_field_options_on_form_field_id_and_option_type"
   add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
 
   create_table "form_fields", :force => true do |t|
@@ -645,6 +650,7 @@ ActiveRecord::Schema.define(:version => 20140405221113) do
 
   add_index "places", ["city"], :name => "index_places_on_city"
   add_index "places", ["country"], :name => "index_places_on_country"
+  add_index "places", ["name"], :name => "index_places_on_name"
   add_index "places", ["reference"], :name => "index_places_on_reference"
   add_index "places", ["state"], :name => "index_places_on_state"
 
