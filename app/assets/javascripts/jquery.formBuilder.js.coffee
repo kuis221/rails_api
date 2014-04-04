@@ -383,7 +383,7 @@ CurrencyField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="number" readonly="readonly">'))
+			$('<div class="controls">').append($('<div class="input-prepend"><span class="add-on">$</span><input type="number" readonly="readonly"></div>'))
 		]
 
 	attributesForm: () ->
@@ -504,7 +504,7 @@ PercentageField = FormField.extend {
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
 						$('<label>').addClass('percentage').append(
-							$('<input type="number" readonly="readonly">')
+							$('<div class="input-append"><input type="number" readonly="readonly"><span class="add-on">%</span>')
 						).append(' '+ option.name)
 			)
 		]
