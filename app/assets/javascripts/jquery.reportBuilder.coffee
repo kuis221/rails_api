@@ -266,6 +266,24 @@ $.widget 'nmk.reportBuilder',
 														label_field.val(label).trigger('keyup')
 										)
 								)
+		if listName in ['report-values', 'report-rows']
+			formFields.push $('<div class="control-group">').
+								append(	$('<label class="control-label" for="report-field-precision">').text('Decimal places'),
+										$('<div class="controls">').append(
+											$('<select name="report-field-precision" id="report-field-precision">').append([
+													$('<option value="0">0</option>').attr('selected', field.precision is '0'),
+													$('<option value="1">1</option>').attr('selected', field.precision is '1'),
+													$('<option value="2">2</option>').attr('selected', field.precision is '2' or field.precision is '' or !field.precision?),
+													$('<option value="3">3</option>').attr('selected', field.precision is '3'),
+													$('<option value="4">4</option>').attr('selected', field.precision is '4')
+												])
+												.on 'change', (e) =>
+													$select = if e.target.tagName is 'OPTION' then  $(e.target).parent() else $(e.target)
+													field.precision = $select.val()
+													@fieldSettings.changed = true
+										)
+								)
+
 
 		if listName in ['report-values']
 			formFields.push $('<div class="control-group">').
@@ -316,7 +334,7 @@ $.widget 'nmk.reportBuilder',
 		if list.attr('id') is 'report-values'
 			label = "Sum of #{label}"
 			@_addValuesToColumns()
-		field = {field: item.data('field-id'), label: label, aggregate: 'sum'}
+		field = {field: item.data('field-id'), label: label, aggregate: 'sum', precision: '2'}
 		list.find('li[data-field-id="'+item.data('field-id')+'"]').data('field', field).find('.field-label').text(label)
 
 	_placeFieldSettings: () ->
@@ -372,7 +390,11 @@ $.widget 'nmk.reportBuilder',
 	_getRowProperties: (row) ->
 		$row = $(row)
 		field = $row.data('field')
-		{field: $row.data('field-id'), label: field.label, aggregate: if field.aggregate? then field.aggregate else 'sum' }
+		{
+			field: $row.data('field-id'), label: field.label,
+			aggregate: if field.aggregate? then field.aggregate else 'sum',
+			precision: if field.precision? then field.precision else '2'
+		}
 
 	_getFilterProperties: (filter) ->
 		$filter = $(filter)
@@ -386,7 +408,8 @@ $.widget 'nmk.reportBuilder',
 			field: $value.data('field-id'),
 			label: field.label,
 			aggregate: if field.aggregate? then field.aggregate else 'sum',
-			display: if field.display? then field.display else ''
+			display: if field.display? then field.display else '',
+			precision: if field.precision? then field.precision else '2'
 		}
 
 	_setListItems: (list_name, items) ->

@@ -624,6 +624,10 @@ class Report::Field
     @data['aggregate']
   end
 
+  def precision
+    @data.has_key?('precision') && @data['precision'] != '' ? @data['precision'].to_i :  2
+  end
+
   def to_hash
     @data
   end

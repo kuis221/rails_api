@@ -443,8 +443,8 @@ feature "Reports", js: true do
 
       within "#report-container tr.level_0" do
         expect(page).to have_content('My Super Campaign')
-        expect(page).to have_content('75.0')
-        expect(page).to have_content('1500.0')
+        expect(page).to have_content('75.00')
+        expect(page).to have_content('1,500.00')
       end
 
       field_list('rows').find('li[data-field-id="campaign:name"]').click
@@ -453,8 +453,8 @@ feature "Reports", js: true do
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('100.0')
-        expect(page).to have_content('2000.0')
+        expect(page).to have_content('100.00')
+        expect(page).to have_content('2,000.00')
       end
 
       field_list('rows').find('li[data-field-id="campaign:name"]').click
@@ -463,8 +463,8 @@ feature "Reports", js: true do
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('50.0')
-        expect(page).to have_content('1000.0')
+        expect(page).to have_content('50.00')
+        expect(page).to have_content('1,000.00')
       end
 
       field_list('rows').find('li[data-field-id="campaign:name"]').click
@@ -473,8 +473,8 @@ feature "Reports", js: true do
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('150.0')
-        expect(page).to have_content('3000.0')
+        expect(page).to have_content('150.00')
+        expect(page).to have_content('3,000.00')
       end
 
       field_list('rows').find('li[data-field-id="campaign:name"]').click

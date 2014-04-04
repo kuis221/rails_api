@@ -102,12 +102,19 @@ describe Results::ReportsController do
       report.description.should == 'Test Report description'
     end
 
-    it "must update the sharing attributes" do
-      put 'update', id: report.to_param, report: {sharing: 'everyone'}, format: :js
+    it "must update the report fields attributes" do
+      put 'update', id: report.to_param, report: {
+        rows:    [{field: 'place:name', label: 'Venue Name', aggregate: 'sum', precision: '4'}],
+        columns: [{field: 'place:name', label: 'Venue Name'}],
+        values:  [{field: 'kpi:1', label: 'Impressions', aggregate: 'sum', precision: '1'}],
+        filters:  [{field: 'place:name', label: 'Place'}]
+      }, format: :js
       assigns(:report).should == report
       expect(response).to render_template('update')
       report.reload
-      expect(report.sharing).to eql 'everyone'
+      expect(report.rows.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate, precision: r.precision}}).to eql [{field: 'place:name', label: 'Venue Name', aggregate: 'sum', precision: 4}]
+      expect(report.columns.map{|r| {field: r.field, label: r.label}}).to eql [{field: 'place:name', label: 'Venue Name'}]
+      expect(report.values.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate, precision: r.precision}}).to eql [{field: 'kpi:1', label: 'Impressions', aggregate: 'sum', precision: 1}]
     end
 
     it "must update the sharing attributes" do

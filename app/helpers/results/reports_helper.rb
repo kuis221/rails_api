@@ -1,7 +1,7 @@
 module Results
   module ReportsHelper
     def available_field_list
-      kpis = Kpi.where("company_id=? OR company_id is null", current_company.id).order('company_id DESC, name ASC')
+      kpis = Kpi.includes(:kpis_segments).where("company_id=? OR company_id is null", current_company.id).order('company_id DESC, name ASC')
       {
         'KPIs' => kpis.map{|kpi| ["kpi:#{kpi.id}", kpi.name, kpi_tooltip(kpi)]},
         'Event' => model_report_fields(Event),
@@ -33,7 +33,7 @@ module Results
           end
           previous_label = row_label
         else
-          yield row[row_field], row_number, row['values']
+          yield row[row_field], row_number, apply_precision_values(row['values'])
         end
       end
     end
@@ -63,7 +63,7 @@ module Results
       def sum_row_values(group, row)
         case row['aggregate']
         when 'avg'
-          group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.reduce(:+).to_f / x.size}
+          group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.any? ? x.reduce(:+).to_f / x.size : 0}
         when 'min'
           group.map{|r| r['values']}.transpose.map{|a| a.compact.min }
         when 'max'
@@ -72,7 +72,17 @@ module Results
           group.map{|r| r['values']}.transpose.map{|a| a.compact.size }
         else
           group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
+        end.map{|v|  v.nil? || v == '' ? v : number_with_precision(v, precision: row.precision, delimiter: ',') }
+      end
+
+      def apply_precision_values(result_values)
+        step = resource.values.count
+        resource.values.each_with_index do |field, index|
+          (index..(result_values.count-1)).step(step).each do |i|
+            result_values[i] = number_with_precision(result_values[i], precision: field.precision, delimiter: ',')
+          end
         end
+        result_values
       end
 
       def kpi_tooltip(kpi)
@@ -85,11 +95,6 @@ module Results
           tooltip << kpi.kpis_segments.map(&:text).join(', ')
         end
         tooltip
-      end
-
-      # Return the names of the expected names from the SQL query for the report values and columns
-      def report_columns_names
-        @report_values_names ||= @report.values.map{|v| @report.field_to_sql_name(v['field']) }
       end
   end
 end
