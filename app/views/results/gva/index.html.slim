@@ -9,7 +9,7 @@
           = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
           = hidden_field_tag :group_by, params[:group_by].present? ? params[:group_by] : 'campaign'
 
-      .text-right
+      .group-by-box
         span#group-by-title GROUP BY:
         #group-by-criterion.btn-group
           a.btn.campaign class="#{params[:group_by].nil? || params[:group_by]=='campaign' ? 'active' : nil}" href="#" data-type="campaign" data-toggle="tab" title="Campaign" Campaign
