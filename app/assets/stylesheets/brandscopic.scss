@@ -2018,7 +2018,7 @@ ul.kpis-list{
 				}
 				.normal-text {
 					display: inline-block;
-					font-size: 22px;
+					font-size: 22px !important;
 					font-weight: 400;
 				}
 			}
@@ -2028,7 +2028,7 @@ ul.kpis-list{
 				line-height: 19px;
 				font-size: 11px !important;
 				&.percentage {
-					font-size: 14px;
+					font-size: 14px !important;
 					line-height: 25px;
 				}
 			}
