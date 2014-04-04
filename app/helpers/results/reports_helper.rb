@@ -11,6 +11,7 @@ module Results
         'Team' => model_report_fields(Team),
         'Role' => model_report_fields(Role),
         'Campaign' => model_report_fields(Campaign),
+        'Brand' => model_report_fields(Brand),
         'Brand Portfolios' => model_report_fields(BrandPortfolio)
         #'Date Range' => model_report_fields(DateRange),
         #'Day Part' => model_report_fields(DayPart)

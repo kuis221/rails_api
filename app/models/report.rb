@@ -327,8 +327,8 @@ class Report < ActiveRecord::Base
     def add_filters_conditions(s)
       if filter_params.present? && filter_params.any?
         filters.each do |filter|
-          unless filter.model_name == 'brand_portfolio' # BrandPortfolios filters are handled directly in #add_joins_scopes
-            if filter_params.has_key?(filter.field)
+          unless ['brand_portfolio', 'brand'].include?(filter.model_name)  # BrandPortfolios/Brands filters are handled directly in #add_joins_scopes
+            if is_filtered_by?(filter.field)
               condition = nil
               if filter_params[filter.field].is_a?(Hash)
                 if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
@@ -431,6 +431,40 @@ class Report < ActiveRecord::Base
                 INNER JOIN brand_portfolios ON brand_portfolios.id = brand_portfolios_brands.brand_portfolio_id
                 #{conditions}
               ) bpj ON bpj.campaign_id = campaigns.id")
+      end
+
+      # Join with brands table
+      brand_filters = filters.select{|filter| filter.model_name == 'brand' && is_filtered_by?(filter.field) }
+      if [field_list, rows, columns].flatten.compact.any?{|v| v.model_name == 'brand' }
+        # This case is for when we are NOT filtering the list by brands but we DO have to fetch a brand field from the
+        # database (eg Brand Name as a row/column)
+        s = s.joins(:campaign).joins("LEFT JOIN (
+                SELECT brands_campaigns.campaign_id, brands_campaigns.brand_id
+                FROM brands_campaigns
+              UNION
+                SELECT brand_portfolios_campaigns.campaign_id, brand_portfolios_brands.brand_id
+                FROM brand_portfolios_campaigns
+                INNER JOIN brand_portfolios_brands ON brand_portfolios_brands.brand_portfolio_id = brand_portfolios_campaigns.brand_portfolio_id
+              ) bj ON bj.campaign_id = campaigns.id
+              LEFT JOIN brands ON brands.id=bj.brand_id")
+
+        brand_filters.each{|filter| s = s.where("#{filter.filter_column} IN (?)", filter_params[filter.field])}
+      elsif brand_filters.any?
+        # This case is for when we should filter the list by brand portfolio but doesn't have to fetch any portfolio field from the
+        # database (eg Portofio Name as a row/column)
+        conditions = "WHERE (#{brand_filters.map{|filter| filter.filter_column + ' IN ('+ filter_params[filter.field].map{|p| Event.sanitize(p) }.join(',')+')'}.join(' AND ')})"
+        s = s.joins(:campaign).joins("INNER JOIN (
+                SELECT brands_campaigns.campaign_id
+                FROM brands_campaigns
+                INNER JOIN brands ON brands.id = brands_campaigns.brand_id
+                #{conditions}
+              UNION
+                SELECT brand_portfolios_campaigns.campaign_id
+                FROM brand_portfolios_campaigns
+                INNER JOIN brand_portfolios_brands ON brand_portfolios_brands.brand_portfolio_id = brand_portfolios_campaigns.brand_portfolio_id
+                INNER JOIN brands ON brands.id = brand_portfolios_brands.brand_id
+                #{conditions}
+              ) bj ON bj.campaign_id = campaigns.id")
       end
 
       [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
