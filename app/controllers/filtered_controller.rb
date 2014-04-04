@@ -12,6 +12,10 @@ class FilteredController < InheritedResources::Base
 
   custom_actions collection: [:filters, :items]
 
+  def set_last_search_url
+    session[:last_search_url] = session[:previous_page] if session[:previous_page]
+  end
+  
   def set_previous_page
     if request.env['HTTP_REFERER']
       session[:previous_page] = request.env['HTTP_REFERER']
