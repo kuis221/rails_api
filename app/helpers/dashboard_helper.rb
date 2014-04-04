@@ -94,13 +94,13 @@ module DashboardHelper
     pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
     actual_percentage = g[:completed_percentage]
     pending_percentage = (pending_and_total/g[:goal].value * 100)
-    one_line = (108-(pending_percentage - g[:completed_percentage])) > 100 || pending_percentage >= 100 && g[:completed_percentage] >= 100
-    actual_pending_labels = if actual_percentage.round == pending_percentage.round
-      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 75 : 0}%") +
+    one_line = (107-(pending_percentage - g[:completed_percentage])) > 100 || pending_percentage >= 100 && g[:completed_percentage] >= 100
+    actual_pending_labels = if (actual_percentage.round == pending_percentage.round) || (actual_percentage.round >= 100 && pending_percentage.round >= 100)
+      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 100 : 0}%") +
       content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%")
     else
       content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label gva', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 50 : 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{[1, 101.5 - pending_percentage].max}%; margin-top:#{one_line ? -8 : 4}px")
+      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{[1, 101.3 - pending_percentage.round].max}%; margin-top:#{one_line ? -8 : 4}px")
     end
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +

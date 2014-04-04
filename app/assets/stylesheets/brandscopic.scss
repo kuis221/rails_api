@@ -2000,7 +2000,7 @@ ul.kpis-list{
 				}
 				.normal-text {
 					display: inline-block;
-					font-size: 22px;
+					font-size: 22px !important;
 					font-weight: 400;
 				}
 			}
@@ -2008,7 +2008,7 @@ ul.kpis-list{
 				display: block;
 				line-height: 19px;
 				&.percentage {
-					font-size: 14px;
+					font-size: 14px !important;
 					line-height: 25px;
 				}
 			}
