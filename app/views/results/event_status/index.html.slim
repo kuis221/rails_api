@@ -8,13 +8,15 @@
         = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
 
   #report-container
-    .details_box
-      p.text-center Select a campaign from the list above
+    #kpis-trends-module
+      .details_box
+        p.text-center Select a campaign from the list above
 
 javascript:
   jQuery(function(){
     $('#report_campaign_id').on('change', function(e){
       if ( $(this).val() ){
+        $('#kpis-trends-module .details_box').empty().addClass('loading-spinner');
         $(this.form).submit();
       }
     });
