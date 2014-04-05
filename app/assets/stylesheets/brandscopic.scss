@@ -3149,17 +3149,222 @@ table.table {
 	input.waiting-files {
 		width: auto !important;
 	}
+	input, textarea{
+		width: 200px;
+	}
+	.input-append, .input-prepend{
+		margin-right: 10px;
+		margin-bottom: 0;
+	 	.add-on{
+			background-color: $user_menu;
+			color: white;
+			height: 19px;
+			text-shadow: none;
+			width: 30px;
+		}
+		input{
+			width: 160px;
+		}
+	}
+	.checkbox{
+		padding-left:0;
+		.checker{
+			margin-right: 10px;
+		}
+	}
+	.chzn-container-single .chzn-single{
+		width: 205px;
+	}
+	.field{
+		&.ui-draggable{
+			&:before{
+				font-family: 'icons';
+				font-size: 16px;
+				height: 20px;
+				line-height: 17px;
+				margin-right: 20px;
+				position:relative;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+
+			}
+			&[data-type="Dropdown"]:before{
+				content:"\e60b";
+				top: 2px;
+			}
+			&[data-type="Checkbox"]:before{
+				content:"\e60c";
+				top: 2px;
+			}
+			&[data-type="Radio"]:before{
+				content:"\e60a";
+				top: 2px;
+			}
+			&[data-type="Percentage"]:before{
+				content:"\e608";
+				top: 2px;
+			}
+			&[data-type="TextArea"]:before{
+				content:"\e60c";
+			}
+			&[data-type="Number"]:before{
+				content:"\e609";
+				top: 5px;
+			}
+			&[data-type="Currency"]:before{
+				content:"\e606";
+				top: 2px;
+				left: 5px;
+			}
+			&[data-type="Text"]:before{
+				content:"\e605";
+				top: 6px;
+			}
+			&[data-type="Photo"]:before{
+				content:"\e607";
+				top: 3px;
+			}
+			&[data-type="Attachment"]:before{
+				content:"\e60d";
+			}
+			&[data-type="Summation"]:before{
+				content:"\e604";
+				top: 2px;
+			}
+			&[data-type="Date"]:before{
+				content:"\e022";
+				top: 2px;
+			}
+			&[data-type="Time"]:before{
+				content:"\e01f";
+				font-size: 19px;
+				top: 4px;
+				left: 2px;
+			}
+			&[data-type="Brand"]:before{
+				content:"\e030";
+				top: 2px;
+				left: 1px;
+			}
+			&[data-type="Marque"]:before{
+				content:"\e60a";
+			}
+		}
+		label.control-label{
+			margin-bottom: 5px;
+		}
+	}
+	.form-fields{
+		[data-type="Dropdown"]{
+			label{
+				margin-bottom: 10px;
+			}
+			.chzn-container-single .chzn-single{
+				width: 205px;
+			}
+			&.selected{
+				.icon-remove-circle:before{
+					font-size: 18px !important;
+				}
+			}
+		}
+		[data-type="Checkbox"]{
+			.checkbox{
+				padding-left:0 !important;
+				margin-bottom: 10px !important;
+				.checker{
+					margin-right:10px !important;
+				}
+			}
+			&.selected{
+				.checker{
+					background-color: $user_menu;
+				}
+			}
+		}
+		[data-type="Radio"]{
+			label.radio{
+				display:block;
+				margin-bottom: 8px;
+				.radio{
+					margin-right: 10px;
+				}
+			}
+		}
+		[data-type="Time"], [data-type="Date"] {
+			input{
+				text-align: right;
+				height: 27px;
+				width: 120px;
+				&[type="date"]{
+					background: url(calendar.svg) no-repeat 3px 8px;
+				}
+				&[type="time"]{
+					background: url(time.svg) no-repeat 3px 8px;
+				}
+			}
+		}
+		[data-type="Percentage"]{
+			label.percentage{
+				margin-bottom: 5px;
+			}
+		}
+		[data-type="Summation"]{
+			.field-option{
+				height: 50px;
+				width: 300px;
+			}
+			.summation{
+				margin-bottom: 10px;
+				&:first-of-type{
+					margin-top: 15px;
+				}
+				input{
+					float: right;
+					width: 200px;
+				}
+			}
+			.summation-total-field{
+				border-top: 2px solid $user_menu;
+				padding-top: 10px;
+				margin-top: 10px;
+				.summation{
+					margin-left: 15px;
+					&:first-of-type{
+						margin-top: 0;
+					}
+				}
+			}
+		}
+		[data-type="LikertScale"]{
+			table{
+				margin-bottom: 0;
+				tbody{
+					tr{
+						td:first-of-type{
+							padding-left: 0;
+						}
+					}
+				}
+			}
+		}
+	}
 	.attachment-panel{
 		border: 1px dashed $user_menu;
 		border-radius: 4px 4px 4px 4px;
 		color: #C0C0C0;
 		font-size: 14px;
-		line-height: 15px;
+		line-height: 17px;
+		margin-top: 15px;
 		padding: 20px 30px;
 		text-align: center;
 		width: 267px;
 
 		p{
+			&:first-of-type{
+				padding: 0 20px;
+				text-align: left;
+			}
 			&.divider{
 				margin: 25px 0;
 			}
@@ -3180,6 +3385,9 @@ table.table {
 					font-size: 200px;
 					direction: ltr;
 					cursor: pointer;
+				}
+				&:hover{
+					color: $text;
 				}
 			}
 		}

@@ -543,7 +543,7 @@ PhotoField = FormField.extend {
 					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for an image located on your computer'),
 					$('<p class="divider">').text('OR'),
 					$('<p>').text('Drag and drop file here to upload'),
-					$('<p class="small">').text('Maximun upload file size: 10MB')
+					$('<p class="small">').text('Maximum upload file size: 10MB')
 				)
 			)
 		]
@@ -581,7 +581,7 @@ AttachmentField = FormField.extend {
 					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for a file located on your computer'),
 					$('<p class="divider">').text('OR'),
 					$('<p>').text('Drag and drop file here to upload'),
-					$('<p class="small">').text('Maximun upload file size: 10MB')
+					$('<p class="small">').text('Maximum upload file size: 10MB')
 				)
 			)
 		]

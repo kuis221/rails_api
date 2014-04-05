@@ -29,6 +29,8 @@
 				border: 1px dashed silver;
 			}
 			&.selected {
+				background-color: $grey_one;
+				border: 1px solid $grey_four;
 				a.close {
 					background: url(more_less_sprite.png) -40px 0 no-repeat;
 					display: inline-block;
@@ -38,18 +40,15 @@
 						display: none;
 					}
 				}
-				background-color: $grey_one;
-				border: 1px solid $grey_four;
 				&:hover {
 					border: 1px solid $grey_four;
 				}
 				.radio span {
 					border: 4px solid #989898;
 				}
-			}
-			label.control-label{
-				color:$brand !important;
-				margin-bottom: 5px;
+				.attachment-panel{
+					background-color: white;
+				}
 			}
 			&.ui-sortable-placeholder {
 				height: 2px;
@@ -100,38 +99,6 @@
 				}
 			}
 		}
-		.form-fields{
-			[data-type="Dropdown"]{
-				label{
-					margin-bottom: 5px;
-				}
-				&.selected{
-					.icon-remove-circle:before{
-						font-size: 18px !important;
-					}
-				}
-			}
-			[data-type="Checkbox"]{
-				.checkbox{
-					padding-left:0;
-					.checker{
-						background-color: #c2c2c2;
-						margin-right:10px !important;
-					}
-				}
-			}
-			[data-type="Radio"]{
-
-			}
-			[data-type="Time"], [data-type="Date"] {
-				input{
-					text-align: right;
-					&[type="time"]{
-						background: url(time.svg) no-repeat 0 0;
-					}
-				}
-			}
-		}
 	}
 	.fields-wrapper {
 		background-color: #fff;
@@ -154,78 +121,6 @@
 			}
 			&.ui-draggable{
 				color: $brand;
-				&:before{
-					font-family: 'icons';
-					font-size: 16px;
-					height: 20px;
-					line-height: 17px;
-					margin-right: 20px;
-					position:relative;
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-
-				}
-				&[data-type="Dropdown"]:before{
-					content:"\e60b";
-					top: 2px;
-				}
-				&[data-type="Checkbox"]:before{
-					content:"\e60c";
-					top: 2px;
-				}
-				&[data-type="Radio"]:before{
-					content:"\e60a";
-					top: 2px;
-				}
-				&[data-type="Percentage"]:before{
-					content:"\e608";
-					top: 2px;
-				}
-				&[data-type="TextArea"]:before{
-					content:"\e60c";
-				}
-				&[data-type="Number"]:before{
-					content:"\e609";
-					top: 5px;
-				}
-				&[data-type="Currency"]:before{
-					content:"\e606";
-					top: 2px;
-					left: 5px;
-				}
-				&[data-type="Text"]:before{
-					content:"\e605";
-					top: 6px;
-				}
-				&[data-type="Photo"]:before{
-					content:"\e607";
-					top: 3px;
-				}
-				&[data-type="Attachment"]:before{
-					content:"\e60d";
-				}
-				&[data-type="Summation"]:before{
-					content:"\e604";
-					top: 2px;
-				}
-				&[data-type="Date"]:before{
-					content:"\e022";
-					top: 2px;
-				}
-				&[data-type="Time"]:before{
-					content:"\e01f";
-					font-size: 19px;
-					top: 4px;
-					left: 2px;
-				}
-				&[data-type="Brand"]:before{
-					content:"\e030";
-					top: 2px;
-					left: 1px;
-				}
-				&[data-type="Marque"]:before{
-					content:"\e60a";
-				}
 			}
 		}
 	}
@@ -244,6 +139,7 @@
 		font-family: "Lato", sans-serif;
 		margin-bottom: 0;
 		padding-top: 9px;
+		height: 24px;
 		cursor: auto;
 	}
 }
@@ -258,8 +154,11 @@
 	.checker{
 		background-color: #c2c2c2;
 		margin: 0 10px 0 0;
-		span.checked:after{
-			top:-20px;
+		span.checked{
+			background-color:$alert_grey !important;
+			&:after{
+				top:-20px;
+			}
 		}
 	}
 
@@ -288,9 +187,15 @@
 
 	input[type=text] {
 		background-color: #fff !important;
+		box-sizing: border-box;
+		color: $text;
+		padding-left: 15px;
+		padding-right: 15px;
+		height: 40px;
 	}
 
 	label{
+		color: $brand;
 		font-size: 11px;
 	}
 	.field-options {
