@@ -143,14 +143,89 @@
 		padding: 10px;
 
 		.field {
-			border: 1px solid $grey_one;
+			border: 1px solid $user_menu;
 			border-radius: 5px;
 			padding: 10px;
-			margin-bottom: 20px;
+			margin-bottom: 18px;
 
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
 				background-color: #fff;
+			}
+			&.ui-draggable{
+				color: $brand;
+				&:before{
+					font-family: 'icons';
+					font-size: 16px;
+					height: 20px;
+					line-height: 17px;
+					margin-right: 20px;
+					position:relative;
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
+
+				}
+				&[data-type="Dropdown"]:before{
+					content:"\e60b";
+					top: 2px;
+				}
+				&[data-type="Checkbox"]:before{
+					content:"\e60c";
+					top: 2px;
+				}
+				&[data-type="Radio"]:before{
+					content:"\e60a";
+					top: 2px;
+				}
+				&[data-type="Percentage"]:before{
+					content:"\e608";
+					top: 2px;
+				}
+				&[data-type="TextArea"]:before{
+					content:"\e60c";
+				}
+				&[data-type="Number"]:before{
+					content:"\e609";
+					top: 5px;
+				}
+				&[data-type="Currency"]:before{
+					content:"\e606";
+					top: 2px;
+					left: 5px;
+				}
+				&[data-type="Text"]:before{
+					content:"\e605";
+					top: 6px;
+				}
+				&[data-type="Photo"]:before{
+					content:"\e607";
+					top: 3px;
+				}
+				&[data-type="Attachment"]:before{
+					content:"\e60d";
+				}
+				&[data-type="Summation"]:before{
+					content:"\e604";
+					top: 2px;
+				}
+				&[data-type="Date"]:before{
+					content:"\e022";
+					top: 2px;
+				}
+				&[data-type="Time"]:before{
+					content:"\e01f";
+					font-size: 19px;
+					top: 4px;
+					left: 2px;
+				}
+				&[data-type="Brand"]:before{
+					content:"\e030";
+					top: 2px;
+					left: 1px;
+				}
+				&[data-type="Marque"]:before{
+					content:"\e60a";
+				}
 			}
 		}
 	}
