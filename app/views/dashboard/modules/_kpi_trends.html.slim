@@ -19,4 +19,4 @@
           .name= campaign['name']
           - if can?(:gva_report, Campaign)
             = link_to "View details", results_gva_path(campaign_id: campaign['id'])
-          = campaing_promo_hours_chart(campaign)
+          = campaign_promo_hours_chart(campaign)
