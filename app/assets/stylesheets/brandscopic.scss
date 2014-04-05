@@ -1540,6 +1540,35 @@ label{
 			top:-22px;
 		}
 	}
+
+	&.time-filter{
+		label {
+			padding: 0;
+			color: $user_menu;
+		}
+		input.timepicker-filter {
+			width: 70px;
+			background: url('time.svg') no-repeat left !important;
+			padding-left:20px;
+			text-align: center;
+			border: 1px solid $user_menu;
+			color: $grey_three;
+			&:focus {
+				border-color: $grey_three;
+			}
+		}
+		label.time-end {
+			position: relative;
+			margin-left: 5px;
+			&:before {
+				content: '-';
+				display: inline-block;
+				position: absolute;
+				left: -10px;
+				top: 33px;
+			}
+		}
+	}
 }
 .clear-filters {
 	text-align: right;

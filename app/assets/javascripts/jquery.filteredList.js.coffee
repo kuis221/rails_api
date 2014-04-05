@@ -133,6 +133,8 @@ $.widget 'nmk.filteredList', {
 				@addSlider filter
 			else if filter.type is 'calendar'
 				@addCalendar filter
+			else if filter.type is 'time'
+				@addTimeFilter filter
 
 
 	addSlider: (filter) ->
@@ -168,6 +170,25 @@ $.widget 'nmk.filteredList', {
 
 
 		@formFilters.append($filter)
+
+	addTimeFilter: (filter) ->
+		$filter = $('<div class="filter-wrapper time-filter">').data('name', filter.name).append(
+			$('<h3>').text(filter.label),
+			$('<div class="row-fluid">').append(
+				$('<div class="span6">').append(
+					$('<label class="time-start">From <input type="text" class="time-start timepicker-filter" name="'+filter.name+'[start]" value="" /></label>')
+				),
+				$('<div class="span6">').append(
+					$('<label class="time-end">To <input type="text" class="time-end timepicker-filter" name="'+filter.name+'[end]" value="" /></label>')
+				)
+			)
+		)
+
+		@formFilters.append($filter)
+
+		$filter.find('.timepicker-filter').on 'change', () =>
+			@_filtersChanged()
+		.timepicker className: 'timepicker-filter', timeFormat: 'g:i A'
 
 
 	addCalendar: (filter) ->

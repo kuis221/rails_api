@@ -329,12 +329,17 @@ class Report < ActiveRecord::Base
         filters.each do |filter|
           unless ['brand_portfolio', 'brand'].include?(filter.model_name)  # BrandPortfolios/Brands filters are handled directly in #add_joins_scopes
             if is_filtered_by?(filter.field)
-              condition = nil
+              condition = filter_info = nil
+              filter_info = filter.column_info[:filter].call(filter) if filter.column_info.present? && filter.column_info.has_key?(:filter)
               if filter_params[filter.field].is_a?(Hash)
-                if filter_params[filter.field]['start'] && filter_params[filter.field]['end']
+                if filter_info && filter_info[:type] == 'calendar' && filter_params[filter.field]['start'] && filter_params[filter.field]['end']
                   start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
                   end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
                   condition = "#{filter.filter_column} BETWEEN ? AND ?", start_date, end_date
+                elsif filter_info && filter_info[:type] == 'time' && (filter_params[filter.field]['start'] || filter_params[filter.field]['end'])
+                  start_time = (Timeliness.parse('2014-01-01 ' + filter_params[filter.field]['start'].to_s) || Timeliness.parse('2014-01-01 00:00:00')).strftime('%H:%M:%S')
+                  end_time   = (Timeliness.parse('2014-01-01 ' + filter_params[filter.field]['end'].to_s) || Timeliness.parse('2014-01-01 23:59:59')).strftime('%H:%M:%S')
+                  condition = "#{filter.filter_column} BETWEEN ? AND ?", start_time, end_time
                 elsif filter_params[filter.field]['min'] && filter_params[filter.field]['max']
                   if filter_params[filter.field]['min'].to_i == 0
                     condition = "(#{filter.filter_column} BETWEEN ? AND ? OR #{filter.filter_column} IS NULL)", filter_params[filter.field]['min'].to_i, filter_params[filter.field]['max'].to_i
@@ -351,7 +356,7 @@ class Report < ActiveRecord::Base
                 s.where(condition)
               else
                 s
-              end
+              end unless condition.nil?
             else
               nil
             end
@@ -650,7 +655,7 @@ class Report::Field
       {field => [:max, :min]}
     elsif column_info
       type = column_info.has_key?(:filter) ? column_info[:filter].call(self)[:type] : nil
-      if type == 'calendar'
+      if ['calendar', 'time'].include?(type)
         {field => [:start, :end]}
       else
         {field => []}

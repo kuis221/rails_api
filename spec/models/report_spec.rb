@@ -878,6 +878,140 @@ describe Report do
       ]
     end
 
+    it "can filter results by start/end times" do
+      campaign.assign_all_global_kpis
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'number')
+      campaign.add_kpi kpi
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00:00 AM',
+        end_date: '01/01/2014', end_time: '11:00:00 AM', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+      event1.result_for_kpi(kpi).value = 200
+      event1.save
+
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00:00 AM',
+        end_date: '01/12/2014', end_time: '03:00:00 AM', campaign: campaign,
+        results: {impressions: 200, interactions: 150})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"event:start_time", "label"=>"Start Time"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+
+      # With filtering
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => '02:00 AM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => ''}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => nil}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => nil, 'end' => nil}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => nil, 'end' => '11:30 PM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => '11:30 PM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+    end
+
+    it "can filter results by start/end times using timezone support" do
+      company.timezone_support = true
+      Company.current = company
+
+      campaign.assign_all_global_kpis
+      kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'number')
+      campaign.add_kpi kpi
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00:00 AM',
+        end_date: '01/01/2014', end_time: '11:00:00 AM', campaign: campaign,
+        results: {impressions: 100, interactions: 50})
+      event1.result_for_kpi(kpi).value = 200
+      event1.save
+
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00:00 AM',
+        end_date: '01/12/2014', end_time: '03:00:00 AM', campaign: campaign,
+        results: {impressions: 200, interactions: 150})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
+        filters: [{"field"=>"event:start_time", "label"=>"Start Time"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      # With no filtering
+      page = report.fetch_page
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      # With filtering
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => '02:00 AM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => ''}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => nil}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => nil, 'end' => nil}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => nil, 'end' => '11:30 PM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+
+      report.filter_params = {"event:start_time" => {'start' => '12:00 AM', 'end' => '11:30 PM'}}
+      expect(report.fetch_page).to eql [
+          {"event_start_date"=>"2014/01/01", "values" => [100.00]},
+          {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+    end
+
     it "can filter results by selected kpi segments" do
       campaign.assign_all_global_kpis
       kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'count')
