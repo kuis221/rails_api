@@ -17,6 +17,6 @@
       - dashboard_promo_hours_graph_data.each do |campaign|
         .kpi-trend
           .name= campaign['name']
-          - if can?(:gva_report, Campaign)
-            = link_to "View details", results_gva_path(campaign_id: campaign['id'])
+          - if can?(:event_status, Campaign)
+            = link_to "View details", results_event_status_path(campaign_id: campaign['id'])
           = campaign_promo_hours_chart(campaign)
