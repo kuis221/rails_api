@@ -8,6 +8,8 @@
 #  value         :text
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  hash_value    :hstore
+#  scalar_value  :decimal(10, 2)   default(0.0)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

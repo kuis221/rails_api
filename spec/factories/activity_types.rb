@@ -18,6 +18,6 @@ FactoryGirl.define do
     sequence(:name) {|n| "Activity Type #{n}" }
     description "Activity Type description"
     active true
-    company 1
+    company_id 1
   end
 end
