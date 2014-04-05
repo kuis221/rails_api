@@ -1,23 +1,28 @@
-#kpis-trends-module.details_box
-  #kpis-trends-bars
-    .map_header
-      .color_map
-        .executed
-          span.bullet.executed 
-          = 'ACTUAL'
-        .scheduled
-          span.bullet.scheduled
-          = 'PENDING'
-        .today
-          span.indicator.today
-          = 'TODAY'
-    .container-kpi-trend
-      - Campaign.where(id: @campaign.id).promo_hours_graph_data.each do |campaign|
-        .kpi-trend-overall
-          .name= 'Overall'
-          = campaign_promo_hours_chart(campaign)
+- campaign_overall = Campaign.where(id: @campaign.id).promo_hours_graph_data
+#kpis-trends-module
+  .details_box
+    - if campaign_overall.present?
+        #kpis-trends-bars
+          .map_header
+            .color_map
+              .executed
+                span.bullet.executed
+                = 'ACTUAL'
+              .scheduled
+                span.bullet.scheduled
+                = 'PENDING'
+              .today
+                span.indicator.today
+                = 'TODAY'
+          .container-kpi-trend
+            - campaign_overall.each do |campaign|
+              .kpi-trend-overall
+                .name= 'Overall'
+                = campaign_promo_hours_chart(campaign)
 
-      - @campaign.promo_hours_graph_data.each do |campaign|
-        .kpi-trend
-          .name= campaign['name']
-          = campaign_promo_hours_chart(campaign)
+            - @campaign.promo_hours_graph_data.each do |campaign|
+              .kpi-trend
+                .name= campaign['name']
+                = campaign_promo_hours_chart(campaign)
+    - else
+        p.text-center No Event or Promo Hour goals have been set for this campaign. Please set these goals or select another campaign to run the report against.

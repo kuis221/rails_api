@@ -4970,6 +4970,11 @@ svg{
 			}
 		}
 	}
+	.loading-spinner{
+		background: #fff url(/assets/loading-circle.gif) center center no-repeat;
+		display: block;
+		height: 50px;
+	}
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
