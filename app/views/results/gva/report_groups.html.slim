@@ -8,7 +8,6 @@
               a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
                 = render partial: 'report_goals_actual_item_summary', locals: {item: item}
                 span.pull-right.collapsed
-              span
                 a href="#" class="remove-item" title="Remove #{item.name}"
             .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
               .accordion-inner.goals-actual
@@ -30,5 +29,11 @@ javascript:
 
   $('#gva-results').on('show', function(e){
     $target = $(e.target);
-    $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} });
+    if (!$target.data('loaded')) {
+      $('#' + $target.attr('id') + ' .accordion-inner').addClass('loading-spinner');
+      $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} }, function(){
+        $target.data('loaded', true);
+        $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
+      });
+    }
   });

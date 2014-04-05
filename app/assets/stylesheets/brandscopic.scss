@@ -1917,6 +1917,9 @@ ul.kpis-list{
 			.bar-remaining {
 				color: $venues_blue;
 			}
+			&.gva{
+				margin-bottom: -5px !important;
+			}
 		}
 
 		.today-line-indicator {
@@ -1956,14 +1959,20 @@ ul.kpis-list{
 			font-size: 12px;
 			white-space: nowrap;
 			div {
+				float:left;
 				margin-left: -120%;
 				margin-top: -2px;
-				float:left;
 				b{
 					top: -1px;
 					color: rgb(139, 184, 65);
 					font-size: 14px;
 				}
+			}
+			&.gva{
+				margin-top: 4px;
+			}
+			&.stacked{
+				line-height: 0;
 			}
 		}
 		.scheduled-label {
@@ -1982,6 +1991,9 @@ ul.kpis-list{
 					font-size: 14px;
 				}
 			}
+			&.stacked{
+				text-align: left;
+			}
 		}
 		.remaining-label {
 			color:$brand;
@@ -1990,11 +2002,11 @@ ul.kpis-list{
 			width: 300px;
 			top: -13px;
 			&.percentage {
-				top: -21px;
+				top: -22px;
 			}
 			b {
 				display: inline-block;
-				font-size: 24px;
+				font-size: 21px;
 				font-weight: 900;
 				float: left;
 				width: 150px;
@@ -2004,6 +2016,11 @@ ul.kpis-list{
 				&.percentage {
 					line-height: 22px;
 				}
+				.normal-text {
+					display: inline-block;
+					font-size: 22px !important;
+					font-weight: 400;
+				}
 			}
 			span {
 				margin-top: -1px;
@@ -2011,8 +2028,8 @@ ul.kpis-list{
 				line-height: 19px;
 				font-size: 11px !important;
 				&.percentage {
-					font-size: 14px;
-					line-height: 30px;
+					font-size: 14px !important;
+					line-height: 25px;
 				}
 			}
 			.kpi-name{
@@ -4944,47 +4961,6 @@ svg{
 				}
 			}
 		}
-		&.tool-box{
-			color: $brand;
-			padding-bottom: 30px;
-			.text-right{
-				margin-top: 47px;
-				#group-by-title{
-					vertical-align: middle;
-				}
-				.btn-group{
-					margin: 0 30px 0 5px;
-					.btn{
-						background-color: $user_menu;
-						box-shadow: none;
-						color: #FFFFFF;
-						font-weight: bold;
-						padding: 10px 17px;
-						width: 60px;
-						&.active{
-							background-color: $brand;
-						}
-						&.campaign{
-							border-right: 1px solid $buttons-border;
-						}
-						&.place{
-							border-left: 1px solid $buttons-border;
-							border-right: 1px solid $buttons-border;
-							&:before{
-								display: none;
-							}
-						}
-						&.staff{
-							border-left: 1px solid $buttons-border;
-						}
-					}
-				}
-			}
-			h3{
-				color: $text;
-				margin: 0 0 25px;
-			}
-		}
 		.chzn-container-single{
 			.chzn-search input{
 				bottom:12px;
@@ -4993,6 +4969,11 @@ svg{
 				margin: 0 0 4px 0;
 			}
 		}
+	}
+	.loading-spinner{
+		background: #fff url(/assets/loading-circle.gif) center center no-repeat;
+		display: block;
+		height: 50px;
 	}
 }
 
@@ -5947,8 +5928,84 @@ a, i{
 }
 
 body.gva {
-	.tab-content {
+	.tab-content{
 		overflow: visible;
+		.tab-pane{
+			.tool-box{
+				color: $brand;
+				padding-bottom: 23px;
+				h3{
+					color: $text;
+					margin: 0 0 25px;
+				}
+				form#gva-report{
+					label{
+						font-size: 11px;
+						line-height: 15px;
+					}
+					.controls{
+						.chzn-container-single{
+							.chzn-single{
+								height: 34px !important;
+								padding-top: 3px;
+								width: 270px !important;
+								span{
+									line-height: 32px;
+								}
+							}
+							.chzn-drop{
+								width: 280px !important;
+							}
+						}
+					}
+				}
+				.group-by-box{
+					display: inline-block;
+					margin-left: 57px;
+					margin-top: 17px;
+					#group-by-title{
+						font-size: 11px;
+						vertical-align: middle;
+					}
+					.btn-group{
+						margin: 0 30px 0 8px;
+						.btn{
+							background-color: $user_menu;
+							box-shadow: none;
+							color: #FFFFFF;
+							font-weight: bold;
+							padding: 9px 10px;
+							width: 60px;
+							&:first-child{
+								border-bottom-left-radius: 6px;
+								border-top-left-radius: 6px;
+							}
+							&:last-child{
+							    border-bottom-right-radius: 6px;
+							    border-top-right-radius: 6px;
+							}
+							&.active{
+								background-color: $brand;
+							}
+							&.campaign{
+								border-right: 1px solid $buttons-border;
+							}
+							&.place{
+								border-left: 1px solid $buttons-border;
+								border-right: 1px solid $buttons-border;
+								&:before{
+									display: none;
+								}
+							}
+							&.staff{
+								border-left: 1px solid $buttons-border;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		#report-container {
 			.total-venues {
 				margin: 0 0 0 40px;
@@ -5969,7 +6026,7 @@ body.gva {
 					font-size: 28px;
 				}
 				.venues-title {
-					font-size: 14px;
+					font-size: 12px;
 					font-weight: 600;
 					line-height: 8px;
 				}
@@ -5977,36 +6034,42 @@ body.gva {
 			.item-summary{
 				color: $text;
 				display: inline-block;
-				width: 95%;
+				width: 93%;
 				b{
-					font-size: 16px;
+					font-size: 17px;
 					margin-top: 7px;
 				}
 				.goals-summary{
 					.goal-item{
 						color: $due_today;
 						display: inline-block;
-						margin-left: 35px;
+						margin-left: 20px;
 						min-width: 70px;
 						text-align: left;
 						b{
-							font-size: 28px;
-							font-weight: 400;
+							font-size: 22px;
+							font-weight: 600;
+							.normal-text{
+								font-size: 23px;
+								font-weight: 400;
+							}
 						}
 						.title{
-							font-size: 14px;
+							font-size: 11px;
 							font-weight: 400;
-							line-height: 8px;
+							line-height: 9px;
 						}
 					}
 
 				}
 			}
 			.captions{
-				margin: 40px 350px 20px 0;
+				color: $brand;
+				font-size: 12px;
+				margin: 24px 350px 20px 0;
 				text-align: right;
 				span {
-					margin-right: 25px;
+					margin-right: 11px;
 					&.actual {
 						&:before {
 							content: '';
@@ -6014,9 +6077,9 @@ body.gva {
 							background: $green;
 							border-radius: 5px;
 							margin-right: 6px;
-							width: 11px;
+							width: 10px;
 							line-height: 13px;
-							height: 11px;
+							height: 10px;
 							vertical-align: baseline;
 						}
 					}
@@ -6027,9 +6090,9 @@ body.gva {
 							background: $due_today;
 							border-radius: 5px;
 							margin-right: 6px;
-							width: 11px;
+							width: 10px;
 							line-height: 13px;
-							height: 11px;
+							height: 10px;
 							vertical-align: baseline;
 						}
 					}
@@ -6039,7 +6102,7 @@ body.gva {
 							color: $brand;
 							content: "\e004";
 							font-family: "icons";
-							font-size: 16px;
+							font-size: 14px;
 							position: relative;
 							top: 6px;
 						}
@@ -6049,6 +6112,10 @@ body.gva {
 			}
 			.container-kpi-trend{
 				margin-left: 0;
+				margin-top: 20px;
+				.kpi-trend{
+					margin-bottom: 18px;
+				}
 			}
 			#gva-results{
 				a{
@@ -6056,7 +6123,7 @@ body.gva {
 					text-decoration: none;
 				}
 				.details_box{
-					padding: 10px 15px 2px 27px;
+					padding: 0 15px 0 0;
 					p{
 						padding: 20px 27px 28px;
 					}
@@ -6064,6 +6131,8 @@ body.gva {
 				.accordion-group{
 					border: none;
 					.accordion-heading{
+						padding-left: 27px;
+						position: relative;
 						a{
 							font-size: 17px;
 							span{
@@ -6072,9 +6141,10 @@ body.gva {
 										color: $user_menu;
 										content: "\f078";
 										font-family: 'FontAwesome';
-										font-size: 23px;
+										font-size: 19px;
 										margin-top: 7px;
 										position: absolute;
+										right: 22px;
 										speak: none;
 										text-align: center;
 										vertical-align: middle;
@@ -6086,9 +6156,10 @@ body.gva {
 										color: $user_menu;
 										content: "\f077";
 										font-family: 'FontAwesome';
-										font-size: 23px;
+										font-size: 19px;
 										margin-top: 7px;
 										position: absolute;
+										right: 22px;
 										speak: none;
 										text-align: center;
 										vertical-align: middle;
@@ -6096,16 +6167,15 @@ body.gva {
 									}
 								}
 							}
-						}
-						span{
-							.remove-item{
+							&.remove-item{
 								&:after{
 									color: $user_menu;
 									content: "\e019";
 									font-family: 'icons';
-									font-size: 18px;
+									font-size: 15px;
 									margin-top: 17px;
 									position: absolute;
+									right: -3px;
 									speak: none;
 									text-align: center;
 									vertical-align: middle;
@@ -6115,12 +6185,12 @@ body.gva {
 						}
 						.accordion-toggle{
 							display: inline-block;
-							margin-right: 40px;
 							padding: 8px 0;
-							width: 95%;
+							width: 100%;
 						}
 					}
 					.accordion-body{
+						padding-left: 27px;
 						.accordion-inner{
 							border: none;
 							padding-left: 0;

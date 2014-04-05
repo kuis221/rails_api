@@ -88,28 +88,34 @@ module DashboardHelper
     if g[:today_percentage]
       today_bar_indicator = content_tag(:div, '', class: "today-line-indicator", style: "left: #{g[:today_percentage] - 0.5}%")
     end
-    goal = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:goal].value, precision: 2) : number_with_precision(g[:goal].value, strip_insignificant_zeros: true)
-    actual = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(g[:total_count], precision: 2) : number_with_precision(g[:total_count], strip_insignificant_zeros: true)
+    goal = number_with_precision(g[:goal].value, strip_insignificant_zeros: true)
+    actual = number_with_precision(g[:total_count], strip_insignificant_zeros: true)
     pending_and_total = (g[:submitted] || 0) + g[:total_count]
-    pending = g[:goal].kpi.present? && g[:goal].kpi.currency? ? number_to_currency(pending_and_total, precision: 2) : number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
-    actual_percentage = g[:completed_percentage].round
-    pending_percentage = (pending_and_total/g[:goal].value * 100).round
-    one_line = (105-(pending_percentage - actual_percentage)) > 100 || pending_percentage >= 100 && actual_percentage >= 100
+    pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
+    actual_percentage = g[:completed_percentage]
+    pending_percentage = (pending_and_total/g[:goal].value * 100)
+    one_line = (107-(pending_percentage - g[:completed_percentage])) > 100 || pending_percentage >= 100 && g[:completed_percentage] >= 100
+    actual_pending_labels = if (actual_percentage.round == pending_percentage.round) || (actual_percentage.round >= 100 && pending_percentage.round >= 100)
+      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 100 : 0}%") +
+      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%")
+    else
+      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label gva', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 50 : 0}%") +
+      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{[1, 101.3 - pending_percentage.round].max}%; margin-top:#{one_line ? -8 : 4}px")
+    end
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
-      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, actual_percentage].min}%") +
+      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, g[:completed_percentage]].min}%") +
       content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{[100, pending_percentage].min}%; height: #{one_line ? 40: 23}px") +
-      content_tag(:div, class: 'progress') do
-        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, actual_percentage].min}%;") +
-        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{pending_percentage - actual_percentage}%;")
+      content_tag(:div, class: 'progress gva') do
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{[100 - g[:completed_percentage], pending_percentage - g[:completed_percentage]].min}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label', style: "margin-left: #{[100, actual_percentage].min}%; margin-right: #{one_line ? 50 : 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{[1, 101.5 - pending_percentage].max}%; margin-top:#{one_line ? -7 : 0}px") +
+      actual_pending_labels +
       content_tag(:div, content_tag(:div, "<b>#{goal}</b> GOAL".html_safe), class: 'goal-label') +
       content_tag(:div, class: 'remaining-label percentage') do
-        content_tag(:b, "#{actual_percentage}%", class: 'percentage') +
+        content_tag(:b, "#{actual_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
         content_tag(:span, "COMPLETE", class: 'percentage') +
-        content_tag(:b, "#{pending_percentage}%", class: 'percentage') +
+        content_tag(:b, "#{pending_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
         content_tag(:span, 'PENDING', class: 'percentage')
       end
     end

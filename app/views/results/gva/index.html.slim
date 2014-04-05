@@ -9,7 +9,7 @@
           = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
           = hidden_field_tag :group_by, params[:group_by].present? ? params[:group_by] : 'campaign'
 
-      .text-right
+      .group-by-box
         span#group-by-title GROUP BY:
         #group-by-criterion.btn-group
           a.btn.campaign class="#{params[:group_by].nil? || params[:group_by]=='campaign' ? 'active' : nil}" href="#" data-type="campaign" data-toggle="tab" title="Campaign" Campaign
@@ -17,8 +17,9 @@
           a.btn.staff class="#{params[:group_by]=='staff' ? 'active' : nil}" href="#" data-type="staff" data-toggle="tab" title="Staff" Staff
 
   #report-container
-    .details_box
-      p.text-center Select a campaign from the list above
+    #kpis-trends-bars
+      .details_box.content
+        p.text-center Select a campaign from the list above
 
 javascript:
   var currentView = null;
@@ -34,6 +35,7 @@ javascript:
     }
   }
   $('#report_campaign_id').on('change', function(e){
+    $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
     submitForm();
     history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
     'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val());
