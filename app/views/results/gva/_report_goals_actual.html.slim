@@ -1,6 +1,6 @@
 #kpis-trends-bars
-  - events_goal = each_events_goal
-  .details_box
+  .details_box.content
+    - events_goal = each_events_goal
     - if events_goal.any?
       = render partial: 'report_goals_actual_item_summary', locals: {item: @campaign}
       = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
