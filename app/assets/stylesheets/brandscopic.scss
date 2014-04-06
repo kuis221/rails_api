@@ -3175,7 +3175,20 @@ table.table {
 	.chzn-container-single .chzn-single{
 		width: 205px;
 	}
+	table{
+		margin-bottom: 0;
+	}
 	.field{
+		height: auto !important;
+		width: auto !important;
+		&.ui-draggable-dragging{
+			height: auto !important;
+			width: auto !important;
+			input[type="date"], input[type="time"]{
+				text-align: right;
+				width: 120px;
+			}
+		}
 		&.ui-draggable{
 			&:before{
 				font-family: 'icons';
@@ -3202,10 +3215,11 @@ table.table {
 			}
 			&[data-type="Percentage"]:before{
 				content:"\e608";
-				top: 2px;
+				top: 4px;
 			}
 			&[data-type="TextArea"]:before{
 				content:"\e60c";
+				top: 2px;
 			}
 			&[data-type="Number"]:before{
 				content:"\e609";
@@ -3226,6 +3240,7 @@ table.table {
 			}
 			&[data-type="Attachment"]:before{
 				content:"\e60d";
+				top: 2px;
 			}
 			&[data-type="Summation"]:before{
 				content:"\e604";
@@ -3239,7 +3254,7 @@ table.table {
 				content:"\e01f";
 				font-size: 19px;
 				top: 4px;
-				left: 2px;
+				left: 1px;
 			}
 			&[data-type="Brand"]:before{
 				content:"\e030";
@@ -3248,6 +3263,9 @@ table.table {
 			}
 			&[data-type="Marque"]:before{
 				content:"\e60a";
+			}
+			&[data-type="LikertScale"]{
+				padding-left:44px;
 			}
 		}
 		label.control-label{
@@ -3306,7 +3324,7 @@ table.table {
 		}
 		[data-type="Percentage"]{
 			label.percentage{
-				margin-bottom: 5px;
+				margin-bottom: 10px;
 			}
 		}
 		[data-type="Summation"]{
@@ -3314,11 +3332,13 @@ table.table {
 				height: 50px;
 				width: 300px;
 			}
+			label{
+				margin-bottom: 15px;
+			}
 			.summation{
-				margin-bottom: 10px;
-				&:first-of-type{
-					margin-top: 15px;
-				}
+				margin-bottom: 15px;
+				height: 40px;
+				line-height: 38px;
 				input{
 					float: right;
 					width: 200px;
@@ -3326,7 +3346,7 @@ table.table {
 			}
 			.summation-total-field{
 				border-top: 2px solid $user_menu;
-				padding-top: 10px;
+				padding-top: 15px;
 				margin-top: 10px;
 				.summation{
 					margin-left: 15px;
@@ -3338,11 +3358,20 @@ table.table {
 		}
 		[data-type="LikertScale"]{
 			table{
-				margin-bottom: 0;
+				thead{
+					tr{
+						th:nth-child(2){
+							padding-left: 25px;
+						}
+					}
+				}
 				tbody{
 					tr{
 						td:first-of-type{
 							padding-left: 0;
+						}
+						td:nth-child(2){
+							padding-left: 25px;
 						}
 					}
 				}
