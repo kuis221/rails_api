@@ -1,4 +1,4 @@
-$brand: #989898;
+@import "variables";
 
 .campaigns.show {
 	.kpis-list {
@@ -157,6 +157,7 @@ $brand: #989898;
 			}
 
 			.field {	
+				border: 1px dashed white;
 				position: relative;
 				border-radius: 5px;
 				padding: 10px;
@@ -165,6 +166,11 @@ $brand: #989898;
 
 					.action-buttons {
 						display: block;
+					}
+				}
+				&.selected{
+					&:hover{
+						border:1px solid $grey_four;
 					}
 				}
 			}
@@ -184,7 +190,8 @@ $brand: #989898;
 			}
 
 			.selected {
-				background-color: #dfdfdf;
+				background-color: $grey_one;
+				border: 1px solid $grey_four;
 			}
 		}
 	}
