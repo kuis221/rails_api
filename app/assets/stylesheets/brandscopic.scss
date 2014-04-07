@@ -2148,6 +2148,16 @@ ul.kpis-list{
 			}
 		}
 	}
+	ul#activity_types-list{
+		li{
+			display: table;
+			width: 100%;
+			a{
+				display: table-cell;
+				vertical-align: middle;
+			}
+		}
+	}
 	ul#select-campaigns-list{
 		li{
 			span{
