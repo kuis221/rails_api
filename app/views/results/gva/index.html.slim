@@ -2,23 +2,71 @@
 
 .tab-content
   #list-view.tab-pane.active
-    .details_box.first
+    .details_box.tool-box.first
+      h3 GOALS VS. ACTUAL
+      .pull-left
+        = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'gva-report' } do |f|
+          = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
+          = hidden_field_tag :group_by, params[:group_by].present? ? params[:group_by] : 'campaign'
 
-      = simple_form_for :report, url: results_gva_path, remote: true do |f|
-        = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
+      .group-by-box
+        span#group-by-title GROUP BY:
+        #group-by-criterion.btn-group
+          a.btn.campaign class="#{params[:group_by].nil? || params[:group_by]=='campaign' ? 'active' : nil}" href="#" data-type="campaign" data-toggle="tab" title="Campaign" Campaign
+          a.btn.place class="#{params[:group_by]=='place' ? 'active' : nil}" href="#" data-type="place" data-toggle="tab" title="Place" Place
+          a.btn.staff class="#{params[:group_by]=='staff' ? 'active' : nil}" href="#" data-type="staff" data-toggle="tab" title="Staff" Staff
 
   #report-container
-    .details_box
-      p.text-center Select a campaign from the list above
+    #kpis-trends-bars
+      .details_box.content
+        p.text-center Select a campaign from the list above
 
 javascript:
-  jQuery(function(){
-    $('#report_campaign_id').on('change', function(e){
-      if ( $(this).val() ){
-        $(this.form).submit();
+  var currentView = null;
+  submitForm = function() {
+    view =  $('#report_campaign_id').val() + $("#group_by").val();
+    if (view != currentView) {
+      currentView = view;
+      if ( $('#report_campaign_id').val() && $("#group_by").val() == 'campaign'){
+        $('form#gva-report').submit();
+      } else if ( $('#report_campaign_id').val() ) {
+        $('#report-container').load('#{results_report_groups_path}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
       }
-    });
-    $(window).ready(function(){
-      $('#report_campaign_id').change()
-    })
-  })
+    }
+  }
+  $('#report_campaign_id').on('change', function(e){
+    $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
+    submitForm();
+    history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
+    'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val());
+  });
+
+  $('#group-by-criterion a').on('click', function(e){
+    $('#group-by-criterion a').removeClass('active');
+    $(this).addClass('active');
+    $("#group_by").val($(this).data('type'));
+    $('#report_campaign_id').trigger('change');
+  });
+
+  $(window).on('popstate', function(){
+    query = window.location.search.replace(/^\?/,"");
+    if (query != '') {
+      vars = query.split('&');
+      $('#group-by-criterion a.active').removeClass('active');
+      $('#group-by-criterion a.campaign').addClass('active');
+      for (i = 0; i<vars.length; i++ ) {
+        pair = vars[i].split('=')
+        if (pair[0] == 'campaign_id') {
+          $('#report_campaign_id').val(pair[1]).trigger('liszt:updated');
+
+        } else if (pair[0] == 'group_by') {
+          $("#group_by").val(pair[1]);
+          $('#group-by-criterion a.active').removeClass('active');
+          $('#group-by-criterion a.'+pair[1]).addClass('active');
+        }
+      }
+    }
+    submitForm();
+  });
+
+  submitForm();

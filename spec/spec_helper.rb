@@ -73,6 +73,7 @@ RSpec.configure do |config|
     DatabaseCleaner.logger = Rails.logger
 
     ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS tablefunc;')
+    ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS hstore;')
   end
 
   config.before(:all) do

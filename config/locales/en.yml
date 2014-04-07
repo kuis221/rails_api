@@ -44,6 +44,7 @@ en:
       brand_portfolio: "New Brand portfolio"
       date_range: "New Date range"
       day_part: "New Day part"
+      activity_type: "New Activity type"
     edit:
       team: "Edit Team"
       campaign: "Edit Campaign"
@@ -52,6 +53,12 @@ en:
       brand_portfolio: "Edit Brand portfolio"
       date_range: "Edit Date range"
       day_part: "Edit Day part"
+
+  inputs:
+    attached_asset:
+      select_file: 
+        photo: '%{browse} for an image located on your computer'
+        attachment: '%{browse} for a file located on your computer'
 
   notifications:
     task_late_user:
@@ -105,6 +112,7 @@ en:
         day_item: "New Time"
         contact_event: "New Contact"
         activity: "New Activity"
+        activity_type: "New Activity type"
       edit:
         company_user: "Edit User"
         event: "Edit Event"

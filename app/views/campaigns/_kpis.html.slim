@@ -10,20 +10,20 @@
 
 .link-list
   ul#custom-kpis.kpis-list
-    = render (Kpi.custom(current_company) + current_company.activity_types.active).sort_by(&:name)
+    = render (Kpi.custom(current_company) + current_company.activity_types.active.each { |a|  a.partial_path = 'campaigns/activity_type'}).sort_by(&:name)
 
 
 - if can?(:activate_kpis, resource)
   javascript:
     $(document).delegate('.toggle-off-btn', 'click', function(e){
       $(this).parent().addClass('active').removeClass('deactive')
-      FormBuilder.activateKpi($(this).data('kpi-id'));
+      CampaignFormBuilder.activateKpi($(this).data('kpi-id'));
       return false;
     });
     
     $(document).delegate('.toggle-off-btn-activity-type', 'click', function(e){
       $(this).parent().addClass('active').removeClass('deactive')
-      FormBuilder.activateActivityType($(this).data('activity-type-id'));
+      CampaignFormBuilder.activateActivityType($(this).data('activity-type-id'));
       return false;
     });
 
@@ -33,7 +33,7 @@
       bootbox.confirm("<p>Please confirm you want to deactivate this KPI?</p>", function (result) {
         if (result) {
           $(_this).parent().addClass('inactive').removeClass('active')
-          FormBuilder.deactivateKpi(kpi_id);
+          CampaignFormBuilder.deactivateKpi(kpi_id);
         }
       });
       return false;
@@ -44,7 +44,7 @@
       bootbox.confirm("<p>Please confirm you want to deactivate this Activity Type?</p>", function (result) {
         if (result) {
           $(_this).parent().addClass('inactive').removeClass('active')
-          FormBuilder.deactivateActivityType(activity_type_id);
+          CampaignFormBuilder.deactivateActivityType(activity_type_id);
         }
       });
       return false;

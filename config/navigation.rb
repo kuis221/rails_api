@@ -46,6 +46,7 @@ SimpleNavigation::Configuration.run do |navigation|
     options.push([:expenses, 'Expenses', results_expenses_path, highlights_on: %r(/results/expenses)]) if can?(:index_results, EventExpense)
     options.push([:surveys, 'Surveys', results_surveys_path, highlights_on: %r(/results/surveys)]) if can?(:index_results, Survey)
     options.push([:gva, 'Goals vs. Actual', results_gva_path, highlights_on: %r(/results/gva)]) if can?(:gva_report, Campaign)
+    options.push([:event_status, 'Event Status', results_event_status_path, highlights_on: %r(/results/event_status)]) if can?(:event_status, Campaign)
 
     unless options.empty?
       primary.item :results, 'Results', options.first[2], highlights_on: %r(/results) do |secondary|
