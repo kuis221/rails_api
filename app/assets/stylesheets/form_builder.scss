@@ -1,0 +1,194 @@
+@import "variables";
+
+.form-builder-wrapper {
+	position: relative;
+	.form-wrapper {
+		background-color: #fff;
+		border-radius: 5px;
+		margin-right: 210px;
+		padding: 20px;
+		.form-fields {
+			min-height: 300px;
+		}
+		.field {
+			float: left;
+			clear: both;
+			padding: 10px;
+			border: 1px dashed #fff;
+			position: relative;
+			border-radius: 5px;
+			a.close {
+				display: none;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: $brand;
+				opacity: 1;
+			}
+			&:hover {
+				border: 1px dashed silver;
+			}
+			&.selected {
+				a.close {
+					display: inline-block;
+				}
+				background-color: $grey_one;
+				border: 1px solid $grey_one;
+				&:hover {
+					border: 1px solid $grey_one;
+				}
+				.radio span {
+					border: 4px solid #989898;
+				}
+			}
+			&.ui-sortable-placeholder {
+				height: 2px;
+				opacity: 1;
+				background-color: $grey_three;
+				border-radius: 0;
+				visibility: visible !important;
+				padding: 0;
+				position: relative;
+				width: 100%;
+				border: none;
+				&:before {
+					content: "||";
+					letter-spacing: -2px;
+					top: -9px;
+					left: -1px;
+					position: absolute;
+					font-size: 6px;
+					font-weight: bolder;
+				}
+				&:after {
+					content: "||";
+					letter-spacing: -2px;
+					top: -9px;
+					right: 1px;
+					position: absolute;
+					font-size: 6px;
+					font-weight: bolder;
+				}
+			}
+		}
+	}
+	.fields-wrapper {
+		background-color: #fff;
+		border-radius: 5px;
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 180px;
+		padding: 10px;
+
+		.field {
+			border: 1px solid $grey_one;
+			border-radius: 5px;
+			padding: 10px;
+			margin-bottom: 20px;
+
+			// Styles for when the field is being dragged
+			&.ui-draggable-dragging {
+				background-color: #fff;
+			}
+		}
+	}
+	.radio {
+		width: auto;
+	}
+
+	// Make disabled form fields looks like they were enabled
+	.chzn-disabled {
+		opacity: 1 !important;
+	}
+	input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+		background-color: white !important;
+		background-image: none !important;
+		border: 1px solid silver;
+		box-shadow: none;
+		font-family: "Lato", sans-serif;
+		margin-bottom: 0;
+		padding-top: 9px;
+		cursor: auto;
+	}
+}
+
+.field-attributes-panel {
+	background-color: $grey_one;
+	border-radius: 5px;
+	padding: 15px 15px 5px 15px;
+	margin-left: 30px;
+
+	.checker{
+		background-color: $brand;
+		margin: 0 10px 0 0;
+		span.checked:after{
+			top:-20px;
+		}
+	}
+
+	.chzn-container-single{
+		.chzn-drop{
+			width: 272px !important;
+		}
+		.chzn-results{
+			margin: 0 0 4px 0;
+			width: 270px;
+		}
+		.chzn-single{
+			border:0 !important;
+			height: 38px !important;
+			padding-top: 2px !important;
+			width: 263px !important;
+		}
+		.chzn-search input {
+			background-image: none !important;
+			bottom: 12px !important;
+		}
+	}
+	h4{
+		margin-top: 0;
+	}
+
+	input[type=text] {
+		background-color: #fff !important;
+	}
+
+	label{
+		font-size: 11px;
+	}
+	.field-options {
+		input[type=text] {
+			width: 200px;
+		}
+	}
+
+	.option-actions {
+		display: inline-block;
+		a {
+			margin-left: 5px;
+			i:before {
+				font-size: 15px;
+				color: #989898;
+			}
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+
+	.arrow-left {
+		width: 0;
+		height: 0;
+		border-top: 10px solid transparent;
+		border-bottom: 10px solid transparent;
+		border-right:10px solid #dfdfdf;
+		position: absolute;
+		top:40px;
+		left: -10px;
+	}
+
+	.field-not-customizable-message {
+		padding: 40px 50px;
+	}
+}

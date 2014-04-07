@@ -99,5 +99,20 @@
         .span2 Details
         .span2 =  permission_checkbox(f, :show, DateRange)
 
+      .span12.separate
+        .span2.title Activity Types
+        .span2 
+        .span2 = permission_checkbox(f, :create, ActivityType)
+        .span2 = permission_checkbox(f, :update, ActivityType)
+        .span2 = permission_checkbox(f, :deactivate, ActivityType)
+
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, ActivityType)
+
+      .span12
+        .span2 Details
+        .span2 =  permission_checkbox(f, :show, ActivityType)
+
   = hidden_field_tag :partial, :admin_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

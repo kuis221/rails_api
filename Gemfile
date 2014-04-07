@@ -52,6 +52,7 @@ gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
 gem 'resque-timeout'
+gem 'activerecord-postgres-hstore'
 
 #For memory debugging
 gem "oink"
