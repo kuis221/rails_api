@@ -6168,7 +6168,7 @@ ul#reports-list {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
-	@mixin test(){
+	@mixin thumbnail-toolbar-styles(){
 		background-color: rgba(0, 0, 0, 0.6);
 		bottom: 0;
 		left: 0;
@@ -6262,11 +6262,11 @@ ul#reports-list {
 
 			&:hover{
 				.thumbnail-toolbar{
-					@include test();
+					@include thumbnail-toolbar-styles();
 				}
 			}
 			.thumbnail-toolbar-for-help{
-				@include test();
+				@include thumbnail-toolbar-styles();
 			}
 		}
 	}
