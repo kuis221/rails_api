@@ -6168,6 +6168,71 @@ ul#reports-list {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
+	@mixin test(){
+		background-color: rgba(0, 0, 0, 0.6);
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: 0 5px;
+		display: block;
+		position: absolute;
+		height: 35px;
+		list-style-type: none;
+		overflow:hidden;
+		a{
+			color: white;
+			float: right;
+			margin: 10px;
+			opacity: 1 !important;
+			text-decoration: none;
+			&.photo-download-link{
+				float:right;
+				margin: 7px 0px 7px 10px;
+				position: relative;
+				&:before{
+					color: $grey_one;
+					content: "\e00b" !important;
+					display: inline-block;
+					font-family: 'icons';
+					font-size: 15px;
+					position: relative;
+					speak: none;
+					text-align: center;
+					vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
+			}
+			&.icon-remove-circle{
+				float:right;
+				margin: 10px;
+				position: relative;
+				&:before{
+					color: $grey_one;
+					content: "\e011" !important;
+					display: inline-block;
+					font-family: 'icons';
+					font-size: 15px;
+					position: relative;
+					speak: none;
+					text-align: center;
+					vertical-align: middle;
+					-webkit-font-smoothing: antialiased;
+				}
+			}
+			&.icon-ok-circle:before{
+				color: $grey_one;
+				content: "\e00d" !important;
+				display: inline-block;
+				font-family: 'icons';
+				font-size: 15px;
+				position: relative;
+				speak: none;
+				text-align: center;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+			}
+		}
+	}
 	&> ul {
 		margin-bottom:0;
 		margin-left:0;
@@ -6197,70 +6262,11 @@ ul#reports-list {
 
 			&:hover{
 				.thumbnail-toolbar{
-					background-color: rgba(0, 0, 0, 0.6);
-					bottom: 0;
-					left: 0;
-					right: 0;
-					margin: 0 5px;
-					display: block;
-					position: absolute;
-					height: 35px;
-					list-style-type: none;
-					overflow:hidden;
-					a{
-						color: white;
-						float: right;
-						margin: 10px;
-						opacity: 1 !important;
-						text-decoration: none;
-						&.photo-download-link{
-							float:right;
-							margin: 7px 0px 7px 10px;
-							position: relative;
-							&:before{
-								color: $grey_one;
-								content: "\e00b" !important;
-								display: inline-block;
-								font-family: 'icons';
-								font-size: 15px;
-								position: relative;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
-							}
-						}
-						&.icon-remove-circle{
-							float:right;
-							margin: 10px;
-							position: relative;
-							&:before{
-								color: $grey_one;
-								content: "\e011" !important;
-								display: inline-block;
-								font-family: 'icons';
-								font-size: 15px;
-								position: relative;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
-							}
-						}
-						&.icon-ok-circle:before{
-							color: $grey_one;
-							content: "\e00d" !important;
-							display: inline-block;
-							font-family: 'icons';
-							font-size: 15px;
-							position: relative;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
-						}
-					}
+					@include test();
 				}
+			}
+			.thumbnail-toolbar-for-help{
+				@include test();
 			}
 		}
 	}
