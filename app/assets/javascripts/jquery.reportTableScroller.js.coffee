@@ -34,8 +34,8 @@ $.widget 'nmk.reportTableScroller',
 			next = row.next('tr')
 			while next.data('level') > level
 				if collapsed
-					next.hide()
-				else
+					next.hide().find('.icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+				else if next.data('level') == level+1  # Only show/hide the inmediate children elements
 					next.show()
 				next = next.next('tr')
 

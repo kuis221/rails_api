@@ -464,13 +464,13 @@ $report_border_color: #ccc;
 			padding-left: 40px;
 		}
 		.level_2 .row_label {
-			padding-left: 40px;
-		}
-		.level_3 .row_label {
 			padding-left: 60px;
 		}
+		.level_3 .row_label {
+			padding-left: 80px;
+		}
 		.level_4 .row_label {
-			padding-left: 70px;
+			padding-left: 100px;
 		}
 		tr:hover td{
 			background-color: transparent;
@@ -479,7 +479,7 @@ $report_border_color: #ccc;
 		.icon-collapse, .icon-expand{
 			display:inline-block;
 			height:20px;
-			margin-right:10px;
+			margin-right:5px;
 			width:10px;
 			color: $text !important;
 			text-decoration: none !important;
