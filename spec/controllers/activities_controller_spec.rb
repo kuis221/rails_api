@@ -52,6 +52,32 @@ describe ActivitiesController do
       assigns(:activity).activitable_id.should == venue.id
       assigns(:activity).activity_date.to_s.should == '05/23/2020 00:00:00'
     end
+
+    it "should correctly save all the values for percentage field" do
+      form_field = FactoryGirl.create(:form_field,
+        fieldable: activity_type, type: 'FormField::Percentage',
+        options: [FactoryGirl.create(:form_field_option, name: 'Option 1', ordering: 0), FactoryGirl.create(:form_field_option, name: 'Option 1', ordering: 1)])
+
+      lambda {
+        post 'create', venue_id: venue.to_param, activity: {
+            activity_type_id: activity_type.to_param, campaign_id: campaign.to_param,
+            company_user_id: @company_user.to_param, activity_date: '05/23/2020',
+            results_attributes: {'0' =>
+              {form_field_id: form_field.id, value: {
+                form_field.options.first.id.to_s => '10',
+                form_field.options.last.id.to_s => '90',
+              }}
+            }
+          }, format: :js
+      }.should change(Activity, :count).by(1)
+      activity = Activity.last
+      expect(activity.results.count).to eql 1
+      result = activity.results.first
+      expect(result.value).to eql({
+        form_field.options.first.id.to_s => '10',
+        form_field.options.last.id.to_s => '90'
+      })
+    end
   end
 
   describe "GET 'edit'" do

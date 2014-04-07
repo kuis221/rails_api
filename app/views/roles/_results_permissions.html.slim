@@ -31,5 +31,10 @@
         .span5
           = permission_checkbox(f, :gva_report, Campaign)
 
+      .span7
+        .span5 Event Status 
+        .span5
+          = permission_checkbox(f, :event_status, Campaign)
+
   = hidden_field_tag :partial, :results_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

@@ -28,6 +28,16 @@ jQuery ->
 		}
 	]
 
+	$("a[rel=popover]").popover()
+	$(".tooltip").tooltip()
+	$("a[rel=tooltip]").tooltip()
+	$("div.gallery").photoGallery()
+
+	$(document).on 'click', (e) ->
+		$('.has-popover').each () ->
+			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
+				$(this).popover('hide')
+
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
 
 	$('header .nav #notifications').notifications();
@@ -52,7 +62,7 @@ jQuery ->
 		$('.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true})
 		$('.has-popover').popover({html: true})
-		$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
+		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
 		$('.toggle-input .btn').click ->
 			$this = $(this);
@@ -95,13 +105,14 @@ jQuery ->
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 
 			errorPlacement: (error, element) ->
-				label = element.closest(".control-group").find("label.control-label")
+				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
+				label = element.closest(".control-group").find("label.control-label") if label.length is 0
 				label.addClass('with_message')
 				if label.length > 0
 					if typeof element.data('segmentFieldId') isnt "undefined"
-						error.insertBefore label
+						error.addClass('segment-title-label').insertBefore label
 					else
-						error.addClass('segment-title-label').insertAfter label
+						error.insertAfter label
 				else
 					error.addClass('segment-title-label').insertAfter element
 
@@ -116,8 +127,7 @@ jQuery ->
 					scrollTop: element.offset().top - 200
 				, 1000
 			success: (element) ->
-				element
-					.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
+				element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
 		}
 

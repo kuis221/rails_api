@@ -17,6 +17,7 @@
 #  active            :boolean          default(TRUE)
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
+#  rating            :integer          default(0)
 #
 
 class AttachedAsset < ActiveRecord::Base
@@ -101,7 +102,6 @@ class AttachedAsset < ActiveRecord::Base
     integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
-
   end
 
   def activate!
@@ -132,8 +132,13 @@ class AttachedAsset < ActiveRecord::Base
   def download_url(style_name=:original)
     file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
       :secure => true,
+      :force_path_style => true,
       :expires => 24*3600, # 24 hours
       :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+  end
+
+  def is_thumbnable?
+    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
   end
 
   class << self
@@ -251,8 +256,7 @@ class AttachedAsset < ActiveRecord::Base
     # Set attachment attributes from the direct upload
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
-      if new_record? and self.file_file_name.nil?
-        direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+      if new_record? and self.file_file_name.nil? && direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
         direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
 
@@ -265,6 +269,7 @@ class AttachedAsset < ActiveRecord::Base
           self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
         end
       end
+    rescue AWS::S3::Errors::NoSuchKey
     end
 
     # Queue file processing
