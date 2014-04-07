@@ -66,8 +66,8 @@ module Brandscopic
     config.assets.precompile += %w[
       admin/active_admin.css admin/active_admin.js
       jquery.placesAutocomplete.js
-      jquery.formBuilder.js
-      reports.css form_builder.css
+      reports.css jquery.reportBuilder.js jquery.reportTableScroller.js
+      form_builder.css jquery.formBuilder.js
       jquery.campaignFormBuilder.js
       ]
 

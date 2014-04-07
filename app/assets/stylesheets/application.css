@@ -30,7 +30,6 @@
  *= require 'date_ranges'
  *= require 'day_parts'
  *= require 'campaigns'
- *= require 'reports'
  *= require 'cross_browser'
  *= require 'responsive'
  */

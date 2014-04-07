@@ -30,5 +30,6 @@
         tbody
           = render 'report_rows' unless skip_report_rows
 
-  javascript:
-    $('.report-table').reportTableScroller();
+  - content_for :footer
+    javascript:
+      $('.report-table').reportTableScroller();
