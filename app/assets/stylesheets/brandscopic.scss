@@ -3218,8 +3218,10 @@ table.table {
 				top: 4px;
 			}
 			&[data-type="TextArea"]:before{
-				content:"\e60c";
+				content:"\e60f";
+				font-size: 15px;
 				top: 2px;
+				left: 2px;
 			}
 			&[data-type="Number"]:before{
 				content:"\e609";
@@ -3262,7 +3264,10 @@ table.table {
 				left: 1px;
 			}
 			&[data-type="Marque"]:before{
-				content:"\e60a";
+				content:"\e60e";
+				font-size: 18px;
+				top: 3px;
+				left: 2px;
 			}
 			&[data-type="LikertScale"]{
 				padding-left:44px;
