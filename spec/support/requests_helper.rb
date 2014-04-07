@@ -74,7 +74,7 @@ module CapybaraBrandscopicHelpers
     found = false
     all('label', text: option).each do |label|
       label.all('div.checker').each do |cb|
-        cb.click
+        cb.trigger('click')
         found = cb
       end
     end
@@ -145,10 +145,7 @@ module RequestsHelper
   def event_team_member(member)
     find('#event-team-members #event-member-'+member.id.to_s)
   end
-
 end
-
-
 
 module Capybara
   module Node

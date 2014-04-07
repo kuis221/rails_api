@@ -84,4 +84,34 @@ describe Analysis::ReportsHelper do
       results[goals[4].id][:submitted].should == 0
     end
   end
+
+  describe "#total_accounts_for_events" do
+    it "should return the total number of accounts where Events have taken place" do
+      company_user = FactoryGirl.create(:company_user, company: @company, role: FactoryGirl.create(:non_admin_role, company: @company))
+
+      campaign1 = FactoryGirl.create(:campaign, company: @company)
+      campaign2 = FactoryGirl.create(:campaign, company: @company)
+
+      place1 = FactoryGirl.create(:place)
+      place2 = FactoryGirl.create(:place)
+      place3 = FactoryGirl.create(:place)
+
+      company_user.campaigns << campaign1
+      company_user.places << place1
+      company_user.places << place2
+
+      events = [
+        FactoryGirl.create(:approved_event, company: @company, campaign: campaign1, place: place1),
+        FactoryGirl.create(:approved_event, company: @company, campaign: campaign1, place: place2),
+        FactoryGirl.create(:approved_event, company: @company, campaign: campaign2, place: place2),
+        FactoryGirl.create(:approved_event, company: @company, campaign: campaign2, place: place3)
+      ]
+
+      helper.instance_variable_set(:@events_scope, Event.accessible_by_user(company_user).by_campaigns(campaign1.id))
+
+      result = helper.total_accounts_for_events
+
+      result.should == 2
+    end
+  end
 end

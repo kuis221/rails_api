@@ -1,4 +1,4 @@
-window.FormBuilder = {
+window.CampaignFormBuilder = {
 	modules: [],
 
 	init: (options) ->
@@ -100,7 +100,7 @@ window.FormBuilder = {
 
 	buildField: (options) ->
 		className = options.type;
-		className = 'FormBuilder.' + className.charAt(0).toUpperCase() + className.substring(1).toLowerCase() + 'Field'
+		className = 'CampaignFormBuilder.' + className.charAt(0).toUpperCase() + className.substring(1).toLowerCase() + 'Field'
 		eval "var field = new #{className}(options)"
 		field
 
@@ -275,7 +275,7 @@ window.FormModule = {
 }
 
 
-window.FormBuilder.TextField = (options) ->
+window.CampaignFormBuilder.TextField = (options) ->
 	@options = $.extend({
 		name: 'Text Field',
 		kpi_id: null,
@@ -347,7 +347,7 @@ window.FormBuilder.TextField = (options) ->
 	@field
 
 
-window.FormBuilder.SectionField = (options) ->
+window.CampaignFormBuilder.SectionField = (options) ->
 	@options = $.extend({
 		name: 'Section',
 		kpi_id: null,
@@ -364,12 +364,12 @@ window.FormBuilder.SectionField = (options) ->
 	])
 
 	for field in @options.fields
-		@fields.append FormBuilder.buildField(field)
+		@fields.append CampaignFormBuilder.buildField(field)
 
 	@field.find('.section-fields').sortable({
 		update: ( event, ui ) ->
 			if not ui.item.data('field')
-				ui.item.replaceWith(eval("new FormBuilder.#{ui.item.data('class')}({})"))
+				ui.item.replaceWith(eval("new CampaignFormBuilder.#{ui.item.data('class')}({})"))
 	})
 
 	@field.data 'field', @
@@ -399,7 +399,7 @@ window.FormBuilder.SectionField = (options) ->
 	@field
 
 
-window.FormBuilder.NumberField = (options) ->
+window.CampaignFormBuilder.NumberField = (options) ->
 	@options = $.extend({
 		name: 'Number Field',
 		predefined_value: '',
@@ -472,7 +472,7 @@ window.FormBuilder.NumberField = (options) ->
 	@field
 
 
-window.FormBuilder.TextareaField = (options) ->
+window.CampaignFormBuilder.TextareaField = (options) ->
 	@options = $.extend({
 		name: 'Paragraph',
 		options: {predefined_value: '', required: 'false'},
@@ -519,7 +519,7 @@ window.FormBuilder.TextareaField = (options) ->
 	@field
 
 
-window.FormBuilder.PhotosField = (options) ->
+window.CampaignFormBuilder.PhotosField = (options) ->
 	@options = $.extend({
 		name: 'Photos'
 	}, options)
@@ -546,7 +546,7 @@ window.FormBuilder.PhotosField = (options) ->
 
 	@field
 
-window.FormBuilder.VideosField = (options) ->
+window.CampaignFormBuilder.VideosField = (options) ->
 	@options = $.extend({
 		name: 'Select a file'
 	}, options)
@@ -572,7 +572,7 @@ window.FormBuilder.VideosField = (options) ->
 
 	@field
 
-window.FormBuilder.CountField = (options) ->
+window.CampaignFormBuilder.CountField = (options) ->
 	@options = $.extend({
 		name: 'Option Field',
 		options: {capture_mechanism: 'dropdown'},
@@ -649,7 +649,7 @@ window.FormBuilder.CountField = (options) ->
 	@field
 
 
-window.FormBuilder.PercentageField = (options) ->
+window.CampaignFormBuilder.PercentageField = (options) ->
 	@options = $.extend({
 		name: 'Option Field',
 		predefined_value: '',
@@ -719,7 +719,7 @@ window.FormBuilder.PercentageField = (options) ->
 
 	@field
 
-window.FormBuilder.CommentsField = (options) ->
+window.CampaignFormBuilder.CommentsField = (options) ->
 	@options = $.extend({
 		name: 'Comments',
 		predefined_value: '',
@@ -751,7 +751,7 @@ window.FormBuilder.CommentsField = (options) ->
 
 	@field
 
-window.FormBuilder.ExpensesField = (options) ->
+window.CampaignFormBuilder.ExpensesField = (options) ->
 	@options = $.extend({
 		name: 'Expenses'
 	}, options)
@@ -778,7 +778,7 @@ window.FormBuilder.ExpensesField = (options) ->
 
 	@field
 
-window.FormBuilder.SurveysField = (options) ->
+window.CampaignFormBuilder.SurveysField = (options) ->
 	@options = $.extend({
 		name: 'Surveys',
 		options: {brands: []}

@@ -110,7 +110,12 @@ class Event < ActiveRecord::Base
       )', ids, ids, true
       )
   }
-  scope :in_places, ->(places) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil }.compact.uniq+[0]) }
+  scope :in_places, ->(places) {
+    joins(:place).where(
+      'events.place_id in (?) or events.place_id in (
+          select place_id FROM locations_places where location_id in (?)
+      )', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil}.compact.uniq+[0])
+  }
 
   track_who_does_it
 

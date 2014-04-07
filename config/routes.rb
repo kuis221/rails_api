@@ -133,6 +133,7 @@ Brandscopic::Application.routes.draw do
     end
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
+    get :report_groups, to: 'gva#report_groups'
 
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
       get :build, on: :member
@@ -148,6 +149,9 @@ Brandscopic::Application.routes.draw do
     get :kpi_report, to: 'kpi_reports#index'
     post :kpi_report, to: 'kpi_reports#report'
     get :kpi_report_status, to: 'kpi_reports#status'
+
+    get :event_status, to: 'event_status#index'
+    post :event_status, to: 'event_status#report'
   end
 
   namespace :analysis do
@@ -231,7 +235,9 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :activity_types, only: [:edit, :update]
+    resources :activity_types do
+      get :set_goal
+    end
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
@@ -409,6 +415,14 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :activities, only: [:show, :edit, :update] do
+    member do
+      get :deactivate
+      get :activate
+    end
+  end
+
+  resources :activity_types  do
+    get :autocomplete, on: :collection
     member do
       get :deactivate
       get :activate
