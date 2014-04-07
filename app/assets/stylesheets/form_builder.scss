@@ -51,14 +51,14 @@
 				}
 			}
 			&.ui-sortable-placeholder {
-				height: 2px;
+				height: 2px !important;
 				opacity: 1;
 				background-color: $grey_three;
 				border-radius: 0;
 				visibility: visible !important;
 				padding: 0;
 				position: relative;
-				width: 100%;
+				width: 100% !important;
 				border: none;
 				&:before {
 					content: "||";
