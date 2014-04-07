@@ -27,8 +27,8 @@ $.widget 'nmk.reportTableScroller',
 			true
 
 		@element.on 'click', '.report-collapse-button', (e) =>
-			$(e.target).toggleClass('icon-minus').toggleClass('icon-plus')
-			collapsed = $(e.target).hasClass('icon-plus')
+			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
+			collapsed = $(e.target).hasClass('icon-expand')
 			row = $(e.target).closest('tr')
 			level = row.data('level')
 			next = row.next('tr')
@@ -38,6 +38,21 @@ $.widget 'nmk.reportTableScroller',
 				else
 					next.show()
 				next = next.next('tr')
+
+			false
+
+		@element.on 'click', '.expand-all', (e) =>
+			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
+			if $(e.target).hasClass('icon-collapse') # Expand all
+				$(e.target).attr('title', 'Collapse All')
+				@element.find('tbody tr[data-level]').show()
+				@element.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+			else
+				$(e.target).attr('title', 'Expand All')
+				@element.find('tbody tr[data-level!=0]').hide()
+				@element.find('tbody tr[data-level] .icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+
+			false
 		@
 
 	_destroy: () ->

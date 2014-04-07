@@ -475,6 +475,25 @@ $report_border_color: #ccc;
 		tr:hover td{
 			background-color: transparent;
 		}
+
+		.icon-collapse, .icon-expand{
+			display:inline-block;
+			height:20px;
+			margin-right:10px;
+			width:10px;
+			color: $text !important;
+			text-decoration: none !important;
+		}
+		.icon-expand:before {
+			content: "\e002";
+			font-size: 12px;
+		}
+		.icon-collapse:before {
+			top: 3px;
+			content: "\e004";
+		}
+
+
 		thead {
 			border-bottom: thin solid $report_border_color;
 			tr {
@@ -585,17 +604,6 @@ $report_border_color: #ccc;
 		li.team:after {
 			content: "TEAM";
 		}
-	}
-}
-
-.icon-minus, .icon-plus{
-	display:inline-block;
-	height:20px;
-	margin-right:10px;
-	width:10px;
-	&:hover{
-		color: $text !important;
-		text-decoration: none !important;;
 	}
 }
 

@@ -27,7 +27,13 @@
     $('#collection-list-filters').filteredList({
       'source': '#{rows_results_report_path}',
       'filtersUrl': '#{filters_results_report_path}',
-      'listContainer' : 'table.report-table tbody'
+      'listContainer' : 'table.report-table tbody',
+      'onItemsLoad' : function(response, page) {
+        if ($('a.expand-all').hasClass('icon-collapse')) {
+          response.find('tbody tr[data-level]').show()
+          response.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+        }
+      }
     });
 
     var downloading = false;
