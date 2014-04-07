@@ -110,6 +110,10 @@ $.widget 'nmk.formBuilder', {
 		$.map @formWrapper.find('.field'), (element, index) =>
 			$(element).data('field')
 
+	placeFieldAttributes: (field) ->
+		position = field.offset()
+		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
+
 	_showFieldAttributes: (field) ->
 		@formWrapper.find('.selected').removeClass('selected')
 		field.addClass('selected')
@@ -118,16 +122,19 @@ $.widget 'nmk.formBuilder', {
 		@attributesPanel.html('').append $('<div class="arrow-left">'), $field.attributesForm()
 		applyFormUiFormatsTo @attributesPanel
 
+		@placeFieldAttributes field
+
+		field.on 'change.attrFrm', () =>
+			@placeFieldAttributes field
+
 		# Store the value of each text field to compare against on the blur event
 		$.each $('input[type=text]'), (index, elm) =>
 			$(elm).data 'saved-value', $(elm).val()
 
-		position = field.offset()
-		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
-
 		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
 			@formWrapper.find('.selected').removeClass('selected')
+			field.off 'change.attrFrm'
 			@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
@@ -263,8 +270,12 @@ FormField = Class.extend {
 			@field.remove()
 
 	refresh: () ->
-		@field.html('').append(@_renderField())
+		@field.html('').append(
+			$('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
+			@_renderField()
+		)
 		applyFormUiFormatsTo @field
+		@field.trigger 'change'
 		@
 
 	_renderField: ->
@@ -679,7 +690,7 @@ LikertScaleField = FormField.extend {
 					$('<tbody>').append(
 						$.map @attributes.statements, (statement, index) =>
 							$('<tr>').append($('<td>').text(statement.name)).append(
-								$.map @attributes.statements, (statement, index) =>
+								$.map @attributes.options, (option, index) =>
 									$('<td>').append($('<input type="radio">'))
 							)
 					)
