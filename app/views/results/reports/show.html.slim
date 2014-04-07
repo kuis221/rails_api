@@ -1,8 +1,8 @@
 #report-builder
-  #resource-filter-column.sidebar
+  #resource-filter-column.sidebar style="#{resource.filters.empty? ? 'display: none' : ''}"
     #collection-list-filters
 
-  .main.with-details-close-bar
+  .main.with-details-close-bar class="#{resource.filters.empty? ? 'no-margin' : ''}"
     = resource_details_bar("You are viewing #{resource.name} report. Click to close.", collection_path)
     - if can?(:edit, resource)
       .pull-left

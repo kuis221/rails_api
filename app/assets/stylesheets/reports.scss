@@ -69,6 +69,11 @@ ul.reports-list {
 
 	#resource-close-details.affix {
 		right: 250px;
+
+	}
+
+	.main.no-margin #resource-close-details.affix {
+		right: 10px;
 	}
 
 	.btn-save-report{
