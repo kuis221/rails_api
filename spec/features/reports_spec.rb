@@ -213,6 +213,9 @@ feature "Reports", js: true do
       visit build_results_report_path(@report)
 
       within report_fields do
+        expect(page).to have_content('VENUE')
+        expect(page).to have_content('USER')
+        expect(page).to have_content('TEAM')
         expect(page).to have_content('ABC KPI')
       end
 
@@ -220,17 +223,24 @@ feature "Reports", js: true do
 
       within report_fields do
         expect(page).to have_no_content('ABC KPI')
+        expect(page).to have_no_content('VENUE')
+        expect(page).to have_no_content('USER')
+        expect(page).to have_no_content('TEAM')
       end
 
       fill_in 'field_search', with: 'ABC'
 
       within report_fields do
         expect(page).to have_content('ABC KPI')
+        expect(page).to have_no_content('VENUE')
+        expect(page).to have_no_content('USER')
+        expect(page).to have_no_content('TEAM')
       end
 
       fill_in 'field_search', with: 'venue'
       within report_fields do
         expect(page).to have_no_content('ABC')
+        expect(page).to have_content('VENUE')
         expect(page).to have_content('Name')
         expect(page).to have_content('State')
         expect(page).to have_content('City')
@@ -238,8 +248,13 @@ feature "Reports", js: true do
     end
 
     scenario "drag fields to the different field lists" do
-      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
-      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company, description: 'This is the description for kpi#1', kpi_type: 'number')
+      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company, description: 'This is the description for kpi#2',
+        kpi_type: 'count', kpis_segments: [
+          FactoryGirl.create(:kpis_segment, text: 'First option'),
+          FactoryGirl.create(:kpis_segment, text: 'Second option')
+        ]
+      )
       FactoryGirl.create(:kpi, name: 'Kpi #3', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
@@ -248,6 +263,25 @@ feature "Reports", js: true do
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+
+      # Test the tooltip
+      find("li", text: 'Kpi #1').hover
+      within('.tooltip') do
+        expect(page).to have_content('This is the description for kpi#1')
+        expect(page).to have_content('TYPE')
+        expect(page).to have_content('Number')
+        expect(page).to have_no_content('OPTIONS')
+      end
+
+      find("li", text: 'Kpi #2').hover
+      within('.tooltip') do
+        expect(page).to have_content('This is the description for kpi#2')
+        expect(page).to have_content('TYPE')
+        expect(page).to have_content('Count')
+        expect(page).to have_content('OPTIONS')
+        expect(page).to have_content('First option, Second option')
+      end
 
       within ".sidebar" do
         expect(field_list('columns')).to have_no_content('Values')
@@ -288,10 +322,66 @@ feature "Reports", js: true do
       end
     end
 
+
+    scenario "user can add fields to the different field lists using the context menu" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #2', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #3', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
+      FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
+
+      visit build_results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      within ".sidebar" do
+        expect(field_list('columns')).to have_no_content('Values')
+        within(field_context_menu 'Kpi #1') { click_js_link 'Add to Values' }
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        expect(field_list('values')).to have_content('Kpi #1')
+        expect(field_list('columns')).to have_content('Values')
+
+        within(field_context_menu 'Kpi #2') { click_js_link 'Add to Columns' }
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        expect(field_list('columns')).to have_content('Kpi #2')
+
+        within(field_context_menu 'Kpi #3') { click_js_link 'Add to Filters' }
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('filters')).to have_content('Kpi #3')
+
+        within(field_context_menu 'Kpi #4') { click_js_link 'Add to Rows' }
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+        expect(field_list('rows')).to have_content('Kpi #4')
+
+      end
+
+      # Save the report and reload page to make sure they were correctly saved
+      click_js_button "Save"
+      wait_for_ajax
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      visit build_results_report_path(@report)
+      within ".sidebar" do
+        # Each KPI should be in the correct list
+        expect(field_list('values')).to have_content('Sum of Kpi #1')
+        expect(field_list('columns')).to have_content('Values')
+        expect(field_list('columns')).to have_content('Kpi #2')
+        expect(field_list('filters')).to have_content('Kpi #3')
+        expect(field_list('rows')).to have_content('Kpi #4')
+
+        # and they should not be in the source fields lists
+        expect(field_list('fields')).to have_no_content('Kpi #1')
+        expect(field_list('fields')).to have_no_content('Kpi #2')
+        expect(field_list('fields')).to have_no_content('Kpi #3')
+        expect(field_list('fields')).to have_no_content('Kpi #4')
+      end
+    end
+
     scenario "user can change the aggregation method for values" do
       visit build_results_report_path(@report)
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
-      field_list('values').find('.field-settings-btn').click
+      field_list('values').find('li').click
       within ".report-field-settings" do
         select_from_chosen('Average', from: 'Summarize by')
         find_field('Label').value.should == 'Average of Impressions'
@@ -341,7 +431,7 @@ feature "Reports", js: true do
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Average', from: 'Summarize by')
         expect(find_field('Label').value).to eql 'Campaign Name'
@@ -353,41 +443,41 @@ feature "Reports", js: true do
 
       within "#report-container tr.level_0" do
         expect(page).to have_content('My Super Campaign')
-        expect(page).to have_content('75.0')
-        expect(page).to have_content('1500.0')
+        expect(page).to have_content('75.00')
+        expect(page).to have_content('1,500.00')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Max', from: 'Summarize by')
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('100.0')
-        expect(page).to have_content('2000.0')
+        expect(page).to have_content('100.00')
+        expect(page).to have_content('2,000.00')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Min', from: 'Summarize by')
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('50.0')
-        expect(page).to have_content('1000.0')
+        expect(page).to have_content('50.00')
+        expect(page).to have_content('1,000.00')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Sum', from: 'Summarize by')
       end
       find('body').click
       within "#report-container tr.level_0" do
-        expect(page).to have_content('150.0')
-        expect(page).to have_content('3000.0')
+        expect(page).to have_content('150.00')
+        expect(page).to have_content('3,000.00')
       end
 
-      field_list('rows').find('li[data-field-id="campaign:name"]').find('.field-settings-btn').click
+      field_list('rows').find('li[data-field-id="campaign:name"]').click
       within '.report-field-settings' do
         select_from_chosen('Count', from: 'Summarize by')
       end
@@ -407,7 +497,7 @@ feature "Reports", js: true do
       field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
-      field_list('values').find('li', text: 'Sum of Interactions').find('.field-settings-btn').click
+      field_list('values').find('li', text: 'Sum of Interactions').click
       within '.report-field-settings' do
         select_from_chosen('% of Column', from: 'Display as')
         expect(find_field('Label').value).to eql 'Sum of Interactions'
@@ -438,6 +528,24 @@ feature "Reports", js: true do
       # Drag the field to outside the list make check it's removed from the columns list
       # and visible in the source fields list
       field_list('columns').find("li", text: 'Kpi #1').drag_to find('#report-container')
+      expect(field_list('columns')).to have_no_content('Kpi #1')
+      expect(field_list('fields')).to have_content('Kpi #1')
+    end
+
+    scenario "user can remove a field by clicking on the X" do
+      FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
+
+      visit build_results_report_path(@report)
+
+      # The save button should be disabled
+      expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
+
+      find("li", text: 'Kpi #1').drag_to field_list('columns')
+      find_button('Save') # The button should become active
+
+      # Drag the field to outside the list make check it's removed from the columns list
+      # and visible in the source fields list
+      hover_and_click "#report-columns li", 'Remove'
       expect(field_list('columns')).to have_no_content('Kpi #1')
       expect(field_list('fields')).to have_content('Kpi #1')
     end
@@ -502,5 +610,10 @@ feature "Reports", js: true do
 
   def field_list(name)
     find("#report-#{name}")
+  end
+
+  def field_context_menu(field_name)
+    find('.sidebar li.report-field', text: field_name).click
+    find(:xpath, "//body").find("div.report-field-settings")
   end
 end

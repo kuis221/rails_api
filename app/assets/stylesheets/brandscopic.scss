@@ -1540,6 +1540,35 @@ label{
 			top:-22px;
 		}
 	}
+
+	&.time-filter{
+		label {
+			padding: 0;
+			color: $user_menu;
+		}
+		input.timepicker-filter {
+			width: 70px;
+			background: url('time.svg') no-repeat left !important;
+			padding-left:20px;
+			text-align: center;
+			border: 1px solid $user_menu;
+			color: $grey_three;
+			&:focus {
+				border-color: $grey_three;
+			}
+		}
+		label.time-end {
+			position: relative;
+			margin-left: 5px;
+			&:before {
+				content: '-';
+				display: inline-block;
+				position: absolute;
+				left: -10px;
+				top: 33px;
+			}
+		}
+	}
 }
 .clear-filters {
 	text-align: right;
@@ -1828,17 +1857,19 @@ ul.kpis-list{
 #kpis-trends-bars {
 	a{
 		color:$grey_three;
-		font-size: 13px;
+		font-size: 12px;
 		&:hover{
 			text-decoration: underline;
 		}
 	}
 	.name {
 		display: inline-block;
-		font-size: 16px;
+		font-size: 13px;
 		font-weight: bold;
-		margin-right: 20px;
-		margin-bottom: 15px;
+		margin-right: 6px;
+		margin-bottom: 6px;
+		padding-top: 2px;
+		padding-left: 1px;
 	}
 	.container-kpi-trend{
 		margin-top: 30px;
@@ -1847,17 +1878,16 @@ ul.kpis-list{
 
 	.kpi-trend {
 		font-size: 12px;
-		margin-bottom: 30px;
+		margin-bottom: 12px;
 		overflow: visible;
 
 		.goal-label {
 			white-space: nowrap;
 			position: absolute;
 			right: 0;
-			top: -30px;
+			top: -25px;
 			div {
 				b{ font-size: 14px; }
-				margin-left: 50%;
 			}
 		}
 	}
@@ -1868,7 +1898,7 @@ ul.kpis-list{
 		position: relative;
 		.progress {
 			width: auto !important;
-			height: 20px;
+			height: 10px;
 			margin-bottom: 0px !important;
 			.bar {
 				text-align: right;
@@ -1889,12 +1919,18 @@ ul.kpis-list{
 
 		.today-line-indicator {
 			position: absolute;
-			width: 2px;
+			width: 0;
 			background-color: $grey_three;
-			height: 29px;
-			top: -5px;
-			border:1px solid $grey_three;
-			border-radius: 2px;
+			height: 0;
+			top: -10px;
+			&:before{
+				content: "\e004";
+				display: inline-block;
+				font-family: "icons";
+				font-size: 12px;
+				left: 5px;
+				top: 4px;
+			}
 			&.green{
 				background-color: $dark_green;
 				border-color: $dark_green;
@@ -1908,7 +1944,7 @@ ul.kpis-list{
 			position: absolute;
 			width: 2px;
 			background-color: #959595;
-			height: 30px;
+			height: 23px;
 			&.goal-indicator{
 				top: -10px;
 			}
@@ -1919,6 +1955,8 @@ ul.kpis-list{
 			white-space: nowrap;
 			div {
 				margin-left: -120%;
+				margin-top: -2px;
+				float:left;
 				b{
 				  color: rgb(139, 184, 65);
 					font-size: 14px;
@@ -1932,10 +1970,12 @@ ul.kpis-list{
 			text-align: right;
 			margin-left: -50%;
 			div {
+				margin-top: -2px;
 				margin-left: -120%;
 				margin-right: -15%;
 				b{
-				  color: rgb(58, 150, 197);
+					top: -1px;
+					color: rgb(58, 150, 197);
 					font-size: 14px;
 				}
 			}
@@ -1943,16 +1983,16 @@ ul.kpis-list{
 		.remaining-label {
 			color:$brand;
 			position: absolute;
-			right: -350px;
+			right: -300px;
 			width: 300px;
-			top: -2px;
+			top: -13px;
 			&.percentage {
 				top: -21px;
 			}
 			b {
 				display: inline-block;
-				font-size: 28px;
-				font-weight: 400;
+				font-size: 24px;
+				font-weight: 900;
 				float: left;
 				width: 150px;
 				text-align: right;
@@ -4914,30 +4954,45 @@ body.campaigns{
 			margin-left: 17px;
 		}
 	}
-  .color_map{
-		margin-left:54%;
-		font-size: 12px;
-		color: rgb(152,152,152);
-		.executed{
-			margin: auto 5px 0 auto;
-			float:left;
-		}
-		span.bullet{
-			height: 10px;
-			border-radius: 5px;
-			width: 10px;
-			display: block;
-			margin: 5px 5px 0 auto;
-			float:left;
-			
-			&.executed{
-				background-color: rgb(139, 184, 65);
+	.map_header{
+		bottom: 20px;
+		margin-right: 350px;
+		color: $brand;
+		position: relative;
+		.color_map{
+			right: 0;
+			position: absolute;
+			font-size: 12px;
+			color: rgb(152,152,152);
+			width: 226px;
+			.executed, .scheduled{
+				margin: auto 5px 0 auto;
+				float:left;
 			}
-			&.scheduled{
-				background-color: rgb(58, 150, 197);
+			span.bullet{
+				height: 10px;
+				border-radius: 5px;
+				width: 10px;
+				display: block;
+				margin: 5px 5px 0 auto;
+				float:left;
+				&.executed{
+					background-color: rgb(139, 184, 65);
+				}
+				&.scheduled{
+					background-color: rgb(58, 150, 197);
+				}
+			}
+			span.indicator{
+				&.today:before {
+					content: "\e004";
+					font-family: "icons";
+					position: relative;
+					top: 4px;
+				}
 			}
 		}
-  }
+	}
 	.box_demographics, .box_consumer_reach{
 		h3{
 			margin-top: 30px;
@@ -5853,13 +5908,8 @@ body.campaigns_report, body.staff_report {
 			}
 		}
 		.today-line-indicator {
-			position: absolute;
-			width: 86px;
-			height: 0px;
-			border: 3px solid #989898;
-			border-radius: 2px;
-			left: -6px;
-			z-index: 1;
+			content: "\e004";
+			font-family: "icons";
 		}
 	}
 
@@ -5953,17 +6003,25 @@ body{
 
 // TOOLTIP STYLES
 
-.tooltip-inner{
-	background-color:$grey_three;
-	opacity: 1;
-	z-index: 90;
-}
+.tooltip {
+	.tooltip-inner{
+		background-color:$grey_five;
+		opacity: 1;
+		z-index: 90;
+	}
 
-.tooltip .tooltip-arrow{
-	border-left:5px solid transparent;
-	border-right:5px solid transparent;
-	border-top:5px solid $grey_three;
-	opacity: 0.5;
+	.tooltip .tooltip-arrow{
+		border-left:5px solid transparent;
+		border-right:5px solid transparent;
+		border-top:5px solid $grey_five;
+		opacity: 0.5;
+	}
+	&.left{
+		.tooltip-arrow{
+			border-left-color: $grey_five;
+			border-top-color: transparent;
+		}
+	}
 }
 
 
@@ -6201,7 +6259,7 @@ ul#reports-list {
 						text-decoration: none;
 						&.photo-download-link{
 							float:right;
-							margin: 11px 5px 12px 12px;
+							margin: 7px 0px 7px 10px;
 							position: relative;
 							&:before{
 								color: $grey_one;
@@ -6608,29 +6666,34 @@ ul#reports-list {
 			position: relative;
 			&:before{
 				content: "\e600";
-				color: white;
+				color: $grey_one;
 				display: inline-block;
 				font-family: 'icons';
 				font-size: 16px;
-				left: -29px;
-				top: 2px;
+				left: -27px;
+				top: 7px;
 				position: absolute;
 				-webkit-font-smoothing: antialiased;
 			}
+			.typeahead {
+				border: 1px solid $grey_three !important;
+			}
+
 			.list{
-				margin-bottom: 15px;
+				margin-bottom: 6px;
 				
 				.tag{
-					font-size: 12px;
+					font-size: 11px;
 					font-weight: 900;
-					border: 1px solid white;
-					color: $grey_one;
+					border: 1px solid $grey_one;
+					color: white;
 					display: inline-block;
-					margin: 0 7px 6px 0;
-					padding: 2px 7px 3px;
+					margin: 9px 7px 6px 0;
+					padding: 0px 7px 4px 5px;
 					-webkit-border-radius: 3px;
 					-moz-border-radius: 3px;
 					border-radius: 3px;
+					height: 16px;
 					.close{
 						position: relative !important;
 						border-left-width-ltr-source: physical;
@@ -6640,17 +6703,31 @@ ul#reports-list {
 						left: 1px;
 						right: 0;
 						top: 0;
+						width: 15px;
+						text-shadow: 0 !important;
+						&:before{
+							content: "\e019";
+							display: block;
+							font-family: 'icons';
+							font-size: 10px;
+							font-weight: 400 !important;
+							display: inline-block;
+							position:absolute;
+							-webkit-font-smoothing: antialiased;
+							top: 0px;
+							text-shadow: none !important;
+						}
 					}
 				}
 			}
 			.typeahead{
 				background-color: rgb(54,54,54);
-				border: 1px solid white;
+				border: 1px solid $grey_two;
 				box-sizing: border-box;
-				color: white;
+				color: $grey_two;
 				display: block;
-				height: 36px;
-				padding:3px;
+				height: 33px;
+				padding:3px 3px 0px 3px;
 				width: 235px;
 				border-radius: 6px !important;
 				&:focus{
@@ -6692,32 +6769,6 @@ ul#reports-list {
 		}
 	}
 }
-
-.select2-dropdown{
-	ul{width: 100%;}
-	border-radius: 4px;
-	.select2-results{
-		color: $grey_one;
-		border-radius: 4px;
-		width: 100% !important;
-		li{
-			width: 100%;
-			border-radius: 4px;
-		}
-		background-color: rgb(54, 54, 54);
-		width: 100%;
-		.select2-results-selectable{
-			width: 90%;
-			border-radius: 4px;
-		}
-		.select2-highlighted {
-			background-color: rgb(0, 0, 0);
-			color: $grey_one;
-		}
-	}
-}
-
-
 
 /*--ICONS FOR ALL DATA SECTIONS --*/
 

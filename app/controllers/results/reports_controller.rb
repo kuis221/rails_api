@@ -65,9 +65,9 @@ class Results::ReportsController < InheritedResources::Base
     def permitted_params
       params.permit(report: [
         :name, :description, :sharing, {sharing_selections: []},
-        { rows: [:field, :label, :aggregate] },
+        { rows: [:field, :label, :aggregate, :precision] },
         { columns: [:field, :label] },
-        { values: [:field, :label, :aggregate, :display] },
+        { values: [:field, :label, :aggregate, :precision, :display] },
         { filters: [:field, :label] }
       ])[:report] || {}
     end

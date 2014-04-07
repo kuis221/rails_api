@@ -24,37 +24,6 @@ javascript:
     'listContainer' : 'table.report-table tbody'
   });
 
-  if ( false ) {
-    var doneLoading = false;
-    $.get('#{results_report_path(resource, format: :js)}', function(){
-      haveReachedTheEnd = ($('#report-container table').length == 0);
-      var infiniteScroller = $('#report-container').infiniteScrollHelper({
-        loadMore: function(page) {
-          if (!haveReachedTheEnd) {
-            doneLoading = false;
-            $('.report-loading-spinner').show();
-            $.get('#{rows_results_report_path(resource)}?page='+page, function(response){
-              $('.report-loading-spinner').hide();
-              if (response == '') {
-                haveReachedTheEnd = true
-              } else {
-                $('#report-container table tbody').append(response)
-                doneLoading=true
-              }
-            });
-          }
-          else {
-            false
-          }
-        },
-        doneLoading: function() {
-          return doneLoading;
-        }
-      });
-      doneLoading = true;
-    });
-  }
-
   var downloading = false;
   $('.report-link').click(function(){
     if (!downloading){

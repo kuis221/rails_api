@@ -1,15 +1,15 @@
 #report-builder
-  #resource-filter-column.sidebar
+  .sidebar
     = render 'fields_list'
+    .fixed-height-lists
+      p.drag-message Drag fields between areas
+      = render 'filters_list'
 
-    p Drag fields between areas
-    = render 'filters_list'
+      = render 'columns_list'
 
-    = render 'columns_list'
+      = render 'rows_list'
 
-    = render 'rows_list'
-
-    = render 'values_list'
+      = render 'values_list'
 
   .main
     button.btn.btn-primary.btn-save-report disabled="disabled" data-disable-with="Saving..." Save

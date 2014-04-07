@@ -55,7 +55,7 @@ $.widget 'nmk.photoGallery', {
 
 	updateTags: (tags) ->
 		@tags_list.select2 $.extend(@_select2Options(), {tags: tags})
-		@tags_list.select2("container").find(".select2-input").attr("placeholder", "Add tags") 
+		@tags_list.select2("container").find(".select2-input").attr("placeholder", "Add tags")
 		if @image
 			@tags_list.select2 'data', @image.data('tags')
 
@@ -71,15 +71,13 @@ $.widget 'nmk.photoGallery', {
 				@tags_list.select2('data', tags);
 
 	_select2Options: () ->
-		{
-			placeholder: 'Add tags'
-			dropdownCssClass: 'select2-dropdown',
-			createSearchChoice: (term, data) =>
-				if 'create_tag' in @image.data('permissions')
-					{id: term, text: term}
-				else
-					return null
-		}
+		placeholder: 'Add tags'
+		dropdownCssClass: 'select2-dropdown'
+		createSearchChoice: (term, data) =>
+			if 'create_tag' in @image.data('permissions')
+				{id: term, text: term}
+			else
+				return null
 
 
 	setTitle: (title, url) ->
@@ -219,7 +217,7 @@ $.widget 'nmk.photoGallery', {
 				@rating.find('span').slice(0,@image.data('rating')).addClass('full').removeClass('empty')
 
 		@tags_list = $('<input id="tag_input" multiple="true" class="select2-field typeahead">')
-			.on "change", (e) => 
+			.on "change", (e) =>
 				@setTag(e)
 
 		if @gallery

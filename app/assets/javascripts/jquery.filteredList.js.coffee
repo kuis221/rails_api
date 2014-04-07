@@ -133,6 +133,8 @@ $.widget 'nmk.filteredList', {
 				@addSlider filter
 			else if filter.type is 'calendar'
 				@addCalendar filter
+			else if filter.type is 'time'
+				@addTimeFilter filter
 
 
 	addSlider: (filter) ->
@@ -144,8 +146,8 @@ $.widget 'nmk.filteredList', {
 		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
 			$slider,
-			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="'+min_value+'" />'),
-			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="'+max_value+'" />')
+			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
+			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
 
 		$slider.rangeSlider({
@@ -154,8 +156,13 @@ $.widget 'nmk.filteredList', {
 			arrows: false,
 			enabled: (max_value > min_value)
 		}).on "userValuesChanged", (e, data) =>
-			$filter.find('input.min').val Math.round(data.values.min)
-			$filter.find('input.max').val Math.round(data.values.max)
+			bounds = $(data.label).rangeSlider("bounds")
+			if data.values.min != bounds.min || data.values.max != bounds.max
+				$filter.find('input.min').val Math.round(data.values.min)
+				$filter.find('input.max').val Math.round(data.values.max)
+			else
+				$filter.find('input.min').val ''
+				$filter.find('input.max').val ''
 			@_filtersChanged()
 
 		if max_value == min_value
@@ -163,6 +170,25 @@ $.widget 'nmk.filteredList', {
 
 
 		@formFilters.append($filter)
+
+	addTimeFilter: (filter) ->
+		$filter = $('<div class="filter-wrapper time-filter">').data('name', filter.name).append(
+			$('<h3>').text(filter.label),
+			$('<div class="row-fluid">').append(
+				$('<div class="span6">').append(
+					$('<label class="time-start">From <input type="text" class="time-start timepicker-filter" name="'+filter.name+'[start]" value="" /></label>')
+				),
+				$('<div class="span6">').append(
+					$('<label class="time-end">To <input type="text" class="time-end timepicker-filter" name="'+filter.name+'[end]" value="" /></label>')
+				)
+			)
+		)
+
+		@formFilters.append($filter)
+
+		$filter.find('.timepicker-filter').on 'change', () =>
+			@_filtersChanged()
+		.timepicker className: 'timepicker-filter', timeFormat: 'g:i A'
 
 
 	addCalendar: (filter) ->

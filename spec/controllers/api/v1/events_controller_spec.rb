@@ -21,6 +21,22 @@ describe Api::V1::EventsController do
       result['results'].first.keys.should =~ ["id", "start_date", "start_time", "end_date", "end_time", "status", "event_status", "campaign", "place"]
     end
 
+    it "sencond page returns empty results" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+      place = FactoryGirl.create(:place)
+      events = FactoryGirl.create_list(:event, 3, company: company, campaign: campaign, place: place)
+      Sunspot.commit
+
+      get :index, auth_token: user.authentication_token, company_id: company.to_param, page: 2, format: :json
+      response.should be_success
+      result = JSON.parse(response.body)
+
+      result['results'].count.should == 0
+      result['total'].should == 3
+      result['page'].should == 2
+      result['results'].should be_empty
+    end
+
     it "return a list of events filtered by campaign id" do
       campaign = FactoryGirl.create(:campaign, company: company)
       other_campaign = FactoryGirl.create(:campaign, company: company)

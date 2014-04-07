@@ -1362,7 +1362,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     def permitted_search_params
-      params.permit(:start_date, :end_date, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
+      params.permit(:page, :start_date, :end_date, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
     end
 
     def load_contactable_from_request
