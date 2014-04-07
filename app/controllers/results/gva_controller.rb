@@ -34,7 +34,7 @@ class Results::GvaController < ApplicationController
       campaign.children_goals.for_areas_and_places
     else
       campaign.children_goals.for_users_and_teams
-    end.select('goalable_id, goalable_type').group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)
+    end.select('goalable_id, goalable_type').where('value IS NOT NULL').group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)
 
     @group_header_data = kpis_headers_data(@goalables)
 

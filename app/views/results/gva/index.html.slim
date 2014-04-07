@@ -45,7 +45,9 @@ javascript:
     $('#group-by-criterion a').removeClass('active');
     $(this).addClass('active');
     $("#group_by").val($(this).data('type'));
-    $('#report_campaign_id').trigger('change');
+    if ($('#report_campaign_id').val() != '') {
+      $('#report_campaign_id').trigger('change');
+    }
   });
 
   $(window).on('popstate', function(){
