@@ -3178,6 +3178,35 @@ table.table {
 	table{
 		margin-bottom: 0;
 	}
+	[data-type="Summation"]{
+		.field-option{
+			height: 50px;
+			width: 300px;
+		}
+		label{
+			margin-bottom: 15px;
+		}
+		.summation{
+			margin-bottom: 15px;
+			height: 40px;
+			line-height: 38px;
+			input{
+				float: right;
+				width: 200px;
+			}
+		}
+		.summation-total-field{
+			border-top: 2px solid $user_menu;
+			padding-top: 15px;
+			margin-top: 10px;
+			.summation{
+				margin-left: 15px;
+				&:first-of-type{
+					margin-top: 0;
+				}
+			}
+		}
+	}
 	.field{
 		height: auto !important;
 		width: auto !important;
@@ -3330,35 +3359,6 @@ table.table {
 		[data-type="Percentage"]{
 			label.percentage{
 				margin-bottom: 10px;
-			}
-		}
-		[data-type="Summation"]{
-			.field-option{
-				height: 50px;
-				width: 300px;
-			}
-			label{
-				margin-bottom: 15px;
-			}
-			.summation{
-				margin-bottom: 15px;
-				height: 40px;
-				line-height: 38px;
-				input{
-					float: right;
-					width: 200px;
-				}
-			}
-			.summation-total-field{
-				border-top: 2px solid $user_menu;
-				padding-top: 15px;
-				margin-top: 10px;
-				.summation{
-					margin-left: 15px;
-					&:first-of-type{
-						margin-top: 0;
-					}
-				}
 			}
 		}
 		[data-type="LikertScale"]{
