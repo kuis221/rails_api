@@ -155,6 +155,10 @@ class Ability
         report.created_by_id != user.id
       end
 
+      cannot :activate, Tag do |tag|
+         !user.current_company_user.role.has_permission?(:activate, Tag)
+      end
+
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
       end
@@ -246,8 +250,8 @@ class Ability
       can :view_rate, AttachedAsset do |asset|
         asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
       end
-      
-      
+
+      can :activate, Tag if can?(:create, Tag)
       # Event Expenses permissions
       can :expenses, Event do |event|
         user.role.has_permission?(:index_expenses, Event) && can?(:show, event)

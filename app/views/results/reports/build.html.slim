@@ -1,3 +1,9 @@
+- content_for :head
+  = javascript_include_tag "jquery.reportBuilder"
+  = javascript_include_tag "jquery.reportTableScroller"
+- content_for :head
+  = stylesheet_link_tag "reports"
+
 #report-builder
   .sidebar
     = render 'fields_list'
@@ -28,11 +34,12 @@
 
   .clearfix
 
-javascript:
-  $('#report-builder').reportBuilder({
-    id: #{resource.id},
-    rows: #{(resource.rows || []).to_json.html_safe},
-    columns: #{(resource.columns || []).to_json.html_safe},
-    values: #{(resource.values || []).to_json.html_safe},
-    filters: #{(resource.filters || []).to_json.html_safe}
-  });
+- content_for :footer
+  javascript:
+    $('#report-builder').reportBuilder({
+      id: #{resource.id},
+      rows: #{(resource.rows || []).to_json.html_safe},
+      columns: #{(resource.columns || []).to_json.html_safe},
+      values: #{(resource.values || []).to_json.html_safe},
+      filters: #{(resource.filters || []).to_json.html_safe}
+    });

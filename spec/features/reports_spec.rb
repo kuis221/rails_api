@@ -160,6 +160,59 @@ feature "Reports", js: true do
       expect(csv_rows[2]).to eql ['Bar 2', '321.0']
       export.destroy
     end
+
+    scenario "a report with two rows with expand/collapse functionality" do
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      FactoryGirl.create(:event, campaign: campaign, start_date: '01/21/2013', end_date: '01/21/2013', place: FactoryGirl.create(:place, name: 'Bar 1'),
+        results: {impressions: 123, interactions: 50})
+
+      FactoryGirl.create(:event, campaign: campaign, start_date: '02/13/2013', end_date: '02/13/2013', place: FactoryGirl.create(:place, name: 'Bar 2'),
+        results: {impressions: 321, interactions: 25})
+
+      report = FactoryGirl.create(:report,
+        company: @company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}, {"field"=>"event:start_date", "label"=>"Start Date"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+
+      visit results_report_path(report)
+
+      expect(page).to have_content('GRAND TOTAL: 444.0')
+      expect(page).to have_content('Bar 1 123.0')
+      expect(page).to have_content('Bar 2 321.0')
+
+      # Test the expand/collapse logic
+      within report_preview do
+        # Initial state should be collapsed
+        expect(page).to have_no_content('2013/01/21')
+        expect(page).to have_no_content('2013/02/13')
+        click_js_link('Expand All')
+        expect(page).to have_content('2013/01/21')
+        expect(page).to have_content('2013/02/13')
+        click_js_link('Collapse All')
+        expect(page).to have_no_content('2013/01/21')
+        expect(page).to have_no_content('2013/02/13')
+      end
+
+      # Export the report
+      with_resque do
+        expect {
+          click_js_button 'Download'
+          within visible_modal do
+            expect(page).to have_content('We are processing your request, the download will start soon...')
+          end
+          ensure_modal_was_closed
+        }.to change(ListExport, :count).by(1)
+      end
+
+      export = ListExport.last
+      csv_rows = CSV.parse(open(export.file.url).read)
+      expect(csv_rows[0]).to eql ['Venue Name', 'Start Date', 'Impressions']
+      expect(csv_rows[1]).to eql ['Bar 1', '2013/01/21', '123.0']
+      expect(csv_rows[2]).to eql ['Bar 2', '2013/02/13', '321.0']
+      export.destroy
+    end
   end
 
   feature "build view" do

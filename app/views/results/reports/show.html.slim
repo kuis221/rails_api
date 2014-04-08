@@ -1,8 +1,14 @@
+- content_for :head
+  = javascript_include_tag "jquery.reportBuilder"
+  = javascript_include_tag "jquery.reportTableScroller"
+- content_for :head
+  = stylesheet_link_tag "reports"
+
 #report-builder
-  #resource-filter-column.sidebar
+  #resource-filter-column.sidebar style="#{resource.filters.empty? ? 'display: none' : ''}"
     #collection-list-filters
 
-  .main.with-details-close-bar
+  .main.with-details-close-bar class="#{resource.filters.empty? ? 'no-margin' : ''}"
     = resource_details_bar("You are viewing #{resource.name} report. Click to close.", collection_path)
     - if can?(:edit, resource)
       .pull-left
@@ -16,20 +22,26 @@
     .report-loading-spinner
 
   .clearfix
+- content_for :footer
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{rows_results_report_path}',
+      'filtersUrl': '#{filters_results_report_path}',
+      'listContainer' : 'table.report-table tbody',
+      'onItemsLoad' : function(response, page) {
+        if ($('a.expand-all').hasClass('icon-collapse')) {
+          response.find('tbody tr[data-level]').show()
+          response.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+        }
+      }
+    });
 
-javascript:
-  $('#collection-list-filters').filteredList({
-    'source': '#{rows_results_report_path}',
-    'filtersUrl': '#{filters_results_report_path}',
-    'listContainer' : 'table.report-table tbody'
-  });
-
-  var downloading = false;
-  $('.report-link').click(function(){
-    if (!downloading){
-      downloading = true;
-      $.get($(this).data('url'), function(){
-        downloading = false;
-      });
-    }
-  })
+    var downloading = false;
+    $('.report-link').click(function(){
+      if (!downloading){
+        downloading = true;
+        $.get($(this).data('url'), function(){
+          downloading = false;
+        });
+      }
+    })

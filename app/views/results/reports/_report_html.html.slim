@@ -23,7 +23,10 @@
                 = row.join.html_safe
 
           tr.grand-total
-            td GRAND TOTAL:
+            td
+              - if row_levels_count > 1
+                a.expand-all.icon-expand href="#" title="Expand All"
+              | GRAND TOTAL:
             - @report.columns_totals.each do |total|
               th= number_with_delimiter total if total
 
