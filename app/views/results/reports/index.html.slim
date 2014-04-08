@@ -3,7 +3,8 @@
 
 .new-feature
   h5 NEW FEATURE'S NAME 
-  a.video-thumbnail href="video_modal"
+  a.close.float-right
+  a.video-thumbnail data-target=".video-modal" data-toggle="modal" 
     img src="/assets/video_arrow.png" /
   .feature-description
     p
@@ -60,4 +61,15 @@
       .link-list
         ul#custom-reports-list.reports-list
           = render @reports
+
+.video-modal.modal.fade aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" 
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close aria-hidden="true" data-dismiss="modal" type="button" 
+        h3 New Feature's Name
+      .modal-body
+        iframe allowfullscreen="" frameborder="0" height="281" src="//www.youtube.com/embed/GNZBSZD16cY" width="500" 
+      .modal-footer
+        button.btn.btn-default data-dismiss="modal" type="button"  Close
 

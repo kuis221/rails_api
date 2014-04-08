@@ -7350,6 +7350,7 @@ table.table.likert-scale-table {
 
 .new-feature{
 	background-color: $grey_one;
+	border-radius: 5px;
 	color: $text;
 	margin-bottom: 10px;
 	padding: 15px 10px;
@@ -7369,7 +7370,7 @@ table.table.likert-scale-table {
 			margin-left: auto;
 			margin-right: auto;
 			display: block;
-			margin-top: 13px;
+			margin-top: 14px;
 		}
 		&:hover{
 			cursor: pointer;
