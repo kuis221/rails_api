@@ -1,6 +1,19 @@
 - content_for :head
   = stylesheet_link_tag "reports"
-  
+
+.new-feature
+  h5 NEW FEATURE'S NAME 
+  a.video-thumbnail href="video_modal"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      | Here goes some text that explains how it works
+      br>/
+      | Here the description continues. This may be 2–3 or 4 lines.
+      br/
+      | It should be just the essence of the feature and maybe how to access it.
+
+    a href="#"  Learn more
 .main.no-margin
   .pull-left
     = button_to 'New report', new_results_report_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Report
@@ -47,3 +60,4 @@
       .link-list
         ul#custom-reports-list.reports-list
           = render @reports
+

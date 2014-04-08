@@ -7345,3 +7345,42 @@ table.table.likert-scale-table {
 	display:inline-block;
 	margin-bottom: 10px;
 }
+
+/*-- NEW FEATURES --*/
+
+.new-feature{
+	background-color: $grey_one;
+	color: $text;
+	margin-bottom: 10px;
+	padding: 15px 10px;
+	h5{
+		font-size: 16px;
+		font-weight: bold;
+		margin-top: 0;
+	}
+	.video-thumbnail{
+		background: #a2a2a2;
+		display: inline-block;
+		height: 100px;
+		margin-right: 30px;
+		vertical-align: top;
+		width: 176px;
+		img{
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+			margin-top: 13px;
+		}
+		&:hover{
+			cursor: pointer;
+		}
+	}
+	.feature-description{
+		display: inline-block;
+		width: 70%;
+		a{
+			color: $brand;
+			text-decoration: underline;
+		}
+	}
+}
