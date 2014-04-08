@@ -156,8 +156,8 @@ feature "Reports", js: true do
       export = ListExport.last
       csv_rows = CSV.parse(open(export.file.url).read)
       expect(csv_rows[0]).to eql ['Venue Name', 'Impressions']
-      expect(csv_rows[1]).to eql ['Bar 1', '123.0']
-      expect(csv_rows[2]).to eql ['Bar 2', '321.0']
+      expect(csv_rows[1]).to eql ['Bar 1', '123.00']
+      expect(csv_rows[2]).to eql ['Bar 2', '321.00']
       export.destroy
     end
 
@@ -209,8 +209,68 @@ feature "Reports", js: true do
       export = ListExport.last
       csv_rows = CSV.parse(open(export.file.url).read)
       expect(csv_rows[0]).to eql ['Venue Name', 'Start Date', 'Impressions']
-      expect(csv_rows[1]).to eql ['Bar 1', '2013/01/21', '123.0']
-      expect(csv_rows[2]).to eql ['Bar 2', '2013/02/13', '321.0']
+      expect(csv_rows[1]).to eql ['Bar 1', '2013/01/21', '123.00']
+      expect(csv_rows[2]).to eql ['Bar 2', '2013/02/13', '321.00']
+      export.destroy
+    end
+
+    scenario "a report with values displayed as percentage of row total/grand total/column total" do
+      campaign1 = FactoryGirl.create(:campaign, company: @company, name: 'Campaign 1')
+      campaign2 = FactoryGirl.create(:campaign, company: @company, name: 'Campaign 2')
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 1', state: 'State 1'),
+        results: {impressions: 300, interactions: 20})
+
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 2', state: 'State 2'),
+        results: {impressions: 700, interactions: 40})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 3', state: 'State 1'),
+        results: {impressions: 200, interactions: 80})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 4', state: 'State 2'),
+        results: {impressions: 100, interactions: 60})
+
+      report = FactoryGirl.create(:report,
+        company: @company,
+        columns: [{"field"=>"values", "label"=>"Values"},{"field"=>"place:state", "label"=>"State"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_row'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>'perc_of_total', 'precision' => '1' }
+        ]
+      )
+
+      visit results_report_path(report)
+
+      within report_preview do
+        expect(page).to have_content('IMPRESSIONS INTERACTIONS')
+        expect(page).to have_content('STATE 1 STATE 2 STATE 1 STATE 2')
+        expect(page).to have_content('GRAND TOTAL: 500.0 800.0 100.0 100.0')
+        expect(page).to have_content('Campaign 1 30.00% 70.00%  10.0% 20.0%')
+        expect(page).to have_content('Campaign 2 66.67% 33.33% 40.0% 30.0%')
+
+        expect(page).to have_no_link('Expand All')
+      end
+
+      # Export the report
+      with_resque do
+        expect {
+          click_js_button 'Download'
+          within visible_modal do
+            expect(page).to have_content('We are processing your request, the download will start soon...')
+          end
+          ensure_modal_was_closed
+        }.to change(ListExport, :count).by(1)
+      end
+
+      export = ListExport.last
+      csv_rows = CSV.parse(open(export.file.url).read)
+      expect(csv_rows[0]).to eql ['Campaign Name', 'Impressions/State 1', 'Impressions/State 2', "Interactions/State 1", "Interactions/State 2"]
+      expect(csv_rows[1]).to eql ['Campaign 1', '30.00%', '70.00%', '10.0%', '20.0%']
+      expect(csv_rows[2]).to eql ['Campaign 2', '66.67%', '33.33%', '40.0%', '30.0%']
       export.destroy
     end
   end

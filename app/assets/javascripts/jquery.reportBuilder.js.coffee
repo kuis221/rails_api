@@ -143,6 +143,7 @@ $.widget 'nmk.reportBuilder',
 				button.text(button.data('ujs:enable-with'))
 
 	refreshReportPreview: () ->
+		$('#report-container').html('')
 		@_showOverlay()
 		$.ajax
 			url: "/results/reports/#{@id}/preview.js",
