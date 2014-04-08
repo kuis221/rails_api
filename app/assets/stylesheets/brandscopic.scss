@@ -6240,10 +6240,53 @@ body.gva {
 }
 
 body.event_status {
-  .details-box{
-      padding: 23px 27px 30px 25px;
-
-  }
+	.details_box{
+		padding: 23px 27px 30px 24px;
+		&.first{
+			-webkit-border-radius: 0px 7px 7px 7px;
+			border-radius: 0px 7px 7px 7px;
+			padding: 17px 0px	25px 20px !important;
+			h3{ 
+				margin-top: 0px !important;
+				margin-bottom: 23px !important;
+			 }
+			 label{
+				margin-left: 3px;
+				margin-bottom: 0px;
+				color: $grey_three !important;
+				font-size: 11px !important;
+				}
+			.controls{ margin: -1px 0px 0px 4px;}
+			.chzn-container-single{
+				width: 270px	!important;
+				height: 31px !important;
+				.chzn-single{
+					height: 32px !important;
+					padding-top: 0px !important;
+					width: 270px !important;
+					span{
+            line-height: 26px;
+						height: 26px !important;
+						padding-top: 0px !important;
+						margin-top: 3px !important;
+					}
+					b{
+						margin-top: -2px !important;
+						margin-right: 75px !important;
+						margin-left: -1px !important;
+					}
+				}
+				.chzn-drop{
+					.chzn-search{
+						input{ 
+							height: 15px;
+							width: 70% !important;
+						}
+					}
+				}
+			}
+		}
+	}
 	.tab-content {
 		overflow: visible;
 	}
@@ -6625,7 +6668,7 @@ ul#reports-list {
 				}
 			}
 
-			&:hover{
+			&:hover, &.chardinjs-show-element {
 				.thumbnail-toolbar{
 					background-color: rgba(0, 0, 0, 0.6);
 					bottom: 0;
