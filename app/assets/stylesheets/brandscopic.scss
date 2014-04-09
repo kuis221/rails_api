@@ -1557,7 +1557,12 @@ label{
 }
 .filter-wrapper{
 	font-size: 13px;
-	margin: 35px 0 0 0;
+	height: 60px;
+	display: block;
+	margin: 0 0 10px 0;
+	&:last-of-type{
+		margin-bottom: 15px;
+	}
 	h3{
 		font-size: 13px;
 		font-weight: bold;
@@ -1574,6 +1579,10 @@ label{
 		line-height: 22px;
 		margin-bottom: 3px;
 		padding: 0 0 0 30px;
+	}
+	&.time-filter{
+		height: auto;
+		margin-bottom: 20px;
 	}
 	.checker{
 		margin:1px 5px 0 -30px;
@@ -1618,6 +1627,7 @@ label{
 .clear-filters {
 	text-align: right;
 	text-decoration: underline;
+	margin-bottom:15px;
 	a{
 		color: $user_menu;
 	}
@@ -1627,6 +1637,9 @@ label{
 }
 .form-facet-filters{
 	margin-bottom: 20px;
+	.dates-range-filter{
+		margin-bottom: 20px;
+	}
 }
 .menu{
 	background-color: $menu;
