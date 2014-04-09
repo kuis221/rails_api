@@ -498,6 +498,18 @@ $report_border_color: #ccc;
 			top: 3px;
 			content: "\e004";
 		}
+		.icon-expand.has-tooltip, .icon-collapse.has-tooltip{
+			&+ .tooltip{
+				text-transform: capitalize;
+				width: 70px;
+				.tooltip-inner{
+					background-color: $text;
+				}
+				.tooltip-arrow{
+					border-top:5px solid $text;
+				}
+			}
+		}
 
 
 		thead {
