@@ -21,7 +21,6 @@ class EventsController < FilteredController
   
   skip_load_and_authorize_resource only: :update
   before_filter :authorize_update, only: :update
-  before_filter :set_last_search_url, only: [:approve, :reject]
 
   def autocomplete
     buckets = autocomplete_buckets({
