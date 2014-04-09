@@ -7397,9 +7397,13 @@ table.table.likert-scale-table {
 
 .video-modal{
 	button.close{
+		color: $brand !important;
 		right: 10px;
 		&:after{
 			opacity:0;
+		}
+		&:before{
+			color: $brand;
 		}
 		&:focus{
 			outline: none;
