@@ -300,6 +300,7 @@ ul.nav {
 		display: block;
 		font-family: 'icons';
 		font-size: 27px;
+		font-weight: normal;
 		left:2px;
 		padding-bottom:5px;
 		position: relative;
@@ -308,6 +309,7 @@ ul.nav {
 		top:-3px;
 		vertical-align: middle;
 		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
 	}
 
 	#analysis a:before{
@@ -515,6 +517,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	a{
 		color: white !important;
 		text-decoration: underline !important;
+		&.close{
+			top: -3px;
+			right: -10px;
+		}
 	}
 	&.alert-info, &.alert-grey{
 		background-color: $brand;
@@ -1782,6 +1788,7 @@ li#user_menu{
 			text-shadow:none;
 			top:1px;
 			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
 			}
 			a:hover:after{
 			color: white;
@@ -3073,6 +3080,7 @@ textarea::-webkit-input-placeholder {
 		opacity: 1;
 		position: relative;
 		text-shadow:none;
+		right: 35px;
 		&:after{
 			color: $grey_one;
 			content: "\e019";
