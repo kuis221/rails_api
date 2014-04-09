@@ -7401,6 +7401,9 @@ table.table.likert-scale-table {
 		&:after{
 			opacity:0;
 		}
+		&:focus{
+			outline: none;
+		}
 	}
 }
 
