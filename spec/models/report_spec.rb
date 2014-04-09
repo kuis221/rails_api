@@ -94,6 +94,49 @@ describe Report do
     end
   end
 
+  describe "#format_values" do
+    let(:company) { FactoryGirl.create(:company) }
+    it "should correcly apply the 'display' formula to values" do
+      campaign1 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 1')
+      campaign2 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 2')
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 1', state: 'State 1'),
+        results: {impressions: 300, interactions: 20, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 2', state: 'State 2'),
+        results: {impressions: 700, interactions: 40, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 3', state: 'State 1'),
+        results: {impressions: 200, interactions: 80, samples: 40})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 4', state: 'State 2'),
+        results: {impressions: 100, interactions: 60, samples: 60})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"},{"field"=>"place:state", "label"=>"State"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_row'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>'perc_of_total', 'precision' => '1' },
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=>'perc_of_column', 'precision' => '0' }
+        ]
+      )
+
+      results = report.fetch_page
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [300.0, 700.0, 20.0, 40.0, 10.0, 10.0]
+      expect(report.format_values(results[0]['values'])).to eql ['30.00%', '70.00%', '10.0%', '20.0%', "20%", "14%"]
+
+      expect(results[1]['campaign_name']).to eql 'Campaign 2'
+      expect(results[1]['values']).to eql [200.0, 100.0, 80.0, 60.0, 40.0, 60.0]
+      expect(report.format_values(results[1]['values'])).to eql ['66.67%', '33.33%', '40.0%', '30.0%', '80%', '86%']
+    end
+  end
+
   describe "#columns_totals" do
     let(:company) { FactoryGirl.create(:company) }
     let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }

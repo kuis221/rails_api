@@ -128,9 +128,19 @@ class Report < ActiveRecord::Base
       results = fetch_page
       total = results.count
       fetch_page.each_with_index do |row, i|
-        csv << row_fields.map{|n| row[n] } + row['values']
+        csv << row_fields.map{|n| row[n] } + format_values(row['values'])
         yield total, i if block_given? && i%50 == 0
       end
+    end
+  end
+
+  def format_values(result_values)
+    values_position = columns.map(&:field).index('values')
+    values_map = report_columns.map{|c| c.split('||')[values_position] }
+    values_label_map = Hash[values.map{|v| [v.label, v]}]
+
+    result_values.each_with_index.map do |value, index|
+      values_label_map[values_map[index]].format_value result_values, index
     end
   end
 
@@ -144,8 +154,6 @@ class Report < ActiveRecord::Base
     end.compact]
 
     rows_columns = {'1' => 'col_name'} if rows_columns.empty?
-
-    params.reverse_merge! apply_values_formatting: true
 
     if can_be_generated?
       select_cols = (fields.reject{|f| f['field'] == 'values'}).each_with_index.map{|f,i| "row_labels[#{i+1}] as #{f.to_sql_name}"}
@@ -184,7 +192,6 @@ class Report < ActiveRecord::Base
         if key != previous_key
           unless row.nil?
             row['values'] = values.values
-            row['values'] = apply_values_formatting(row['values']) if params[:apply_values_formatting]
             rows.push row
           end
           row = result.select{|k,v| key_fields.include?(k) }
@@ -198,21 +205,10 @@ class Report < ActiveRecord::Base
       end
       unless row.nil?
         row['values'] = values.values
-        row['values'] = apply_values_formatting(row['values']) if params[:apply_values_formatting]
         rows.push row
       end
       rows
     end
-  end
-
-  def apply_values_formatting(result_values)
-    step = values.count
-    values.each_with_index do |field, index|
-      (index..(result_values.count-1)).step(step).each do |i|
-        result_values[i] = field.apply_display_method(result_values[i], columns_totals[i])
-      end
-    end
-    result_values
   end
 
   def report_columns
@@ -233,7 +229,7 @@ class Report < ActiveRecord::Base
 
   def columns_totals
     @columns_totals ||= begin
-      results = fetch_results_for(columns, apply_values_formatting: false)
+      results = fetch_results_for(columns)
       if results.any?
         results.first['values']
       else
@@ -553,6 +549,8 @@ end
 class Report::Field
   attr_accessor :type, :data, :report
 
+  include ActionView::Helpers::NumberHelper
+
   def initialize(report, type, data)
     @report = report
     @type = type
@@ -563,16 +561,34 @@ class Report::Field
     @data[key]
   end
 
-  def apply_display_method(value, column_total)
-    case display
+  def apply_display_method(row_values, column_index)
+    total = case display
     when 'perc_of_column'
-      if column_total.nil?  || column_total == 0
-        ''
-      else
-        value*100/column_total
-      end
+      @report.columns_totals[column_index]
+    when 'perc_of_row'
+      _sum_total_for_value row_values, column_index
+    when 'perc_of_total'
+      _sum_total_for_value @report.columns_totals, column_index
     else
-      value
+      -1
+    end
+    if total == -1
+      row_values[column_index]
+    elsif total.nil?  || total == 0
+      ''
+    else
+      row_values[column_index]*100/total
+    end
+  end
+
+  def format_value(row_values, column_index, field=nil)
+    field ||= self
+    if row_values[column_index].present? && row_values[column_index] != ''
+      if field.display.present? && field.display != ''
+        number_to_percentage(field.apply_display_method(row_values, column_index), precision: precision)
+      else
+        number_with_precision(row_values[column_index], precision: precision, delimiter: ',')
+      end
     end
   end
 
@@ -715,6 +731,18 @@ class Report::Field
   def field_attribute
     @field_attribute ||= if m = /\A.*:([a-z_]+)\z/.match(field)
       m[1]
+    end
+  end
+
+  def _sum_total_for_value(row_values, column_index)
+    _field_positions_in_value.map{|position| row_values[position] }.compact.reduce(:+)
+  end
+
+  def _field_positions_in_value
+    @field_positions_in_value ||= begin
+      values_position = @report.columns.map(&:field).index('values')
+      values_map = @report.report_columns.map{|c| c.split('||')[values_position] }
+      values_map.each_with_index.map{|l, index| index if l == label }.compact
     end
   end
 end

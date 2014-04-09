@@ -143,6 +143,7 @@ $.widget 'nmk.reportBuilder',
 				button.text(button.data('ujs:enable-with'))
 
 	refreshReportPreview: () ->
+		$('#report-container').html('')
 		@_showOverlay()
 		$.ajax
 			url: "/results/reports/#{@id}/preview.js",
@@ -453,7 +454,10 @@ $.widget 'nmk.reportBuilder',
 		sidebar = @element.find('.sidebar')
 		padding = parseInt(sidebar.css('padding-top')) + parseInt(sidebar.css('padding-bottom'))
 		sidebarHeight = Math.max(560, ($(window).height() - sidebar.position().top - padding - 10))
-		sidebar.css({height: sidebarHeight+'px', position: 'fixed', right: '10px'})
+		if sidebarHeight is 560
+			sidebar.css({height: sidebarHeight+'px', position: 'absolute', right: '10px'})
+		else
+			sidebar.css({height: sidebarHeight+'px', position: 'fixed', right: '10px'})
 
 		sidebar.find('#report-fields').css({height: sidebarHeight - sidebar.find('.fixed-height-lists').outerHeight() - parseInt(sidebar.css('padding-bottom')) })
 

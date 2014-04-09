@@ -33,10 +33,14 @@ javascript:
     }
   }
   $('#report_campaign_id').on('change', function(e){
-    $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
-    submitForm();
-    history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
-    'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val());
+    if ($('#report_campaign_id').val() != '') {
+      $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
+      submitForm();
+      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
+      'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val());
+    } else {
+      $('#kpis-trends-bars').empty().addClass("details_box content").prepend('<p class="text-center">Select a campaign from the list above');
+    }
   });
 
   $('#group-by-criterion a').on('click', function(e){

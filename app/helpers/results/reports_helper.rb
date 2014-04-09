@@ -33,7 +33,7 @@ module Results
           end
           previous_label = row_label
         else
-          yield row[row_field], row_number, apply_precision_values(row['values'])
+          yield row[row_field], row_number, resource.format_values(row['values'])
         end
       end
     end
@@ -61,7 +61,7 @@ module Results
       end
 
       def sum_row_values(group, row)
-        case row['aggregate']
+        format_row_values row, case row['aggregate']
         when 'avg'
           group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.any? ? x.reduce(:+).to_f / x.size : 0}
         when 'min'
@@ -72,17 +72,15 @@ module Results
           group.map{|r| r['values']}.transpose.map{|a| a.compact.size }
         else
           group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
-        end.map{|v|  v.nil? || v == '' ? v : number_with_precision(v, precision: row.precision, delimiter: ',') }
+        end
       end
 
-      def apply_precision_values(result_values)
-        step = resource.values.count
-        resource.values.each_with_index do |field, index|
-          (index..(result_values.count-1)).step(step).each do |i|
-            result_values[i] = number_with_precision(result_values[i], precision: field.precision, delimiter: ',')
+      def format_row_values(row, result_values)
+        resource.values.each_with_index.map do |field, index|
+          (index..(result_values.count-1)).step(resource.values.count).each.map do |i|
+            row.format_value(result_values, i, field)
           end
-        end
-        result_values
+        end.flatten
       end
 
       def kpi_tooltip(kpi)

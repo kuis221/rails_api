@@ -241,7 +241,6 @@ feature 'Activities management' do
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Photo')
 
-
       campaign.activity_types << activity_type
 
       with_resque do # So the image is processed
@@ -296,7 +295,10 @@ feature 'Activities management' do
         end
         ensure_modal_was_closed
 
-        find('#activities-list li').click
+        within("#activities-list li") do
+          click_js_link('Activity Details')
+        end
+        expect(page).to have_selector('h2', text: 'Activity Type #1')
         expect(current_path).to eql activity_path(activity)
         photo = AttachedAsset.last
         src = photo.reload.file.url(:thumbnail, timestamp: false)
@@ -344,7 +346,10 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a ActivityResult
         expect(photo.file_file_name).to eql 'file.pdf'
 
-        find('#activities-list li').click
+        within("#activities-list li") do
+          click_js_link('Activity Details')
+        end
+        expect(page).to have_selector('h2', text: 'Activity Type #1')
         expect(current_path).to eql activity_path(activity)
         file = AttachedAsset.last
         src = file.reload.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
