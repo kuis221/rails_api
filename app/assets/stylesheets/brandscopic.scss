@@ -559,12 +559,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		right: 25px;
 		text-shadow:none;
 		&:after{
-				color: white;
-				content: "\e019";
-				display: block;
-				font-family: 'icons';
-				font-size: 12px;
-				left: 0;
+			color: white;
+			content: "\e019";
+			display: block;
+			font-family: 'icons';
+			font-size: 12px;
+			left: 0;
 			position: absolute;
 			speak:none;
 			text-indent: 0;
@@ -7354,10 +7354,19 @@ table.table.likert-scale-table {
 	color: $text;
 	margin-bottom: 10px;
 	padding: 15px 10px;
+	position: relative;
 	h5{
 		font-size: 16px;
 		font-weight: bold;
 		margin-top: 0;
+	}
+	.close{
+		position: absolute;
+		right: 25px;
+		top: 5px;
+		&:after{
+			color: $brand;
+		}
 	}
 	.video-thumbnail{
 		background: #a2a2a2;
@@ -7383,5 +7392,36 @@ table.table.likert-scale-table {
 			color: $brand;
 			text-decoration: underline;
 		}
+	}
+}
+
+.video-modal{
+	button.close{
+		right: 10px;
+		&:after{
+			opacity:0;
+		}
+	}
+}
+
+.close {
+	opacity: 1;
+	right: 25px;
+	text-shadow:none;
+	&:after{
+		color: white;
+		content: "\e019";
+		display: block;
+		font-family: 'icons';
+		font-size: 12px;
+		left: 0;
+		position: absolute;
+		speak:none;
+		text-indent: 0;
+		top:4px;
+		-webkit-font-smoothing: antialiased;
+	}
+	&:hover{
+		opacity: 1 !important;
 	}
 }
