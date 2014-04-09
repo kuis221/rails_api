@@ -210,6 +210,13 @@ ul.reports-list {
 					margin-bottom: 0;
 				}
 
+				a{
+					color:$text;
+					&:hover{
+						color:$text;
+					}
+				}
+
 				&.ui-sortable-placeholder {
 					height: 2px;
 					opacity: 1;
