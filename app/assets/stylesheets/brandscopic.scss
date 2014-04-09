@@ -403,6 +403,8 @@ input[type="color"],
 	height: 33px;
 	margin-bottom: 0;
 	width: 260px;
+	-webkit-box-shadow: none;
+	box-shadow:0;
 	&:focus{
 		box-shadow: none !important;
 		outline: none;
@@ -1566,7 +1568,8 @@ label{
 		visibility: hidden;
 	}
 	label{
-		font-weight: 400px;
+		color: $user_menu;
+		font-weight: 400;
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
@@ -1590,13 +1593,13 @@ label{
 		}
 		input.timepicker-filter {
 			width: 70px;
-			background: url('time.svg') no-repeat left !important;
+			background: url('time.svg') no-repeat center left 3px !important;
 			padding-left:20px;
-			text-align: center;
+			text-align: right;
 			border: 1px solid $user_menu;
-			color: $grey_three;
+			color: $text;
 			&:focus {
-				border-color: $grey_three;
+				border-color: rgba(102,102,102,0.6);
 			}
 		}
 		label.time-end {
