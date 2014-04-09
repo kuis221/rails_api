@@ -1,6 +1,6 @@
 - content_for :head
   = stylesheet_link_tag "reports"
-  
+
 .main.no-margin
   .pull-left
     = button_to 'New report', new_results_report_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Report
@@ -47,3 +47,5 @@
       .link-list
         ul#custom-reports-list.reports-list
           = render @reports
+
+= render partial: 'help_tutorial'

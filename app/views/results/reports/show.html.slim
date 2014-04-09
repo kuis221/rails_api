@@ -22,6 +22,9 @@
     .report-loading-spinner
 
   .clearfix
+
+= render partial: 'help_tutorial'
+
 - content_for :footer
   javascript:
     $('#collection-list-filters').filteredList({
