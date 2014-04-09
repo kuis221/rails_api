@@ -15,12 +15,13 @@ class EventsController < FilteredController
   respond_to :json, only: [:index, :calendar_highlights]
   respond_to :xls, only: :index
   respond_to :xls, only: :index
-
+  
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
-
+  
   skip_load_and_authorize_resource only: :update
   before_filter :authorize_update, only: :update
+  before_filter :set_last_search_url, only: [:approve, :reject]
 
   def autocomplete
     buckets = autocomplete_buckets({
