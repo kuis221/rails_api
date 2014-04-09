@@ -11,13 +11,12 @@
             - if resource.values.count > 1 || resource.columns.count == 1 || index != resource.columns.index{|v| v['field'] == 'values' }
               tr.row-headers class="#{if index == @report_header_cols_rows.count-1 then 'last-header' else '' end}"
                 td.row_label
-                  span.row_label_inner
                 = row.join.html_safe
 
           tr.grand-total
             td.row_label
               - if row_levels_count > 1
-                a.expand-all.icon-expand href="#" title="Expand All"
+                a.expand-all.icon-expand.has-tooltip href="#" title="Expand All"
               | GRAND TOTAL:
             - @report.columns_totals.each do |total|
               th= number_with_precision total, precision: 2, strip_insignificant_zeros: true, delimiter: ',' if total

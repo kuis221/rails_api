@@ -1,6 +1,12 @@
 @import "variables.scss"; 
 
 // REPORTS
+
+body.reports{
+	.ui-timepicker-list.timepicker-filter{
+		border-color: rgba(102,102,102,0.6);
+	}
+}
 ul.reports-list {
 	li {
 		display: table;
@@ -49,7 +55,16 @@ ul.reports-list {
 	.tooltip {
 		opacity: 1;
 		.tooltip-inner {
+			background-color: $text;
 			text-align: left;
+			b{
+				color: #cccccc;
+			}
+		}
+		&.left{
+			.tooltip-arrow{
+				border-left-color: $text;
+			}
 		}
 		b {
 			margin-top: 10px;
@@ -193,6 +208,13 @@ ul.reports-list {
 				padding: 3px 5px;
 				&:last-child{
 					margin-bottom: 0;
+				}
+
+				a{
+					color:$text;
+					&:hover{
+						color:$text;
+					}
 				}
 
 				&.ui-sortable-placeholder {
@@ -373,7 +395,7 @@ ul.reports-list {
 
 		a.option {
 			display: block;
-			padding: 10px;
+			padding: 6px 10px;
 			&:hover {
 				text-decoration: none;
 				background-color: $grey_three;
@@ -492,6 +514,18 @@ $report_border_color: #ccc;
 			top: 3px;
 			content: "\e004";
 		}
+		.icon-expand.has-tooltip, .icon-collapse.has-tooltip{
+			&+ .tooltip{
+				text-transform: capitalize;
+				width: 70px;
+				.tooltip-inner{
+					background-color: $text;
+				}
+				.tooltip-arrow{
+					border-top:5px solid $text;
+				}
+			}
+		}
 
 
 		thead {
@@ -555,12 +589,10 @@ $report_border_color: #ccc;
 		tr td:first-child {
 			white-space: nowrap;
 			text-align: left;
-			// position:absolute;
-			// *position: relative; /*ie7*/
-			// left:0;
 			padding-left: 20px;
 			width:215px;
 			height: 20px;
+			display: block;
 		}
 
 		tr td:last-child{
@@ -579,9 +611,8 @@ $report_border_color: #ccc;
 			}
 		}
 
-		.row_label_inner{
+		.row_label {
 			width: 215px;
-			display: block;
 		}
 	}
 }
@@ -609,3 +640,4 @@ $report_border_color: #ccc;
 		height: 55px;
 	}
 }
+

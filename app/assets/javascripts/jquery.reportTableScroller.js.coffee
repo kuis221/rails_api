@@ -14,12 +14,6 @@ $.widget 'nmk.reportTableScroller',
 			left: @element.position().left
 		}).insertAfter(@scroller)
 
-		top = 0
-		for cell in @element.find('thead>tr>td.row_label')
-			$(cell).css({top: top})
-			top += $(cell).outerHeight();
-
-
 		@element.css marginTop: -@header.find('thead').outerHeight()
 		@scroller.css marginTop: @header.find('thead').outerHeight()
 
@@ -44,7 +38,7 @@ $.widget 'nmk.reportTableScroller',
 	adjustHeader: () ->
 		headerCols = @header.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
 		tableCols = @element.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
-		for num in [0..tableCols.length]
+		for num in [1..tableCols.length]
 			$(headerCols[num]).css width: $(tableCols[num]).width()
 		@
 

@@ -37,6 +37,9 @@
           response.find('tbody tr[data-level]').show()
           response.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
         }
+      },
+      'onPageLoaded' : function(page) {
+        $('#report-table').reportTableScroller('adjustHeader');
       }
     });
 

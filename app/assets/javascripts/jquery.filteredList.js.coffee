@@ -5,6 +5,7 @@ $.widget 'nmk.filteredList', {
 		autoLoad: true,
 		filters: false,
 		onChange: false,
+		onPageLoaded: false,
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
@@ -659,6 +660,9 @@ $.widget 'nmk.filteredList', {
 			$response.remove()
 			$items.remove()
 			$items = $response = null
+
+			if @options.onPageLoaded
+				@options.onPageLoaded page
 			true
 
 		params = null
