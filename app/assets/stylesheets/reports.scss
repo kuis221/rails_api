@@ -55,7 +55,16 @@ ul.reports-list {
 	.tooltip {
 		opacity: 1;
 		.tooltip-inner {
+			background-color: $text;
 			text-align: left;
+			b{
+				color: #cccccc;
+			}
+		}
+		&.left{
+			.tooltip-arrow{
+				border-left-color: $text;
+			}
 		}
 		b {
 			margin-top: 10px;
