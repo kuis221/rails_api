@@ -13,8 +13,8 @@ class FilteredController < InheritedResources::Base
   custom_actions collection: [:filters, :items]
 
   def set_return
-    @return = params[:return] || request.env['HTTP_REFERER']
-    @return = nil if @return and (!@return.include?(Rails.application.routes.default_url_options[:host]) or @return =~ /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(([0-9]{1,5})?\/.*)?$/ix)
+    url_to_return = params[:return] || request.env['HTTP_REFERER']
+    @return = url_to_return if url_valid? url_to_return
   end
 
   def filters
