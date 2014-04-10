@@ -66,7 +66,7 @@ feature "DateRanges", search: true, js: true do
     scenario 'allows the user to create a new date_range' do
       visit date_ranges_path
 
-      click_js_button 'New Date range'
+      click_js_button 'New Date Range'
 
       within visible_modal do
         fill_in 'Name', with: 'new date range name'

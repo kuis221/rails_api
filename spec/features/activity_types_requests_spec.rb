@@ -40,7 +40,7 @@ feature "ActivityTypes", js: true do
     scenario 'allows the user to create a new activity type' do
       visit activity_types_path
 
-      click_js_button 'New Activity type'
+      click_js_button 'New Activity Type'
 
       within visible_modal do
         fill_in 'Name', with: 'Activity Type name'
