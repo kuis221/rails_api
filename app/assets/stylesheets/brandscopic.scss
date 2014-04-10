@@ -536,6 +536,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	&.alert-success{
 		background-color: $complete;
 	}
+	&.collection-list-description{
+		a.close{
+			right: 30px;
+		}
+	}
 }
 
 .alert-grey {
