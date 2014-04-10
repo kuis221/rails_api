@@ -112,14 +112,27 @@ $.widget 'nmk.formBuilder', {
 
 	placeFieldAttributes: (field) ->
 		position = field.offset()
-		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
+		@attributesPanel.removeClass('on-bottom on-left')
+		if field.data('type') is 'LikertScale'
+			left = position.left + ((field.outerWidth()-@attributesPanel.outerWidth())/2)
+			left = Math.max(left, position.left)
+			@attributesPanel.removeClass('on-left').addClass('on-bottom').css
+				top: (position.top + field.outerHeight()+10) + 'px'
+				left: left+'px'
+				display: 'block'
+		else
+			@attributesPanel.addClass('on-left').removeClass('on-bottom').css
+				top: position.top + 'px'
+				left: (position.left + field.outerWidth())+'px'
+				display: 'block'
+		@
 
 	_showFieldAttributes: (field) ->
 		@formWrapper.find('.selected').removeClass('selected')
 		field.addClass('selected')
 		$('#form-field-tabs a[href="#attributes"]').tab('show')
 		$field = field.data('field')
-		@attributesPanel.html('').append $('<div class="arrow-left">'), $field.attributesForm()
+		@attributesPanel.html('').append $('<div class="arrow">'), $field.attributesForm()
 		applyFormUiFormatsTo @attributesPanel
 
 		@placeFieldAttributes field
