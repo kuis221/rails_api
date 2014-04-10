@@ -56,6 +56,8 @@ $.widget 'nmk.reportTableScroller',
 
 		$(window).on 'resize.reportTableScroller', (e) =>
 			@adjustTableSize()
+			@adjustHeader()
+			true
 
 		@adjustTableSize()
 		@adjustHeader()
