@@ -1,10 +1,10 @@
 - content_for :head
   = stylesheet_link_tag "reports"
 
-.new-feature
+= user_new_feature('reports') do
   h5 NEW FEATURE'S NAME 
-  a.close
-  a.video-thumbnail data-target=".video-modal" data-toggle="modal" 
+  a.close href="#" title="Dimiss"
+  a.video-thumbnail href="#" title="Play Video" data-target=".video-modal" data-toggle="modal" 
     img src="/assets/video_arrow.png" /
   .feature-description
     p
