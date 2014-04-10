@@ -4,6 +4,9 @@
 - content_for :head
   = stylesheet_link_tag "reports"
 
+= render 'new_feature_alert'
+
+
 #report-builder
   #resource-filter-column.sidebar style="#{resource.filters.empty? ? 'display: none' : ''}"
     #collection-list-filters

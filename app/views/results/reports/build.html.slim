@@ -4,6 +4,8 @@
 - content_for :head
   = stylesheet_link_tag "reports"
 
+= render 'new_feature_alert'
+
 #report-builder
   .sidebar
     = render 'fields_list'
