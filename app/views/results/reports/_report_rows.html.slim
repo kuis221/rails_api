@@ -1,6 +1,6 @@
 - row_levels_count = resource.rows.count
 - each_grouped_report_row do |row_label, row_level, values|
-  tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}" style="#{row_level > 0 ? 'display: none;' : ''}"
+  tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}"
     td.row_label
       - if row_level+1 < row_levels_count
         a href="#" class="icon-expand report-collapse-button"

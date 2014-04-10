@@ -16,7 +16,7 @@
           tr.grand-total
             td.row_label
               - if row_levels_count > 1
-                a.expand-all.icon-expand.has-tooltip href="#" title="Expand All"
+                a.expand-all.icon-collapse.has-tooltip href="#" title="Collapse All"
               | GRAND TOTAL:
             - @report.columns_totals.each do |total|
               th= number_with_precision total, precision: 2, strip_insignificant_zeros: true, delimiter: ',' if total
