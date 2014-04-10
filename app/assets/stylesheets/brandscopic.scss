@@ -800,6 +800,9 @@ table{
 a.more-options-link{
 	font-size: 13px;
 	margin-left:30px;
+	&:hover{
+		color: $text;
+	}
 }
 a.more-options-link:after{
 	content: "\e004";
@@ -1557,7 +1560,6 @@ label{
 }
 .filter-wrapper{
 	font-size: 13px;
-	height: 60px;
 	display: block;
 	margin: 0 0 10px 0;
 	&:last-of-type{
@@ -1579,10 +1581,6 @@ label{
 		line-height: 22px;
 		margin-bottom: 3px;
 		padding: 0 0 0 30px;
-	}
-	&.time-filter{
-		height: auto;
-		margin-bottom: 20px;
 	}
 	.checker{
 		margin:1px 5px 0 -30px;
