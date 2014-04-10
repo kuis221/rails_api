@@ -156,7 +156,7 @@ ul.reports-list {
 		background-color: white !important;
 		border: 1px solid $user_menu;
 		height: 37px;
-		width: 200px;
+		width: 100%;
 		background-image: url("search2.svg") !important;
 		background-position: center right;
 		background-repeat: no-repeat;
@@ -164,8 +164,9 @@ ul.reports-list {
 		box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		border-radius: 20px;
-		margin-left: -5px;
-		margin-bottom: 10px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 2px;
 		padding-left: 7%;
 		padding-right: 17%;
 		-webkit-box-shadow: none;
@@ -175,7 +176,7 @@ ul.reports-list {
 
 	.draggable-list {
 		font-weight: normal;
-		overflow:visible;
+		overflow:hidden;
 		text-transform: none;
 	}
 
@@ -189,28 +190,50 @@ ul.reports-list {
 		border: 1px solid #ccc;
 		box-sizing: border-box;
 		height: 90px;
-		padding: 4px 10px;
+		padding: 1px 3px 3px 3px;
 		margin-bottom: 10px;
 		.fields-group{
-			height: 20px;
+			height: 70px;
 			overflow: auto;
+		}
+		.search-fields{
+			margin-right: 2px;
+			margin-left: 2px;
 		}
 
 		span.group-name{
 			padding-left: 15px;
 		}
 
+		ul{
+			margin:0;
+			li{
+				height: 24px;
+				margin-right: 3px;
+				&:first-child{
+					margin-top: 2px;
+				}
+			}
+		}
+	
 		&> ul {
-			margin: 7px -5px 30px -5px;
+			//margin: 7px -5px 30px -5px;
 			&#report-filters{
 				margin-bottom: 0;
 				margin-top: 0;
 			}
 			li{
-				margin: 3px 0;
-				padding: 3px 5px;
+				//margin: 3px 0;
+				padding: 0;
+				&:first-child{
+					margin-top: 1px;
+				}
 				&:last-child{
 					margin-bottom: 0;
+				}
+
+				.field-label{
+					padding-left:0;
 				}
 
 				a{
@@ -257,7 +280,7 @@ ul.reports-list {
 
 				.icon-remove:before {
 					content:"\e019";
-					font-size: 12px;
+					font-size: 11px;
 					top: 5px;
 				}
 
@@ -265,7 +288,9 @@ ul.reports-list {
 					float: left;
 					display: inline-block;
 					visibility: hidden;
-					margin-right: 3px;
+					margin-right: 2px;
+					margin-left: 4px;
+					margin-top: 2px;
 					&:hover {
 						text-decoration: none;
 					}
@@ -311,7 +336,8 @@ ul.reports-list {
 			}
 		}
 		&#report-filters-outer, &#report-columns-outer, &#report-rows-outer, &#report-values-outer{
-			margin-bottom: 20px;
+			margin-bottom: 10px;
+			overflow: auto;
 			ul{
 				margin-bottom: 0;
 				margin-top: 0;
@@ -331,17 +357,23 @@ ul.reports-list {
 	}
 
 	.report-field {
-		padding-right: 25px;
+		//padding-right: 25px;
 		position: relative;
 		overflow: visible;
 		.field-label {
 			float: left;
-			width: 145px;
+			width: 140px;
+			line-height: 24px;
+			padding-left: 15px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 		.field-settings-btn {
 			cursor: pointer;
 			float: right;
-			margin-right: 2px;
+			margin-right: 9px;
+			margin-top: 3px;
 			font-size: 20px;
 			display: none;
 		}
@@ -637,13 +669,15 @@ $report_border_color: #ccc;
 @media (max-height: 810px) {
 
 	#report-builder{
-		#report-fields{
-			min-height: 118px;
-			max-height: 118px;
+		.sidebar{
+			#report-fields{
+				min-height: 118px;
+				max-height: 118px;
+			}
+			.field-list { 
+				height: 54px;
+			} 
 		}
-		.field-list { 
-			height: 55px;
-		} 
 	}
 }
 
