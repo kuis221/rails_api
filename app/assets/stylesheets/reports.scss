@@ -6,6 +6,16 @@ body.reports{
 	.ui-timepicker-list.timepicker-filter{
 		border-color: rgba(102,102,102,0.6);
 	}
+	.tooltip{
+	    &.top{
+	    	.tooltip-inner{
+				background-color: $text;
+	    	}
+	    	.tooltip-arrow{
+				border-top:5px solid $text;
+			}
+		}
+	}
 }
 ul.reports-list {
 	li {
@@ -211,6 +221,9 @@ ul.reports-list {
 			min-height: 71px;
 			margin-top: 8px;
 			overflow: auto;
+			a.field-remove-btn.icon-remove{
+				display: none;
+			}
 		}
 		.search-fields{
 			margin-right: 2px;
@@ -564,18 +577,6 @@ $report_border_color: #ccc;
 		.icon-collapse:before {
 			top: 3px;
 			content: "\e004";
-		}
-		.icon-expand.has-tooltip, .icon-collapse.has-tooltip{
-			&+ .tooltip{
-				text-transform: capitalize;
-				width: 70px;
-				.tooltip-inner{
-					background-color: $text;
-				}
-				.tooltip-arrow{
-					border-top:5px solid $text;
-				}
-			}
 		}
 
 
