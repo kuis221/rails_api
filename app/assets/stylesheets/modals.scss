@@ -1349,8 +1349,17 @@ div#spin{
 		padding:0;
 	}
 	.modal-header{
+		position:relative;
 		button.close{
+			right: -35px;
+			top: 15px;
 			z-index: 99999;
+			&:before{
+				content:"";
+				background:url('close-video.png') no-repeat right !important;
+				height: 30px;
+				width: 30px;
+			}
 		}
 	}
 	.modal-content, .modal-dialog, .modal-header, .modal-body{
