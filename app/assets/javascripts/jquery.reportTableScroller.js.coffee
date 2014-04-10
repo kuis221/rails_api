@@ -75,5 +75,5 @@ $.widget 'nmk.reportTableScroller',
 		@
 
 	adjustTableSize: () ->
-		maxHeight = $(window).height() - @scroller.offset().top - parseInt(@scroller.css('margin-top')) - parseInt($('body').css('padding-top')) - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
+		maxHeight = $(window).height() - @scroller.offset().top - parseInt($('footer').css('margin-top')) - parseInt($('body').css('padding-top')) - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
 		@scroller.css height: maxHeight

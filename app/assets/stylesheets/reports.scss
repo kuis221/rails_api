@@ -685,13 +685,10 @@ $report_border_color: #ccc;
 	#report-builder{
 		#report-fields{
 			min-height: 118px;
-			max-height: 118px;
 		}
 		.field-list { 
-			height: 54px;
+			height: 55px;
 			.fields-group{
-				max-height: 70px !important;
-				height: 70px;
 				margin-top: 0;
 			}
 		} 

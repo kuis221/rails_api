@@ -453,13 +453,17 @@ $.widget 'nmk.reportBuilder',
 	_resizeSideBar: () ->
 		sidebar = @element.find('.sidebar')
 		padding = parseInt(sidebar.css('padding-top')) + parseInt(sidebar.css('padding-bottom'))
-		sidebarHeight = Math.max(560, ($(window).height() - sidebar.position().top - padding - 10))
-		if sidebarHeight is 560
-			sidebar.css({height: sidebarHeight+'px', position: 'absolute', right: '10px'})
-		else
-			sidebar.css({height: sidebarHeight+'px', position: 'fixed', right: '10px'})
+		footerHeight = $('footer').outerHeight() + parseInt($('footer').css('margin-top')) + parseInt($('footer').css('margin-bottom')) + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('padding-bottom'))
+		sidebarHeight = Math.max(479, ($(window).height() - sidebar.position().top - padding - footerHeight))
+		sidebar.css
+			height: sidebarHeight+'px'
+			position: 'fixed'
+			right: '10px'
 
-		sidebar.find('#report-fields').css({height: sidebarHeight - sidebar.find('.fixed-height-lists').outerHeight() - parseInt(sidebar.css('padding-bottom')) })
+		fieldsHeight = sidebarHeight - sidebar.find('.fixed-height-lists').outerHeight() - parseInt(sidebar.css('padding-bottom'))
+		sidebar.find('#report-fields').css height: fieldsHeight
+		sidebar.find('.fields-group').css height: (fieldsHeight - sidebar.find('.search-fields').outerHeight() - 8)
+		@
 
 	_addValuesToColumns: () ->
 		if $('#report-values li', @element).length > 0
