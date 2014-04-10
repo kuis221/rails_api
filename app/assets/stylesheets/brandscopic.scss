@@ -2792,7 +2792,7 @@ ul.kpis-list{
 		}
 	}
 }
-div.loading-spinner {
+div.loading-spinner, li.loading-spinner {
 	display:block;
 	background: #fff url(/assets/loading.gif) center center no-repeat;
 	height: 30px;

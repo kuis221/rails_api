@@ -620,6 +620,12 @@ $.widget 'nmk.filteredList', {
 	paramsQueryString: () ->
 		@_serializeFilters()
 
+	_loadingSpinner: () ->
+		if @options.spinnerElement?
+			@options.spinnerElement()
+		else
+			$('<li class="loading-spinner">').appendTo @listContainer
+
 	reloadData: () ->
 		@_loadPage 1
 		@
@@ -644,10 +650,11 @@ $.widget 'nmk.filteredList', {
 			$('.main').css {'min-height': $('#resource-filter-column').outerHeight()}
 			@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
-		@listContainer.append $('<li class="loading-spinner">');
+
+		spinner = @_loadingSpinner()
 
 		@jqxhr = $.get @options.source, params, (response) =>
-			@listContainer.find('.loading-spinner').remove();
+			spinner.remove();
 			$response = $('<div>').append(response)
 			$items = $response.find('[data-content="items"]')
 			if @options.onItemsLoad

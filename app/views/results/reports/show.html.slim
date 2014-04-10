@@ -33,7 +33,7 @@
     $('#collection-list-filters').filteredList({
       'source': '#{rows_results_report_path}',
       'filtersUrl': '#{filters_results_report_path}',
-      'listContainer' : 'table.report-table tbody',
+      'listContainer' : 'table#report-table tbody',
       'onItemsLoad' : function(response, page) {
         $('#report-table').reportTableScroller('adjustHeader');
         if ($('a.expand-all').hasClass('icon-collapse')) {
@@ -43,6 +43,9 @@
       },
       'onPageLoaded' : function(page) {
         $('#report-table').reportTableScroller('adjustHeader');
+      },
+      spinnerElement: function() {
+        return $('<div class="report-overlay" style="height: 60px; width: 100%"></div>').insertAfter($('table#report-table'));
       }
     });
 
