@@ -144,7 +144,7 @@ $.widget 'nmk.filteredList', {
 		min_value = Math.min(min_value, filter.max)
 		max_value = Math.min(max_value, filter.max)
 		$slider = $('<div class="slider-range">')
-		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
+		$filter = $('<div class="filter-wrapper slider-filter">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
 			$slider,
 			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),

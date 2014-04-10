@@ -56,7 +56,9 @@ ul.reports-list {
 		.form-facet-filters{
 			.filter-wrapper{
 				display: block;
-				height: 60px;
+				&.slider-filter{
+					height: 60px;
+				}
 				&.time-filter{
 					height: auto;
 					margin-bottom: 20px;
