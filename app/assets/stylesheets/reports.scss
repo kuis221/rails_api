@@ -52,6 +52,19 @@ ul.reports-list {
 		-moz-box-sizing: border-box;
 	}
 
+	.sidebar{
+		.form-facet-filters{
+			.filter-wrapper{
+				display: block;
+				height: 60px;
+				&.time-filter{
+					height: auto;
+					margin-bottom: 20px;
+				}
+			}
+		}
+	}
+
 	.tooltip {
 		opacity: 1;
 		.tooltip-inner {
