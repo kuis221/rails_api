@@ -158,6 +158,18 @@ jQuery ->
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
 
+
+	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .close', () ->
+		alert = $(this).closest('.new-feature')
+		$.ajax
+			url: '/users/dismiss_alert'
+			method: 'PUT'
+			data: {name: alert.data('alert'), version: alert.data('version')}
+
+		alert.remove()
+		false
+
+
 	$(document).on 'click', '.xlsx-download-link', () ->
 		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
 		$.ajax url, {

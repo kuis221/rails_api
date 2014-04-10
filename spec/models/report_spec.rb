@@ -700,9 +700,11 @@ describe Report do
       page = report.fetch_page
       expect(report.report_columns).to match_array ["% of column Impressions"]
       expect(page).to eql [
-       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[75.0]},
-       {"campaign_name"=>"Other", "values"=>[25.0]}
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[300.0]},
+       {"campaign_name"=>"Other", "values"=>[100.0]}
       ]
+      expect(report.format_values(page[0]['values'])).to eql ['75.00%']
+      expect(report.format_values(page[1]['values'])).to eql ['25.00%']
     end
 
     it "should work when adding a table field as a value with the aggregation method 'count'" do
@@ -848,8 +850,8 @@ describe Report do
           company: company,
           columns: [{"field"=>"place:state", "label"=>"State"}, {"field"=>"values", "label"=>"Values"}],
           rows:    [{"field"=>"event:start_date", "label"=>"Start date"}],
-          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"},
-                    {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"avg"}]
+          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'precision' => '1'},
+                    {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"avg", 'precision' => '3'}]
         )
         page = report.fetch_page
         expect(report.report_columns).to match_array ["California||Impressions", "California||Interactions", "Texas||Impressions", "Texas||Interactions"]
@@ -861,8 +863,8 @@ describe Report do
         # Test to_csv
         csv = CSV.parse(report.to_csv)
         expect(csv[0]).to eql ["Start date", "California/Impressions", "California/Interactions", "Texas/Impressions", "Texas/Interactions"]
-        expect(csv[1]).to eql ["2014/01/01", "100.0", "50.0", nil, nil]
-        expect(csv[2]).to eql ["2014/01/12", nil, nil, "200.0", "150.0"]
+        expect(csv[1]).to eql ["2014/01/01", "100.0", "50.000", nil, nil]
+        expect(csv[2]).to eql ["2014/01/12", nil, nil, "200.0", "150.000"]
       end
 
       it "returns a line for each team  when adding a team field as a row and the team is part of the event" do
@@ -1510,8 +1512,8 @@ describe Report do
       # Test to_csv
       csv = CSV.parse(report.to_csv)
       expect(csv[0]).to eql ['Campaign', 'California/Impressions', 'Texas/Impressions']
-      expect(csv[1]).to eql ['Guaro Cacique 2013', '200.0', '100.0']
-      expect(csv[2]).to eql ['Ron Centenario FY12', '300.0', nil]
+      expect(csv[1]).to eql ['Guaro Cacique 2013', '200.00', '100.00']
+      expect(csv[2]).to eql ['Ron Centenario FY12', '300.00', nil]
     end
 
     it "returns all the campaign names" do
@@ -1536,9 +1538,9 @@ describe Report do
       # Test to_csv
       csv = CSV.parse(report.to_csv)
       expect(csv[0]).to eql ['Venue', 'Guaro Cacique 2013/Impressions']
-      expect(csv[1]).to eql ["Bar Texano", '100.0']
-      expect(csv[2]).to eql ['Texas Bar & Grill', '300.0']
-      expect(csv[3]).to eql ['Texas Restaurant', '200.0']
+      expect(csv[1]).to eql ["Bar Texano", '100.00']
+      expect(csv[2]).to eql ['Texas Bar & Grill', '300.00']
+      expect(csv[3]).to eql ['Texas Restaurant', '200.00']
     end
   end
 end

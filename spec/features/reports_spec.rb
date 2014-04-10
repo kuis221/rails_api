@@ -76,6 +76,31 @@ feature "Reports", js: true do
     end
   end
 
+  feature "video tutorial" do
+    scenario "a user can play and dimiss the video tutorial" do
+      visit results_reports_path
+
+      feature_name = 'NEW FEATURE\'S NAME'
+
+      expect(page).to have_content(feature_name)
+      expect(page).to have_content('Here goes some text that explains how it works')
+      click_link 'Play Video'
+      within visible_modal do
+        expect(page).to have_content('New Feature\'s Name')
+        click_js_button 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dimiss'
+      end
+      wait_for_ajax
+
+      visit results_reports_path
+      expect(page).to have_no_content(feature_name)
+    end
+  end
+
   feature "run view" do
     let(:report) { FactoryGirl.create(:report, name: 'My Report',
         description: 'Description of my report',

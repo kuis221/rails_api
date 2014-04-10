@@ -1,20 +1,7 @@
 - content_for :head
   = stylesheet_link_tag "reports"
 
-.new-feature
-  h5 NEW FEATURE'S NAME 
-  a.close
-  a.video-thumbnail data-target=".video-modal" data-toggle="modal" 
-    img src="/assets/video_arrow.png" /
-  .feature-description
-    p
-      | Here goes some text that explains how it works
-      br>/
-      | Here the description continues. This may be 2–3 or 4 lines.
-      br/
-      | It should be just the essence of the feature and maybe how to access it.
-
-    a href="#"  Learn more
+= render 'new_feature_alert'
 
 .main.no-margin
   .pull-left
@@ -64,15 +51,4 @@
           = render @reports
 
 = render partial: 'help_tutorial'
-
-.video-modal.modal.fade aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" 
-  .modal-dialog
-    .modal-content
-      .modal-header
-        button.close aria-hidden="true" data-dismiss="modal" type="button" 
-        h3 New Feature's Name
-      .modal-body
-        iframe allowfullscreen="" frameborder="0" height="281" src="//www.youtube.com/embed/GNZBSZD16cY" width="500" 
-      .modal-footer
-        button.btn.btn-cancel data-dismiss="modal" type="button"  Close
 

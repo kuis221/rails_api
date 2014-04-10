@@ -147,6 +147,14 @@ module ApplicationHelper
     end
   end
 
+  def user_new_feature(name, version=1, &block)
+    unless current_company_user.dismissed_alert?(name, version)
+      content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
+        yield
+      end
+    end
+  end
+
   def user_company_dropdown(user)
     companies = user.companies_active_role
 
