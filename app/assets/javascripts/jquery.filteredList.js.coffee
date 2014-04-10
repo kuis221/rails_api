@@ -6,6 +6,7 @@ $.widget 'nmk.filteredList', {
 		filters: false,
 		onChange: false,
 		onPageLoaded: false,
+		onFiltersLoaded: false,
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
@@ -136,6 +137,9 @@ $.widget 'nmk.filteredList', {
 				@addCalendar filter
 			else if filter.type is 'time'
 				@addTimeFilter filter
+
+		if @options.onFiltersLoaded
+			@options.onFiltersLoaded()
 
 
 	addSlider: (filter) ->

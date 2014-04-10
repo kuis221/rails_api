@@ -83,9 +83,6 @@ $.widget 'nmk.reportBuilder',
 
 				return 'left';
 
-		# for field in $('#report-fields .report-field').get()
-		# 	$(field).data('tooltip').options.placement = 'left'
-
 		@element.on 'click', '.field-remove-btn', (e) =>
 			e.stopPropagation()
 			@removeField $(e.target).closest('.report-field')

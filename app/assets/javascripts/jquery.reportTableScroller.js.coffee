@@ -32,7 +32,7 @@ $.widget 'nmk.reportTableScroller',
 			@adjustHeader()
 			false
 
-		@header.find('.expand-all').tooltip('destroy').tooltip container: 'body'
+		@header.find('.expand-all').tooltip('destroy').tooltip container: '#report-container'
 		@header.on 'click', '.expand-all', (e) =>
 			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
 			if $(e.target).hasClass('icon-collapse') # Expand all
@@ -75,5 +75,10 @@ $.widget 'nmk.reportTableScroller',
 		@
 
 	adjustTableSize: () ->
-		maxHeight = $(window).height() - @scroller.offset().top - parseInt($('footer').css('margin-top')) - parseInt($('body').css('padding-top')) - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
+		maxHeight = $(window).height() - @scroller.offset().top - parseInt($('footer').css('margin-top')) - 30 - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
 		@scroller.css height: maxHeight
+
+		difference =  ($('.sidebar').position().top+$('.sidebar').outerHeight()) - ($('.main').position().top+$('.main').outerHeight())
+
+		if difference > 0
+			@scroller.css height: maxHeight + difference

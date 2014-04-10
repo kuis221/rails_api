@@ -43,6 +43,10 @@
       },
       'onPageLoaded' : function(page) {
         $('#report-table').reportTableScroller('adjustHeader');
+        $('#report-table').reportTableScroller('adjustTableSize');
+      },
+      'onFiltersLoaded': function(page) {
+        $('#report-table').reportTableScroller('adjustTableSize');
       },
       spinnerElement: function() {
         return $('<div class="report-overlay" style="height: 60px; width: 100%"></div>').insertAfter($('table#report-table'));
