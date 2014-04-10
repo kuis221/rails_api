@@ -209,6 +209,9 @@ ul.reports-list {
 			max-height: 190px;
 			margin-top: 8px;
 			overflow: auto;
+			a.field-remove-btn.icon-remove{
+				display: none;
+			}
 		}
 		.search-fields{
 			margin-right: 2px;
