@@ -29,7 +29,7 @@ class Ability
 
       can :time_zone_change, CompanyUser
       can :time_zone_update, CompanyUser
-      can [:notifications, :select_company], CompanyUser
+      can [:notifications, :select_company, :dismiss_alert], CompanyUser
 
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
