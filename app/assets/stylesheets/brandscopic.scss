@@ -7415,7 +7415,7 @@ table.table.likert-scale-table {
 		position: absolute;
 		right: 25px;
 		top: 5px;
-		&:after{
+		&:before{
 			color: $brand;
 		}
 	}
@@ -7442,22 +7442,6 @@ table.table.likert-scale-table {
 		a{
 			color: $brand;
 			text-decoration: underline;
-		}
-	}
-}
-
-.video-modal{
-	button.close{
-		color: $brand !important;
-		right: 10px;
-		&:after{
-			opacity:0;
-		}
-		&:before{
-			color: $brand;
-		}
-		&:focus{
-			outline: none;
 		}
 	}
 }

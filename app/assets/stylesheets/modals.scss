@@ -1335,3 +1335,51 @@ div#spin{
 		}
 	}
 }
+
+.video-modal{
+	height:360px;
+	width:640px;
+	&.modal{
+		background-color: transparent !important;
+		border:0;
+		-webkit-box-shadow:none;
+		box-shadow:0;
+	}
+	.modal-body{
+		padding:0;
+	}
+	.modal-header{
+		button.close{
+			z-index: 99999;
+		}
+	}
+	.modal-content, .modal-dialog, .modal-header, .modal-body{
+		background-color:transparent;
+		-webkit-border-radius:0;
+		border-radius:0;
+		box-shadow:0;
+	}
+	.modal-footer{
+		background-color:transparent;
+		-webkit-box-shadow: none;
+		box-shadow:0;
+	}
+	button.close{
+		color: $brand !important;
+		right: 10px;
+		&:after{
+			opacity:0;
+		}
+		&:before{
+			color: $brand;
+		}
+		&:focus{
+			outline: none;
+		}
+	}
+}
+
+.modal-backdrop, .modal-backdrop.fade.in{
+	background-color:#252525;
+}
+
