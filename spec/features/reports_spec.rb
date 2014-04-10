@@ -171,6 +171,7 @@ feature "Reports", js: true do
       with_resque do
         expect {
           click_js_button 'Download'
+          wait_for_ajax(10)
           within visible_modal do
             expect(page).to have_content('We are processing your request, the download will start soon...')
           end
