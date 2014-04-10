@@ -97,6 +97,10 @@ class Results::ReportsController < InheritedResources::Base
     end
 
     def resource_close_bar_url
-      collection_path
+      if action_name == 'build'
+        resource_path
+      else
+        collection_path
+      end
     end
 end
