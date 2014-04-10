@@ -156,7 +156,7 @@ ul.reports-list {
 		background-color: white !important;
 		border: 1px solid $user_menu;
 		height: 37px;
-		width: 190px;
+		width: 200px;
 		background-image: url("search2.svg") !important;
 		background-position: center right;
 		background-repeat: no-repeat;
@@ -181,17 +181,20 @@ ul.reports-list {
 
 	p.drag-message{
 		color: $user_menu;
-		padding-bottom:10px;
-		padding-top:10px;
 		text-align: center;
+		margin-bottom: 5px;
 	}
 
 	.field-list {
 		border: 1px solid #ccc;
+		box-sizing: border-box;
 		height: 90px;
 		padding: 4px 10px;
 		margin-bottom: 10px;
-		overflow: auto;
+		.fields-group{
+			height: 20px;
+			overflow: auto;
+		}
 
 		span.group-name{
 			padding-left: 15px;
@@ -291,6 +294,7 @@ ul.reports-list {
 		&#report-fields {
 			font-weight: bold;
 			height: 345px;
+			padding-top: 5px;
 			text-transform: uppercase;
 			ul {
 				&:last-of-type{
@@ -307,7 +311,6 @@ ul.reports-list {
 			}
 		}
 		&#report-filters-outer, &#report-columns-outer, &#report-rows-outer, &#report-values-outer{
-			margin-top: 5px;
 			margin-bottom: 20px;
 			ul{
 				margin-bottom: 0;
@@ -636,8 +639,15 @@ $report_border_color: #ccc;
 }
 
 @media (max-height: 810px) {
-	#report-builder .field-list { 
-		height: 55px;
+
+	#report-builder{
+		#report-fields{
+			min-height: 118px;
+			max-height: 118px;
+		}
+		.field-list { 
+			height: 55px;
+		} 
 	}
 }
 

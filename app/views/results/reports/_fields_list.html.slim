@@ -1,12 +1,14 @@
 #report-fields.field-list
-  input type="search" id="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
-  - available_field_list.each do |group_name, items|
-    span.group-name data-group="#{group_name}"= group_name
-    ul.draggable-list data-group="#{group_name}"
-      - items.each do |id, name, tooltip|
-        li.report-field id="#{id}" data-field-id="#{id}" data-group="#{group_name}" title="#{tooltip}"
-          a.field-remove-btn.icon-remove href="#" title="Remove"
-          .field-label= name
-          i.field-settings-btn.icon-caret-down
-          .clearfix
+  .search-fields
+    input type="search" id="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
+  .fields-group
+    - available_field_list.each do |group_name, items|
+      span.group-name data-group="#{group_name}"= group_name
+      ul.draggable-list data-group="#{group_name}"
+        - items.each do |id, name, tooltip|
+          li.report-field id="#{id}" data-field-id="#{id}" data-group="#{group_name}" title="#{tooltip}"
+            a.field-remove-btn.icon-remove href="#" title="Remove"
+            .field-label= name
+            i.field-settings-btn.icon-caret-down
+            .clearfix
 
