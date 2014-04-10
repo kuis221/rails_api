@@ -3218,8 +3218,10 @@ table.table {
 		}
 	}
 	.field{
+		display: inline-block;
+		float: left;
 		height: auto !important;
-		width: auto !important;
+		width: 38% !important;
 		&.ui-draggable-dragging{
 			height: auto !important;
 			width: auto !important;
