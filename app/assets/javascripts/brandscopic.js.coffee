@@ -31,7 +31,16 @@ jQuery ->
 	$("a[rel=popover]").popover()
 	$(".tooltip").tooltip()
 	$("a[rel=tooltip]").tooltip()
-	$("div.gallery").photoGallery()
+	$("div.gallery").photoGallery
+	$('[data-spy]').each( (index, element) ->
+		$(element).affix offset: {
+			top: () ->
+				if $(element).css('position') isnt 'fixed'
+					$(element).data('offset', $(element).offset().top - $('header').outerHeight())
+				$(element).data('offset')
+
+		}
+	)
 
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
@@ -159,7 +168,7 @@ jQuery ->
 	$(document).on 'ajax:before', "form", validateForm
 
 
-	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .close', () ->
+	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .btn-dismiss-alert', () ->
 		alert = $(this).closest('.new-feature')
 		$.ajax
 			url: '/users/dismiss_alert'
