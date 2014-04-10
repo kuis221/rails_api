@@ -590,7 +590,7 @@ $report_border_color: #ccc;
 			white-space: nowrap;
 			text-align: left;
 			padding-left: 20px;
-			width:215px;
+			min-width:215px;
 			height: 20px;
 			display: block;
 		}
@@ -609,10 +609,6 @@ $report_border_color: #ccc;
 					margin-top: -1px;
 				}
 			}
-		}
-
-		.row_label {
-			width: 215px;
 		}
 	}
 }

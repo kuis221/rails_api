@@ -17,6 +17,35 @@ $.widget 'nmk.reportTableScroller',
 		@element.css marginTop: -@header.find('thead').outerHeight()
 		@scroller.css marginTop: @header.find('thead').outerHeight()
 
+		@element.on 'click', '.report-collapse-button', (e) =>
+			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
+			collapsed = $(e.target).hasClass('icon-expand')
+			row = $(e.target).closest('tr')
+			level = row.data('level')
+			next = row.next('tr')
+			while next.data('level') > level
+				if collapsed
+					next.hide().find('.icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+				else if next.data('level') == level+1  # Only show/hide the inmediate children elements
+					next.show()
+				next = next.next('tr')
+			@adjustHeader()
+			false
+
+		@header.find('.expand-all').tooltip('destroy').tooltip container: 'body'
+		@header.on 'click', '.expand-all', (e) =>
+			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
+			if $(e.target).hasClass('icon-collapse') # Expand all
+				$(e.target).attr('title', 'Collapse All').tooltip('destroy').tooltip container: 'body'
+				@element.find('tbody tr[data-level]').show()
+				@element.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+			else
+				$(e.target).attr('title', 'Expand All').tooltip('destroy').tooltip container: 'body'
+				@element.find('tbody tr[data-level!=0]').hide()
+				@element.find('tbody tr[data-level] .icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+			@adjustHeader()
+			false
+
 
 		@scroller.on 'scroll', (e) =>
 			tablePosition = @header.position()
@@ -38,7 +67,7 @@ $.widget 'nmk.reportTableScroller',
 	adjustHeader: () ->
 		headerCols = @header.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
 		tableCols = @element.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
-		for num in [1..tableCols.length]
+		for num in [0..tableCols.length]
 			$(headerCols[num]).css width: $(tableCols[num]).width()
 		@
 

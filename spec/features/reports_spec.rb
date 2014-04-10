@@ -17,7 +17,7 @@ feature "Reports", js: true do
     scenario 'user is redirected to the report build page after creation' do
       visit results_reports_path
 
-      click_js_button 'New report'
+      click_js_button 'New Report'
 
       expect {
         within visible_modal do
@@ -138,7 +138,7 @@ feature "Reports", js: true do
 
       visit results_report_path(report)
 
-      expect(page).to have_content('GRAND TOTAL: 444.0')
+      expect(page).to have_content('GRAND TOTAL: 444')
       expect(page).to have_content('Bar 1 123.0')
       expect(page).to have_content('Bar 2 321.0')
 
@@ -149,6 +149,7 @@ feature "Reports", js: true do
           within visible_modal do
             expect(page).to have_content('We are processing your request, the download will start soon...')
           end
+          wait_for_ajax(30)
           ensure_modal_was_closed
         }.to change(ListExport, :count).by(1)
       end
@@ -178,21 +179,21 @@ feature "Reports", js: true do
 
       visit results_report_path(report)
 
-      expect(page).to have_content('GRAND TOTAL: 444.0')
+      expect(page).to have_content('GRAND TOTAL: 444')
       expect(page).to have_content('Bar 1 123.0')
       expect(page).to have_content('Bar 2 321.0')
 
       # Test the expand/collapse logic
       within report_preview do
         # Initial state should be collapsed
-        expect(page).to have_no_content('2013/01/21')
-        expect(page).to have_no_content('2013/02/13')
-        click_js_link('Expand All')
         expect(page).to have_content('2013/01/21')
         expect(page).to have_content('2013/02/13')
-        click_js_link('Collapse All')
+        find('.report-table.cloned a.expand-all').trigger 'click'
         expect(page).to have_no_content('2013/01/21')
         expect(page).to have_no_content('2013/02/13')
+        find('.report-table.cloned a.expand-all').trigger 'click'
+        expect(page).to have_content('2013/01/21')
+        expect(page).to have_content('2013/02/13')
       end
 
       # Export the report
@@ -248,7 +249,7 @@ feature "Reports", js: true do
       within report_preview do
         expect(page).to have_content('IMPRESSIONS INTERACTIONS')
         expect(page).to have_content('STATE 1 STATE 2 STATE 1 STATE 2')
-        expect(page).to have_content('GRAND TOTAL: 500.0 800.0 100.0 100.0')
+        expect(page).to have_content('GRAND TOTAL: 500 800 100 100')
         expect(page).to have_content('Campaign 1 30.00% 70.00%  10.0% 20.0%')
         expect(page).to have_content('Campaign 2 66.67% 33.33% 40.0% 30.0%')
 
