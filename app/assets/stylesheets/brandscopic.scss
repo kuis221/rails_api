@@ -3100,7 +3100,7 @@ textarea::-webkit-input-placeholder {
 		position: relative;
 		text-shadow:none;
 		right: 35px;
-		&:after{
+		&:before{
 			color: $grey_one;
 			content: "\e019";
 			display: block;
@@ -7467,7 +7467,7 @@ table.table.likert-scale-table {
 	opacity: 1;
 	right: 25px;
 	text-shadow:none;
-	&:after{
+	&:before{
 		color: white;
 		content: "\e019";
 		display: block;
