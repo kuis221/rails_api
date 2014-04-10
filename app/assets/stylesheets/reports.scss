@@ -6,6 +6,16 @@ body.reports{
 	.ui-timepicker-list.timepicker-filter{
 		border-color: rgba(102,102,102,0.6);
 	}
+	.tooltip{
+	    &.top{
+	    	.tooltip-inner{
+				background-color: $text;
+	    	}
+	    	.tooltip-arrow{
+				border-top:5px solid $text;
+			}
+		}
+	}
 }
 ul.reports-list {
 	li {
