@@ -350,6 +350,7 @@ ul.reports-list {
 			height: 345px;
 			padding-top: 5px;
 			text-transform: uppercase;
+			overflow: hidden;
 			ul {
 				&:last-of-type{
 					margin-bottom: 10px;
