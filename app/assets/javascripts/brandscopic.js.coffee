@@ -178,6 +178,11 @@ jQuery ->
 		alert.remove()
 		false
 
+	$(document).off('click.videoFeature').on 'click.videoFeature', 'a[data-video]', (e) ->
+		bootbox.classes('video-modal')
+		bootbox.modal($('<iframe allowfullscreen="" frameborder="0">').attr('src', $(e.target).data('video')).attr('width', $(e.target).data('width')).attr('height', $(e.target).data('height')), '&nbsp;')
+		false
+
 
 	$(document).on 'click', '.xlsx-download-link', () ->
 		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')

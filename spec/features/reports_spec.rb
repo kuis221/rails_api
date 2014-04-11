@@ -80,14 +80,13 @@ feature "Reports", js: true do
     scenario "a user can play and dimiss the video tutorial" do
       visit results_reports_path
 
-      feature_name = 'NEW FEATURE\'S NAME'
+      feature_name = 'CHECK OUT THE NEW RESULTS SECTION'
 
       expect(page).to have_content(feature_name)
-      expect(page).to have_content('Here goes some text that explains how it works')
+      expect(page).to have_content('We have completely overhauled the layout of the Results')
       click_link 'Play Video'
       within visible_modal do
-        expect(page).to have_content('New Feature\'s Name')
-        click_js_button 'Close'
+        click_js_link 'Close'
       end
       ensure_modal_was_closed
 

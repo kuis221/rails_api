@@ -1350,7 +1350,8 @@ div#spin{
 	}
 	.modal-header{
 		position:relative;
-		button.close{
+		h3 { display: none; }
+		a.close{
 			right: -35px;
 			top: 15px;
 			z-index: 99999;

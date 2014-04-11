@@ -1,7 +1,16 @@
 - content_for :head
   = stylesheet_link_tag "reports"
 
-= render 'new_feature_alert'
+= user_new_feature('reports_index') do
+  h5 CHECK OUT THE NEW RESULTS SECTION
+  a.close.btn-dismiss-alert href="#" title="Dimiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/GNZBSZD16cY" data-width="640" data-height="360" 
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      ' We have completely overhauled the layout of the Results section and have added a brand new Report Builder feature so that you can build your own custom reports.  Click on the video to the left for a quick overview or check out our 
+      a> href="http://support.branscopic.com" support site
+      | for more in depth info. 
 
 .main.no-margin
   .pull-left
