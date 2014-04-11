@@ -247,6 +247,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *have_data*: returns true if data have been entered for the event, otherwise, returns false
+  * *data*: Calculated data based on event results, returned only when have_data is true
+    * *spent_by_impression*: The cost for each impression. The result of total of expenses / number of impressions
+    * *spent_by_interaction*: The cost for each interaction. The result of total of expenses / number of interactions
+    * *spent_by_sample*: The cost for each sample. The result of total of expenses / number of samples
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
   * *place*: On object with the event's venue information with the following attributes
     * *id*: the venue's id
@@ -276,6 +280,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "event_status": "Unsent",
       "summary": "This is a test summary",
       "have_data": true,
+      data: {
+        spent_by_impression: "6.0"
+        spent_by_interaction: "6.857142857"
+        spent_by_sample: "6.857142857"
+      }
       "actions": [
           "enter post event data",
           "upload photos",

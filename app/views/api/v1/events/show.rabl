@@ -20,6 +20,16 @@ node :have_data do |event|
   event.has_event_data?
 end
 
+if resource.has_event_data? && resource.event_data.present?
+  node :data do
+    {
+      spent_by_impression: resource.event_data.spent / resource.event_data.impressions,
+      spent_by_interaction: resource.event_data.spent / resource.event_data.interactions,
+      spent_by_sample: resource.event_data.spent / resource.event_data.samples
+    }
+  end
+end
+
 child(venue: :place) do
   attributes :id, :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
 end
