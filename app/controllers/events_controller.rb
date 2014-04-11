@@ -21,7 +21,6 @@ class EventsController < FilteredController
   
   skip_load_and_authorize_resource only: :update
   before_filter :authorize_update, only: :update
-  before_filter :set_last_search_url, only: [:approve, :reject]
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -48,7 +47,7 @@ class EventsController < FilteredController
       raise resource.errors.full_messages if resource.errors.any?
     end
     flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(:status => 'approved')
+    redirect_to resource_path(:status => 'approved', :return => params[:return])
   end
 
   def reject

@@ -8,18 +8,13 @@ class FilteredController < InheritedResources::Base
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
-  before_filter :set_previous_page, only: [:show]
+  before_filter :set_return, only: [:show]
 
   custom_actions collection: [:filters, :items]
 
-  def set_last_search_url
-    session[:last_search_url] = session[:previous_page] if session[:previous_page]
-  end
-  
-  def set_previous_page
-    if request.env['HTTP_REFERER']
-      session[:previous_page] = request.env['HTTP_REFERER']
-    end
+  def set_return
+    url_to_return = params[:return] || request.env['HTTP_REFERER']
+    @return = url_to_return if url_valid? url_to_return
   end
 
   def filters

@@ -67,8 +67,8 @@ r
 
 - else
   .alert.alert-info.submitted
-    - approve_link = link_to 'approve', approve_event_path, method: :put
-    - reject_link = link_to 'reject', reject_event_path, class: 'reject-post-event', method: :put, remote: true
+    - approve_link = link_to 'approve', approve_event_path(:return => @return), method: :put
+    - reject_link = link_to 'reject', reject_event_path(:return => @return), class: 'reject-post-event', method: :put, remote: true
     == "Your post event report has been submitted for approval."
     - if can?(:approve, resource)
       == " Please review and either #{approve_link} or #{reject_link}."

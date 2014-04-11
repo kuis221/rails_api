@@ -1,3 +1,6 @@
 - if !resource.errors.any?
   |
-    window.location = "#{resource_path}?status=rejected"
+    - if params[:return]
+      window.location = "#{resource_path}?status=rejected&return=#{params[:return]}"
+    else
+      window.location = "#{resource_path}?status=rejected"
