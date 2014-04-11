@@ -89,4 +89,9 @@ class ApplicationController < ActionController::Base
       Company.current = nil
       Time.zone = Rails.application.config.time_zone
     end
+    
+    def url_valid?(url)
+      url = URI.parse(url) rescue false
+      url.kind_of?(URI::HTTP) || url.kind_of?(URI::HTTPS)
+  end
 end
