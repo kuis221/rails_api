@@ -21,12 +21,13 @@ node :have_data do |event|
 end
 
 if resource.has_event_data? && resource.event_data.present?
+  active_kpis = resource.campaign.active_kpis
   node :data do
-    {
-      spent_by_impression: resource.event_data.spent / resource.event_data.impressions,
-      spent_by_interaction: resource.event_data.spent / resource.event_data.interactions,
-      spent_by_sample: resource.event_data.spent / resource.event_data.samples
-    }
+    data = {}
+    data[:spent_by_impression] = resource.event_data.spent / resource.event_data.impressions if active_kpis.include?(Kpi.impressions)
+    data[:spent_by_interaction] = resource.event_data.spent / resource.event_data.interactions  if active_kpis.include?(Kpi.interactions)
+    data[:spent_by_sample] = resource.event_data.spent / resource.event_data.samples  if active_kpis.include?(Kpi.samples)
+    data
   end
 end
 
