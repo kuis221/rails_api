@@ -52,9 +52,9 @@ module ApplicationHelper
     "<address>#{address_with_name}</address>".html_safe
   end
 
-  def resource_details_bar(title, url = '')
+  def resource_details_bar(title)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
-      link_to(session[:previous_page] || collection_path, class: 'close-details') do
+      link_to(@return || collection_path, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, " ".html_safe, class: :close)
       end
