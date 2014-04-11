@@ -54,7 +54,7 @@ $.widget 'nmk.reportTableScroller',
 			$(window).trigger 'scroll'
 			true
 
-		$(window).on 'resize.reportTableScroller', (e) =>
+		$(window).on 'resize.reportTableScroller, DOMSubtreeModified.reportTableScroller', (e) =>
 			@adjustTableSize()
 			@adjustHeader()
 			true

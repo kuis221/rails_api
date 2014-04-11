@@ -137,8 +137,8 @@ class Report < ActiveRecord::Base
   def format_values(result_values)
     values_position = columns.map(&:field).index('values')
     values_map = report_columns.map{|c| c.split('||')[values_position] }
-    values_label_map = Hash[values.map{|v| [v.label, v]}]
-
+    values_label_map = {}
+    values.each{|v| v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count') ? v.kpi.kpis_segments.each{|s| values_label_map["#{v.label}: #{s.text}"] =  v}  :  values_label_map[v.label] = v}.flatten
     result_values.each_with_index.map do |value, index|
       values_label_map[values_map[index]].format_value result_values, index
     end
