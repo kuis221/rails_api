@@ -776,7 +776,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
         result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
       else
         if field.field_type == 'count'
-          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
+          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s.id] : nil)}}})
         end
         r = resource.results_for([field]).first
         result.merge!({id: r.id, value: r.value})
