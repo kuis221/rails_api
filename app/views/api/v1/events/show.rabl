@@ -24,9 +24,9 @@ if resource.has_event_data? && resource.event_data.present?
   active_kpis = resource.campaign.active_kpis
   node :data do
     data = {}
-    data[:spent_by_impression] = resource.event_data.spent / resource.event_data.impressions if active_kpis.include?(Kpi.impressions)
-    data[:spent_by_interaction] = resource.event_data.spent / resource.event_data.interactions  if active_kpis.include?(Kpi.interactions)
-    data[:spent_by_sample] = resource.event_data.spent / resource.event_data.samples  if active_kpis.include?(Kpi.samples)
+    data[:spent_by_impression] = resource.event_data.impressions > 0 ? resource.event_data.spent / resource.event_data.impressions : '0.0' if active_kpis.include?(Kpi.impressions)
+    data[:spent_by_interaction] = resource.event_data.interactions > 0 ? resource.event_data.spent / resource.event_data.interactions : '0.0'  if active_kpis.include?(Kpi.interactions)
+    data[:spent_by_sample] = resource.event_data.samples > 0 ? resource.event_data.spent / resource.event_data.samples : '0.0'  if active_kpis.include?(Kpi.samples)
     data
   end
 end
