@@ -110,6 +110,8 @@ feature 'Events section' do
           within('.alert') do
             click_link 'approve'
           end
+          expect(page).to have_content('Your post event report has been approved.')
+          
           find("#resource-close-details").click
           expect(page).to have_selector('ul#events-list li', count: 2)
         end
