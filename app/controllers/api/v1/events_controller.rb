@@ -280,11 +280,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "event_status": "Unsent",
       "summary": "This is a test summary",
       "have_data": true,
-      data: {
+      "data": {
         spent_by_impression: "6.0"
         spent_by_interaction: "6.857142857"
         spent_by_sample: "6.857142857"
-      }
+      },
       "actions": [
           "enter post event data",
           "upload photos",
