@@ -235,7 +235,7 @@ $.widget 'nmk.reportBuilder',
 
 		formFields = []
 		formFields.push $('<div class="control-group">').
-							append($('<label class="control-label" for="report-field-label">').text('Label'),
+							append($('<label class="control-label" for="report-field-label">').text('Label:'),
 								$('<div class="controls">').append(
 									$('<input type="text" name="report-field-label" id="report-field-label">').val(field.label).
 										on 'keyup', (e) =>
@@ -247,7 +247,7 @@ $.widget 'nmk.reportBuilder',
 
 		if listName in ['report-values', 'report-rows']
 			formFields.push $('<div class="control-group">').
-								append(	$('<label class="control-label" for="report-field-aggregate">').text('Summarize by'),
+								append(	$('<label class="control-label" for="report-field-aggregate">').text('Summarize by:'),
 										$('<div class="controls">').append(
 											$('<select name="report-field-aggregate" id="report-field-aggregate">').append([
 													$('<option value="count">Count</option>').attr('selected', field.aggregate is 'count'),
@@ -269,7 +269,7 @@ $.widget 'nmk.reportBuilder',
 								)
 		if listName in ['report-values', 'report-rows']
 			formFields.push $('<div class="control-group">').
-								append(	$('<label class="control-label" for="report-field-precision">').text('Decimal places'),
+								append(	$('<label class="control-label" for="report-field-precision">').text('Decimal places:'),
 										$('<div class="controls">').append(
 											$('<select name="report-field-precision" id="report-field-precision">').append([
 													$('<option value="0">0</option>').attr('selected', field.precision is '0'),
@@ -288,7 +288,7 @@ $.widget 'nmk.reportBuilder',
 
 		if listName in ['report-values']
 			formFields.push $('<div class="control-group">').
-								append(	$('<label class="control-label" for="report-field-display">').text('Display as'),
+								append(	$('<label class="control-label" for="report-field-display">').text('Display as:'),
 										$('<div class="controls">').append(
 											$('<select name="report-field-display" id="report-field-display">').append([
 													$('<option value="">No Calculation</option>').attr('selected', field.display is ''),

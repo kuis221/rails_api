@@ -422,7 +422,7 @@ ul.reports-list {
 	.report-field-settings {
 		width: 190px;
 		.report-field-settings-inner {
-			padding: 0px;
+			padding: 0 0 5px 0;
 			background-color: $grey_one;
 			border-radius: 5px;
 		}
@@ -478,7 +478,7 @@ ul.reports-list {
 		}
 
 		.control-group{
-			padding: 8px;
+			padding: 2px 8px;
 			margin-bottom: 0;
 		}
 
@@ -517,7 +517,8 @@ ul.reports-list {
 		}
 
 		label.control-label{
-			margin-bottom:5px;
+			margin-bottom: 0;
+			font-size: 11px;
 		}
 		.control-group{
 			&:last-of-type{
@@ -551,6 +552,7 @@ $report_border_color: #ccc;
 	}
 	.report-table {
 		margin-bottom: 0px;
+		font-size: 11px;
 		.level_1 .row_label {
 			padding-left: 40px;
 		}
@@ -572,18 +574,17 @@ $report_border_color: #ccc;
 			height:20px;
 			margin-right:5px;
 			width:10px;
-			color: $text !important;
+			color: $grey_three !important;
 			text-decoration: none !important;
 		}
 		.icon-expand:before {
 			content: "\e002";
-			font-size: 12px;
+			font-size: 9px;
 		}
 		.icon-collapse:before {
 			top: 3px;
 			content: "\e004";
 		}
-
 
 		thead {
 			border-bottom: thin solid $report_border_color;
@@ -605,6 +606,7 @@ $report_border_color: #ccc;
 					white-space: nowrap;
 					border-top: none 0 !important;
 					border-bottom: none 0 !important;
+					padding: 5px;
 				}
 				&.last-header, &.grand-total {
 					th, td { 
@@ -639,6 +641,7 @@ $report_border_color: #ccc;
 		tbody td {
 			border: 0;
 			text-align: right;
+			padding: 0px 5px;
 		}
 		tbody tr {
 			position: relative;
@@ -664,6 +667,15 @@ $report_border_color: #ccc;
 					border-top: thin solid $report_border_color;
 					font-weight:bold;
 					margin-top: -1px;
+				}
+				td {
+					padding-top: 5px;
+				}
+			}
+			tr.level_2, tr.level_3, tr.level_4, tr.level_5 {
+				td {
+					line-height: 18px;
+					height: 18px;
 				}
 			}
 		}
