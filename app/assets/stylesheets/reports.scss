@@ -214,7 +214,7 @@ ul.reports-list {
 	.field-list {
 		border: 1px solid #ccc;
 		box-sizing: border-box;
-		height: 102px;
+		height: 79px;
 		padding: 1px 3px 3px 3px;
 		margin-bottom: 10px;
 		.fields-group{
@@ -348,6 +348,7 @@ ul.reports-list {
 		&#report-fields {
 			font-weight: bold;
 			height: 345px;
+			min-height: 118px;
 			padding-top: 5px;
 			text-transform: uppercase;
 			overflow: hidden;
@@ -534,7 +535,7 @@ ul.reports-list {
 $report_border_color: #ccc;
 #report-container {
 	min-height: 200px;
-	margin-top: 50px;
+	margin-top: 20px;
 	.report-outer {
 		position:relative;
 		border: thin solid $report_border_color;
@@ -687,9 +688,6 @@ $report_border_color: #ccc;
 @media (max-height: 810px) {
 
 	#report-builder{
-		#report-fields{
-			min-height: 118px;
-		}
 		.field-list { 
 			height: 55px;
 			.fields-group{

@@ -386,6 +386,10 @@ jQuery ->
 				bottomPosition = $window.scrollTop()+$window.height()
 				footerHeight = $('footer').outerHeight()
 
+				# We need to get the natural top of the bar when it's not absolute or fixed positioned
+				$filterSidebar.css position: 'static'
+				$filterSidebar.originalTop = $filterSidebar.position().top;
+
 				if sidebarBottom < $window.height()
 					$filterSidebar.css({
 						position: 'fixed',

@@ -457,7 +457,11 @@ $.widget 'nmk.reportBuilder',
 			position: 'fixed'
 			right: '10px'
 
-		fieldsHeight = sidebarHeight - sidebar.find('.fixed-height-lists').outerHeight() - parseInt(sidebar.css('padding-bottom'))
+		sidebarFixedHeight = sidebar.find('.fixed-height-lists').outerHeight() + parseInt(sidebar.css('padding-bottom'))
+		fieldsHeight = Math.max((sidebarHeight - sidebarFixedHeight), parseInt(sidebar.find('#report-fields').css('min-height')))
+		if sidebarHeight < (fieldsHeight + sidebarFixedHeight)
+			sidebar.css height: (fieldsHeight + sidebarFixedHeight)+'px'
+
 		sidebar.find('#report-fields').css height: fieldsHeight
 		sidebar.find('.fields-group').css height: (fieldsHeight - sidebar.find('.search-fields').outerHeight() - 8)
 		@
