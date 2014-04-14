@@ -6,7 +6,7 @@ feature "Reports", js: true do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
     @company = @user.companies.first
-    page.driver.resize(1024, 2500)
+    page.driver.resize(1024, 1000)
   end
 
   after do
@@ -302,12 +302,11 @@ feature "Reports", js: true do
   end
 
   feature "build view" do
-    before do
-      @report = FactoryGirl.create(:report, name: 'Events by Venue',
+    before { Kpi.create_global_kpis }
+
+    let(:report) { FactoryGirl.create(:report, name: 'Events by Venue',
         description: 'a resume of events by venue',
-        active: true, company: @company)
-      Kpi.create_global_kpis
-    end
+        active: true, company: @company) }
 
     scenario "share a report" do
       user = FactoryGirl.create(:company_user,
@@ -316,7 +315,7 @@ feature "Reports", js: true do
       team = FactoryGirl.create(:team, name:'Los Fantasticos', company: @company)
       role = FactoryGirl.create(:role, name: 'Super Hero', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       click_js_button 'Share'
       within visible_modal do
         expect(find_field('report_sharing_custom')['checked']).to be_false
@@ -343,13 +342,13 @@ feature "Reports", js: true do
         click_js_button 'Save'
       end
       ensure_modal_was_closed
-      expect(@report.reload.sharing).to eql 'everyone'
+      expect(report.reload.sharing).to eql 'everyone'
     end
 
     scenario "search for fields in the fields list" do
       FactoryGirl.create(:kpi, name: 'ABC KPI', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       within report_fields do
         expect(page).to have_content('VENUE')
@@ -398,7 +397,7 @@ feature "Reports", js: true do
       FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
@@ -443,7 +442,7 @@ feature "Reports", js: true do
       wait_for_ajax
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       within ".sidebar" do
         # Each KPI should be in the correct list
         expect(field_list('values')).to have_content('Kpi #1')
@@ -469,7 +468,7 @@ feature "Reports", js: true do
       FactoryGirl.create(:kpi, name: 'Kpi #4', company: @company)
       FactoryGirl.create(:kpi, name: 'Kpi #5', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
@@ -500,7 +499,7 @@ feature "Reports", js: true do
       wait_for_ajax
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       within ".sidebar" do
         # Each KPI should be in the correct list
         expect(field_list('values')).to have_content('Sum of Kpi #1')
@@ -518,7 +517,7 @@ feature "Reports", js: true do
     end
 
     scenario "user can change the aggregation method for values" do
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
       field_list('values').find('li').click
       within ".report-field-settings" do
@@ -528,13 +527,13 @@ feature "Reports", js: true do
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      expect(@report.reload.values.first.to_hash).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
+      expect(report.reload.values.first.to_hash).to include("label"=>"Average of Impressions", "aggregate" => 'avg')
     end
 
     scenario "'Values' must be added automatically to the columns when adding a value" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       within ".sidebar" do
         expect(field_list('columns')).to have_no_content('Values')
@@ -564,9 +563,11 @@ feature "Reports", js: true do
         results: {impressions: 100, interactions: 1000})
       FactoryGirl.create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
         results: {impressions: 50, interactions: 2000})
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
+      expect(field_list('rows')).to have_content('Campaign Name')
       field_list('fields').find('li[data-field-id="event:start_date"]').drag_to field_list('rows')
+      expect(field_list('rows')).to have_content('Event Start date')
       field_list('fields').find("li", text: 'Impressions').drag_to field_list('values')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
@@ -578,7 +579,7 @@ feature "Reports", js: true do
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      expect(@report.reload.rows.first.to_hash).to include("label"=>"Campaign Name", "aggregate" => 'avg', "field" => "campaign:name")
+      expect(report.reload.rows.first.to_hash).to include("label"=>"Campaign Name", "aggregate" => 'avg', "field" => "campaign:name")
 
       within "#report-container tr.level_0" do
         expect(page).to have_content('My Super Campaign')
@@ -632,7 +633,7 @@ feature "Reports", js: true do
         results: {impressions: 100, interactions: 1000})
       FactoryGirl.create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
         results: {impressions: 50, interactions: 2000})
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
       field_list('fields').find('li[data-field-id="campaign:name"]').drag_to field_list('rows')
       field_list('fields').find("li", text: 'Interactions').drag_to field_list('values')
 
@@ -644,7 +645,7 @@ feature "Reports", js: true do
       find('body').click
       click_button 'Save'
       wait_for_ajax
-      expect(@report.reload.values.first.to_hash).to include("label"=>"Sum of Interactions", "display" => 'perc_of_column', "field" => "kpi:#{Kpi.interactions.id}")
+      expect(report.reload.values.first.to_hash).to include("label"=>"Sum of Interactions", "display" => 'perc_of_column', "field" => "kpi:#{Kpi.interactions.id}")
 
       within "#report-container tr.level_0" do
         expect(page).to have_content('My Super Campaign')
@@ -656,7 +657,7 @@ feature "Reports", js: true do
     scenario "drag fields outside the list to remove it" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
@@ -674,7 +675,7 @@ feature "Reports", js: true do
     scenario "user can remove a field by clicking on the X" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
@@ -692,7 +693,7 @@ feature "Reports", js: true do
     scenario "adding a value should automatically add the 'Values' column and removing it should remove the values" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
-      visit build_results_report_path(@report)
+      visit build_results_report_path(report)
 
       find("li", text: 'Kpi #1').drag_to field_list('values')
 
@@ -710,7 +711,7 @@ feature "Reports", js: true do
     feature "preview" do
       it "should display a preview as the user make changes on the report" do
         FactoryGirl.create(:event, company: @company, results: {impressions: 100})
-        visit build_results_report_path(@report)
+        visit build_results_report_path(report)
 
         expect(find(report_preview)).to have_content('Drag and drop filters, columns, rows and values to create your report.')
 
