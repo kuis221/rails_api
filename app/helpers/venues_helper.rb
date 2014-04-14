@@ -4,4 +4,8 @@ module VenuesHelper
     @venue_events_total = @venue_events.total
     @venue_events.results
   end
+  
+  def is_demographic_empty?(data)
+    data.map(&:last).uniq.first == 0
+  end
 end

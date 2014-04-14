@@ -86,7 +86,9 @@
                     span= number_to_currency(resource.avg_impressions_cost, precision: 2)
                     = " Cost/Impression"
 
-      - if resource.persisted? && can?(:view_kpis, resource)
+      - if resource.persisted? && can?(:view_kpis, resource) && !is_demographic_empty?(resource.overall_graphs_data[:gender])
+        - puts "WWWWWWWWWWWWWWWwwwwwwwwwwww"
+        - puts "ZZZZZZzzzz #{resource.overall_graphs_data[:gender].inspect}"
         #demographics.row-fluid
           .span6
             #gender-graph.row-fluid
