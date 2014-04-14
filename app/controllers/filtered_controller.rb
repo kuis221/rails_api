@@ -2,19 +2,18 @@ class FilteredController < InheritedResources::Base
   include FacetsHelper
   include AutocompleteHelper
 
-  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
+  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item, :return_path
   respond_to :json, only: :index
 
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
-  before_filter :set_return, only: [:show]
 
   custom_actions collection: [:filters, :items]
 
-  def set_return
+  def return_path
     url_to_return = params[:return] || request.env['HTTP_REFERER']
-    @return = url_to_return if url_valid? url_to_return
+    url_to_return if url_valid? url_to_return
   end
 
   def filters

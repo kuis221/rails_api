@@ -1,6 +1,5 @@
 - if !resource.errors.any?
-  |
-    - if params[:return]
-      window.location = "#{resource_path}?status=rejected&return=#{params[:return]}"
-    else
-      window.location = "#{resource_path}?status=rejected"
+  - if params[:return]
+    | window.location = "#{j resource_path(status: :rejected, return: params[:return]).html_safe}"
+  - else
+    | window.location = "#{resource_path}?status=rejected"

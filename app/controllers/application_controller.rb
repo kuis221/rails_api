@@ -11,8 +11,6 @@ class ApplicationController < ActionController::Base
   after_filter :update_user_last_activity
   after_filter :remove_viewed_notification
 
-  before_filter :remember_return_path, only: :show
-
   layout :set_layout
 
   helper_method :current_company, :custom_body_class, :modal_dialog_title
@@ -53,12 +51,6 @@ class ApplicationController < ActionController::Base
       @custom_body_class ||= ''
     end
 
-    def remember_return_path
-      if params.has_key?(:return) and params[:return]
-        session["return_path"] = Base64.decode64(params.has_key?(:return)) rescue nil
-      end
-    end
-
     def modal_dialog_title
       I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
     end
@@ -89,7 +81,7 @@ class ApplicationController < ActionController::Base
       Company.current = nil
       Time.zone = Rails.application.config.time_zone
     end
-    
+
     def url_valid?(url)
       url = URI.parse(url) rescue false
       url.kind_of?(URI::HTTP) || url.kind_of?(URI::HTTPS)

@@ -138,7 +138,7 @@ RSpec.configure do |config|
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 4
+  Capybara.default_wait_time = 5
   Capybara.server_host = 'localhost'
   Devise.stretches = 1
   #Rails.logger.level = 4
