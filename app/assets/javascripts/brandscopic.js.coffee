@@ -31,7 +31,7 @@ jQuery ->
 	$("a[rel=popover]").popover()
 	$(".tooltip").tooltip()
 	$("a[rel=tooltip]").tooltip()
-	$("div.gallery").photoGallery
+	$("div.gallery").photoGallery()
 	$('[data-spy]').each( (index, element) ->
 		$(element).affix offset: {
 			top: () ->
@@ -372,13 +372,16 @@ jQuery ->
 	# Keep filter Sidebar always visible but make it scroll if it's
 	# taller than the window size
 	$filterSidebar = $('#resource-filter-column')
+	lastTimestamp  = 0
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
 		$filterSidebar.originalWidth = $filterSidebar.width();
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
-			if $.loadingContent is 0
-				console.log "not loading content"
+			now = new Date().getTime() # Add a small delay between each execution because FF seems to
+									   # trigger this too frequently decreasing the performance
+			if $.loadingContent is 0 && lastTimestamp < (now - 50)
+				lastTimestamp = now
 				if $window.width() >= 979 # For the responsive design
 					if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
 						return true
@@ -414,8 +417,6 @@ jQuery ->
 					true
 				else # On small screens, leave it static
 					$filterSidebar.css({position: ''}).addClass('responsive-mode')
-			else
-				console.log "waiting for load content to finish"
 		).trigger('scroll')
 
 	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->
