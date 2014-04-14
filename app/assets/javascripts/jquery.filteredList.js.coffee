@@ -20,6 +20,9 @@ $.widget 'nmk.filteredList', {
 	},
 
 	_create: () ->
+		query = window.location.search.replace(/^\?/,"")
+		if query != ''
+			@options.defaultParams = @options.clearFilterParams
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
 			.appendTo(@element).submit (e)->

@@ -29,7 +29,7 @@
       = render 'values_list'
 
   .main.with-details-close-bar class="#{resource.filters.empty? ? 'no-margin' : ''}"
-    = resource_details_bar("You are viewing #{resource.name} report. Click to close.", collection_path)
+    = resource_details_bar("You are viewing #{resource.name} report. Click to close.")
     button.btn.btn-primary.btn-save-report disabled="disabled" data-disable-with="Saving..." Save
     = link_to 'Exit', results_report_path(resource), method: :get, title: 'Exit', form_class: "btn-cancel-report-form", class: 'btn btn-cancel btn-cancel-report'
 

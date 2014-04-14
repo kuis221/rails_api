@@ -21,7 +21,7 @@
     #collection-list-filters
 
   .main.with-details-close-bar class="#{resource.filters.empty? ? 'no-margin' : ''}"
-    = resource_details_bar("You are viewing #{resource.name} report. Click to close.", collection_path)
+    = resource_details_bar("You are viewing #{resource.name} report. Click to close.")
     - if can?(:edit, resource)
       .pull-left
         = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
