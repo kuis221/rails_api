@@ -377,41 +377,45 @@ jQuery ->
 		$filterSidebar.originalWidth = $filterSidebar.width();
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
-			if $window.width() >= 979 # For the responsive design
-				if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
-					return true
-				$filterSidebar.positioning = true
-				$filterSidebar.removeClass('responsive-mode')
-				sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
-				bottomPosition = $window.scrollTop()+$window.height()
-				footerHeight = $('footer').outerHeight()
+			if $.loadingContent is 0
+				console.log "not loading content"
+				if $window.width() >= 979 # For the responsive design
+					if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
+						return true
+					$filterSidebar.positioning = true
+					$filterSidebar.removeClass('responsive-mode')
+					sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
+					bottomPosition = $window.scrollTop()+$window.height()
+					footerHeight = $('footer').outerHeight()
 
-				# We need to get the natural top of the bar when it's not absolute or fixed positioned
-				$filterSidebar.css position: 'static'
-				$filterSidebar.originalTop = $filterSidebar.position().top;
+					# We need to get the natural top of the bar when it's not absolute or fixed positioned
+					$filterSidebar.css position: 'static'
+					$filterSidebar.originalTop = $filterSidebar.position().top;
 
-				if sidebarBottom < $window.height()
-					$filterSidebar.css({
-						position: 'fixed',
-						top: "#{$filterSidebar.originalTop}px",
-						right: "10px",
-						bottom: 'auto'
-					})
-				else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
-					$filterSidebar.css({
-						position: 'fixed',
-						bottom: footerHeight+"px",
-						top: 'auto',
-						right: "10px"
-					})
-				else
-					$filterSidebar.css({
-						position: 'static'
-					})
-				$filterSidebar.positioning = false
-				true
-			else # On small screens, leave it static
-				$filterSidebar.css({position: ''}).addClass('responsive-mode')
+					if sidebarBottom < $window.height()
+						$filterSidebar.css({
+							position: 'fixed',
+							top: "#{$filterSidebar.originalTop}px",
+							right: "10px",
+							bottom: 'auto'
+						})
+					else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
+						$filterSidebar.css({
+							position: 'fixed',
+							bottom: footerHeight+"px",
+							top: 'auto',
+							right: "10px"
+						})
+					else
+						$filterSidebar.css({
+							position: 'static'
+						})
+					$filterSidebar.positioning = false
+					true
+				else # On small screens, leave it static
+					$filterSidebar.css({position: ''}).addClass('responsive-mode')
+			else
+				console.log "waiting for load content to finish"
 		).trigger('scroll')
 
 	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->

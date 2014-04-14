@@ -106,7 +106,10 @@ $.widget 'nmk.reportBuilder',
 		@refreshReportPreview()
 
 		$(window).bind "scroll resize DOMSubtreeModified", () =>
-			@_resizeSideBar()
+			clearTimeout window.reportBuilderTimeout if window.reportBuilderTimeout?
+			window.reportBuilderTimeout = window.setTimeout =>
+				@_resizeSideBar()
+			, 50
 
 		@element
 

@@ -145,7 +145,7 @@ class Report < ActiveRecord::Base
   end
 
   def offset
-    ((page || 1)-1) * 50
+    ((page || 1)-1) * 30
   end
 
   def fetch_results_for(fields, params={})
@@ -240,7 +240,7 @@ class Report < ActiveRecord::Base
 
   def first_row_values_for_page
     @first_row_values_for_page ||= add_filters_conditions(add_joins_scopes(base_events_scope, values)).order('1 ASC').
-    limit(50).offset(offset).group('1').
+    limit(30).offset(offset).group('1').
     pluck(rows.first.table_column[0])
   end
 

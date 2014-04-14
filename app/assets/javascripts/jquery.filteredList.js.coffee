@@ -1,3 +1,5 @@
+$.loadingContent = 0
+
 $.widget 'nmk.filteredList', {
 	options: {
 		source: false,
@@ -130,6 +132,7 @@ $.widget 'nmk.filteredList', {
 		p
 
 	setFilters: (filters) ->
+		$.loadingContent += 1
 		@formFilters.html('')
 		for filter in filters
 			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
@@ -143,6 +146,9 @@ $.widget 'nmk.filteredList', {
 
 		if @options.onFiltersLoaded
 			@options.onFiltersLoaded()
+
+		$.loadingContent -= 1
+		@
 
 
 	addSlider: (filter) ->
@@ -661,6 +667,7 @@ $.widget 'nmk.filteredList', {
 		spinner = @_loadingSpinner()
 
 		@jqxhr = $.get @options.source, params, (response) =>
+			$.loadingContent += 1
 			spinner.remove();
 			$response = $('<div>').append(response)
 			$items = $response.find('[data-content="items"]')
@@ -677,6 +684,8 @@ $.widget 'nmk.filteredList', {
 
 			if @options.onPageLoaded
 				@options.onPageLoaded page
+
+			$.loadingContent -= 1
 			true
 
 		params = null

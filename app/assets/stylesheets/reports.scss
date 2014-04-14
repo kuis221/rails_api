@@ -536,6 +536,9 @@ $report_border_color: #ccc;
 #report-container {
 	min-height: 200px;
 	margin-top: 20px;
+	&.preview {
+		margin-top: 50px;
+	}
 	.report-outer {
 		position:relative;
 		border: thin solid $report_border_color;

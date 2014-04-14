@@ -55,9 +55,14 @@ $.widget 'nmk.reportTableScroller',
 			true
 
 		$(window).on 'resize.reportTableScroller, DOMSubtreeModified.reportTableScroller', (e) =>
-			@adjustTableSize()
-			@adjustHeader()
-			true
+			clearTimeout window.reportTableResizerTimeout if window.reportTableResizerTimeout?
+
+			window.reportTableResizerTimeout = window.setTimeout =>
+				if $.loadingContent is 0
+					@adjustTableSize()
+					@adjustHeader()
+					true
+			, 100
 
 		@adjustTableSize()
 		@adjustHeader()
@@ -65,7 +70,7 @@ $.widget 'nmk.reportTableScroller',
 		@
 
 	_destroy: () ->
-		window.off 'resize.reportTableScroller'
+		window.off 'resize.reportTableScroller, DOMSubtreeModified.reportTableScroller'
 
 	adjustHeader: () ->
 		headerCols = @header.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
