@@ -15,10 +15,10 @@ class EventsController < FilteredController
   respond_to :json, only: [:index, :calendar_highlights]
   respond_to :xls, only: :index
   respond_to :xls, only: :index
-
+  
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
-
+  
   skip_load_and_authorize_resource only: :update
   before_filter :authorize_update, only: :update
 
@@ -47,7 +47,7 @@ class EventsController < FilteredController
       raise resource.errors.full_messages if resource.errors.any?
     end
     flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(:status => 'approved')
+    redirect_to resource_path(:status => 'approved', :return => params[:return])
   end
 
   def reject

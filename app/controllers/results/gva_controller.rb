@@ -28,7 +28,7 @@ class Results::GvaController < ApplicationController
     goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
     # Following KPIs should be displayed in this specific order at the beginning. Rest of KPIs and Activity Types should be next in the list ordered by name
     promotables = ['Events', 'Promo Hours', 'Expenses', 'Samples', 'Interactions', 'Impressions']
-    @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || g.kpi.name).to_s : g.activity_type.name }
+    @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || ('A'+g.kpi.name)).to_s : g.activity_type.name }
   end
 
   def report_groups
