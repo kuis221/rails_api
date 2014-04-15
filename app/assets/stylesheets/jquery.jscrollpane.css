@@ -1,3 +1,4 @@
+
 /*
  * CSS Styles that are needed by jScrollPane for it to operate correctly.
  *
@@ -21,9 +22,9 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 16px;
+	width: 10px;
 	height: 100%;
-	background: red;
+	background: transparent;
 }
 
 .jspHorizontalBar
@@ -48,13 +49,15 @@
 
 .jspTrack
 {
-	background: #dde;
+	background: white;
 	position: relative;
 }
 
 .jspDrag
 {
-	background: #bbd;
+	background: #666666;
+	border-radius: 4px;
+	width: 8px;
 	position: relative;
 	top: 0;
 	left: 0;
