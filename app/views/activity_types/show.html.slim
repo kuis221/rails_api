@@ -49,7 +49,7 @@
 javascript:
   jQuery(function(){
     $(document).on('activity_types:change', function(){
-      window.location.reload(true);
+      window.location = '#{activity_type_path(return: return_path)}'
     });
     $('.form-builder-wrapper').formBuilder({
       url: '#{activity_type_path(resource, format: :json)}'
