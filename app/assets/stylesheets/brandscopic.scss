@@ -3209,6 +3209,7 @@ table.table {
 	[data-type="Summation"]{
 		.controls{
 			clear: both;
+			margin-top: 15px;
 		}
 		.field-option{
 			height: 50px;
@@ -3350,7 +3351,6 @@ table.table {
 		label.control-label{
 			margin-bottom: 5px;
 			margin-right: 10px;
-			float: left;
 		}
 	}
 	.form-fields{
@@ -3436,7 +3436,7 @@ table.table {
 		color: #C0C0C0;
 		font-size: 14px;
 		line-height: 17px;
-		margin-top: 35px;
+		margin-top: 15px;
 		padding: 20px 30px;
 		text-align: center;
 		width: 267px;
