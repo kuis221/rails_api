@@ -43,6 +43,8 @@
 //= require jquery.timepicker
 //= require jquery.uniform
 //= require jquery.validate
+//= require jquery.mousewheel
+//= require jquery.jscrollpane
 //= require markerclusterer
 //= require select2
 //= require superfish

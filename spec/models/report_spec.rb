@@ -135,6 +135,217 @@ describe Report do
       expect(results[1]['values']).to eql [200.0, 100.0, 80.0, 60.0, 40.0, 60.0]
       expect(report.format_values(results[1]['values'])).to eql ['66.67%', '33.33%', '40.0%', '30.0%', '80%', '86%']
     end
+
+    it "should olny apply the 'display' formula to values that have any selected - with columns" do
+      campaign1 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 1')
+      campaign2 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 2')
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 1', state: 'State 1'),
+        results: {impressions: 300, interactions: 20, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 2', state: 'State 2'),
+        results: {impressions: 700, interactions: 40, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 3', state: 'State 1'),
+        results: {impressions: 200, interactions: 80, samples: 40})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 4', state: 'State 2'),
+        results: {impressions: 100, interactions: 60, samples: 60})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"},{"field"=>"place:state", "label"=>"State"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_row'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+        ]
+      )
+
+      results = report.fetch_page
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [300.0, 700.0, 20.0, 40.0, 10.0, 10.0]
+      expect(report.format_values(results[0]['values'])).to eql ['30.00%', '70.00%', '20.00', '40.00', "10.00", "10.00"]
+
+      expect(results[1]['campaign_name']).to eql 'Campaign 2'
+      expect(results[1]['values']).to eql [200.0, 100.0, 80.0, 60.0, 40.0, 60.0]
+      expect(report.format_values(results[1]['values'])).to eql ['66.67%', '33.33%', '80.00', '60.00', '40.00', '60.00']
+    end
+
+    it "should olny apply the 'display' formula to values that have any selected - without columns" do
+      campaign1 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 1')
+      campaign2 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 2')
+      FactoryGirl.create(:event, campaign: campaign1,
+        results: {impressions: 300, interactions: 20, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign1,
+        results: {impressions: 700, interactions: 40, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        results: {impressions: 200, interactions: 80, samples: 40})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        results: {impressions: 100, interactions: 60, samples: 60})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_row'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+        ]
+      )
+
+      # The first value is displayed as % of row
+      results = report.fetch_page
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [1000.0, 60.0, 20.0]
+      expect(report.format_values(results[0]['values'])).to eql ['100.00%', '60.00', "20.00"]
+
+      expect(results[1]['campaign_name']).to eql 'Campaign 2'
+      expect(results[1]['values']).to eql [300.0, 140.0, 100.0]
+      expect(report.format_values(results[1]['values'])).to eql ['100.00%', '140.00', '100.00']
+
+
+      # The first value is displayed as % of column
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_column'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+        ]
+      )
+
+      results = report.fetch_page
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [1000.0, 60.0, 20.0]
+      expect(report.format_values(results[0]['values'])).to eql ['76.92%', '60.00', "20.00"]
+
+      expect(results[1]['campaign_name']).to eql 'Campaign 2'
+      expect(results[1]['values']).to eql [300.0, 140.0, 100.0]
+      expect(report.format_values(results[1]['values'])).to eql ['23.08%', '140.00', '100.00']
+
+
+      # The first value is displayed as % of total
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_total'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+        ]
+      )
+
+      results = report.fetch_page
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [1000.0, 60.0, 20.0]
+      expect(report.format_values(results[0]['values'])).to eql ['76.92%', '60.00', "20.00"]
+
+      expect(results[1]['campaign_name']).to eql 'Campaign 2'
+      expect(results[1]['values']).to eql [300.0, 140.0, 100.0]
+      expect(report.format_values(results[1]['values'])).to eql ['23.08%', '140.00', '100.00']
+    end
+
+    it "should olny apply the 'display' formula to values that have any selected - without multiple rows" do
+      campaign1 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 1')
+      campaign2 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 2')
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 1'),
+        results: {impressions: 300, interactions: 20, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign1,
+        place: FactoryGirl.create(:place, name: 'Bar 2'),
+        results: {impressions: 700, interactions: 40, samples: 10})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 3'),
+        results: {impressions: 200, interactions: 80, samples: 40})
+
+      FactoryGirl.create(:event, campaign: campaign2,
+        place: FactoryGirl.create(:place, name: 'Bar 4'),
+        results: {impressions: 100, interactions: 60, samples: 60})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}, {"field"=>"campaign:name", "label"=>"Campaign Name"}],
+        values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>'perc_of_row'},
+            {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+            {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+        ]
+      )
+
+      # The first value is displayed as % of row
+      results = report.fetch_page
+      expect(results[0]['place_name']).to eql 'Bar 1'
+      expect(results[0]['campaign_name']).to eql 'Campaign 1'
+      expect(results[0]['values']).to eql [300.0, 20.0, 10.0]
+      expect(report.format_values(results[0]['values'])).to eql ['100.00%', '20.00', "10.00"]
+
+      expect(results[1]['place_name']).to eql 'Bar 2'
+      expect(results[1]['campaign_name']).to eql 'Campaign 1'
+      expect(results[1]['values']).to eql [700.0, 40.0, 10.0]
+      expect(report.format_values(results[1]['values'])).to eql ['100.00%', '40.00', "10.00"]
+
+      expect(results[2]['place_name']).to eql 'Bar 3'
+      expect(results[2]['campaign_name']).to eql 'Campaign 2'
+      expect(results[2]['values']).to eql [200.0, 80.0, 40.0]
+      expect(report.format_values(results[2]['values'])).to eql ['100.00%', '80.00', '40.00']
+
+      expect(results[3]['place_name']).to eql 'Bar 4'
+      expect(results[3]['campaign_name']).to eql 'Campaign 2'
+      expect(results[3]['values']).to eql [100.0, 60.0, 60.0]
+      expect(report.format_values(results[3]['values'])).to eql ['100.00%', '60.00', '60.00']
+
+      # The first value is displayed as % of column and % of total
+      ['perc_of_column', 'perc_of_total'].each do |display|
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"place:name", "label"=>"Venue Name"}, {"field"=>"campaign:name", "label"=>"Campaign Name"}],
+          values:  [
+              {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum", 'display'=>display},
+              {"field"=>"kpi:#{Kpi.interactions.id}", "label"=>"Interactions", "aggregate"=>"sum", 'display'=>''},
+              {"field"=>"kpi:#{Kpi.samples.id}", "label"=>"Samples", "aggregate"=>"sum", 'display'=> nil}
+          ]
+        )
+
+        # The first value is displayed as % of row
+        results = report.fetch_page
+        expect(results[0]['place_name']).to eql 'Bar 1'
+        expect(results[0]['campaign_name']).to eql 'Campaign 1'
+        expect(results[0]['values']).to eql [300.0, 20.0, 10.0]
+        expect(report.format_values(results[0]['values'])).to eql ['23.08%', '20.00', "10.00"]
+
+        expect(results[1]['place_name']).to eql 'Bar 2'
+        expect(results[1]['campaign_name']).to eql 'Campaign 1'
+        expect(results[1]['values']).to eql [700.0, 40.0, 10.0]
+        expect(report.format_values(results[1]['values'])).to eql ['53.85%', '40.00', "10.00"]
+
+        expect(results[2]['place_name']).to eql 'Bar 3'
+        expect(results[2]['campaign_name']).to eql 'Campaign 2'
+        expect(results[2]['values']).to eql [200.0, 80.0, 40.0]
+        expect(report.format_values(results[2]['values'])).to eql ['15.38%', '80.00', '40.00']
+
+        expect(results[3]['place_name']).to eql 'Bar 4'
+        expect(results[3]['campaign_name']).to eql 'Campaign 2'
+        expect(results[3]['values']).to eql [100.0, 60.0, 60.0]
+        expect(report.format_values(results[3]['values'])).to eql ['7.69%', '60.00', '60.00']
+      end
+
+    end
   end
 
   describe "#columns_totals" do

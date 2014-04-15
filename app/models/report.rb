@@ -581,11 +581,10 @@ class Report::Field
     end
   end
 
-  def format_value(row_values, column_index, field=nil)
-    field ||= self
+  def format_value(row_values, column_index)
     if row_values[column_index].present? && row_values[column_index] != ''
-      if field.display.present? && field.display != ''
-        number_to_percentage(field.apply_display_method(row_values, column_index), precision: precision)
+      if display.present? && display != ''
+        number_to_percentage(apply_display_method(row_values, column_index), precision: precision)
       else
         number_with_precision(row_values[column_index], precision: precision, delimiter: ',')
       end

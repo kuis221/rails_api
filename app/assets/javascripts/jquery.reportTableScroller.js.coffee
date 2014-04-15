@@ -1,5 +1,6 @@
 $.widget 'nmk.reportTableScroller',
 	options: {
+		useScrollerPuglin: true
 	},
 
 	_create: () ->
@@ -8,6 +9,9 @@ $.widget 'nmk.reportTableScroller',
 		@leftMargin
 
 		@scroller = @element.closest('.report-inner')
+
+		@scroller.jScrollPane() if @options.useScrollerPuglin
+
 		@header = $('<table>').attr('class', @element.attr('class')+' cloned').append(@element.find('thead').clone(true, true).css({position: 'absolute'})).css({
 			position: 'absolute',
 			top: @element.position().top,
@@ -47,30 +51,35 @@ $.widget 'nmk.reportTableScroller',
 			false
 
 
-		@scroller.on 'scroll', (e) =>
-			tablePosition = @header.position()
-			inner = $(e.target)
-			@header.find('thead').css({left: -inner.scrollLeft()})
-			$(window).trigger 'scroll'
-			true
+		unless @options.useScrollerPuglin
+			@scroller.on 'scroll', (e) =>
+				@header.find('thead').css({left: -$(e.target).scrollLeft()})
+				$(window).trigger 'scroll'
+				true
+		else
+			@scroller.on 'jsp-scroll-y', (e) =>
+				@header.find('thead').css left: '-' + @scroller.data('jsp').getContentPositionX() + 'px'
+				true
 
-		$(window).on 'resize.reportTableScroller, DOMSubtreeModified.reportTableScroller', (e) =>
+		$(window).on 'resize.reportTableScroller, alert:missed.reportTableScroller', (e) =>
 			clearTimeout window.reportTableResizerTimeout if window.reportTableResizerTimeout?
 
 			window.reportTableResizerTimeout = window.setTimeout =>
 				if $.loadingContent is 0
 					@adjustTableSize()
 					@adjustHeader()
+					@resetScroller()
 					true
-			, 100
+			, 20
 
 		@adjustTableSize()
 		@adjustHeader()
+		@resetScroller()
 
 		@
 
 	_destroy: () ->
-		window.off 'resize.reportTableScroller, DOMSubtreeModified.reportTableScroller'
+		window.off 'resize.reportTableScroller, alert:missed.reportTableScroller'
 
 	adjustHeader: () ->
 		headerCols = @header.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
@@ -87,3 +96,7 @@ $.widget 'nmk.reportTableScroller',
 
 		if difference > 0
 			@scroller.css height: maxHeight + difference
+
+	resetScroller: () ->
+		scrollerApi = @scroller.data('jsp')
+		scrollerApi.reinitialise()

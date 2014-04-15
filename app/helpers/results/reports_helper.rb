@@ -61,7 +61,7 @@ module Results
       end
 
       def sum_row_values(group, row)
-        format_row_values row, case row['aggregate']
+        resource.format_values case row['aggregate']
         when 'avg'
           group.map{|r| r['values']}.transpose.map{|a| x = a.compact; x.any? ? x.reduce(:+).to_f / x.size : 0}
         when 'min'
@@ -73,14 +73,6 @@ module Results
         else
           group.map{|r| r['values']}.transpose.map{|a| a.compact.reduce(:+)}
         end
-      end
-
-      def format_row_values(row, result_values)
-        resource.values.each_with_index.map do |field, index|
-          (index..(result_values.count-1)).step(resource.values.count).each.map do |i|
-            row.format_value(result_values, i, field)
-          end
-        end.flatten
       end
 
       def kpi_tooltip(kpi)
