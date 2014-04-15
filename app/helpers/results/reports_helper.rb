@@ -57,7 +57,7 @@ module Results
       end
 
       def model_report_fields(klass)
-        klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title], ""]}
+        klass.report_fields.map{|k,info| ["#{klass.name.underscore}:#{k}", info[:title], info[:title]]}
       end
 
       def sum_row_values(group, row)
@@ -76,8 +76,8 @@ module Results
       end
 
       def kpi_tooltip(kpi)
-        tooltip = ''
-        tooltip = "<p>#{kpi.description}</p>" if kpi.description.present? && !kpi.description.empty?
+        tooltip = "<p class=\"name\">#{kpi.name}</p>"
+        tooltip << "<p class=\"description\">#{kpi.description}</p>" if kpi.description.present? && !kpi.description.empty?
         tooltip << "<b>TYPE</b>"
         tooltip << kpi.kpi_type.capitalize
         if ['percentage', 'count'].include?(kpi.kpi_type)

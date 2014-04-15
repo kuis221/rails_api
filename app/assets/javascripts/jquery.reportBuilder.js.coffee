@@ -75,6 +75,8 @@ $.widget 'nmk.reportBuilder',
 
 		$('#report-fields .report-field').tooltip
 			html: true, container: @element, delay: 0, animation: false
+			title: (a, b) ->
+				$(this).data('title')
 			placement: (tooltip, field) ->
 				window.setTimeout ->
 					$(tooltip).css
