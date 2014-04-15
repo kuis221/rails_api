@@ -14,6 +14,7 @@
  *= require bootstrap_and_overrides
  *= require 'jquery.datepick.css'
  *= require 'jquery.timepicker.css'
+ *= require 'jquery.jscrollpane.css'
  *= require 'jqslider-classic.css'
  *= require 'jquery.fancybox.css'
  *= require 'superfish.css'

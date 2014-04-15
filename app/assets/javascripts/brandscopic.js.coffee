@@ -176,6 +176,7 @@ jQuery ->
 			data: {name: alert.data('alert'), version: alert.data('version')}
 
 		alert.remove()
+		$(window).trigger 'alert:missed', [alert]
 		false
 
 	$(document).off('click.videoFeature').on 'click.videoFeature', 'a[data-video]', (e) ->
