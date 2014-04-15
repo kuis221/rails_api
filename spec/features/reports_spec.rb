@@ -274,7 +274,7 @@ feature "Reports", js: true do
       within report_preview do
         expect(page).to have_content('IMPRESSIONS INTERACTIONS')
         expect(page).to have_content('STATE 1 STATE 2 STATE 1 STATE 2')
-        expect(page).to have_content('GRAND TOTAL: 500 800 100 100')
+        expect(page).to have_content('GRAND TOTAL: 500.00 800.00 100.0 100.0')
         expect(page).to have_content('Campaign 1 30.00% 70.00%  10.0% 20.0%')
         expect(page).to have_content('Campaign 2 66.67% 33.33% 40.0% 30.0%')
 

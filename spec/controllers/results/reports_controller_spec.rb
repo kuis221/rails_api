@@ -104,7 +104,7 @@ describe Results::ReportsController do
 
     it "must update the report fields attributes" do
       put 'update', id: report.to_param, report: {
-        rows:    [{field: 'place:name', label: 'Venue Name', aggregate: 'sum', precision: '4'}],
+        rows:    [{field: 'place:name', label: 'Venue Name', aggregate: 'sum'}],
         columns: [{field: 'place:name', label: 'Venue Name'}],
         values:  [{field: 'kpi:1', label: 'Impressions', aggregate: 'sum', precision: '1'}],
         filters:  [{field: 'place:name', label: 'Place'}]
@@ -112,7 +112,7 @@ describe Results::ReportsController do
       assigns(:report).should == report
       expect(response).to render_template('update')
       report.reload
-      expect(report.rows.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate, precision: r.precision}}).to eql [{field: 'place:name', label: 'Venue Name', aggregate: 'sum', precision: 4}]
+      expect(report.rows.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate}}).to eql [{field: 'place:name', label: 'Venue Name', aggregate: 'sum'}]
       expect(report.columns.map{|r| {field: r.field, label: r.label}}).to eql [{field: 'place:name', label: 'Venue Name'}]
       expect(report.values.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate, precision: r.precision}}).to eql [{field: 'kpi:1', label: 'Impressions', aggregate: 'sum', precision: 1}]
     end

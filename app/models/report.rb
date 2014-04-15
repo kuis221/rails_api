@@ -134,13 +134,13 @@ class Report < ActiveRecord::Base
     end
   end
 
-  def format_values(result_values)
+  def format_values(result_values, options={})
     values_position = columns.map(&:field).index('values')
     values_map = report_columns.map{|c| c.split('||')[values_position] }
     values_label_map = {}
     values.each{|v| v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count') ? v.kpi.kpis_segments.each{|s| values_label_map["#{v.label}: #{s.text}"] =  v}  :  values_label_map[v.label] = v}.flatten
     result_values.each_with_index.map do |value, index|
-      values_label_map[values_map[index]].format_value result_values, index
+      values_label_map[values_map[index]].format_value result_values, index, options
     end
   end
 
@@ -581,9 +581,9 @@ class Report::Field
     end
   end
 
-  def format_value(row_values, column_index)
+  def format_value(row_values, column_index, options={})
     if row_values[column_index].present? && row_values[column_index] != ''
-      if display.present? && display != ''
+      if display.present? && display != '' && (options[:ignore_display].nil? || !options[:ignore_display])
         number_to_percentage(apply_display_method(row_values, column_index), precision: precision)
       else
         number_with_precision(row_values[column_index], precision: precision, delimiter: ',')

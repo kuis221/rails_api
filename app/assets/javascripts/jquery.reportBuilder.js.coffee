@@ -267,7 +267,7 @@ $.widget 'nmk.reportBuilder',
 														label_field.val(label).trigger('keyup')
 										)
 								)
-		if listName in ['report-values', 'report-rows']
+		if listName in ['report-values']
 			formFields.push $('<div class="control-group">').
 								append(	$('<label class="control-label" for="report-field-precision">').text('Decimal places:'),
 										$('<div class="controls">').append(

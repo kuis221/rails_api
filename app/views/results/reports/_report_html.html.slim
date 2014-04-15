@@ -18,8 +18,8 @@
               - if row_levels_count > 1
                 a.expand-all.icon-collapse.has-tooltip href="#" title="Collapse All"
               | GRAND TOTAL:
-            - @report.columns_totals.each do |total|
-              th= number_with_precision total, precision: 2, strip_insignificant_zeros: true, delimiter: ',' if total
+            - resource.format_values(@report.columns_totals, ignore_display: true).each do |total|
+              th= total if total.present?
 
         tbody
           = render 'report_rows' unless skip_report_rows
