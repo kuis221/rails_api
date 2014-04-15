@@ -3156,6 +3156,24 @@ table.table {
 }
 
 .activity-form{
+
+	.fields-wrapper{
+		&>p{
+			color: $user_menu;
+			margin: 5px auto 15px auto;
+			text-align: center;
+		}
+		div{
+			&.ui-draggable{
+				&:hover{
+					background-color:$user_menu;
+					border: 1px solid $user_menu;
+					color: white;
+					cursor: pointer;
+				}
+			}
+		}
+	}
 	input.waiting-files {
 		width: auto !important;
 	}
@@ -3189,6 +3207,10 @@ table.table {
 		margin-bottom: 0;
 	}
 	[data-type="Summation"]{
+		.controls{
+			clear: both;
+			margin-top: 15px;
+		}
 		.field-option{
 			height: 50px;
 			width: 300px;
@@ -3218,6 +3240,8 @@ table.table {
 		}
 	}
 	.field{
+		display: inline-block;
+		float: left;
 		height: auto !important;
 		width: auto !important;
 		&.ui-draggable-dragging{
@@ -3229,90 +3253,104 @@ table.table {
 			}
 		}
 		&.ui-draggable{
+			display: inline-block;
+			font-size: 11px;
+			font-weight: bold;
+			height: 40px !important;
+			padding: 0 10px !important;
+			text-align: center;
+			margin-bottom: 8px !important;
+			width: 37% !important;
+			&:hover{
+				&:before{
+					color: white;
+				}
+			}
+			&:nth-child(even) {
+				margin-right: 10px;
+			}
 			&:before{
 				font-family: 'icons';
-				font-size: 16px;
+				color: $user_menu;
+				font-size: 13px;
 				height: 20px;
 				line-height: 17px;
-				margin-right: 20px;
 				position:relative;
+				display: block;
+				font-weight: normal;
+				text-align: center;
+				top: 2px;
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale !important;
 			}
 			&[data-type="Dropdown"]:before{
 				content:"\e60b";
-				top: 2px;
+				line-height: 22px;
 			}
 			&[data-type="Checkbox"]:before{
 				content:"\e60c";
-				top: 2px;
+				line-height: 22px;
 			}
 			&[data-type="Radio"]:before{
 				content:"\e60a";
-				top: 2px;
 			}
 			&[data-type="Percentage"]:before{
 				content:"\e608";
-				top: 4px;
+				font-size: 14px;
+				line-height: 24px;
 			}
 			&[data-type="TextArea"]:before{
 				content:"\e60f";
-				font-size: 15px;
-				top: 2px;
-				left: 2px;
+				line-height: 23px;
 			}
 			&[data-type="Number"]:before{
 				content:"\e609";
-				top: 5px;
+				font-size: 15px;
+				line-height: 27px;
 			}
 			&[data-type="Currency"]:before{
 				content:"\e606";
-				top: 2px;
-				left: 5px;
+				font-size: 15px;
+				line-height: 24px;
 			}
 			&[data-type="Text"]:before{
 				content:"\e605";
-				top: 6px;
+				font-size: 15px;
+				line-height: 27px;
 			}
 			&[data-type="Photo"]:before{
 				content:"\e607";
-				top: 3px;
 			}
 			&[data-type="Attachment"]:before{
 				content:"\e60d";
-				top: 2px;
 			}
 			&[data-type="Summation"]:before{
 				content:"\e604";
-				top: 2px;
+				font-size: 14px;
 			}
 			&[data-type="Date"]:before{
 				content:"\e022";
-				top: 2px;
+				font-size: 14px;
 			}
 			&[data-type="Time"]:before{
 				content:"\e01f";
-				font-size: 19px;
-				top: 4px;
-				left: 1px;
+				font-size: 17px;
+				line-height: 24px;
 			}
 			&[data-type="Brand"]:before{
 				content:"\e030";
-				top: 2px;
-				left: 1px;
 			}
 			&[data-type="Marque"]:before{
 				content:"\e60e";
-				font-size: 18px;
-				top: 3px;
-				left: 2px;
+				font-size: 14px;
 			}
 			&[data-type="LikertScale"]{
-				padding-left:44px;
+				line-height:60px;
 			}
 		}
 		label.control-label{
 			margin-bottom: 5px;
+			margin-right: 10px;
 		}
 	}
 	.form-fields{
