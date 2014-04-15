@@ -1,5 +1,5 @@
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing role details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing role details. Click to close.")
 
   .details_box.padding-top-close-bar
     h2= resource.name
@@ -73,6 +73,8 @@
             #admin_permissions.tab-pane
       - else
         p Here goes the message for the super admin role
+
+= render partial: 'help_tutorial'
 
 javascript:
   $(document).on('roles:change', function(){
