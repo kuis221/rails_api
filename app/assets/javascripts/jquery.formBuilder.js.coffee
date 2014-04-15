@@ -15,9 +15,9 @@ $.widget 'nmk.formBuilder', {
 				e.stopPropagation()
 				true
 
-		@formWrapper.sortable {
-			items: "> div.field",
-			cancel: '.empty-form-legend ',
+		@formWrapper.sortable
+			items: "> div.field"
+			cancel: '.empty-form-legend'
 			revert: true,
 			stop: (e, ui) =>
 				if ui.item.hasClass('ui-draggable')
@@ -29,17 +29,19 @@ $.widget 'nmk.formBuilder', {
 					$(field).data('field').attributes.ordering = index
 
 				@formWrapper.find('.clearfix').appendTo(@formWrapper)
-		}
+			over: (event, ui) =>
+				@formWrapper.addClass 'sorting'
+			out: (event, ui) =>
+				@formWrapper.removeClass 'sorting'
 
-		@fieldsWrapper.find('.field').draggable {
-			connectToSortable: ".form-fields",
+		@fieldsWrapper.find('.field').draggable
+			connectToSortable: ".form-fields"
+			revert: "invalid"
 			helper: (a, b) =>
 				@buildField({type: $(a.target).data('type')})
 			start: (e, ui) =>
 				ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
 				applyFormUiFormatsTo(ui.helper)
-			revert: "invalid"
-		}
 
 		@_loadForm()
 
