@@ -3207,6 +3207,9 @@ table.table {
 		margin-bottom: 0;
 	}
 	[data-type="Summation"]{
+		.controls{
+			clear: both;
+		}
 		.field-option{
 			height: 50px;
 			width: 300px;
@@ -3251,15 +3254,19 @@ table.table {
 		&.ui-draggable{
 			display: inline-block;
 			font-size: 11px;
+			font-weight: bold;
 			height: 40px !important;
-			padding: 1px 10px !important;
+			padding: 0 10px !important;
 			text-align: center;
 			margin-bottom: 8px !important;
-			width: 38% !important;
+			width: 37% !important;
 			&:hover{
 				&:before{
 					color: white;
 				}
+			}
+			&:nth-child(even) {
+				margin-right: 10px;
 			}
 			&:before{
 				font-family: 'icons';
@@ -3269,6 +3276,7 @@ table.table {
 				line-height: 17px;
 				position:relative;
 				display: block;
+				font-weight: normal;
 				text-align: center;
 				top: 2px;
 				-webkit-font-smoothing: antialiased;
@@ -3276,9 +3284,11 @@ table.table {
 			}
 			&[data-type="Dropdown"]:before{
 				content:"\e60b";
+				line-height: 22px;
 			}
 			&[data-type="Checkbox"]:before{
 				content:"\e60c";
+				line-height: 22px;
 			}
 			&[data-type="Radio"]:before{
 				content:"\e60a";
@@ -3426,7 +3436,7 @@ table.table {
 		color: #C0C0C0;
 		font-size: 14px;
 		line-height: 17px;
-		margin-top: 15px;
+		margin-top: 35px;
 		padding: 20px 30px;
 		text-align: center;
 		width: 267px;
