@@ -6,6 +6,6 @@ module VenuesHelper
   end
   
   def is_demographic_empty?(data)
-    data.map(&:last).uniq.first == 0
+    return true if data.blank? or data.map(&:last).uniq.first == 0
   end
 end

@@ -87,8 +87,6 @@
                     = " Cost/Impression"
 
       - if resource.persisted? && can?(:view_kpis, resource) && !is_demographic_empty?(resource.overall_graphs_data[:gender])
-        - puts "WWWWWWWWWWWWWWWwwwwwwwwwwww"
-        - puts "ZZZZZZzzzz #{resource.overall_graphs_data[:gender].inspect}"
         #demographics.row-fluid
           .span6
             #gender-graph.row-fluid
