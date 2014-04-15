@@ -25,7 +25,7 @@
       = render 'day_items'
 
     = link_to '', new_day_part_day_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Time' if can?(:edit, resource)
-
+= render partial: 'help_tutorial'
 javascript:
   $(document).on('day_parts:change', function(){
     window.location.reload(true);
