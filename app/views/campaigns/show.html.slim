@@ -75,11 +75,13 @@
         #documents_tab.tab-pane
 
   - if can?(:view_event_form, resource)
-    .details_box
+    .details_box.post-event-form
       h3 POST EVENT FORM
 
       #post-event-form-content
         = render 'post_event_form'
+
+= render partial: 'help_tutorial'
 
 javascript:
   $('#campaign-tabs a').click(function (e) {
