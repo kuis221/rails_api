@@ -16,6 +16,8 @@
           li.placeholder
             p Select any filter to see results
 
+= render partial: 'help_tutorial'
+
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{items_path(controller: 'results/surveys')}',
