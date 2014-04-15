@@ -229,8 +229,8 @@ FormField = Class.extend {
 
 	optionsField: (type='option') ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
-		titles = {'option': 'Options', 'statement': 'Statements'}
-		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type])).append(
+		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
+		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
 				$('<div class="controls field-option">').data('option', option).append([
 					$('<input type="hidden" name="'+type+'['+index+'][id]">').val(option.id),
@@ -244,7 +244,8 @@ FormField = Class.extend {
 						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							index = list.indexOf(option)+1
-							list.splice(index,0, {id: '', name: '', ordering: index})
+							list.splice(index,0, {id: '', name: titles[type][0] + ' ' + (list.length+1), ordering: index})
+							item.ordering = i for item,i in list
 							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
 							false
@@ -681,11 +682,20 @@ LikertScaleField = FormField.extend {
 			statements: []
 		}, attributes)
 
-		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+		if @attributes.id is null
+			@attributes.options = [
+				{id: null, name: 'Strongly Disagree', ordering: 0},
+				{id: null, name: 'Disagree', ordering: 1},
+				{id: null, name: 'Agree', ordering: 2},
+				{id: null, name: 'Strongly Agree', ordering: 3}
+			]
 
-		if @attributes.statements.length is 0
-			@attributes.statements = [{id: null, name: 'Statement 1', ordering: 0}]
+		if @attributes.id is null
+			@attributes.statements = [
+				{id: null, name: 'Statement 1', ordering: 0},
+				{id: null, name: 'Statement 2', ordering: 1},
+				{id: null, name: 'Statement 3', ordering: 2}
+			]
 
 		@attributes.settings ||= {}
 
