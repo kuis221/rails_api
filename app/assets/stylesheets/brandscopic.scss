@@ -3156,7 +3156,7 @@ table.table {
 }
 
 .activity-form{
-
+	
 	.fields-wrapper{
 		&>p{
 			color: $user_menu;
@@ -3244,6 +3244,12 @@ table.table {
 		float: left;
 		height: auto !important;
 		width: auto !important;
+		label.control-label{
+			width: 120px;
+		}
+		label.radio .radio{
+			margin-right: 10px;
+		}
 		&.ui-draggable-dragging{
 			height: auto !important;
 			width: auto !important;

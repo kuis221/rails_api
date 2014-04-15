@@ -45,10 +45,18 @@
 	   .btn.fullscreen:after {
 	       content: "\e040";
 		   font-family: 'icons';
-	   }
+	   } 
 	}
 	.field-attributes-panel input[type=text]{
 		height: 32px;
+	}
+	.activity-form{
+		.field{
+			&.ui-draggable{
+				padding: 0 !important;
+				width:46% !important;
+			}
+		}
 	}
 } 
 
