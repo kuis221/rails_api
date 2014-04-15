@@ -181,7 +181,8 @@ jQuery ->
 
 	$(document).off('click.videoFeature').on 'click.videoFeature', 'a[data-video]', (e) ->
 		bootbox.classes('video-modal')
-		bootbox.modal($('<iframe allowfullscreen="" frameborder="0">').attr('src', $(e.target).data('video')).attr('width', $(e.target).data('width')).attr('height', $(e.target).data('height')), '&nbsp;')
+		link = if e.target.tagName is 'A' then $(e.target) else $(e.target).closest('a')
+		bootbox.modal($('<iframe allowfullscreen="" frameborder="0">').attr('src', link.data('video')).attr('width', link.data('width')).attr('height', link.data('height')), '&nbsp;')
 		false
 
 
