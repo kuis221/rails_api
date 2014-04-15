@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "DayParts", search: true, js: true do
+feature "DayParts", js: true do
 
   before do
     Warden.test_mode!
@@ -14,7 +14,7 @@ feature "DayParts", search: true, js: true do
     Warden.test_reset!
   end
 
-  feature "/day_parts" do
+  feature "/day_parts", search: true do
     scenario "GET index should display a table with the day_parts" do
       day_parts = [
         FactoryGirl.create(:day_part, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
@@ -81,7 +81,7 @@ feature "DayParts", search: true, js: true do
     end
   end
 
-  feature "/day_parts/:day_part_id", :js => true do
+  feature "/day_parts/:day_part_id" do
     scenario "GET show should display the day_part details page" do
       day_part = FactoryGirl.create(:day_part, company: @company, name: 'Some day part', description: 'a day part description')
       visit day_part_path(day_part)

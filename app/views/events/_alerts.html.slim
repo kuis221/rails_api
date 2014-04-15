@@ -1,6 +1,6 @@
 - submit_link = false
 - if can?(:submit, resource) && (resource.unsent? || resource.rejected?)
-  - submit_link = link_to 'submit', submit_event_path(format: :js), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'submitting'}
+  - submit_link = link_to 'submit', submit_event_path(format: :js, return: return_path), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'submitting'}
 r
 // Event is scheduled on a place that is not longer part of the campaign
 - unless resource.place.nil? || resource.campaign.place_allowed_for_event?(resource.place)
@@ -58,7 +58,7 @@ r
 
 - elsif resource.rejected?
   .alert.alert-danger
-    - resubmit_link = link_to 'resubmit', submit_event_path(format: :js), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'resubmitting'}
+    - resubmit_link = link_to 'resubmit', submit_event_path(format: :js, return: return_path), class: 'submit-event-data-link', method: :put, remote: true, data: { disable_with: 'resubmitting'}
     == "Your post event report form has been rejected for the following reasons:"
     br>/
     p #{resource.reject_reason}
@@ -67,8 +67,8 @@ r
 
 - else
   .alert.alert-info.submitted
-    - approve_link = link_to 'approve', approve_event_path, method: :put
-    - reject_link = link_to 'reject', reject_event_path, class: 'reject-post-event', method: :put, remote: true
+    - approve_link = link_to 'approve', approve_event_path(:return => return_path), method: :put
+    - reject_link = link_to 'reject', reject_event_path(:return => return_path), class: 'reject-post-event', method: :put, remote: true
     == "Your post event report has been submitted for approval."
     - if can?(:approve, resource)
       == " Please review and either #{approve_link} or #{reject_link}."
