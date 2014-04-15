@@ -24,6 +24,8 @@
       = render partial: 'places', locals: { places: resource.places.order(:name) }
     = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
 
+= render partial: 'help_tutorial'
+
 javascript:
   $(document).on('areas:change', function(){
     window.location.reload(true);
