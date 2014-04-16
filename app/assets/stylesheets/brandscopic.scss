@@ -5328,7 +5328,7 @@ body.campaigns{
 			margin-left: 17px;
 		}
 	}
-	
+
 	p{
 		margin-bottom: -1px;
 	}
@@ -5507,16 +5507,19 @@ body.campaigns{
 			width: 32px;
 		}
 		span.remove{
-			display: none;
+			visibility: hidden;
+			float:right;
+			a{
+				margin-top: 8px;
+				width: 100%;
+			}
+			&.chardinjs-show-element{
+				visibility: visible;
+			}
 		}
 		&:hover{
 			span.remove{
-				display:inline-block;
-				float:right;
-				a{
-					margin-top: 8px;
-					width: 100%;
-				}
+				visibility: visible;
 			}
 		}
 	}
@@ -6505,7 +6508,7 @@ body.event_status {
 			-webkit-border-radius: 0px 7px 7px 7px;
 			border-radius: 0px 7px 7px 7px;
 			padding: 17px 0px	25px 20px !important;
-			h3{ 
+			h3{
 				margin-top: 0px !important;
 				margin-bottom: 23px !important;
 			 }
@@ -6537,7 +6540,7 @@ body.event_status {
 				}
 				.chzn-drop{
 					.chzn-search{
-						input{ 
+						input{
 							height: 15px;
 							width: 70% !important;
 						}

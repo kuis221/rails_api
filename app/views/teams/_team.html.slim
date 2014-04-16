@@ -1,14 +1,14 @@
 li id="team_#{team.id}" class="#{active_class(team)}"
   = link_to_if_permitted :show, Team, team_path(team) do
-    span
+    span.details
       b= team.name
       span.description
         = team.description
     span.members
       b= team.users.active.count
-      br>/ 
+      br>/
       | Members
-  span.pull-right
+  span.pull-right.tools
     = link_to '', edit_team_path(team), remote: true, class: 'edit' if can?(:edit, Team)
     - if can?(:deactivate, Team)
       = link_to_deactivate team
