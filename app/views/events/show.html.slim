@@ -1,7 +1,7 @@
 - can_edit = can?(:update, resource)
 - can_tasks = can?(:tasks, resource)
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing event details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing event details. Click to close.")
 
   .details_box
     - unless resource.place.nil? or resource.place.latitude.nil?

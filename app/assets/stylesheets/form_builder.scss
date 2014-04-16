@@ -6,9 +6,13 @@
 		background-color: #fff;
 		border-radius: 5px;
 		margin-right: 240px;
-		padding: 20px;
+		padding: 20px 20px 20px 20px;
 		.form-fields {
 			min-height: 300px;
+			padding-bottom: 20px;
+			&.sorting {
+				padding-bottom: 30px;
+			}
 		}
 		.field {
 			float: left;
