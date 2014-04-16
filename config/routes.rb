@@ -25,7 +25,7 @@ Brandscopic::Application.routes.draw do
             get :form, on: :collection
           end
           resources :tasks, only: [:index]
-          resources :comments, only: [:index, :create]
+          resources :comments, only: [:index, :create, :update]
           resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
           end

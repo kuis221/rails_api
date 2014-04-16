@@ -55,4 +55,20 @@ describe Api::V1::CommentsController do
       event.comments.should == [comment]
     end
   end
+
+  describe "PUT 'update'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
+    let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
+    let(:comment){ FactoryGirl.create(:comment, commentable: event) }
+
+    it "must update the event attributes" do
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param,
+                    id: comment.to_param, event_id: event.to_param,
+                    comment: {content: 'New comment content' }, format: :json
+      assigns(:comment).should == comment
+      response.should be_success
+      comment.reload
+      comment.content.should == 'New comment content'
+    end
+  end
 end
