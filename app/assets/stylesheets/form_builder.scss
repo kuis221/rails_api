@@ -14,6 +14,9 @@
 				padding-bottom: 30px;
 			}
 		}
+		.btn[disabled=disabled] {
+			opacity: 0.5;
+		}
 		.field {
 			float: left;
 			clear: both;
