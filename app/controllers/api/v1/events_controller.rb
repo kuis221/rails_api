@@ -344,6 +344,25 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :PUT, '/api/v1/events/:id/submit', 'Submits a event for approval'
   param :id, :number, required: true, desc: "Event ID"
+  example <<-EOS
+  Response when the event was successfully submitted
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: true
+    info: "Event successfully approved"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to submit a event that is already submitted
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: false
+    info: "Event cannot transition to submitted from submitted"
+    data: { }
+  }
+  EOS
   def submit
     status = 200
     if resource.unsent? || resource.rejected?
@@ -372,6 +391,25 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :PUT, '/api/v1/events/:id/approve', 'Mark a event as approved'
   param :id, :number, required: true, desc: "Event ID"
+  example <<-EOS
+  Response when the event was successfully approved
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: true
+    info: "Event successfully approved"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to approve a event that is already approved
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: false
+    info: "Event cannot transition to approved from approved"
+    data: { }
+  }
+  EOS
   def approve
     status = 200
     if resource.submitted?
@@ -401,6 +439,34 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :PUT, '/api/v1/events/:id/reject', 'Mark a event as rejected'
   param :id, :number, required: true, desc: "Event ID"
   param :reason, String, required: true, desc: "Rejection reason (required when rejecting a event)"
+  example <<-EOS
+  Response when the event was successfully rejected
+  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  DATA: {
+    reason: 'Please attach some photos of the event'
+  }
+
+  RESPONSE:
+  {
+    success: true
+    info: "Event successfully rejected"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to reject a event that is already rejected
+  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  DATA: {
+    reason: 'Add the invoice for the expenses'
+  }
+  RESPONSE:
+  {
+    success: false
+    info: "Event cannot transition to rejected from rejected"
+    data: { }
+  }
+  EOS
   def reject
     status = 200
     reject_reason = params[:reason].try(:strip)
