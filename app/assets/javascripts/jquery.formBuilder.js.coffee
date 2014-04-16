@@ -253,7 +253,7 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if option.removable is false then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							if option.id isnt ''
 								option._destroy = '1'
@@ -635,7 +635,8 @@ SummationField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+			@attributes.options = [{id: null, name: 'Option 1', ordering: 0, removable: false},
+																										{id: null, name: 'Option 2', ordering: 1, removable: false}]
 
 		@attributes.settings ||= {}
 
