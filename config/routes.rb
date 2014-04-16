@@ -31,6 +31,9 @@ Brandscopic::Application.routes.draw do
           end
           get :autocomplete,   on: :collection
           member do
+            put :submit
+            put :reject
+            put :approve
             get :results
             get :members
             post :members, to: "events#add_member"

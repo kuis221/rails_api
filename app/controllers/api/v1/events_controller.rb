@@ -7,6 +7,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 401, "Unauthorized access"
     error 404, "The requested resource was not found"
     error 406, "The server cannot return data in the requested format"
+    error 422, "Unprocessable Entity: The change could not be processed because of errors on the data"
     error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
@@ -341,6 +342,98 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  api :PUT, '/api/v1/events/:id/submit', 'Submits a event for approval'
+  param :id, :number, required: true, desc: "Event ID"
+  def submit
+    status = 200
+    if resource.unsent? || resource.rejected?
+      begin
+        resource.submit!
+        result = { :success => true,
+                   :info => "Event successfully submitted",
+                   :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to submitted from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:id/approve', 'Mark a event as approved'
+  param :id, :number, required: true, desc: "Event ID"
+  def approve
+    status = 200
+    if resource.submitted?
+      begin
+        resource.approve!
+        result = { :success => true,
+             :info => "Event successfully approved",
+             :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to approved from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:id/reject', 'Mark a event as rejected'
+  param :id, :number, required: true, desc: "Event ID"
+  param :reason, String, required: true, desc: "Rejection reason (required when rejecting a event)"
+  def reject
+    status = 200
+    reject_reason = params[:reason].try(:strip)
+    if reject_reason.nil? || reject_reason.empty?
+      status = :unprocessable_entity
+      result = { :success => false,
+                 :info => "Must provide a reason for rejection",
+                 :data => {} }
+    elsif resource.submitted?
+      begin
+        resource.reject!
+        resource.update_column(:reject_reason, reject_reason)
+        result = { :success => true,
+             :info => "Event successfully rejected",
+             :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to rejected from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
@@ -351,12 +444,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *fields*: a list of fields for the module, the definition of this list is described below.
 
   Each campaign can have a different set of fields that have to be capture for its events. a field returned
-  by the API consists on the following attributes:
+  by the API consists on the ['submit', 'approve', 'submit'].include?(params[:status])
 
   * *id:* the id of the field that have to be used later save the results. Please see the documentation
     for saving a devent. This is not included for "percentage" fields as such fields have to be sent to
     the API as separate fields. See the examples for more detail.
 
+  * *value:* the event's current value for that field. This should be used to pre-populate the field or
   * *value:* the event's current value for that field. This should be used to pre-populate the field or
     to select the correspondent options for the case of radio buttons/checboxes/dropdown.
 
