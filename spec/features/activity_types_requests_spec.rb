@@ -314,7 +314,7 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Radio Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
         expect(page).to have_no_content('Second Option')
       end
 
@@ -372,7 +372,7 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Checkbox Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
         expect(page).to have_no_content('Second Option')
       end
 
@@ -430,7 +430,7 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Dropdown Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
         expect(page).to have_no_content('Second Option')
       end
 
@@ -680,7 +680,7 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Percent Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
         expect(page).to have_no_content('Second Option')
       end
 
@@ -699,13 +699,13 @@ feature "ActivityTypes", js: true do
       summation_field.drag_to form_builder
 
       expect(form_builder).to have_form_field('Summation',
-          with_options: ['Option 1']
+          with_options: ['Option 1', 'Option 2']
         )
 
       within form_field_settings_for 'Summation' do
         fill_in 'Field label', with: 'My Summation Field'
         fill_in 'option[0][name]', with: 'First Option'
-        click_js_link 'Add option after this' # Create another option
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
         fill_in 'option[1][name]', with: 'Second Option'
       end
 
@@ -723,13 +723,13 @@ feature "ActivityTypes", js: true do
           click_js_button 'Save'
           wait_for_ajax
         }.to change(FormField, :count).by(1)
-      }.to change(FormFieldOption, :count).by(2)
+      }.to change(FormFieldOption, :count).by(3)
       field = FormField.last
       expect(field.name).to eql 'My Summation Field'
       expect(field.ordering).to eql 0
       expect(field.type).to eql 'FormField::Summation'
-      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
-      expect(field.options.map(&:ordering)).to eql [0, 1]
+      expect(field.options.map(&:name)).to eql ["First Option", "Second Option", "Option 2"]
+      expect(field.options.map(&:ordering)).to eql [0, 1, 2]
 
       # Remove fields
       expect(form_builder).to have_form_field('My Summation Field',
@@ -738,7 +738,7 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Summation Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
         expect(page).to have_no_content('Second Option')
       end
 
