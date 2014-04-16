@@ -117,6 +117,27 @@ class Api::V1::CommentsController < Api::V1::ApiController
     end
   end
 
+  api :DELETE, '/api/v1/events/:event_id/comments/:id', 'Deletes a comment'
+  param :event_id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: "Comment ID"
+  example <<-EOS
+  DELETE /api/v1/events/192/comments/12.json?auth_token=AJHshslaA.sdd&company_id=1
+  RESPONSE:
+  {
+    success: true
+    info: "The comment was successfully deleted"
+    data: { }
+  }
+  EOS
+  def destroy
+    destroy! do |success, failure|
+      success.json { render json: {success: true, info: 'The comment was successfully deleted', data: {} } }
+      success.xml  { render xml: {success: true, info: 'The comment was successfully deleted', data: {} } }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
   protected
 
     def build_resource_params

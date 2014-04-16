@@ -71,4 +71,19 @@ describe Api::V1::CommentsController do
       comment.content.should == 'New comment content'
     end
   end
+
+  describe "DELETE 'destroy'" do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company) }
+    let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }
+    let(:comment){ FactoryGirl.create(:comment, commentable: event) }
+
+    it "must update the event attributes" do
+      comment.save
+      expect {
+        delete 'destroy', auth_token: user.authentication_token, company_id: company.to_param,
+                    id: comment.to_param, event_id: event.to_param, format: :json
+      }.to change(Comment, :count).by(-1)
+      response.should be_success
+    end
+  end
 end
