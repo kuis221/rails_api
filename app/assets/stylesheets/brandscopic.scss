@@ -2150,12 +2150,15 @@ ul.kpis-list{
 	}
 	ul#activity_types-list{
 		li{
+			box-sizing: border-box;
 			display: table;
 			min-height: 86px;
+			padding-left: 25px;
 			height: 86px;
 			width: 100%;
-			a{
+			a, span{
 				display: table-cell;
+				padding-left:0;
 				vertical-align: middle;
 			}
 		}
