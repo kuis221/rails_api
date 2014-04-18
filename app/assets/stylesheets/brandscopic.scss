@@ -5263,7 +5263,6 @@ svg{
 		}
 		.chzn-container-single{
 			.chzn-search input{
-				bottom:12px;
 				height: 25px;
 			}
 			.chzn-results{
@@ -5334,7 +5333,7 @@ body.campaigns{
 			margin-left: 17px;
 		}
 	}
-	
+
 	p{
 		margin-bottom: -1px;
 	}
@@ -5513,16 +5512,19 @@ body.campaigns{
 			width: 32px;
 		}
 		span.remove{
-			display: none;
+			visibility: hidden;
+			float:right;
+			a{
+				margin-top: 8px;
+				width: 100%;
+			}
+			&.chardinjs-show-element{
+				visibility: visible;
+			}
 		}
 		&:hover{
 			span.remove{
-				display:inline-block;
-				float:right;
-				a{
-					margin-top: 8px;
-					width: 100%;
-				}
+				visibility: visible;
 			}
 		}
 	}
@@ -6242,17 +6244,24 @@ body.gva {
 				}
 				form#gva-report{
 					label{
+						color: $alert_grey;
 						font-size: 11px;
 						line-height: 15px;
 					}
 					.controls{
 						.chzn-container-single{
+							.chzn-search input{
+								bottom:13px;
+							}
 							.chzn-single{
 								height: 29px !important;
 								padding-top: 3px;
 								width: 270px !important;
 								span{
 									line-height: 26px;
+								}
+								div b{
+									background: url("triangle-down.svg") no-repeat 1px 13px !important;
 								}
 							}
 							.chzn-drop{
@@ -6276,7 +6285,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
-							padding: 9px 10px;
+							padding: 6px 10px;
 							width: 60px;
 							&:first-child{
 								border-bottom-left-radius: 6px;
@@ -6510,7 +6519,7 @@ body.event_status {
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
 			border-radius: 0px 7px 7px 7px;
-			h3{ 
+			h3{
 				margin-top: 0px !important;
 				margin-bottom: 23px !important;
 			 }
@@ -6540,11 +6549,10 @@ body.event_status {
 					}
 				}
 				.chzn-drop{
+					margin-top: 6px !important;
 					.chzn-search{
 						input{ 
-							height: 25px;
-							padding-top: 10px;
-							width: 70% !important;
+							bottom:13px;
 						}
 					}
 				}

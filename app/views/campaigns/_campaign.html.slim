@@ -1,6 +1,6 @@
 li id="campaign_#{campaign.id}" class="#{active_class(campaign)}"
   = link_to_if_permitted :read, Campaign, campaign_path(campaign) do
-    span
+    span.details
       b= campaign.name
       span.description
         = campaign.description

@@ -838,6 +838,8 @@ feature "ActivityTypes", js: true do
         click_js_link 'Remove'
       end
 
+      confirm_prompt "Do you really want to delete this field?"
+
       expect(form_builder).to_not have_form_field('Single line text')
 
       # Save the form, should not create any field
@@ -853,7 +855,7 @@ feature "ActivityTypes", js: true do
       text_field.drag_to form_builder
 
       expect(form_builder).to have_form_field('Single line text')
-      # Save the form, should not create any field
+      # Save the form
       expect {
         click_js_button 'Save'
         wait_for_ajax
@@ -867,6 +869,8 @@ feature "ActivityTypes", js: true do
       within form_builder.find('.field.selected') do
         click_js_link 'Remove'
       end
+
+      confirm_prompt "Deleting this field will also delete all the associated data"
 
       expect(form_builder).to_not have_form_field('Single line text')
 
