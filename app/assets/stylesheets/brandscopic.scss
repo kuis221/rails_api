@@ -2150,10 +2150,15 @@ ul.kpis-list{
 	}
 	ul#activity_types-list{
 		li{
+			box-sizing: border-box;
 			display: table;
+			min-height: 86px;
+			padding-left: 25px;
+			height: 86px;
 			width: 100%;
-			a{
+			a, span{
 				display: table-cell;
+				padding-left:0;
 				vertical-align: middle;
 			}
 		}
@@ -5252,13 +5257,13 @@ svg{
 					width: 365px !important;
 				}
 				.chzn-drop{
-					width: 374px !important;
+					width: 280px !important;
 				}
 			}
 		}
 		.chzn-container-single{
 			.chzn-search input{
-				bottom:12px;
+				height: 25px;
 			}
 			.chzn-results{
 				margin: 0 0 4px 0;
@@ -5318,7 +5323,7 @@ body.campaigns{
 	background-color: white;
 	box-sizing: border-box;
 	margin-bottom: 10px;
-	padding: 23px 27px 30px 25px;
+	padding: 23px 27px 30px 27px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
@@ -6239,17 +6244,24 @@ body.gva {
 				}
 				form#gva-report{
 					label{
+						color: $alert_grey;
 						font-size: 11px;
 						line-height: 15px;
 					}
 					.controls{
 						.chzn-container-single{
+							.chzn-search input{
+								bottom:13px;
+							}
 							.chzn-single{
-								height: 34px !important;
+								height: 29px !important;
 								padding-top: 3px;
 								width: 270px !important;
 								span{
-									line-height: 32px;
+									line-height: 26px;
+								}
+								div b{
+									background: url("triangle-down.svg") no-repeat 1px 13px !important;
 								}
 							}
 							.chzn-drop{
@@ -6273,7 +6285,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
-							padding: 9px 10px;
+							padding: 6px 10px;
 							width: 60px;
 							&:first-child{
 								border-bottom-left-radius: 6px;
@@ -6503,22 +6515,20 @@ body.gva {
 
 body.event_status {
 	.details_box{
-		padding: 23px 27px 30px 24px;
+		padding: 23px 27px 30px 27px;
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
 			border-radius: 0px 7px 7px 7px;
-			padding: 17px 0px	25px 20px !important;
 			h3{
 				margin-top: 0px !important;
 				margin-bottom: 23px !important;
 			 }
 			 label{
-				margin-left: 3px;
 				margin-bottom: 0px;
 				color: $grey_three !important;
 				font-size: 11px !important;
 				}
-			.controls{ margin: -1px 0px 0px 4px;}
+			.controls{ margin: -1px 0px 0px 0px;}
 			.chzn-container-single{
 				width: 270px	!important;
 				height: 31px !important;
@@ -6527,7 +6537,7 @@ body.event_status {
 					padding-top: 0px !important;
 					width: 270px !important;
 					span{
-            line-height: 26px;
+            			line-height: 26px;
 						height: 26px !important;
 						padding-top: 0px !important;
 						margin-top: 3px !important;
@@ -6539,10 +6549,10 @@ body.event_status {
 					}
 				}
 				.chzn-drop{
+					margin-top: 6px !important;
 					.chzn-search{
-						input{
-							height: 15px;
-							width: 70% !important;
+						input{ 
+							bottom:13px;
 						}
 					}
 				}

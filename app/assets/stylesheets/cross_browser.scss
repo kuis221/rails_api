@@ -40,6 +40,9 @@
 	}
 	.search-filter-label, input.search-query{
 		margin-bottom: 0;
+		&#search-box-filter{
+			margin-bottom: 10px;
+		}
 	}
 	#main:-moz-full-screen {
 	   .btn.fullscreen:after {
