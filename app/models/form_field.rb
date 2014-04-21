@@ -70,4 +70,14 @@ class FormField < ActiveRecord::Base
   def field_type=(type)
     self.type = type if new_record?
   end
+  
+  def min_fields_allowed
+    return case self.type
+      when 'FormField::Summation'
+        2
+      else
+        nil
+    end
+    
+  end
 end
