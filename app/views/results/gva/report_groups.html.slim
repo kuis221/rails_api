@@ -29,11 +29,11 @@ javascript:
 
   $('#gva-results').on('show', function(e){
     $target = $(e.target);
-    if (!$target.data('loaded')) {
-      $('#' + $target.attr('id') + ' .accordion-inner').addClass('loading-spinner');
-      $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}"} }, function(){
-        $target.data('loaded', true);
+    //if (!$target.data('loaded')) {
+      $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
+      $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), view_style: $("#view_style").val(), report: {campaign_id: "#{@campaign.id}"} }, function(){
+        //$target.data('loaded', true);
         $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
       });
-    }
+    //}
   });
