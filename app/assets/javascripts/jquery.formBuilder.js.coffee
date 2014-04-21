@@ -2,6 +2,8 @@ $.widget 'nmk.formBuilder', {
 	options: {
 	},
 	_create: () ->
+		@modified = false
+		@_updateSaveButtonState()
 		@element.find('.form-wrapper').append(
 			@formWrapper = $('<div class="form-fields clearfix">'),
 			$('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>')
@@ -28,6 +30,7 @@ $.widget 'nmk.formBuilder', {
 				$.map @formWrapper.find("> div.field"), (field, index) =>
 					$(field).data('field').attributes.ordering = index
 
+				@setModified()
 				@formWrapper.find('.clearfix').appendTo(@formWrapper)
 			over: (event, ui) =>
 				@formWrapper.addClass 'sorting'
@@ -54,24 +57,17 @@ $.widget 'nmk.formBuilder', {
 			@_showFieldAttributes $field
 			false
 
-		@formWrapper.on 'click', '.delete-field', (e) =>
-			e.stopPropagation()
-			e.preventDefault()
-			element = $(e.target).closest('.field')
-			field = element.data('field')
-			bootbox.confirm "Deleting this field will also delete all the associated data<br/>&nbsp;<p>Do you want to delete it?</p>", (result) =>
-				element.remove()
-
-			false
-
 		@element.on 'click', '#save-report', (e) =>
 			@saveFields()
+			false
 
 		true
 
 	_loadForm: () ->
 		$.getJSON "#{@options.url}", (response) =>
 			@formWrapper.find('.field').remove()
+			@modified = false
+			@_updateSaveButtonState()
 			for field in response.form_fields
 				@_addFieldToForm field
 
@@ -86,7 +82,7 @@ $.widget 'nmk.formBuilder', {
 	buildField: (options) ->
 		className = options.type.replace('FormField::', '');
 		className = className+'Field'
-		eval "var field = new #{className}(options)"
+		eval "var field = new #{className}(this, options)"
 		field.render()
 
 	saveFields: () ->
@@ -97,6 +93,8 @@ $.widget 'nmk.formBuilder', {
 		@saveForm data
 
 	saveForm: (data) ->
+		$('#save-report').data('text', $('#save-report').text()) unless $('#save-report').data('text')?
+		$('#save-report').text('Saving...').attr 'disabled', true
 		$.ajax {
 			url: "#{@options.url}",
 			method: 'put',
@@ -106,7 +104,15 @@ $.widget 'nmk.formBuilder', {
 					bootbox.alert response.message
 				else
 					@_loadForm()
+			failure: () =>
+				$('#save-report').attr 'disabled', false
+			complete: () =>
+				$('#save-report').text($('#save-report').data('text'))
 		}
+
+	setModified: () ->
+		@modified = true
+		@_updateSaveButtonState()
 
 	formFields: () ->
 		$.map @formWrapper.find('.field'), (element, index) =>
@@ -154,6 +160,9 @@ $.widget 'nmk.formBuilder', {
 
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow @attributesPanel
+
+	_updateSaveButtonState: () ->
+		$('#save-report').attr('disabled', not @modified)
 }
 
 
@@ -216,7 +225,9 @@ FormField = Class.extend {
 			$('<div class="controls">').append $('<input type="text" id="field_name" name="name">').val(@attributes.name).on 'keyup', (e) =>
 					input = $(e.target)
 					@attributes.name = input.val()
+					@form.setModified()
 					@refresh()
+					true
 		])
 
 	requiredField: () ->
@@ -225,6 +236,8 @@ FormField = Class.extend {
 				$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
 					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required then ' checked="checked"' else '')+'">').on 'change', (e) =>
 						@attributes.required = (if e.target.checked then 'true' else 'false')
+						@form.setModified()
+						true
 				)
 			)
 		])
@@ -240,7 +253,9 @@ FormField = Class.extend {
 					$('<input type="text" name="'+type+'['+index+'][name]">').val(option.name).on 'keyup', (e) =>
 						option = $(e.target).closest('.field-option').data('option')
 						option.name = $(e.target).val()
+						@form.setModified()
 						@refresh()
+						true
 					$('<div class="option-actions">').append(
 						# Button for adding a new option to the field
 						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
@@ -251,6 +266,7 @@ FormField = Class.extend {
 							item.ordering = i for item,i in list
 							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
+							@form.setModified()
 							false
 
 						# Button for removing an option of the field
@@ -268,6 +284,7 @@ FormField = Class.extend {
 								alert("else")
 							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
+							@form.setModified()
 							false
 					)
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
@@ -286,11 +303,18 @@ FormField = Class.extend {
 					@_renderField()
 
 	remove: () ->
-		if @attributes.id
-			@field.hide()
-			@attributes._destroy = true
+		if @attributes.id # If this file already exists on the database
+			bootbox.confirm "Deleting this field will also delete all the associated data<br/>&nbsp;<p>Do you want to delete it?</p>", (result) =>
+				if result
+					@field.hide()
+					@attributes._destroy = true
+					@form.setModified()
+					true
 		else
-			@field.remove()
+			bootbox.confirm "Do you really want to delete this field?", (result) =>
+				if result
+					@field.remove()
+					@form.setModified()
 
 	refresh: () ->
 		@field.html('').append(
@@ -311,7 +335,8 @@ FormField = Class.extend {
 TextAreaField = FormField.extend {
 	type: 'TextArea',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Paragraph',
 			id: null,
@@ -341,7 +366,8 @@ TextAreaField = FormField.extend {
 TextField = FormField.extend {
 	type: 'Text',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Single line text',
 			id: null,
@@ -371,7 +397,8 @@ TextField = FormField.extend {
 NumberField = FormField.extend {
 	type: 'Number',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Number',
 			id: null,
@@ -401,7 +428,8 @@ NumberField = FormField.extend {
 CurrencyField = FormField.extend {
 	type: 'Currency',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Price',
 			id: null,
@@ -431,7 +459,8 @@ CurrencyField = FormField.extend {
 DropdownField = FormField.extend {
 	type: 'Dropdown',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Dropdown',
 			id: null,
@@ -473,7 +502,8 @@ DropdownField = FormField.extend {
 RadioField = FormField.extend {
 	type: 'Radio',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Multiple Choice',
 			id: null,
@@ -514,7 +544,8 @@ RadioField = FormField.extend {
 PercentageField = FormField.extend {
 	type: 'Percentage',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Percent',
 			id: null,
@@ -555,7 +586,8 @@ PercentageField = FormField.extend {
 PhotoField = FormField.extend {
 	type: 'Photo',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Photo',
 			id: null,
@@ -593,7 +625,8 @@ PhotoField = FormField.extend {
 AttachmentField = FormField.extend {
 	type: 'Attachment',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Attachment',
 			id: null,
@@ -631,7 +664,8 @@ AttachmentField = FormField.extend {
 SummationField = FormField.extend {
 	type: 'Summation',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Summation',
 			id: null,
@@ -684,7 +718,8 @@ SummationField = FormField.extend {
 LikertScaleField = FormField.extend {
 	type: 'LikertScale',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Likert scale',
 			id: null,
@@ -747,7 +782,8 @@ LikertScaleField = FormField.extend {
 CheckboxField = FormField.extend {
 	type: 'Checkbox',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Checkboxes',
 			id: null,
@@ -789,7 +825,8 @@ CheckboxField = FormField.extend {
 BrandField = FormField.extend {
 	type: 'Brand',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Brand',
 			id: null,
@@ -819,7 +856,8 @@ BrandField = FormField.extend {
 MarqueField = FormField.extend {
 	type: 'Marque',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Marque',
 			id: null,
@@ -849,7 +887,8 @@ MarqueField = FormField.extend {
 DateField = FormField.extend {
 	type: 'Date',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Date',
 			id: null,
@@ -879,7 +918,8 @@ DateField = FormField.extend {
 TimeField = FormField.extend {
 	type: 'Time',
 
-	init: (attributes) ->
+	init: (form, attributes) ->
+		@form = form
 		@attributes = $.extend({
 			name: 'Time',
 			id: null,
