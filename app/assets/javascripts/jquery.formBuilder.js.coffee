@@ -244,6 +244,7 @@ FormField = Class.extend {
 
 	optionsField: (type='option') ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
+		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
 		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
@@ -259,7 +260,6 @@ FormField = Class.extend {
 					$('<div class="option-actions">').append(
 						# Button for adding a new option to the field
 						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
-							@attributes.current_visible_fields += 1
 							option = $(e.target).closest('.field-option').data('option')
 							index = list.indexOf(option)+1
 							list.splice(index,0, {id: '', name: titles[type][0] + ' ' + (list.length+1), ordering: index})
@@ -270,9 +270,8 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if @attributes.min_fields_allowed and @attributes.current_visible_fields <= @attributes.min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if @attributes.min_options_allowed and visible_items.length <= @attributes.min_options_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
-							@attributes.current_visible_fields -= 1
 							if option.id isnt ''
 								option._destroy = '1'
 							else
@@ -664,7 +663,7 @@ SummationField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Summation',
 			id: null,
-			min_fields_allowed: 2,
+			min_options_allowed: 2,
 			required: false,
 			type: 'FormField::Summation',
 			settings: {},
@@ -674,7 +673,6 @@ SummationField = FormField.extend {
 		if @attributes.options.length is 0
 			@attributes.options = [{id: null, name: 'Option 1', ordering: 0},
 																										{id: null, name: 'Option 2', ordering: 1}]
-		@attributes.current_visible_fields = @attributes.options.length
 		@attributes.settings ||= {}
 
 		@

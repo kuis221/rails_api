@@ -15,6 +15,8 @@
 #
 
 class FormField < ActiveRecord::Base
+  MIN_OPTIONS_ALLOWED = 1
+  MIN_STATEMENTS_ALLOWED = 1
   belongs_to :fieldable, polymorphic: true
 
   has_many :options, class_name: 'FormFieldOption', conditions: {option_type: 'option'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
@@ -71,13 +73,11 @@ class FormField < ActiveRecord::Base
     self.type = type if new_record?
   end
   
-  def min_fields_allowed
-    return case self.type
-      when 'FormField::Summation'
-        2
-      else
-        nil
-    end
-    
+  def min_options_allowed
+    MIN_OPTIONS_ALLOWED
+  end
+  
+  def min_statements_allowed
+    MIN_STATEMENTS_ALLOWED
   end
 end
