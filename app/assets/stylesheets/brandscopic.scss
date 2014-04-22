@@ -33,6 +33,11 @@
 
 /*-- GENERAL STYLES --*/
 
+
+a:before, a:after{
+	font-weight:normal;
+}
+
 abbr[title]{
 	border:0;
 }
@@ -2115,6 +2120,14 @@ ul.kpis-list{
 	}
 	ul#areas-list{
 		li{
+			display: table !important;
+			height: 86px;
+			min-height: 86px;
+			width: 100%;
+			a, span{
+				display: table-cell !important;
+				vertical-align: middle;
+			}
 			span{
 				&:first-child{
 					font-size: 11px;
@@ -2150,17 +2163,33 @@ ul.kpis-list{
 	}
 	ul#activity_types-list{
 		li{
-			box-sizing: border-box;
-			display: table;
+			box-sizing: border-box !important;
+			-moz-box-sizing: border-box;
+			display: table !important;
 			min-height: 86px;
 			padding-left: 25px;
 			height: 86px;
 			width: 100%;
 			a, span{
-				display: table-cell;
+				display: table-cell !important;
 				padding-left:0;
 				vertical-align: middle;
 			}
+			&.inactive{
+				span{
+					color:$user_menu;
+				}
+				&:hover{
+					span{
+						color: $text;
+					}
+				}
+			}
+		}
+	}
+	ul#campaigns-list{
+		li{
+			min-height: 97px;
 		}
 	}
 	ul#select-campaigns-list{
