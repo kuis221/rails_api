@@ -1642,6 +1642,15 @@ label{
 		margin-bottom: 20px;
 	}
 }
+.placeholder-empty-state {
+	padding: 60px 10px !important;;
+	text-align: center;
+	color: silver !important;
+	font-size: 13px !important;
+	&:hover {
+		background-color: #fff !important;
+	}
+}
 .menu{
 	background-color: $menu;
 	float: left;

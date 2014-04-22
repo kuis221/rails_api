@@ -18,7 +18,9 @@ $.widget 'nmk.reportBuilder',
 		@reportOverlay = $('<div class="report-overlay">').hide().insertAfter(@preview)
 
 		@element.find('.sortable-list').sortable
-			forcePlaceholderSize: false,
+			forcePlaceholderSize: false
+			helper: 'clone'
+			appendTo: @element.find('.sidebar')
 			receive: (event, ui) =>
 				if ui.item.data('field-id') is 'values'
 					$(ui.placeholder).addClass('ui-state-error')
@@ -28,6 +30,7 @@ $.widget 'nmk.reportBuilder',
 				# when it comes directly from the fields list
 				if ui.helper?
 					@addFieldToList ui.item, $(event.target)
+				@resetScrollers()
 				true
 			over: (event, ui) =>
 				if ui.item.data('field-id') is 'values'
@@ -35,10 +38,11 @@ $.widget 'nmk.reportBuilder',
 			update: (event, ui) =>
 				@reportModified()
 				true
-			connectWith: '.sortable-list',
+			connectWith: '.sortable-list'
 			containment: 'body'
 		.droppable
 			greedy: true
+
 
 		# Allow the list items to be removed when dropped outside of the list
 		$('body').droppable
@@ -50,6 +54,7 @@ $.widget 'nmk.reportBuilder',
 			connectToSortable: ".sortable-list"
 			revert: "invalid"
 			helper: "clone"
+			appendTo: @element.find('.sidebar')
 			containment: "#resource-filter-column"
 			scroll: false
 			# The next two events (start/drag) are only to fix this issue:
@@ -63,7 +68,7 @@ $.widget 'nmk.reportBuilder',
 		@element.find('.btn-save-report').on 'click', () =>
 			@saveForm()
 
-		$(window).on 'beforeunload', =>
+		$(window).on 'beforeunload.reportBuilder', =>
 			if not @saved
 				'All changes will be lost. Are you sure you want to exit?'
 
@@ -72,6 +77,7 @@ $.widget 'nmk.reportBuilder',
 		@_setListItems 'columns', @options.columns
 		@_setListItems 'filters', @options.filters
 		@_addValuesToColumns()
+		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
 
 		$('#report-fields .report-field').tooltip
 			html: true, container: @element, delay: 0, animation: false
@@ -107,13 +113,23 @@ $.widget 'nmk.reportBuilder',
 
 		@refreshReportPreview()
 
-		$(window).bind "scroll resize DOMSubtreeModified", () =>
+		$(window).bind "scroll.reportBuilder resize.reportBuilder", () =>
 			clearTimeout window.reportBuilderTimeout if window.reportBuilderTimeout?
 			window.reportBuilderTimeout = window.setTimeout =>
 				@_resizeSideBar()
 			, 50
 
+		$(window).bind "resize.reportBuilder", () =>
+			@resetScrollers()
+			true
+
+		@_resizeSideBar()
 		@element
+
+	destroy: ->
+		$(window).unbind "scroll.reportBuilder"
+		$(window).unbind "resize.reportBuilder"
+		$(window).off 'beforeunload.reportBuilder'
 
 	searchFieldList: (value) ->
 		for li in @element.find("#report-fields li:not(.hidden)")
@@ -129,6 +145,8 @@ $.widget 'nmk.reportBuilder',
 				$('#report-fields ul.draggable-list[data-group="'+group_name+'"]').hide()
 			else
 				$(group).show()
+		scrollerApi = $('#report-fields .scrollable-list').data('jsp')
+		scrollerApi.reinitialise()
 		true
 
 	saveForm: () ->
@@ -153,7 +171,14 @@ $.widget 'nmk.reportBuilder',
 			data: @_reportFormData(),
 			complete: () =>
 				@_hideOverlay()
+				$('#report-table').reportTableScroller('adjustTableSize');
+
 		, 1000
+
+	resetScrollers: () ->
+		for list in @element.find('.scrollable-list')
+			scrollerApi = $(list).data('jsp')
+			scrollerApi.reinitialise()
 
 	removeField: (field) ->
 		@closeFieldSettings()
@@ -454,6 +479,7 @@ $.widget 'nmk.reportBuilder',
 
 	_resizeSideBar: () ->
 		sidebar = @element.find('.sidebar')
+		initial = sidebar.outerHeight()
 		padding = parseInt(sidebar.css('padding-top')) + parseInt(sidebar.css('padding-bottom'))
 		footerHeight = $('footer').outerHeight() + parseInt($('footer').css('margin-top')) + parseInt($('footer').css('margin-bottom')) + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('padding-bottom'))
 		sidebarHeight = Math.max(479, ($(window).height() - sidebar.position().top - padding - footerHeight))
@@ -469,6 +495,13 @@ $.widget 'nmk.reportBuilder',
 
 		sidebar.find('#report-fields').css height: fieldsHeight
 		sidebar.find('.fields-group').css height: (fieldsHeight - sidebar.find('.search-fields').outerHeight() - 8)
+
+		sidebar.find('ul.sortable-list').each (index, list) ->
+			$(list).css height: $(list).closest('.scrollable-list').height() - 5
+
+		if initial != sidebar.outerHeight()
+			@resetScrollers()
+			$(window).trigger('form_builder_sidebar:resize')
 		@
 
 	_addValuesToColumns: () ->

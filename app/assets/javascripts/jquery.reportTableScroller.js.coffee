@@ -12,11 +12,12 @@ $.widget 'nmk.reportTableScroller',
 
 		@scroller.jScrollPane() if @options.useScrollerPuglin
 
-		@header = $('<table>').attr('class', @element.attr('class')+' cloned').append(@element.find('thead').clone(true, true).css({position: 'absolute'})).css({
+		@header = $('<table>').attr('class', @element.attr('class')+' cloned').css
 			position: 'absolute',
 			top: @element.position().top,
 			left: @element.position().left
-		}).insertAfter(@scroller)
+		.insertAfter(@scroller)
+		@rebuildHeader()
 
 		@element.css marginTop: -@header.find('thead').outerHeight()
 		@scroller.css marginTop: @header.find('thead').outerHeight()
@@ -57,7 +58,7 @@ $.widget 'nmk.reportTableScroller',
 				$(window).trigger 'scroll'
 				true
 		else
-			@scroller.on 'jsp-scroll-y', (e) =>
+			@scroller.on 'jsp-scroll-x', (e) =>
 				@header.find('thead').css left: '-' + @scroller.data('jsp').getContentPositionX() + 'px'
 				true
 
@@ -72,14 +73,22 @@ $.widget 'nmk.reportTableScroller',
 					true
 			, 20
 
+		$(window).on 'form_builder_sidebar:resize', () =>
+			@adjustTableSize()
+
 		@adjustTableSize()
 		@adjustHeader()
 		@resetScroller()
 
 		@
 
-	_destroy: () ->
+	destroy: () ->
 		window.off 'resize.reportTableScroller, alert:missed.reportTableScroller'
+
+	rebuildHeader: () ->
+		@header.find('thead').remove().end().append(
+			@element.find('thead').clone(true, true).css({position: 'absolute'})
+		)
 
 	adjustHeader: () ->
 		headerCols = @header.find('thead>tr:first-child>td, thead>tr:first-child>th').get()
@@ -89,13 +98,18 @@ $.widget 'nmk.reportTableScroller',
 		@
 
 	adjustTableSize: () ->
-		maxHeight = $(window).height() - @scroller.offset().top - parseInt($('footer').css('margin-top')) - 30 - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
-		@scroller.css height: maxHeight
+		if @element.height() is 0
+			@scroller.css height: 'auto'
+			@element.hide()
+		else
+			@element.show()
+			maxHeight = $(window).height() + $(document).scrollTop() + parseInt(@scroller.css('margin-top')) - @scroller.offset().top - parseInt($('footer').css('margin-top')) - 85 - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
+			@scroller.css height: maxHeight
 
-		difference =  ($('.sidebar').position().top+$('.sidebar').outerHeight()) - ($('.main').position().top+$('.main').outerHeight())
+			difference =  ($('.sidebar').position().top+$('.sidebar').outerHeight()) - ($('.main').position().top+$('.main').outerHeight())
 
-		if difference > 0
-			@scroller.css height: maxHeight + difference
+			if difference > 0
+				@scroller.css height: maxHeight + difference
 
 	resetScroller: () ->
 		scrollerApi = @scroller.data('jsp')

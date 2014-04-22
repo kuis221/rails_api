@@ -22,12 +22,14 @@
 
   .main.with-details-close-bar class="#{resource.filters.empty? ? 'no-margin' : ''}"
     = resource_details_bar("You are viewing #{resource.name} report. Click to close.")
-    - if can?(:edit, resource)
-      .pull-left
-        = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
-    .text-right
-      button.btn.download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"
+    .pull-right
+      - if resource.can_be_generated?
+        button.btn.download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"
+
+    - if can?(:edit, resource)
+      .text-left
+        = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
 
     #report-container
       = render partial: 'report_html', locals: { skip_report_rows: true }
@@ -44,6 +46,11 @@
       'filtersUrl': '#{filters_results_report_path}',
       'listContainer' : 'table#report-table tbody',
       'onItemsLoad' : function(response, page) {
+        if (response.find('thead').length > 0) {
+          $('#report-table').find('thead').replaceWith(response.find('thead'))
+          $('#report-table').reportTableScroller('rebuildHeader');
+          $('#report-table').reportTableScroller('adjustTableSize');
+        }
         $('#report-table').reportTableScroller('adjustHeader');
         if ($('a.expand-all').hasClass('icon-collapse')) {
           response.find('tbody tr[data-level]').show()
@@ -51,17 +58,22 @@
         }
       },
       'onPageLoaded' : function(page) {
+        //$('#report-table').reportTableScroller('adjustTableSize');
         $('#report-table').reportTableScroller('adjustHeader');
-        $('#report-table').reportTableScroller('adjustTableSize');
         $('#report-table').reportTableScroller('resetScroller');
       },
       'onFiltersLoaded': function(page) {
         $('#report-table').reportTableScroller('adjustTableSize');
+        $('#report-table').reportTableScroller('resetScroller');
       },
       spinnerElement: function() {
-        spinner = $('<div class="report-overlay" style="height: 60px; width: 100%"></div>').insertAfter($('table#report-table'));
+        spinner = $('<div class="report-overlay" style="height: 60px; width: 100%"></div>')
+            .insertAfter($('table#report-table'));
         $('#report-table').reportTableScroller('resetScroller');
         return spinner;
+      },
+      placeholderElement: function(message) {
+        return $('<div class="placeholder-empty-state">'+message+'</div>').insertAfter($('table#report-table'));
       }
     });
 

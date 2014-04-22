@@ -639,6 +639,14 @@ $.widget 'nmk.filteredList', {
 		else
 			$('<li class="loading-spinner">').appendTo @listContainer
 
+
+	_placeholderEmptyState: () ->
+		message = '<p>There are no results matching the filtering criteria you selected.<br />Please select different filtering criteria.</p>'
+		if @options.placeholderElement?
+			@options.placeholderElement(message)
+		else
+			$('<li class="placeholder-empty-state">'+message+'</li>').appendTo @listContainer
+
 	reloadData: () ->
 		@_loadPage 1
 		@
@@ -664,11 +672,14 @@ $.widget 'nmk.filteredList', {
 			@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
 
-		spinner = @_loadingSpinner()
+		@emptyState.remove() if @emptyState
+		@spinner.remove() if @spinner
+
+		@spinner = @_loadingSpinner()
 
 		@jqxhr = $.get @options.source, params, (response) =>
 			$.loadingContent += 1
-			spinner.remove();
+			@spinner.remove();
 			$response = $('<div>').append(response)
 			$items = $response.find('[data-content="items"]')
 			if @options.onItemsLoad
@@ -676,11 +687,15 @@ $.widget 'nmk.filteredList', {
 
 			@listContainer.append $items.html()
 			@_pageLoaded page, $items
-			@listContainer.css {height: ''}
+			@listContainer.css height: ''
+
+			if page is 1 and $items.find('>*').length is 0
+				@emptyState = @_placeholderEmptyState()
 
 			$response.remove()
 			$items.remove()
 			$items = $response = null
+
 
 			if @options.onPageLoaded
 				@options.onPageLoaded page

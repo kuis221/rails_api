@@ -145,6 +145,28 @@ feature "Reports", js: true do
       expect(current_path).to eql(results_report_path(report))
     end
 
+    it "should display a message if the report returns not results" do
+      Kpi.create_global_kpis
+      report = FactoryGirl.create(:report,
+        company: @company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+
+      visit results_report_path(report)
+
+      within report_preview do
+        expect(page).to have_no_content('Drag and drop filters, columns, rows and values to create your report.')
+        # The report should not display the table header
+        expect(page).to have_no_content('IMPRESSIONS')
+        expect(page).to have_no_content('INTERACTIONS')
+
+        expect(page).to have_content('There are no results matching the filtering criteria you selected.')
+        expect(page).to have_content('Please select different filtering criteria.')
+      end
+    end
+
     scenario "should render the report" do
       campaign = FactoryGirl.create(:campaign, company: @company)
       FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, name: 'Bar 1'),
@@ -710,7 +732,7 @@ feature "Reports", js: true do
 
     feature "preview" do
       it "should display a preview as the user make changes on the report" do
-        FactoryGirl.create(:event, company: @company, results: {impressions: 100})
+        FactoryGirl.create(:event, place: FactoryGirl.create(:place, name: 'Los Pollitos Bar'), company: @company, results: {impressions: 100})
         visit build_results_report_path(report)
 
         expect(find(report_preview)).to have_content('Drag and drop filters, columns, rows and values to create your report.')
@@ -726,6 +748,7 @@ feature "Reports", js: true do
           expect(page).to have_no_content('Drag and drop filters, columns, rows and values to create your report.')
           expect(page).to have_selector('th', text: 'IMPRESSIONS')
           expect(page).to have_selector('th', text: 'INTERACTIONS')
+          expect(page).to have_content('Los Pollitos Bar')
         end
       end
     end
