@@ -320,7 +320,6 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Radio Field' do
         expect(page).to have_no_content('Second Option')
       end
-      
 
       # Save the form
       expect {
