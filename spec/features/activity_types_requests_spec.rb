@@ -823,15 +823,19 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Likert scale Field' do
         # Remove the second option (the first one doesn't have the link)
-        within '.field-options[data-type="option"]' do
-          within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
-          confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
-          expect(page).to have_no_content('Second Option')
-        end
-        within '.field-options[data-type="statement"]' do
-          within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
-          expect(page).to have_no_content('Second Statement')
-        end
+        within('.field-options[data-type="option"] .field-option:nth-child(3)') { click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="option"]') {expect(page).to have_no_content('Second Option')}
+      end
+      within form_field_settings_for 'My Likert scale Field' do
+        # Remove the second statement (the first one doesn't have the link)
+        within('.field-options[data-type="statement"] .field-option:nth-child(3)') { click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Removing this statement will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="statement"]') {expect(page).to have_no_content('Second Option')}
       end
 
       # Save the form
@@ -887,7 +891,7 @@ feature "ActivityTypes", js: true do
         click_js_link 'Remove'
       end
 
-      confirm_prompt "Deleting this field will also delete all the associated data"
+      confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
 
       expect(form_builder).to_not have_form_field('Single line text')
 
