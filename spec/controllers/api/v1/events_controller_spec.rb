@@ -150,6 +150,54 @@ describe Api::V1::EventsController do
     end
   end
 
+
+  describe "PUT 'submit'" do
+    it "should submit event" do
+      event = FactoryGirl.create(:event, active: true, company: @company)
+      lambda {
+        put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        response.should be_success
+        event.reload
+      }.should change(event, :submitted?).to(true)
+    end
+
+    it "should not allow to submit the event if the event data is not valid" do
+      campaign = FactoryGirl.create(:campaign, company_id: company)
+      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+      event = FactoryGirl.create(:event, active: true, company: company, campaign: campaign)
+      lambda {
+        put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        response.response_code.should == 422
+        event.reload
+      }.should_not change(event, :submitted?).to(true)
+    end
+  end
+
+
+  describe "PUT 'approve'" do
+    it "should approve event" do
+      event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+      lambda {
+        put 'approve', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        response.should be_success
+        event.reload
+      }.should change(event, :approved?).to(true)
+    end
+  end
+
+
+  describe "PUT 'reject'" do
+    it "should reject event" do
+      event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+      lambda {
+        put 'reject', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, reason: 'blah blah blah', format: :json
+        response.should be_success
+        event.reload
+      }.should change(event, :rejected?).to(true)
+      event.reject_reason.should == 'blah blah blah'
+    end
+  end
+
   describe "GET 'results'" do
     let(:campaign){ FactoryGirl.create(:campaign, company: company) }
     let(:event){ FactoryGirl.create(:event, company: company, campaign: campaign) }

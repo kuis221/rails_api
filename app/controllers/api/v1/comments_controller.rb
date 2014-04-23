@@ -7,7 +7,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   resource_description do
     short 'Comments'
     formats ['json', 'xml']
-    error 404, "Missing"
+    error 404, "Record not found"
     error 401, "Unauthorized access"
     error 500, "Server crashed for some reason"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
@@ -76,10 +76,65 @@ class Api::V1::CommentsController < Api::V1::ApiController
     }
   }
   EOS
+
   def create
     create! do |success, failure|
       success.json { render :show }
       failure.json { render json: resource.errors }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:event_id/comments/:id', 'Update a comment'
+  param :event_id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: "Comment ID"
+  param :comment, Hash, required: true, :action_aware => true do
+    param :content, String, required: true, desc: "Comment text"
+  end
+  example <<-EOS
+  POST /api/v1/events/192/comments/12.json?auth_token=AJHshslaA.sdd&company_id=1
+  DATA:
+  {
+    comment: {
+      content: 'This is the new content for the comment'
+    }
+  }
+
+  RESPONSE:
+  {
+    {
+      "id": 20,
+      "content": "This is the new content for the comment"
+      "created_at": "2014-01-07T10:16:39-08:00"
+    }
+  }
+  EOS
+  def update
+    update! do |success, failure|
+      success.json { render :show }
+      success.xml  { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :DELETE, '/api/v1/events/:event_id/comments/:id', 'Deletes a comment'
+  param :event_id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: "Comment ID"
+  example <<-EOS
+  DELETE /api/v1/events/192/comments/12.json?auth_token=AJHshslaA.sdd&company_id=1
+  RESPONSE:
+  {
+    success: true
+    info: "The comment was successfully deleted"
+    data: { }
+  }
+  EOS
+  def destroy
+    destroy! do |success, failure|
+      success.json { render json: {success: true, info: 'The comment was successfully deleted', data: {} } }
+      success.xml  { render xml: {success: true, info: 'The comment was successfully deleted', data: {} } }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
 
