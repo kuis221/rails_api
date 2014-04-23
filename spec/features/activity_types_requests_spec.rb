@@ -315,8 +315,12 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Radio Field' do
         # Remove the second option (the first one doesn't have the link)
         click_js_link 'Remove this option'
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Radio Field' do
         expect(page).to have_no_content('Second Option')
       end
+      
 
       # Save the form
       expect {
@@ -373,6 +377,9 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Checkbox Field' do
         # Remove the second option (the first one doesn't have the link)
         click_js_link 'Remove this option'
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Checkbox Field' do
         expect(page).to have_no_content('Second Option')
       end
 
@@ -431,6 +438,9 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Dropdown Field' do
         # Remove the second option (the first one doesn't have the link)
         click_js_link 'Remove this option'
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Dropdown Field' do
         expect(page).to have_no_content('Second Option')
       end
 
@@ -681,6 +691,9 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Percent Field' do
         # Remove the second option (the first one doesn't have the link)
         click_js_link 'Remove this option'
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Percent Field' do
         expect(page).to have_no_content('Second Option')
       end
 
@@ -739,6 +752,9 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Summation Field' do
         # Remove the second option (the first one doesn't have the link)
         click_js_link 'Remove this option'
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Summation Field' do
         expect(page).to have_no_content('Second Option')
       end
 
@@ -809,6 +825,7 @@ feature "ActivityTypes", js: true do
         # Remove the second option (the first one doesn't have the link)
         within '.field-options[data-type="option"]' do
           within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+          confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
           expect(page).to have_no_content('Second Option')
         end
         within '.field-options[data-type="statement"]' do
@@ -838,7 +855,7 @@ feature "ActivityTypes", js: true do
         click_js_link 'Remove'
       end
 
-      confirm_prompt "Do you really want to delete this field?"
+      confirm_prompt "Are you sure you want to remove this field?"
 
       expect(form_builder).to_not have_form_field('Single line text')
 

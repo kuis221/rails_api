@@ -272,9 +272,13 @@ FormField = Class.extend {
 						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							if option.id isnt ''
-								option._destroy = '1'
+								bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
+									if result 
+										option._destroy = '1'
 							else
-								list.splice(list.indexOf(option),1)
+								bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
+									if result
+										list.splice(list.indexOf(option),1)
 							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
 							@form.setModified()
@@ -297,14 +301,14 @@ FormField = Class.extend {
 
 	remove: () ->
 		if @attributes.id # If this file already exists on the database
-			bootbox.confirm "Deleting this field will also delete all the associated data<br/>&nbsp;<p>Do you want to delete it?</p>", (result) =>
+			bootbox.confirm "Removing this field will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>", (result) =>
 				if result
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
 					true
 		else
-			bootbox.confirm "Do you really want to delete this field?", (result) =>
+			bootbox.confirm "Are you sure you want to remove this field?", (result) =>
 				if result
 					@field.remove()
 					@form.setModified()
