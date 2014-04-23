@@ -22,6 +22,9 @@
           a.btn.graph class="#{params[:view_style].nil? || params[:view_style]=='graph' ? 'active' : nil}" href="#" data-type="graph" data-toggle="tab" title="Graph View"
           a.btn.table class="#{params[:view_style]=='table' ? 'active' : nil}" href="#" data-type="table" data-toggle="tab" title="Table View"
 
+      .export-xls
+        = link_to '', '#', :id => 'download-gva-btn', class: 'btn download'
+
   #report-container
     #kpis-trends-bars
       .details_box.content
@@ -29,6 +32,7 @@
 
 javascript:
   var currentView = null;
+
   submitForm = function() {
     view =  $('#report_campaign_id').val() + $("#group_by").val();
     if (view != currentView) {
@@ -40,6 +44,7 @@ javascript:
       }
     }
   }
+
   $('#report_campaign_id').on('change', function(e){
     if ($('#report_campaign_id').val() != '') {
       $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
@@ -67,6 +72,12 @@ javascript:
     $('#'+$(this).data('type')+'-view').removeClass('hidden');
   });
 
+  $('#download-gva-btn').on('click', function(e){
+    if ($('#report_campaign_id').val()) {
+      $.get('#{results_gva_path(format: :xls)}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
+    }
+  });
+
   $(window).on('popstate', function(){
     query = window.location.search.replace(/^\?/,"");
     if (query != '') {
@@ -82,7 +93,6 @@ javascript:
           $('#group-by-criterion a.active').removeClass('active');
           $('#group-by-criterion a.'+pair[1]).addClass('active');
         } else if (pair[0] == 'view_style') {
-          alert(pair[1]);
           $("#view_style").val(pair[1]);
           $('#view-style a.active').removeClass('active');
           $('#view-style a.'+pair[1]).addClass('active');
