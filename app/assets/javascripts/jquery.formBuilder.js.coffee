@@ -244,6 +244,8 @@ FormField = Class.extend {
 
 	optionsField: (type='option') ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
+		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
+		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
 		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
@@ -269,7 +271,7 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if visible_items.length <= min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							if option.id isnt ''
 								option._destroy = '1'
@@ -662,6 +664,7 @@ SummationField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Summation',
 			id: null,
+			min_options_allowed: 2,
 			required: false,
 			type: 'FormField::Summation',
 			settings: {},
@@ -669,8 +672,10 @@ SummationField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
-
+			@attributes.options = [
+				{id: null, name: 'Option 1', ordering: 0},
+				{id: null, name: 'Option 2', ordering: 1}
+			]
 		@attributes.settings ||= {}
 
 		@
