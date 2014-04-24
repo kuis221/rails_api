@@ -152,11 +152,15 @@ $.widget 'nmk.formBuilder', {
 		$.each $('input[type=text]'), (index, elm) =>
 			$(elm).data 'saved-value', $(elm).val()
 
+		$(document).on 'click.fbuidler', '.modal', (e) =>
+			e.ignoreClose = true
+
 		$(document).on 'click.fbuidler', (e) =>
-			$(document).off 'click.fbuidler'
-			@formWrapper.find('.selected').removeClass('selected')
-			field.off 'change.attrFrm'
-			@attributesPanel.hide()
+			if $('.modal.in:visible').length is 0 and not e.ignoreClose?
+				$(document).off 'click.fbuidler'
+				@formWrapper.find('.selected').removeClass('selected')
+				field.off 'change.attrFrm'
+				@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow @attributesPanel
@@ -275,15 +279,18 @@ FormField = Class.extend {
 							option = $(e.target).closest('.field-option').data('option')
 							if option.id isnt ''
 								bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
-									if result 
+									if result
 										option._destroy = '1'
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										@refresh()
+										@form.setModified()
 							else
 								bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
 									if result
 										list.splice(list.indexOf(option),1)
-							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-							@refresh()
-							@form.setModified()
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										@refresh()
+										@form.setModified()
 							false
 					)
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
