@@ -90,6 +90,7 @@ module DashboardHelper
     submitted_percentage = g[:submitted_percentage].round
     rejected = number_with_precision(g[:rejected], strip_insignificant_zeros: true)
     rejected_percentage = g[:rejected_percentage].round
+    total =  number_with_precision(g[:total_count]+g[:submitted]+g[:rejected], strip_insignificant_zeros: true)
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
       content_tag(:div, class: 'progress gva') do
@@ -97,7 +98,7 @@ module DashboardHelper
         content_tag(:div, content_tag(:div, submitted, class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{[100 - g[:completed_percentage], submitted_percentage].min}%;") +
         content_tag(:div, content_tag(:div, rejected, class: 'bar-label rejected-label'), class: 'bar bar-rejected', style: "width: #{[100 - g[:rejected_percentage], rejected_percentage].min}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{goal}</b> GOAL".html_safe), class: 'goal-label') +
+      content_tag(:div, content_tag(:div, "<b>#{total}/#{goal}</b> GOAL".html_safe), class: 'goal-label') +
       content_tag(:div, class: 'remaining-label percentage') do
         content_tag(:b, "#{actual_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
         content_tag(:span, "APPROVED", class: 'percentage') +
