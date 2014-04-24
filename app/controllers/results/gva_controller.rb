@@ -1,14 +1,21 @@
-class Results::GvaController < ApplicationController
-  before_filter :campaign, except: :index
+class Results::GvaController < InheritedResources::Base
+  respond_to :xls, only: :index
 
+  before_filter :campaign, except: :index
   before_filter :authorize_actions
 
   def index
     @campaigns = current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
+    if request.format.xls?
+      @export = ListExport.create({controller: self.class.name, params: params, export_format: 'xls', company_user: current_company_user}, without_protection: true)
+      if @export.new?
+        @export.queue!
+      end
+      render action: :new_export, formats: [:js]
+    end
   end
 
   def report
-    authorize_actions
     @events_scope = filter_events_scope
     @group_header_data = {}
     goals = if area
@@ -41,6 +48,18 @@ class Results::GvaController < ApplicationController
     @group_header_data = kpis_headers_data(@goalables)
 
     render layout: false
+  end
+
+  def export_list(export)
+    report
+
+    Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
+      render_to_string :index, handlers: [:slim], formats: [:xls], layout: false
+    end
+  end
+
+  def export_file_name
+    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   private
@@ -76,7 +95,6 @@ class Results::GvaController < ApplicationController
       scope = scope.with_team(team) unless team.nil?
       scope
     end
-
 
     def kpis_headers_data(goalables)
       if goalables.is_a?(Campaign)
