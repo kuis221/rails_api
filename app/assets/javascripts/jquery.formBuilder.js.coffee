@@ -463,6 +463,7 @@ DropdownField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Dropdown',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Dropdown',
 			settings: {},
@@ -506,6 +507,7 @@ RadioField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Multiple Choice',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Radio',
 			settings: {},
@@ -548,6 +550,7 @@ PercentageField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Percent',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Percentage',
 			settings: {},
@@ -721,6 +724,8 @@ LikertScaleField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Likert scale',
 			id: null,
+			min_options_allowed:4,
+			min_statements_allowed:4,
 			required: false,
 			type: 'FormField::LikertScale',
 			settings: {},
@@ -785,6 +790,7 @@ CheckboxField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Checkboxes',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Checkbox',
 			settings: {},
@@ -828,6 +834,7 @@ BrandField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Brand',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Brand',
 			settings: {},
@@ -859,6 +866,7 @@ MarqueField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Marque',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Marque',
 			settings: {},
