@@ -131,6 +131,36 @@ jQuery ->
 					.closest('.control-group').removeClass('error')
 		}
 
+	# Check what graph labels are colliding with others and adjust the position
+	$(window).on 'resize ready', () ->
+		adjustChartsPositions()
+
+	$(document).on 'ajaxComplete', () ->
+		adjustChartsPositions()
+
+	adjustChartsPositions = () ->
+		$('.chart-bar').each (index, container) ->
+			labels = $(container).find('.bar-label')
+			maxLevel = 0
+			for label, i in labels
+				$label = $(label)
+				# if $(label).text() is '101'
+				# 	debugger
+				position = $label.offset()
+				level = 0
+				for o, j in labels
+					if j < i
+						other = $(o)
+						otherPosition = other.offset()
+						if otherPosition.left+other.outerWidth() > position.left
+							level = other.data('level') + 1
+				$label.removeClass('level-1 level-2 level-3').addClass("level-#{level}").data('level', level)
+				$label = null
+
+				maxLevel = Math.max maxLevel, level
+
+			$(container).removeClass('level-1 level-2 level-3').addClass("level-#{maxLevel}")
+
 	validateForm = (e) ->
 		if e.target.tagName is 'A'
 			return true

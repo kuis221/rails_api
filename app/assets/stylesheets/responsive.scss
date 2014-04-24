@@ -465,6 +465,9 @@
 
 	.dashboard.index {
 		#kpis-trends-bars {
+			.map_header {
+				margin-right: 200px;
+			}
 			.chart-bar {
 				margin-right: 200px;
 				margin-top: 15px;
@@ -479,6 +482,15 @@
 	}
 }
 
+@media (max-width: 540px) {
+	.dashboard.index {
+		#kpis-trends-bars {
+			.map_header {
+				margin-right: 0px;
+			}
+		}
+	}
+}
 @media (max-width: 400px) {
 	body {
 		font-size: 12px;
@@ -685,29 +697,7 @@
 			display: none;
 		}
 	}
-	.dashboard.index {
-		#kpis-trends-bars {
-			.container-kpi-trend {
-				margin-left: 0;
-				.chart-bar {
-					margin-right: 150px;
-					margin-top: 25px;
-					.remaining-label{
-						right: -167px;
-						width: 90px;
-						top: -25px
-						b {
-							float: initial;
-							text-align: left;
-							width: auto;
-							font-size: 15px;
-							display:block;
-						}
-					}
-				}
-			}
-		}
-	}
+
 }
 
 .main-nav-collapse {

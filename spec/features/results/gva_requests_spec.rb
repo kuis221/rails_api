@@ -152,6 +152,56 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
           expect(page).to_not have_content('Place 1')
         end
       end
+
+      scenario "should export the overall campaign GvA to Excel" do
+        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
+        kpi = Kpi.samples
+        kpi2 = Kpi.events
+        campaign.add_kpi kpi
+        campaign.add_kpi kpi2
+
+        place1 = FactoryGirl.create(:place, name: 'Place 1')
+        campaign.places << place1
+        company_user.campaigns << campaign
+        company_user.places << place1
+
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi2, value: '2')
+
+        event1 = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place1)
+        event1.result_for_kpi(kpi).value = '25'
+        event1.save
+
+        event2 = FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place1)
+        event2.result_for_kpi(kpi).value = '20'
+        event2.save
+
+        visit results_gva_path
+
+        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+
+        # Export
+        with_resque do
+          expect {
+            click_js_link('Download')
+            wait_for_ajax(10)
+            within visible_modal do
+              expect(page).to have_content('We are processing your request, the download will start soon...')
+            end
+            wait_for_ajax(30)
+            ensure_modal_was_closed
+          }.to change(ListExport, :count).by(1)
+        end
+
+        spreadsheet_from_last_export do |doc|
+          rows = doc.elements.to_a('//Row')
+          expect(rows.count).to eql 3
+          expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
+          expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql ['Events', '2', '1', '0.5', '2', '1']
+          expect(rows[2].elements.to_a('Cell/Data').map{|d| d.text }).to eql ['Samples', '100', '25', '0.25', '45', '0.45']
+        end
+      end
     end
   end
 end

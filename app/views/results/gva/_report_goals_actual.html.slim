@@ -9,3 +9,6 @@
         = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
     - else
       p.text-center This campaign has no events Goal Vs. Actual stats
+
+javascript:
+  monitorGraphLabels($('#kpis-trends-bars'))
