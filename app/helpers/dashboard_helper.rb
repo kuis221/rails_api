@@ -90,33 +90,26 @@ module DashboardHelper
     end
     goal = number_with_precision(g[:goal].value, strip_insignificant_zeros: true)
     actual = number_with_precision(g[:total_count], strip_insignificant_zeros: true)
-    pending_and_total = (g[:submitted] || 0) + g[:total_count]
-    pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
     actual_percentage = g[:completed_percentage]
-    pending_percentage = (pending_and_total/g[:goal].value * 100)
-    one_line = (107-(pending_percentage - g[:completed_percentage])) > 100 || pending_percentage >= 100 && g[:completed_percentage] >= 100
-    actual_pending_labels = if (actual_percentage.round == pending_percentage.round) || (actual_percentage.round >= 100 && pending_percentage.round >= 100)
-      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 100 : 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label stacked', style: "margin-left: #{[100, g[:completed_percentage]].min}%")
-    else
-      content_tag(:div, content_tag(:div, "<b>#{actual}</b>".html_safe), class: 'executed-label gva', style: "margin-left: #{[100, g[:completed_percentage]].min}%; margin-right: #{one_line ? 50 : 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{pending}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{[1, 101.3 - pending_percentage.round].max}%; margin-top:#{one_line ? -8 : 4}px")
-    end
+    submitted = number_with_precision(g[:submitted], strip_insignificant_zeros: true)
+    submitted_percentage = g[:submitted_percentage].round
+    rejected = number_with_precision(g[:rejected], strip_insignificant_zeros: true)
+    rejected_percentage = g[:rejected_percentage].round
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
-      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{[100, g[:completed_percentage]].min}%") +
-      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{[100, pending_percentage].min}%; height: #{one_line ? 40: 23}px") +
       content_tag(:div, class: 'progress gva') do
-        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
-        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{[100 - g[:completed_percentage], pending_percentage - g[:completed_percentage]].min}%;")
+        content_tag(:div, content_tag(:div, actual, class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
+        content_tag(:div, content_tag(:div, submitted, class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{[100 - g[:completed_percentage], submitted_percentage].min}%;") +
+        content_tag(:div, content_tag(:div, rejected, class: 'bar-label rejected-label'), class: 'bar bar-rejected', style: "width: #{[100 - g[:rejected_percentage], rejected_percentage].min}%;")
       end +
-      actual_pending_labels +
       content_tag(:div, content_tag(:div, "<b>#{goal}</b> GOAL".html_safe), class: 'goal-label') +
       content_tag(:div, class: 'remaining-label percentage') do
         content_tag(:b, "#{actual_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, "COMPLETE", class: 'percentage') +
-        content_tag(:b, "#{pending_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, 'PENDING', class: 'percentage')
+        content_tag(:span, "APPROVED", class: 'percentage') +
+        content_tag(:b, "#{g[:submitted_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
+        content_tag(:span, 'SUBMITTED', class: 'percentage') +
+        content_tag(:b, "#{g[:rejected_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
+        content_tag(:span, 'REJECTED', class: 'percentage')
       end
     end
   end

@@ -92,7 +92,7 @@ class Results::GvaController < ApplicationController
 
       goal_keys = goals.keys
       queries = goalables.map do |goalable|
-        events_scope = campaign.events.active.approved.select("ARRAY['#{goalable.id}', '#{goalable.class.name}'], '{KPI_NAME}', {KPI_AGGR}").reorder(nil)
+        events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).select("ARRAY['#{goalable.id}', '#{goalable.class.name}'], '{KPI_NAME}', {KPI_AGGR}").reorder(nil)
         query = if goalable.is_a?(Area)
           events_scope.in_areas([goalable])
         elsif goalable.is_a?(Place)
