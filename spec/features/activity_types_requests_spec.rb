@@ -687,13 +687,13 @@ feature "ActivityTypes", js: true do
       percentage_field.drag_to form_builder
 
       expect(form_builder).to have_form_field('Percent',
-          with_options: ['Option 1']
+          with_options: ['Option 1', 'Option 2', 'Option 3']
         )
 
       within form_field_settings_for 'Percent' do
         fill_in 'Field label', with: 'My Percent Field'
         fill_in 'option[0][name]', with: 'First Option'
-        click_js_link 'Add option after this' # Create another option
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
         fill_in 'option[1][name]', with: 'Second Option'
       end
 
@@ -711,13 +711,13 @@ feature "ActivityTypes", js: true do
           click_js_button 'Save'
           wait_for_ajax
         }.to change(FormField, :count).by(1)
-      }.to change(FormFieldOption, :count).by(2)
+      }.to change(FormFieldOption, :count).by(4)
       field = FormField.last
       expect(field.name).to eql 'My Percent Field'
       expect(field.ordering).to eql 0
       expect(field.type).to eql 'FormField::Percentage'
-      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
-      expect(field.options.map(&:ordering)).to eql [0, 1]
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option','Option 2', 'Option 3']
+      expect(field.options.map(&:ordering)).to eql [0, 1,2,3]
 
       # Remove fields
       expect(form_builder).to have_form_field('My Percent Field',
