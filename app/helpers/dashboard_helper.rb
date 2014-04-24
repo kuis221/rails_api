@@ -62,18 +62,13 @@ module DashboardHelper
       end
       today_bar_indicator = content_tag(:div, '', class: "today-line-indicator #{color_class}", style: "left: #{c['today_percentage'] - 0.5}%")
     end
-    one_line = (105-c['scheduled_percentage']) > 100
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
-      content_tag(:div, '', class: 'bar-indicator executed-indicator', style: "left: #{c['executed_percentage']}%") +
-      content_tag(:div, '', class: 'bar-indicator scheduled-indicator', style: "left: #{c['executed_percentage']+c['scheduled_percentage']}%; height: #{one_line ? 37: 23}px") +
       content_tag(:div, class: 'progress') do
-        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
-        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
+        content_tag(:div, content_tag(:div, number_with_precision(c['executed'], strip_insignificant_zeros: true), class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
+        content_tag(:div, content_tag(:div, number_with_precision(c['scheduled'], strip_insignificant_zeros: true), class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
         content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['executed'], strip_insignificant_zeros: true)}</b>".html_safe), class: 'executed-label', style: "margin-left: #{c['executed_percentage']}%; margin-right: #{ one_line ? 50: 0}%") +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['scheduled'], strip_insignificant_zeros: true)}</b>".html_safe), class: 'scheduled-label', style: "float: right; margin-right: #{101-c['scheduled_percentage']-c['executed_percentage']}%; margin-top:#{ one_line ? -11: 0}px") +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
       content_tag(:div, class: 'remaining-label') do
         content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true, delimiter: ',')) +
