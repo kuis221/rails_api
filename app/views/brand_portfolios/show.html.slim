@@ -24,6 +24,8 @@
       = render 'brands'
     = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'  if can?(:edit, resource)
 
+= render partial: 'help_tutorial'
+
 javascript:
   $(document).on('brand_portfolios:change', function(){
     window.location.reload(true);

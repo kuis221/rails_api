@@ -70,6 +70,7 @@ class ListExport < ActiveRecord::Base
 
     controller.instance_variable_set(:@_params, params)
     controller.instance_variable_set(:@_current_user, company_user.user)
+    controller.instance_variable_set(:@current_user, company_user.user)
     controller.instance_variable_set(:@current_company, company_user.company)
     controller.instance_variable_set(:@current_company_user, company_user)
 
@@ -83,7 +84,6 @@ class ListExport < ActiveRecord::Base
     File.open(tmp_filename, 'w'){|f| f.write(buffer) }
     buffer = nil
     self.file = File.open(tmp_filename)
-
 
     # Save export with retry to handle errors on S3 comunications
     tries = 3

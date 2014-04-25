@@ -24,6 +24,8 @@
       = render 'members'
     = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:edit, resource)
 
+= render partial: 'help_tutorial'
+
 javascript:
   $(document).on('teams:change', function(){
     window.location.reload(true);
