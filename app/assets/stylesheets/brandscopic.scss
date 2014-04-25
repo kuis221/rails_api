@@ -1886,6 +1886,13 @@ ul.kpis-list{
 				b{ font-size: 14px; }
 			}
 		}
+
+		.bar-label {
+			padding-top: 16px !important;
+			&.level-1 {
+				padding-top: 32px !important;
+			}
+		}
 	}
 	.kpi-trend-overall {
 		margin-bottom: 37px !important;

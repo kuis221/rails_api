@@ -95,8 +95,8 @@ module DashboardHelper
       today_bar_indicator +
       content_tag(:div, class: 'progress gva') do
         content_tag(:div, content_tag(:div, actual, class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
-        content_tag(:div, content_tag(:div, submitted, class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{[100 - g[:completed_percentage], submitted_percentage].min}%;") +
-        content_tag(:div, content_tag(:div, rejected, class: 'bar-label rejected-label'), class: 'bar bar-rejected', style: "width: #{[100 - g[:rejected_percentage], rejected_percentage].min}%;")
+        content_tag(:div, content_tag(:div, submitted, class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{[[100 - g[:completed_percentage], submitted_percentage].min, 0].max}%;") +
+        content_tag(:div, content_tag(:div, rejected, class: 'bar-label rejected-label'), class: 'bar bar-rejected', style: "width: #{[[100 - g[:completed_percentage] - submitted_percentage - rejected_percentage, rejected_percentage].min, 0].max}%;")
       end +
       content_tag(:div, content_tag(:div, "<b>#{total}/#{goal}</b> GOAL".html_safe), class: 'goal-label') +
       content_tag(:div, class: 'remaining-label percentage') do
