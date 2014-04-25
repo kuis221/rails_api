@@ -102,13 +102,109 @@
 			border-radius: 5px;
 			padding: 10px;
 			margin-bottom: 18px;
-
+			color: $brand;
+			display: inline-block;
+			font-size: 11px;
+			font-weight: bold;
+			height: 40px !important;
+			padding: 0 10px !important;
+			text-align: center;
+			margin-bottom: 8px !important;
+			width: 37% !important;
+			&:nth-child(even) {
+				margin-right: 10px;
+			}
+			&:before{
+				font-family: 'icons';
+				color: $user_menu;
+				font-size: 13px;
+				height: 20px;
+				line-height: 17px;
+				position:relative;
+				display: block;
+				font-weight: normal;
+				text-align: center;
+				top: 2px;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale !important;
+			}
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
 				background-color: #fff;
 			}
-			&.ui-draggable{
-				color: $brand;
+			&:hover{
+				background-color:$user_menu;
+				border: 1px solid $user_menu;
+				color: white;
+				cursor: pointer;
+				&:before{
+					color: white;
+				}
+			}
+
+			&[data-type="Dropdown"]:before{
+				content:"\e60b";
+				line-height: 22px;
+			}
+			&[data-type="Checkbox"]:before{
+				content:"\e60c";
+				line-height: 22px;
+			}
+			&[data-type="Radio"]:before{
+				content:"\e60a";
+			}
+			&[data-type="Percentage"]:before{
+				content:"\e608";
+				font-size: 14px;
+				line-height: 24px;
+			}
+			&[data-type="TextArea"]:before{
+				content:"\e60f";
+				line-height: 23px;
+			}
+			&[data-type="Number"]:before{
+				content:"\e609";
+				font-size: 15px;
+				line-height: 27px;
+			}
+			&[data-type="Currency"]:before{
+				content:"\e606";
+				font-size: 15px;
+				line-height: 24px;
+			}
+			&[data-type="Text"]:before{
+				content:"\e605";
+				font-size: 15px;
+				line-height: 27px;
+			}
+			&[data-type="Photo"]:before{
+				content:"\e607";
+			}
+			&[data-type="Attachment"]:before{
+				content:"\e60d";
+			}
+			&[data-type="Summation"]:before{
+				content:"\e604";
+				font-size: 14px;
+			}
+			&[data-type="Date"]:before{
+				content:"\e022";
+				font-size: 14px;
+			}
+			&[data-type="Time"]:before{
+				content:"\e01f";
+				font-size: 17px;
+				line-height: 24px;
+			}
+			&[data-type="Brand"]:before{
+				content:"\e030";
+			}
+			&[data-type="Marque"]:before{
+				content:"\e60e";
+				font-size: 14px;
+			}
+			&[data-type="LikertScale"]{
+				line-height:60px;
 			}
 		}
 	}

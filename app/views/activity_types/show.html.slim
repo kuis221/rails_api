@@ -52,6 +52,7 @@ javascript:
       window.location = '#{activity_type_path(return: return_path)}'
     });
     $('.form-builder-wrapper').formBuilder({
-      url: '#{activity_type_path(resource, format: :json)}'
+      url: '#{activity_type_path(resource, format: :json)}',
+      canEdit: #{can?(:update, resource) ? 'true' : 'false'}
     });
   });

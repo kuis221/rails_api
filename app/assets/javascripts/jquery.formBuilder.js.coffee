@@ -4,9 +4,10 @@ $.widget 'nmk.formBuilder', {
 	_create: () ->
 		@modified = false
 		@_updateSaveButtonState()
+
 		@element.find('.form-wrapper').append(
 			@formWrapper = $('<div class="form-fields clearfix">'),
-			$('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>')
+			( if @options.canEdit then $('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>') else null )
 		)
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
@@ -17,52 +18,56 @@ $.widget 'nmk.formBuilder', {
 				e.stopPropagation()
 				true
 
-		@formWrapper.sortable
-			items: "> div.field"
-			cancel: '.empty-form-legend'
-			revert: true,
-			stop: (e, ui) =>
-				if ui.item.hasClass('ui-draggable')
-					fieldHtml = @buildField({type: ui.item.data('type')})
-					ui.item.replaceWith fieldHtml
-					applyFormUiFormatsTo fieldHtml
+		if @options.canEdit
+			@formWrapper.sortable
+				items: "> div.field"
+				cancel: '.empty-form-legend'
+				revert: true,
+				stop: (e, ui) =>
+					if ui.item.hasClass('ui-draggable')
+						fieldHtml = @buildField({type: ui.item.data('type')})
+						ui.item.replaceWith fieldHtml
+						applyFormUiFormatsTo fieldHtml
 
-				$.map @formWrapper.find("> div.field"), (field, index) =>
-					$(field).data('field').attributes.ordering = index
+					$.map @formWrapper.find("> div.field"), (field, index) =>
+						$(field).data('field').attributes.ordering = index
 
-				@setModified()
-				@formWrapper.find('.clearfix').appendTo(@formWrapper)
-			over: (event, ui) =>
-				@formWrapper.addClass 'sorting'
-			out: (event, ui) =>
-				@formWrapper.removeClass 'sorting'
+					@setModified()
+					@formWrapper.find('.clearfix').appendTo(@formWrapper)
+				over: (event, ui) =>
+					@formWrapper.addClass 'sorting'
+				out: (event, ui) =>
+					@formWrapper.removeClass 'sorting'
 
-		@fieldsWrapper.find('.field').draggable
-			connectToSortable: ".form-fields"
-			revert: "invalid"
-			helper: (a, b) =>
-				@buildField({type: $(a.target).data('type')})
-			start: (e, ui) =>
-				ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
-				applyFormUiFormatsTo(ui.helper)
+		if @options.canEdit
+			@fieldsWrapper.find('.field').draggable
+				connectToSortable: ".form-fields"
+				revert: "invalid"
+				helper: (a, b) =>
+					@buildField({type: $(a.target).data('type')})
+				start: (e, ui) =>
+					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
+					applyFormUiFormatsTo(ui.helper)
+
+			# Display Field Attributes Dialog
+			@formWrapper.on 'click', '.field', (e) =>
+				e.stopPropagation()
+				$field = $(e.target)
+				if not $field.hasClass('field')
+					$field = $field.closest('.field')
+				@_showFieldAttributes $field
+				false
 
 		@_loadForm()
 
-		# Display Field Attributes Dialog
-		@formWrapper.on 'click', '.field', (e) =>
-			e.stopPropagation()
-			$field = $(e.target)
-			if not $field.hasClass('field')
-				$field = $field.closest('.field')
-			@_showFieldAttributes $field
-			false
+		if @options.canEdit
+			@element.on 'click', '#save-report', (e) =>
+				@saveFields()
+				false
+			$(window).on 'beforeunload.formBuilder', =>
+				if @modified
+					'You are leaving the activity type details page without saving your work.'
 
-		@element.on 'click', '#save-report', (e) =>
-			@saveFields()
-			false
-		$(window).on 'beforeunload.formBuilder', =>
-			if @modified
-				'You are leaving the activity type details page without saving your work.'
 		true
 
 	_loadForm: () ->
@@ -76,7 +81,7 @@ $.widget 'nmk.formBuilder', {
 	_addFieldToForm: (field) ->
 		fieldHtml = @buildField(field)
 		@formWrapper.append fieldHtml
-		@formWrapper.sortable "refresh"
+		@formWrapper.sortable "refresh" if @options.canEdit
 		applyFormUiFormatsTo fieldHtml
 
 		field
@@ -105,10 +110,12 @@ $.widget 'nmk.formBuilder', {
 				if response.result isnt 'OK'
 					bootbox.alert response.message
 				else
+					@modified = false
 					@_loadForm()
-			failure: () =>
+			error: (jqXHR, textStatus, errorThrown) =>
+				bootbox.alert jqXHR.responseText
 				$('#save-report').attr 'disabled', false
-			complete: () =>
+			complete: ( jqXHR, textStatus) =>
 				$('#save-report').text($('#save-report').data('text'))
 		}
 
@@ -277,7 +284,7 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if visible_items.length <= min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if @form.options.canEdit && visible_items.length <= min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							if option.id isnt null
 								bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
@@ -307,7 +314,7 @@ FormField = Class.extend {
 	render: () ->
 		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
 			.data('field', @)
-			.append $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
+			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
 					@_renderField()
 
 	remove: () ->
