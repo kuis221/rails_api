@@ -1522,7 +1522,7 @@ defaultOptions = {
 		borderColor: '#4572A7',
 		//borderWidth: 0,
 		borderRadius: 5,
-		defaultSeriesType: 'line',
+		defaultSeriesType: 'line', 
 		ignoreHiddenSeries: true,
 		//inverted: false,
 		//shadow: false,
@@ -1531,7 +1531,7 @@ defaultOptions = {
 		spacingBottom: 15,
 		spacingLeft: 10,
 		style: {
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+			fontFamily: '"Lato", sans-serif', // default font
 			fontSize: '12px'
 		},
 		backgroundColor: '#FFFFFF',

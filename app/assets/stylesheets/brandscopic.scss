@@ -4724,6 +4724,10 @@ table.table td.comments-container {
 	img {
 		max-width: none;
 	}
+	.gm-style-iw{
+		height: auto !important;
+		overflow-y: hidden;
+	}
 }
 
 // Simple Form
