@@ -16,34 +16,11 @@ class Results::GvaController < InheritedResources::Base
   end
 
   def report
-    @events_scope = filter_events_scope
-    @group_header_data = {}
-    goals = if area
-      area.goals.in(campaign)
-    elsif place
-      place.goals.in(campaign)
-    elsif company_user
-      company_user.goals.in(campaign)
-    elsif team
-      team.goals.in(campaign)
-    else
-      campaign.goals.base
-    end
-    @group_header_data = kpis_headers_data(campaign) if params[:group_by] == 'campaign'
-    goals = goals.where('goals.value is not null and goals.value <> 0')
-    goals_activities = goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).includes(:activity_type)
-    goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
-    # Following KPIs should be displayed in this specific order at the beginning. Rest of KPIs and Activity Types should be next in the list ordered by name
-    promotables = ['Events', 'Promo Hours', 'Expenses', 'Samples', 'Interactions', 'Impressions']
-    @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || ('A'+g.kpi.name)).to_s : g.activity_type.name }
+    set_report_scopes_for(area || place || company_user || team || campaign)
   end
 
   def report_groups
-    @goalables =  if params[:group_by] == 'place'
-      campaign.children_goals.for_areas_and_places
-    else
-      campaign.children_goals.for_users_and_teams
-    end.select('goalable_id, goalable_type').where('value IS NOT NULL').group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)
+    @goalables = goalables_by_type
 
     @group_header_data = kpis_headers_data(@goalables)
 
@@ -51,7 +28,18 @@ class Results::GvaController < InheritedResources::Base
   end
 
   def export_list(export)
-    report
+    if params[:group_by] == 'campaign'
+      report
+    else
+      @goalables = goalables_by_type
+      @goalables_data = []
+      if @goalables.present?
+        @goalables.each do |goalable|
+          set_report_scopes_for(goalable)
+          @goalables_data << {name: goalable.name , event_goal: view_context.each_events_goal}
+        end
+      end
+    end
 
     Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
       render_to_string :index, handlers: [:slim], formats: [:xls], layout: false
@@ -94,6 +82,43 @@ class Results::GvaController < InheritedResources::Base
       scope = scope.with_user_in_team(company_user) unless company_user.nil?
       scope = scope.with_team(team) unless team.nil?
       scope
+    end
+
+    def goalables_by_type
+      if params[:group_by] == 'campaign'
+        [campaign]
+      elsif params[:group_by] == 'place'
+        campaign.children_goals.for_areas_and_places
+      else
+        campaign.children_goals.for_users_and_teams
+      end.select('goalable_id, goalable_type').where('value IS NOT NULL').group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)
+    end
+
+    def set_report_scopes_for(goalable)
+      if params[:format] == 'xls' && (params[:group_by] == 'place' || params[:group_by] == 'staff')
+        @area, @place, @company_user, @team = nil, nil, nil, nil
+        params.merge!(item_type: goalable.class.name, item_id: goalable.id)
+      end
+      @events_scope = filter_events_scope
+      @group_header_data = {}
+      goals = if area
+        area.goals.in(campaign)
+      elsif place
+        place.goals.in(campaign)
+      elsif company_user
+        company_user.goals.in(campaign)
+      elsif team
+        team.goals.in(campaign)
+      else
+        campaign.goals.base
+      end
+      @group_header_data = kpis_headers_data(campaign) if params[:group_by] == 'campaign'
+      goals = goals.where('goals.value is not null and goals.value <> 0')
+      goals_activities = goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).includes(:activity_type)
+      goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
+      # Following KPIs should be displayed in this specific order at the beginning. Rest of KPIs and Activity Types should be next in the list ordered by name
+      promotables = ['Events', 'Promo Hours', 'Expenses', 'Samples', 'Interactions', 'Impressions']
+      @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || ('A'+g.kpi.name)).to_s : g.activity_type.name }
     end
 
     def kpis_headers_data(goalables)

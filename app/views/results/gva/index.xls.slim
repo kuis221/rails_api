@@ -9,6 +9,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
   Worksheet ss:Name="Goals Vs. Actual"
 
     Table
+      - if params[:group_by] == 'place' || params[:group_by] == 'staff'
+        Column ss:Width="100"
       Column ss:Width="200"
       Column ss:Width="100"
       Column ss:Width="100"
@@ -16,6 +18,12 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Row ss:StyleID="s1"
+        - if params[:group_by] == 'place'
+          Cell
+            Data ss:Type="String"= "PLACE/AREA"
+        - if params[:group_by] == 'staff'
+          Cell
+            Data ss:Type="String"= "USER/TEAM"
         Cell
           Data ss:Type="String" METRIC
         Cell
@@ -29,21 +37,45 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
         Cell
           Data ss:Type="String" PENDING %
 
-      - each_events_goal.each do |id, event_goal|
-        - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
-        - pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
-        - actual_percentage = event_goal[:completed_percentage]/100
-        - pending_percentage = pending_and_total/event_goal[:goal].value
-        Row
-          Cell
-            Data ss:Type="String"= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
-          Cell
-            Data ss:Type="Number"= number_with_precision(event_goal[:goal].value, strip_insignificant_zeros: true)
-          Cell
-            Data ss:Type="Number"= number_with_precision(event_goal[:total_count], strip_insignificant_zeros: true)
-          Cell ss:StyleID="s2"
-            Data ss:Type="Number"= number_with_precision(actual_percentage, precision: 2, strip_insignificant_zeros: true)
-          Cell
-            Data ss:Type="Number"= pending
-          Cell ss:StyleID="s2"
-            Data ss:Type="Number"= number_with_precision(pending_percentage, precision: 2, strip_insignificant_zeros: true)
+      - if params[:group_by] == 'campaign'
+        - each_events_goal.each do |id, event_goal|
+          - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
+          - pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
+          - actual_percentage = event_goal[:completed_percentage]/100
+          - pending_percentage = pending_and_total/event_goal[:goal].value
+          Row
+            Cell
+              Data ss:Type="String"= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
+            Cell
+              Data ss:Type="Number"= number_with_precision(event_goal[:goal].value, strip_insignificant_zeros: true)
+            Cell
+              Data ss:Type="Number"= number_with_precision(event_goal[:total_count], strip_insignificant_zeros: true)
+            Cell ss:StyleID="s2"
+              Data ss:Type="Number"= number_with_precision(actual_percentage, precision: 2, strip_insignificant_zeros: true)
+            Cell
+              Data ss:Type="Number"= pending
+            Cell ss:StyleID="s2"
+              Data ss:Type="Number"= number_with_precision(pending_percentage, precision: 2, strip_insignificant_zeros: true)
+
+      - elsif params[:group_by] == 'place' || params[:group_by] == 'staff'
+        - @goalables_data.each do |goalable|
+          - goalable[:event_goal].each do |id, event_goal|
+            - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
+            - pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
+            - actual_percentage = event_goal[:completed_percentage]/100
+            - pending_percentage = pending_and_total/event_goal[:goal].value
+            Row
+              Cell
+                Data ss:Type="String"= goalable[:name]
+              Cell
+                Data ss:Type="String"= event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name
+              Cell
+                Data ss:Type="Number"= number_with_precision(event_goal[:goal].value, strip_insignificant_zeros: true)
+              Cell
+                Data ss:Type="Number"= number_with_precision(event_goal[:total_count], strip_insignificant_zeros: true)
+              Cell ss:StyleID="s2"
+                Data ss:Type="Number"= number_with_precision(actual_percentage, precision: 2, strip_insignificant_zeros: true)
+              Cell
+                Data ss:Type="Number"= pending
+              Cell ss:StyleID="s2"
+                Data ss:Type="Number"= number_with_precision(pending_percentage, precision: 2, strip_insignificant_zeros: true)
