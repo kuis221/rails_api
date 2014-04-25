@@ -14,7 +14,7 @@
 //= require jquery_ujs
 //= require jquery.form_has_changed
 //= require jquery-migrate-1.2.1
-//= require jquery-ui-1.10.3.custom
+//= require jquery-ui-1.10.4.custom
 //= require s3_direct_upload
 //= require twitter/bootstrap
 //= require jquery_nested_form
@@ -43,6 +43,8 @@
 //= require jquery.timepicker
 //= require jquery.uniform
 //= require jquery.validate
+//= require jquery.mousewheel
+//= require jquery.jscrollpane
 //= require markerclusterer
 //= require select2
 //= require superfish

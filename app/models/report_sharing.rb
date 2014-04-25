@@ -10,4 +10,6 @@
 
 class ReportSharing < ActiveRecord::Base
   belongs_to :report
+
+  belongs_to :shared_with, polymorphic: true
 end

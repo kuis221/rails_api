@@ -1,0 +1,8 @@
+- if resource.can_be_generated?
+  table
+    - if params[:page].to_i == 1
+      thead data-content="head"
+        = render 'report_head'
+
+    tbody data-content="items"
+      = render 'report_rows'

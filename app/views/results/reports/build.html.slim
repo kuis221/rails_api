@@ -1,0 +1,57 @@
+- content_for :head
+  = javascript_include_tag "jquery.reportBuilder"
+  = javascript_include_tag "jquery.reportTableScroller"
+- content_for :head
+  = stylesheet_link_tag "reports"
+
+= user_new_feature('reports_build') do
+  h5 REPORT BUILDER
+  a.close.btn-dismiss-alert href="#" title="Dimiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/GNZBSZD16cY" data-width="640" data-height="360" 
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      ' Let's build a report!  Start searching for fields on the right panel and then adding them to the various containers below.  You will instantly see a preview of your report in the center module.  Once finished, you can save and share your report with other users.  Click on the video to the left for a quick overview or check out our 
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more in depth info. 
+
+#report-builder
+  .sidebar
+    = render 'fields_list'
+    .fixed-height-lists
+      p.drag-message Drag fields between areas
+      = render 'filters_list'
+
+      = render 'columns_list'
+
+      = render 'rows_list'
+
+      = render 'values_list'
+
+  .main.with-details-close-bar
+    = resource_details_bar("You are editing #{resource.name} report. Click to close.")
+    button.btn.btn-primary.btn-save-report disabled="disabled" data-disable-with="Saving..." Save
+    = link_to 'Exit', results_report_path(resource), method: :get, title: 'Exit', form_class: "btn-cancel-report-form", class: 'btn btn-cancel btn-cancel-report'
+
+    .buttons-zone.pull-right
+      = button_to '', share_results_report_path(resource, format: :js), class: 'btn btn-share-report icon-share', title: 'Share', remote: true, method: :get
+
+      - if false # This is not implemented yet, so hide it
+        .btn-group
+          a.btn.active.table-view
+          a.btn.charts
+
+    #report-container.preview
+      / This will be filled by AJAX
+
+  .clearfix
+
+- content_for :footer
+  javascript:
+    $('#report-builder').reportBuilder({
+      id: #{resource.id},
+      rows: #{(resource.rows || []).to_json.html_safe},
+      columns: #{(resource.columns || []).to_json.html_safe},
+      values: #{(resource.values || []).to_json.html_safe},
+      filters: #{(resource.filters || []).to_json.html_safe}
+    });

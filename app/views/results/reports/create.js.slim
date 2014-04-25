@@ -1,0 +1,6 @@
+- if resource.errors.any?
+  - render 'settings'
+  = render 'form_dialog'
+- else
+  |
+    window.location = "#{build_results_report_path(resource)}"

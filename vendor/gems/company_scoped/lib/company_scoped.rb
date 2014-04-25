@@ -10,6 +10,8 @@ module CompanyScoped
 
     belongs_to :company
 
+    scope :in_company, ->(company) { where(company_id: company) }
+
     def self.ignoring_company_scoped?
       @_ignore_nil ||= false
       @_ignore_nil
@@ -21,6 +23,5 @@ module CompanyScoped
         yield
         @_ignore_nil = false
       end
-
   end
 end

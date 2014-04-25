@@ -14,7 +14,6 @@ class Ability
     alias_action :remove_activity_type, :to => :activate_kpis
 
     # All users
-
     if user.id && !user.is_a?(AdminUser)
       can :find_similar_kpi, Campaign do
         can?(:update, Campaign) || can?(:create, Campaign)
@@ -30,7 +29,7 @@ class Ability
 
       can :time_zone_change, CompanyUser
       can :time_zone_update, CompanyUser
-      can [:notifications, :select_company], CompanyUser
+      can [:notifications, :select_company, :dismiss_alert], CompanyUser
 
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
@@ -113,6 +112,16 @@ class Ability
          can?(:edit, object)
       end
 
+      # Custom Reports
+      can :manage, Report do |report|
+        report.created_by_id == user.id
+      end
+
+      can [:read, :rows], Report do |report|
+        report.created_by_id == user.id ||
+        Report.accessible_by_user(user.current_company_user).where(id: report.id).first == report
+      end
+
       # Event Data
       can :edit_data, Event do |event|
        (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
@@ -135,6 +144,19 @@ class Ability
       cannot [:show, :edit], Event do |event|
         !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
         !user.current_company_user.allowed_to_access_place?(event.place)
+      end
+
+      # cannot [:show, :preview], Report do |report|
+      #   report.created_by_id != user.id &&
+      #   Report.accessible_by_user(user.current_company_user).where(id: report.id).count == 0
+      # end
+
+      cannot [:edit, :update, :share_form, :build] do |report|
+        report.created_by_id != user.id
+      end
+
+      cannot :activate, Tag do |tag|
+         !user.current_company_user.role.has_permission?(:activate, Tag)
       end
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
@@ -228,7 +250,7 @@ class Ability
       can :view_rate, AttachedAsset do |asset|
         asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
       end
-      
+
       can :activate, Tag if can?(:create, Tag)
       # Event Expenses permissions
       can :expenses, Event do |event|

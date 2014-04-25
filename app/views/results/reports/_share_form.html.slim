@@ -1,0 +1,31 @@
+= simple_form_for resource, remote: true, url: results_report_path(resource), method: :put do |f|
+
+  .share-option
+    = f.collection_radio_buttons :sharing, [['owner', 'Just me']], :first, :last
+    .option-help Only I can run this report
+
+  .share-option
+    = f.collection_radio_buttons :sharing, [['custom', 'Share with Users, Teams and Roles']], :first, :last
+    .option-help Share this report with specific users, teams and roles
+
+    = f.input :sharing_selections, label: false do
+      = f.select :sharing_selections, @sharing_collection, {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " ", disabled: (resource.sharing != 'custom')
+
+
+  .share-option
+    = f.collection_radio_buttons :sharing, [['everyone', 'Share with everyone']], :first, :last
+    .option-help Share this report with all users
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('input[type=radio][name="report[sharing]"]').click(function(){
+    if ($(this).val() == 'custom') {
+      $('#report_sharing_selections').removeAttr('disabled').trigger("liszt:updated");
+    } else {
+      $('#report_sharing_selections').attr('disabled', 'disabled').trigger("liszt:updated");;
+    }
+  })
