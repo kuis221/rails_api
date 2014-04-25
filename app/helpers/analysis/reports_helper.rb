@@ -159,7 +159,11 @@ module Analysis
       approved_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
                           .select(fields_select_kpis)
                           .group('1, event_results.kpi_id')
-      submitted_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted', 'rejected'])
+      submitted_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted'])
+                          .select(fields_select_kpis)
+                          .group('1, event_results.kpi_id')
+
+      rejected_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['rejected'])
                           .select(fields_select_kpis)
                           .group('1, event_results.kpi_id')
 
@@ -195,7 +199,7 @@ module Analysis
           # Handle special kpis types
           completed = get_total_by_status(goal_scope, goal, approved_totals_kpis, 'approved') || 0
           submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted']) || 0
-          rejected = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['rejected']) || 0
+          rejected = get_total_by_status(goal_scope, goal, rejected_totals_kpis, ['rejected']) || 0
         else
           venues_activities = @campaign.present? ? venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0 : 0
           completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
