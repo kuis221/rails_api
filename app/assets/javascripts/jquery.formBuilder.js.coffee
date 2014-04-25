@@ -60,7 +60,9 @@ $.widget 'nmk.formBuilder', {
 		@element.on 'click', '#save-report', (e) =>
 			@saveFields()
 			false
-
+		$(window).on 'beforeunload.formBuilder', =>
+			if @modified
+				'You are leaving the activity type details page without saving your work.'
 		true
 
 	_loadForm: () ->
