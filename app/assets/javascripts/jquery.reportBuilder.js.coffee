@@ -491,13 +491,19 @@ $.widget 'nmk.reportBuilder',
 		sidebarFixedHeight = sidebar.find('.fixed-height-lists').outerHeight() + parseInt(sidebar.css('padding-bottom'))
 		fieldsHeight = Math.max((sidebarHeight - sidebarFixedHeight), parseInt(sidebar.find('#report-fields').css('min-height')))
 		if sidebarHeight < (fieldsHeight + sidebarFixedHeight)
-			sidebar.css height: (fieldsHeight + sidebarFixedHeight)+'px'
+			sidebarHeight = fieldsHeight + sidebarFixedHeight
+			sidebar.css height: sidebarHeight+'px'
 
 		sidebar.find('#report-fields').css height: fieldsHeight
 		sidebar.find('.fields-group').css height: (fieldsHeight - sidebar.find('.search-fields').outerHeight() - 8)
 
 		sidebar.find('ul.sortable-list').each (index, list) ->
 			$(list).css height: $(list).closest('.scrollable-list').height() - 5
+
+		$('.main').css {'min-height': sidebar.outerHeight()+'px', '-moz-box-sizing': 'border-box'}
+
+		if (sidebar.offset().top + sidebar.outerHeight()) > $(window).height()
+			sidebar.css 'position': 'static'
 
 		if initial != sidebar.outerHeight()
 			@resetScrollers()

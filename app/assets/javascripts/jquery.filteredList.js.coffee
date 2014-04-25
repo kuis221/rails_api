@@ -663,12 +663,15 @@ $.widget 'nmk.filteredList', {
 			@jqxhr.abort()
 			@jqxhr = null
 
+		if @options.onBeforePageLoad
+			@options.onBeforePageLoad page
+
 		@doneLoading = false
 		if page is 1
 			if @infiniteScroller
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 
-			$('.main').css {'min-height': $('#resource-filter-column').outerHeight()}
+			$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
 			@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
 

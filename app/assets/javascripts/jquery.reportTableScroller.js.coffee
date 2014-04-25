@@ -105,11 +105,14 @@ $.widget 'nmk.reportTableScroller',
 			@element.show()
 			maxHeight = $(window).height() + $(document).scrollTop() + parseInt(@scroller.css('margin-top')) - @scroller.offset().top - parseInt($('footer').css('margin-top')) - 85 - parseInt($('body').css('margin-top')) - $('footer').outerHeight()
 			@scroller.css height: maxHeight
-
 			difference =  ($('.sidebar').position().top+$('.sidebar').outerHeight()) - ($('.main').position().top+$('.main').outerHeight())
 
-			if difference > 0
-				@scroller.css height: maxHeight + difference
+			difference =  ($('.sidebar').position().top+$('.sidebar').outerHeight()) - ($('.main').position().top+$('.main').outerHeight())
+			@scroller.css height: maxHeight + difference if difference > 0
+
+			difference =  ($('.main').position().top+parseInt($('.main').css('min-height'))-parseInt($('.main').css('padding-bottom'))) - (@scroller.offset().top+@scroller.outerHeight())
+			@scroller.css height: @scroller.height() + difference if difference > 0
+
 
 	resetScroller: () ->
 		scrollerApi = @scroller.data('jsp')
