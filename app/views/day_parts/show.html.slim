@@ -18,7 +18,7 @@
       = link_to '', edit_day_part_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
-  .details_box
+  #time_ranges.details_box
     h3 TIME RANGES
 
     #day-part-days-list
