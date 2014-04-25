@@ -27,8 +27,8 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         company_user.places << place1
 
         FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
-        FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 50)
-        FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 1)
+        FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 100)
+        FactoryGirl.create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 3)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: kpi, value: 150)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.events, value: 2)
         FactoryGirl.create(:goal, parent: campaign, goalable: place1, kpi: Kpi.promo_hours, value: 4)
@@ -42,19 +42,25 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         event2.result_for_kpi(kpi).value = '20'
         event2.save
 
+        event3 = FactoryGirl.create(:rejected_event, company: company, campaign: campaign, place: place1)
+        event3.result_for_kpi(kpi).value = '33'
+        event3.save
+
         visit results_gva_path
 
         select_from_chosen('Test Campaign FY01', from: 'Campaign')
 
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
-          expect(page).to have_content('25')
-          expect(page).to have_content('45')
+          expect(page).to have_selector('.executed-label', text: '25')
+          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.rejected-label', text: '33')
           expect(page).to have_content('100 GOAL')
           expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
-            expect(page).to have_content('25% COMPLETE')
-            expect(page).to have_content('45% PENDING')
+            expect(page).to have_content('25% APPROVED')
+            expect(page).to have_content('20% SUBMITTED')
+            expect(page).to have_content('33% REJECTED')
           end
         end
 
@@ -69,7 +75,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
             expect(page).to have_content('50% EVENTS')
             expect(page).to have_content('50% PROMO HOURS')
             expect(page).to have_content('0% EXPENSES')
-            expect(page).to have_content('17% SAMPLES')
+            expect(page).to have_content('52% SAMPLES')
           end
         end
 
@@ -79,13 +85,15 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         within('.container-kpi-trend .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
-          expect(page).to have_content('25')
-          expect(page).to have_content('45')
-          expect(page).to have_content('150 GOAL')
+          expect(page).to have_selector('.executed-label', text: '25')
+          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.rejected-label', text: '33')
+          expect(page).to have_content('78/150 GOAL')
           expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
-            expect(page).to have_content('17% COMPLETE')
-            expect(page).to have_content('30% PENDING')
+            expect(page).to have_content('17% APPROVED')
+            expect(page).to have_content('13% SUBMITTED')
+            expect(page).to have_content('22% REJECTED')
           end
         end
 
@@ -98,7 +106,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
           expect(page).to have_content('Juanito Bazooka')
           within('.goals-summary') do
             expect(page).to have_content('100% EVENTS')
-            expect(page).to have_content('50% SAMPLES')
+            expect(page).to have_content('78% SAMPLES')
           end
         end
 
@@ -108,13 +116,15 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         within('.container-kpi-trend .kpi-trend:nth-child(2)') do
           expect(page).to have_content('Samples')
-          expect(page).to have_content('25')
-          expect(page).to have_content('45')
-          expect(page).to have_content('50 GOAL')
+          expect(page).to have_selector('.executed-label', text: '25')
+          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.rejected-label', text: '33')
+          expect(page).to have_content('78/100 GOAL')
           expect(page).to have_css('.today-line-indicator')
           within('.remaining-label') do
-            expect(page).to have_content('50% COMPLETE')
-            expect(page).to have_content('90% PENDING')
+            expect(page).to have_content('25% APPROVED')
+            expect(page).to have_content('20% SUBMITTED')
+            expect(page).to have_content('33% REJECTED')
           end
         end
       end
