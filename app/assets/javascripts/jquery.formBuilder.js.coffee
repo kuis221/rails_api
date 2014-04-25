@@ -60,7 +60,9 @@ $.widget 'nmk.formBuilder', {
 		@element.on 'click', '#save-report', (e) =>
 			@saveFields()
 			false
-
+		$(window).on 'beforeunload.formBuilder', =>
+			if @modified
+				'You are leaving the activity type details page without saving your work.'
 		true
 
 	_loadForm: () ->
@@ -152,11 +154,15 @@ $.widget 'nmk.formBuilder', {
 		$.each $('input[type=text]'), (index, elm) =>
 			$(elm).data 'saved-value', $(elm).val()
 
+		$(document).on 'click.fbuidler', '.modal', (e) =>
+			e.ignoreClose = true
+
 		$(document).on 'click.fbuidler', (e) =>
-			$(document).off 'click.fbuidler'
-			@formWrapper.find('.selected').removeClass('selected')
-			field.off 'change.attrFrm'
-			@attributesPanel.hide()
+			if $('.modal.in:visible').length is 0 and not e.ignoreClose?
+				$(document).off 'click.fbuidler'
+				@formWrapper.find('.selected').removeClass('selected')
+				field.off 'change.attrFrm'
+				@attributesPanel.hide()
 
 		if typeof $field.onAttributesShow != 'undefined'
 			$field.onAttributesShow @attributesPanel
@@ -244,6 +250,8 @@ FormField = Class.extend {
 
 	optionsField: (type='option') ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
+		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
+		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
 		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
@@ -261,7 +269,7 @@ FormField = Class.extend {
 						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
 							index = list.indexOf(option)+1
-							list.splice(index,0, {id: '', name: titles[type][0] + ' ' + (list.length+1), ordering: index})
+							list.splice(index,0, {id: null, name: titles[type][0] + ' ' + (list.length+1), ordering: index})
 							item.ordering = i for item,i in list
 							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 							@refresh()
@@ -269,15 +277,22 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if index is 0 then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+						if visible_items.length <= min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
 							option = $(e.target).closest('.field-option').data('option')
-							if option.id isnt ''
-								option._destroy = '1'
+							if option.id isnt null
+								bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
+									if result
+										option._destroy = '1'
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										@refresh()
+										@form.setModified()
 							else
-								list.splice(list.indexOf(option),1)
-							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-							@refresh()
-							@form.setModified()
+								bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
+									if result
+										list.splice(list.indexOf(option),1)
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										@refresh()
+										@form.setModified()
 							false
 					)
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
@@ -297,14 +312,14 @@ FormField = Class.extend {
 
 	remove: () ->
 		if @attributes.id # If this file already exists on the database
-			bootbox.confirm "Deleting this field will also delete all the associated data<br/>&nbsp;<p>Do you want to delete it?</p>", (result) =>
+			bootbox.confirm "Removing this field will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>", (result) =>
 				if result
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
 					true
 		else
-			bootbox.confirm "Do you really want to delete this field?", (result) =>
+			bootbox.confirm "Are you sure you want to remove this field?", (result) =>
 				if result
 					@field.remove()
 					@form.setModified()
@@ -457,6 +472,7 @@ DropdownField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Dropdown',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Dropdown',
 			settings: {},
@@ -500,6 +516,7 @@ RadioField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Multiple Choice',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Radio',
 			settings: {},
@@ -542,6 +559,7 @@ PercentageField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Percent',
 			id: null,
+			min_options_allowed:2,
 			required: false,
 			type: 'FormField::Percentage',
 			settings: {},
@@ -549,7 +567,10 @@ PercentageField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
+			@attributes.options = [
+				{id: null, name: 'Option 1', ordering: 0},
+				{id: null, name: 'Option 2', ordering: 1},
+				{id: null, name: 'Option 3', ordering: 2}]
 
 		@attributes.settings ||= {}
 
@@ -662,6 +683,7 @@ SummationField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Summation',
 			id: null,
+			min_options_allowed: 2,
 			required: false,
 			type: 'FormField::Summation',
 			settings: {},
@@ -669,8 +691,10 @@ SummationField = FormField.extend {
 		}, attributes)
 
 		if @attributes.options.length is 0
-			@attributes.options = [{id: null, name: 'Option 1', ordering: 0}]
-
+			@attributes.options = [
+				{id: null, name: 'Option 1', ordering: 0},
+				{id: null, name: 'Option 2', ordering: 1}
+			]
 		@attributes.settings ||= {}
 
 		@
@@ -712,6 +736,8 @@ LikertScaleField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Likert scale',
 			id: null,
+			min_options_allowed:4,
+			min_statements_allowed:4,
 			required: false,
 			type: 'FormField::LikertScale',
 			settings: {},
@@ -776,6 +802,7 @@ CheckboxField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Checkboxes',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Checkbox',
 			settings: {},
@@ -819,6 +846,7 @@ BrandField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Brand',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Brand',
 			settings: {},
@@ -850,6 +878,7 @@ MarqueField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Marque',
 			id: null,
+			min_options_allowed:1,
 			required: false,
 			type: 'FormField::Marque',
 			settings: {},

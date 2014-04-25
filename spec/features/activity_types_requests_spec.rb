@@ -269,7 +269,7 @@ feature "ActivityTypes", js: true do
       end
     end
 
-    scenario "user can add radio fields to form" do
+    scenario "user can add/delete radio fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       radio_field.drag_to form_builder
@@ -314,8 +314,25 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Radio Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      end
+      
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      
+      within form_field_settings_for 'My Radio Field' do
         expect(page).to have_no_content('Second Option')
+      end
+
+      within form_field_settings_for 'My Radio Field' do
+        # Remove the second option (the first one doesn't have the link)
+        within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+
+      within form_field_settings_for 'My Radio Field' do
+        expect(page).to have_no_content('Option 3')
       end
 
       # Save the form
@@ -327,7 +344,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(-1)
     end
 
-    scenario "user can add checkbox fields to form" do
+    scenario "user can add/delete checkbox fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       checkbox_field.drag_to form_builder
@@ -372,8 +389,22 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Checkbox Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Checkbox Field' do
         expect(page).to have_no_content('Second Option')
+      end
+
+      within form_field_settings_for 'My Checkbox Field' do
+        within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+
+      within form_field_settings_for 'My Checkbox Field' do
+        expect(page).to have_no_content('Option 3')
       end
 
       # Save the form
@@ -385,7 +416,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(-1)
     end
 
-    scenario "user can add dropdown fields to form" do
+    scenario "user can add/delete dropdown fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       dropdown_field.drag_to form_builder
@@ -430,10 +461,25 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Dropdown Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+
+      within form_field_settings_for 'My Dropdown Field' do
         expect(page).to have_no_content('Second Option')
       end
 
+      within form_field_settings_for 'My Dropdown Field' do
+        within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+
+      within form_field_settings_for 'My Dropdown Field' do
+        expect(page).to have_no_content('Option 3')
+      end
       # Save the form
       expect {
         expect {
@@ -635,19 +681,19 @@ feature "ActivityTypes", js: true do
       expect(field.type).to eql 'FormField::Attachment'
     end
 
-    scenario "user can add percentage fields to form" do
+    scenario "user can add/delete percentage fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       percentage_field.drag_to form_builder
 
       expect(form_builder).to have_form_field('Percent',
-          with_options: ['Option 1']
+          with_options: ['Option 1', 'Option 2', 'Option 3']
         )
 
       within form_field_settings_for 'Percent' do
         fill_in 'Field label', with: 'My Percent Field'
         fill_in 'option[0][name]', with: 'First Option'
-        click_js_link 'Add option after this' # Create another option
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
         fill_in 'option[1][name]', with: 'Second Option'
       end
 
@@ -665,13 +711,13 @@ feature "ActivityTypes", js: true do
           click_js_button 'Save'
           wait_for_ajax
         }.to change(FormField, :count).by(1)
-      }.to change(FormFieldOption, :count).by(2)
+      }.to change(FormFieldOption, :count).by(4)
       field = FormField.last
       expect(field.name).to eql 'My Percent Field'
       expect(field.ordering).to eql 0
       expect(field.type).to eql 'FormField::Percentage'
-      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
-      expect(field.options.map(&:ordering)).to eql [0, 1]
+      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option','Option 2', 'Option 3']
+      expect(field.options.map(&:ordering)).to eql [0, 1,2,3]
 
       # Remove fields
       expect(form_builder).to have_form_field('My Percent Field',
@@ -680,8 +726,21 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Percent Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+
+      within form_field_settings_for 'My Percent Field' do
         expect(page).to have_no_content('Second Option')
+        within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+        
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+
+      within form_field_settings_for 'My Percent Field' do
+        expect(page).to have_no_content('Option 3')
       end
 
       # Save the form
@@ -693,19 +752,19 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(-1)
     end
 
-    scenario "user can add summation fields to form" do
+    scenario "user can add/delete summation fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       summation_field.drag_to form_builder
 
       expect(form_builder).to have_form_field('Summation',
-          with_options: ['Option 1']
+          with_options: ['Option 1', 'Option 2']
         )
 
       within form_field_settings_for 'Summation' do
         fill_in 'Field label', with: 'My Summation Field'
         fill_in 'option[0][name]', with: 'First Option'
-        click_js_link 'Add option after this' # Create another option
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
         fill_in 'option[1][name]', with: 'Second Option'
       end
 
@@ -723,13 +782,13 @@ feature "ActivityTypes", js: true do
           click_js_button 'Save'
           wait_for_ajax
         }.to change(FormField, :count).by(1)
-      }.to change(FormFieldOption, :count).by(2)
+      }.to change(FormFieldOption, :count).by(3)
       field = FormField.last
       expect(field.name).to eql 'My Summation Field'
       expect(field.ordering).to eql 0
       expect(field.type).to eql 'FormField::Summation'
-      expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
-      expect(field.options.map(&:ordering)).to eql [0, 1]
+      expect(field.options.map(&:name)).to eql ["First Option", "Second Option", "Option 2"]
+      expect(field.options.map(&:ordering)).to eql [0, 1, 2]
 
       # Remove fields
       expect(form_builder).to have_form_field('My Summation Field',
@@ -738,8 +797,23 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Summation Field' do
         # Remove the second option (the first one doesn't have the link)
-        click_js_link 'Remove this option'
+        within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+
+      within form_field_settings_for 'My Summation Field' do
         expect(page).to have_no_content('Second Option')
+      end
+
+      within form_field_settings_for 'My Summation Field' do
+        within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+      within form_field_settings_for 'My Summation Field' do
+        expect(page).to have_no_content('Option 3')
       end
 
       # Save the form
@@ -751,7 +825,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(-1)
     end
 
-    scenario "user can add likert scale fields to form" do
+    scenario "user can add/delete likert scale fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
       likert_scale_field.drag_to form_builder
@@ -807,14 +881,40 @@ feature "ActivityTypes", js: true do
 
       within form_field_settings_for 'My Likert scale Field' do
         # Remove the second option (the first one doesn't have the link)
-        within '.field-options[data-type="option"]' do
-          within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
-          expect(page).to have_no_content('Second Option')
-        end
-        within '.field-options[data-type="statement"]' do
-          within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
-          expect(page).to have_no_content('Second Statement')
-        end
+        within('.field-options[data-type="option"] .field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-options[data-type="option"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="option"]') {expect(page).to have_no_content('Second Option')}
+      end
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="option"] .field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+
+      confirm_prompt "Are you sure you want to remove this option?"
+
+      within form_field_settings_for 'My Likert scale Field' do
+        expect(page).to have_no_content('Option 3')
+      end
+
+      within form_field_settings_for 'My Likert scale Field' do
+        # Remove the second statement (the first one doesn't have the link)
+        within('.field-options[data-type="statement"] .field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+        within('.field-options[data-type="statement"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Removing this statement will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="statement"]') {expect(page).to have_no_content('Second Option')}
+      end
+      within form_field_settings_for 'My Likert scale Field' do
+        within('.field-options[data-type="statement"] .field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      end
+      confirm_prompt "Are you sure you want to remove this statement?"
+      within form_field_settings_for 'My Likert scale Field' do
+        expect(page).to have_no_content('Statement 3')
       end
 
       # Save the form
@@ -838,7 +938,7 @@ feature "ActivityTypes", js: true do
         click_js_link 'Remove'
       end
 
-      confirm_prompt "Do you really want to delete this field?"
+      confirm_prompt "Are you sure you want to remove this field?"
 
       expect(form_builder).to_not have_form_field('Single line text')
 
@@ -870,7 +970,7 @@ feature "ActivityTypes", js: true do
         click_js_link 'Remove'
       end
 
-      confirm_prompt "Deleting this field will also delete all the associated data"
+      confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
 
       expect(form_builder).to_not have_form_field('Single line text')
 
