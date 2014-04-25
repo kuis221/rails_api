@@ -828,7 +828,7 @@ body.app-layout{
 	padding: 7px 17px;
 	text-shadow:none;
 	&.active{
-		&.list, &.map, &.calendar{
+		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
 				color: $user_menu;
 			}
@@ -873,7 +873,7 @@ body.app-layout{
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-	&.list:after{
+	&.list:after, &.table:after{
 		color: white;
 		content: "\e008";
 		font-family: 'icons';
@@ -910,6 +910,18 @@ body.app-layout{
 		top: 2px;
 		-webkit-font-smoothing: antialiased;
 	}
+	&.graph:after{
+		color: white;
+		content: "\e00e";
+		font-family: 'icons';
+		font-size: 14px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		top: 1px;
+		-webkit-font-smoothing: antialiased;
+	}
 	.icon-calendar:before{
 		color: white;
 		font-size: 19px;
@@ -931,7 +943,7 @@ body.app-layout{
 	.btn{
 		border: 0;
 		box-shadow: none;
-		&.list{
+		&.list, &.table, &.graph{
 			border-right:1px solid $buttons-border;
 		}
 		&.calendar{
@@ -1879,6 +1891,13 @@ ul.kpis-list{
 				b{ font-size: 14px; }
 			}
 		}
+
+		.bar-label {
+			padding-top: 16px !important;
+			&.level-1 {
+				padding-top: 32px !important;
+			}
+		}
 	}
 	.kpi-trend-overall {
 		margin-bottom: 37px !important;
@@ -1903,11 +1922,18 @@ ul.kpis-list{
 		margin-right: 350px;
 		color: $brand;
 		position: relative;
+		margin-bottom: 50px;
+
+		&.level-2 {
+			margin-bottom: 50px;
+		}
 		.progress {
 			width: auto !important;
 			height: 10px;
 			margin-bottom: 0px !important;
+			overflow: visible;
 			.bar {
+				position: relative;
 				text-align: right;
 				text-shadow:none;
 				span.percentage {
@@ -1915,12 +1941,35 @@ ul.kpis-list{
 					margin-right: 10px;
 					line-height: 26px
 				}
+				.bar-label {
+					position: absolute;
+					right: 0;
+					padding: 12px 3px 0;
+					border-right: #959595 2px solid;
+					line-height: 12px;
+					font-size: 14px;
+					display: inline-block;
+					white-space: nowrap;
+					text-align: right;
+					&.level-1 {
+						padding-top: 30px;
+					}
+					&.level-2 {
+						padding-top: 45px;
+					}
+				}
 			}
 			.bar-executed {
 				background-color: $green !important;
+				color: $green !important;
 			}
-			.bar-remaining {
-				color: $venues_blue;
+			.bar-rejected {
+				background-color: $rejected !important;
+				color: $rejected !important;
+			}
+			.bar-scheduled {
+				background-color: $venues_blue !important;
+				color: $venues_blue !important;
 			}
 			&.gva{
 				margin-bottom: -5px !important;
@@ -1957,47 +2006,6 @@ ul.kpis-list{
 			height: 23px;
 			&.goal-indicator{
 				top: -10px;
-			}
-		}
-		.executed-label {
-			display: inline-block;
-			font-size: 12px;
-			white-space: nowrap;
-			div {
-				float:left;
-				margin-left: -120%;
-				margin-top: -2px;
-				b{
-					top: -1px;
-					color: rgb(139, 184, 65);
-					font-size: 14px;
-				}
-			}
-			&.gva{
-				margin-top: 4px;
-			}
-			&.stacked{
-				line-height: 0;
-			}
-		}
-		.scheduled-label {
-			display: inline-block;
-			font-size: 12px;
-			white-space: nowrap;
-			text-align: right;
-			margin-left: -50%;
-			div {
-				margin-top: -2px;
-				margin-left: -120%;
-				margin-right: -15%;
-				b{
-					top: -1px;
-					color: rgb(58, 150, 197);
-					font-size: 14px;
-				}
-			}
-			&.stacked{
-				text-align: left;
 			}
 		}
 		.remaining-label {
@@ -4350,10 +4358,9 @@ body.roles{
 }
 
 .goals-actual {
-	margin-bottom: 30px;
-	padding-right: 40px;
+	margin-top: 26px;
 	.span12, .span12:first-child {
-		margin-left: 20px;
+		margin-left: 0;
 		&.category {
 			background-color: $brand;
 			.span2 {
@@ -6299,7 +6306,8 @@ body.gva {
 						}
 					}
 				}
-				.group-by-box{
+
+				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
 					margin-top: 17px;
@@ -6308,7 +6316,7 @@ body.gva {
 						vertical-align: middle;
 					}
 					.btn-group{
-						margin: 0 30px 0 8px;
+						margin: 0 0 0 8px;
 						.btn{
 							background-color: $user_menu;
 							box-shadow: none;
@@ -6339,6 +6347,14 @@ body.gva {
 							}
 							&.staff{
 								border-left: 1px solid $buttons-border;
+							}
+							&.list, &.table, &.graph{
+								width: 30px;
+								padding: 8px 10px;
+								&:after{
+									font-size: 18px;
+									font-weight: normal;
+								}
 							}
 						}
 					}
@@ -6381,7 +6397,7 @@ body.gva {
 				}
 				.goals-summary{
 					.goal-item{
-						color: $due_today;
+						color: $brand;
 						display: inline-block;
 						margin-left: 20px;
 						min-width: 70px;
@@ -6410,30 +6426,29 @@ body.gva {
 				text-align: right;
 				span {
 					margin-right: 11px;
+					&:before {
+						content: '';
+						display: inline-block;
+						border-radius: 5px;
+						margin-right: 6px;
+						width: 10px;
+						line-height: 13px;
+						height: 10px;
+						vertical-align: baseline;
+					}
 					&.actual {
 						&:before {
-							content: '';
-							display: inline-block;
 							background: $green;
-							border-radius: 5px;
-							margin-right: 6px;
-							width: 10px;
-							line-height: 13px;
-							height: 10px;
-							vertical-align: baseline;
 						}
 					}
 					&.pending{
 						&:before {
-							content: '';
-							display: inline-block;
 							background: $due_today;
-							border-radius: 5px;
-							margin-right: 6px;
-							width: 10px;
-							line-height: 13px;
-							height: 10px;
-							vertical-align: baseline;
+						}
+					}
+					&.rejected{
+						&:before {
+							background: $rejected;
 						}
 					}
 					&.today{
@@ -6533,6 +6548,7 @@ body.gva {
 						padding-left: 27px;
 						.accordion-inner{
 							border: none;
+							margin-top: 0;
 							padding-left: 0;
 						}
 					}

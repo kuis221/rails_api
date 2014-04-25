@@ -85,6 +85,13 @@ module CapybaraBrandscopicHelpers
   def object_row(object)
     find("tr#{object.class.name.underscore.downcase}-#{object.id}")
   end
+
+  def spreadsheet_from_last_export
+    require "rexml/document"
+    require 'open-uri'
+    file = open(URI.parse(ListExport.last.file.url(:original, timestamp: false)))
+    yield REXML::Document.new(file)
+  end
 end
 
 
