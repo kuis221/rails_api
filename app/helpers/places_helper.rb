@@ -13,58 +13,54 @@ module PlacesHelper
       end
 
       @place = Place.new(attributes)
-      if current_company_user.allowed_to_access_place?(@place)
-        reference_value = attributes[:reference]
+      reference_value = attributes[:reference]
 
-        if add_new_place
-          if set_lat_lon_from_address(@place)
-            spot = search_place_in_google_api_by_name(@place)
+      if add_new_place
+        if set_lat_lon_from_address(@place)
+          spot = search_place_in_google_api_by_name(@place)
 
-            # If the place was not found in API, create it
-            if spot.nil?
-              if create_place_in_google_api(@place)
-                # Save the place on the database with the user's entered data
-                @place.save
-              else
-                @place.is_custom_place = true
-                @place.save
-              end
+          # If the place was not found in API, create it
+          if spot.nil?
+            if create_place_in_google_api(@place)
+              # Save the place on the database with the user's entered data
+              @place.save
             else
-              reference_value = spot.reference+'||'+spot.id
+              @place.is_custom_place = true
+              @place.save
             end
           else
-            @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
+            reference_value = spot.reference+'||'+spot.id
           end
+        else
+          @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
+        end
+      end
+
+      if reference_value and !reference_value.nil? and !reference_value.empty?
+        if reference_value =~ /(.*)\|\|(.*)/
+          reference, place_id = reference_value.split('||')
+          @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
+        else
+          @place = Place.find(reference_value)
         end
 
-        if reference_value and !reference_value.nil? and !reference_value.empty?
-          if reference_value =~ /(.*)\|\|(.*)/
-            reference, place_id = reference_value.split('||')
-            @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
-          else
-            @place = Place.find(reference_value)
-          end
+        # There can be spots that doesn't have all address
+        # fields in the API, so update it as needed
+        @place.city ||= attributes[:city]
+        @place.country ||= attributes[:country]
+        @place.state ||= attributes[:state]
+        @place.street_number ||= attributes[:street_number]
+        @place.route ||= attributes[:route]
+        @place.zipcode ||= attributes[:zipcode]
+        @place.save if @place.changed?
+      end
 
-          # There can be spots that doesn't have all address
-          # fields in the API, so update it as needed
-          @place.city ||= attributes[:city]
-          @place.country ||= attributes[:country]
-          @place.state ||= attributes[:state]
-          @place.street_number ||= attributes[:street_number]
-          @place.route ||= attributes[:route]
-          @place.zipcode ||= attributes[:zipcode]
-          @place.save if @place.changed?
-        end
+      if @place.persisted?
+        has_parent ||= parent.present? rescue false
+        parent.update_attributes({place_ids: parent.place_ids + [@place.id]}, without_protection: true) if has_parent
 
-        if @place.persisted?
-          has_parent ||= parent.present? rescue false
-          parent.update_attributes({place_ids: parent.place_ids + [@place.id]}, without_protection: true) if has_parent
-
-          # Create a Venue for this place on the current company
-          @venue = Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
-        end
-      else
-        @place.errors.add(:base, 'You are not allowed to create venues on this location') if add_new_place
+        # Create a Venue for this place on the current company
+        @venue = Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
       end
 
       @place.persisted?
