@@ -74,5 +74,8 @@ module Brandscopic
     config.cache_store = :dalli_store
 
     I18n.enforce_available_locales = true
+
+
+    GC::Profiler.enable
   end
 end
