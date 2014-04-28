@@ -21,7 +21,7 @@
       ul#global-reports-list.reports-list
         - if can?(:gva_report, Campaign)
           li id="report_event_status"
-            = link_to results_gva_path, title: 'Event Stats' do
+            = link_to results_event_status_path, title: 'Event Stats' do
               .span10.report-item
                 b Event Status
                 p View progress of event and promo hours against goals
