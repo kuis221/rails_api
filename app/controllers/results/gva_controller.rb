@@ -29,7 +29,6 @@ class Results::GvaController < InheritedResources::Base
 
   def export_list(export)
     @goalables_data = goalables_by_type.map do |goalable|
-      p goalable.inspect
       set_report_scopes_for(goalable)
       {name: goalable.name , event_goal: view_context.each_events_goal}
     end
@@ -78,7 +77,9 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def goalables_by_type
-      if params[:group_by] == 'place'
+      if params[:group_by] == 'campaign'
+        campaign.goals
+      elsif params[:group_by] == 'place'
         campaign.children_goals.for_areas_and_places
       else
         campaign.children_goals.for_users_and_teams
