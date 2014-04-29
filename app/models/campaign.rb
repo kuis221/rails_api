@@ -396,6 +396,12 @@ class Campaign < ActiveRecord::Base
       end
     end
 
+    def report_fields
+      {
+        name:   { title: 'Name' }
+      }
+    end
+
     # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
       q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).

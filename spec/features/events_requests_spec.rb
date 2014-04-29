@@ -89,16 +89,16 @@ feature 'Events section' do
       after do
         Timecop.return
       end
-      
+
       feature "Close bar" do
         let(:events){[
-            
+
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign #1 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company),
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign #2 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: company),
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign #3 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 3'), company: company),
             FactoryGirl.create(:event, start_date: "08/21/2014", end_date: "08/21/2014", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign #4 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company)
           ]}
-        
+
         scenario "Close bar should return the list of events" do
           events.size  # make sure users are created before
           Sunspot.commit
@@ -114,9 +114,9 @@ feature 'Events section' do
           find("#resource-close-details").click
           expect(page).to have_selector('ul#events-list li', count: 2)
         end
-        
+
       end
-      
+
       feature "GET index" do
         let(:events){[
             FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company),
@@ -970,11 +970,5 @@ feature 'Events section' do
 
   def event_list_item(event)
     "li#event_#{event.id}"
-  end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
-    end
   end
 end

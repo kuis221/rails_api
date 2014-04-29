@@ -143,6 +143,11 @@ class CompanyUsersController < FilteredController
     render json: alerts
   end
 
+  def dismiss_alert
+    current_company_user.dismiss_alert params[:name], params[:version]
+    render text: ''
+  end
+
   protected
     def permitted_params
       allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }

@@ -27,6 +27,10 @@ class Brand < ActiveRecord::Base
 
   scope :for_company_campaigns, lambda{|company| joins(:campaigns).where(campaigns: {company_id: company}).group('brands.id').order('brands.name') }
 
+  # TODO: when we make the change for scoping the brands by company, we should remove this scope and use the
+  # one provided by company_scoped
+  scope :in_company, lambda{|company| for_company_campaigns(company) }
+
   searchable do
     text :name, stored: true
     string :name
@@ -42,5 +46,11 @@ class Brand < ActiveRecord::Base
     boolean :active do
       true
     end
+  end
+
+  def self.report_fields
+    {
+      name:       { title: 'Name' }
+    }
   end
 end

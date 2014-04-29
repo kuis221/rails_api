@@ -72,5 +72,12 @@ class DayPart < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+
+    def report_fields
+      {
+        name:       { title: 'Name' }
+      }
+    end
   end
 end

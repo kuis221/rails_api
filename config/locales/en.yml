@@ -111,6 +111,7 @@ en:
         goal: "New Goal"
         day_item: "New Time"
         contact_event: "New Contact"
+        report: "New Report"
         activity: "New Activity"
         activity_type: "New Activity type"
       edit:
@@ -136,6 +137,7 @@ en:
         goal: "Edit Goal"
         day_item: "Edit Time"
         contact_event: "Edit Contact"
+        report: "Edit Report"
         activity: "Edit Activity"
         activity_type: "Edit Activity Type"
 

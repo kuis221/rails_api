@@ -1,3 +1,5 @@
+$.loadingContent = 0
+
 $.widget 'nmk.filteredList', {
 	options: {
 		source: false,
@@ -5,6 +7,8 @@ $.widget 'nmk.filteredList', {
 		autoLoad: true,
 		filters: false,
 		onChange: false,
+		onPageLoaded: false,
+		onFiltersLoaded: false,
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
@@ -28,8 +32,6 @@ $.widget 'nmk.filteredList', {
 				e.stopPropagation()
 				false
 		@form.data('serializedData', null)
-
-		@nextpagetoken  = false
 
 		if @options.includeAutoComplete
 			@_addAutocompleteBox()
@@ -130,12 +132,23 @@ $.widget 'nmk.filteredList', {
 		p
 
 	setFilters: (filters) ->
+		$.loadingContent += 1
 		@formFilters.html('')
 		for filter in filters
 			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?
 				@addSlider filter
+			else if filter.type is 'calendar'
+				@addCalendar filter
+			else if filter.type is 'time'
+				@addTimeFilter filter
+
+		if @options.onFiltersLoaded
+			@options.onFiltersLoaded()
+
+		$.loadingContent -= 1
+		@
 
 
 	addSlider: (filter) ->
@@ -144,11 +157,11 @@ $.widget 'nmk.filteredList', {
 		min_value = Math.min(min_value, filter.max)
 		max_value = Math.min(max_value, filter.max)
 		$slider = $('<div class="slider-range">')
-		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append(
+		$filter = $('<div class="filter-wrapper slider-filter">').data('name', filter.name).append(
 			$('<span class="slider-label">').text(filter.label),
 			$slider,
-			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="'+min_value+'" />'),
-			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="'+max_value+'" />')
+			$('<input type="hidden" class="min" name="'+filter.name+'[min]" value="" />'),
+			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
 
 		$slider.rangeSlider({
@@ -157,8 +170,13 @@ $.widget 'nmk.filteredList', {
 			arrows: false,
 			enabled: (max_value > min_value)
 		}).on "userValuesChanged", (e, data) =>
-			$filter.find('input.min').val Math.round(data.values.min)
-			$filter.find('input.max').val Math.round(data.values.max)
+			bounds = $(data.label).rangeSlider("bounds")
+			if data.values.min != bounds.min || data.values.max != bounds.max
+				$filter.find('input.min').val Math.round(data.values.min)
+				$filter.find('input.max').val Math.round(data.values.max)
+			else
+				$filter.find('input.min').val ''
+				$filter.find('input.max').val ''
 			@_filtersChanged()
 
 		if max_value == min_value
@@ -166,6 +184,54 @@ $.widget 'nmk.filteredList', {
 
 
 		@formFilters.append($filter)
+
+	addTimeFilter: (filter) ->
+		$filter = $('<div class="filter-wrapper time-filter">').data('name', filter.name).append(
+			$('<h3>').text(filter.label),
+			$('<div class="row-fluid">').append(
+				$('<div class="span6">').append(
+					$('<label class="time-start">From <input type="text" class="time-start timepicker-filter" name="'+filter.name+'[start]" value="" /></label>')
+				),
+				$('<div class="span6">').append(
+					$('<label class="time-end">To <input type="text" class="time-end timepicker-filter" name="'+filter.name+'[end]" value="" /></label>')
+				)
+			)
+		)
+
+		@formFilters.append($filter)
+
+		$filter.find('.timepicker-filter').on 'change', () =>
+			@_filtersChanged()
+		.timepicker className: 'timepicker-filter', timeFormat: 'g:i A'
+
+
+	addCalendar: (filter) ->
+		@formFilters.append(
+			$('<input type="hidden" name="'+filter.name+'[start]" class="no-validate">'),
+			$('<input type="hidden" name="'+filter.name+'[end]" class="no-validate">')
+		)
+
+		$('<div class="dates-range-filter">').data('filter', filter).appendTo(@formFilters).datepick
+			rangeSelect: true,
+			monthsToShow: 1,
+			changeMonth: false,
+			prevText: '<',
+			nextText: '>',
+			onDate: true,
+			showOtherMonths: true,
+			selectOtherMonths: true,
+			highlightClass: 'datepick-event',
+			daysHighlighted: @options.calendarHighlights,
+			renderer: $.extend(
+						{}, $.datepick.defaultRenderer,
+						{picker: '<div class="datepick">' +
+								'<div class="datepick-nav">{link:prev}{link:next}</div>{months}' +
+								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
+								'<div class="datepick-clear-fix"></div></div>'})
+			onSelect: (dates, e) =>
+				@formFilters.find('input[name="'+filter.name+'[start]"]').val @_formatDate(dates[0])
+				@formFilters.find('input[name="'+filter.name+'[end]"]').val @_formatDate(dates[1])
+				@_filtersChanged()
 
 
 	addCustomFilter: (name, value, reload=true) ->
@@ -524,7 +590,6 @@ $.widget 'nmk.filteredList', {
 		if @options.includeCalendars
 			@_setCalendarDatesFromCalendar()
 
-		@nextpagetoken = false
 		if @options.source
 			@reloadData
 		data = @_serializeFilters()
@@ -545,7 +610,6 @@ $.widget 'nmk.filteredList', {
 	_storeFilters: (data) ->
 		if typeof(Storage) isnt "undefined"
 			sessionStorage["filters#{@storageScope}"] = data
-
 		@
 
 	_loadStoredFilters: () ->
@@ -561,19 +625,29 @@ $.widget 'nmk.filteredList', {
 		filtersStr.replace(/^&/,"")
 
 	buildParams: (params=[]) ->
-		if @nextpagetoken
-			params = [{name: 'page', value: @nextpagetoken }]
-		else
-			data = @getFilters()
-			for param in data
-				params.push(param)
+		data = @getFilters()
+		for param in data
+			params.push(param)
 		params
 
 	paramsQueryString: () ->
 		@_serializeFilters()
 
+	_loadingSpinner: () ->
+		if @options.spinnerElement?
+			@options.spinnerElement()
+		else
+			$('<li class="loading-spinner">').appendTo @listContainer
+
+
+	_placeholderEmptyState: () ->
+		message = '<p>There are no results matching the filtering criteria you selected.<br />Please select different filtering criteria.</p>'
+		if @options.placeholderElement?
+			@options.placeholderElement(message)
+		else
+			$('<li class="placeholder-empty-state">'+message+'</li>').appendTo @listContainer
+
 	reloadData: () ->
-		@nextpagetoken = false
 		@_loadPage 1
 		@
 
@@ -589,31 +663,48 @@ $.widget 'nmk.filteredList', {
 			@jqxhr.abort()
 			@jqxhr = null
 
+		if @options.onBeforePageLoad
+			@options.onBeforePageLoad page
+
 		@doneLoading = false
 		if page is 1
 			if @infiniteScroller
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 
-			$('.main').css {'min-height': $('#resource-filter-column').outerHeight()}
+			$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
 			@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
-		@listContainer.append $('<li class="loading-spinner">');
+
+		@emptyState.remove() if @emptyState
+		@spinner.remove() if @spinner
+
+		@spinner = @_loadingSpinner()
 
 		@jqxhr = $.get @options.source, params, (response) =>
-			@listContainer.find('.loading-spinner').remove();
+			$.loadingContent += 1
+			@spinner.remove();
 			$response = $('<div>').append(response)
-			$items = $response.find('div[data-content="items"]')
+			$items = $response.find('[data-content="items"]')
 			if @options.onItemsLoad
-				@options.onItemsLoad($response, page)
+				@options.onItemsLoad $response, page
 
-			@listContainer.append($items.html())
-			@listContainer.css {height: ''}
+			@listContainer.append $items.html()
+			@_pageLoaded page, $items
+			@listContainer.css height: ''
 
-			@_pageLoaded(page, $items)
+			if page is 1 and $items.find('>*').length is 0
+				@emptyState = @_placeholderEmptyState()
 
+			$response.remove()
 			$items.remove()
+			$items = $response = null
 
-			$response = $items = null
+
+			if @options.onPageLoaded
+				@options.onPageLoaded page
+
+			$.loadingContent -= 1
+			true
 
 		params = null
 
@@ -624,14 +715,13 @@ $.widget 'nmk.filteredList', {
 		if @options.onItemsChange
 			@options.onItemsChange(response)
 
-		@nextpagetoken = response.data('next-page-token')
 		if page == 1
 			@totalPages = response.data('pages')
 
-			if (@totalPages > 1 || @nextpagetoken)  and !@infiniteScroller
+			if (@totalPages is undefined or @totalPages > 1) and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
-						if (page <= @totalPages || @nextpagetoken) && @doneLoading
+						if (@totalPages is undefined or page <= @totalPages) && @doneLoading
 							@_loadPage(page)
 						else
 							false
@@ -639,9 +729,14 @@ $.widget 'nmk.filteredList', {
 					doneLoading: =>
 						@doneLoading
 				}
-			else if @totalPages <= page and @infiniteScroller
+			else if (@totalPages <= page || response.find('>*').length is 0) and @infiniteScroller
 				@listContainer.infiniteScrollHelper 'destroy'
 				@infiniteScroller = false
+		else if @totalPages is undefined and response.find('>*').length is 0
+			# If the first page didn't provided a number of pages and the last request retorned not rows,
+			# then assume we reached the end and stop the infiniteScrollHelper
+			@listContainer.infiniteScrollHelper 'destroy'
+			@infiniteScroller = false
 
 	_parseQueryString: () ->
 		@initialized = false

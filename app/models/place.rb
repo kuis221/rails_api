@@ -63,6 +63,9 @@ class Place < ActiveRecord::Base
 
   serialize :types
 
+  scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company} ) }
+
+
   def street
     "#{street_number} #{route}".strip
   end
@@ -162,6 +165,18 @@ class Place < ActiveRecord::Base
         neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
         [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
       end
+    end
+
+    def report_fields
+      {
+        name:          { title: 'Name' },
+        street_number: { title: 'Street 1' },
+        route:         { title: 'Street 2' },
+        city:          { title: 'City' },
+        state:         { title: 'State' },
+        country:       { title: 'Country' },
+        zipcode:       { title: 'Zip code' }
+      }
     end
   end
 

@@ -1,0 +1,16 @@
+- if @report.columns_totals.any?
+  - build_report_header_cols(resource.report_columns_hash)
+  - row_levels_count = resource.rows.count
+  - @report_header_cols_rows.each_with_index do |row, index|
+    - if resource.values.count > 1 || resource.columns.count == 1 || index != resource.columns.index{|v| v['field'] == 'values' }
+      tr.row-headers class="#{if index == @report_header_cols_rows.count-1 then 'last-header' else '' end}"
+        td.row_label
+        = row.join.html_safe
+
+  tr.grand-total
+    td.row_label
+      - if row_levels_count > 1
+        a.expand-all.icon-collapse.has-tooltip href="#" title="Collapse All"
+      | GRAND TOTAL:
+    - resource.format_values(@report.columns_totals, ignore_display: true).each do |total|
+      th= total if total.present?
