@@ -1062,6 +1062,7 @@ p{
 	margin: 10% auto 0 auto !important;
 	padding: 20px 20px 40px 20px;
 	text-align: center;
+	height: 300px;
 	width:402px;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
@@ -1262,7 +1263,7 @@ p{
 	h2{
 		color: $user_menu !important;
 		font-size: 24px;
-		margin: 48px 0 28px 0;
+		margin: 25px 0 28px 0;
 	}
 	label{
 		color:$user_menu;
@@ -1270,6 +1271,11 @@ p{
 	}
 	p{
 		margin-bottom: 40px;
+	}
+	&.resend{
+		.brand{
+			margin-bottom: 50px;
+		}
 	}
 }
 .form-actions{

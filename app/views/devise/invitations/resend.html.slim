@@ -1,4 +1,4 @@
-.login_box
+.login_box.resend
   .brand 
   = simple_form_for(resource, :as => resource_name, :url => users_invitation_resend_path, :html => { :method => :post }) do |f|
     = f.error_notification
