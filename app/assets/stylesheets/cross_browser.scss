@@ -61,6 +61,30 @@
 			}
 		}
 	}
+
+	#report-builder{
+		.report-field .field-settings-btn{
+			margin-top: 0;
+		}
+	}
+
+	@media (max-height: 810px) {
+
+		#report-builder{
+			#report-fields{
+				min-height: 108px;
+			}
+			.field-list { 
+				height: 48px;
+				.fields-group{
+					height: 70px;
+					margin-top: 0;
+				}
+			} 
+		}
+	}
+
+
 } 
 
 /*Webkit Browsers----------------------------------*/

@@ -57,4 +57,15 @@ module BrandscopiSpecHelpers
     end
     export.export_list
   end
+
+  def csv_from_last_export
+    require "rexml/document"
+    export = ListExport.last
+    export.should_receive(:save).any_number_of_times.and_return(true)
+    File.should_receive(:delete) do |path|
+      file = File.new( path )
+      yield REXML::Document.new(file)
+    end
+    export.export_list
+  end
 end

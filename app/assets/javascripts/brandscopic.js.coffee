@@ -32,6 +32,15 @@ jQuery ->
 	$(".tooltip").tooltip()
 	$("a[rel=tooltip]").tooltip()
 	$("div.gallery").photoGallery()
+	$('[data-spy]').each( (index, element) ->
+		$(element).affix offset: {
+			top: () ->
+				if $(element).css('position') isnt 'fixed'
+					$(element).data('offset', $(element).offset().top - $('header').outerHeight())
+				$(element).data('offset')
+
+		}
+	)
 
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
@@ -187,6 +196,25 @@ jQuery ->
 
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
+
+
+	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .btn-dismiss-alert', () ->
+		alert = $(this).closest('.new-feature')
+		$.ajax
+			url: '/users/dismiss_alert'
+			method: 'PUT'
+			data: {name: alert.data('alert'), version: alert.data('version')}
+
+		alert.remove()
+		$(window).trigger 'alert:missed', [alert]
+		false
+
+	$(document).off('click.videoFeature').on 'click.videoFeature', 'a[data-video]', (e) ->
+		bootbox.classes('video-modal')
+		link = if e.target.tagName is 'A' then $(e.target) else $(e.target).closest('a')
+		bootbox.modal($('<iframe allowfullscreen="" frameborder="0">').attr('src', link.data('video')).attr('width', link.data('width')).attr('height', link.data('height')), '&nbsp;')
+		false
+
 
 	$(document).on 'click', '.xlsx-download-link', () ->
 		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
@@ -376,42 +404,51 @@ jQuery ->
 	# Keep filter Sidebar always visible but make it scroll if it's
 	# taller than the window size
 	$filterSidebar = $('#resource-filter-column')
+	lastTimestamp  = 0
 	if $filterSidebar.length
 		$filterSidebar.originalTop = $filterSidebar.position().top;
 		$filterSidebar.originalWidth = $filterSidebar.width();
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
-			if $window.width() >= 979 # For the responsive design
-				if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
-					return true
-				$filterSidebar.positioning = true
-				$filterSidebar.removeClass('responsive-mode')
-				sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
-				bottomPosition = $window.scrollTop()+$window.height()
-				footerHeight = $('footer').outerHeight()
+			now = new Date().getTime() # Add a small delay between each execution because FF seems to
+									   # trigger this too frequently decreasing the performance
+			if $.loadingContent is 0 && lastTimestamp < (now - 50)
+				lastTimestamp = now
+				if $window.width() >= 979 # For the responsive design
+					if $filterSidebar.positioning or $('.chardinjs-overlay').length != 0
+						return true
+					$filterSidebar.positioning = true
+					$filterSidebar.removeClass('responsive-mode')
+					sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
+					bottomPosition = $window.scrollTop()+$window.height()
+					footerHeight = $('footer').outerHeight()
 
-				if sidebarBottom < $window.height()
-					$filterSidebar.css({
-						position: 'fixed',
-						top: "#{$filterSidebar.originalTop}px",
-						right: "10px",
-						bottom: 'auto'
-					})
-				else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
-					$filterSidebar.css({
-						position: 'fixed',
-						bottom: footerHeight+"px",
-						top: 'auto',
-						right: "10px"
-					})
-				else
-					$filterSidebar.css({
-						position: 'static'
-					})
-				$filterSidebar.positioning = false
-				true
-			else # On small screens, leave it static
-				$filterSidebar.css({position: ''}).addClass('responsive-mode')
+					# We need to get the natural top of the bar when it's not absolute or fixed positioned
+					$filterSidebar.css position: 'static'
+					$filterSidebar.originalTop = $filterSidebar.position().top;
+
+					if sidebarBottom < $window.height()
+						$filterSidebar.css({
+							position: 'fixed',
+							top: "#{$filterSidebar.originalTop}px",
+							right: "10px",
+							bottom: 'auto'
+						})
+					else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
+						$filterSidebar.css({
+							position: 'fixed',
+							bottom: footerHeight+"px",
+							top: 'auto',
+							right: "10px"
+						})
+					else
+						$filterSidebar.css({
+							position: 'static'
+						})
+					$filterSidebar.positioning = false
+					true
+				else # On small screens, leave it static
+					$filterSidebar.css({position: ''}).addClass('responsive-mode')
 		).trigger('scroll')
 
 	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->
@@ -559,7 +596,7 @@ jQuery ->
 		e.preventDefault()
 		$link = $(this)
 		bootbox.classes('modal-med rejection-prompt')
-		bootbox.prompt "Why is the post event being rejected?",'Cancel', 'Submit', (result) ->
+		bootbox.prompt "Why is the post event being rejected?", 'Cancel', 'Submit', (result) ->
 			if result isnt null and result isnt ""
 				$.ajax $link.attr("href"),
 					method: "PUT"

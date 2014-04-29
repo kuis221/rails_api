@@ -1,0 +1,22 @@
+- skip_report_rows ||= false
+- if resource.can_be_generated?
+  - row_levels_count = resource.rows.count
+
+  .report-outer
+    .report-inner
+      table.table#report-table.report-table class="#{row_levels_count > 1 ? 'multi-row' : ''}"
+        thead
+          = render 'report_head'
+
+        tbody
+          = render 'report_rows' unless skip_report_rows
+
+  javascript:
+    $('#report-table').reportTableScroller();
+
+- else
+  .placeholder-empty-state
+    p 
+      | Your report does not include enough information
+      br to display results. Please edit and update your
+      | report so that information will be displayed.

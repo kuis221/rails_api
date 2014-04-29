@@ -1,4 +1,3 @@
-require "benchmark"
 module Results
   module EventDataHelper
     def custom_fields_to_export_headers
