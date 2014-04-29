@@ -95,6 +95,7 @@ class User < ActiveRecord::Base
 
   scope :active, where('invitation_accepted_at is not null')
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
+  scope :in_company, lambda{|company| active_in_company(company) }
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users
@@ -226,6 +227,18 @@ class User < ActiveRecord::Base
   end
 
   class << self
+    def report_fields
+      {
+        first_name:     { title: 'First Name' },
+        last_name:      { title: 'Last Name' },
+        email:          { title: 'Email' },
+        country:        { title: 'Country' },
+        state:          { title: 'State' },
+        city:           { title: 'City' },
+        street1:        { title: 'Street 1' },
+        street2:        { title: 'Street 2' }
+      }
+    end
 
     # Find a user by its confirmation token and try to confirm it.
     # If no user is found, returns a new user with an error.

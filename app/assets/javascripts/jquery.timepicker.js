@@ -130,7 +130,7 @@ requires jQuery 1.7+
 				list.offset({ 'left':(self.offset().left), 'top': self.offset().top - list.outerHeight() });
 			} else {
 				// put it under the input
-				list.offset({ 'left':(self.offset().left), 'top': self.offset().top + self.outerHeight() });
+				list.offset({ 'left':(self.offset().left), 'top': self.offset().top + 2 + self.outerHeight() });
 			}
 
 			// position scrolling

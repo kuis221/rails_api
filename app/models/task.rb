@@ -221,6 +221,15 @@ class Task < ActiveRecord::Base
       end
     end
 
+    def report_fields
+      {
+        title:       { title: 'Title' },
+        due_at:      { title: 'Start time' },
+        active:      { title: 'Active State' },
+        task_status: { title: 'Event Status' }
+      }
+    end
+
     def search_params_for_scope(scope, company_user)
       if scope == 'user'
         {user: [company_user.id]}

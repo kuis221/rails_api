@@ -20,6 +20,7 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :role
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
+  has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
 
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
@@ -202,6 +203,15 @@ class CompanyUser < ActiveRecord::Base
       role.try(:name)
     end
   end
+
+  def dismissed_alert?(alert, version=1)
+    alerts.where(name: alert, version: version).any?
+  end
+
+  def dismiss_alert(alert, version=1)
+    alerts.find_or_create_by_name_and_version(alert, version)
+  end
+
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin

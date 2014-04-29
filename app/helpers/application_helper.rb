@@ -147,6 +147,14 @@ module ApplicationHelper
     end
   end
 
+  def user_new_feature(name, version=1, &block)
+    unless current_company_user.dismissed_alert?(name, version)
+      content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
+        yield
+      end
+    end
+  end
+
   def user_company_dropdown(user)
     companies = user.companies_active_role
 
@@ -185,10 +193,11 @@ module ApplicationHelper
     link_to_if allowed, name, options, html_options
   end
 
-  def link_to_deactivate(model)
+  def link_to_deactivate(model, opts={})
+    opts[:url] ||= [:deactivate, model]
     model_sytem_name = model.class.name.underscore
     humanized_name = model.class.model_name.human.downcase
-    link_to '', [:deactivate, model], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
+    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
   end
 
   def active_class(item)

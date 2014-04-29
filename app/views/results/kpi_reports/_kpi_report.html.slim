@@ -1,0 +1,18 @@
+li id="report_#{kpi_report.id}" data-status="#{kpi_report.aasm_state}" data-id="#{kpi_report.id}"
+  span.report-item
+    | KPI Report: 
+    = "#{Date::MONTHNAMES[kpi_report.params[:month].to_i]}, #{kpi_report.params[:year]}"
+
+  span.report-status
+    = "Status: "
+    span.status
+      = kpi_report.aasm_state.capitalize
+    - unless kpi_report.complete?
+      .progress
+        .bar
+
+  span.pull-right
+    - if kpi_report.complete?
+      = link_to '', kpi_report.download_url, class: 'download', title: 'Download'
+    - else
+      = link_to '', '#', class: 'download', title: 'Download'

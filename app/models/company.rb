@@ -24,6 +24,7 @@ class Company < ActiveRecord::Base
   has_many :day_parts, dependent: :destroy
   has_many :contacts, dependent: :destroy
   has_many :kpis, dependent: :destroy
+  has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
   has_many :tags, :order => 'name ASC', :autosave => true, dependent: :destroy
 

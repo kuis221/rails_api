@@ -94,7 +94,7 @@
 
   				self.doneLoadingInt = setInterval(
   					function() {
-      					if (self.options.doneLoading(self.pageCount)) {
+      					if (self.options.doneLoading && self.options.doneLoading(self.pageCount)) {
       						clearInterval(self.doneLoadingInt);
       						self.loading = false;
       						self.element.removeClass(self.options.loadingClass);
@@ -130,11 +130,10 @@
 	 * @public
 	 */
 	Plugin.prototype.destroy = function() {
-
+		clearInterval(this.doneLoadingInt);
 		this.win.off('scroll.' + pluginName);
 		this.options.loadMore = null;
 		this.options.doneLoading = null;
-		clearInterval(this.doneLoadingInt);
 		this.element.data(namespace, null);
 	};
 
