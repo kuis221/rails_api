@@ -5,3 +5,18 @@
   div data-target="#activity_types-list li:nth-child(1) .pull-right" data-intro="Activities can be deactivated or edited" data-position="left" data-tooltip-style="left: -114px; top: -3px; width: 185px;"
   div data-target=".form-facet-filters" data-intro="Filter activities by selecting multiple criteria" data-position="left" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="top: 42px; left: -127px;"
   div data-target="#activity_types-list li:nth-child(1) span" data-intro="View the name and short description of the activity type" data-position="bottom" data-tooltip-style="left: -80px; top: 113px; width: 280px; max-width: 300px"
+
+  //For show
+  div data-target=".padding-top-close-bar h2" data-intro="View the name and short description of the activity type" data-position="right" data-element-class="chardinjs-keep-back" data-tooltip-style="top: -15px; left: 270px; max-width: 270px; width: 263px;"
+  div data-target=".links-data" data-intro="Edit or deactivate an activity type by clicking here" data-position="right"  data-tooltip-style="top: -6px; left: 83px; max-width: 212px;"
+  div data-target=".form-fields" data-intro="Add fields to the activity type by dragging and dropping from the right panel" data-position="top" data-element-class="chardinjs-keep-back" data-tooltip-style="left: 600px; top: -17px; height: 47px; width: 160px; width:337px; max-width:400px;"
+  div data-target=".activity-form .fields-wrapper " data-intro="Drag and drop any activity type field to set it's position within the new/edit activity form" data-position="left" data-helper-class="chardinjs-dashed" data-tooltip-style="top: 300px; left: -127px;"
+  div data-target="#save-report" data-intro="Save any changes you have made to the activity type form" data-position="right" data-tooltip-style="top: -15px; left: 117px; width: 200px"
+  div data-target=".form-fields div:nth-child(1)" data-intro="Remove fields from an activity type" data-position="bottom" data-tooltip-style="left: 0px; top: 162px; width: 280px; max-width: 300px"
+  div data-target=".form-fields div:nth-child(1)" data-intro="Modify settings of any field on the activity type" data-position="right" data-tooltip-style="left: 640px; top: 66px; width: 215px; max-width: 300px;"
+  div data-target=".field-attributes-panel" data-intro=""
+
+javascript:
+  $('body').on('chardinJs:start', function(){
+    $('.form-fields div')[0].click();
+  });
