@@ -122,6 +122,8 @@ jQuery ->
 						error.addClass('segment-title-label').insertBefore label
 					else
 						error.insertAfter label
+				else
+					error.addClass('segment-title-label').insertAfter element
 
 			focusInvalid: false,
 			invalidHandler: (form, validator) ->
