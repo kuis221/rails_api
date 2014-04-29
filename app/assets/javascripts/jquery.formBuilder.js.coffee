@@ -378,6 +378,37 @@ TextAreaField = FormField.extend {
 		]
 }
 
+UserDateField = FormField.extend {
+	type: 'UserDate',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'UserDate',
+			id: null,
+			required: false,
+			type: 'FormField::UserDate',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		'<div class="row-fluid">'+
+			'<div class="span8"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
+			'<div class="span4"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="date" value=""></div></div></div>' +
+		'</div>'
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('UserDate'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
 TextField = FormField.extend {
 	type: 'Text',
 

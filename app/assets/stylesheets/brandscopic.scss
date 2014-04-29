@@ -3424,7 +3424,7 @@ textarea::-webkit-input-placeholder {
 				}
 			}
 		}
-		[data-type="Time"], [data-type="Date"] {
+		[data-type="Time"], [data-type="Date"], .date_picker {
 			input{
 				text-align: right;
 				height: 27px;
