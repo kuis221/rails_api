@@ -32,6 +32,8 @@ class ActivityType < ActiveRecord::Base
   scope :active, lambda{ where(active: true) }
   attr_accessor :partial_path
 
+  before_save :ensure_user_date_field
+
   searchable do
     integer :id
 
@@ -98,4 +100,12 @@ class ActivityType < ActiveRecord::Base
       end
     end
   end
+
+  private
+
+    def ensure_user_date_field
+      if form_fields.empty? || !form_fields.map(&:type).include?('FormField::UserDate')
+        form_fields << FormField::UserDate.new(name: 'User/Date', ordering: (form_fields.map(&:ordering).max || 0)+1)
+      end
+    end
 end

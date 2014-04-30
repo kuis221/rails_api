@@ -33,6 +33,11 @@
 
 /*-- GENERAL STYLES --*/
 
+
+a:before, a:after{
+	font-weight:normal;
+}
+
 html {
 	min-height: 100%;
 }
@@ -2214,6 +2219,14 @@ ul.kpis-list{
 	}
 	ul#areas-list{
 		li{
+			display: table !important;
+			height: 86px;
+			min-height: 86px;
+			width: 100%;
+			a, span{
+				display: table-cell !important;
+				vertical-align: middle;
+			}
 			span{
 				&:first-child{
 					font-size: 11px;
@@ -2245,6 +2258,37 @@ ul.kpis-list{
 					}
 				}
 			}
+		}
+	}
+	ul#activity_types-list{
+		li{
+			box-sizing: border-box !important;
+			-moz-box-sizing: border-box;
+			display: table !important;
+			min-height: 86px;
+			padding-left: 25px;
+			height: 86px;
+			width: 100%;
+			a, span{
+				display: table-cell !important;
+				padding-left:0;
+				vertical-align: middle;
+			}
+			&.inactive{
+				span{
+					color:$user_menu;
+				}
+				&:hover{
+					span{
+						color: $text;
+					}
+				}
+			}
+		}
+	}
+	ul#campaigns-list{
+		li{
+			min-height: 97px;
 		}
 	}
 	ul#select-campaigns-list{
@@ -3246,20 +3290,196 @@ textarea::-webkit-input-placeholder {
 }
 
 .activity-form{
+	
+	.fields-wrapper{
+		&>p{
+			color: $user_menu;
+			margin: 5px auto 15px auto;
+			text-align: center;
+		}
+	}
 	input.waiting-files {
 		width: auto !important;
+	}
+	input, textarea{
+		width: 200px;
+	}
+	.input-append, .input-prepend{
+		margin-right: 10px;
+		margin-bottom: 0;
+	 	.add-on{
+			background-color: $user_menu;
+			color: white;
+			height: 19px;
+			text-shadow: none;
+			width: 30px;
+		}
+		input{
+			width: 160px;
+		}
+	}
+	.checkbox{
+		padding-left:0;
+		.checker{
+			margin-right: 10px;
+		}
+	}
+	.chzn-container-single .chzn-single{
+		width: 205px;
+	}
+	table{
+		margin-bottom: 0;
+	}
+	[data-type="Summation"]{
+		.controls{
+			clear: both;
+			margin-top: 15px;
+		}
+		.field-option{
+			height: 50px;
+			width: 300px;
+		}
+		label{
+			margin-bottom: 15px;
+		}
+		.summation{
+			margin-bottom: 15px;
+			height: 40px;
+			line-height: 38px;
+			input{
+				float: right;
+				width: 200px;
+			}
+		}
+		.summation-total-field{
+			border-top: 2px solid $user_menu;
+			padding-top: 15px;
+			margin-top: 10px;
+			.summation{
+				margin-left: 15px;
+				&:first-of-type{
+					margin-top: 0;
+				}
+			}
+		}
+	}
+	.field{
+		display: inline-block;
+		float: left;
+		height: auto;
+		width: auto;
+		label.control-label{
+			width: 120px;
+		}
+		label.radio .radio{
+			margin-right: 10px;
+		}
+		&.ui-draggable-dragging{
+			height: auto !important;
+			width: auto !important;
+			input[type="date"], input[type="time"]{
+				text-align: right;
+				width: 120px;
+			}
+		}
+		label.control-label{
+			margin-bottom: 5px;
+			margin-right: 10px;
+		}
+	}
+	.form-fields{
+		[data-type="Dropdown"]{
+			label{
+				margin-bottom: 10px;
+			}
+			.chzn-container-single .chzn-single{
+				width: 205px;
+			}
+			&.selected{
+				.icon-remove-circle:before{
+					font-size: 18px !important;
+				}
+			}
+		}
+		[data-type="Checkbox"]{
+			.checkbox{
+				padding-left:0 !important;
+				margin-bottom: 10px !important;
+				.checker{
+					margin-right:10px !important;
+				}
+			}
+			&.selected{
+				.checker{
+					background-color: $user_menu;
+				}
+			}
+		}
+		[data-type="Radio"]{
+			label.radio{
+				display:block;
+				margin-bottom: 8px;
+				.radio{
+					margin-right: 10px;
+				}
+			}
+		}
+		[data-type="Time"], [data-type="Date"], .date_picker {
+			input{
+				text-align: right;
+				height: 27px;
+				width: 120px;
+				&[type="date"]{
+					background: url(calendar.svg) no-repeat 3px 8px;
+				}
+				&[type="time"]{
+					background: url(time.svg) no-repeat 3px 8px;
+				}
+			}
+		}
+		[data-type="Percentage"]{
+			label.percentage{
+				margin-bottom: 10px;
+			}
+		}
+		[data-type="LikertScale"]{
+			table{
+				thead{
+					tr{
+						th:nth-child(2){
+							padding-left: 25px;
+						}
+					}
+				}
+				tbody{
+					tr{
+						td:first-of-type{
+							padding-left: 0;
+						}
+						td:nth-child(2){
+							padding-left: 25px;
+						}
+					}
+				}
+			}
+		}
 	}
 	.attachment-panel{
 		border: 1px dashed $user_menu;
 		border-radius: 4px 4px 4px 4px;
 		color: #C0C0C0;
 		font-size: 14px;
-		line-height: 15px;
+		line-height: 17px;
+		margin-top: 15px;
 		padding: 20px 30px;
 		text-align: center;
 		width: 267px;
 
 		p{
+			&:first-of-type{
+				padding: 0 20px;
+				text-align: left;
+			}
 			&.divider{
 				margin: 25px 0;
 			}
@@ -3280,6 +3500,9 @@ textarea::-webkit-input-placeholder {
 					font-size: 200px;
 					direction: ltr;
 					cursor: pointer;
+				}
+				&:hover{
+					color: $text;
 				}
 			}
 		}
@@ -5056,13 +5279,13 @@ svg{
 					width: 365px !important;
 				}
 				.chzn-drop{
-					width: 374px !important;
+					width: 280px !important;
 				}
 			}
 		}
 		.chzn-container-single{
 			.chzn-search input{
-				bottom:12px;
+				height: 25px;
 			}
 			.chzn-results{
 				margin: 0 0 4px 0;
@@ -5122,7 +5345,7 @@ body.campaigns{
 	background-color: white;
 	box-sizing: border-box;
 	margin-bottom: 10px;
-	padding: 23px 27px 30px 25px;
+	padding: 23px 27px 30px 27px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
@@ -6029,17 +6252,24 @@ body.gva {
 				}
 				form#gva-report{
 					label{
+						color: $alert_grey;
 						font-size: 11px;
 						line-height: 15px;
 					}
 					.controls{
 						.chzn-container-single{
+							.chzn-search input{
+								bottom:13px;
+							}
 							.chzn-single{
-								height: 34px !important;
+								height: 29px !important;
 								padding-top: 3px;
 								width: 270px !important;
 								span{
-									line-height: 32px;
+									line-height: 26px;
+								}
+								div b{
+									background: url("triangle-down.svg") no-repeat 1px 13px !important;
 								}
 							}
 							.chzn-drop{
@@ -6064,7 +6294,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
-							padding: 9px 10px;
+							padding: 6px 10px;
 							width: 60px;
 							&:first-child{
 								border-bottom-left-radius: 6px;
@@ -6302,22 +6532,20 @@ body.gva {
 
 body.event_status {
 	.details_box{
-		padding: 23px 27px 30px 24px;
+		padding: 23px 27px 30px 27px;
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
 			border-radius: 0px 7px 7px 7px;
-			padding: 17px 0px	25px 20px !important;
 			h3{
 				margin-top: 0px !important;
 				margin-bottom: 23px !important;
 			 }
 			 label{
-				margin-left: 3px;
 				margin-bottom: 0px;
 				color: $grey_three !important;
 				font-size: 11px !important;
 				}
-			.controls{ margin: -1px 0px 0px 4px;}
+			.controls{ margin: -1px 0px 0px 0px;}
 			.chzn-container-single{
 				width: 270px	!important;
 				height: 31px !important;
@@ -6326,7 +6554,7 @@ body.event_status {
 					padding-top: 0px !important;
 					width: 270px !important;
 					span{
-            line-height: 26px;
+            			line-height: 26px;
 						height: 26px !important;
 						padding-top: 0px !important;
 						margin-top: 3px !important;
@@ -6338,10 +6566,10 @@ body.event_status {
 					}
 				}
 				.chzn-drop{
+					margin-top: 6px !important;
 					.chzn-search{
-						input{
-							height: 15px;
-							width: 70% !important;
+						input{ 
+							bottom:13px;
 						}
 					}
 				}

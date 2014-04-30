@@ -63,6 +63,7 @@ class ApplicationController < ActionController::Base
 
     def access_denied
       respond_to do |format|
+        format.json { render text: 'Permission denied', status: 403 }
         format.js { render 'access_denied' }
         format.html { render 'access_denied' }
       end
