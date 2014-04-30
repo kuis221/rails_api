@@ -1731,7 +1731,7 @@ li#notifications{
 			color: $text;
 			font-size: 13px;
 			font-weight: bold;
-			padding-left: 10px;
+			padding-left: 7px;
 			margin-top: 5px;
 		}
 		&:before {
@@ -1776,10 +1776,11 @@ li#notifications{
 
 				.alert-message{
 					display: inline-block;
-					font-weight: bold;
-					font-size: 12px;
-					width: 188px;
-					padding-left: 42px;
+					font-weight: 500;
+					font-size: 13px;
+					width: 225px;
+					line-height: 16px;
+					padding-left: 32px;
 				}
 
 				&:hover{
@@ -1802,6 +1803,9 @@ li#notifications{
 						&:before{
 							color: white;
 						}
+						&.icon-notification-task:before{
+							font-size: 16px !important;
+						}
 						&.icon-angle-right{
 							position: absolute;
 							top: 21px;
@@ -1812,8 +1816,7 @@ li#notifications{
 							}
 						}
 						&.alert-icon{
-							margin-left: 12px;
-							margin-right: 12px;
+							margin-left: 8px;
 							top: 22px;
 							position: absolute;
 						}

@@ -37,8 +37,7 @@ $.widget 'nmk.notifications', {
 				$('<li>').addClass(alert.level + (if alert.unread then ' new' else '')).append(
 					$('<a>').attr('href', alert.url).append([
 						$('<i class="alert-icon">').addClass(alert.icon),
-						$('<span>').addClass('alert-message').html(alert.message),
-						$('<i class="icon-angle-right">')
+						$('<span>').addClass('alert-message').html(alert.message)
 					])
 				)
 			)
