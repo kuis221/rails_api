@@ -58,7 +58,8 @@
           li id="report_photos"
             = link_to results_photos_path, title: 'Photos' do
               .span10.report-item
-                b View photos by event
+                b Photos
+                p View photos by event
 
         - if can?(:index_results, Survey)
           li id="report_surveys"
