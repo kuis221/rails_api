@@ -19,9 +19,23 @@
   .tab-content
     .link-list
       ul#global-reports-list.reports-list
+        - if can?(:index_results, EventData)
+          li id="report_event_data"
+            = link_to results_event_data_path, title: 'Event Data' do
+              .span10.report-item
+                b Event Data
+                p View data collected at events
+
+        - if can?(:index_results, Comment)
+          li id="report_comments"
+            = link_to results_comments_path, title: 'Comments' do
+              .span10.report-item
+                b Comments
+                p View consumer comments by event
+
         - if can?(:gva_report, Campaign)
           li id="report_event_status"
-            = link_to results_event_status_path, title: 'Event Stats' do
+            = link_to results_event_status_path, title: 'Event Status' do
               .span10.report-item
                 b Event Status
                 p View progress of event and promo hours against goals
@@ -45,6 +59,7 @@
             = link_to results_photos_path, title: 'Photos' do
               .span10.report-item
                 b Photos
+                p View photos by event
 
         - if can?(:index_results, Survey)
           li id="report_surveys"
