@@ -156,7 +156,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Text Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::TextArea'
 
       within form_field_settings_for 'My Text Field' do
@@ -190,7 +190,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Text Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.required).to be_true
       expect(field.type).to eql 'FormField::Text'
 
@@ -225,7 +225,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Numeric Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Number'
 
       within form_field_settings_for 'My Numeric Field' do
@@ -260,7 +260,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Price Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Currency'
 
       within form_field_settings_for 'My Price Field' do
@@ -302,7 +302,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(2)
       field = FormField.last
       expect(field.name).to eql 'My Radio Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Radio'
       expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
       expect(field.options.map(&:ordering)).to eql [0, 1]
@@ -317,9 +317,9 @@ feature "ActivityTypes", js: true do
         within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
         within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
       end
-      
+
       confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
-      
+
       within form_field_settings_for 'My Radio Field' do
         expect(page).to have_no_content('Second Option')
       end
@@ -377,7 +377,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(2)
       field = FormField.last
       expect(field.name).to eql 'My Checkbox Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Checkbox'
       expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
       expect(field.options.map(&:ordering)).to eql [0, 1]
@@ -449,7 +449,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(2)
       field = FormField.last
       expect(field.name).to eql 'My Dropdown Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Dropdown'
       expect(field.options.map(&:name)).to eql ['First Option', 'Second Option']
       expect(field.options.map(&:ordering)).to eql [0, 1]
@@ -514,7 +514,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Date Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Date'
 
       within form_field_settings_for 'My Date Field' do
@@ -548,7 +548,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Time Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Time'
 
       within form_field_settings_for 'My Time Field' do
@@ -581,7 +581,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'Brand'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Brand'
 
       within form_field_settings_for 'Brand' do
@@ -613,7 +613,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'Marque'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Marque'
 
       within form_field_settings_for 'Marque' do
@@ -646,7 +646,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Photo Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.required).to be_true
       expect(field.type).to eql 'FormField::Photo'
     end
@@ -676,7 +676,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormField, :count).by(1)
       field = FormField.last
       expect(field.name).to eql 'My Attachment Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.required).to be_true
       expect(field.type).to eql 'FormField::Attachment'
     end
@@ -714,7 +714,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(4)
       field = FormField.last
       expect(field.name).to eql 'My Percent Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Percentage'
       expect(field.options.map(&:name)).to eql ['First Option', 'Second Option','Option 2', 'Option 3']
       expect(field.options.map(&:ordering)).to eql [0, 1,2,3]
@@ -734,7 +734,7 @@ feature "ActivityTypes", js: true do
       within form_field_settings_for 'My Percent Field' do
         expect(page).to have_no_content('Second Option')
         within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
-        
+
       end
 
       confirm_prompt "Are you sure you want to remove this option?"
@@ -785,7 +785,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(3)
       field = FormField.last
       expect(field.name).to eql 'My Summation Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::Summation'
       expect(field.options.map(&:name)).to eql ["First Option", "Second Option", "Option 2"]
       expect(field.options.map(&:ordering)).to eql [0, 1, 2]
@@ -867,7 +867,7 @@ feature "ActivityTypes", js: true do
       }.to change(FormFieldOption, :count).by(9)
       field = FormField.last
       expect(field.name).to eql 'My Likert scale Field'
-      expect(field.ordering).to eql 0
+      expect(field.ordering).to eql 1
       expect(field.type).to eql 'FormField::LikertScale'
       expect(field.options.order('ordering ASC').map(&:name)).to eql ['First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
       expect(field.options.map(&:ordering)).to eql [0, 1, 2, 3, 4]

@@ -145,34 +145,37 @@ $.widget 'nmk.formBuilder', {
 		@
 
 	_showFieldAttributes: (field) ->
-		@formWrapper.find('.selected').removeClass('selected')
-		field.addClass('selected')
-		$('#form-field-tabs a[href="#attributes"]').tab('show')
 		$field = field.data('field')
-		@attributesPanel.html('').append $('<div class="arrow">'), $field.attributesForm()
-		applyFormUiFormatsTo @attributesPanel
+		if form = $field.attributesForm()
+			@formWrapper.find('.selected').removeClass('selected')
+			field.addClass('selected')
+			$('#form-field-tabs a[href="#attributes"]').tab('show')
+			@attributesPanel.html('').append $('<div class="arrow">'), form
+			applyFormUiFormatsTo @attributesPanel
 
-		@placeFieldAttributes field
-
-		field.on 'change.attrFrm', () =>
 			@placeFieldAttributes field
 
-		# Store the value of each text field to compare against on the blur event
-		$.each $('input[type=text]'), (index, elm) =>
-			$(elm).data 'saved-value', $(elm).val()
+			field.on 'change.attrFrm', () =>
+				@placeFieldAttributes field
 
-		$(document).on 'click.fbuidler', '.modal', (e) =>
-			e.ignoreClose = true
+			# Store the value of each text field to compare against on the blur event
+			$.each $('input[type=text]'), (index, elm) =>
+				$(elm).data 'saved-value', $(elm).val()
 
-		$(document).on 'click.fbuidler', (e) =>
-			if $('.modal.in:visible').length is 0 and not e.ignoreClose?
-				$(document).off 'click.fbuidler'
-				@formWrapper.find('.selected').removeClass('selected')
-				field.off 'change.attrFrm'
-				@attributesPanel.hide()
+			$(document).on 'click.fbuidler', '.modal', (e) =>
+				e.ignoreClose = true
 
-		if typeof $field.onAttributesShow != 'undefined'
-			$field.onAttributesShow @attributesPanel
+			$(document).on 'click.fbuidler', (e) =>
+				if $('.modal.in:visible').length is 0 and not e.ignoreClose?
+					@_hideFieldAttributes field
+		else
+			@_hideFieldAttributes field
+
+	_hideFieldAttributes: (field) ->
+		$(document).off 'click.fbuidler'
+		@formWrapper.find('.selected').removeClass('selected')
+		field.off 'change.attrFrm'
+		@attributesPanel.hide()
 
 	_updateSaveButtonState: () ->
 		$('#save-report').attr('disabled', not @modified)
@@ -397,16 +400,12 @@ UserDateField = FormField.extend {
 
 	_renderField: () ->
 		'<div class="row-fluid">'+
-			'<div class="span8"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
-			'<div class="span4"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="date" value=""></div></div></div>' +
+			'<div class="span7"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
+			'<div class="span5"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="date" value=""></div></div></div>' +
 		'</div>'
 
 	attributesForm: () ->
-		[
-			$('<h4>').text('UserDate'),
-			@labelField(),
-			@requiredField()
-		]
+		false
 }
 
 TextField = FormField.extend {

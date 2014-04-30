@@ -3366,8 +3366,8 @@ textarea::-webkit-input-placeholder {
 	.field{
 		display: inline-block;
 		float: left;
-		height: auto !important;
-		width: auto !important;
+		height: auto;
+		width: auto;
 		label.control-label{
 			width: 120px;
 		}
