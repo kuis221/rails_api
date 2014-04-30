@@ -1720,6 +1720,12 @@ li#notifications{
 		.dropdown-toggle { background-color: $alert_red; }
 	}
 
+	.notifications-container{
+		height: 261px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
 	.dropdown-menu{
 		background-color: $grey_one;
 		border: 1px solid #d5d5d5;
@@ -1768,7 +1774,7 @@ li#notifications{
 					}
 				}
 				&.grey {
-					background-color: $alert_grey;
+					background-color: $brand;
 					&:hover{
 						background-color:#858585;
 					}
@@ -1781,6 +1787,9 @@ li#notifications{
 					width: 225px;
 					line-height: 16px;
 					padding-left: 32px;
+					span{
+						color: $grey_one;
+					}
 				}
 
 				&:hover{
