@@ -5621,8 +5621,8 @@ a, i{
 	&:before{
 		display: inline-block;
 		font-family: 'icons';
-		position:relative;	
-		speak: none;	
+		position:relative;
+		speak: none;
 		-webkit-font-smoothing: antialiased;
 	}
 	&.icon-ok-circle:before{
@@ -5701,7 +5701,7 @@ a, i{
 		color: white;
 		content: "\e604";
 		font-size: 18px;
-		top: 1px;	
+		top: 1px;
 	}
 	&.icon-minus:before, &.icon-plus:before{
 		font-family: FontAwesome !important;
@@ -6234,6 +6234,7 @@ body.gva {
 							font-size: 17px;
 							span{
 								&.collapsed{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f078";
@@ -6249,6 +6250,7 @@ body.gva {
 									}
 								}
 								&.expanded{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f077";
@@ -6265,6 +6267,7 @@ body.gva {
 								}
 							}
 							&.remove-item{
+								width: 20px;
 								&:after{
 									color: $user_menu;
 									content: "\e019";

@@ -101,11 +101,11 @@ module DashboardHelper
       content_tag(:div, content_tag(:div, "<b>#{total}/#{goal}</b> GOAL".html_safe), class: 'goal-label') +
       content_tag(:div, class: 'remaining-label percentage') do
         content_tag(:b, "#{actual_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, "APPROVED", class: 'percentage') +
+        content_tag(:span, "APPROVED", class: 'percentage approved') +
         content_tag(:b, "#{g[:submitted_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, 'SUBMITTED', class: 'percentage') +
+        content_tag(:span, 'SUBMITTED', class: 'percentage submitted') +
         content_tag(:b, "#{g[:rejected_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, 'REJECTED', class: 'percentage')
+        content_tag(:span, 'REJECTED', class: 'percentage rejected')
       end
     end
   end
