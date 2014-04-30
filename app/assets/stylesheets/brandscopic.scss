@@ -5621,8 +5621,8 @@ a, i{
 	&:before{
 		display: inline-block;
 		font-family: 'icons';
-		position:relative;	
-		speak: none;	
+		position:relative;
+		speak: none;
 		-webkit-font-smoothing: antialiased;
 	}
 	&.icon-ok-circle:before{
@@ -5701,7 +5701,7 @@ a, i{
 		color: white;
 		content: "\e604";
 		font-size: 18px;
-		top: 1px;	
+		top: 1px;
 	}
 	&.icon-minus:before, &.icon-plus:before{
 		font-family: FontAwesome !important;
@@ -7477,6 +7477,9 @@ table.table.likert-scale-table {
 		a{
 			color: $brand;
 			text-decoration: underline;
+		}
+		p{
+			max-width: 100% !important;
 		}
 	}
 }

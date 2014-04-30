@@ -3,6 +3,17 @@
     a.close data-dismiss="alert"
     .filter-label
 
+= user_new_feature('events_list') do
+  h5 EVENTS
+  a.close.btn-dismiss-alert href="#" title="Dimiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/LmACvczhWdk?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'The Events module is your one-stop-shop for viewing and managing events - start to finish . Create events, track event status, fill out post event forms, as well as submit, reject, and approve your reports. Click on the video to the left for a quick overview or visit our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
+
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save
