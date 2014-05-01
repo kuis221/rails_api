@@ -4,7 +4,7 @@
 - if resource.approved?
   = user_new_feature('event_details_approved') do
     h5 EVENT DETAILS
-    a.close.btn-dismiss-alert href="#" title="Dimiss"
+    a.close.btn-dismiss-alert href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/SOSswwvDYGI?rel=0" data-width="640" data-height="360"
       img src="/assets/video_arrow.png" /
     .feature-description
@@ -15,7 +15,7 @@
 - else
   = user_new_feature('event_details_scheduled') do
     h5 EVENT DETAILS
-    a.close.btn-dismiss-alert href="#" title="Dimiss"
+    a.close.btn-dismiss-alert href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/-6fVKhvXIhM?rel=0" data-width="640" data-height="360"
       img src="/assets/video_arrow.png" /
     .feature-description
