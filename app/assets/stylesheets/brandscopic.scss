@@ -1067,12 +1067,12 @@ p{
 	width:402px;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
-	.user-login-form {
-		span.help-inline {
-			display: none !important;
-		}
+	form {
 		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
 			background-color: #fff !important;
+		}
+		span.help-inline {
+			display: none !important;
 		}
 	}
 	&.first_login{
