@@ -2163,30 +2163,21 @@ ul.kpis-list{
 				top: -10px;
 			}
 		}
-		.remaining-label, .progress-label {
-			color:$brand;
-			position: absolute;
-			top: -13px;
-			&.percentage {
-				top: -29px;
-			}
-
-			b {
-				&.percentage {
-					font-size: 21px;
-					line-height: 22px;
-				}
-				.normal-text {
-					display: inline-block;
-					font-size: 22px !important;
-					font-weight: 400;
-				}
-			}
-		}
 		.progress-label {
+			position: absolute;
+			top: -43px;
 			width: 200px;
 			right: -235px;
 			text-align: center;
+			&.percentage {
+				font-size: 31px;
+				line-height: 32px;
+			}
+			.normal-text {
+				display: inline-block;
+				font-size: 32px !important;
+				font-weight: 400;
+			}
 			.progress-numbers {
 				color: $grey_three;
 				font-size: 12px;
@@ -2202,7 +2193,16 @@ ul.kpis-list{
 		.remaining-label {
 			width: 300px;
 			right: -285px;
+			color:$brand;
+			position: absolute;
+			top: -13px;
 			b {
+				.normal-text {
+					display: inline-block;
+					font-size: 22px !important;
+					font-weight: 400;
+				}
+
 				display: inline-block;
 				font-size: 21px;
 				font-weight: 900;
