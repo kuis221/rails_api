@@ -964,12 +964,12 @@ body.app-layout{
 }
 .btn-group{
 	margin-left: 40px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
 	.btn{
 		border: 0;
 		box-shadow: none;
-		&.list, &.table, &.graph{
-			border-right:1px solid $buttons-border;
-		}
 		&.calendar{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
@@ -2078,9 +2078,12 @@ ul.kpis-list{
 					color: $grey_one;
 				}
 			}
-			.executed-label span {color: $green; }
-			.submitted-label span {color: $venues_blue; }
-			.rejected-label span {color: $rejected; }
+			.executed-label{
+				padding-right: 10px;
+			}
+			.executed-label span {color: $green; font-weight: bold;}
+			.submitted-label span {color: $venues_blue; font-weight: bold;}
+			.rejected-label span {color: $rejected; font-weight: bold;}
 		}
 		.progress {
 			width: auto !important;
@@ -2171,7 +2174,8 @@ ul.kpis-list{
 			text-align: center;
 			&.percentage {
 				font-size: 31px;
-				line-height: 32px;
+				line-height: 26px;
+				padding-top: 10px;
 			}
 			.normal-text {
 				display: inline-block;
@@ -2183,10 +2187,10 @@ ul.kpis-list{
 				font-size: 12px;
 				b {
 					color: $brand;
-					font-size: 13px;
+					font-size: 12px;
 				}
 				.total-of {
-					color: $grey_one;
+					color: $user_menu;
 				}
 			}
 		}
@@ -5357,7 +5361,16 @@ svg{
 
 // ANALYSIS
 
-.campaigns_report, .snapshot_report, .staff_report, .gva, .event_status {
+.gva{
+	.details_box{
+		&.first{
+			-webkit-border-radius: 7px;
+			border-radius: 7px;
+		}
+	}
+}
+
+.campaigns_report, .snapshot_report, .staff_report, .event_status {
 	.details_box{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
@@ -6372,7 +6385,7 @@ body.gva {
 				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
-					margin-top: 17px;
+					margin-top: 14px;
 					#group-by-title{
 						font-size: 11px;
 						vertical-align: middle;
@@ -6384,7 +6397,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
-							padding: 6px 10px;
+							padding: 7px 10px;
 							width: 60px;
 							&:first-child{
 								border-bottom-left-radius: 6px;
@@ -6412,9 +6425,9 @@ body.gva {
 							}
 							&.list, &.table, &.graph{
 								width: 30px;
-								padding: 8px 10px;
+								padding: 6px 10px;
 								&:after{
-									font-size: 18px;
+									font-size: 16px;
 									font-weight: normal;
 								}
 							}
@@ -6484,7 +6497,7 @@ body.gva {
 			.captions{
 				color: $brand;
 				font-size: 12px;
-				margin: 24px 350px 20px 0;
+				margin: 24px 250px 20px 0;
 				text-align: right;
 				span {
 					margin-right: 11px;

@@ -31,7 +31,7 @@
           a.btn.graph class="#{params[:view_style].nil? || params[:view_style]=='graph' ? 'active' : nil}" href="#" data-type="graph" data-toggle="tab" title="Graph View"
           a.btn.table class="#{params[:view_style]=='table' ? 'active' : nil}" href="#" data-type="table" data-toggle="tab" title="Table View"
 
-      .export-xls
+      .export-xls.pull-right
         = link_to '', '#', :id => 'download-gva-btn', class: 'btn download', title: 'Download'
 
   #report-container
