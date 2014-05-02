@@ -1,3 +1,14 @@
+= user_new_feature('tasks_index') do
+  h5 TASKS
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/lM5t3CPs8K0?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'Tasks allow you to assign activities to other users. In this section you can keep track of tasks that are assigned to both you and your team. Click on the video to the left for a quick overview or visit our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
+
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
 .tab-content
   .tab-pane.active
