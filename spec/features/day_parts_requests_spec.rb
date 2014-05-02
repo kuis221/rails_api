@@ -66,7 +66,7 @@ feature "DayParts", js: true do
     scenario 'allows the user to create a new day part' do
       visit day_parts_path
 
-      click_js_button 'New Day part'
+      click_js_button 'New Day Part'
 
       within visible_modal do
         fill_in 'Name', with: 'new day part name'

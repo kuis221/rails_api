@@ -15,14 +15,16 @@
               = f.input :campaign_id, collection: resource.activity_type.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
           - resource.results_for_type.each do |result|
             = f.simple_fields_for :results, result do |rf|
-              .large-inputs
-                = rf.input :value, result.form_field.field_options(result)
-                = rf.input :form_field_id, as: :hidden, wrapper: false
-          .row-fluid
-            .span8
-              = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
-            .span4
-              = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+              - if result.form_field.is_a?(FormField::UserDate)
+                .row-fluid
+                  .span8
+                    = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+                  .span4
+                    = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+              - else
+                .large-inputs
+                  = rf.input :value, result.form_field.field_options(result)
+                  = rf.input :form_field_id, as: :hidden, wrapper: false
 
           .form-actions
             = f.button :submit, id: 'save-activity-btn', class: 'btn btn-primary', disable_with: 'Please wait...'

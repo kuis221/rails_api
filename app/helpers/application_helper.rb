@@ -148,7 +148,7 @@ module ApplicationHelper
   end
 
   def user_new_feature(name, version=1, &block)
-    unless current_company_user.dismissed_alert?(name, version)
+    unless true || current_company_user.dismissed_alert?(name, version)
       content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
         yield
       end
