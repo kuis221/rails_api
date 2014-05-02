@@ -12,6 +12,8 @@
 - if can?(:show, Activity) && resource.campaign.activity_types.any?
   #event-activities.details_box
     = render 'activities'
+- else
+  h1 no activities
 
 / Photos module
 - if active_kpis.include?(Kpi.photos) && can?(:photos, resource)

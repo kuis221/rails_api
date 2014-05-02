@@ -1,5 +1,16 @@
 = render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
 
+= user_new_feature('results_event_data') do
+  h5 RESULTS
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/02MkcedI0Hs?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'The Results Module holds all of your post-event data results. Here you will find essential information for assessing your campaign and event successes. Review KPI details, find out if your campaign hit goals, and get an in-depth look into ground floor event attendee experiences. Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more in depth info.
+
 .sidebar#resource-filter-column
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save

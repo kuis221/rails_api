@@ -14,8 +14,12 @@
 #  updated_at     :datetime         not null
 #
 
-class FormField::Currency < FormField
+class FormField::UserDate < FormField
   def field_options(result)
-    {as: :currency, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {as: :text}
+  end
+
+  def format_html(result)
+    result.value.gsub(/\n/, '<br>').html_safe unless result.value.nil?
   end
 end
