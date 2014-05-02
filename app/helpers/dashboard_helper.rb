@@ -81,8 +81,8 @@ module DashboardHelper
   def gva_chart(g)
     today_bar_indicator = ''.html_safe
     if g[:today_percentage]
-      today = number_with_precision(g[:today], strip_insignificant_zeros: true)
-      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator has-tooltip", title: "<span class=today-label>TODAY:</span> #{today}", style: "left: #{g[:today_percentage] - 0.5}%")
+      today = number_with_precision(g[:today], strip_insignificant_zeros: true, delimiter: ',')
+      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator has-tooltip", title: "<span class=today-label>TODAY:</span> #{today}", data: {delay: 0}, style: "left: #{g[:today_percentage] - 0.5}%")
     end
     goal = number_with_precision(g[:goal].value, strip_insignificant_zeros: true, delimiter: ',')
     actual = number_with_precision(g[:total_count], strip_insignificant_zeros: true, delimiter: ',')
@@ -98,7 +98,7 @@ module DashboardHelper
 
     content_tag(:div, class: 'chart-bar gva') do
       today_bar_indicator +
-      content_tag(:div, class: 'progress gva has-tooltip', title: bar_tooltip.gsub('"', '')) do
+      content_tag(:div, class: 'progress gva has-tooltip', title: bar_tooltip.gsub('"', ''), data: {delay: 0}) do
         content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
         content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{[[100 - g[:completed_percentage], submitted_percentage].min, 0].max}%;") +
         content_tag(:div, '', class: 'bar bar-rejected', style: "width: #{[[100 - g[:completed_percentage] - submitted_percentage - rejected_percentage, rejected_percentage].min, 0].max}%;")
