@@ -2015,8 +2015,31 @@ ul.kpis-list{
 		position: relative;
 		margin-bottom: 50px;
 
+		&.gva {
+			margin-right: 250px;
+		}
+
 		&.level-2 {
 			margin-bottom: 50px;
+		}
+		.tooltip {
+			opacity: 1;
+			.tooltip-inner {
+				text-align: left;
+			}
+			span { 
+				width: 70px; 
+				display: inline-block; 
+				text-align: right;
+				margin-right: 5px;
+				&.today-label {
+					width: auto;
+					color: $grey_one;
+				}
+			}
+			.executed-label span {color: $green; }
+			.submitted-label span {color: $venues_blue; }
+			.rejected-label span {color: $rejected; }
 		}
 		.progress {
 			width: auto !important;
@@ -2099,15 +2122,45 @@ ul.kpis-list{
 				top: -10px;
 			}
 		}
-		.remaining-label {
+		.remaining-label, .progress-label {
 			color:$brand;
 			position: absolute;
-			right: -285px;
-			width: 300px;
 			top: -13px;
 			&.percentage {
-				top: -22px;
+				top: -29px;
 			}
+
+			b {
+				&.percentage {
+					font-size: 21px;
+					line-height: 22px;
+				}
+				.normal-text {
+					display: inline-block;
+					font-size: 22px !important;
+					font-weight: 400;
+				}
+			}
+		}
+		.progress-label {
+			width: 200px;
+			right: -235px;
+			text-align: center;
+			.progress-numbers {
+				color: $grey_three;
+				font-size: 12px;
+				b {
+					color: $brand;
+					font-size: 13px;
+				}
+				.total-of {
+					color: $grey_one;
+				}
+			}
+		}
+		.remaining-label {
+			width: 300px;
+			right: -285px;
 			b {
 				display: inline-block;
 				font-size: 21px;
@@ -2117,14 +2170,6 @@ ul.kpis-list{
 				text-align: right;
 				margin-right: 10px;
 				line-height: 25px;
-				&.percentage {
-					line-height: 22px;
-				}
-				.normal-text {
-					display: inline-block;
-					font-size: 22px !important;
-					font-weight: 400;
-				}
 			}
 			span {
 				margin-top: -1px;
@@ -6723,7 +6768,7 @@ body{
 
 .tooltip {
 	.tooltip-inner{
-		background-color:$grey_five;
+		background-color:#515151;
 		opacity: 1;
 		z-index: 90;
 	}
@@ -6731,14 +6776,15 @@ body{
 	.tooltip .tooltip-arrow{
 		border-left:5px solid transparent;
 		border-right:5px solid transparent;
-		border-top:5px solid $grey_five;
+		border-top:5px solid #515151;
 		opacity: 0.5;
 	}
-	&.left{
-		.tooltip-arrow{
-			border-left-color: $grey_five;
-			border-top-color: transparent;
-		}
+	&.left .tooltip-arrow{
+		border-left-color: #515151;
+		border-top-color: transparent;
+	}
+	&.top .tooltip-arrow{
+		border-top-color: #515151;
 	}
 }
 
