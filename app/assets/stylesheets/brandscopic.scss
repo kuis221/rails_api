@@ -6509,6 +6509,7 @@ body.gva {
 							font-size: 17px;
 							span{
 								&.collapsed{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f078";
@@ -6524,6 +6525,7 @@ body.gva {
 									}
 								}
 								&.expanded{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f077";
@@ -6540,6 +6542,7 @@ body.gva {
 								}
 							}
 							&.remove-item{
+								width: 20px;
 								&:after{
 									color: $user_menu;
 									content: "\e019";
