@@ -1726,7 +1726,9 @@ li#notifications{
 	}
 
 	.notifications-container{
+		background-color: #cccccc;
 		height: 261px;
+		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
