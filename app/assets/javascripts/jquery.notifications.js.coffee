@@ -18,6 +18,7 @@ $.widget 'nmk.notifications', {
 		else
 			$.get '/notifications.json', (response) =>
 				$('<h5>').text('Notifications').insertBefore @list
+				$('<div class="notifications-container">').insertBefore(@list).append @list
 				@_updateNotifications response
 
 	_updateNotifications: (alerts) ->
@@ -37,8 +38,7 @@ $.widget 'nmk.notifications', {
 				$('<li>').addClass(alert.level + (if alert.unread then ' new' else '')).append(
 					$('<a>').attr('href', alert.url).append([
 						$('<i class="alert-icon">').addClass(alert.icon),
-						$('<span>').addClass('alert-message').html(alert.message),
-						$('<i class="icon-angle-right">')
+						$('<div>').addClass('alert-message').html(alert.message)
 					])
 				)
 			)

@@ -83,7 +83,7 @@
     #event-tasks.details_box
 
       .pull-left
-        = link_to 'Create task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
+        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
       #event-tasks-counters.pull-right
         = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
 
