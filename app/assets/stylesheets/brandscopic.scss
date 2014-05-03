@@ -1759,11 +1759,12 @@ li#notifications{
 			padding: 0;
 			width: 100%;
 			li {
-				display: table-row;
+				display: inline-block;
 				vertical-align: middle;
 				background-color: #fff;
-				height: 52px;
 				border-top: 1px solid $borders;
+				position:relative;
+				padding: 10px 0;
 
 				&:first-child{
 					border-top: 0;
@@ -1813,7 +1814,7 @@ li#notifications{
 					line-height: 15px;
 					display: table-cell;
 					vertical-align: middle;
-					position:relative;
+					height: 32px;
 					i{
 						margin-right: 5px;
 						&:before{
@@ -6630,6 +6631,9 @@ body.gva {
 							border: none;
 							margin-top: 0;
 							padding-left: 0;
+							&.loading-spinner {
+								background: white url(/assets/loading-circle.gif) center center no-repeat;
+							}
 						}
 					}
 				}
