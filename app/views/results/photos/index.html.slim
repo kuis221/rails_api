@@ -3,6 +3,17 @@
     a.close data-dismiss="alert"
     .filter-label
 
+= user_new_feature('results_photos') do
+  h5 PHOTOS REPORT
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/tBqJwYj8CiQ?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'Want to see what happened at your event? Scroll though the pictures below or use the right sidebar filter to target specific campaigns and events. Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more in depth info.
+
 .sidebar#resource-filter-column
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save

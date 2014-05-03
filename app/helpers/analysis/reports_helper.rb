@@ -203,9 +203,33 @@ module Analysis
         else
           venues_activities = @campaign.present? ? venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0 : 0
           completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
-          completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : nil
+          completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : 0
           submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
           rejected = rejected_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+        end
+
+        goal_value = goal.value || 0
+        total_count = completed
+        remaining_count =  goal_value - completed
+        if goal_value != 0
+          completed_percentage = completed * 100 / goal_value
+          submitted_percentage = submitted * 100 / goal_value
+          rejected_percentage = rejected * 100 / goal_value
+        else
+          completed_percentage = submitted_percentage = rejected_percentage = 0
+        end
+
+        today_percentage = today = nil
+        if @campaign.present? && @campaign.start_date && @campaign.end_date && goal_value
+          days = (@campaign.end_date-@campaign.start_date).to_i
+          if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
+            today = ((Date.today-@campaign.start_date).to_i+1) * goal_value / days
+          elsif Date.today > @campaign.end_date
+            today = goal_value
+          else
+            today = 0
+          end
+          today_percentage = [(today*100/goal_value).to_i, 100].min
         end
 
         if completed.nil?
@@ -213,36 +237,16 @@ module Analysis
             goal: goal,
             completed_percentage: 0,
             remaining_percentage: 100,
-            remaining_count: goal.value || 0,
+            remaining_count: goal_value,
             total_count: 0,
             submitted: submitted,
-            rejected: rejected
+            submitted_percentage: submitted_percentage,
+            rejected: rejected,
+            rejected_percentage: rejected_percentage,
+            today: today,
+            today_percentage: today_percentage
           }
         else
-          goal_value = goal.value || 0
-          total_count = completed
-          remaining_count =  goal_value - completed
-          if goal_value != 0
-            completed_percentage = completed * 100 / goal_value
-            submitted_percentage = submitted * 100 / goal_value
-            rejected_percentage = rejected * 100 / goal_value
-          else
-            completed_percentage = submitted_percentage = rejected_percentage = 0
-          end
-
-          today_percentage = today = nil
-          if @campaign.present? && @campaign.start_date && @campaign.end_date && goal_value
-            days = (@campaign.end_date-@campaign.start_date).to_i
-            if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
-              today = ((Date.today-@campaign.start_date).to_i+1) * goal_value / days
-            elsif Date.today > @campaign.end_date
-              today = goal_value
-            else
-              today = 0
-            end
-            today_percentage = [(today*100/goal_value).to_i, 100].min
-          end
-
           goals_result[goal.id] = {
             goal: goal,
             completed_percentage: completed_percentage,
@@ -253,7 +257,8 @@ module Analysis
             submitted_percentage: submitted_percentage,
             rejected: rejected,
             rejected_percentage: rejected_percentage,
-            today: today, today_percentage: today_percentage
+            today: today,
+            today_percentage: today_percentage
           }
         end
       end
