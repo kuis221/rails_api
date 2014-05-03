@@ -2,7 +2,11 @@
 - if resource.errors.any?
   = render 'form_dialog'
 - else
-  |
-    $('.bootbox.modal').modal('hide');
-    $('#brands-list').html('#{escape_javascript(render(partial: 'brand_portfolios/brands', locals: {resource: parent}))}');
-    $(document).trigger('brands:change');
+  - if parent.is_a?(BrandPortfolio)
+    |
+      $('.bootbox.modal').modal('hide');
+      $('#brands-list').html('#{escape_javascript(render(partial: 'brand_portfolios/brands', locals: {resource: parent}))}');
+      $(document).trigger('brands:change');
+  - else
+    |
+      window.location = "#{resource_path}"

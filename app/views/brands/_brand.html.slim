@@ -1,0 +1,9 @@
+li id="brand_#{brand.id}" class="#{active_class(brand)}"
+  = link_to_if_permitted :show, brand, brand_path(brand) do
+    span
+      b= brand.name
+  span.pull-right
+    = link_to '', edit_brand_path(brand), remote: true, title: 'Edit', class: 'edit' if can?(:edit, brand)
+    - if can?(:deactivate, brand)
+      = link_to_deactivate brand
+      = link_to '', activate_brand_path(brand), remote: true, title: I18n.t('confirmation.activate'), class: 'enable' unless brand.active?
