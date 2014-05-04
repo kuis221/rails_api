@@ -4,6 +4,8 @@ class Results::GvaController < InheritedResources::Base
   before_filter :campaign, except: :index
   before_filter :authorize_actions
 
+  helper_method :return_path
+
   def index
     @campaigns = current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
     if request.format.xls?
@@ -181,5 +183,9 @@ class Results::GvaController < InheritedResources::Base
       else
         {}
       end
+    end
+
+    def return_path
+      results_reports_path
     end
 end

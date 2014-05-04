@@ -3,6 +3,8 @@ class Results::CommentsController < FilteredController
   defaults :resource_class => ::Event
   respond_to :xls, only: :index
 
+  helper_method :return_path
+
   private
 
     def search_params
@@ -17,5 +19,9 @@ class Results::CommentsController < FilteredController
 
     def authorize_actions
       authorize! :index_results, Comment
+    end
+
+    def return_path
+      results_reports_path
     end
 end

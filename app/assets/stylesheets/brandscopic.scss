@@ -4737,6 +4737,11 @@ body.roles{
 
 // EVENT DATA
 
+.event_data, .comments, .expenses, .surveys, .photos {
+	.main.with-details-close-bar {
+		padding-top: 60px;
+	}
+}
 .event_data, .comments, .expenses {
 	&.index {
 		//For Firefox
