@@ -77,7 +77,7 @@ feature "Reports", js: true do
   end
 
   feature "video tutorial" do
-    scenario "a user can play and dimiss the video tutorial" do
+    pending "a user can play and dimiss the video tutorial" do
       visit results_reports_path
 
       feature_name = 'CHECK OUT THE NEW RESULTS SECTION'
