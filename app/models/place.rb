@@ -279,8 +279,8 @@ class Place < ActiveRecord::Base
         end
 
         self.city.strip! unless self.city.nil?
-        self.state.strip! unless self.city.nil?
-        self.country.strip! unless self.city.nil?
+        self.state.strip! unless self.state.nil?
+        self.country.strip! unless self.country.nil?
 
         update_locations
         self
