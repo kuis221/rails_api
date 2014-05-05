@@ -50,9 +50,6 @@
 				&:hover {
 					border: 1px solid $app_bg;
 				}
-				.radio span {
-					border: 4px solid #989898;
-				}
 				.attachment-panel{
 					background-color: white;
 				}
@@ -85,6 +82,10 @@
 					font-size: 6px;
 					font-weight: bolder;
 				}
+			}
+
+			.date_picker input {
+				width: 140px;
 			}
 		}
 	}
