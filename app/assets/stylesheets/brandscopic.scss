@@ -7090,11 +7090,13 @@ ul#reports-list {
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
+				text-align: center;
 			}
 			&.photo-item{
 				img.google-images{
 					min-height: 160px;
-					width: 100%;
+					max-width: 100%;
+					max-height: 160px;
 				}
 			}
 
