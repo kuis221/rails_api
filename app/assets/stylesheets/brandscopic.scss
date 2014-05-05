@@ -1619,7 +1619,7 @@ label{
 		visibility: hidden;
 	}
 	label{
-		color: $user_menu;
+		color: $text;
 		font-weight: 400;
 		letter-spacing: -0.5px;
 		line-height: 22px;
@@ -6386,7 +6386,7 @@ body.gva {
 				}
 				form#gva-report{
 					label{
-						color: $alert_grey;
+						color: $brand;
 						font-size: 11px;
 						line-height: 15px;
 					}
@@ -6394,6 +6394,7 @@ body.gva {
 						.chzn-container-single{
 							.chzn-search input{
 								bottom:13px;
+								height: 24px;
 							}
 							.chzn-single{
 								height: 29px !important;
@@ -6416,7 +6417,7 @@ body.gva {
 				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
-					margin-top: 14px;
+					margin-top: 15px;
 					#group-by-title{
 						font-size: 11px;
 						vertical-align: middle;
@@ -6428,6 +6429,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
+							font-size: 13px;
 							padding: 7px 10px;
 							width: 60px;
 							&:first-child{
@@ -6440,19 +6442,16 @@ body.gva {
 							}
 							&.active{
 								background-color: $brand;
+								color: $grey_one;
 							}
 							&.campaign{
 								border-right: 1px solid $buttons-border;
 							}
 							&.place{
-								border-left: 1px solid $buttons-border;
 								border-right: 1px solid $buttons-border;
 								&:before{
 									display: none;
 								}
-							}
-							&.staff{
-								border-left: 1px solid $buttons-border;
 							}
 							&.list, &.table, &.graph{
 								width: 30px;
