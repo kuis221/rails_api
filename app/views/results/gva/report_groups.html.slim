@@ -16,12 +16,6 @@
         p.text-center This campaign has no stats for the selected grouping
 
 javascript:
-  $('.collapse').on('show', function(){
-    $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded").prop('title', 'Collapse');
-  }).on('hide', function(){
-    $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed").prop('title', 'Expand');
-  });
-
   $('.remove-item').on('click', function(e){
     $(this).closest(".details_box").remove();
     e.preventDefault();
@@ -29,11 +23,17 @@ javascript:
 
   $('#gva-results').on('show', function(e){
     $target = $(e.target);
-    //if (!$target.data('loaded')) {
-      $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
-      $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), view_style: $("#view_style").val(), report: {campaign_id: "#{@campaign.id}"} }, function(){
-        //$target.data('loaded', true);
-        $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
-      });
-    //}
+    // For some reason this is being called when the tooltips are being desplayed
+    if ($target.hasClass('accordion-body')){
+      $(this).parent().find(".collapsed").removeClass("collapsed").addClass("expanded").prop('title', 'Collapse');
+      //if (!$target.data('loaded')) {
+        $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
+        $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), view_style: $("#view_style").val(), report: {campaign_id: "#{@campaign.id}"} }, function(){
+          //$target.data('loaded', true);
+          $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
+        });
+      //}
+    }
+  }).on('hide', function(){
+    $(this).parent().find(".expanded").removeClass("expanded").addClass("collapsed").prop('title', 'Expand');
   });

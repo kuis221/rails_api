@@ -32,6 +32,9 @@
 			float: left;
 		}
 	}
+	li#notifications .dropdown-menu ul li a i.alert-icon {
+		top: 18px;
+	}
 	li#notifications .dropdown-menu ul li a i.icon-angle-right:before{
 		top:8px;
 	}
