@@ -1,14 +1,9 @@
-#kpis-trends-bars
-  .details_box.content
-    - events_goal = each_events_goal
-    - if events_goal.any?
-      = render partial: 'report_goals_actual_item_summary', locals: {item: @campaign}
-      #graph-view.view-style class="#{params[:view_style].nil? || params[:view_style]=='graph' ? nil : 'hidden'}"
-        = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
-      #table-view.view-style class="#{params[:view_style]=='table' ? nil : 'hidden'}"
-        = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
-    - else
-      p.text-center This campaign has no events Goal Vs. Actual stats
-
-javascript:
-  monitorGraphLabels($('#kpis-trends-bars'))
+- events_goal = each_events_goal
+- if events_goal.any?
+  = render partial: 'report_goals_actual_item_summary', locals: {item: @campaign}
+  #graph-view.view-style class="#{params[:view_style].nil? || params[:view_style]=='graph' ? nil : 'hidden'}"
+    = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
+  #table-view.view-style class="#{params[:view_style]=='table' ? nil : 'hidden'}"
+    = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
+- else
+  p.text-center This campaign has no events Goal Vs. Actual stats

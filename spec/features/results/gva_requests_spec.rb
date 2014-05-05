@@ -52,15 +52,15 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
+          find('.progress').hover
           expect(page).to have_selector('.executed-label', text: '25')
-          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
           expect(page).to have_content('100 GOAL')
           expect(page).to have_css('.today-line-indicator')
-          within('.remaining-label') do
-            expect(page).to have_content('25% APPROVED')
-            expect(page).to have_content('20% SUBMITTED')
-            expect(page).to have_content('33% REJECTED')
+          within('.progress-label') do
+            expect(page).to have_content('78%')
+            expect(page).to have_content('78 OF 100 GOAL')
           end
         end
 
@@ -85,15 +85,14 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         within('.container-kpi-trend .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
+          find('.progress').hover
           expect(page).to have_selector('.executed-label', text: '25')
-          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
-          expect(page).to have_content('78/150 GOAL')
           expect(page).to have_css('.today-line-indicator')
-          within('.remaining-label') do
-            expect(page).to have_content('17% APPROVED')
-            expect(page).to have_content('13% SUBMITTED')
-            expect(page).to have_content('22% REJECTED')
+          within('.progress-label') do
+            expect(page).to have_content('52%')
+            expect(page).to have_content('78 OF 150 GOAL')
           end
         end
 
@@ -116,15 +115,14 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         within('.container-kpi-trend .kpi-trend:nth-child(2)') do
           expect(page).to have_content('Samples')
+          find('.progress').hover
           expect(page).to have_selector('.executed-label', text: '25')
-          expect(page).to have_selector('.scheduled-label', text: '20')
+          expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
-          expect(page).to have_content('78/100 GOAL')
           expect(page).to have_css('.today-line-indicator')
-          within('.remaining-label') do
-            expect(page).to have_content('25% APPROVED')
-            expect(page).to have_content('20% SUBMITTED')
-            expect(page).to have_content('33% REJECTED')
+          within('.progress-label') do
+            expect(page).to have_content('78%')
+            expect(page).to have_content('78 OF 100 GOAL')
           end
         end
       end

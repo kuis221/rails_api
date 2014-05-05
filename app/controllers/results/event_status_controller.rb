@@ -18,7 +18,11 @@ class Results::EventStatusController < ApplicationController
     end
 
     def authorize_actions
-      authorize! :event_status, Campaign
+      if params[:report] && params[:report][:campaign_id]
+        authorize! :event_status_report_campaign, campaign
+      else
+        authorize! :event_status, Campaign
+      end
     end
 
     def return_path

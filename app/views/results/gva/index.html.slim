@@ -36,9 +36,8 @@
         = link_to '', '#', :id => 'download-gva-btn', class: 'btn download', title: 'Download'
 
   #report-container
-    #kpis-trends-bars
-      .details_box.content
-        p.text-center Select a campaign from the list above
+    #kpis-trends-bars.details_box.content
+      p.text-center.empty-state Select a campaign from the list above
 
 = render partial: 'help_tutorial'
 
@@ -59,12 +58,15 @@ javascript:
 
   $('#report_campaign_id').on('change', function(e){
     if ($('#report_campaign_id').val() != '') {
-      $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
+      $('#kpis-trends-bars .content')
+      $('#kpis-trends-bars').empty().addClass('loading-spinner');
       submitForm();
       history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
       'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val()+'&view_style='+$("#view_style").val());
     } else {
-      $('#kpis-trends-bars').empty().addClass("details_box content").prepend('<p class="text-center">Select a campaign from the list above');
+      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
+      'campaign_id=&group_by='+$("#group_by").val()+'&view_style='+$("#view_style").val());
+      $('#kpis-trends-bars').empty().addClass("details_box content empty-state").prepend('<p class="text-center empty-state">Select a campaign from the list above');
     }
   });
 

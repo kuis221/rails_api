@@ -1081,12 +1081,18 @@ p{
 	}
 	&.first_login{
 		width:600px;
+		height: auto;
 		h2{
 			margin-bottom: 20px;
 		}
 		.chzn-container{
 			display:block;
 			margin-bottom: 10px;
+		}
+		form {
+			span.help-inline {
+				display: inline !important;
+			}
 		}
 		input[type="submit"].btn{
 			margin: 40px 0 0 0;
@@ -1991,6 +1997,13 @@ ul.kpis-list{
 	}
 }
 
+#kpis-trends-module {
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+}
+
 // Graphical visualization for Goals
 #kpis-trends-bars {
 	a{
@@ -2012,6 +2025,13 @@ ul.kpis-list{
 	.container-kpi-trend{
 		margin-top: 21px;
 		margin-left: 0px;
+	}
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+	&.loading-spinner {
+		padding: 50px 0;
 	}
 	.kpi-trend, .kpi-trend-overall {
 		font-size: 12px;
@@ -2143,6 +2163,7 @@ ul.kpis-list{
 			background-color: $grey_three;
 			height: 0;
 			top: -10px;
+			cursor: default;
 			&:before{
 				content: "\e004";
 				display: inline-block;
@@ -2176,13 +2197,12 @@ ul.kpis-list{
 			right: -235px;
 			text-align: center;
 			&.percentage {
-				font-size: 31px;
+				font-size: 26px;
 				line-height: 26px;
 				padding-top: 10px;
 			}
 			.normal-text {
 				display: inline-block;
-				font-size: 32px !important;
 				font-weight: 400;
 			}
 			.progress-numbers {
@@ -5376,6 +5396,9 @@ svg{
 			border-radius: 7px;
 		}
 	}
+	.loading-spinner {
+		background: white url(/assets/loading-circle.gif) center center no-repeat;
+	}
 }
 
 .campaigns_report, .snapshot_report, .staff_report, .event_status {
@@ -6636,9 +6659,6 @@ body.gva {
 							border: none;
 							margin-top: 0;
 							padding-left: 0;
-							&.loading-spinner {
-								background: white url(/assets/loading-circle.gif) center center no-repeat;
-							}
 						}
 					}
 				}

@@ -33,7 +33,7 @@
                 b Comments
                 p View consumer comments by event
 
-        - if can?(:gva_report, Campaign)
+        - if can?(:event_status, Campaign)
           li id="report_event_status"
             = link_to results_event_status_path, title: 'Event Status' do
               .span10.report-item
