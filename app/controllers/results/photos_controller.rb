@@ -6,7 +6,7 @@ class Results::PhotosController < FilteredController
 
   defaults :resource_class => AttachedAsset
 
-  helper_method :describe_filters
+  helper_method :describe_filters, :return_path
 
   skip_load_and_authorize_resource
 
@@ -73,5 +73,9 @@ class Results::PhotosController < FilteredController
 
     def authorize_actions
       authorize! :index_photo_results, resource_class
+    end
+
+    def return_path
+      results_reports_path
     end
 end

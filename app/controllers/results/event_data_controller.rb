@@ -2,7 +2,7 @@ class Results::EventDataController < FilteredController
 
   defaults :resource_class => ::Event
 
-  helper_method :data_totals
+  helper_method :data_totals, :return_path
 
   private
     def search_params
@@ -37,5 +37,9 @@ class Results::EventDataController < FilteredController
 
     def authorize_actions
       authorize! :index_results, EventData
+    end
+
+    def return_path
+      results_reports_path
     end
 end

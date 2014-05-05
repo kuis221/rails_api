@@ -220,6 +220,10 @@ abbr[title]{
 	}
 }
 
+.chzn-default span {
+	color: $user_menu;
+}
+
 /*-- EVENT DETAILS PAGES __*/
 
 body.events.show{
@@ -964,12 +968,12 @@ body.app-layout{
 }
 .btn-group{
 	margin-left: 40px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
 	.btn{
 		border: 0;
 		box-shadow: none;
-		&.list, &.table, &.graph{
-			border-right:1px solid $buttons-border;
-		}
 		&.calendar{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
@@ -1006,6 +1010,9 @@ body.app-layout{
 	&:active{
 		background-color: $buttons-hover;
 		box-shadow: none;
+	}
+	&.fileinput-button{
+		padding: 7px 23px;
 	}
 }
 .btn-cancel{
@@ -1064,25 +1071,32 @@ p{
 	margin: 10% auto 0 auto !important;
 	padding: 20px 20px 40px 20px;
 	text-align: center;
+	height: 300px;
 	width:402px;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
-	.user-login-form {
-		span.help-inline {
-			display: none !important;
-		}
+	form {
 		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
 			background-color: #fff !important;
+		}
+		span.help-inline {
+			display: none !important;
 		}
 	}
 	&.first_login{
 		width:600px;
+		height: auto;
 		h2{
 			margin-bottom: 20px;
 		}
 		.chzn-container{
 			display:block;
 			margin-bottom: 10px;
+		}
+		form {
+			span.help-inline {
+				display: inline !important;
+			}
 		}
 		input[type="submit"].btn{
 			margin: 40px 0 0 0;
@@ -1272,7 +1286,7 @@ p{
 	h2{
 		color: $user_menu !important;
 		font-size: 24px;
-		margin: 48px 0 28px 0;
+		margin: 25px 0 28px 0;
 	}
 	label{
 		color:$user_menu;
@@ -1280,6 +1294,11 @@ p{
 	}
 	p{
 		margin-bottom: 40px;
+	}
+	&.resend{
+		.brand{
+			margin-bottom: 50px;
+		}
 	}
 }
 .form-actions{
@@ -1604,7 +1623,7 @@ label{
 		visibility: hidden;
 	}
 	label{
-		color: $user_menu;
+		color: $text;
 		font-weight: 400;
 		letter-spacing: -0.5px;
 		line-height: 22px;
@@ -1716,20 +1735,27 @@ li#notifications{
 		.dropdown-toggle { background-color: $alert_red; }
 	}
 
+	.notifications-container{
+		background-color: #cccccc;
+		height: 261px;
+		margin-bottom: 2px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
 	.dropdown-menu{
 		background-color: $grey_one;
-		border: 0;
+		border: 1px solid #d5d5d5;
 		box-shadow: none;
 		margin-top: 22px;
 		min-width: 270px;
 		left: -181px;
-		padding: 5px 5px 10px 5px;
 		h5{
-			color: $brand;
+			color: $text;
 			font-size: 13px;
 			font-weight: bold;
-			padding-left: 10px;
-			padding-bottom: 10px;
+			padding-left: 7px;
+			margin-top: 5px;
 		}
 		&:before {
 			left: 199px;
@@ -1743,46 +1769,73 @@ li#notifications{
 			padding: 0;
 			width: 100%;
 			li {
-				display: table-row;
+				display: inline-block;
 				vertical-align: middle;
 				background-color: #fff;
-				height: 65px;
 				border-top: 1px solid $borders;
+				position:relative;
+				padding: 10px 0;
 
 				&:first-child{
 					border-top: 0;
 				}
 				&.red {
-					border-left: 5px solid $alert_red;
+					background-color: $alert_red;
+					&:hover{
+						background-color: #cc4137;
+					}
 				}
 				&.blue {
-					border-left: 5px solid $alert_blue;
+					background-color: $alert_blue;
+					&:hover{
+						background-color:$alert_blue;
+					}
 				}
 				&.grey {
-					border-left: 5px solid $alert_grey;
+					background-color: $brand;
+					&:hover{
+						background-color:#858585;
+					}
 				}
 
 				.alert-message{
 					display: inline-block;
-					width: 188px;
+					font-weight: 500;
+					font-size: 13px;
+					width: 225px;
+					line-height: 16px;
+					padding-left: 32px;
+					span{
+						color: $grey_one;
+					}
 				}
 
 				&:hover{
 					background-color: $app_bg;
 					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
-						color:$brand;
+						color:white;
 					}
 				}
 
 				// Icons
 				a{
-					color: $text;
+					color: white;
 					font-size: 11px;
+					line-height: 15px;
 					display: table-cell;
 					vertical-align: middle;
+					height: 32px;
 					i{
 						margin-right: 5px;
+						&:before{
+							color: white;
+						}
+						&.icon-notification-task:before{
+							font-size: 16px !important;
+						}
 						&.icon-angle-right{
+							position: absolute;
+							top: 21px;
 							&:before{
 								font-size: 22px !important;
 								left:16px !important;
@@ -1790,8 +1843,9 @@ li#notifications{
 							}
 						}
 						&.alert-icon{
-							margin-left: 12px;
-							margin-right: 12px;
+							margin-left: 8px;
+							top: 22px;
+							position: absolute;
 						}
 					}
 					&:hover{
@@ -1947,6 +2001,13 @@ ul.kpis-list{
 	}
 }
 
+#kpis-trends-module {
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+}
+
 // Graphical visualization for Goals
 #kpis-trends-bars {
 	a{
@@ -1968,6 +2029,13 @@ ul.kpis-list{
 	.container-kpi-trend{
 		margin-top: 21px;
 		margin-left: 0px;
+	}
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+	&.loading-spinner {
+		padding: 50px 0;
 	}
 	.kpi-trend, .kpi-trend-overall {
 		font-size: 12px;
@@ -2015,8 +2083,34 @@ ul.kpis-list{
 		position: relative;
 		margin-bottom: 50px;
 
+		&.gva {
+			margin-right: 250px;
+		}
+
 		&.level-2 {
 			margin-bottom: 50px;
+		}
+		.tooltip {
+			opacity: 1;
+			.tooltip-inner {
+				text-align: left;
+			}
+			span { 
+				width: 70px; 
+				display: inline-block; 
+				text-align: right;
+				margin-right: 5px;
+				&.today-label {
+					width: auto;
+					color: $grey_one;
+				}
+			}
+			.executed-label{
+				padding-right: 10px;
+			}
+			.executed-label span {color: $green; font-weight: bold;}
+			.submitted-label span {color: $venues_blue; font-weight: bold;}
+			.rejected-label span {color: $rejected; font-weight: bold;}
 		}
 		.progress {
 			width: auto !important;
@@ -2073,6 +2167,7 @@ ul.kpis-list{
 			background-color: $grey_three;
 			height: 0;
 			top: -10px;
+			cursor: default;
 			&:before{
 				content: "\e004";
 				display: inline-block;
@@ -2099,16 +2194,46 @@ ul.kpis-list{
 				top: -10px;
 			}
 		}
+		.progress-label {
+			position: absolute;
+			top: -43px;
+			width: 200px;
+			right: -235px;
+			text-align: center;
+			&.percentage {
+				font-size: 26px;
+				line-height: 26px;
+				padding-top: 10px;
+			}
+			.normal-text {
+				display: inline-block;
+				font-weight: 400;
+			}
+			.progress-numbers {
+				color: $grey_three;
+				font-size: 12px;
+				b {
+					color: $brand;
+					font-size: 12px;
+				}
+				.total-of {
+					color: $user_menu;
+				}
+			}
+		}
 		.remaining-label {
+			width: 300px;
+			right: -285px;
 			color:$brand;
 			position: absolute;
-			right: -285px;
-			width: 300px;
 			top: -13px;
-			&.percentage {
-				top: -22px;
-			}
 			b {
+				.normal-text {
+					display: inline-block;
+					font-size: 22px !important;
+					font-weight: 400;
+				}
+
 				display: inline-block;
 				font-size: 21px;
 				font-weight: 900;
@@ -2117,14 +2242,6 @@ ul.kpis-list{
 				text-align: right;
 				margin-right: 10px;
 				line-height: 25px;
-				&.percentage {
-					line-height: 22px;
-				}
-				.normal-text {
-					display: inline-block;
-					font-size: 22px !important;
-					font-weight: 400;
-				}
 			}
 			span {
 				margin-top: -1px;
@@ -4644,6 +4761,11 @@ body.roles{
 
 // EVENT DATA
 
+.event_data, .comments, .expenses, .surveys, .photos {
+	.main.with-details-close-bar {
+		padding-top: 60px;
+	}
+}
 .event_data, .comments, .expenses {
 	&.index {
 		//For Firefox
@@ -5043,6 +5165,10 @@ table.table td.comments-container {
 	img {
 		max-width: none;
 	}
+	.gm-style-iw{
+		height: auto !important;
+		overflow-y: hidden;
+	}
 }
 
 // Simple Form
@@ -5267,7 +5393,19 @@ svg{
 
 // ANALYSIS
 
-.campaigns_report, .snapshot_report, .staff_report, .gva, .event_status {
+.gva{
+	.details_box{
+		&.first{
+			-webkit-border-radius: 7px;
+			border-radius: 7px;
+		}
+	}
+	.loading-spinner {
+		background: white url(/assets/loading-circle.gif) center center no-repeat;
+	}
+}
+
+.campaigns_report, .snapshot_report, .staff_report, .event_status {
 	.details_box{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
@@ -5841,11 +5979,11 @@ div.chardinjs-tooltip
 // GENERAL ICONS
 
 a, i{
-	&:before{
+	&:before, &:after{
 		display: inline-block;
 		font-family: 'icons';
-		position:relative;	
-		speak: none;	
+		position:relative;
+		speak: none;
 		-webkit-font-smoothing: antialiased;
 	}
 	&.icon-ok-circle:before{
@@ -5924,7 +6062,7 @@ a, i{
 		color: white;
 		content: "\e604";
 		font-size: 18px;
-		top: 1px;	
+		top: 1px;
 	}
 	&.icon-minus:before, &.icon-plus:before{
 		font-family: FontAwesome !important;
@@ -6252,7 +6390,7 @@ body.gva {
 				}
 				form#gva-report{
 					label{
-						color: $alert_grey;
+						color: $brand;
 						font-size: 11px;
 						line-height: 15px;
 					}
@@ -6260,6 +6398,7 @@ body.gva {
 						.chzn-container-single{
 							.chzn-search input{
 								bottom:13px;
+								height: 24px;
 							}
 							.chzn-single{
 								height: 29px !important;
@@ -6282,7 +6421,7 @@ body.gva {
 				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
-					margin-top: 17px;
+					margin-top: 15px;
 					#group-by-title{
 						font-size: 11px;
 						vertical-align: middle;
@@ -6294,7 +6433,8 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
-							padding: 6px 10px;
+							font-size: 13px;
+							padding: 7px 10px;
 							width: 60px;
 							&:first-child{
 								border-bottom-left-radius: 6px;
@@ -6306,25 +6446,22 @@ body.gva {
 							}
 							&.active{
 								background-color: $brand;
+								color: $grey_one;
 							}
 							&.campaign{
 								border-right: 1px solid $buttons-border;
 							}
 							&.place{
-								border-left: 1px solid $buttons-border;
 								border-right: 1px solid $buttons-border;
 								&:before{
 									display: none;
 								}
 							}
-							&.staff{
-								border-left: 1px solid $buttons-border;
-							}
 							&.list, &.table, &.graph{
 								width: 30px;
-								padding: 8px 10px;
+								padding: 6px 10px;
 								&:after{
-									font-size: 18px;
+									font-size: 16px;
 									font-weight: normal;
 								}
 							}
@@ -6394,7 +6531,7 @@ body.gva {
 			.captions{
 				color: $brand;
 				font-size: 12px;
-				margin: 24px 350px 20px 0;
+				margin: 24px 250px 20px 0;
 				text-align: right;
 				span {
 					margin-right: 11px;
@@ -6464,6 +6601,7 @@ body.gva {
 							font-size: 17px;
 							span{
 								&.collapsed{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f078";
@@ -6479,6 +6617,7 @@ body.gva {
 									}
 								}
 								&.expanded{
+									width: 20px;
 									&:after{
 										color: $user_menu;
 										content: "\f077";
@@ -6495,6 +6634,7 @@ body.gva {
 								}
 							}
 							&.remove-item{
+								width: 20px;
 								&:after{
 									color: $user_menu;
 									content: "\e019";
@@ -6723,7 +6863,7 @@ body{
 
 .tooltip {
 	.tooltip-inner{
-		background-color:$grey_five;
+		background-color:#515151;
 		opacity: 1;
 		z-index: 90;
 	}
@@ -6731,14 +6871,15 @@ body{
 	.tooltip .tooltip-arrow{
 		border-left:5px solid transparent;
 		border-right:5px solid transparent;
-		border-top:5px solid $grey_five;
+		border-top:5px solid #515151;
 		opacity: 0.5;
 	}
-	&.left{
-		.tooltip-arrow{
-			border-left-color: $grey_five;
-			border-top-color: transparent;
-		}
+	&.left .tooltip-arrow{
+		border-left-color: #515151;
+		border-top-color: transparent;
+	}
+	&.top .tooltip-arrow{
+		border-top-color: #515151;
 	}
 }
 
@@ -6942,18 +7083,20 @@ ul#reports-list {
 			list-style: none;
 			width: 20%;
 			overflow: hidden;
-			margin-bottom: 8px;
+			margin-bottom: 6px;
 			.thumbnail-toolbar{
 				display: none;
 			}
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
+				text-align: center;
 			}
 			&.photo-item{
 				img.google-images{
 					min-height: 160px;
-					width: 100%;
+					max-width: 100%;
+					max-height: 160px;
 				}
 			}
 
@@ -7620,7 +7763,6 @@ table.table.likert-scale-table {
 
 /*-- RADIO BUTTONS STYLES --*/
 
-
 .radio{
 	display: inline-block;
 	margin: 0 15px 5px 0;
@@ -7705,6 +7847,9 @@ table.table.likert-scale-table {
 		a{
 			color: $brand;
 			text-decoration: underline;
+		}
+		p{
+			max-width: 100% !important;
 		}
 	}
 }

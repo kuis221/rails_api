@@ -3,14 +3,14 @@
 
 = user_new_feature('reports_index') do
   h5 CHECK OUT THE NEW RESULTS SECTION
-  a.close.btn-dismiss-alert href="#" title="Dimiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/V5C--QNxMB4?rel=0" data-width="640" data-height="360" 
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/mD1EWOxfVWk?rel=0" data-width="640" data-height="360"
     img src="/assets/video_arrow.png" /
   .feature-description
     p
-      ' We have completely overhauled the layout of the Results section and have added a brand new Report Builder feature so that you can build your own custom reports.  Click on the video to the left for a quick overview or check out our 
+      'We have completely overhauled the layout of the Results section and have added a brand new Report Builder feature so that you can build your own custom reports. Click on the video to the left for a quick overview or check out our
       a> href="http://support.brandscopic.com" target="_blank" support site
-      | for more in depth info. 
+      | for more in depth info.
 
 .main.no-margin
   .pull-left
@@ -19,9 +19,23 @@
   .tab-content
     .link-list
       ul#global-reports-list.reports-list
-        - if can?(:gva_report, Campaign)
+        - if can?(:index_results, EventData)
+          li id="report_event_data"
+            = link_to results_event_data_path, title: 'Event Data' do
+              .span10.report-item
+                b Event Data
+                p View data collected at events
+
+        - if can?(:index_results, Comment)
+          li id="report_comments"
+            = link_to results_comments_path, title: 'Comments' do
+              .span10.report-item
+                b Comments
+                p View consumer comments by event
+
+        - if can?(:event_status, Campaign)
           li id="report_event_status"
-            = link_to results_event_status_path, title: 'Event Stats' do
+            = link_to results_event_status_path, title: 'Event Status' do
               .span10.report-item
                 b Event Status
                 p View progress of event and promo hours against goals
@@ -45,6 +59,7 @@
             = link_to results_photos_path, title: 'Photos' do
               .span10.report-item
                 b Photos
+                p View photos by event
 
         - if can?(:index_results, Survey)
           li id="report_surveys"

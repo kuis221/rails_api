@@ -696,7 +696,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Create task'
+        click_js_link 'Create Task'
         within('form#new_task') do
           fill_in 'Title', with: 'Pick up the kidz at school'
           fill_in 'Due at', with: '05/16/2013'

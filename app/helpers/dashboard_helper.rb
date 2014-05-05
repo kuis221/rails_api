@@ -65,11 +65,11 @@ module DashboardHelper
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
       content_tag(:div, class: 'progress') do
-        content_tag(:div, content_tag(:div, number_with_precision(c['executed'], strip_insignificant_zeros: true), class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
-        content_tag(:div, content_tag(:div, number_with_precision(c['scheduled'], strip_insignificant_zeros: true), class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
+        content_tag(:div, content_tag(:div, number_with_precision(c['executed'], strip_insignificant_zeros: true, delimiter: ','), class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, c['executed_percentage']].min}%;") +
+        content_tag(:div, content_tag(:div, number_with_precision(c['scheduled'], strip_insignificant_zeros: true, delimiter: ','), class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{c['scheduled_percentage']}%;") +
         content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true)}</b> GOAL".html_safe), class: 'goal-label')+
+      content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true, delimiter: ',')}</b> GOAL".html_safe), class: 'goal-label')+
       content_tag(:div, class: 'remaining-label') do
         content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true, delimiter: ',')) +
         content_tag(:span, c['kpi'], class: 'kpi-name') +
@@ -81,31 +81,32 @@ module DashboardHelper
   def gva_chart(g)
     today_bar_indicator = ''.html_safe
     if g[:today_percentage]
-      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator", style: "left: #{g[:today_percentage] - 0.5}%")
+      today = number_with_precision(g[:today], strip_insignificant_zeros: true, delimiter: ',')
+      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator has-tooltip", title: "<span class=today-label>TODAY:</span> #{today}", data: {delay: 0}, style: "left: #{g[:today_percentage] - 0.5}%")
     end
-    goal = number_with_precision(g[:goal].value, strip_insignificant_zeros: true)
-    actual = number_with_precision(g[:total_count], strip_insignificant_zeros: true)
+    value_prefix = g[:goal].kpi.present? && g[:goal].kpi.currency? ? '$' : ''
+    goal = number_with_precision(g[:goal].value, strip_insignificant_zeros: true, delimiter: ',')
+    actual = number_with_precision(g[:total_count], strip_insignificant_zeros: true, delimiter: ',')
     actual_percentage = g[:completed_percentage]
-    submitted = number_with_precision(g[:submitted], strip_insignificant_zeros: true)
-    submitted_percentage = g[:submitted_percentage].round
-    rejected = number_with_precision(g[:rejected], strip_insignificant_zeros: true)
-    rejected_percentage = g[:rejected_percentage].round
-    total =  number_with_precision(g[:total_count]+g[:submitted]+g[:rejected], strip_insignificant_zeros: true)
-    content_tag(:div, class: 'chart-bar') do
+    submitted = number_with_precision(g[:submitted], strip_insignificant_zeros: true, delimiter: ',')
+    submitted_percentage = g[:submitted_percentage]
+    rejected = number_with_precision(g[:rejected], strip_insignificant_zeros: true, delimiter: ',')
+    rejected_percentage = g[:rejected_percentage]
+    total =  number_with_precision(g[:total_count]+g[:submitted]+g[:rejected], strip_insignificant_zeros: true, delimiter: ',')
+    bar_tooltip = content_tag(:div, content_tag(:span, 'APPROVED:') + value_prefix + actual, class: 'executed-label') +
+      content_tag(:div, content_tag(:span, 'SUBMITTED:') + value_prefix + submitted, class: 'submitted-label') +
+      content_tag(:div, content_tag(:span, 'REJECTED:') + value_prefix + rejected, class: 'rejected-label')
+
+    content_tag(:div, class: 'chart-bar gva') do
       today_bar_indicator +
-      content_tag(:div, class: 'progress gva') do
-        content_tag(:div, content_tag(:div, actual, class: 'bar-label executed-label'), class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
-        content_tag(:div, content_tag(:div, submitted, class: 'bar-label scheduled-label'), class: 'bar bar-scheduled', style: "width: #{[[100 - g[:completed_percentage], submitted_percentage].min, 0].max}%;") +
-        content_tag(:div, content_tag(:div, rejected, class: 'bar-label rejected-label'), class: 'bar bar-rejected', style: "width: #{[[100 - g[:completed_percentage] - submitted_percentage - rejected_percentage, rejected_percentage].min, 0].max}%;")
+      content_tag(:div, class: 'progress gva has-tooltip', title: bar_tooltip.gsub('"', ''), data: {delay: 0}) do
+        content_tag(:div, '', class: 'bar bar-executed', style: "width: #{[100, g[:completed_percentage]].min}%;") +
+        content_tag(:div, '', class: 'bar bar-scheduled', style: "width: #{[[100 - actual_percentage, submitted_percentage].min, 0].max}%;") +
+        content_tag(:div, '', class: 'bar bar-rejected', style: "width: #{[[100 - actual_percentage - submitted_percentage, rejected_percentage].min, 0].max}%;")
       end +
-      content_tag(:div, content_tag(:div, "<b>#{total}/#{goal}</b> GOAL".html_safe), class: 'goal-label') +
-      content_tag(:div, class: 'remaining-label percentage') do
-        content_tag(:b, "#{actual_percentage.round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, "APPROVED", class: 'percentage') +
-        content_tag(:b, "#{g[:submitted_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, 'SUBMITTED', class: 'percentage') +
-        content_tag(:b, "#{g[:rejected_percentage].round}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
-        content_tag(:span, 'REJECTED', class: 'percentage')
+      content_tag(:div, class: 'progress-label percentage') do
+        content_tag(:b, "#{(actual_percentage+submitted_percentage+rejected_percentage).truncate}<span class=\"normal-text\">%</span>".html_safe, class: 'percentage') +
+        content_tag(:div, "<b>#{value_prefix}#{total}</b> <span class=total-of>OF</span> <b>#{value_prefix}#{goal}</b> GOAL".html_safe, class: 'progress-numbers')
       end
     end
   end

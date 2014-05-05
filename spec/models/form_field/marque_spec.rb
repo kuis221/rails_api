@@ -37,10 +37,12 @@ describe FormField::Marque do
       campaign.activity_types << @activity_type
       venue = FactoryGirl.create(:venue, place: FactoryGirl.create(:place), company: Company.current)
       activity = FactoryGirl.create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
-      ff_brand = FactoryGirl.create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)
+      ff_brand = FactoryGirl.create(:form_field, fieldable: @activity_type, type: 'FormField::Brand', settings: {}, ordering: 1)
       FactoryGirl.create(:activity_result, activity: activity, form_field: ff_brand, value: brand.id)
-      ff_marque = FactoryGirl.create(:form_field_marque, fieldable: @activity_type, settings: {}, ordering: 2)
+      ff_marque = FactoryGirl.create(:form_field, fieldable: @activity_type, type: 'FormField::Marque', settings: {}, ordering: 2)
       activity_result = FactoryGirl.create(:activity_result, activity: activity, form_field: ff_marque)
+
+      ff_marque = FormField.find(ff_marque.id)
 
       options = ff_marque.field_options(activity_result)
       expect(options[:collection]).to be_empty
@@ -54,10 +56,13 @@ describe FormField::Marque do
       campaign.activity_types << @activity_type
       venue = FactoryGirl.create(:venue, place: FactoryGirl.create(:place), company: Company.current)
       activity = FactoryGirl.create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
-      ff_brand = FactoryGirl.create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)
-      FactoryGirl.create(:activity_result, activity: activity, form_field: ff_brand, value: brand.id)
-      ff_marque = FactoryGirl.create(:form_field_marque, fieldable: @activity_type, settings: {}, ordering: 2)
+      ff_brand = FactoryGirl.create(:form_field, type: 'FormField::Brand', fieldable: @activity_type, settings: {}, ordering: 1)
+      activity_result = FactoryGirl.create(:activity_result, activity: activity, form_field: ff_brand, value: brand.id)
+      @activity_type.form_fields.reload
+      ff_marque = FactoryGirl.create(:form_field, type: 'FormField::Marque', fieldable: @activity_type, settings: {}, ordering: 2)
       activity_result = FactoryGirl.create(:activity_result, activity: activity, form_field: ff_marque, value: "#{marque1.id},#{marque2.id}")
+
+      ff_marque = FormField.find(ff_marque.id)
 
       options = ff_marque.field_options(activity_result)
       expect(options[:collection]).to match_array([marque1, marque2])

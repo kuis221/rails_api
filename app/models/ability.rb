@@ -159,6 +159,16 @@ class Ability
          !user.current_company_user.role.has_permission?(:activate, Tag)
       end
 
+      can :gva_report_campaign, Campaign do |campaign|
+        can?(:gva_report, Campaign) &&
+        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      end
+
+      can :event_status_report_campaign, Campaign do |campaign|
+        can?(:event_status, Campaign) &&
+        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      end
+
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
       end

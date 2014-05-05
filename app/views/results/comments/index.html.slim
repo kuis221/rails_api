@@ -1,8 +1,20 @@
+= user_new_feature('results_comments') do
+  h5 COMMENTS REPORT
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/oev9CQqZhVo?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'Get to know your consumers - track what was said at your events by using the right sidebar filter to target specific events and campaigns. Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more in depth info.
+
 .sidebar#resource-filter-column
   #collection-list-filters
   a.btn.btn-primary Save
 
-#main.main
+#main.main.with-details-close-bar
+  = resource_details_bar("You are viewing Comments report. Click to close.")
   .tab-content
     #list-view.tab-pane.active
       #list-tools.row-fluid
