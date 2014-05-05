@@ -2,20 +2,18 @@ class FilteredController < InheritedResources::Base
   include FacetsHelper
   include AutocompleteHelper
 
-  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item
+  helper_method :collection_count, :facets, :page, :total_pages, :each_collection_item, :return_path
   respond_to :json, only: :index
 
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
-  before_filter :set_previous_page, only: [:show]
 
   custom_actions collection: [:filters, :items]
 
-  def set_previous_page
-    if request.env['HTTP_REFERER']
-      session[:previous_page] = request.env['HTTP_REFERER']
-    end
+  def return_path
+    url_to_return = params[:return] || request.env['HTTP_REFERER']
+    url_to_return if url_valid? url_to_return
   end
 
   def filters
@@ -69,7 +67,7 @@ class FilteredController < InheritedResources::Base
 
     def export_list(export)
       @_export = export
-      @_params = @search_params = export.params.merge(per_page: 100)
+      @search_params = export.params.merge(per_page: 100)
       @solr_search = resource_class.do_search(@search_params)
       @collection_count = @solr_search.total
       @total_pages = @solr_search.results.total_pages

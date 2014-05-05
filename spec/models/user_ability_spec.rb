@@ -254,7 +254,6 @@ describe "User" do
           ability.should be_able_to(:create, document)
         end
 
-
         it "should be able to list document in a event if has the permission :index_documents on Event" do
           ability.should_not be_able_to(:documents, event)
           ability.should_not be_able_to(:index_documents, event)
@@ -630,7 +629,7 @@ describe "User" do
           ability.should be_able_to(:venue_performance_module, :dashboard)
         end
       end
-      
+
       #   ______   ____   ____  _____
       #  |      | /    | /    |/ ___/
       #  |      ||  o  ||   __(   \_
@@ -643,27 +642,98 @@ describe "User" do
         it "should be able to deactivate a tag if has the permission :deactivate on Tag" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:remove, tag)
-          
+
           user.role.permission_for(:remove, Tag).save
-          
+
           ability.should be_able_to(:remove, tag)
         end
         it "should be able to activate a tag if has the permission :activate on Tag" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:activate, tag)
-          
+
           user.role.permission_for(:activate, Tag).save
-          
+
           ability.should be_able_to(:activate, tag)
         end
-        
+
         it "should NOT be able to activate a tag if has the permission :remove on Tag but not the :activate permission" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:activate, tag)
-          
+
           user.role.permission_for(:remove, Tag).save
-          
+
           ability.should_not be_able_to(:activate, tag)
+        end
+      end
+
+      #    ____   ___    ____  _     _____     __ __  _____      ____    __ ______  __ __   ____  _     _____
+      #   /    | /   \  /    || |   / ___/    |  |  |/ ___/     /    |  /  ]      ||  |  | /    || |   / ___/
+      #  |   __||     ||  o  || |  (   \_     |  |  (   \_     |  o  | /  /|      ||  |  ||  o  || |  (   \_
+      #  |  |  ||  O  ||     || |___\__  |    |  |  |\__  |    |     |/  / |_|  |_||  |  ||     || |___\__  |
+      #  |  |_ ||     ||  _  ||     /  \ |    |  :  |/  \ |    |  _  /   \_  |  |  |  :  ||  _  ||     /  \ |
+      #  |     ||     ||  |  ||     \    |     \   / \    |    |  |  \     | |  |  |     ||  |  ||     \    |
+      #  |___,_| \___/ |__|__||_____|\___|      \_/   \___|    |__|__|\____| |__|   \__,_||__|__||_____|\___|
+      #
+      describe "GvA reports" do
+        it "should be able to access the GvA report" do
+          ability.should_not be_able_to(:gva_report, Campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+        end
+        it "should be able to view the GvA report for a specific campaign" do
+          campaign = FactoryGirl.create(:campaign)
+          other_campaign = FactoryGirl.create(:campaign)
+          ability.should_not be_able_to(:gva_report, Campaign)
+          ability.should_not be_able_to(:gva_report_campaign, campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+          ability.should_not be_able_to(:gva_report_campaign, campaign)
+
+          User.current.current_company_user.campaigns << campaign
+
+          ability.should be_able_to(:gva_report, Campaign)
+          ability.should be_able_to(:gva_report_campaign, campaign)
+          ability.should_not be_able_to(:gva_report_campaign, other_campaign)
+        end
+      end
+
+      #     ___ __ __    ___  ____   ______       _____ ______   ____  ______  __ __  _____
+      #    /  _]  |  |  /  _]|    \ |      |     / ___/|      | /    ||      ||  |  |/ ___/
+      #   /  [_|  |  | /  [_ |  _  ||      |    (   \_ |      ||  o  ||      ||  |  (   \_
+      #  |    _]  |  ||    _]|  |  ||_|  |_|     \__  ||_|  |_||     ||_|  |_||  |  |\__  |
+      #  |   [_|  :  ||   [_ |  |  |  |  |       /  \ |  |  |  |  _  |  |  |  |  :  |/  \ |
+      #  |     |\   / |     ||  |  |  |  |       \    |  |  |  |  |  |  |  |  |     |\    |
+      #  |_____| \_/  |_____||__|__|  |__|        \___|  |__|  |__|__|  |__|   \__,_| \___|
+      #
+      describe "Event Status report" do
+        it "should be able to access the Event Status report" do
+          ability.should_not be_able_to(:gva_report, Campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+        end
+
+        it "should be able to view the Event Status report for a specific campaign" do
+          campaign = FactoryGirl.create(:campaign)
+          other_campaign = FactoryGirl.create(:campaign)
+          ability.should_not be_able_to(:event_status, Campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, campaign)
+
+          user.role.permission_for(:event_status, Campaign).save
+
+          ability.should be_able_to(:event_status, Campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, campaign)
+
+          User.current.current_company_user.campaigns << campaign
+
+          ability.should be_able_to(:event_status, Campaign)
+          ability.should be_able_to(:event_status_report_campaign, campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, other_campaign)
         end
       end
     end

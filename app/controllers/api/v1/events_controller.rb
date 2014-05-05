@@ -7,6 +7,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 401, "Unauthorized access"
     error 404, "The requested resource was not found"
     error 406, "The server cannot return data in the requested format"
+    error 422, "Unprocessable Entity: The change could not be processed because of errors on the data"
     error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
@@ -247,6 +248,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *have_data*: returns true if data have been entered for the event, otherwise, returns false
+  * *data*: Calculated data based on event results, returned only when have_data is true
+    * *spent_by_impression*: The cost for each impression. The result of total of expenses / number of impressions
+    * *spent_by_interaction*: The cost for each interaction. The result of total of expenses / number of interactions
+    * *spent_by_sample*: The cost for each sample. The result of total of expenses / number of samples
   * *actions*: A list of actions that the user can perform on this event with zero or more of: ["enter post event data", "upload photos", "conduct surveys", "enter expenses", "gather comments"]
   * *place*: On object with the event's venue information with the following attributes
     * *id*: the venue's id
@@ -276,6 +281,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "event_status": "Unsent",
       "summary": "This is a test summary",
       "have_data": true,
+      "data": {
+        spent_by_impression: "6.0"
+        spent_by_interaction: "6.857142857"
+        spent_by_sample: "6.857142857"
+      },
       "actions": [
           "enter post event data",
           "upload photos",
@@ -332,6 +342,164 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  api :PUT, '/api/v1/events/:id/submit', 'Submits a event for approval'
+  param :id, :number, required: true, desc: "Event ID"
+  example <<-EOS
+  Response when the event was successfully submitted
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: true
+    info: "Event successfully approved"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to submit a event that is already submitted
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: false
+    info: "Event cannot transition to submitted from submitted"
+    data: { }
+  }
+  EOS
+  def submit
+    status = 200
+    if resource.unsent? || resource.rejected?
+      begin
+        resource.submit!
+        result = { :success => true,
+                   :info => "Event successfully submitted",
+                   :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to submitted from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:id/approve', 'Mark a event as approved'
+  param :id, :number, required: true, desc: "Event ID"
+  example <<-EOS
+  Response when the event was successfully approved
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: true
+    info: "Event successfully approved"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to approve a event that is already approved
+  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  {
+    success: false
+    info: "Event cannot transition to approved from approved"
+    data: { }
+  }
+  EOS
+  def approve
+    status = 200
+    if resource.submitted?
+      begin
+        resource.approve!
+        result = { :success => true,
+             :info => "Event successfully approved",
+             :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to approved from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:id/reject', 'Mark a event as rejected'
+  param :id, :number, required: true, desc: "Event ID"
+  param :reason, String, required: true, desc: "Rejection reason (required when rejecting a event)"
+  example <<-EOS
+  Response when the event was successfully rejected
+  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  DATA: {
+    reason: 'Please attach some photos of the event'
+  }
+
+  RESPONSE:
+  {
+    success: true
+    info: "Event successfully rejected"
+    data: { }
+  }
+  EOS
+
+  example <<-EOS
+  Response when trying to reject a event that is already rejected
+  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  DATA: {
+    reason: 'Add the invoice for the expenses'
+  }
+  RESPONSE:
+  {
+    success: false
+    info: "Event cannot transition to rejected from rejected"
+    data: { }
+  }
+  EOS
+  def reject
+    status = 200
+    reject_reason = params[:reason].try(:strip)
+    if reject_reason.nil? || reject_reason.empty?
+      status = :unprocessable_entity
+      result = { :success => false,
+                 :info => "Must provide a reason for rejection",
+                 :data => {} }
+    elsif resource.submitted?
+      begin
+        resource.reject!
+        resource.update_column(:reject_reason, reject_reason)
+        result = { :success => true,
+             :info => "Event successfully rejected",
+             :data => {} }
+      rescue AASM::InvalidTransition => e
+        status = :unprocessable_entity
+        result = { :success => false,
+                   :info => resource.errors.full_messages.join("\n"),
+                   :data => {} }
+      end
+    else
+      status = :unprocessable_entity
+      result = { :success => false,
+                   :info => "Event cannot transition to rejected from #{resource.aasm_state}",
+                   :data => {} }
+    end
+    respond_to do |format|
+      format.json { render json: result, status: status  }
+      format.xml { render xml: result, status: status }
+    end
+  end
+
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
   param :id, :number, required: true, desc: "Event ID"
   description <<-EOS
@@ -342,12 +510,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *fields*: a list of fields for the module, the definition of this list is described below.
 
   Each campaign can have a different set of fields that have to be capture for its events. a field returned
-  by the API consists on the following attributes:
+  by the API consists on the ['submit', 'approve', 'submit'].include?(params[:status])
 
   * *id:* the id of the field that have to be used later save the results. Please see the documentation
     for saving a devent. This is not included for "percentage" fields as such fields have to be sent to
     the API as separate fields. See the examples for more detail.
 
+  * *value:* the event's current value for that field. This should be used to pre-populate the field or
   * *value:* the event's current value for that field. This should be used to pre-populate the field or
     to select the correspondent options for the case of radio buttons/checboxes/dropdown.
 
@@ -776,7 +945,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
         result.merge!({segments: resource.segments_results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
       else
         if field.field_type == 'count'
-          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}})
+          result.merge!({segments: field.kpi.kpis_segments.map{|s| {id: s.id, text: s.text, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s.id] : nil)}}})
         end
         r = resource.results_for([field]).first
         result.merge!({id: r.id, value: r.value})

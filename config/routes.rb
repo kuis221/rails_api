@@ -1,5 +1,4 @@
 Brandscopic::Application.routes.draw do
-
   apipie
 
   namespace :api do
@@ -25,12 +24,15 @@ Brandscopic::Application.routes.draw do
             get :form, on: :collection
           end
           resources :tasks, only: [:index]
-          resources :comments, only: [:index, :create]
+          resources :comments, only: [:index, :create, :update, :destroy]
           resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
           end
           get :autocomplete,   on: :collection
           member do
+            put :submit
+            put :reject
+            put :approve
             get :results
             get :members
             post :members, to: "events#add_member"
@@ -100,6 +102,7 @@ Brandscopic::Application.routes.draw do
 
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
+  put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
 
@@ -136,10 +139,20 @@ Brandscopic::Application.routes.draw do
     post :gva, to: 'gva#report'
     get :report_groups, to: 'gva#report_groups'
 
+    resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
+      get :build, on: :member
+      get :rows, on: :member
+      get :filters, on: :member
+      get :share, to: 'reports#share_form', on: :member
+      get :deactivate, on: :member
+      get :activate, on: :member
+      post :preview, on: :member
+    end
+
     # For The KPI report
-    get :kpi_report, to: 'kpi_report#index'
-    post :kpi_report, to: 'kpi_report#report'
-    get :kpi_report_status, to: 'kpi_report#status'
+    get :kpi_report, to: 'kpi_reports#index'
+    post :kpi_report, to: 'kpi_reports#report'
+    get :kpi_report_status, to: 'kpi_reports#status'
 
     get :event_status, to: 'event_status#index'
     post :event_status, to: 'event_status#report'

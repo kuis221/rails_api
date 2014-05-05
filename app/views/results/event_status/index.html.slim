@@ -1,6 +1,16 @@
-= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+= user_new_feature('results_event_status_index') do
+  h5 EVENT STATUS REPORT
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/aEfDAXnbj5g?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'This section allows you to quickly track your Event Status. Use the bar graph below for an at-a-glance visual representation of how many events have been scheduled and executed - and how many more you need to go before hitting  your overall campaign goal. Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
 
-.tab-content
+.tab-content.with-details-close-bar
+  = resource_details_bar("You are viewing the Event Status report. Click to close.")
   #list-view.tab-pane.active
     .details_box.first
       h3 EVENT STATUS
@@ -10,14 +20,17 @@
   #report-container
     #kpis-trends-module
       .details_box
-        p.text-center Select a campaign from the list above
+
+= render partial: 'help_tutorial'
 
 javascript:
   jQuery(function(){
     $('#report_campaign_id').on('change', function(e){
       if ( $(this).val() ){
-        $('#kpis-trends-module .details_box').empty().addClass('loading-spinner');
+        $('#kpis-trends-module .details_box').empty().removeClass('empty-state').addClass('loading-spinner');
         $(this.form).submit();
+      } else {
+        $('#kpis-trends-module .details_box').empty().append( $('<div class="text-center empty-state">').text('Select a campaign from the list above') );
       }
     });
     $(window).ready(function(){

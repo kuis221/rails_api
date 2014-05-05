@@ -1,0 +1,10 @@
+= simple_form_for([:results, resource], remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :name, :input_html => {class: 'input-xlarge'}
+    = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
+
+  .form-actions
+    = f.button :submit, class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = f.button :button, 'Cancel', class: 'btn-cancel'

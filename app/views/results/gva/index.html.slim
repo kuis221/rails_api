@@ -1,13 +1,24 @@
-= render_navigation(renderer: :bootstrap, level: 2, skip_if_empty: true, nav_class: 'nav-tabs')
+= user_new_feature('results_gva_index') do
+  h5 GOALS VS. ACTUALS
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/5shx6FRkdmM?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'The Goals vs. Actual section allows you to quickly and easily track campaign goals. Monitor overall campaign goals, place specific goals, and staff goals - all by toggling between the three buttons below.  Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
 
-.tab-content
+.tab-content.with-details-close-bar
+  = resource_details_bar("You are viewing the Goals vs. Actuals report. Click to close.")
   #list-view.tab-pane.active
     .details_box.tool-box.first
       h3 GOALS VS. ACTUAL
       .pull-left
         = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'gva-report' } do |f|
-          = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
+          = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
           = hidden_field_tag :group_by, params[:group_by].present? ? params[:group_by] : 'campaign'
+          = hidden_field_tag :view_style, params[:view_style].present? ? params[:view_style] : 'graph'
 
       .group-by-box
         span#group-by-title GROUP BY:
@@ -16,13 +27,23 @@
           a.btn.place class="#{params[:group_by]=='place' ? 'active' : nil}" href="#" data-type="place" data-toggle="tab" title="Place" Place
           a.btn.staff class="#{params[:group_by]=='staff' ? 'active' : nil}" href="#" data-type="staff" data-toggle="tab" title="Staff" Staff
 
+      .view-style-box
+        #view-style.btn-group
+          a.btn.graph class="#{params[:view_style].nil? || params[:view_style]=='graph' ? 'active' : nil}" href="#" data-type="graph" data-toggle="tab" title="Graph View"
+          a.btn.table class="#{params[:view_style]=='table' ? 'active' : nil}" href="#" data-type="table" data-toggle="tab" title="Table View"
+
+      .export-xls.pull-right
+        = link_to '', '#', :id => 'download-gva-btn', class: 'btn download', title: 'Download'
+
   #report-container
-    #kpis-trends-bars
-      .details_box.content
-        p.text-center Select a campaign from the list above
+    #kpis-trends-bars.details_box.content
+      p.text-center.empty-state Select a campaign from the list above
+
+= render partial: 'help_tutorial'
 
 javascript:
   var currentView = null;
+
   submitForm = function() {
     view =  $('#report_campaign_id').val() + $("#group_by").val();
     if (view != currentView) {
@@ -30,15 +51,27 @@ javascript:
       if ( $('#report_campaign_id').val() && $("#group_by").val() == 'campaign'){
         $('form#gva-report').submit();
       } else if ( $('#report_campaign_id').val() ) {
-        $('#report-container').load('#{results_report_groups_path}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
+        $('#report-container').load('#{results_report_groups_path}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val()+'&view_style='+$("#view_style").val());
+      } else {
+        $('#download-gva-btn').attr('disabled', true);
       }
     }
   }
+
   $('#report_campaign_id').on('change', function(e){
-    $('#kpis-trends-bars .content').empty().addClass('loading-spinner');
-    submitForm();
-    history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
-    'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val());
+    if ($('#report_campaign_id').val() != '') {
+      $('#download-gva-btn').attr('disabled', false);
+      $('#kpis-trends-bars .content')
+      $('#kpis-trends-bars').empty().addClass('loading-spinner');
+      submitForm();
+      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
+      'campaign_id='+$(this).val()+'&group_by='+$("#group_by").val()+'&view_style='+$("#view_style").val());
+    } else {
+      $('#download-gva-btn').attr('disabled', true);
+      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +
+      'campaign_id=&group_by='+$("#group_by").val()+'&view_style='+$("#view_style").val());
+      $('#kpis-trends-bars').empty().addClass("details_box content empty-state").prepend('<p class="text-center empty-state">Select a campaign from the list above');
+    }
   });
 
   $('#group-by-criterion a').on('click', function(e){
@@ -46,6 +79,21 @@ javascript:
     $(this).addClass('active');
     $("#group_by").val($(this).data('type'));
     $('#report_campaign_id').trigger('change');
+  });
+
+  $('#view-style a').on('click', function(e){
+    $('.accordion-body.in').collapse('hide');
+    $('#view-style a').removeClass('active');
+    $(this).addClass('active');
+    $("#view_style").val($(this).data('type'));
+    $('.view-style').addClass('hidden');
+    $('#'+$(this).data('type')+'-view').removeClass('hidden');
+  });
+
+  $('#download-gva-btn').on('click', function(e){
+    if ($('#report_campaign_id').val()) {
+      $.get('#{results_gva_path(format: :xls)}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
+    }
   });
 
   $(window).on('popstate', function(){
@@ -58,11 +106,14 @@ javascript:
         pair = vars[i].split('=')
         if (pair[0] == 'campaign_id') {
           $('#report_campaign_id').val(pair[1]).trigger('liszt:updated');
-
         } else if (pair[0] == 'group_by') {
           $("#group_by").val(pair[1]);
           $('#group-by-criterion a.active').removeClass('active');
           $('#group-by-criterion a.'+pair[1]).addClass('active');
+        } else if (pair[0] == 'view_style') {
+          $("#view_style").val(pair[1]);
+          $('#view-style a.active').removeClass('active');
+          $('#view-style a.'+pair[1]).addClass('active');
         }
       }
     }

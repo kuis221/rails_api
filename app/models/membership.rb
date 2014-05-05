@@ -58,6 +58,8 @@ class Membership < ActiveRecord::Base
       if memberable.is_a?(Area)
         Rails.cache.delete("user_accessible_locations_#{company_user_id}")
         Rails.cache.delete("user_accessible_places_#{company_user_id}")
+      elsif memberable.is_a?(Campaign)
+        Rails.cache.delete("user_accessible_campaigns_#{company_user_id}")
       end
       true
     end

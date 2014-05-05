@@ -16,7 +16,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                         <p>'+I18n.translate('inputs.attached_asset.select_file.'+object.form_field.class.name.split('::').last.downcase, browse: '<a href="#" class="file-browse">Browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="'+max_file_size.to_s+'" /></a>')+'</p>
                         <p class="divider">OR</p>
                         <p>Drag and drop file here to upload</p>
-                        <p class="small">Maximun upload file size: 10MB</p>
+                        <p class="small">Maximum upload file size: 10MB</p>
                         <a href="#" class="cancel-upload"'+ (object.attached_asset.present? ? '' : 'style="display: none"') + '>Cancel</a>
                       </div>
                       <div class="attachment-uploading-view" style="display: none">

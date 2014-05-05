@@ -1,5 +1,5 @@
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing team details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing team details. Click to close.")
 
   .details_box.padding-top-close-bar
     h2= resource.name
@@ -23,6 +23,8 @@
     #team-members-list
       = render 'members'
     = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:edit, resource)
+
+= render partial: 'help_tutorial'
 
 javascript:
   $(document).on('teams:change', function(){

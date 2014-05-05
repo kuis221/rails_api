@@ -70,7 +70,7 @@ feature "BrandPortfolios", js: true, search: true do
     scenario 'allows the user to create a new portfolio' do
       visit brand_portfolios_path
 
-      click_js_button 'New Brand portfolio'
+      click_js_button 'New Brand Portfolio'
 
       within("form#new_brand_portfolio") do
         fill_in 'Name', with: 'new portfolio name'

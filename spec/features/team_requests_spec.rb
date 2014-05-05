@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Teams", js: true, search: true do
+feature "Teams", js: true do
   before do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     sign_in @user
@@ -11,7 +11,7 @@ feature "Teams", js: true, search: true do
     Warden.test_reset!
   end
 
-  feature "/teams" do
+  feature "/teams", search: true  do
     scenario "GET index should display a list with the teams" do
       teams = [
         FactoryGirl.create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: @company.id),
@@ -142,12 +142,11 @@ feature "Teams", js: true, search: true do
         fill_in 'Description', with: 'edited team description'
         click_js_button 'Save'
       end
+      ensure_modal_was_closed
 
-      find('h2', text: 'edited team name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited team name')
       expect(page).to have_selector('div.description-data', text: 'edited team description')
     end
-
 
     scenario 'allows the user to add the users to the team' do
       team = FactoryGirl.create(:team, company_id: @user.current_company.id)
@@ -159,7 +158,6 @@ feature "Teams", js: true, search: true do
       expect(page).to_not have_content('Fulanito')
 
       click_js_link('Add Team Member')
-
 
       within visible_modal do
         find("#staff-member-user-#{company_user.id}").click_js_link('Add')

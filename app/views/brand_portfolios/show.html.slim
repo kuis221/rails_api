@@ -1,5 +1,5 @@
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing brand portfolio details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing brand portfolio details. Click to close.")
 
   .details_box.padding-top-close-bar
     h2= resource.name
@@ -23,6 +23,8 @@
     #brands-list
       = render 'brands'
     = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'  if can?(:edit, resource)
+
+= render partial: 'help_tutorial'
 
 javascript:
   $(document).on('brand_portfolios:change', function(){

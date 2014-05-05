@@ -2,7 +2,7 @@
   = javascript_include_tag "jquery.campaignFormBuilder"
 
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing campaign details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing campaign details. Click to close.")
 
   .details_box.padding-top-close-bar
     h2= resource.name
@@ -75,11 +75,13 @@
         #documents_tab.tab-pane
 
   - if can?(:view_event_form, resource)
-    .details_box
+    .details_box.post-event-form
       h3 POST EVENT FORM
 
       #post-event-form-content
         = render 'post_event_form'
+
+= render partial: 'help_tutorial'
 
 javascript:
   $('#campaign-tabs a').click(function (e) {

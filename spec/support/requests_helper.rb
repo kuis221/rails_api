@@ -49,6 +49,13 @@ module CapybaraBrandscopicHelpers
     wait_for_ajax
   end
 
+  def select_from_autocomplete(selector, text)
+    field = find_field(selector)
+    page.execute_script %Q{$('##{field['id']}').val('#{text}').keydown()}
+    find('ul.ui-autocomplete li.ui-menu-item a', match: :first).click
+  end
+
+
   def select2(item_text, options)
     select_name = options[:from]
     select2_container = first("label", text: select_name).find(:xpath, '..').find(".select2-container")
@@ -84,6 +91,13 @@ module CapybaraBrandscopicHelpers
 
   def object_row(object)
     find("tr#{object.class.name.underscore.downcase}-#{object.id}")
+  end
+
+  def spreadsheet_from_last_export
+    require "rexml/document"
+    require 'open-uri'
+    file = open(URI.parse(ListExport.last.file.url(:original, timestamp: false)))
+    yield REXML::Document.new(file)
   end
 end
 
@@ -144,6 +158,12 @@ module RequestsHelper
   # Helpers for events section
   def event_team_member(member)
     find('#event-team-members #event-member-'+member.id.to_s)
+  end
+
+  def add_permissions(permissions)
+    permissions.each do |p|
+      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+    end
   end
 end
 

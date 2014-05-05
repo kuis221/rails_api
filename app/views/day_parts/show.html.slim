@@ -1,5 +1,5 @@
 .row-fluid.with-details-close-bar
-  = resource_details_bar("Viewing Day Part Details", collection_path)
+  = resource_details_bar("Viewing Day Part Details")
 
   .details_box.padding-top-close-bar
     h2= resource.name
@@ -18,14 +18,14 @@
       = link_to '', edit_day_part_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
-  .details_box
+  #time_ranges.details_box
     h3 TIME RANGES
 
     #day-part-days-list
       = render 'day_items'
 
     = link_to '', new_day_part_day_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Time' if can?(:edit, resource)
-
+= render partial: 'help_tutorial'
 javascript:
   $(document).on('day_parts:change', function(){
     window.location.reload(true);

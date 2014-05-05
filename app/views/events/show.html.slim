@@ -1,7 +1,31 @@
 - can_edit = can?(:update, resource)
 - can_tasks = can?(:tasks, resource)
+
+- if resource.approved?
+  = user_new_feature('event_details_approved') do
+    h5 EVENT DETAILS
+    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/SOSswwvDYGI?rel=0" data-width="640" data-height="360"
+      img src="/assets/video_arrow.png" /
+    .feature-description
+      p
+        'You are viewing the Event Details page for an executed event. Scroll down the page to view post event data, check out pictures and review comments. Click on the video to the left for a quick overview or visit our
+        a> href="http://support.brandscopic.com" target="_blank" support site
+        | for more information about this section.
+- else
+  = user_new_feature('event_details_scheduled') do
+    h5 EVENT DETAILS
+    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/-6fVKhvXIhM?rel=0" data-width="640" data-height="360"
+      img src="/assets/video_arrow.png" /
+    .feature-description
+      p
+        'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
+        a> href="http://support.brandscopic.com" target="_blank" support site
+        | for more information about this section.
+
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing event details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing event details. Click to close.")
 
   .details_box
     - unless resource.place.nil? or resource.place.latitude.nil?
@@ -59,7 +83,7 @@
     #event-tasks.details_box
 
       .pull-left
-        = link_to 'Create task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
+        = link_to 'Create Task', new_event_task_path(resource), {remote: true, class: 'btn btn-primary'} if can? :create_task, resource
       #event-tasks-counters.pull-right
         = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
 

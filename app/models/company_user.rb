@@ -20,6 +20,7 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :role
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
+  has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
 
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
@@ -31,7 +32,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign' do
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', after_add: :campaigns_changed do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
@@ -134,14 +135,16 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_campaign_ids
-    @accessible_campaign_ids ||= if is_admin?
-      company.campaign_ids
-    else
-      (
-        campaign_ids +
-        Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).map(&:id) +
-        Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).map(&:id)
-      ).uniq
+    @accessible_campaign_ids ||= Rails.cache.fetch("user_accessible_campaigns_#{self.id}", expires_in: 10.minutes) do
+      if is_admin?
+        company.campaign_ids
+      else
+        (
+          campaign_ids +
+          Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
+          Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
+        ).uniq
+      end
     end
   end
 
@@ -203,6 +206,15 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
+  def dismissed_alert?(alert, version=1)
+    alerts.where(name: alert, version: version).any?
+  end
+
+  def dismiss_alert(alert, version=1)
+    alerts.find_or_create_by_name_and_version(alert, version)
+  end
+
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
@@ -239,4 +251,11 @@ class CompanyUser < ActiveRecord::Base
       end
     end
   end
+
+
+  private
+    def campaigns_changed(campaign)
+      @accessible_campaign_ids = nil
+      Rails.cache.delete("user_accessible_campaigns_#{self.id}")
+    end
 end

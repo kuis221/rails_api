@@ -1,3 +1,5 @@
+= render partial: 'video_tutorial'
+
 .sidebar#resource-filter-column
   #collection-list-filters
   a.btn.btn-primary Save
@@ -8,6 +10,7 @@
     .link-list
       ul id="#{controller_name}-list"
 
+= render partial: 'help_tutorial'
 
 javascript:
   $('#collection-list-filters').filteredList({

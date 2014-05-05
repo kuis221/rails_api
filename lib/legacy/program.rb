@@ -17,6 +17,8 @@
 #
 
 class Legacy::Program  < Legacy::Record
+  self.table_name = "legacy_programs"
+
   has_and_belongs_to_many :accounts
   has_many      :events, inverse_of: :program
   belongs_to    :brand

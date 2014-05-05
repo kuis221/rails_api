@@ -23,7 +23,6 @@ window.CampaignFormBuilder = {
 				@saveOrdering()
 		}
 
-
 		$(document).on 'kpis:create', (e, kpi) =>
 			@_addFieldToForm @_kpiToField(kpi)
 			@kpis.push kpi
@@ -50,7 +49,7 @@ window.CampaignFormBuilder = {
 			e.preventDefault()
 			element = $(e.target).closest('.field')
 			field = element.data('field')
-			if field.options.kpi_id? 
+			if field.options.kpi_id?
 				bootbox.confirm "Deleting this field will deactivate the KPI associated to it<br/>&nbsp;<p>Do you want to remove it?</p>", (result) =>
 					if result
 						if field.options.module == 'custom'
@@ -123,7 +122,7 @@ window.CampaignFormBuilder = {
 			success: (reponse) =>
 				@_addFieldToForm reponse.field
 		}
-		
+
 	deactivateActivityType: (activity_type_id) ->
 		$.ajax "#{@options.url}/activity_type", {
 			method: 'DELETE',
@@ -175,7 +174,6 @@ window.CampaignFormBuilder = {
 					if not @modules[kpi.module]?
 						module = @modules[kpi.module] = $.extend({}, FormModule, {id: kpi.module, icon: kpi.module, label: kpi.module_name})
 
-
 		@
 
 	formFields: () ->
@@ -199,7 +197,7 @@ window.CampaignFormBuilder = {
 		position = field.offset()
 		@attributesPanel.css {top: position.top + 'px', left: (position.left + field.outerWidth())+'px', display: 'block'}
 
-		$(document).on 'click.fbuidler', (e) => 
+		$(document).on 'click.fbuidler', (e) =>
 			$(document).off 'click.fbuidler'
 			@attributesPanel.hide()
 

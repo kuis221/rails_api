@@ -1,5 +1,16 @@
+= user_new_feature('venue_details') do
+  h5 VENUE DETAILS
+  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/79Yc_AgNzMc?rel=0" data-width="640" data-height="360"
+    img src="/assets/video_arrow.png" /
+  .feature-description
+    p
+      'You are now viewing the Venue Details page. This page provides a variety of important information about a specific venue to help give you a thorough snapshot of your account's performance. Learn about demographics, average impressions, bar spend, and much more - all by scrolling down the page! Click on the video to the left for a quick overview or visit our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
+
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing venue details. Click to close.", collection_path)
+  = resource_details_bar("You are viewing venue details. Click to close.")
 
   .details_box
     - unless resource.latitude.nil?
@@ -86,7 +97,7 @@
                     span= number_to_currency(resource.avg_impressions_cost, precision: 2)
                     = " Cost/Impression"
 
-      - if resource.persisted? && can?(:view_kpis, resource)
+      - if resource.persisted? && can?(:view_kpis, resource) && !is_demographic_empty?(resource.overall_graphs_data[:gender])
         #demographics.row-fluid
           .span6
             #gender-graph.row-fluid
