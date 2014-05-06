@@ -77,6 +77,8 @@ class Ability
 
       can :edit_data, Event
 
+      can :access, :results
+
     # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
