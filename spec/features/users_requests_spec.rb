@@ -125,22 +125,28 @@ feature "Users", :js => true do
       scenario "should be able to assign areas to the user" do
         company_user = FactoryGirl.create(:company_user, company_id: @company.id)
         area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
+        area2 = FactoryGirl.create(:area, name: 'Los Angeles Area', company: @company)
         visit company_user_path(company_user)
 
         click_js_link 'Add Area'
 
         within visible_modal do
+          fill_in 'place-search-box', with: 'San'
+          expect(page).to have_selector("li#area-#{area.id}")
+          expect(page).to have_no_selector("li#area-#{area2.id}")
+          expect(page).to have_content('San Francisco Area')
+          expect(page).to have_no_content('Los Angeles Area')
           find("#area-#{area.id}").click_js_link('Add Area')
-          expect(page).to have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
+          expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
         end
         close_modal
 
         # Re-open the modal to make sure it's not added again to the list
         click_js_link 'Add Area'
         within visible_modal do
-          expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
+          expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the user
+          expect(page).to have_selector("#area-#{area2.id}")
         end
-
         close_modal
 
         # Ensure the area now appears on the list of areas

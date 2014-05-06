@@ -139,25 +139,31 @@ feature "Campaigns", js: true, search: true do
     scenario "should be able to assign areas to the campaign" do
       campaign = FactoryGirl.create(:campaign, company: @company)
       area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
+      area2 = FactoryGirl.create(:area, name: 'Los Angeles Area', company: @company)
       visit campaign_path(campaign)
 
       tab = open_tab('Places')
-      within tab do
-        click_js_link 'Add Places'
-      end
-
-      within visible_modal do
-        find("#area-#{area.id}").click_js_link('Add Area')
-        expect(page).to have_no_selector("#area-#{area.id}")   # The area was removed from the available areas list
-      end
-      close_modal
 
       click_js_link 'Add Places'
 
       within visible_modal do
-        expect(page).to have_no_selector("#area-#{area.id}")   # The area does not longer appear on the list after it was added to the user
+        fill_in 'place-search-box', with: 'San'
+        expect(page).to have_selector("li#area-#{area.id}")
+        expect(page).to have_no_selector("li#area-#{area2.id}")
+        expect(page).to have_content('San Francisco Area')
+        expect(page).to have_no_content('Los Angeles Area')
+        find("#area-#{area.id}").click_js_link('Add Area')
+        expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
+      close_modal
 
+      # Re-open the modal to make sure it's not added again to the list
+      click_js_link 'Add Places'
+
+      within visible_modal do
+        expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the user
+        expect(page).to have_selector("#area-#{area2.id}")
+      end
       close_modal
 
       within tab do

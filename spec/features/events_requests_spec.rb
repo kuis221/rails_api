@@ -517,17 +517,30 @@ feature 'Events section' do
         event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: company), company: company)
         pablo = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: company.id, role_id: company_user.role_id)
         pablo_user = pablo.company_users.first
+        anonymous = FactoryGirl.create(:user, first_name:'Anonymous', last_name:'User', email: 'anonymous@gmail.com', company_id: company.id, role_id: company_user.role_id)
+        anonymous_user = anonymous.company_users.first
         Sunspot.commit
 
         visit event_path(event)
 
         click_js_link 'Add Team Member'
         within visible_modal do
-          expect(page).to have_content('Pablo')
-          expect(page).to have_content('Baltodano')
+          fill_in 'staff-search-item', with: 'Pab'
+          expect(page).to have_selector("li#staff-member-user-#{pablo_user.id}")
+          expect(page).to have_no_selector("li#staff-member-user-#{anonymous_user.id}")
+          expect(page).to have_content('Pablo Baltodano')
+          expect(page).to have_no_content('Anonymous User')
           click_js_link("add-member-btn-#{pablo_user.id}")
 
           expect(page).to have_no_selector("li#staff-member-user-#{pablo_user.id}")
+        end
+        close_modal
+
+        # Re-open the modal to make sure it's not added again to the list
+        click_js_link 'Add Team Member'
+        within visible_modal do
+          expect(page).to have_no_selector("#staff-member-user-#{pablo_user.id}") # The user does not longer appear on the list after it was added to the event's team
+          expect(page).to have_selector("#staff-member-user-#{anonymous_user.id}")
         end
         close_modal
 
