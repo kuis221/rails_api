@@ -36,7 +36,7 @@ SimpleNavigation::Configuration.run do |navigation|
     options.push([:teams, 'Teams', teams_path, highlights_on: %r(^/teams.*)]) if can?(:index, Team)
     options.push([:roles, 'Roles', roles_path, highlights_on: %r(^/roles.*)]) if can?(:index, Role)
     options.push([:campaigns, 'Campaigns', campaigns_path, highlights_on: %r(^/campaigns.*)]) if can?(:index, Campaign)
-    options.push([:activity_types, 'Active Types', activity_types_path, highlights_on: %r(^/activity_types.*)]) if can?(:index, ActivityType)
+    options.push([:activity_types, 'Activity Types', activity_types_path, highlights_on: %r(^/activity_types.*)]) if can?(:index, ActivityType)
     options.push([:areas, 'Areas', areas_path, highlights_on: %r(^/areas.*)]) if can?(:index, Area)
     options.push([:brand_portfolios, 'Brand Portfolios', brand_portfolios_path, highlights_on: %r(^/brand_portfolios.*)]) if can?(:index, BrandPortfolio)
     options.push([:date_ranges, 'Date Ranges', date_ranges_path, highlights_on: %r(^/date_ranges.*)]) if can?(:index, DateRange)

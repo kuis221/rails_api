@@ -5,6 +5,8 @@ class Results::ReportsController < InheritedResources::Base
 
   load_and_authorize_resource except: [:index]
 
+  before_filter :autorize_results, only: [:index]
+
   helper_method :return_path
 
   # This helper provide the methods to activate/deactivate the resource
@@ -102,5 +104,9 @@ class Results::ReportsController < InheritedResources::Base
       else
         collection_path
       end
+    end
+
+    def autorize_results
+      authorize! :access, :results
     end
 end

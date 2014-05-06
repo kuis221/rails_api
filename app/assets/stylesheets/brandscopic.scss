@@ -4568,6 +4568,7 @@ body.roles{
 			overflow: hidden;
 
 			.results-box-container {
+				float: right;
 				.venues-data-column {
 					display: inline-block;
 					vertical-align: top;
@@ -4575,6 +4576,9 @@ body.roles{
 					float: left;
 					margin-left: 0;
 					width: 137px;
+					&.spent-box{
+						width: 157px;
+					}
 				}
 			}
 
@@ -4588,7 +4592,7 @@ body.roles{
 				@include box-sizing(border-box);
 				float: left;
 				text-align: center;
-				width: 55%;
+				width: auto;
 
 				#new-venue-btn {
 					margin-top: 10px;

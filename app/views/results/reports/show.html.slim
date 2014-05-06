@@ -30,6 +30,7 @@
     - if can?(:edit, resource)
       .text-left
         = link_to 'Edit', build_results_report_path(resource), {class: 'btn btn-primary btn-edit-report', :id => 'edit-report-btn'}
+    .clearfix
 
     #report-container
       = render partial: 'report_html', locals: { skip_report_rows: true }
