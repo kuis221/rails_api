@@ -978,9 +978,6 @@ body.app-layout{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
 		}
-		&.map{
-			border-left: 1px solid $buttons-border;
-		}
 	}
 }
 
@@ -3734,14 +3731,29 @@ body.company_users{
 		.campaigns-group-body{
 			a.icon-plus-sign:before{
 				margin: 15px 0 10px 15px;
+				top: 0;
 			}
 		}
 		margin-bottom: 20px;
 
 		.campaigns-list {
-			padding: 20px 10px;
+			padding: 20px 0 0 10px;
+			width: auto;
 			.user-campaign{
-				margin-left: 5px;
+				margin-left: 0;
+				padding: 10px 25px 15px 7px;
+				width: 33%;
+				.pull-left{
+					width: 85%;
+				}
+				.pull-right{
+					a.icon-remove-sign:before{
+						font-size: 16px;
+					}
+				}
+			}
+			&+.row-fluid{
+				height: 65px;
 			}
 		}
 	}
