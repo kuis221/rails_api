@@ -36,7 +36,7 @@ javascript:
   $('.modal .places-autocomplete').placesAutocomplete();
 
   $('#place-search-box').on('keyup', function () {
-    var value = $(this).val();
+    var value = $(this).val().toLowerCase();
     $("#areas-list > li:not(.empty-list-message)").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();

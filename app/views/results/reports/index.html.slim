@@ -70,7 +70,7 @@
                   b Surveys
                   p View survey results by event
 
-    - if @reports.any?
+    - if can?(:index, Report) && @reports.any? 
       h3 CUSTOM REPORTS
       .link-list
         ul#custom-reports-list.reports-list

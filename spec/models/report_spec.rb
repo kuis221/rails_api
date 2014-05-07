@@ -83,6 +83,9 @@ describe Report do
     end
 
     it "should return reports shared with the user" do
+      other_report = FactoryGirl.create(:report, company: company, sharing: 'owner')
+      other_report.update_attribute(:created_by_id, user.id+100)
+      p other_report.reload.inspect
       other_user = FactoryGirl.create(:company_user, company: company, role: user.role)
       team = FactoryGirl.create(:team, company: company)
       team.users << user

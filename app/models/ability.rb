@@ -115,13 +115,22 @@ class Ability
       end
 
       # Custom Reports
-      can :manage, Report do |report|
-        report.created_by_id == user.id
+      # can :manage, Report do |report|
+      #   report.created_by_id == user.id
+      # end
+
+      can [:build, :preview, :rows], Report do |report|
+        can? :edit, report
       end
 
-      cannot :create, Report unless user.current_company_user.role.has_permission?(:create, Report)
+      can [:rows], Report do |report|
+        can? :edit, report
+      end
 
-      can :access, :results if user.current_company_user.role.has_permission?(:create, Report) ||
+      # cannot :create, Report unless user.current_company_user.role.has_permission?(:create, Report)
+
+      can :access, :results if user.current_company_user.role.has_permission?(:index, Report) ||
+                            user.current_company_user.role.has_permission?(:index_results, EventData) ||
                             user.current_company_user.role.has_permission?(:index_results, Comment) ||
                             user.current_company_user.role.has_permission?(:index_results, EventExpense) ||
                             user.current_company_user.role.has_permission?(:index_results, Survey) ||
@@ -129,9 +138,19 @@ class Ability
                             user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
                             user.current_company_user.role.has_permission?(:event_status, Campaign)
 
-      can [:read, :rows, :filters], Report do |report|
-        report.created_by_id == user.id ||
-        Report.accessible_by_user(user.current_company_user).where(id: report.id).first == report
+      can [:build, :preview, :update], Report do |report|
+        user.current_company_user.role.has_permission?(:create, Report) &&
+        report.created_by_id == user.id
+      end
+
+      cannot [:edit, :update, :show, :share], Report do |report|
+        report.created_by_id != user.id &&
+        Report.accessible_by_user(user.current_company_user).where(id: report.id).none?
+      end
+
+      can [:share_form], Report do |report|
+        user.current_company_user.role.has_permission?(:share, Report) &&
+        Report.accessible_by_user(user.current_company_user).where(id: report.id).any?
       end
 
       # Event Data
@@ -156,10 +175,6 @@ class Ability
       cannot [:show, :edit], Event do |event|
         !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
         !user.current_company_user.allowed_to_access_place?(event.place)
-      end
-
-      cannot [:edit, :update, :share_form, :build] do |report|
-        report.created_by_id != user.id
       end
 
       cannot :activate, Tag do |tag|

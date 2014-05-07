@@ -29,7 +29,7 @@ class FormField::Photo < FormField
 
   def format_html(result)
     if result.attached_asset.present? && result.attached_asset.processed?
-      "<img src=\"#{result.attached_asset.file.url(:thumbnail)}\" alt=\"\" />".html_safe
+      "<a href=\"#{result.attached_asset.download_url}\" title=\"Download\"><img src=\"#{result.attached_asset.file.url(:thumbnail)}\" alt=\"\" /></a>".html_safe
     elsif result.attached_asset.present?
       "The photo is being processed. It will be available soon.."
     end
