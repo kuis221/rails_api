@@ -471,6 +471,8 @@ class Event < ActiveRecord::Base
             end
           end
 
+          with :id, params[:id] if params.has_key?(:id) and params[:id].present?
+
           with :location,    params[:location] if params.has_key?(:location) and params[:location].present?
           with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
 

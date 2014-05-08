@@ -83,16 +83,18 @@ describe CompanyUsersController, search: true do
 
   describe "GET 'notifications'" do
     it "should return a notification if a user is added to a event's team" do
-      event = FactoryGirl.create(:event, company: @company)
-      event.users << @company_user
-      Sunspot.commit
+      Timecop.freeze do
+        event = FactoryGirl.create(:event, company: @company)
+        event.users << @company_user
+        Sunspot.commit
 
-      get 'notifications', id: @company_user.to_param, format: :json
+        get 'notifications', id: @company_user.to_param, format: :json
 
-      response.should be_success
+        response.should be_success
 
-      notifications = JSON.parse(response.body)
-      notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => event_path(event, notifid: Notification.last.id), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event", "event_id" => event.id})
+        notifications = JSON.parse(response.body)
+        notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => events_path(new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event"})
+      end
     end
 
     it "should return a notification if the user have a late event recap" do

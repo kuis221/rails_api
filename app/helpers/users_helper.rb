@@ -88,7 +88,16 @@ module UsersHelper
       })
     end
 
-    user.notifications.find_each do |notification|
+    new_events = user.notifications.new_events.count
+    if new_events > 0
+      alerts.push({
+        message: I18n.translate("notifications.new_events", count: new_events), level: 'grey',
+        url: events_path(new_at: Time.now.to_i, start_date: '', end_date: ''),
+        unread: true, icon: 'icon-notification-event', type: 'new_event'
+      })
+    end
+
+    user.notifications.except_new_events.find_each do |notification|
       alerts.push({
         message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level,
         url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}",

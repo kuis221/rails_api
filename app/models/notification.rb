@@ -21,6 +21,8 @@ class Notification < ActiveRecord::Base
   serialize :message_params
   serialize :extra_params
 
+  scope :new_events, -> { where(message: 'new_event') }
+  scope :except_new_events, -> { where('message <> \'new_event\'') }
 
   def self.new_campaign(user, campaign)
     path = Rails.application.routes.url_helpers.campaign_path(campaign)
