@@ -162,7 +162,7 @@ RSpec::Matchers.define :have_notification do |text, filter={}|
     notifications  = page.all("#notifications .notifications-container li", text: text)
 
     if notifications.count != filter[:count]
-      @errors.push "Expected to have #{1} #{filter[:count] == 1 ? 'notification' : 'notifications'} but have #{notifications.count}"
+      @errors.push "#{filter[:count]} #{filter[:count] == 1 ? 'notification' : 'notifications'} with text \"#{text}\" but have #{notifications.count}"
     end
 
     @errors.empty?
@@ -170,12 +170,12 @@ RSpec::Matchers.define :have_notification do |text, filter={}|
 
 
   failure_message_for_should do |actual|
-    message = @errors.join("\n")
+    message = "Expected to have " + @errors.join("\n")
     message
   end
 
   failure_message_for_should_not do |actual|
-    message = @errors.join("\n")
+    message = "Expected to not have #{filter[:count] == 1 ? 'a notification' :  filter[:count].to_s + ' notifications'} with text \"#{text}\", but it did"
     message
   end
 

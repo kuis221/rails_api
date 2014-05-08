@@ -158,11 +158,20 @@ class EventsController < FilteredController
         # Get a list of new events notifications to obtain the list of ids, then delete them as they are already seen, but
         # store them in the session to allow the user to navigate, paginate, etc
         if params.has_key?(:new_at) && params[:new_at]
-          @search_params[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
-            notifications = current_company_user.notifications.where(message: 'new_event')
-            ids = notifications.map{|n| n.extra_params[:event_id]}.compact
-            notifications.destroy_all
-            ids
+          if params.has_key?(:notification) && params[:notification] == 'new_campaign'
+            @search_params[:campaign] = session["new_campaigns_at_#{params[:new_at].to_i}"] ||= begin
+              notifications = current_company_user.notifications.new_campaigns
+              ids = notifications.map{|n| n.extra_params[:campaign_id]}.compact
+              notifications.destroy_all
+              ids
+            end
+          else
+            @search_params[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
+              notifications = current_company_user.notifications.new_events
+              ids = notifications.map{|n| n.extra_params[:event_id]}.compact
+              notifications.destroy_all
+              ids
+            end
           end
         end
 

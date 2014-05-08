@@ -83,6 +83,21 @@ describe CompanyUsersController, search: true do
     end
 
     describe "GET 'notifications'" do
+      it "should return a notification if a user is added to a campaign" do
+        Timecop.freeze do
+          campaign = FactoryGirl.create(:campaign, company: @company)
+          @company_user.campaigns << campaign
+          Sunspot.commit
+
+          get 'notifications', id: @company_user.to_param, format: :json
+
+          response.should be_success
+
+          notifications = JSON.parse(response.body)
+          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => events_path(campaign: [campaign.id], end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
+        end
+      end
+
       it "should return a notification if a user is added to a event's team" do
         Timecop.freeze do
           event = FactoryGirl.create(:event, company: @company)
@@ -176,28 +191,30 @@ describe CompanyUsersController, search: true do
         notifications.should include({"message"=>"Your team has one late task", "level"=>"red", "url"=>"/tasks/my_teams?end_date=&not_assigned_to%5B%5D=#{@company_user.id}&start_date=&status%5B%5D=Active&task_status%5B%5D=Late&team_members%5B%5D=#{@company_user.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"team_tasks_late"})
       end
 
-      it "should return a notification if the user is part of the event's team and a new task is created on that event" do
-        event = FactoryGirl.create(:event, company: @company)
-        event.users << @company_user
-        task = FactoryGirl.create(:task, title: 'The task title', event: event)
+      # it "should return a notification if the user is part of the event's team and a new task is created on that event" do
+      #   event = FactoryGirl.create(:event, company: @company)
+      #   event.users << @company_user
+      #   task = FactoryGirl.create(:task, title: 'The task title', event: event)
 
-        Sunspot.commit
+      #   Sunspot.commit
 
-        get 'notifications', id: @company_user.to_param, format: :json
+      #   get 'notifications', id: @company_user.to_param, format: :json
 
-        notifications = JSON.parse(response.body)
-        notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_team_task", "task_id" => task.id})
-      end
+      #   notifications = JSON.parse(response.body)
+      #   notifications.should include({"message"=>"A new task was created for your event: The task title", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_team_task", "task_id" => task.id})
+      # end
 
       it "should return a notification if there is a new task for the user" do
-        task = FactoryGirl.create(:task,
-          title: 'The task title',
-          event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+        task =  without_current_user do
+          FactoryGirl.create(:task,
+            title: 'The task title',
+            event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+        end
 
         get 'notifications', id: @company_user.to_param, format: :json
 
         notifications = JSON.parse(response.body)
-        notifications.should include({"message"=>"You have been assigned a task: The task title", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}&notifid=#{Notification.last.id}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task", "task_id" => task.id})
+        notifications.should include({"message"=>"You have a new task", "level"=>"grey", "url"=>"/tasks/mine?new_at=#{Time.now.to_i}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task"})
       end
 
       it "should return a notification if there is a new comment for a user's task" do

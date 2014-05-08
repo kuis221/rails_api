@@ -9,28 +9,18 @@ feature "Notifications", search: true, js: true do
   let(:permissions) { [] }
 
   before do
-    #Warden.test_mode!
+    Warden.test_mode!
     add_permissions permissions
-    #sign_in user
+    sign_in user
   end
 
-  # after do
-  #   Warden.test_reset!
-  # end
+  after do
+    Warden.test_reset!
+  end
 
   shared_examples_for 'a user that can see notifications' do
 
     it "should receive notifications for new events" do
-      visit new_user_session_path
-
-      fill_in('E-mail', with: user.email)
-      fill_in('Password', with: user.password)
-      click_button 'Login'
-
-      current_path.should == root_path
-      expect(page).to have_text(user.full_name)
-
-
       without_current_user do
         FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
         FactoryGirl.create(:event, company: company, campaign: campaign, place: place) # Event not associated to the user
@@ -52,7 +42,80 @@ feature "Notifications", search: true, js: true do
 
       visit current_url
 
-      # reload page and make sure that the two events are still there
+      # reload page and make sure that only the two events are still there
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications for new tasks assigned to him" do
+      event = FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
+      task = FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
+
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'You have a new task'
+
+      click_notification 'You have a new task'
+
+      expect(current_path).to eql mine_tasks_path
+      expect(page).to have_selector('#tasks-list li', count: 1)
+
+      expect(page).to_not have_notification 'You have a new task'
+
+      # Create two new tasks and make sure the notification is correct and then click
+      # on it. The app should only list those two new tasks without showing the old one
+      FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
+      FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
+
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'You have 2 new tasks'
+
+      click_notification 'You have 2 new tasks'
+
+      expect(current_path).to eql mine_tasks_path
+      expect(page).to have_selector('#tasks-list li', count: 2)
+
+      # Make sure the notification does not longer appear after the user see the list
+      expect(page).to_not have_notification 'You have 2 new tasks'
+
+      visit current_url
+
+      # reload page and make sure that only the two tasks are still there
+      expect(current_path).to eql mine_tasks_path
+      expect(page).to have_selector('#tasks-list li', count: 2)
+    end
+
+    it "should receive notifications for new campaigns" do
+      campaign2 = FactoryGirl.create(:campaign, company: company)
+      without_current_user do # so the permissions are not validated during the event creation
+        FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
+        FactoryGirl.create(:event, company: company, campaign: campaign2, place: place)
+      end
+      Sunspot.commit
+
+      company_user.campaigns << campaign
+
+      visit root_path
+      expect(page).to have_notification 'You have a new campaign'
+
+      company_user.campaigns << campaign2
+      Sunspot.commit
+
+      visit current_url
+      expect(page).to have_notification 'You have 2 new campaigns'
+
+      click_notification 'You have 2 new campaigns'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+
+      expect(page).to_not have_notification 'You have 2 new campaigns'
+
+      visit current_url
+
+      # reload page and make sure that only the two events are still there
       expect(current_path).to eql events_path
       expect(page).to have_selector('#events-list li', count: 2)
     end
@@ -70,7 +133,10 @@ feature "Notifications", search: true, js: true do
     it_behaves_like "a user that can see notifications" do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:index, 'Event'],  [:view_list, 'Event']] }
+      let(:permissions) { [
+        [:index, 'Event'],  [:view_list, 'Event'],
+        [:index_my, 'Task'],  [:index_team, 'Task'],
+      ] }
     end
   end
 

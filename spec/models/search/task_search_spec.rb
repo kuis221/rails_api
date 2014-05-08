@@ -25,6 +25,11 @@ describe Task, search: true do
 
     # Make some test searches
 
+    # Search for tasks by id
+    Task.do_search(company_id: company.id, id: user_tasks.map(&:id)).results.should =~ user_tasks
+    Task.do_search(company_id: company.id, id: user2_tasks.map(&:id)).results.should =~ user2_tasks
+    Task.do_search(company_id: company.id, id: user_tasks.first.id).results.should =~ [user_tasks.first]
+
     # Search for all tasks on a given company
     Task.do_search(company_id: company.id).results.should =~ user_tasks + user2_tasks
     Task.do_search(company_id: company2.id).results.should =~ [company2_task]
