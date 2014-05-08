@@ -23,9 +23,14 @@ $.widget 'nmk.notifications', {
 
 	_updateNotifications: (alerts) ->
 		@counter.text(alerts.length)
+		@list.html('')
 		if alerts.length > 0
 			@element.addClass('has-notifications')
-		@list.html('')
+		else
+			@element.removeClass('has-notifications').addClass('without-notifications')
+			@list.html('<li class="empty-state"><p>No Notifications</p></li>')
+
+
 		hasRed = false
 		hasBlue = false
 		hasGrey = false

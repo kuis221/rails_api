@@ -1735,6 +1735,24 @@ li#notifications{
 		.dropdown-toggle { background-color: $alert_red; }
 	}
 
+	&.without-notifications ul {
+		height: 100%;
+		li.empty-state {
+			height: 100%;
+			width: 100%;
+			background-color: #C5C5C5;
+			color: #A5A4A5;
+			p {
+				display: table;
+				margin: 40% auto;
+				font-weight: bold;
+			}
+			&:hover {
+				background-color: #C5C5C5;
+			}
+		}
+	}
+
 	.notifications-container{
 		background-color: #cccccc;
 		height: 261px;
