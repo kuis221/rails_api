@@ -2095,9 +2095,9 @@ ul.kpis-list{
 			.tooltip-inner {
 				text-align: left;
 			}
-			span { 
-				width: 70px; 
-				display: inline-block; 
+			span {
+				width: 70px;
+				display: inline-block;
 				text-align: right;
 				margin-right: 5px;
 				&.today-label {
@@ -2336,7 +2336,7 @@ ul.kpis-list{
 	}
 	ul#areas-list{
 		li{
-			display: table !important;
+			display: table;
 			height: 86px;
 			min-height: 86px;
 			width: 100%;
@@ -3407,7 +3407,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .activity-form{
-	
+
 	.fields-wrapper{
 		&>p{
 			color: $user_menu;
@@ -6712,7 +6712,7 @@ body.event_status {
 				.chzn-drop{
 					margin-top: 6px !important;
 					.chzn-search{
-						input{ 
+						input{
 							bottom:13px;
 						}
 					}

@@ -5,7 +5,7 @@ module UsersHelper
 
     # Gets the counts with a single Solr request
     status_counts = {late: 0, due: 0, submitted: 0, rejected: 0}
-    events_search = Event.do_search({company_id: company.id, status: ['Active'], user: [user.id], team: user.team_ids}, true)
+    events_search = Event.do_search({company_id: company.id, status: ['Active'], current_company_user: current_company_user, user: [user.id], team: user.team_ids}, true)
     events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
     # Due event recaps
     if status_counts[:due] > 0
