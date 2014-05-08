@@ -19,6 +19,16 @@ module CapybaraBrandscopicHelpers
     self
   end
 
+  def wait_for_download_to_complete(timeout = Capybara.default_wait_time)
+    count = ListExport.count
+    yield
+    Timeout.timeout(timeout) do
+      sleep(0.5) until ListExport.count != count
+      export = ListExport.last
+      sleep(0.5) until export.reload.completed?
+    end
+  end
+
   def confirm_prompt(message)
     within find('.modal.confirm-dialog.in', visible: true) do
       expect(page).to have_content(message)

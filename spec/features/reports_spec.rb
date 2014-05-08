@@ -189,17 +189,7 @@ feature "Reports", js: true do
       expect(page).to have_content('Bar 2 321.0')
 
       # Export the report
-      with_resque do
-        expect {
-          click_js_button 'Download'
-          wait_for_ajax(10)
-          within visible_modal do
-            expect(page).to have_content('We are processing your request, the download will start soon...')
-          end
-          wait_for_ajax(30)
-          ensure_modal_was_closed
-        }.to change(ListExport, :count).by(1)
-      end
+      download_report
 
       export = ListExport.last
       csv_rows = CSV.parse(open(export.file.url).read)
@@ -211,16 +201,19 @@ feature "Reports", js: true do
 
     scenario "a report with two rows with expand/collapse functionality" do
       campaign = FactoryGirl.create(:campaign, company: @company)
-      FactoryGirl.create(:event, campaign: campaign, start_date: '01/21/2013', end_date: '01/21/2013', place: FactoryGirl.create(:place, name: 'Bar 1'),
+      FactoryGirl.create(:event, campaign: campaign,
+        start_date: '01/21/2013', end_date: '01/21/2013', place: FactoryGirl.create(:place, name: 'Bar 1'),
         results: {impressions: 123, interactions: 50})
 
-      FactoryGirl.create(:event, campaign: campaign, start_date: '02/13/2013', end_date: '02/13/2013', place: FactoryGirl.create(:place, name: 'Bar 2'),
+      FactoryGirl.create(:event, campaign: campaign,
+        start_date: '02/13/2013', end_date: '02/13/2013', place: FactoryGirl.create(:place, name: 'Bar 2'),
         results: {impressions: 321, interactions: 25})
 
       report = FactoryGirl.create(:report,
         company: @company,
         columns: [{"field"=>"values", "label"=>"Values"}],
-        rows:    [{"field"=>"place:name", "label"=>"Venue Name"}, {"field"=>"event:start_date", "label"=>"Start Date"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue Name"},
+                  {"field"=>"event:start_date", "label"=>"Start Date"}],
         values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
       )
 
@@ -244,15 +237,7 @@ feature "Reports", js: true do
       end
 
       # Export the report
-      with_resque do
-        expect {
-          click_js_button 'Download'
-          within visible_modal do
-            expect(page).to have_content('We are processing your request, the download will start soon...')
-          end
-          ensure_modal_was_closed
-        }.to change(ListExport, :count).by(1)
-      end
+      download_report
 
       export = ListExport.last
       csv_rows = CSV.parse(open(export.file.url).read)
@@ -304,15 +289,7 @@ feature "Reports", js: true do
       end
 
       # Export the report
-      with_resque do
-        expect {
-          click_js_button 'Download'
-          within visible_modal do
-            expect(page).to have_content('We are processing your request, the download will start soon...')
-          end
-          ensure_modal_was_closed
-        }.to change(ListExport, :count).by(1)
-      end
+      download_report
 
       export = ListExport.last
       csv_rows = CSV.parse(open(export.file.url).read)
@@ -513,7 +490,6 @@ feature "Reports", js: true do
         within(field_context_menu 'Kpi #4') { click_js_link 'Add to Rows' }
         expect(field_list('fields')).to have_no_content('Kpi #4')
         expect(field_list('rows')).to have_content('Kpi #4')
-
       end
 
       # Save the report and reload page to make sure they were correctly saved
@@ -778,5 +754,13 @@ feature "Reports", js: true do
   def field_context_menu(field_name)
     find('.sidebar li.report-field', text: field_name).click
     find(:xpath, "//body").find("div.report-field-settings")
+  end
+
+  def download_report
+    with_resque do
+      wait_for_download_to_complete 15 do
+        click_js_button 'Download'
+      end
+    end
   end
 end
