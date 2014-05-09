@@ -1,6 +1,21 @@
 module PhotosHelper
   include ActionView::Helpers::NumberHelper
 
+  def photo_permissions(photo)
+    @_generic_photo_permissions ||= [
+      (can?(:deactivate_photo, Event) ? 'deactivate_photo' : nil),
+      (can?(:index_photo_results, AttachedAsset) ? 'index_photo_results' : nil),
+      (can?(:remove, Tag) ? 'deactivate_tag' : nil),
+      (can?(:create, Tag) ? 'create_tag' : nil),
+      (can?(:index, Tag) ? 'view_tag' : nil),
+      (can?(:activate, Tag) ? 'add_tag' : nil)
+    ].compact
+    @_generic_photo_permissions + [
+      (can?(:rate, photo) ? 'rate' : nil),
+      (can?(:view_rate, photo) ? 'view_rate' : nil),
+    ].compact
+  end
+
   protected
 
     def describe_filters
@@ -108,7 +123,7 @@ module PhotosHelper
         status.to_sentence(last_word_connector: ' and ')
       end
     end
-    
+
     def company_tags(assigned_tags)
       result = []
       tags = Tag.where(company_id: current_company).order('name ASC')
@@ -116,11 +131,11 @@ module PhotosHelper
       tags.each{ |t| result << {'id' => t.id, 'text' => t.name}}
       return result
     end
-    
+
     def to_select2_tag_format(obj)
       result = []
       obj.each{|o| result << {'id' => o.id, 'text' => o.name}}
       return result
     end
-    
+
 end
