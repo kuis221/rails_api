@@ -758,7 +758,7 @@ feature "Reports", js: true do
 
   def download_report
     with_resque do
-      wait_for_download_to_complete 15 do
+      wait_for_download_to_complete 25 do
         click_js_button 'Download'
       end
     end

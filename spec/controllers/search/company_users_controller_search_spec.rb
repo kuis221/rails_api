@@ -94,7 +94,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => events_path(campaign: [campaign.id], end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
+          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => events_path(campaign: [campaign.id], notification: 'new_campaign', new_at: Time.now.to_i, start_date: '', end_date: ''), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
         end
       end
 
