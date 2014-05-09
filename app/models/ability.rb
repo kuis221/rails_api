@@ -123,8 +123,8 @@ class Ability
         can? :edit, report
       end
 
-      can [:rows], Report do |report|
-        can? :edit, report
+      can [:rows, :filters], Report do |report|
+        can?(:show, report) || can?(:edit, report)
       end
 
       # cannot :create, Report unless user.current_company_user.role.has_permission?(:create, Report)
