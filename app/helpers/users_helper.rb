@@ -102,7 +102,7 @@ module UsersHelper
     # New campaigns notifications
     if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0
       notification_params = current_company_user.notifications.where(message: 'new_campaign').pluck(:extra_params)
-      ids = notification_params.map{|param| param[:campaign_id] }.compact
+      ids = notification_params.map{|param| param.try(:[], :campaign_id) }.compact
       alerts.push({
         message: I18n.translate("notifications.new_campaigns", count: grouped_notifications['new_campaign'].to_i), level: 'grey',
         url: events_path(campaign: ids, notification: 'new_campaign', new_at: Time.now.to_i, start_date: '', end_date: ''),
