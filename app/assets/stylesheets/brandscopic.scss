@@ -1740,7 +1740,7 @@ li#notifications{
 		li.empty-state {
 			height: 100%;
 			width: 100%;
-			background-color: #C5C5C5;
+			background-color: #cccccc;
 			color: #A5A4A5;
 			p {
 				display: table;
@@ -1748,7 +1748,7 @@ li#notifications{
 				font-weight: bold;
 			}
 			&:hover {
-				background-color: #C5C5C5;
+				background-color: #cccccc;
 			}
 		}
 	}
@@ -1759,6 +1759,16 @@ li#notifications{
 		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
+
+		.jspVerticalBar {
+			width: 7px;
+			.jspTrack {
+				width: 7px;
+			}
+			.jspDrag {
+				width: 5px;
+			}
+		}
 	}
 
 	.dropdown-menu{
@@ -1820,7 +1830,7 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 225px;
+					width: 240px;
 					line-height: 16px;
 					padding-left: 32px;
 					span{

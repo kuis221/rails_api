@@ -9,7 +9,7 @@ $.widget 'nmk.notifications', {
 		@counter = @element.find(@options.counterSelector)
 		@list = @element.find(@options.listSelector)
 		@list.removeClass('dropdown-menu')
-		$('<div class="dropdown-menu">').insertAfter(@counter).append(@list)
+		@dropdown = $('<div class="dropdown-menu">').insertAfter(@counter).append(@list)
 
 
 		if @options.notifications
@@ -30,7 +30,6 @@ $.widget 'nmk.notifications', {
 			@element.removeClass('has-notifications').addClass('without-notifications')
 			@list.html('<li class="empty-state"><p>No Notifications</p></li>')
 
-
 		hasRed = false
 		hasBlue = false
 		hasGrey = false
@@ -47,6 +46,10 @@ $.widget 'nmk.notifications', {
 					])
 				)
 			)
+
+		@dropdown.css visibility: 'hidden', display: 'block' # So the scroller can be correctly initialized
+		@element.find('.notifications-container').jScrollPane verticalDragMinHeight: 10
+		@dropdown.css visibility: '', display: ''
 
 		if hasRed then @element.addClass('has-red-notifications')
 		if hasBlue then @element.addClass('has-blue-notifications')
