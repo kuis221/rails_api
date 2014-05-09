@@ -168,6 +168,26 @@ describe User do
     end
   end
 
+  describe "#companies_active_role" do
+    it "should return the user's companies sorted by name for company users and roles that are active" do
+      user = FactoryGirl.create(:user, :first_name => 'Juanito', :last_name => 'Perez')
+      companyB = FactoryGirl.create(:company, name: 'B Company')
+      companyC = FactoryGirl.create(:company, name: 'C Company')
+      companyA = FactoryGirl.create(:company, name: 'A Company')
+      company_users = [
+        FactoryGirl.create(:company_user, company: companyA),
+        FactoryGirl.create(:company_user, company: companyB, active: false),
+        FactoryGirl.create(:company_user, company: companyC)
+      ]
+      company_users.each do |company_user|
+        user.company_users << company_user
+      end
+
+      companies = user.companies_active_role
+      companies[0].should == companyA
+      companies[1].should == companyC
+    end
+  end
 
   describe "is_super_admin?" do
     it "should return true if the current role is admin" do
@@ -184,5 +204,4 @@ describe User do
       user.is_super_admin?.should be_false
     end
   end
-
 end
