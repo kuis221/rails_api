@@ -88,8 +88,8 @@ en:
     new_team_tasks:
       one: "You have a new task"
       other: "You have %{count} new tasks"
-    unread_tasks_comments_user: "Your task %{task} has a new comment"
-    unread_tasks_comments_team: "Your team's task %{task} has a new comment"
+    unread_tasks_comments_user: "Your task <span>%{task}</span> has a new comment"
+    unread_tasks_comments_team: "Your team's task <span>%{task}</span> has a new comment"
     new_campaigns: 
       one: "You have a new campaign"
       other: "You have %{count} new campaigns"
