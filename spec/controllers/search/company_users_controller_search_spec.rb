@@ -225,7 +225,7 @@ describe CompanyUsersController, search: true do
         get 'notifications', id: @company_user.to_param, format: :json
 
         notifications = JSON.parse(response.body)
-        notifications.should include({"message"=>"Your task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"user_task_comments", "task_id"=>task.id})
+        notifications.should include({"message"=>"Your task <span>The task title</span> has a new comment", "level"=>"grey", "url"=>"/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"user_task_comments", "task_id"=>task.id})
       end
 
       it "should return a notification if there is a new comment for a user's team task" do
@@ -237,7 +237,7 @@ describe CompanyUsersController, search: true do
         get 'notifications', id: @company_user.to_param, format: :json
 
         notifications = JSON.parse(response.body)
-        notifications.should include({"message"=>"Your team's task The task title has a new comment", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"team_task_comments", "task_id"=>task.id})
+        notifications.should include({"message"=>"Your team's task <span>The task title</span> has a new comment", "level"=>"grey", "url"=>"/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}", "unread"=>true, "icon"=>"icon-notification-comment", "type"=>"team_task_comments", "task_id"=>task.id})
       end
     end
   end
