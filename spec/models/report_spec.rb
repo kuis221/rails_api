@@ -423,6 +423,7 @@ describe Report do
   describe "#fetch_page" do
     let(:company) { FactoryGirl.create(:company) }
     let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
     before do
       Kpi.create_global_kpis
     end
@@ -1094,6 +1095,168 @@ describe Report do
         page = report.fetch_page
         expect(page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+        ]
+      end
+    end
+
+    describe "activity types" do
+      it "returns a line for each different value for a form field" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Text", fieldable: FactoryGirl.create(:activity_type))
+        form_field2 = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: form_field.fieldable)
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign)
+        event2 = FactoryGirl.create(:event, campaign: campaign)
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'First Result'
+        activity.results_for([form_field2]).first.value = 150
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'First Result'
+        activity.results_for([form_field2]).first.value = 15
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'Another Result'
+        activity.results_for([form_field2]).first.value = 200
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"form_field:#{form_field.id}", "label"=>"Form Field"}],
+          values:  [{"field"=>"form_field:#{form_field2.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{form_field.id}"=>"Another Result", "values" => [200.00]},
+            {"form_field_#{form_field.id}"=>"First Result", "values" => [165.00]}
+        ]
+      end
+
+      it "returns a line for each different date for an activity" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        event2 = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.today)
+        activity.results_for([form_field]).first.value = '100'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.today)
+        activity.results_for([form_field]).first.value = '200'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.yesterday)
+        activity.results_for([form_field]).first.value = '75'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.yesterday)
+        activity.results_for([form_field]).first.value = '30'
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:activity_date", "label"=>"Date"}],
+          values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.yesterday.to_s(:ymd), "values" => [105.00]},
+            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.today.to_s(:ymd), "values" => [300.00]}
+        ]
+      end
+
+      it "returns a line for each different user for an activity" do
+        user2 = FactoryGirl.create(:company_user,
+          company: company,
+          user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez') )
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        event2 = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = '100'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = '200'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user2)
+        activity.results_for([form_field]).first.value = '75'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user2)
+        activity.results_for([form_field]).first.value = '30'
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:user", "label"=>"User"}],
+          values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"activity_type_#{form_field.fieldable.id}_user"=>user2.full_name, "values" => [105.00]},
+            {"activity_type_#{form_field.fieldable.id}_user"=>user.full_name, "values" => [300.00]}
+        ]
+      end
+
+      it "returns the values for the numeric fields" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 333
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 222
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Form Field"}],
+          values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"},
+            {"field"=>"form_field:#{form_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}
+          ]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"campaign_name"=>"Guaro Cacique 2013", "values" => [300.00, 555.0]}
         ]
       end
     end

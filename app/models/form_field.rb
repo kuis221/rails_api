@@ -57,8 +57,16 @@ class FormField < ActiveRecord::Base
     false
   end
 
+  def is_numeric?
+    false
+  end
+
   def is_attachable?
     false
+  end
+
+  def type_name
+    self.class.name
   end
 
   def validate_result(result)
@@ -72,11 +80,11 @@ class FormField < ActiveRecord::Base
   def field_type=(type)
     self.type = type if new_record?
   end
-  
+
   def min_options_allowed
     MIN_OPTIONS_ALLOWED
   end
-  
+
   def min_statements_allowed
     MIN_STATEMENTS_ALLOWED
   end

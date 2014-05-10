@@ -346,10 +346,16 @@ feature "Reports", js: true do
 
     scenario "search for fields in the fields list" do
       FactoryGirl.create(:kpi, name: 'ABC KPI', company: @company)
+      type = FactoryGirl.create(:activity_type, name: 'XYZ Activiy Type', company: @company)
+      FactoryGirl.create(:form_field_number, fieldable: type, name: 'FormField 1')
+      FactoryGirl.create(:form_field_number, fieldable: type, name: 'FormField 2')
 
       visit build_results_report_path(report)
 
       within report_fields do
+        expect(page).to have_content('XYZ ACTIVIY TYPE')
+        expect(page).to have_content('FormField 1')
+        expect(page).to have_content('FormField 2')
         expect(page).to have_content('VENUE')
         expect(page).to have_content('USER')
         expect(page).to have_content('TEAM')

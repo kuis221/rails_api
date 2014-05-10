@@ -54,7 +54,7 @@ class ActivityResult < ActiveRecord::Base
           self.build_attached_asset(direct_upload_url: self.value) unless self.value.nil? || self.value == ''
         end
       end
-      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
+      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value.to_s =~ /\A[0-9\.\,]+\z/
       true
     end
 end
