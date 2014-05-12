@@ -726,7 +726,6 @@ describe Report do
       ]
     end
 
-
     it "returns a line for each brand when adding a brand field as a row and the event is associated to any " do
       campaign.assign_all_global_kpis
       brand1 = FactoryGirl.create(:brand, name: 'Brand1')
@@ -783,6 +782,60 @@ describe Report do
       page = report.fetch_page
       expect(page).to eql [
         {"brand_portfolio_name"=>"BP1", "values"=>[300.0]}
+      ]
+    end
+
+    it "returns a line for each area when adding a area field as a row and the event is associated to any " do
+      campaign.assign_all_global_kpis
+      area1 = FactoryGirl.create(:area, name: 'Area1')
+      area2 = FactoryGirl.create(:area, name: 'Area2')
+      chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+      los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+      venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+      venue_in_la = FactoryGirl.create(:place, name: 'Bar L.A.', city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+      venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      area1.places << chicago
+      area2.places << los_angeles
+      area2.places << venue_in_la
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+        results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+      # Event without any Area
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+        results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"area:name", "label"=>"Area"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"area_name"=>"Area1", "values"=>[400.0]},
+        {"area_name"=>"Area2", "values"=>[200.0]},
+        {"area_name"=>nil, "values"=>[350.0]}
+      ]
+
+      # Filter by a place
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"area:name", "label"=>"Area"}],
+        filters: [{"field"=>"place:name", "label"=>"Venue"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"place:name" => [venue_in_la.name]}
+      page = report.fetch_page
+      expect(page).to eql [
+        {"area_name"=>"Area2", "values"=>[200.0]}
       ]
     end
 
@@ -1097,6 +1150,47 @@ describe Report do
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
         ]
       end
+
+      it "returns the area names as columns" do
+        campaign.assign_all_global_kpis
+        area1 = FactoryGirl.create(:area, name: 'Area1')
+        area2 = FactoryGirl.create(:area, name: 'Area2')
+        chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+        los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+        venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+        venue_in_la = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+        venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+        area1.places << chicago
+        area2.places << los_angeles
+        area2.places << venue_in_la
+
+        FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+        FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+          results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+        # Event without any Area
+        FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+          results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"area:name", "label"=>"Area"}, {"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(report.report_columns).to match_array ["Area1||Impressions", "Area2||Impressions", "||Impressions"]
+        expect(page).to eql [
+          {"place_name"=>venue_in_chicago.name, "values"=>[400.0, nil, nil]},
+          {"place_name"=>venue_in_la.name, "values"=>[nil, 200.0, nil]},
+          {"place_name"=>venue_in_ny.name, "values"=>[nil, nil, 350.0]}
+        ]
+      end
     end
 
     describe "activity types" do
@@ -1296,6 +1390,62 @@ describe Report do
       report.filter_params = {"kpi:#{kpi.id}" => {'min' => '100', 'max' => '300'}}
       expect(report.fetch_page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+      ]
+    end
+
+    it "can filter the results by area name" do
+      campaign.assign_all_global_kpis
+      area1 = FactoryGirl.create(:area, name: 'Area1')
+      area2 = FactoryGirl.create(:area, name: 'Area2')
+      chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+      los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+      venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+      venue_in_la = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+      venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      area1.places << chicago
+      area2.places << los_angeles
+      area2.places << venue_in_la
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+        results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+      # Event without any Area
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+        results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+        filters: [{"field"=>"area:name", "label"=>"Area"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_chicago.name, "values"=>[400.0]},
+        {"place_name"=>venue_in_la.name, "values"=>[200.0]},
+        {"place_name"=>venue_in_ny.name, "values"=>[350.0]}
+      ]
+
+      # With filtering
+      report.filter_params = {"area:name" => ['Area1']}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_chicago.name, "values"=>[400.0]}
+      ]
+
+      report.filter_params = {"area:name" => ['Area2']}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_la.name, "values"=>[200.0]}
       ]
     end
 

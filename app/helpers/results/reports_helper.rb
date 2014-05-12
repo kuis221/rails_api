@@ -12,6 +12,7 @@ module Results
       end]
 
       fields.merge({
+        'Area' => model_report_fields(Area),
         'Event' => model_report_fields(Event),
         'Task' => model_report_fields(Task),
         'Venue' => model_report_fields(Place),

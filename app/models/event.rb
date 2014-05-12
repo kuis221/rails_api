@@ -109,6 +109,7 @@ class Event < ActiveRecord::Base
     joins(:place).
     joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   }
+
   scope :in_places, ->(places) {
     joins(:place).where(
       'events.place_id in (?) or events.place_id in (

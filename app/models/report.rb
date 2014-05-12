@@ -417,6 +417,24 @@ class Report < ActiveRecord::Base
       end
       #s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
 
+      # Join with areas table
+      if fields.any?{|v| v.model_name == 'area'} || filters.any?{|v| v.model_name == 'area' && is_filtered_by?(v.field)}
+        s = s.joins('LEFT JOIN "places" ON "places"."id" = "events"."place_id"
+            LEFT JOIN (
+                SELECT place_id, placeable_id area_id FROM "placeables"
+                WHERE "placeables"."placeable_type" = \'Area\'
+              UNION
+                SELECT place_id, locations.area_id FROM locations_places
+                INNER JOIN (
+                  SELECT DISTINCT places.location_id, placeables.placeable_id area_id
+                  FROM "places"
+                  INNER JOIN "placeables" ON "placeables"."place_id" = "places"."id"
+                  WHERE "placeables"."placeable_type" = \'Area\' AND "places"."is_location" = \'t\'
+                ) locations on locations.location_id=locations_places.location_id
+            ) areas_places ON events.place_id=areas_places.place_id
+            LEFT JOIN areas ON areas.id=areas_places.area_id')
+      end
+
       # Join with brand_portfolios table
       portfolio_filters = filters.select{|filter| filter.model_name == 'brand_portfolio' && is_filtered_by?(filter.field) }
       if [field_list, rows, columns].flatten.compact.any?{|v| v.model_name == 'brand_portfolio' }
