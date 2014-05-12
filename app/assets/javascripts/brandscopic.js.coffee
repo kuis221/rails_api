@@ -389,6 +389,8 @@ jQuery ->
 		else
 			$('.totop').slideUp()
 
+		lazyLoadElements();
+
 		$detailsBar = $('#resource-close-details')
 		if $detailsBar.length > 0
 			$alternateInfo = $('.details-bar-info').get().reverse()
@@ -406,6 +408,19 @@ jQuery ->
 				if not found and $link.data('default-content')
 					$link.html $link.data('default-content')
 					$link.data 'default-content', null
+
+
+	lazyLoadElements = () ->
+		wt = $(window).scrollTop()
+		wb = wt + $(window).height()
+
+		$(".lazyloaded").each () ->
+			ot = $(@).offset().top;
+			ob = ot + $(@).height();
+
+			if not $(@).attr("loaded") && wt <= ob && wb >= ot
+				$(@).load $(@).data('content-url')
+				$(@).attr "loaded", true
 
 
 	# Keep filter Sidebar always visible but make it scroll if it's
