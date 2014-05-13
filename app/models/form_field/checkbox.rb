@@ -24,4 +24,22 @@ class FormField::Checkbox < FormField
       self.options.where(id: result.value).pluck(:name).join(', ')
     end
   end
+
+  def is_hashed_value?
+    true
+  end
+
+  def is_optionable?
+    true
+  end
+
+  def store_value(values)
+    if values.is_a?(Hash)
+      values
+    elsif values.is_a?(Array)
+      Hash[values.reject{|v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }.map{|v| [v, 1] }]
+    else
+      {values => nil}
+    end
+  end
 end

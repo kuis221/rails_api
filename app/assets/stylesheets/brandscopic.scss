@@ -3467,6 +3467,10 @@ textarea::-webkit-input-placeholder {
 		padding-left:0;
 		.checker{
 			margin-right: 10px;
+
+			span.checked:after {
+				top: -16px;
+			}
 		}
 	}
 	.chzn-container-single .chzn-single{

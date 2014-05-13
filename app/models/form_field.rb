@@ -65,6 +65,11 @@ class FormField < ActiveRecord::Base
     false
   end
 
+  # Returns true if the field can have options associated
+  def is_optionable?
+    false
+  end
+
   def type_name
     self.class.name
   end

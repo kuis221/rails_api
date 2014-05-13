@@ -27,6 +27,10 @@ class FormField::Percentage < FormField
     true
   end
 
+  def is_optionable?
+    true
+  end
+
   def format_html(result)
     if result.value
       options.map do |option|

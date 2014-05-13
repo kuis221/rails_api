@@ -40,6 +40,10 @@ class FormField::Dropdown < FormField
     self.settings.present? && self.settings.has_key?('multiple') && self.settings['multiple']
   end
 
+  def is_optionable?
+    true
+  end
+
   def format_html(result)
     unless result.value.nil? || result.value.empty?
       self.options.where(id: result.value).pluck(:name).join(', ')
