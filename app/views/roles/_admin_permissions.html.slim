@@ -55,6 +55,21 @@
         .span2 = permission_checkbox(f, :show, Role)
 
       .span12.separate
+        .span2.title Brand
+        .span2 
+        .span2 = permission_checkbox(f, :create, Brand)
+        .span2 = permission_checkbox(f, :update, Brand)
+        .span2 = permission_checkbox(f, :deactivate, Brand)
+
+      .span12
+        .span2 List
+        .span2 = permission_checkbox(f, :index, Brand)
+
+      .span12
+        .span2 Details
+        .span2 = permission_checkbox(f, :show, Brand)
+
+      .span12.separate
         .span2.title Brand Portfolios
         .span2 
         .span2 = permission_checkbox(f, :create, BrandPortfolio)

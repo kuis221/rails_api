@@ -45,7 +45,7 @@ describe Results::PhotosController, search: true do
     end
 
     it "should return the brands in the Brands Bucket" do
-      brand = FactoryGirl.create(:brand, name: 'Cacique')
+      brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: @company)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'

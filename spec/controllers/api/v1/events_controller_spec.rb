@@ -738,7 +738,7 @@ describe Api::V1::EventsController do
     end
 
     it "should return the brands in the Brands Bucket" do
-      brand = FactoryGirl.create(:brand, name: 'Cacique')
+      brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: company.to_param)
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json

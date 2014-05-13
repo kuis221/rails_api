@@ -206,7 +206,7 @@ class CompanyUsersController < FilteredController
         enabled = resource.brand_portfolios.include?(portfolio)
         list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(portfolio) ) }
       end
-      Brand.for_company_campaigns(current_company).each do |brand|
+      current_company.brands.each do |brand|
         enabled = resource.brands.include?(brand)
         list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(brand) ) }
       end
