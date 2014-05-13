@@ -246,7 +246,8 @@ class Ability
       end
 
       can :create, Task do |task|
-        user.role.has_permission?(:create_task, Event) && can?(:show, task.event)
+        (user.role.has_permission?(:create_task, Event) && can?(:show, task.event)) ||
+        user.role.has_permission?(:create_my, Task) || user.role.has_permission?(:create_team, Task)
       end
 
       # Documents permissions

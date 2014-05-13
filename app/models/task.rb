@@ -27,11 +27,11 @@ class Task < ActiveRecord::Base
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
-  delegate :campaign_id, :campaign_name, :place_id, :company_id, to: :event, allow_nil: true
+  delegate :campaign_name, :place_id, to: :event, allow_nil: true
 
   validates :title, presence: true
   validates :company_user_id, numericality: true, if: :company_user_id
-  validates :event_id, presence: true, numericality: true
+  validates :event_id, numericality: true, if: :event_id
 
   scope :incomplete, lambda{ where(completed: false) }
   scope :active, lambda{ where(active: true) }
@@ -49,13 +49,17 @@ class Task < ActiveRecord::Base
 
     integer :company_user_id, references: CompanyUser
     integer :event_id
-    integer :company_id
-
-    integer :team_members, multiple: true do
-      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id)  }.flatten.uniq
+    integer :company_id do
+      company_id
     end
 
-    integer :campaign_id
+    integer :team_members, multiple: true do
+      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id)  }.flatten.uniq if event.present?
+    end
+
+    integer :campaign_id do
+      campaign_id
+    end
 
     time :due_at, :trie => true
     time :last_activity
@@ -66,7 +70,7 @@ class Task < ActiveRecord::Base
 
     boolean :completed
     string :status do
-      if event.active?
+      if (event.present? && event.active?) || event.nil?
         active? ? 'Active' : 'Inactive'
       else
         'Inactive Event'
@@ -114,6 +118,22 @@ class Task < ActiveRecord::Base
     status.push 'Late' if late?
     status.push 'Due' if due_today?
     status
+  end
+
+  def company_id
+    # For those tasks created from Task section,
+    # company ID will be assigned from user
+    if event.present?
+      event.company_id
+    elsif company_user.present?
+      company_user.company_id
+    end
+  end
+
+  def campaign_id
+    # For those tasks created from Task section,
+    # campaign ID will be zero
+    event.present? ? event.campaign_id : 0
   end
 
   class << self
