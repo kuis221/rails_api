@@ -333,6 +333,7 @@ FormField = Class.extend {
 				if result
 					@field.remove()
 					@form.setModified()
+					@form._hideFieldAttributes @field
 
 	refresh: () ->
 		@field.html('').append(
