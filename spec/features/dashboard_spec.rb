@@ -18,6 +18,38 @@ feature "Dashboard", search: true, js: true do
     Warden.test_reset!
   end
 
+  shared_examples_for 'a user that can view the recent comments module' do
+    scenario "should display only 9 comments" do
+      FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event,
+        campaign: campaign,
+        company: company, place: place))
+
+      visit root_path
+      page.execute_script "window.scrollBy(0,10000)" # Scrolls down to the bottom of the page
+
+      within recent_comments_module do
+        expect(page).to have_selector('ul#comments-list-container li', count: 9)
+      end
+    end
+  end
+
+  shared_examples_for 'a user that can view the recent photos module' do
+    scenario "should display latest photos module" do
+      FactoryGirl.create_list(:photo, 15, attachable: FactoryGirl.create(:event,
+        campaign: campaign,
+        company: company, place: place))
+
+      Sunspot.commit
+
+      visit root_path
+      page.execute_script "window.scrollBy(0,10000)" # Scrolls down to the bottom of the page
+
+      within recent_photos_module do
+        expect(page).to have_selector('ul#photos-thumbs li', count: 12)
+      end
+    end
+  end
+
   shared_examples_for 'a user that can view the upcoming events module' do
     let(:campaign1) { FactoryGirl.create(:campaign,  company: company,
         name: 'Jameson + Kahlua Rum Campaign',
@@ -169,15 +201,10 @@ feature "Dashboard", search: true, js: true do
 
     it_behaves_like "a user that can view the upcoming events module"
 
-    describe "recent comments module" do
-      scenario "should display only 9 comments" do
-        FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event, company: company))
-        visit root_path
-        within recent_comments_module do
-          expect(all('.comment').count).to eql 9
-        end
-      end
-    end
+    it_behaves_like "a user that can view the recent comments module"
+
+    it_behaves_like "a user that can view the recent photos module"
+
   end
 
   feature "Non Admin User", js: true, search: true do
@@ -188,6 +215,16 @@ feature "Dashboard", search: true, js: true do
       before { company_user.places << FactoryGirl.create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
       let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
     end
+    it_should_behave_like "a user that can view the recent comments module" do
+      before { company_user.campaigns << [campaign] }
+      before { company_user.places << place }
+      let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
+    end
+    it_should_behave_like "a user that can view the recent photos module" do
+      before { company_user.campaigns << [campaign] }
+      before { company_user.places << place }
+      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard']] }
+    end
   end
 
   def upcoming_events_module
@@ -196,6 +233,10 @@ feature "Dashboard", search: true, js: true do
 
   def recent_comments_module
     find('div#recent-comments-module')
+  end
+
+  def recent_photos_module
+    find('div#recent-photos-module')
   end
 
   def add_permissions(permissions)

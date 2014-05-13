@@ -143,6 +143,7 @@ jQuery ->
 	# Check what graph labels are colliding with others and adjust the position
 	$(window).on 'resize ready', () ->
 		adjustChartsPositions()
+		lazyLoadElements()
 
 	$(document).on 'ajaxComplete', () ->
 		adjustChartsPositions()
