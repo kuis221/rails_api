@@ -80,9 +80,20 @@ en:
     recaps_prending_approval:
       one: "There is one event recap that is pending approval"
       other: "There are %{count} event recaps that are pending approval"
-    unread_tasks_comments_user: "Your task %{task} has a new comment"
-    unread_tasks_comments_team: "Your team's task %{task} has a new comment"
-    new_campaign: "You have a new campaign"
+    new_events:
+      one: "You have a new event"
+      other: "You have %{count} new events"
+    new_tasks:
+      one: "You have a new task"
+      other: "You have %{count} new tasks"
+    new_team_tasks:
+      one: "You have a new task"
+      other: "You have %{count} new tasks"
+    unread_tasks_comments_user: "Your task <span>%{task}</span> has a new comment"
+    unread_tasks_comments_team: "Your team's task <span>%{task}</span> has a new comment"
+    new_campaigns: 
+      one: "You have a new campaign"
+      other: "You have %{count} new campaigns"
     new_event: "You have a new event"
     new_task: "You have been assigned a task: %{task}"
     new_team_task: "A new task was created for your event: %{task}"

@@ -2,8 +2,17 @@ module Results
   module ReportsHelper
     def available_field_list
       kpis = Kpi.includes(:kpis_segments).where("company_id=? OR company_id is null", current_company.id).order('company_id DESC, name ASC')
-      {
-        'KPIs' => kpis.map{|kpi| ["kpi:#{kpi.id}", kpi.name, kpi_tooltip(kpi)]},
+      fields = {'KPIs' => kpis.map{|kpi| ["kpi:#{kpi.id}", kpi.name, kpi_tooltip(kpi)]}}
+      fields.merge! Hash[current_company.activity_types.includes(form_fields: [:options, :statements]).map do |activity_type|
+        [
+          activity_type.name,
+          activity_type.form_fields.map{|ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact +
+              [["activity_type_#{activity_type.id}:user", 'User', 'User'],  ["activity_type_#{activity_type.id}:date", 'Date', 'Date']]
+        ]
+      end]
+
+      fields.merge({
+        'Area' => model_report_fields(Area),
         'Event' => model_report_fields(Event),
         'Task' => model_report_fields(Task),
         'Venue' => model_report_fields(Place),
@@ -15,7 +24,7 @@ module Results
         'Brand Portfolios' => model_report_fields(BrandPortfolio)
         #'Date Range' => model_report_fields(DateRange),
         #'Day Part' => model_report_fields(DayPart)
-      }
+      })
     end
 
     def each_grouped_report_row(results=nil, row_number=0, &block)
@@ -83,6 +92,21 @@ module Results
         if ['percentage', 'count'].include?(kpi.kpi_type)
           tooltip << "<b>OPTIONS</b>"
           tooltip << kpi.kpis_segments.map(&:text).join(', ')
+        end
+        tooltip
+      end
+
+      def form_field_tooltip(form_field)
+        tooltip = "<p class=\"name\">#{form_field.name}</p>"
+        tooltip << "<b>TYPE</b>"
+        tooltip << form_field.type_name.capitalize
+        if form_field.options.any?
+          tooltip << "<b>OPTIONS</b>"
+          tooltip << form_field.options.map(&:name).join(', ')
+        end
+        if form_field.statements.any?
+          tooltip << "<b>STATEMENTS</b>"
+          tooltip << form_field.statements.map(&:name).join(', ')
         end
         tooltip
       end

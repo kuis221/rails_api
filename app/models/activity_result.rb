@@ -27,7 +27,11 @@ class ActivityResult < ActiveRecord::Base
 
   def value
     if form_field.present? && form_field.is_hashed_value?
-      self.attributes['hash_value']
+      if form_field.type == 'FormField::Checkbox'
+        (self.attributes['hash_value'].try(:keys) || []).map(&:to_i)
+      else
+        self.attributes['hash_value']
+      end
     elsif form_field.present? && form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
       self.attributes['value'].try(:split, ',')
     else
@@ -54,7 +58,7 @@ class ActivityResult < ActiveRecord::Base
           self.build_attached_asset(direct_upload_url: self.value) unless self.value.nil? || self.value == ''
         end
       end
-      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value =~ /\A[0-9\.\,]+\z/
+      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value.to_s =~ /\A[0-9\.\,]+\z/
       true
     end
 end

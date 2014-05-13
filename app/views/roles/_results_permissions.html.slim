@@ -2,9 +2,9 @@
   .permissions
     .row-fluid
       .span7
-        .span5 Create Reports
+        .span5 Event Data
         .span2
-          = permission_checkbox(f, :create, Report)
+          = permission_checkbox(f, :index_results, EventData)
 
       .span7
         .span5 Comments
@@ -35,6 +35,39 @@
         .span5 Event Status 
         .span5
           = permission_checkbox(f, :event_status, Campaign)
+
+      .span12
+        .span2.title.separate_small Custom Reports
+
+      .span7
+        .span5 View
+        .span2
+          = permission_checkbox(f, :index, Report)
+
+      .span7
+        .span5 Run
+        .span2
+          = permission_checkbox(f, :show, Report)
+
+      .span7
+        .span5 Create
+        .span2
+          = permission_checkbox(f, :create, Report)
+
+      .span7
+        .span5 Edit
+        .span2
+          = permission_checkbox(f, :update, Report)
+
+      .span7
+        .span5 Deactivate
+        .span2
+          = permission_checkbox(f, :deactivate, Report)
+
+      .span7
+        .span5 Share
+        .span2
+          = permission_checkbox(f, :share, Report)
 
   = hidden_field_tag :partial, :results_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

@@ -37,6 +37,11 @@ describe Event, search: true do
 
     # Make some test searches
 
+    # Search by event id
+    Event.do_search(company_id: company.id, id: [event.id, event2.id]).results.should =~ [event, event2]
+    Event.do_search(company_id: company.id, id: [event.id]).results.should =~ [event]
+    Event.do_search(company_id: company.id, id: [event2.id]).results.should =~ [event2]
+
     # Search for all Events on a given Company
     Event.do_search(company_id: company.id).results.should =~ [event, event2]
     Event.do_search(company_id: company2_campaign.company_id).results.should =~ [company2_event]

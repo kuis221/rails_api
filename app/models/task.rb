@@ -52,7 +52,7 @@ class Task < ActiveRecord::Base
     integer :company_id
 
     integer :team_members, multiple: true do
-      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id)  }.flatten.uniq
+      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id) }.flatten.uniq
     end
 
     integer :campaign_id
@@ -129,6 +129,7 @@ class Task < ActiveRecord::Base
           end
         end
 
+        with :id, params[:id] if params.has_key?(:id) and params[:id]
         with :company_id, params[:company_id]
         with :campaign_id, params[:campaign]  if params.has_key?(:campaign) and params[:campaign]
         with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
@@ -246,11 +247,11 @@ class Task < ActiveRecord::Base
       if (id_changed? || company_user_id_changed?) && company_user_id.present?
         #New task with assigned user or assigning user to existing task
         Notification.new_task(company_user, self)
-      elsif id_changed? && company_user_id.nil?
-        #New task without assigned user
-        event.all_users.each do |user|
-          Notification.new_task(user, self, true)
-        end
+      # elsif id_changed? && company_user_id.nil?
+      #   #New task without assigned user
+      #   event.all_users.each do |user|
+      #     Notification.new_task(user, self, true)
+      #   end
       end
     end
 

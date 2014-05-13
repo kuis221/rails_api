@@ -6,4 +6,4 @@ h3 GALLERY
 
 .gallery 
   ul#photos-thumbs
-    = render partial: 'results/photos/photo', collection: resource.active_photos
+    = render partial: 'results/photos/photo', collection: resource.photos.includes(:tags).map{|a| a.attachable = resource; a }

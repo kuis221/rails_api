@@ -76,12 +76,12 @@
       ul.consumer-reach-metrics.pull-right
         - custom_kpis.each do |custom_kpi|
           - if ['number', 'count'].include?(custom_kpi.kpi_type)
-            - custom_kpi_value = resource.results.active.find_by_kpi_id(custom_kpi.id).try(:display_value)
-            - field = resource.campaign.form_field_for_kpi(custom_kpi)
-            - unless field.nil?
+            - if field = resource.campaign.form_field_for_kpi(custom_kpi)
+              - custom_kpi_value = resource.results_for([field]).first.try(:display_value)
               li
                 div.metric
-                  span= (custom_kpi.capture_mechanism == 'currency' ? number_to_currency(custom_kpi_value, precision: 2) : custom_kpi_value)
+                  span
+                    = (custom_kpi.capture_mechanism == 'currency' ? number_to_currency(custom_kpi_value, precision: 2) : custom_kpi_value) unless custom_kpi_value.nil?
                   = ' ' + field.name
 
 - if event_data
@@ -185,6 +185,10 @@
                 },
                 series: {
                   enableMouseTracking: false,
+                  dataLabels: {
+                    connectorColor: '#C0C0C0',
+                    softConnector: false
+                  }
                 }
             },
             tooltip: {

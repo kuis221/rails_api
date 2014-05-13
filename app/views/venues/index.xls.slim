@@ -6,8 +6,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Font ss:Bold="1"
     Style ss:ID="s2"
       NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
-    Style ss:ID="s4" ss:Name="Currency"
+    Style ss:ID="s3" ss:Name="Currency"
       NumberFormat ss:Format='"$"#,##0.00'
+    Style ss:ID="s4" ss:Name="TDLinkCode"
+      Alignment ss:Horizontal="Left"
   Worksheet ss:Name="Venues"
 
     Table
@@ -40,8 +42,12 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
         Row
           Cell
             Data ss:Type="String"= venue.name
-          Cell
-            Data ss:Type="String"= venue.td_linx_code
+          - if !!(venue.td_linx_code =~ /^[0-9]+$/)
+              Cell ss:StyleID="s4"
+                Data ss:Type="Number"= venue.td_linx_code
+          - else
+              Cell
+                Data ss:Type="String"= venue.td_linx_code
           Cell
             Data ss:Type="String"= venue.formatted_address
           Cell
@@ -52,5 +58,5 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="Number"= venue.events_count
           Cell
             Data ss:Type="Number"= venue.promo_hours
-          Cell ss:StyleID="s4"
+          Cell ss:StyleID="s3"
             Data ss:Type="Number"= venue.spent

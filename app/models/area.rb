@@ -131,6 +131,12 @@ class Area < ActiveRecord::Base
     end
   end
 
+  def self.report_fields
+    {
+      name:       { title: 'Name' }
+    }
+  end
+
   protected
 
     # Generates the common denominators of the places within this area. Example:

@@ -5,6 +5,8 @@ class Results::ReportsController < InheritedResources::Base
 
   load_and_authorize_resource except: [:index]
 
+  before_filter :autorize_results, only: [:index]
+
   helper_method :return_path
 
   # This helper provide the methods to activate/deactivate the resource
@@ -63,13 +65,21 @@ class Results::ReportsController < InheritedResources::Base
     end
 
     def permitted_params
-      params.permit(report: [
-        :name, :description, :sharing, {sharing_selections: []},
-        { rows: [:field, :label, :aggregate] },
-        { columns: [:field, :label] },
-        { values: [:field, :label, :aggregate, :precision, :display] },
-        { filters: [:field, :label] }
-      ])[:report] || {}
+      allowed =if params[:id].present?
+        if can?(:edit, resource)
+          [ :name, :description,
+            { rows: [:field, :label, :aggregate] },
+            { columns: [:field, :label] },
+            { values: [:field, :label, :aggregate, :precision, :display] },
+            { filters: [:field, :label] } ]
+        else
+          []
+        end
+      else
+        [ :name, :description ]
+      end
+      allowed += [:sharing, {sharing_selections: []}] if params[:id].present? && can?(:share, resource)
+      params.permit(report: allowed)[:report] || {}
     end
 
     def filter_params
@@ -102,5 +112,9 @@ class Results::ReportsController < InheritedResources::Base
       else
         collection_path
       end
+    end
+
+    def autorize_results
+      authorize! :access, :results
     end
 end

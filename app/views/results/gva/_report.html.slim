@@ -1,5 +1,7 @@
-- if @campaign.events.count > 0
-  = render 'report_goals_actual'
-- else
-  .details_box
-    p.text-center This campaign has no events
+#kpis-trends-bars
+  .details_box.content
+    - if @campaign.events.count > 0
+      = render 'report_goals_actual'
+    - else
+      .details_box
+        p.text-center.empty-state This campaign has no events

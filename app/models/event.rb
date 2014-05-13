@@ -80,7 +80,9 @@ class Event < ActiveRecord::Base
 
   scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
   scope :with_user_in_team, lambda{|user|
-    joins_for_user_teams.where('company_users.id in (?)', user) }
+      joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
+      joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')').
+      where('memberships.company_user_id in (?)', user) }
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
   scope :with_team, lambda{|team|
     joins(:teamings).
@@ -99,17 +101,15 @@ class Event < ActiveRecord::Base
       joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id').
       joins('LEFT JOIN users ON users.id=company_users.user_id')
   }
-  #scope :in_areas, ->(areas) { joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', areas.map{|a| a.place_ids}.flatten.uniq+[0], areas.map{|a| a.locations.map(&:id)}.flatten.uniq+[0]) }
+
   scope :in_areas, ->(areas) {
-    ids = areas.map(&:id);
-    joins(:place).where(
-      'events.place_id in (
-          select place_id from placeables where placeable_type=\'Area\' and placeable_id in (?)
-        UNION
-          select place_id from locations_places where location_id in (select distinct places.location_id from places INNER JOIN placeables ON placeable_type=\'Area\' and placeable_id in (?) AND places.id=placeables.place_id WHERE places.is_location=?)
-      )', ids, ids, true
-      )
+    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).to_sql
+    joins(:place).
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   }
+
   scope :in_places, ->(places) {
     joins(:place).where(
       'events.place_id in (?) or events.place_id in (
@@ -471,6 +471,8 @@ class Event < ActiveRecord::Base
               with(:team_ids, team_ids) if team_ids.any?
             end
           end
+
+          with :id, params[:id] if params.has_key?(:id) and params[:id].present?
 
           with :location,    params[:location] if params.has_key?(:location) and params[:location].present?
           with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?

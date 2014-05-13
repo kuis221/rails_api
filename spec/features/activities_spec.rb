@@ -314,7 +314,7 @@ feature 'Activities management' do
 
       campaign.activity_types << activity_type
 
-      with_resque do # So the image is processed
+      with_resque do # So the document is processed
         visit event_path(event)
 
         click_js_link('New Activity')

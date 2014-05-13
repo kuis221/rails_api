@@ -1,4 +1,4 @@
-@import "variables.scss"; 
+@import "variables.scss";
 
 /*-- COLOR PALETTE --*/
 $completed: #90bf43;
@@ -969,7 +969,6 @@ ul.select2-results{
 	#select-areas-table-wrapper .link-list {
 		ul#areas-list{
 			min-height: 82px;
-			max-height: 251px;
 			overflow-y: auto;
 			overflow-x: hidden;
 			.pull-left{
@@ -1275,7 +1274,7 @@ div#spin{
 		.chzn-container-multi{
 			.chzn-choices, .chzn-drop, .chzn-results{
 				width: 440px !important;
-			}	
+			}
 			.chzn-drop{
 				top: 38px !important;
 			}
@@ -1293,8 +1292,8 @@ div#spin{
 						right: 4px !important;
 					}
 				}
-			}	
-		} 
+			}
+		}
 	}
 	div.option-help{
 		color: $user_menu;

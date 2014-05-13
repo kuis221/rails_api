@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140429215144) do
+ActiveRecord::Schema.define(:version => 20140508162351) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -617,6 +617,7 @@ ActiveRecord::Schema.define(:version => 20140429215144) do
   end
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
+  add_index "notifications", ["message"], :name => "index_notifications_on_message"
 
   create_table "permissions", :force => true do |t|
     t.integer "role_id"
@@ -704,6 +705,16 @@ ActiveRecord::Schema.define(:version => 20140429215144) do
     t.text     "description"
     t.boolean  "is_admin",    :default => false
   end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "surveys", :force => true do |t|
     t.integer  "event_id"

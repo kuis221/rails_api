@@ -254,7 +254,6 @@ describe "User" do
           ability.should be_able_to(:create, document)
         end
 
-
         it "should be able to list document in a event if has the permission :index_documents on Event" do
           ability.should_not be_able_to(:documents, event)
           ability.should_not be_able_to(:index_documents, event)
@@ -630,7 +629,7 @@ describe "User" do
           ability.should be_able_to(:venue_performance_module, :dashboard)
         end
       end
-      
+
       #   ______   ____   ____  _____
       #  |      | /    | /    |/ ___/
       #  |      ||  o  ||   __(   \_
@@ -643,27 +642,221 @@ describe "User" do
         it "should be able to deactivate a tag if has the permission :deactivate on Tag" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:remove, tag)
-          
+
           user.role.permission_for(:remove, Tag).save
-          
+
           ability.should be_able_to(:remove, tag)
         end
         it "should be able to activate a tag if has the permission :activate on Tag" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:activate, tag)
-          
+
           user.role.permission_for(:activate, Tag).save
-          
+
           ability.should be_able_to(:activate, tag)
         end
-        
+
         it "should NOT be able to activate a tag if has the permission :remove on Tag but not the :activate permission" do
           tag = FactoryGirl.create(:tag)
           ability.should_not be_able_to(:activate, tag)
-          
+
           user.role.permission_for(:remove, Tag).save
-          
+
           ability.should_not be_able_to(:activate, tag)
+        end
+      end
+
+      #    ____   ___    ____  _     _____     __ __  _____      ____    __ ______  __ __   ____  _     _____
+      #   /    | /   \  /    || |   / ___/    |  |  |/ ___/     /    |  /  ]      ||  |  | /    || |   / ___/
+      #  |   __||     ||  o  || |  (   \_     |  |  (   \_     |  o  | /  /|      ||  |  ||  o  || |  (   \_
+      #  |  |  ||  O  ||     || |___\__  |    |  |  |\__  |    |     |/  / |_|  |_||  |  ||     || |___\__  |
+      #  |  |_ ||     ||  _  ||     /  \ |    |  :  |/  \ |    |  _  /   \_  |  |  |  :  ||  _  ||     /  \ |
+      #  |     ||     ||  |  ||     \    |     \   / \    |    |  |  \     | |  |  |     ||  |  ||     \    |
+      #  |___,_| \___/ |__|__||_____|\___|      \_/   \___|    |__|__|\____| |__|   \__,_||__|__||_____|\___|
+      #
+      describe "GvA reports" do
+        it "should be able to access the GvA report" do
+          ability.should_not be_able_to(:gva_report, Campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+        end
+        it "should be able to view the GvA report for a specific campaign" do
+          campaign = FactoryGirl.create(:campaign)
+          other_campaign = FactoryGirl.create(:campaign)
+          ability.should_not be_able_to(:gva_report, Campaign)
+          ability.should_not be_able_to(:gva_report_campaign, campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+          ability.should_not be_able_to(:gva_report_campaign, campaign)
+
+          User.current.current_company_user.campaigns << campaign
+
+          ability.should be_able_to(:gva_report, Campaign)
+          ability.should be_able_to(:gva_report_campaign, campaign)
+          ability.should_not be_able_to(:gva_report_campaign, other_campaign)
+        end
+      end
+
+      #     ___ __ __    ___  ____   ______       _____ ______   ____  ______  __ __  _____
+      #    /  _]  |  |  /  _]|    \ |      |     / ___/|      | /    ||      ||  |  |/ ___/
+      #   /  [_|  |  | /  [_ |  _  ||      |    (   \_ |      ||  o  ||      ||  |  (   \_
+      #  |    _]  |  ||    _]|  |  ||_|  |_|     \__  ||_|  |_||     ||_|  |_||  |  |\__  |
+      #  |   [_|  :  ||   [_ |  |  |  |  |       /  \ |  |  |  |  _  |  |  |  |  :  |/  \ |
+      #  |     |\   / |     ||  |  |  |  |       \    |  |  |  |  |  |  |  |  |     |\    |
+      #  |_____| \_/  |_____||__|__|  |__|        \___|  |__|  |__|__|  |__|   \__,_| \___|
+      #
+      describe "Event Status report" do
+        it "should be able to access the Event Status report" do
+          ability.should_not be_able_to(:gva_report, Campaign)
+
+          user.role.permission_for(:gva_report, Campaign).save
+
+          ability.should be_able_to(:gva_report, Campaign)
+        end
+
+        it "should be able to view the Event Status report for a specific campaign" do
+          campaign = FactoryGirl.create(:campaign)
+          other_campaign = FactoryGirl.create(:campaign)
+          ability.should_not be_able_to(:event_status, Campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, campaign)
+
+          user.role.permission_for(:event_status, Campaign).save
+
+          ability.should be_able_to(:event_status, Campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, campaign)
+
+          User.current.current_company_user.campaigns << campaign
+
+          ability.should be_able_to(:event_status, Campaign)
+          ability.should be_able_to(:event_status_report_campaign, campaign)
+          ability.should_not be_able_to(:event_status_report_campaign, other_campaign)
+        end
+      end
+
+
+      #      __  __ __  _____ ______   ___   ___ ___      ____     ___  ____   ___   ____  ______  _____
+      #     /  ]|  |  |/ ___/|      | /   \ |   |   |    |    \   /  _]|    \ /   \ |    \|      |/ ___/
+      #    /  / |  |  (   \_ |      ||     || _   _ |    |  D  ) /  [_ |  o  )     ||  D  )      (   \_
+      #   /  /  |  |  |\__  ||_|  |_||  O  ||  \_/  |    |    / |    _]|   _/|  O  ||    /|_|  |_|\__  |
+      #  /   \_ |  :  |/  \ |  |  |  |     ||   |   |    |    \ |   [_ |  |  |     ||    \  |  |  /  \ |
+      #  \     ||     |\    |  |  |  |     ||   |   |    |  .  \|     ||  |  |     ||  .  \ |  |  \    |
+      #   \____| \__,_| \___|  |__|   \___/ |___|___|    |__|\_||_____||__|   \___/ |__|\_| |__|   \___|
+      #
+      describe "Custom Report" do
+        it "should be able to view a list of custom reports" do
+          ability.should_not be_able_to(:index, Report)
+
+          user.role.permission_for(:index, Report).save
+
+          ability.should be_able_to(:index, Report)
+        end
+
+        it "should be able to run a custom report that was created by him" do
+          report  = company.reports.create(created_by_id: user.id)
+          ability.should_not be_able_to(:show, report)
+
+          user.role.permission_for(:show, Report).save
+
+          ability.should be_able_to(:show, report)
+        end
+
+        it "should be able to run a custom report that was shared with him" do
+          report  = FactoryGirl.create(:report, company: company, sharing: 'custom', sharing_selections: ["company_user:#{company_user.id}"])
+          report.update_attribute(:created_by_id, user.id+100)
+          non_shared_report  = FactoryGirl.create(:report, company: company, sharing: 'custom')
+          non_shared_report.update_attribute(:created_by_id, user.id+100)
+          ability.should_not be_able_to(:show, report)
+
+          user.role.permission_for(:show, Report).save
+
+          ability.should be_able_to(:show, report)
+          ability.should_not be_able_to(:show, non_shared_report)
+        end
+
+        it "should be able to update a custom report if was created by him and has permissions to create reports" do
+          report  = FactoryGirl.create(:report, company: company, created_by_id: user.id)
+          ability.should_not be_able_to(:update, report)
+
+          user.role.permission_for(:create, Report).save
+
+          ability.should be_able_to(:update, report)
+        end
+
+        it "should be able to update a custom report if have permissions to update reports" do
+          report = without_current_user { FactoryGirl.create(:report, company: company, created_by_id: user.id + 100) }
+          ability.should_not be_able_to(:update, report)
+          ability.should_not be_able_to(:edit, report)
+
+          user.role.permission_for(:update, Report).save
+
+          ability.should_not be_able_to(:update, report)
+          ability.should_not be_able_to(:edit, report)
+
+          report.update_attributes(sharing: 'custom', sharing_selections: ["company_user:#{company_user.id}"])
+          ability.should be_able_to(:update, report)
+          ability.should be_able_to(:edit, report)
+        end
+
+        it "should NOT be able to update a custom report if does not have permissions to update reports" do
+          report = without_current_user { FactoryGirl.create(:report, company: company, created_by_id: user.id + 100) }
+          ability.should_not be_able_to(:update, report)
+
+          user.role.permission_for(:create, Report).save
+
+          ability.should_not be_able_to(:update, report)
+        end
+
+        it "should be able to edit a custom report that was created by him" do
+          report  = FactoryGirl.create(:report, company: company, created_by_id: user.id)
+          ability.should_not be_able_to(:edit, report)
+          ability.should_not be_able_to(:update, report)
+
+          user.role.permission_for(:update, Report).save
+
+          ability.should be_able_to(:edit, report)
+          ability.should be_able_to(:update, report)
+        end
+
+        it "should be able to edit a custom report that was shared with him" do
+          report  = FactoryGirl.create(:report, company: company)
+          report.update_attribute(:created_by_id, user.id+100)
+          ability.should_not be_able_to(:edit, report)
+          ability.should_not be_able_to(:update, report)
+
+          user.role.permission_for(:update, Report).save
+
+          ability.should_not be_able_to(:edit, report)
+          ability.should_not be_able_to(:update, report)
+
+          report.update_attributes(sharing: 'custom', sharing_selections: ["company_user:#{company_user.id}"])
+          ability.should be_able_to(:edit, report)
+          ability.should be_able_to(:update, report)
+        end
+
+        it "should be able to share a custom report that was created by him" do
+          report  = FactoryGirl.create(:report, company: company, created_by_id: user.id)
+          ability.should_not be_able_to(:share, report)
+
+          user.role.permission_for(:share, Report).save
+
+          ability.should be_able_to(:share, report)
+        end
+
+        it "should be able to share a custom report that was shared with him" do
+          report = without_current_user { FactoryGirl.create(:report, company: company, created_by_id: user.id + 100) }
+
+          ability.should_not be_able_to(:share, report)
+
+          user.role.permission_for(:share, Report).save
+
+          ability.should_not be_able_to(:share, report)
+
+          report.update_attributes(sharing: 'custom', sharing_selections: ["company_user:#{company_user.id}"])
+          ability.should be_able_to(:share, report)
         end
       end
     end

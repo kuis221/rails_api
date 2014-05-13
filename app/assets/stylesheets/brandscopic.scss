@@ -220,6 +220,10 @@ abbr[title]{
 	}
 }
 
+.chzn-default span {
+	color: $user_menu;
+}
+
 /*-- EVENT DETAILS PAGES __*/
 
 body.events.show{
@@ -1081,12 +1085,18 @@ p{
 	}
 	&.first_login{
 		width:600px;
+		height: auto;
 		h2{
 			margin-bottom: 20px;
 		}
 		.chzn-container{
 			display:block;
 			margin-bottom: 10px;
+		}
+		form {
+			span.help-inline {
+				display: inline !important;
+			}
 		}
 		input[type="submit"].btn{
 			margin: 40px 0 0 0;
@@ -1613,7 +1623,7 @@ label{
 		visibility: hidden;
 	}
 	label{
-		color: $user_menu;
+		color: $text;
 		font-weight: 400;
 		letter-spacing: -0.5px;
 		line-height: 22px;
@@ -1725,12 +1735,40 @@ li#notifications{
 		.dropdown-toggle { background-color: $alert_red; }
 	}
 
+	&.without-notifications ul {
+		height: 100%;
+		li.empty-state {
+			height: 100%;
+			width: 100%;
+			background-color: #cccccc;
+			color: #A5A4A5;
+			p {
+				display: table;
+				margin: 40% auto;
+				font-weight: bold;
+			}
+			&:hover {
+				background-color: #cccccc;
+			}
+		}
+	}
+
 	.notifications-container{
 		background-color: #cccccc;
 		height: 261px;
 		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
+
+		.jspVerticalBar {
+			width: 7px;
+			.jspTrack {
+				width: 7px;
+			}
+			.jspDrag {
+				width: 5px;
+			}
+		}
 	}
 
 	.dropdown-menu{
@@ -1792,7 +1830,7 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 225px;
+					width: 240px;
 					line-height: 16px;
 					padding-left: 32px;
 					span{
@@ -1991,6 +2029,13 @@ ul.kpis-list{
 	}
 }
 
+#kpis-trends-module {
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+}
+
 // Graphical visualization for Goals
 #kpis-trends-bars {
 	a{
@@ -2012,6 +2057,13 @@ ul.kpis-list{
 	.container-kpi-trend{
 		margin-top: 21px;
 		margin-left: 0px;
+	}
+	.empty-state {
+		padding: 50px 0;
+		color: $user_menu;
+	}
+	&.loading-spinner {
+		padding: 50px 0;
 	}
 	.kpi-trend, .kpi-trend-overall {
 		font-size: 12px;
@@ -2071,9 +2123,9 @@ ul.kpis-list{
 			.tooltip-inner {
 				text-align: left;
 			}
-			span { 
-				width: 70px; 
-				display: inline-block; 
+			span {
+				width: 70px;
+				display: inline-block;
 				text-align: right;
 				margin-right: 5px;
 				&.today-label {
@@ -2143,6 +2195,7 @@ ul.kpis-list{
 			background-color: $grey_three;
 			height: 0;
 			top: -10px;
+			cursor: default;
 			&:before{
 				content: "\e004";
 				display: inline-block;
@@ -2176,13 +2229,12 @@ ul.kpis-list{
 			right: -235px;
 			text-align: center;
 			&.percentage {
-				font-size: 31px;
+				font-size: 26px;
 				line-height: 26px;
 				padding-top: 10px;
 			}
 			.normal-text {
 				display: inline-block;
-				font-size: 32px !important;
 				font-weight: 400;
 			}
 			.progress-numbers {
@@ -2312,7 +2364,7 @@ ul.kpis-list{
 	}
 	ul#areas-list{
 		li{
-			display: table !important;
+			display: table;
 			height: 86px;
 			min-height: 86px;
 			width: 100%;
@@ -3383,7 +3435,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .activity-form{
-	
+
 	.fields-wrapper{
 		&>p{
 			color: $user_menu;
@@ -3415,6 +3467,10 @@ textarea::-webkit-input-placeholder {
 		padding-left:0;
 		.checker{
 			margin-right: 10px;
+
+			span.checked:after {
+				top: -16px;
+			}
 		}
 	}
 	.chzn-container-single .chzn-single{
@@ -4544,6 +4600,7 @@ body.roles{
 			overflow: hidden;
 
 			.results-box-container {
+				float: right;
 				.venues-data-column {
 					display: inline-block;
 					vertical-align: top;
@@ -4551,6 +4608,9 @@ body.roles{
 					float: left;
 					margin-left: 0;
 					width: 137px;
+					&.spent-box{
+						width: 157px;
+					}
 				}
 			}
 
@@ -4564,7 +4624,7 @@ body.roles{
 				@include box-sizing(border-box);
 				float: left;
 				text-align: center;
-				width: 55%;
+				width: auto;
 
 				#new-venue-btn {
 					margin-top: 10px;
@@ -4737,6 +4797,11 @@ body.roles{
 
 // EVENT DATA
 
+.event_data, .comments, .expenses, .surveys, .photos {
+	.main.with-details-close-bar {
+		padding-top: 60px;
+	}
+}
 .event_data, .comments, .expenses {
 	&.index {
 		//For Firefox
@@ -5370,6 +5435,9 @@ svg{
 			-webkit-border-radius: 7px;
 			border-radius: 7px;
 		}
+	}
+	.loading-spinner {
+		background: white url(/assets/loading-circle.gif) center center no-repeat;
 	}
 }
 
@@ -6358,7 +6426,7 @@ body.gva {
 				}
 				form#gva-report{
 					label{
-						color: $alert_grey;
+						color: $brand;
 						font-size: 11px;
 						line-height: 15px;
 					}
@@ -6366,6 +6434,7 @@ body.gva {
 						.chzn-container-single{
 							.chzn-search input{
 								bottom:13px;
+								height: 24px;
 							}
 							.chzn-single{
 								height: 29px !important;
@@ -6388,7 +6457,7 @@ body.gva {
 				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
-					margin-top: 14px;
+					margin-top: 15px;
 					#group-by-title{
 						font-size: 11px;
 						vertical-align: middle;
@@ -6400,6 +6469,7 @@ body.gva {
 							box-shadow: none;
 							color: #FFFFFF;
 							font-weight: bold;
+							font-size: 13px;
 							padding: 7px 10px;
 							width: 60px;
 							&:first-child{
@@ -6412,19 +6482,16 @@ body.gva {
 							}
 							&.active{
 								background-color: $brand;
+								color: $grey_one;
 							}
 							&.campaign{
 								border-right: 1px solid $buttons-border;
 							}
 							&.place{
-								border-left: 1px solid $buttons-border;
 								border-right: 1px solid $buttons-border;
 								&:before{
 									display: none;
 								}
-							}
-							&.staff{
-								border-left: 1px solid $buttons-border;
 							}
 							&.list, &.table, &.graph{
 								width: 30px;
@@ -6631,9 +6698,6 @@ body.gva {
 							border: none;
 							margin-top: 0;
 							padding-left: 0;
-							&.loading-spinner {
-								background: white url(/assets/loading-circle.gif) center center no-repeat;
-							}
 						}
 					}
 				}
@@ -6680,7 +6744,7 @@ body.event_status {
 				.chzn-drop{
 					margin-top: 6px !important;
 					.chzn-search{
-						input{ 
+						input{
 							bottom:13px;
 						}
 					}
@@ -7062,11 +7126,13 @@ ul#reports-list {
 			.thumbnail-inner {
 				padding: 0 5px;
 				position: relative;
+				text-align: center;
 			}
 			&.photo-item{
 				img.google-images{
 					min-height: 160px;
-					width: 100%;
+					max-width: 100%;
+					max-height: 160px;
 				}
 			}
 

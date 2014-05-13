@@ -9,7 +9,8 @@
       a> href="http://support.brandscopic.com" target="_blank" support site
       | for more information about this section.
 
-.tab-content
+.tab-content.with-details-close-bar
+  = resource_details_bar("You are viewing the Event Status report. Click to close.")
   #list-view.tab-pane.active
     .details_box.first
       h3 EVENT STATUS
@@ -19,7 +20,6 @@
   #report-container
     #kpis-trends-module
       .details_box
-        p.text-center Select a campaign from the list above
 
 = render partial: 'help_tutorial'
 
@@ -27,8 +27,10 @@ javascript:
   jQuery(function(){
     $('#report_campaign_id').on('change', function(e){
       if ( $(this).val() ){
-        $('#kpis-trends-module .details_box').empty().addClass('loading-spinner');
+        $('#kpis-trends-module .details_box').empty().removeClass('empty-state').addClass('loading-spinner');
         $(this.form).submit();
+      } else {
+        $('#kpis-trends-module .details_box').empty().append( $('<div class="text-center empty-state">').text('Select a campaign from the list above') );
       }
     });
     $(window).ready(function(){
