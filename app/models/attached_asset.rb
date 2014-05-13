@@ -26,15 +26,18 @@ class AttachedAsset < ActiveRecord::Base
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
-    :styles => {
-      :small => '',
-      :thumbnail => '',
-      :medium => '800x800>'
+    styles: -> (a) {
+      if a.instance.is_pdf?
+        a.options[:convert_options] = { thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400' }
+        { thumbnail: ['300x400>', 'jpg'] }
+      else
+        { small: '', thumbnail: '', medium: '800x800>' }
+      end
     },
-    :convert_options => {
-      :small => '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
-      :thumbnail => '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
-      :medium => '-quality 85 -strip'
+    convert_options: {
+      small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+      thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+      medium: '-quality 85 -strip'
     }
   })
 
@@ -138,13 +141,17 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def is_thumbnable?
-    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
+    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf)$}.match(file_content_type).present?
+  end
+
+  def is_pdf?
+    %r{^(x-)?application/pdf$}.match(file_content_type).present?
   end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      options = {include: {:attachable => [:campaign, :place] }}
+      options = {include: [{:attachable => [:campaign, :place] }, :tags]}
       solr_search(options) do
         with :company_id, params[:company_id]
         with :processed, true
@@ -250,7 +257,7 @@ class AttachedAsset < ActiveRecord::Base
 
     # Determines if file requires post-processing (image resizing, etc)
     def post_process_required?
-      %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
+      is_thumbnable?
     end
 
     # Set attachment attributes from the direct upload

@@ -175,7 +175,7 @@ class User < ActiveRecord::Base
   end
 
   def companies_active_role
-    self.company_users.select{|cu| cu.active? && cu.role.active?}.map(&:company)
+    self.company_users.select{|cu| cu.active? && cu.role.active?}.map(&:company).sort_by(&:name)
   end
 
   def is_super_admin?

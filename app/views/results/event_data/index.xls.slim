@@ -12,8 +12,11 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       NumberFormat ss:Format='"$"#,##0.00'
     Style ss:ID="s5"
       NumberFormat ss:Format="Percent"
-  Worksheet ss:Name="Event Data"
+    Style ss:ID="s6" ss:Name="ZipCode"
+      NumberFormat ss:Format="00000\-0000"
+      Alignment ss:Horizontal="Left"
 
+  Worksheet ss:Name="Event Data"
     Table
       Column ss:Width="160"
       Column ss:Width="100"
@@ -41,7 +44,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" CITY
         Cell
           Data ss:Type="String" STATE
-        Cell 
+        Cell
           Data ss:Type="String" ZIP
         Cell
           Data ss:Type="String" ACTIVE STATE
@@ -95,8 +98,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= event.place_city
           Cell
             Data ss:Type="String"= event.place_state
-          Cell
-            Data ss:Type="String"= event.place_zipcode
+          Cell ss:StyleID="s6"
+            Data ss:Type="Number"= event.place_zipcode
           Cell
             Data ss:Type="String"= event.status
           Cell
@@ -125,7 +128,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell ss:StyleID="s5"
             Data ss:Type="Number"= number_with_precision(event.gender_male/100) unless event.gender_male.nil?
           Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian, precision: 2) unless event.ethnicity_asian.nil? 
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian, precision: 2) unless event.ethnicity_asian.nil?
           Cell ss:StyleID="s5"
             Data ss:Type="Number"= number_with_precision(event.ethnicity_black, precision: 2) unless event.ethnicity_black.nil?
           Cell ss:StyleID="s5"
@@ -136,4 +139,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="Number"= number_with_precision(event.ethnicity_white, precision: 2) unless event.ethnicity_white.nil?
           - custom_fields_to_export_values(event).each do |v|
             Cell
-              Data ss:Type="String"= v
+              - if v.is_a? Numeric
+                Data ss:Type="Number"= v
+              - else
+                Data ss:Type="String"= v

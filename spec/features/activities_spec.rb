@@ -148,8 +148,8 @@ feature 'Activities management' do
       venue = FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil))
       FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
-      brand1 = FactoryGirl.create(:brand, name: 'Brand #1')
-      brand2 = FactoryGirl.create(:brand, name: 'Brand #2')
+      brand1 = FactoryGirl.create(:brand, name: 'Brand #1', company: company)
+      brand2 = FactoryGirl.create(:brand, name: 'Brand #2', company: company)
       FactoryGirl.create(:marque, name: 'Marque #1 for Brand #2', brand: brand2)
       FactoryGirl.create(:marque, name: 'Marque #2 for Brand #2', brand: brand2)
       FactoryGirl.create(:marque, name: 'Marque alone', brand: brand1)
@@ -314,7 +314,7 @@ feature 'Activities management' do
 
       campaign.activity_types << activity_type
 
-      with_resque do # So the image is processed
+      with_resque do # So the document is processed
         visit event_path(event)
 
         click_js_link('New Activity')

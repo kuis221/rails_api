@@ -138,7 +138,15 @@ class Report < ActiveRecord::Base
     values_position = columns.map(&:field).index('values')
     values_map = report_columns.map{|c| c.split('||')[values_position] }
     values_label_map = {}
-    values.each{|v| v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count') ? v.kpi.kpis_segments.each{|s| values_label_map["#{v.label}: #{s.text}"] =  v}  :  values_label_map[v.label] = v}.flatten
+    values.each do |v|
+      if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
+        v.kpi.kpis_segments.each{ |s| values_label_map["#{v.label}: #{s.text}"] =  v }
+      elsif v.form_field.present? && v.form_field.is_optionable?
+        v.form_field.options.each{ |o| p "#{v.label}: #{o.name}"; values_label_map["#{v.label}: #{o.name}"] =  v }
+      else
+        values_label_map[v.label] = v
+      end
+    end
     result_values.each_with_index.map do |value, index|
       values_label_map[values_map[index]].format_value result_values, index, options
     end
@@ -164,6 +172,13 @@ class Report < ActiveRecord::Base
             name = "kpi_#{s.kpi_id}_#{s.id}"
             select_cols.push name
             value_fields[name] = "#{f.label}: #{s.text}"
+            "#{name} numeric"
+          end
+        elsif f.form_field.present? && f.form_field.is_optionable?
+          f.form_field.options.map do |o|
+            name = "form_field_#{o.form_field_id}_#{o.id}"
+            select_cols.push name
+            value_fields[name] = "#{f.label}: #{o.name}"
             "#{name} numeric"
           end
         else
@@ -306,6 +321,29 @@ class Report < ActiveRecord::Base
               end
               s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
             end
+          elsif value.form_field.present?
+            if value.form_field.is_optionable? && value.form_field.is_hashed_value?
+              value.form_field.options.map do |option|
+                value_field = value_aggregate_sql(value['aggregate'], '(activity_results.hash_value->\''+option.id.to_s+'\')::numeric')
+                s.where("activity_results.form_field_id=#{value.form_field.id} and activity_results.hash_value ? '#{option.id}'").
+                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+              end
+            elsif value.form_field.is_optionable?
+              value_field = value['aggregate'] == 'count' ? value_aggregate_sql(value['aggregate'], 'activity_results.id') : 0
+              value.form_field.options.map do |option|
+                s.where('activity_results.form_field_id=? and activity_results.value=?', value.form_field.id, option.id.to_s).
+                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+              end
+            else
+              if value.form_field.is_numeric?
+                value_field = value_aggregate_sql(value.aggregate, 'activity_results.scalar_value')
+              elsif value.aggregate.downcase == 'count'
+                value_field = value_aggregate_sql('count', 'activity_results.value')
+              else
+                value_field = '0'
+              end
+              s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+            end
           elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
             if value['aggregate'] == 'count'
               value_field = value_aggregate_sql(value['aggregate'], value.table_column[0])
@@ -375,6 +413,14 @@ class Report < ActiveRecord::Base
         s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id AND event_results.kpi_id in (?)', field_list.select{|f| f.kpi.present? && is_a_result_kpi?(f.kpi) }.map{|f| f.kpi.id})
       end
 
+      joined_with_activities = false
+      if fields_without_filters.any?{|v| v.form_field.present?} ||
+         filters.any?{|filter| filter.form_field.present? && is_filtered_by?(filter.field) }
+        # Include the form_fields table in the join making sure that only active form fields results are counted
+        s = s.joins(activities: :results, campaign: {activity_types: :form_fields}).where('activity_results.form_field_id=form_fields.id AND activity_type_campaigns.activity_type_id=activities.activity_type_id AND form_fields.id in (?)', field_list.map{|f| f.form_field.try(:id) }.compact)
+        joined_with_activities = true
+      end
+
       if fields_without_filters.any?{|v| v.kpi.present? && v.kpi.id == Kpi.photos.id}
         s = s.joins("LEFT JOIN attached_assets photos ON photos.attachable_type='Event' AND photos.asset_type='photo' AND photos.attachable_id = events.id AND photos.active='t'")
       end
@@ -399,6 +445,24 @@ class Report < ActiveRecord::Base
         s = s.joins(:teams)
       end
       #s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
+
+      # Join with areas table
+      if fields.any?{|v| v.model_name == 'area'} || filters.any?{|v| v.model_name == 'area' && is_filtered_by?(v.field)}
+        s = s.joins('LEFT JOIN "places" ON "places"."id" = "events"."place_id"
+            LEFT JOIN (
+                SELECT place_id, placeable_id area_id FROM "placeables"
+                WHERE "placeables"."placeable_type" = \'Area\'
+              UNION
+                SELECT place_id, locations.area_id FROM locations_places
+                INNER JOIN (
+                  SELECT DISTINCT places.location_id, placeables.placeable_id area_id
+                  FROM "places"
+                  INNER JOIN "placeables" ON "placeables"."place_id" = "places"."id"
+                  WHERE "placeables"."placeable_type" = \'Area\' AND "places"."is_location" = \'t\'
+                ) locations on locations.location_id=locations_places.location_id
+            ) areas_places ON events.place_id=areas_places.place_id
+            LEFT JOIN areas ON areas.id=areas_places.area_id')
+      end
 
       # Join with brand_portfolios table
       portfolio_filters = filters.select{|filter| filter.model_name == 'brand_portfolio' && is_filtered_by?(filter.field) }
@@ -468,9 +532,37 @@ class Report < ActiveRecord::Base
               ) bj ON bj.campaign_id = campaigns.id")
       end
 
+      # Joins with activities table
+      activity_type_fields = [field_list, rows, columns].flatten.compact.select{|f| f.activity_type.present? }
+      if activity_type_fields.any?
+        ids = activity_type_fields.map{|at| at.activity_type.id }
+        #s = s.joins("INNER JOIN activities activities on activities.activity_type_id in (#{ids.join(',')})")
+        s = s.where(activities: {activity_type_id: ids})
+        activity_type_fields.select{|f| f.activity_field == 'user' }.each do |f|
+          s = s.joins("LEFT JOIN company_users cu_activities_#{f.activity_type.id} on cu_activities_#{f.activity_type.id}.id=activities.company_user_id " +
+                      "LEFT JOIN users users_activities_#{f.activity_type.id} on users_activities_#{f.activity_type.id}.id=cu_activities_#{f.activity_type.id}.user_id " )
+        end
+      end
+
       [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
         if f.kpi.present?
           s = s.joins("INNER JOIN event_results er_kpi_#{f.kpi.id} ON er_kpi_#{f.kpi.id}.event_id = events.id AND er_kpi_#{f.kpi.id}.kpi_id=#{f.kpi.id}")
+        elsif f.form_field.present?
+          s = s.joins(
+            "INNER JOIN activities a_field_#{f.form_field.id} ON a_field_#{f.form_field.id}.activitable_type='Event' and a_field_#{f.form_field.id}.activitable_id=events.id " + ( joined_with_activities ? "AND activities.id=a_field_#{f.form_field.id}.id " : '' ) +
+            "INNER JOIN activity_results ar_field_#{f.form_field.id} ON ar_field_#{f.form_field.id}.activity_id = a_field_#{f.form_field.id}.id AND ar_field_#{f.form_field.id}.form_field_id=#{f.form_field.id}"
+          )
+          if f.form_field.is_optionable? && f.form_field.is_hashed_value?
+            s = s.joins("
+              LEFT JOIN form_field_options field_options_#{f.form_field.id}
+              ON ar_field_#{f.form_field.id}.form_field_id=field_options_#{f.form_field.id}.form_field_id AND
+                 ar_field_#{f.form_field.id}.hash_value ? field_options_#{f.form_field.id}.id::varchar")
+          elsif f.form_field.is_optionable?
+            s = s.joins("
+                LEFT JOIN form_field_options field_options_#{f.form_field.id}
+                ON ar_field_#{f.form_field.id}.form_field_id=field_options_#{f.form_field.id}.form_field_id AND
+                ar_field_#{f.form_field.id}.value::numeric=field_options_#{f.form_field.id}.id")
+          end
         end
       end
 
@@ -515,6 +607,8 @@ class Report < ActiveRecord::Base
             values.map do |v|
               if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
                 v.kpi.kpis_segments.map{|segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
+              elsif v.form_field.present? && v.form_field.is_optionable?
+                v.form_field.options.map{|option| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{option.name}||") }
               else
                 scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}||")
               end
@@ -592,11 +686,25 @@ class Report::Field
   end
 
   def table_column
-    @table_column ||= if m = /\Akpi:([0-9]+)\z/.match(field)
-      ["er_kpi_#{m[1]}.value", "kpi_#{m[1]}"]
+    @table_column ||= if kpi.present?
+      ["er_kpi_#{kpi.id}.value", "kpi_#{kpi.id}"]
+    elsif form_field.present?
+      if form_field.is_optionable?
+        ["field_options_#{form_field.id}.name", "form_field_#{form_field.id}"]
+      else
+        ["ar_field_#{form_field.id}.value", "form_field_#{form_field.id}"]
+      end
+    elsif activity_type.present?
+      if activity_field == 'user'
+        ["users_activities_#{activity_type.id}.first_name || ' ' || users_activities_#{activity_type.id}.last_name", "activity_user_#{activity_type.id}"]
+      elsif activity_field == 'activity_date'
+        ["to_char(activities.#{activity_field}, 'YYYY/MM/DD')", "activity_#{activity_field}_#{activity_type.id}"]
+      else
+        ["activities.#{activity_field}", "activity_#{activity_field}_#{activity_type.id}"]
+      end
     elsif m = /\A(.*):([a-z_]+)\z/.match(field)
       definition = field_class.report_fields[m[2].to_sym]
-      definition[:column].nil? ? ["#{field_class.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]])
+      definition[:column].nil? ? ["#{field_class.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]] )
     end
   end
 
@@ -656,6 +764,23 @@ class Report::Field
     @kpi ||= if m = /\Akpi:([0-9]+)\z/.match(field)
       Kpi.where('company_id is null OR company_id = ?', @report.company_id).find(m[1])
     end
+  end
+
+  def form_field
+    @form_field ||= if m = /\Aform_field:([0-9]+)\z/.match(field)
+      FormField.find(m[1])
+    end
+  end
+
+  def activity_type
+    @activity_type ||= if m = /\Aactivity_type_([0-9]+):(.*)\z/.match(field)
+      @activity_field = m[2]
+      ActivityType.find(m[1])
+    end
+  end
+
+  def activity_field
+    @activity_field
   end
 
   def model_name

@@ -22,14 +22,6 @@ include BrandscopiSpecHelpers
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
-# Capybara.register_driver :poltergeist do |app|
-#   Capybara::Poltergeist::Driver.new(app, {js_errors:true, port:44678+ENV['TEST_ENV_NUMBER'].to_i, phantomjs_options:['--proxy-type=none'], timeout:180})
-# end
-
-# Capybara.register_driver :selenium do |app|
-#   Capybara::Selenium::Driver.new(app, :browser => :chrome)
-# end
-
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -40,7 +32,7 @@ RSpec.configure do |config|
   # config.mock_with :rr
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  #config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -54,7 +46,7 @@ RSpec.configure do |config|
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
-  config.infer_base_class_for_anonymous_controllers = true
+  config.infer_base_class_for_anonymous_controllers = false
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -83,16 +75,6 @@ RSpec.configure do |config|
   config.after(:all) do
     DeferredGarbageCollection.reconsider
   end
-
-  # config.before(:each) do
-  #   if example.metadata[:js]
-  #     DatabaseCleaner.strategy = :deletion
-  #   elsif example.metadata[:strategy]
-  #     DatabaseCleaner.strategy = example.metadata[:strategy]
-  #   else
-  #     DatabaseCleaner.strategy = :transaction
-  #   end
-  # end
 
   config.before(:each) do
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"

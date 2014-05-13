@@ -83,6 +83,8 @@ describe Report do
     end
 
     it "should return reports shared with the user" do
+      other_report = FactoryGirl.create(:report, company: company, sharing: 'owner')
+      other_report.update_attribute(:created_by_id, user.id+100)
       other_user = FactoryGirl.create(:company_user, company: company, role: user.role)
       team = FactoryGirl.create(:team, company: company)
       team.users << user
@@ -421,6 +423,7 @@ describe Report do
   describe "#fetch_page" do
     let(:company) { FactoryGirl.create(:company) }
     let(:campaign) { FactoryGirl.create(:campaign, name: 'Guaro Cacique 2013', company: company) }
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
     before do
       Kpi.create_global_kpis
     end
@@ -723,7 +726,6 @@ describe Report do
       ]
     end
 
-
     it "returns a line for each brand when adding a brand field as a row and the event is associated to any " do
       campaign.assign_all_global_kpis
       brand1 = FactoryGirl.create(:brand, name: 'Brand1')
@@ -780,6 +782,60 @@ describe Report do
       page = report.fetch_page
       expect(page).to eql [
         {"brand_portfolio_name"=>"BP1", "values"=>[300.0]}
+      ]
+    end
+
+    it "returns a line for each area when adding a area field as a row and the event is associated to any " do
+      campaign.assign_all_global_kpis
+      area1 = FactoryGirl.create(:area, name: 'Area1')
+      area2 = FactoryGirl.create(:area, name: 'Area2')
+      chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+      los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+      venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+      venue_in_la = FactoryGirl.create(:place, name: 'Bar L.A.', city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+      venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      area1.places << chicago
+      area2.places << los_angeles
+      area2.places << venue_in_la
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+        results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+      # Event without any Area
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+        results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"area:name", "label"=>"Area"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"area_name"=>"Area1", "values"=>[400.0]},
+        {"area_name"=>"Area2", "values"=>[200.0]},
+        {"area_name"=>nil, "values"=>[350.0]}
+      ]
+
+      # Filter by a place
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"area:name", "label"=>"Area"}],
+        filters: [{"field"=>"place:name", "label"=>"Venue"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"place:name" => [venue_in_la.name]}
+      page = report.fetch_page
+      expect(page).to eql [
+        {"area_name"=>"Area2", "values"=>[200.0]}
       ]
     end
 
@@ -1094,6 +1150,473 @@ describe Report do
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
         ]
       end
+
+      it "returns the area names as columns" do
+        campaign.assign_all_global_kpis
+        area1 = FactoryGirl.create(:area, name: 'Area1')
+        area2 = FactoryGirl.create(:area, name: 'Area2')
+        chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+        los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+        venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+        venue_in_la = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+        venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+        area1.places << chicago
+        area2.places << los_angeles
+        area2.places << venue_in_la
+
+        FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+        FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+          results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+        # Event without any Area
+        FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+          results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"area:name", "label"=>"Area"}, {"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+          values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(report.report_columns).to match_array ["Area1||Impressions", "Area2||Impressions", "||Impressions"]
+        expect(page).to eql [
+          {"place_name"=>venue_in_chicago.name, "values"=>[400.0, nil, nil]},
+          {"place_name"=>venue_in_la.name, "values"=>[nil, 200.0, nil]},
+          {"place_name"=>venue_in_ny.name, "values"=>[nil, nil, 350.0]}
+        ]
+      end
+    end
+
+    describe "activity types" do
+      it "returns a line for each different value for a form field" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Text", fieldable: FactoryGirl.create(:activity_type))
+        form_field2 = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: form_field.fieldable)
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign)
+        event2 = FactoryGirl.create(:event, campaign: campaign)
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'First Result'
+        activity.results_for([form_field2]).first.value = 150
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'First Result'
+        activity.results_for([form_field2]).first.value = 15
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 'Another Result'
+        activity.results_for([form_field2]).first.value = 200
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"form_field:#{form_field.id}", "label"=>"Form Field"}],
+          values:  [{"field"=>"form_field:#{form_field2.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{form_field.id}"=>"Another Result", "values" => [200.00]},
+            {"form_field_#{form_field.id}"=>"First Result", "values" => [165.00]}
+        ]
+      end
+
+      it "returns a line for each different date for an activity" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        event2 = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.today)
+        activity.results_for([form_field]).first.value = '100'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.today)
+        activity.results_for([form_field]).first.value = '200'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.yesterday)
+        activity.results_for([form_field]).first.value = '75'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user, activity_date: Date.yesterday)
+        activity.results_for([form_field]).first.value = '30'
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:activity_date", "label"=>"Date"}],
+          values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.yesterday.to_s(:ymd), "values" => [105.00]},
+            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.today.to_s(:ymd), "values" => [300.00]}
+        ]
+      end
+
+      it "returns a line for each different user for an activity" do
+        user2 = FactoryGirl.create(:company_user,
+          company: company,
+          user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez') )
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        event2 = FactoryGirl.create(:event, campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = '100'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = '200'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user2)
+        activity.results_for([form_field]).first.value = '75'
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event2,
+          activity_type: form_field.fieldable, company_user: user2)
+        activity.results_for([form_field]).first.value = '30'
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:user", "label"=>"User"}],
+          values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"activity_type_#{form_field.fieldable.id}_user"=>user2.full_name, "values" => [105.00]},
+            {"activity_type_#{form_field.fieldable.id}_user"=>user.full_name, "values" => [300.00]}
+        ]
+      end
+
+      it "returns the values for the numeric fields" do
+        form_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: FactoryGirl.create(:activity_type))
+        campaign.activity_types << form_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 333
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: form_field.fieldable, company_user: user)
+        activity.results_for([form_field]).first.value = 222
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Form Field"}],
+          values:  [
+            {"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"},
+            {"field"=>"form_field:#{form_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}
+          ]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"campaign_name"=>"Guaro Cacique 2013", "values" => [300.00, 555.0]}
+        ]
+      end
+
+      it "should work when adding radio form fields as a value" do
+        radio_field = FactoryGirl.create(:form_field, type: "FormField::Radio",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        campaign.activity_types << radio_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option1.id
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{radio_field.id}", "label"=>"Radio Field", "aggregate"=>"count"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Radio Field: Opt1", "Radio Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[1.0, 2.0]}
+        ]
+      end
+
+      it "should work when adding checkboxes form fields as a value" do
+        checkbox_field = FactoryGirl.create(:form_field, type: "FormField::Checkbox",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        checkbox_field = FormField.find(checkbox_field)
+        campaign.activity_types << checkbox_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{checkbox_field.id}", "label"=>"Checkbox Field", "aggregate"=>"count"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Checkbox Field: Opt1", "Checkbox Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[2.0, 3.0]}
+        ]
+      end
+
+      it "should work when adding percentage form fields as a value" do
+        percentage_field = FactoryGirl.create(:form_field, type: "FormField::Percentage",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        percentage_field = FormField.find(percentage_field.id)
+        campaign.activity_types << percentage_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 35, option2.id.to_s => 65 }
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 80 }
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 40, option2.id.to_s => 60 }
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{percentage_field.id}", "label"=>"Percentage Field", "aggregate"=>"avg"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Percentage Field: Opt1", "Percentage Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[31.666666666666668, 68.33333333333333]},
+        ]
+      end
+
+      it "works when adding radio fields as rows" do
+        radio_field = FactoryGirl.create(:form_field, type: "FormField::Radio",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: radio_field.fieldable)
+        campaign.activity_types << radio_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option1.id
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:     [{"field"=>"form_field:#{radio_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{radio_field.id}"=>"Opt1", "values" => [100.00]},
+            {"form_field_#{radio_field.id}"=>"Opt2", "values" => [400.00]}
+        ]
+      end
+
+      it "works when adding checkboxes fields as rows" do
+        checkbox_field = FactoryGirl.create(:form_field, type: "FormField::Checkbox",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        checkbox_field = FormField.find(checkbox_field.id)
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: checkbox_field.fieldable)
+        campaign.activity_types << checkbox_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id]
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
+        activity.results_for([numeric_field]).first.value = 300
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:     [{"field"=>"form_field:#{checkbox_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{checkbox_field.id}"=>"Opt1", "values" => [400.00]},
+            {"form_field_#{checkbox_field.id}"=>"Opt2", "values" => [700.00]}
+        ]
+      end
+
+      it "works when adding percentage fields as rows" do
+        percentage_field = FactoryGirl.create(:form_field, type: "FormField::Percentage",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        percentage_field = FormField.find(percentage_field.id)
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: percentage_field.fieldable)
+        campaign.activity_types << percentage_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = {option1.id => 70, option2.id => 30}
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = {option1.id => 70, option2.id => 30}
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"form_field:#{percentage_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{percentage_field.id}"=>"Opt1", "values" => [500.00]},
+            {"form_field_#{percentage_field.id}"=>"Opt2", "values" => [500.00]}
+        ]
+      end
     end
   end
 
@@ -1131,6 +1654,62 @@ describe Report do
       report.filter_params = {"kpi:#{kpi.id}" => {'min' => '100', 'max' => '300'}}
       expect(report.fetch_page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]}
+      ]
+    end
+
+    it "can filter the results by area name" do
+      campaign.assign_all_global_kpis
+      area1 = FactoryGirl.create(:area, name: 'Area1')
+      area2 = FactoryGirl.create(:area, name: 'Area2')
+      chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
+      los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
+      venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+      venue_in_la = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+      venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      area1.places << chicago
+      area2.places << los_angeles
+      area2.places << venue_in_la
+
+      FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+        results: {impressions: 100, interactions: 50}, place: venue_in_chicago)
+
+      FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+        results: {impressions: 200, interactions: 150}, place: venue_in_la)
+
+      FactoryGirl.create(:event, start_date: '01/13/2014', end_date: '01/13/2014', campaign: campaign,
+        results: {impressions: 300, interactions: 175}, place: venue_in_chicago)
+
+      # Event without any Area
+      FactoryGirl.create(:event, start_date: '01/15/2014', end_date: '01/15/2014', campaign: campaign,
+        results: {impressions: 350, interactions: 250}, place: venue_in_ny)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"place:name", "label"=>"Venue"}],
+        filters: [{"field"=>"area:name", "label"=>"Area"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_chicago.name, "values"=>[400.0]},
+        {"place_name"=>venue_in_la.name, "values"=>[200.0]},
+        {"place_name"=>venue_in_ny.name, "values"=>[350.0]}
+      ]
+
+      # With filtering
+      report.filter_params = {"area:name" => ['Area1']}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_chicago.name, "values"=>[400.0]}
+      ]
+
+      report.filter_params = {"area:name" => ['Area2']}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"place_name"=>venue_in_la.name, "values"=>[200.0]}
       ]
     end
 

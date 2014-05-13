@@ -262,7 +262,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def custom_kpis
-    @custom_kpis ||= (form_fields.where("kpi_id is not null AND module = 'custom'").joins(:kpi).map(&:kpi)).compact
+    @custom_kpis ||= (form_fields.where("kpi_id is not null AND module = 'custom'").includes(:kpi).joins(:kpi).map(&:kpi)).compact
   end
 
   def active_field_types
@@ -294,7 +294,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def form_field_for_kpi(kpi)
-    form_fields.detect{|field| field.kpi_id == kpi.id}
+    form_fields.detect{|field| field.kpi_id == kpi.id}.tap{|f| f.kpi = kpi unless f.nil? }
   end
 
   def survey_statistics

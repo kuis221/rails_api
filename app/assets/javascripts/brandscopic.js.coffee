@@ -143,6 +143,7 @@ jQuery ->
 	# Check what graph labels are colliding with others and adjust the position
 	$(window).on 'resize ready', () ->
 		adjustChartsPositions()
+		lazyLoadElements()
 
 	$(document).on 'ajaxComplete', () ->
 		adjustChartsPositions()
@@ -350,29 +351,36 @@ jQuery ->
 			position = $(elm).offset()
 			img = new Image()
 			img.src = preview.find('img').attr('src')
-			size = {width: img.width, height: img.height}
+			size = {width: Math.max(img.width, 100), height: Math.max(img.height, 100)}
 			preview
-				.css("top",  (position.top - (size.height/2) - 10) + "px")
-				.css("left", (position.left - size.width - 10) + "px")
+				.css("top",  (position.top - (size.height/2) - 20) + "px")
+				.css("left", (position.left - size.width - 20) + "px")
 
 		if e.type is 'mouseenter'
-			this.t = this.title
-			this.title = ""
+			$("#imgpreview").remove()
+			clearTimeout window.previewTimeout if window.previewTimeout?
+			@t = @title
+			@title = ""
 			c = if this.t != "" then "<br/>" + this.t else ""
-			preview = $("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' width=100 height=100 alt='Image preview' />#{c}</p>")
+			preview = $("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' width=100 height=100 alt='Loading...' />#{c}</p>").hide()
 			$("body").append(preview)
+
 			preview.find('img').load (e) =>
 				img = e.target
 				$(img).attr('width', "")
 				$(img).attr('height', "")
 				placePreviewInPosition this, preview
+				preview.show()
 
 			placePreviewInPosition this, preview
 			preview.fadeIn "fast", => placePreviewInPosition this, preview
 
 		else
-			this.title = this.t
-			$("#imgpreview").remove()
+			window.previewTimeout = window.setTimeout () =>
+				@title = @t
+				$("#imgpreview").remove()
+				true
+			, 100
 	)
 
 	$window = $(window)
@@ -381,6 +389,8 @@ jQuery ->
 			$('.totop').slideDown()
 		else
 			$('.totop').slideUp()
+
+		lazyLoadElements();
 
 		$detailsBar = $('#resource-close-details')
 		if $detailsBar.length > 0
@@ -399,6 +409,19 @@ jQuery ->
 				if not found and $link.data('default-content')
 					$link.html $link.data('default-content')
 					$link.data 'default-content', null
+
+
+	lazyLoadElements = () ->
+		wt = $(window).scrollTop()
+		wb = wt + $(window).height()
+
+		$(".lazyloaded").each () ->
+			ot = $(@).offset().top;
+			ob = ot + $(@).height();
+
+			if not $(@).attr("loaded") && wt <= ob && wb >= ot
+				$(@).load $(@).data('content-url')
+				$(@).attr "loaded", true
 
 
 	# Keep filter Sidebar always visible but make it scroll if it's

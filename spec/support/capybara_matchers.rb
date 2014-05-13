@@ -147,3 +147,40 @@ RSpec::Matchers.define :have_form_field do |name, filter={}|
   end
 
 end
+
+
+RSpec::Matchers.define :have_notification do |text, filter={}|
+  match do |page|
+    @errors = []
+
+    filter[:count] ||= 1
+
+    if page.all('header li#notifications.open').count == 0
+      page.find('header li#notifications a.dropdown-toggle').click
+    end
+
+    notifications  = page.all("#notifications .notifications-container li", text: text)
+
+    if notifications.count != filter[:count]
+      @errors.push "#{filter[:count]} #{filter[:count] == 1 ? 'notification' : 'notifications'} with text \"#{text}\" but have #{notifications.count}"
+    end
+
+    @errors.empty?
+  end
+
+
+  failure_message_for_should do |actual|
+    message = "Expected to have " + @errors.join("\n")
+    message
+  end
+
+  failure_message_for_should_not do |actual|
+    message = "Expected to not have #{filter[:count] == 1 ? 'a notification' :  filter[:count].to_s + ' notifications'} with text \"#{text}\", but it did"
+    message
+  end
+
+  description do
+    message = "has notification #{text}"
+  end
+
+end

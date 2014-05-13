@@ -1732,12 +1732,40 @@ li#notifications{
 		.dropdown-toggle { background-color: $alert_red; }
 	}
 
+	&.without-notifications ul {
+		height: 100%;
+		li.empty-state {
+			height: 100%;
+			width: 100%;
+			background-color: #cccccc;
+			color: #A5A4A5;
+			p {
+				display: table;
+				margin: 40% auto;
+				font-weight: bold;
+			}
+			&:hover {
+				background-color: #cccccc;
+			}
+		}
+	}
+
 	.notifications-container{
 		background-color: #cccccc;
 		height: 261px;
 		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
+
+		.jspVerticalBar {
+			width: 7px;
+			.jspTrack {
+				width: 7px;
+			}
+			.jspDrag {
+				width: 5px;
+			}
+		}
 	}
 
 	.dropdown-menu{
@@ -1799,7 +1827,7 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 225px;
+					width: 240px;
 					line-height: 16px;
 					padding-left: 32px;
 					span{
@@ -3436,6 +3464,10 @@ textarea::-webkit-input-placeholder {
 		padding-left:0;
 		.checker{
 			margin-right: 10px;
+
+			span.checked:after {
+				top: -16px;
+			}
 		}
 	}
 	.chzn-container-single .chzn-single{

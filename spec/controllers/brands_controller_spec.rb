@@ -8,6 +8,7 @@ describe BrandsController do
 
   describe "campaign scope" do
     let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
+    
 
     describe "GET 'new'" do
       it "returns http success" do
@@ -40,36 +41,89 @@ describe BrandsController do
       end
     end
   end
+  
+  describe "GET 'edit'" do
+    let(:brand){ FactoryGirl.create(:brand, company: @company) }
+    it "returns http success" do
+      get 'edit', id: brand.to_param, format: :js
+      response.should be_success
+    end
+  end
+  
+  describe "GET 'items'" do
+    it "returns the correct structure" do
+      get 'items'
+      response.should be_success
+    end
+  end
+  
+  describe "GET 'show'" do
+    let(:brand){ FactoryGirl.create(:brand, company: @company) }
+    it "assigns the loads the correct objects and templates" do
+      get 'show', id: brand.id
+      assigns(:brand).should == brand
+      response.should render_template(:show)
+    end
+  end
 
-  describe "GET 'index'" do
+  describe "GET 'index'" , search: true do
     let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
     let(:brand_portfolio) { FactoryGirl.create(:brand_portfolio, company: @company) }
     it "returns the brands associated to a campaign" do
-      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 123')
-      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 456')
-      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 871')
-      FactoryGirl.create(:brand, name: 'Brand 789')
-
+      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 123', company: @company)
+      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 456', company: @company)
+      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 871', company: @company)
+      FactoryGirl.create(:brand, name: 'Brand 789', company: @company)
+      Sunspot.commit
       get 'index', campaign_id: campaign.id, format: :json
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
       parsed_body.count.should == 2
-      parsed_body.map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
+      parsed_body.map{|b| b['name']}.should == ['Brand 456', 'Brand 123']
     end
 
     it "returns the brands associated to a brand portfolio" do
-      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 123')
-      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 456')
-      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 871')
-      FactoryGirl.create(:brand, name: 'Brand 789')
-
+      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 123', company: @company)
+      brand_portfolio.brands << FactoryGirl.create(:brand, name: 'Brand 456', company: @company)
+      campaign.brands << FactoryGirl.create(:brand, name: 'Brand 871', company: @company)
+      FactoryGirl.create(:brand, name: 'Brand 789', company: @company)
+      Sunspot.commit
       get 'index', brand_portfolio_id: brand_portfolio.id, format: :json
 
       response.should be_success
       parsed_body = JSON.parse(response.body)
       parsed_body.count.should == 2
-      parsed_body.map{|b| b['name']}.should == ['Brand 123', 'Brand 456']
+      parsed_body.map{|b| b['name']}.should == ['Brand 456', 'Brand 123']
+    end
+  end
+  
+    describe "GET 'deactivate'" do
+    let(:brand){ FactoryGirl.create(:brand, company: @company) }
+
+    it "deactivates an active brand" do
+      brand.update_attribute(:active, true)
+      get 'deactivate', id: brand.to_param, format: :js
+      response.should be_success
+      brand.reload.active?.should be_false
+    end
+
+    it "activates an inactive brand" do
+      brand.update_attribute(:active, false)
+      get 'activate', id: brand.to_param, format: :js
+      response.should be_success
+      brand.reload.active?.should be_true
+    end
+  end
+
+  describe "PUT 'update'" do
+    let(:brand){ FactoryGirl.create(:brand, company: @company) }
+    it "must update the brand attributes" do
+      t = FactoryGirl.create(:brand)
+      put 'update', id: brand.to_param, brand: {name: 'Test brand'}
+      assigns(:brand).should == brand
+      brand.reload
+      brand.name.should == 'Test brand'
     end
   end
 

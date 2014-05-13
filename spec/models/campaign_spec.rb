@@ -120,7 +120,7 @@ describe Campaign do
 
   describe "staff_users" do
     it "should include users that have the brands assigned to" do
-      brand = FactoryGirl.create(:brand)
+      brand = FactoryGirl.create(:brand, company_id: 1)
       campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company_id: 1)
 
       # This is an user that is following all the campaigns of this brand

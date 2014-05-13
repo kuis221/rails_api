@@ -88,7 +88,47 @@ module UsersHelper
       })
     end
 
-    user.notifications.find_each do |notification|
+    grouped_notifications = Notification.grouped_notifications_counts(current_company_user.notifications)
+
+    # New events notifications
+    if grouped_notifications['new_event'].present? && grouped_notifications['new_event'].to_i > 0
+      alerts.push({
+        message: I18n.translate("notifications.new_events", count: grouped_notifications['new_event'].to_i), level: 'grey',
+        url: events_path(new_at: Time.now.to_i, start_date: '', end_date: ''),
+        unread: true, icon: 'icon-notification-event', type: 'new_event'
+      })
+    end
+
+    # New campaigns notifications
+    if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0
+      notification_params = current_company_user.notifications.where(message: 'new_campaign').pluck(:extra_params)
+      ids = notification_params.map{|param| param.try(:[], :campaign_id) }.compact
+      alerts.push({
+        message: I18n.translate("notifications.new_campaigns", count: grouped_notifications['new_campaign'].to_i), level: 'grey',
+        url: events_path(campaign: ids, notification: 'new_campaign', new_at: Time.now.to_i, start_date: '', end_date: ''),
+        unread: true, icon: 'icon-notification-campaign', type: 'new_campaign'
+      })
+    end
+
+    # New user tasks notifications
+    if grouped_notifications['new_task'].present? && grouped_notifications['new_task'].to_i > 0
+      alerts.push({
+        message: I18n.translate("notifications.new_tasks", count: grouped_notifications['new_task'].to_i), level: 'grey',
+        url: mine_tasks_path(new_at: Time.now.to_i),
+        unread: true, icon: 'icon-notification-task', type: 'new_task'
+      })
+    end
+
+    # New user team tasks notifications
+    # if grouped_notifications['new_team_task'].present? && grouped_notifications['new_team_task'].to_i > 0
+    #   alerts.push({
+    #     message: I18n.translate("notifications.my_teams_tasks_path", count: grouped_notifications['new_team_task'].to_i), level: 'grey',
+    #     url: mine_tasks_path(new_at: Time.now.to_i),
+    #     unread: true, icon: 'icon-notification-task', type: 'new_team_task'
+    #   })
+    # end
+
+    user.notifications.except_grouped_notifications.find_each do |notification|
       alerts.push({
         message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level,
         url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}",

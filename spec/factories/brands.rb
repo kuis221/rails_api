@@ -15,7 +15,9 @@
 FactoryGirl.define do
   factory :brand do
     sequence(:name) {|n| "Test Brand #{n}" }
+    active true
     created_by_id 1
     updated_by_id 1
+    company_id 1
   end
 end

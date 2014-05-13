@@ -20,6 +20,7 @@ class Company < ActiveRecord::Base
   has_many :brand_portfolios, dependent: :destroy
   has_many :events, dependent: :destroy
   has_many :areas, dependent: :destroy
+  has_many :brands, dependent: :destroy
   has_many :date_ranges, dependent: :destroy
   has_many :day_parts, dependent: :destroy
   has_many :contacts, dependent: :destroy

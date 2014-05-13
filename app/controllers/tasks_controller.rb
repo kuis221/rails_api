@@ -74,6 +74,18 @@ class TasksController < FilteredController
         unless @search_params.has_key?(:user) && !@search_params[:user].empty?
           @search_params.merge! Task.search_params_for_scope(params[:scope], current_company_user)
         end
+
+        # Get a list of new tasks notifications to obtain the list of ids, then delete them as they are already seen, but
+        # store them in the session to allow the user to navigate, paginate, etc
+        if params.has_key?(:new_at) && params[:new_at]
+          @search_params[:id] = session["new_tasks_#{params[:scope]}_at_#{params[:new_at].to_i}"] ||= begin
+            notifications = current_company_user.notifications.new_tasks
+            ids = notifications.map{|n| n.extra_params.try(:[], :task_id) }.compact
+            notifications.destroy_all
+            ids
+          end
+        end
+
         @search_params
       end
     end

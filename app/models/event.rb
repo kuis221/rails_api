@@ -109,6 +109,7 @@ class Event < ActiveRecord::Base
     joins(:place).
     joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   }
+
   scope :in_places, ->(places) {
     joins(:place).where(
       'events.place_id in (?) or events.place_id in (
@@ -470,6 +471,8 @@ class Event < ActiveRecord::Base
               with(:team_ids, team_ids) if team_ids.any?
             end
           end
+
+          with :id, params[:id] if params.has_key?(:id) and params[:id].present?
 
           with :location,    params[:location] if params.has_key?(:location) and params[:location].present?
           with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?

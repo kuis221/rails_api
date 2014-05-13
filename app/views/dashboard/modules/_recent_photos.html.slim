@@ -1,8 +1,12 @@
-#recent-photos-module.details_box
+- if action_name == 'module'
+    = render partial: 'results/photos/photo', collection: recent_photos_list
+- else
+    #recent-photos-module.details_box
 
-  h3 RECENT PHOTOS
-  .gallery
-    ul#photos-thumbs
-      = render partial: 'results/photos/photo', collection: recent_photos_list
-  .pull-right
-    = link_to 'View All', results_photos_path, class: 'btn btn-info icon-angle-right-after'
+      h3 RECENT PHOTOS
+      .gallery
+        ul#photos-thumbs.lazyloaded data-content-url="#{url_for(controller: :dashboard, action: :module, module: :recent_photos, only_path: true)}"
+            // The content is loaded by ajax when the user scrolls down to the photos section
+            li= image_tag 'loading-circle.gif'
+      .pull-right
+        = link_to 'View All', results_photos_path, class: 'btn btn-info icon-angle-right-after'

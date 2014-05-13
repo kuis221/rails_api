@@ -27,6 +27,10 @@ class FormField::LikertScale < FormField
     true
   end
 
+  def is_optionable?
+    true
+  end
+
   def format_html(result)
     if result.value
       statements.map do |statement|
