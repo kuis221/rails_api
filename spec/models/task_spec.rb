@@ -22,7 +22,6 @@ describe Task do
   it { should belong_to(:company_user) }
 
   it { should validate_presence_of(:title) }
-  it { should validate_presence_of(:event_id) }
   it { should validate_numericality_of(:event_id) }
   it { should validate_numericality_of(:company_user_id) }
 
