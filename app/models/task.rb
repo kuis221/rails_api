@@ -152,7 +152,7 @@ class Task < ActiveRecord::Base
             with :statusm, params[:task_status].uniq unless params[:task_status].empty?
             if late.present?
               all_of do
-                with(:due_at).less_than(Time.zone.now)
+                with(:due_at).less_than(Date.yesterday.beginning_of_day)
                 with(:completed, false)
               end
             end
@@ -175,7 +175,7 @@ class Task < ActiveRecord::Base
         end
 
         if params[:late]
-          with(:due_at).less_than(Time.zone.now)
+          with(:due_at).less_than(Date.yesterday.beginning_of_day)
           with :completed, false
         end
 
