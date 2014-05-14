@@ -27,11 +27,11 @@ describe "User" do
       it{ should_not be_able_to(:index, Company) }
 
       it { should be_able_to(:create, Brand)}
-      it { should_not be_able_to(:manage, FactoryGirl.create(:brand))}
+      it { should_not be_able_to(:manage, without_current_user { FactoryGirl.create(:brand) } )}
 
       it { should be_able_to(:create, Event) }
       it { should be_able_to(:manage, FactoryGirl.create(:event, campaign: campaign, company: company)) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:event)) }
+      it { should_not be_able_to(:manage, without_current_user {  FactoryGirl.create(:event) } ) }
 
       it { should be_able_to(:create, Team) }
       it { should be_able_to(:manage, FactoryGirl.create(:team, company_id: company.id)) }
@@ -39,7 +39,7 @@ describe "User" do
 
       it { should be_able_to(:create, Task) }
       it { should be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event, campaign: campaign, company: company))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:task, event: FactoryGirl.create(:event))) }
+      it { should_not be_able_to(:manage, without_current_user {  FactoryGirl.create(:task, event: FactoryGirl.create(:event)) } ) }
 
       it { should be_able_to(:create, Area) }
       it { should be_able_to(:manage, FactoryGirl.create(:area, company_id: company.id)) }
@@ -77,19 +77,19 @@ describe "User" do
 
       it { should be_able_to(:create, EventExpense) }
       it { should be_able_to(:manage, FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, campaign: campaign, company: company))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, company_id: company.id + 1))) }
+      it { should_not be_able_to(:manage, without_current_user {  FactoryGirl.create(:event_expense, event: FactoryGirl.create(:event, company_id: company.id + 1)) } ) }
 
       it { should be_able_to(:create, Comment) }
       it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, company_id: company.id + 1))) }
+      it { should_not be_able_to(:manage, without_current_user {  FactoryGirl.create(:comment, commentable: FactoryGirl.create(:event, company_id: company.id + 1)) } ) }
       it { should be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, campaign: campaign, company: company)))) }
-      it { should_not be_able_to(:manage, FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id + 1)))) }
+      it { should_not be_able_to(:manage, without_current_user { FactoryGirl.create(:comment, commentable: FactoryGirl.create(:task, event: FactoryGirl.create(:event, company_id: company.id + 1))) } ) }
 
       it { should be_able_to(:create, AttachedAsset) }
       it { should be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, campaign: campaign, company: company))) }
       it { should be_able_to(:rate, AttachedAsset)}
       it { should be_able_to(:view_rate, AttachedAsset)}
-      it { should_not be_able_to(:manage, FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1))) }
+      it { should_not be_able_to(:manage, without_current_user { FactoryGirl.create(:attached_asset, attachable: FactoryGirl.create(:event, company_id: company.id + 1)) } ) }
 
       it { should be_able_to(:create, Activity) }
       it { should be_able_to(:manage, FactoryGirl.create(:activity, activity_type: FactoryGirl.create(:activity_type, company_id: company.id), activitable: FactoryGirl.create(:venue, place: place, company: company), company_user: FactoryGirl.create(:company_user,  company: company))) }
