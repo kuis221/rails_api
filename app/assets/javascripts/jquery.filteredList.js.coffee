@@ -617,12 +617,7 @@ $.widget 'nmk.filteredList', {
 			sessionStorage["filters#{@storageScope}"]
 
 	_serializeFilters: () ->
-		data = @getFilters()
-		filtersStr = ''
-		for filter in data
-			filtersStr += "&#{filter.name}=#{escape(filter.value)}"
-		data = null
-		filtersStr.replace(/^&/,"")
+		jQuery.param( @getFilters() )
 
 	buildParams: (params=[]) ->
 		data = @getFilters()
