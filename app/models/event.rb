@@ -88,9 +88,21 @@ class Event < ActiveRecord::Base
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user| company_user.is_admin? ? scoped() : where(campaign_id: company_user.accessible_campaign_ids+[0]) }
+  scope :for_campaigns_accessible_by, lambda{|company_user|
+    if company_user.is_admin?
+      where(company_id: company_user.company_id)
+    else
+      where(company_id: company_user.company_id, campaign_id: company_user.accessible_campaign_ids+[0])
+    end
+  }
 
-  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? scoped() : for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user) }
+  scope :accessible_by_user, ->(company_user) {
+    if company_user.is_admin?
+      where(company_id: company_user.company_id)
+    else
+      where(company_id: company_user.company_id).for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user)
+    end
+  }
 
   scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped() : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places+[0], company_user.accessible_locations+[0]) }
 

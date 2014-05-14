@@ -32,7 +32,7 @@ describe Analysis::StaffReportController do
       events = FactoryGirl.create_list(:approved_event, 3, company: @company, user_ids:[company_user.id])
       FactoryGirl.create(:event, company: @company) # Unapproved event
       FactoryGirl.create(:approved_event, company: @company)
-      FactoryGirl.create(:approved_event, company_id: @company.id+1)
+      without_current_user { FactoryGirl.create(:approved_event, company_id: @company.id+1) }
 
       get 'report', report: { user_id: company_user.to_param }, format: :js
 

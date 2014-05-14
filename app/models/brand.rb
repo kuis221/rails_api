@@ -13,7 +13,7 @@
 class Brand < ActiveRecord::Base
   track_who_does_it
   scoped_to_company
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: {scope: :company_id}
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
@@ -37,7 +37,7 @@ class Brand < ActiveRecord::Base
 
     integer :company_id
   end
-  
+
     def activate!
     update_attribute :active, true
   end
