@@ -4,7 +4,7 @@
   = resource.errors.full_messages.join("<br />").html_safe
 
   .form-inputs
-    = f.fields_for :goal, (if resource.goal.nil? then resource.build_goal else resource.goal end), wrapper: false do |gf|
+    = f.fields_for :goals, parent.goals.for_activity_type(resource), wrapper: false do |gf|
       = gf.input :value, label: 'Goal', :input_html => {class: 'input-medium'}
       = gf.hidden_field :goalable_id, value: @campaign.id
       = gf.hidden_field :goalable_type, value: 'Campaign'
