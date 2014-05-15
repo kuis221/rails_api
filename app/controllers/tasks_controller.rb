@@ -25,10 +25,12 @@ class TasksController < FilteredController
 
   def assignable_users
     users = []
-    unless resource.event.nil?
+    if resource.event.present?
       users =  company_users.active.by_events(resource.event)
       users += company_users.active.by_teams(resource.event.teams)
       users.uniq!
+    else
+      users = current_company.company_users.active.joins(:user).includes(:user)
     end
     users.sort{|a,b| a.name <=> b.name}
   end

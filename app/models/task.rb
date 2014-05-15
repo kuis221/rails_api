@@ -30,8 +30,10 @@ class Task < ActiveRecord::Base
   delegate :campaign_name, :place_id, to: :event, allow_nil: true
 
   validates :title, presence: true
-  validates :company_user_id, numericality: true, if: :company_user_id
+  validates :company_user_id, numericality: true, allow_nil: true
   validates :event_id, numericality: true, if: :event_id
+  validates :event_id, presence: true unless :company_user_id
+  validates :company_user_id, presence: true unless :event_id
 
   scope :incomplete, lambda{ where(completed: false) }
   scope :active, lambda{ where(active: true) }
@@ -70,7 +72,7 @@ class Task < ActiveRecord::Base
 
     boolean :completed
     string :status do
-      if (event.present? && event.active?) || event.nil?
+      if event.nil? || event.active?
         active? ? 'Active' : 'Inactive'
       else
         'Inactive Event'
@@ -123,17 +125,13 @@ class Task < ActiveRecord::Base
   def company_id
     # For those tasks created from Task section,
     # company ID will be assigned from user
-    if event.present?
-      event.company_id
-    elsif company_user.present?
-      company_user.company_id
-    end
+    event.try(:company_id) || company_user.try(:company_id)
   end
 
   def campaign_id
     # For those tasks created from Task section,
-    # campaign ID will be zero
-    event.present? ? event.campaign_id : 0
+    # campaign ID will be nil
+    event.try(:campaign_id)
   end
 
   class << self
@@ -145,7 +143,13 @@ class Task < ActiveRecord::Base
         company_user = params[:current_company_user]
         if company_user.present?
           unless company_user.role.is_admin?
-            with(:campaign_id, company_user.accessible_campaign_ids + [0])
+            any_of do
+              with(:campaign_id, company_user.accessible_campaign_ids + [0])
+              all_of do
+                 with(:campaign_id, nil)
+                 with(:company_user_id, company_user.id)
+              end
+            end
           end
         end
 
