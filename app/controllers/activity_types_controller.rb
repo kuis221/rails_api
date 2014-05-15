@@ -2,7 +2,7 @@ class ActivityTypesController < FilteredController
   before_filter :load_campaign, only: [ :set_goal]
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
   respond_to :json, only: [:show, :update]
-  belongs_to :company, optional: true
+  belongs_to :company, :campaign, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
@@ -39,7 +39,7 @@ class ActivityTypesController < FilteredController
           :id, :name, :field_type, :ordering, :required, :_destroy,
           {options_attributes: [:id, :name, :_destroy, :ordering]},
           {statements_attributes: [:id, :name, :_destroy, :ordering]}]},
-        {goal_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
+        {goals_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
       ])[:activity_type]
     end
 
