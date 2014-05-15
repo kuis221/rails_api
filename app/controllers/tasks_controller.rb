@@ -24,15 +24,14 @@ class TasksController < FilteredController
   end
 
   def assignable_users
-    users = []
     if resource.event.present?
-      users =  company_users.active.by_events(resource.event)
-      users += company_users.active.by_teams(resource.event.teams)
-      users.uniq!
+      ( company_users.active.by_events(resource.event) +
+        company_users.active.by_teams(resource.event.teams)
+      ).uniq.sort{|a,b| a.name <=> b.name}
     else
-      users = current_company.company_users.active.joins(:user).includes(:user)
+      current_company.company_users.active.joins(:user).
+        includes(:user).order('users.first_name || users.first_name')
     end
-    users.sort{|a,b| a.name <=> b.name}
   end
 
   def calendar_highlights

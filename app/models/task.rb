@@ -30,9 +30,9 @@ class Task < ActiveRecord::Base
   delegate :campaign_name, :place_id, to: :event, allow_nil: true
 
   validates :title, presence: true
-  validates :company_user_id, numericality: true, allow_nil: true
   validates :event_id, numericality: true, if: :event_id
   validates :event_id, presence: true unless :company_user_id
+  validates :company_user_id, numericality: true, allow_nil: true
   validates :company_user_id, presence: true unless :event_id
 
   scope :incomplete, lambda{ where(completed: false) }
