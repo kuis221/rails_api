@@ -32,7 +32,13 @@ class Activity < ActiveRecord::Base
   validates :activity_date, presence: true
   validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
-  scope :active, lambda{ where(active: true) }
+  scope :active, -> { where(active: true) }
+
+  scope :with_results_for, ->(fields) {
+    select('DISTINCT activities.*').
+    joins(:results).
+    where(activity_results: {form_field_id: fields}).
+    where('activity_results.value is not NULL AND activity_results.value !=\'\'') }
 
   after_initialize :set_default_values
 
@@ -42,12 +48,21 @@ class Activity < ActiveRecord::Base
 
   before_validation :delegate_campaign_id_from_event
 
+  after_commit :reindex_trending
+
   def activate!
     update_attribute :active, true
   end
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def all_values_for_trending
+    results.joins(:form_field).
+    where(form_fields: {type: ActivityType::TRENDING_FIELDS_TYPES}).
+    where('activity_results.value is not NULL AND activity_results.value !=\'\'').
+    pluck('activity_results.value')
   end
 
   def results_for_type
@@ -80,6 +95,12 @@ class Activity < ActiveRecord::Base
       if activitable.is_a?(Event)
         self.campaign = activitable.campaign
         self.campaign_id = activitable.campaign_id
+      end
+    end
+
+    def reindex_trending
+      if all_values_for_trending.count > 0
+        Sunspot.index TrendObject.new(self)
       end
     end
 end

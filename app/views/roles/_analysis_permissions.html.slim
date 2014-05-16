@@ -1,15 +1,20 @@
 = simple_form_for resource, remote: true do |f|
   .permissions
     .row-fluid
-      .span7
-        .span5 Staff
-        .span2
-          = permission_checkbox(f, :show_analysis, CompanyUser)
+      / .span7
+      /   .span5 Staff
+      /   .span2
+      /     = permission_checkbox(f, :show_analysis, CompanyUser)
+
+      / .span7
+      /   .span5 Campaigns
+      /   .span2
+      /     = permission_checkbox(f, :show_analysis, Campaign)
 
       .span7
-        .span5 Campaigns
+        .span5 Trends
         .span2
-          = permission_checkbox(f, :show_analysis, Campaign)
+          = permission_checkbox(f, :access, :trends_report)
 
 
   = hidden_field_tag :partial, :analysis_permissions

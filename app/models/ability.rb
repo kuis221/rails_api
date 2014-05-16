@@ -53,6 +53,9 @@ class Ability
     elsif user.is_super_admin?
       can :manage, :dashboard
 
+      # Analysis reports
+      can :access, :trends_report
+
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
         Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"

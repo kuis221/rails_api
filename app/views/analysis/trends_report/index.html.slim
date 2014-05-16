@@ -1,0 +1,30 @@
+.sidebar.collapsed#resource-filter-column
+  #collection-list-filters
+
+.main
+  h3 TERMS
+  #bubble-container
+
+javascript:
+  var plot = Bubbles();
+
+  $('#collection-list-filters').filteredList({
+    'source': '#{analysis_trends_items_path}',
+    'filtersUrl': '#{filters_path(controller: 'analysis/trends')}',
+    'listContainer' : '#events-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'asc',
+    'includeCalendars': true,
+    'selectDefaultDate': false,
+    'selectDefaultDateRange': false,
+    'defaultParams': [],
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'onChange': function(filterBox){
+      $(document).trigger('events-filter:changed')
+    },
+    'onItemsLoad': function(response, page){
+      $("#bubble-container").html('')
+      plotData("#bubble-container", response, plot)
+    }
+  });

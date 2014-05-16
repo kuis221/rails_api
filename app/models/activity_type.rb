@@ -29,7 +29,13 @@ class ActivityType < ActiveRecord::Base
 
   accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
-  scope :active, lambda{ where(active: true) }
+
+  TRENDING_FIELDS_TYPES = ['FormField::TextArea']
+
+  scope :active, -> { where(active: true) }
+
+  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
+
   attr_accessor :partial_path
 
   before_save :ensure_user_date_field
@@ -74,6 +80,10 @@ class ActivityType < ActiveRecord::Base
         activity_types: [ActivityType]
       })
     render :json => buckets.flatten
+  end
+
+  def trending_fields
+    form_fields.where(type: TRENDING_FIELDS_TYPES)
   end
 
 

@@ -22,7 +22,7 @@ class Comment < ActiveRecord::Base
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 
-  delegate :company_id, to: :commentable
+  delegate :company_id, :campaign_id, to: :commentable
 
   attr_accessible :content
 
@@ -40,13 +40,22 @@ class Comment < ActiveRecord::Base
 
   scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id = commentable_id and commentable_type=\'Event\' and ec.id in ('+Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql+')') }
 
+  scope :for_trends, -> { joins('INNER JOIN events e ON e.id = commentable_id and commentable_type=\'Event\'').where('e.active=?', true) }
+
   after_create :reindex_event
+  after_commit :reindex_trending
 
   private
 
     def reindex_event
       if commentable.is_a?(Event)
         Sunspot.index commentable
+      end
+    end
+
+    def reindex_trending
+      if commentable.is_a?(Event)
+        Sunspot.index TrendObject.new(self)
       end
     end
 end

@@ -26,6 +26,12 @@ FactoryGirl.define do
     required false
   end
 
+  factory :form_field_text_area, :class => FormField::TextArea do |f|
+    sequence(:name) {|n| "Form Field TextArea #{n}" }
+    type "FormField::TextArea"
+    ordering 1
+  end
+
   factory :form_field_number, :class => FormField::Number do |f|
     sequence(:name) {|n| "Form Field Number #{n}" }
     type "FormField::Number"

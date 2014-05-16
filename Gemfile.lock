@@ -268,7 +268,7 @@ GEM
       rspec-core (>= 2.5.0)
       rspec-expectations (>= 2.5.0)
       rspec-mocks (>= 2.5.0)
-    rsolr (1.0.9)
+    rsolr (1.0.10)
       builder (>= 2.1.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)

@@ -675,24 +675,30 @@ $.widget 'nmk.filteredList', {
 
 		@spinner = @_loadingSpinner()
 
-		@jqxhr = $.get @options.source, params, (response) =>
+		@jqxhr = $.get @options.source, params, (response, textStatus, jqXHR) =>
 			$.loadingContent += 1
 			@spinner.remove();
-			$response = $('<div>').append(response)
-			$items = $response.find('[data-content="items"]')
-			if @options.onItemsLoad
-				@options.onItemsLoad $response, page
+			if typeof response is 'object'
+				if @options.onItemsLoad
+					@options.onItemsLoad response, page
 
-			@listContainer.append $items.html()
-			@_pageLoaded page, $items
-			@listContainer.css height: ''
+				@listContainer.css height: ''
+			else
+				$response = $('<div>').append(response)
+				$items = $response.find('[data-content="items"]')
+				if @options.onItemsLoad
+					@options.onItemsLoad $response, page
 
-			if page is 1 and $items.find('>*').length is 0
-				@emptyState = @_placeholderEmptyState()
+				@listContainer.append $items.html()
+				@_pageLoaded page, $items
+				@listContainer.css height: ''
 
-			$response.remove()
-			$items.remove()
-			$items = $response = null
+				if page is 1 and $items.find('>*').length is 0
+					@emptyState = @_placeholderEmptyState()
+
+				$response.remove()
+				$items.remove()
+				$items = $response = null
 
 
 			if @options.onPageLoaded
