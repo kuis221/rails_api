@@ -42,8 +42,9 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :results, 'Results', results_reports_path, highlights_on: %r(/results) if can?(:access, :results)
 
     options = []
-    options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)]) if can?(:show_analysis, Campaign )
-    options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r(/analysis/staff_report)]) if can?(:show_analysis, CompanyUser)
+    options.push([:trends, 'Trends Report', analysis_trends_path, highlights_on: %r(/analysis/trends)]) if can?(:access, :trends_report )
+    # options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)]) if can?(:show_analysis, Campaign )
+    # options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r(/analysis/staff_report)]) if can?(:show_analysis, CompanyUser)
 
     unless options.empty?
       primary.item :analysis, 'Analysis', options.first[2], highlights_on: %r(/analysis) do |secondary|

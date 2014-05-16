@@ -46,4 +46,41 @@ describe Activity do
       activity.active.should be_false
     end
   end
+
+  describe "with_results_for" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: campaign.company) }
+    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+    let(:venue) { FactoryGirl.create(:venue, company: campaign.company) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+
+    before { campaign.activity_types << activity_type }
+
+    it "results empty if no activities have the give fields" do
+      FactoryGirl.create(:activity, activity_type: activity_type,
+        activitable: venue, campaign: campaign, company_user_id: 1)
+      expect(Activity.with_results_for(field)).to be_empty
+    end
+
+    it "results the activity if have result for the field" do
+      activity = FactoryGirl.create(:activity, activity_type: activity_type,
+        activitable: venue, campaign: campaign, company_user_id: 1)
+      activity.results_for([field]).first.value = 'this have a value'
+      activity.save
+
+      expect(Activity.with_results_for(field)).to match_array [activity]
+    end
+
+    it "should return each activity only once" do
+      activity = FactoryGirl.create(:activity, activity_type: activity_type,
+        activitable: venue, campaign: campaign, company_user_id: 1)
+
+      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
+      activity.results_for([field, field2]).each{|r| r.value = 'this have a value' }
+      expect {
+        activity.save
+      }.to change(ActivityResult, :count).by(2)
+
+      expect(Activity.with_results_for([field, field2])).to match_array [activity]
+    end
+  end
 end

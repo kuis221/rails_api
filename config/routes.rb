@@ -151,6 +151,7 @@ Brandscopic::Application.routes.draw do
 
     # For The KPI report
     get :kpi_report, to: 'kpi_reports#index'
+
     post :kpi_report, to: 'kpi_reports#report'
     get :kpi_report_status, to: 'kpi_reports#status'
 
@@ -159,6 +160,9 @@ Brandscopic::Application.routes.draw do
   end
 
   namespace :analysis do
+    get :trends, to: 'trends_report#index'
+    get 'trends/items', to: 'trends_report#items'
+
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'
 

@@ -39,4 +39,26 @@ describe ActivityType do
       expect(FormField.last.type).to eql 'FormField::UserDate'
     end
   end
+
+  describe "with_trending_fields" do
+    let(:activity_type) { FactoryGirl.create(:activity_type) }
+    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+
+
+    it "results empty if no activity types have the needed fields" do
+      expect(ActivityType.with_trending_fields).to be_empty
+    end
+
+    it "results the activity type if have a text area field" do
+      field.save
+      expect(ActivityType.with_trending_fields).to match_array [activity_type]
+    end
+
+    it "should return each activity type only once" do
+      field.save
+      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
+
+      expect(ActivityType.with_trending_fields).to match_array [activity_type]
+    end
+  end
 end
