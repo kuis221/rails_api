@@ -12,7 +12,7 @@ window.Bubbles = () ->
 	maxRadius = 45
 
 	# this scale will be used to size our bubbles
-	rScale = d3.scale.sqrt().range([0,maxRadius])
+	rScale = d3.scale.sqrt().range([10,maxRadius])
 	
 	# I've abstracted the data value used to size each
 	# into its own function. This should make it easy
@@ -106,8 +106,8 @@ window.Bubbles = () ->
 			# setup the radius scale's domain now that
 			# we have some data
 			maxDomainValue = d3.max(data, (d) -> rValue(d))
-			minDomainValue = d3.min(data, (d) -> rValue(d))
-			rScale.domain([minDomainValue-parseInt(maxDomainValue*20/199), maxDomainValue])
+			minDomainValue = Math.max(d3.min(data, (d) -> rValue(d))-parseInt(maxDomainValue*20/199), 0)
+			rScale.domain([minDomainValue, maxDomainValue])
 
 			# a fancy way to setup svg element
 			svg = d3.select(this).selectAll("svg").data([data])

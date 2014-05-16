@@ -162,6 +162,7 @@ Brandscopic::Application.routes.draw do
   namespace :analysis do
     get :trends, to: 'trends_report#index'
     get 'trends/items', to: 'trends_report#items'
+    get 'trends/filters', to: 'trends_report#filters'
 
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'

@@ -125,7 +125,7 @@ class TrendObject
         end
       end
 
-      facet :description, sort: :count, limit: 30
+      facet :description, sort: :count, limit: 50
     end
   end
 
