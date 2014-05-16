@@ -8,7 +8,6 @@ describe BrandsController do
 
   describe "campaign scope" do
     let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
-    
 
     describe "GET 'new'" do
       it "returns http success" do
@@ -41,7 +40,7 @@ describe BrandsController do
       end
     end
   end
-  
+
   describe "GET 'edit'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
     it "returns http success" do
@@ -49,14 +48,14 @@ describe BrandsController do
       response.should be_success
     end
   end
-  
+
   describe "GET 'items'" do
     it "returns the correct structure" do
       get 'items'
       response.should be_success
     end
   end
-  
+
   describe "GET 'show'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
     it "assigns the loads the correct objects and templates" do
@@ -97,8 +96,8 @@ describe BrandsController do
       parsed_body.map{|b| b['name']}.should == ['Brand 456', 'Brand 123']
     end
   end
-  
-    describe "GET 'deactivate'" do
+
+  describe "GET 'deactivate'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
 
     it "deactivates an active brand" do
@@ -116,6 +115,34 @@ describe BrandsController do
     end
   end
 
+  describe "POST 'create'" do
+    it "returns http success" do
+      post 'create', format: :js
+      response.should be_success
+    end
+
+    it "should not render form_dialog if no errors" do
+      lambda {
+        post 'create', brand: {name: 'Test Brand'}, format: :js
+      }.should change(Brand, :count).by(1)
+      response.should be_success
+      response.should render_template(:create)
+      response.should_not render_template(:form_dialog)
+
+      brand = Brand.last
+      brand.name.should == 'Test Brand'
+    end
+
+    it "should render the form_dialog template if errors" do
+      lambda {
+        post 'create', format: :js
+      }.should_not change(Brand, :count)
+      response.should render_template(:create)
+      response.should render_template(:form_dialog)
+      assigns(:brand).errors.count.should > 0
+    end
+  end
+
   describe "PUT 'update'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
     it "must update the brand attributes" do
@@ -126,5 +153,4 @@ describe BrandsController do
       brand.name.should == 'Test brand'
     end
   end
-
 end
