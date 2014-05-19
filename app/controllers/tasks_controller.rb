@@ -25,12 +25,11 @@ class TasksController < FilteredController
 
   def assignable_users
     if resource.event.present?
-      ( company_users.active.by_events(resource.event) +
-        company_users.active.by_teams(resource.event.teams)
-      ).uniq.sort{|a,b| a.name <=> b.name}
+      ( company_users.active.by_events(resource.event).for_dropdown +
+        company_users.active.by_teams(resource.event.teams).for_dropdown
+      ).uniq.sort_by{|a| a[0].downcase }
     else
-      current_company.company_users.active.joins(:user).
-        includes(:user).order('users.first_name || users.first_name')
+      current_company.company_users.active.for_dropdown
     end
   end
 
