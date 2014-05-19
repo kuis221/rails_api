@@ -179,7 +179,7 @@ jQuery ->
 							textColor: 'white',
 							url: '/assets/small-bubble.png',
 							height: 50,
-							textSize: 12,
+							textSize: 11,
 							width: 50
 						},
 						{
@@ -187,7 +187,7 @@ jQuery ->
 							textColor: 'white',
 							url: '/assets/medium-bubble.png',
 							height: 50,
-							textSize: 12,
+							textSize: 11,
 							width: 50
 						},
 						{
@@ -195,7 +195,7 @@ jQuery ->
 							textColor: 'white',
 							url: '/assets/big-bubble.png',
 							height: 50,
-							textSize: 12,
+							textSize: 11,
 							width: 50
 						}
 					];

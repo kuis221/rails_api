@@ -977,6 +977,9 @@ body.app-layout{
 		&.calendar{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
 		}
 	}
 }
