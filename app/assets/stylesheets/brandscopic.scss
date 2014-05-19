@@ -2763,7 +2763,7 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#campaigns-list, ul#areas-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
+	ul#campaigns-list, ul#areas-list, ul#brands-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
 		span{
 			line-height: 20px;
 			b{
@@ -5242,6 +5242,9 @@ table.table td.comments-container {
 			margin: 30px 5px 0 0;
 		}
 	}
+	#new-task-btn{
+		margin-top: 15px;
+	}
 	input[type="checkbox"]{
 		visibility: hidden;
 	}
@@ -5268,8 +5271,7 @@ table.table td.comments-container {
 }
 
 .tasks-progress-bar{
-	position: relative;
-	padding-bottom: 80px;
+	padding-bottom: 50px;
 	.btn.btn-primary{
 		margin-top: 35px;
 	}
