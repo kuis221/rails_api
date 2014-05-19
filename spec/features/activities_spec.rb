@@ -36,6 +36,17 @@ feature 'Activities management' do
       click_link 'You are viewing activity details. Click to close.'
       expect(current_path).to eql event_path(event)
     end
+
+    scenario "can see all the info of a venue's activity", js: true do
+      venue = FactoryGirl.create(:venue, place: place)
+      venue_activity = FactoryGirl.create(:activity,
+        company_user: company_user, activitable: venue,
+        campaign: campaign,
+        activity_type: FactoryGirl.create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+      visit activity_path(activity)
+      expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(current_path).to eql activity_path(activity)
+    end
   end
 
   feature "admin user", js: true do
