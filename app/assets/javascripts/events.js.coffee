@@ -176,7 +176,7 @@ jQuery ->
 				markerCluster = new MarkerClusterer(map, markersArray, {styles: clusterStyles = [
 						{
 							opt_textColor: 'white',
-							url: '/assets/blue_image.png',
+							url: '/assets/small-bubble.png',
 							height: 50,
 							width: 50
 						},

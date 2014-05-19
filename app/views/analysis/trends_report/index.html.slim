@@ -2,7 +2,15 @@
   #collection-list-filters
 
 .main
-  h3 TERMS
+  h4 TERMS
+  #terms-container
+    form.form-inline
+      input.form-control placeholder=("Add term or phrase") type="text" /
+      button.btn.btn-default type="submit" +
+    legend
+      .key LOSING
+      .key STABLE
+      .key GAINING 
   #bubble-container
 
 javascript:
