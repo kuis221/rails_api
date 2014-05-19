@@ -1371,16 +1371,16 @@ li.dropdown a{
 	border-bottom: 0;
 }
 .nav-tabs li a{
-	background-color: $brand;
+	background-color: $grey_one;
 	border: 0;
-	color: white;
+	color: $brand;
 	text-align: center;
 	width: 92px;
 }
 .nav-tabs li a:hover{
-	background-color: white;
+	background-color: $user_menu;
 	border-bottom: 0;
-	color: $brand;
+	color: $grey_three;
 }
 .nav-tabs>.active>a{
 	color: $brand;
