@@ -5254,6 +5254,9 @@ table.table td.comments-container {
 			margin: 30px 5px 0 0;
 		}
 	}
+	#new-task-btn{
+		margin-top: 15px;
+	}
 	input[type="checkbox"]{
 		visibility: hidden;
 	}
@@ -5280,8 +5283,7 @@ table.table td.comments-container {
 }
 
 .tasks-progress-bar{
-	position: relative;
-	padding-bottom: 80px;
+	padding-bottom: 50px;
 	.btn.btn-primary{
 		margin-top: 35px;
 	}

@@ -17,7 +17,14 @@
       #save-filters-btn.a.btn.btn-primary Save
 
     .main
-    	#list-view.tab-pane.active
-    	  = render partial: 'table', locals: {source: url_for(action: :items)}
+      #list-view.tab-pane.active
+        = render partial: 'table', locals: {source: url_for(action: :items)}
 
 = render partial: 'help_tutorial'
+
+javascript:
+  $(document).on('tasks:change', function(){
+    if ('#{params[:scope]}' == 'user') {
+      $('#collection-list-filters').filteredList('reloadData');
+    }
+  });

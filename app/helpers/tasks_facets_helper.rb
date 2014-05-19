@@ -27,7 +27,7 @@ module TasksFacetsHelper
       counters['unassigned'] = 0
       counters['incomplete'] = 0
       counters['late'] = count_late_tasks
-      facet_search.facet(:statusm).rows.map{|x| counters[x.value.downcase] = x.count } unless facet_search.facet(:statusm).nil?
+      facet_search.facet(:status).rows.map{|x| counters[x.value.to_s] = x.count } unless facet_search.facet(:status).nil?
     end
     @status_counters
   end

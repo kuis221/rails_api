@@ -67,6 +67,26 @@ feature "Tasks", js: true, search: true do
     end
   end
 
+  scenario "allows to create a new task" do
+    visit mine_tasks_path
+
+    click_js_button 'Create'
+    within('form#new_task') do
+      fill_in 'Title', with: 'Do the math homework'
+      fill_in 'Due at', with: '05/16/2013'
+      select_from_chosen('Test User', :from => 'Assigned To')
+      click_js_button 'Submit'
+    end
+
+    expect(page).to have_text('0 INCOMPLETE')
+    expect(page).to have_text('1 LATE')
+
+    within('#tasks-list li') do
+      expect(page).to have_content('Do the math homework')
+      expect(page).to have_content('THU May 16')
+    end
+  end
+
   feature "/tasks/my_teams"  do
     scenario "GET index should display a table with the events" do
       team1 = FactoryGirl.create(:team, company: @company)

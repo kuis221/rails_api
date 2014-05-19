@@ -416,7 +416,7 @@ describe Campaign do
       campaign.goals.for_kpi(Kpi.events).value = 10
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, campaign: campaign)
+      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 1
@@ -437,7 +437,7 @@ describe Campaign do
       campaign.goals.for_kpi(Kpi.promo_hours).value = 10
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 1
@@ -459,7 +459,7 @@ describe Campaign do
       campaign.goals.for_kpi(Kpi.events).value = 5
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 2
@@ -492,7 +492,7 @@ describe Campaign do
       campaign.goals.for_kpi(Kpi.events).value = 5
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
       event = FactoryGirl.create(:rejected_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
       event = FactoryGirl.create(:submitted_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
       event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)

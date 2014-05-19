@@ -25,9 +25,9 @@ class ActivityType < ActiveRecord::Base
   has_many :campaigns, through: :activity_type_campaigns
 
   # Goals relationships
-  has_one :goal, conditions: { parent_id: nil }, dependent: :destroy
+  has_many :goals, dependent: :destroy
 
-  accepts_nested_attributes_for :goal
+  accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
   scope :active, lambda{ where(active: true) }
   attr_accessor :partial_path
