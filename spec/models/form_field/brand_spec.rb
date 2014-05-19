@@ -26,7 +26,9 @@ describe FormField::Brand do
   describe "#field_options" do
     it "should return all brands for company campaigns if it is a new record" do
       field = FormField::Brand.new(settings: {})
-      brands = FactoryGirl.create_list(:brand, 2)
+      brands = []
+      brands << FactoryGirl.create(:brand, company: company)
+      brands << FactoryGirl.create(:brand, company: company)
       campaign = FactoryGirl.create(:campaign, brand_ids: brands.map(&:id), company: company)
       activity_result = ActivityResult.new(form_field: field)
 

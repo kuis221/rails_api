@@ -12,8 +12,8 @@
 
 class Brand < ActiveRecord::Base
   track_who_does_it
-
-  validates :name, presence: true, uniqueness: true
+  scoped_to_company
+  validates :name, presence: true, uniqueness: {scope: :company_id}
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
@@ -25,27 +25,29 @@ class Brand < ActiveRecord::Base
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
   scope :accessible_by_user, lambda{|user| scoped }
 
-  scope :for_company_campaigns, lambda{|company| joins(:campaigns).where(campaigns: {company_id: company}).group('brands.id').order('brands.name') }
-
-  # TODO: when we make the change for scoping the brands by company, we should remove this scope and use the
-  # one provided by company_scoped
-  scope :in_company, lambda{|company| for_company_campaigns(company) }
-
   searchable do
+    integer :id
+
     text :name, stored: true
+
     string :name
+    string :status
 
-    integer :company_id do
-      -1
-    end
+    boolean :active
 
-    string :status do
-      'Active'
-    end
+    integer :company_id
+  end
 
-    boolean :active do
-      true
-    end
+    def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
+
+  def status
+    self.active? ? 'Active' : 'Inactive'
   end
 
   def self.report_fields
@@ -53,4 +55,33 @@ class Brand < ActiveRecord::Base
       name:       { title: 'Name' }
     }
   end
+#
+    class << self
+    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
+    def do_search(params, include_facets=false)
+      ss = solr_search do
+        with(:company_id, params[:company_id])
+        with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
+        with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))
+        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+        if params.has_key?(:q) and params[:q].present?
+          (attribute, value) = params[:q].split(',')
+          case attribute
+          when 'brand'
+            with :id, value
+          else
+            with "#{attribute}_ids", value
+          end
+        end
+
+        if include_facets
+          facet :status
+        end
+
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      end
+    end
+  end
+
 end

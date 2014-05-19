@@ -1,3 +1,7 @@
-|
-  $('.bootbox.modal').modal('hide');
-  $('#event-surveys-list').html('#{j render(parent.surveys)}')
+- if resource.errors.any?
+	- resource.surveys_answers.select{|a| !a.valid? }.each{|a| puts a.errors.inspect }
+	= render 'form_dialog'
+- else
+	|
+	  $('.bootbox.modal').modal('hide');
+	  $('#event-surveys-list').html('#{j render(parent.surveys)}')

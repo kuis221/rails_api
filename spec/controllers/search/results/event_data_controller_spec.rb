@@ -29,7 +29,7 @@ describe Results::EventDataController, search: true do
 
       Sunspot.commit
 
-      FactoryGirl.create(:event, company_id: @company.id + 1) # An event in other company
+      without_current_user { FactoryGirl.create(:event, company_id: @company.id + 1) } # An event in other company
 
       get 'items'
       response.should be_success

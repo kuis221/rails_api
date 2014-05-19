@@ -39,6 +39,7 @@ en:
     new:
       team: "New Team"
       campaign: "New Campaign"
+      brand: "New Brand"
       role: "New Role"
       area: "New Area"
       brand_portfolio: "New Brand Portfolio"
@@ -56,7 +57,7 @@ en:
 
   inputs:
     attached_asset:
-      select_file: 
+      select_file:
         photo: '%{browse} for an image located on your computer'
         attachment: '%{browse} for a file located on your computer'
 
@@ -90,7 +91,7 @@ en:
       other: "You have %{count} new tasks"
     unread_tasks_comments_user: "Your task <span>%{task}</span> has a new comment"
     unread_tasks_comments_team: "Your team's task <span>%{task}</span> has a new comment"
-    new_campaigns: 
+    new_campaigns:
       one: "You have a new campaign"
       other: "You have %{count} new campaigns"
     new_event: "You have a new event"
@@ -295,7 +296,7 @@ en:
     sublocality_level_1: "Sublocality level 1"
     subpremise: "Subpremise"
     transit_station: "Transit Station"
-    
+
   dashboard:
     intro_message: "Track progress against event and promo hour goals for your campaigns"
 

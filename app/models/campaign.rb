@@ -80,7 +80,13 @@ class Campaign < ActiveRecord::Base
   has_many :activity_types, through: :activity_type_campaigns
 
   scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
-  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.accessible_campaign_ids) }
+  scope :accessible_by_user, lambda {|company_user|
+    if company_user.is_admin?
+      where(company_id: company_user.company_id)
+    else
+      where(company_id: company_user.company_id, id: company_user.accessible_campaign_ids)
+    end
+  }
   scope :active, lambda { where(aasm_state: 'active') }
 
   # Campaigns-Places relationship

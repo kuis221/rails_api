@@ -1353,6 +1353,270 @@ describe Report do
             {"campaign_name"=>"Guaro Cacique 2013", "values" => [300.00, 555.0]}
         ]
       end
+
+      it "should work when adding radio form fields as a value" do
+        radio_field = FactoryGirl.create(:form_field, type: "FormField::Radio",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        campaign.activity_types << radio_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option1.id
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{radio_field.id}", "label"=>"Radio Field", "aggregate"=>"count"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Radio Field: Opt1", "Radio Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[1.0, 2.0]}
+        ]
+      end
+
+      it "should work when adding checkboxes form fields as a value" do
+        checkbox_field = FactoryGirl.create(:form_field, type: "FormField::Checkbox",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        checkbox_field = FormField.find(checkbox_field)
+        campaign.activity_types << checkbox_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{checkbox_field.id}", "label"=>"Checkbox Field", "aggregate"=>"count"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Checkbox Field: Opt1", "Checkbox Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[2.0, 3.0]}
+        ]
+      end
+
+      it "should work when adding percentage form fields as a value" do
+        percentage_field = FactoryGirl.create(:form_field, type: "FormField::Percentage",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+        )
+        percentage_field = FormField.find(percentage_field.id)
+        campaign.activity_types << percentage_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 35, option2.id.to_s => 65 }
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 80 }
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 40, option2.id.to_s => 60 }
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+          values:  [{"field"=>"form_field:#{percentage_field.id}", "label"=>"Percentage Field", "aggregate"=>"avg"}]
+        )
+
+        page = report.fetch_page
+        expect(report.report_columns).to eql ["Percentage Field: Opt1", "Percentage Field: Opt2"]
+        expect(page).to eql [
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[31.666666666666668, 68.33333333333333]},
+        ]
+      end
+
+      it "works when adding radio fields as rows" do
+        radio_field = FactoryGirl.create(:form_field, type: "FormField::Radio",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: radio_field.fieldable)
+        campaign.activity_types << radio_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option1.id
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: radio_field.fieldable, company_user: user)
+        activity.results_for([radio_field]).first.value = option2.id
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:     [{"field"=>"form_field:#{radio_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{radio_field.id}"=>"Opt1", "values" => [100.00]},
+            {"form_field_#{radio_field.id}"=>"Opt2", "values" => [400.00]}
+        ]
+      end
+
+      it "works when adding checkboxes fields as rows" do
+        checkbox_field = FactoryGirl.create(:form_field, type: "FormField::Checkbox",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        checkbox_field = FormField.find(checkbox_field.id)
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: checkbox_field.fieldable)
+        campaign.activity_types << checkbox_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id]
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option2.id]
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: checkbox_field.fieldable, company_user: user)
+        activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
+        activity.results_for([numeric_field]).first.value = 300
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:     [{"field"=>"form_field:#{checkbox_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{checkbox_field.id}"=>"Opt1", "values" => [400.00]},
+            {"form_field_#{checkbox_field.id}"=>"Opt2", "values" => [700.00]}
+        ]
+      end
+
+      it "works when adding percentage fields as rows" do
+        percentage_field = FactoryGirl.create(:form_field, type: "FormField::Percentage",
+          fieldable: FactoryGirl.create(:activity_type),
+          options: [
+            option1 = FactoryGirl.create(:form_field_option, name: 'Opt1'),
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2') ]
+        )
+        percentage_field = FormField.find(percentage_field.id)
+        numeric_field = FactoryGirl.create(:form_field, type: "FormField::Number", fieldable: percentage_field.fieldable)
+        campaign.activity_types << percentage_field.fieldable
+
+        event = FactoryGirl.create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
+          results: {impressions: 100, interactions: 50})
+        FactoryGirl.create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+          results: {impressions: 200, interactions: 150})
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = {option1.id => 70, option2.id => 30}
+        activity.results_for([numeric_field]).first.value = 400
+        activity.save
+
+        activity = FactoryGirl.create(:activity, activitable: event,
+          activity_type: percentage_field.fieldable, company_user: user)
+        activity.results_for([percentage_field]).first.value = {option1.id => 70, option2.id => 30}
+        activity.results_for([numeric_field]).first.value = 100
+        activity.save
+
+        report = FactoryGirl.create(:report,
+          company: company,
+          columns: [{"field"=>"values", "label"=>"Values"}],
+          rows:    [{"field"=>"form_field:#{percentage_field.id}", "label"=>"Radio Field", "aggregate"=>"sum"}],
+          values:  [{"field"=>"form_field:#{numeric_field.id}", "label"=>"Numeric Field", "aggregate"=>"sum"}]
+        )
+        page = report.fetch_page
+        expect(page).to eql [
+            {"form_field_#{percentage_field.id}"=>"Opt1", "values" => [500.00]},
+            {"form_field_#{percentage_field.id}"=>"Opt2", "values" => [500.00]}
+        ]
+      end
     end
   end
 

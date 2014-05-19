@@ -39,8 +39,8 @@ describe ActivityTypesController do
       expect {
         expect {
           put 'update', id: activity_type.to_param,
-              activity_type: {goal_attributes:
-                {goalable_id: campaign.to_param, goalable_type: 'Campaign', activity_type_id: activity_type.to_param, value: 23}
+              activity_type: {goals_attributes:
+                [{goalable_id: campaign.to_param, goalable_type: 'Campaign', activity_type_id: activity_type.to_param, value: 23}]
               }, format: :js
         }.to change(Goal, :count).by(1)
       }.to_not change(ActivityType, :count)

@@ -17,7 +17,7 @@ describe EventExpensesController do
     end
 
     it 'cannot edit an event expense on other company' do
-      other_event = FactoryGirl.create(:event, company: FactoryGirl.create(:company))
+      other_event = without_current_user{ FactoryGirl.create(:event, company: FactoryGirl.create(:company)) }
       other_expense = FactoryGirl.create(:event_expense, event: other_event)
       get 'edit', event_id: other_event.to_param, id: other_expense.id, format: :js
       response.should be_success

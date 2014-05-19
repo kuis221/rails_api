@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BrandPortfoliosController, search: true do
+describe BrandsController, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -17,17 +17,6 @@ describe BrandPortfoliosController, search: true do
       buckets.map{|b| b['label']}.should == ['Brands']
     end
 
-    it "should return the brands in the Brands Bucket" do
-      brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: @company)
-      Sunspot.commit
-
-      get 'autocomplete', q: 'cac'
-      response.should be_success
-
-      buckets = JSON.parse(response.body)
-      brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
-    end
   end
 
   describe "GET 'filters'" do
@@ -37,7 +26,7 @@ describe BrandPortfoliosController, search: true do
       response.should be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Brands", "Active State"]
+      filters['filters'].map{|b| b['label']}.should == ["Active State"]
     end
   end
 end

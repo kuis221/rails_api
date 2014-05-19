@@ -28,6 +28,10 @@ class FormField::Summation < FormField
     true
   end
 
+  def is_optionable?
+    true
+  end
+
   def format_html(result)
     if result.value
       total = 0

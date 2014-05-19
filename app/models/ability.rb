@@ -63,9 +63,6 @@ class Ability
         [Company].include?(subject_class)
       end
 
-      # Other permissions
-      can [:index, :create], Brand
-
       can [:new, :create], Kpi do |kpi|
         can?(:edit, Campaign)
       end
@@ -95,8 +92,6 @@ class Ability
       can :search, Place
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
-
-      can :index, Brand
 
       can :index, Marque
 
