@@ -175,21 +175,27 @@ jQuery ->
 
 				markerCluster = new MarkerClusterer(map, markersArray, {styles: clusterStyles = [
 						{
-							opt_textColor: 'white',
-							url: '/assets/blue_image.png',
+							fontFamily: '\'Lato\', sans-serif',
+							textColor: 'white',
+							url: '/assets/small-bubble.png',
 							height: 50,
+							textSize: 12,
 							width: 50
 						},
 						{
-							opt_textColor: 'white',
-							url: '/assets/yellow_image.png',
+							fontFamily: '\'Lato\', sans-serif',
+							textColor: 'white',
+							url: '/assets/medium-bubble.png',
 							height: 50,
+							textSize: 12,
 							width: 50
 						},
 						{
-							opt_textColor: 'white',
-							url: '/assets/red_image.png',
+							fontFamily: '\'Lato\', sans-serif',
+							textColor: 'white',
+							url: '/assets/big-bubble.png',
 							height: 50,
+							textSize: 12,
 							width: 50
 						}
 					];
