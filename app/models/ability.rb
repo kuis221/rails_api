@@ -63,9 +63,6 @@ class Ability
         [Company].include?(subject_class)
       end
 
-      # Other permissions
-      can [:index, :create], Brand
-
       can [:new, :create], Kpi do |kpi|
         can?(:edit, Campaign)
       end
@@ -95,8 +92,6 @@ class Ability
       can :search, Place
 
       can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
-
-      can :index, Brand
 
       can :index, Marque
 
@@ -246,7 +241,8 @@ class Ability
       end
 
       can :create, Task do |task|
-        user.role.has_permission?(:create_task, Event) && can?(:show, task.event)
+        (user.role.has_permission?(:create_task, Event) && can?(:show, task.event)) ||
+        user.role.has_permission?(:create_my, Task) || user.role.has_permission?(:create_team, Task)
       end
 
       # Documents permissions

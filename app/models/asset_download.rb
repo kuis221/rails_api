@@ -16,6 +16,8 @@
 #  updated_at        :datetime         not null
 #
 
+require 'zip'
+
 class AssetDownload < ActiveRecord::Base
   belongs_to :user
   attr_accessible :last_downloaded, :uid, :assets_ids
@@ -68,7 +70,7 @@ class AssetDownload < ActiveRecord::Base
     File.delete(tmp_filename) if File.exists?(tmp_filename) # Make sure the zipfile doesn't exists
 
     # Add all the assets to the zip file
-    Zip::ZipFile.open(tmp_filename, Zip::ZipFile::CREATE) do |zip|
+    Zip::File.open(tmp_filename, Zip::File::CREATE) do |zip|
       #get all of the attachments
       AttachedAsset.find(assets_ids).each do |a|
         photo_local_name = "#{Rails.root}/tmp/#{a.id}"
