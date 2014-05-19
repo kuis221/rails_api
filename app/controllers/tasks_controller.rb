@@ -24,13 +24,13 @@ class TasksController < FilteredController
   end
 
   def assignable_users
-    users = []
-    unless resource.event.nil?
-      users =  company_users.active.by_events(resource.event)
-      users += company_users.active.by_teams(resource.event.teams)
-      users.uniq!
+    if resource.event.present?
+      ( company_users.active.by_events(resource.event).for_dropdown +
+        company_users.active.by_teams(resource.event.teams).for_dropdown
+      ).uniq.sort_by{|a| a[0].downcase }
+    else
+      current_company.company_users.active.for_dropdown
     end
-    users.sort{|a,b| a.name <=> b.name}
   end
 
   def calendar_highlights

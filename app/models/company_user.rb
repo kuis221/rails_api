@@ -250,6 +250,13 @@ class CompanyUser < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def for_dropdown
+      ActiveRecord::Base.connection.select_all(
+        self.select("users.first_name || \' \' || users.last_name as name, company_users.id").
+        joins(:user).order('lower(users.first_name || \' \' || users.last_name)')
+      ).map{|r| [r['name'], r['id']] }
+    end
   end
 
 

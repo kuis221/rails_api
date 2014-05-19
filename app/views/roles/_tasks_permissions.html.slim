@@ -12,7 +12,7 @@
       .span12
         .span2.title My tasks
         .span2 = permission_checkbox(f, :index_my, Task)
-        .span2 
+        .span2 = permission_checkbox(f, :create_my, Task)
         .span2 = permission_checkbox(f, :edit_my, Task)
         .span2 = permission_checkbox(f, :deactivate_my, Task)
 
@@ -26,7 +26,7 @@
       .span12.separate_small
         .span2.title Team tasks
         .span2 = permission_checkbox(f, :index_team, Task)
-        .span2 
+        .span2 = permission_checkbox(f, :create_team, Task)
         .span2 = permission_checkbox(f, :edit_team, Task)
         .span2 = permission_checkbox(f, :deactivate_team, Task)
 
