@@ -212,7 +212,7 @@ class Campaign < ActiveRecord::Base
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).
-        select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
+        select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
         reorder(nil).group('1, 2, 3').to_sql
     end
 
@@ -413,12 +413,12 @@ class Campaign < ActiveRecord::Base
     # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
       q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
+         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
       data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
 
       q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
+         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
       data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
       data.sort!{|a, b| a['name'] <=> b['name'] }
