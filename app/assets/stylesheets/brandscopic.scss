@@ -2431,11 +2431,6 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#campaigns-list{
-		li{
-			min-height: 97px;
-		}
-	}
 	ul#select-campaigns-list{
 		li{
 			span{
@@ -2682,12 +2677,12 @@ ul.kpis-list{
 				&.name{
 					font-size: 16px;
 					margin:20px 0 0 0;
-			width: 45%;
+					width: 45%;
 				}
-			&.event-item {
-			min-height: 82px;
-			width: 100%;
-			}
+				&.event-item {
+					min-height: 82px;
+					width: 100%;
+				}
 			}
 		}
 	}
@@ -2763,7 +2758,10 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#campaigns-list, ul#areas-list, ul#brands-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
+	ul#campaigns-list{
+		li{
+			min-height: 97px;
+		}
 		span{
 			line-height: 20px;
 			b{
@@ -2775,7 +2773,7 @@ ul.kpis-list{
 			}
 			&.first{
 				margin-right: 55px;
-				width: 14%;
+				width: 15%;
 			}
 			&.first, &.last{
 				margin-top: 8px;
@@ -2785,7 +2783,7 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#brands-list{
+	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list, ul#day_parts-list{
 		li{
 			display: table;
 			width: 100%;
