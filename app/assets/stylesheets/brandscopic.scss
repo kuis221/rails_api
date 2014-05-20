@@ -79,6 +79,7 @@ abbr[title]{
 		position: absolute;
 		speak: none;
 		left: 20px;
+		line-height: 35px;
 		text-align: center;
 		vertical-align: middle;
 		-webkit-font-smoothing: antialiased;
@@ -2357,9 +2358,9 @@ ul.kpis-list{
 	.empty-list-message:first-child:last-child {
 		display: block;
 		p{
-			margin: 0;
-			padding-top: 30px;
-			text-align: center;
+			vertical-align: middle;
+			display: table-cell;
+			padding-left: 20px;
 		}
 	}
 	ul#areas-list{
@@ -6905,18 +6906,18 @@ body{
 					line-height: 16px;
 				}
 			}
-				a {
-					color: $venues_blue;
-					text-decoration: none;
-					&.icon-plus-sign:before {
-						content: "\e021";
-						color: $brand;
-						display: block;
-						font-family: 'icons';
-						font-size: 21px;
-						margin: 0 0 0 30px;
-					}
+			a {
+				color: $venues_blue;
+				text-decoration: none;
+				&.icon-plus-sign:before {
+					content: "\e021";
+					color: $brand;
+					display: block;
+					font-family: 'icons';
+					font-size: 21px;
+					margin: 0 0 0 30px;
 				}
+			}
 		}
 	}
 }
