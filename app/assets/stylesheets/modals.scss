@@ -329,6 +329,9 @@ ul.select2-results{
 			.link-list{
 				margin-top: 35px;
 				ul#select-campaigns-list{
+					height: 333px;
+					overflow-x: hidden;
+					overflow-y: scroll;
 					li{
 						padding: 14px 0 0 20px;
 						box-sizing: border-box;
