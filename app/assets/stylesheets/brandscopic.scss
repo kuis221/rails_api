@@ -2501,54 +2501,54 @@ ul.kpis-list{
 			width: 320px;
 		}
 	}
-		ul#events-list{
-			li{
-				color: $text;
-				min-height: 70px;
-				padding: 9px 0 0 15px;
+	ul#events-list{
+		li{
+			color: $text;
+			min-height: 70px;
+			padding: 9px 0 0 15px;
 
-				.address{
-					br{
-						display:block;
-					}
-				}
-
-				&.late {
-					border-left: 5px solid $late;
-				}
-				&.submitted {
-					border-left: 5px solid $submitted;
-				}
-				&.approved {
-					border-left: 5px solid $approved;
-				}
-				&.rejected {
-					border-left: 5px solid $rejected;
+			.address{
+				br{
+					display:block;
 				}
 			}
-			span.event-item {
-				min-height: 82px;
+
+			&.late {
+				border-left: 5px solid $late;
+			}
+			&.submitted {
+				border-left: 5px solid $submitted;
+			}
+			&.approved {
+				border-left: 5px solid $approved;
+			}
+			&.rejected {
+				border-left: 5px solid $rejected;
+			}
+		}
+		span.event-item {
+			min-height: 82px;
+			width: 100%;
+		}
+	}
+	ul#my-tasks-list, ul#team-tasks-list{
+		li{
+			.task-list{
+				min-height: 63px;
+				padding: 20px 0 0 0;
 				width: 100%;
-			}
-		}
-		ul#my-tasks-list, ul#team-tasks-list{
-			li{
-				.task-list{
-					min-height: 63px;
-					padding: 20px 0 0 0;
-					width: 100%;
-					span{
-						&.title{
-							margin-left: 18px;
-							width: 60%;
-						}
-						&.task-completed{
-							vertical-align: bottom;
-						}
+				span{
+					&.title{
+						margin-left: 18px;
+						width: 60%;
+					}
+					&.task-completed{
+						vertical-align: bottom;
 					}
 				}
 			}
 		}
+	}
 	ul#tasks-list{
 		li{
 			color: $text;
@@ -2781,6 +2781,19 @@ ul.kpis-list{
 				margin-top: 8px;
 				b{
 					top:-2px;
+				}
+			}
+		}
+	}
+	ul#brands-list{
+		li{
+			display: table;
+			width: 100%;
+			a{
+				display: table-cell;
+				vertical-align: middle;
+				span{
+					margin:0 !important;
 				}
 			}
 		}
@@ -6882,9 +6895,6 @@ body{
 		width: 100%;
 		li {
 			min-height: 65px;
-			.member-data{
-				padding: 27px 0 10px 30px;
-			}
 			.brand-data{
 				padding: 12px;
 			}

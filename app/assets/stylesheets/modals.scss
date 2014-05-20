@@ -203,8 +203,14 @@ ul.select2-results{
 		min-width: 620px;
 		.modal-body{
 			.contacts-modals{
-				a.btn.btn-primary{
-					margin-right: 10px;
+				a{
+					&.btn.btn-primary{
+						margin-right: 10px;
+					}
+					&.btn-cancel{
+						box-sizing: border-box;
+						width: 177px;
+					}
 				}
 				#select-contacts-table-wrapper{
 					.divider{
@@ -598,17 +604,22 @@ ul.select2-results{
 				float: left;
 				margin-bottom: 40px;
 			}
-			ul#areas-list, ul#select-brands-list{
+			ul#areas-list, ul#select-brands-list, ul#staff-list{
 				li{
 					display: table;
 					min-height: 85px !important;
 					width: 100%;
-					span:first-child{
-						display: table-cell !important;
-						vertical-align: middle;
-						padding-left: 20px;
-						span{
-							padding: 0;
+					span{
+						&:first-child{
+							display: table-cell !important;
+							vertical-align: middle;
+							padding-left: 20px;
+							span{
+								padding: 0;
+							}
+						}
+						&.member-data{
+							padding-left: 60px;
 						}
 					}
 				}
