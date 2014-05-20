@@ -15,7 +15,7 @@ class ActivitiesController < FilteredController
 
   protected
     def assignable_users
-      current_company.company_users.active.joins(:user).includes(:user).order('users.first_name ASC, users.last_name ASC')
+      current_company.company_users.active.for_dropdown
     end
 
     def activity_types

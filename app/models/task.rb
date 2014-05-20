@@ -27,11 +27,13 @@ class Task < ActiveRecord::Base
   validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
-  delegate :campaign_id, :campaign_name, :place_id, :company_id, to: :event, allow_nil: true
+  delegate :campaign_name, :place_id, to: :event, allow_nil: true
 
   validates :title, presence: true
-  validates :company_user_id, numericality: true, if: :company_user_id
-  validates :event_id, presence: true, numericality: true
+  validates :event_id, numericality: true, allow_nil: true, if: :event_id
+  validates :event_id, presence: true, unless: :company_user_id
+  validates :company_user_id, numericality: true, allow_nil: true
+  validates :company_user_id, presence: true, unless: :event_id
 
   scope :incomplete, lambda{ where(completed: false) }
   scope :active, lambda{ where(active: true) }
@@ -49,13 +51,17 @@ class Task < ActiveRecord::Base
 
     integer :company_user_id, references: CompanyUser
     integer :event_id
-    integer :company_id
-
-    integer :team_members, multiple: true do
-      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id) }.flatten.uniq
+    integer :company_id do
+      company_id
     end
 
-    integer :campaign_id
+    integer :team_members, multiple: true do
+      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id) }.flatten.uniq if event.present?
+    end
+
+    integer :campaign_id do
+      campaign_id
+    end
 
     time :due_at, :trie => true
     time :last_activity
@@ -66,7 +72,7 @@ class Task < ActiveRecord::Base
 
     boolean :completed
     string :status do
-      if event.active?
+      if event.nil? || event.active?
         active? ? 'Active' : 'Inactive'
       else
         'Inactive Event'
@@ -116,6 +122,18 @@ class Task < ActiveRecord::Base
     status
   end
 
+  def company_id
+    # For those tasks created from Task section,
+    # company ID will be assigned from user
+    event.try(:company_id) || company_user.try(:company_id)
+  end
+
+  def campaign_id
+    # For those tasks created from Task section,
+    # campaign ID will be nil
+    event.try(:campaign_id)
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
@@ -125,7 +143,13 @@ class Task < ActiveRecord::Base
         company_user = params[:current_company_user]
         if company_user.present?
           unless company_user.role.is_admin?
-            with(:campaign_id, company_user.accessible_campaign_ids + [0])
+            any_of do
+              with(:campaign_id, company_user.accessible_campaign_ids + [0])
+              all_of do
+                 with(:campaign_id, nil)
+                 with(:company_user_id, company_user.id)
+              end
+            end
           end
         end
 
@@ -152,7 +176,7 @@ class Task < ActiveRecord::Base
             with :statusm, params[:task_status].uniq unless params[:task_status].empty?
             if late.present?
               all_of do
-                with(:due_at).less_than(Time.zone.now)
+                with(:due_at).less_than(Date.yesterday.beginning_of_day)
                 with(:completed, false)
               end
             end
@@ -175,7 +199,7 @@ class Task < ActiveRecord::Base
         end
 
         if params[:late]
-          with(:due_at).less_than(Time.zone.now)
+          with(:due_at).less_than(Date.yesterday.beginning_of_day)
           with :completed, false
         end
 
