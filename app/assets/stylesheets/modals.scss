@@ -215,12 +215,25 @@ ul.select2-results{
 					}
 				}
 			}
-
+	    	#select-campaigns-table-wrapper{
+				.link-list{
+					margin-top: 35px;
+					ul#select-campaigns-list{
+						height: auto;
+						max-height: 332px;
+						overflow-x: hidden;
+						overflow-y: auto;
+						li{
+							padding: 14px 0 0 20px;
+							box-sizing: border-box;
+						}
+					}
+				}
+			}
 			#select-areas-table-wrapper .link-list{
-				height: 330px;
+				height: 347px;
 				overflow-y: scroll;
 			}
-
 			.control-group{
 				label{
 					display: inline-block;
@@ -325,20 +338,6 @@ ul.select2-results{
     	left: 10%;
     	margin-left: 0;
     	min-width:80%;
-    	#select-campaigns-table-wrapper{
-			.link-list{
-				margin-top: 35px;
-				ul#select-campaigns-list{
-					height: 333px;
-					overflow-x: hidden;
-					overflow-y: scroll;
-					li{
-						padding: 14px 0 0 20px;
-						box-sizing: border-box;
-					}
-				}
-			}
-		}
 		#survey-form {
 			.control-group {
 				width: 100%;
@@ -590,11 +589,27 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 33px 30px;
-		#select-areas-table-wrapper{
-			ul#areas-list{
+		.scroll-table-content, #select-areas-table-wrapper{
+			max-height: 343px;
+			.row-fluid:after{
+				clear: none;
+			}
+			#new_place{
+				float: left;
+				margin-bottom: 40px;
+			}
+			ul#areas-list, ul#select-brands-list{
 				li{
+					display: table;
+					min-height: 85px !important;
+					width: 100%;
 					span:first-child{
-						margin: 22px 0 0 22px;
+						display: table-cell !important;
+						vertical-align: middle;
+						padding-left: 20px;
+						span{
+							padding: 0;
+						}
 					}
 				}
 			}
