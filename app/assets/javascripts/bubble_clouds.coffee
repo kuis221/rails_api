@@ -5,8 +5,10 @@ window.Bubbles = () ->
 	data = []
 	node = null
 	label = null
+	removeB = null
 	width = null
 	height = null
+	activeNode = null
 	margin = {top: 5, right: 0, bottom: 0, left: 0}
 	# largest size for our bubbles
 	maxRadius = 45
@@ -80,6 +82,9 @@ window.Bubbles = () ->
 			.style("left", (d) -> ((margin.left + d.x) - d.dx / 2) + "px")
 			.style("top", (d) -> ((margin.top + d.y) - d.dy / 2) + "px")
 
+		if activeNode?
+			showRemoveButton(activeNode)
+
 	# The force variable is the force layout controlling the bubbles
 	# here we disable gravity and charge as we implement custom versions
 	# of gravity and collisions for this visualization
@@ -120,12 +125,6 @@ window.Bubbles = () ->
 				.attr("width", width)
 				.attr("height", height)
 
-			# clickable background rect to clear the current selection
-			node.append("rect")
-				.attr("id", "bubble-background")
-				.attr("width", width)
-				.attr("height", height)
-				.on("click", clear)
 
 			# label is the container div for all the labels that sit on top of 
 			# the bubbles
@@ -147,7 +146,6 @@ window.Bubbles = () ->
 				svg.attr("width", width + margin.left + margin.right )
 				svg.attr("height", height + margin.top + margin.bottom )
 				node.attr("width", width).attr("height", height)
-				d3.select(this).selectAll("#bubble-background").attr("width", width).attr("height", height)
 				force.start()
 
 	# ---
@@ -190,6 +188,7 @@ window.Bubbles = () ->
 		node.enter()
 			.append("a")
 			.attr("class", "bubble-node")
+			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
 			.attr("xlink:href", (d) -> "##{encodeURIComponent(idValue(d))}")
 			.call(force.drag)
 			.call(connectEvents)
@@ -212,6 +211,7 @@ window.Bubbles = () ->
 		# is easier to append multiple elements to this selection
 		labelEnter = label.enter().append("a")
 			.attr("class", "bubble-label")
+			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
 			.attr("href", (d) -> "##{encodeURIComponent(idValue(d))}")
 			.call(force.drag)
 			.call(connectEvents)
@@ -319,45 +319,54 @@ window.Bubbles = () ->
 		d.on("mouseout", mouseout)
 
 	# ---
-	# clears currently selected bubble
-	# ---
-	clear = () ->
-
-	# ---
 	# changes clicked bubble by modifying url
 	# ---
 	click = (d) ->
 		d3.event.preventDefault()
 
 	# ---
-	# called when url after the # changes
-	# ---
-	hashchange = () ->
-		id = decodeURIComponent(location.hash.substring(1)).trim()
-		updateActive(id)
-
-	# ---
-	# activates new node
-	# ---
-	updateActive = (id) ->
-		node.classed("bubble-selected", (d) -> id == idValue(d))
-		# if no node is selected, id will be empty
-		if id.length > 0
-			d3.select("#status").html("<h3>The word <span class=\"active\">#{id}</span> is now active</h3>")
-		else
-			d3.select("#status").html("<h3>No word is active</h3>")
-
-	# ---
 	# hover event
 	# ---
 	mouseover = (d) ->
+		activeNode = d
 		node.classed("bubble-hover", (p) -> p == d)
+		showRemoveButton(d)
+		if window.bubleTimeout
+			clearTimeout(window.bubleTimeout)
+
 
 	# ---
 	# remove hover class
 	# ---
 	mouseout = (d) ->
 		node.classed("bubble-hover", false)
+		window.bubleTimeout = setTimeout () ->
+			d3.selectAll('.bubble-remove').remove()
+			activeNode = null
+		, 200
+
+	showRemoveButton = (d) ->
+		if activeNode
+			button = d3.select('.bubble-remove')
+			if button.empty()
+				button = d3.select('#bubble-labels').insert('a', ":first-child")
+					.attr('class', 'bubble-remove')
+					.on("click", () -> removeNode(activeNode) )
+					.on("mouseover", () -> mouseover(activeNode) )
+					.on("mouseout", mouseout )
+
+			button.attr('href', '#')
+				.attr('style', "top: #{(margin.left+d.y-7)-(d.forceR * Math.cos(315))}px; left: #{(margin.left+d.x-7)+(d.forceR * Math.sin(315))}px")
+
+
+	removeNode = (d) ->
+		d3.event.preventDefault()
+		data = data.filter (e) -> e isnt d
+		node = node.filter (n) -> n.name isnt d.name
+		d3.selectAll("[data-bubble-name=\"#{d.name}\"]").remove()
+		d3.selectAll('.bubble-remove').remove()
+		activeNode=null
+		force.start()
 
 	# ---
 	# public getter/setter for jitter variable
@@ -455,4 +464,3 @@ window.plotData = (selector, data, plot) ->
 
 # 	# load our data
 # 	d3.csv("data/#{text.file}", display)
-

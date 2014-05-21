@@ -8039,11 +8039,35 @@ table.table.likert-scale-table {
 		position: absolute;
 	}
 
-
 	.bubble-label .bubble-label-value {
 		font-family: 'Lato', sans-serif;
 		font-size: 11px;
 		font-weight: bold;
 		white-space: nowrap;
+	}
+	.bubble-remove {
+		display: block;
+		position: absolute;
+		height: 14px;
+		width: 14px;
+		z-index: 9999;
+		text-decoration: none;
+		color: $grey_three;
+		cursor: pointer;
+		line-height: 14px;
+		&:hover {
+			text-decoration: none;
+			color: $grey_three;
+		}
+		&:after {
+			content: "\e011";
+			font-family: 'icons';
+			font-size: 14px;
+			display:block;
+			line-height: 14px;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
 	}
 }
