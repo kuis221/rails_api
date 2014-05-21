@@ -3,7 +3,7 @@
   var selectBrandDialog = bootbox.dialog($('#{escape_javascript(render "select_brands")}'), [
     {
       "label" : 'Create New Brand',
-      "class" : "btn",
+      "class" : "btn btn btn-primary",
       "callback": function() {
         selectBrandDialog.off('hidden'); // To prevent the div to be removed in case the user returns to the form
         selectBrandDialog.modal('hide');

@@ -79,6 +79,7 @@ abbr[title]{
 		position: absolute;
 		speak: none;
 		left: 20px;
+		line-height: 35px;
 		text-align: center;
 		vertical-align: middle;
 		-webkit-font-smoothing: antialiased;
@@ -977,9 +978,9 @@ body.app-layout{
 		&.calendar{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
-		}
-		&.map{
-			border-left: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
 		}
 	}
 }
@@ -1374,16 +1375,16 @@ li.dropdown a{
 	border-bottom: 0;
 }
 .nav-tabs li a{
-	background-color: $brand;
+	background-color: $grey_one;
 	border: 0;
-	color: white;
+	color: $brand;
 	text-align: center;
 	width: 92px;
 }
 .nav-tabs li a:hover{
-	background-color: white;
+	background-color: $user_menu;
 	border-bottom: 0;
-	color: $brand;
+	color: $grey_three;
 }
 .nav-tabs>.active>a{
 	color: $brand;
@@ -2357,9 +2358,9 @@ ul.kpis-list{
 	.empty-list-message:first-child:last-child {
 		display: block;
 		p{
-			margin: 0;
-			padding-top: 30px;
-			text-align: center;
+			vertical-align: middle;
+			display: table-cell;
+			padding-left: 20px;
 		}
 	}
 	ul#areas-list{
@@ -2431,11 +2432,6 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#campaigns-list{
-		li{
-			min-height: 97px;
-		}
-	}
 	ul#select-campaigns-list{
 		li{
 			span{
@@ -2501,54 +2497,54 @@ ul.kpis-list{
 			width: 320px;
 		}
 	}
-		ul#events-list{
-			li{
-				color: $text;
-				min-height: 70px;
-				padding: 9px 0 0 15px;
+	ul#events-list{
+		li{
+			color: $text;
+			min-height: 70px;
+			padding: 9px 0 0 15px;
 
-				.address{
-					br{
-						display:block;
-					}
-				}
-
-				&.late {
-					border-left: 5px solid $late;
-				}
-				&.submitted {
-					border-left: 5px solid $submitted;
-				}
-				&.approved {
-					border-left: 5px solid $approved;
-				}
-				&.rejected {
-					border-left: 5px solid $rejected;
+			.address{
+				br{
+					display:block;
 				}
 			}
-			span.event-item {
-				min-height: 82px;
+
+			&.late {
+				border-left: 5px solid $late;
+			}
+			&.submitted {
+				border-left: 5px solid $submitted;
+			}
+			&.approved {
+				border-left: 5px solid $approved;
+			}
+			&.rejected {
+				border-left: 5px solid $rejected;
+			}
+		}
+		span.event-item {
+			min-height: 82px;
+			width: 100%;
+		}
+	}
+	ul#my-tasks-list, ul#team-tasks-list{
+		li{
+			.task-list{
+				min-height: 63px;
+				padding: 20px 0 0 0;
 				width: 100%;
-			}
-		}
-		ul#my-tasks-list, ul#team-tasks-list{
-			li{
-				.task-list{
-					min-height: 63px;
-					padding: 20px 0 0 0;
-					width: 100%;
-					span{
-						&.title{
-							margin-left: 18px;
-							width: 60%;
-						}
-						&.task-completed{
-							vertical-align: bottom;
-						}
+				span{
+					&.title{
+						margin-left: 18px;
+						width: 60%;
+					}
+					&.task-completed{
+						vertical-align: bottom;
 					}
 				}
 			}
 		}
+	}
 	ul#tasks-list{
 		li{
 			color: $text;
@@ -2682,12 +2678,12 @@ ul.kpis-list{
 				&.name{
 					font-size: 16px;
 					margin:20px 0 0 0;
-			width: 45%;
+					width: 45%;
 				}
-			&.event-item {
-			min-height: 82px;
-			width: 100%;
-			}
+				&.event-item {
+					min-height: 82px;
+					width: 100%;
+				}
 			}
 		}
 	}
@@ -2763,7 +2759,10 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#campaigns-list, ul#areas-list, ul#brands-list, ul#brand_portfolios-list, ul#day_parts-list, ul#date_ranges-list{
+	ul#campaigns-list{
+		li{
+			min-height: 97px;
+		}
 		span{
 			line-height: 20px;
 			b{
@@ -2775,12 +2774,25 @@ ul.kpis-list{
 			}
 			&.first{
 				margin-right: 55px;
-				width: 14%;
+				width: 15%;
 			}
 			&.first, &.last{
 				margin-top: 8px;
 				b{
 					top:-2px;
+				}
+			}
+		}
+	}
+	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list, ul#day_parts-list{
+		li{
+			display: table;
+			width: 100%;
+			a{
+				display: table-cell;
+				vertical-align: middle;
+				span{
+					margin:0 !important;
 				}
 			}
 		}
@@ -3766,14 +3778,29 @@ body.company_users{
 		.campaigns-group-body{
 			a.icon-plus-sign:before{
 				margin: 15px 0 10px 15px;
+				top: 0;
 			}
 		}
 		margin-bottom: 20px;
 
 		.campaigns-list {
-			padding: 20px 10px;
+			padding: 20px 0 0 10px;
+			width: auto;
 			.user-campaign{
-				margin-left: 5px;
+				margin-left: 0;
+				padding: 10px 25px 15px 7px;
+				width: 33%;
+				.pull-left{
+					width: 85%;
+				}
+				.pull-right{
+					a.icon-remove-sign:before{
+						font-size: 16px;
+					}
+				}
+			}
+			&+.row-fluid{
+				height: 65px;
 			}
 		}
 	}
@@ -5449,6 +5476,7 @@ svg{
 			-webkit-border-radius: 0px 7px 7px 7px;
 			border-radius: 0px 7px 7px 7px;
 			.chzn-container-single{
+				color: $brand;
 				.chzn-single{
 					height: 38px !important;
 					padding-top: 3px;
@@ -6859,16 +6887,13 @@ body{
 .scroll-table-content {
 	border: 1px solid $borders;
 	margin: 20px 0 10px 0;
-	max-height: 197px;
+	max-height: 233px;
 	overflow: auto;
 	.link-list {
 		border: 0;
 		width: 100%;
 		li {
 			min-height: 65px;
-			.member-data{
-				padding: 27px 0 10px 30px;
-			}
 			.brand-data{
 				padding: 12px;
 			}
@@ -6881,18 +6906,18 @@ body{
 					line-height: 16px;
 				}
 			}
-				a {
-					color: $venues_blue;
-					text-decoration: none;
-					&.icon-plus-sign:before {
-						content: "\e021";
-						color: $brand;
-						display: block;
-						font-family: 'icons';
-						font-size: 21px;
-						margin: 0 0 0 30px;
-					}
+			a {
+				color: $venues_blue;
+				text-decoration: none;
+				&.icon-plus-sign:before {
+					content: "\e021";
+					color: $brand;
+					display: block;
+					font-family: 'icons';
+					font-size: 21px;
+					margin: 0 0 0 30px;
 				}
+			}
 		}
 	}
 }
