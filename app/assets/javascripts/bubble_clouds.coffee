@@ -187,7 +187,7 @@ window.Bubbles = () ->
 		# the styling comes from the css
 		node.enter()
 			.append("a")
-			.attr("class", "bubble-node")
+			.attr("class", (d) -> "bubble-node trending-#{d.trending}")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
 			.attr("xlink:href", (d) -> "##{encodeURIComponent(idValue(d))}")
 			.call(force.drag)

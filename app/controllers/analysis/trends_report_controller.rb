@@ -10,7 +10,7 @@ class Analysis::TrendsReportController < FilteredController
 
   def items
     search = resource_class.do_search(search_params)
-    @trend_words = search.facet(:description).rows.map{|r| { name: r.value, count: r.count } }
+    @trend_words = search.facet(:description).rows.map{|r| { name: r.value, count: r.count, trending: [:up, :down, :stable].sample } }
     render json: @trend_words
   end
 

@@ -8007,12 +8007,17 @@ table.table.likert-scale-table {
 
 	.bubble-node {
 		/* fill: #d1e0f3; */
-		fill: #93D4F4;
-	}
-
-	.bubble-hover {
-		/* fill: #b8c7d9; */
-		fill: #E8E9E7;
+		fill: #d1e2e8;
+		&.trending-up {
+			fill: #6dbce7;
+		}
+		&.trending-down {
+			fill: #e6f4f7;
+		}
+		&.bubble-hover {
+			/* fill: #b8c7d9; */
+			fill: #3E9CCF;
+		}
 	}
 
 	.bubble-selected {
