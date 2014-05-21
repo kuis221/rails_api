@@ -80,7 +80,7 @@ class TasksController < FilteredController
         if params.has_key?(:new_at) && params[:new_at]
           @search_params[:id] = session["new_tasks_#{params[:scope]}_at_#{params[:new_at].to_i}"] ||= begin
             notifications = current_company_user.notifications.new_tasks
-            ids = notifications.map{|n| n.extra_params.try(:[], :task_id) }.compact
+            ids = notifications.map{|n| n.params['task_id']}.compact
             notifications.destroy_all
             ids
           end

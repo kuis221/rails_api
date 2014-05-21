@@ -16,10 +16,11 @@
 
 class Notification < ActiveRecord::Base
   belongs_to :company_user
-  attr_accessible :icon, :level, :message, :message_params, :extra_params, :path
+  attr_accessible :icon, :level, :message, :message_params, :extra_params, :params, :path
 
   serialize :message_params
   serialize :extra_params
+  serialize :params, ActiveRecord::Coders::Hstore
 
   scope :new_tasks, -> { where(message: 'new_task') }
   scope :new_events, -> { where(message: 'new_event') }
@@ -36,14 +37,14 @@ class Notification < ActiveRecord::Base
   def self.new_campaign(user, campaign)
     path = Rails.application.routes.url_helpers.campaign_path(campaign)
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign', extra_params: {campaign_id: campaign.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign', params: {campaign_id: campaign.id})
     end
   end
 
   def self.new_event(user, event)
     path = Rails.application.routes.url_helpers.event_path(event)
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event', extra_params: {event_id: event.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event', params: {event_id: event.id})
     end
   end
 
@@ -57,7 +58,7 @@ class Notification < ActiveRecord::Base
     end
 
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', extra_params: {task_id: task.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
     end
   end
 
