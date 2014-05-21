@@ -189,7 +189,7 @@ window.Bubbles = () ->
 			.append("a")
 			.attr("class", (d) -> "bubble-node trending-#{d.trending}")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
-			.attr("xlink:href", (d) -> "##{encodeURIComponent(idValue(d))}")
+			.attr("xlink:href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
 			.call(force.drag)
 			.call(connectEvents)
 			.append("circle")
@@ -212,7 +212,7 @@ window.Bubbles = () ->
 		labelEnter = label.enter().append("a")
 			.attr("class", "bubble-label")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
-			.attr("href", (d) -> "##{encodeURIComponent(idValue(d))}")
+			.attr("href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
 			.call(force.drag)
 			.call(connectEvents)
 
@@ -314,15 +314,8 @@ window.Bubbles = () ->
 	# adds mouse events to element
 	# ---
 	connectEvents = (d) ->
-		d.on("click", click)
 		d.on("mouseover", mouseover)
 		d.on("mouseout", mouseout)
-
-	# ---
-	# changes clicked bubble by modifying url
-	# ---
-	click = (d) ->
-		d3.event.preventDefault()
 
 	# ---
 	# hover event

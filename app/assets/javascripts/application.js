@@ -26,7 +26,7 @@
 //= require chosen.jquery
 //= require desk.widget
 //= require events.js
-//= require highcharts.src.js
+//= require highstock.src.js
 //= require d3.v3.min
 //= require bubble_clouds
 //= require detect_timezone

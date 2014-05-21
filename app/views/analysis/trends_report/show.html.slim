@@ -1,0 +1,11 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing event details. Click to close.")
+
+  .details_box.padding-top-close-bar
+    h2= @term.capitalize
+
+  = render 'mentions_over_time'
+
+  = render 'mentions_across_locations'
+
+  = render 'all_mentions'

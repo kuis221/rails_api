@@ -1,0 +1,26 @@
+.details_box
+  h3 MENTIONS OVER TIME
+  #mentions-over-time-graph
+
+javascript:
+  $.getJSON('#{analysis_mentions_over_time_path(term: @term)}', function(data) {
+    $('#mentions-over-time-graph').highcharts('StockChart', {
+
+      rangeSelector : {
+        selected : 1,
+        inputEnabled: $('#mentions-over-time-graph').width() > 480
+      },
+
+      title : {
+        text : null
+      },
+
+      series : [{
+        name : 'MENTIONS',
+        data : data,
+        tooltip: {
+          valueDecimals: 2
+        }
+      }]
+    });
+  });

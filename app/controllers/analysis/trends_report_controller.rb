@@ -14,6 +14,16 @@ class Analysis::TrendsReportController < FilteredController
     render json: @trend_words
   end
 
+  def show
+    @term = params[:term]
+  end
+
+  def over_time
+    @term = params[:term]
+    start = 100.days.ago
+    render json: 100.times.map{|i| [(start+i.days).to_datetime.strftime('%Q').to_i, rand(20)] }
+  end
+
   private
 
     def authorize_actions
