@@ -8089,3 +8089,29 @@ table.table.likert-scale-table {
 		}
 	}
 }
+
+#mentions-over-time-graph {
+	.highcharts-tooltip {
+		color: #fff;
+		.point-date {
+			margin-top: -8px;
+			margin-left: -8px;
+			margin-right: -8px;
+			margin-bottom: 10px;
+			padding: 5px 8px;
+			right: 16px;
+			background-color: #505050;
+			display: block;
+			text-align: center;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+		}
+		b {
+			color: #fff;
+		}
+	}
+	input.highcharts-range-selector {
+		border: 0px !important;
+	}
+}
+

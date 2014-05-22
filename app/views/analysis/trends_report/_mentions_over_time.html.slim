@@ -5,22 +5,142 @@
 javascript:
   $.getJSON('#{analysis_mentions_over_time_path(term: @term)}', function(data) {
     $('#mentions-over-time-graph').highcharts('StockChart', {
+      chart: {
+        style: {
+          fontFamily: "'Lato', sans-serif",
+        }
+      },
+
+      labels: { style: {color: 'silver' } },
+
+      credits: { enabled: false },
+
+      plotOptions: {
+        series: { states: { hover: { halo: {size: 0} } } },
+        line: { dataLabels: {style: {color: 'silver' } } }
+      },
+
+      xAxis: {
+        gridLineColor: '#eee',
+        lineColor: '#eee',
+        tickColor: '#eee',
+        labels: {
+           style: {
+              color: '#9C9C9C'
+           }
+        },
+      },
+
+      yAxis: {
+        gridLineColor: '#eee',
+        lineColor: '#eee',
+        tickColor: '#eee',
+        tickWidth: 1,
+        min: 0,
+        labels: {
+           style: {
+              color: '#9C9C9C'
+           }
+        },
+      },
 
       rangeSelector : {
         selected : 1,
-        inputEnabled: $('#mentions-over-time-graph').width() > 480
+        inputEnabled: $('#mentions-over-time-graph').width() > 480,
+        buttonTheme: { // styles for the buttons
+          fill: 'none',
+          stroke: 'none',
+          'stroke-width': 0,
+          r: 8,
+          style: {
+            color: 'silver',
+            fontWeight: 'bold',
+            textDecoration: 'underline'
+          },
+          states: {
+            hover: {
+              fill: 'none',
+              style: {
+                color: '#9C9C9C',
+              }
+            },
+            select: {
+              fill: 'none',
+              style: {
+                color: '#9C9C9C',
+                fontWeight: 'bold',
+                textDecoration: 'none'
+              }
+            }
+          }
+        },
+        inputBoxBorderColor: '#9C9C9C',
+        inputBoxWidth: 120,
+        inputBoxHeight: 28,
+        inputStyle: {
+          color: '#9C9C9C',
+          fontWeight: 'bold',
+        },
+        labelStyle: {
+          color: '#9C9C9C',
+        }
       },
 
       title : {
         text : null
       },
 
+
+      tooltip : {
+        useHTML: true,
+        borderRadius: 10,
+        borderColor: '#666666',
+        backgroundColor: '#666666',
+        valueDecimals: 0,
+        style: {
+          color: '#ccc',
+          fontSize: '12px',
+          padding: '8px',
+          top: 0,
+          left: 0
+        },
+        headerFormat: '<span class="point-date">{point.key}</span>',
+        pointFormat: '{series.name}:&nbsp;&nbsp;<b>{point.y}</b><br/>'
+      },
+
+      scrollbar: {
+        barBackgroundColor: '#A7A7A7',
+        barBorderRadius: 7,
+        barBorderWidth: 0,
+        rifleColor: '#A7A7A7',
+        buttonBackgroundColor: '#FFF',
+        buttonBorderWidth: 1,
+        buttonBorderRadius: 0,
+        trackBackgroundColor: 'none',
+        trackBorderWidth: 1,
+        trackBorderRadius: 8,
+        trackBorderColor: '#CCC',
+        height: 10
+      },
+
       series : [{
         name : 'MENTIONS',
         data : data,
-        tooltip: {
-          valueDecimals: 2
-        }
+        color: '#3496D5'
       }]
+    });
+
+    $('.highcharts-input-group rect').attr({rx: 5, ry: 5, y: -4});
+    $(document).on('focus', '#mentions-over-time-graph input', function(){
+      input = this;
+      $(input).hide();
+      setTimeout(function(){
+        $(input).css({
+          height: '20px',
+          left: ($(input).position().left+2)+'px',
+          width: ($(input).width()-2)+'px'
+        });
+      },0);
+      $(input).show();
     });
   });

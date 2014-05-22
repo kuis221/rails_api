@@ -17,9 +17,7 @@ class Analysis::TrendsReportController < FilteredController
   end
 
   def over_time
-    @term = params[:term]
-    start = 100.days.ago
-    render json: 100.times.map{|i| [(start+i.days).to_datetime.strftime('%Q').to_i, rand(20)] }
+    render json: word_trending_over_time_data
   end
 
   private
@@ -76,5 +74,23 @@ class Analysis::TrendsReportController < FilteredController
       end
 
       words.values
+    end
+
+    def word_trending_over_time_data
+      # Search for the # occurrences of the work on each day
+      search = resource_class.do_search(company_id: current_company.id, term: params[:term])
+      data = Hash[search.facet(:start_at).rows.map do |r|
+        [r.value.first.to_s(:numeric).to_i, [r.value.first.to_datetime.strftime('%Q').to_i, r.count]]
+      end]
+
+      # fill in each missing day between the first and last days with zeros
+      if data.count > 1
+        (Date.strptime(data[data.keys.first][0].to_s,'%Q').to_date..Date.strptime(data[data.keys.last][0].to_s,'%Q').to_date).each do |day|
+          data[day.to_s(:numeric).to_i] ||= [day.strftime('%Q').to_i, 0]
+        end
+      end
+
+      # Sort by keys (days) and return the values
+      data.sort.to_h.values
     end
 end

@@ -169,4 +169,74 @@ describe Analysis::TrendsReportController, search: true do
     end
   end
 
+  describe "GET #over_time" do
+    it "returns empty if no results" do
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+
+      Sunspot.commit
+      get 'over_time', term: 'adios', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to be_empty
+    end
+
+    it "returns the count for each day the word appears" do
+      activity_type = FactoryGirl.create(:activity_type, company: company)
+      form_field = FormField.find(
+        FactoryGirl.create(:form_field_text_area, fieldable: activity_type).id
+      )
+      campaign.activity_types << activity_type
+
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+      FactoryGirl.create(:comment, commentable: event, content: 'holas') # this should not be counted
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: Date.yesterday.to_s(:slashes),
+        end_date: Date.yesterday.to_s(:slashes))
+      FactoryGirl.create(:comment, commentable: event2, content: 'otra')
+      FactoryGirl.create(:comment, commentable: event2, content: 'hola')
+
+      activity = FactoryGirl.create(:activity, activity_type: activity_type,
+        activitable: event2, activity_date: Date.yesterday.to_s(:slashes),
+        company_user: company_user)
+
+      activity.results_for([form_field]).first.value = 'Texto con hola en medio!'
+      activity.save
+
+      Sunspot.commit
+
+      get 'over_time', term: 'hola', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items.count).to eql 2
+      expect(DateTime.strptime(items.first[0].to_s,'%Q').to_date).to eql Date.yesterday
+      expect(items.first[1]).to eql 2
+      expect(DateTime.strptime(items.last[0].to_s,'%Q').to_date).to eql Date.today
+      expect(items.last[1]).to eql 2
+    end
+
+    it "should fill in missing days with zeros" do
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+      FactoryGirl.create(:comment, commentable: event, content: 'hola')
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: 3.days.ago.to_s(:slashes),
+        end_date: 3.days.ago.to_s(:slashes))
+      FactoryGirl.create(:comment, commentable: event2, content: 'hola')
+
+      Sunspot.commit
+
+      get 'over_time', term: 'hola', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items.count).to eql 4
+      expect(items.map{|i| i[1]}).to eql [1, 0, 0, 2]
+    end
+  end
+
 end
