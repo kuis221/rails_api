@@ -104,7 +104,7 @@ class TrendObject
     resource.class.name.underscore + ':' + resource.id.to_s
   end
 
-  def self.do_search(params, include_facets=false, &block)
+  def self.do_search(params)
     ss = solr_search do
       with :company_id, params[:company_id]
 
@@ -125,7 +125,11 @@ class TrendObject
         end
       end
 
-      facet :description, sort: :count, limit: 50
+      if words = params[:words]
+        facet :description, sort: :count, limit: 50, only: words
+      else
+        facet :description, sort: :count, limit: 50
+      end
     end
   end
 
