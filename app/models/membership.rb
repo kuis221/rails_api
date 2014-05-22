@@ -32,9 +32,9 @@ class Membership < ActiveRecord::Base
 
   private
     def create_notifications
-      if memberable_type == 'Campaign'
+      if memberable_type == 'Campaign' && company_user.role.has_permission?(:read, Campaign)
         Notification.new_campaign(company_user, memberable)
-      elsif memberable_type == 'Event'
+      elsif memberable_type == 'Event' && company_user.allowed_to_access_place?(memberable.place)
         Notification.new_event(company_user, memberable)
       end
     end
@@ -44,6 +44,7 @@ class Membership < ActiveRecord::Base
         company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).delete_all
       elsif memberable_type == 'Event'
         company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).delete_all
+        company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).delete_all
       end
     end
 

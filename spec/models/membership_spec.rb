@@ -28,7 +28,7 @@ describe Membership do
       }.to change(Notification, :count).by(1)
     end
 
-    it "should generate a new notification" do
+    it "should remove a notification" do
       campaign.users << user
       expect {
         campaign.users.destroy(user)

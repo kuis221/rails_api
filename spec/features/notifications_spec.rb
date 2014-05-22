@@ -108,16 +108,16 @@ feature "Notifications", search: true, js: true do
 
       click_notification 'You have 2 new campaigns'
 
-      expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(current_path).to eql campaigns_path
+      expect(page).to have_selector('#campaigns-list li', count: 2)
 
       expect(page).to_not have_notification 'You have 2 new campaigns'
 
       visit current_url
 
       # reload page and make sure that only the two events are still there
-      expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(current_path).to eql campaigns_path
+      expect(page).to have_selector('#campaigns-list li', count: 2)
     end
   end
 
@@ -134,8 +134,8 @@ feature "Notifications", search: true, js: true do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [
-        [:index, 'Event'],  [:view_list, 'Event'],
-        [:index_my, 'Task'],  [:index_team, 'Task'],
+        [:index, 'Event'], [:view_list, 'Event'],
+        [:index_my, 'Task'], [:index_team, 'Task'], [:read, 'Campaign']
       ] }
     end
   end
@@ -146,5 +146,11 @@ feature "Notifications", search: true, js: true do
     end
 
     page.find("#notifications .notifications-container li a", text: text).click
+  end
+
+  def add_permissions(permissions)
+    permissions.each do |p|
+      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+    end
   end
 end
