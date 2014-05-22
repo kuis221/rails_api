@@ -3,7 +3,7 @@ module UsersHelper
     alerts = []
     company = user.company
 
-    if current_company_user.role.has_permission?(:view_list, Event)
+    if can?(:view_list, Event)
       # Gets the counts with a single Solr request
       status_counts = {late: 0, due: 0, submitted: 0, rejected: 0}
       events_search = Event.do_search({company_id: company.id, status: ['Active'], current_company_user: current_company_user, user: [user.id], team: user.team_ids}, true)
@@ -50,7 +50,7 @@ module UsersHelper
     end
 
     # User's teams late tasks
-    if current_company_user.role.has_permission?(:index_team, Task)
+    if can?(:index_team, Task)
       count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]}).total
       if count > 0
         alerts.push({
@@ -62,7 +62,7 @@ module UsersHelper
     end
 
     # User's late tasks
-    if current_company_user.role.has_permission?(:index_my, Task)
+    if can?(:index_my, Task)
       count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], user: [user.id]}).total
       if count > 0
         alerts.push({
@@ -74,7 +74,7 @@ module UsersHelper
     end
 
     # Unread comments in user's tasks
-    if current_company_user.role.has_permission?(:index_my, Task) && current_company_user.role.has_permission?(:index_my_comments, Task)
+    if can?(:index_my, Task) && can?(:index_my_comments, Task)
       tasks = Task.select('id, title').where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).to_sql})")
       user_tasks = [0]
       tasks.find_each do |task|
@@ -88,7 +88,8 @@ module UsersHelper
     end
 
     # Unread comments in user teams' tasks
-    if current_company_user.role.has_permission?(:index_team, Task) && current_company_user.role.has_permission?(:index_team_comments, Task)
+    if can?(:index_team, Task) && can?(:index_team_comments, Task)
+      user_tasks = user_tasks.presence || Task.select('id, title').where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).to_sql})").map(&:id)+[0]
       tasks = Task.select('id, title').where("id not in (?)", user_tasks).where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_where_user_in_team(user).unread_by(user.user).to_sql})")
       tasks.find_each do |task|
         alerts.push({
@@ -102,7 +103,7 @@ module UsersHelper
     grouped_notifications = Notification.grouped_notifications_counts(current_company_user.notifications)
 
     # New events notifications
-    if grouped_notifications['new_event'].present? && grouped_notifications['new_event'].to_i > 0 && current_company_user.role.has_permission?(:view_list, Event)
+    if grouped_notifications['new_event'].present? && grouped_notifications['new_event'].to_i > 0 && can?(:view_list, Event)
       alerts.push({
         message: I18n.translate("notifications.new_events", count: grouped_notifications['new_event'].to_i), level: 'grey',
         url: events_path(new_at: Time.now.to_i, start_date: '', end_date: ''),
@@ -111,7 +112,7 @@ module UsersHelper
     end
 
     # New campaigns notifications
-    if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0 && current_company_user.role.has_permission?(:read, Campaign)
+    if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0 && can?(:read, Campaign)
       alerts.push({
         message: I18n.translate("notifications.new_campaigns", count: grouped_notifications['new_campaign'].to_i), level: 'grey',
         url: campaigns_path(new_at: Time.now.to_i),
@@ -120,7 +121,7 @@ module UsersHelper
     end
 
     # New user tasks notifications
-    if grouped_notifications['new_task'].present? && grouped_notifications['new_task'].to_i > 0 && current_company_user.role.has_permission?(:index_my, Task)
+    if grouped_notifications['new_task'].present? && grouped_notifications['new_task'].to_i > 0 && can?(:index_my, Task)
       alerts.push({
         message: I18n.translate("notifications.new_tasks", count: grouped_notifications['new_task'].to_i), level: 'grey',
         url: mine_tasks_path(new_at: Time.now.to_i),
