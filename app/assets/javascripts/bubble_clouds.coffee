@@ -344,6 +344,7 @@ window.Bubbles = () ->
 			if button.empty()
 				button = d3.select('#bubble-labels').insert('a', ":first-child")
 					.attr('class', 'bubble-remove')
+					.attr('title', 'Remove this word')
 					.on("click", () -> removeNode(activeNode) )
 					.on("mouseover", () -> mouseover(activeNode) )
 					.on("mouseout", mouseout )
