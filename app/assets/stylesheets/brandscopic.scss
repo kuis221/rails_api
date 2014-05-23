@@ -7972,8 +7972,15 @@ table.table.likert-scale-table {
 }
 
 .trends_report{
+	.details_box{
+		h2{
+			&.mb10{
+				margin-bottom: 10px;
+			}
+		}
+	}
 	.total_mentions{
-		margin-bottom: 20px;
+		margin-top: 10px;
 		span{
 			&:first-child{
 				color: $brand;
