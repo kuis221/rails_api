@@ -141,6 +141,11 @@ class TrendObject
         end
       end
 
+      if params.has_key?(:brand) and params[:brand].present?
+        campaign_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
+        with "campaign_id", campaign_ids + [0]
+      end
+
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
         d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
