@@ -3,6 +3,15 @@
 
   .details_box.padding-top-close-bar
     h2= @term.capitalize
+    .total_mentions
+    	p 
+	    	| TOTAL MENTIONS:
+	    	span 349
+	    	span.indicator-up
+
+    .links-data
+    	a href="#"
+    		i.icon-remove-sign
 
   = render 'mentions_over_time'
 
