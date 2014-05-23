@@ -28,7 +28,7 @@ class TeamsController < FilteredController
         facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id).include?(k)})
         facet_search = resource_class.do_search(facet_params, true)
 
-        f.push build_campaign_bucket facet_search
+        f.push build_campaign_bucket
         f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
       end
     end

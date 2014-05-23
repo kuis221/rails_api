@@ -451,6 +451,15 @@ class Campaign < ActiveRecord::Base
       end
       data
     end
+
+    # Returns an Array of campaigns ready to be used for a dropdown. Use this
+    # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
+    # TODO: use pluck(:name, :id) when upgraded to Rails 4
+    def for_dropdown
+      ActiveRecord::Base.connection.select_all(
+        self.select("campaigns.name, campaigns.id").to_sql
+      ).map{|r| [r['name'], r['id']] }
+    end
   end
 
 end
