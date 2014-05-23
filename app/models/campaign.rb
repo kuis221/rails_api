@@ -378,6 +378,7 @@ class Campaign < ActiveRecord::Base
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+        with(:id, params[:id]) if params.has_key?(:id) and params[:id].present?
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')

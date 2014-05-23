@@ -94,7 +94,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => events_path(campaign: [campaign.id], notification: 'new_campaign', new_at: Time.now.to_i, start_date: '', end_date: ''), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
+          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => campaigns_path(new_at: Time.now.to_i), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
         end
       end
 
@@ -258,10 +258,11 @@ describe CompanyUsersController, search: true do
     describe "GET 'notifications'" do
       it "should return a notification if a user is added to a event's team" do
         Timecop.freeze do
+          @company_user.role.permission_for(:view_list, Event).save
           @company_user.places << place
           campaign.places << place
           campaign.users << @company_user
-          event = FactoryGirl.create(:event, company: @company)
+          event = FactoryGirl.create(:event, company: @company, place: place)
           event.users << @company_user
           Sunspot.commit
 
@@ -275,6 +276,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a late event recap" do
+        @company_user.role.permission_for(:view_list, Event).save
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user
@@ -291,6 +293,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a submitted event recap that is waiting for approval" do
+        @company_user.role.permission_for(:view_list, Event).save
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user
@@ -307,6 +310,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a due event recap" do
+        @company_user.role.permission_for(:view_list, Event).save
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user

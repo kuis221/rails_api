@@ -56,7 +56,7 @@ class Role < ActiveRecord::Base
   end
 
   def has_permission?(action, subject_class)
-    cached_permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+    is_admin? || cached_permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
   end
 
   def cached_permissions
