@@ -19,8 +19,11 @@ module EventsHelper
 
   def allowed_campaigns(venue = nil)
     campaigns = company_campaigns.active.accessible_by_user(current_company_user)
-    campaigns = campaigns.select{|c| c.place_allowed_for_event?(venue.place) } if venue.present? && !current_company_user.is_admin?
-    campaigns
+    if venue.present? && !current_company_user.is_admin?
+      campaigns.select{|c| c.place_allowed_for_event?(venue.place) }
+    else
+      campaigns.for_dropdown
+    end
   end
 
   def event_date(event, attribute)

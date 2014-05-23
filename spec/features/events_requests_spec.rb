@@ -939,6 +939,7 @@ feature 'Events section' do
       end
 
       scenario "the entered data should be saved automatically when submitting the event recap" do
+        Kpi.create_global_kpis
         campaign = FactoryGirl.create(:campaign, company: company)
         kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 

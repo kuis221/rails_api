@@ -167,7 +167,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allowed_to_access_place?(place)
-    is_admin? ||
+    @allowed_places_cache ||= {}
+    @allowed_places_cache[place.try(:id) || place.object_id] ||= is_admin? ||
     (
       place.present? &&
       (
@@ -254,7 +255,7 @@ class CompanyUser < ActiveRecord::Base
     def for_dropdown
       ActiveRecord::Base.connection.select_all(
         self.select("users.first_name || \' \' || users.last_name as name, company_users.id").
-        joins(:user).order('lower(users.first_name || \' \' || users.last_name)')
+        joins(:user).order('lower(users.first_name || \' \' || users.last_name)').to_sql
       ).map{|r| [r['name'], r['id']] }
     end
   end

@@ -137,6 +137,7 @@ feature "Campaigns", js: true, search: true do
 
 
     scenario "should be able to assign areas to the campaign" do
+      Kpi.create_global_kpis
       campaign = FactoryGirl.create(:campaign, company: @company)
       area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
       area2 = FactoryGirl.create(:area, name: 'Los Angeles Area', company: @company)

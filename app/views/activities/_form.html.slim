@@ -12,7 +12,7 @@
         - if resource.activity_type.present?
           .large-inputs
             - if resource.activitable_type == 'Venue'
-              = f.input :campaign_id, collection: resource.activity_type.campaigns.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
+              = f.input :campaign_id, collection: resource.activity_type.campaigns.active.accessible_by_user(current_company_user).order(:name).for_dropdown, input_html: {class: 'chosen-enabled'}
           - resource.results_for_type.each do |result|
             = f.simple_fields_for :results, result do |rf|
               - if result.form_field.is_a?(FormField::UserDate)
