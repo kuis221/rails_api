@@ -17,7 +17,6 @@
 class CampaignFormField < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :kpi
-  attr_accessible :name, :options, :ordering, :section_id, :field_type, :kpi_id, :fields_attributes
 
   serialize :options
 

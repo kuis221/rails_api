@@ -589,14 +589,14 @@ window.CampaignFormBuilder.CountField = (options) ->
 	]
 
 	@renderInput = () ->
-		if @options.capture_mechanism is 'dropdown'
+		if @options.options.capture_mechanism is 'dropdown'
 			@field.find('.controls').html('').append(
 				$('<select>').append $.map(@options.segments, (segment, index) => $("<option>#{segment}</option>"))
 			)
-		else if @options.capture_mechanism is 'radio'
+		else if @options.options.capture_mechanism is 'radio'
 			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=radio name=\"#{@options.name}\" readonly=readonly />#{segment}</label>"))
 
-		else if @options.capture_mechanism is 'checkbox'
+		else if @options.options.capture_mechanism is 'checkbox'
 			@field.find('.controls').html('').append $.map(@options.segments, (segment, index) => $("<label><input type=checkbox readonly=readonly />#{segment}</label>"))
 
 		true
