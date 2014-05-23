@@ -70,6 +70,7 @@ describe PlacesController do
       end
 
       it "creates the place and associate its to the campaign" do
+        Kpi.create_global_kpis
         GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: [
@@ -142,6 +143,7 @@ describe PlacesController do
     end
 
     it "adds a place to the campaing and clears the cache" do
+      Kpi.create_global_kpis
       Rails.cache.should_receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
       post 'create', campaign_id: campaign.id, place: {reference: place.to_param}, format: :js
       expect(campaign.places).to include(place)

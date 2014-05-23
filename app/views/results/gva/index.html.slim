@@ -16,7 +16,7 @@
       h3 GOALS VS. ACTUAL
       .pull-left
         = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'gva-report' } do |f|
-          = f.input :campaign_id, collection: @campaigns, selected: params[:campaign_id], wrapper: false, include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], wrapper: false, include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
           = hidden_field_tag :group_by, params[:group_by].present? ? params[:group_by] : 'campaign'
           = hidden_field_tag :view_style, params[:view_style].present? ? params[:view_style] : 'graph'
 

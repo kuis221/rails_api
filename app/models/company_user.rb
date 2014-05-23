@@ -167,7 +167,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allowed_to_access_place?(place)
-    is_admin? ||
+    @allowed_places_cache ||= {}
+    @allowed_places_cache[place.try(:id) || place.object_id] ||= is_admin? ||
     (
       place.present? &&
       (

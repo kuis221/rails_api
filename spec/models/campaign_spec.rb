@@ -76,6 +76,45 @@ describe Campaign do
     end
   end
 
+  describe "active_kpis" do
+    let(:campaign){ FactoryGirl.build(:campaign) }
+    it "should returns only evens and promo hours if no custom kpis have been created for campaign" do
+      Kpi.create_global_kpis
+      expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours]
+    end
+
+    it "should returns all kpis + evens and promo hours" do
+      Kpi.create_global_kpis
+      form_field  = FactoryGirl.create(:campaign_form_field,
+            campaign: campaign,
+            kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
+
+      expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours]
+    end
+  end
+
+  describe "custom_kpis" do
+    let(:campaign){ FactoryGirl.build(:campaign) }
+    it "should returns empty if no custom kpis have been created for campaign" do
+      Kpi.create_global_kpis
+      expect(campaign.custom_kpis).to match_array []
+    end
+
+    it "should returns all kpis + evens and promo hours" do
+      Kpi.create_global_kpis
+      form_field  = FactoryGirl.create(:campaign_form_field,
+            campaign: campaign,
+            kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
+
+      # Other field associated to another campaign
+      FactoryGirl.create(:campaign_form_field,
+            campaign: FactoryGirl.build(:campaign, company_id: campaign.company_id),
+            kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
+
+      expect(campaign.custom_kpis).to match_array [form_field.kpi]
+    end
+  end
+
   describe "brands_list=" do
     it "should create any non-existing brand into the app" do
       campaign = FactoryGirl.build(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')

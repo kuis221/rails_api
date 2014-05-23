@@ -75,6 +75,8 @@ class Campaign < ActiveRecord::Base
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
+  has_many :kpis, through: :form_fields
+
   # Activity-Type relationships
   has_many :activity_type_campaigns
   has_many :activity_types, through: :activity_type_campaigns
@@ -181,10 +183,7 @@ class Campaign < ActiveRecord::Base
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
     place.location_ids.any?{|location| accessible_locations.include?(location)} ||
-    place.persisted? && (
-        places.map(&:id).include?(place.id) ||
-        areas.map(&:place_ids).flatten.include?(place.id)
-    )
+    place.persisted? && (Place.linked_to_campaign(self).where(id: place.id).count('DISTINCT places.id') > 0)
   end
 
   def accessible_locations
@@ -266,11 +265,11 @@ class Campaign < ActiveRecord::Base
   end
 
   def active_kpis
-    @active_kpis ||= (form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi) + [Kpi.events, Kpi.promo_hours]).compact
+    @active_kpis ||= kpis + [Kpi.events, Kpi.promo_hours]
   end
 
   def custom_kpis
-    @custom_kpis ||= (form_fields.where("kpi_id is not null AND module = 'custom'").includes(:kpi).joins(:kpi).map(&:kpi)).compact
+    @custom_kpis ||= kpis.select{|k| k.module == 'custom' }
   end
 
   def active_field_types
