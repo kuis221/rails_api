@@ -41,7 +41,7 @@ describe Kpi do
     end
 
     it "should return false if Goal has a kpis_segment_id for a Kpi of type count" do
-      kpi = FactoryGirl.create(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company)
+      kpi = FactoryGirl.create(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 2))
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: 100)
 
       kpi.invalid_goal?(goal).should be_false
@@ -52,6 +52,34 @@ describe Kpi do
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
 
       kpi.invalid_goal?(goal).should be_false
+    end
+  end
+
+  describe "check_segments_number" do
+    let(:company) { FactoryGirl.create(:company) }
+
+    it "should return error if there are restrictions when capture_mechanism is radio and number od segments is less than 2" do
+      kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 1))
+      kpi.check_segments_number
+      kpi.errors.full_messages.should include("You need to add at least 2 segments for the selected capture mechanism")
+    end
+
+    it "should return error if there are restrictions when capture_mechanism is dropdown and number od segments is less than 1" do
+      kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'dropdown', company: company)
+      kpi.check_segments_number
+      kpi.errors.full_messages.should include("You need to add at least 1 segments for the selected capture mechanism")
+    end
+
+    it "should return error if there are restrictions when capture_mechanism is checkbox and number od segments is less than 1" do
+      kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'checkbox', company: company)
+      kpi.check_segments_number
+      kpi.errors.full_messages.should include("You need to add at least 1 segments for the selected capture mechanism")
+    end
+
+    it "should not return errors if capture_mechanism doesn't have segments quantity restrictions" do
+      kpi = FactoryGirl.build(:kpi, kpi_type: 'number', capture_mechanism: 'decimal', company: company)
+      kpi.check_segments_number
+      kpi.errors.full_messages.should be_empty
     end
   end
 
