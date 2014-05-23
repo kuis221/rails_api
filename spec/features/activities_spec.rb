@@ -248,6 +248,7 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a photo to an activity" do
+      AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Photo')
@@ -274,8 +275,9 @@ feature 'Activities management' do
 
           select_from_chosen(user.name, from: 'User')
           fill_in 'Date', with: '05/16/2013'
-          click_js_button 'Create'
-          wait_for_ajax(30)
+          wait_for_photo_to_process 30 do
+            click_js_button 'Create'
+          end
         end
         ensure_modal_was_closed
 
@@ -301,8 +303,9 @@ feature 'Activities management' do
           expect(page).to have_content('Uploading photo2.jpg....')
           wait_for_ajax(30) # For the image to upload to S3
           expect(page).to have_content('File attached: photo2.jpg')
-          click_js_button 'Save'
-          wait_for_ajax(30)
+          wait_for_photo_to_process 30 do
+            click_js_button 'Save'
+          end
         end
         ensure_modal_was_closed
 
@@ -318,6 +321,7 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a document to an activity" do
+      AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Attachment')
@@ -341,8 +345,9 @@ feature 'Activities management' do
 
           select_from_chosen(user.name, from: 'User')
           fill_in 'Date', with: '05/16/2013'
-          click_js_button 'Create'
-          wait_for_ajax(30)
+          wait_for_photo_to_process 30 do
+            click_js_button 'Create'
+          end
         end
         ensure_modal_was_closed
 

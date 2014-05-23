@@ -29,6 +29,15 @@ module CapybaraBrandscopicHelpers
     end
   end
 
+  def wait_for_photo_to_process(timeout = Capybara.default_wait_time)
+    yield
+    Timeout.timeout(timeout) do
+      sleep(0.5) until photo = AttachedAsset.last and !photo.processed?
+      photo = AttachedAsset.last
+      sleep(0.5) until photo.reload.processed?
+    end
+  end
+
   def confirm_prompt(message)
     within find('.modal.confirm-dialog.in', visible: true) do
       expect(page).to have_content(message)
