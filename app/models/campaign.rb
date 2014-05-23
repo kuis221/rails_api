@@ -170,9 +170,9 @@ class Campaign < ActiveRecord::Base
 
   def staff_users
     staff_users = (
-      users +
-      CompanyUser.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
-      CompanyUser.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
+      users.active +
+      CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
+      CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
     ).uniq
   end
 
