@@ -270,7 +270,9 @@ class Task < ActiveRecord::Base
     def create_notifications
       if (id_changed? || company_user_id_changed?) && company_user_id.present?
         #New task with assigned user or assigning user to existing task
-        Notification.new_task(company_user, self)
+        unless event.present? && !company_user.allowed_to_access_place?(event.place)
+          Notification.new_task(company_user, self)
+        end
       # elsif id_changed? && company_user_id.nil?
       #   #New task without assigned user
       #   event.all_users.each do |user|
