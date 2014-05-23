@@ -49,11 +49,17 @@ class Analysis::TrendsReportController < FilteredController
     def trend_words
       search = resource_class.do_search(search_params)
       words = Hash[search.facet(:description).rows.map{|r| [r.value, { name: r.value, count: r.count, current: 0, previous: 0, trending: :stable }] }]
-      facet_params = search_params.dup
-      facet_params[:start_date] = 2.weeks.ago.to_s(:slashes)
-      facet_params[:end_date] = Date.today.to_s(:slashes)
+
+      # Determine how each work have been trending...
       if words.any?
+        time_period = 2.weeks
+        ratio = 10.0/100.0  # The differecen between periods should lower/greater than 10%  to be considered
+                        # and trending down/up
+        facet_params = search_params.dup
         facet_params[:words] = words.keys
+
+        facet_params[:start_date] = time_period.ago.to_s(:slashes)
+        facet_params[:end_date] = Date.today.to_s(:slashes)
         rows = resource_class.do_search(facet_params).facet(:description).rows
         rows.each do |r|
           if words.has_key?(r.value)
@@ -62,13 +68,15 @@ class Analysis::TrendsReportController < FilteredController
           end
         end
 
-        facet_params[:start_date] = (4.weeks.ago-1.day).to_s(:slashes)
-        facet_params[:end_date] = (2.weeks.ago-1.day).to_s(:slashes)
+        facet_params[:start_date] = ((time_period*2).ago-1.day).to_s(:slashes)
+        facet_params[:end_date] = (time_period.ago-1.day).to_s(:slashes)
         resource_class.do_search(facet_params).facet(:description).rows.each do|r|
           if words.has_key?(r.value)
             words[r.value][:previous] = r.count
             words[r.value][:trending] =  :down if r.count > words[r.value][:current]
-            words[r.value][:trending] =  :stable if r.count == words[r.value][:current]
+            margin = words[r.value][:current] * ratio
+            range = (words[r.value][:current]-margin)..(words[r.value][:current]+margin)
+            words[r.value][:trending] =  :stable if range.include? r.count
           end
         end
       end
