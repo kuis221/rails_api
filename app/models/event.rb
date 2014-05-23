@@ -530,8 +530,8 @@ class Event < ActiveRecord::Base
           with(:has_surveys, true) if params[:with_surveys_only].present?
           with(:has_comments, true) if params[:with_comments_only].present?
           if params.has_key?(:brand) and params[:brand].present?
-            campaing_ids = Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).map(&:id)
-            with "campaign_id", campaing_ids + [0]
+            campaign_ids = Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).map(&:id)
+            with "campaign_id", campaign_ids + [0]
           end
 
           if params[:start_date].present? and params[:end_date].present?

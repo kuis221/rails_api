@@ -34,7 +34,7 @@ module FacetsHelper
     {label: 'Brands', items: brands}
   end
 
-  def build_areas_bucket(search)
+  def build_areas_bucket
     places = current_company_user.places
     list = {label: :root, items: [], id: nil, path: nil}
 
@@ -82,7 +82,7 @@ module FacetsHelper
 
       f.push build_campaign_bucket
       f.push build_brands_bucket
-      f.push build_areas_bucket( facet_search )
+      f.push build_areas_bucket
       f.push build_people_bucket( facet_search )
 
       f.push build_status_bucket( facet_search )
@@ -124,7 +124,7 @@ module FacetsHelper
       ]
       f.push(label: "Price", items: prices )
 
-      f.push build_areas_bucket(facet_search)
+      f.push build_areas_bucket
       #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
       f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_ids).rows)
       f.push build_brands_bucket

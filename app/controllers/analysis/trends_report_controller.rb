@@ -32,6 +32,8 @@ class Analysis::TrendsReportController < FilteredController
         if bucket = build_source_bucket
           f.push bucket
         end
+        f.push build_campaign_bucket
+        f.push build_areas_bucket
       end
     end
 
