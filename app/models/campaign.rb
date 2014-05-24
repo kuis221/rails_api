@@ -75,6 +75,8 @@ class Campaign < ActiveRecord::Base
 
   has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
 
+  has_many :kpis, through: :form_fields
+
   # Activity-Type relationships
   has_many :activity_type_campaigns
   has_many :activity_types, through: :activity_type_campaigns
@@ -168,9 +170,9 @@ class Campaign < ActiveRecord::Base
 
   def staff_users
     staff_users = (
-      users +
-      CompanyUser.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
-      CompanyUser.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
+      users.active +
+      CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
+      CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
     ).uniq
   end
 
@@ -181,10 +183,7 @@ class Campaign < ActiveRecord::Base
   def place_allowed_for_event?(place)
     !geographically_restricted? ||
     place.location_ids.any?{|location| accessible_locations.include?(location)} ||
-    place.persisted? && (
-        places.map(&:id).include?(place.id) ||
-        areas.map(&:place_ids).flatten.include?(place.id)
-    )
+    place.persisted? && (Place.linked_to_campaign(self).where(id: place.id).count('DISTINCT places.id') > 0)
   end
 
   def accessible_locations
@@ -266,11 +265,11 @@ class Campaign < ActiveRecord::Base
   end
 
   def active_kpis
-    @active_kpis ||= (form_fields.where('kpi_id is not null').includes(:kpi).map(&:kpi) + [Kpi.events, Kpi.promo_hours]).compact
+    @active_kpis ||= kpis + [Kpi.events, Kpi.promo_hours]
   end
 
   def custom_kpis
-    @custom_kpis ||= (form_fields.where("kpi_id is not null AND module = 'custom'").includes(:kpi).joins(:kpi).map(&:kpi)).compact
+    @custom_kpis ||= kpis.select{|k| k.module == 'custom' }
   end
 
   def active_field_types
@@ -378,6 +377,7 @@ class Campaign < ActiveRecord::Base
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
+        with(:id, params[:id]) if params.has_key?(:id) and params[:id].present?
 
         if params.has_key?(:q) and params[:q].present?
           (attribute, value) = params[:q].split(',')
@@ -449,6 +449,15 @@ class Campaign < ActiveRecord::Base
         end
       end
       data
+    end
+
+    # Returns an Array of campaigns ready to be used for a dropdown. Use this
+    # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
+    # TODO: use pluck(:name, :id) when upgraded to Rails 4
+    def for_dropdown
+      ActiveRecord::Base.connection.select_all(
+        self.select("campaigns.name, campaigns.id").to_sql
+      ).map{|r| [r['name'], r['id']] }
     end
   end
 

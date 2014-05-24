@@ -66,6 +66,78 @@ describe Analysis::TrendsReportController, search: true do
       ]
     end
 
+    it "returns trending stable if the word count is between 10% down of the previous period" do
+      FactoryGirl.create_list(:comment, 10, commentable: event, content: 'hola')
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: 3.weeks.ago.to_s(:slashes),
+        end_date: 3.weeks.ago.to_s(:slashes))
+      FactoryGirl.create_list(:comment, 9, commentable: event2, content: 'hola')
+      Sunspot.commit
+
+      get 'items', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to match_array [
+        {"name"=>"hola", "count"=>19, "current"=>10, "previous"=>9, "trending"=>"stable"}
+      ]
+    end
+
+    it "returns trending stable if the word count is between 10% up of the previous period" do
+      FactoryGirl.create_list(:comment, 10, commentable: event, content: 'hola')
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: 3.weeks.ago.to_s(:slashes),
+        end_date: 3.weeks.ago.to_s(:slashes))
+      FactoryGirl.create_list(:comment, 11, commentable: event2, content: 'hola')
+      Sunspot.commit
+
+      get 'items', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to match_array [
+        {"name"=>"hola", "count"=>21, "current"=>10, "previous"=>11, "trending"=>"stable"}
+      ]
+    end
+
+    it "returns trending down if the word count is lower than 10% of the previous period" do
+      FactoryGirl.create_list(:comment, 10, commentable: event, content: 'hola')
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: 3.weeks.ago.to_s(:slashes),
+        end_date: 3.weeks.ago.to_s(:slashes))
+      FactoryGirl.create_list(:comment, 12, commentable: event2, content: 'hola')
+      Sunspot.commit
+
+      get 'items', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to match_array [
+        {"name"=>"hola", "count"=>22, "current"=>10, "previous"=>12, "trending"=>"down"}
+      ]
+    end
+
+    it "returns trending up if the word count is greater than 10% of the previous period" do
+      FactoryGirl.create_list(:comment, 10, commentable: event, content: 'hola')
+
+      event2 = FactoryGirl.create(:event, campaign: campaign,
+        start_date: 3.weeks.ago.to_s(:slashes),
+        end_date: 3.weeks.ago.to_s(:slashes))
+      FactoryGirl.create_list(:comment, 8, commentable: event2, content: 'hola')
+      Sunspot.commit
+
+      get 'items', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to match_array [
+        {"name"=>"hola", "count"=>18, "current"=>10, "previous"=>8, "trending"=>"up"}
+      ]
+    end
+
     it "returns trending up if the word count increased from the previous period" do
       FactoryGirl.create(:comment, commentable: event, content: 'hola')
       FactoryGirl.create(:comment, commentable: event, content: 'hola')

@@ -13,6 +13,12 @@ class TrendObject
     integer :company_id
     integer :campaign_id
 
+    integer :place_id
+
+    integer :location, multiple: true do
+      locations_for_index
+    end
+
     time :start_at, stored: true, trie: true
     time :end_at, stored: true, trie: true
 
@@ -56,6 +62,22 @@ class TrendObject
 
   def campaign_id
     @resource.campaign_id
+  end
+
+  def place_id
+    place.try(:id)
+  end
+
+  def locations_for_index
+    place.locations.pluck('locations.id') if place.present?
+  end
+
+  def place
+    if @resource.is_a?(Comment)
+      @resource.commentable.place
+    elsif @resource.activitable.present?
+      @resource.activitable.place
+    end
   end
 
   def start_at
@@ -110,6 +132,20 @@ class TrendObject
 
       with :source, params[:source] unless params[:source].nil?
 
+      with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
+
+      if params[:area].present?
+        any_of do
+          with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
+          with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
+        end
+      end
+
+      if params.has_key?(:brand) and params[:brand].present?
+        campaign_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
+        with "campaign_id", campaign_ids + [0]
+      end
+
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
         d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
@@ -148,7 +184,7 @@ class TrendObject
 
       # Index events comments
       batch_counter = 0
-      Comment.for_trends.find_in_batches(options.slice(:batch_size, :start)) do |records|
+      Comment.for_trends.preload(commentable: :place).find_in_batches(options.slice(:batch_size, :start)) do |records|
         solr_benchmark(options[:batch_size], batch_counter += 1) do
           Sunspot.index(records.map{|comment| TrendObject.new(comment) }.select { |model| model.indexable? })
           Sunspot.commit if options[:batch_commit]
@@ -159,7 +195,7 @@ class TrendObject
       # Index activities with text answers
       batch_counter = 0
       activity_types = ActivityType.active.with_trending_fields.each do |activity_type|
-        Activity.active.where(activity_type_id: activity_type.id).with_results_for(activity_type.trending_fields).find_in_batches(options.slice(:batch_size, :start)) do |records|
+        Activity.active.preload(activitable: :place).where(activity_type_id: activity_type.id).with_results_for(activity_type.trending_fields).find_in_batches(options.slice(:batch_size, :start)) do |records|
           solr_benchmark(options[:batch_size], batch_counter += 1) do
             Sunspot.index(records.map{|activity| TrendObject.new(activity) }.select { |model| model.indexable? })
             Sunspot.commit if options[:batch_commit]

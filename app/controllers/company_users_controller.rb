@@ -168,7 +168,7 @@ class CompanyUsersController < FilteredController
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_role_bucket facet_search
-        f.push build_campaign_bucket facet_search
+        f.push build_campaign_bucket
         f.push build_team_bucket facet_search
         # f.push(label: "Active State", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
         f.push build_state_bucket

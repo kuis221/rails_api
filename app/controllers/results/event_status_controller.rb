@@ -4,10 +4,6 @@ class Results::EventStatusController < ApplicationController
 
   helper_method :return_path
 
-  def index
-    @campaigns = current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
-  end
-
   def report
     authorize_actions
   end

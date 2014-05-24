@@ -44,11 +44,11 @@ class Place < ActiveRecord::Base
   has_and_belongs_to_many :locations, autosave: true
   belongs_to :location, autosave: true
 
-  with_options through: :placeables, :source => :placeable do |place|
-    place.has_many :areas, :source_type => 'Area'
-    place.has_many :campaigns, :source_type => 'Campaign'
-    place.has_many :users, :source_type => 'CompanyUser'
-    place.has_many :teams, :source_type => 'Team'
+  with_options through: :placeables, source: :placeable do |place|
+    place.has_many :areas, source_type: 'Area'
+    place.has_many :campaigns, source_type: 'Campaign'
+    place.has_many :users, source_type: 'CompanyUser'
+    place.has_many :teams, source_type: 'Team'
   end
 
   attr_accessor :do_not_connect_to_api
@@ -65,6 +65,14 @@ class Place < ActiveRecord::Base
 
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company} ) }
 
+  scope :linked_to_campaign, ->(campaign) {
+    select('DISTINCT places.*')
+    joins(:placeables).
+    where('(placeables.placeable_type=\'Campaign\' AND placeables.placeable_id=:campaign_id) OR
+      (placeables.placeable_type=\'Area\' AND placeables.placeable_id  in (
+        select area_id FROM areas_campaigns where campaign_id=:campaign_id
+      ))', campaign_id: campaign)
+  }
 
   def street
     "#{street_number} #{route}".strip
@@ -144,7 +152,7 @@ class Place < ActiveRecord::Base
   end
 
   def location_ids
-    if new_record?
+    @location_ids ||= if new_record?
       update_locations unless locations.any?
       locations.map(&:id)
     else

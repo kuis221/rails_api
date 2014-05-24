@@ -53,7 +53,6 @@ class ActivityType < ActiveRecord::Base
     integer :company_id
   end
 
-
   def activate!
     update_attribute :active, true
   end
@@ -64,15 +63,6 @@ class ActivityType < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
-  end
-
-
-  def to_partial_path
-    partial_path
-  end
-
-  def partial_path
-    @partial_path || 'activity_types/activity_type'
   end
 
   def autocomplete
