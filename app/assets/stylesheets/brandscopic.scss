@@ -1354,6 +1354,9 @@ h1, h2, h3{
 	font-weight: normal;
 	line-height: 20px;
 	margin-top: 0;
+	.blue{
+		color: $blue;
+	}
 }
 .icon-chevron-up{
 	margin-right: 15px;
@@ -7943,6 +7946,63 @@ table.table.likert-scale-table {
 }
 
 /*-- TRENDING STYLES --*/
+
+.highlight{
+	background-color: $light_blue;
+	color: #0a4466;
+	padding: 2px 4px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.indicator-up, .indicator-down{
+	&:before{
+		font-family: 'icons';
+		font-size: 16px;
+		color:$user_menu;
+	}
+}
+
+.indicator-up:before{
+	content: '\e612';
+}
+
+.indicator-down:before{
+	content: '\e613';
+}
+
+.trends_report{
+	.details_box{
+		h2{
+			&.mb10{
+				margin-bottom: 10px;
+			}
+		}
+	}
+	.total_mentions{
+		margin-top: 10px;
+		span{
+			&:first-child{
+				color: $brand;
+				font-size: 22px;
+				font-weight: 600;
+				margin-left: 10px;
+			}
+			&.indicator-up, &.indicator-down{
+				margin-left: 3px;
+			}
+		}
+	}
+	.row-fluid.mentions{
+		.span12{
+			margin: 0 0 60px 0;
+			&:last-child{
+				margin-bottom: 20px;
+			}
+		}
+	}
+
+}
 
 #terms-container{
 	margin: 0 auto;

@@ -2,7 +2,16 @@
   = resource_details_bar("You are viewing event details. Click to close.")
 
   .details_box.padding-top-close-bar
-    h2= @term.capitalize
+  	.row-fluid
+  		.span12
+  			.span8
+   		 		h2.mb10= @term.capitalize
+   		 	.span4
+    			.total_mentions.pull-right
+    				p 
+	    				| TOTAL MENTIONS:
+	    				span 349
+	    				span.indicator-up
 
   = render 'mentions_over_time'
 
