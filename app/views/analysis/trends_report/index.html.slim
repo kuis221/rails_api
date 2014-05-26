@@ -5,8 +5,8 @@
   h4 TERMS
   #terms-container
     form.form-inline
-      input.form-control placeholder=("Add term or phrase") type="text" /
-      button.btn.btn-default type="submit" +
+      input#add-trend-term.form-control placeholder=("Add term or phrase") type="text" /
+      button#add-trend-term-button.btn.btn-default type="submit" +
     legend
       .key LOSING
       .key STABLE
@@ -36,3 +36,34 @@ javascript:
       plotData("#bubble-container", response, plot)
     }
   });
+
+  $('#add-trend-term-button').click(function (e) { return false; })
+
+  $.extend($('#add-trend-term').autocomplete({
+      source: function(request, callback) {
+        url = '/analysis/trends/search.json?term='+ request.term + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
+        $.ajax(url, {
+          success: function(response) {
+            callback(response);
+          }
+        })
+      },
+      select: function ( event, ui ) {
+        $('#add-trend-term').val('');
+        plot.addNode(ui.item);
+        return false;
+      }
+    }).data('ui-autocomplete'), {
+      _renderItem: function ( ul, item ) {
+        newText = String(item.value).replace(
+          new RegExp(this.term, "gi"),
+          "<strong>$&</strong>");
+
+        return $("<li></li>")
+          .addClass('ui-menu-item')
+          .data("item.autocomplete", item)
+          .append("<a>" + newText + "</a>")
+          .appendTo(ul);
+      }
+    }
+  );

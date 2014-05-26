@@ -20,6 +20,12 @@ class Analysis::TrendsReportController < FilteredController
     render json: word_trending_over_time_data
   end
 
+  def search
+    search = resource_class.do_search(search_params.reject{|k, v| k == 'term' }.merge(prefix: params[:term], limit: 10))
+    results = search.facet(:description).rows.map{|r| { value: r.value, name: r.value, count: r.count } }
+    render json: results
+  end
+
   private
 
     def authorize_actions

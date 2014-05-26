@@ -166,9 +166,9 @@ class TrendObject
         facet :start_at, :time_range => (Time.parse('2009-06-01 00:00:00 -0400')..
                      Date.today.end_of_day), :time_interval => 86400
       elsif words = params[:words]
-        facet :description, sort: :count, limit: 50, only: words
+        facet :description, sort: :count, limit: (params[:limit] || 50), only: words
       else
-        facet :description, sort: :count, limit: 50
+        facet :description, sort: :count, limit: (params[:limit] || 50), prefix: params[:prefix]
       end
     end
   end

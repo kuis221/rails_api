@@ -27,7 +27,7 @@
 //= require desk.widget
 //= require events.js
 //= require highstock.src.js
-//= require d3.v3.min
+//= require d3
 //= require bubble_clouds
 //= require detect_timezone
 //= require jquery.detect_timezone

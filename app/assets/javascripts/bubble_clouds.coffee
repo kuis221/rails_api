@@ -71,14 +71,14 @@ window.Bubbles = () ->
 		
 		# Most of the work is done by the gravity and collide
 		# functions.
-		node
+		node.selectAll(".bubble-node")
 			.each(gravity(dampenedAlpha))
 			.each(collide(jitter))
 			.attr("transform", (d) -> "translate(#{d.x},#{d.y})")
 
 		# As the labels are created in raw html and not svg, we need
 		# to ensure we specify the 'px' for moving based on pixels
-		label
+		label.selectAll(".bubble-label")
 			.style("left", (d) -> ((margin.left + d.x) - d.dx / 2) + "px")
 			.style("top", (d) -> ((margin.top + d.y) - d.dy / 2) + "px")
 
@@ -176,17 +176,20 @@ window.Bubbles = () ->
 		# data to the (currently) empty 'bubble-node selection'.
 		# if you want to use your own data, you just need to modify what
 		# idValue returns
-		node = node.selectAll(".bubble-node").data(data, (d) -> idValue(d))
+		xNodes = node.selectAll(".bubble-node").data(data, (d) -> idValue(d))
 
 		# we don't actually remove any nodes from our data in this example 
 		# but if we did, this line of code would remove them from the
 		# visualization as well
-		node.exit().remove()
+		xNodes.exit().remove()
+
+		nodeEnter = xNodes.enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
 
 		# nodes are just links with circles inside.
 		# the styling comes from the css
-		node.enter()
-			.append("a")
+		nodeEnter.append("a")
 			.attr("class", (d) -> "bubble-node trending-#{d.trending}")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
 			.attr("xlink:href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
@@ -202,14 +205,14 @@ window.Bubbles = () ->
 	updateLabels = () ->
 		# as in updateNodes, we use idValue to define what the unique id for each data 
 		# point is
-		label = label.selectAll(".bubble-label").data(data, (d) -> idValue(d))
+		labels = label.selectAll(".bubble-label").data(data, (d) -> idValue(d))
 
-		label.exit().remove()
+		labels.exit().remove()
 
 		# labels are anchors with div's inside them
 		# labelEnter holds our enter selection so it 
 		# is easier to append multiple elements to this selection
-		labelEnter = label.enter().append("a")
+		labelEnter = labels.enter().append("a")
 			.attr("class", "bubble-label")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
 			.attr("href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
@@ -228,7 +231,7 @@ window.Bubbles = () ->
 		# this sizing allows for a bit of overhang outside of the bubble
 		# - remember to add the 'px' at the end as we are dealing with 
 		#  styling divs
-		label
+		labels
 			.style("font-size", (d) -> Math.max(8, rScale(rValue(d) / 2)) + "px")
 			.style("width", (d) -> 2.5 * rScale(rValue(d)) + "px")
 
@@ -239,20 +242,20 @@ window.Bubbles = () ->
 		#  which is how much to adjust the label by when
 		#  positioning it
 		# - remove the extra span
-		label.append("span")
+		labels.append("span")
 			.text((d) -> textValue(d))
 			.each((d) -> d.dx = Math.max(2.5 * rScale(rValue(d)), this.getBoundingClientRect().width))
 			.remove()
 
 		# reset the width of the label to the actual width
-		label
+		labels
 			.style("width", (d) -> d.dx + "px")
 	
 		# compute and store each nodes 'dy' value - the 
 		# amount to shift the label down
 		# 'this' inside of D3's each refers to the actual DOM element
 		# connected to the data node
-		label.each((d) -> d.dy = this.getBoundingClientRect().height)
+		labels.each((d) -> d.dy = this.getBoundingClientRect().height)
 
 	# ---
 	# custom gravity to skew the bubble placement
@@ -353,7 +356,7 @@ window.Bubbles = () ->
 				.attr('style', "top: #{(margin.left+d.y-7)-(d.forceR * Math.cos(315))}px; left: #{(margin.left+d.x-7)+(d.forceR * Math.sin(315))}px")
 
 
-	removeNode = (d) ->
+	removeNodeREMOVE = (d) ->
 		d3.event.preventDefault()
 		data = data.filter (e) -> e isnt d
 		node = node.filter (n) -> n.name isnt d.name
@@ -361,6 +364,14 @@ window.Bubbles = () ->
 		d3.selectAll('.bubble-remove').remove()
 		activeNode=null
 		force.start()
+	
+	removeNode = (d) ->
+		d3.event.preventDefault()
+		data = data.filter (e) -> e isnt d
+		force.nodes force.nodes().filter (n) -> n.name isnt d.name
+		d3.selectAll('.bubble-remove').remove()
+		activeNode=null
+		update()
 
 	# ---
 	# public getter/setter for jitter variable
@@ -398,7 +409,13 @@ window.Bubbles = () ->
 			return rValue
 		rValue = _
 		chart
-	
+
+	chart.addNode = (d) ->
+		d.count = parseInt(d.count)
+		d.forceR = Math.max(minCollisionRadius, rScale(rValue(d)))
+		force.nodes().push d
+		update()
+
 	# final act of our main function is to
 	# return the chart function we have created
 	return chart
