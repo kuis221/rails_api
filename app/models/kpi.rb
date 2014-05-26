@@ -44,7 +44,7 @@ class Kpi < ActiveRecord::Base
 
   validate :segments_can_be_deleted?
 
-  validate :check_segments_number
+  validate :segments_count_valid?
 
   # KPIs-Segments relationship
   has_many :kpis_segments, dependent: :destroy, order: 'ordering ASC, id ASC'
@@ -296,14 +296,11 @@ class Kpi < ActiveRecord::Base
   end
 
   def segments_count_valid?
-    #Valid if no restrictions for the selected capture mechanism or if segments count is equal or greater
+    #Valid if no restrictions for the selected capture mechanism or if segments count is less
     #than the quantity permitted for the selected capture mechanism
-    !SEGMENTS_COUNT_MIN[capture_mechanism] || kpis_segments.reject(&:marked_for_destruction?).count >= SEGMENTS_COUNT_MIN[capture_mechanism]
-  end
-
-  def check_segments_number
-    unless segments_count_valid?
-      errors.add :base, "You need to add at least #{SEGMENTS_COUNT_MIN[capture_mechanism]} segments for the selected capture mechanism"
+    min_count = SEGMENTS_COUNT_MIN[capture_mechanism] if SEGMENTS_COUNT_MIN.has_key?(capture_mechanism)
+    if min_count && kpis_segments.reject(&:marked_for_destruction?).count < min_count
+      errors.add :base, "You need to add at least #{min_count} segments for the selected capture mechanism"
     end
   end
 end
