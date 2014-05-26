@@ -21,9 +21,8 @@ class Analysis::TrendsReportController < FilteredController
   end
 
   def search
-    search = resource_class.do_search(search_params.reject{|k, v| k == 'term' }.merge(prefix: params[:term], limit: 10))
-    results = search.facet(:description).rows.map{|r| { value: r.value, name: r.value, count: r.count } }
-    render json: results
+    @search_params = search_params.reject{|k, v| k == 'term' }.merge(prefix: params[:term], limit: 10)
+    render json: trend_words
   end
 
   private
@@ -57,40 +56,9 @@ class Analysis::TrendsReportController < FilteredController
 
     def trend_words
       search = resource_class.do_search(search_params)
-      words = Hash[search.facet(:description).rows.map{|r| [r.value, { name: r.value, count: r.count, current: 0, previous: 0, trending: :stable }] }]
-
-      # Determine how each work have been trending...
-      if words.any?
-        time_period = 2.weeks
-        ratio = 10.0/100.0  # The differecen between periods should lower/greater than 10%  to be considered
-                        # and trending down/up
-        facet_params = search_params.dup
-        facet_params[:words] = words.keys
-
-        facet_params[:start_date] = time_period.ago.to_s(:slashes)
-        facet_params[:end_date] = Date.today.to_s(:slashes)
-        rows = resource_class.do_search(facet_params).facet(:description).rows
-        rows.each do |r|
-          if words.has_key?(r.value)
-            words[r.value][:current] = r.count
-            words[r.value][:trending] = :up
-          end
-        end
-
-        facet_params[:start_date] = ((time_period*2).ago-1.day).to_s(:slashes)
-        facet_params[:end_date] = (time_period.ago-1.day).to_s(:slashes)
-        resource_class.do_search(facet_params).facet(:description).rows.each do|r|
-          if words.has_key?(r.value)
-            words[r.value][:previous] = r.count
-            words[r.value][:trending] =  :down if r.count > words[r.value][:current]
-            margin = words[r.value][:current] * ratio
-            range = (words[r.value][:current]-margin)..(words[r.value][:current]+margin)
-            words[r.value][:trending] =  :stable if range.include? r.count
-          end
-        end
-      end
-
-      words.values
+      words = search.facet(:description).rows.map{|r| { name: r.value, count: r.count, current: 0, previous: 0, trending: :stable } }
+      add_trending_values words  # Updates the values for current, previous and trending
+      words
     end
 
     def word_trending_over_time_data
@@ -109,5 +77,39 @@ class Analysis::TrendsReportController < FilteredController
 
       # Sort by keys (days) and return the values
       data.sort.to_h.values
+    end
+
+    def add_trending_values(words)
+      # Determine how each work have been trending...
+      if words.any?
+        workds_hash = Hash[words.map{|w| [w[:name], w] }]
+        time_period = 2.weeks
+        ratio = 10.0/100.0  # The differecen between periods should lower/greater than 10%  to be considered
+                        # and trending down/up
+        facet_params = search_params.dup
+        facet_params[:words] = workds_hash.keys
+
+        facet_params[:start_date] = time_period.ago.to_s(:slashes)
+        facet_params[:end_date] = Date.today.to_s(:slashes)
+        rows = resource_class.do_search(facet_params).facet(:description).rows
+        rows.each do |r|
+          if workds_hash.has_key?(r.value)
+            workds_hash[r.value][:current] = r.count
+            workds_hash[r.value][:trending] = :up
+          end
+        end
+
+        facet_params[:start_date] = ((time_period*2).ago-1.day).to_s(:slashes)
+        facet_params[:end_date] = (time_period.ago-1.day).to_s(:slashes)
+        resource_class.do_search(facet_params).facet(:description).rows.each do|r|
+          if workds_hash.has_key?(r.value)
+            workds_hash[r.value][:previous] = r.count
+            workds_hash[r.value][:trending] =  :down if r.count > workds_hash[r.value][:current]
+            margin = workds_hash[r.value][:current] * ratio
+            range = (workds_hash[r.value][:current]-margin)..(workds_hash[r.value][:current]+margin)
+            workds_hash[r.value][:trending] =  :stable if range.include? r.count
+          end
+        end
+      end
     end
 end

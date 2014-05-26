@@ -55,7 +55,7 @@ javascript:
       }
     }).data('ui-autocomplete'), {
       _renderItem: function ( ul, item ) {
-        newText = String(item.value).replace(
+        newText = String(item.name).replace(
           new RegExp(this.term, "gi"),
           "<strong>$&</strong>");
 

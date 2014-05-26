@@ -311,4 +311,27 @@ describe Analysis::TrendsReportController, search: true do
     end
   end
 
+  describe "GET #items" do
+    it "returns empty if no words" do
+      Sunspot.commit
+      get 'search', term: 'abs', format: :json
+      items = JSON.parse(response.body)
+      expect(items).to be_empty
+    end
+
+    it "returns a list of items with the correct counting" do
+      FactoryGirl.create(:comment, commentable: event, content: 'absolute')
+      FactoryGirl.create(:comment, commentable: event, content: 'other')
+      Sunspot.commit
+
+      get 'search', term: 'abs', format: :json
+
+      items = JSON.parse(response.body)
+
+      expect(items).to match_array [
+        {"name"=>"absolute", "count"=>1, "current"=>1, "previous"=>0, "trending"=>"up"}
+      ]
+    end
+  end
+
 end
