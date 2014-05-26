@@ -485,8 +485,8 @@ $.widget 'nmk.filteredList', {
 		@defaultParams = []
 		@_cleanSearchFilter()
 		@_deselectDates()
-		defaultParams = if @options.clearFilterParams then @options.clearFilterParams else @options.defaultParams
-
+		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
+		defaultParams ||= []
 		@element.find('input[type=checkbox]').attr('checked', false)
 		for param in defaultParams
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)

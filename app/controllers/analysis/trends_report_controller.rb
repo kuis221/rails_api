@@ -14,6 +14,9 @@ class Analysis::TrendsReportController < FilteredController
 
   def show
     @term = params[:term]
+    @search_params = search_params.reject{|k, v| k == 'term' }.merge(words: [@term])
+    @info = trend_words.first
+    raise ActiveRecord::RecordNotFound if @info.nil? || @info[:name] != @term
   end
 
   def over_time

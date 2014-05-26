@@ -8,10 +8,10 @@
    		 		h2.mb10= @term.capitalize
    		 	.span4
     			.total_mentions.pull-right
-    				p 
+    				p
 	    				| TOTAL MENTIONS:
-	    				span 349
-	    				span.indicator-up
+	    				span= @info[:count]
+	    				span class="indicator-#{@info[:trending]}"
 
   = render 'mentions_over_time'
 
