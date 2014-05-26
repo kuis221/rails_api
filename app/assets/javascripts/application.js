@@ -27,6 +27,7 @@
 //= require desk.widget
 //= require events.js
 //= require highstock.src.js
+//= require highchart-modules/map.js
 //= require d3
 //= require bubble_clouds
 //= require detect_timezone

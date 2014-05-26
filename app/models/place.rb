@@ -86,6 +86,10 @@ class Place < ActiveRecord::Base
     state || load_country.states[administrative_level_1]['name'] rescue nil if load_country and state
   end
 
+  def state_code
+    load_country.states.detect{|code, info| info['name'] == 'California'}[0] rescue nil if state and load_country
+  end
+
   def continent_name
     load_country.continent if load_country
   end
