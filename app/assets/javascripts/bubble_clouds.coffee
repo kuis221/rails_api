@@ -325,7 +325,7 @@ window.Bubbles = () ->
 	# ---
 	mouseover = (d) ->
 		activeNode = d
-		node.classed("bubble-hover", (p) -> p == d)
+		node.selectAll(".bubble-node").classed("bubble-hover", (p) -> p == d)
 		showRemoveButton(d)
 		if window.bubleTimeout
 			clearTimeout(window.bubleTimeout)
@@ -335,7 +335,7 @@ window.Bubbles = () ->
 	# remove hover class
 	# ---
 	mouseout = (d) ->
-		node.classed("bubble-hover", false)
+		node.selectAll(".bubble-node").classed("bubble-hover", false)
 		window.bubleTimeout = setTimeout () ->
 			d3.selectAll('.bubble-remove').remove()
 			activeNode = null
@@ -411,10 +411,23 @@ window.Bubbles = () ->
 		chart
 
 	chart.addNode = (d) ->
-		d.count = parseInt(d.count)
-		d.forceR = Math.max(minCollisionRadius, rScale(rValue(d)))
-		force.nodes().push d
-		update()
+		if force.nodes().filter( (n) -> n.name == d.name ).length == 0
+			d.count = parseInt(d.count)
+			d.forceR = Math.max(minCollisionRadius, rScale(rValue(d)))
+			force.nodes().push d
+			update()
+		else
+			#$(".bubble-node[data-bubble-name=\"#{d.name}\"]").effect( "shake" )
+			elm = node.selectAll(".bubble-node[data-bubble-name=\"#{d.name}\"]").each (d) ->
+				color = d3.select(@).style("fill")
+				d3.select("[data-bubble-name=\"#{d.name}\"]")
+					.transition().duration(500).style("fill", '#CFC53F')
+					.each "end", () ->
+						d3.select(@).transition().duration(1000).style("fill", color)
+			# node.selectAll(".bubble-node").classed("highlight", (p) -> p.name == d.name)
+			# setTimeout () -> 
+			# 	node.selectAll(".bubble-node").classed("highlight", false)
+			# , 2000
 
 	# final act of our main function is to
 	# return the chart function we have created
