@@ -7986,17 +7986,44 @@ table.table.likert-scale-table {
 		}
 	}
 	.row-fluid.mentions{
-		.span10{
-			margin: 0 0 60px 0;
+		.span7{
+			margin: 0 0 40px 0;
 			&:last-child{
 				margin-bottom: 20px;
+			}
+			.photo-container{
+				margin-top: 10px;
+				width: 650px;
+				img{
+					width: 100%;
+				}
+			}
+			p{
+				&.consumer{
+					clear: both;
+					color: $user_menu;
+					font-size: 11px;
+					margin-top: 10px;
+					span{
+						color: $brand;
+					}
+				}
 			}
 		}
 		ul{
 			margin-left: 0;
 			li{
-				list-style: none;
 				display: inline-block;
+				list-style: none;
+				margin-right: 10px;
+				&:last-child{
+					margin-right: 0;
+				}
+			}
+			&.two-col{
+				li{
+					width:49%;
+				}
 			}
 		}
 	}
