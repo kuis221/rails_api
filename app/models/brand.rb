@@ -8,11 +8,18 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  company_id    :integer
+#  active        :boolean          default(TRUE)
 #
 
 class Brand < ActiveRecord::Base
   track_who_does_it
+
   scoped_to_company
+
+  attr_accessor :marques_list
+
+  # Required fields
   validates :name, presence: true, uniqueness: {scope: :company_id}
 
   # Campaigns-Brands relationship
@@ -20,7 +27,7 @@ class Brand < ActiveRecord::Base
 
   has_many :brand_portfolios_brands, dependent: :destroy
   has_many :brand_portfolios, through: :brand_portfolios_brands
-  has_many :marques, dependent: :destroy
+  has_many :marques, :order => 'name ASC', :autosave => true, dependent: :destroy
 
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
   scope :accessible_by_user, lambda{|user| scoped }
@@ -52,11 +59,25 @@ class Brand < ActiveRecord::Base
 
   def self.report_fields
     {
-      name:       { title: 'Name' }
+      name: { title: 'Name' }
     }
   end
-#
-    class << self
+
+  def marques_list
+    marques.map(&:name).join ','
+  end
+
+  def marques_list=(list)
+    marques_names = list.split(',')
+    existing_ids = self.marques.map(&:id)
+    marques_names.each do |marque_name|
+      marque = Marque.find_or_initialize_by_name_and_brand_id(marque_name, id)
+      self.marques << marque unless existing_ids.include?(marque.id)
+    end
+    marques.each{|marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }
+  end
+
+  class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       ss = solr_search do
