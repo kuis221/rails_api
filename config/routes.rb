@@ -166,6 +166,7 @@ Brandscopic::Application.routes.draw do
     get 'trends/search', to: 'trends_report#search'
     get 'trends/t/:term', to: 'trends_report#show'
     get 'trends/t/:term/mentions_over_time', to: 'trends_report#over_time', as: :mentions_over_time
+    get 'trends/t/:term/mentions_across_locations', to: 'trends_report#across_locations', as: :mentions_across_locations
 
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'

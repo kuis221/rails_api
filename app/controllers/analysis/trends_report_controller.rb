@@ -23,6 +23,10 @@ class Analysis::TrendsReportController < FilteredController
     render json: word_trending_over_time_data
   end
 
+  def across_locations
+    render json: word_trending_across_locations
+  end
+
   def search
     @search_params = search_params.reject{|k, v| k == 'term' }.merge(prefix: params[:term], limit: 10)
     render json: trend_words
@@ -82,6 +86,40 @@ class Analysis::TrendsReportController < FilteredController
       data.sort.to_h.values
     end
 
+    def word_trending_across_locations
+      search = TrendObject.solr_search do
+        with :company_id, current_company.id
+        with :description, params[:term]
+        if params[:country].present? && params[:country] && params[:state].present? && params[:state]
+          with :state, params[:state]
+          with :country, params[:country]
+          facet :city
+        elsif params[:country].present? && params[:country]
+          with :country, params[:country]
+          facet :state
+        else
+          facet :country
+        end
+      end
+
+      rows = []
+      search.facets.first.tap do |f|
+        rows = search.facet(f.name).rows.map{|fr| [fr.value, fr.count] }
+      end
+      if params[:state] && params[:country]
+        rows = [['Latitude', 'longitude', 'City', 'Mentions']] +
+               add_latlon_cities(params[:country], params[:state], rows) if params[:state] && params[:country]
+      elsif params[:country]
+        country = Country.new(params[:country])
+        rows.each{|state| state[0] = country.states[state[0]]['name'] if country.states[state[0]].present? } if country.present?
+        rows = [['State', 'Mentions']] + rows
+      else
+        rows.each{|row| row[0] = country.name if country = Country.new(row[0])}
+        rows = [['Country', 'Mentions']] + rows
+      end
+      rows
+    end
+
     def add_trending_values(words)
       # Determine how each work have been trending...
       if words.any?
@@ -110,9 +148,33 @@ class Analysis::TrendsReportController < FilteredController
             workds_hash[r.value][:trending] =  :down if r.count > workds_hash[r.value][:current]
             margin = workds_hash[r.value][:current] * ratio
             range = (workds_hash[r.value][:current]-margin)..(workds_hash[r.value][:current]+margin)
-            workds_hash[r.value][:trending] =  :stable if range.include? r.count
+            workds_hash[r.value][:trending] = :stable if range.include? r.count
           end
         end
+      end
+    end
+
+    # Returns a new array of cities with the first two columns containing the latitude and longitude,
+    # the third one with the city name and the last one the count
+    def add_latlon_cities(country_name, state_code, cities)
+      country = Country.new(country_name)
+      unless country.nil?
+        state_name = country.states[state_code]['name'] unless country.nil?
+        city_names = cities.map{|r| r[0] }
+        locations = Hash[Place.where('types like \'%political%\'').
+          where(state: state_name, country: country_name, name: city_names).map do |place|
+           [place.name, [place.latitude, place.longitude, place.name]]
+        end]
+
+        cities.map do |city|
+          if locations.has_key?(city[0]) # If the city was found on the database
+            locations[city[0]] + [city[1]]
+          elsif points = Place.latlon_for_city(city[0], state_code, country_name)
+            points + [city[0], city[1]]
+          end
+        end.compact
+      else
+        cities
       end
     end
 end

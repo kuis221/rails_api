@@ -21,6 +21,8 @@ class TrendObject
 
     string :country
 
+    string :state
+
     string :city
 
     time :start_at, stored: true, trie: true
@@ -77,7 +79,11 @@ class TrendObject
   end
 
   def city
-    "#{place.city}, #{place.state_code}" if place.present?
+    place.city if place.present?
+  end
+
+  def state
+    place.try(:state_code)
   end
 
   def locations_for_index

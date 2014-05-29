@@ -87,7 +87,7 @@ class Place < ActiveRecord::Base
   end
 
   def state_code
-    load_country.states.detect{|code, info| info['name'] == 'California'}[0] rescue nil if state and load_country
+    load_country.states.detect{|code, info| info['name'] == state}[0] rescue nil if state and load_country
   end
 
   def continent_name
@@ -208,6 +208,22 @@ class Place < ActiveRecord::Base
       end
       results
     end
+
+    def latlon_for_city(name, state, country)
+      points = Rails.cache.fetch("latlon_#{name.parameterize('_')}_#{state.parameterize('_')}_#{country.parameterize('_')}") do
+        data = JSON.parse(open(URI.encode("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI::encode(name)}&components=country:#{URI::encode(country)}|administrative_area:#{URI::encode(state)}&sensor=false")).read)
+        if data['results'].count > 0
+          result = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
+          [result['geometry']['location']['lat'],  result['geometry']['location']['lng']] if result
+        else
+          nil
+        end
+      end
+    end
+
+    def google_client
+      @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+    end
   end
 
   private
@@ -306,7 +322,7 @@ class Place < ActiveRecord::Base
     end
 
     def client
-      @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+      Place.google_client
     end
 
     def clear_cache
