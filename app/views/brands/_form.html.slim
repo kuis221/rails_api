@@ -3,7 +3,11 @@
   = f.error_notification
 
   .form-inputs
-    = f.input :name, input_html: {class: 'input-xlarge'}
+    .row-fluid
+      = f.input :name, input_html: {class: 'input-xlarge'}
+
+    .row-fluid
+      = f.input :marques_list
 
   .form-actions
     = f.button :submit, class: 'btn-primary'
@@ -14,5 +18,9 @@ javascript:
     e.preventDefault();
     e.stopPropagation();
     $(this).parents('.modal').modal('hide');
-    selectBrandDialog.modal('show');
-  })
+    if ('#{parent.is_a? BrandPortfolio}' == 'true') {
+      selectBrandDialog.modal('show');
+    }
+  });
+
+  $('#brand_marques_list').select2({tags: []});
