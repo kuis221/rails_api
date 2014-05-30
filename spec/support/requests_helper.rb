@@ -30,9 +30,12 @@ module CapybaraBrandscopicHelpers
   end
 
   def wait_for_photo_to_process(timeout = Capybara.default_wait_time)
+    last_modified = AttachedAsset.last.try(:updated_at)
+    count = AttachedAsset.count
     yield
     Timeout.timeout(timeout) do
-      sleep(0.5) until photo = AttachedAsset.last and !photo.processed?
+      # Wait until a new attachment is created or the last one is modified (for the cases when updating attachments)
+      sleep(0.5) until AttachedAsset.count > count || last_modified != AttachedAsset.last.try(:updated_at)
       photo = AttachedAsset.last
       sleep(0.5) until photo.reload.processed?
     end
@@ -89,6 +92,21 @@ module CapybaraBrandscopicHelpers
       find(:xpath, "//body").find(".select2-drop li", text: value).click
     end
     wait_for_ajax
+  end
+
+  def select2_add_tag(tag)
+    find('.select2-container').find(".select2-search-field").click
+    find("input.select2-input").set(tag)
+    page.execute_script(%|$("input.select2-input:visible").keyup();|)
+    [tag].flatten.each do |tag|
+      find(:xpath, "//body").find(".select2-results li", text: tag).click
+    end
+  end
+
+  def select2_remove_tag(tag)
+    page.execute_script %Q{
+      $('.select2-choices div:contains("#{tag}")').closest('li').find('a').click();
+    }
   end
 
   def select_filter_calendar_day(day1, day2=nil)

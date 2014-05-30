@@ -12,6 +12,7 @@
 #  updated_at      :datetime         not null
 #  message_params  :text
 #  extra_params    :text
+#  params          :hstore
 #
 
 require 'spec_helper'

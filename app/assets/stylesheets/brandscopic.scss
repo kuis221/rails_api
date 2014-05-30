@@ -60,8 +60,14 @@ abbr[title]{
 		color: #5C5C5C;
 	}
 }
+
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .member-data{
 	margin:0 0 20px 30px;
+	width: 380px;
+}
+
+.marques-data{
+	margin:0 0 20px 0;
 	width: 380px;
 }
 
@@ -3631,53 +3637,56 @@ textarea::-webkit-input-placeholder {
 			}
 		}
 	}
-	.attachment-panel{
-		border: 1px dashed $user_menu;
-		border-radius: 4px 4px 4px 4px;
-		color: #C0C0C0;
-		font-size: 14px;
-		line-height: 17px;
-		margin-top: 15px;
-		padding: 20px 30px;
-		text-align: center;
-		width: 267px;
+}
 
-		p{
-			&:first-of-type{
-				padding: 0 20px;
-				text-align: left;
+.attachment-panel{
+	border: 1px dashed $user_menu;
+	border-radius: 4px 4px 4px 4px;
+	color: #C0C0C0;
+	font-size: 14px;
+	line-height: 17px;
+	margin-top: 15px;
+	padding: 20px 30px;
+	text-align: center;
+	width: 267px;
+
+	p{
+		&:first-of-type{
+			padding: 0 20px;
+			text-align: left;
+		}
+		&.divider{
+			margin: 25px 0;
+		}
+		&.small{
+			font-size: 11px;
+		}
+		span.file-browse {
+			text-decoration: underline;
+			position: relative;
+			color: $text;
+			overflow: hidden;
+			input[type=file] {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 0;
+				opacity: 0;
+				left: 0;
+				-ms-filter: 'alpha(opacity=0)';
+				font-size: 200px;
+				direction: ltr;
+				cursor: pointer;
 			}
-			&.divider{
-				margin: 25px 0;
-			}
-			&.small{
-				font-size: 11px;
-			}
-			a.file-browse {
-				text-decoration: underline;
-				position: relative;
-				overflow: hidden;
-				input[type=file] {
-					position: absolute;
-					top: 0;
-					right: 0;
-					margin: 0;
-					opacity: 0;
-					-ms-filter: 'alpha(opacity=0)';
-					font-size: 200px;
-					direction: ltr;
-					cursor: pointer;
-				}
-				&:hover{
-					color: $text;
-				}
+			&:hover{
+				color: $text;
 			}
 		}
+	}
 
-		.uploader {
-			.filename, .action {
-				display: none;
-			}
+	.uploader {
+		.filename, .action {
+			display: none;
 		}
 	}
 }

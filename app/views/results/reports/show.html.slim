@@ -63,11 +63,14 @@
             $('table.report-table').hide();
         }
       },
-      'onPageLoaded' : function(page) {
+      'onPageLoaded' : function(page, resultsCount) {
         //$('#report-table').reportTableScroller('adjustTableSize');
         $('#report-table').reportTableScroller('adjustHeader');
         $('#report-table').reportTableScroller('adjustTableSize');
         $('#report-table').reportTableScroller('resetScroller');
+        if (page == 1 && resultsCount > 0) { // In case the first page of results is too small for the window's size
+          $(window).scroll();
+        }
       },
       'onFiltersLoaded': function(page) {
         $('#report-table').reportTableScroller('adjustTableSize');

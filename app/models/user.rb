@@ -232,6 +232,7 @@ class User < ActiveRecord::Base
   class << self
     def report_fields
       {
+        full_name:      { title: 'Full Name', column: -> { "first_name || ' ' || last_name" }, filter_column: -> { "first_name || ' ' || last_name" } },
         first_name:     { title: 'First Name' },
         last_name:      { title: 'Last Name' },
         email:          { title: 'Email' },

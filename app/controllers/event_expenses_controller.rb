@@ -12,12 +12,6 @@ class EventExpensesController < InheritedResources::Base
     end
 
     def permitted_params
-      p = params.dup
-      p[:event_expense] ||= {}
-      p[:event_expense][:name] = params[:name]
-      p[:event_expense][:amount] = params[:amount]
-
-      p = p.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
-
+      params.permit(event_expense: [:name, :amount, {receipt_attributes:[:direct_upload_url, :_destroy]}])[:event_expense]
     end
 end

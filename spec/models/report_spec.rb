@@ -486,6 +486,24 @@ describe Report do
       ]
     end
 
+    it "returns a line for each event's user (full name) when adding a user field as a row using" do
+      user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
+      user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      event.users << [user1, user2]
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"user:full_name", "label"=>"Full Name"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"user_full_name"=>"Nadia Aldana", "values" => [100.00]},
+        {"user_full_name"=>"Nicole Aldana", "values" => [100.00]}
+      ]
+    end
+
     it "returns a line for each team's user when adding a user field as a row and the team is part of the event" do
       user1 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nicole', last_name: 'Aldana'))
       user2 = FactoryGirl.create(:company_user, company: company, user: FactoryGirl.create(:user, first_name: 'Nadia', last_name: 'Aldana'))

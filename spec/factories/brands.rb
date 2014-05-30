@@ -8,6 +8,8 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  company_id    :integer
+#  active        :boolean          default(TRUE)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

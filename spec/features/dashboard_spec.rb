@@ -12,6 +12,7 @@ feature "Dashboard", search: true, js: true do
     Warden.test_mode!
     add_permissions permissions
     sign_in user
+    Company.current = company
   end
 
   after do

@@ -5,7 +5,7 @@ class BrandsController < FilteredController
   respond_to :js, only: [:new, :create,:edit, :update]
 
   has_scope :not_in_portfolio
-  
+
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
@@ -19,15 +19,15 @@ class BrandsController < FilteredController
   def create
     create! do |success, failure|
       success.js do
-          parent.brands << resource if parent? and parent
-          render :create
+        parent.brands << resource if parent? and parent
+        render :create
       end
     end
   end
 
   protected
     def permitted_params
-      params.permit(brand: [:name])[:brand]
+      params.permit(brand: [:name, :marques_list])[:brand]
     end
 
     def authorize_actions
