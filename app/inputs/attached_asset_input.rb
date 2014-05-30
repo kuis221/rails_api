@@ -19,7 +19,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
 
     output_html << '<div class="attachment-panel" data-id="'+(has_attached_asset ? attached_asset.id.to_s : '')+'" >
                       <div class="attachment-select-file-view"'+ (has_attached_asset ? 'style="display: none"' : '') + '>
-                        <p>'+I18n.translate(options[:browse_legend], browse: '<a href="javascript:none" class="file-browse">Browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="'+max_file_size.to_s+'" /></a>')+'</p>
+                        <p>'+I18n.translate(options[:browse_legend], browse: '<span class="file-browse">Browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="'+max_file_size.to_s+'" /></span>')+'</p>
                         <p class="divider">OR</p>
                         <p>Drag and drop file here to upload</p>
                         <p class="small">Maximum upload file size: 10MB</p>
