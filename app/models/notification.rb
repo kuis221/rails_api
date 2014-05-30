@@ -25,14 +25,15 @@ class Notification < ActiveRecord::Base
 
   scope :new_tasks, -> { where(message: 'new_task') }
   scope :new_events, -> { where(message: 'new_event') }
+  scope :new_team_events, -> { where(message: 'new_team_event') }
   scope :new_campaigns, -> { where(message: 'new_campaign') }
 
   scope :grouped_notifications, -> {
-    where(message: ['new_event', 'new_campaign', 'new_task', 'new_team_task'])
+    where(message: ['new_event', 'new_team_event', 'new_campaign', 'new_task', 'new_team_task'])
   }
 
   scope :except_grouped_notifications, -> {
-    where('message not in (?)', ['new_event', 'new_campaign', 'new_task', 'new_team_task'])
+    where('message not in (?)', ['new_event', 'new_team_event', 'new_campaign', 'new_task', 'new_team_task'])
   }
 
   def self.new_campaign(user, campaign)
@@ -42,10 +43,12 @@ class Notification < ActiveRecord::Base
     end
   end
 
-  def self.new_event(user, event)
+  def self.new_event(user, event, team = nil)
     path = Rails.application.routes.url_helpers.event_path(event)
     if user.notifications.where(path: path).count == 0
-      notification = user.notifications.create(path: path, level: 'grey', message: 'new_event', icon: 'event', params: {event_id: event.id})
+      message = team.present? ? 'new_team_event' : 'new_event'
+      message_params = team.present? ? {team_id: team.id, team_name: team.name} : nil
+      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
     end
   end
 
