@@ -440,8 +440,8 @@ jQuery ->
 			ob = ot + $(@).height();
 
 			if not $(@).attr("loaded") && wt <= ob && wb >= ot
+				$(@).removeClass "lazyloaded"
 				$(@).load $(@).data('content-url')
-				$(@).attr "loaded", true
 
 
 	# Keep filter Sidebar always visible but make it scroll if it's

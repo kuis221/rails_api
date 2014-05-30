@@ -7955,7 +7955,17 @@ table.table.likert-scale-table {
 }
 
 /*-- TRENDING STYLES --*/
+.highlight{
+	background-color: $light_blue;
+	color: #0a4466;
+	padding: 2px 4px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
 
+#all-mentions-list-filter {
+	display: none;
+}
 .indicator-up, .indicator-down{
 	&:before{
 		font-family: 'icons';

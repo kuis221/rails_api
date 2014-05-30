@@ -3,6 +3,8 @@ class Analysis::TrendsReportController < FilteredController
 
   defaults resource_class: TrendObject
 
+  helper Analysis::TrendsReport
+
   skip_load_and_authorize_resource
 
   def index
@@ -30,6 +32,11 @@ class Analysis::TrendsReportController < FilteredController
   def search
     @search_params = search_params.reject{|k, v| k == 'term' }.merge(prefix: params[:term], limit: 10)
     render json: trend_words
+  end
+
+  def mentions
+    @term = params[:term]
+    render layout: false
   end
 
   private

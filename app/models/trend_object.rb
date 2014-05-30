@@ -136,7 +136,14 @@ class TrendObject
     end
 
     ids_by_class.map do |clazz_name, ids|
-      clazz_name.camelize.constantize.where(id: ids)
+      p clazz_name
+      if clazz_name == 'comment'
+        clazz_name.camelize.constantize.preload(commentable: :campaign).where(id: ids)
+      elsif clazz_name == 'activity'
+        clazz_name.camelize.constantize.includes(:campaign).where(id: ids)
+      else
+        clazz_name.camelize.constantize.where(id: ids)
+      end
     end.flatten.map{|o| TrendObject.new(o) }
   end
 
@@ -144,7 +151,7 @@ class TrendObject
     resource.class.name.underscore + ':' + resource.id.to_s
   end
 
-  def self.do_search(params)
+  def self.do_search(params, include_facets=true)
     ss = solr_search do
       with :company_id, params[:company_id]
 
@@ -179,15 +186,20 @@ class TrendObject
         end
       end
 
-      if term = params[:term]
-        with(:description, term)
-        facet :start_at, :time_range => (Time.parse('2009-06-01 00:00:00 -0400')..
-                     Date.today.end_of_day), :time_interval => 86400
-      elsif words = params[:words]
-        facet :description, sort: :count, limit: (params[:limit] || 50), only: words
-      else
-        facet :description, sort: :count, limit: (params[:limit] || 50), prefix: params[:prefix]
+      if include_facets
+        if term = params[:term]
+          with(:description, term)
+          facet :start_at, :time_range => (Time.parse('2009-06-01 00:00:00 -0400')..
+                       Date.today.end_of_day), :time_interval => 86400
+        elsif words = params[:words]
+          facet :description, sort: :count, limit: (params[:limit] || 50), only: words
+        else
+          facet :description, sort: :count, limit: (params[:limit] || 50), prefix: params[:prefix]
+        end
       end
+
+      order_by(params[:sorting] || :start_at, params[:sorting_dir] || :asc)
+      paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
     end
   end
 
