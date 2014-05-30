@@ -3659,12 +3659,15 @@ textarea::-webkit-input-placeholder {
 			text-decoration: underline;
 			position: relative;
 			overflow: hidden;
+			display: inline-block;
+			margin-bottom: -3px;
 			input[type=file] {
 				position: absolute;
 				top: 0;
 				right: 0;
 				margin: 0;
 				opacity: 0;
+				left: 0;
 				-ms-filter: 'alpha(opacity=0)';
 				font-size: 200px;
 				direction: ltr;

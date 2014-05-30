@@ -687,7 +687,9 @@ $.widget 'nmk.filteredList', {
 			@_pageLoaded page, $items
 			@listContainer.css height: ''
 
-			if page is 1 and $items.find('>*').length is 0
+			resultsCount = $items.find('>*').length
+
+			if page is 1 and resultsCount is 0
 				@emptyState = @_placeholderEmptyState()
 
 			$response.remove()
@@ -696,7 +698,7 @@ $.widget 'nmk.filteredList', {
 
 
 			if @options.onPageLoaded
-				@options.onPageLoaded page
+				@options.onPageLoaded page, resultsCount
 
 			$.loadingContent -= 1
 			true

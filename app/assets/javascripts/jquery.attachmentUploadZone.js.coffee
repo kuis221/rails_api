@@ -94,6 +94,15 @@ $.widget 'nmk.attachmentUploadZone', {
 					find("input[name*=\"[_destroy]\"]").val "1"
 			false
 
+		form.on "click", "a.file-browse", (e) ->
+			e.preventDefault();
+			e.stopPropagation();
+			false
+
+		form.on "click", "input#fileupload", (e) ->
+			e.stopPropagation();
+			true
+
 		form.on "click", ".cancel-upload", (e) ->
 			form.data("jqXHR").abort() if form.data("jqXHR")
 			if form.data('id') or form.find("input[type=hidden].direct_upload_url").val()
