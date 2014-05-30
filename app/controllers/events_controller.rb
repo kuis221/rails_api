@@ -159,9 +159,10 @@ class EventsController < FilteredController
         # store them in the session to allow the user to navigate, paginate, etc
         if params.has_key?(:new_at) && params[:new_at]
           @search_params[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
-            notifications = (params.has_key?(:notification) && params[:notification] == 'new_team_event') ? current_company_user.notifications.new_team_events : current_company_user.notifications.new_events
-            ids = notifications.map{|n| n.params['event_id']}.compact
-            notifications.destroy_all
+            ids = (params.has_key?(:notification) && params[:notification] == 'new_team_event') ?
+                  current_company_user.notifications.new_team_events.pluck("params->'event_id'") :
+                  current_company_user.notifications.new_events.pluck("params->'event_id'")
+            current_company_user.notifications.where("params->'event_id' in (?)", ids).delete_all
             ids
           end
         end
