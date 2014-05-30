@@ -66,10 +66,11 @@ module FacetsHelper
         sort{ |a, b| a[:label] <=> b[:label] }}
   end
 
-  def build_campaign_bucket(facet_search)
-    items = facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :campaign}) }
-    items = items.sort{|a, b| a[:label] <=> b[:label]}
-    {label: 'Campaigns', items: items}
+  def build_campaign_bucket
+    items = Campaign.accessible_by_user(current_company_user).order(:name).for_dropdown.map do |r|
+      build_facet_item({label: r[0], id: r[1], name: :campaign, count: 1})
+    end
+    { label: 'Campaigns', items: items }
   end
 
   # Returns the facets for the events controller
@@ -79,7 +80,7 @@ module FacetsHelper
       facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
       facet_search = resource_class.do_search(facet_params, true)
 
-      f.push build_facet( Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_id).rows)
+      f.push build_campaign_bucket
       f.push build_brands_bucket
       f.push build_areas_bucket( facet_search )
       f.push build_people_bucket( facet_search )

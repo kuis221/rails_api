@@ -26,4 +26,4 @@
     = f.button :button, 'Cancel', class: 'btn-cancel'
 
 javascript:
-  $('#campaign_brands_list').select2({tags: #{raw(Brand.all.map(&:name).to_json).html_safe}});
+  $('#campaign_brands_list').select2({tags: #{raw(Brand.scoped_by_company_id(@campaign.company_id).order(:name).map(&:name).to_json).html_safe}});

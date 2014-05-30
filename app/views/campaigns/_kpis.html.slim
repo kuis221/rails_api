@@ -1,8 +1,7 @@
 - campaign ||= nil
 .link-list
   ul#global-kpis.kpis-list
-    = render partial: 'kpis/kpi', collection: Kpi.global
-
+    = render partial: 'goalables/goalable', collection: Kpi.global
 
 .row-fluid
   .pull-left.kpis-button
@@ -10,7 +9,7 @@
 
 .link-list
   ul#custom-kpis.kpis-list
-    = render (Kpi.custom(current_company) + current_company.activity_types.active.each { |a|  a.partial_path = 'campaigns/activity_type'}).sort_by(&:name)
+    = render collection: (Kpi.custom(current_company).includes(:kpis_segments) + current_company.activity_types.active).sort_by(&:name), partial: 'goalables/goalable'
 
 
 - if can?(:activate_kpis, resource)
@@ -20,7 +19,7 @@
       CampaignFormBuilder.activateKpi($(this).data('kpi-id'));
       return false;
     });
-    
+
     $(document).delegate('.toggle-off-btn-activity-type', 'click', function(e){
       $(this).parent().addClass('active').removeClass('deactive')
       CampaignFormBuilder.activateActivityType($(this).data('activity-type-id'));

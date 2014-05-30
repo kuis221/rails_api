@@ -27,7 +27,7 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing event details. Click to close.")
 
-  .details_box
+  .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
     - unless resource.place.nil? or resource.place.latitude.nil?
       #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
           b= resource.campaign_name

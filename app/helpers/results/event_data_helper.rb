@@ -92,7 +92,7 @@ module Results
       end
 
       def campaign_from_cache(id)
-        @_campaign_cache ||= []
+        @_campaign_cache ||= {}
         @_campaign_cache[id] ||= Campaign.find(id)
         @_campaign_cache[id]
       end

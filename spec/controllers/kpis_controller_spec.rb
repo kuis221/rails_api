@@ -40,12 +40,12 @@ describe KpisController do
       kpi.description.should == 'Test kpi description'
     end
 
-    it "should render the form_dialog template if errors" do
+    it "should not render the form_dialog template if errors" do
       lambda {
         post 'create', campaign_id: campaign.to_param, format: :js, kpi: {}
       }.should_not change(Kpi, :count)
       response.should render_template(:create)
-      response.should render_template(:form_dialog)
+      response.should_not render_template(:form_dialog)
       assigns(:kpi).errors.count > 0
     end
   end

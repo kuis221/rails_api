@@ -1,7 +1,7 @@
 - render 'settings'
 - if resource.errors.any?
-  = render 'form_dialog'
+  | $('#kpi_errors').html('#{j resource.errors.full_messages.join("<br />").html_safe}').removeClass('hidden');
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('#custom-kpis').append($('#{j render(partial:'kpi', locals: {kpi: resource, resource: @campaign})}'));
+    $('#custom-kpis').append($('#{j render(partial:'goalables/goalable', locals: {goalable: resource, resource: @campaign})}'));

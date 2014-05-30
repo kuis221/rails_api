@@ -16,7 +16,14 @@
 
 class FormField::Photo < FormField
   def field_options(result)
-    {as: :attached_asset, label: self.name, field_id: self.id, options: self.settings, file_types: '(\.|\/)(gif|jpe?g|png)$', required: self.required, input_html: {value: result.value, class: field_classes, required: (self.required? ? 'required' : nil)}}
+    { as: :attached_asset,
+      label: self.name,
+      field_id: self.id, options: self.settings,
+      file_types: '(\.|\/)(gif|jpe?g|png)$',
+      browse_legend: 'inputs.attached_asset.select_file.photo',
+      required: self.required, input_html: {
+        value: result.value, class: field_classes,
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes

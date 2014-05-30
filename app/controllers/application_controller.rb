@@ -75,6 +75,7 @@ class ApplicationController < ActionController::Base
         Company.current = current_user.current_company = current_company
         Time.zone = current_user.time_zone
         ::NewRelic::Agent.add_custom_parameters(:user_id => current_user.id)
+        ::NewRelic::Agent.add_custom_parameters(:company_user_id => current_company_user.id)
       end
       yield
     ensure

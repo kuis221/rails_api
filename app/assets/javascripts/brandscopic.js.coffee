@@ -98,6 +98,8 @@ jQuery ->
 
 		$('form[data-watch-changes]').watchChanges();
 
+		$('.attached_asset_upload_form').attachmentUploadZone();
+
 	window.smoothScrollTo = (element) ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 
@@ -176,12 +178,30 @@ jQuery ->
 			return true
 
 		makeFormValidatable($(this))
-
 		if not $(this).valid()
-
 			e.preventDefault()
 			e.stopPropagation()
 			false
+		else
+			button = $(this).find('input[type=submit], button')
+			if $(".attached_asset_upload_form.uploading").length > 0
+				if typeof this.activityInterval == 'undefined' || this.activityInterval == null
+					e.stopPropagation()
+					e.preventDefault()
+					$.rails.stopEverything e
+					$(button).addClass("waiting-files").attr("disabled", true).data("oldval", $(button).val()).val "Uploading file(s)..."
+					this.activityInterval = setInterval( =>
+						if $(".attached_asset_upload_form.uploading", this).length is 0
+							$(button).attr("disabled", false).removeClass("waiting-files").val $(button).data("oldval")
+							clearInterval this.activityInterval
+							this.activityInterval = null
+							$(button[0]).click();
+						return
+					, 500)
+
+				false
+			else
+				true
 
 	attachPluginsToElements()
 
@@ -225,10 +245,10 @@ jQuery ->
 		}
 		false
 
-	# Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
-	$(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
-		if settings.type == 'POST'
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+	# # Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
+	# $(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
+	# 	if settings.type == 'POST'
+	# 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
@@ -631,6 +651,10 @@ jQuery ->
 					$link.click()
 
 		false
+
+
+	makeFieldAttachable = () ->
+
 
 # Hack to use bootbox's confirm dialog
 $.rails.allowAction = (element) ->

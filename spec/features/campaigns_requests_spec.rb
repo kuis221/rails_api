@@ -137,6 +137,7 @@ feature "Campaigns", js: true, search: true do
 
 
     scenario "should be able to assign areas to the campaign" do
+      Kpi.create_global_kpis
       campaign = FactoryGirl.create(:campaign, company: @company)
       area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
       area2 = FactoryGirl.create(:area, name: 'Los Angeles Area', company: @company)
@@ -206,7 +207,7 @@ feature "Campaigns", js: true, search: true do
           select_from_chosen('Count', from: 'Kpi type', match: :first)
           click_js_link 'Add a segment'
           fill_in 'Segment name', with: 'Option 1'
-          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          select_from_chosen('Dropdown', from: 'Capture mechanism', match: :first)
           click_js_button 'Create'
         end
         ensure_modal_was_closed
@@ -226,6 +227,24 @@ feature "Campaigns", js: true, search: true do
 
         within "#custom-kpis" do
           expect(page).to have_content('223311.0')
+        end
+      end
+
+      scenario "Get errors when add a KPI without enough segments for the selected capture mechanism" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+        visit campaign_path(campaign)
+
+        click_js_link 'Add Custom KPI'
+
+        within visible_modal do
+          fill_in 'Name', with: 'My Custom KPI'
+          fill_in 'Description', with: 'my custom kpi description'
+          select_from_chosen('Count', from: 'Kpi type', match: :first)
+          click_js_link 'Add a segment'
+          fill_in 'Segment name', with: 'Option 1'
+          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          click_js_button 'Create'
+          expect(page).to have_content('You need to add at least 2 segments for the selected capture mechanism')
         end
       end
     end
@@ -309,7 +328,7 @@ feature "Campaigns", js: true, search: true do
           select_from_chosen('Count', from: 'Kpi type', match: :first)
           click_js_link 'Add a segment'
           fill_in 'Segment name', with: 'Option 1'
-          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          select_from_chosen('Dropdown', from: 'Capture mechanism', match: :first)
           click_js_button 'Save'
         end
         ensure_modal_was_closed

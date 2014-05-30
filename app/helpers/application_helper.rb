@@ -193,6 +193,10 @@ module ApplicationHelper
     link_to_if allowed, name, options, html_options
   end
 
+  def campaigns_list_for_dropdown
+    current_company.campaigns.accessible_by_user(current_company_user).order('name ASC').for_dropdown
+  end
+
   def link_to_deactivate(model, opts={})
     opts[:url] ||= [:deactivate, model]
     model_sytem_name = model.class.name.underscore
