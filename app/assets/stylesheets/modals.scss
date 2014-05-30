@@ -74,6 +74,10 @@ ul.select2-results{
 				position: absolute;
 				right: -50%;
 				top: 0;
+
+				.attachment-panel {
+					width: 220px;
+				}
 			}
 			.form-actions{
 				clear: both;

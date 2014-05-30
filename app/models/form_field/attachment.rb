@@ -16,7 +16,12 @@
 
 class FormField::Attachment < FormField
   def field_options(result)
-    {as: :attached_asset, label: self.name, field_id: self.id, options: self.settings, file_types: '', required: self.required, input_html: {value: result.value, class: field_classes, required: (self.required? ? 'required' : nil)}}
+    { as: :attached_asset, label: self.name, field_id: self.id, options: self.settings,
+      file_types: '', required: self.required,
+      input_html: {
+          value: result.value,
+          class: field_classes,
+            required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes
