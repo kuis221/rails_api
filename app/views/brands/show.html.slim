@@ -1,8 +1,14 @@
+- marques = resource.marques_list
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing brand details. Click to close.")
 
   .details_box.padding-top-close-bar
     h2= resource.name
+
+    - if marques.present?
+      .marques-data
+        span= "Marque(s): "
+        b= marques.gsub(/,([^ ])/, ', \1')
 
     .links-data
       = link_to '', edit_brand_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)

@@ -32,6 +32,10 @@ class Kpi < ActiveRecord::Base
 
   COMPLETE_TYPE_OPTIONS = CUSTOM_TYPE_OPTIONS.keys + OUT_BOX_TYPE_OPTIONS
 
+  SEGMENTS_COUNT_MIN = {"radio"     => 2,
+                        "dropdown"  => 1,
+                        "checkbox"  => 1}
+
   validates :name, presence: true, uniqueness: {scope: :company_id}
   validates :company_id, numericality: true, allow_nil: true
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
@@ -39,6 +43,8 @@ class Kpi < ActiveRecord::Base
   validates_associated :kpis_segments
 
   validate :segments_can_be_deleted?
+
+  validate :segments_count_valid?
 
   # KPIs-Segments relationship
   has_many :kpis_segments, dependent: :destroy, order: 'ordering ASC, id ASC'
@@ -281,7 +287,7 @@ class Kpi < ActiveRecord::Base
 
   def segments_can_be_deleted?
     kpis_segments.select{|s| s.marked_for_destruction? }.each do |segment|
-      errors.add :base, 'cannot delete segments with results' if segment.has_results?
+      errors.add :base, 'Cannot delete segments with results' if segment.has_results?
     end
   end
 
@@ -289,4 +295,12 @@ class Kpi < ActiveRecord::Base
     goal['kpis_segment_id'].nil? && ['count', 'percentage'].include?(kpi_type)
   end
 
+  def segments_count_valid?
+    #Valid if no restrictions for the selected capture mechanism or if segments count is less
+    #than the quantity permitted for the selected capture mechanism
+    min_count = SEGMENTS_COUNT_MIN[capture_mechanism] if SEGMENTS_COUNT_MIN.has_key?(capture_mechanism)
+    if min_count && kpis_segments.reject(&:marked_for_destruction?).count < min_count
+      errors.add :base, "You need to add at least #{min_count} segments for the selected capture mechanism"
+    end
+  end
 end

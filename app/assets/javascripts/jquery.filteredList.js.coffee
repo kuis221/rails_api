@@ -678,11 +678,14 @@ $.widget 'nmk.filteredList', {
 		@jqxhr = $.get @options.source, params, (response, textStatus, jqXHR) =>
 			$.loadingContent += 1
 			@spinner.remove();
+			resultsCount = 0
 			if typeof response is 'object'
 				if @options.onItemsLoad
 					@options.onItemsLoad response, page
 
 				@listContainer.css height: ''
+
+				resultsCount = response.length
 			else
 				$response = $('<div>').append(response)
 				$items = $response.find('[data-content="items"]')
@@ -696,13 +699,18 @@ $.widget 'nmk.filteredList', {
 				if page is 1 and $items.find('>*').length is 0
 					@emptyState = @_placeholderEmptyState()
 
+				resultsCount = $items.find('>*').length
+
+				if page is 1 and resultsCount is 0
+					@emptyState = @_placeholderEmptyState()
+
 				$response.remove()
 				$items.remove()
 				$items = $response = null
 
 
 			if @options.onPageLoaded
-				@options.onPageLoaded page
+				@options.onPageLoaded page, resultsCount
 
 			$.loadingContent -= 1
 			true

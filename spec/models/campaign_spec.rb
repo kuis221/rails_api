@@ -30,8 +30,11 @@ describe Campaign do
   it { should have_and_belong_to_many(:areas) }
   it { should have_and_belong_to_many(:date_ranges) }
   it { should have_and_belong_to_many(:day_parts) }
-
   it { should validate_presence_of(:name) }
+
+  let(:company) { FactoryGirl.create(:company) }
+
+  before { Company.current = company }
 
   describe "states" do
     before(:each) do
@@ -125,7 +128,7 @@ describe Campaign do
     end
 
     it "should create only the brands that does not exists into the app" do
-      FactoryGirl.create(:brand, name: 'Brand 1')
+      FactoryGirl.create(:brand, name: 'Brand 1', company: company)
       campaign = FactoryGirl.build(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')
       expect{
         campaign.save!

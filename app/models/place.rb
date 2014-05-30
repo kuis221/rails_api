@@ -187,7 +187,8 @@ class Place < ActiveRecord::Base
         city:          { title: 'City' },
         state:         { title: 'State' },
         country:       { title: 'Country' },
-        zipcode:       { title: 'Zip code' }
+        zipcode:       { title: 'Zip code' },
+        td_linx_code:  { title: 'TD Linx Code' }
       }
     end
   end

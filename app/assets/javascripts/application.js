@@ -36,6 +36,7 @@
 //= require jquery.activityForm
 //= require jquery.datepick
 //= require jquery.eventsCalendar
+//= require jquery.attachmentUploadZone
 //= require jquery.fancybox
 //= require jquery.filteredList
 //= require jquery.notifications

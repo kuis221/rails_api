@@ -66,20 +66,25 @@ feature "Brands", js: true do
 
       within visible_modal do
         fill_in 'Name', with: 'New brand name'
+        select2_add_tag 'Marque 1'
+        select2_add_tag 'Marque 2'
+
         click_button 'Create'
       end
       ensure_modal_was_closed
 
       find('h2', text: 'New brand name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'New brand name')
+      expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 1, Marque 2')
     end
   end
 
   feature "/brands/:brand_id", :js => true do
     scenario "GET show should display the brand details page" do
-      brand = FactoryGirl.create(:brand, name: 'Brand 1', company_id: @user.current_company.id)
+      brand = FactoryGirl.create(:brand, name: 'Brand 1', marques_list: 'Marque 1,Marque 2', company_id: @user.current_company.id)
       visit brand_path(brand)
       expect(page).to have_selector('h2', text: 'Brand 1')
+      expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 1, Marque 2')
     end
 
     scenario 'allows the user to activate/deactivate a team' do
@@ -106,11 +111,31 @@ feature "Brands", js: true do
 
       within visible_modal do
         fill_in 'Name', with: 'Edited brand name'
+        select2_add_tag 'Marque 1'
+
         click_js_button 'Save'
       end
       ensure_modal_was_closed
 
       expect(page).to have_selector('h2', text: 'Edited brand name')
+      expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 1')
+    end
+
+    scenario 'allows the user to edit the brand' do
+      brand = FactoryGirl.create(:brand, name: 'Brand 1', marques_list: 'Marque 1,Marque 2', company_id: @company.id)
+      Sunspot.commit
+      visit brand_path(brand)
+
+      click_js_link('Edit')
+
+      within visible_modal do
+        select2_remove_tag('Marque 1')
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      expect(page).to have_selector('h2', text: 'Brand 1')
+      expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 2')
     end
   end
 end

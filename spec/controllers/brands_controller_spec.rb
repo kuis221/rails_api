@@ -34,7 +34,7 @@ describe BrandsController do
       it "should assign the new brand to the brand portfolio" do
         expect {
           expect {
-            post 'create', brand_portfolio_id: brand_portfolio.to_param, brand: {name: 'test brand'}, format: :js
+            post 'create', brand_portfolio_id: brand_portfolio.to_param, brand: {name: 'Test Brand', marques_list: 'Marque 1'}, format: :js
           }.to change(Brand, :count).by(1)
         }.to change(brand_portfolio.brands, :count).by(1)
       end
@@ -123,7 +123,7 @@ describe BrandsController do
 
     it "should not render form_dialog if no errors" do
       lambda {
-        post 'create', brand: {name: 'Test Brand'}, format: :js
+        post 'create', brand: {name: 'Test Brand', marques_list: 'Marque 1,Marque 2'}, format: :js
       }.should change(Brand, :count).by(1)
       response.should be_success
       response.should render_template(:create)
@@ -131,6 +131,7 @@ describe BrandsController do
 
       brand = Brand.last
       brand.name.should == 'Test Brand'
+      brand.marques.all.map(&:name).should =~ ['Marque 1','Marque 2']
     end
 
     it "should render the form_dialog template if errors" do
@@ -146,11 +147,11 @@ describe BrandsController do
   describe "PUT 'update'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
     it "must update the brand attributes" do
-      t = FactoryGirl.create(:brand)
-      put 'update', id: brand.to_param, brand: {name: 'Test brand'}
+      put 'update', id: brand.to_param, brand: {name: 'Test brand', marques_list: 'Marque 1'}
       assigns(:brand).should == brand
       brand.reload
       brand.name.should == 'Test brand'
+      brand.marques.all.map(&:name).should =~ ['Marque 1']
     end
   end
 end
