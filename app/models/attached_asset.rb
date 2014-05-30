@@ -29,11 +29,12 @@ class AttachedAsset < ActiveRecord::Base
     styles: -> (a) {
       if a.instance.is_pdf?
         a.options[:convert_options] = { thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400' }
-        { thumbnail: ['300x400>', 'jpg'] }
+        { thumbnail: ['300x400>', :jpg] }
       else
         { small: '', thumbnail: '', medium: '800x800>' }
       end
     },
+    processors: ->(instance) { instance.is_pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
     convert_options: {
       small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
       thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
