@@ -94,6 +94,21 @@ module CapybaraBrandscopicHelpers
     wait_for_ajax
   end
 
+  def select2_add_tag(tag)
+    find('.select2-container').find(".select2-search-field").click
+    find("input.select2-input").set(tag)
+    page.execute_script(%|$("input.select2-input:visible").keyup();|)
+    [tag].flatten.each do |tag|
+      find(:xpath, "//body").find(".select2-results li", text: tag).click
+    end
+  end
+
+  def select2_remove_tag(tag)
+    page.execute_script %Q{
+      $('.select2-choices div:contains("#{tag}")').closest('li').find('a').click();
+    }
+  end
+
   def select_filter_calendar_day(day1, day2=nil)
     day2 ||= day1
     find('div.dates-range-filter div.datepick-month').click_js_link(day1).click_js_link(day2)

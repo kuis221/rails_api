@@ -12,6 +12,7 @@
 #  updated_at      :datetime         not null
 #  message_params  :text
 #  extra_params    :text
+#  params          :hstore
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -162,7 +162,7 @@ describe CampaignsController do
 
     it "should successfully create the new record" do
       portfolios = FactoryGirl.create_list(:brand_portfolio, 2, company: @company)
-      FactoryGirl.create(:brand, name: 'Cacique')
+      FactoryGirl.create(:brand, name: 'Cacique', company: @company)
       expect {
         expect {
           post 'create', campaign: {name: 'Test Campaign', description: 'Test Campaign description', brand_portfolio_ids: portfolios.map(&:id), brands_list: "Anchor Steam,Jack Daniels,Cacique"}, format: :js
