@@ -8029,7 +8029,7 @@ table.table.likert-scale-table {
 						height: 100
 					}
 					img {
-						width: 100%;
+						width: calc(100% - 10px);
 					}
 				}
 
