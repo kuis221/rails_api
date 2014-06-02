@@ -113,7 +113,7 @@ module UsersHelper
 
     # New team events notifications
     if grouped_notifications['new_team_event'].present? && grouped_notifications['new_team_event'].to_i > 0 && can?(:view_list, Event)
-      team_ids = user.notifications.new_team_events.map{|n| n.message_params[:team_id]}.uniq
+      team_ids = user.notifications.new_team_events.map{|n| n.message_params[:team_id]}.sort.uniq
       team_names = user.notifications.new_team_events.map{|n| n.message_params[:team_name]}.uniq.sort.join(', ')
       events_count = grouped_notifications['new_team_event'].to_i
       events_sentence = events_count > 1 ? "#{events_count} new events" : 'a new event'

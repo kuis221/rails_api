@@ -141,7 +141,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You teams Team A, Team B have 2 new events", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team2.id, team1.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
+          notifications.should include({"message" => "You teams Team A, Team B have 2 new events", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id, team2.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
         end
       end
 
