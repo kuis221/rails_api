@@ -113,6 +113,38 @@ describe CompanyUsersController, search: true do
         end
       end
 
+      it "should return a notification if a user team is added to a event's team" do
+        Timecop.freeze do
+          event1 = FactoryGirl.create(:event, company: @company)
+          @company_user.notifications.delete_all
+          team1 = FactoryGirl.create(:team, name: 'Team A', company: @company)
+          team1.users << @company_user
+          event1.teams << team1
+          Sunspot.commit
+
+          get 'notifications', id: @company_user.to_param, format: :json
+
+          response.should be_success
+
+          notifications = JSON.parse(response.body)
+          notifications.should include({"message" => "Your team Team A has a new event", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
+
+          #New user team added to a new event, different message is obtained
+          event2 = FactoryGirl.create(:event, company: @company)
+          team2 = FactoryGirl.create(:team, name: 'Team B', company: @company)
+          team2.users << @company_user
+          event2.teams << team2
+          Sunspot.commit
+
+          get 'notifications', id: @company_user.to_param, format: :json
+
+          response.should be_success
+
+          notifications = JSON.parse(response.body)
+          notifications.should include({"message" => "You teams Team A, Team B have 2 new events", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id, team2.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
+        end
+      end
+
       it "should return a notification if the user have a late event recap" do
         event = FactoryGirl.create(:late_event, company: @company)
         event.users << @company_user
