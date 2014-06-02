@@ -991,7 +991,7 @@ TimeField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="time" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="time" value="hh:mm" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
