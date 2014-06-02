@@ -31,6 +31,7 @@ class ActivityType < ActiveRecord::Base
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   TRENDING_FIELDS_TYPES = ['FormField::TextArea']
+  PHOTO_FIELDS_TYPES = ['FormField::Photo']
 
   scope :active, -> { where(active: true) }
 

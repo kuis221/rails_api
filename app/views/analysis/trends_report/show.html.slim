@@ -18,3 +18,13 @@
   = render 'mentions_across_locations'
 
   = render 'all_mentions'
+
+
+javascript:
+  $(document).on('slid', '.photo-container.carousel', function(e){
+    index = $(".active", e.target).index();
+    count = $(".item:first-child img", e.target).length;
+    items = $(".item.active img", e.target).length;
+    start = (index*count+1);
+    $('.carousel-progress', e.target).text(start + '-' + (start+items-1));
+  })

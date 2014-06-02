@@ -26,6 +26,8 @@ class ActivityResult < ActiveRecord::Base
 
   before_validation :prepare_for_store
 
+  delegate :company_id, to: :activity
+
   def value
     if form_field.present? && form_field.is_hashed_value?
       if form_field.type == 'FormField::Checkbox'

@@ -27,13 +27,13 @@ $.widget 'nmk.filteredList', {
 			@options.defaultParams = @options.clearFilterParams
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
-			.appendTo(@element).submit (e)->
+			.appendTo(@element).submit (e) ->
 				e.preventDefault()
 				e.stopPropagation()
 				false
 		@form.data('serializedData', null)
 
-		if @options.includeAutoComplete
+		if @options.includeAutoComplete and @options.filtersUrl
 			@_addAutocompleteBox()
 
 		if @options.includeCalendars
@@ -82,7 +82,7 @@ $.widget 'nmk.filteredList', {
 		if @options.autoLoad
 			@_loadPage(1)
 
-		@_loadFilters()
+		@_loadFilters() if @options.filtersUrl
 
 		@defaultParams = []
 		@initialized = true

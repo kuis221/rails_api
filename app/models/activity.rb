@@ -25,7 +25,7 @@ class Activity < ActiveRecord::Base
   validates :activity_type_id, numericality: true, presence: true,
     :inclusion => { :in => proc { |activity| activity.campaign.present? ? activity.campaign.activity_type_ids : (activity.company.present? ? activity.company.activity_type_ids : []) } }
 
-  validates :campaign_id, presence: true, numericality: true, 
+  validates :campaign_id, presence: true, numericality: true,
     if: -> (activitable) { activitable_type == 'Event' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
@@ -59,16 +59,17 @@ class Activity < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def all_values_for_trending
-    results.joins(:form_field).
-    where(form_fields: {type: ActivityType::TRENDING_FIELDS_TYPES}).
-    where('activity_results.value is not NULL AND activity_results.value !=\'\'').
-    pluck('activity_results.value')
+  def all_values_for_trending(term=nil)
+    scope = results.joins(:form_field).
+      where(form_fields: {type: ActivityType::TRENDING_FIELDS_TYPES}).
+      where('activity_results.value is not NULL AND activity_results.value !=\'\'')
+    scope = scope.where('lower(value) like ?', "%#{term}%") if term.present?
+    scope.pluck('activity_results.value')
   end
 
   def results_for_type
     activity_type.form_fields.map do |field|
-      result = results.detect{|r| r.form_field_id == field.id} || 
+      result = results.detect{|r| r.form_field_id == field.id} ||
                results.build({form_field_id: field.id}, without_protection: true)
       result.form_field = field
       result
@@ -77,11 +78,18 @@ class Activity < ActiveRecord::Base
 
   def results_for(fields)
     fields.map do |field|
-      result = results.select{|r| r.form_field_id == field.id}.first || 
+      result = results.select{|r| r.form_field_id == field.id}.first ||
                results.build({form_field_id: field.id}, without_protection: true)
       result.form_field = field
       result
     end
+  end
+
+  def photos
+    scope = results.joins(:form_field).
+      where(form_fields: {type: ActivityType::PHOTO_FIELDS_TYPES}).
+      where('activity_results.value is not NULL AND activity_results.value !=\'\'').
+      preload(:attached_asset).map(&:attached_asset)
   end
 
   private
@@ -103,6 +111,7 @@ class Activity < ActiveRecord::Base
 
     def reindex_trending
       if all_values_for_trending.count > 0
+        p "Reindexing element #{self.inspect}"
         Sunspot.index TrendObject.new(self)
       end
     end
