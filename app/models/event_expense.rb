@@ -29,6 +29,7 @@ class EventExpense < ActiveRecord::Base
   delegate :download_url, to: :receipt
 
   accepts_nested_attributes_for :receipt,
+    allow_destroy: true,
     reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
 
   private
