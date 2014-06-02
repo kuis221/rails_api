@@ -19,7 +19,7 @@
             .bar.bar-remaining style="width: #{goal[:remaining_percentage]}%"
           span.total
             - if goal[:goal].kpi.currency?
-              = number_to_currency(goal.value, precision: 2)
+              = number_to_currency(goal[:goal].value, precision: 2)
             - else
               = number_with_delimiter(goal[:goal].value.round)
       .span6.description.pull-right #{goal[:completed_percentage].round}% completed
