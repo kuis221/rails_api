@@ -114,8 +114,8 @@ class Analysis::TrendsReportController < FilteredController
         rows.each{|state| state[0] = country.states[state[0]]['name'] if country.states[state[0]].present? } if country.present?
         rows = [['State', 'Mentions']] + rows
       else
-        rows.each{|row| row[0] = country.name if country = Country.new(row[0])}
-        rows = [['Country', 'Mentions']] + rows
+        rows.each{|row| row[1], row[2] = [country.name, row[1]] if country = Country.new(row[0])}
+        rows = [['Country Code', 'Country', 'Mentions']] + rows
       end
       rows
     end

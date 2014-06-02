@@ -75,12 +75,20 @@
     function drawWorldMap(countries) {
       $('#mentions-breadcrumbs').html('');
       if (typeof countries == 'undefined'){
+        geochart = new google.visualization.GeoChart(
+          document.getElementById('mentions-across-locations-graph'));
+
         if (typeof cache['world'] != 'undefined') {
           drawWorldMap(cache['world']);
         } else {
           $.get('#{analysis_mentions_across_locations_path(format: :json)}', function(response){
             cache['world'] = response;
-            drawWorldMap(response);
+            debugger;
+            if (response.length == 2) {
+              drawStatesMap(response[1][0]);
+            } else {
+              drawWorldMap(response);
+            }
           });
         }
       } else {
@@ -94,8 +102,6 @@
           backgroundColor: '#ffffff'
         };
 
-        geochart = new google.visualization.GeoChart(
-          document.getElementById('mentions-across-locations-graph'));
         geochart.draw(data, options);
 
         google.visualization.events.addListener(geochart, 'regionClick', function(selection) {
