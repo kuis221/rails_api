@@ -240,12 +240,14 @@ class AttachedAsset < ActiveRecord::Base
 
     paperclip_file_path = file.path(:original).sub(%r{\A/},'')
     s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+    @processing = true
     if post_process_required?
       file.reprocess!
     end
     self.processed = true
 
     s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete if save
+    @processing = false
   end
 
   protected
@@ -292,7 +294,7 @@ class AttachedAsset < ActiveRecord::Base
 
     # Queue file processing
     def queue_processing
-      unless processed?
+      unless processed? || @processing
         if direct_upload_url.present?
           if post_process_required?
             Resque.enqueue(AssetsUploadWorker, id)
