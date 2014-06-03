@@ -39,6 +39,16 @@ class FilteredController < InheritedResources::Base
     end
   end
 
+  def show
+    case resource.class.name
+    when "Event"
+      #Remove the notifications related to new events and keep the notifications for new tasks associated to the event and user
+      current_company_user.notifications.where("params->'event_id' = (?)", resource.id.to_s).delete_all
+    when "Campaign"
+      current_company_user.notifications.where("params->'campaign_id' = (?)", resource.id.to_s).delete_all
+    end
+  end
+
   protected
     def build_resource_params
       [permitted_params || {}]
