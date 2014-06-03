@@ -83,6 +83,9 @@ en:
     new_events:
       one: "You have a new event"
       other: "You have %{count} new events"
+    new_team_events:
+      one: "Your team %{teams_names} has %{events_sentence}"
+      other: "You teams %{teams_names} have %{events_sentence}"
     new_tasks:
       one: "You have a new task"
       other: "You have %{count} new tasks"

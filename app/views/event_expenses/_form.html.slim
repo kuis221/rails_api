@@ -11,4 +11,5 @@
         = "&nbsp;".html_safe
       .expense-file-form
         = f.fields_for :receipt do |rf|
+          = rf.input :id, as: :hidden, wrapper: false
           = rf.input :file, label: false, as: :attached_asset, hidden_field_name: 'direct_upload_url'
