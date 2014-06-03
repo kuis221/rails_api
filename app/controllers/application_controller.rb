@@ -87,5 +87,16 @@ class ApplicationController < ActionController::Base
     def url_valid?(url)
       url = URI.parse(url) rescue false
       url.kind_of?(URI::HTTP) || url.kind_of?(URI::HTTPS)
-  end
+    end
+
+    def with_immediate_indexing
+      old_session = Sunspot.session
+      if Sunspot.session.is_a?(Sunspot::Queue::SessionProxy)
+        Sunspot.session = Sunspot.session.session
+      end
+      yield
+      Sunspot.commit
+    ensure
+      Sunspot.session = old_session
+    end
 end

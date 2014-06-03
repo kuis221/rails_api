@@ -20,13 +20,13 @@ javascript:
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="counters"]').length > 0){
-        $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'))
+        $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'));
       }
     },
     'onItemsChange': function(response, page){
       var taskId = document.location.hash.replace(/^#comments\-([0-9]+)/, '$1');
       if (taskId){
-        $('li#task_'+taskId+' .load-comments-link').click()
+        $('li#task_'+taskId+' .load-comments-link').click();
       }
     }
   });
