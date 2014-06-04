@@ -20,7 +20,7 @@ class Brand < ActiveRecord::Base
   attr_accessor :marques_list
 
   # Required fields
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: {scope: :company_id, case_sensitive: false}
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
