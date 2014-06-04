@@ -48,6 +48,7 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Brand Portfolios relationship
   has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
+  has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
   has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
@@ -254,6 +255,10 @@ class Campaign < ActiveRecord::Base
 
   def associated_brands
     brands + brand_portfolios.includes(:brands).map(&:brands).flatten
+  end
+
+  def associated_brand_ids
+    (brands.pluck(:id) + brand_portfolio_brands.pluck(:id)).uniq
   end
 
   def status

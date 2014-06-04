@@ -37,6 +37,8 @@ gem 'sunspot_stats'
 gem "sunspot-queue"
 gem 'progress_bar'
 gem 'unicorn'
+gem 'gctools'
+gem 'unicorn-worker-killer'
 gem "geocoder"
 gem "nested_form"
 gem 'rubyzip'
