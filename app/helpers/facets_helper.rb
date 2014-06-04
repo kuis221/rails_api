@@ -31,8 +31,9 @@ module FacetsHelper
   end
 
   def build_brands_bucket
-    brands = Brand.select('brands.id, brands.name').joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).group('brands.id, brands.name').order('brands.name ASC').map do |b|
-      build_facet_item({label: b.name, id: b.id, name: :brand})
+    brands = Brand.joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).
+        for_dropdown.map do |b|
+      build_facet_item({label: b[0], id: b[1], name: :brand})
     end
     {label: 'Brands', items: brands}
   end
@@ -41,12 +42,12 @@ module FacetsHelper
     places = current_company_user.places
     list = {label: :root, items: [], id: nil, path: nil}
 
-    areas = Area.scoped_by_company_id(current_company.id).accessible_by_user(current_company_user).order(:name).active.all
+    areas = current_company.areas.accessible_by_user(current_company_user).order(:name).active.all
     places.each do |p|
-      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) }).sort_by(&:name)
+      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) })
     end
 
-    areas = areas.map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
+    areas = areas.sort_by(&:name).map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
     {label: 'Areas', items: areas}
   end
 
@@ -93,7 +94,7 @@ module FacetsHelper
     end
   end
 
-  # Returns the facets for the venuesah  controller
+  # Returns the facets for the venues controller
   def venues_facets
     @facet_search ||= Array.new.tap do |f|
       # select what params should we use for the facets search
@@ -129,7 +130,7 @@ module FacetsHelper
 
       f.push build_areas_bucket(facet_search)
       #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
-      f.push build_facet(Campaign, 'Campaigns', :campaign, facet_search.facet(:campaign_ids).rows)
+      f.push build_campaign_bucket
       f.push build_brands_bucket
     end
   end
