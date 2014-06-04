@@ -1362,6 +1362,9 @@ h1, h2, h3{
 	margin-top: 0;
 	.blue{
 		color: $blue;
+		&.ml4{
+			margin-left: 4px;
+		}
 	}
 }
 .icon-chevron-up{
