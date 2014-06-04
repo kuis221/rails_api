@@ -8008,47 +8008,57 @@ table.table.likert-scale-table {
 		}
 	}
 	.row-fluid.mentions{
-		.span7{
+		.span10{
 			margin: 0 0 40px 0;
 			&:last-child{
 				margin-bottom: 20px;
 			}
 			.photo-container{
 				margin: 10px 0 0 0;
-				width: 650px;
+				//height: 320px;
+				overflow: hidden;
+				width: 100%;
+				.image-wrapper + .image-wrapper{
+					margin-left: 10px;
+				}
+
 				img {
-					width: calc(33.3333% - 10px);
 					display: inline-block;
-					margin-right: 10px;
+					width: calc(33.3333% - 14px);
 				}
 
 				&.photos-count-2 img {
-					width: calc(50% - 10px);
+					width: calc(50% - 15px);
 				}
 
 				&.photos-count-1 {
 					.image-wrapper {
 						display: block;
-						height: 100
 					}
 					img {
-						width: calc(100% - 10px);
+						width: calc(100% - 20px);
 					}
 				}
 
 				.carousel-controls {
 					text-align: center;
-					a  {
-						font-size: 40px;
-						color: $grey_three;
+					a:before{
+						font-size: 25px;
+						color: $user_menu;
+						position:relative;
+						top: 10px;
 					}
 					.carousel-label {
 						display: inline-block;
-						color: $grey_two;
+						color: $user_menu;
 						span {
-							color: $grey_three;
+							color: $brand;
 						}
 					}
+				}
+
+				.carousel-inner{
+					margin-bottom: 4px;
 				}
 			}
 			p{
