@@ -8,6 +8,7 @@ class FilteredController < InheritedResources::Base
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
   before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
+  after_filter :remove_resource_new_notifications, only: :show
 
   custom_actions collection: [:filters, :items]
 
@@ -36,16 +37,6 @@ class FilteredController < InheritedResources::Base
       render action: :new_export, formats: [:js]
     else
       super
-    end
-  end
-
-  def show
-    case resource.class.name
-    when "Event"
-      #Remove the notifications related to new events and keep the notifications for new tasks associated to the event and user
-      current_company_user.notifications.where("params->'event_id' = (?)", resource.id.to_s).delete_all
-    when "Campaign"
-      current_company_user.notifications.where("params->'campaign_id' = (?)", resource.id.to_s).delete_all
     end
   end
 
@@ -152,5 +143,15 @@ class FilteredController < InheritedResources::Base
 
     def sort_options
       {}
+    end
+
+    def remove_resource_new_notifications
+      case resource.class.name
+      when "Event"
+        #Remove the notifications related to new events (including for teams) and keep the notifications for new tasks associated to the event and user
+        current_company_user.notifications.where("message = 'new_event' OR message = 'new_team_event'").where("params->'event_id' = (?)", resource.id.to_s).delete_all
+      when "Campaign"
+        current_company_user.notifications.new_campaigns.where("params->'campaign_id' = (?)", resource.id.to_s).delete_all
+      end
     end
 end
