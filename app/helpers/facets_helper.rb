@@ -8,12 +8,15 @@ module FacetsHelper
 
   # Facet helper methods
   def build_facet(klass, title, name, facets)
-    if klass.name == 'CompanyUser'
-      items = klass.where(id: facets.map(&:value)).joins(:user).includes(:user).order('users.first_name, users.last_name')
+    items = if klass.name == 'CompanyUser'
+      klass.where(id: facets.map(&:value)).
+        for_dropdown.
+        map{|x| build_facet_item({label: x[0], id: x[1], name: x[0]})}
     else
-      items = klass.where(id: facets.map(&:value)).order(:name)
+      klass.where(id: facets.map(&:value)).
+        order(:name).
+        map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
     end
-    items = items.map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
 
     {label: title, items: items}
   end
