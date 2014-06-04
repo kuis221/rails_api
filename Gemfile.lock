@@ -136,6 +136,7 @@ GEM
       rspec (~> 2.0)
       rspec-instafail (~> 0.2.0)
       ruby-progressbar (~> 1.0)
+    gctools (0.2.3)
     geocoder (1.1.8)
     google_places (0.18.0)
       httparty
@@ -184,7 +185,7 @@ GEM
       kdtree
       require_all
     nested_form (0.3.2)
-    newrelic_rpm (3.8.0.218)
+    newrelic_rpm (3.8.1.221)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     oink (0.10.1)
@@ -365,10 +366,12 @@ GEM
     uglifier (2.0.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
-    unicorn (4.8.2)
+    unicorn (4.8.3)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    unicorn-worker-killer (0.4.2)
+      unicorn (~> 4)
     unread (0.3.0)
       activerecord (>= 3)
     uuidtools (2.1.4)
@@ -408,6 +411,7 @@ DEPENDENCIES
   factory_girl_rails (~> 4.3)
   faker
   fuubar
+  gctools
   geocoder
   google_places
   has_scope
@@ -459,5 +463,6 @@ DEPENDENCIES
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   unicorn
+  unicorn-worker-killer
   unread
   validates_timeliness (~> 3.0)
