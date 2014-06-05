@@ -3598,6 +3598,9 @@ textarea::-webkit-input-placeholder {
 				width: 120px;
 				&[type="date"]{
 					background: url(calendar.svg) no-repeat 3px 8px;
+					height: 33px;
+					padding: 2px 0 2px 10px;
+					width: 140px;
 				}
 				&[type="time"]{
 					background: url(time.svg) no-repeat 3px 8px;
