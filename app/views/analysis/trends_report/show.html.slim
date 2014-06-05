@@ -2,16 +2,17 @@
   = resource_details_bar("You are viewing event details. Click to close.")
 
   .details_box.padding-top-close-bar
-  	.row-fluid
-  		.span12
-  			.span8
-   		 		h2.mb10= @term.capitalize
-   		 	.span4
-    			.total_mentions.pull-right
-    				p
-	    				| TOTAL MENTIONS:
-	    				span= @info[:count]
-	    				span class="indicator-#{@info[:trending]}"
+    .row-fluid
+      .span12
+        .span8
+          h2.mb10= @term.capitalize
+        .span4
+          .total_mentions.pull-right
+            p
+              | TOTAL MENTIONS:
+              span= @info[:count]
+              - if @info[:trending] != :stable
+                span class="indicator-#{@info[:trending]}"
 
   = render 'mentions_over_time'
 
