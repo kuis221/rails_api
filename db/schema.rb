@@ -211,8 +211,6 @@ ActiveRecord::Schema.define(:version => 20140520204529) do
     t.boolean  "active",        :default => true
   end
 
-  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
-
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
     t.integer "campaign_id"
