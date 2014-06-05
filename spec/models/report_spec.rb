@@ -543,6 +543,27 @@ describe Report do
       ]
     end
 
+    it "returns a line for each activity type when adding an activity type field as a row" do
+      event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      activity_type = FactoryGirl.create(:activity_type, name: 'SomeActivityName1', company: company)
+      campaign.activity_types << activity_type
+
+      activity = FactoryGirl.create(:activity, activitable: event,
+        activity_type: activity_type, company_user: user)
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"activity_type:name", "label"=>"Activity Type"}],
+        values:  [{"field"=>"activity_type:user", "label"=>"Impressions", "aggregate"=>"count"}]
+      )
+      page = report.fetch_page
+
+      expect(page).to eql [
+        {"activity_type_name"=>"SomeActivityName1", "values" => [1.0]}
+      ]
+    end
+
     it "returns the correct number of events" do
       event = FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300}) # Another event
@@ -1283,13 +1304,13 @@ describe Report do
         report = FactoryGirl.create(:report,
           company: company,
           columns: [{"field"=>"values", "label"=>"Values"}],
-          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:activity_date", "label"=>"Date"}],
+          rows:    [{"field"=>"activity_type:date", "label"=>"Date"}],
           values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
         )
         page = report.fetch_page
         expect(page).to eql [
-            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.yesterday.to_s(:ymd), "values" => [105.00]},
-            {"activity_type_#{form_field.fieldable.id}_activity_date"=>Date.today.to_s(:ymd), "values" => [300.00]}
+            {"activity_type_date"=>Date.yesterday.to_s(:ymd), "values" => [105.00]},
+            {"activity_type_date"=>Date.today.to_s(:ymd), "values" => [300.00]}
         ]
       end
 
@@ -1328,13 +1349,13 @@ describe Report do
         report = FactoryGirl.create(:report,
           company: company,
           columns: [{"field"=>"values", "label"=>"Values"}],
-          rows:    [{"field"=>"activity_type_#{form_field.fieldable.id}:user", "label"=>"User"}],
+          rows:    [{"field"=>"activity_type:user", "label"=>"User"}],
           values:  [{"field"=>"form_field:#{form_field.id}", "label"=>"Field1", "aggregate"=>"sum"}]
         )
         page = report.fetch_page
         expect(page).to eql [
-            {"activity_type_#{form_field.fieldable.id}_user"=>user2.full_name, "values" => [105.00]},
-            {"activity_type_#{form_field.fieldable.id}_user"=>user.full_name, "values" => [300.00]}
+            {"activity_type_user"=>user2.full_name, "values" => [105.00]},
+            {"activity_type_user"=>user.full_name, "values" => [300.00]}
         ]
       end
 

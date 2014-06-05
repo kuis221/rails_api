@@ -436,6 +436,18 @@ class Report < ActiveRecord::Base
       s = s.joins(:place) if fields_without_filters.any?{|v| v.model_name == 'place' } || filters.any?{|v| v.model_name == 'place' && is_filtered_by?(v.field)}
       s = s.joins(:campaign) if fields_without_filters.any?{|v| v.model_name == 'campaign'} || filters.any?{|v| v.model_name == 'campaign' && is_filtered_by?(v.field)}
 
+      activity_type_fields = fields_without_filters.select{|v| v.model_name == 'activity_type'} +
+                             filters.select{|v| v.model_name == 'activity_type' && is_filtered_by?(v.field)}
+      if activity_type_fields.any?
+        if activity_type_fields.any?{|f| ['activity_type:name', 'activity_type:description'].include? f.field }
+          s = s.joins(activities: :activity_type)
+        end
+        if activity_type_fields.any?{|f| ['activity_type:user'].include? f.field }
+          s = s.joins(:activities).joins('INNER JOIN company_users activity_company_user ON activity_company_user.id=activities.company_user_id')
+               .joins('INNER JOIN users activity_user ON activity_user.id=activity_company_user.user_id')
+        end
+      end
+
       # Join with users/teams table
       include_roles = fields_without_filters.any?{|v| v.model_name == 'role' } || filters.any?{|v| v.model_name == 'role' && is_filtered_by?(v.field)}
       if fields.any?{|v| v.model_name == 'user'} || filters.any?{|v| v.model_name == 'user' && is_filtered_by?(v.field)}  || include_roles
@@ -536,12 +548,7 @@ class Report < ActiveRecord::Base
       activity_type_fields = [field_list, rows, columns].flatten.compact.select{|f| f.activity_type.present? }
       if activity_type_fields.any?
         ids = activity_type_fields.map{|at| at.activity_type.id }
-        #s = s.joins("INNER JOIN activities activities on activities.activity_type_id in (#{ids.join(',')})")
         s = s.where(activities: {activity_type_id: ids})
-        activity_type_fields.select{|f| f.activity_field == 'user' }.each do |f|
-          s = s.joins("LEFT JOIN company_users cu_activities_#{f.activity_type.id} on cu_activities_#{f.activity_type.id}.id=activities.company_user_id " +
-                      "LEFT JOIN users users_activities_#{f.activity_type.id} on users_activities_#{f.activity_type.id}.id=cu_activities_#{f.activity_type.id}.user_id " )
-        end
       end
 
       [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
@@ -695,13 +702,7 @@ class Report::Field
         ["ar_field_#{form_field.id}.value", "form_field_#{form_field.id}"]
       end
     elsif activity_type.present?
-      if activity_field == 'user'
-        ["users_activities_#{activity_type.id}.first_name || ' ' || users_activities_#{activity_type.id}.last_name", "activity_user_#{activity_type.id}"]
-      elsif activity_field == 'activity_date'
-        ["to_char(activities.#{activity_field}, 'YYYY/MM/DD')", "activity_#{activity_field}_#{activity_type.id}"]
-      else
-        ["activities.#{activity_field}", "activity_#{activity_field}_#{activity_type.id}"]
-      end
+      ["activities.#{activity_field}", "activity_#{activity_field}_#{activity_type.id}"]
     elsif m = /\A(.*):([a-z_]+)\z/.match(field)
       definition = field_class.report_fields[m[2].to_sym]
       definition[:column].nil? ? ["#{field_class.table_name}.#{m[2]}", m[2]] : ( definition[:column].respond_to?(:call) ? [definition[:column].call, m[2]] :  [definition[:column], m[2]] )
