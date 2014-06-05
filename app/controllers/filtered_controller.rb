@@ -143,4 +143,13 @@ class FilteredController < InheritedResources::Base
     def sort_options
       {}
     end
+
+    # Makes sure that the resource is immediate indexed.
+    # this can be used in any controller with:
+    #  after_index :force_resource_reindex, only: [:create]
+    def force_resource_reindex
+      with_immediate_indexing do
+        Sunspot.index resource if resource.persisted? && resource.errors.empty?
+      end
+    end
 end

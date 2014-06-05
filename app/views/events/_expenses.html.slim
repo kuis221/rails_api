@@ -7,4 +7,4 @@
       li.total-expenses
         span TOTAL:
         span
-          b= number_to_currency(resource.event_expenses.sum(&:amount), precision: 2)
+          b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)

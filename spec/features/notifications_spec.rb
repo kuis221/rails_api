@@ -5,6 +5,7 @@ feature "Notifications", search: true, js: true do
   let(:campaign) { FactoryGirl.create(:campaign, company: company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
+  let(:team) { FactoryGirl.create(:team, name: 'Team 1') }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
 
@@ -36,6 +37,34 @@ feature "Notifications", search: true, js: true do
       expect(page).to have_notification 'You have 2 new events'
 
       click_notification 'You have 2 new events'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+
+      visit current_url
+
+      # reload page and make sure that only the two events are still there
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications for new team events" do
+      without_current_user do
+        team.users << company_user
+        FactoryGirl.create(:event, company: company, teams: [team], campaign: campaign, place: place)
+        FactoryGirl.create(:event, company: company, campaign: campaign, place: place) # Event not associated to the team
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'Your team Team 1 has a new event'
+
+      without_current_user{ FactoryGirl.create(:event, company: company, teams: [team], campaign: campaign, place: place) }
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'Your team Team 1 has 2 new events'
+
+      click_notification 'Your team Team 1 has 2 new events'
 
       expect(current_path).to eql events_path
       expect(page).to have_selector('#events-list li', count: 2)

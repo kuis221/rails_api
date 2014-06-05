@@ -100,6 +100,15 @@ class ActivityType < ActiveRecord::Base
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
     end
+
+    def report_fields
+      {
+        name:        { title: 'Activity Type Name' },
+        description: { title: 'Activity Type Description' },
+        user:        { title: 'Activity User', column: -> { "activity_user.first_name || ' ' || activity_user.last_name" } },
+        date:        { title: 'Activity Date', column: -> { "to_char(activities.activity_date, 'YYYY/MM/DD')" } }
+      }
+    end
   end
 
   private

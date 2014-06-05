@@ -13,6 +13,7 @@ class TasksController < FilteredController
   helper_method :assignable_users, :status_counters, :calendar_highlights
 
   before_filter :set_body_class, only: :index
+  after_filter :force_resource_reindex, only: [:create, :update]
 
   def autocomplete
     buckets = autocomplete_buckets({

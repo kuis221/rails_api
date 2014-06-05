@@ -6,12 +6,12 @@ module Results
       fields.merge! Hash[current_company.activity_types.includes(form_fields: [:options, :statements]).map do |activity_type|
         [
           activity_type.name,
-          activity_type.form_fields.map{|ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact +
-              [["activity_type_#{activity_type.id}:user", 'User', 'User'],  ["activity_type_#{activity_type.id}:date", 'Date', 'Date']]
+          activity_type.form_fields.map{|ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact
         ]
       end]
 
       fields.merge({
+        'Activity Type' => model_report_fields(ActivityType),
         'Area' => model_report_fields(Area),
         'Event' => model_report_fields(Event),
         'Task' => model_report_fields(Task),

@@ -111,6 +111,19 @@ module UsersHelper
       })
     end
 
+    # New team events notifications
+    if grouped_notifications['new_team_event'].present? && grouped_notifications['new_team_event'].to_i > 0 && can?(:view_list, Event)
+      team_ids = user.notifications.new_team_events.map{|n| n.message_params[:team_id]}.sort.uniq
+      team_names = user.notifications.new_team_events.map{|n| n.message_params[:team_name]}.uniq.sort.join(', ')
+      events_count = grouped_notifications['new_team_event'].to_i
+      events_sentence = events_count > 1 ? "#{events_count} new events" : 'a new event'
+      alerts.push({
+        message: I18n.translate("notifications.new_team_events", count: team_ids.count, teams_names: team_names, events_sentence: events_sentence), level: 'grey',
+        url: events_path(notification: 'new_team_event', team: team_ids, new_at: Time.now.to_i, start_date: '', end_date: ''),
+        unread: true, icon: 'icon-notification-event', type: 'new_team_event'
+      })
+    end
+
     # New campaigns notifications
     if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0 && can?(:read, Campaign)
       alerts.push({

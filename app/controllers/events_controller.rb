@@ -67,15 +67,18 @@ class EventsController < FilteredController
   def calendar_highlights
     @calendar_highlights ||= Hash.new.tap do |hsh|
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
-      Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, to_char(TIMEZONE('UTC', end_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as end, count(events.id) as count")
-        .where(company_id: current_company, active: true)
-        .for_campaigns_accessible_by(current_company_user)
-        .group("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD'), to_char(TIMEZONE('UTC', end_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')").each do |result|
-          the_start = Timeliness.parse(result.start).to_date
-          the_end = Timeliness.parse(result.end).to_date
+      events_scope = if current_company.timezone_support?
+        Event.select("to_char(local_start_at, 'YYYY/MM/DD') as start, to_char(local_end_at, 'YYYY/MM/DD') as end, count(events.id) as count")
+      else
+        Event.select("to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start, to_char(TIMEZONE('UTC', end_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as end, count(events.id) as count")
+      end.active.accessible_by_user(current_company_user)
+
+      ActiveRecord::Base.connection.select_all(events_scope.group("1, 2").to_sql).each do |result|
+          the_start = Timeliness.parse(result['start']).to_date
+          the_end = Timeliness.parse(result['end']).to_date
           (the_start..the_end).each do |day|
             parts = day.to_s(:ymd).split('/').map(&:to_i)
-            hsh.merge!({parts[0] => {parts[1] => {parts[2] => result.count.to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
+            hsh.merge!({parts[0] => {parts[1] => {parts[2] => result['count'].to_i}}}){|year, months1, months2| months1.merge(months2) {|month, days1, days2| days1.merge(days2){|day, day_count1, day_count2| day_count1 + day_count2} }  }
           end
       end
       hsh
@@ -123,21 +126,23 @@ class EventsController < FilteredController
       campaing_brands_map = {}
       start_date = DateTime.strptime(params[:start],'%s')
       end_date = DateTime.strptime(params[:end],'%s')
-      p = search_params.merge(start_date: nil, end_date: nil)
-      search = Event.do_search(p, true)
+      custom_params = search_params.merge(start_date: nil, end_date: nil)
+      search = Event.do_search(custom_params, true)
       #raise search.facet(:start_at).inspect
       campaign_ids = search.facet(:campaign_id).rows.map{|r| r.value.to_i }
-      current_company.campaigns.where(id: campaign_ids).map{|campaign| campaing_brands_map[campaign.id] = campaign.associated_brands }
+      current_company.campaigns.where(id: campaign_ids).map{|campaign| campaing_brands_map[campaign.id] = campaign.associated_brand_ids }
 
-      all_brands = campaing_brands_map.values.flatten.map(&:id).uniq
+      all_brands = campaing_brands_map.values.flatten.uniq
+      brands = Hash[Brand.where(id: all_brands).map{|b| [b.id, b]}]
 
-      search = Event.do_search(p.merge(start_date: start_date.to_s(:slashes), end_date: end_date.to_s(:slashes), per_page: 1000))
+      search = Event.do_search(custom_params.merge(start_date: start_date.to_s(:slashes), end_date: end_date.to_s(:slashes), per_page: 1000))
       search.hits.each do |hit|
         sd = hit.stored(:start_at).in_time_zone.to_date
         ed = hit.stored(:end_at).in_time_zone.to_date
         (sd..ed).each do |day|
           days[day] ||= {}
-          campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand|
+          campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand_id|
+            brand = brands[brand_id]
             days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes))}
             days[day][brand.id][:count] += 1
             days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
@@ -159,9 +164,10 @@ class EventsController < FilteredController
         # store them in the session to allow the user to navigate, paginate, etc
         if params.has_key?(:new_at) && params[:new_at]
           @search_params[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
-            notifications = current_company_user.notifications.new_events
-            ids = notifications.map{|n| n.params['event_id']}.compact
-            notifications.destroy_all
+            ids = (params.has_key?(:notification) && params[:notification] == 'new_team_event') ?
+                  current_company_user.notifications.new_team_events.pluck("params->'event_id'") :
+                  current_company_user.notifications.new_events.pluck("params->'event_id'")
+            current_company_user.notifications.where("params->'event_id' in (?)", ids).delete_all
             ids
           end
         end

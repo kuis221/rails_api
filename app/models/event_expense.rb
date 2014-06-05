@@ -17,6 +17,7 @@ class EventExpense < ActiveRecord::Base
 
   #validates :event_id, presence: true, numericality: true
   validates :name, presence: true
+  validates :amount, presence: true
 
   after_save :update_event_data
 
@@ -29,6 +30,7 @@ class EventExpense < ActiveRecord::Base
   delegate :download_url, to: :receipt
 
   accepts_nested_attributes_for :receipt,
+    allow_destroy: true,
     reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
 
   private

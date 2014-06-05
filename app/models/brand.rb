@@ -20,7 +20,7 @@ class Brand < ActiveRecord::Base
   attr_accessor :marques_list
 
   # Required fields
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: {scope: :company_id, case_sensitive: false}
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
@@ -102,6 +102,15 @@ class Brand < ActiveRecord::Base
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
         paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
       end
+    end
+
+    # Returns an Array of campaigns ready to be used for a dropdown. Use this
+    # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
+    # TODO: use pluck(:name, :id) when upgraded to Rails 4
+    def for_dropdown
+      ActiveRecord::Base.connection.select_all(
+        self.select("brands.name, brands.id").group('1, 2').order('1').to_sql
+      ).map{|r| [r['name'], r['id']] }
     end
   end
 
