@@ -863,6 +863,12 @@ body.app-layout{
 	font-family: $baseFontFamily;
 	padding: 7px 17px;
 	text-shadow:none;
+	&[disabled]{
+		background-color: $grey_one;
+		&:hover{
+			background-color: $grey_one;
+		}
+	}
 	&.active{
 		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
@@ -870,19 +876,29 @@ body.app-layout{
 			}
 		}
 	}
-	&.download:after{
-		color: white;
-		content: "\e00b";
-		font-family: 'icons';
-		font-size: 15px;
-		padding-left: 6px;
-		padding-right: 6px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		top:1px;
-		-webkit-font-smoothing: antialiased;
+	&.download{
+		&:after{
+			color: white;
+			content: "\e00b";
+			font-family: 'icons';
+			font-size: 15px;
+			padding-left: 6px;
+			padding-right: 6px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:1px;
+			-webkit-font-smoothing: antialiased;
+		}
+		&[disabled]{
+			background-color: $grey_one;
+			color: #f2f2f2;
+			&:hover{
+				background-color: $grey_one;
+				color:#f2f2f2;
+			}
+		}
 	}
 	&:focus{
 		outline:0;
@@ -3118,6 +3134,7 @@ ul.ui-widget-content{
 				color: $menu;
 				font-weight: normal !important;
 				padding: 7px 10px;
+				font-size: 13px;
 				&:active, &:hover{
 					background-color: $menu !important;
 					background-image: none !important;
@@ -3137,6 +3154,7 @@ ul.ui-widget-content{
 		}
 		&.ui-autocomplete-category{
 			color:$text;
+			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
 			text-transform: uppercase;
@@ -5131,7 +5149,7 @@ body.roles{
 #venue-map-canvas{
 	border:1px solid $user_menu;
 	display:block;
-	margin: 20px -15px 30px -15px;
+	margin: 20px -15px 4px -15px;
 	height: 500px;
 }
 
