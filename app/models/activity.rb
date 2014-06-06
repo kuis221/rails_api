@@ -111,8 +111,9 @@ class Activity < ActiveRecord::Base
 
     def reindex_trending
       if all_values_for_trending.count > 0
-        p "Reindexing element #{self.inspect}"
         Sunspot.index TrendObject.new(self)
+      else
+        Sunspot.remove TrendObject.new(self)
       end
     end
 end

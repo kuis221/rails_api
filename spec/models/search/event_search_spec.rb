@@ -118,6 +118,31 @@ describe Event, search: true do
     Event.do_search({company_id: company.id, event_data_stats: true}).results.should =~ [event, event2]
   end
 
+  describe "TrendObject indexing" do
+    let(:field) { FactoryGirl.create(:campaign_form_field, field_type: 'textarea', campaign: campaign ) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
+
+    it "should create a TrendObject if the event have any trending result" do
+      event.results_for([field]).first.value = 'this have a value'
+      event.save
+
+      Sunspot.commit
+
+      search = TrendObject.do_search(company_id: campaign.company_id)
+      expect(search.results.map(&:resource)).to match_array [event]
+
+      # Now unset the result and make sure its removed from the index
+      event.results_for([field]).first.value = ''
+      event.save
+
+      Sunspot.commit
+
+      search = TrendObject.do_search(company_id: campaign.company_id)
+      expect(search.results.map(&:resource)).to be_empty
+    end
+  end
+
   it "should not fail if a brand without campaings is given" do
     company = FactoryGirl.create(:company)
     FactoryGirl.create(:event, company: company)

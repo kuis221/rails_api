@@ -60,7 +60,8 @@ class Analysis::TrendsReportController < FilteredController
     def build_source_bucket
       activity_types = current_company.activity_types.active.with_trending_fields
       if activity_types.any?
-        items =  [{label: 'Comments', id: "Comment", name: :source, count: 1}]
+        items =  [ {label: 'Comments', id: "Comment", name: :source, count: 1},
+        items =    {label: 'Post Event Data', id: "Event", name: :source, count: 1} ]
         items += activity_types.map{|at| build_facet_item({label: at.name, id: "ActivityType:#{at.id}", name: :source, count: 1}) }
         {label: 'Source', items: items}
       else

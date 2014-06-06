@@ -51,6 +51,12 @@ describe 'TrendObject' do
     before { campaign.activity_types << activity_type }
 
     it "works" do
+      event_field = FactoryGirl.create(:campaign_form_field,
+        field_type: 'text', campaign: campaign )
+
+      event.results_for([event_field]).first.value = 'this have a value'
+      event.save
+
       comment.save
 
       activity.results_for([field]).first.value = 'this have a value'
@@ -60,7 +66,7 @@ describe 'TrendObject' do
       Sunspot.commit
 
       search = TrendObject.do_search(company_id: campaign.company_id)
-      expect(search.results.map(&:resource)).to match_array [activity, comment]
+      expect(search.results.map(&:resource)).to match_array [activity, comment, event]
     end
   end
 end

@@ -64,6 +64,8 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
+  after_commit :reindex_trending
+
   attr_accessor :place_reference
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
@@ -128,6 +130,13 @@ class Event < ActiveRecord::Base
           select place_id FROM locations_places where location_id in (?)
       )', places.map(&:id).uniq+[0], places.map{|p| p.is_location? ? p.location_id : nil}.compact.uniq+[0])
   }
+
+  scope :with_trending_results, ->  {
+    joins(event_results: :form_field).
+    where(campaign_form_fields: {field_type: CampaignFormField::TRENDING_FIELDS_TYPES}).
+    where('event_results.value is not NULL AND value <> \'\'')
+    group('events.id') }
+
 
   track_who_does_it
 
@@ -373,6 +382,14 @@ class Event < ActiveRecord::Base
 
   def results_for_kpis(kpis)
     kpis.map{|kpi| result_for_kpi(kpi) }.flatten.compact
+  end
+
+  def all_values_for_trending(term=nil)
+    scope = results.joins(:form_field).
+      where(campaign_form_fields: {field_type: CampaignFormField::TRENDING_FIELDS_TYPES}).
+      where('event_results.value is not NULL AND event_results.value !=\'\'')
+    scope = scope.where('lower(value) like ?', "%#{term}%") if term.present?
+    scope.pluck('event_results.value')
   end
 
   def locations_for_index
@@ -841,5 +858,13 @@ class Event < ActiveRecord::Base
 
     def add_current_company_user
       self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
+    end
+
+    def reindex_trending
+      if all_values_for_trending.count > 0
+        Sunspot.index TrendObject.new(self)
+      else
+        Sunspot.remove TrendObject.new(self)
+      end
     end
 end

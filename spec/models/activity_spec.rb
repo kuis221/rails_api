@@ -55,7 +55,7 @@ describe Activity do
 
     before { campaign.activity_types << activity_type }
 
-    it "results empty if no activities have the give fields" do
+    it "results empty if no activities have the given fields" do
       FactoryGirl.create(:activity, activity_type: activity_type,
         activitable: venue, campaign: campaign, company_user_id: 1)
       expect(Activity.with_results_for(field)).to be_empty
@@ -81,6 +81,42 @@ describe Activity do
       }.to change(ActivityResult, :count).by(2)
 
       expect(Activity.with_results_for([field, field2])).to match_array [activity]
+    end
+  end
+
+  describe "all_values_for_trending" do
+    let(:activity_type) { FactoryGirl.create(:activity_type, company: campaign.company) }
+    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+    let(:venue) { FactoryGirl.create(:venue, company: campaign.company) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:activity) { FactoryGirl.create(:activity, activity_type: activity_type,
+            activitable: venue, campaign: campaign, company_user_id: 1) }
+
+    before { campaign.activity_types << activity_type }
+
+    it "results empty if no activities have the given fields" do
+      expect(activity.all_values_for_trending).to be_empty
+    end
+
+    it "returns all the values for all trending fields" do
+      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
+
+      activity.results_for([field]).first.value = 'this have a value'
+      activity.results_for([field2]).first.value = 'another value'
+      activity.save
+
+      expect(activity.all_values_for_trending).to match_array ['this have a value', 'another value']
+    end
+
+    it "returns all the values for all trending fields that match the given term" do
+      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
+
+      activity.results_for([field]).first.value = 'this have a value'
+      activity.results_for([field2]).first.value = 'another value'
+      activity.save
+
+      expect(activity.all_values_for_trending('another')).to match_array ['another value']
+      expect(activity.all_values_for_trending('value')).to match_array ['this have a value', 'another value']
     end
   end
 end

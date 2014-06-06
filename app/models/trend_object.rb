@@ -93,6 +93,8 @@ class TrendObject
   def place
     if @resource.is_a?(Comment)
       @resource.commentable.place
+    elsif @resource.is_a?(Event)
+      @resource.place
     elsif @resource.activitable.present?
       @resource.activitable.place
     end
@@ -101,6 +103,8 @@ class TrendObject
   def start_at
     if @resource.is_a?(Comment)
       @resource.commentable.start_at
+    elsif @resource.is_a?(Event)
+      @resource.start_at
     else
       @resource.activity_date.beginning_of_day
     end
@@ -109,6 +113,8 @@ class TrendObject
   def end_at
     if @resource.is_a?(Comment)
       @resource.commentable.end_at
+    elsif @resource.is_a?(Event)
+      @resource.start_at
     else
       @resource.activity_date.end_of_day
     end
@@ -224,6 +230,18 @@ class TrendObject
           Sunspot.commit if options[:batch_commit]
         end
         options[:progress_bar].increment!(records.length) if options[:progress_bar]
+      end
+
+      # Index events PostEvent-Forms
+      batch_counter = 0
+      Campaign.where(id: CampaignFormField.for_trends.pluck('DISTINCT campaign_id')).find_each do |campaign|
+        campaign.events.with_trending_results.find_in_batches(options.slice(:batch_size, :start)) do |records|
+          solr_benchmark(options[:batch_size], batch_counter += 1) do
+            Sunspot.index(records.map{|event| TrendObject.new(event) }.select { |model| model.indexable? })
+            Sunspot.commit if options[:batch_commit]
+          end
+          options[:progress_bar].increment!(records.length) if options[:progress_bar]
+        end
       end
 
       # Index activities with text answers

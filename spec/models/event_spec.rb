@@ -894,6 +894,38 @@ describe Event do
     end
   end
 
+
+  describe "all_values_for_trending" do
+    let(:field) { FactoryGirl.create(:campaign_form_field, field_type: 'textarea', campaign: campaign ) }
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
+
+    it "results empty if no activities have the given fields" do
+      expect(event.all_values_for_trending).to be_empty
+    end
+
+    it "returns all the values for all trending fields" do
+      field2 = FactoryGirl.create(:campaign_form_field, field_type: 'text', campaign: campaign)
+
+      event.results_for([field]).first.value = 'this have a value'
+      event.results_for([field2]).first.value = 'another value'
+      event.save
+
+      expect(event.all_values_for_trending).to match_array ['this have a value', 'another value']
+    end
+
+    it "returns all the values for all trending fields that match the given term" do
+      field2 = FactoryGirl.create(:campaign_form_field, field_type: 'text', campaign: campaign )
+
+      event.results_for([field]).first.value = 'this have a value'
+      event.results_for([field2]).first.value = 'another value'
+      event.save
+
+      expect(event.all_values_for_trending('another')).to match_array ['another value']
+      expect(event.all_values_for_trending('value')).to match_array ['this have a value', 'another value']
+    end
+  end
+
   describe "#event_place_valid?" do
     after do
       User.current = nil
