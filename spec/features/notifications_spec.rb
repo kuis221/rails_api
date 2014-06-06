@@ -76,6 +76,22 @@ feature "Notifications", search: true, js: true do
       expect(page).to have_selector('#events-list li', count: 2)
     end
 
+    it "should remove notifications for new events visited" do
+      without_current_user do # so the permissions are not validated during the event creation
+        FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:event, company: company, campaign: campaign, place: place) # Event not associated to the user
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'You have 2 new events'
+
+      #New events counter should be decreased by 1
+      visit event_path(company_user.events.first)
+      expect(page).to have_notification 'You have a new event'
+    end
+
     it "should receive notifications for new tasks assigned to him" do
       event = FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
       task = FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
@@ -148,6 +164,25 @@ feature "Notifications", search: true, js: true do
       expect(current_path).to eql campaigns_path
       expect(page).to have_selector('#campaigns-list li', count: 2)
     end
+
+    it "should remove notifications for new campaigns visited" do
+      campaign2 = FactoryGirl.create(:campaign, company: company)
+      without_current_user do # so the permissions are not validated during the event creation
+        FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
+        FactoryGirl.create(:event, company: company, campaign: campaign2, place: place)
+      end
+      Sunspot.commit
+
+      company_user.campaigns << campaign
+      company_user.campaigns << campaign2
+
+      visit root_path
+      expect(page).to have_notification 'You have 2 new campaigns'
+
+      #New campaigns counter should be decreased by 1
+      visit campaign_path(company_user.campaigns.first)
+      expect(page).to have_notification 'You have a new campaign'
+    end
   end
 
   feature "Admin user" do
@@ -163,7 +198,7 @@ feature "Notifications", search: true, js: true do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [
-        [:index, 'Event'], [:view_list, 'Event'],
+        [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
         [:index_my, 'Task'], [:index_team, 'Task'], [:read, 'Campaign']
       ] }
     end

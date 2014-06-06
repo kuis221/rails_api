@@ -154,7 +154,7 @@ module UsersHelper
     user.notifications.except_grouped_notifications.find_each do |notification|
       alerts.push({
         message: I18n.translate("notifications.#{notification.message}", notification.message_params), level: notification.level,
-        url: notification.path + (notification.path.index('?').nil? ?  "?" : '&') + "notifid=#{notification.id}",
+        url: notification.path,
         unread: true, icon: 'icon-notification-'+ notification.icon, type: notification.message
       }.merge(notification.params || {} ))
     end
