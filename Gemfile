@@ -45,6 +45,8 @@ gem 'rubyzip'
 gem 'redis'
 gem "resque", :require => "resque/server"
 gem 'resque-loner'
+gem 'resque-pool', '~> 0.4.0.rc2'
+gem 'resque-timeout'
 gem 'unread'
 gem 'strong_parameters'
 gem 'apipie-rails'
@@ -53,7 +55,6 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
-gem 'resque-timeout'
 gem 'activerecord-postgres-hstore'
 
 #For memory debugging
