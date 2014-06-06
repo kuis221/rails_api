@@ -207,4 +207,8 @@ module ApplicationHelper
   def active_class(item)
     item.active? ? 'active' : 'inactive'
   end
+
+  def full_image_path(img_path)
+      request.protocol + request.host_with_port + image_path(img_path)
+  end
 end
