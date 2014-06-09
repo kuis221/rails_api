@@ -350,6 +350,7 @@ ul.select2-results{
     	min-width:80%;
 		#survey-form {
 			.control-group {
+				margin-bottom: 50px;
 				width: 100%;
 				.hidden-label{
 					display: inline-block;
@@ -418,7 +419,6 @@ ul.select2-results{
 				margin-bottom: 10px;
 				&.competitive, &.conversion{
 					float: left;
-					margin-top: 60px;
 					position: relative;
 				}
 			}
