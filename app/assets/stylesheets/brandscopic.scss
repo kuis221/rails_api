@@ -1329,6 +1329,14 @@ p{
 			margin-bottom: 20px;
 		}
 	}
+	&.thanks_page{
+		a{
+			text-decoration: underline;
+		}
+		h2{
+			margin: 90px 0 15px 0;
+		}
+	}
 }
 .form-actions{
 	background-color: white;
