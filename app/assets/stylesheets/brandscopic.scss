@@ -1360,6 +1360,60 @@ footer{
 			color: $user_menu;
 		}
 	}
+	.emotions_select{
+		display: inline-block;
+		.positive, .neutral, .negative{
+			display: inline-block;
+			span{
+				height: 20px;
+				width: 20px;
+			}
+		}
+		.positive{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') !important;
+					&.checked{
+						background: url('emotions-sprite.png') 0 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 0 40px !important;
+					}
+				}
+			}
+		}
+		.negative{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') 20px 0 !important;
+					&.checked{
+						background: url('emotions-sprite.png') 20px 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 20px 40px !important;
+					}
+				}
+			}
+		}
+		.neutral{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') 40px 0!important;
+					&.checked{
+						background: url('emotions-sprite.png') 40px 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 40px 40px !important;
+					}
+				}
+			}
+		}
+	}
+	p{
+		color: $brand;
+		display: inline-block;
+		margin-right: 5px;
+	}
 }
 header{
 	&.navbar-inverse {
