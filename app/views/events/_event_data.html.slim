@@ -19,7 +19,7 @@
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
         .control-group.segment-label
           label.field-label
-            b= field.name
+            = field.name
           = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'+ (field.is_required? ? '' : ' optional')
           - if field.field_type == 'percentage'
             span.help-inline.error.segment-error-label for="total-field-#{field.id}" id="progress-error-#{field.id}"

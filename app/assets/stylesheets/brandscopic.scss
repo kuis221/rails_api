@@ -213,7 +213,8 @@ abbr[title]{
 	label.control-label{
 		color:$brand;
 		display: inline-block;
-		font-size: 11px;
+		float: right;
+		font-size: 13px;
 		margin-top: 12px;
 		margin-right: 5px;
 		width: 150px;
@@ -456,6 +457,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
+	height: 17px;
 	width: 220px !important;
 	.bar{
 		background-color: $due_today!important;
@@ -3988,6 +3990,9 @@ body.show {
 	.details_box.box_custom+.details_box.box_custom{
 		margin-top: -40px;
 	}
+	.box_custom+.box_consumer_reach{
+		margin-top: 70px;
+	}
 
 	.box_photos,
 	.box_surveys,
@@ -5643,8 +5648,12 @@ body.campaigns{
 		}
 	}
 	.box_demographics, .box_consumer_reach{
+		margin-bottom: 70px;
 		h3{
 			margin-top: 30px;
+		}
+		.box_demographics, .box_consumer_reach{
+			margin-bottom: 0;
 		}
 	}
 	.box_report{
@@ -5730,6 +5739,9 @@ body.campaigns{
 						display: none;
 					}
 				}
+			}
+			h3{
+				margin-bottom: 20px;
 			}
 			label {
 				display: inline-block;
