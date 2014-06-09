@@ -428,6 +428,9 @@ ul.select2-results{
 					list-style: none;
 					padding: 0;
 					margin: 0;
+					.control-group{
+						margin-bottom: 10px;
+					}
 				}
 				&.competitive{
 					margin: 25px 0 25px 0;
@@ -493,7 +496,7 @@ ul.select2-results{
 					}
 				}
 				&.recommend{
-					margin: 25px 0 60px 0;
+					margin: 25px 0 25px 0;
 					.titles{
 						color: $brand;
 						margin:0 0 15px 245px;
