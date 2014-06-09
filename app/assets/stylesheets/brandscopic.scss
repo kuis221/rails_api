@@ -1298,7 +1298,7 @@ p{
 		font-size: 15px;
 		box-shadow: none;
 		height: 42px;
-		margin-bottom: 15px;
+		margin-bottom: 30px;
 		padding: 0;
 		width: 272px;
 	}
@@ -1312,7 +1312,7 @@ p{
 	h2{
 		color: $user_menu !important;
 		font-size: 24px;
-		margin: 25px 0 28px 0;
+		margin: 25px 0 15px 0;
 	}
 	label{
 		color:$user_menu;
@@ -1324,6 +1324,9 @@ p{
 	&.resend{
 		.brand{
 			margin-bottom: 50px;
+		}
+		.btn-primary{
+			margin-bottom: 20px;
 		}
 	}
 }
