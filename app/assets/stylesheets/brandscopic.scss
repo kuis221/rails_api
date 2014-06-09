@@ -5716,10 +5716,11 @@ body.campaigns{
 	}
 	&.box_event_data{
 		form {
-			margin-bottom: 30px;
+			.form-actions{
+				margin-top: 20px;
+			}
 			.segment-label {
 				margin-bottom: 0;
-
 			}
 			.segment-error-label {
 				margin-bottom: 0;
@@ -5744,7 +5745,11 @@ body.campaigns{
 				margin-bottom: 20px;
 			}
 			label {
+				color: $brand;
 				display: inline-block;
+				&.field-label{
+					color: $text;
+				}
 				&.radio {
 					display: block;
 				}
