@@ -858,6 +858,8 @@ body.app-layout{
 	padding-top: 41px;
 }
 
+/*-- BUTTON STYLES --*/
+
 .btn{
 	background-color: $user_menu;
 	background-image: none;
@@ -867,11 +869,16 @@ body.app-layout{
 	text-shadow:none;
 	&[disabled]{
 		background-color: $grey_one;
+		opacity: 1;
 		&:hover{
 			background-color: $grey_one;
 		}
 	}
 	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		-webkit-font-smoothing: antialiased;
 		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
 				color: $user_menu;
@@ -1010,16 +1017,6 @@ body.app-layout{
 	}
 }
 
-.btn[disabled]{
-	opacity: 1;
-}
-
-.btn.active{
-	background-color: $brand;
-	border: 0;
-	box-shadow: none;
-	-webkit-font-smoothing: antialiased;
-}
 .btn-primary{
 	background-color: $buttons !important;
 	background-image:none !important;
@@ -1041,10 +1038,13 @@ body.app-layout{
 		padding: 7px 23px;
 	}
 }
+
 .btn-cancel{
+	background-color: $user_menu;
 	color: white;
 	&:hover{
 		color: white;
+		background-color: $brand;
 	}
 }
 
@@ -1071,6 +1071,8 @@ body.app-layout{
 	}
 }
 
+/*-- END BUTTON STYLES --*/
+
 #flash_error{
 	li{
 		list-style-type: none;
@@ -1092,6 +1094,7 @@ p{
 }
 
 /*-- Login styles --*/
+
 .login_box{
 	background-color: $menu;
 	margin: 10% auto 0 auto !important;
@@ -1357,12 +1360,15 @@ footer{
 	a{
 		color: $user_menu;
 		font-weight: normal;
+		position: absolute;
+		right: 5%;
 		&:hover{
 			color: $user_menu;
 		}
 	}
 	.emotions_select{
 		display: inline-block;
+		margin-left: 5px;
 		.positive, .neutral, .negative{
 			display: inline-block;
 			span{
@@ -1413,25 +1419,54 @@ footer{
 	.survey{
 		color: $brand;
 		display: inline-block;
-		margin-right: 5px;
+		margin: 0 auto;
 		position: relative;
 		p{
+			display: inline-block;
 			margin-bottom: 0;
 		}
 		.survey-box{
 		    background-color: $grey_one;
 			border: 1px solid $grey_four;
+			color: $brand;
+			line-height: 16px;
 			-webkit-border-radius: 6px;
 			-moz-border-radius: 6px;
 			border-radius: 6px;
-			bottom:0;
-			padding: 10px;
+			bottom: 32px;
+			padding: 10px 10px 3px 10px;
 			position: absolute;
 			height: 140px;
 			width: 175px;
+			&:after{
+			    content: '';
+			    background: $grey_one;
+			    height: 15px; width: 15px;
+			    position: absolute;
+			    bottom: -7px; left: 45%;
+			    z-index: 4;
+			    -webkit-transform: rotate(45deg);
+			    transform: rotate(45deg);
+			    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
+			}
+			.btn{
+				padding: 7px;
+				width: 45%;
+				&+.btn{
+					margin-left: 10px;
+				}
+			}
+			.control-group{
+				margin-top: 6px;
+				margin-bottom: 9px;
+			}
 			textarea{
-				background-color: white;
-				width: 100%;
+				background-color: white !important;
+				-webkit-border-radius: 6px;
+				-moz-border-radius: 6px;
+				border-radius: 6px;
+				height: 45px;
+				width: 90%;
 			}
 		}
 	}
