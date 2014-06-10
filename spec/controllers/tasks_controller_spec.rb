@@ -50,6 +50,20 @@ describe TasksController do
       assigns(:task).event_id.should == event.id
       assigns(:task).due_at.to_s.should == '05/23/2020 00:00:00'
     end
+
+    it "should assign the user to the task and send a SMS to the assigned user" do
+      Timecop.freeze do
+        with_resque do
+          @company_user = FactoryGirl.create(:company_user, company_id: @company.id, notifications_settings: ['new_task_assignment_sms'])
+          lambda {
+            post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
+          }.should change(Task, :count).by(1)
+          assigns(:task).company_user_id.should == @company_user.id
+          open_last_text_message_for @user.phone_number
+          current_text_message.should have_body "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
+        end
+      end
+    end
   end
 
   describe "GET 'edit'" do

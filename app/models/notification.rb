@@ -39,6 +39,10 @@ class Notification < ActiveRecord::Base
   def self.new_campaign(user, campaign)
     path = Rails.application.routes.url_helpers.campaign_path(campaign)
     if user.notifications.where(path: path).count == 0
+      if user.notifications_settings.include?('new_campaign_sms')
+        sms_message = I18n.translate("notifications_sms.new_campaign", url: Rails.application.routes.url_helpers.campaign_url(campaign))
+        Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
+      end
       notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign', params: {campaign_id: campaign.id})
     end
   end
@@ -48,6 +52,10 @@ class Notification < ActiveRecord::Base
     if user.notifications.where(path: path).count == 0
       message = team.present? ? 'new_team_event' : 'new_event'
       message_params = team.present? ? {team_id: team.id, team_name: team.name} : nil
+      if user.notifications_settings.include?('new_event_team_sms')
+        sms_message = I18n.translate("notifications_sms.new_event", url: Rails.application.routes.url_helpers.event_url(event))
+        Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
+      end
       notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
     end
   end
@@ -55,13 +63,18 @@ class Notification < ActiveRecord::Base
   def self.new_task(user, task, team = false)
     if team
       path = Rails.application.routes.url_helpers.my_teams_tasks_path(q: "task,#{task.id}")
+      sms_message = I18n.translate("notifications_sms.new_unassigned_team_task", url: Rails.application.routes.url_helpers.my_teams_tasks_url(new_at: Time.now.to_i))
       message = 'new_team_task'
     else
       path = Rails.application.routes.url_helpers.mine_tasks_path(q: "task,#{task.id}")
+      sms_message = I18n.translate("notifications_sms.new_task_assignment", url: Rails.application.routes.url_helpers.mine_tasks_url(new_at: Time.now.to_i))
       message = 'new_task'
     end
 
     if user.notifications.where(path: path).count == 0
+      if user.notifications_settings.include?('new_task_assignment_sms') || user.notifications_settings.include?('new_unassigned_team_task_sms')
+        Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
+      end
       notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
     end
   end

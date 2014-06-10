@@ -43,6 +43,23 @@
             = uf.input :zip_code, input_html: {class: 'input-large'}, required: !is_admin
         .row-fluid.users-teams-roles
           = uf.input :time_zone, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
+      h5 COMMUNICATION PREFERENCES
+      .notification-types
+        .row-fluid
+          .span12.category
+            .span5
+            .span2 IN-APP
+            .span2 SMS
+            .span2 EMAIL
+        - CompanyUser::NOTIFICATION_SETTINGS_TYPES.each do |type|
+          -if resource.notification_setting_permission?(type)
+            .row-fluid
+              .span12
+                .span5.title= t("notification_settings_types.#{type}")
+                .span2
+                .span2= notification_setting_checkbox(type, 'sms')
+                .span2
+
   .form-actions
     = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe

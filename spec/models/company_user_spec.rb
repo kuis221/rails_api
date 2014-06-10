@@ -121,7 +121,6 @@ describe CompanyUser do
         other_campaigns = FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
         expect(user.accessible_campaign_ids).to match_array campaigns.map(&:id)
       end
-
     end
   end
 
@@ -197,5 +196,18 @@ describe CompanyUser do
         user.places << bar
         expect(user.accessible_locations).to be_empty
      end
+  end
+
+  describe "#notification_setting_permission?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    it "should return false if the user hasn't the correct permissions" do
+      expect(user.notification_setting_permission?('new_campaign')).to be_false
+    end
+
+    it "should return false if the user hasn the correct permissions" do
+      user.role.permissions.create({action: :read, subject_class: 'Campaign'}, without_protection: true)
+      expect(user.notification_setting_permission?('new_campaign')).to be_true
+    end
   end
 end

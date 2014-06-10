@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140520204529) do
+ActiveRecord::Schema.define(:version => 20140604183223) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -297,10 +297,11 @@ ActiveRecord::Schema.define(:version => 20140520204529) do
     t.integer  "company_id"
     t.integer  "user_id"
     t.integer  "role_id"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-    t.boolean  "active",           :default => true
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.boolean  "active",                 :default => true
     t.datetime "last_activity_at"
+    t.text     "notifications_settings", :default => "{}"
   end
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"

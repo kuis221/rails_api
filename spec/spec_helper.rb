@@ -14,6 +14,7 @@ require 'capybara/rails'
 require 'capybara/poltergeist'
 require 'database_cleaner'
 require 'capybara-screenshot/rspec'
+require 'sms-spec'
 
 require 'support/brandscopic_spec_helpers'
 include BrandscopiSpecHelpers
@@ -125,4 +126,9 @@ RSpec.configure do |config|
   Capybara.server_host = 'localhost'
   Devise.stretches = 1
   #Rails.logger.level = 4
+
+  config.include(SmsSpec::Helpers)
+  config.include(SmsSpec::Matchers)
+
+  SmsSpec.driver = :"twilio-ruby" #this can be any available sms-spec driver
 end

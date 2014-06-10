@@ -220,10 +220,15 @@ describe EventsController do
       end
 
       it "should assign current_company_user to the new event" do
-        lambda {
-          post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
-        }.should change(Event, :count).by(1)
-        assigns(:event).users.last.user.id.should == @user.id
+        with_resque do
+          @company_user.update_attributes({notifications_settings: ['new_event_team_sms']}, without_protection: true)
+          lambda {
+            post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+          }.should change(Event, :count).by(1)
+          assigns(:event).users.last.user.id.should == @user.id
+          open_last_text_message_for @user.phone_number
+          current_text_message.should have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
+        end
       end
 
       it "should create the event with the correct dates" do
@@ -424,22 +429,26 @@ describe EventsController do
       let(:event){ FactoryGirl.create(:event, company: @company, place: place) }
 
       it 'should assign the user to the event and create a notification for the new member' do
-        other_user = FactoryGirl.create(:company_user, company_id: @company.id)
-        other_user.places << place
-        lambda {
+        with_resque do
+          other_user = FactoryGirl.create(:company_user, company_id: @company.id, notifications_settings: ['new_event_team_sms'])
+          other_user.places << place
           lambda {
-            post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
-            response.should be_success
-            assigns(:event).should == event
-            event.reload
-          }.should change(event.users, :count).by(1)
-        }.should change(other_user.notifications, :count).by(1)
-        event.users.should =~ [@company_user, other_user]
-        other_user.reload
-        notification = other_user.notifications.last
-        notification.company_user_id.should == other_user.id
-        notification.message.should == 'new_event'
-        notification.path.should == event_path(event)
+            lambda {
+              post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
+              response.should be_success
+              assigns(:event).should == event
+              event.reload
+            }.should change(event.users, :count).by(1)
+          }.should change(other_user.notifications, :count).by(1)
+          event.users.should =~ [@company_user, other_user]
+          other_user.reload
+          notification = other_user.notifications.last
+          notification.company_user_id.should == other_user.id
+          notification.message.should == 'new_event'
+          notification.path.should == event_path(event)
+          open_last_text_message_for other_user.phone_number
+          current_text_message.should have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
+        end
       end
 
       it 'should assign all the team to the event and create a notification for team members' do
