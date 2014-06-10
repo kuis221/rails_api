@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/guilleva/heroku-resque-workers-scaler.git
+  revision: 36756885cda320ef08c65543037000602155997a
+  specs:
+    heroku-resque-workers-scaler (0.1.6)
+      platform-api
+      resque
+
 PATH
   remote: vendor/gems/company_scoped
   specs:
@@ -121,6 +129,7 @@ GEM
       launchy (~> 2.1)
       mail (~> 2.2)
     erubis (2.7.0)
+    excon (0.37.0)
     execjs (2.0.2)
     factory_girl (4.3.0)
       activesupport (>= 3.0.0)
@@ -141,6 +150,12 @@ GEM
     google_places (0.18.0)
       httparty
     has_scope (0.5.1)
+    heroics (0.0.10)
+      erubis (~> 2.7.0)
+      excon
+      moneta
+      multi_json (>= 1.9.2)
+      netrc
     highline (1.6.19)
     hike (1.2.3)
     hodel_3000_compliant_logger (0.1.1)
@@ -177,6 +192,7 @@ GEM
     mini_portile (0.5.3)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
+    moneta (0.7.20)
     mono_logger (1.1.0)
     multi_json (1.10.1)
     multi_xml (0.5.5)
@@ -185,6 +201,7 @@ GEM
       kdtree
       require_all
     nested_form (0.3.2)
+    netrc (0.7.7)
     newrelic_rpm (3.8.1.221)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
@@ -202,6 +219,8 @@ GEM
       mime-types
     pg (0.15.1)
     pg-hstore (1.2.0)
+    platform-api (0.2.0)
+      heroics (~> 0.0.10)
     poltergeist (1.5.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -420,6 +439,7 @@ DEPENDENCIES
   geocoder
   google_places
   has_scope
+  heroku-resque-workers-scaler!
   inherited_resources
   jquery-rails
   kgio

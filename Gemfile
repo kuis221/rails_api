@@ -6,16 +6,15 @@ gem 'rails', '3.2.18'
 gem "rack-timeout"
 
 # Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+# gem 'rails', git: 'git://github.com/rails/rails.git'
 
 gem 'pg'
 gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
 gem "cancan", ">= 1.6.8"
 gem "slim-rails"
-gem "annotate", ">=2.5.0",  :group => :development
-gem "quiet_assets", ">= 1.0.1", :group => :development
-gem 'simple_form'
+gem "annotate", ">=2.5.0",  group: :development
+gem "quiet_assets", ">= 1.0.1", group: :development
 gem 'inherited_resources'
 gem 'has_scope'
 gem 'clerk'
@@ -24,9 +23,7 @@ gem 'oj'
 gem 'simple-navigation'
 gem 'aasm'
 gem 'countries'
-gem 'activeadmin'
-gem "meta_search", '>= 1.1.0.pre'
-gem "company_scoped", :path => 'vendor/gems/company_scoped'
+gem "company_scoped", path: 'vendor/gems/company_scoped'
 gem 'newrelic_rpm'
 gem "paperclip", "~> 3.0"
 gem "aws-sdk"
@@ -35,31 +32,40 @@ gem 'validates_timeliness', '~> 3.0'
 gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
-gem 'progress_bar'
-gem 'unicorn'
+gem 'progress_bar', require: false
 gem 'gctools'
 gem 'unicorn-worker-killer'
 gem "geocoder"
-gem "nested_form"
 gem 'rubyzip'
 gem 'redis'
-gem "resque", :require => "resque/server"
+gem "resque" #, require: "resque/server"
 gem 'resque-loner'
 gem 'resque-pool', '~> 0.4.0.rc2'
 gem 'resque-timeout'
 gem 'unread'
 gem 'strong_parameters'
-gem 'apipie-rails'
 gem 'nearest_time_zone'
 gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
 gem 'activerecord-postgres-hstore'
+gem 'apipie-rails'
+gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 
 #For memory debugging
 gem "oink"
 #gem "allocation_stats"
+
+# Gems that are only required for the web process, to prevent
+# workers loading not needed libraries
+group :web do
+  gem 'activeadmin'
+  gem "meta_search", '>= 1.1.0.pre'
+  gem 'unicorn'
+  gem 'simple_form'
+  gem "nested_form"
+end
 
 
 # Gems used only for assets and not required
@@ -98,7 +104,7 @@ group :test do
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
-  gem 'simplecov', :require => false
+  gem 'simplecov', require: false
   gem 'capybara-screenshot'
   gem 'fuubar'
   gem 'database_cleaner'

@@ -2,6 +2,8 @@ class AssetsUploadWorker
   include Resque::Plugins::UniqueJob
   @queue = :upload
 
+  extend HerokuResqueAutoScale
+
   def self.perform(asset_id)
     tries ||= 3
     asset = AttachedAsset.find(asset_id)

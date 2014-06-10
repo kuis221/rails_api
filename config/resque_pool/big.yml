@@ -1,1 +1,2 @@
-"export,upload": <%= WORKER_CONCURRENCY_BIG %>
+"export": <%= WORKER_CONCURRENCY_BIG %>
+"upload": <%= WORKER_CONCURRENCY_BIG %>

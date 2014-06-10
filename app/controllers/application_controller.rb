@@ -5,8 +5,6 @@ class ApplicationController < ActionController::Base
 
   skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  include CurrentCompanyHelper
-
   before_filter :authenticate_user!
   after_filter :update_user_last_activity
 
@@ -19,6 +17,26 @@ class ApplicationController < ActionController::Base
   protected
     def set_layout
       user_signed_in? ? 'application' : 'empty'
+    end
+
+    def company_users
+      current_company.company_users
+    end
+
+    def company_roles
+      current_company.roles
+    end
+
+    def company_teams
+      current_company.teams
+    end
+
+    def company_campaigns
+      current_company.campaigns.order('name')
+    end
+
+    def current_company_user
+      current_user.current_company_user
     end
 
     def current_company

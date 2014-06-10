@@ -1,1 +1,1 @@
-require 'legacy'
+require 'legacy' if ENV['WEB']
