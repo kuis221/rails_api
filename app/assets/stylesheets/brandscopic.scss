@@ -1351,7 +1351,8 @@ form{
 
 footer{
 	height: 35px;
-	padding: 10px;
+	padding: 10px 0 0 0;
+	position: relative;
 	text-align: center;
 	a{
 		color: $user_menu;
@@ -1409,10 +1410,30 @@ footer{
 			}
 		}
 	}
-	p{
+	.survey{
 		color: $brand;
 		display: inline-block;
 		margin-right: 5px;
+		position: relative;
+		p{
+			margin-bottom: 0;
+		}
+		.survey-box{
+		    background-color: $grey_one;
+			border: 1px solid $grey_four;
+			-webkit-border-radius: 6px;
+			-moz-border-radius: 6px;
+			border-radius: 6px;
+			bottom:0;
+			padding: 10px;
+			position: absolute;
+			height: 140px;
+			width: 175px;
+			textarea{
+				background-color: white;
+				width: 100%;
+			}
+		}
 	}
 }
 header{

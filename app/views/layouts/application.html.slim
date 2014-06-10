@@ -72,7 +72,18 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
   span class="totop pull-right"
     a href="#" Top
   footer
-    p Overall how do you feel about the app?
+    .survey 
+      p
+        | Overall how do you feel about the app?
+      .survey-box
+        p
+          | Would you like to give us 
+          br>/
+          | some feedback?
+        textarea
+        input type="submit" value="Send" /
+        input type="submit" value="No, thanks" /
+
     .emotions_select
       .positive
         input name="emotion" type="radio" value="positive" class="positive" 
