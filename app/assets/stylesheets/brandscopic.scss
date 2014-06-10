@@ -1362,6 +1362,13 @@ footer{
 		font-weight: normal;
 		position: absolute;
 		right: 5%;
+		&.close{
+			right: 18px;
+			top: 0px;
+			&:before{
+				color: $brand;
+			}
+		}
 		&:hover{
 			color: $user_menu;
 		}
@@ -1434,7 +1441,7 @@ footer{
 			-moz-border-radius: 6px;
 			border-radius: 6px;
 			bottom: 32px;
-			padding: 10px 10px 3px 10px;
+			padding: 13px 10px 3px 10px;
 			position: absolute;
 			height: 140px;
 			width: 175px;
