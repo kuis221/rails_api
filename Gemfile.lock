@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/guilleva/heroku-resque-workers-scaler.git
-  revision: fc2cc62a9561157f5f114c5311a6a955d38f6362
+  revision: d819a90b3e7bd7dc5355e7e9b2a04de16cc7005b
   specs:
     heroku-resque-workers-scaler (0.1.6)
       platform-api
