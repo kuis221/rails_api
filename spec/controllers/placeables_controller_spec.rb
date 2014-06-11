@@ -88,9 +88,17 @@ describe PlaceablesController do
 
     it "should remove the area from the company user" do
       company_user.areas << area
+
+      area_goal = area.goals.for_kpi(kpi)
+      area_goal.parent = company_user
+      area_goal.value = 100
+      area_goal.save
+
       expect {
-        delete 'remove_area', company_user_id: company_user.id, area: area.id, format: :js
-      }.to change(company_user.areas, :count).by(-1)
+        expect {
+          delete 'remove_area', company_user_id: company_user.id, area: area.id, format: :js
+        }.to change(company_user.areas, :count).by(-1)
+      }.to change(Goal, :count).by(-1)
       response.should be_success
       response.should render_template('placeables/remove_area')
     end

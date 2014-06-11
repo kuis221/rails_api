@@ -47,17 +47,17 @@ class Campaign < ActiveRecord::Base
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
   has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
@@ -208,7 +208,7 @@ class Campaign < ActiveRecord::Base
 
   def promo_hours_graph_data
     stats={}
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(areas).map do |goal|
+    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(area_ids).map do |goal|
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).
@@ -369,6 +369,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def clear_locations_cache(area)
+    remove_child_goals_for(area)
     Rails.cache.delete("campaign_locations_#{self.id}")
   end
 

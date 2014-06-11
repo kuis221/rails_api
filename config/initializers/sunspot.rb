@@ -10,7 +10,7 @@
 
 
 # To reindex using resque
-if ENV['WEB']
+if ENV['WEB'] && !Rails.env.test?
   require "sunspot/queue/resque"
   backend = Sunspot::Queue::Resque::Backend.new
   Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)

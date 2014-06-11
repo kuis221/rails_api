@@ -23,7 +23,6 @@ class PlaceablesController < FilteredController
     authorize!(:remove_place, parent)
     @area = current_company.areas.find(params[:area])
     if parent.area_ids.include?(@area.id)
-      @area.goals.in(parent).delete_all
       parent.areas.delete @area
     end
   end

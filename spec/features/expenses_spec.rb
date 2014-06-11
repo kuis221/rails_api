@@ -30,7 +30,7 @@ feature 'Events section' do
       with_resque do # So the document is processed
         visit event_path(event)
 
-        click_js_link 'Add expense'
+        click_js_link 'Add Expense'
 
         within visible_modal do
           attach_file "file", 'spec/fixtures/file.pdf'

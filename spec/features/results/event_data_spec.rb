@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Results Comments Page", js: true, search: true  do
+feature "Results Event Data Page", js: true, search: true  do
 
   before do
     Kpi.destroy_all

@@ -158,7 +158,7 @@ feature "Invitations", :js => true do
       find_field('New Password', match: :first).should have_error('Should have at least one upper case letter')
 
       fill_in('New Password', with: 'aA', match: :first)
-      fill_in(' Confirm New Password', with: 'aA')
+      fill_in('Confirm New Password', with: 'aA')
       click_button 'Save'
       find_field('New Password', match: :first).should have_error('Should have at least one digit')
 
