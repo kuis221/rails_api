@@ -4,7 +4,7 @@
 = user_new_feature('reports_index') do
   h5 CHECK OUT THE NEW RESULTS SECTION
   a.close.btn-dismiss-alert href="#" title="Dismiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/mD1EWOxfVWk?rel=0" data-width="640" data-height="360"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/SN923UOiiOM" data-width="640" data-height="360"
     img src="/assets/video_arrow.png" /
   .feature-description
     p
@@ -70,7 +70,7 @@
                   b Surveys
                   p View survey results by event
 
-    - if can?(:index, Report) && @reports.any? 
+    - if can?(:index, Report) && @reports.any?
       h3 CUSTOM REPORTS
       .link-list
         ul#custom-reports-list.reports-list

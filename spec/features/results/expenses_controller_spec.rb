@@ -17,6 +17,29 @@ feature "Results Expenses Page", js: true, search: true  do
   let(:campaign){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
 
   feature "Event Expenses index", js: true, search: true  do
+    scenario "a user can play and dismiss the video tutorial" do
+      visit results_expenses_path
+
+      feature_name = 'EXPENSES REPORT'
+
+      expect(page).to have_content(feature_name)
+      expect(page).to have_content("Keep track of your event and campaign expenses")
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit results_expenses_path
+      expect(page).to have_no_content(feature_name)
+    end
+
     scenario "GET index should display a table with the expenses" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.expenses)

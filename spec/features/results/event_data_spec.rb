@@ -14,6 +14,29 @@ feature "Results Event Data Page", js: true, search: true  do
   let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
   feature "export as xls" do
+    scenario "a user can play and dismiss the video tutorial" do
+      visit results_event_data_path
+
+      feature_name = 'RESULTS'
+
+      expect(page).to have_selector('h5', text: feature_name)
+      expect(page).to have_content("The Results Module holds all of your post-event")
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit results_event_data_path
+      expect(page).to have_no_selector('h5', text: feature_name)
+    end
+
     scenario "should include any custom kpis from all the campaigns" do
       with_resque do
         kpi = FactoryGirl.create(:kpi, company: @company, name: 'A Custom KPI')

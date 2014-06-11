@@ -122,6 +122,30 @@ feature 'Events section' do
             FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company),
             FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: company)
           ]}
+
+        scenario "a user can play and dismiss the video tutorial" do
+          visit events_path
+
+          feature_name = 'EVENTS'
+
+          expect(page).to have_content(feature_name)
+          expect(page).to have_content("The Events module is your one-stop-shop")
+          click_link 'Play Video'
+
+          within visible_modal do
+            click_js_link 'Close'
+          end
+          ensure_modal_was_closed
+
+          within('.new-feature') do
+            click_js_link 'Dismiss'
+          end
+          wait_for_ajax
+
+          visit events_path
+          expect(page).to have_no_content(feature_name)
+        end
+
         scenario "should display a list of events" do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             events.size  # make sure users are created before
@@ -472,6 +496,60 @@ feature 'Events section' do
     end
 
     feature "/events/:event_id", :js => true do
+      scenario "a user can play and dismiss the video tutorial (scheduled event)" do
+        event = FactoryGirl.create(:event,
+          start_date: '08/28/2013', end_date: '08/28/2013',
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, company: company), company: company)
+        visit event_path(event)
+
+        feature_name = 'EVENT DETAILS'
+
+        expect(page).to have_selector('h5', text: feature_name)
+        expect(page).to have_content("Welcome to the Event Details page")
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit event_path(event)
+        expect(page).to have_no_selector('h5', text: feature_name)
+      end
+
+      scenario "a user can play and dismiss the video tutorial (executed event)" do
+        event = FactoryGirl.create(:event,
+          start_date: '08/28/2013', end_date: '08/28/2013',
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, company: company), aasm_state: 'approved', company: company)
+        visit event_path(event)
+
+        feature_name = 'EVENT DETAILS'
+
+        expect(page).to have_selector('h5', text: feature_name)
+        expect(page).to have_content("You are viewing the Event Details page for an executed event")
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit event_path(event)
+        expect(page).to have_no_selector('h5', text: feature_name)
+      end
+
       scenario "GET show should display the event details page" do
         event = FactoryGirl.create(:event,
           start_date: '08/28/2013', end_date: '08/28/2013',
