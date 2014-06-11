@@ -67,11 +67,21 @@ describe PlaceablesController do
 
   describe "DELETE 'remove_area'" do
     let(:area) {FactoryGirl.create(:area, company: @company)}
-    it "should remove the area from the campaing" do
+    let(:kpi) {FactoryGirl.create(:kpi, company: @company)}
+    it "should remove the area and the goals for the associated kpis from the campaign" do
       campaign.areas << area
+
+      area_goal = area.goals.for_kpi(kpi)
+      area_goal.parent = campaign
+      area_goal.value = 100
+      area_goal.save
+
       expect {
-        delete 'remove_area', campaign_id: campaign.id, area: area.id, format: :js
-      }.to change(campaign.areas, :count).by(-1)
+        expect {
+          delete 'remove_area', campaign_id: campaign.id, area: area.id, format: :js
+        }.to change(campaign.areas, :count).by(-1)
+      }.to change(Goal, :count).by(-1)
+
       response.should be_success
       response.should render_template('placeables/remove_area')
     end
