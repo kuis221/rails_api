@@ -40,6 +40,7 @@ a:before, a:after{
 
 html {
 	min-height: 100%;
+	height:100%;
 }
 
 abbr[title]{
@@ -837,25 +838,27 @@ a.more-options-link:after{
 	position: relative;
 	top:4px;
 }
+
 body{
 	color:$text;
 	font-family: $baseFontFamily;
 	font-size: 13px;
 	font-weight: 400;
-}
-body.empty-layout{
-	background: $text;
-	color: $brand;
-	a{
-		color:$brand;
+	height: 100%;
+	&.app-layout{
+		background: $app_bg url('bg.png') repeat-y left;
+	 	padding-top: 41px;
 	}
-	h2{
-		color:white;
+	&.empty-layout{
+		background: $text;
+		color: $brand;
+		a{
+			color:$brand;
+		}
+		h2{
+			color:white;
+		}
 	}
-}
-body.app-layout{
-	background: $app_bg url('bg.png') repeat-y left;
-	padding-top: 41px;
 }
 
 /*-- BUTTON STYLES --*/
@@ -1353,10 +1356,12 @@ form{
 }
 
 footer{
+	bottom: 0;
 	height: 35px;
 	padding: 10px 0 0 0;
 	position: relative;
 	text-align: center;
+	width: 100%;
 	a{
 		color: $user_menu;
 		font-weight: normal;
@@ -2113,10 +2118,11 @@ li#user_menu{
 }
 
 #main-container{
-	min-height: 300px;
+	min-height: 650px;
 	padding: 20px 0px 10px 80px;
 	width: auto;
 }
+
 .main{
 	background-color: white;
 	box-sizing: border-box;
@@ -3697,6 +3703,12 @@ textarea::-webkit-input-placeholder {
 				text-align: right;
 				width: 120px;
 			}
+			input[type="date"]{
+				background: url(calendar.svg) no-repeat 3px 8px;
+				height: 33px;
+				padding: 2px 0 2px 10px;
+				width: 140px;
+			}
 		}
 		label.control-label{
 			margin-bottom: 5px;
@@ -3987,7 +3999,7 @@ body.events.index {
 body.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
-		margin: 0 -12% 0 0;
+		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
 		font-size: 16px;
@@ -4164,8 +4176,14 @@ body.show {
 	width: 154px;
 }
 
-.gm-style .gm-style-iw div{
+.gm-style .gm-style-iw{
 	overflow: hidden !important;
+	div{
+		overflow: hidden !important;
+		&.gm-rev, &.gm-photos{
+			display: none;
+		}
+	}
 }
 
 .resource-form-modal {
@@ -5709,6 +5727,7 @@ body.campaigns{
 }
 
 // DETAILS PAGES
+
 .details_box {
 	background-color: white;
 	box-sizing: border-box;
@@ -5717,6 +5736,9 @@ body.campaigns{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.google-map + h2{
+		margin-top: 40px !important;
+	}
 	&.smaller{
 		padding: 30px 10px;
 		h3{
@@ -6184,18 +6206,18 @@ body.campaigns{
 
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
-	&:before {
-		content: "\e011";
-		display: block;
-		left: -30px;
-		font-family: 'icons';
-		font-size: 20px;
-		position: relative;
-		top: 30px;
-	}
-	&:after {
-		bottom: 10000px;
-	}
+		&:before {
+			content: "\e011";
+			display: block;
+			left: -30px;
+			font-family: 'icons';
+			font-size: 20px;
+			position: relative;
+			top: 30px;
+		}
+		&:after {
+			bottom: 10000px;
+		}
 	}
 }
 
