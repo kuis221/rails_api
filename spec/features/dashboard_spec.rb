@@ -69,6 +69,30 @@ feature "Dashboard", search: true, js: true do
       FactoryGirl.create(:event, campaign: campaign2, place: place, start_date: '01/27/2014', end_date: '01/27/2014'),
       FactoryGirl.create(:event, campaign: campaign3, place: place, start_date: '01/14/2014', end_date: '01/14/2014') ]}
 
+    feature "video tutorial" do
+      scenario "a user can play and dismiss the video tutorial" do
+        visit root_path
+
+        feature_name = 'DASHBOARD'
+
+        expect(page).to have_selector('h5', text: feature_name)
+        expect(page).to have_content('Welcome to your Dashboard')
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit root_path
+        expect(page).to have_no_selector('h5', text: feature_name)
+      end
+    end
 
     feature "Events List View" do
       before { events.count; Sunspot.commit } # Create the events

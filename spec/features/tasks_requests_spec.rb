@@ -14,7 +14,32 @@ feature "Tasks", js: true, search: true do
     Warden.test_reset!
   end
 
-  feature "/tasks/mine"  do
+  feature "video tutorial" do
+    scenario "a user can play and dismiss the video tutorial" do
+      visit mine_tasks_path
+
+      feature_name = 'TASKS'
+
+      expect(page).to have_selector('h5', text: feature_name)
+      expect(page).to have_content('Tasks allow you to assign activities to other users')
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit mine_tasks_path
+      expect(page).to have_no_selector('h5', text: feature_name)
+    end
+  end
+
+  feature "/tasks/mine" do
     scenario "GET index should display a table with the events" do
       tasks = [
         FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
