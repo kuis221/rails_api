@@ -1470,7 +1470,7 @@ footer{
 			}
 			.btn{
 				padding: 7px;
-				width: 45%;
+				width: 45% !important;
 				&+.btn{
 					margin-left: 10px;
 				}
