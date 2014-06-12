@@ -1,5 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
+$footer-height: 35px;
+
 @font-face {
 	font-family: 'icons';
 	src:url('/assets/font/icons.eot');
@@ -43,9 +45,32 @@ html {
 	height:100%;
 }
 
-body {
+body{
+	color:$text;
+	font-family: $baseFontFamily;
+	font-size: 13px;
+	font-weight: 400;
 	min-height: 100%;
+	position: relative;
+	&.app-layout{
+		padding-bottom: $footer-height;
+		background: $app_bg url('bg.png') repeat-y left;
+		padding-top: 41px;
+		padding-bottom: $footer-height;
+		min-height: calc(100% - #{$footer-height + 41px});
+	}
+	&.empty-layout{
+		background: $text;
+		color: $brand;
+		a{
+			color:$brand;
+		}
+		h2{
+			color:white;
+		}
+	}
 }
+
 
 abbr[title]{
 	border:0;
@@ -843,28 +868,6 @@ a.more-options-link:after{
 	top:4px;
 }
 
-body{
-	color:$text;
-	font-family: $baseFontFamily;
-	font-size: 13px;
-	font-weight: 400;
-	height: 100%;
-	&.app-layout{
-		background: $app_bg url('bg.png') repeat-y left;
-	 	padding-top: 41px;
-	}
-	&.empty-layout{
-		background: $text;
-		color: $brand;
-		a{
-			color:$brand;
-		}
-		h2{
-			color:white;
-		}
-	}
-}
-
 /*-- BUTTON STYLES --*/
 
 .btn{
@@ -1361,9 +1364,9 @@ form{
 
 footer{
 	bottom: 0;
-	height: 35px;
+	height: $footer-height;
 	padding: 10px 0 0 0;
-	position: relative;
+	position: absolute;
 	text-align: center;
 	width: 100%;
 	a{
