@@ -128,7 +128,7 @@ feature 'Events section' do
 
           feature_name = 'EVENTS'
 
-          expect(page).to have_content(feature_name)
+          expect(page).to have_selector('h5', text: feature_name)
           expect(page).to have_content("The Events module is your one-stop-shop")
           click_link 'Play Video'
 
@@ -143,7 +143,7 @@ feature 'Events section' do
           wait_for_ajax
 
           visit events_path
-          expect(page).to have_no_content(feature_name)
+          expect(page).to have_no_selector('h5', text: feature_name)
         end
 
         scenario "should display a list of events" do
