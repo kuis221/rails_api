@@ -42,10 +42,10 @@ class Membership < ActiveRecord::Base
 
     def delete_notifications
       if memberable_type == 'Campaign'
-        company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).delete_all
+        company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).destroy_all
       elsif memberable_type == 'Event'
-        company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).delete_all
-        company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).delete_all
+        company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).destroy_all
+        company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).destroy_all
       end
     end
 

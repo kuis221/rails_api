@@ -40,8 +40,8 @@ class Teaming < ActiveRecord::Base
     def delete_notifications
       if teamable_type == 'Event'
         team.users.each do |user|
-          user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').delete_all
-          #user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).delete_all
+          user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').destroy_all
+          #user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).destroy_all
         end
       end
     end

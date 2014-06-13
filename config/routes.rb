@@ -111,7 +111,7 @@ Brandscopic::Application.routes.draw do
 
   get "countries/states"
 
-  get "/notifications", to: 'company_users#notifications', format: :json
+  get "/notifications.json", to: 'company_users#notifications', format: :json
 
   get 'exports/:download_id/status', to: 'company_users#export_status', as: :export_status, format: :json
 
