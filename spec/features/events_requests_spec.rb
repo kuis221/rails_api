@@ -415,6 +415,51 @@ feature 'Events section' do
         ensure_modal_was_closed
         expect(page).to have_content('ABSOLUT Vodka')
       end
+
+      scenario "end date are updated after user changes the start date" do
+        Timecop.travel(Time.zone.local(2013, 07, 30, 12, 00)) do
+          FactoryGirl.create(:campaign, company: company)
+          visit events_path
+
+          click_button 'Create'
+
+          within visible_modal do
+            event = Event.new
+
+            # Test both dates are the same
+            expect(find_field('Start date').value).to eql '07/30/2013'
+            expect(find_field('End date').value).to eql '07/30/2013'
+
+
+            #Change the start date and make sure the end date is changed automatically
+            find_field('Start date').click
+            find_field('Start date').set '07/29/2013'
+            find_field('End date').click
+            expect(find_field('End date').value).to eql '07/29/2013'
+
+            # Now, change the end data to make them different and test that the difference
+            # is kept after changing start date
+            find_field('End date').set '07/31/2013'
+            find_field('Start date').click
+            find_field('Start date').set '07/20/2013'
+            find_field('End date').click
+            expect(find_field('End date').value).to eql '07/22/2013'
+
+            #Change the start time and make sure the end date is changed automatically
+            #to one hour later
+            find_field('Start time').click
+            find_field('Start time').set '08:00am'
+            find_field('End time').click
+            expect(find_field('End time').value).to eql '9:00am'
+
+            find_field('Start time').click
+            find_field('Start time').set '4:00pm'
+            find_field('End time').click
+            expect(find_field('End time').value).to eql '5:00pm'
+
+          end
+        end
+      end
     end
 
 
