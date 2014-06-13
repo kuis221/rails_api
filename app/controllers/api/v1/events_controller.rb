@@ -222,6 +222,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   ]
   EOS
   def autocomplete
+    authorize! :index, Event
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
@@ -364,6 +365,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   }
   EOS
   def submit
+    authorize! :submit, resource
     status = 200
     if resource.unsent? || resource.rejected?
       begin
@@ -411,6 +413,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   }
   EOS
   def approve
+    authorize! :approve, resource
     status = 200
     if resource.submitted?
       begin
@@ -468,6 +471,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   }
   EOS
   def reject
+    authorize! :approve, resource
     status = 200
     reject_reason = params[:reason].try(:strip)
     if reject_reason.nil? || reject_reason.empty?
@@ -931,6 +935,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def results
+    authorize! :view_or_edit_data, resource
     fields = resource.campaign.form_fields.for_event_data.includes(:kpi)
 
     # Save the results so they are returned with an ID
@@ -1084,6 +1089,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def members
+    authorize! :view_members, resource
     @users = @teams = []
     @users = resource.users.with_user_and_role.order('users.first_name, users.last_name') unless params[:type] == 'team'
     @teams = resource.teams.order(:name) unless params[:type] == 'user'
@@ -1123,6 +1129,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def assignable_members
+    authorize! :add_members, resource
     respond_to do |format|
       format.json {
         render :status => 200,
@@ -1135,7 +1142,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :POST, '/api/v1/events/:id/members', 'Assocciate an user or team to the event\'s team'
+  api :POST, '/api/v1/events/:id/members', 'Associate an user or team to the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
   param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
@@ -1174,6 +1181,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     }
   EOS
   def add_member
+    authorize! :add_members, resource
     memberable = build_memberable_from_request
     if memberable.save
       resource.solr_index
@@ -1235,6 +1243,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     }
   EOS
   def delete_member
+    authorize! :delete_member, resource
     memberable = find_memberable_from_request
     if memberable.present?
       if memberable.destroy
@@ -1344,6 +1353,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def contacts
+    authorize! :view_contacts, resource
     @contacts = resource.contacts
   end
 
@@ -1399,10 +1409,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
   def assignable_contacts
+    authorize! :add, ContactEvent
     @contacts =  ContactEvent.contactables_for_event(resource, params[:term])
   end
 
-  api :POST, '/api/v1/events/:id/contacts', 'Assocciate a contact to the event'
+  api :POST, '/api/v1/events/:id/contacts', 'Associate a contact to the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'
   param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be added as a contact'
   see 'events#assignable_contacts'
@@ -1441,6 +1452,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     }
   EOS
   def add_contact
+    authorize! :create_contacts, resource
     contact = resource.contact_events.build({contactable: load_contactable_from_request}, without_protection: true)
     if contact.save
       result = { :success => true,
@@ -1501,6 +1513,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     }
   EOS
   def delete_contact
+    authorize! :delete_contact, resource
     contact = find_contactable_from_request
     if contact.present?
       if contact.destroy

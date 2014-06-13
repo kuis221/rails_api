@@ -42,4 +42,33 @@ describe Api::V1::CampaignsController do
       expect(results.second).to include({"id"=> campaign.id, "name"=>'Cerveza Imperial FY14', "goal" => 200.0, "kpi" => 'EVENTS'})
     end
   end
+
+  describe "GET 'stats'"do
+    before { Kpi.create_global_kpis }
+    it "return a list of campaings with the info" do
+      campaign = FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
+      campaign.areas << area
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+
+      get :stats, auth_token: user.authentication_token, company_id: company.to_param, id: campaign.to_param, format: :json
+      response.should be_success
+      stats = JSON.parse(response.body)
+
+      expect(stats.first['id']).to eql area.id
+      expect(stats.first['name']).to eql 'California'
+      expect(stats.first['kpi']).to eql 'PROMO HOURS'
+      expect(stats.first['goal']).to eql '10.0'
+      expect(stats.first['executed']).to eql 0.0
+      expect(stats.first['scheduled']).to eql 0.0
+      expect(stats.first['remaining']).to eql '10.0'
+      expect(stats.first['executed_percentage']).to eql 0
+      expect(stats.first['scheduled_percentage']).to eql 0
+      expect(stats.first['remaining_percentage']).to eql 100
+      expect(stats.first.has_key?('today')).to be_false
+      expect(stats.first.has_key?('today_percentage')).to be_false
+     end
+  end
 end

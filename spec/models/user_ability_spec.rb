@@ -127,6 +127,117 @@ describe "User" do
         end
       end
 
+      #     ___ __ __    ___  ____   ______      ___ ___    ___  ___ ___  ____     ___  ____    _____
+      #    /  _]  |  |  /  _]|    \ |      |    |   |   |  /  _]|   |   ||    \   /  _]|    \  / ___/
+      #   /  [_|  |  | /  [_ |  _  ||      |    | _   _ | /  [_ | _   _ ||  o  ) /  [_ |  D  )(   \_
+      #  |    _]  |  ||    _]|  |  ||_|  |_|    |  \_/  ||    _]|  \_/  ||     ||    _]|    /  \__  |
+      #  |   [_|  :  ||   [_ |  |  |  |  |      |   |   ||   [_ |   |   ||  O  ||   [_ |    \  /  \ |
+      #  |     |\   / |     ||  |  |  |  |      |   |   ||     ||   |   ||     ||     ||  .  \ \    |
+      #  |_____| \_/  |_____||__|__|  |__|      |___|___||_____||___|___||_____||_____||__|\_|  \___|
+      #
+      describe "Event member permissions" do
+        it "should be able to view event members if has the permission :view_members on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:view_members, event)
+
+          user.role.permission_for(:view_members, Event).save
+
+          ability.should be_able_to(:view_members, event)
+          ability.should_not be_able_to(:view_members, other_event)
+        end
+
+        it "should be able to add members to event if has the permission :add_members on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:add_members, event)
+
+          user.role.permission_for(:add_members, Event).save
+
+          ability.should be_able_to(:add_members, event)
+          ability.should_not be_able_to(:add_members, other_event)
+        end
+
+
+        it "should be able to remove members from a event if has the permission :delete_member on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:delete_member, event)
+
+          user.role.permission_for(:delete_member, Event).save
+
+          ability.should be_able_to(:delete_member, event)
+          ability.should_not be_able_to(:delete_member, other_event)
+        end
+      end
+
+      #     ___ __ __    ___  ____   ______         __   ___   ____   ______   ____    __ ______  _____
+      #    /  _]  |  |  /  _]|    \ |      |       /  ] /   \ |    \ |      | /    |  /  ]      |/ ___/
+      #   /  [_|  |  | /  [_ |  _  ||      |      /  / |     ||  _  ||      ||  o  | /  /|      (   \_
+      #  |    _]  |  ||    _]|  |  ||_|  |_|     /  /  |  O  ||  |  ||_|  |_||     |/  / |_|  |_|\__  |
+      #  |   [_|  :  ||   [_ |  |  |  |  |      /   \_ |     ||  |  |  |  |  |  _  /   \_  |  |  /  \ |
+      #  |     |\   / |     ||  |  |  |  |      \     ||     ||  |  |  |  |  |  |  \     | |  |  \    |
+      #  |_____| \_/  |_____||__|__|  |__|       \____| \___/ |__|__|  |__|  |__|__|\____| |__|   \___|
+      #
+      describe "Event contacts permissions" do
+        it "should be able to view event contacts if has the permission :view_contacts on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:view_contacts, event)
+
+          user.role.permission_for(:view_contacts, Event).save
+
+          ability.should be_able_to(:view_contacts, event)
+          ability.should_not be_able_to(:view_contacts, other_event)
+        end
+
+        it "should be able to add contacts to event if has the permission :create_contacts on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:create_contacts, event)
+
+          user.role.permission_for(:create_contacts, Event).save
+
+          ability.should be_able_to(:create_contacts, event)
+          ability.should_not be_able_to(:create_contacts, other_event)
+        end
+
+        it "should be able to remove contacts from a event if has the permission :delete_contact on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:delete_contact, event)
+
+          user.role.permission_for(:delete_contact, Event).save
+
+          ability.should be_able_to(:delete_contact, event)
+          ability.should_not be_able_to(:delete_contact, other_event)
+        end
+
+        it "should be able to remove contacts from a event if has the permission :delete_contact on Event and can view the event" do
+          user.role.permission_for(:show, Event).save
+          other_event = without_current_user{
+            FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, company: FactoryGirl.create(:company)))
+          }
+          ability.should_not be_able_to(:delete_contact, event)
+
+          user.role.permission_for(:delete_contact, Event).save
+
+          ability.should be_able_to(:delete_contact, event)
+          ability.should_not be_able_to(:delete_contact, other_event)
+        end
+      end
 
       #     ___ __ __    ___  ____   ______      ______   ____  _____ __  _  _____
       #    /  _]  |  |  /  _]|    \ |      |    |      | /    |/ ___/|  |/ ]/ ___/

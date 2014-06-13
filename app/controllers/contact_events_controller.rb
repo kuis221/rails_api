@@ -10,6 +10,10 @@ class ContactEventsController < InheritedResources::Base
 
   load_and_authorize_resource
 
+  before_filter do
+    authorize! :show, parent
+  end
+
   respond_to :js
 
   def add
