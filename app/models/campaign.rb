@@ -217,7 +217,7 @@ class Campaign < ActiveRecord::Base
     end
 
     ActiveRecord::Base.connection.select_all("
-      SELECT keys[1] as id, kpi, executed, scheduled FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 2, 1',
+      SELECT keys[1] as id, kpi, executed, scheduled FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 2 ASC, 1 ASC',
         'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(keys varchar[], kpi varchar, executed numeric, scheduled numeric)").each do |result|
       r = stats["#{result['id']}-#{result['kpi']}"]
       r['executed'] = result['executed'].to_f if result['executed']
@@ -246,7 +246,7 @@ class Campaign < ActiveRecord::Base
       end
     end
 
-    stats.values.sort{|a, b| a['name'] <=> b['name'] }
+    stats.values.sort{|a, b| a['name']+a['kpi'] <=> b['name']+b['kpi'] }
   end
 
   def brands_list
