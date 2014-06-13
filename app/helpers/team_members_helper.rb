@@ -99,7 +99,8 @@ module TeamMembersHelper
   end
 
   def self.extended(receiver)
-    receiver.send(:include,  InstanceMethods)
-    receiver.send(:helper_method,  :resource_members)
+    receiver.send(:include, InstanceMethods)
+    receiver.send(:helper_method, :resource_members)
+    receiver.send(:cache_sweeper, :notification_sweeper, only: [:add_members, :delete_member])
   end
 end
