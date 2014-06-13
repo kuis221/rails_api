@@ -1,6 +1,6 @@
 Resque.redis = REDIS
 
-if ENV['WEB']
+if ENV['WEB'] && !Rails.env.test?
   require "resque/server"
   Resque::Server.class_eval do
 

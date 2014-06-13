@@ -91,7 +91,7 @@ Brandscopic::Application.routes.draw do
     devise_for :admin_users, ActiveAdmin::Devise.config
     ActiveAdmin.routes(self)
 
-    mount Resque::Server.new, :at => '/resque'
+    mount Resque::Server.new, :at => '/resque' unless Rails.env.test?
   end
 
   devise_for :users, :controllers => { :invitations => 'invitations', :passwords => "passwords" }
