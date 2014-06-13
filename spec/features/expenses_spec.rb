@@ -42,7 +42,9 @@ feature 'Events section' do
           fill_in 'Name', with: 'test expense'
           expect(page).to have_content('File attached: file.pdf')
 
-          click_js_button 'Save'
+          wait_for_photo_to_process 15 do
+            click_js_button 'Save'
+          end
         end
         ensure_modal_was_closed
 

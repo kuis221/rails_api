@@ -77,6 +77,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    Resque::Worker.stub(:working).and_return([])
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
     Rails.logger.debug "**************************************************************************************"
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"

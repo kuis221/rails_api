@@ -1,4 +1,8 @@
 class Api::V1::CampaignsController < Api::V1::FilteredController
+
+  skip_authorization_check :only => [:all, :overall_stats]
+
+
   resource_description do
     short 'Campaigns'
     formats ['json', 'xml']
@@ -218,6 +222,7 @@ api :GET, '/api/v1/campaigns/:id/stats', "Returns the stats of events and promo 
   ]
   EOS
   def stats
+    authorize! :view_promo_hours_data, resource
     data = resource.promo_hours_graph_data
     respond_to do |format|
         format.json {

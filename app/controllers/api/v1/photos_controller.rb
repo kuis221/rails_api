@@ -4,6 +4,8 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults :resource_class => AttachedAsset
 
+  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy, :index]
+
   resource_description do
     short 'Photos'
     formats ['json', 'xml']
@@ -164,5 +166,9 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
     def permitted_search_params
       params.permit({brand: [], place: [], status: []})
+    end
+
+    def skip_default_validation
+      true
     end
 end

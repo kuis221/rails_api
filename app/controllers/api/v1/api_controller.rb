@@ -1,6 +1,9 @@
 class Api::V1::ApiController < ActionController::Base
   respond_to :json, :xml
 
+  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
+  check_authorization
+
   include SentientController
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
@@ -120,6 +123,10 @@ class Api::V1::ApiController < ActionController::Base
     def ensure_valid_request
       return if ['json', 'xml'].include?(params[:format]) || request.headers["Accept"] =~ /json|xml/
       render :nothing => true, :status => 406
+    end
+
+    def skip_default_validation
+      false
     end
 end
 

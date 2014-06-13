@@ -169,6 +169,7 @@ class Api::V1::TasksController < Api::V1::FilteredController
     ]
   EOS
   def comments
+    authorize! :index_my_comments, resource
     @comments = resource.comments
   end
 

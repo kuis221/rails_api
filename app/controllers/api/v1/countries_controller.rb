@@ -1,4 +1,6 @@
 class Api::V1::CountriesController < Api::V1::ApiController
+  skip_authorization_check only: [:index, :states]
+
   resource_description do
     short 'Countries'
     formats ['json', 'xml']
