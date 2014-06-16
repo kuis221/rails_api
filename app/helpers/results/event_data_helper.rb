@@ -5,15 +5,21 @@ module Results
     end
 
     def custom_fields_to_export_values(event)
+      # We are reusing the same object for each result to reduce memory usage
+      @result ||= EventResult.new
       event_values = empty_values_hash
-      results = event.results.where(form_field_id: active_fields_for_campaign(event.campaign_id)).all
-      results.each do |result|
-        result.form_field = custom_fields_to_export[result.form_field_id]
-        id = result.kpi_id.nil? ? "field_#{result.form_field_id}" : "kpi_#{result.kpi_id}"
-        unless result.kpis_segment_id.nil?
-          event_values["#{id}-#{result.kpis_segment_id}"] = result.display_value
+      ActiveRecord::Base.connection.select_all(
+        event.results.where(form_field_id: active_fields_for_campaign(event.campaign_id)).
+                  select('event_results.form_field_id, event_results.kpis_segment_id, event_results.value').to_sql
+      ).each do |row|
+        @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
+        @result.value = row['value']
+        @result.kpis_segment_id = row['kpis_segment_id']
+        id = @result.form_field.kpi_id.nil? ? "field_#{@result.form_field_id}" : "kpi_#{@result.form_field.kpi_id}"
+        unless @result.kpis_segment_id.nil?
+          event_values["#{id}-#{@result.kpis_segment_id}"] = @result.display_value
         else
-          event_values[id] = result.display_value
+          event_values[id] = @result.display_value
         end
       end
       event_values.values

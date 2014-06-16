@@ -148,7 +148,7 @@ module ApplicationHelper
   end
 
   def user_new_feature(name, version=1, &block)
-    unless true || current_company_user.dismissed_alert?(name, version)
+    unless current_company_user.dismissed_alert?(name, version)
       content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
         yield
       end
@@ -206,5 +206,9 @@ module ApplicationHelper
 
   def active_class(item)
     item.active? ? 'active' : 'inactive'
+  end
+
+  def full_image_path(img_path)
+      request.protocol + request.host_with_port + image_path(img_path)
   end
 end

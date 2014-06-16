@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Areas", js: true do
+feature "Areas", js: true, search: true  do
   let(:company) { FactoryGirl.create(:company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
@@ -51,7 +51,7 @@ feature "Areas", js: true do
     end
   end
 
-  feature "non admin user", js: true, search: true do
+  feature "non admin user", js: true do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
 
     it_should_behave_like "a user that can edit areas" do
@@ -64,7 +64,7 @@ feature "Areas", js: true do
 
     it_behaves_like "a user that can edit areas"
 
-    feature "/areas", search: true do
+    feature "/areas" do
       scenario "GET index should display a table with the areas" do
         areas = [
           FactoryGirl.create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),

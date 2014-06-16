@@ -15,6 +15,31 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
       before { Kpi.create_global_kpis }
 
+      scenario "a user can play and dismiss the video tutorial" do
+        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+
+        visit results_gva_path
+
+        feature_name = 'GOALS VS. ACTUALS'
+
+        expect(page).to have_content(feature_name)
+        expect(page).to have_content("The Goals vs. Actual section allows you")
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit results_gva_path
+        expect(page).to have_no_content(feature_name)
+      end
+
       scenario "should display the GvA stats for selected campaign and grouping" do
         company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)

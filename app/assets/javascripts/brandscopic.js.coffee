@@ -381,8 +381,8 @@ jQuery ->
 			clearTimeout window.previewTimeout if window.previewTimeout?
 			@t = @title
 			@title = ""
-			c = if this.t != "" then "<br/>" + this.t else ""
-			preview = $("<p id='imgpreview'><img src='#{this.getAttribute('data-preview-url')}' width=100 height=100 alt='Loading...' />#{c}</p>").hide()
+			img = $('<img width=100 height=100 alt="Loading..." />').attr('src', this.getAttribute('data-preview-url'))
+			preview = $("<p id='imgpreview'></p>").append(img).hide()
 			$("body").append(preview)
 
 			preview.find('img').load (e) =>

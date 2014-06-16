@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
   scope :in_company, lambda{|company| active_in_company(company) }
 
-  search_methods :active_eq
+  search_methods :active_eq if respond_to?(:search_methods)
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users

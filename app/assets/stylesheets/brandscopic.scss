@@ -1,4 +1,7 @@
+
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
+
+$footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
@@ -40,7 +43,34 @@ a:before, a:after{
 
 html {
 	min-height: 100%;
+	height:100%;
 }
+
+body{
+	color:$text;
+	font-family: $baseFontFamily;
+	font-size: 13px;
+	font-weight: 400;
+	min-height: 100%;
+	position: relative;
+	&.app-layout{
+		background: $app_bg url('bg.png') repeat-y left;
+		padding-top: 41px;
+		padding-bottom: $footer-height;
+		min-height: calc(100% - #{$footer-height + 41px});
+	}
+	&.empty-layout{
+		background: $text;
+		color: $brand;
+		a{
+			color:$brand;
+		}
+		h2{
+			color:white;
+		}
+	}
+}
+
 
 abbr[title]{
 	border:0;
@@ -213,7 +243,8 @@ abbr[title]{
 	label.control-label{
 		color:$brand;
 		display: inline-block;
-		font-size: 11px;
+		float: right;
+		font-size: 13px;
 		margin-top: 12px;
 		margin-right: 5px;
 		width: 150px;
@@ -456,6 +487,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
+	height: 17px;
 	width: 220px !important;
 	.bar{
 		background-color: $due_today!important;
@@ -821,6 +853,7 @@ table{
 a.more-options-link{
 	font-size: 13px;
 	margin-left:30px;
+	margin-bottom:35px;
 	&:hover{
 		color: $text;
 	}
@@ -834,26 +867,8 @@ a.more-options-link:after{
 	position: relative;
 	top:4px;
 }
-body{
-	color:$text;
-	font-family: $baseFontFamily;
-	font-size: 13px;
-	font-weight: 400;
-}
-body.empty-layout{
-	background: $text;
-	color: $brand;
-	a{
-		color:$brand;
-	}
-	h2{
-		color:white;
-	}
-}
-body.app-layout{
-	background: $app_bg url('bg.png') repeat-y left;
-	padding-top: 41px;
-}
+
+/*-- BUTTON STYLES --*/
 
 .btn{
 	background-color: $user_menu;
@@ -862,26 +877,47 @@ body.app-layout{
 	font-family: $baseFontFamily;
 	padding: 7px 17px;
 	text-shadow:none;
+	&[disabled]{
+		background-color: $grey_one;
+		opacity: 1;
+		&:hover{
+			background-color: $grey_one;
+		}
+	}
 	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		-webkit-font-smoothing: antialiased;
 		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
 				color: $user_menu;
 			}
 		}
 	}
-	&.download:after{
-		color: white;
-		content: "\e00b";
-		font-family: 'icons';
-		font-size: 15px;
-		padding-left: 6px;
-		padding-right: 6px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		top:1px;
-		-webkit-font-smoothing: antialiased;
+	&.download{
+		&:after{
+			color: white;
+			content: "\e00b";
+			font-family: 'icons';
+			font-size: 15px;
+			padding-left: 6px;
+			padding-right: 6px;
+			position: relative;
+			speak:none;
+			text-align: center;
+			text-shadow:none;
+			top:1px;
+			-webkit-font-smoothing: antialiased;
+		}
+		&[disabled]{
+			background-color: $grey_one;
+			color: #f2f2f2;
+			&:hover{
+				background-color: $grey_one;
+				color:#f2f2f2;
+			}
+		}
 	}
 	&:focus{
 		outline:0;
@@ -991,16 +1027,6 @@ body.app-layout{
 	}
 }
 
-.btn[disabled]{
-	opacity: 1;
-}
-
-.btn.active{
-	background-color: $brand;
-	border: 0;
-	box-shadow: none;
-	-webkit-font-smoothing: antialiased;
-}
 .btn-primary{
 	background-color: $buttons !important;
 	background-image:none !important;
@@ -1022,10 +1048,13 @@ body.app-layout{
 		padding: 7px 23px;
 	}
 }
+
 .btn-cancel{
+	background-color: $user_menu;
 	color: white;
 	&:hover{
 		color: white;
+		background-color: $brand;
 	}
 }
 
@@ -1052,6 +1081,8 @@ body.app-layout{
 	}
 }
 
+/*-- END BUTTON STYLES --*/
+
 #flash_error{
 	li{
 		list-style-type: none;
@@ -1073,6 +1104,7 @@ p{
 }
 
 /*-- Login styles --*/
+
 .login_box{
 	background-color: $menu;
 	margin: 10% auto 0 auto !important;
@@ -1279,7 +1311,7 @@ p{
 		font-size: 15px;
 		box-shadow: none;
 		height: 42px;
-		margin-bottom: 15px;
+		margin-bottom: 30px;
 		padding: 0;
 		width: 272px;
 	}
@@ -1293,7 +1325,7 @@ p{
 	h2{
 		color: $user_menu !important;
 		font-size: 24px;
-		margin: 25px 0 28px 0;
+		margin: 25px 0 15px 0;
 	}
 	label{
 		color:$user_menu;
@@ -1305,6 +1337,17 @@ p{
 	&.resend{
 		.brand{
 			margin-bottom: 50px;
+		}
+		.btn-primary{
+			margin-bottom: 20px;
+		}
+	}
+	&.thanks_page{
+		a{
+			text-decoration: underline;
+		}
+		h2{
+			margin: 90px 0 15px 0;
 		}
 	}
 }
@@ -1320,14 +1363,130 @@ form{
 }
 
 footer{
-	height: 35px;
-	padding: 10px;
+	bottom: 0;
+	height: $footer-height;
+	padding: 10px 0 0 0;
+	position: absolute;
 	text-align: center;
+	width: 100%;
 	a{
 		color: $user_menu;
 		font-weight: normal;
+		position: absolute;
+		right: 5%;
+		&.close{
+			right: 18px;
+			top: 0px;
+			&:before{
+				color: $brand;
+			}
+		}
 		&:hover{
 			color: $user_menu;
+		}
+	}
+	.emotions_select{
+		display: inline-block;
+		margin-left: 5px;
+		.positive, .neutral, .negative{
+			display: inline-block;
+			span{
+				height: 20px;
+				width: 20px;
+			}
+		}
+		.positive{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') !important;
+					&.checked{
+						background: url('emotions-sprite.png') 0 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 0 40px !important;
+					}
+				}
+			}
+		}
+		.negative{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') 20px 0 !important;
+					&.checked{
+						background: url('emotions-sprite.png') 20px 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 20px 40px !important;
+					}
+				}
+			}
+		}
+		.neutral{
+			.radio{ 
+				span{
+					background: url('emotions-sprite.png') 40px 0!important;
+					&.checked{
+						background: url('emotions-sprite.png') 40px 20px !important;
+					}
+					&:hover{
+						background: url('emotions-sprite.png') 40px 40px !important;
+					}
+				}
+			}
+		}
+	}
+	.survey{
+		color: $brand;
+		display: inline-block;
+		margin: 0 auto;
+		position: relative;
+		p{
+			display: inline-block;
+			margin-bottom: 0;
+		}
+		.survey-box{
+		    background-color: $grey_one;
+			border: 1px solid $grey_four;
+			color: $brand;
+			line-height: 16px;
+			-webkit-border-radius: 6px;
+			-moz-border-radius: 6px;
+			border-radius: 6px;
+			bottom: 32px;
+			padding: 13px 10px 3px 10px;
+			position: absolute;
+			height: 140px;
+			width: 175px;
+			&:after{
+			    content: '';
+			    background: $grey_one;
+			    height: 15px; width: 15px;
+			    position: absolute;
+			    bottom: -7px; left: 45%;
+			    z-index: 4;
+			    -webkit-transform: rotate(45deg);
+			    transform: rotate(45deg);
+			    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
+			}
+			.btn{
+				padding: 7px;
+				width: 45%;
+				&+.btn{
+					margin-left: 10px;
+				}
+			}
+			.control-group{
+				margin-top: 6px;
+				margin-bottom: 9px;
+			}
+			textarea{
+				background-color: white !important;
+				-webkit-border-radius: 6px;
+				-moz-border-radius: 6px;
+				border-radius: 6px;
+				height: 45px;
+				width: 90%;
+			}
 		}
 	}
 }
@@ -1966,10 +2125,11 @@ li#user_menu{
 }
 
 #main-container{
-	min-height: 300px;
+	min-height: 650px;
 	padding: 20px 0px 10px 80px;
 	width: auto;
 }
+
 .main{
 	background-color: white;
 	box-sizing: border-box;
@@ -3117,6 +3277,7 @@ ul.ui-widget-content{
 				color: $menu;
 				font-weight: normal !important;
 				padding: 7px 10px;
+				font-size: 13px;
 				&:active, &:hover{
 					background-color: $menu !important;
 					background-image: none !important;
@@ -3136,6 +3297,7 @@ ul.ui-widget-content{
 		}
 		&.ui-autocomplete-category{
 			color:$text;
+			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
 			text-transform: uppercase;
@@ -3548,6 +3710,12 @@ textarea::-webkit-input-placeholder {
 				text-align: right;
 				width: 120px;
 			}
+			input[type="date"]{
+				background: url(calendar.svg) no-repeat 3px 8px;
+				height: 33px;
+				padding: 2px 0 2px 10px;
+				width: 140px;
+			}
 		}
 		label.control-label{
 			margin-bottom: 5px;
@@ -3598,6 +3766,9 @@ textarea::-webkit-input-placeholder {
 				width: 120px;
 				&[type="date"]{
 					background: url(calendar.svg) no-repeat 3px 8px;
+					height: 33px;
+					padding: 2px 0 2px 10px;
+					width: 140px;
 				}
 				&[type="time"]{
 					background: url(time.svg) no-repeat 3px 8px;
@@ -3835,7 +4006,7 @@ body.events.index {
 body.show {
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
-		margin: 0 -12% 0 0;
+		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
 		font-size: 16px;
@@ -3966,6 +4137,9 @@ body.show {
 	.details_box.box_custom+.details_box.box_custom{
 		margin-top: -40px;
 	}
+	.box_custom+.box_consumer_reach{
+		margin-top: 70px;
+	}
 
 	.box_photos,
 	.box_surveys,
@@ -4009,8 +4183,14 @@ body.show {
 	width: 154px;
 }
 
-.gm-style .gm-style-iw div{
+.gm-style .gm-style-iw{
 	overflow: hidden !important;
+	div{
+		overflow: hidden !important;
+		&.gm-rev, &.gm-photos{
+			display: none;
+		}
+	}
 }
 
 .resource-form-modal {
@@ -5127,7 +5307,7 @@ body.roles{
 #venue-map-canvas{
 	border:1px solid $user_menu;
 	display:block;
-	margin: 20px -15px 30px -15px;
+	margin: 20px -15px 4px -15px;
 	height: 500px;
 }
 
@@ -5554,6 +5734,7 @@ body.campaigns{
 }
 
 // DETAILS PAGES
+
 .details_box {
 	background-color: white;
 	box-sizing: border-box;
@@ -5562,6 +5743,9 @@ body.campaigns{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	.google-map + h2{
+		margin-top: 40px !important;
+	}
 	&.smaller{
 		padding: 30px 10px;
 		h3{
@@ -5621,8 +5805,12 @@ body.campaigns{
 		}
 	}
 	.box_demographics, .box_consumer_reach{
+		margin-bottom: 70px;
 		h3{
 			margin-top: 30px;
+		}
+		.box_demographics, .box_consumer_reach{
+			margin-bottom: 0;
 		}
 	}
 	.box_report{
@@ -5685,10 +5873,11 @@ body.campaigns{
 	}
 	&.box_event_data{
 		form {
-			margin-bottom: 30px;
+			.form-actions{
+				margin-top: 20px;
+			}
 			.segment-label {
 				margin-bottom: 0;
-
 			}
 			.segment-error-label {
 				margin-bottom: 0;
@@ -5709,8 +5898,15 @@ body.campaigns{
 					}
 				}
 			}
+			h3{
+				margin-bottom: 20px;
+			}
 			label {
+				color: $brand;
 				display: inline-block;
+				&.field-label{
+					color: $text;
+				}
 				&.radio {
 					display: block;
 				}
@@ -6017,18 +6213,18 @@ body.campaigns{
 
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
-	&:before {
-		content: "\e011";
-		display: block;
-		left: -30px;
-		font-family: 'icons';
-		font-size: 20px;
-		position: relative;
-		top: 30px;
-	}
-	&:after {
-		bottom: 10000px;
-	}
+		&:before {
+			content: "\e011";
+			display: block;
+			left: -30px;
+			font-family: 'icons';
+			font-size: 20px;
+			position: relative;
+			top: 30px;
+		}
+		&:after {
+			bottom: 10000px;
+		}
 	}
 }
 

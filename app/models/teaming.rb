@@ -20,6 +20,7 @@ class Teaming < ActiveRecord::Base
 
   after_destroy :delete_notifications
   after_destroy :update_tasks
+  after_destroy :delete_goals
 
   private
     def create_notifications
@@ -30,6 +31,10 @@ class Teaming < ActiveRecord::Base
           end
         end
       end
+    end
+
+    def delete_goals
+      teamable.remove_child_goals_for(self.team) if teamable.respond_to?(:remove_child_goals_for)
     end
 
     def delete_notifications

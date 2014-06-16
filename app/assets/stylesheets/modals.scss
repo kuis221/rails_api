@@ -350,6 +350,7 @@ ul.select2-results{
     	min-width:80%;
 		#survey-form {
 			.control-group {
+				margin-bottom: 50px;
 				width: 100%;
 				.hidden-label{
 					display: inline-block;
@@ -418,7 +419,6 @@ ul.select2-results{
 				margin-bottom: 10px;
 				&.competitive, &.conversion{
 					float: left;
-					margin-top: 60px;
 					position: relative;
 				}
 			}
@@ -428,6 +428,9 @@ ul.select2-results{
 					list-style: none;
 					padding: 0;
 					margin: 0;
+					.control-group{
+						margin-bottom: 10px;
+					}
 				}
 				&.competitive{
 					margin: 25px 0 25px 0;
@@ -493,7 +496,7 @@ ul.select2-results{
 					}
 				}
 				&.recommend{
-					margin: 25px 0 60px 0;
+					margin: 25px 0 25px 0;
 					.titles{
 						color: $brand;
 						margin:0 0 15px 245px;
@@ -607,6 +610,7 @@ ul.select2-results{
 			#new_place{
 				float: left;
 				margin-bottom: 40px;
+				width: 100%;
 			}
 			ul#areas-list, ul#select-brands-list, ul#staff-list, ul#contacts-list{
 				li{

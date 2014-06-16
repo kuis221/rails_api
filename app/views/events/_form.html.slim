@@ -32,14 +32,36 @@
 
 javascript:
   val = $('#calendar_start_date').text();
-  $('#calendar_start_date').datepicker({
-    altField: '#event_start_date',
-    defaultDate: $('#calendar_start_date').data('date')
+  $('#event_start_date').datepicker({
+    showOtherMonths: true,
+    selectOtherMonths: true,
+    dateFormat: "mm/dd/yy",
+    defaultDate: $('#calendar_start_date').data('date'),
+    onClose: function( selectedDate ) {
+      var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+      var prevDate = $('#event_start_date').data('previous-date');
+      var startDate = $('#event_start_date').datepicker( "getDate" );
+      var endDate = $('#event_end_date').datepicker( "getDate" );
+      if (prevDate && endDate) {
+        var diff =  Math.abs(endDate.getTime() - prevDate.getTime());
+        var ed = new Date();
+        ed.setTime(startDate.getTime() + diff)
+        $('#event_end_date').datepicker( "setDate",  ed);
+      }
+      $('#event_start_date').data('previous-date', startDate);
+    }
+  }).data('previous-date',  $('#event_start_date').datepicker( "getDate" ));
+
+  $('#event_end_date').datepicker({
+    showOtherMonths: true,
+    selectOtherMonths: true,
+    dateFormat: "mm/dd/yy"
   });
 
-  $('#calendar_end_date').datepicker({
-    altField: '#event_end_date',
-    defaultDate: $('#calendar_end_date').data('date')
+  $('#event_start_time').on('change hideTimepicker', function(){
+    var time = $('#event_start_time').timepicker('getTime')
+    time.setHours(time.getHours()+1);
+    $('#event_end_time').timepicker('setTime', time);
   });
 
   $('.modal .places-autocomplete').placesAutocomplete();

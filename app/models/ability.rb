@@ -164,6 +164,10 @@ class Ability
        (event.rejected? && can?(:view_rejected_data, event))
       end
 
+      can :view_or_edit_data, Event do |event|
+        can?(:view_data, event) || can?(:edit_data, event)
+      end
+
       can :calendar, Event do |event|
         can?(:view_calendar, Event) && can?(:show, event)
       end
@@ -198,6 +202,12 @@ class Ability
       # Team Members
       can [:add_members, :delete_member], Team do |team|
         can?(:edit, team)
+      end
+
+      cannot [:approve, :reject, :submit,
+              :view_members, :add_members, :delete_member,
+              :view_contacts, :create_contacts, :edit_contacts, :delete_contact], Event do |event|
+        cannot?(:show, event)
       end
 
       can [:add, :list], ContactEvent if user.role.has_permission?(:create_contacts, Event)
@@ -340,6 +350,10 @@ class Ability
         (comment.commentable.is_a?(Event) && user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)) ||
         (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_my_comment, Task) && comment.commentable.company_user_id == user.current_company_user.id) ||
         (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.user_in_team?(user.current_company_user))
+      end
+
+      can :view_promo_hours_data, Campaign do |campaign|
+        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       can :reject, Event do |event|

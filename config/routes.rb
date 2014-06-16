@@ -1,5 +1,6 @@
 Brandscopic::Application.routes.draw do
-  apipie
+
+  apipie if ENV['WEB']
 
   namespace :api do
     namespace :v1 do
@@ -86,10 +87,12 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
+  if ENV['WEB']
+    devise_for :admin_users, ActiveAdmin::Devise.config
+    ActiveAdmin.routes(self)
 
-  mount Resque::Server.new, :at => '/resque'
+    mount Resque::Server.new, :at => '/resque' unless Rails.env.test?
+  end
 
   devise_for :users, :controllers => { :invitations => 'invitations', :passwords => "passwords" }
 

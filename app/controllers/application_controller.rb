@@ -5,11 +5,8 @@ class ApplicationController < ActionController::Base
 
   skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  include CurrentCompanyHelper
-
   before_filter :authenticate_user!
   after_filter :update_user_last_activity
-  after_filter :remove_viewed_notification
 
   layout :set_layout
 
@@ -20,6 +17,26 @@ class ApplicationController < ActionController::Base
   protected
     def set_layout
       user_signed_in? ? 'application' : 'empty'
+    end
+
+    def company_users
+      current_company.company_users
+    end
+
+    def company_roles
+      current_company.roles
+    end
+
+    def company_teams
+      current_company.teams
+    end
+
+    def company_campaigns
+      current_company.campaigns.order('name')
+    end
+
+    def current_company_user
+      current_user.current_company_user
     end
 
     def current_company
@@ -55,12 +72,6 @@ class ApplicationController < ActionController::Base
       I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
     end
 
-    def remove_viewed_notification
-      if params[:notifid]
-        current_company_user.notifications.where(id: params[:notifid]).destroy_all
-      end
-    end
-
     def access_denied
       respond_to do |format|
         format.json { render text: 'Permission denied', status: 403 }
@@ -87,5 +98,16 @@ class ApplicationController < ActionController::Base
     def url_valid?(url)
       url = URI.parse(url) rescue false
       url.kind_of?(URI::HTTP) || url.kind_of?(URI::HTTPS)
-  end
+    end
+
+    def with_immediate_indexing
+      old_session = Sunspot.session
+      if Sunspot.session.is_a?(Sunspot::Queue::SessionProxy)
+        Sunspot.session = Sunspot.session.session
+      end
+      yield
+      Sunspot.commit
+    ensure
+      Sunspot.session = old_session
+    end
 end

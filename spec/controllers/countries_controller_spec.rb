@@ -8,5 +8,4 @@ describe CountriesController do
       response.should be_success
     end
   end
-
 end

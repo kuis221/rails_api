@@ -42,7 +42,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area'
+  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
   has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'

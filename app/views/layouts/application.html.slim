@@ -26,6 +26,7 @@ head
           checkUserTimeZoneChanges('#{escape_javascript(current_user.time_zone.try(:html_safe))}', '#{escape_javascript(current_user.detected_time_zone.try(:html_safe))}');
         })
       }
+    = render 'layouts/icons'
     = render 'application/tracking/lucky_orange' unless Rails.env.development? || Rails.env.test?
 
   - unless Rails.env.development? || Rails.env.test?
@@ -71,7 +72,31 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
   span class="totop pull-right"
     a href="#" Top
   footer
-    a target="_blank" href="http://www.brandscopic.com" Powered by Brandscopic
+    - if Rails.env.development? # Commented
+      .survey
+        p
+          | Overall how do you feel about the app?
+
+        .survey-box
+          a class="close" href="#" title="Close"
+          p
+            | Would you like to give us
+            br>/
+            | some feedback?
+          .control-group
+            .control
+              textarea
+          input type="submit" class="btn btn-primary" value="Send" /
+          input type="submit" class="btn btn-cancel" value="No, thanks" /
+
+        .emotions_select
+          .positive
+            input name="emotion" type="radio" value="positive" class="positive"
+          .neutral
+            input name="emotion" type="radio" value="neutral"
+          .negative
+            input name="emotion" type="radio" value="negative"
+    a target="_blank" class="pull-right" href="http://www.brandscopic.com" Powered by Brandscopic
   = render 'application/help'
 
   = yield(:footer)

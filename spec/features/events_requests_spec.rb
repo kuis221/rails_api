@@ -122,6 +122,30 @@ feature 'Events section' do
             FactoryGirl.create(:event, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company),
             FactoryGirl.create(:event, start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: company)
           ]}
+
+        scenario "a user can play and dismiss the video tutorial" do
+          visit events_path
+
+          feature_name = 'EVENTS'
+
+          expect(page).to have_selector('h5', text: feature_name)
+          expect(page).to have_content("The Events module is your one-stop-shop")
+          click_link 'Play Video'
+
+          within visible_modal do
+            click_js_link 'Close'
+          end
+          ensure_modal_was_closed
+
+          within('.new-feature') do
+            click_js_link 'Dismiss'
+          end
+          wait_for_ajax
+
+          visit events_path
+          expect(page).to have_no_selector('h5', text: feature_name)
+        end
+
         scenario "should display a list of events" do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             events.size  # make sure users are created before
@@ -391,6 +415,51 @@ feature 'Events section' do
         ensure_modal_was_closed
         expect(page).to have_content('ABSOLUT Vodka')
       end
+
+      scenario "end date are updated after user changes the start date" do
+        Timecop.travel(Time.zone.local(2013, 07, 30, 12, 00)) do
+          FactoryGirl.create(:campaign, company: company)
+          visit events_path
+
+          click_button 'Create'
+
+          within visible_modal do
+            event = Event.new
+
+            # Test both dates are the same
+            expect(find_field('Start date').value).to eql '07/30/2013'
+            expect(find_field('End date').value).to eql '07/30/2013'
+
+
+            #Change the start date and make sure the end date is changed automatically
+            find_field('Start date').click
+            find_field('Start date').set '07/29/2013'
+            find_field('End date').click
+            expect(find_field('End date').value).to eql '07/29/2013'
+
+            # Now, change the end data to make them different and test that the difference
+            # is kept after changing start date
+            find_field('End date').set '07/31/2013'
+            find_field('Start date').click
+            find_field('Start date').set '07/20/2013'
+            find_field('End date').click
+            expect(find_field('End date').value).to eql '07/22/2013'
+
+            #Change the start time and make sure the end date is changed automatically
+            #to one hour later
+            find_field('Start time').click
+            find_field('Start time').set '08:00am'
+            find_field('End time').click
+            expect(find_field('End time').value).to eql '9:00am'
+
+            find_field('Start time').click
+            find_field('Start time').set '4:00pm'
+            find_field('End time').click
+            expect(find_field('End time').value).to eql '5:00pm'
+
+          end
+        end
+      end
     end
 
 
@@ -472,6 +541,60 @@ feature 'Events section' do
     end
 
     feature "/events/:event_id", :js => true do
+      scenario "a user can play and dismiss the video tutorial (scheduled event)" do
+        event = FactoryGirl.create(:event,
+          start_date: '08/28/2013', end_date: '08/28/2013',
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, company: company), company: company)
+        visit event_path(event)
+
+        feature_name = 'EVENT DETAILS'
+
+        expect(page).to have_selector('h5', text: feature_name)
+        expect(page).to have_content("Welcome to the Event Details page")
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit event_path(event)
+        expect(page).to have_no_selector('h5', text: feature_name)
+      end
+
+      scenario "a user can play and dismiss the video tutorial (executed event)" do
+        event = FactoryGirl.create(:event,
+          start_date: '08/28/2013', end_date: '08/28/2013',
+          start_time: '8:00 PM', end_time: '11:00 PM',
+          campaign: FactoryGirl.create(:campaign, company: company), aasm_state: 'approved', company: company)
+        visit event_path(event)
+
+        feature_name = 'EVENT DETAILS'
+
+        expect(page).to have_selector('h5', text: feature_name)
+        expect(page).to have_content("You are viewing the Event Details page for an executed event")
+        click_link 'Play Video'
+
+        within visible_modal do
+          click_js_link 'Close'
+        end
+        ensure_modal_was_closed
+
+        within('.new-feature') do
+          click_js_link 'Dismiss'
+        end
+        wait_for_ajax
+
+        visit event_path(event)
+        expect(page).to have_no_selector('h5', text: feature_name)
+      end
+
       scenario "GET show should display the event details page" do
         event = FactoryGirl.create(:event,
           start_date: '08/28/2013', end_date: '08/28/2013',

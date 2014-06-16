@@ -18,7 +18,7 @@ feature "Login", :js => true do
       role_id: FactoryGirl.create(:role, company: @company).id)
 
     visit new_user_session_path
-    fill_in('E-mail', with: 'pedrito-picaso@gmail.com')
+    fill_in('user[email]', with: 'pedrito-picaso@gmail.com')
     fill_in('Password', with: 'SomeValidPassword01')
     click_button 'Login'
 
@@ -30,7 +30,7 @@ feature "Login", :js => true do
 
   scenario "should display a message if the password is not valid" do
     visit new_user_session_path
-    fill_in('E-mail', with: 'non-existing-user@gmail.com')
+    fill_in('user[email]', with: 'non-existing-user@gmail.com')
     fill_in('Password', with: 'SomeValidPassword01')
     click_button 'Login'
 

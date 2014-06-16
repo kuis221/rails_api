@@ -306,46 +306,46 @@ describe Campaign do
       los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       area.places << los_angeles
       other_area.places << los_angeles
+      campaign.areas << [area, other_area]
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 20)
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 10)
       FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, city: 'Los Angeles', state: 'California'))
-      campaign.areas << [area, other_area]
       stats = campaign.promo_hours_graph_data
       expect(stats.count).to eql 2
 
       expect(stats.first['id']).to eql area.id
       expect(stats.first['name']).to eql 'California'
-      expect(stats.first['kpi']).to eql 'PROMO HOURS'
-      expect(stats.first['goal']).to eql 20.0
+      expect(stats.first['kpi']).to eql 'EVENTS'
+      expect(stats.first['goal']).to eql 10.0
       expect(stats.first['executed']).to eql 0.0
-      expect(stats.first['scheduled']).to eql 2.0
-      expect(stats.first['remaining']).to eql 18.0
+      expect(stats.first['scheduled']).to eql 1.0
+      expect(stats.first['remaining']).to eql 9.0
       expect(stats.first['executed_percentage']).to eql 0
       expect(stats.first['scheduled_percentage']).to eql 10
       expect(stats.first['remaining_percentage']).to eql 90
       expect(stats.first.has_key?('today')).to be_false
       expect(stats.first.has_key?('today_percentage')).to be_false
 
-
       expect(stats.last['id']).to eql area.id
       expect(stats.last['name']).to eql 'California'
-      expect(stats.last['kpi']).to eql 'EVENTS'
-      expect(stats.last['goal']).to eql 10.0
+      expect(stats.last['kpi']).to eql 'PROMO HOURS'
+      expect(stats.last['goal']).to eql 20.0
       expect(stats.last['executed']).to eql 0.0
-      expect(stats.last['scheduled']).to eql 1.0
-      expect(stats.last['remaining']).to eql 9.0
+      expect(stats.last['scheduled']).to eql 2.0
+      expect(stats.last['remaining']).to eql 18.0
       expect(stats.last['executed_percentage']).to eql 0
       expect(stats.last['scheduled_percentage']).to eql 10
       expect(stats.last['remaining_percentage']).to eql 90
       expect(stats.last.has_key?('today')).to be_false
       expect(stats.last.has_key?('today_percentage')).to be_false
+
     end
 
     it "should return the results for all areas on the campaign with goals even if there are not events" do
       area = FactoryGirl.create(:area, name: 'California', company: company)
       area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
-      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
       campaign.areas << area
+      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
       stats = campaign.promo_hours_graph_data
       expect(stats.count).to eql 1
 
@@ -367,9 +367,9 @@ describe Campaign do
       area = FactoryGirl.create(:area, name: 'California', company: company)
       area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       campaign = FactoryGirl.create(:campaign, start_date: '01/01/2014', end_date: '02/01/2014', company: company)
+      campaign.areas << area
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 5)
-      campaign.areas << area
 
       some_bar_in_los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
       event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm',

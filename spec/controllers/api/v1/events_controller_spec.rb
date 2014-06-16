@@ -132,7 +132,7 @@ describe Api::V1::EventsController do
 
     it "must update the event attributes" do
       place = FactoryGirl.create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, partial: 'event_data', event: {campaign_id: FactoryGirl.create(:campaign, company: @company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, partial: 'event_data', event: {campaign_id: FactoryGirl.create(:campaign, company: company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
       assigns(:event).should == event
       response.should be_success
     end
@@ -153,7 +153,7 @@ describe Api::V1::EventsController do
 
   describe "PUT 'submit'" do
     it "should submit event" do
-      event = FactoryGirl.create(:event, active: true, company: @company)
+      event = FactoryGirl.create(:event, active: true, company: company)
       lambda {
         put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
         response.should be_success
@@ -176,7 +176,7 @@ describe Api::V1::EventsController do
 
   describe "PUT 'approve'" do
     it "should approve event" do
-      event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+      event = FactoryGirl.create(:submitted_event, active: true, company: company)
       lambda {
         put 'approve', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
         response.should be_success
@@ -188,7 +188,7 @@ describe Api::V1::EventsController do
 
   describe "PUT 'reject'" do
     it "should reject event" do
-      event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+      event = FactoryGirl.create(:submitted_event, active: true, company: company)
       lambda {
         put 'reject', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, reason: 'blah blah blah', format: :json
         response.should be_success
@@ -280,7 +280,7 @@ describe Api::V1::EventsController do
     end
   end
 
-  describe "GET 'team'" do
+  describe "GET 'members'" do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of users" do
       users = [

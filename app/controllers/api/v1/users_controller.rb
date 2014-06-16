@@ -4,6 +4,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
   skip_before_filter :verify_authenticity_token,
                      :if => Proc.new { |c| c.request.format == 'application/json' }
 
+  skip_authorization_check only: [:new_password, :companies, :permissions, :notifications]
+
   defaults resource_class: CompanyUser
 
   def_param_group :user do
@@ -431,7 +433,6 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   def permissions
     if current_user.present?
-      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
       respond_to do |format|
         format.json {
           render :status => 200,
@@ -454,57 +455,6 @@ class Api::V1::UsersController < Api::V1::FilteredController
                       :data => {} }
   end
 
-  def user_permissions
-    permissions = []
-    permissions.push 'events' if can?(:view_list, Event)
-    permissions.push 'events_create' if can?(:create, Event)
-    permissions.push 'events_show' if can?(:show, Event)
-    permissions.push 'events_edit' if can?(:update, Event)
-    permissions.push 'events_deactivate' if can?(:deactivate, Event)
-    permissions.push 'events_team_members' if can?(:view_members, Event)
-    permissions.push 'events_add_team_members' if can?(:add_members, Event)
-    permissions.push 'events_delete_team_members' if can?(:delete_member, Event)
-    permissions.push 'events_contacts' if can?(:view_contacts, Event)
-    permissions.push 'events_add_contacts' if can?(:create_contacts, Event)
-    permissions.push 'events_edit_contacts' if can?(:edit_contacts, Event)
-    permissions.push 'events_delete_contacts' if can?(:delete_contact, Event)
-    permissions.push 'events_tasks' if can?(:index_tasks, Event)
-    permissions.push 'events_create_tasks' if can?(:create_task, Event)
-    permissions.push 'events_edit_tasks' if can?(:edit_task, Event)
-    permissions.push 'events_documents' if can?(:index_documents, Event)
-    permissions.push 'events_create_documents' if can?(:create_document, Event)
-    permissions.push 'events_deactivate_documents' if can?(:deactivate_document, Event)
-    permissions.push 'events_photos' if can?(:index_photos, Event)
-    permissions.push 'events_create_photos' if can?(:create_photo, Event)
-    permissions.push 'events_deactivate_photos' if can?(:deactivate_photo, Event)
-    permissions.push 'events_expenses' if can?(:index_expenses, Event)
-    permissions.push 'events_create_expenses' if can?(:create_expense, Event)
-    permissions.push 'events_edit_expenses' if can?(:edit_expense, Event)
-    permissions.push 'events_deactivate_expenses' if can?(:deactivate_expense, Event)
-    permissions.push 'events_surveys' if can?(:index_surveys, Event)
-    permissions.push 'events_create_surveys' if can?(:create_survey, Event)
-    permissions.push 'events_edit_surveys' if can?(:edit_survey, Event)
-    permissions.push 'events_deactivate_surveys' if can?(:deactivate_survey, Event)
-
-    permissions.push 'venues' if can?(:index, Venue)
-    permissions.push 'venues_create' if can?(:create, Venue)
-
-    permissions.push 'tasks_own' if can?(:index_my, Task)
-    permissions.push 'tasks_edit_own' if can?(:edit_my, Task)
-    permissions.push 'tasks_deactivate_own' if can?(:edit_my, Task)
-    permissions.push 'tasks_comments_own' if can?(:index_my_comments, Task)
-    permissions.push 'tasks_create_comments_own' if can?(:create_my_comment, Task)
-
-    permissions.push 'tasks_team' if can?(:index_team, Task)
-    permissions.push 'tasks_edit_team' if can?(:edit_team, Task)
-    permissions.push 'tasks_deactivate_team' if can?(:edit_team, Task)
-    permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
-    permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
-
-    permissions
-  end
-
-
   private
     def permitted_params
       allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }
@@ -523,4 +473,55 @@ class Api::V1::UsersController < Api::V1::FilteredController
     def permitted_search_params
       params.permit({role: []}, {status: []}, {team: []}, {campaign: []})
     end
+
+    def user_permissions
+      permissions = []
+      permissions.push 'events' if can?(:view_list, Event)
+      permissions.push 'events_create' if can?(:create, Event)
+      permissions.push 'events_show' if can?(:show, Event)
+      permissions.push 'events_edit' if can?(:update, Event)
+      permissions.push 'events_deactivate' if can?(:deactivate, Event)
+      permissions.push 'events_team_members' if can?(:view_members, Event)
+      permissions.push 'events_add_team_members' if can?(:add_members, Event)
+      permissions.push 'events_delete_team_members' if can?(:delete_member, Event)
+      permissions.push 'events_contacts' if can?(:view_contacts, Event)
+      permissions.push 'events_add_contacts' if can?(:create_contacts, Event)
+      permissions.push 'events_edit_contacts' if can?(:edit_contacts, Event)
+      permissions.push 'events_delete_contacts' if can?(:delete_contact, Event)
+      permissions.push 'events_tasks' if can?(:index_tasks, Event)
+      permissions.push 'events_create_tasks' if can?(:create_task, Event)
+      permissions.push 'events_edit_tasks' if can?(:edit_task, Event)
+      permissions.push 'events_documents' if can?(:index_documents, Event)
+      permissions.push 'events_create_documents' if can?(:create_document, Event)
+      permissions.push 'events_deactivate_documents' if can?(:deactivate_document, Event)
+      permissions.push 'events_photos' if can?(:index_photos, Event)
+      permissions.push 'events_create_photos' if can?(:create_photo, Event)
+      permissions.push 'events_deactivate_photos' if can?(:deactivate_photo, Event)
+      permissions.push 'events_expenses' if can?(:index_expenses, Event)
+      permissions.push 'events_create_expenses' if can?(:create_expense, Event)
+      permissions.push 'events_edit_expenses' if can?(:edit_expense, Event)
+      permissions.push 'events_deactivate_expenses' if can?(:deactivate_expense, Event)
+      permissions.push 'events_surveys' if can?(:index_surveys, Event)
+      permissions.push 'events_create_surveys' if can?(:create_survey, Event)
+      permissions.push 'events_edit_surveys' if can?(:edit_survey, Event)
+      permissions.push 'events_deactivate_surveys' if can?(:deactivate_survey, Event)
+
+      permissions.push 'venues' if can?(:index, Venue)
+      permissions.push 'venues_create' if can?(:create, Venue)
+
+      permissions.push 'tasks_own' if can?(:index_my, Task)
+      permissions.push 'tasks_edit_own' if can?(:edit_my, Task)
+      permissions.push 'tasks_deactivate_own' if can?(:edit_my, Task)
+      permissions.push 'tasks_comments_own' if can?(:index_my_comments, Task)
+      permissions.push 'tasks_create_comments_own' if can?(:create_my_comment, Task)
+
+      permissions.push 'tasks_team' if can?(:index_team, Task)
+      permissions.push 'tasks_edit_team' if can?(:edit_team, Task)
+      permissions.push 'tasks_deactivate_team' if can?(:edit_team, Task)
+      permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
+      permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
+
+      permissions
+    end
+
 end

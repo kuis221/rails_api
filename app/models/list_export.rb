@@ -80,7 +80,7 @@ class ListExport < ActiveRecord::Base
 
     name = controller.send(:export_file_name)
     buffer = controller.send(:export_list, self)
-    tmp_filename = "#{Rails.root}/tmp/#{name}.#{export_format}"
+    tmp_filename = "#{Rails.root}/tmp/#{name}-#{self.id}.#{export_format}"
     File.open(tmp_filename, 'w'){|f| f.write(buffer) }
     buffer = nil
     self.file = File.open(tmp_filename)

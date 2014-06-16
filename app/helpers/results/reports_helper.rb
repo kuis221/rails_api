@@ -6,12 +6,12 @@ module Results
       fields.merge! Hash[current_company.activity_types.includes(form_fields: [:options, :statements]).map do |activity_type|
         [
           activity_type.name,
-          activity_type.form_fields.map{|ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact +
-              [["activity_type_#{activity_type.id}:user", 'User', 'User'],  ["activity_type_#{activity_type.id}:date", 'Date', 'Date']]
+          activity_type.form_fields.map{|ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact
         ]
       end]
 
       fields.merge({
+        'Activity Type' => model_report_fields(ActivityType),
         'Area' => model_report_fields(Area),
         'Event' => model_report_fields(Event),
         'Task' => model_report_fields(Task),
@@ -27,22 +27,26 @@ module Results
       })
     end
 
-    def each_grouped_report_row(results=nil, row_number=0, &block)
+    def each_grouped_report_row(limit_results=false, results=nil, row_number=0, &block)
       results ||= resource.fetch_page
       row_field = resource.rows[row_number].to_sql_name
       previous_label = nil
+      counter = 0
       results.each do |row|
-        if row_number < resource.rows.count-1
-          row_label = row[row_field]
-          if row_label != previous_label
-            group = results.select{|r|r[row_field] == row_label}
-            values = sum_row_values(group, resource.rows[row_number])
-            yield row_label, row_number, values
-            each_grouped_report_row(group, row_number+1, &block)
+        if !limit_results || counter < 10 || row_number == 0
+          if row_number < resource.rows.count-1
+            row_label = row[row_field]
+            if row_label != previous_label
+              group = results.select{|r|r[row_field] == row_label}
+              values = sum_row_values(group, resource.rows[row_number])
+              yield row_label, row_number, values
+              each_grouped_report_row(limit_results, group, row_number+1, &block)
+              counter += 1
+            end
+            previous_label = row_label
+          else
+            yield row[row_field], row_number, resource.format_values(row['values'])
           end
-          previous_label = row_label
-        else
-          yield row[row_field], row_number, resource.format_values(row['values'])
         end
       end
     end
