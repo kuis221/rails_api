@@ -231,6 +231,41 @@ feature 'Events section' do
           end
         end
 
+        scenario "can filter by users" do
+          ev1 = FactoryGirl.create(:event,
+            campaign: FactoryGirl.create(:campaign, name: 'Campaña1', company: company))
+          ev2 = FactoryGirl.create(:event,
+            campaign: FactoryGirl.create(:campaign, name: 'Campaña2', company: company))
+          ev1.users << FactoryGirl.create(:company_user,
+            user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+          ev2.users << FactoryGirl.create(:company_user,
+            user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company)
+          Sunspot.commit
+
+          visit events_path
+
+          expect(page).to have_filter_section(title: 'PEOPLE',
+                            options: ['Mario Cantinflas', 'Roberto Gomez'])
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña1')
+            expect(page).to have_content('Campaña2')
+          end
+
+          filter_section('PEOPLE').unicheck('Roberto Gomez') # Select
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña1')
+            expect(page).to have_no_content('Campaña2')
+          end
+
+          filter_section('PEOPLE').unicheck('Roberto Gomez') # Deselect
+          filter_section('PEOPLE').unicheck('Mario Cantinflas') # Select
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña2')
+            expect(page).to have_no_content('Campaña1')
+          end
+        end
+
         scenario "Filters are preserved upon navigation" do
           today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today+1.day

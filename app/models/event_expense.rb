@@ -17,7 +17,7 @@ class EventExpense < ActiveRecord::Base
 
   #validates :event_id, presence: true, numericality: true
   validates :name, presence: true
-  validates :amount, presence: true
+  validates :amount, presence: true, numericality: true
 
   after_save :update_event_data
 
