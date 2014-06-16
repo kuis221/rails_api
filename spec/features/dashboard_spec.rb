@@ -73,10 +73,10 @@ feature "Dashboard", search: true, js: true do
       scenario "a user can play and dismiss the video tutorial" do
         visit root_path
 
-        feature_name = 'DASHBOARD'
+        feature_name = 'Getting Started: Dashboard'
 
         expect(page).to have_selector('h5', text: feature_name)
-        expect(page).to have_content('Welcome to your Dashboard')
+        expect(page).to have_content('On this page you will find a quick overview')
         click_link 'Play Video'
 
         within visible_modal do
