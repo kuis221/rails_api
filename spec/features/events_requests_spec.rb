@@ -126,7 +126,7 @@ feature 'Events section' do
         scenario "a user can play and dismiss the video tutorial" do
           visit events_path
 
-          feature_name = 'EVENTS'
+          feature_name = 'Getting Started: Events'
 
           expect(page).to have_selector('h5', text: feature_name)
           expect(page).to have_content("The Events module is your one-stop-shop")
@@ -548,7 +548,7 @@ feature 'Events section' do
           campaign: FactoryGirl.create(:campaign, company: company), company: company)
         visit event_path(event)
 
-        feature_name = 'EVENT DETAILS'
+        feature_name = 'Getting Started: Event Details'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content("Welcome to the Event Details page")
@@ -575,7 +575,7 @@ feature 'Events section' do
           campaign: FactoryGirl.create(:campaign, company: company), aasm_state: 'approved', company: company)
         visit event_path(event)
 
-        feature_name = 'EVENT DETAILS'
+        feature_name = 'Getting Started: Event Details'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content("You are viewing the Event Details page for an executed event")

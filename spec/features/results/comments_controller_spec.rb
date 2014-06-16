@@ -21,7 +21,7 @@ feature "Results Comments Page", js: true, search: true  do
     scenario "a user can play and dismiss the video tutorial" do
       visit results_comments_path
 
-      feature_name = 'COMMENTS REPORT'
+      feature_name = 'Getting Started: Comments Report'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content("Get to know your consumers")
