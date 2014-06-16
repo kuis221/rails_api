@@ -18,7 +18,7 @@ feature "Tasks", js: true, search: true do
     scenario "a user can play and dismiss the video tutorial" do
       visit mine_tasks_path
 
-      feature_name = 'TASKS'
+      feature_name = 'Getting Started: Tasks'
 
       expect(page).to have_selector('h5', text: feature_name)
       expect(page).to have_content('Tasks allow you to assign activities to other users')

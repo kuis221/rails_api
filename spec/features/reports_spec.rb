@@ -80,10 +80,10 @@ feature "Reports", js: true do
     scenario "a user can play and dismiss the video tutorial" do
       visit results_reports_path
 
-      feature_name = 'CHECK OUT THE NEW RESULTS SECTION'
+      feature_name = 'Getting Started: Results Overview'
 
       expect(page).to have_content(feature_name)
-      expect(page).to have_content('We have completely overhauled the layout of the Results')
+      expect(page).to have_content('The Results Module holds all of your post-event data results')
       click_link 'Play Video'
 
       within visible_modal do
@@ -109,10 +109,10 @@ feature "Reports", js: true do
     scenario "a user can play and dismiss the video tutorial" do
       visit results_report_path(report)
 
-      feature_name = 'CUSTOM REPORTS '
+      feature_name = 'Getting Started: Custom Reports'
 
       expect(page).to have_content(feature_name)
-      expect(page).to have_content("Running a custom report is easy and intuitive")
+      expect(page).to have_content("Custom Reports are reports that either you or your teammates created and shared")
       click_link 'Play Video'
 
       within visible_modal do
@@ -333,7 +333,7 @@ feature "Reports", js: true do
     scenario "a user can play and dismiss the video tutorial" do
       visit build_results_report_path(report)
 
-      feature_name = 'REPORT BUILDER'
+      feature_name = 'Getting Started: Report Builder'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content("Let's build a report!")
