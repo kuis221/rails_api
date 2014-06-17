@@ -5,7 +5,7 @@ production:
     log_level: WARNING
     path: /solr/production
     read_timeout: 4
-    open_timeout: 1.5
+    open_timeout: 4
 
 staging:
   solr:
@@ -14,7 +14,7 @@ staging:
     log_level: WARNING
     path: /solr/production
     read_timeout: 4
-    open_timeout: 1.5
+    open_timeout: 4
 
 development:
   solr:
