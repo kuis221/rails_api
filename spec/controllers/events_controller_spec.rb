@@ -518,12 +518,19 @@ describe EventsController do
 
     describe "PUT 'submit'" do
       it "should submit event" do
-        event = FactoryGirl.create(:event, active: true, company: @company)
-        lambda {
-          put 'submit', id: event.to_param, format: :js
-          response.should be_success
-          event.reload
-        }.should change(event, :submitted?).to(true)
+        Timecop.freeze do
+          with_resque do
+            event = FactoryGirl.create(:event, active: true, company: @company)
+            @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_sms']}, without_protection: true)
+            lambda {
+              put 'submit', id: event.to_param, format: :js
+              response.should be_success
+              event.reload
+            }.should change(event, :submitted?).to(true)
+            open_last_text_message_for @user.phone_number
+            current_text_message.should have_body "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
+          end
+        end
       end
 
       it "should not allow to submit the event if the event data is not valid" do
@@ -551,13 +558,20 @@ describe EventsController do
 
     describe "PUT 'reject'" do
       it "should reject event" do
-        event = FactoryGirl.create(:submitted_event, active: true, company: @company)
-        lambda {
-          put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
-          response.should be_success
-          event.reload
-        }.should change(event, :rejected?).to(true)
-        event.reject_reason.should == 'blah blah blah'
+        Timecop.freeze do
+          with_resque do
+            event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+            @company_user.update_attributes({notifications_settings: ['event_recap_rejected_sms']}, without_protection: true)
+            lambda {
+              put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
+              response.should be_success
+              event.reload
+            }.should change(event, :rejected?).to(true)
+            event.reject_reason.should == 'blah blah blah'
+            open_last_text_message_for @user.phone_number
+            current_text_message.should have_body "You have a rejected event recap http://localhost:5100/events/#{event.id}"
+          end
+        end
       end
     end
   end

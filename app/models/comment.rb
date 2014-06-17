@@ -56,14 +56,14 @@ class Comment < ActiveRecord::Base
       if commentable_type == 'Task'
         #Case when Task has an assigned user
         if commentable.company_user.present?
-          if commentable.company_user.notifications_settings.include?('new_comment')
+          if commentable.company_user.notifications_settings.include?('new_comment_sms')
             sms_message = I18n.translate("notifications_sms.new_comment", url: Rails.application.routes.url_helpers.mine_tasks_url(q: "task,#{commentable_id}", anchor: "comments-#{commentable_id}"))
             Resque.enqueue(SendSmsWorker, commentable.company_user.phone_number, sms_message)
           end
         else #Case when Task has not an assigned user, send messages to all event's team
           sms_message = I18n.translate("notifications_sms.new_team_comment", url: Rails.application.routes.url_helpers.mine_tasks_url(q: "task,#{commentable_id}", anchor: "comments-#{commentable_id}"))
           commentable.event.all_users.each do |user|
-            if user.notifications_settings.include?('new_team_comment')
+            if user.notifications_settings.include?('new_team_comment_sms')
               Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
             end
           end

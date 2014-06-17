@@ -104,8 +104,8 @@ en:
   notifications_sms:
     event_recap_due: 'You have a due event recap'
     event_recap_late: 'You have a late event recap'
-    event_recap_pending_approval: 'You have a event recap that is pending approval'
-    event_recap_rejected: 'You have a rejected event recap'
+    event_recap_pending_approval: 'You have an event recap that is pending approval %{url}'
+    event_recap_rejected: 'You have a rejected event recap %{url}'
     new_event: 'You have a new event %{url}'
     new_event_team: 'Your team has a new event'
     late_task: 'You have a late task'
