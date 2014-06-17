@@ -20,7 +20,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        feature_name = 'GOALS VS. ACTUALS'
+        feature_name = 'Getting Started: Goals vs. Actual'
 
         expect(page).to have_content(feature_name)
         expect(page).to have_content("The Goals vs. Actual section allows you")

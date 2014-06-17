@@ -126,7 +126,7 @@ feature 'Events section' do
         scenario "a user can play and dismiss the video tutorial" do
           visit events_path
 
-          feature_name = 'EVENTS'
+          feature_name = 'Getting Started: Events'
 
           expect(page).to have_selector('h5', text: feature_name)
           expect(page).to have_content("The Events module is your one-stop-shop")
@@ -228,6 +228,41 @@ feature 'Events section' do
             end
 
             expect(page).to have_content("2 Active events taking place between today and tomorrow as part of Another Campaign April 03 and Campaign FY2012")
+          end
+        end
+
+        scenario "can filter by users" do
+          ev1 = FactoryGirl.create(:event,
+            campaign: FactoryGirl.create(:campaign, name: 'Campaña1', company: company))
+          ev2 = FactoryGirl.create(:event,
+            campaign: FactoryGirl.create(:campaign, name: 'Campaña2', company: company))
+          ev1.users << FactoryGirl.create(:company_user,
+            user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+          ev2.users << FactoryGirl.create(:company_user,
+            user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company)
+          Sunspot.commit
+
+          visit events_path
+
+          expect(page).to have_filter_section(title: 'PEOPLE',
+                            options: ['Mario Cantinflas', 'Roberto Gomez'])
+
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña1')
+            expect(page).to have_content('Campaña2')
+          end
+
+          filter_section('PEOPLE').unicheck('Roberto Gomez') # Select
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña1')
+            expect(page).to have_no_content('Campaña2')
+          end
+
+          filter_section('PEOPLE').unicheck('Roberto Gomez') # Deselect
+          filter_section('PEOPLE').unicheck('Mario Cantinflas') # Select
+          within("ul#events-list") do
+            expect(page).to have_content('Campaña2')
+            expect(page).to have_no_content('Campaña1')
           end
         end
 
@@ -548,7 +583,7 @@ feature 'Events section' do
           campaign: FactoryGirl.create(:campaign, company: company), company: company)
         visit event_path(event)
 
-        feature_name = 'EVENT DETAILS'
+        feature_name = 'Getting Started: Event Details'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content("Welcome to the Event Details page")
@@ -575,7 +610,7 @@ feature 'Events section' do
           campaign: FactoryGirl.create(:campaign, company: company), aasm_state: 'approved', company: company)
         visit event_path(event)
 
-        feature_name = 'EVENT DETAILS'
+        feature_name = 'Getting Started: Event Details'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content("You are viewing the Event Details page for an executed event")

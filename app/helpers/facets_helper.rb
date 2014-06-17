@@ -11,7 +11,7 @@ module FacetsHelper
     items = if klass.name == 'CompanyUser'
       klass.where(id: facets.map(&:value)).
         for_dropdown.
-        map{|x| build_facet_item({label: x[0], id: x[1], name: x[0]})}
+        map{|x| build_facet_item({label: x[0], id: x[1], name: name})}
     else
       klass.where(id: facets.map(&:value)).
         order(:name).

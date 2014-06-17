@@ -1,9 +1,6 @@
 class Api::V1::ApiController < ActionController::Base
   respond_to :json, :xml
 
-  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
-  check_authorization
-
   include SentientController
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
@@ -15,6 +12,9 @@ class Api::V1::ApiController < ActionController::Base
   after_filter :set_access_control_headers
 
   before_filter :set_user
+
+  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
+  check_authorization
 
   def options
   end
@@ -97,7 +97,7 @@ class Api::V1::ApiController < ActionController::Base
       unless Rails.env.production?
         headers['Access-Control-Allow-Origin'] = '*'
       else
-        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+        headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
       end
       headers['Access-Control-Request-Method'] = '*'
       headers['Access-Control-Expose-Headers'] = 'ETag'
@@ -111,7 +111,7 @@ class Api::V1::ApiController < ActionController::Base
         unless Rails.env.production?
           headers['Access-Control-Allow-Origin'] = '*'
         else
-          headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+          headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
         end
         headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
         headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'

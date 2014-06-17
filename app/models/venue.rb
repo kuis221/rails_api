@@ -306,7 +306,6 @@ class Venue < ActiveRecord::Base
         end
       end
 
-
       stat(:events_count, :type => "max")
       stat(:promo_hours, :type => "max")
       stat(:impressions, :type => "max")

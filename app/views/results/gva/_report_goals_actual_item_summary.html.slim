@@ -1,20 +1,21 @@
 - data = @group_header_data["#{item.class.name}#{item.id}"] || {}
 .item-summary
   b.pull-left= item.name
-  .goals-summary.text-right
-    - unless data['events'].nil?
-      .goal-item
-        b== "#{data['events'].truncate}<span class=\"normal-text\">%</span>"
-        .title EVENTS
-    - unless data['promo_hours'].nil?
-      .goal-item
-        b== "#{data['promo_hours'].truncate}<span class=\"normal-text\">%</span>"
-        .title PROMO HOURS
-    - unless data['expenses'].nil?
-      .goal-item
-        b== "#{data['expenses'].truncate}<span class=\"normal-text\">%</span>"
-        .title EXPENSES
-    - unless data['samples'].nil?
-      .goal-item
-        b== "#{data['samples'].truncate}<span class=\"normal-text\">%</span>"
-        .title SAMPLES
+  - if data.present?
+    .goals-summary.text-right
+      - unless data['events'].nil?
+        .goal-item
+          b== "#{data['events'].truncate}<span class=\"normal-text\">%</span>"
+          .title EVENTS
+      - unless data['promo_hours'].nil?
+        .goal-item
+          b== "#{data['promo_hours'].truncate}<span class=\"normal-text\">%</span>"
+          .title PROMO HOURS
+      - unless data['expenses'].nil?
+        .goal-item
+          b== "#{data['expenses'].truncate}<span class=\"normal-text\">%</span>"
+          .title EXPENSES
+      - unless data['samples'].nil?
+        .goal-item
+          b== "#{data['samples'].truncate}<span class=\"normal-text\">%</span>"
+          .title SAMPLES

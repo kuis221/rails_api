@@ -16,7 +16,7 @@ feature "Venues Section", js: true, search: true do
     scenario "a user can play and dismiss the video tutorial" do
       visit venues_path
 
-      feature_name = 'VENUES'
+      feature_name = 'Getting Started: Venues'
 
       expect(page).to have_selector('h5', text: feature_name)
       expect(page).to have_content('Welcome to the Venues module!')
@@ -77,7 +77,7 @@ feature "Venues Section", js: true, search: true do
 
       visit venue_path(venue)
 
-      feature_name = 'VENUE DETAILS'
+      feature_name = 'Getting Started: Venue Details'
 
       expect(page).to have_selector('h5', text: feature_name)
       expect(page).to have_content('You are now viewing the Venue Details page')
