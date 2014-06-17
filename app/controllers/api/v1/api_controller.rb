@@ -97,7 +97,7 @@ class Api::V1::ApiController < ActionController::Base
       unless Rails.env.production?
         headers['Access-Control-Allow-Origin'] = '*'
       else
-        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+        headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
       end
       headers['Access-Control-Request-Method'] = '*'
       headers['Access-Control-Expose-Headers'] = 'ETag'
@@ -111,7 +111,7 @@ class Api::V1::ApiController < ActionController::Base
         unless Rails.env.production?
           headers['Access-Control-Allow-Origin'] = '*'
         else
-          headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+          headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
         end
         headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
         headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
