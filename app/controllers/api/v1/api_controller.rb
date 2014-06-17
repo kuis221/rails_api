@@ -97,7 +97,7 @@ class Api::V1::ApiController < ActionController::Base
       unless Rails.env.production?
         headers['Access-Control-Allow-Origin'] = '*'
       else
-        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+        headers['Access-Control-Allow-Origin'] = 'm.brandscopic.com'
       end
       headers['Access-Control-Request-Method'] = '*'
       headers['Access-Control-Expose-Headers'] = 'ETag'
