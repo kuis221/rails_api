@@ -1,9 +1,6 @@
 class Api::V1::ApiController < ActionController::Base
   respond_to :json, :xml
 
-  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
-  check_authorization
-
   include SentientController
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
@@ -15,6 +12,9 @@ class Api::V1::ApiController < ActionController::Base
   after_filter :set_access_control_headers
 
   before_filter :set_user
+
+  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
+  check_authorization
 
   def options
   end
