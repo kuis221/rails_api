@@ -14,8 +14,9 @@
           h3=t "form_builder.modules.#{field.kpi.module}"
         = render partial: 'event_data', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
       - elsif field.is_section?
-        h2= field.name
-        = render partial: 'event_data', locals: {fields: field.fields, f: f, current_module: "section"}
+        h3.section-title= field.name
+        - if field.description
+          p.section-description= field.options[:description]
       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
         .control-group.segment-label
           label.field-label

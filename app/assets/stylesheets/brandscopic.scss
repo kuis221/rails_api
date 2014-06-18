@@ -5901,6 +5901,15 @@ body.campaigns{
 			h3{
 				margin-bottom: 20px;
 			}
+			.box_section {
+				margin-bottom: 20px;
+				h3 {
+					margin-bottom: 0;
+				}
+				p {
+					color: $brand;
+				}
+			}
 			label {
 				color: $brand;
 				display: inline-block;
