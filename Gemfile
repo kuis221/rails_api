@@ -49,7 +49,8 @@ gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
-gem 'activerecord-postgres-hstore'
+gem 'activerecord-postgres-hstore'  # Remove when upgrading to Rails4
+gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'

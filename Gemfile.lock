@@ -219,6 +219,7 @@ GEM
       mime-types
     pg (0.15.1)
     pg-hstore (1.2.0)
+    pg_array_parser (0.0.9)
     platform-api (0.2.0)
       heroics (~> 0.0.10)
     poltergeist (1.5.1)
@@ -230,6 +231,9 @@ GEM
       activerecord (~> 3.0)
     polyglot (0.3.4)
     populator (1.0.0)
+    postgres_ext (1.0.0)
+      activerecord (~> 3.2.0)
+      pg_array_parser (~> 0.0.9)
     pr_geohash (1.0.0)
     progress_bar (1.0.0)
       highline (~> 1.6.1)
@@ -460,6 +464,7 @@ DEPENDENCIES
   pg
   poltergeist
   populator
+  postgres_ext
   progress_bar
   quiet_assets (>= 1.0.1)
   rabl

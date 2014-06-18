@@ -13,6 +13,11 @@
 
 ActiveRecord::Schema.define(:version => 20140604183223) do
 
+  add_extension "hstore"
+  add_extension "pg_stat_statements"
+  add_extension "postgres_fdw"
+  add_extension "tablefunc"
+
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
     t.string   "resource_type", :null => false
@@ -57,7 +62,7 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
   add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
   add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
-  add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value"
+  add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
 
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"
@@ -301,7 +306,7 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
     t.datetime "updated_at",                               :null => false
     t.boolean  "active",                 :default => true
     t.datetime "last_activity_at"
-    t.text     "notifications_settings", :default => "{}"
+    t.string   "notifications_settings", :default => [],                   :array => true
   end
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
@@ -624,7 +629,7 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
 
   add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
   add_index "notifications", ["message"], :name => "index_notifications_on_message"
-  add_index "notifications", ["params"], :name => "index_notifications_on_params"
+  add_index "notifications", ["params"], :name => "index_notifications_on_params", :using => :gist
 
   create_table "permissions", :force => true do |t|
     t.integer "role_id"
