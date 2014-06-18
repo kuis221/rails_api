@@ -237,16 +237,18 @@ describe CompanyUsersController, search: true do
       # end
 
       it "should return a notification if there is a new task for the user" do
-        task =  without_current_user do
-          FactoryGirl.create(:task,
-            title: 'The task title',
-            event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+        Timecop.freeze do
+          task = without_current_user do
+            FactoryGirl.create(:task,
+              title: 'The task title',
+              event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
+          end
+
+          get 'notifications', id: @company_user.to_param, format: :json
+
+          notifications = JSON.parse(response.body)
+          notifications.should include({"message"=>"You have a new task", "level"=>"grey", "url"=>"/tasks/mine?new_at=#{Time.now.to_i}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task"})
         end
-
-        get 'notifications', id: @company_user.to_param, format: :json
-
-        notifications = JSON.parse(response.body)
-        notifications.should include({"message"=>"You have a new task", "level"=>"grey", "url"=>"/tasks/mine?new_at=#{Time.now.to_i}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task"})
       end
 
       it "should return a notification if there is a new comment for a user's task" do

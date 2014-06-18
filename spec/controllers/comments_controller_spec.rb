@@ -67,7 +67,7 @@ describe CommentsController do
           comment.content.should == 'this is a test'
           task.comments.should == [comment]
           open_last_text_message_for @user.phone_number
-          current_text_message.should have_body "You have a new comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{comment.id}"
+          current_text_message.should have_body "You have a new comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
         end
       end
     end
@@ -86,9 +86,9 @@ describe CommentsController do
           comment.content.should == 'this is a test'
           task.comments.should == [comment]
           open_last_text_message_for @user.phone_number
-          current_text_message.should have_body "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{comment.id}"
+          current_text_message.should have_body "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
           open_last_text_message_for other_user.user.phone_number
-          current_text_message.should have_body "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{comment.id}"
+          current_text_message.should have_body "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
         end
       end
     end
