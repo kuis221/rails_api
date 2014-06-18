@@ -157,7 +157,7 @@ describe CompanyUser do
   end
 
   describe "#accessible_places" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
     it "should return the id of the places assocaited to the user" do
       FactoryGirl.create(:place)
       place = FactoryGirl.create(:place)
@@ -178,7 +178,7 @@ describe CompanyUser do
   end
 
   describe "#accessible_locations" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
      it "should return the location id of the city" do
         city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
         user.places << city
@@ -198,6 +198,29 @@ describe CompanyUser do
      end
   end
 
+  describe "#phone_number_confirmed?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    #It should be updated once the phone_number_confirmed? method is implemented correctly
+    #Right now it just looks for the phone number existence
+    it "should return true if the user has a confirmed phone number" do
+      expect(user.phone_number_confirmed?).to be_true
+    end
+  end
+
+  describe "#allow_notification?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    it "should return false if the user is not allowed to receive a notification" do
+      expect(user.allow_notification?('new_campaign_sms')).to be_false
+    end
+
+    it "sshould return false if the user is allowed to receive a notification" do
+      user.update_attributes({notifications_settings: ['new_campaign_sms']})
+      expect(user.allow_notification?('new_campaign_sms')).to be_true
+    end
+  end
+
   describe "#notification_setting_permission?" do
     let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
 
@@ -205,8 +228,8 @@ describe CompanyUser do
       expect(user.notification_setting_permission?('new_campaign')).to be_false
     end
 
-    it "should return false if the user hasn the correct permissions" do
-      user.role.permissions.create({action: :read, subject_class: 'Campaign'}, without_protection: true)
+    it "should return true if the user has the correct permissions" do
+      user.role.permissions.create({action: :read, subject_class: 'Campaign'})
       expect(user.notification_setting_permission?('new_campaign')).to be_true
     end
   end

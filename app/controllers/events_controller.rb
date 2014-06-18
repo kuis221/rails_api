@@ -39,7 +39,7 @@ class EventsController < FilteredController
       begin
         resource.submit!
         resource.users.each do |user|
-          if user.notifications_settings.include?('event_recap_pending_approval_sms')
+          if user.allow_notification?('event_recap_pending_approval_sms')
             sms_message = I18n.translate("notifications_sms.event_recap_pending_approval", url: Rails.application.routes.url_helpers.event_url(resource))
             Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
           end
@@ -64,7 +64,7 @@ class EventsController < FilteredController
       resource.reject!
       resource.update_column(:reject_reason, reject_reason)
       resource.users.each do |user|
-        if user.notifications_settings.include?('event_recap_rejected_sms')
+        if user.allow_notification?('event_recap_rejected_sms')
           sms_message = I18n.translate("notifications_sms.event_recap_rejected", url: Rails.application.routes.url_helpers.event_url(resource))
           Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
         end

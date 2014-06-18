@@ -230,6 +230,14 @@ class CompanyUser < ActiveRecord::Base
     alerts.where(name: alert, version: version).any?
   end
 
+  def allow_notification?(type)
+     phone_number_confirmed? && notifications_settings.is_a?(Array) && notifications_settings.include?(type)
+  end
+
+  def phone_number_confirmed?
+    phone_number.present?
+  end
+
   def dismiss_alert(alert, version=1)
     alerts.find_or_create_by_name_and_version(alert, version)
   end
