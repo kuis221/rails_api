@@ -164,6 +164,6 @@ module UsersHelper
 
   def notification_setting_checkbox(type, subject)
     field_id = "#{type}_#{subject}"
-    content_tag(:label, check_box_tag("company_user[notifications_settings][]", field_id, resource.notifications_settings.include?(field_id), id: "notification_settings_#{field_id}"))
+    content_tag(:label, check_box_tag("company_user[notifications_settings][]", field_id, resource.allow_notification?(field_id), id: "notification_settings_#{field_id}"))
   end
 end
