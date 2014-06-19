@@ -14,17 +14,6 @@ $footer-height: 35px;
 	font-style: normal;
 }
 
-@font-face {
-	font-family: 'rabioheadregular';
-	src: url('/assets/font/rabiohead-webfont.eot');
-	src: url('/assets/font/rabiohead-webfont.eot?#iefix') format('embedded-opentype'),
-		url('/assets/font/rabiohead-webfont.woff') format('woff'),
-		url('/assets/font/rabiohead-webfont.ttf') format('truetype'),
-		url('/assets/font/rabiohead-webfont.svg#rabioheadregular') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-
 @import "variables";
 
 @mixin box-sizing($value){
@@ -373,7 +362,7 @@ ul.nav {
 		content: "\e015";
 	}
 	#venues a:before {
-		content: "\e018";
+		content: "\e001";
 	}
 	#results a:before {
 		content: "\e014";
@@ -6344,9 +6333,6 @@ a, i{
 		font-size: 18px;
 		top: 1px;
 	}
-	&.icon-minus:before, &.icon-plus:before{
-		font-family: FontAwesome !important;
-	}
 }
 
 
@@ -7681,7 +7667,7 @@ ul#reports-list {
 					text-decoration: none;
 					&.photo-download-link{
 						float:right;
-						margin: 11px 5px 12px 12px;
+						margin: 16px 5px 12px 12px;
 						position: relative;
 						&:before{
 							color: $grey_one;
@@ -7698,7 +7684,7 @@ ul#reports-list {
 					}
 					&.icon-remove-circle{
 						float:right;
-						margin: 10px;
+						margin: 14px 15px 0 10px;
 						position: relative;
 						&:before{
 							color: $grey_one;
@@ -8135,19 +8121,6 @@ table.table.likert-scale-table {
 	opacity: 1;
 	right: 25px;
 	text-shadow:none;
-	&:before{
-		color: white;
-		content: "\e019";
-		display: block;
-		font-family: 'icons';
-		font-size: 12px;
-		left: 0;
-		position: absolute;
-		speak:none;
-		text-indent: 0;
-		top:4px;
-		-webkit-font-smoothing: antialiased;
-	}
 	&:hover{
 		opacity: 1 !important;
 	}
