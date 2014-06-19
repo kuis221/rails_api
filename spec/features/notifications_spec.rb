@@ -94,7 +94,7 @@ feature "Notifications", search: true, js: true do
 
     it "should receive notifications for new tasks assigned to him" do
       event = FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
-      task = FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
+      task = FactoryGirl.create(:task, title: 'My Task #1', event: event, company_user: company_user, due_at: nil)
 
       Sunspot.commit
 
@@ -104,23 +104,24 @@ feature "Notifications", search: true, js: true do
       click_notification 'You have a new task'
 
       expect(current_path).to eql mine_tasks_path
-      expect(page).to have_selector('#tasks-list li', count: 1)
+      expect(page).to have_content('My Task #1')
 
       expect(page).to_not have_notification 'You have a new task'
 
       # Create two new tasks and make sure the notification is correct and then click
       # on it. The app should only list those two new tasks without showing the old one
-      FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
-      FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
-
+      FactoryGirl.create(:task, title: 'My Task #2', event: event, company_user: company_user, due_at: nil)
+      FactoryGirl.create(:task, title: 'My Task #3', event: event, company_user: company_user, due_at: nil)
       Sunspot.commit
+
       visit root_path
       expect(page).to have_notification 'You have 2 new tasks'
 
       click_notification 'You have 2 new tasks'
 
       expect(current_path).to eql mine_tasks_path
-      expect(page).to have_selector('#tasks-list li', count: 2)
+      expect(page).to have_content('My Task #2')
+      expect(page).to have_content('My Task #3')
 
       # Make sure the notification does not longer appear after the user see the list
       expect(page).to_not have_notification 'You have 2 new tasks'
@@ -129,7 +130,8 @@ feature "Notifications", search: true, js: true do
 
       # reload page and make sure that only the two tasks are still there
       expect(current_path).to eql mine_tasks_path
-      expect(page).to have_selector('#tasks-list li', count: 2)
+      expect(page).to have_content('My Task #2')
+      expect(page).to have_content('My Task #3')
     end
 
     it "should receive notifications for new campaigns" do
