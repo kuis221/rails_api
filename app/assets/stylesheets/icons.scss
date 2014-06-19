@@ -1,2 +1,51 @@
 
 /*-- ICONS STYLESHEET --*/
+
+[class^="icon-"], [class*=" icon-"] {
+	display: inline;
+	width: auto;
+	height: auto;
+	line-height: normal;
+	vertical-align: baseline;
+	background-image: none;
+	background-position: 0% 0%;
+	background-repeat: repeat;
+	margin-top: 0;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: icons;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: inherit;
+	-webkit-font-smoothing: antialiased;
+}
+
+.close:before{
+	color: white;
+	content: "\e019";
+	display: block;
+	font-family: 'icons';
+	font-size: 12px;
+	left: 0;
+	position: absolute;
+	speak:none;
+	text-indent: 0;
+	top:4px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icon-download{
+	content: "\e00b";
+}
+
+.icon-plus:before{
+	content: "\e614";
+}
+
+.icon-star:before {
+	color: 12px;
+	content: "\e614";
+	font-family: 'icons';
+	font-size: 12px;
+}
