@@ -5793,15 +5793,6 @@ body.campaigns{
 			}
 		}
 	}
-	.box_demographics, .box_consumer_reach{
-		margin-bottom: 70px;
-		h3{
-			margin-top: 30px;
-		}
-		.box_demographics, .box_consumer_reach{
-			margin-bottom: 0;
-		}
-	}
 	.box_report{
 		margin-bottom: 90px;
 		p.big{
@@ -5891,7 +5882,7 @@ body.campaigns{
 				margin-bottom: 20px;
 			}
 			.box_section {
-				margin-bottom: 20px;
+				margin: 20px 0;
 				h3 {
 					margin-bottom: 0;
 				}
