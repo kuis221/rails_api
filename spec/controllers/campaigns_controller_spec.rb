@@ -365,16 +365,18 @@ describe CampaignsController do
   describe "POST 'add_members" do
     it 'should assign the user to the campaign' do
       with_resque do
-        @company_user.update_attributes({notifications_settings: ['new_campaign_sms']}, without_protection: true)
-        lambda {
+        @company_user.update_attributes({notifications_settings: ['new_campaign_sms', 'new_campaign_email']}, without_protection: true)
+        message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
+        UserMailer.should_receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
+        expect {
           post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
           response.should be_success
           assigns(:campaign).should == campaign
           campaign.reload
-        }.should change(campaign.users, :count).by(1)
+        }.to change(campaign.users, :count).by(1)
         campaign.users.should == [@company_user]
         open_last_text_message_for @user.phone_number
-        current_text_message.should have_body "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
+        current_text_message.should have_body message
       end
     end
 

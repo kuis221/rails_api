@@ -55,10 +55,10 @@
           -if resource.notification_setting_permission?(type)
             .row-fluid
               .span12
-                .span5.title= t("notification_settings_types.#{type}")
+                .span5.title= t("notification_types.#{type}")
                 .span2
                 .span2= notification_setting_checkbox(type, 'sms')
-                .span2
+                .span2= notification_setting_checkbox(type, 'email')
 
   .form-actions
     = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'

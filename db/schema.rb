@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
-  add_extension "postgres_fdw"
   add_extension "tablefunc"
 
   create_table "active_admin_comments", :force => true do |t|
@@ -53,15 +52,17 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
     t.integer  "activity_id"
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
+    t.integer  "form_field_option_id"
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "scalar_value",         :precision => 10, :scale => 2, :default => 0.0
   end
 
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
   add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
   add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+  add_index "activity_results", ["form_field_option_id"], :name => "index_activity_results_on_form_field_option_id"
   add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
 
   create_table "activity_type_campaigns", :force => true do |t|
@@ -215,8 +216,6 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
     t.integer  "company_id"
     t.boolean  "active",        :default => true
   end
-
-  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
 
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
@@ -526,7 +525,8 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
-  create_table "kpi_reports", :force => true do |t|
+  create_table "kpi_reports", :id => false, :force => true do |t|
+    t.integer  "id",                :null => false
     t.integer  "company_user_id"
     t.text     "params"
     t.string   "aasm_state"
