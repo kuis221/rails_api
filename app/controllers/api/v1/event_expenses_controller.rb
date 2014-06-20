@@ -166,6 +166,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   }
   EOS
   def form
+    authorize!(:create_expense, parent)
     if parent.campaign.active_field_types.include?('expenses') && can?(:expenses, parent) && can?(:create_expense, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
       form = bucket.presigned_post.

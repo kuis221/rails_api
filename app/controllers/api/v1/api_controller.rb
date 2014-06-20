@@ -13,6 +13,9 @@ class Api::V1::ApiController < ActionController::Base
 
   before_filter :set_user
 
+  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
+  check_authorization
+
   def options
   end
 
@@ -94,7 +97,7 @@ class Api::V1::ApiController < ActionController::Base
       unless Rails.env.production?
         headers['Access-Control-Allow-Origin'] = '*'
       else
-        headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+        headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
       end
       headers['Access-Control-Request-Method'] = '*'
       headers['Access-Control-Expose-Headers'] = 'ETag'
@@ -108,7 +111,7 @@ class Api::V1::ApiController < ActionController::Base
         unless Rails.env.production?
           headers['Access-Control-Allow-Origin'] = '*'
         else
-          headers['Access-Control-Allow-Origin'] = '*.brandscopic.com'
+          headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
         end
         headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
         headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
@@ -120,6 +123,10 @@ class Api::V1::ApiController < ActionController::Base
     def ensure_valid_request
       return if ['json', 'xml'].include?(params[:format]) || request.headers["Accept"] =~ /json|xml/
       render :nothing => true, :status => 406
+    end
+
+    def skip_default_validation
+      false
     end
 end
 

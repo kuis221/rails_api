@@ -54,4 +54,18 @@ describe Teaming do
       }.to change(Notification, :count).by(-1)
     end
   end
+
+  describe "#delete_goals after_destroy callback" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    let(:team) { FactoryGirl.create(:team) }
+    it "should remove the goals for the user" do
+      campaign.teams << team
+      goal = FactoryGirl.create(:goal, parent: campaign, goalable: team, value: 100, kpi: FactoryGirl.create(:kpi))
+      expect {
+        expect {
+          campaign.teams.destroy(team)
+        }.to change(Teaming, :count).by(-1)
+      }.to change(Goal, :count).by(-1)
+    end
+  end
 end

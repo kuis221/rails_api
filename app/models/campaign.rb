@@ -47,17 +47,17 @@ class Campaign < ActiveRecord::Base
   has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
   has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
@@ -129,32 +129,14 @@ class Campaign < ActiveRecord::Base
     string :aasm_state
 
     integer :company_user_ids, multiple: true do
-      users.map(&:id)
-    end
-    string :users, multiple: true, references: User do
-      users.map{|u| u.id.to_s + '||' + u.name}
+      users.pluck(:id)
     end
 
-    integer :team_ids, multiple: true do
-      teams.map(&:id)
-    end
-    string :teams, multiple: true, references: Team do
-      teams.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :team_ids, multiple: true
 
-    integer :brand_ids, multiple: true do
-      brands.map(&:id)
-    end
-    string :brands, multiple: true, references: Brand do
-      brands.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_ids, multiple: true
 
-    integer :brand_portfolio_ids, multiple: true do
-      brand_portfolios.map(&:id)
-    end
-    string :brand_portfolios, multiple: true, references: BrandPortfolio do
-      brand_portfolios.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_portfolio_ids, multiple: true
   end
 
   def has_date_range?
@@ -208,7 +190,7 @@ class Campaign < ActiveRecord::Base
 
   def promo_hours_graph_data
     stats={}
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(areas).map do |goal|
+    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(area_ids).map do |goal|
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).
@@ -217,7 +199,7 @@ class Campaign < ActiveRecord::Base
     end
 
     ActiveRecord::Base.connection.select_all("
-      SELECT keys[1] as id, kpi, executed, scheduled FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 2, 1',
+      SELECT keys[1] as id, kpi, executed, scheduled FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 2 ASC, 1 ASC',
         'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(keys varchar[], kpi varchar, executed numeric, scheduled numeric)").each do |result|
       r = stats["#{result['id']}-#{result['kpi']}"]
       r['executed'] = result['executed'].to_f if result['executed']
@@ -246,7 +228,7 @@ class Campaign < ActiveRecord::Base
       end
     end
 
-    stats.values.sort{|a, b| a['name'] <=> b['name'] }
+    stats.values.sort{|a, b| a['name']+a['kpi'] <=> b['name']+b['kpi'] }
   end
 
   def brands_list
@@ -369,6 +351,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def clear_locations_cache(area)
+    remove_child_goals_for(area)
     Rails.cache.delete("campaign_locations_#{self.id}")
   end
 

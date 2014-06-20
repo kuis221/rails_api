@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
   scope :in_company, lambda{|company| active_in_company(company) }
 
-  search_methods :active_eq
+  search_methods :active_eq if respond_to?(:search_methods)
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users
@@ -207,14 +207,12 @@ class User < ActiveRecord::Base
 
   def reindex_related
     if first_name_changed? or last_name_changed?
-      Sunspot.index self.tasks.includes([{:company_user => :user}, :event]).all
-      Sunspot.commit
+      Sunspot.index self.tasks
     end
   end
 
   def reindex_company_users
     Sunspot.index company_users.all
-    Sunspot.commit
   end
 
   # Update password saving the record and clearing token. Returns true if

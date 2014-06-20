@@ -9,6 +9,9 @@
     resource_modal.css({
         'margin-top': function () {
           return window.pageYOffset;
+        },
+        'top': function() {
+          return Math.max(($(window).height() - resource_modal.height())/2 - 10, 10);
         }
     });
   } else {

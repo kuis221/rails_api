@@ -20,6 +20,7 @@ class Teaming < ActiveRecord::Base
 
   after_destroy :delete_notifications
   after_destroy :update_tasks
+  after_destroy :delete_goals
 
   private
     def create_notifications
@@ -32,11 +33,15 @@ class Teaming < ActiveRecord::Base
       end
     end
 
+    def delete_goals
+      teamable.remove_child_goals_for(self.team) if teamable.respond_to?(:remove_child_goals_for)
+    end
+
     def delete_notifications
       if teamable_type == 'Event'
         team.users.each do |user|
-          user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').delete_all
-          #user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).delete_all
+          user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').destroy_all
+          #user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).destroy_all
         end
       end
     end

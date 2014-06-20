@@ -7,6 +7,8 @@ describe Api::V1::ApiController do
   end
 
   controller(Api::V1::ApiController) do
+    skip_authorize_resource
+    skip_authorization_check
     def index
     end
 

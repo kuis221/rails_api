@@ -42,7 +42,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area'
+  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
   has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'
@@ -85,9 +85,6 @@ class CompanyUser < ActiveRecord::Base
     end
 
     integer :role_id
-    string :role do
-      role_id.to_s + '||' + role_name.to_s if role_id
-    end
     string :role_name
 
     boolean :active
@@ -98,18 +95,7 @@ class CompanyUser < ActiveRecord::Base
 
     integer :team_ids, multiple: true
     integer :place_ids, multiple: true
-
-    string :teams, multiple: true, references: Team do
-      teams.map{|t| t.id.to_s + '||' + t.name}
-    end
-
-    integer :campaign_ids, multiple: true do
-      campaigns.map(&:id)
-    end
-
-    string :campaigns, multiple: true, references: Campaign do
-      campaigns.map{|c| c.id.to_s + '||' + c.name}
-    end
+    integer :campaign_ids, multiple: true
   end
 
   accepts_nested_attributes_for :user, allow_destroy: false, update_only: true

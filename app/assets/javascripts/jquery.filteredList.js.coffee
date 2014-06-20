@@ -270,13 +270,20 @@ $.widget 'nmk.filteredList', {
 			$div = $('<div>')
 			$ul = $('<ul class="sf-menu sf-vertical-menu">')
 
+			filterListResizer = =>
+				container = $trigger.next()
+				container.show()
+				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
+				container.find('>ul').css({'max-height': Math.min(400, maxHeight)})
+
 			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
-					if $trigger.next().css('display') == "none"
+					container = $trigger.next()
+					if container.css('display') == "none"
 						$('.child_div').hide()
 						$('.child_div').parent().css('height','8%')
 						$('.more-options-link').next().hide()
-						$trigger.next().show()
+						filterListResizer()
 					else
 						$('.more-options-link').next().hide()
 					false
@@ -287,6 +294,7 @@ $.widget 'nmk.filteredList', {
 						$ul.find('li').append(list)
 						$trigger.superfish({cssArrows: false, disableHI: true})
 						$trigger.superfish('show')
+						filterListResizer()
 					false
 				.on 'click', (e) =>
 					if $trigger.next().css('display') == "inline-block"

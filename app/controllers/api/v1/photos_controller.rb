@@ -4,6 +4,8 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults :resource_class => AttachedAsset
 
+  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy, :index]
+
   resource_description do
     short 'Photos'
     formats ['json', 'xml']
@@ -127,6 +129,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   }
   EOS
   def form
+    authorize!(:create_photo, parent)
     if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
       form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).
@@ -164,5 +167,9 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
     def permitted_search_params
       params.permit({brand: [], place: [], status: []})
+    end
+
+    def skip_default_validation
+      true
     end
 end

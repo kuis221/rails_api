@@ -1,5 +1,8 @@
 - row_levels_count = resource.rows.count
-- each_grouped_report_row do |row_label, row_level, values|
+- limit_results = action_name == 'preview'
+- counter = 0
+- each_grouped_report_row limit_results do |row_label, row_level, values|
+  - counter += 1
   tr class="level_#{row_level}" data-parent="#{row_label}" data-level="#{row_level}"
     td.row_label
       - if row_level+1 < row_levels_count

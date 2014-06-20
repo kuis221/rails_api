@@ -4,7 +4,7 @@ $grey_three:#7a7a7a;
 $user_menu:#c0c0c0;
 
 .eventsCalendar {
-	margin-top: 10px;
+	margin-top: 15px;
 
 	.calendar-table {
 		width: 100%;
@@ -35,7 +35,7 @@ $user_menu:#c0c0c0;
 				width: 95%;
 				overflow: hidden;
 				top: 0;
-				padding: 3px;
+				padding: 3px 3px 6px 6px;
 				color: $brand;
 				font-size: 11px;
 				line-height: 17px;
@@ -75,11 +75,17 @@ $user_menu:#c0c0c0;
 			.calendar-event-bullet {
 				font-size: 20px;
 			}
+
+			.close{
+				opacity: 0;
+			}
+
 			&.expanded {
 				.daytitle{
 					display: block;
 					font-size: 13px;
 					margin-bottom: 5px;
+					margin-top: 3px;
 				}
 				.calendar-day-events-container {
 					height: auto;
@@ -102,7 +108,9 @@ $user_menu:#c0c0c0;
 					opacity: 1;
 					position: relative;
 					text-shadow:none;
-					&:after{
+					right: 17px;
+					top: -2px;
+					&:before{
 						color: #ccc;
 						content: "\e019";
 						display: block;
@@ -110,7 +118,6 @@ $user_menu:#c0c0c0;
 						font-size: 14px;
 						font-weight: normal;
 						position: absolute;
-						right: 5px;
 						speak: none;
 						text-indent: 0;
 						-webkit-font-smoothing: antialiased;

@@ -86,12 +86,22 @@ describe CampaignsController do
     it "should delete the date range from the campaign" do
       date_range = FactoryGirl.create(:date_range, company: @company)
       campaign.date_ranges << date_range
+
+      FactoryGirl.create(:goal, goalable: date_range, parent: campaign, kpi: FactoryGirl.create(:kpi))
+      FactoryGirl.create(:goal, goalable: date_range, parent: campaign, kpi: FactoryGirl.create(:kpi))
+
+      # this should not be deleted
+      goal = FactoryGirl.create(:goal, goalable: date_range, kpi: FactoryGirl.create(:kpi))
+
       expect {
         expect {
-          delete 'delete_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
-        }.to_not change(DateRange, :count)
-        response.should be_success
-      }.to change(campaign.date_ranges, :count).by(-1)
+          expect {
+            delete 'delete_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
+          }.to_not change(DateRange, :count)
+          response.should be_success
+        }.to change(campaign.date_ranges, :count).by(-1)
+      }.to change(Goal, :count).by(-2)
+      expect(goal.reload).to be_true
     end
   end
 
@@ -145,12 +155,22 @@ describe CampaignsController do
     it "should delete the day part from the campaign" do
       day_part = FactoryGirl.create(:day_part, company: @company)
       campaign.day_parts << day_part
+
+      FactoryGirl.create(:goal, goalable: day_part, parent: campaign, kpi: FactoryGirl.create(:kpi))
+      FactoryGirl.create(:goal, goalable: day_part, parent: campaign, kpi: FactoryGirl.create(:kpi))
+
+      # this should not be deleted
+      goal = FactoryGirl.create(:goal, goalable: day_part, kpi: FactoryGirl.create(:kpi))
+
       expect {
         expect {
-          delete 'delete_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
-        }.to_not change(DayPart, :count)
-        response.should be_success
-      }.to change(campaign.day_parts, :count).by(-1)
+          expect {
+            delete 'delete_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
+          }.to_not change(DayPart, :count)
+          response.should be_success
+        }.to change(campaign.day_parts, :count).by(-1)
+      }.to change(Goal, :count).by(-2)
+      expect(goal.reload).to be_true
     end
   end
 
@@ -239,14 +259,43 @@ describe CampaignsController do
 
 
   describe "DELETE 'delete_member'" do
-    it "should remove the team member from the campaign" do
+    it "should remove the team member from the campaign and remove any goal" do
+      FactoryGirl.create(:goal, goalable: @company_user, parent: campaign, kpi: FactoryGirl.create(:kpi))
+      FactoryGirl.create(:goal, goalable: @company_user, parent: campaign, kpi: FactoryGirl.create(:kpi))
+
+      # this should not be deleted
+      goal = FactoryGirl.create(:goal, goalable: @company_user, kpi: FactoryGirl.create(:kpi))
+
       campaign.users << @company_user
-      lambda{
-        delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
-        campaign.reload
-      }.should change(campaign.users, :count).by(-1)
+      expect {
+        expect {
+          delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
+          response.should be_success
+          assigns(:campaign).should == campaign
+          campaign.reload
+        }.to change(campaign.users, :count).by(-1)
+      }.to change(Goal, :count).by(-2)
+      expect(goal.reload).to be_true
+    end
+
+    it "should remove the team  from the campaign and remove any goal" do
+      team = FactoryGirl.create(:team, company: @company)
+      FactoryGirl.create(:goal, goalable: team, parent: campaign, kpi: FactoryGirl.create(:kpi))
+      FactoryGirl.create(:goal, goalable: team, parent: campaign, kpi: FactoryGirl.create(:kpi))
+
+      # this should not be deleted
+      goal = FactoryGirl.create(:goal, goalable: team, kpi: FactoryGirl.create(:kpi))
+
+      campaign.teams << team
+      expect {
+        expect {
+          delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
+          response.should be_success
+          assigns(:campaign).should == campaign
+          campaign.reload
+        }.to change(campaign.teams, :count).by(-1)
+      }.to change(Goal, :count).by(-2)
+      expect(goal.reload).to be_true
     end
 
     it "should not raise error if the user doesn't belongs to the campaign" do

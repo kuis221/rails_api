@@ -2,6 +2,9 @@ class Api::V1::SessionsController < Api::V1::ApiController
   skip_before_filter :verify_authenticity_token
   skip_before_filter :set_user
 
+  skip_authorize_resource
+  skip_authorization_check
+
   resource_description do
     short 'Site members'
     formats ['json', 'xml']

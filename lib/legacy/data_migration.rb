@@ -28,5 +28,5 @@ class Legacy::DataMigration < ActiveRecord::Base
     where('ld1.postal_code::varchar(255) <> p1.zipcode')
   }
 
-  search_methods :different_zipcode
+  search_methods :different_zipcode if respond_to?(:search_methods)
 end

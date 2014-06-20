@@ -43,4 +43,8 @@ module GoalableModel
       receiver.has_many :children_goals, class_name: 'Goal', as: :parent
     end
   end
+
+  def remove_child_goals_for(element)
+    self.children_goals.for(element).delete_all
+  end
 end

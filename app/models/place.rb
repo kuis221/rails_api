@@ -333,7 +333,7 @@ class Place < ActiveRecord::Base
     end
 
     def reindex_associated
-      Venue.where(place_id: id).reindex
+      Sunspot.index Venue.where(place_id: id)
       self.areas.each do |area|
         Area.update_common_denominators(area)
       end

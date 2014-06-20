@@ -18,6 +18,29 @@ feature "Results Comments Page", js: true, search: true  do
   let(:campaign){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
 
   feature "/results/comments", js: true, search: true  do
+    scenario "a user can play and dismiss the video tutorial" do
+      visit results_comments_path
+
+      feature_name = 'Getting Started: Comments Report'
+
+      expect(page).to have_content(feature_name)
+      expect(page).to have_content("Get to know your consumers")
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit results_comments_path
+      expect(page).to have_no_content(feature_name)
+    end
+
     scenario "GET index should display a table with the comments" do
       Kpi.create_global_kpis
       campaign.add_kpi(Kpi.comments)

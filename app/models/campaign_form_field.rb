@@ -53,6 +53,10 @@ class CampaignFormField < ActiveRecord::Base
     options.try(:[], :capture_mechanism)
   end
 
+  def description
+    options.try(:[], :description)
+  end
+
   def simple_form_field_type
     case field_type
     when 'text', 'number'

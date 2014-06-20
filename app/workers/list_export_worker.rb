@@ -2,6 +2,8 @@ class ListExportWorker
   include Resque::Plugins::UniqueJob
   @queue = :export
 
+  extend HerokuResqueAutoScale
+
   def self.perform(download_id)
     export = ListExport.find(download_id)
     begin

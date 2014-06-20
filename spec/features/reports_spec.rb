@@ -77,21 +77,22 @@ feature "Reports", js: true do
   end
 
   feature "video tutorial" do
-    pending "a user can play and dimiss the video tutorial" do
+    scenario "a user can play and dismiss the video tutorial" do
       visit results_reports_path
 
-      feature_name = 'CHECK OUT THE NEW RESULTS SECTION'
+      feature_name = 'Getting Started: Results Overview'
 
       expect(page).to have_content(feature_name)
-      expect(page).to have_content('We have completely overhauled the layout of the Results')
+      expect(page).to have_content('The Results Module holds all of your post-event data results')
       click_link 'Play Video'
+
       within visible_modal do
         click_js_link 'Close'
       end
       ensure_modal_was_closed
 
       within('.new-feature') do
-        click_js_link 'Dimiss'
+        click_js_link 'Dismiss'
       end
       wait_for_ajax
 
@@ -105,13 +106,35 @@ feature "Reports", js: true do
         description: 'Description of my report',
         active: true, company: @company) }
 
+    scenario "a user can play and dismiss the video tutorial" do
+      visit results_report_path(report)
+
+      feature_name = 'Getting Started: Custom Reports'
+
+      expect(page).to have_content(feature_name)
+      expect(page).to have_content("Custom Reports are reports that either you or your teammates created and shared")
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit results_report_path(report)
+      expect(page).to have_no_content(feature_name)
+    end
+
     scenario "allows the user to modify an existing custom report" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)
 
       visit results_report_path(report)
 
       click_link 'Edit'
-
 
       expect(current_path).to eql(build_results_report_path(report))
 
@@ -307,6 +330,29 @@ feature "Reports", js: true do
         description: 'a resume of events by venue',
         active: true, company: @company) }
 
+    scenario "a user can play and dismiss the video tutorial" do
+      visit build_results_report_path(report)
+
+      feature_name = 'Getting Started: Report Builder'
+
+      expect(page).to have_content(feature_name)
+      expect(page).to have_content("Let's build a report!")
+      click_link 'Play Video'
+
+      within visible_modal do
+        click_js_link 'Close'
+      end
+      ensure_modal_was_closed
+
+      within('.new-feature') do
+        click_js_link 'Dismiss'
+      end
+      wait_for_ajax
+
+      visit build_results_report_path(report)
+      expect(page).to have_no_content(feature_name)
+    end
+
     scenario "share a report" do
       user = FactoryGirl.create(:company_user,
         user: FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas'),
@@ -407,7 +453,6 @@ feature "Reports", js: true do
       # The save button should be disabled
       expect(find_button('Save', disabled: true)['disabled']).to eql 'disabled'
 
-
       # Test the tooltip
       find("li", text: 'Kpi #1').hover
       within('.tooltip') do
@@ -464,7 +509,6 @@ feature "Reports", js: true do
         expect(field_list('fields')).to have_content('Kpi #5')
       end
     end
-
 
     scenario "user can add fields to the different field lists using the context menu" do
       FactoryGirl.create(:kpi, name: 'Kpi #1', company: @company)

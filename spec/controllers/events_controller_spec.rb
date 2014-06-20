@@ -419,30 +419,48 @@ describe EventsController do
       end
     end
 
-
     describe "POST 'add_members" do
-      let(:event){ FactoryGirl.create(:event, company: @company) }
+      let(:place){ FactoryGirl.create(:place) }
+      let(:event){ FactoryGirl.create(:event, company: @company, place: place) }
 
-      it 'should assign the user to the event' do
+      it 'should assign the user to the event and create a notification for the new member' do
         other_user = FactoryGirl.create(:company_user, company_id: @company.id)
+        other_user.places << place
         lambda {
-          post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
-          response.should be_success
-          assigns(:event).should == event
-          event.reload
-        }.should change(event.users, :count).by(1)
+          lambda {
+            post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
+            response.should be_success
+            assigns(:event).should == event
+            event.reload
+          }.should change(event.users, :count).by(1)
+        }.should change(other_user.notifications, :count).by(1)
         event.users.should =~ [@company_user, other_user]
+        other_user.reload
+        notification = other_user.notifications.last
+        notification.company_user_id.should == other_user.id
+        notification.message.should == 'new_event'
+        notification.path.should == event_path(event)
       end
 
-      it 'should assign all the team to the event' do
+      it 'should assign all the team to the event and create a notification for team members' do
         team = FactoryGirl.create(:team, company_id: @company.id)
+        other_user = FactoryGirl.create(:company_user, company_id: @company.id)
+        other_user.places << place
+        team.users << other_user
         lambda {
-          post 'add_members', id: event.id, team_id: team.to_param, format: :js
-          response.should be_success
-          assigns(:event).should == event
-          event.reload
-        }.should change(event.teams, :count).by(1)
+          lambda {
+            post 'add_members', id: event.id, team_id: team.to_param, format: :js
+            response.should be_success
+            assigns(:event).should == event
+            event.reload
+          }.should change(event.teams, :count).by(1)
+        }.should change(other_user.notifications, :count).by(1)
         event.teams.should == [team]
+        other_user.reload
+        notification = other_user.notifications.last
+        notification.company_user_id.should == other_user.id
+        notification.message.should == 'new_team_event'
+        notification.path.should == event_path(event)
       end
 
       it 'should not assign users to the event if they are already part of the event' do
@@ -511,7 +529,6 @@ describe EventsController do
       end
     end
 
-
     describe "PUT 'approve'" do
       it "should approve event" do
         event = FactoryGirl.create(:submitted_event, active: true, company: @company)
@@ -522,7 +539,6 @@ describe EventsController do
         }.should change(event, :approved?).to(true)
       end
     end
-
 
     describe "PUT 'reject'" do
       it "should reject event" do
@@ -536,7 +552,6 @@ describe EventsController do
       end
     end
   end
-
 
   describe "user with permissions to edit event data only" do
     before(:each) do
@@ -555,7 +570,4 @@ describe EventsController do
       response.should render_template('events/_event')
     end
   end
-
-
-
 end

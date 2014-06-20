@@ -47,7 +47,7 @@ Brandscopic::Application.configure do
 
 
   # We want to see the logs on the console for the workers :)
-  unless $rails_rake_task && !Rake.application.top_level_tasks.include?('resque:work')
+  unless $rails_rake_task && !ENV['LOG_CONSOLE']
     config.logger = Logger.new(STDOUT)
     config.logger.level = Logger.const_get(
       ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'

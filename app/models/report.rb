@@ -153,7 +153,13 @@ class Report < ActiveRecord::Base
   end
 
   def offset
-    ((page || 1)-1) * 30
+    ((page || 1)-1) * result_per_page
+  end
+
+  # Returns a number of results per page (the first row) depending of the number of rows
+  # of the current report
+  def result_per_page
+    30 / [rows.count, 3].min
   end
 
   def fetch_results_for(fields, params={})
@@ -255,7 +261,7 @@ class Report < ActiveRecord::Base
 
   def first_row_values_for_page
     @first_row_values_for_page ||= add_filters_conditions(add_joins_scopes(base_events_scope, values)).order('1 ASC').
-    limit(30).offset(offset).group('1').
+    limit(result_per_page).offset(offset).group('1').
     pluck(rows.first.table_column[0])
   end
 

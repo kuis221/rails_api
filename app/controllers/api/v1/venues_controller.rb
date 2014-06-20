@@ -1,6 +1,9 @@
 class Api::V1::VenuesController < Api::V1::FilteredController
   include PlacesHelper::CreatePlace
 
+  skip_authorization_check only: [:new_password, :companies, :permissions, :notifications]
+
+
   resource_description do
     short 'Venues'
     formats ['json', 'xml']
@@ -464,6 +467,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   ]
   EOS
   def types
+    authorize! :index, Venue
     types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
     respond_to do |format|
       format.json { render json: types }
@@ -527,6 +531,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   ]
   EOS
   def photos
+    authorize! :view_photos, resource
     @photos = resource.photos
   end
 
@@ -570,6 +575,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     ]
   EOS
   def comments
+    authorize! :view_comments, resource
     @comments = resource.reviews
   end
 
@@ -596,6 +602,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     }]
   EOS
   def search
+    authorize! :index, Venue
     @venues = Place.combined_search(company_id: current_company.id, q: params[:term], search_address: true)
 
     render json: @venues.first(10)
@@ -650,6 +657,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   ]
   EOS
   def autocomplete
+    authorize! :index, Venue
     buckets = autocomplete_buckets({
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],

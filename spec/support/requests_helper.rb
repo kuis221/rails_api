@@ -176,7 +176,7 @@ module RequestsHelper
   end
 
   def close_modal
-    visible_modal.click_link('Close', match: :first)
+    visible_modal.click_js_link('Close', match: :first)
     ensure_modal_was_closed
   end
 

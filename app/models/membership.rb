@@ -24,6 +24,7 @@ class Membership < ActiveRecord::Base
   after_destroy :delete_notifications
   after_destroy :update_tasks
   after_destroy :clear_cache
+  after_destroy :delete_goals
 
   validates :memberable_id, presence: true
   validates :memberable_type, presence: true
@@ -41,11 +42,15 @@ class Membership < ActiveRecord::Base
 
     def delete_notifications
       if memberable_type == 'Campaign'
-        company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).delete_all
+        company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).destroy_all
       elsif memberable_type == 'Event'
-        company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).delete_all
-        company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).delete_all
+        company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).destroy_all
+        company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).destroy_all
       end
+    end
+
+    def delete_goals
+      memberable.remove_child_goals_for(self.company_user) if memberable.respond_to?(:remove_child_goals_for)
     end
 
     def update_tasks

@@ -24,31 +24,29 @@ describe AssetDownload do
   it { should validate_presence_of(:uid) }
 
   describe "states" do
-    before(:each) do
-      @asset = FactoryGirl.create(:asset_download)
-    end
+    let(:asset) { FactoryGirl.create(:asset_download) }
 
     describe ":new" do
       it 'should be an initial state' do
-        @asset.should be_new
+        asset.should be_new
       end
 
       it 'should change to :queued on :new or :complete' do
-        @asset.queue
-        @asset.should be_queued
+        asset.queue
+        expect(asset.aasm_state).to eql 'queued'
       end
 
       it 'should change to :processing on :queued or :new' do
-        @asset.should_receive(:compress_assets)
-        @asset.process
-        @asset.should be_processing
+        asset.should_receive(:compress_assets)
+        asset.process
+        asset.should be_processing
       end
 
       it 'should change to :completed on :processing' do
-        @asset.should_receive(:compress_assets)
-        @asset.process
-        @asset.complete
-        @asset.should be_completed
+        asset.should_receive(:compress_assets)
+        asset.process
+        asset.complete
+        asset.should be_completed
       end
     end
   end

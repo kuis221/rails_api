@@ -167,7 +167,7 @@ class EventsController < FilteredController
             ids = (params.has_key?(:notification) && params[:notification] == 'new_team_event') ?
                   current_company_user.notifications.new_team_events.pluck("params->'event_id'") :
                   current_company_user.notifications.new_events.pluck("params->'event_id'")
-            current_company_user.notifications.where("params->'event_id' in (?)", ids).delete_all
+            current_company_user.notifications.where("params->'event_id' in (?)", ids).destroy_all
             ids
           end
         end

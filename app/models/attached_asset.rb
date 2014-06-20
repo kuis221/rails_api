@@ -275,6 +275,7 @@ class AttachedAsset < ActiveRecord::Base
     # Set attachment attributes from the direct upload
     # @note Retry logic handles S3 "eventual consistency" lag.
     def set_upload_attributes
+      tries ||= 3
       direct_url_changed = self.direct_upload_url.present? && self.direct_upload_url_changed?
       if ((new_record? and self.file_file_name.nil?) || direct_url_changed) && direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
         s3 = AWS::S3.new
@@ -288,6 +289,14 @@ class AttachedAsset < ActiveRecord::Base
         if self.file_content_type == 'binary/octet-stream'
           self.file_content_type = MIME::Types.type_for(self.file_file_name).first.to_s
         end
+      end
+    rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout => e
+      tries -= 1
+      if tries > 0
+        sleep(1)
+        retry
+      else
+        raise e
       end
     rescue AWS::S3::Errors::NoSuchKey
     end
