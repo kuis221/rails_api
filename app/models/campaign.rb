@@ -129,32 +129,14 @@ class Campaign < ActiveRecord::Base
     string :aasm_state
 
     integer :company_user_ids, multiple: true do
-      users.map(&:id)
-    end
-    string :users, multiple: true, references: User do
-      users.map{|u| u.id.to_s + '||' + u.name}
+      users.pluck(:id)
     end
 
-    integer :team_ids, multiple: true do
-      teams.map(&:id)
-    end
-    string :teams, multiple: true, references: Team do
-      teams.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :team_ids, multiple: true
 
-    integer :brand_ids, multiple: true do
-      brands.map(&:id)
-    end
-    string :brands, multiple: true, references: Brand do
-      brands.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_ids, multiple: true
 
-    integer :brand_portfolio_ids, multiple: true do
-      brand_portfolios.map(&:id)
-    end
-    string :brand_portfolios, multiple: true, references: BrandPortfolio do
-      brand_portfolios.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_portfolio_ids, multiple: true
   end
 
   def has_date_range?
