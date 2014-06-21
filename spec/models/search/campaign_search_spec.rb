@@ -24,8 +24,8 @@ describe Campaign, search: true do
     Campaign.do_search(company_id: 2).results.should =~ [company2_campaign]
 
     # Search for users associated to the Campaigns
-    Campaign.do_search(company_id: 1, q: "company_user,#{user.id}").results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, q: "company_user,#{user2.id}").results.should =~ [campaign2]
+    Campaign.do_search(company_id: 1, q: "user,#{user.id}").results.should =~ [campaign, campaign2]
+    Campaign.do_search(company_id: 1, q: "user,#{user2.id}").results.should =~ [campaign2]
     Campaign.do_search(company_id: 1, user: user.id).results.should =~ [campaign, campaign2]
     Campaign.do_search(company_id: 1, user: user2.id).results.should =~ [campaign2]
     Campaign.do_search(company_id: 1, user: [user.id, user2.id]).results.should =~ [campaign, campaign2]

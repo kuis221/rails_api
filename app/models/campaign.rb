@@ -128,9 +128,7 @@ class Campaign < ActiveRecord::Base
 
     string :aasm_state
 
-    integer :company_user_ids, multiple: true do
-      users.pluck(:id)
-    end
+    integer :user_ids, multiple: true
 
     integer :team_ids, multiple: true
 
@@ -360,7 +358,7 @@ class Campaign < ActiveRecord::Base
     def do_search(params, include_facets=false)
       ss = solr_search do
         with(:company_id, params[:company_id])
-        with(:company_user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?
@@ -380,10 +378,10 @@ class Campaign < ActiveRecord::Base
         end
 
         if include_facets
-          facet :users
-          facet :teams
-          facet :brands
-          facet :brand_portfolios
+          facet :user_ids
+          facet :team_ids
+          facet :brand_ids
+          facet :brand_portfolio_ids
           facet :status
         end
 

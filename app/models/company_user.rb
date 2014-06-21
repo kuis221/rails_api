@@ -227,9 +227,9 @@ class CompanyUser < ActiveRecord::Base
         end
 
         if include_facets
-          facet :role
-          facet :teams
-          facet :campaigns
+          facet :role_id
+          facet :team_ids
+          facet :campaign_ids
           facet :status
         end
 
