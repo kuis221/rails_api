@@ -9,12 +9,10 @@ module FacetsHelper
   # Facet helper methods
   def build_facet(klass, title, name, facets)
     items = if klass.name == 'CompanyUser'
-      klass.where(id: facets.map(&:value)).
-        for_dropdown.
+      klass.where(id: facets.map(&:value)).for_dropdown.
         map{|x| build_facet_item({label: x[0], id: x[1], name: name})}
     else
-      klass.where(id: facets.map(&:value)).
-        order(:name).
+      klass.where(id: facets.map(&:value)).order(:name).
         map{|x| build_facet_item({label: x.name, id: x.id, name: name})}
     end
 
@@ -61,6 +59,21 @@ module FacetsHelper
   def build_state_bucket(facet_search)
     counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
     {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: counters.try(:[], x) || 0}) }}
+  end
+
+  def build_role_bucket(facet_search)
+    items = build_facet(Role, 'Role', :role, facet_search.facet(:role_id).rows)[:items]
+    {label: "Roles", items: items}
+  end
+
+  def build_team_bucket(facet_search)
+    items = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
+    {label: "Teams", items: items}
+  end
+
+  def build_brand_portfolio_bucket(facet_search)
+    items = build_facet(BrandPortfolio, 'Brand Portfolios', :brand_portfolio, facet_search.facet(:brand_portfolio_ids).rows)[:items]
+    {label: "Brand Portfolios", items: items}
   end
 
   def build_status_bucket(facet_search)
