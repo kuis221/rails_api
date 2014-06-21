@@ -157,8 +157,10 @@ class TrendObject
   end
 
   def self.find(id)
-    clazz_name, object_id = id.split(':')
-    TrendObject.new(clazz_name.camelize.constantize.find(object_id))
+    if id
+      clazz_name, object_id = id.split(':')
+      TrendObject.new(clazz_name.camelize.constantize.find(object_id))
+    end
   end
 
   def self.do_search(params, include_facets=true)
