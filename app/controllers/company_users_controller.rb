@@ -175,18 +175,6 @@ class CompanyUsersController < FilteredController
       end
     end
 
-    def build_role_bucket facet_search
-      items = facet_search.facet(:role).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :role}) }
-      items = items.sort{|a, b| a[:label] <=> b[:label]}
-      {label: "Roles", items: items}
-    end
-
-    def build_team_bucket facet_search
-      items = facet_search.facet(:teams).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, count: x.count, name: :team}) }
-      items = items.sort{|a, b| a[:label] <=> b[:label]}
-      {label: "Teams", items: items}
-    end
-
     def build_state_bucket
       items = ['Active', 'Inactive', 'Invited'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }
       items = items.sort{|a, b| a[:label] <=> b[:label]}

@@ -6,6 +6,8 @@ production:
     path: /solr/production
     read_timeout: 10
     open_timeout: 4
+  auto_commit_after_request: true
+  auto_commit_after_delete_request: true
 
 staging:
   solr:
@@ -15,6 +17,8 @@ staging:
     path: /solr/production
     read_timeout: 10
     open_timeout: 4
+  auto_commit_after_request: true
+  auto_commit_after_delete_request: true
 
 development:
   solr:
@@ -22,6 +26,8 @@ development:
     port: 8982
     log_level: INFO
     path: /solr/development
+  auto_commit_after_request: true
+  auto_commit_after_delete_request: true
 
 test:
   solr:
@@ -29,4 +35,6 @@ test:
     port: 8981
     log_level: WARNING
     path: /solr/test
+  auto_commit_after_request: true
+  auto_commit_after_delete_request: true
     
