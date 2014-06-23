@@ -1,7 +1,7 @@
 
 @import "variables";
 
-/*-- ICONS STYLESHEET --*/ 
+/*-- ICONS STYLESHEET --*/
 
 [class^="icon-"], [class*=" icon-"] {
 	display: inline;
@@ -15,7 +15,7 @@
 	margin-top: 0;
 }
 
-[class^="icon-"], [class*=" icon-"], [class^="area-"], [class*=" area-"], [class$="-data"], [class$="-data"],{
+[class^="icon-"], [class*=" icon-"], [class^="area-"], [class*=" area-"], [class$="-data"]:before, [class$="-data"]:before,{
 	font-family: icons;
 	font-weight: normal;
 	font-style: normal;
@@ -29,12 +29,12 @@
 	position:relative;
 	speak: none;
 	text-shadow: none;
-	-webkit-font-smoothing: antialiased;	
+	-webkit-font-smoothing: antialiased;
 }
 
 // GENERAL ICONS
 
-a, i{
+a, i, .btn{
 	&:before, &:after{
 		display: inline-block;
 		font-family: 'icons';
@@ -96,6 +96,24 @@ a, i{
 		font-size: 26px;
 	}
 
+	// Icons for buttons
+
+	&.calendar:after{
+		content: "\e031";
+	}
+	&.fullscreen:after{
+		content: "\e020";
+	}
+	&.graph:after{
+		content: "\e00e";
+	}
+	&.list:after, &.table:after{
+		content: "\e615";
+	}
+	&.map:after{
+		content: "\e001";
+	}
+
 	// Icons for notification center
 
 	&.icon-notification-event:before{
@@ -149,32 +167,6 @@ a, i{
 	}
 }
 
-.btn{
-	&:before, &:after{
-		color:white;
-		position: relative;
-		text-align: center;
-	}
-	&.calendar:after{
-		content: "\e031";
-	}
-	&.download:after{
-		content: "\e00b";
-	}
-	&.fullscreen:after{
-		content: "\e020";
-	}
-	&.graph:after{
-		content: "\e00e";
-	}
-	&.list:after, &.table:after{
-		content: "\e615";
-	}
-	&.map:after{
-		content: "\e001";
-	}
-}
-
 .area-place:before, .place:before{
 	color: $user_menu;
 	content: "\e02c";
@@ -205,7 +197,7 @@ a, i{
 			&.left span:before{
 				content: "\e602";
 				margin-left: 10px;
-			}	
+			}
 		}
 	}
 }
@@ -238,10 +230,9 @@ a, i{
 */
 
 .icon-star:before {
-	color: 12px;
 	content: "\e614";
 	font-family: 'icons';
-	font-size: 12px;
+	font-size: 15px;
 }
 
 .calendar-data:before{
@@ -375,7 +366,7 @@ ul.nav {
 }
 
 .datepick-cmd-prev:after{
-	content: "\e003";	
+	content: "\e003";
 	left: 0;
 }
 
@@ -383,4 +374,3 @@ ul.nav {
 	content: "\e002";
 	left: 6px;
 }
-

@@ -7267,7 +7267,7 @@ ul#reports-list {
 					}
 					&.icon-remove-circle{
 						float:right;
-						margin: 14px 15px 0 10px;
+						margin: 17px 15px 0 10px;
 						position: relative;
 						&:before{
 							color: $grey_one;
@@ -7302,7 +7302,7 @@ ul#reports-list {
 			color: white;
 			top: 7px;
 			opacity: 1;
-			right: 20px;;
+			right: 2px;
 			position: absolute;
 			width: 20px;
 			height: 20px;
@@ -7310,6 +7310,9 @@ ul#reports-list {
 				font-size: 12px;
 				position:absolute;
 				top: 0px;
+			}
+			&:focus{
+				outline: none;
 			}
 		}
 		h3{
