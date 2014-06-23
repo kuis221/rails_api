@@ -295,7 +295,11 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    campaign.present? && (results.where(form_field_id: campaign.form_fields.for_event_data.pluck(:id)).where('event_results.value is not null AND event_results.value <> \'\'').count > 0)
+    campaign_id.present? &&
+    (
+      results.where(form_field_id: CampaignFormField.where(campaign_id: campaign_id).for_event_data.pluck(:id)).
+              where('event_results.value is not null AND event_results.value <> \'\'').count > 0
+    )
   end
 
   def venue
@@ -376,7 +380,7 @@ class Event < ActiveRecord::Base
   end
 
   def locations_for_index
-    place.locations.pluck('locations.id') if place.present?
+    place.location_ids if place.present?
   end
 
   def kpi_goals

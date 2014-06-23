@@ -128,33 +128,13 @@ class Campaign < ActiveRecord::Base
 
     string :aasm_state
 
-    integer :company_user_ids, multiple: true do
-      users.map(&:id)
-    end
-    string :users, multiple: true, references: User do
-      users.map{|u| u.id.to_s + '||' + u.name}
-    end
+    integer :user_ids, multiple: true
 
-    integer :team_ids, multiple: true do
-      teams.map(&:id)
-    end
-    string :teams, multiple: true, references: Team do
-      teams.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :team_ids, multiple: true
 
-    integer :brand_ids, multiple: true do
-      brands.map(&:id)
-    end
-    string :brands, multiple: true, references: Brand do
-      brands.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_ids, multiple: true
 
-    integer :brand_portfolio_ids, multiple: true do
-      brand_portfolios.map(&:id)
-    end
-    string :brand_portfolios, multiple: true, references: BrandPortfolio do
-      brand_portfolios.map{|t| t.id.to_s + '||' + t.name}
-    end
+    integer :brand_portfolio_ids, multiple: true
   end
 
   def has_date_range?
@@ -378,7 +358,7 @@ class Campaign < ActiveRecord::Base
     def do_search(params, include_facets=false)
       ss = solr_search do
         with(:company_id, params[:company_id])
-        with(:company_user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
+        with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
         with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.has_key?(:brand_portfolio) and params[:brand_portfolio].present?
@@ -398,10 +378,10 @@ class Campaign < ActiveRecord::Base
         end
 
         if include_facets
-          facet :users
-          facet :teams
-          facet :brands
-          facet :brand_portfolios
+          facet :user_ids
+          facet :team_ids
+          facet :brand_ids
+          facet :brand_portfolio_ids
           facet :status
         end
 
