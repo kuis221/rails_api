@@ -7043,25 +7043,11 @@ ul#reports-list {
 	height:470px;
 	a.carousel-control{
 		opacity: 0;
-			&.right:before{
-		content: "\e601";
-		margin-left: 4px;
-	}
-	&.left:before{
-		content: "\e602";
-	}
 	}
 	&:hover{
 		a.carousel-control{
 			background-color: #050505;
 			opacity: 0.75;
-				&.right:before{
-		content: "\e601";
-		margin-left: 4px;
-	}
-	&.left:before{
-		content: "\e602";
-	}
 			&.right:before, &.left:before{
 				color: white;
 				display: block;
