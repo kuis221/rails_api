@@ -7043,11 +7043,25 @@ ul#reports-list {
 	height:470px;
 	a.carousel-control{
 		opacity: 0;
+			&.right:before{
+		content: "\e601";
+		margin-left: 4px;
+	}
+	&.left:before{
+		content: "\e602";
+	}
 	}
 	&:hover{
 		a.carousel-control{
 			background-color: #050505;
 			opacity: 0.75;
+				&.right:before{
+		content: "\e601";
+		margin-left: 4px;
+	}
+	&.left:before{
+		content: "\e602";
+	}
 			&.right:before, &.left:before{
 				color: white;
 				display: block;
@@ -7410,6 +7424,8 @@ ul#reports-list {
 				background-color: rgb(54, 54, 54) !important;
 				background-image: none !important;
 				border: 0px !important;
+				box-shadow: none;
+				-webkit-box-shadow: none;
 				.select2-search-field{
 					height: 20px;
 					.select2-input{
