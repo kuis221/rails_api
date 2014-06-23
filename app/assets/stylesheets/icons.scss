@@ -49,7 +49,7 @@ a, i{
 		font-size: 18px;
 		top: 1px;
 	}
-	&.download:before, &.photo-download-link{
+	&.download:before, &.photo-download-link:before{
 		content: "\e00b";
 		color: $app_bg;
 	}
@@ -153,6 +153,7 @@ a, i{
 	&:before, &:after{
 		color:white;
 		position: relative;
+		text-align: center;
 	}
 	&.calendar:after{
 		content: "\e031";
