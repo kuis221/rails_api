@@ -195,6 +195,21 @@ a, i{
 	}
 }
 
+.gallery-carousel{
+	&.carousel{
+		.carousel-control{
+			&.right span:before{
+				content: "\e601";
+				margin-left: 14px;
+			}
+			&.left span:before{
+				content: "\e602";
+				margin-left: 10px;
+			}	
+		}
+	}
+}
+
 .close:before, .remove-item:after{
 	color: white;
 	content: "\e019";

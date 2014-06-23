@@ -7056,6 +7056,11 @@ ul#reports-list {
 				padding-left: 11px;
 				opacity: 0.5;
 			}
+			&:hover{
+				&.right:before, &.left:before{
+					opacity: 1;
+				}
+			}
 		}
 	}
 }
@@ -7087,14 +7092,21 @@ ul#reports-list {
 					padding-right:10px;
 				}
 			}
-			&.right:before, &.left:before{
-				color: white;
-				display: block;
-				font-family: 'icons';
-				font-size: 25px;
-				line-height: 53px;
-				opacity: 1;
-				-webkit-font-smoothing: antialiased;
+			&.right, &.left{
+				&:before{
+					color: white;
+					display: block;
+					font-family: 'icons';
+					font-size: 25px;
+					line-height: 53px;
+					opacity: 1;
+					-webkit-font-smoothing: antialiased;
+				}
+				span{
+					&:before{
+						opacity: 0;
+					}
+				}
 			}
 		}
 		.carousel-inner{
@@ -7167,7 +7179,7 @@ ul#reports-list {
 				}
 				&.left{
 					left: 0;
-					width: 20%;
+					//width: 20%;
 					span:before {
 						display:block;
 						line-height: 63px;
@@ -7181,7 +7193,7 @@ ul#reports-list {
 				}
 				&.right{
 					right: 0;
-					width: 80%;
+					//width: 80%;
 					span {
 						right: 0;
 						&:before {
@@ -7189,12 +7201,12 @@ ul#reports-list {
 							line-height: 63px;
 							font-size: 40px;
 							color: #fff;
-							margin-left: 4px;
+							margin-left: 14px;
 							opacity: 0.5;
 						}
 					}
 					&:hover span:before {
-						opacity: 0.8;
+						opacity: 1;
 					}
 				}
 			}
