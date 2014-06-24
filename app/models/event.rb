@@ -64,7 +64,7 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :place_reference
+  attr_accessor :place_reference, :team_members
 
   scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
   scope :active, lambda{ where(active: true) }
@@ -83,6 +83,7 @@ class Event < ActiveRecord::Base
       joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
       joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')').
       where('memberships.company_user_id in (?)', user) }
+
   scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
   scope :with_team, lambda{|team|
     joins(:teamings).
@@ -158,7 +159,6 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
-  before_create :add_current_company_user
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
@@ -683,6 +683,15 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def team_members
+    team_ids.map{|id| "team:#{id}"} + user_ids.map{|id| "company_user:#{id}"}
+  end
+
+  def team_members=(members)
+    self.user_ids = members.select{|member| member =~ /^company_user:[0-9]+$/}.map{|member| member.split(':')[1]}
+    self.team_ids = members.select{|member| member =~ /^team:[0-9]+$/}.map{|member| member.split(':')[1]}
+  end
+
   def start_at
     localize_date(:start_at)
   end
@@ -842,8 +851,4 @@ class Event < ActiveRecord::Base
     #     end
     #   end
     # end
-
-    def add_current_company_user
-      self.memberships.build({company_user: User.current.current_company_user}, without_protection: true) if User.current.present? &&  User.current.current_company_user.present?
-    end
 end
