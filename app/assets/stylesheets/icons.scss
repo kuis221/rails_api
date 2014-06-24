@@ -221,7 +221,15 @@ a, i, .btn{
 	-webkit-font-smoothing: antialiased;
 }
 
-.icon-download{
+.female:before{
+	content: "\e01b";
+}
+
+.male:before{
+	content: "\e01a";
+}
+
+.icon-download:before{
 	content: "\e00b";
 	font-family: 'icons';
 }

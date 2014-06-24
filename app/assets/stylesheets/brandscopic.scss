@@ -4971,57 +4971,34 @@ body.roles{
 }
 
 #gender-graph{
-	.female{
+	.female, .male{
 		color: $venues_blue;
 		display: inline-block;
-		margin: 0 0 25px 60px;
+		position: relative;
+		&:before{
+			bottom: 21px;
+			font-size: 58px;
+			position: absolute;
+			left: -40px;
+		}
 		.gender{
-			font-size: 25px;
+			font-size: 18px;
 		}
 		.percent{
-			font-size: 55px;
-			padding-bottom: 25px;
-		}
-		&:before{
-			bottom:-35px;
-			content: "\e01b" !important;
-			display: inline-block;
-			font-family: 'icons';
-			font-size: 90px;
-			padding-bottom:5px;
-			position: relative;
-			right: 60px;
-			speak: none;
-			text-align: center;
-			vertical-align: middle;
-			-webkit-font-smoothing: antialiased;
+			font-size: 45px;
+			font-weight: bold;
+			padding-bottom: 14px;
+			span{
+				font-size: 14px;
+				font-weight: normal;
+			}
 		}
 	}
+	.female{
+		margin: 0 0 25px 30px;
+	}
 	.male{
-		color: $venues_blue;
-		display: inline-block;
-		margin: 0 90px 25px 80px;
-		.gender{
-			font-size: 25px;
-		}
-		.percent{
-			font-size: 55px;
-			padding-bottom: 25px;
-		}
-		&:before{
-			bottom: -35px;
-			content: "\e01a" !important;
-			display: inline-block;
-			font-family: 'icons';
-			font-size: 90px;
-			padding-bottom:5px;
-			position: relative;
-			right: 50px;
-			speak: none;
-			text-align: center;
-			vertical-align: middle;
-			-webkit-font-smoothing: antialiased;
-		}
+		margin: 0 90px 25px 50px;
 	}
 }
 
