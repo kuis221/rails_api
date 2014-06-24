@@ -22,6 +22,7 @@ feature "Notifications", search: true, js: true do
   shared_examples_for 'a user that can see notifications' do
 
     it "should receive notifications for new events" do
+      company_user.update_attributes({notifications_settings: ['new_event_team_app']})
       without_current_user do
         FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
         FactoryGirl.create(:event, company: company, campaign: campaign, place: place) # Event not associated to the user
@@ -49,6 +50,7 @@ feature "Notifications", search: true, js: true do
     end
 
     it "should receive notifications for new team events" do
+      company_user.update_attributes({notifications_settings: ['new_event_team_app']})
       without_current_user do
         team.users << company_user
         FactoryGirl.create(:event, company: company, teams: [team], campaign: campaign, place: place)
@@ -77,6 +79,7 @@ feature "Notifications", search: true, js: true do
     end
 
     it "should remove notifications for new events visited" do
+      company_user.update_attributes({notifications_settings: ['new_event_team_app']})
       without_current_user do # so the permissions are not validated during the event creation
         FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
         FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
@@ -92,7 +95,96 @@ feature "Notifications", search: true, js: true do
       expect(page).to have_notification 'You have a new event'
     end
 
+    it "should receive notifications for due events recaps" do
+      company_user.update_attributes({notifications_settings: ['event_recap_due_app']})
+      without_current_user do
+        FactoryGirl.create(:due_event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:due_event, company: company, campaign: campaign, place: place) # Event not associated to the user
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'There is one event recap that is due'
+
+      without_current_user{ FactoryGirl.create(:due_event, company: company, users: [company_user], campaign: campaign, place: place) }
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'There are 2 event recaps that are due'
+
+      click_notification 'There are 2 event recaps that are due'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications for late events recaps" do
+      company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
+      without_current_user do
+        FactoryGirl.create(:late_event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:late_event, company: company, campaign: campaign, place: place) # Event not associated to the user
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'There is one late event recap'
+
+      without_current_user{ FactoryGirl.create(:late_event, company: company, users: [company_user], campaign: campaign, place: place) }
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'There are 2 late event recaps'
+
+      click_notification 'There are 2 late event recaps'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications for pending approval events recaps" do
+      company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_app']})
+      without_current_user do
+        FactoryGirl.create(:submitted_event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place) # Event not associated to the user
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'There is one event recap that is pending approval'
+
+      without_current_user{ FactoryGirl.create(:submitted_event, company: company, users: [company_user], campaign: campaign, place: place) }
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'There are 2 event recaps that are pending approval'
+
+      click_notification 'There are 2 event recaps that are pending approval'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications for rejected events recaps" do
+      company_user.update_attributes({notifications_settings: ['event_recap_rejected_app']})
+      without_current_user do
+        FactoryGirl.create(:rejected_event, company: company, users: [company_user], campaign: campaign, place: place)
+        FactoryGirl.create(:rejected_event, company: company, campaign: campaign, place: place) # Event not associated to the user
+      end
+      Sunspot.commit
+
+      visit root_path
+      expect(page).to have_notification 'There is one event recap that has been rejected'
+
+      without_current_user{ FactoryGirl.create(:rejected_event, company: company, users: [company_user], campaign: campaign, place: place) }
+      Sunspot.commit
+      visit root_path
+      expect(page).to have_notification 'There are 2 event recaps that have been rejected'
+
+      click_notification 'There are 2 event recaps that have been rejected'
+
+      expect(current_path).to eql events_path
+      expect(page).to have_selector('#events-list li', count: 2)
+    end
+
     it "should receive notifications for new tasks assigned to him" do
+      company_user.update_attributes({notifications_settings: ['new_task_assignment_app']})
       event = FactoryGirl.create(:event, company: company, users: [company_user], campaign: campaign, place: place)
       task = FactoryGirl.create(:task, event: event, company_user: company_user, due_at: nil)
 
@@ -133,6 +225,7 @@ feature "Notifications", search: true, js: true do
     end
 
     it "should receive notifications for new campaigns" do
+      company_user.update_attributes({notifications_settings: ['new_campaign_app']})
       campaign2 = FactoryGirl.create(:campaign, company: company)
       without_current_user do # so the permissions are not validated during the event creation
         FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
@@ -166,6 +259,7 @@ feature "Notifications", search: true, js: true do
     end
 
     it "should remove notifications for new campaigns visited" do
+      company_user.update_attributes({notifications_settings: ['new_campaign_app']})
       campaign2 = FactoryGirl.create(:campaign, company: company)
       without_current_user do # so the permissions are not validated during the event creation
         FactoryGirl.create(:event, company: company, campaign: campaign, place: place)

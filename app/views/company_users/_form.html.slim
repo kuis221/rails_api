@@ -56,7 +56,7 @@
             .row-fluid
               .span12
                 .span5.title= t("notification_types.#{type}")
-                .span2
+                .span2= notification_setting_checkbox(type, 'app')
                 .span2= notification_setting_checkbox(type, 'sms')
                 .span2= notification_setting_checkbox(type, 'email')
 
