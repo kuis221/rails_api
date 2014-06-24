@@ -4200,11 +4200,22 @@ ul.thumbnails{
 	}
 }
 #list-tools {
+	margin-top: 10px;
+	position: relative;
 	.download-photos-counter {
 		left: auto;
 		position: absolute;
-		right: 252px;
-		top: 152px;
+		right: 0px;
+		top: -6px;	
+		&.badge{
+			font-size: 11px;
+			line-height: 15px;
+			padding: 1px 4px;
+			text-align: center;
+			text-shadow:none;
+			height: 16px;
+			width:12px;
+		}
 	}
 }
 .photo-list{
@@ -6969,28 +6980,25 @@ ul#reports-list {
 						margin: 10px;
 						opacity: 1 !important;
 						text-decoration: none;
+						&:before{
+							color: white;
+							font-size: 15px;
+							speak: none;
+							text-align: center;
+							vertical-align: middle;						
+						}
 						&.photo-download-link{
 							float:right;
-							margin: 7px 0px 7px 10px;
+							margin: 7px 0;
 							position: relative;
-							&:before{
-								color: $grey_one;
-								font-size: 15px;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
+							&.icon-minus, &.icon-plus{
+								margin: 11px 0;
 							}
 						}
 						&.icon-remove-circle{
 							float:right;
 							margin: 10px;
 							position: relative;
-							&:before{
-								color: $grey_one;
-								font-size: 15px;
-								text-align: center;
-								vertical-align: middle;
-							}
 						}
 						&.icon-ok-circle:before{
 							color: $grey_one;

@@ -727,11 +727,17 @@
 	.gallery ul>li {
 		width: 20%;
 	}
+	.gallery.photo-results ul>li{
+		width: 33.3%;
+	}
 }
 @media only screen and (max-width:1291px) and (min-width:1041px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 25%;
+	}
+	.gallery.photo-results ul>li{
+		width: 33.3%;
 	}
 }
 @media only screen and (max-width:1041px) and (min-width:791px) {

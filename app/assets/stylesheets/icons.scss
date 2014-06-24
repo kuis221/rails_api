@@ -206,6 +206,21 @@ a, i, .btn{
 	}
 }
 
+.select-for-download{
+	a.photo-download-link{
+		&:before{
+			color: white;
+			content: "\e611";
+			font-size: 12px;		
+		}
+		&.icon-minus:before{
+			color: white;
+			content: "\e616";
+			font-size: 12px;
+		}
+	}
+}
+
 .close:before, .remove-item:after{
 	color: white;
 	content: "\e019";
@@ -231,15 +246,7 @@ a, i, .btn{
 
 .icon-download:before{
 	content: "\e00b";
-	font-family: 'icons';
 }
-
-/*
-.icon-plus:before{
-	content: "\e614";
-	font-family: 'icons';
-}
-*/
 
 .icon-star:before {
 	content: "\e614";
