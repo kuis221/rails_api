@@ -15,7 +15,8 @@
 	margin-top: 0;
 }
 
-[class^="icon-"], [class*=" icon-"], [class^="area-"], [class*=" area-"], [class$="-data"]:before, [class$="-data"]:before,{
+[class^="icon-"], [class*=" icon-"], [class^="area-"], [class*=" area-"],
+[class$="-data"]:before, [class$="-data"]:before,{
 	font-family: icons;
 	font-weight: normal;
 	font-style: normal;
@@ -116,40 +117,37 @@ a, i, .btn{
 
 	// Icons for notification center
 
+	&[class^="icon-notification"]:before, &[class*=" icon-notification"]:before{
+		font-size: 16px;
+	}
+
 	&.icon-notification-event:before{
 		color: $user_menu;
 		content: "\e00a";
-		font-size: 20px;
 	}
 	&.icon-notification-task:before{
 		color: $user_menu;
 		content: "\e015";
-		font-size: 20px;
 	}
 	&.icon-notification-comment:before{
 		color: $user_menu;
 		content: "\e010";
-		font-size: 20px;
 	}
 	&.icon-notification-campaign:before{
 		color: $user_menu;
 		content: "\e00a";
-		font-size: 20px;
 	}
 	&.icon-notification-action:before{
 		color: $user_menu;
 		content: "\e024";
-		font-size: 20px;
 	}
 	&.icon-notification-group:before{
 		color: $user_menu;
 		content: "\e023";
-		font-size: 20px;
 	}
 	&.icon-notification-venue:before{
 		color: $user_menu;
 		content: "\e018";
-		font-size: 20px;
 	}
 	&.load-comments-link:after{
 		content: "\e010";
@@ -175,6 +173,12 @@ a, i, .btn{
 .area-user:before{
 	content: "\e02e";
 	color: $user_menu;
+}
+
+.btn-group{
+	.btn:after{
+		color:white;
+	}
 }
 
 .carousel-control{
@@ -294,7 +298,8 @@ a, i, .btn{
 /*-- UL Nav --*/
 
 ul.nav {
-	#analysis a:before, #dashboard a:before, #events a:before, #venues a:before, #tasks a:before, #results a:before {
+	#analysis a:before, #dashboard a:before, #events a:before, #venues a:before,
+	#tasks a:before, #results a:before {
 		display: block;
 		font-family: 'icons';
 		font-size: 27px;

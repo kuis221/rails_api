@@ -1828,9 +1828,6 @@ li#notifications{
 						&:before{
 							color: white;
 						}
-						&.icon-notification-task:before{
-							font-size: 16px !important;
-						}
 						&.icon-angle-right{
 							position: absolute;
 							top: 21px;
@@ -1842,7 +1839,6 @@ li#notifications{
 						}
 						&.alert-icon{
 							margin-left: 8px;
-							top: 22px;
 							position: absolute;
 						}
 					}
@@ -7318,6 +7314,7 @@ ul#reports-list {
 		h3{
 			font-size: 20px;
 			line-height: 23px;
+			margin-top: 10px;
 			margin-bottom: 30px !important;
 			font-weight: bold;
 			position: relative;
@@ -7330,6 +7327,7 @@ ul#reports-list {
 		}
 		.description{
 			height: 200px;
+			margin-bottom: 30px;
 			width: 320px;
 			.place-data, .calendar-data{
 				position: relative;
