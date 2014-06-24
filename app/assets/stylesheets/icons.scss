@@ -52,7 +52,7 @@ a, i, .btn{
 	}
 	&.download:before, &.photo-download-link:before{
 		content: "\e00b";
-		color: $app_bg;
+		color: white;
 	}
 	&.edit:after{
 		background-color: none;
@@ -179,6 +179,11 @@ a, i, .btn{
 	.btn:after{
 		color:white;
 	}
+	.btn:hover{
+		&:after{
+			color: white;
+		}
+	}
 }
 
 .carousel-control{
@@ -250,7 +255,6 @@ a, i, .btn{
 
 .icon-star:before {
 	content: "\e614";
-	font-family: 'icons';
 	font-size: 15px;
 }
 

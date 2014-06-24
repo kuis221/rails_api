@@ -754,10 +754,10 @@ a.more-options-link:after{
 		}
 	}
 	&.download{
-		&:after{
-			font-size: 15px;
-			padding-left: 6px;
-			padding-right: 6px;
+		&:before{
+			font-size: 16px;
+			padding-left: 5px;
+			padding-right: 5px;
 			top:1px;
 		}
 		&[disabled]{
