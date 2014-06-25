@@ -286,7 +286,7 @@ body.events.show{
 	.event-contact {
 		a.edit {
 			display: none;
-			margin-right: 3px;
+			margin-right: 6px;
 			&:after {
 				color: #989898;
 				top: 0;
@@ -807,6 +807,9 @@ a.more-options-link:after{
 		font-size: 19px;
 		left: 2px;
 		top:1px;
+	}
+	&.btn-primary, &.btn-cancel{
+		padding: 11px 25px;
 	}
 }
 
@@ -2259,7 +2262,6 @@ ul.kpis-list{
 /*-- LISTS OF ELEMENTS - EVENTS --*/
 .link-list{
 	border:1px solid $borders;
-	//clear: both;
 	color: $brand;
 	font-size: 12px;
 	margin: 25px 0 0 0;
@@ -2306,16 +2308,16 @@ ul.kpis-list{
 			&.due > span.task-list {
 				border-left: 5px solid $due_today;
 			}
-				&.inactive{
-					a{
-					color:$user_menu;
-					}
-			}
-				&:hover{
-					&.inactive a{
-						color:$text;
-					}
+			&.inactive{
+				a{
+				color:$user_menu;
 				}
+			}
+			&:hover{
+				&.inactive a{
+					color:$text;
+				}
+			}
 		}
 	}
 	.empty-list-message {
@@ -2514,7 +2516,7 @@ ul.kpis-list{
 	ul#tasks-list{
 		li{
 			color: $text;
-			min-height:70px;
+			min-height:80px;
 
 			&.complete > span.task-list {
 				border-left: 5px solid $complete !important;
@@ -6720,7 +6722,7 @@ body{
 				&.icon-plus-sign:before {
 					display: block;
 					font-size: 21px;
-					margin: 0 0 0 30px;
+					margin: 0 0 0 60px;
 				}
 			}
 		}
