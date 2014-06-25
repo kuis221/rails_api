@@ -1,0 +1,400 @@
+
+@import "variables";
+
+/*-- ICONS STYLESHEET --*/
+
+[class^="icon-"], [class*=" icon-"] {
+	display: inline;
+	width: auto;
+	height: auto;
+	line-height: normal;
+	vertical-align: baseline;
+	background-image: none;
+	background-position: 0% 0%;
+	background-repeat: repeat;
+	margin-top: 0;
+}
+
+[class^="icon-"], [class*=" icon-"], [class^="area-"], [class*=" area-"],
+[class$="-data"]:before, [class$="-data"]:before,{
+	font-family: icons;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: inherit;
+	-webkit-font-smoothing: antialiased;
+}
+
+:before, :after{
+	display: inline-block;
+	font-family: 'icons';
+	position:relative;
+	speak: none;
+	text-shadow: none;
+	-webkit-font-smoothing: antialiased;
+}
+
+// GENERAL ICONS
+
+a, i, .btn{
+	&:before, &:after{
+		display: inline-block;
+		font-family: 'icons';
+		position:relative;
+		speak: none;
+		text-shadow: none;
+		-webkit-font-smoothing: antialiased;
+	}
+	&.charts:before{
+		color: white;
+		content: "\e604";
+		font-size: 18px;
+		top: 1px;
+	}
+	&.download:before, &.photo-download-link:before{
+		content: "\e00b";
+		color: white;
+	}
+	&.edit:after{
+		background-color: none;
+		color: $app_bg;
+		content: "\e006";;
+		font-size: 15px;
+		top: 2px;
+	}
+	&.enable:after{
+		content: "\e00d";
+		font-family: 'icons';
+		font-size: 18px;
+	}
+	&.icon-ok-circle:before{
+		color: $brand;
+		content: "\e00d";
+		font-size: 20px;
+	}
+	&.icon-plus-sign:before{
+		color: $brand;
+		content: "\e021";
+		font-size: 20px;
+	}
+	&.icon-calendar:before{
+		color: $brand;
+		content: "\e031";
+		font-size: 17px;
+	}
+	&.icon-remove-circle:before, &.icon-remove-sign:before, &.disable:after{
+		color: $brand;
+		content: "\e011";
+		font-size: 20px;
+	}
+	&.icon-angle-right:before, &.icon-angle-right-after:after{
+		color: $user_menu;
+		content: "\e01d";
+		font-size: 26px;
+	}
+	&.icon-angle-left:before{
+		color: $user_menu;
+		content: "\e01c";
+		font-size: 26px;
+	}
+
+	// Icons for buttons
+
+	&.calendar:after{
+		content: "\e031";
+	}
+	&.fullscreen:after{
+		content: "\e020";
+	}
+	&.graph:after{
+		content: "\e00e";
+	}
+	&.list:after, &.table:after{
+		content: "\e615";
+	}
+	&.map:after{
+		content: "\e001";
+	}
+
+	// Icons for notification center
+
+	&[class^="icon-notification"]:before, &[class*=" icon-notification"]:before{
+		font-size: 16px;
+	}
+
+	&.icon-notification-event:before{
+		color: $user_menu;
+		content: "\e00a";
+	}
+	&.icon-notification-task:before{
+		color: $user_menu;
+		content: "\e015";
+	}
+	&.icon-notification-comment:before{
+		color: $user_menu;
+		content: "\e010";
+	}
+	&.icon-notification-campaign:before{
+		color: $user_menu;
+		content: "\e00a";
+	}
+	&.icon-notification-action:before{
+		color: $user_menu;
+		content: "\e024";
+	}
+	&.icon-notification-group:before{
+		color: $user_menu;
+		content: "\e023";
+	}
+	&.icon-notification-venue:before{
+		color: $user_menu;
+		content: "\e018";
+	}
+	&.load-comments-link:after{
+		content: "\e010";
+		font-size: 18px;
+	}
+	&.share:after{
+		content: "\e603";
+		font-size: 19px;
+	}
+	&.table-view:before{
+		color: white;
+		content: "\e007";
+		font-size: 18px;
+		top: 1px;
+	}
+}
+
+.area-place:before, .place:before{
+	color: $user_menu;
+	content: "\e02c";
+}
+
+.area-user:before{
+	content: "\e02e";
+	color: $user_menu;
+}
+
+.btn-group{
+	.btn:after{
+		color:white;
+	}
+	.btn:hover{
+		&:after{
+			color: white;
+		}
+	}
+}
+
+.carousel-control{
+	&.right:before{
+		content: "\e601";
+		margin-left: 4px;
+	}
+	&.left:before{
+		content: "\e602";
+	}
+}
+
+.gallery-carousel{
+	&.carousel{
+		.carousel-control{
+			&.right span:before{
+				content: "\e601";
+				margin-left: 14px;
+			}
+			&.left span:before{
+				content: "\e602";
+				margin-left: 10px;
+			}
+		}
+	}
+}
+
+.select-for-download{
+	a.photo-download-link{
+		&:before{
+			color: white;
+			content: "\e611";
+			font-size: 12px;		
+		}
+		&.icon-minus:before{
+			color: white;
+			content: "\e616";
+			font-size: 12px;
+		}
+	}
+}
+
+.close:before, .remove-item:after{
+	color: white;
+	content: "\e019";
+	display: block;
+	font-family: 'icons';
+	font-size: 12px;
+	font-weight: normal;
+	left: 0;
+	position: absolute;
+	speak:none;
+	text-indent: 0;
+	top:4px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.female:before{
+	content: "\e01b";
+}
+
+.male:before{
+	content: "\e01a";
+}
+
+.icon-download:before{
+	content: "\e00b";
+}
+
+.icon-star:before {
+	content: "\e614";
+	font-size: 15px;
+}
+
+.calendar-data:before{
+	content: "\e022";
+	font-size: 19px;
+}
+
+.description-data:before{
+	content: "\e02b";
+}
+
+.email-data:before{
+	content: "\e02f";
+	font-size: 19px;
+}
+
+.place-data:before{
+	content: "\e02c";
+	font-size: 22px;
+}
+
+.phone-data:before{
+	content: "\e02d";
+	font-size: 18px;
+}
+
+.time-data:before{
+	content: "\e01f";
+	font-size: 22px;
+}
+
+.description-data, .time-data{
+	&:before{
+		color: $user_menu;
+		font-size: 22px;
+		padding-top: 5px;
+		position: absolute;
+		left: 27px;
+		text-align: center;
+		vertical-align: middle;
+	}
+}
+
+.tags:before{
+	content: "\e600";
+	color: $grey_one;
+}
+
+.team:before{
+	color: $user_menu;
+	content: "\e023";
+}
+
+.team-member:before, .member-data:before{
+	color: $user_menu;
+	content: "\e024";
+}
+
+/*-- UL Nav --*/
+
+ul.nav {
+	#analysis a:before, #dashboard a:before, #events a:before, #venues a:before,
+	#tasks a:before, #results a:before {
+		display: block;
+		font-family: 'icons';
+		font-size: 27px;
+		font-weight: normal;
+		left:2px;
+		padding-bottom:5px;
+		position: relative;
+		speak: none;
+		text-align: center;
+		top:-3px;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	#analysis a:before{
+		content: "\e00e";
+	}
+	#dashboard a:before {
+		content: "\e00c";
+	}
+	#events a:before{
+		content: "\e00a";
+		left: 3px;
+	}
+	#tasks a:before {
+		content: "\e015";
+	}
+	#venues a:before {
+		content: "\e001";
+	}
+	#results a:before {
+		content: "\e014";
+	}
+	#analysis, #dashboard, #events, #tasks, #venues, #results {
+		a:hover{
+			background-color: $text;
+			color:$user_menu;
+		}
+		a.active:hover{
+			background-color: $app_bg;
+			color:$grey_three;
+			&:before{
+				color:$grey_three;
+			}
+		}
+		a:hover:before{
+			color: $user_menu;
+		}
+		a:active{
+			background-color: $app_bg;
+			color:$grey_three;
+		}
+		a:active:before{
+			color:$grey_three;
+		}
+	}
+}
+
+/*-- Datepick Sidebar Icons --*/
+
+.datepick-cmd-prev:after, .datepick-cmd-next:after{
+	color: white;
+	display: block;
+	font-size: 9px;
+	position: absolute;
+	text-indent: 0;
+	top:1px;
+}
+
+.datepick-cmd-prev:after{
+	content: "\e003";
+	left: 0;
+}
+
+.datepick-cmd-next:after{
+	content: "\e002";
+	left: 6px;
+}
