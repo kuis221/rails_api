@@ -22,6 +22,7 @@
 	font-style: normal;
 	text-decoration: inherit;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 :before, :after{
@@ -31,6 +32,7 @@
 	speak: none;
 	text-shadow: none;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 // GENERAL ICONS
