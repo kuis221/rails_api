@@ -42,6 +42,8 @@ class AttachedAsset < ActiveRecord::Base
     }
   })
 
+  do_not_validate_attachment_file_type :file
+
   scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, lambda{ where(asset_type: 'photo') }
   scope :active, lambda{ where(active: true) }
@@ -236,17 +238,16 @@ class AttachedAsset < ActiveRecord::Base
   # Final upload processing step
   def transfer_and_cleanup
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
-    s3 = AWS::S3.new
 
     paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-    s3.buckets[S3_CONFIGS['bucket_name']].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+    file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     @processing = true
     if post_process_required?
       file.reprocess!
     end
     self.processed = true
 
-    s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].delete if save
+    file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     @processing = false
   end
 
