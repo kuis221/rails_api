@@ -1,15 +1,17 @@
 # == Schema Information
 #
-# Table name: brands
+# Table name: form_fields
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  created_by_id :integer
-#  updated_by_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  company_id    :integer
-#  active        :boolean          default(TRUE)
+#  id             :integer          not null, primary key
+#  fieldable_id   :integer
+#  fieldable_type :string(255)
+#  name           :string(255)
+#  type           :string(255)
+#  settings       :text
+#  ordering       :integer
+#  required       :boolean
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
 #
 
 require 'spec_helper'
