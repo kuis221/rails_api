@@ -458,7 +458,7 @@ class Event < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
       ss = solr_search(include: [:campaign, :place]) do
-        (start_at_field, end_at_field) = [:start_at, :end_at, Time.zone.name]
+        (start_at_field, end_at_field, timezone) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
           (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
         end

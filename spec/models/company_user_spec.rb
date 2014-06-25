@@ -234,4 +234,24 @@ describe CompanyUser do
       expect(user.notification_setting_permission?('new_campaign')).to be_true
     end
   end
+
+
+  describe "#with_notifications" do
+    it "should return empty if no users have the any of the notifications enabled" do
+      FactoryGirl.create(:company_user)
+      expect(CompanyUser.with_notifications(['some_notification'])).to be_empty
+    end
+
+    it "should return all users with any of the notifications enabled" do
+      user1 = FactoryGirl.create(:company_user,
+        notifications_settings: ['notification2', 'notification1'])
+
+      user2 = FactoryGirl.create(:company_user,
+        notifications_settings: ['notification3', 'notification4', 'notification1'])
+
+      expect(CompanyUser.with_notifications(['notification2'])).to match_array [user1]
+
+      expect(CompanyUser.with_notifications(['notification1'])).to match_array [user1, user2]
+    end
+  end
 end

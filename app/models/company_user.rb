@@ -2,14 +2,15 @@
 #
 # Table name: company_users
 #
-#  id               :integer          not null, primary key
-#  company_id       :integer
-#  user_id          :integer
-#  role_id          :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  active           :boolean          default(TRUE)
-#  last_activity_at :datetime
+#  id                     :integer          not null, primary key
+#  company_id             :integer
+#  user_id                :integer
+#  role_id                :integer
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  active                 :boolean          default(TRUE)
+#  last_activity_at       :datetime
+#  notifications_settings :string(255)      default([])
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -58,30 +59,38 @@ class CompanyUser < ActiveRecord::Base
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
   delegate :is_admin?, to: :role, prefix: false
 
-  NOTIFICATION_SETTINGS_TYPES = ['event_recap_due', 'event_recap_late', 'event_recap_pending_approval', 'event_recap_rejected',
-                                 'new_event_team', 'late_task', 'late_team_task', 'new_comment', 'new_team_comment',
-                                 'new_unassigned_team_task', 'new_task_assignment', 'new_campaign'
-                                ]
+  NOTIFICATION_SETTINGS_TYPES = [
+      'event_recap_due', 'event_recap_late', 'event_recap_pending_approval', 'event_recap_rejected',
+      'new_event_team', 'late_task', 'late_team_task', 'new_comment', 'new_team_comment',
+      'new_unassigned_team_task', 'new_task_assignment', 'new_campaign'
+  ]
 
   NOTIFICATION_SETTINGS_PERMISSIONS = {
-                                        'event_recap_due' => [{action: :view_list, subject_class: Event}],
-                                        'event_recap_late' => [{action: :view_list, subject_class: Event}],
-                                        'event_recap_pending_approval' => [{action: :view_list, subject_class: Event}],
-                                        'event_recap_rejected' => [{action: :view_list, subject_class: Event}],
-                                        'new_event_team' => [{action: :view_list, subject_class: Event}],
-                                        'late_task' => [{action: :index_my, subject_class: Task}],
-                                        'late_team_task' => [{action: :index_team, subject_class: Task}],
-                                        'new_comment' => [{action: :index_my, subject_class: Task}, {action: :index_my_comments, subject_class: Task}],
-                                        'new_team_comment' => [{action: :index_team, subject_class: Task}, {action: :index_team_comments, subject_class: Task}],
-                                        'new_unassigned_team_task' => [{action: :index_team, subject_class: Task}],
-                                        'new_task_assignment' => [{action: :index_my, subject_class: Task}],
-                                        'new_campaign' => [{action: :read, subject_class: Campaign}]
-                                      }
+      'event_recap_due' => [{action: :view_list, subject_class: Event}],
+      'event_recap_late' => [{action: :view_list, subject_class: Event}],
+      'event_recap_pending_approval' => [{action: :view_list, subject_class: Event}],
+      'event_recap_rejected' => [{action: :view_list, subject_class: Event}],
+      'new_event_team' => [{action: :view_list, subject_class: Event}],
+      'late_task' => [{action: :index_my, subject_class: Task}],
+      'late_team_task' => [{action: :index_team, subject_class: Task}],
+      'new_comment' => [{action: :index_my, subject_class: Task}, {action: :index_my_comments, subject_class: Task}],
+      'new_team_comment' => [{action: :index_team, subject_class: Task}, {action: :index_team_comments, subject_class: Task}],
+      'new_unassigned_team_task' => [{action: :index_team, subject_class: Task}],
+      'new_task_assignment' => [{action: :index_my, subject_class: Task}],
+      'new_campaign' => [{action: :read, subject_class: Campaign}]
+  }
 
   scope :active, where(:active => true)
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
+
+  # Returns all users that have at least one of the given notifications
+  scope :with_notifications, ->(notifications) { where(notifications.map{|n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
+
+  scope :with_confirmed_phone_number, -> { joins(:user).where('users.phone_number is not null') }
+
+  scope :with_timezone, -> { joins(:user).where('users.time_zone is not null') }
 
   scope :with_user_and_role, lambda{ joins([:role, :user]).includes([:role, :user]) }
 
