@@ -689,24 +689,6 @@ $report_border_color: #ccc;
 	}
 }
 
-.report_modal {
-	.chzn-results {
-		li:after {
-			margin-left: 20px;
-			color: #ccc;
-		}
-		li.company_user:after {
-			content: "USER";
-		}
-		li.role:after {
-			content: "ROLE";
-		}
-		li.team:after {
-			content: "TEAM";
-		}
-	}
-}
-
 @media (max-height: 810px) {
 
 	#report-builder{

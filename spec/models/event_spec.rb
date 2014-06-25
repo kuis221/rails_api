@@ -1041,4 +1041,49 @@ describe Event do
       end
     end
   end
+
+  describe "team_members" do
+    let(:company){ FactoryGirl.create(:company) }
+
+    it "should return all teams and users" do
+      event = FactoryGirl.build(:event, company: company)
+
+      FactoryGirl.create(:company_user, company: company )
+      user1 = FactoryGirl.create(:company_user, company: company )
+      event.users << user1
+      user2 = FactoryGirl.create(:company_user, company: company )
+      event.users << user2
+
+      FactoryGirl.create(:team, company: company )
+      team1 = FactoryGirl.create(:team, company: company )
+      event.teams << team1
+      team2 = FactoryGirl.create(:team, company: company )
+      event.teams << team2
+
+      expect(event.team_members).to match_array [
+        "company_user:#{user1.id}", "company_user:#{user2.id}",
+        "team:#{team1.id}", "team:#{team2.id}"
+      ]
+    end
+  end
+
+  describe "team_members=" do
+    let(:company){ FactoryGirl.create(:company) }
+
+    it "should correctly assign users and teams" do
+      event = FactoryGirl.build(:event, company: company)
+      user1 = FactoryGirl.create(:company_user, company: company)
+      user2 = FactoryGirl.create(:company_user, company: company)
+      team1 = FactoryGirl.create(:team, company: company)
+
+      event.team_members = [
+        "company_user:#{user1.id}", "company_user:#{user2.id}",
+        "team:#{team1.id}", 'invalid:222'
+      ]
+
+      expect(event.user_ids).to match_array [user1.id, user2.id]
+      expect(event.team_ids).to match_array [team1.id]
+      expect(event.new_record?).to be_true
+    end
+  end
 end

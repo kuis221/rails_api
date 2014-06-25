@@ -88,11 +88,13 @@ class EventsController < FilteredController
   protected
 
     def build_resource
-      super
-      if action_name == 'new' && params[:event]
-        @event.assign_attributes(params.permit(event: [:place_reference])[:event])
+      @event || super.tap do |e|
+        super
+        if action_name == 'new' && params[:event]
+          e.assign_attributes(params.permit(event: [:place_reference])[:event])
+        end
+        e.user_ids = [current_company_user.id] if action_name == 'new'
       end
-      @event
     end
 
     def permitted_params
@@ -108,7 +110,7 @@ class EventsController < FilteredController
         parameters[:end_time] = t.to_s(:time_only)
       else
         allowed = []
-        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference] if can?(:update, Event) || can?(:create, Event)
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
         allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, {value: []}, :id]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end

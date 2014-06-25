@@ -44,6 +44,16 @@ class Company < ActiveRecord::Base
     Thread.current[:company]
   end
 
+  def team_member_options
+    ActiveRecord::Base.connection.select_all("
+      #{company_users.active.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').joins(:user).to_sql}
+      UNION ALL
+      #{teams.active.select('teams.id, teams.name, \'team\' as type').to_sql}
+      ORDER BY name ASC
+    ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+  end
+
+
   private
     def create_admin_role_and_user
       if admin_email

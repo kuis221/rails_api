@@ -62,14 +62,17 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         event1 = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place1)
         event1.result_for_kpi(kpi).value = '25'
         event1.save
+        event1.users << company_user
 
         event2 = FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place1)
         event2.result_for_kpi(kpi).value = '20'
         event2.save
+        event2.users << company_user
 
         event3 = FactoryGirl.create(:rejected_event, company: company, campaign: campaign, place: place1)
         event3.result_for_kpi(kpi).value = '33'
         event3.save
+        event3.users << company_user
 
         visit results_gva_path
 
@@ -316,6 +319,9 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         event2 = FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place1)
         event2.result_for_kpi(kpi).value = '20'
         event2.save
+
+        event1.users << company_user
+        event2.users << company_user
 
         visit results_gva_path
 
