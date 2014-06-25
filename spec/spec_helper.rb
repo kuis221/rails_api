@@ -64,9 +64,6 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :deletion
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.logger = Rails.logger
-
-    ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS tablefunc;')
-    ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS hstore;')
   end
 
   config.before(:all) do
