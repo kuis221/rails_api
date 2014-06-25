@@ -80,6 +80,7 @@ describe CommentsController do
           @company_user.update_attributes({notifications_settings: ['new_team_comment_sms', 'new_team_comment_email']}, without_protection: true)
           other_user = FactoryGirl.create(:company_user, company_id: @company.id, notifications_settings: ['new_team_comment_sms'])
           task.update_attributes({event_id: event.to_param}, without_protection: true)
+          event.users << @company_user
           event.users << other_user
           message = "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
           UserMailer.should_receive(:notification).with(@company_user, "New Team Comment", message).and_return(double(deliver: true))
