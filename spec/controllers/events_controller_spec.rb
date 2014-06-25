@@ -126,6 +126,7 @@ describe EventsController do
         event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
         team = FactoryGirl.create(:team, company: @company, name: "zteam")
         event.teams << team
+        event.users << @company_user
         Sunspot.commit
 
         expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -213,9 +214,9 @@ describe EventsController do
       end
 
       it "should assign current_user's company_id to the new event" do
-        lambda {
+        expect {
           post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
-        }.should change(Event, :count).by(1)
+        }.to change(Event, :count).by(1)
         assigns(:event).company_id.should == @company.id
       end
 
@@ -224,7 +225,10 @@ describe EventsController do
           @company_user.update_attributes({notifications_settings: ['new_event_team_sms', 'new_event_team_email']}, without_protection: true)
           UserMailer.should_receive(:notification).with(@company_user, "Added to Event", /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
           expect {
-            post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm'}, format: :js
+            post 'create', event: {
+              campaign_id: campaign.id, team_members: ["company_user:#{@company_user.id}"],
+              start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
+              end_time: '01:00pm'}, format: :js
           }.to change(Event, :count).by(1)
           assigns(:event).users.last.user.id.should == @user.id
           open_last_text_message_for @user.phone_number
@@ -233,13 +237,30 @@ describe EventsController do
       end
 
       it "should create the event with the correct dates" do
-        lambda {
+        expect {
           post 'create', event: {campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
-        }.should change(Event, :count).by(1)
+        }.to change(Event, :count).by(1)
         event = Event.last
         event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
         event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
         event.promo_hours.should == 1
+      end
+
+      it "should create the event with the given event team" do
+        user = FactoryGirl.create(:company_user, company: @company)
+        team = FactoryGirl.create(:team, company: @company)
+        expect {
+          post 'create', event: {
+              campaign_id: campaign.id, team_members: ["company_user:#{user.id}", "team:#{team.id}"],
+              start_date: '05/21/2020', start_time: '12:00pm',
+              end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
+        }.to change(Event, :count).by(1)
+        event = Event.last
+        event.start_at.should == Time.zone.parse('2020/05/21 12:00pm')
+        event.end_at.should == Time.zone.parse('2020/05/21 01:00pm')
+        event.promo_hours.should == 1
+        expect(event.users).to eql [user]
+        expect(event.teams).to eql [team]
       end
     end
 
@@ -316,6 +337,7 @@ describe EventsController do
     describe "DELETE 'delete_member' with a user" do
       let(:event){ FactoryGirl.create(:event, company: @company) }
       it "should remove the team member from the event" do
+        event.users << @company_user
         lambda{
           delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
           response.should be_success
@@ -373,6 +395,7 @@ describe EventsController do
       it "should not unassign any tasks assigned the team users if the user is directly assigned to the event" do
         team.users << @company_user
         event.teams << team
+        event.users << @company_user
         other_user = FactoryGirl.create(:company_user, company_id: 1)
         user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
         other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user: other_user)
@@ -399,7 +422,10 @@ describe EventsController do
         event.reload
         response.should be_success
         assigns(:event).should == event
-        assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
+        assigns(:staff).should match_array [
+          {'id' => @company_user.id.to_s, 'name' => @company_user.full_name, 'description' => 'Super Admin', 'type' => 'user'},
+          {'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}
+        ]
       end
 
       it 'should not load the users that are already assigned to the event' do
@@ -412,6 +438,7 @@ describe EventsController do
       end
 
       it 'should load teams with active users' do
+        event.users << @company_user
         @company_user.user.update_attributes({first_name: 'CDE', last_name: 'FGH'}, without_protection: true)
         team = FactoryGirl.create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
         other_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
@@ -430,28 +457,22 @@ describe EventsController do
       let(:event){ FactoryGirl.create(:event, company: @company, place: place) }
 
       it 'should assign the user to the event and create a notification for the new member' do
-        with_resque do
-          other_user = FactoryGirl.create(:company_user, company_id: @company.id, notifications_settings: ['new_event_team_sms', 'new_event_team_email'])
-          other_user.places << place
-          message = "You have a new event http://localhost:5100/events/#{event.id}"
-          UserMailer.should_receive(:notification).with(other_user, "Added to Event", message).and_return(double(deliver: true))
+        other_user = FactoryGirl.create(:company_user, company_id: @company.id)
+        other_user.places << place
+        expect {
           expect {
-            expect {
-              post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
-              response.should be_success
-              assigns(:event).should == event
-              event.reload
-            }.to change(event.users, :count).by(1)
-          }.to change(other_user.notifications, :count).by(1)
-          event.users.should =~ [@company_user, other_user]
-          other_user.reload
-          notification = other_user.notifications.last
-          notification.company_user_id.should == other_user.id
-          notification.message.should == 'new_event'
-          notification.path.should == event_path(event)
-          open_last_text_message_for other_user.phone_number
-          current_text_message.should have_body message
-        end
+            post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
+            response.should be_success
+            assigns(:event).should == event
+            event.reload
+          }.to change(event.users, :count).by(1)
+        }.to change(other_user.notifications, :count).by(1)
+        event.users.should =~ [other_user]
+        other_user.reload
+        notification = other_user.notifications.last
+        notification.company_user_id.should == other_user.id
+        notification.message.should == 'new_event'
+        notification.path.should == event_path(event)
       end
 
       it 'should assign all the team to the event and create a notification for team members' do
@@ -524,6 +545,7 @@ describe EventsController do
         Timecop.freeze do
           with_resque do
             event = FactoryGirl.create(:event, active: true, company: @company)
+            event.users << @company_user
             @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_sms', 'event_recap_pending_approval_email']}, without_protection: true)
             message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
             UserMailer.should_receive(:notification).with(@company_user, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
@@ -566,6 +588,7 @@ describe EventsController do
         Timecop.freeze do
           with_resque do
             event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+            event.users << @company_user
             @company_user.update_attributes({notifications_settings: ['event_recap_rejected_sms', 'event_recap_rejected_email']}, without_protection: true)
             message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
             UserMailer.should_receive(:notification).with(@company_user, "Rejected Event Recaps", message).and_return(double(deliver: true))

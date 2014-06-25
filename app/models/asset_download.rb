@@ -28,6 +28,8 @@ class AssetDownload < ActiveRecord::Base
 
   has_attached_file :file, PAPERCLIP_SETTINGS
 
+  do_not_validate_attachment_file_type :file
+
   include AASM
 
   aasm do

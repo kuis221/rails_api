@@ -207,14 +207,12 @@ class User < ActiveRecord::Base
 
   def reindex_related
     if first_name_changed? or last_name_changed?
-      Sunspot.index self.tasks.includes([{:company_user => :user}, :event]).all
-      Sunspot.commit
+      Sunspot.index self.tasks
     end
   end
 
   def reindex_company_users
     Sunspot.index company_users.all
-    Sunspot.commit
   end
 
   # Update password saving the record and clearing token. Returns true if

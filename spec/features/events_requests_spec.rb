@@ -438,17 +438,24 @@ feature 'Events section' do
 
     feature "create a event" do
       scenario "allows to create a new event" do
+        FactoryGirl.create(:company_user, company: company,
+          user: FactoryGirl.create(:user, first_name: 'Other', last_name: 'User'))
         FactoryGirl.create(:campaign, company: company, name: 'ABSOLUT Vodka')
         visit events_path
 
         click_button 'Create'
 
         within visible_modal do
+          expect(page).to have_content(company_user.full_name)
           select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
+          select_from_chosen('Other User', from: 'Event staff')
           click_button 'Create'
         end
         ensure_modal_was_closed
         expect(page).to have_content('ABSOLUT Vodka')
+        within '#event-team-members' do
+          expect(page).to have_content('Other User')
+        end
       end
 
       scenario "end date are updated after user changes the start date" do
@@ -715,7 +722,7 @@ feature 'Events section' do
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
-        all('#event-team-members .team-member').count.should == 1
+        all('#event-team-members .team-member').count.should == 0
       end
 
 

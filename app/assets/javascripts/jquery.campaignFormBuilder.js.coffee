@@ -208,7 +208,7 @@ window.CampaignFormBuilder = {
 		$('select', @attributesPanel).on 'change', =>
 			@saveFields [field]
 
-		$('input[type=text]', @attributesPanel).on 'blur', (e) =>
+		$('input[type=text], textarea', @attributesPanel).on 'blur', (e) =>
 			input = $(e.target)
 			if input.data('saved-value') != input.val()
 				input.data 'saved-value', input.val()
@@ -358,19 +358,10 @@ window.CampaignFormBuilder.SectionField = (options) ->
 		options: {}
 	}, options)
 
-	@field =  $('<div class="section" data-class="SectionField">').append $('<fieldset>').append([
-		$('<legend>').html(@options.name),
-		@fields = $('<div class="section-fields">').append($('<div class="empty-form-legend">This section is empty.</div>'))
-	])
-
-	for field in @options.fields
-		@fields.append CampaignFormBuilder.buildField(field)
-
-	@field.find('.section-fields').sortable({
-		update: ( event, ui ) ->
-			if not ui.item.data('field')
-				ui.item.replaceWith(eval("new CampaignFormBuilder.#{ui.item.data('class')}({})"))
-	})
+	@field =  $('<div class="field control-group" data-class="SectionField">').append [
+		$('<h3>').html(@options.name),
+		$('<p>').text(@options.options.description )
+	]
 
 	@field.data 'field', @
 
@@ -378,11 +369,17 @@ window.CampaignFormBuilder.SectionField = (options) ->
 		[
 			$('<h4>').text(@options.name),
 			$('<div class="control-group">').append([
-				$('<label class="control-label">').text('Section name'),
+				$('<label class="control-label">').text('Field Label'),
 				$('<div class="controls">').append $('<input type="text" name="label">').val(@options.name).on 'keyup', (e) =>
 						input = $(e.target)
 						@options.name = input.val()
-						@field.find('legend').text @options.name
+						@field.find('h3').text @options.name
+
+				$('<label class="control-label">').text('Description'),
+				$('<div class="controls">').append $('<textarea>').val(@options.options.description).on 'keyup', (e) =>
+						input = $(e.target)
+						@options.options.description = input.val()
+						@field.find('p').text @options.options.description
 			])
 		]
 
@@ -391,7 +388,7 @@ window.CampaignFormBuilder.SectionField = (options) ->
 			$.extend {ordering: index}, $(fieldDiv).data('field').getSaveAttributes()
 
 	@getSaveAttributes = () ->
-		{id: @options.id, name: @options.name, field_type: 'section', kpi_id: null, options: {}, fields_attributes: @_getFieldsAttributes()}
+		{id: @options.id, name: @options.name, field_type: 'section', kpi_id: null, options: @options.options, fields_attributes: @_getFieldsAttributes()}
 
 	@getId = () ->
 		@options.id

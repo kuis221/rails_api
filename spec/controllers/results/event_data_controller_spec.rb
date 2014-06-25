@@ -55,6 +55,7 @@ describe Results::EventDataController do
       campaign.assign_all_global_kpis
       place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
       event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
+      event.users << @company_user
       team = FactoryGirl.create(:team, company: @company, name: "zteam")
       event.teams << team
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
@@ -104,6 +105,7 @@ describe Results::EventDataController do
       campaign.areas << area
       place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
       event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
+      event.users << @company_user
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
       event.result_for_kpi(custom_kpi).value = 8899
       set_event_results(event,

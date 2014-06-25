@@ -15,7 +15,6 @@
 class Membership < ActiveRecord::Base
   belongs_to :company_user
   belongs_to :memberable, polymorphic: true
-  # attr_accessible :title, :body
 
   after_create :create_notifications
   after_create :update_tasks

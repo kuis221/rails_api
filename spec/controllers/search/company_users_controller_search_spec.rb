@@ -83,6 +83,7 @@ describe CompanyUsersController, search: true do
     end
 
     describe "GET 'notifications'" do
+      let(:timestamp) { Time.now.to_datetime.strftime('%Q').to_i }
       it "should return a notification if a user is added to a campaign" do
         Timecop.freeze do
           @company_user.update_attributes({notifications_settings: ['new_campaign_app']})
@@ -95,7 +96,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => campaigns_path(new_at: Time.now.to_i), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
+          notifications.should include({"message" => "You have a new campaign", "level" => "grey", "url" => campaigns_path(new_at: timestamp), "unread" => true, "icon" => "icon-notification-campaign", "type"=>"new_campaign"})
         end
       end
 
@@ -111,7 +112,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => events_path(new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event"})
+          notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => events_path(new_at: timestamp, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event"})
         end
       end
 
@@ -130,7 +131,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "Your team Team A has a new event", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
+          notifications.should include({"message" => "Your team Team A has a new event", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id], new_at: timestamp, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
 
           #New user team added to a new event, different message is obtained
           event2 = FactoryGirl.create(:event, company: @company)
@@ -144,7 +145,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You teams Team A, Team B have 2 new events", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id, team2.id], new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
+          notifications.should include({"message" => "You teams Team A, Team B have 2 new events", "level" => "grey", "url" => events_path(notification: 'new_team_event', team: [team1.id, team2.id], new_at: timestamp, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_team_event"})
         end
       end
 
@@ -247,8 +248,8 @@ describe CompanyUsersController, search: true do
       # end
 
       it "should return a notification if there is a new task for the user" do
+        @company_user.update_attributes({notifications_settings: ['new_task_assignment_app']})
         Timecop.freeze do
-          @company_user.update_attributes({notifications_settings: ['new_task_assignment_app']})
           task = without_current_user do
             FactoryGirl.create(:task,
               title: 'The task title',
@@ -258,7 +259,7 @@ describe CompanyUsersController, search: true do
           get 'notifications', id: @company_user.to_param, format: :json
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message"=>"You have a new task", "level"=>"grey", "url"=>"/tasks/mine?new_at=#{Time.now.to_i}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task"})
+          notifications.should include({"message"=>"You have a new task", "level"=>"grey", "url"=>"/tasks/mine?new_at=#{timestamp}", "unread"=>true, "icon"=>"icon-notification-task", "type"=>"new_task"})
         end
       end
 
@@ -303,6 +304,7 @@ describe CompanyUsersController, search: true do
     let(:place){ FactoryGirl.create(:place) }
 
     describe "GET 'notifications'" do
+      let(:timestamp) { Time.now.to_datetime.strftime('%Q').to_i }
       it "should return a notification if a user is added to a event's team" do
         Timecop.freeze do
           @company_user.role.permission_for(:view_list, Event).save
@@ -319,7 +321,7 @@ describe CompanyUsersController, search: true do
           response.should be_success
 
           notifications = JSON.parse(response.body)
-          notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => events_path(new_at: Time.now.to_i, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event"})
+          notifications.should include({"message" => "You have a new event", "level" => "grey", "url" => events_path(new_at: timestamp, end_date: '', start_date: ''), "unread" => true, "icon" => "icon-notification-event", "type"=>"new_event"})
         end
       end
 

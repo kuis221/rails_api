@@ -20,6 +20,8 @@ feature "Teams", js: true do
       # Create a few users for each team
       teams[0].users << FactoryGirl.create_list(:company_user, 3, company_id: @company.id)
       teams[1].users << FactoryGirl.create_list(:company_user, 2, company_id: @company.id)
+      Sunspot.commit
+
       visit teams_path
 
       within("ul#teams-list") do

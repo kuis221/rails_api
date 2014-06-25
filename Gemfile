@@ -25,7 +25,7 @@ gem 'aasm'
 gem 'countries'
 gem "company_scoped", path: 'vendor/gems/company_scoped'
 gem 'newrelic_rpm'
-gem "paperclip", "~> 3.0"
+gem "paperclip", "~> 4.1"
 gem "aws-sdk"
 gem 'google_places'
 gem 'validates_timeliness', '~> 3.0'
