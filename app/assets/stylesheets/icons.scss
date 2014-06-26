@@ -101,6 +101,10 @@ a, i, .btn{
 
 	// Icons for buttons
 
+	&.calendar:after, &.fullscreen:after, &.graph:after, &.list:after, &.table:after, &.map:after{
+		color: white;
+	}
+
 	&.calendar:after{
 		content: "\e031";
 	}
@@ -187,7 +191,6 @@ a, i, .btn{
 		}
 	}
 }
-
 .carousel-control{
 	&.right:before{
 		content: "\e601";
