@@ -38,6 +38,16 @@ class EventsController < FilteredController
     if resource.unsent? || resource.rejected?
       begin
         resource.submit!
+        resource.users.each do |user|
+          if user.allow_notification?('event_recap_pending_approval_sms')
+            sms_message = I18n.translate("notifications_sms.event_recap_pending_approval", url: Rails.application.routes.url_helpers.event_url(resource))
+            Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
+          end
+          if user.allow_notification?('event_recap_pending_approval_email')
+            email_message = I18n.translate("notifications_email.event_recap_pending_approval", url: Rails.application.routes.url_helpers.event_url(resource))
+            UserMailer.notification(user, I18n.translate("notification_types.event_recap_pending_approval"), email_message).deliver
+          end
+        end
       rescue AASM::InvalidTransition => e
       end
     end
@@ -57,6 +67,16 @@ class EventsController < FilteredController
     if resource.submitted? && reject_reason.present?
       resource.reject!
       resource.update_column(:reject_reason, reject_reason)
+      resource.users.each do |user|
+        if user.allow_notification?('event_recap_rejected_sms')
+          sms_message = I18n.translate("notifications_sms.event_recap_rejected", url: Rails.application.routes.url_helpers.event_url(resource))
+          Resque.enqueue(SendSmsWorker, user.phone_number, sms_message)
+        end
+        if user.allow_notification?('event_recap_rejected_email')
+          email_message = I18n.translate("notifications_email.event_recap_rejected", url: Rails.application.routes.url_helpers.event_url(resource))
+          UserMailer.notification(user, I18n.translate("notification_types.event_recap_rejected"), email_message).deliver
+        end
+      end
     end
   end
 

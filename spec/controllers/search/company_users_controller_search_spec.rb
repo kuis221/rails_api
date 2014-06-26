@@ -86,6 +86,7 @@ describe CompanyUsersController, search: true do
       let(:timestamp) { Time.now.to_datetime.strftime('%Q').to_i }
       it "should return a notification if a user is added to a campaign" do
         Timecop.freeze do
+          @company_user.update_attributes({notifications_settings: ['new_campaign_app']})
           campaign = FactoryGirl.create(:campaign, company: @company)
           @company_user.campaigns << campaign
           Sunspot.commit
@@ -101,6 +102,7 @@ describe CompanyUsersController, search: true do
 
       it "should return a notification if a user is added to a event's team" do
         Timecop.freeze do
+          @company_user.update_attributes({notifications_settings: ['new_event_team_app']})
           event = FactoryGirl.create(:event, company: @company)
           event.users << @company_user
           Sunspot.commit
@@ -117,6 +119,7 @@ describe CompanyUsersController, search: true do
       it "should return a notification if a user team is added to a event's team" do
         Timecop.freeze do
           event1 = FactoryGirl.create(:event, company: @company)
+          @company_user.update_attributes({notifications_settings: ['new_event_team_app']})
           @company_user.notifications.delete_all
           team1 = FactoryGirl.create(:team, name: 'Team A', company: @company)
           team1.users << @company_user
@@ -147,6 +150,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a late event recap" do
+        @company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
         event = FactoryGirl.create(:late_event, company: @company)
         event.users << @company_user
         Sunspot.commit
@@ -160,6 +164,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should NOT return a notification if the user is not part of the event's team" do
+        @company_user.update_attributes({notifications_settings: ['new_event_team_app']})
         without_current_user do
           event = FactoryGirl.create(:late_event, company: @company)
         end
@@ -174,6 +179,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a submitted event recap that is waiting for approval" do
+        @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_app']})
         event = FactoryGirl.create(:submitted_event, company: @company)
         event.users << @company_user
         Sunspot.commit
@@ -187,6 +193,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user have a due event recap" do
+        @company_user.update_attributes({notifications_settings: ['event_recap_due_app']})
         event = FactoryGirl.create(:due_event, company: @company)
         event.users << @company_user
         Sunspot.commit
@@ -200,6 +207,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user has is assigned to a task that is late" do
+        @company_user.update_attributes({notifications_settings: ['late_task_app']})
         event = FactoryGirl.create(:event, company: @company)
         task = FactoryGirl.create(:late_task, event: event, company_user_id: @company_user.id)
 
@@ -212,6 +220,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if the user is part of the event's team that have a late task" do
+        @company_user.update_attributes({notifications_settings: ['late_team_task_app']})
         event = FactoryGirl.create(:event, company: @company)
         event.users << @company_user
         task = FactoryGirl.create(:late_task, event: event, company_user_id: nil)
@@ -225,6 +234,7 @@ describe CompanyUsersController, search: true do
       end
 
       # it "should return a notification if the user is part of the event's team and a new task is created on that event" do
+      #   @company_user.update_attributes({notifications_settings: ['new_unassigned_team_task_app']})
       #   event = FactoryGirl.create(:event, company: @company)
       #   event.users << @company_user
       #   task = FactoryGirl.create(:task, title: 'The task title', event: event)
@@ -238,8 +248,9 @@ describe CompanyUsersController, search: true do
       # end
 
       it "should return a notification if there is a new task for the user" do
+        @company_user.update_attributes({notifications_settings: ['new_task_assignment_app']})
         Timecop.freeze do
-          task =  without_current_user do
+          task = without_current_user do
             FactoryGirl.create(:task,
               title: 'The task title',
               event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
@@ -253,6 +264,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if there is a new comment for a user's task" do
+        @company_user.update_attributes({notifications_settings: ['new_comment_app']})
         task = FactoryGirl.create(:task, title: 'The task title', event: FactoryGirl.create(:event, company: @company), company_user: @company_user)
         comment = FactoryGirl.create(:comment, commentable: task)
         comment.update_column(:created_by_id, FactoryGirl.create(:company_user, company: @company).user.id)
@@ -264,6 +276,7 @@ describe CompanyUsersController, search: true do
       end
 
       it "should return a notification if there is a new comment for a user's team task" do
+        @company_user.update_attributes({notifications_settings: ['new_team_comment_app']})
         task = FactoryGirl.create(:task, title: 'The task title', event: FactoryGirl.create(:event, company: @company))
         task.event.users << @company_user
         comment = FactoryGirl.create(:comment, commentable: task)
@@ -295,6 +308,7 @@ describe CompanyUsersController, search: true do
       it "should return a notification if a user is added to a event's team" do
         Timecop.freeze do
           @company_user.role.permission_for(:view_list, Event).save
+          @company_user.update_attributes({notifications_settings: ['new_event_team_app']})
           @company_user.places << place
           campaign.places << place
           campaign.users << @company_user
@@ -313,6 +327,7 @@ describe CompanyUsersController, search: true do
 
       it "should return a notification if the user have a late event recap" do
         @company_user.role.permission_for(:view_list, Event).save
+        @company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user
@@ -330,6 +345,7 @@ describe CompanyUsersController, search: true do
 
       it "should return a notification if the user have a submitted event recap that is waiting for approval" do
         @company_user.role.permission_for(:view_list, Event).save
+        @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_app']})
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user
@@ -347,6 +363,7 @@ describe CompanyUsersController, search: true do
 
       it "should return a notification if the user have a due event recap" do
         @company_user.role.permission_for(:view_list, Event).save
+        @company_user.update_attributes({notifications_settings: ['event_recap_due_app']})
         @company_user.places << place
         campaign.places << place
         campaign.users << @company_user

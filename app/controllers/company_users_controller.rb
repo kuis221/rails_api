@@ -150,7 +150,7 @@ class CompanyUsersController < FilteredController
 
   protected
     def permitted_params
-      allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }
+      allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}, :notifications_settings => []] }
       if params[:id].present? && can?(:super_update, CompanyUser.find(params[:id]))
         allowed[:company_user] += [:role_id, {team_ids: []}]
       end

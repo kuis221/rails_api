@@ -3748,6 +3748,39 @@ body.company_users{
 	}
 }
 
+.notification-types{
+	margin-bottom: 30px;
+	.span12, .span12:first-child{
+		margin-left: 0px;
+		&.category{
+			.span2{
+				padding-bottom: 15px;
+				text-align: center;
+				font-weight: bold;
+			}
+		}
+		.span5{
+			margin-left: 0px;
+			&.title{
+				font-weight: bold;
+			}
+		}
+		.span2{
+			.checker{
+				display: block;
+				float: none;
+				margin: 0 auto;
+				span.checked:after {
+					top: -20px;
+				}
+			}
+			&.title{
+				font-size: 16px;
+			}
+		}
+	}
+}
+
 body.events.index {
 	#map-canvas {
 		border:1px solid $user_menu;

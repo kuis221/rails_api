@@ -2,14 +2,15 @@
 #
 # Table name: company_users
 #
-#  id               :integer          not null, primary key
-#  company_id       :integer
-#  user_id          :integer
-#  role_id          :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  active           :boolean          default(TRUE)
-#  last_activity_at :datetime
+#  id                     :integer          not null, primary key
+#  company_id             :integer
+#  user_id                :integer
+#  role_id                :integer
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  active                 :boolean          default(TRUE)
+#  last_activity_at       :datetime
+#  notifications_settings :string(255)      default([])
 #
 
 require 'spec_helper'
@@ -121,7 +122,6 @@ describe CompanyUser do
         other_campaigns = FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
         expect(user.accessible_campaign_ids).to match_array campaigns.map(&:id)
       end
-
     end
   end
 
@@ -158,7 +158,7 @@ describe CompanyUser do
   end
 
   describe "#accessible_places" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
     it "should return the id of the places assocaited to the user" do
       FactoryGirl.create(:place)
       place = FactoryGirl.create(:place)
@@ -179,7 +179,7 @@ describe CompanyUser do
   end
 
   describe "#accessible_locations" do
-    let(:user)      { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
      it "should return the location id of the city" do
         city = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
         user.places << city
@@ -197,5 +197,61 @@ describe CompanyUser do
         user.places << bar
         expect(user.accessible_locations).to be_empty
      end
+  end
+
+  describe "#phone_number_confirmed?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    #It should be updated once the phone_number_confirmed? method is implemented correctly
+    #Right now it just looks for the phone number existence
+    it "should return true if the user has a confirmed phone number" do
+      expect(user.phone_number_confirmed?).to be_true
+    end
+  end
+
+  describe "#allow_notification?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    it "should return false if the user is not allowed to receive a notification" do
+      expect(user.allow_notification?('new_campaign_sms')).to be_false
+    end
+
+    it "sshould return false if the user is allowed to receive a notification" do
+      user.update_attributes({notifications_settings: ['new_campaign_sms']})
+      expect(user.allow_notification?('new_campaign_sms')).to be_true
+    end
+  end
+
+  describe "#notification_setting_permission?" do
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+
+    it "should return false if the user hasn't the correct permissions" do
+      expect(user.notification_setting_permission?('new_campaign')).to be_false
+    end
+
+    it "should return true if the user has the correct permissions" do
+      user.role.permissions.create({action: :read, subject_class: 'Campaign'})
+      expect(user.notification_setting_permission?('new_campaign')).to be_true
+    end
+  end
+
+
+  describe "#with_notifications" do
+    it "should return empty if no users have the any of the notifications enabled" do
+      FactoryGirl.create(:company_user)
+      expect(CompanyUser.with_notifications(['some_notification'])).to be_empty
+    end
+
+    it "should return all users with any of the notifications enabled" do
+      user1 = FactoryGirl.create(:company_user,
+        notifications_settings: ['notification2', 'notification1'])
+
+      user2 = FactoryGirl.create(:company_user,
+        notifications_settings: ['notification3', 'notification4', 'notification1'])
+
+      expect(CompanyUser.with_notifications(['notification2'])).to match_array [user1]
+
+      expect(CompanyUser.with_notifications(['notification1'])).to match_array [user1, user2]
+    end
   end
 end

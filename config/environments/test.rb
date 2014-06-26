@@ -44,4 +44,8 @@ Brandscopic::Application.configure do
 
   config.cache_store = :null_store
 
+  ENV['TWILIO_SID'] = 'AC3dae2ea168193f9f004536af2420a1eb'
+  ENV['TWILIO_AUTH_TOKEN'] = '3efbfcd113d13790eaff9e7bac433e3c'
+  ENV['TWILIO_PHONE_NUMBER'] = '+15005550006'
+  ENV['TO_PHONE_NUMBERS_ALLOWED'] = '+14108675309'
 end
