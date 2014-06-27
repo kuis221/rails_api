@@ -22,6 +22,7 @@
 	font-style: normal;
 	text-decoration: inherit;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 :before, :after{
@@ -31,6 +32,7 @@
 	speak: none;
 	text-shadow: none;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 // GENERAL ICONS
@@ -98,6 +100,10 @@ a, i, .btn{
 	}
 
 	// Icons for buttons
+
+	&.calendar:after, &.fullscreen:after, &.graph:after, &.list:after, &.table:after, &.map:after{
+		color: white;
+	}
 
 	&.calendar:after{
 		content: "\e031";
@@ -185,7 +191,6 @@ a, i, .btn{
 		}
 	}
 }
-
 .carousel-control{
 	&.right:before{
 		content: "\e601";
@@ -220,7 +225,7 @@ a, i, .btn{
 		}
 		&.icon-minus:before{
 			color: white;
-			content: "\e616";
+			content: "\e618";
 			font-size: 12px;
 		}
 	}
@@ -397,4 +402,88 @@ ul.nav {
 .datepick-cmd-next:after{
 	content: "\e002";
 	left: 6px;
+}
+
+/*-- Form Builder Icons --*/
+
+.form-builder-wrapper{
+	.fields-wrapper{
+		.field{
+			&[data-type="Dropdown"]:before{
+				content:"\e60c";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Section"]:before{
+				content:"\e619";
+				font-size: 14px;
+				line-height: 22px;
+			}
+			&[data-type="Checkbox"]:before{
+				content:"\e60d";
+				line-height: 22px;
+			}
+			&[data-type="Radio"]:before{
+				content:"\e60b";
+			}
+			&[data-type="Percentage"]:before{
+				content:"\e609";
+				font-size: 15px;
+				line-height: 24px;
+			}
+			&[data-type="TextArea"]:before{
+				content:"\e610";
+				line-height: 23px;
+			}
+			&[data-type="Number"]:before{
+				content:"\e60a";
+				font-size: 15px;
+				line-height: 27px;
+			}
+			&[data-type="Currency"]:before{
+				content:"\e607";
+				font-size: 15px;
+				line-height: 24px;
+			}
+			&[data-type="Text"]:before{
+				content:"\e606";
+				font-size: 15px;
+				line-height: 27px;
+			}
+			&[data-type="Photo"]:before{
+				content:"\e608";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Attachment"]:before{
+				content:"\e60e";
+			}
+			&[data-type="Summation"]:before{
+				content:"\e605";
+				font-size: 16px;
+				line-height: 21px;
+			}
+			&[data-type="Date"]:before{
+				content:"\e022";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Time"]:before{
+				content:"\e01f";
+				font-size: 17px;
+				line-height: 24px;
+			}
+			&[data-type="Brand"]:before{
+				content:"\e030";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Marque"]{
+				line-height: 60px;
+			}
+			&[data-type="LikertScale"]{
+				line-height:60px;
+			}
+		}
+	}
 }

@@ -26,6 +26,11 @@ ul.select2-results{
 
 .modal {
 	overflow: visible !important;
+	.btn-primary, .btn-cancel{
+		padding: 11px 25px;
+		height: 40px;
+		width: 154px;
+	}
 	&.modal-med{
 		width: 460px;
 		&.eventexpense_modal{
@@ -603,7 +608,7 @@ ul.select2-results{
 		overflow: visible;
 		padding: 25px 30px 33px 30px;
 		.scroll-table-content, #select-areas-table-wrapper{
-			max-height: 343px;
+			max-height: 257px;
 			.row-fluid:after{
 				clear: none;
 			}
@@ -616,8 +621,9 @@ ul.select2-results{
 				li{
 					display: table;
 					min-height: 85px !important;
+					height: 85px;
 					width: 100%;
-					span{
+					span, p{
 						&:first-child{
 							display: table-cell !important;
 							vertical-align: middle;
@@ -625,6 +631,10 @@ ul.select2-results{
 							span{
 								padding: 0;
 							}
+						}
+						&.add-button{
+							display: table-cell;
+							vertical-align: middle;
 						}
 						&.member-data{
 							padding-left: 60px;
@@ -830,10 +840,6 @@ ul.select2-results{
 			margin-top: 25px;
 			.btn-primary{
 				margin-right: 8px;
-			}
-			.btn-primary, .btn-cancel{
-				height: 40px;
-				width: 154px;
 			}
 			&.inside-form{
 				margin: 25px 0px 33px;

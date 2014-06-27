@@ -122,18 +122,14 @@
 				margin-right: 10px;
 			}
 			&:before{
-				font-family: 'icons';
 				color: $user_menu;
 				font-size: 13px;
+				font-family: 'icons';
 				height: 20px;
-				line-height: 17px;
-				position:relative;
 				display: block;
 				font-weight: normal;
 				text-align: center;
 				top: 2px;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale !important;
 			}
 			&:hover{
 				background-color:$user_menu;
@@ -145,75 +141,6 @@
 				}
 			}
 
-			&[data-type="Dropdown"]:before{
-				content:"\e60c";
-				line-height: 22px;
-			}
-			&[data-type="Checkbox"]:before{
-				content:"\e60d";
-				line-height: 22px;
-			}
-			&[data-type="Radio"]:before{
-				content:"\e60b";
-			}
-			&[data-type="Percentage"]:before{
-				content:"\e609";
-				font-size: 15px;
-				line-height: 24px;
-			}
-			&[data-type="TextArea"]:before{
-				content:"\e610";
-				line-height: 23px;
-			}
-			&[data-type="Number"]:before{
-				content:"\e60a";
-				font-size: 15px;
-				line-height: 27px;
-			}
-			&[data-type="Currency"]:before{
-				content:"\e607";
-				font-size: 15px;
-				line-height: 24px;
-			}
-			&[data-type="Text"]:before{
-				content:"\e606";
-				font-size: 15px;
-				line-height: 27px;
-			}
-			&[data-type="Photo"]:before{
-				content:"\e608";
-				font-size: 15px;
-				line-height: 22px;
-			}
-			&[data-type="Attachment"]:before{
-				content:"\e60e";
-			}
-			&[data-type="Summation"]:before{
-				content:"\e605";
-				font-size: 16px;
-				line-height: 21px;
-			}
-			&[data-type="Date"]:before{
-				content:"\e022";
-				font-size: 15px;
-				line-height: 22px;
-			}
-			&[data-type="Time"]:before{
-				content:"\e01f";
-				font-size: 17px;
-				line-height: 24px;
-			}
-			&[data-type="Brand"]:before{
-				content:"\e030";
-				font-size: 15px;
-				line-height: 22px;
-			}
-			&[data-type="Marque"]{
-				line-height: 60px;
-			}
-			&[data-type="LikertScale"]{
-				line-height:60px;
-			}
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
 				padding: 10px;

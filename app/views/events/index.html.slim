@@ -18,20 +18,21 @@
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save
 .main
+  
+  #list-tools
+    .pull-left
+      = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
 
-  .pull-left
-    = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
-
-  .text-right
-    button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
-    - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
-      #toggle-events-view.btn-group
-        - if can?(:view_list, Event)
-          a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
-        - if can?(:view_calendar, Event)
-          a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
-        - if can?(:view_map, Event)
-          a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+    .text-right
+      button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
+      - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
+        #toggle-events-view.btn-group
+          - if can?(:view_list, Event)
+            a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+          - if can?(:view_calendar, Event)
+            a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+          - if can?(:view_map, Event)
+            a.btn.map href="#map-view" data-toggle="tab" title="Map View"
 
   .tab-content
     - if can?(:view_list, Event)
