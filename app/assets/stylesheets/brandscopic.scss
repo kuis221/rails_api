@@ -5664,6 +5664,57 @@ body.campaigns{
 			}
 		}
 	}
+
+		&.first{
+
+			.controls{
+				.chzn-container-single{
+					width: 300px	!important;
+					height: 31px !important;
+					.chzn-single{
+						height: 32px !important;
+						padding-top: 0px !important;
+						width: 300px !important;
+						span{
+							color: $text;
+			    			line-height: 26px;
+							height: 26px !important;
+							padding-top: 0px !important;
+							margin-top: 3px !important;
+						}
+						b{
+							margin-top: -2px !important;
+							margin-right: 75px !important;
+							margin-left: -1px !important;
+						}
+					}
+					.chzn-drop{
+						margin-top: 6px !important;
+						width: 310px !important;
+						.chzn-search{
+							input{
+								bottom:9px;
+								height: 30px;
+								margin-left: 8px;
+								width: 90% !important;
+							}
+						}
+					}
+				}
+			}
+			label{
+				color: $brand;
+				font-size: 11px;
+			}
+			h3 + #list-tools{
+				margin: 10px 0 0px 0;
+			}
+			.simple_form{
+				display: inline-block;
+			}
+		}
+
+
 	label{
 		margin-bottom: 2px;
 	}
@@ -6503,54 +6554,8 @@ body.event_status {
 }
 
 body.gva, body.event_status{
-	.controls{
-		.chzn-container-single{
-			width: 300px	!important;
-			height: 31px !important;
-			.chzn-single{
-				height: 32px !important;
-				padding-top: 0px !important;
-				width: 300px !important;
-				span{
-					color: $text;
-	    			line-height: 26px;
-					height: 26px !important;
-					padding-top: 0px !important;
-					margin-top: 3px !important;
-				}
-				b{
-					margin-top: -2px !important;
-					margin-right: 75px !important;
-					margin-left: -1px !important;
-				}
-			}
-			.chzn-drop{
-				margin-top: 6px !important;
-				width: 310px !important;
-				.chzn-search{
-					input{
-						bottom:9px;
-						height: 30px;
-						margin-left: 8px;
-					}
-				}
-			}
-		}
-	}
-	.details_box{
-		&.first{
-			label{
-				color: $brand;
-				font-size: 11px;
-			}
-			h3 + #list-tools{
-				margin: 10px 0 0px 0;
-			}
-			.simple_form{
-				display: inline-block;
-			}
-		}
-	}
+
+
 }
 
 body.campaigns_report,
