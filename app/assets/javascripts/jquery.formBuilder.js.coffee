@@ -351,6 +351,55 @@ FormField = Class.extend {
 		"FormField::#{@__proto__.type}"
 }
 
+SectionField = FormField.extend {
+	type: 'Section',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Section',
+			id: null,
+			required: false,
+			type: 'FormField::Section',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {description: null}
+
+		@
+
+	_renderField: () ->
+		[
+			description = 
+			$('<h3 class="section-title">').text(@attributes.name),
+			(if @attributes.settings.description then $('<p class="section-description">').html(@_nl2br(@attributes.settings.description)) else null)
+		]
+
+	descriptionField: () ->
+		$('<div class="control-group">').append([
+			$('<label class="control-label" for="field_description">').text('Description'),
+			$('<div class="controls">').append $('<textarea id="field_description" name="description">').val(@attributes.settings.description).on 'keyup', (e) =>
+					input = $(e.target)
+					@attributes.settings.description = input.val()
+					@form.setModified()
+					@refresh()
+					true
+		])
+
+	_nl2br: (str) ->
+		breakTag = '<br>';
+		s = (str + '').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+		s.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2')
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Section'),
+			@labelField(),
+			@descriptionField()
+		]
+}
+
+
 TextAreaField = FormField.extend {
 	type: 'TextArea',
 

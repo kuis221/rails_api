@@ -37,6 +37,7 @@ class ActivityTypesController < FilteredController
         :name, :description,
         {form_fields_attributes: [
           :id, :name, :field_type, :ordering, :required, :_destroy,
+          {settings: [:description]},
           {options_attributes: [:id, :name, :_destroy, :ordering]},
           {statements_attributes: [:id, :name, :_destroy, :ordering]}]},
         {goals_attributes: [:id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []]}
