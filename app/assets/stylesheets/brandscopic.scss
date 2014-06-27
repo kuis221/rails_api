@@ -800,6 +800,7 @@ a.more-options-link:after{
 		top:1px;
 	}
 	&.btn-primary, &.btn-cancel{
+		box-sizing: border-box;
 		padding: 8px 25px;
 		height: 35px;
 	}
