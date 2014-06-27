@@ -322,9 +322,15 @@ a{
 
 .tab-content{
 	overflow-x:hidden;
+	width: 100%;
+	.link-list{
+		&+h3{
+			margin-left: 20px;
+		}
+	}
 	h3{
 		font-size: 16px;
-		margin: 40px 0 0 10px;
+		margin: 45px 0 25px 0 !important;
 	}
 }
 
@@ -2314,7 +2320,7 @@ ul.kpis-list{
 		font-size: 16px;
 		font-weight: normal;
 		position: relative;
-		top: -2px;
+		top: 1px;
 	}
 	.clean-date {
 		b{
@@ -3243,14 +3249,6 @@ textarea::-webkit-input-placeholder {
 		.options-list-group{
 			font-weight: bold;
 		}
-	}
-}
-
-.tab-content{
-	width: 100%;
-	h3{
-		margin-top: 25px;
-		font-size: 16px;
 	}
 }
 
@@ -5360,18 +5358,12 @@ svg{
 // ANALYSIS
 
 .gva{
-	.details_box{
-		&.first{
-			-webkit-border-radius: 7px;
-			border-radius: 7px;
-		}
-	}
 	.loading-spinner {
 		background: white url(/assets/loading-circle.gif) center center no-repeat;
 	}
 }
 
-.campaigns_report, .snapshot_report, .staff_report, .event_status {
+.campaigns_report, .snapshot_report, .staff_report {
 	.details_box{
 		&.first{
 			-webkit-border-radius: 0px 7px 7px 7px;
@@ -6251,48 +6243,13 @@ body.gva {
 		.tab-pane{
 			.tool-box{
 				color: $brand;
-				padding-bottom: 23px;
 				h3{
 					color: $text;
-					margin: 40px 0 25px;
-					&+ #list-tools{
-						margin: 10px 0 10px 0;
-					}
 				}
-				form#gva-report{
-					label{
-						color: $brand;
-						font-size: 11px;
-						line-height: 15px;
-					}
-					.controls{
-						.chzn-container-single{
-							.chzn-search input{
-								bottom:13px;
-								height: 24px;
-							}
-							.chzn-single{
-								height: 29px !important;
-								padding-top: 3px;
-								width: 270px !important;
-								span{
-									line-height: 26px;
-								}
-								div b{
-									background: url("triangle-down.svg") no-repeat 1px 13px !important;
-								}
-							}
-							.chzn-drop{
-								width: 280px !important;
-							}
-						}
-					}
-				}
-
 				.group-by-box, .view-style-box, .export-xls{
 					display: inline-block;
 					margin-left: 57px;
-					margin-top: 17px;
+					margin-top: 20px;
 					#group-by-title{
 						font-size: 11px;
 						vertical-align: middle;
@@ -6539,53 +6496,59 @@ body.gva {
 }
 
 body.event_status {
-	.details_box{
-		padding: 23px 27px 30px 27px;
-		&.first{
-			-webkit-border-radius: 0px 7px 7px 7px;
-			border-radius: 0px 7px 7px 7px;
-			h3{
-				margin-top: 0px !important;
-				margin-bottom: 23px !important;
-			 }
-			 label{
-				margin-bottom: 0px;
-				color: $grey_three !important;
-				font-size: 11px !important;
-				}
-			.controls{ margin: -1px 0px 0px 0px;}
-			.chzn-container-single{
-				width: 270px	!important;
-				height: 31px !important;
-				.chzn-single{
-					height: 32px !important;
+	.tab-content {
+		overflow: visible;
+	}
+}
+
+body.gva, body.event_status{
+	.controls{
+		.chzn-container-single{
+			width: 300px	!important;
+			height: 31px !important;
+			.chzn-single{
+				height: 32px !important;
+				padding-top: 0px !important;
+				width: 300px !important;
+				span{
+					color: $text;
+	    			line-height: 26px;
+					height: 26px !important;
 					padding-top: 0px !important;
-					width: 270px !important;
-					span{
-            			line-height: 26px;
-						height: 26px !important;
-						padding-top: 0px !important;
-						margin-top: 3px !important;
-					}
-					b{
-						margin-top: -2px !important;
-						margin-right: 75px !important;
-						margin-left: -1px !important;
-					}
+					margin-top: 3px !important;
 				}
-				.chzn-drop{
-					margin-top: 6px !important;
-					.chzn-search{
-						input{
-							bottom:13px;
-						}
+				b{
+					margin-top: -2px !important;
+					margin-right: 75px !important;
+					margin-left: -1px !important;
+				}
+			}
+			.chzn-drop{
+				margin-top: 6px !important;
+				width: 310px !important;
+				.chzn-search{
+					input{
+						bottom:9px;
+						height: 30px;
+						margin-left: 8px;
 					}
 				}
 			}
 		}
 	}
-	.tab-content {
-		overflow: visible;
+	.details_box{
+		&.first{
+			label{
+				color: $brand;
+				font-size: 11px;
+			}
+			h3 + #list-tools{
+				margin: 10px 0 0px 0;
+			}
+			.simple_form{
+				display: inline-block;
+			}
+		}
 	}
 }
 
