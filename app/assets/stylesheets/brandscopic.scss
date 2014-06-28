@@ -1248,7 +1248,7 @@ footer{
 			display: inline-block;
 			margin-bottom: 0;
 		}
-		.survey-box{
+		.survey-box, .thanks-box{
 		    background-color: $grey_one;
 			border: 1px solid $grey_four;
 			color: $brand;
@@ -1290,6 +1290,12 @@ footer{
 				border-radius: 6px;
 				height: 45px;
 				width: 90%;
+			}
+			h3{
+				&.title{
+					font-weight: bold;
+					margin-bottom: 18px;
+				}
 			}
 		}
 	}
@@ -4206,7 +4212,7 @@ ul.thumbnails{
 		left: auto;
 		position: absolute;
 		right: 0px;
-		top: -6px;	
+		top: -6px;
 		&.badge{
 			font-size: 11px;
 			line-height: 15px;
@@ -6985,7 +6991,7 @@ ul#reports-list {
 							font-size: 15px;
 							speak: none;
 							text-align: center;
-							vertical-align: middle;						
+							vertical-align: middle;
 						}
 						&.photo-download-link{
 							float:right;
