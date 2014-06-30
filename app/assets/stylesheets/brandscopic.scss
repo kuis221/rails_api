@@ -1664,10 +1664,10 @@ label{
 }
 .clear-filters {
 	text-align: right;
-	text-decoration: underline;
 	margin-bottom:15px;
 	a{
 		color: $user_menu;
+		text-decoration: underline;
 	}
 	a:hover{
 		color: $text;
@@ -2297,7 +2297,7 @@ ul.kpis-list{
 		font-size: 16px;
 		font-weight: normal;
 		position: relative;
-		top: 1px;
+		top: -2px;
 	}
 	.clean-date {
 		b{
