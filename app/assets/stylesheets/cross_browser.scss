@@ -22,6 +22,9 @@
 	.datepick{
 		margin-bottom: 10px;
 	}
+	.filter-wrapper .checker span.checked:after{
+		top: -23px;
+	}
 	.goalable-list li{ 
 		.goals-controls{
 			a:hover, a:focus  {
