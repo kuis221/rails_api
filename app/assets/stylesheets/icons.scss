@@ -93,12 +93,12 @@ a, i, .btn, span{
 		content: "\e01d";
 		font-size: 26px;
 	}
-	&.collapsed:before{
+	&.icon-collapsed:before{
 		color: $user_menu;
 		content: "\e616";
 		font-size: 24px;
 	}
-	&.expanded:before{
+	&.icon-expanded:before{
 		color: $user_menu;
 		content: "\e61a";
 		font-size: 24px;		
@@ -327,6 +327,15 @@ a, i, .btn, span{
 .team-member:before, .member-data:before{
 	color: $user_menu;
 	content: "\e024";
+}
+
+.today-line-indicator{
+	&:before{
+		content: "\e004";
+		display: inline-block;
+		font-family: "icons";
+		font-size: 12px;
+	}
 }
 
 /*-- UL Nav --*/
