@@ -511,17 +511,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
-
-	/*
-	.close {
-		opacity: 1;
-		right: 25px;
-		text-shadow:none;
-		&:before{
-			color: white;
+	.filter-label{
+		div{
+			overflow:hidden;
+			text-overflow: ellipsis;
+			white-space:nowrap;
+			width: 95%;
 		}
 	}
-	*/
 }
 
 /*-- Datepick Sidebar -- */
@@ -869,7 +866,7 @@ a.more-options-link:after{
 }
 
 #list-tools {
-	margin: 10px 0 25px 0;
+	margin: 1px 0 25px 0;
 	position: relative;
 	button, a{
 		&.btn.download, &.btn.fullscreen{
@@ -1976,7 +1973,7 @@ li#user_menu{
 	background:white;
 	float:right;
 	min-height: 300px;
-	padding:13px 11px 18px 11px;
+	padding:14px 11px 18px 11px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
@@ -2371,18 +2368,18 @@ ul.kpis-list{
 				}
 				&:last-child{
 					.add:before{
-					color: $brand;
-							content: "\e021";
+						color: $brand;
+						content: "\e021";
 						display: inline-block;
 						font-family: 'icons';
-							font-size: 21px;
-							right:5px;
+						font-size: 21px;
+						right:5px;
 						position: relative;
-							speak: none;
-							text-align: center;
-							top: 5px;
+						speak: none;
+						text-align: center;
+						top: 5px;
 						vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
+						-webkit-font-smoothing: antialiased;
 					}
 				}
 			}
