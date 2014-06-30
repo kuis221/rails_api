@@ -12,12 +12,13 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Dropdown < FormField
   def field_options(result)
     { as: :select,
-      collection: self.options.order(:ordering),
+      collection: options_for_input,
       label: self.name,
       field_id: self.id,
       options: self.settings,

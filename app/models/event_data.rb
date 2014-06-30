@@ -36,16 +36,18 @@ class EventData < ActiveRecord::Base
   scope :for_active_events, lambda{ joins(:event).where(events: {active: true}) }
 
   def update_data
-    results = EventResult.scoped_by_event_id(event_id)
-    self.impressions  = (results.impressions.first.try(:scalar_value) || 0).round
-    self.interactions = (results.consumers_interactions.first.try(:scalar_value) || 0).round
-    self.samples      = (results.consumers_sampled.first.try(:scalar_value) || 0).round
+    return if Kpi.impressions.nil?
+    results = event.results
+    self.impressions  = event.result_for_kpi(Kpi.impressions).value.to_i
+    self.interactions = event.result_for_kpi(Kpi.interactions).value.to_i
+    self.samples      = event.result_for_kpi(Kpi.samples).value.to_i
     self.spent = event.event_expenses.sum(:amount)
 
     #For gender and ethnicity
     [:gender, :ethnicity].each do |kpi|
       segments = Kpi.send(kpi).try(:kpis_segments)
-      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))} if segments
+      result = event.result_for_kpi(Kpi.send(kpi))
+      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[],s.id).to_f)} if segments
     end
 
     self

@@ -2,21 +2,22 @@
 #
 # Table name: campaigns
 #
-#  id             :integer          not null, primary key
-#  name           :string(255)
-#  description    :text
-#  aasm_state     :string(255)
-#  created_by_id  :integer
-#  updated_by_id  :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  company_id     :integer
-#  first_event_id :integer
-#  last_event_id  :integer
-#  first_event_at :datetime
-#  last_event_at  :datetime
-#  start_date     :date
-#  end_date       :date
+#  id              :integer          not null, primary key
+#  name            :string(255)
+#  description     :text
+#  aasm_state      :string(255)
+#  created_by_id   :integer
+#  updated_by_id   :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  company_id      :integer
+#  first_event_id  :integer
+#  last_event_id   :integer
+#  first_event_at  :datetime
+#  last_event_at   :datetime
+#  start_date      :date
+#  end_date        :date
+#  enabled_modules :string(255)      default([])
 #
 
 class Campaign < ActiveRecord::Base
@@ -74,7 +75,8 @@ class Campaign < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
-  has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+  #has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
+  has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
 
   has_many :kpis, through: :form_fields
 
@@ -257,10 +259,6 @@ class Campaign < ActiveRecord::Base
     @custom_kpis ||= kpis.select{|k| k.module == 'custom' }
   end
 
-  def active_field_types
-    @active_field_types ||= form_fields.map(&:field_type).uniq
-  end
-
   # Returns true if there is any area or place associated to the campaign
   def geographically_restricted?
     (self.areas.loaded? ? self.areas.any? : self.areas.count > 0 ) ||
@@ -332,19 +330,14 @@ class Campaign < ActiveRecord::Base
   end
 
   def assign_all_global_kpis(autosave = true)
-    assign_attributes({form_fields_attributes: {
-      "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"percentage", "kpi_id"=> Kpi.gender.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"percentage", "kpi_id"=> Kpi.age.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "2" => {"ordering"=>"2", "name"=>"Ethnicity/Race", "field_type"=>"percentage", "kpi_id"=> Kpi.ethnicity.id, "options"=>{"capture_mechanism"=>"integer", "predefined_value"=>""}},
-      "3" => {"ordering"=>"3", "name"=>"Expenses", "field_type"=>"expenses", "kpi_id"=> Kpi.expenses.id, "options"=>{"capture_mechanism"=>"currency", "predefined_value"=>""}},
-      "4" => {"ordering"=>"4", "name"=>"Surveys", "field_type"=>"surveys", "kpi_id"=> Kpi.surveys.id},
-      "5" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id},
-      "6" => {"ordering"=>"6", "name"=>"Videos", "field_type"=>"videos", "kpi_id"=> Kpi.videos.id},
-      "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"number", "kpi_id"=> Kpi.impressions.id, "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"number", "kpi_id"=> Kpi.interactions.id, "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"number", "kpi_id"=> Kpi.samples.id, "options"=>{"capture_mechanism"=>"", "predefined_value"=>""}},
-      "10"=> {"ordering"=>"10", "name"=>"Your Comment", "kpi_id"=> Kpi.comments.id, "field_type"=>"comments"}
-    }}, without_protection: true)
+    assign_attributes(form_fields_attributes: {
+      "0" => {"ordering"=>"0", "name"=>"Gender", "field_type"=>"FormField::Percentage", "kpi_id"=> Kpi.gender.id},
+      "1" => {"ordering"=>"1", "name"=>"Age", "field_type"=>"FormField::Percentage", "kpi_id"=> Kpi.age.id},
+      "2" => {"ordering"=>"2", "name"=>"Ethnicity/Race", "field_type"=>"FormField::Percentage", "kpi_id"=> Kpi.ethnicity.id},
+      "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.impressions.id},
+      "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.interactions.id},
+      "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.samples.id},
+    }, enabled_modules: ['expenses', 'photos', 'surveys', 'videos', 'comments'])
     save if autosave
   end
 

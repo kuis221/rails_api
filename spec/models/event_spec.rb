@@ -49,7 +49,8 @@ describe Event do
   describe "event results validations" do
     it "should not allow submitting the event if the resuls are not valid" do
       campaign = FactoryGirl.create(:campaign)
-      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+      field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
+      field = FormField.find(field.id)
       event = FactoryGirl.create(:event, campaign: campaign)
 
       expect {
@@ -500,8 +501,8 @@ describe Event do
       ResqueSpec.reset!
       expect {
         field = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
-        event.update_attributes({results_attributes: {"1" => {form_field_id: field.id, kpi_id: field.kpi_id, value: '100' }}})
-      }.to change(EventResult, :count).by(1)
+        event.update_attributes({results_attributes: {"1" => {form_field_id: field.id, value: '100' }}})
+      }.to change(FormFieldResult, :count).by(1)
       VenueIndexer.should have_queued(event.venue.id)
     end
 
@@ -784,16 +785,16 @@ describe Event do
   describe "#result_for_kpi" do
     let(:campaign) { FactoryGirl.create(:campaign) }
     let(:event) { FactoryGirl.create(:event, campaign: campaign) }
-    it "should return a new instance of EventResult if the event has not results for the given kpi" do
+    it "should return a new instance of FormFieldResult if the event has not results for the given kpi" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
       result = event.result_for_kpi(Kpi.impressions)
-      result.should be_an_instance_of(EventResult)
+      result.should be_an_instance_of(FormFieldResult)
       result.new_record?.should be_true
 
       # Make sure the result is correctly initialized
-      result.kpi_id == Kpi.impressions.id
       result.form_field_id.should_not be_nil
+      expect(result.form_field.kpi).to be(Kpi.impressions)
       result.value.should be_nil
       result.scalar_value.should == 0
     end
@@ -803,17 +804,17 @@ describe Event do
   describe "#results_for_kpis" do
     let(:campaign) { FactoryGirl.create(:campaign) }
     let(:event) { FactoryGirl.create(:event, campaign: campaign) }
-    it "should return a new instance of EventResult if the event has not results for the given kpi" do
+    it "should return a new instance of FormFieldResult if the event has not results for the given kpi" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
       results = event.results_for_kpis([Kpi.impressions, Kpi.interactions])
       results.count.should == 2
       results.each do |result|
-        result.should be_an_instance_of(EventResult)
+        result.should be_an_instance_of(FormFieldResult)
         result.new_record?.should be_true
 
         # Make sure the result is correctly initialized
-        [Kpi.impressions.id, Kpi.interactions.id].should include(result.kpi_id)
+        [Kpi.impressions.id, Kpi.interactions.id].should include(result.form_field.kpi_id)
         result.form_field_id.should_not be_nil
         result.value.should be_nil
         result.scalar_value.should == 0
@@ -842,7 +843,6 @@ describe Event do
       results.should == []
     end
 
-
     it "should only return the results for the given fields" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
@@ -856,41 +856,15 @@ describe Event do
       # They both should be new records
       results.all?{|r| r.new_record? }.should be_true
 
-      results.map{|r| r.kpi_id }.should =~ [Kpi.impressions.id, Kpi.interactions.id]
+      results.map{|r| r.form_field.kpi_id }.should =~ [Kpi.impressions.id, Kpi.interactions.id]
     end
 
-
-    it "should not include segmented fields " do
+    it "should include segmented fields " do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
       results = event.results_for(campaign.form_fields)
 
-      results.any?{|r| r.kpis_segment_id.present? }.should be_false
-    end
-  end
-
-  describe "#segments_results_for" do
-    let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:event) { FactoryGirl.create(:event, campaign: campaign) }
-
-    it "should return empty array if the fields is not segmented" do
-      Kpi.create_global_kpis
-      campaign.assign_all_global_kpis
-      impressions  = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
-      results = event.segments_results_for(impressions)
-
-      results.should == []
-    end
-
-    it "the values for the all segments" do
-      Kpi.create_global_kpis
-      campaign.assign_all_global_kpis
-      gender  = campaign.form_fields.detect{|f| f.kpi_id == Kpi.gender.id}
-      results = event.segments_results_for(gender)
-
-      results.all?{|r| r.new_record? }.should be_true
-
-      results.count.should == 2
+      results.map{|r| r.form_field.kpi_id }.should include(Kpi.age.id)
     end
   end
 

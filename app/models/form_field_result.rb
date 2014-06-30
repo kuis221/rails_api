@@ -1,19 +1,21 @@
 # == Schema Information
 #
-# Table name: activity_results
+# Table name: form_field_results
 #
-#  id            :integer          not null, primary key
-#  activity_id   :integer
-#  form_field_id :integer
-#  value         :text
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  hash_value    :hstore
-#  scalar_value  :decimal(10, 2)   default(0.0)
+#  id              :integer          not null, primary key
+#  activity_id     :integer
+#  form_field_id   :integer
+#  value           :text
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  hash_value      :hstore
+#  scalar_value    :decimal(10, 2)   default(0.0)
+#  resultable_id   :integer
+#  resultable_type :string(255)
 #
 
-class ActivityResult < ActiveRecord::Base
-  belongs_to :activity
+class FormFieldResult < ActiveRecord::Base
+  belongs_to :resultable, polymorphic: true
   belongs_to :form_field
 
   validate :valid_value?

@@ -45,6 +45,38 @@ class CampaignFormField < ActiveRecord::Base
     options
   end
 
+  # returns the equivalent FormField type to be used in the migration
+  def migration_type
+    case field_type
+    when 'text'
+      'FormField::Text'
+    when 'textarea'
+      'FormField::Text'
+    when 'number'
+      if capture_mechanism == 'currency'
+        'FormField::Currency'
+      else
+        'FormField::Number'
+      end
+    when 'count'
+      case capture_mechanism
+      when 'radio' then 'FormField::Radio'
+      when 'checkbox' then 'FormField::Checkbox'
+      else 'FormField::Dropdown'
+      end
+    when 'percentage'
+      'FormField::Percentage'
+    when 'text'
+      'FormField::Text'
+    when 'text'
+      'FormField::Text'
+    when 'text'
+      'FormField::Text'
+    when 'section'
+      'FormField::Section'
+    end
+  end
+
   def capture_mechanism
     options.try(:[], :capture_mechanism)
   end

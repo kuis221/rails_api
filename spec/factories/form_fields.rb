@@ -12,6 +12,7 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

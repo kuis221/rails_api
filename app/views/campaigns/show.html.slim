@@ -34,9 +34,12 @@
       = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
   ul#campaign-tabs.nav.nav-tabs
+    - if can?(:view_event_form, resource)
+      li
+        a href="#post_event_tab" Post Event form
     - if can?(:view_kpis, resource)
       li
-        a href="#kpis_tab" KPIs
+        a href="#kpis_tab" data-content="#{tab_campaign_path(resource, :kpis)}" KPIs
     - if can?(:view_places, resource)
       li
         a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
@@ -55,9 +58,12 @@
 
   .campaigns_box
     .tab-content
+      - if can?(:view_event_form, resource)
+        #post_event_tab.tab-pane.active
+          = render 'post_event_form'
+
       - if can?(:view_kpis, resource)
-        #kpis_tab.tab-pane.active
-          = render 'kpis'
+        #kpis_tab.tab-pane
 
       - if can?(:view_places, resource)
         #campaign-places-list.tab-pane
@@ -73,13 +79,6 @@
 
       - if can?(:view_documents, resource)
         #documents_tab.tab-pane
-
-  - if can?(:view_event_form, resource)
-    .details_box.post-event-form
-      h3 POST EVENT FORM
-
-      #post-event-form-content
-        = render 'post_event_form'
 
 = render partial: 'help_tutorial'
 
