@@ -35,6 +35,10 @@ html {
 	height:100%;
 }
 
+.help-inline.valid{
+	display:none !important;
+}
+
 body{
 	color:$text;
 	font-family: $baseFontFamily;
@@ -161,29 +165,13 @@ abbr[title]{
 .time-data{
 	&:before{
 		color: $user_menu;
-		padding-top: 5px;
+		padding-top: 3px;
 		position: absolute;
 		left: 27px;
 		text-align: center;
 		vertical-align: middle;
 	}
 }
-/*
-.description-data{
-	&:before{
-		color: $user_menu;
-		content: "\e02b";
-		font-family: 'icons';
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		speak: none;
-		left: 27px;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
-}*/
 
 .control-group.percentage{
 	width:390px;
@@ -2200,14 +2188,6 @@ ul.kpis-list{
 			height: 0;
 			top: -10px;
 			cursor: default;
-			&:before{
-				content: "\e004";
-				display: inline-block;
-				font-family: "icons";
-				font-size: 12px;
-				left: 5px;
-				top: 4px;
-			}
 			&.green{
 				background-color: $dark_green;
 				border-color: $dark_green;
@@ -6468,25 +6448,25 @@ body.gva {
 				}
 				.details_box{
 					padding: 0 15px 0 0;
-					min-height: 62px;
+					min-height: 55px;
 					p{
 						padding: 20px 27px 28px;
 					}
 				}
 				.accordion-group{
 					border: none;
-					margin-bottom: 2px;
+					margin-bottom: 0;
 					.accordion-heading{
 						padding-left: 27px;
 						position: relative;
 						a{
 							span{
-								&.collapsed, &.expanded{
+								&.icon-collapsed, &.icon-expanded{
 									margin-right: 10px;
 									width: 20px;
 									&:before{
 										color: $user_menu;
-										margin-top: 12px;
+										margin-top: 9px;
 									}
 								}
 							}
@@ -6496,14 +6476,14 @@ body.gva {
 								&:after{
 									color: $user_menu;
 									font-size: 15px;
-									margin-top: 18px;
+									margin-top: 15px;
 									position: relative;
 								}
 							}
 						}
 						.accordion-toggle{
 							display: inline-block;
-							padding: 8px 0;
+							padding: 4px 0;
 							width: 98%;
 						}
 					}
@@ -7361,14 +7341,16 @@ table td.sub-level-1 {
 
 
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
-	margin:0 0 20px 30px;
+	display: block;
+	font-size: 16px;
+	min-height: 20px;
+	margin: 0 0 20px 30px;
 	width: 380px;
 }
 .links-data{
 	margin: 0 0 0 30px;
 }
 .calendar-data{
-	font-size: 12px;
 	b{
 		font-size:16px;
 		font-weight: 400;
