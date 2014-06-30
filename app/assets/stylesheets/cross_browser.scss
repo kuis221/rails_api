@@ -6,18 +6,28 @@
 
 /*Mozilla Firefox----------------------------------*/
 .mozilla{
-	a:focus{
-		text-decoration: none;
+	a{
+		&:focus{
+			text-decoration: none;
+		}
+		&.icon-notification-event:before{
+			top: 4px;
+		}
 	}
-	a.icon-notification-event:before, i.icon-notification-event:before{
-		top: 4px;
+	i.icon-notification-event:before{
+		top:4px;
 	}
-	.btn.map:after{
-		font-size: 14px;
-	}
-	.btn.calendar:after{
-		font-size: 14px;
-		top: 1px;
+	.btn{
+		&.btn-primary, &.btn-cancel{
+			padding: 5px 25px;
+		}
+		&.calendar:after{
+			font-size: 14px;
+			top: 1px;
+		}
+		&.map:after{
+			font-size: 14px;
+		}
 	}
 	.datepick{
 		margin-bottom: 10px;
