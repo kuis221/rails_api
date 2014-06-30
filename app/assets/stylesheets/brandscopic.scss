@@ -787,6 +787,9 @@ a.more-options-link:after{
 		box-sizing: border-box;
 		padding: 8px 25px;
 		height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
 	}
 }
 
@@ -6997,10 +7000,14 @@ table td.sub-level-1 {
 			display: inline-block;
 			width:85px;
 			&:first-of-type{
-				margin-right: 3px;
+				margin-right: 2px;
 			}
 			&:last-of-type{
-				margin-left: 3px;
+				margin-left: 2px;
+			}
+			&.active{
+				outline: 1px solid $user_menu;
+				outline-offset: -1px;
 			}
 		}
 	}
