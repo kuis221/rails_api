@@ -7517,8 +7517,9 @@ table.table.likert-scale-table {
 .event_team_members, .report_sharing_selections {
 	.chzn-results {
 		li:after {
-			margin-left: 20px;
 			color: #ccc;
+			font-size: 11px;
+			margin-left: 20px;
 		}
 		li.company_user:after {
 			content: "USER";
