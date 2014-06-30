@@ -3465,7 +3465,10 @@ textarea::-webkit-input-placeholder {
 		height: auto;
 		width: auto;
 		label.control-label{
-			width: 120px;
+			margin-bottom: 5px;
+			margin-right: 10px;
+			min-width: 240px;
+			width: auto;
 		}
 		label.radio .radio{
 			margin-right: 10px;
@@ -3483,10 +3486,6 @@ textarea::-webkit-input-placeholder {
 				padding: 2px 0 2px 10px;
 				width: 140px;
 			}
-		}
-		label.control-label{
-			margin-bottom: 5px;
-			margin-right: 10px;
 		}
 	}
 	.form-fields{
