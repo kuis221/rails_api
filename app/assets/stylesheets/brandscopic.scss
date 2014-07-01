@@ -3774,7 +3774,7 @@ body.events.index {
 
 body.show {
 	.details_box{
-		.btn-primary{
+		.btn-primary, .btn-cancel{
 			min-width: 130px;
 		}
 	}
@@ -6803,6 +6803,7 @@ table td.sub-level-1 {
 		border-radius: 6px;
 		margin-top: 15px;
 		padding: 5px 0;
+		max-height: 120px !important;
 		li{
 			label:hover{
 				background-color: $brand;
