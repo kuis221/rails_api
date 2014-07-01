@@ -597,16 +597,16 @@ ul.select2-results{
 		  	font-family: 'icons';
 			font-size: 14px;
 			opacity: 1 !important;
-		  	position: relative;
+		  	position: absolute;
 			speak: none;
 			text-align: center;
-			right: 3px;
+			top: 4px;
 		}
 	}
 	.modal-body {
 		max-height: 800px;
 		overflow: visible;
-		padding: 25px 30px 33px 30px;
+		padding: 25px 30px 22px 30px;
 		.scroll-table-content, #select-areas-table-wrapper{
 			max-height: 257px;
 			.row-fluid:after{
