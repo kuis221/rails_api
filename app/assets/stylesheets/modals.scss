@@ -26,6 +26,8 @@ ul.select2-results{
 
 .modal {
 	overflow: visible !important;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 	.btn-primary, .btn-cancel{
 		padding: 11px 25px;
 		height: 40px;
@@ -1440,6 +1442,7 @@ div#spin{
 }
 
 .modal-backdrop, .modal-backdrop.fade.in{
-	background-color:black;
+	background-color: #252525;
+	opacity: 0.9;
 }
 
