@@ -35,6 +35,10 @@ html {
 	height:100%;
 }
 
+.help-inline.valid{
+	display:none !important;
+}
+
 body{
 	color:$text;
 	font-family: $baseFontFamily;
@@ -161,29 +165,13 @@ abbr[title]{
 .time-data{
 	&:before{
 		color: $user_menu;
-		padding-top: 5px;
+		padding-top: 3px;
 		position: absolute;
 		left: 27px;
 		text-align: center;
 		vertical-align: middle;
 	}
 }
-/*
-.description-data{
-	&:before{
-		color: $user_menu;
-		content: "\e02b";
-		font-family: 'icons';
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		speak: none;
-		left: 27px;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
-}*/
 
 .control-group.percentage{
 	width:390px;
@@ -523,17 +511,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
-
-	/*
-	.close {
-		opacity: 1;
-		right: 25px;
-		text-shadow:none;
-		&:before{
-			color: white;
+	.filter-label{
+		div{
+			overflow:hidden;
+			text-overflow: ellipsis;
+			white-space:nowrap;
+			width: 95%;
 		}
 	}
-	*/
 }
 
 /*-- Datepick Sidebar -- */
@@ -881,7 +866,7 @@ a.more-options-link:after{
 }
 
 #list-tools {
-	margin: 10px 0 25px 0;
+	margin: 1px 0 25px 0;
 	position: relative;
 	button, a{
 		&.btn.download, &.btn.fullscreen{
@@ -1679,10 +1664,10 @@ label{
 }
 .clear-filters {
 	text-align: right;
-	text-decoration: underline;
 	margin-bottom:15px;
 	a{
 		color: $user_menu;
+		text-decoration: underline;
 	}
 	a:hover{
 		color: $text;
@@ -1823,7 +1808,7 @@ li#notifications{
 				&.blue {
 					background-color: $alert_blue;
 					&:hover{
-						background-color:$alert_blue;
+						background-color: #3990bf;
 					}
 				}
 				&.grey {
@@ -1988,7 +1973,7 @@ li#user_menu{
 	background:white;
 	float:right;
 	min-height: 300px;
-	padding:13px 11px 18px 11px;
+	padding:14px 11px 18px 11px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
@@ -2200,14 +2185,6 @@ ul.kpis-list{
 			height: 0;
 			top: -10px;
 			cursor: default;
-			&:before{
-				content: "\e004";
-				display: inline-block;
-				font-family: "icons";
-				font-size: 12px;
-				left: 5px;
-				top: 4px;
-			}
 			&.green{
 				background-color: $dark_green;
 				border-color: $dark_green;
@@ -2230,7 +2207,7 @@ ul.kpis-list{
 			position: absolute;
 			top: -43px;
 			width: 200px;
-			right: -235px;
+			right: -190px;
 			text-align: center;
 			&.percentage {
 				font-size: 26px;
@@ -2320,7 +2297,7 @@ ul.kpis-list{
 		font-size: 16px;
 		font-weight: normal;
 		position: relative;
-		top: 1px;
+		top: -2px;
 	}
 	.clean-date {
 		b{
@@ -2391,18 +2368,18 @@ ul.kpis-list{
 				}
 				&:last-child{
 					.add:before{
-					color: $brand;
-							content: "\e021";
+						color: $brand;
+						content: "\e021";
 						display: inline-block;
 						font-family: 'icons';
-							font-size: 21px;
-							right:5px;
+						font-size: 21px;
+						right:5px;
 						position: relative;
-							speak: none;
-							text-align: center;
-							top: 5px;
+						speak: none;
+						text-align: center;
+						top: 5px;
 						vertical-align: middle;
-							-webkit-font-smoothing: antialiased;
+						-webkit-font-smoothing: antialiased;
 					}
 				}
 			}
@@ -3488,7 +3465,10 @@ textarea::-webkit-input-placeholder {
 		height: auto;
 		width: auto;
 		label.control-label{
-			width: 120px;
+			margin-bottom: 5px;
+			margin-right: 10px;
+			min-width: 240px;
+			width: auto;
 		}
 		label.radio .radio{
 			margin-right: 10px;
@@ -3506,10 +3486,6 @@ textarea::-webkit-input-placeholder {
 				padding: 2px 0 2px 10px;
 				width: 140px;
 			}
-		}
-		label.control-label{
-			margin-bottom: 5px;
-			margin-right: 10px;
 		}
 	}
 	.form-fields{
@@ -5151,6 +5127,9 @@ table.table td.comments-container {
 	.gallery{
 		margin-top: 12px !important;
 	}
+	#list-tools{
+		margin-top: 9px;
+	}
 }
 
 // TASKS STYLES
@@ -6381,7 +6360,7 @@ body.gva {
 				width: 93%;
 				b{
 					font-size: 17px;
-					margin-top: 7px;
+					margin-top: 14px;
 				}
 				.goals-summary{
 					.goal-item{
@@ -6390,6 +6369,7 @@ body.gva {
 						margin-left: 20px;
 						min-width: 70px;
 						text-align: left;
+						line-height: 30px;
 						b{
 							font-size: 22px;
 							font-weight: 600;
@@ -6399,9 +6379,9 @@ body.gva {
 							}
 						}
 						.title{
-							font-size: 11px;
+							font-size: 12px;
 							font-weight: 400;
-							line-height: 9px;
+							line-height: 2px;
 						}
 					}
 
@@ -6410,7 +6390,7 @@ body.gva {
 			.captions{
 				color: $brand;
 				font-size: 12px;
-				margin: 24px 250px 20px 0;
+				margin: 15px 250px 30px 0;
 				text-align: right;
 				span {
 					margin-right: 11px;
@@ -6467,69 +6447,43 @@ body.gva {
 				}
 				.details_box{
 					padding: 0 15px 0 0;
+					min-height: 55px;
 					p{
 						padding: 20px 27px 28px;
 					}
 				}
 				.accordion-group{
 					border: none;
+					margin-bottom: 0;
 					.accordion-heading{
 						padding-left: 27px;
 						position: relative;
 						a{
-							font-size: 17px;
 							span{
-								&.collapsed{
+								&.icon-collapsed, &.icon-expanded{
+									margin-right: 10px;
 									width: 20px;
-									&:after{
+									&:before{
 										color: $user_menu;
-										content: "\f078";
-										font-family: 'FontAwesome';
-										font-size: 19px;
-										margin-top: 7px;
-										position: absolute;
-										right: 22px;
-										speak: none;
-										text-align: center;
-										vertical-align: middle;
-										-webkit-font-smoothing: antialiased;
-									}
-								}
-								&.expanded{
-									width: 20px;
-									&:after{
-										color: $user_menu;
-										content: "\f077";
-										font-family: 'FontAwesome';
-										font-size: 19px;
-										margin-top: 7px;
-										position: absolute;
-										right: 22px;
-										speak: none;
-										text-align: center;
-										vertical-align: middle;
-										-webkit-font-smoothing: antialiased;
+										margin-top: 9px;
 									}
 								}
 							}
 							&.remove-item{
+								float: right;
 								width: 20px;
 								&:after{
 									color: $user_menu;
 									font-size: 15px;
-									margin-top: 17px;
-									position: absolute;
-									right: -3px;
-									speak: none;
-									text-align: center;
-									vertical-align: middle;
+									margin-top: 15px;
+									position: relative;
 								}
 							}
 						}
 						.accordion-toggle{
 							display: inline-block;
-							padding: 8px 0;
-							width: 100%;
+							padding: 4px 0;
+							width: 98%;
 						}
 					}
 					.accordion-body{
@@ -7386,14 +7340,16 @@ table td.sub-level-1 {
 
 
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
-	margin:0 0 20px 30px;
+	display: block;
+	font-size: 16px;
+	min-height: 20px;
+	margin: 0 0 20px 30px;
 	width: 380px;
 }
 .links-data{
 	margin: 0 0 0 30px;
 }
 .calendar-data{
-	font-size: 12px;
 	b{
 		font-size:16px;
 		font-weight: 400;
@@ -7552,7 +7508,7 @@ table.table.likert-scale-table {
 			text-decoration: underline;
 		}
 		p{
-			max-width: 100% !important;
+			max-width: 70%;
 		}
 	}
 }
@@ -7560,8 +7516,9 @@ table.table.likert-scale-table {
 .event_team_members, .report_sharing_selections {
 	.chzn-results {
 		li:after {
-			margin-left: 20px;
 			color: #ccc;
+			font-size: 11px;
+			margin-left: 20px;
 		}
 		li.company_user:after {
 			content: "USER";

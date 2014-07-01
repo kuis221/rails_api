@@ -37,7 +37,7 @@
 
 // GENERAL ICONS
 
-a, i, .btn{
+a, i, .btn, span{
 	&:before, &:after{
 		display: inline-block;
 		font-family: 'icons';
@@ -92,6 +92,16 @@ a, i, .btn{
 		color: $user_menu;
 		content: "\e01d";
 		font-size: 26px;
+	}
+	&.icon-collapsed:before{
+		color: $user_menu;
+		content: "\e616";
+		font-size: 24px;
+	}
+	&.icon-expanded:before{
+		color: $user_menu;
+		content: "\e61a";
+		font-size: 24px;		
 	}
 	&.icon-angle-left:before{
 		color: $user_menu;
@@ -317,6 +327,15 @@ a, i, .btn{
 .team-member:before, .member-data:before{
 	color: $user_menu;
 	content: "\e024";
+}
+
+.today-line-indicator{
+	&:before{
+		content: "\e004";
+		display: inline-block;
+		font-family: "icons";
+		font-size: 12px;
+	}
 }
 
 /*-- UL Nav --*/
