@@ -3895,9 +3895,6 @@ body.show {
 	.details_box.box_custom+.details_box.box_custom{
 		margin-top: -40px;
 	}
-	.box_custom+.box_consumer_reach{
-		margin-top: 70px;
-	}
 
 	.box_photos,
 	.box_surveys,
@@ -5549,6 +5546,15 @@ body.campaigns{
 	}
 	&.box_event_data{
 		form {
+			[class^='box_']{
+				margin-top: 70px;
+				[class^='box_']{
+					margin-top: 0;
+				}
+			}
+			[class*='box_custom']{
+				margin-top: 10px;
+			}
 			.form-actions{
 				margin-top: 20px;
 			}
