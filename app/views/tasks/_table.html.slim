@@ -1,6 +1,8 @@
-.pull-left
-  = button_to 'Create', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
-.tasks-progress-bar
+
+#list-tools
+  .pull-left
+    = button_to 'Create', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
+  .tasks-progress-bar
 .link-list.rows-no-list
   ul#tasks-list
 

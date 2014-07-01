@@ -12,10 +12,11 @@
 .tab-content.with-details-close-bar
   = resource_details_bar("You are viewing the Event Status report. Click to close.")
   #list-view.tab-pane.active
-    .details_box.first
+    .details_box.first 
       h3 EVENT STATUS
-      = simple_form_for :report, url: results_event_status_path, remote: true do |f|
-        = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
+      #list-tools
+        = simple_form_for :report, url: results_event_status_path, remote: true do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], wrapper: false, include_blank: "Select a campaign", required: false, input_html: { class: 'chosen-enabled no-validate' }
 
   #report-container
     #kpis-trends-module

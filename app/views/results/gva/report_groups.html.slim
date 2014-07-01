@@ -7,7 +7,7 @@
             .accordion-heading
               a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
                 = render partial: 'report_goals_actual_item_summary', locals: {item: item}
-                span.pull-right.collapsed
+                span.pull-right.icon-collapsed
                 a href="#" class="remove-item" title="Remove #{item.name}"
             .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
               .accordion-inner.goals-actual
@@ -25,7 +25,7 @@ javascript:
     $target = $(e.target);
     // For some reason this is being called when the tooltips are being desplayed
     if ($target.hasClass('accordion-body')){
-      $(e.target).closest('.accordion-group').find(".collapsed").removeClass("collapsed").addClass("expanded").prop('title', 'Collapse');
+      $(e.target).closest('.accordion-group').find(".icon-collapsed").removeClass("icon-collapsed").addClass("icon-expanded").prop('title', 'Collapse');
       //if (!$target.data('loaded')) {
         $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
         $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), view_style: $("#view_style").val(), report: {campaign_id: "#{@campaign.id}"} }, function(){
@@ -35,5 +35,5 @@ javascript:
       //}
     }
   }).on('hide', function(e){
-    $(e.target).closest('.accordion-group').find(".expanded").removeClass("expanded").addClass("collapsed").prop('title', 'Expand');
+    $(e.target).closest('.accordion-group').find(".icon-expanded").removeClass("icon-expanded").addClass("icon-collapsed").prop('title', 'Expand');
   });
