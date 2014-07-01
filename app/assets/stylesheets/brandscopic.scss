@@ -3773,6 +3773,11 @@ body.events.index {
 
 
 body.show {
+	.details_box{
+		.btn-primary{
+			min-width: 130px;
+		}
+	}
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		//margin: 0 -12% 0 0;
