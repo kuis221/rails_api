@@ -776,15 +776,18 @@ ul.select2-results{
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		input:-ms-input-placeholder,
 		textarea:-ms-input-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		input::-webkit-input-placeholder,
 		textarea::-webkit-input-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		.chosen-campaign{
 			.control-group{
@@ -866,6 +869,7 @@ ul.select2-results{
 			font-size: 11px;
 		}
 		.to{
+			color: $brand;
 			float: left;
 			padding: 32px 7px 0 0;
 			text-align: center;
