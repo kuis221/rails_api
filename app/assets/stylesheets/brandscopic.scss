@@ -736,7 +736,6 @@ a.more-options-link:after{
 		background-color: $brand;
 		border: 0;
 		box-shadow: none;
-		-webkit-font-smoothing: antialiased;
 		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
 				color: $user_menu;
