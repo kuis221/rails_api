@@ -26,8 +26,10 @@ ul.select2-results{
 
 .modal {
 	overflow: visible !important;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 	.btn-primary, .btn-cancel{
-		padding: 11px 25px;
+		padding: 11px 10px;
 		height: 40px;
 		width: 154px;
 	}
@@ -597,16 +599,16 @@ ul.select2-results{
 		  	font-family: 'icons';
 			font-size: 14px;
 			opacity: 1 !important;
-		  	position: relative;
+		  	position: absolute;
 			speak: none;
 			text-align: center;
-			right: 3px;
+			top: 4px;
 		}
 	}
 	.modal-body {
 		max-height: 800px;
 		overflow: visible;
-		padding: 25px 30px 33px 30px;
+		padding: 25px 30px 22px 30px;
 		.scroll-table-content, #select-areas-table-wrapper{
 			max-height: 257px;
 			.row-fluid:after{
@@ -776,15 +778,18 @@ ul.select2-results{
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		input:-ms-input-placeholder,
 		textarea:-ms-input-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		input::-webkit-input-placeholder,
 		textarea::-webkit-input-placeholder {
-		  color: $grey_three;
+		  color: $user_menu;
+		  font-weight: normal;
 		}
 		.chosen-campaign{
 			.control-group{
@@ -866,6 +871,7 @@ ul.select2-results{
 			font-size: 11px;
 		}
 		.to{
+			color: $brand;
 			float: left;
 			padding: 32px 7px 0 0;
 			text-align: center;
@@ -1436,6 +1442,7 @@ div#spin{
 }
 
 .modal-backdrop, .modal-backdrop.fade.in{
-	background-color:black;
+	background-color: #252525;
+	opacity: 0.9;
 }
 
