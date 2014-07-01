@@ -846,17 +846,18 @@ a.more-options-link:after{
 
 .btn-info{
 	background-color: $user_menu !important;
-	color: white !important;
 	font-size: 13px;
-	font-weight: bold;
 	padding-bottom:9px;
 	padding-top: 9px;
 	&.icon-angle-right-after{
+		color: white;
+		font-family: $baseFontFamily;
+		font-weight: bold;
 		&:after{
 			color: white !important;
-			font-size: 19px;
-			top: 6px;
-			left: 9px;
+			font-size: 20px !important;
+			top: 7px;
+			left: 15px;
 		}
 		&:before{
 			display:none;
