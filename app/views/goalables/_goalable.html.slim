@@ -1,52 +1,36 @@
-- if goalable.is_a?(Kpi)
-  - unless ['Videos', 'Competitive Analysis'].include?(goalable.name)
-    li id="campaign-kpi-#{goalable.id}"
-      span.on-off-switch
-        - if goalable.module.present? and goalable.module != ''
-          div class="switch-toggle #{resource.active_kpis.include?(goalable) ? 'active' : 'inactive'}"
-            a.btn.btn-small.toggle-on-btn href="#" id="toggle-kpi-off-#{goalable.id}" data-kpi-id="#{goalable.id}"
-              .on ON
-              span
-            a.btn.btn-small.toggle-off-btn href="#" id="toggle-kpi-on-#{goalable.id}" data-kpi-id="#{goalable.id}"
-              span
-              .off OFF
+- if goalable.present?
+  - if goalable.is_a?(Kpi)
+    - unless ['Videos', 'Competitive Analysis'].include?(goalable.name)
+      li id="campaign-kpi-#{goalable.id}"
+        span.kpi-info
+          .kpi-name
+            = goalable.name
+          = goalable.description
+        span.kpi-goal
+          - if goalable.is_segmented? || goalable.kpi_type == 'count'
+            - suffix = goalable.kpi_type == 'percentage' ? '%' : ''
+            ul.kpi-goals-list
+              - goals = resource.goals.for_kpis_segments(goalable, false)
+              - goalable.kpis_segments.each do |segment|
+                - goal = goals.detect{|g| g.kpis_segment_id == segment.id }
+                li
+                  span.value= "#{goal.present? && goal.value.present? ? goal.value : '--'}#{suffix}"
+                  | &nbsp;
+                  span.segment_name= segment.text
+          - else
+            - goal = resource.goals.for_kpi(goalable, false)
+            span.value= goal.try(:value)
+        span.pull-right
+          = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'edit', title: 'Edit'
+        .clearfix
+  - else
+    li id="campaign-activity-type-#{goalable.id}"
       span.kpi-info
         .kpi-name
           = goalable.name
         = goalable.description
       span.kpi-goal
-        - if goalable.is_segmented? || goalable.kpi_type == 'count'
-          - suffix = goalable.kpi_type == 'percentage' ? '%' : ''
-          ul.kpi-goals-list
-            - goals = resource.goals.for_kpis_segments(goalable, false)
-            - goalable.kpis_segments.each do |segment|
-              - goal = goals.detect{|g| g.kpis_segment_id == segment.id }
-              li
-                span.value= "#{goal.present? && goal.value.present? ? goal.value : '--'}#{suffix}"
-                | &nbsp;
-                span.segment_name= segment.text
-        - else
-          - goal = resource.goals.for_kpi(goalable, false)
-          span.value= goal.try(:value)
+        span.value= resource.goals.for_activity_type(goalable, false).try(:value)
       span.pull-right
-        = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'edit', title: 'Edit'
+        = link_to '', campaign_activity_type_set_goal_path(resource, goalable.id), remote: true, class: 'edit', title: 'Edit'
       .clearfix
-- else
-  li id="campaign-activity-type-#{goalable.id}"
-    span.on-off-switch
-      div class="switch-toggle #{resource.activity_types.include?(goalable) ? 'active' : 'inactive'}"
-        a.btn.btn-small.toggle-on-btn-activity-type href="#" id="toggle-kpi-off-#{goalable.id}" data-activity-type-id="#{goalable.id}"
-          .on ON
-          span
-        a.btn.btn-small.toggle-off-btn-activity-type href="#" id="toggle-kpi-on-#{goalable.id}" data-activity-type-id="#{goalable.id}"
-          span
-          .off OFF
-    span.kpi-info
-      .kpi-name
-        = goalable.name
-      = goalable.description
-    span.kpi-goal
-      span.value= resource.goals.for_activity_type(goalable, false).try(:value)
-    span.pull-right
-      = link_to '', campaign_activity_type_set_goal_path(resource, goalable.id), remote: true, class: 'edit', title: 'Edit'
-    .clearfix

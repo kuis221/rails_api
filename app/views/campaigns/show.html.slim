@@ -103,11 +103,11 @@ javascript:
   });
 
   $(document).on('kpis:change', function(){
-    window.location.reload(true);
+    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
   });
 
   $(document).on('activity_types:change', function(){
-    window.location.reload(true);
+    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
   });
 
   $(document).on('members:change teams:change', function(){

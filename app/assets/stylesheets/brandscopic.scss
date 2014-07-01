@@ -836,7 +836,7 @@ a.more-options-link:after{
 		left: auto;
 		position: absolute;
 		right: 0px;
-		top: -6px;	
+		top: -6px;
 		&.badge{
 			font-size: 11px;
 			line-height: 15px;
@@ -1942,12 +1942,12 @@ ul.kpis-list{
 		padding:10px 0 10px 0;
 		.kpi-goal{
 			font-size: 16px;
-			margin-top: 15px;
+			margin-top: 10px;
 		}
 	}
 	.kpi-info{
 		font-size: 11px;
-		margin-top: 14px;
+		margin: 10px 0 0 10px;
 		.kpi-name{
 			font-size: 16px;
 		}
@@ -5391,9 +5391,6 @@ svg{
 	padding: 30px 10px;
 	-webkit-border-radius: 0px 7px 7px 7px;
 	border-radius: 0px 7px 7px 7px;
-	.kpis-button{
-		margin: 70px 0 10px 0;
-	}
 }
 
 body.campaigns{
@@ -6883,7 +6880,7 @@ table td.sub-level-1 {
 							font-size: 15px;
 							speak: none;
 							text-align: center;
-							vertical-align: middle;						
+							vertical-align: middle;
 						}
 						&.photo-download-link{
 							float:right;

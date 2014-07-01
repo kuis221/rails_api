@@ -250,8 +250,16 @@ class Campaign < ActiveRecord::Base
     Sunspot.index(resource)
   end
 
+  def enabled_modules_kpis
+    enabled_modules.map{|m| Kpi.send(m)}
+  end
+
+  def active_global_kpis
+    @active_global_kpis ||= [Kpi.events, Kpi.promo_hours] + (kpis.select{|k| k.module != 'custom'} + enabled_modules_kpis).sort_by(&:ordering)
+  end
+
   def active_kpis
-    @active_kpis ||= kpis + [Kpi.events, Kpi.promo_hours]
+    @active_kpis ||= kpis + enabled_modules_kpis + [Kpi.events, Kpi.promo_hours]
   end
 
   def custom_kpis

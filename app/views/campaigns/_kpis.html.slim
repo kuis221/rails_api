@@ -1,50 +1,7 @@
-- campaign ||= nil
-.link-list
-  ul#global-kpis.kpis-list
-    = render partial: 'goalables/goalable', collection: Kpi.global
-
 .row-fluid
   .pull-left.kpis-button
-    = link_to 'Add Custom KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_custom_kpis, resource)
+    = link_to 'Add KPI', new_campaign_kpi_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_custom_kpis, resource)
 
 .link-list
-  ul#custom-kpis.kpis-list
-    = render collection: (Kpi.custom(current_company).includes(:kpis_segments) + current_company.activity_types.active).sort_by(&:name), partial: 'goalables/goalable'
-
-
-- if can?(:activate_kpis, resource)
-  javascript:
-    $(document).delegate('.toggle-off-btn', 'click', function(e){
-      $(this).parent().addClass('active').removeClass('deactive')
-      CampaignFormBuilder.activateKpi($(this).data('kpi-id'));
-      return false;
-    });
-
-    $(document).delegate('.toggle-off-btn-activity-type', 'click', function(e){
-      $(this).parent().addClass('active').removeClass('deactive')
-      CampaignFormBuilder.activateActivityType($(this).data('activity-type-id'));
-      return false;
-    });
-
-    $(document).delegate('.toggle-on-btn', 'click', function(e){
-      var kpi_id = $(this).data('kpi-id');
-      var _this = this;
-      bootbox.confirm("<p>Please confirm you want to deactivate this KPI?</p>", function (result) {
-        if (result) {
-          $(_this).parent().addClass('inactive').removeClass('active')
-          CampaignFormBuilder.deactivateKpi(kpi_id);
-        }
-      });
-      return false;
-    });
-    $(document).delegate('.toggle-on-btn-activity-type', 'click', function(e){
-      var activity_type_id = $(this).data('activity-type-id');
-      var _this = this;
-      bootbox.confirm("<p>Please confirm you want to deactivate this Activity Type?</p>", function (result) {
-        if (result) {
-          $(_this).parent().addClass('inactive').removeClass('active')
-          CampaignFormBuilder.deactivateActivityType(activity_type_id);
-        }
-      });
-      return false;
-    });
+  ul#global-kpis.kpis-list
+    = render partial: 'goalables/goalable', collection: resource.active_global_kpis + (resource.custom_kpis + resource.activity_types).sort_by(&:name)

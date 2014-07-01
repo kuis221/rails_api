@@ -2,6 +2,17 @@ class KpisController < FilteredController
   prepend_before_filter :load_campaign, only: [:new, :update, :edit, :create]
   respond_to :js, only: [:new, :create, :edit, :update]
 
+  def create
+    create! do |success, failure|
+      success.js do
+        if params[:campaign_id].present?
+          campaign = current_company.campaigns.find(params[:campaign_id])
+          campaign.add_kpi(resource)
+        end
+      end
+    end
+  end
+
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
   end

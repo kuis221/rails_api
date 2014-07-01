@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
-  add_extension "postgres_fdw"
   add_extension "tablefunc"
 
   create_table "active_admin_comments", :force => true do |t|
@@ -200,8 +199,6 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
     t.integer  "company_id"
     t.boolean  "active",        :default => true
   end
-
-  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
 
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
@@ -410,6 +407,22 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_index "event_expenses", ["event_id"], :name => "index_event_expenses_on_event_id"
 
+  create_table "event_results", :force => true do |t|
+    t.integer  "form_field_id"
+    t.integer  "event_id"
+    t.integer  "kpis_segment_id"
+    t.text     "value"
+    t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+    t.integer  "kpi_id"
+  end
+
+  add_index "event_results", ["event_id", "form_field_id"], :name => "index_event_results_on_event_id_and_form_field_id"
+  add_index "event_results", ["event_id"], :name => "index_event_results_on_event_id"
+  add_index "event_results", ["form_field_id"], :name => "index_event_results_on_form_field_id"
+  add_index "event_results", ["kpi_id"], :name => "index_event_results_on_kpi_id"
+
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
     t.integer  "company_id"
@@ -450,15 +463,17 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
   create_table "form_field_results", :force => true do |t|
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
+    t.integer  "form_field_option_id"
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "scalar_value",         :precision => 10, :scale => 2, :default => 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
 
   add_index "form_field_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+  add_index "form_field_results", ["form_field_option_id"], :name => "index_activity_results_on_form_field_option_id"
   add_index "form_field_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
   add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], :name => "index_ff_results_on_resultable_and_form_field_id"
   add_index "form_field_results", ["resultable_id", "resultable_type"], :name => "index_form_field_results_on_resultable_id_and_resultable_type"
@@ -498,7 +513,8 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
-  create_table "kpi_reports", :force => true do |t|
+  create_table "kpi_reports", :id => false, :force => true do |t|
+    t.integer  "id",                :null => false
     t.integer  "company_user_id"
     t.text     "params"
     t.string   "aasm_state"
@@ -690,6 +706,17 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
     t.boolean  "is_admin",    :default => false
   end
 
+  create_table "satisfaction_surveys", :force => true do |t|
+    t.integer  "company_user_id"
+    t.string   "session_id"
+    t.string   "rating"
+    t.text     "feedback"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "satisfaction_surveys", ["company_user_id"], :name => "index_satisfaction_surveys_on_company_user_id"
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -699,11 +726,6 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
-
-  create_table "stat", :id => false, :force => true do |t|
-    t.text "key"
-    t.text "value"
-  end
 
   create_table "surveys", :force => true do |t|
     t.integer  "event_id"

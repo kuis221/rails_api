@@ -199,7 +199,9 @@ feature "Campaigns", js: true, search: true do
         campaign = FactoryGirl.create(:campaign, company: @company)
         visit campaign_path(campaign)
 
-        click_js_link 'Add Custom KPI'
+        click_js_link 'KPIs'
+
+        click_js_link 'Add KPI'
 
         within visible_modal do
           fill_in 'Name', with: 'My Custom KPI'
@@ -213,7 +215,7 @@ feature "Campaigns", js: true, search: true do
         ensure_modal_was_closed
 
         kpi = Kpi.last
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('My Custom KPI')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
         end
@@ -225,7 +227,7 @@ feature "Campaigns", js: true, search: true do
 
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('223311.0')
         end
       end
@@ -234,7 +236,9 @@ feature "Campaigns", js: true, search: true do
         campaign = FactoryGirl.create(:campaign, company: @company)
         visit campaign_path(campaign)
 
-        click_js_link 'Add Custom KPI'
+        click_js_link 'KPIs'
+
+        click_js_link 'Add KPI'
 
         within visible_modal do
           fill_in 'Name', with: 'My Custom KPI'
@@ -266,7 +270,7 @@ feature "Campaigns", js: true, search: true do
 
           visit campaign_path(campaign)
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('My Custom KPI')
             hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
           end
@@ -286,7 +290,7 @@ feature "Campaigns", js: true, search: true do
 
           visit campaign_path(campaign)
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('My Custom KPI')
             expect(page).to have_content('100.0')
             expect(page).to have_content('my custom kpi description')
@@ -303,7 +307,7 @@ feature "Campaigns", js: true, search: true do
           end
           ensure_modal_was_closed
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('350.0')
           end
         end
@@ -317,7 +321,9 @@ feature "Campaigns", js: true, search: true do
 
         visit campaign_path(campaign)
 
-        within "#custom-kpis" do
+        click_js_link 'KPIs'
+
+        within "#global-kpis" do
           expect(page).to have_content('My Custom KPI')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
         end
@@ -333,7 +339,7 @@ feature "Campaigns", js: true, search: true do
         end
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('My Modified KPI')
           expect(page).to have_content('my modified kpi description')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
@@ -345,7 +351,7 @@ feature "Campaigns", js: true, search: true do
         end
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('350.0')
         end
       end
@@ -354,11 +360,13 @@ feature "Campaigns", js: true, search: true do
     feature "Activity Types", search: false do
       scenario "Set goals for Activity Types" do
         campaign = FactoryGirl.create(:campaign, company: @company)
-        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company, campaign_ids: [campaign.id])
 
         visit campaign_path(campaign)
 
-        within "#custom-kpis" do
+        click_js_link 'KPIs'
+
+        within "#global-kpis" do
           expect(page).to have_content('Activity Type #1')
           hover_and_click('li#campaign-activity-type-'+activity_type.id.to_s, 'Edit')
         end
@@ -370,7 +378,7 @@ feature "Campaigns", js: true, search: true do
 
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('123.0')
         end
       end
