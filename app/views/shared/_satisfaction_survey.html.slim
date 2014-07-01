@@ -34,28 +34,24 @@
       = radio_button_tag('emotion', 'negative', current_rating == 'negative')
 
 javascript:
-  var newRecordId = null;
-
-  $("input:radio[name='emotion']").click(function(){
+  $(".emotions_select input:radio[name='emotion']").click(function(){
     $('.thanks-box').hide();
     $.ajax({
       type: "POST",
       url: '#{satisfaction_surveys_path}',
       data: {rating: $(this).val()},
       success: function(response){
-        newRecordId = response.id;
         $('.survey-box').show();
       }
     });
   });
 
-  $(".btn-send-feedback").click(function(){
+  $(".survey .btn-send-feedback").click(function(){
     $.ajax({
       type: "POST",
       url: '#{satisfaction_surveys_path}',
-      data: {record_id: newRecordId, feedback: $("textarea[class='feedback']").val()},
+      data: {feedback: $("textarea[class='feedback']").val()},
       success: function(response){
-        newRecordId = null;
         $('.survey-box').hide();
         $("textarea[class='feedback']").val('');
         $('.thanks-box').show();
@@ -63,7 +59,7 @@ javascript:
     });
   });
 
-  $('.btn-close-survey, .btn-cancel').click(function(e){
+  $('.survey .btn-close-survey, .survey .btn-cancel').click(function(e){
     e.preventDefault();
     e.stopPropagation();
     $('.survey-box').hide();

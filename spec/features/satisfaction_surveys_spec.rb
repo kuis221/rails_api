@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "SatisfactionSurvey", search: true, js: true do
+feature "SatisfactionSurvey", js: true do
 
   before do
     Warden.test_mode!
@@ -33,6 +33,13 @@ feature "SatisfactionSurvey", search: true, js: true do
       end
 
       expect(page).to have_content("Thanks!")
+
+      # Reload page and make sure the selected emoticon remains selected
+      visit root_path
+
+      within emotions_box do
+        find("input#emotion_positive").should be_checked
+      end
     end
   end
 

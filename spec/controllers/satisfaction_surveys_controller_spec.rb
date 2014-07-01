@@ -8,7 +8,8 @@ describe SatisfactionSurveysController do
   end
 
   describe "POST create" do
-    let(:satisfaction_survey){ FactoryGirl.create(:satisfaction_survey, company_user: @company_user, session_id: request.session_options[:id], feedback: '') }
+    let(:satisfaction_survey){ FactoryGirl.create(:satisfaction_survey,
+      company_user: @company_user, session_id: request.session_options[:id], feedback: '') }
 
     it "should create a new satisfaction survey" do
       expect {
@@ -28,7 +29,8 @@ describe SatisfactionSurveysController do
     end
 
     it "must update the satisfaction survey attributes" do
-      put 'create', record_id: satisfaction_survey.to_param, feedback: 'Nice app. Excellent job!'
+      satisfaction_survey.save
+      put 'create', feedback: 'Nice app. Excellent job!'
       satisfaction_survey.reload
       satisfaction_survey.company_user_id.should == @company_user.id
       satisfaction_survey.rating.should == 'positive'

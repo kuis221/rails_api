@@ -27,8 +27,8 @@ ActiveAdmin.register SatisfactionSurvey do
   end
 
   filter :company_id, as: :select, collection: proc { Company.all(order: :name) }
-  filter :company_user_id, as: :select, collection: proc { CompanyUser.all(include: [:user], order: "users.first_name") }
-  filter :rating
+  filter :company_user_id, as: :select, collection: proc { CompanyUser.for_dropdown }
+  filter :rating, as: :checkbox, collection: SatisfactionSurvey::RATING_OPTIONS
   filter :feedback
   filter :updated_at
 
