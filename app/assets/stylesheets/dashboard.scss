@@ -9,6 +9,9 @@
 
 	h3{
 		margin-bottom: 20px;
+		&+p{
+			max-width: 310px;
+		}
 	}
 
 	.kpi-trends-stats{
@@ -22,7 +25,6 @@
 	}
 
 	p{
-		max-width: 310px;
 		&.help-block {
 			width: auto;
 		}

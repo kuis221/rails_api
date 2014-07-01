@@ -736,7 +736,6 @@ a.more-options-link:after{
 		background-color: $brand;
 		border: 0;
 		box-shadow: none;
-		-webkit-font-smoothing: antialiased;
 		&.list, &.map, &.calendar, &.table, &.graph{
 			&:after{
 				color: $user_menu;
@@ -787,6 +786,9 @@ a.more-options-link:after{
 		box-sizing: border-box;
 		padding: 8px 25px;
 		height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
 	}
 }
 
@@ -844,17 +846,18 @@ a.more-options-link:after{
 
 .btn-info{
 	background-color: $user_menu !important;
-	color: white !important;
 	font-size: 13px;
-	font-weight: bold;
 	padding-bottom:9px;
 	padding-top: 9px;
 	&.icon-angle-right-after{
+		color: white;
+		font-family: $baseFontFamily;
+		font-weight: bold;
 		&:after{
 			color: white !important;
-			font-size: 19px;
-			top: 6px;
-			left: 9px;
+			font-size: 20px !important;
+			top: 7px;
+			left: 15px;
 		}
 		&:before{
 			display:none;
@@ -3776,6 +3779,11 @@ body.events.index {
 
 
 body.show {
+	.details_box{
+		.btn-primary, .btn-cancel{
+			min-width: 130px;
+		}
+	}
 	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
 		clear: both;
 		//margin: 0 -12% 0 0;
@@ -3898,9 +3906,6 @@ body.show {
 
 	.details_box.box_custom+.details_box.box_custom{
 		margin-top: -40px;
-	}
-	.box_custom+.box_consumer_reach{
-		margin-top: 70px;
 	}
 
 	.box_photos,
@@ -4421,6 +4426,9 @@ body.roles{
 		font-size: 16px;
 		line-height: 40px;
 		margin: 0 0 0 20px;
+		.span2{
+			margin-top: 10px;
+		}
 	}
 	.span12, .span12:first-child{
 		margin-left: 20px;
@@ -5553,6 +5561,15 @@ body.campaigns{
 	}
 	&.box_event_data{
 		form {
+			[class^='box_']{
+				margin-top: 70px;
+				[class^='box_']{
+					margin-top: 0;
+				}
+			}
+			[class*='box_custom']{
+				margin-top: 10px;
+			}
 			.form-actions{
 				margin-top: 20px;
 			}
@@ -6792,6 +6809,7 @@ table td.sub-level-1 {
 		border-radius: 6px;
 		margin-top: 15px;
 		padding: 5px 0;
+		max-height: 120px !important;
 		li{
 			label:hover{
 				background-color: $brand;
@@ -7003,10 +7021,14 @@ table td.sub-level-1 {
 			display: inline-block;
 			width:85px;
 			&:first-of-type{
-				margin-right: 3px;
+				margin-right: 2px;
 			}
 			&:last-of-type{
-				margin-left: 3px;
+				margin-left: 2px;
+			}
+			&.active{
+				outline: 1px solid $user_menu;
+				outline-offset: -1px;
 			}
 		}
 	}
