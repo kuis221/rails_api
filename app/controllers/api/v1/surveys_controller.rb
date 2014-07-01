@@ -11,7 +11,7 @@ class Api::V1::SurveysController < Api::V1::ApiController
     formats ['json', 'xml']
     error 404, "Missing"
     error 401, "Unauthorized access"
-    error 402, "Event does allows surveys as per campaign settings"
+    error 403, "Event does allows surveys as per campaign settings"
     error 500, "Server crashed for some reason"
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
@@ -665,16 +665,16 @@ class Api::V1::SurveysController < Api::V1::ApiController
     end
 
     def check_surveys_enabled_for_event
-      unless parent.campaign.form_field_for_kpi(Kpi.surveys).present?
+      unless parent.campaign.enabled_modules.include?('surveys')
         respond_to do |format|
           format.json {
-            render :status => 402,
+            render :status => 403,
                    :json => { :success => false,
                               :info => "Invalid request",
                               :data => {} }
           }
           format.xml {
-            render :status => 402,
+            render :status => 403,
                    :xml => { :success => false,
                              :info => "Invalid request",
                              :data => {} }.to_xml(root: 'response')

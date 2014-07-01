@@ -35,6 +35,12 @@ class FormField < ActiveRecord::Base
     format: { with: /\AFormField::/ }
   validates :ordering, presence: true, numericality: true
 
+  scope :for_events_in_company, ->(companies) { joins(
+      'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
+      form_fields.fieldable_type=\'Campaign\''
+    ).where(campaigns: {company_id: companies})
+  }
+
   def field_options(result)
     {as: :string}
   end

@@ -467,10 +467,10 @@ describe CampaignsController do
       Kpi.create_global_kpis
       expect {
         post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: nil, name: 'Test 1', ordering: 1, kpi_id: Kpi.impressions, field_type: 'number', options: {capture_mechanism: 'integer'}},
-          '1' => {id: nil, name: 'Test 2', ordering: 2, kpi_id: Kpi.interactions , field_type: 'number', options: {capture_mechanism: 'integer'}}
+          '0' => {id: nil, name: 'Test 1', ordering: 1, kpi_id: Kpi.impressions, field_type: 'FormField::Number'},
+          '1' => {id: nil, name: 'Test 2', ordering: 2, kpi_id: Kpi.interactions , field_type: 'FormField::Number'}
         }
-      }.to change(CampaignFormField, :count).by(2)
+      }.to change(FormField, :count).by(2)
 
       campaign.form_fields.count.should == 2
 
@@ -478,15 +478,14 @@ describe CampaignsController do
       response.body.should == 'OK'
     end
 
-
     it "should update the form fields information" do
       Kpi.create_global_kpis
-      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: Kpi.impressions, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: Kpi.impressions, ordering: 1, name: 'impressions')
       expect {
         post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: field.id, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, options: {capture_mechanism: 'number'}}
+          '0' => {id: field.id, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions}
         }
-      }.to_not change(CampaignFormField, :count)
+      }.to_not change(FormField, :count)
 
       campaign.form_fields.count.should == 1
 
@@ -501,14 +500,14 @@ describe CampaignsController do
       brand = FactoryGirl.create(:brand, name: 'A brand')
       expect {
         post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: nil, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, options: {capture_mechanism: 'number', brands: ['A brand', 'Another brand']}}
+          '0' => {id: nil, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, field_type: 'FormField::Number', settings: {brands: ['A brand', 'Another brand']}}
         }
       }.to change(Brand, :count).by(1)
 
       campaign.form_fields.count.should == 1
 
-      campaign.form_fields.first.options['brands'].count.should == 2
-      campaign.form_fields.first.options['brands'].should include(brand.id)
+      campaign.form_fields.first.settings['brands'].count.should == 2
+      campaign.form_fields.first.settings['brands'].should include(brand.id)
 
       response.should be_success
       response.body.should == 'OK'
@@ -521,43 +520,32 @@ describe CampaignsController do
     it "should associate the kpi to the campaign" do
       expect {
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
-      }.to change(CampaignFormField, :count).by(1)
+      }.to change(FormField, :count).by(1)
 
       campaign.form_fields.count.should == 1
       field = campaign.form_fields.first
       field.kpi_id.should == kpi.id
-      field.field_type.should == kpi.kpi_type
+      field.type.should == 'FormField::Number'
       field.name.should == kpi.name
       field.ordering.should == 1
-      field.options[:capture_mechanism].should == 'integer'
     end
 
     it "should NOT associate the kpi to the campaign if the campaing already have it assgined" do
-      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions')
       expect {
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
-      }.to_not change(CampaignFormField, :count)
+      }.to_not change(FormField, :count)
     end
 
     it "should automatically assign a correct ordering for the new field" do
-      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: 999, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: 999, ordering: 1, name: 'impressions' )
       expect {
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
-      }.to change(CampaignFormField, :count).by(1)
+      }.to change(FormField, :count).by(1)
 
       campaign.form_fields.count.should == 2
-      field = CampaignFormField.last
+      field = FormField.last
       field.ordering.should == 2
-    end
-
-    it "should update the form_field_id for any existing results for the kpi" do
-      result = EventResult.create({form_field: FactoryGirl.create(:campaign_form_field, campaign: campaign), event: FactoryGirl.create(:event, campaign: campaign, company: @company), kpis_segment_id: nil, kpi_id: kpi.id}, without_protection: true)
-      expect {
-        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
-      }.to change(CampaignFormField, :count).by(1)
-
-      field = CampaignFormField.last
-      result.reload.form_field_id.should == field.id
     end
   end
 
@@ -592,10 +580,10 @@ describe CampaignsController do
     let(:kpi) { FactoryGirl.create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer' ) }
 
     it "should disassociate the kpi from the campaign" do
-      FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions', field_type: 'number', options: {capture_mechanism: 'integer'} )
+      FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions')
       expect {
         post 'remove_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
-      }.to change(CampaignFormField, :count).by(-1)
+      }.to change(FormField, :count).by(-1)
       response.should be_success
     end
   end

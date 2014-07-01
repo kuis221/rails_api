@@ -75,7 +75,6 @@ class Campaign < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
-  #has_many :form_fields, class_name: 'CampaignFormField', order: 'campaign_form_fields.ordering'
   has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
 
   has_many :kpis, through: :form_fields
@@ -271,13 +270,12 @@ class Campaign < ActiveRecord::Base
     # Make sure the kpi is not already assigned to the campaign
     if field.nil?
       ordering = form_fields.select('max(ordering) as ordering').reorder(nil).first.ordering || 0
-      field = form_fields.create({kpi: kpi, field_type: kpi.kpi_type, name: kpi.name, ordering: ordering + 1, options: {capture_mechanism: kpi.capture_mechanism}}, without_protection: true)
-
-      # Update any preview results captured for this kpi using the new
-      # created field
-      if field.persisted?
-        EventResult.joins(:event).where(events: {campaign_id: self.id}, kpi_id: kpi).update_all(form_field_id: field.id)
-      end
+      field = form_fields.create(
+        kpi: kpi,
+        field_type: kpi.form_field_type,
+        name: kpi.name,
+        ordering: ordering + 1,
+      )
     end
 
     field

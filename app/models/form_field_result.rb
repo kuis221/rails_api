@@ -27,6 +27,12 @@ class FormFieldResult < ActiveRecord::Base
 
   before_validation :prepare_for_store
 
+  scope :for_kpi, -> (kpi){ joins(:form_field).where(form_fields: {kpi_id: kpi}) }
+
+  scope :for_event_campaign, -> (campaign){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {campaign_id: campaign}) }
+
+  scope :for_place_in_company, -> (place, company){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {company_id: company, place_id: place}) }
+
   def value
     if form_field.present? && form_field.is_hashed_value?
       if form_field.type == 'FormField::Checkbox'

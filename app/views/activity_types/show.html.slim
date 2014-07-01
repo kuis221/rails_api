@@ -24,8 +24,8 @@
       = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
-  .form-builder-wrapper.activity-form
-    .form-wrapper.activity-form
+  .form-builder-wrapper
+    .form-wrapper.data-form-wrapper
 
     .fields-wrapper
       p Drag fields to add

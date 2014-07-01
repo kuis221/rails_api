@@ -44,14 +44,14 @@ describe EventData do
 
       event.event_data.spent.should == 0
 
-      event.event_data.gender_female.should be_nil
-      event.event_data.gender_male.should be_nil
+      event.event_data.gender_female.should == 0.0
+      event.event_data.gender_male.should == 0.0
 
-      event.event_data.ethnicity_asian.should    be_nil
-      event.event_data.ethnicity_black.should    be_nil
-      event.event_data.ethnicity_hispanic.should be_nil
-      event.event_data.ethnicity_native_american.should  be_nil
-      event.event_data.ethnicity_white.should be_nil
+      event.event_data.ethnicity_asian.should   ==  0.0
+      event.event_data.ethnicity_black.should   ==  0.0
+      event.event_data.ethnicity_hispanic.should == 0.0
+      event.event_data.ethnicity_native_american.should == 0.0
+      event.event_data.ethnicity_white.should == 0.0
     end
 
     it "should correctly count the values for each segment" do
@@ -67,29 +67,24 @@ describe EventData do
       gender_results = event.result_for_kpi(Kpi.gender)
 
       male_segment = Kpi.gender.kpis_segments.detect{|s| s.text == 'Male' }
-      gender_results.detect{|r| r.kpis_segment_id == male_segment.id}.value = '30'
-
       female_segment = Kpi.gender.kpis_segments.detect{|s| s.text == 'Female' }
-      gender_results.detect{|r| r.kpis_segment_id == female_segment.id}.value = '70'
+      gender_results.value = {male_segment.id => '30',
+                             female_segment.id => '70'}
+
 
       # Assign values for the ethnicity
       ethnicity_results = event.result_for_kpi(Kpi.ethnicity)
 
-      segment = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Asian' }
-      ethnicity_results.detect{|r| r.kpis_segment_id == segment.id}.value = '30'
-
-      segment = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Black / African American' }
-      ethnicity_results.detect{|r| r.kpis_segment_id == segment.id}.value = '20'
-
-      segment = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Hispanic / Latino' }
-      ethnicity_results.detect{|r| r.kpis_segment_id == segment.id}.value = '5'
-
-      segment = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Native American' }
-      ethnicity_results.detect{|r| r.kpis_segment_id == segment.id}.value = '15'
-
-      segment = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'White' }
-      ethnicity_results.detect{|r| r.kpis_segment_id == segment.id}.value = '10'
-
+      segment1 = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Asian' }
+      segment2 = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Black / African American' }
+      segment3 = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Hispanic / Latino' }
+      segment4 = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'Native American' }
+      segment5 = Kpi.ethnicity.kpis_segments.detect{|s| s.text == 'White' }
+      ethnicity_results.value = {segment1.id => '30',
+                                 segment2.id => '20',
+                                 segment3.id => '5',
+                                 segment4.id => '15',
+                                 segment5.id => '10'}
 
       event.save
 

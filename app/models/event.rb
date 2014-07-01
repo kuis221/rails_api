@@ -298,8 +298,9 @@ class Event < ActiveRecord::Base
     # TODO: this should also check for values for hashed fields
     campaign_id.present? &&
     (
-      results.active.
-              where('form_field_results.value is not null AND form_field_results.value <> \'\'').count > 0
+      results.active.where(
+        '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
+         (form_field_results.hash_value is not null AND form_field_results.hash_value <> \'\')').count > 0
     )
   end
 
@@ -339,8 +340,8 @@ class Event < ActiveRecord::Base
 
   def result_for_kpi(kpi)
     field = campaign.form_fields.detect{|f| f.kpi_id == kpi.id }
-    field.kpi = kpi # Assign it so it won't be reloaded if requested.
     if field.present?
+      field.kpi = kpi # Assign it so it won't be reloaded if requested.
       results_for([field]).first
     end
   end

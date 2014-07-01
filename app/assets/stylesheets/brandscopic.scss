@@ -193,13 +193,7 @@ abbr[title]{
 		width: 40px;
 	}
 	label.control-label{
-		color:$brand;
-		display: inline-block;
-		float: right;
-		font-size: 13px;
-		margin-top: 12px;
-		margin-right: 5px;
-		width: 150px;
+		color:$text;
 	}
 }
 
@@ -229,47 +223,6 @@ body.events.show{
 			}
 		}
 	}
-
-	#event-results-form{
-		.control-group{
-			.segment-total{
-				display: none;
-			}
-			&.error{
-				.controls{
-					input[type="text"]{
-						border-color: $alert_red !important;
-					}
-					span.add-on{
-						background-color: $alert_red;
-					}
-				}
-			}
-		}
-		#event-custom{
-			label.radio{
-				display: block;
-				font-size: 13px;
-				margin-bottom: 10px;
-				width: auto;
-				&:last-child{
-					margin-bottom: 20px;
-				}
-			}
-			.control-group.radio_buttons label.radio_buttons{
-				font-size: 13px;
-				margin-bottom: 10px;
-				&:first-of-type{
-					margin-top: 15px;
-				}
-			}
-			.radio{
-				margin-right: 10px;
-				margin-bottom: 3px;
-			}
-		}
-	}
-
 	.event-contact {
 		a.edit {
 			display: none;
@@ -3381,8 +3334,23 @@ textarea::-webkit-input-placeholder {
 	float: left;
 }
 
-.activity-form{
-
+.data-form-wrapper {
+	.control-group{
+		.segment-total{
+			display: none;
+		}
+		&.error{
+			.input-append{
+				input[type="text"]{
+					border-color: $alert_red !important;
+				}
+				span.add-on{
+					background-color: $alert_red;
+					color: #fff;
+				}
+			}
+		}
+	}
 	.fields-wrapper{
 		&>p{
 			color: $user_menu;
@@ -5588,7 +5556,6 @@ body.campaigns{
 			}
 			.segment-error-label {
 				margin-bottom: 0;
-				min-height: 22px;
 				display: block;
 			}
 			.help-inline {
@@ -5596,12 +5563,12 @@ body.campaigns{
 				padding-left: 5px;
 				&.segment-title-label, &.segment-error-label {
 					padding-left: 0;
-				}
-			}
-			.control-group.percentage {
-				span {
-					&.ok-message span {
-						display: none;
+					display:block;
+					&:after {
+						display: table;
+						content: "";
+						line-height: 0;
+						clear: both;
 					}
 				}
 			}

@@ -8,17 +8,17 @@
     p= "You are going to merge the following #{@kpis.count} KPIs:"
     table style="width:300px"
       tr
-        td 
+        td
           b Name
-        td 
+        td
           b # Campaigns
       - @kpis.each do |kpi|
         tr
           td= link_to kpi.name, admin_kpi_path(kpi)
-          td= CampaignFormField.where(kpi_id: kpi).count
+          td= FormField.where(fieldable_type: 'Campaign', kpi_id: kpi).count
 
   fieldset.inputs
-    legend 
+    legend
       span Process summary
 
 
@@ -26,7 +26,7 @@
     - if ['count', 'percentage'].include?(@kpis.first.kpi_type) && @kpis.any?{|k| (segments & k.kpis_segments.map{|s| s.text.downcase.strip }).count != segments.count}
       b WARNING!! Not all KPIs have the same segments that the others. If you proceed with the merge some answers can be lost!!
 
-    p In case a campaign have more than one of those KPIs assigned, we need to know what KPI's values should be keeped if it happens that a event have values for more than one of those KPIs.  
+    p In case a campaign have more than one of those KPIs assigned, we need to know what KPI's values should be keeped if it happens that a event have values for more than one of those KPIs.
     - @campaigns.each do |campaign|
       ol
         li.string.input.required.stringish
@@ -42,7 +42,7 @@
           = link_to 'Export', export_duplicated_data_admin_kpis_path(campaign_id: campaign.id, kpis: kpis.map(&:id), format: :csv) if kpis.length > 1
 
   fieldset.inputs
-    legend 
+    legend
       span Resulting KPI's info
     ol
       li.string.input.required.stringish
@@ -52,7 +52,7 @@
         input id="kpi_name" name="merge[name]" type="text" value="#{@kpis.first.name}"
 
       li.string.input.required.stringish
-        label.label for="kpi_description" 
+        label.label for="kpi_description"
           = "Description"
           abbr title="required" *
         textarea id="kpi_description" name="merge[description]"= @kpis.detect{|k| k.description.present? }.try(:description)

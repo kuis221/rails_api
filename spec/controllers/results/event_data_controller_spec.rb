@@ -190,25 +190,34 @@ describe Results::EventDataController do
 
     it "should correctly include the segments for the percentage kpis" do
       kpi = FactoryGirl.build(:kpi, company: @company, kpi_type: 'percentage', name: 'My KPI')
-      kpi.kpis_segments.build(text: 'Uno')
-      kpi.kpis_segments.build(text: 'Dos')
+      seg1 = kpi.kpis_segments.build(text: 'Uno')
+      seg2 = kpi.kpis_segments.build(text: 'Dos')
       kpi.save
-      campaign.add_kpi kpi
 
-      event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
-      results = event.result_for_kpi(kpi)
-      results.first.value = '63'
-      results.last.value = '27'
-      event.save
+      another_kpi = FactoryGirl.build(:kpi, company: @company, kpi_type: 'number', name: 'My Other KPI')
+      campaign.add_kpi kpi
+      campaign.add_kpi another_kpi
+
+      expect{
+        event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '27'}
+        expect(event.save).to be_true
+
+        event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = nil
+        event.result_for_kpi(another_kpi).value = 134
+        expect(event.save).to be_true
+      }.to change(FormFieldResult, :count).by(3)
 
       Sunspot.commit
 
       expect { get 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
+        expect(rows.count).to eql 3
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('MY KPI: UNO', 'MY KPI: DOS')
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('63', '27')
+        expect(rows[2].elements.to_a('Cell/Data').map{|d| d.text }).to include('134')
       end
     end
   end

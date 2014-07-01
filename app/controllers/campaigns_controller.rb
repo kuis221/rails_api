@@ -12,7 +12,7 @@ class CampaignsController < FilteredController
 
   def update_post_event_form
     attrs = params[:fields].dup
-    attrs.each{|index, field| normalize_brands(field[:options][:brands]) if field[:options].present? && field[:options][:brands].present? }
+    attrs.each{|index, field| normalize_brands(field[:settings][:brands]) if field[:settings].present? && field[:settings][:brands].present? }
     resource.form_fields_attributes = attrs
     resource.save
     render text: 'OK'

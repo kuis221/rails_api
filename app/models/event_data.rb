@@ -37,17 +37,19 @@ class EventData < ActiveRecord::Base
 
   def update_data
     return if Kpi.impressions.nil?
-    results = event.results
-    self.impressions  = event.result_for_kpi(Kpi.impressions).value.to_i
-    self.interactions = event.result_for_kpi(Kpi.interactions).value.to_i
-    self.samples      = event.result_for_kpi(Kpi.samples).value.to_i
-    self.spent = event.event_expenses.sum(:amount)
+    e = Event.find(event_id)
+    results = e.results
+    [:impressions, :interactions, :samples].each do |kpi_name|
+      result = e.result_for_kpi(Kpi.send(kpi_name))
+      self.send("#{kpi_name}=",  result.value.to_i) unless result.nil?
+    end
+    self.spent = e.event_expenses.sum(:amount)
 
     #For gender and ethnicity
     [:gender, :ethnicity].each do |kpi|
       segments = Kpi.send(kpi).try(:kpis_segments)
-      result = event.result_for_kpi(Kpi.send(kpi))
-      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[],s.id).to_f)} if segments
+      result = e.result_for_kpi(Kpi.send(kpi))
+      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[], s.id.to_s).to_f) if result.value.has_key?(s.id.to_s)} if result.present? && segments
     end
 
     self

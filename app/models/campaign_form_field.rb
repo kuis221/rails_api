@@ -27,8 +27,6 @@ class CampaignFormField < ActiveRecord::Base
 
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
-  scope :for_event_data, lambda{ joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
-
   # For field - sections relationship
   has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
   accepts_nested_attributes_for :fields
@@ -66,12 +64,6 @@ class CampaignFormField < ActiveRecord::Base
       end
     when 'percentage'
       'FormField::Percentage'
-    when 'text'
-      'FormField::Text'
-    when 'text'
-      'FormField::Text'
-    when 'text'
-      'FormField::Text'
     when 'section'
       'FormField::Section'
     end

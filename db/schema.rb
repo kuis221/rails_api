@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140626231648) do
+ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -410,22 +410,6 @@ ActiveRecord::Schema.define(:version => 20140626231648) do
 
   add_index "event_expenses", ["event_id"], :name => "index_event_expenses_on_event_id"
 
-  create_table "event_results", :force => true do |t|
-    t.integer  "form_field_id"
-    t.integer  "event_id"
-    t.integer  "kpis_segment_id"
-    t.text     "value"
-    t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
-    t.integer  "kpi_id"
-  end
-
-  add_index "event_results", ["event_id", "form_field_id"], :name => "index_event_results_on_event_id_and_form_field_id"
-  add_index "event_results", ["event_id"], :name => "index_event_results_on_event_id"
-  add_index "event_results", ["form_field_id"], :name => "index_event_results_on_form_field_id"
-  add_index "event_results", ["kpi_id"], :name => "index_event_results_on_kpi_id"
-
   create_table "events", :force => true do |t|
     t.integer  "campaign_id"
     t.integer  "company_id"
@@ -476,6 +460,8 @@ ActiveRecord::Schema.define(:version => 20140626231648) do
 
   add_index "form_field_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
   add_index "form_field_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
+  add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], :name => "index_ff_results_on_resultable_and_form_field_id"
+  add_index "form_field_results", ["resultable_id", "resultable_type"], :name => "index_form_field_results_on_resultable_id_and_resultable_type"
 
   create_table "form_fields", :force => true do |t|
     t.integer  "fieldable_id"

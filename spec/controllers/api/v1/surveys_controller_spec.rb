@@ -13,7 +13,7 @@ describe Api::V1::SurveysController do
 
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
-      campaign.add_kpi Kpi.surveys
+      campaign.update_attribute(:enabled_modules, ['surveys'])
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
       expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
@@ -23,7 +23,7 @@ describe Api::V1::SurveysController do
     end
 
     it "returns the list of surveys for the event" do
-      campaign.add_kpi Kpi.surveys
+      campaign.update_attribute(:enabled_modules, ['surveys'])
       survey1 = FactoryGirl.create(:survey, event: event)
       survey2 = FactoryGirl.create(:survey, event: event)
 
@@ -36,13 +36,13 @@ describe Api::V1::SurveysController do
     end
     it "should return error if the campaign doest have the surveys module enabled" do
       get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
-      expect(response.response_code).to eql 402
+      expect(response.response_code).to eql 403
     end
   end
 
   describe "GET 'show'" do
+    before { campaign.update_attribute(:enabled_modules, ['surveys']) }
     it "should return failure for invalid authorization token" do
-      campaign.add_kpi Kpi.surveys
       get :show, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, id: 1, format: :json
       expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
@@ -52,7 +52,6 @@ describe Api::V1::SurveysController do
     end
 
     it "returns the list of surveys for the event" do
-      campaign.add_kpi Kpi.surveys
       survey = FactoryGirl.create(:survey, event: event)
 
       get :show, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, id: survey.id, format: :json
@@ -67,10 +66,10 @@ describe Api::V1::SurveysController do
       brand1 = FactoryGirl.create(:brand)
       brand2 = FactoryGirl.create(:brand)
 
-      # Assign the surveys kpi and brands to the campaign
-      field = campaign.add_kpi(Kpi.surveys)
-      field.options['brands'] = [brand1.id, brand2.id]
-      field.save
+      # Assign the surveys module and brands to the campaign
+      campaign.update_attribute(:enabled_modules, ['surveys'])
+      # field.options['brands'] = [brand1.id, brand2.id]
+      # field.save
 
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample
@@ -129,7 +128,7 @@ describe Api::V1::SurveysController do
           },
         }, format: :json
       }.to_not change(Survey, :count)
-      expect(response.response_code).to eql 402
+      expect(response.response_code).to eql 403
     end
   end
 end

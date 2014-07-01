@@ -7,6 +7,7 @@ feature "Results Event Data Page", js: true, search: true  do
     Warden.test_mode!
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
+    Kpi.create_global_kpis
     sign_in @user
     Place.any_instance.stub(:fetch_place_data).and_return(true)
   end

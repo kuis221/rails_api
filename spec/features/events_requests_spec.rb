@@ -1074,7 +1074,7 @@ feature 'Events section' do
                            FactoryGirl.create(:kpis_segment, text: 'Female') ] )
 
         field = campaign.add_kpi(kpi)
-        field.options[:required] = 'true'
+        field.required = 'false'
         field.save
 
         event = FactoryGirl.create(:event,
@@ -1129,7 +1129,7 @@ feature 'Events section' do
         kpi = FactoryGirl.create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
         field = campaign.add_kpi(kpi)
-        field.options[:required] = 'true'
+        field.required = 'true'
         field.save
 
         event = FactoryGirl.create(:event,

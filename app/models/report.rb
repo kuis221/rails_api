@@ -299,17 +299,22 @@ class Report < ActiveRecord::Base
           value_field = value['field']
           s = add_filters_conditions(add_joins_scopes(base_events_scope, value).group('1'))
           s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && page.present?
+
           if value.kpi.present?
+            # When the value is for a KPI
             if value.kpi.is_segmented?
-              value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-              value.kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.kpis_segment_id=?', value.kpi.id, segment.id).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+              value.kpi.kpis_segments.map do |segment|
+                value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(event_results.hash_value->\''+segment.id.to_s+'\', \'\'), \'0\')::NUMERIC')
+                s.where("form_fields.kpi_id=#{value.kpi.id} and event_results.hash_value ? '#{segment.id}'").
+                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+              end
             elsif value.kpi.kpi_type == 'count'
               if value['aggregate'] == 'count'
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
               else
                 value_field = '0'
               end
-              value.kpi.kpis_segments.map{|segment| s.where('event_results.kpi_id=? and event_results.value=?', value.kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+              value.kpi.kpis_segments.map{|segment| s.where('form_fields.kpi_id=? and event_results.value=?', value.kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
             else
               if Kpi.promo_hours.id == value.kpi.id
                 value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
@@ -323,14 +328,14 @@ class Report < ActiveRecord::Base
                 value_field = value_aggregate_sql(value['aggregate'], 'event_expenses.amount')
               else
                 value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                s = s.where('event_results.kpi_id=?', value.kpi.id)
+                s = s.where('form_fields.kpi_id=?', value.kpi.id)
               end
               s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
             end
           elsif value.form_field.present?
             if value.form_field.is_optionable? && value.form_field.is_hashed_value?
               value.form_field.options.map do |option|
-                value_field = value_aggregate_sql(value['aggregate'], '(activity_results.hash_value->\''+option.id.to_s+'\')::numeric')
+                value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(activity_results.hash_value->\''+option.id.to_s+'\', \'\'), \'0\')::NUMERIC')
                 s.where("activity_results.form_field_id=#{value.form_field.id} and activity_results.hash_value ? '#{option.id}'").
                   select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
               end
@@ -416,14 +421,18 @@ class Report < ActiveRecord::Base
       if fields_without_filters.any?{|v| v.kpi.present? && is_a_result_kpi?(v.kpi)} ||
          filters.any?{|filter| filter.kpi.present? && is_filtered_by?(filter.field) && is_a_result_kpi?(filter.kpi)}
         # Include the form_fields table in the join making sure that only active kpis are counted
-        s = s.joins(:results, {campaign: :form_fields}).where('campaign_form_fields.kpi_id=event_results.kpi_id AND event_results.kpi_id in (?)', field_list.select{|f| f.kpi.present? && is_a_result_kpi?(f.kpi) }.map{|f| f.kpi.id})
+        s = s.joins(campaign: :form_fields).
+              joins('INNER JOIN form_field_results event_results ON form_fields.id=event_results.form_field_id AND event_results.resultable_id = events.id AND event_results.resultable_type = \'Event\'').
+              where(form_fields: {kpi_id: field_list.select{|f| f.kpi.present? && is_a_result_kpi?(f.kpi) }.map{|f| f.kpi.id} })
       end
 
       joined_with_activities = false
       if fields_without_filters.any?{|v| v.form_field.present?} ||
          filters.any?{|filter| filter.form_field.present? && is_filtered_by?(filter.field) }
         # Include the form_fields table in the join making sure that only active form fields results are counted
-        s = s.joins(activities: :results, campaign: {activity_types: :form_fields}).where('activity_results.form_field_id=form_fields.id AND activity_type_campaigns.activity_type_id=activities.activity_type_id AND form_fields.id in (?)', field_list.map{|f| f.form_field.try(:id) }.compact)
+        s = s.joins(:activities, campaign: {activity_types: :form_fields}).
+            joins('INNER JOIN form_field_results activity_results ON activity_results.resultable_id = activities.id AND activity_results.resultable_type = \'Activity\'').
+            where('activity_results.form_field_id=form_fields.id AND activity_type_campaigns.activity_type_id=activities.activity_type_id AND form_fields.id in (?)', field_list.map{|f| f.form_field.try(:id) }.compact)
         joined_with_activities = true
       end
 
@@ -559,11 +568,14 @@ class Report < ActiveRecord::Base
 
       [rows, columns].compact.inject{|sum,x| sum + x }.each do |f|
         if f.kpi.present?
-          s = s.joins("INNER JOIN event_results er_kpi_#{f.kpi.id} ON er_kpi_#{f.kpi.id}.event_id = events.id AND er_kpi_#{f.kpi.id}.kpi_id=#{f.kpi.id}")
+          s = s.
+            joins("INNER JOIN form_field_results er_kpi_#{f.kpi.id} ON er_kpi_#{f.kpi.id}.resultable_type='Event' AND er_kpi_#{f.kpi.id}.resultable_id = events.id").
+            joins("INNER JOIN form_fields ff_kpi_#{f.kpi.id} ON ff_kpi_#{f.kpi.id}.id=er_kpi_#{f.kpi.id}.form_field_id").
+            where("ff_kpi_#{f.kpi.id}.kpi_id=#{f.kpi.id}")
         elsif f.form_field.present?
           s = s.joins(
             "INNER JOIN activities a_field_#{f.form_field.id} ON a_field_#{f.form_field.id}.activitable_type='Event' and a_field_#{f.form_field.id}.activitable_id=events.id " + ( joined_with_activities ? "AND activities.id=a_field_#{f.form_field.id}.id " : '' ) +
-            "INNER JOIN activity_results ar_field_#{f.form_field.id} ON ar_field_#{f.form_field.id}.activity_id = a_field_#{f.form_field.id}.id AND ar_field_#{f.form_field.id}.form_field_id=#{f.form_field.id}"
+            "INNER JOIN form_field_results ar_field_#{f.form_field.id} ON ar_field_#{f.form_field.id}.resultable_type='Activity' AND ar_field_#{f.form_field.id}.resultable_id = a_field_#{f.form_field.id}.id AND ar_field_#{f.form_field.id}.form_field_id=#{f.form_field.id}"
           )
           if f.form_field.is_optionable? && f.form_field.is_hashed_value?
             s = s.joins("
@@ -583,7 +595,8 @@ class Report < ActiveRecord::Base
       filters.each do |filter|
         if filter.kpi.present? && is_filtered_by?(filter.field)
           if is_a_result_kpi?(filter.kpi)
-            s = s.joins("LEFT JOIN event_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.event_id = events.id AND er_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
+            s = s.joins("INNER JOIN form_field_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.resultable_type='Event' AND er_kpi_#{filter.kpi.id}.resultable_id = events.id
+                         INNER JOIN form_fields eff_kpi_#{filter.kpi.id} ON eff_kpi_#{filter.kpi.id}.id=er_kpi_#{filter.kpi.id}.form_field_id AND eff_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
           elsif filter.kpi.id == Kpi.comments.id
             s = s.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) filter_comments_join ON filter_comments_join.commentable_id = events.id")
           elsif filter.kpi.id == Kpi.photos.id
@@ -829,7 +842,7 @@ class Report::Field
         elsif kpi.id == Kpi.promo_hours.id
           result = @report.base_events_scope.select('MAX(events.promo_hours) as max_value, 0 as min_value').first
         else
-          result = @report.base_events_scope.joins(:results).where(event_results: {kpi_id: kpi.id}).select('MAX(event_results.scalar_value) as max_value, MIN(event_results.scalar_value) as min_value').first
+          result = @report.base_events_scope.joins(:results).where(form_field_results: {kpi_id: kpi.id}).select('MAX(form_field_results.scalar_value) as max_value, MIN(form_field_results.scalar_value) as min_value').first
         end
         min = result.min_value.to_f.truncate
         max = result.max_value.to_f.ceil

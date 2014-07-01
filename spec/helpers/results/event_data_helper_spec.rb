@@ -11,26 +11,23 @@ describe Results::EventDataHelper do
   describe "#custom_fields_to_export_values and #custom_fields_to_export_headers" do
     it "returns all the segments results in order" do
       kpi = FactoryGirl.build(:kpi, company: campaign.company, kpi_type: 'percentage', name: 'My KPI')
-      kpi.kpis_segments.build(text: 'Uno')
-      kpi.kpis_segments.build(text: 'Dos')
+      seg1 = kpi.kpis_segments.build(text: 'Uno')
+      seg2 = kpi.kpis_segments.build(text: 'Dos')
       kpi.save
       campaign.add_kpi kpi
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
-      results = event.result_for_kpi(kpi)
-      results.first.value = '88'
-      results.last.value = '22'
-      event.valid?
+      event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '22'}
       expect(event.save).to be_true
 
       helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [88, 22]
+      helper.custom_fields_to_export_values(event).should == ['88', '22']
     end
 
     it "correctly include segmented kpis and non-segmented kpis together" do
       kpi = FactoryGirl.build(:kpi, company_id: campaign.company_id, kpi_type: 'percentage', name: 'My KPI')
-      kpi.kpis_segments.build(text: 'Uno')
-      kpi.kpis_segments.build(text: 'Dos')
+      seg1 = kpi.kpis_segments.build(text: 'Uno')
+      seg2 = kpi.kpis_segments.build(text: 'Dos')
       kpi.save
       campaign.add_kpi kpi
 
@@ -43,18 +40,16 @@ describe Results::EventDataHelper do
 
       helper.custom_fields_to_export_values(event).should == [nil, nil, nil]
 
-      results = event.result_for_kpi(kpi)
-      results.first.value = '66'
-      results.last.value = '34'
+      event.result_for_kpi(kpi).value = {seg1.id.to_s => '66', seg2.id.to_s => '34'}
       event.save
 
-      helper.custom_fields_to_export_values(event).should == [nil, 66, 34]
+      helper.custom_fields_to_export_values(event).should == [nil, '66', '34']
 
       event.result_for_kpi(kpi2).value = '666666'
       event.save
 
       helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [666666, 66, 34]
+      helper.custom_fields_to_export_values(event).should == ['666666', '66', '34']
     end
 
     it "returns nil for the fields that doesn't apply to the event's campaign" do
@@ -77,8 +72,8 @@ describe Results::EventDataHelper do
 
       helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'ANOTHER KPI']
 
-      helper.custom_fields_to_export_values(event).should == [9876, nil]
-      helper.custom_fields_to_export_values(event2).should == [nil, 7654]
+      helper.custom_fields_to_export_values(event).should == ['9876', nil]
+      helper.custom_fields_to_export_values(event2).should == [nil, '7654']
     end
 
     it "returns the segment name for count kpis" do
@@ -104,15 +99,16 @@ describe Results::EventDataHelper do
 
 
     it "returns custom kpis grouped on the same column" do
-      campaign2 = FactoryGirl.create(:campaign)
-      helper.stubs(:params).returns({campaign: [campaign.id,campaign2.id]})
+      campaign2 = FactoryGirl.create(:campaign, company: campaign.company)
+      helper.stubs(:params).returns({campaign: [campaign.id, campaign2.id]})
 
       kpi = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
       kpi2 = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
 
       campaign.add_kpi kpi
-      campaign2.add_kpi kpi
       campaign.add_kpi kpi2
+
+      campaign2.add_kpi kpi
       campaign2.add_kpi kpi2
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
@@ -127,8 +123,8 @@ describe Results::EventDataHelper do
 
       helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'ANOTHER KPI']
 
-      helper.custom_fields_to_export_values(event).should == [1111, 2222]
-      helper.custom_fields_to_export_values(event2).should == [3333, 4444]
+      helper.custom_fields_to_export_values(event).should == ['1111', '2222']
+      helper.custom_fields_to_export_values(event2).should == ['3333', '4444']
     end
   end
 end
