@@ -5,11 +5,11 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('/assets/font/icons.eot');
-	src:font-url('/assets/font/icons.eot?#iefix') format('embedded-opentype'),
-		font-url('/assets/font/icons.woff') format('woff'),
-		font-url('/assets/font/icons.ttf') format('truetype'),
-		font-url('/assets/font/icons.svg#icons') format('svg');
+	src:font-url('icons.eot');
+	src:font-url('icons.eot?#iefix') format('embedded-opentype'),
+		font-url('icons.woff') format('woff'),
+		font-url('icons.ttf') format('truetype'),
+		font-url('icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -47,7 +47,7 @@ body{
 	min-height: 100%;
 	position: relative;
 	&.app-layout{
-		background: $app_bg url('bg.png') repeat-y left;
+		background: $app_bg image-url('bg.png') repeat-y left;
 		padding-top: 41px;
 		padding-bottom: $footer-height;
 		min-height: calc(100% - #{$footer-height + 41px});
@@ -1130,7 +1130,7 @@ p{
 		color: $grey_three;
 	}
 	.brand{
-		background-image: url('brand.svg');
+		background-image: image-url('brand.svg');
 		margin: 0 auto 40px auto;
 		width:180px;
 		height:65px;
@@ -1227,12 +1227,12 @@ footer{
 		.positive{
 			.radio{
 				span{
-					background: url('emotions-sprite.png') !important;
+					background: image-url('emotions-sprite.png') !important;
 					&.checked{
-						background: url('emotions-sprite.png') 0 20px !important;
+						background: image-url('emotions-sprite.png') 0 20px !important;
 					}
 					&:hover{
-						background: url('emotions-sprite.png') 0 40px !important;
+						background: image-url('emotions-sprite.png') 0 40px !important;
 					}
 				}
 			}
@@ -1240,12 +1240,12 @@ footer{
 		.negative{
 			.radio{
 				span{
-					background: url('emotions-sprite.png') 20px 0 !important;
+					background: image-url('emotions-sprite.png') 20px 0 !important;
 					&.checked{
-						background: url('emotions-sprite.png') 20px 20px !important;
+						background: image-url('emotions-sprite.png') 20px 20px !important;
 					}
 					&:hover{
-						background: url('emotions-sprite.png') 20px 40px !important;
+						background: image-url('emotions-sprite.png') 20px 40px !important;
 					}
 				}
 			}
@@ -1253,12 +1253,12 @@ footer{
 		.neutral{
 			.radio{
 				span{
-					background: url('emotions-sprite.png') 40px 0!important;
+					background: image-url('emotions-sprite.png') 40px 0!important;
 					&.checked{
-						background: url('emotions-sprite.png') 40px 20px !important;
+						background: image-url('emotions-sprite.png') 40px 20px !important;
 					}
 					&:hover{
-						background: url('emotions-sprite.png') 40px 40px !important;
+						background: image-url('emotions-sprite.png') 40px 40px !important;
 					}
 				}
 			}
@@ -1596,7 +1596,7 @@ li.dropdown#user_menu{
 				height: 97px;
 				top: -5px;
 				right: 0;
-				background-image: url(active-rounded.png),url(active-rounded.png);
+				background-image: image-url('active-rounded.png'),url(active-rounded.png);
 				background-position: right -5px, right 93px;
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
@@ -1649,7 +1649,7 @@ label{
 		}
 		input.timepicker-filter {
 			width: 70px;
-			background: url('time.svg') no-repeat center left 3px !important;
+			background: image-url('time.svg') no-repeat center left 3px !important;
 			padding-left:20px;
 			text-align: right;
 			border: 1px solid $user_menu;
@@ -2979,7 +2979,7 @@ ul.kpis-list{
 }
 div.loading-spinner, li.loading-spinner {
 	display:block;
-	background: #fff url(/assets/loading.gif) center center no-repeat;
+	background: #fff image-url('loading.gif') center center no-repeat;
 	height: 30px;
 	width: 100%;
 	clear: both;
@@ -2990,7 +2990,7 @@ div.loading-spinner, li.loading-spinner {
 .search-filter-label,
 input.search-query {
 	background-color: $brand !important;
-	background-image: url('search.svg');
+	background-image: image-url('search.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
 	border:$brand;
@@ -3490,7 +3490,7 @@ textarea::-webkit-input-placeholder {
 				width: 120px;
 			}
 			input[type="date"]{
-				background: url(calendar.svg) no-repeat 3px 8px;
+				background: image-url('calendar.svg') no-repeat 3px 8px;
 				height: 33px;
 				padding: 2px 0 2px 10px;
 				width: 140px;
@@ -3540,13 +3540,13 @@ textarea::-webkit-input-placeholder {
 				height: 27px;
 				width: 120px;
 				&[type="date"]{
-					background: url(calendar.svg) no-repeat 3px 8px;
+					background: image-url('calendar.svg') no-repeat 3px 8px;
 					height: 33px;
 					padding: 2px 0 2px 10px;
 					width: 140px;
 				}
 				&[type="time"]{
-					background: url(time.svg) no-repeat 3px 8px;
+					background: image-url('time.svg') no-repeat 3px 8px;
 				}
 			}
 		}
@@ -4203,7 +4203,7 @@ ul.thumbnails{
 
 	.image-loading-container {
 		height: 120px;
-		background: #fff url(/assets/loading.gif) center center no-repeat;
+		background: #fff image-url('loading.gif') center center no-repeat;
 	}
 
 }
@@ -4381,7 +4381,7 @@ ul{
 }
 
 .fancybox-close{
-	background-image: url('carousel-close.svg') !important;
+	background-image: image-url('carousel-close.svg') !important;
 	background-repeat: no-repeat !important;
 	height: 25px !important;
 	right: -13px !important;
@@ -4397,11 +4397,11 @@ ul{
 }
 
 .fancybox-next span{
-	background-image: url('carousel-next.svg') !important;
+	background-image: image-url('carousel-next.svg') !important;
 }
 
 .fancybox-prev span{
-	background-image: url('carousel-previous.svg') !important;
+	background-image: image-url('carousel-previous.svg') !important;
 }
 
 // ROLES DETAILS
@@ -4639,7 +4639,7 @@ body.roles{
 	}
 	input[type="text"]#venue-search-term, #venue-search-location{
 		background-color: white !important;
-		background-image: url('search2.svg');
+		background-image: image-url('search2.svg');
 		background-position: center right;
 		background-repeat: no-repeat;
 		border: 1px solid $user_menu;
@@ -5352,7 +5352,7 @@ svg{
 
 .gva{
 	.loading-spinner {
-		background: white url(/assets/loading-circle.gif) center center no-repeat;
+		background: white image-url('loading-circle.gif') center center no-repeat;
 	}
 }
 
@@ -5383,7 +5383,7 @@ svg{
 		}
 	}
 	.loading-spinner{
-		background: #fff url(/assets/loading-circle.gif) center center no-repeat;
+		background: #fff image-url('loading-circle.gif') center center no-repeat;
 		display: block;
 		height: 50px;
 	}
@@ -7456,7 +7456,7 @@ table.table.likert-scale-table {
 	padding: 0;
 	width: 20px;
 	span{
-		background: url('radio-unchecked.svg') no-repeat center center !important;
+		background: image-url('radio-unchecked.svg') no-repeat center center !important;
 		display: block;
 		height: 25px;
 		width: 25px;
@@ -7469,7 +7469,7 @@ table.table.likert-scale-table {
 		}
 	}
 	span.checked{
-		background: url('radio-checked.svg') no-repeat center center !important;
+		background: image-url('radio-checked.svg') no-repeat center center !important;
 		display: block;
 		height: 25px;
 		margin: 0;
