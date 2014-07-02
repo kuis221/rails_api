@@ -52,6 +52,7 @@ gem 'kgio'
 gem 'activerecord-postgres-hstore'
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
+gem 'font_assets'
 
 #For memory debugging
 gem "oink"
