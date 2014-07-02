@@ -4601,16 +4601,6 @@ body.roles{
 
 	.venue-review{
 		margin-top: 20px;
-		i{
-			font-size: 16px;
-			&.icon-star{
-				color: $stars;
-			}
-			&.icon-star-empty:before{
-				color:$user_menu;
-				content: "\f005";
-			}
-		}
 		.review-author-name{
 			margin-bottom: 5px;
 		}
@@ -7369,7 +7359,6 @@ table td.sub-level-1 {
 
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
 	display: block;
-	font-size: 16px;
 	min-height: 20px;
 	margin: 0 0 20px 30px;
 	width: 380px;
