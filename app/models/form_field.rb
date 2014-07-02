@@ -92,7 +92,7 @@ class FormField < ActiveRecord::Base
     if kpi_id.present?
       kpi.kpis_segments.map{|s| [s.text, s.id]}
     else
-      self.options.order(:ordering).map{|o| [o.name, id: o.id]}
+      self.options.order(:ordering).map{|o| [o.name, o.id]}
     end
   end
 

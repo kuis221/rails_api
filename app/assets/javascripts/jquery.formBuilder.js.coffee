@@ -1,5 +1,6 @@
 $.widget 'nmk.formBuilder', {
 	options: {
+		resourceName: null
 	},
 	_create: () ->
 		@modified = false
@@ -36,8 +37,15 @@ $.widget 'nmk.formBuilder', {
 					@formWrapper.find('.clearfix').appendTo(@formWrapper)
 				over: (event, ui) =>
 					@formWrapper.addClass 'sorting'
+					@element.find('.empty-form-legend').hide()
+
 				out: (event, ui) =>
 					@formWrapper.removeClass 'sorting'
+					# if @fieldsWrapper.find('.find').length is 0
+					# 	@element.find('.empty-form-legend').show()
+
+				receive: () =>
+					@element.find('.empty-form-legend').hide()
 
 		if @options.canEdit
 			@fieldsWrapper.find('.field').draggable
@@ -71,12 +79,16 @@ $.widget 'nmk.formBuilder', {
 		true
 
 	_loadForm: () ->
+		@element.find('.empty-form-legend').hide()
 		$.getJSON "#{@options.url}", (response) =>
 			@formWrapper.find('.field').remove()
 			@modified = false
 			@_updateSaveButtonState()
-			for field in response.form_fields
-				@_addFieldToForm field
+			if response.form_fields.length > 0
+				for field in response.form_fields
+					@_addFieldToForm field
+			else
+				@element.find('.empty-form-legend').show()
 
 	_addFieldToForm: (field) ->
 		fieldHtml = @buildField(field)
@@ -102,10 +114,12 @@ $.widget 'nmk.formBuilder', {
 	saveForm: (data) ->
 		$('#save-report').data('text', $('#save-report').text()) unless $('#save-report').data('text')?
 		$('#save-report').text('Saving...').attr 'disabled', true
+		params = {}
+		params[@options.resourceName] = data
 		$.ajax {
 			url: "#{@options.url}",
 			method: 'put',
-			data: {activity_type: data},
+			data: params,
 			success: (response) =>
 				if response.result isnt 'OK'
 					bootbox.alert response.message
@@ -229,6 +243,8 @@ FormField = Class.extend {
 	getSaveAttributes: () ->
 		if @attributes._destroy? && @attributes._destroy is true
 			{id: @attributes.id, _destroy: true }
+		else if @attributes.kpi_id 
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering}
 		else
 			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 

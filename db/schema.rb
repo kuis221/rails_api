@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
-  add_extension "postgres_fdw"
   add_extension "tablefunc"
 
   create_table "active_admin_comments", :force => true do |t|
@@ -463,8 +462,7 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
   add_index "form_field_options", ["form_field_id", "option_type"], :name => "index_form_field_options_on_form_field_id_and_option_type"
   add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
 
-  create_table "form_field_results", :id => false, :force => true do |t|
-    t.integer  "id",                                                              :null => false
+  create_table "form_field_results", :force => true do |t|
     t.integer  "form_field_id"
     t.text     "value"
     t.datetime "created_at",                                                      :null => false

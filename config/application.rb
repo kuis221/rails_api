@@ -73,7 +73,6 @@ module Brandscopic
       jquery.placesAutocomplete.js
       reports.css jquery.reportBuilder.js jquery.reportTableScroller.js
       form_builder.css jquery.formBuilder.js
-      jquery.campaignFormBuilder.js
       ]
 
     config.cache_store = :dalli_store

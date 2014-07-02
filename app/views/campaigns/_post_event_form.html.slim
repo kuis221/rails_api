@@ -1,12 +1,34 @@
-#post-event-form-builder
-  div#form-wrapper
+.form-builder-wrapper
+  .form-wrapper.data-form-wrapper
     div.empty-form-legend
       b No Fields! You should add a field.
       p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
 
+  .fields-wrapper
+    p Drag fields to add
+    .field data-type="Dropdown" Dropdown
+    .field data-type="Section" Section
+    .field data-type="Checkbox" Checkboxes
+    .field data-type="Photo" Photo
+    .field data-type="Radio" Multiple Choice
+    .field data-type="Attachment" Attachment
+    .field data-type="Percentage" Percent
+    .field data-type="Summation" Summation
+    .field data-type="Number" Number
+    .field data-type="Date" Date
+    .field data-type="Currency" Price
+    .field data-type="Time" Time
+    .field data-type="Text" Single line text
+    .field data-type="LikertScale" Likert scale
+    .field data-type="TextArea" Paragraph
+    .field data-type="Brand" Brand
+    .field data-type="Marque" Marque
+
 javascript:
   jQuery(function(){
-    CampaignFormBuilder.init({
-      url: '#{campaign_path(resource)}'
+    $('.form-builder-wrapper').formBuilder({
+      url: '#{campaign_path(resource, format: :json)}',
+      resourceName: 'campaign',
+      canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'}
     });
   });

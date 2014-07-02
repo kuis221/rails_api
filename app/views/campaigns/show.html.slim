@@ -1,5 +1,7 @@
 - content_for :footer
-  = javascript_include_tag "jquery.campaignFormBuilder"
+  = javascript_include_tag "jquery.formBuilder"
+- content_for :head
+  = stylesheet_link_tag "form_builder"
 
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing campaign details. Click to close.")

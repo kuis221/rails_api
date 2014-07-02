@@ -1,5 +1,6 @@
 class CampaignsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :new_date_range]
+  respond_to :json, only: [:show, :update]
 
   include DeactivableHelper
 
@@ -10,12 +11,12 @@ class CampaignsController < FilteredController
 
   layout false, only: :kpis
 
-  def update_post_event_form
-    attrs = params[:fields].dup
-    attrs.each{|index, field| normalize_brands(field[:settings][:brands]) if field[:settings].present? && field[:settings][:brands].present? }
-    resource.form_fields_attributes = attrs
-    resource.save
-    render text: 'OK'
+  def update
+    update! do |success, failure|
+      success.js { render }
+      success.json { render json: {result: 'OK' } }
+      failure.json { render json: {result: 'KO', message: resource.errors.full_messages.join('<br />') } }
+    end
   end
 
   def autocomplete
@@ -52,14 +53,13 @@ class CampaignsController < FilteredController
     end
   end
 
-    def remove_activity_type
-      activity_type = current_company.activity_types.find(params[:activity_type_id])
-      if resource.activity_types.include?(activity_type)
-        resource.activity_types.delete(activity_type)
-      else
-        render text: ''
-      end
-
+  def remove_activity_type
+    activity_type = current_company.activity_types.find(params[:activity_type_id])
+    if resource.activity_types.include?(activity_type)
+      resource.activity_types.delete(activity_type)
+    else
+      render text: ''
+    end
   end
 
   def add_activity_type
@@ -110,7 +110,15 @@ class CampaignsController < FilteredController
 
   protected
     def permitted_params
-      params.permit(campaign: [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}])[:campaign]
+      p = [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}]
+      if can?(:view_event_form, Campaign)
+        p.push({form_fields_attributes: [
+            :id, :name, :field_type, :ordering, :required, :_destroy,
+            {settings: [:description]},
+            {options_attributes: [:id, :name, :_destroy, :ordering]},
+            {statements_attributes: [:id, :name, :_destroy, :ordering]}]})
+      end
+      params.permit(campaign: p)[:campaign]
     end
 
     def normalize_brands(brands)

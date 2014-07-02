@@ -254,6 +254,75 @@ describe CampaignsController do
       campaign.name.should == 'Test Campaign'
       campaign.description.should == 'Test Campaign description'
     end
+
+    it "must allow create form fields" do
+      campaign.save
+      expect {
+        expect {
+          put 'update', id: campaign.to_param,
+              campaign: {form_fields_attributes:
+                {id: nil, field_type: 'FormField::Text', name: 'Test Field', ordering: 0, required: true}
+              }, format: :json
+        }.to change(FormField, :count).by(1)
+      }.to_not change(ActivityType, :count)
+      field = FormField.last
+      expect(field.name).to eql 'Test Field'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_true
+      expect(field.type).to eql 'FormField::Text'
+    end
+
+    it "must allow update form fields" do
+      campaign.save
+      field = FactoryGirl.create(:form_field, fieldable: campaign,
+        type: 'FormField::Text', name: 'Test Field',
+        ordering: 0, required: true )
+      expect {
+        expect {
+          put 'update', id: campaign.to_param,
+              campaign: {form_fields_attributes:
+                {id: field.id, field_type: 'FormField::Text', name: 'New name', ordering: 0, required: false}
+              }, format: :json
+        }.to_not change(FormField, :count)
+      }.to_not change(Campaign, :count)
+      field = FormField.last
+      expect(field.name).to eql 'New name'
+      expect(field.ordering).to eql 0
+      expect(field.required).to be_false
+      expect(field.type).to eql 'FormField::Text'
+    end
+
+    it "must allow create form fields with nested options" do
+      campaign.save
+      expect {
+        expect {
+          expect {
+            put 'update', id: campaign.to_param,
+                campaign: {form_fields_attributes:
+                  {id: nil, field_type: 'FormField::Radio', name: 'Radio Field', ordering: 0, required: true,
+                    options_attributes: [{name: 'One Option', ordering: 0}, {name: 'Other Option', ordering: 1}] }
+                }, format: :json
+          }.to change(FormField, :count).by(1)
+        }.to change(FormFieldOption, :count).by(2)
+      }.to_not change(Campaign, :count)
+      field = FormField.last
+      expect(field.options.map(&:name)).to eql ['One Option', 'Other Option']
+    end
+
+    it "must allow remove form fields" do
+      campaign.save
+      field = FactoryGirl.create(:form_field, fieldable: campaign,
+        type: 'FormField::Text', name: 'Test Field',
+        ordering: 0, required: true )
+      expect {
+        expect {
+          put 'update', id: campaign.to_param,
+              campaign: {form_fields_attributes:
+                {id: field.id, _destroy: true}
+              }, format: :json
+        }.to change(FormField, :count).by(-1)
+      }.to_not change(Campaign, :count)
+    end
   end
 
   describe "DELETE 'delete_member'" do
@@ -457,60 +526,6 @@ describe CampaignsController do
       get 'tab', id: campaign.id, tab: 'documents'
       assigns(:campaign).should == campaign
       response.should render_template(:documents)
-    end
-  end
-
-  describe "POST 'update_post_event_form'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
-
-    it "should save the form fields information" do
-      Kpi.create_global_kpis
-      expect {
-        post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: nil, name: 'Test 1', ordering: 1, kpi_id: Kpi.impressions, field_type: 'FormField::Number'},
-          '1' => {id: nil, name: 'Test 2', ordering: 2, kpi_id: Kpi.interactions , field_type: 'FormField::Number'}
-        }
-      }.to change(FormField, :count).by(2)
-
-      campaign.form_fields.count.should == 2
-
-      response.should be_success
-      response.body.should == 'OK'
-    end
-
-    it "should update the form fields information" do
-      Kpi.create_global_kpis
-      field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: Kpi.impressions, ordering: 1, name: 'impressions')
-      expect {
-        post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: field.id, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions}
-        }
-      }.to_not change(FormField, :count)
-
-      campaign.form_fields.count.should == 1
-
-      field.reload.name.should == '# Impressions'
-
-      response.should be_success
-      response.body.should == 'OK'
-    end
-
-    it "should normalize brands" do
-      Kpi.create_global_kpis
-      brand = FactoryGirl.create(:brand, name: 'A brand')
-      expect {
-        post 'update_post_event_form', id: campaign.id, fields: {
-          '0' => {id: nil, name: '# Impressions', ordering: 1, kpi_id: Kpi.impressions, field_type: 'FormField::Number', settings: {brands: ['A brand', 'Another brand']}}
-        }
-      }.to change(Brand, :count).by(1)
-
-      campaign.form_fields.count.should == 1
-
-      campaign.form_fields.first.settings['brands'].count.should == 2
-      campaign.form_fields.first.settings['brands'].should include(brand.id)
-
-      response.should be_success
-      response.body.should == 'OK'
     end
   end
 

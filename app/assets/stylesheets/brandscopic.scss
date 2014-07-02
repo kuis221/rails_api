@@ -4490,28 +4490,10 @@ body.roles{
 	}
 }
 
-// CAMPAIGNS POST EVENT FORM BUILDER
 
-#post-event-form-builder {
-	border:0 !important;
-	width: 100% !important;
-	#droppable {
-		min-height: 100px;
-	}
-	.widget-list {
-		.draggable {
-			height: 60px;
-			border: 1px solid #ccc;
-		}
-		.widget-media {
-
-		}
-	}
+.ui-rangeSlider-label{
+	padding: 13px 10px 7px 8px !important;
 }
-
-	.ui-rangeSlider-label{
-		padding: 13px 10px 7px 8px !important;
-	}
 
 // VENUES
 
@@ -5771,14 +5753,6 @@ body.campaigns{
 			left: -30px;
 			margin: 0 13px 0 4px;
 			top: 15px;
-		}
-	}
-
-	#post-event-form-builder{
-		legend{
-			border:0;
-			color: $text;
-			font-size: 16px;
 		}
 	}
 

@@ -15,6 +15,11 @@ feature "Campaigns", js: true, search: true do
   end
 
   feature "/campaigns" do
+    it_behaves_like "a fieldable element" do
+      let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+      let(:fieldable_path) { campaign_path(fieldable) }
+    end
+
     feature "GET index" do
       scenario "should display a table with the campaigns" do
         campaigns = [

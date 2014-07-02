@@ -100,7 +100,7 @@ class Campaign < ActiveRecord::Base
   # Attached Documents
   has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
 
-  accepts_nested_attributes_for :form_fields
+  accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
     state :active, :initial => true
