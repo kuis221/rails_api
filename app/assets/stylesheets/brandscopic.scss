@@ -5,11 +5,11 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:url('/assets/font/icons.eot');
-	src:url('/assets/font/icons.eot?#iefix') format('embedded-opentype'),
-		url('/assets/font/icons.woff') format('woff'),
-		url('/assets/font/icons.ttf') format('truetype'),
-		url('/assets/font/icons.svg#icons') format('svg');
+	src:font-url('/assets/font/icons.eot');
+	src:font-url('/assets/font/icons.eot?#iefix') format('embedded-opentype'),
+		font-url('/assets/font/icons.woff') format('woff'),
+		font-url('/assets/font/icons.ttf') format('truetype'),
+		font-url('/assets/font/icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
