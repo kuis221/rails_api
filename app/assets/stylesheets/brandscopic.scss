@@ -6,7 +6,7 @@ $footer-height: 35px;
 @font-face {
 	font-family: 'icons';
 	src:font-url('icons.eot');
-	src:font-url('icons.eot?#iefix') format('embedded-opentype'),
+	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
 		font-url('icons.woff') format('woff'),
 		font-url('icons.ttf') format('truetype'),
 		font-url('icons.svg#icons') format('svg');
