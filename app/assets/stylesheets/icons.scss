@@ -273,11 +273,6 @@ a, i, .btn, span{
 	font-size: 15px;
 }
 
-.icon-star-wired:before{
-	content: "\e61b";
-	font-size: 15px;
-}
-
 .calendar-data:before{
 	content: "\e022";
 	font-size: 19px;
@@ -305,6 +300,20 @@ a, i, .btn, span{
 .time-data:before{
 	content: "\e01f";
 	font-size: 22px;
+}
+
+#brands-list{
+	.brand{
+		position: relative;
+		&:before{
+			content: "\e61b";
+			font-size: 18px;
+			color: $user_menu;
+			position: absolute;
+			top: 9px;
+			left: 0px;
+		}
+	}
 }
 
 .description-data, .time-data{
