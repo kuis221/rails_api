@@ -210,7 +210,7 @@ module ApplicationHelper
 
   def full_image_path(img_path)
     path = image_path(img_path)
-    path = request.protocol + request.host_with_port + path unless path.include?('//:')
+    path = request.protocol + request.host_with_port + path unless ActionController::Base.asset_host
     path
   end
 end
