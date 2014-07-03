@@ -186,7 +186,7 @@ ul.select2-results{
 					margin-left: 21px;
 					width: 110px;
 					input[type="text"]{
-						background: url('calendar.svg') no-repeat left !important;
+						background: image-url('calendar.svg') no-repeat left !important;
 						text-align: right;
 						width: 110px;
 					}
@@ -274,7 +274,7 @@ ul.select2-results{
 
 			.staff-table, .brands-table, .campaigns-modals, .places-modals, .contacts-modals{
 				input[type="text"]{
-					background-image: url('search2.svg') !important;
+					background-image: image-url('search2.svg') !important;
 					background-position: center right;
 					background-repeat: no-repeat;
 					-webkit-border-radius: 20px;
@@ -543,7 +543,7 @@ ul.select2-results{
 				padding: 0;
 				width: 20px;
 				span{
-					background: url('radio-unchecked.svg') no-repeat center center !important;
+					background: image-url('radio-unchecked.svg') no-repeat center center !important;
 					display: block;
 					height: 25px;
 					width: 25px;
@@ -563,7 +563,7 @@ ul.select2-results{
 					}
 				}
 				span.checked{
-					background: url('radio-checked.svg') no-repeat center center !important;
+					background: image-url('radio-checked.svg') no-repeat center center !important;
 					display: block;
 					height: 25px;
 					margin: 0;
@@ -814,11 +814,11 @@ ul.select2-results{
 			input[type="text"]{
 				color: $text !important;
 				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
-					background: url('calendar.svg') no-repeat left !important;
+					background: image-url('calendar.svg') no-repeat left !important;
 					text-align: right;
 				}
 				&#event_start_time, &#event_end_time, &.field-type-time {
-					background: url('time.svg') no-repeat left !important;
+					background: image-url('time.svg') no-repeat left !important;
 					padding-left:10px;
 					text-align: center;
 				}
@@ -1000,7 +1000,7 @@ ul.select2-results{
 		width: 92% !important;
 	}
 	.chzn-single div b {
-	background: url('triangle-down.svg') no-repeat 2px 15px !important;
+	background: image-url('triangle-down.svg') no-repeat 2px 15px !important;
 	}
 }
 
@@ -1328,7 +1328,7 @@ div#spin{
 				top: 38px !important;
 			}
 			.chzn-choices{
-				background: url('arrow.svg') no-repeat right !important;
+				background: image-url('arrow.svg') no-repeat right !important;
 				padding-top: 3px !important;
 				padding-bottom: 3px !important;
 				li.search-choice{
@@ -1336,7 +1336,7 @@ div#spin{
 					background-color: $brand !important;
 					color: white !important;
 					.search-choice-close{
-						background: url('cross.png') no-repeat right !important;
+						background: image-url('cross.png') no-repeat right !important;
 						top: 5px !important;
 						right: 4px !important;
 					}
@@ -1409,7 +1409,7 @@ div#spin{
 			z-index: 99999;
 			&:before{
 				content:"";
-				background:url('close-video.png') no-repeat right !important;
+				background: image-url('close-video.png') no-repeat right !important;
 				height: 30px;
 				width: 30px;
 			}

@@ -39,7 +39,7 @@
 				background-color: $app_bg;
 				border: 1px solid $app_bg;
 				a.close {
-					background: url(more_less_sprite.png) -40px 0 no-repeat;
+					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
 					display: inline-block;
 					width: 20px;
 					height: 20px;
@@ -259,13 +259,13 @@
 				top:6px;
 			}
 			&.add-option-btn{
-				background: url(more_less_sprite.png) no-repeat 0 0 ;
+				background: image-url('more_less_sprite.png') no-repeat 0 0 ;
 				&:hover{
 					background-position: 0 -20px;
 				}
 			}
 			&.remove-option-btn{
-				background: url(more_less_sprite.png) no-repeat -20px 0 ;
+				background: image-url('more_less_sprite.png') no-repeat -20px 0 ;
 				&:hover{
 					background-position: -20px -20px;
 				}

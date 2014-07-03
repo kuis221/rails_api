@@ -7,7 +7,7 @@
   h5 Getting Started: Photos Report
   a.close.btn-dismiss-alert href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/qDh7f0KYCRo?rel=0" data-width="640" data-height="360"
-    img src="/assets/video_arrow.png" /
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
       'Want to see what happened at your event? Scroll though the pictures below or use the right sidebar filter to target specific campaigns and events. Click on the video to the left for a quick overview or check out our
@@ -22,7 +22,7 @@
   = resource_details_bar("You are viewing Photos report. Click to close.")
   .tab-content
     #list-view.tab-pane.active
-      #list-tools.row-fluid 
+      #list-tools.row-fluid
         .pull-right
           a.btn.download id="download-photos-button" href="" title="Download"
           #download-photos-counter-container

@@ -138,6 +138,8 @@ GEM
     faker (1.1.2)
       i18n (~> 0.5)
     fattr (2.2.1)
+    font_assets (0.1.11)
+      rack
     formtastic (2.2.1)
       actionpack (>= 3.0)
     fuubar (1.2.1)
@@ -432,6 +434,7 @@ DEPENDENCIES
   email_spec (>= 1.4.0)
   factory_girl_rails (~> 4.3)
   faker
+  font_assets
   fuubar
   gctools
   geocoder

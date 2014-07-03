@@ -138,7 +138,7 @@ ul.reports-list {
 			display: inline-block;
 		}
 		.icon-share{
-			background-image: url("share.svg");
+			background-image: image-url('share.svg');
 			background-size: 35%;
 			background-repeat: no-repeat;
 			background-position: 20px 7px;
@@ -151,7 +151,7 @@ ul.reports-list {
 	}
 
 	.report-overlay {
-		background: url(/assets/loading-circle.gif) no-repeat center center;
+		background: image-url('loading-circle.gif') no-repeat center center;
 	}
 	.report-placeholder {
 		border: 1px solid #ccc;
@@ -185,7 +185,7 @@ ul.reports-list {
 		border: 1px solid $user_menu;
 		height: 37px;
 		width: 100%;
-		background-image: url("search2.svg") !important;
+		background-image: image-url('search2.svg') !important;
 		background-position: center right;
 		background-repeat: no-repeat;
 		-webkit-border-radius: 20px;
@@ -500,7 +500,7 @@ ul.reports-list {
 				height: 34px !important;
 				width: auto !important;
 				div b{
-					background: url("triangle-down.svg") no-repeat 0px 13px !important;
+					background: image-url('triangle-down.svg') no-repeat 0px 13px !important;
 				}
 				span{
 					line-height: 32px;
