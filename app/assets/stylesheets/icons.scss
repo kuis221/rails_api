@@ -264,6 +264,12 @@ a, i, .btn, span{
 	content: "\e01a";
 }
 
+.icon-drag:before{
+	color: $user_menu;
+	content: "\e61c";
+	font-size: 20px;
+}
+
 .icon-download:before{
 	content: "\e00b";
 }
