@@ -332,36 +332,6 @@ a{
 input{
 	font-family: $baseFontFamily;
 }
-select,
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="tel"],
-input[type="url"],
-input[type="search"],
-input[type="color"],
-.uneditable-input {
-	background-color: $grey_one !important;
-	border: $grey_one;
-	font-size: 13px;
-	height: 33px;
-	margin-bottom: 0;
-	width: 260px;
-	-webkit-box-shadow: none;
-	box-shadow:0;
-	&:focus{
-		box-shadow: none !important;
-		outline: none;
-	}
-}
 
 input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-shadow: none !important;
@@ -505,6 +475,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 .alert-danger, .alert-error {
 	background-color: $buttons;
 	color: white;
+	margin: 0 10px 0 90px;
 }
 
 .collection-list-description {
@@ -952,6 +923,24 @@ p{
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
 	form {
+		input[type="text"],
+		input[type="password"],
+		input[type="email"],
+		.uneditable-input {
+			background-color: $grey_one !important;
+			border: $grey_one;
+			font-size: 13px;
+			height: 33px;
+			margin-bottom: 12px;
+			width: 260px;
+			-webkit-box-shadow: none;
+			box-shadow:0;
+			&:focus{
+				box-shadow: none !important;
+				outline: none;
+			}
+		}
+
 		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
 			background-color: #fff !important;
 		}
