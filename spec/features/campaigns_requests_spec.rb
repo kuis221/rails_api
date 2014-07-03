@@ -235,83 +235,75 @@ feature "Campaigns", js: true, search: true do
           expect(page).to have_content('Gender')
         end
       end
+
+      scenario "Add a new KPI to campaign and set the goal" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+
+        visit campaign_path(campaign)
+
+        tab = open_tab('KPIs')
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          click_js_link 'Create New KPI'
+        end
+
+        within visible_modal do
+          fill_in 'Name', with: 'My Custom KPI'
+          fill_in 'Description', with: 'My custom KPI description'
+          select_from_chosen('Count', from: 'Kpi type', match: :first)
+          click_js_link 'Add a segment'
+          fill_in 'Segment name', with: 'Option 1'
+          select_from_chosen('Dropdown', from: 'Capture mechanism', match: :first)
+          click_js_button 'Create'
+        end
+        ensure_modal_was_closed
+
+        kpi = Kpi.last
+        within "#global-kpis" do
+          expect(page).to have_content('My Custom KPI')
+          expect(page).to have_content('My custom KPI description')
+          hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
+        end
+
+        within visible_modal do
+          fill_in 'Goal', with: '223311'
+          click_js_button 'Save'
+        end
+
+        ensure_modal_was_closed
+
+        within "#global-kpis" do
+          expect(page).to have_content('223311.0')
+        end
+      end
+
+      scenario "Get errors when create a new KPI without enough segments for the selected capture mechanism" do
+        campaign = FactoryGirl.create(:campaign, company: @company)
+
+        visit campaign_path(campaign)
+
+        click_js_link 'KPIs'
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          click_js_link 'Create New KPI'
+        end
+
+        within visible_modal do
+          fill_in 'Name', with: 'My Custom KPI'
+          fill_in 'Description', with: 'my custom kpi description'
+          select_from_chosen('Count', from: 'Kpi type', match: :first)
+          click_js_link 'Add a segment'
+          fill_in 'Segment name', with: 'Option 1'
+          select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
+          click_js_button 'Create'
+          expect(page).to have_content('You need to add at least 2 segments for the selected capture mechanism')
+        end
+      end
     end
-
-    # feature "Create custom KPIs", search: false do
-
-    #   feature "with a non admin user", search: false do
-    #     let(:company) { FactoryGirl.create(:company) }
-    #     let(:user){ FactoryGirl.create(:user, company: company, role_id: FactoryGirl.create(:non_admin_role, company: company).id) }
-    #     let(:company_user) { user.company_users.first }
-
-    #     scenario "User without permissions cannot add Custom KPIs" do
-    #       company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
-    #       company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
-
-    #       campaign = FactoryGirl.create(:campaign, company: company)
-    #       visit campaign_path(campaign)
-
-    #       expect(page).to_not have_content('Add Custom KPI')
-    #     end
-    #   end
-
-    #   scenario "Add Custom count KPI and set goals" do
-    #     campaign = FactoryGirl.create(:campaign, company: @company)
-    #     visit campaign_path(campaign)
-
-    #     click_js_link 'KPIs'
-
-    #     click_js_link 'Add KPI'
-
-    #     within visible_modal do
-    #       fill_in 'Name', with: 'My Custom KPI'
-    #       fill_in 'Description', with: 'my custom kpi description'
-    #       select_from_chosen('Count', from: 'Kpi type', match: :first)
-    #       click_js_link 'Add a segment'
-    #       fill_in 'Segment name', with: 'Option 1'
-    #       select_from_chosen('Dropdown', from: 'Capture mechanism', match: :first)
-    #       click_js_button 'Create'
-    #     end
-    #     ensure_modal_was_closed
-
-    #     kpi = Kpi.last
-    #     within "#global-kpis" do
-    #       expect(page).to have_content('My Custom KPI')
-    #       hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
-    #     end
-
-    #     within visible_modal do
-    #       fill_in 'Goal', with: '223311'
-    #       click_js_button 'Save'
-    #     end
-
-    #     ensure_modal_was_closed
-
-    #     within "#global-kpis" do
-    #       expect(page).to have_content('223311.0')
-    #     end
-    #   end
-
-    #   scenario "Get errors when add a KPI without enough segments for the selected capture mechanism" do
-    #     campaign = FactoryGirl.create(:campaign, company: @company)
-    #     visit campaign_path(campaign)
-
-    #     click_js_link 'KPIs'
-
-    #     click_js_link 'Add KPI'
-
-    #     within visible_modal do
-    #       fill_in 'Name', with: 'My Custom KPI'
-    #       fill_in 'Description', with: 'my custom kpi description'
-    #       select_from_chosen('Count', from: 'Kpi type', match: :first)
-    #       click_js_link 'Add a segment'
-    #       fill_in 'Segment name', with: 'Option 1'
-    #       select_from_chosen('Radio', from: 'Capture mechanism', match: :first)
-    #       click_js_button 'Create'
-    #       expect(page).to have_content('You need to add at least 2 segments for the selected capture mechanism')
-    #     end
-    #   end
-    # end
 
     feature "Edit custom KPIs", search: false do
 
