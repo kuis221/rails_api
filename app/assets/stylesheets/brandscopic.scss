@@ -5,11 +5,11 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('font/icons.eot');
-	src:url(font-path('font/icons.eot') + '?#iefix') format('embedded-opentype'),
-		font-url('font/icons.woff') format('woff'),
-		font-url('font/icons.ttf') format('truetype'),
-		font-url('font/icons.svg#icons') format('svg');
+	src:font-url('icons.eot');
+	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
+		font-url('icons.woff') format('woff'),
+		font-url('icons.ttf') format('truetype'),
+		font-url('icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -247,13 +247,21 @@ body.events.show{
 			}
 		}
 		#event-custom{
-			label.radio{
-				display: block;
-				font-size: 13px;
-				margin-bottom: 10px;
-				width: auto;
-				&:last-child{
-					margin-bottom: 20px;
+			label{
+				&.radio, &.checkbox{
+					display: block;
+					font-size: 13px;
+					margin-bottom: 10px;
+					padding-left: 0;
+					width: auto;
+					&:last-child{
+						margin-bottom: 20px;
+					}
+				}
+				&.checkbox{
+					.checker{
+						margin-right: 10px;
+					}
 				}
 			}
 			.control-group.radio_buttons label.radio_buttons{
@@ -3579,8 +3587,10 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
+/*-- ATTACHMENT PANEL FOR PHOTOS UPLOAD --*/
+
 .attachment-panel{
-	border: 1px dashed $user_menu;
+	border: 2px dashed $grey_one;
 	border-radius: 4px 4px 4px 4px;
 	color: #C0C0C0;
 	font-size: 14px;
@@ -3588,38 +3598,37 @@ textarea::-webkit-input-placeholder {
 	margin-top: 15px;
 	padding: 20px 30px;
 	text-align: center;
-	width: 267px;
+	height: 150px;
+	width: 240px;
 
-	p{
-		&:first-of-type{
-			padding: 0 20px;
+	&.big{
+		width: 100%;
+	}
+
+	.drag-box{
+		h4, p{
+			color: $user_menu;
+			font-family: $baseFontFamily;
 			text-align: left;
 		}
-		&.divider{
-			margin: 25px 0;
-		}
-		&.small{
-			font-size: 11px;
-		}
-		span.file-browse {
-			text-decoration: underline;
-			position: relative;
-			color: $text;
-			overflow: hidden;
-			input[type=file] {
-				position: absolute;
-				top: 0;
-				right: 0;
-				margin: 0;
-				opacity: 0;
-				left: 0;
-				-ms-filter: 'alpha(opacity=0)';
-				font-size: 200px;
-				direction: ltr;
-				cursor: pointer;
-			}
-			&:hover{
+		p{
+			a.file-browse {
+				text-decoration: underline;
+				position: relative;
 				color: $text;
+				overflow: hidden;
+				input[type=file] {
+					position: absolute;
+					top: 0;
+					right: 0;
+					margin: 0;
+					opacity: 0;
+					left: 0;
+					-ms-filter: 'alpha(opacity=0)';
+					font-size: 200px;
+					direction: ltr;
+					cursor: pointer;
+				}
 			}
 		}
 	}
