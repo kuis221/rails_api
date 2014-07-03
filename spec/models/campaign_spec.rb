@@ -80,20 +80,33 @@ describe Campaign do
     end
   end
 
-  describe "active_kpis" do
-    let(:campaign){ FactoryGirl.create(:campaign) }
-    it "should returns only evens and promo hours if no custom kpis have been created for campaign" do
-      Kpi.create_global_kpis
-      expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours]
-    end
+  describe "active_global_kpis" do
+    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['expenses', 'comments']) }
 
-    it "should returns all kpis + evens and promo hours" do
+    it "should returns global kpis + enabled modules" do
       Kpi.create_global_kpis
       form_field  = FactoryGirl.create(:form_field_number,
             fieldable: campaign,
             kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
 
-      expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours]
+      expect(campaign.active_global_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.expenses, Kpi.comments]
+    end
+  end
+
+  describe "active_kpis" do
+    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['surveys']) }
+    it "should returns only events, promo hours and surveys if no custom kpis have been created for campaign" do
+      Kpi.create_global_kpis
+      expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.surveys]
+    end
+
+    it "should returns all kpis + events, promo hours and surveys" do
+      Kpi.create_global_kpis
+      form_field  = FactoryGirl.create(:form_field_number,
+            fieldable: campaign,
+            kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
+
+      expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours, Kpi.surveys]
     end
   end
 
@@ -104,7 +117,7 @@ describe Campaign do
       expect(campaign.custom_kpis).to match_array []
     end
 
-    it "should returns all kpis + evens and promo hours" do
+    it "should returns all custom kpis" do
       Kpi.create_global_kpis
       form_field  = FactoryGirl.create(:form_field_number,
             fieldable: campaign,

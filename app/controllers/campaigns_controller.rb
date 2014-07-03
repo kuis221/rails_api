@@ -53,6 +53,10 @@ class CampaignsController < FilteredController
     end
   end
 
+  def select_kpis
+    @kpis = Kpi.campaign_assignable(resource, current_company)
+  end
+
   def remove_activity_type
     activity_type = current_company.activity_types.find(params[:activity_type_id])
     if resource.activity_types.include?(activity_type)

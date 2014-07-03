@@ -1,0 +1,20 @@
+|
+  bootbox.classes('modal-large');
+  var selectKpisDialog = bootbox.dialog($('#{escape_javascript(render "select_kpis")}'), [
+    {
+      "label" : 'Create New KPI',
+      "class" : "btn btn btn-primary",
+      "callback": function() {
+        selectKpisDialog.off('hidden'); // To prevent the div to be removed in case the user returns to the form
+        selectKpisDialog.modal('hide');
+        $.ajax('#{new_campaign_kpi_path(resource, format: :js)}');
+      }
+    },
+    {
+      "label" : "Cancel",
+      "class" : "btn btn btn-cancel",
+      "callback": function() {
+        selectKpisDialog.modal('hide');
+      }
+    }
+  ],{'onEscape': true, animate: (!$.fx.off), header: 'Add KPI'})

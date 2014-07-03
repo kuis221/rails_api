@@ -1926,7 +1926,7 @@ li#user_menu{
 		margin-right: 0px;
 	}
 }
-#select-areas-table-wrapper{
+#select-areas-table-wrapper, #select-kpis-table-wrapper{
 	.link-list{
 		margin-top: 25px;
 	}
@@ -2304,7 +2304,7 @@ ul.kpis-list{
 			padding-left: 20px;
 		}
 	}
-	ul#areas-list{
+	ul#areas-list, ul#kpis-list{
 		li{
 			display: table;
 			height: 86px;
@@ -2319,10 +2319,10 @@ ul.kpis-list{
 					font-size: 11px;
 					margin: 8px 0 0 0;
 					width: 400px;
-					.area_name{
+					.area_name, .kpi_name{
 						font-size: 16px;
 					}
-					.area_description{
+					.area_description, .kpi_description{
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -6612,11 +6612,11 @@ body{
 		width: 100%;
 		li {
 			min-height: 65px;
-			.brand-data{
+			.brand-data, .kpi-data {
 				padding: 12px;
 			}
-			.member-data, .brand-data {
-				.member-name, .brand-name {
+			.member-data, .brand-data, .kpi-data {
+				.member-name, .brand-name, .kpi-name {
 					font-size: 16px;
 				}
 				.member-description {

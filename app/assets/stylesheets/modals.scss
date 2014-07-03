@@ -162,7 +162,7 @@ ul.select2-results{
 				}
 				&.campaign_brands_list, &.date_range_name,
 				&.date_range_description,
-				&.team_name, &.role_name, &.area_name, &.brand_portfolio_name, &.day_part_name,
+				&.team_name, &.role_name, &.area_name, &.kpi_name, &.brand_portfolio_name, &.day_part_name,
 				{
 					display:block;
 					width: 400px;
@@ -247,7 +247,7 @@ ul.select2-results{
 					}
 				}
 			}
-			#select-areas-table-wrapper .link-list{
+			#select-areas-table-wrapper .link-list, #select-kpis-table-wrapper .link-list{
 				height: 257px;
 				overflow-y: scroll;
 			}
@@ -284,10 +284,7 @@ ul.select2-results{
 					&#staff-search-item, &#brands-search-item{
 						width: 95%;
 					}
-					&#place-search-box {
-						width: 96%;
-					}
-					&#contact-search-box {
+					&#place-search-box, &#contact-search-box, &#kpi-search-box {
 						width: 96%;
 					}
 					&.places-autocomplete{
@@ -609,7 +606,7 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
-		.scroll-table-content, #select-areas-table-wrapper{
+		.scroll-table-content, #select-areas-table-wrapper, #select-kpis-table-wrapper{
 			max-height: 257px;
 			.row-fluid:after{
 				clear: none;
@@ -619,7 +616,7 @@ ul.select2-results{
 				margin-bottom: 40px;
 				width: 100%;
 			}
-			ul#areas-list, ul#select-brands-list, ul#staff-list, ul#contacts-list{
+			ul#areas-list, ul#select-brands-list, ul#staff-list, ul#contacts-list, ul#kpis-list{
 				li{
 					display: table;
 					min-height: 85px !important;
@@ -1015,8 +1012,8 @@ ul.select2-results{
 
 .campaigns-modals{
 	color: $brand;
-	#select-areas-table-wrapper .link-list {
-		ul#areas-list{
+	#select-areas-table-wrapper .link-list, #select-kpis-table-wrapper .link-list {
+		ul#areas-list, ul#kpis-list{
 			min-height: 82px;
 			overflow-y: auto;
 			overflow-x: hidden;

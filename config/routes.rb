@@ -278,6 +278,9 @@ Brandscopic::Application.routes.draw do
       match 'day_parts/new' => 'campaigns#new_day_part', via: :get, as: :new_day_part
       match 'day_parts' => 'campaigns#add_day_part', via: :post, as: :add_day_part
       match 'day_parts/:day_part_id' => 'campaigns#delete_day_part', via: :delete, as: :delete_day_part
+
+      match 'kpis/select' => 'campaigns#select_kpis', via: :get, as: :select_kpis
+      match 'kpis/add' => 'campaigns#add_kpi', via: :post, as: :add_kpi
     end
 
     resources :documents, only: [:create, :new] do

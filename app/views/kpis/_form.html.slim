@@ -13,7 +13,7 @@
   .form-actions.pull-left
     = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
     = "&nbsp;".html_safe
-    = f.button :button, 'Cancel', class: 'btn-cancel'
+    = f.button :button, 'Cancel', id: 'btn-cancel-kpi', class: 'btn-cancel'
 
 javascript:
     var captureOptions = #{Kpi::CUSTOM_TYPE_OPTIONS.to_json.html_safe}
@@ -78,3 +78,12 @@ javascript:
     function capitalize(text) {
       return text.substr(0,1).toUpperCase() + text.substr(1);
     }
+
+    $('#btn-cancel-kpi').click(function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).parents('.modal').modal('hide');
+      if ('#{resource.new_record?}' == 'true') {
+        selectKpisDialog.modal('show');
+      }
+    });
