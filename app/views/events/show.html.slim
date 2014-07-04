@@ -60,7 +60,7 @@
 
   - if can?(:view_members, resource)
     #event-members.details_box
-      h3 EVENT TEAM
+      h3 EVENT STAFF
       #event-team-members
         = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
       = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:add_members, resource)
