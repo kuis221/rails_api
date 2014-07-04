@@ -63,10 +63,6 @@ describe CampaignsController do
       get("/campaigns/1/tab/day_parts").should route_to("campaigns#tab", :id => "1", tab: 'day_parts')
     end
 
-    it "routes to #kpi" do
-      post("/campaigns/1/kpi").should route_to("campaigns#add_kpi", :id => "1")
-    end
-
     it "routes to #find_similar_kpi" do
       get("/campaigns/find_similar_kpi").should route_to("campaigns#find_similar_kpi")
     end
@@ -79,5 +75,24 @@ describe CampaignsController do
       post("/campaigns/1/update_post_event_form").should route_to("campaigns#update_post_event_form", :id => "1")
     end
 
+    it "routes to #select_kpis" do
+      get("/campaigns/1/kpis/select").should route_to("campaigns#select_kpis", :id => "1")
+    end
+
+    it "routes to #add_kpi" do
+      post("/campaigns/1/kpis/add").should route_to("campaigns#add_kpi", :id => "1")
+    end
+
+    it "routes to #remove_kpi" do
+      delete("/campaigns/1/kpis/1").should route_to("campaigns#remove_kpi", :id => "1", :kpi_id => "1")
+    end
+
+    it "routes to #add_activity_type" do
+      post("/campaigns/1/activity_types/add").should route_to("campaigns#add_activity_type", :id => "1")
+    end
+
+    it "routes to #remove_activity_type" do
+      delete("/campaigns/1/activity_types/1").should route_to("campaigns#remove_activity_type", :id => "1", :activity_type_id => "1")
+    end
   end
 end

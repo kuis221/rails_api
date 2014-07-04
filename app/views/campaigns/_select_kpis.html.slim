@@ -2,17 +2,18 @@
   p Add an existing KPI from the list below
 
   input type="text" name="q" id="kpi-search-box" placeholder="Search"
-  #select-kpis-table-wrapper
+  .select-list-table-wrapper
     .link-list
-      ul#kpis-list
+      ul.select-items-list
         - if @kpis.present?
           - @kpis.each do |kpi|
-            li id="kpi-#{kpi.id}"
+            - type = kpi.is_a?(Kpi) ? 'kpi' : 'activity_type'
+            li id="#{type}-#{kpi.id}"
               span
                 .kpi_name= kpi.name
                 .kpi_description= kpi.description
               span.pull-right
-                = link_to '', add_kpi_campaign_path(resource, kpi_id: kpi.id), id: "add-kpi-btn-#{kpi.id}", data:{'kpi-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add KPI'
+                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add KPI'
         - else
           li.empty-list-message
             p There are not assignable KPIs
@@ -25,7 +26,7 @@
 javascript:
   $('#kpi-search-box').on('keyup', function () {
     var value = $(this).val().toLowerCase();
-    $("#kpis-list > li:not(.empty-list-message)").each(function() {
+    $(".select-items-list > li:not(.empty-list-message)").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
       }

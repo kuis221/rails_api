@@ -242,7 +242,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :activity_types do
+    resources :activity_types, only: [] do
       get :set_goal
     end
     resources :placeables, only: [:new] do
@@ -255,10 +255,6 @@ Brandscopic::Application.routes.draw do
     member do
       get :post_event_form
       post :update_post_event_form
-      post :kpi, to: :add_kpi
-      delete :kpi, to: :remove_kpi
-      post :activity_type, to: :add_activity_type
-      delete :activity_type, to: :remove_activity_type
       get :deactivate
       get :activate
       get :kpis
@@ -281,6 +277,10 @@ Brandscopic::Application.routes.draw do
 
       match 'kpis/select' => 'campaigns#select_kpis', via: :get, as: :select_kpis
       match 'kpis/add' => 'campaigns#add_kpi', via: :post, as: :add_kpi
+      match 'kpis/:kpi_id' => 'campaigns#remove_kpi', via: :delete, as: :remove_kpi
+
+      match 'activity_types/add' => 'campaigns#add_activity_type', via: :post, as: :add_activity_type
+      match 'activity_types/:activity_type_id' => 'campaigns#remove_activity_type', via: :delete, as: :remove_activity_type
     end
 
     resources :documents, only: [:create, :new] do

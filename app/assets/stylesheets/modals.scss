@@ -247,7 +247,7 @@ ul.select2-results{
 					}
 				}
 			}
-			#select-areas-table-wrapper .link-list, #select-kpis-table-wrapper .link-list{
+			.select-list-table-wrapper .link-list{
 				height: 257px;
 				overflow-y: scroll;
 			}
@@ -606,7 +606,7 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
-		.scroll-table-content, #select-areas-table-wrapper, #select-kpis-table-wrapper{
+		.scroll-table-content, .select-list-table-wrapper{
 			max-height: 257px;
 			.row-fluid:after{
 				clear: none;
@@ -616,7 +616,7 @@ ul.select2-results{
 				margin-bottom: 40px;
 				width: 100%;
 			}
-			ul#areas-list, ul#select-brands-list, ul#staff-list, ul#contacts-list, ul#kpis-list{
+			ul#select-brands-list, ul#staff-list, ul#contacts-list, ul.select-items-list{
 				li{
 					display: table;
 					min-height: 85px !important;
@@ -1012,8 +1012,8 @@ ul.select2-results{
 
 .campaigns-modals{
 	color: $brand;
-	#select-areas-table-wrapper .link-list, #select-kpis-table-wrapper .link-list {
-		ul#areas-list, ul#kpis-list{
+	.select-list-table-wrapper .link-list {
+		ul.select-items-list{
 			min-height: 82px;
 			overflow-y: auto;
 			overflow-x: hidden;

@@ -1926,9 +1926,9 @@ li#user_menu{
 		margin-right: 0px;
 	}
 }
-#select-areas-table-wrapper, #select-kpis-table-wrapper{
+.select-list-table-wrapper{
 	.link-list{
-		margin-top: 25px;
+		margin-top: 25px !important;
 	}
 }
 .sidebar{
@@ -2304,7 +2304,7 @@ ul.kpis-list{
 			padding-left: 20px;
 		}
 	}
-	ul#areas-list, ul#kpis-list{
+	ul.select-items-list{
 		li{
 			display: table;
 			height: 86px;

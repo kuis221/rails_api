@@ -534,7 +534,7 @@ describe CampaignsController do
 
     it "should associate the kpi to the campaign" do
       expect {
-        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(1)
 
       campaign.form_fields.count.should == 1
@@ -548,14 +548,14 @@ describe CampaignsController do
     it "should NOT associate the kpi to the campaign if the campaing already have it assgined" do
       FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions')
       expect {
-        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to_not change(FormField, :count)
     end
 
     it "should automatically assign a correct ordering for the new field" do
       FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: 999, ordering: 1, name: 'impressions' )
       expect {
-        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+        post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(1)
 
       campaign.form_fields.count.should == 2
@@ -569,13 +569,13 @@ describe CampaignsController do
 
     it "should associate the kpi to the campaign" do
       expect {
-        post 'add_activity_type', id: campaign.id,activity_type_id: activity_type.id, format: :json
+        post 'add_activity_type', id: campaign.id,activity_type_id: activity_type.id, format: :js
       }.to change(ActivityTypeCampaign, :count).by(1)
     end
 
     it "should NOT associate the activity_type to the campaign if the campaing already have it assgined" do
       expect {
-        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :js
       }.to_not change(ActivityTypeCampaign, :count)
     end
   end
@@ -585,7 +585,7 @@ describe CampaignsController do
     it "should disassociate the activity_type from the campaign" do
       campaign.activity_types << activity_type
       expect {
-        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :json
+        post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :js
       }.to change(ActivityTypeCampaign, :count).by(-1)
       response.should be_success
     end
@@ -597,7 +597,7 @@ describe CampaignsController do
     it "should disassociate the kpi from the campaign" do
       FactoryGirl.create(:form_field_number, fieldable: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions')
       expect {
-        post 'remove_kpi', id: campaign.id, kpi_id: kpi.id, format: :json
+        post 'remove_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(-1)
       response.should be_success
     end
