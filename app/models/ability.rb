@@ -12,7 +12,7 @@ class Ability
     alias_action :remove_kpi, :to => :activate_kpis
     alias_action :add_activity_type, :to => :activate_kpis
     alias_action :remove_activity_type, :to => :activate_kpis
-    alias_action :post_event_form, :to => :view_event_form
+    alias_action :post_event_form, :update_post_event_form, :to => :view_event_form
 
     # All users
     if user.id && !user.is_a?(AdminUser)
