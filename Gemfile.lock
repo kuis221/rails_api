@@ -93,6 +93,8 @@ GEM
     capybara-screenshot (0.3.14)
       capybara (>= 1.0, < 3)
       launchy
+    celluloid (0.15.2)
+      timers (~> 1.1.0)
     clerk (0.2.1)
       activerecord (~> 3)
       railties (~> 3)
@@ -102,6 +104,7 @@ GEM
     cliver (0.3.2)
     cocaine (0.5.4)
       climate_control (>= 0.0.3, < 1.0)
+    coderay (1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -124,10 +127,14 @@ GEM
       actionmailer (>= 3.2.6, < 5)
       devise (>= 3.1.0)
     diff-lcs (1.2.5)
+    em-websocket (0.5.1)
+      eventmachine (>= 0.12.9)
+      http_parser.rb (~> 0.6.0)
     email_spec (1.4.0)
       launchy (~> 2.1)
       mail (~> 2.2)
     erubis (2.7.0)
+    eventmachine (1.0.3)
     excon (0.37.0)
     execjs (2.0.2)
     factory_girl (4.3.0)
@@ -138,8 +145,10 @@ GEM
     faker (1.1.2)
       i18n (~> 0.5)
     fattr (2.2.1)
+    ffi (1.9.3)
     font_assets (0.1.11)
       rack
+    formatador (0.2.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
     fuubar (1.2.1)
@@ -148,8 +157,19 @@ GEM
       ruby-progressbar (~> 1.0)
     gctools (0.2.3)
     geocoder (1.1.8)
+    github-markdown (0.6.5)
     google_places (0.18.0)
       httparty
+    guard (2.6.1)
+      formatador (>= 0.2.4)
+      listen (~> 2.7)
+      lumberjack (~> 1.0)
+      pry (>= 0.9.12)
+      thor (>= 0.18.1)
+    guard-livereload (2.3.0)
+      em-websocket (~> 0.5)
+      guard (~> 2.0)
+      multi_json (~> 1.8)
     has_scope (0.5.1)
     heroics (0.0.10)
       erubis (~> 2.7.0)
@@ -160,6 +180,7 @@ GEM
     highline (1.6.19)
     hike (1.2.3)
     hodel_3000_compliant_logger (0.1.1)
+    http_parser.rb (0.6.0)
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
@@ -179,6 +200,11 @@ GEM
     kgio (2.9.2)
     launchy (2.3.0)
       addressable (~> 2.3)
+    listen (2.7.9)
+      celluloid (>= 0.15.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+    lumberjack (1.0.9)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -189,6 +215,7 @@ GEM
       activesupport (~> 3.1)
       polyamorous (~> 0.5.0)
     metaclass (0.0.1)
+    method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.6.0)
     mocha (0.13.3)
@@ -235,6 +262,10 @@ GEM
     progress_bar (1.0.0)
       highline (~> 1.6.1)
       options (~> 2.3.0)
+    pry (0.10.0)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     quiet_assets (1.0.2)
       railties (>= 3.1, < 5.0)
     rabl (0.8.3)
@@ -242,6 +273,8 @@ GEM
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
+    rack-livereload (0.3.15)
+      rack
     rack-protection (1.5.3)
       rack
     rack-ssl (1.3.4)
@@ -266,6 +299,9 @@ GEM
       thor (>= 0.14.6, < 2.0)
     raindrops (0.13.0)
     rake (10.3.2)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
     redis (3.0.7)
@@ -347,6 +383,7 @@ GEM
       activesupport (>= 3.0, < 4.1)
       railties (>= 3.0, < 4.1)
       slim (~> 2.0)
+    slop (3.5.0)
     spring (1.1.3)
     spring-commands-rspec (1.0.1)
       spring (>= 0.9.1)
@@ -359,6 +396,10 @@ GEM
       actionpack (~> 3.0)
       activemodel (~> 3.0)
       railties (~> 3.0)
+    style-guide (1.0.0)
+      github-markdown (~> 0.5)
+      nokogiri (~> 1.5)
+      rails (~> 3.2)
     sunspot (2.1.1)
       pr_geohash (~> 1.0)
       rsolr (~> 1.0.7)
@@ -378,6 +419,7 @@ GEM
     tilt (1.4.1)
     timecop (0.6.1)
     timeliness (0.3.7)
+    timers (1.1.0)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -439,6 +481,7 @@ DEPENDENCIES
   gctools
   geocoder
   google_places
+  guard-livereload
   has_scope
   heroku-resque-workers-scaler!
   inherited_resources
@@ -460,6 +503,7 @@ DEPENDENCIES
   quiet_assets (>= 1.0.1)
   rabl
   rack-cache
+  rack-livereload
   rack-timeout
   rails (= 3.2.18)
   redis
@@ -481,6 +525,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   strong_parameters
+  style-guide
   sunspot-queue
   sunspot_rails
   sunspot_solr

@@ -1,4 +1,4 @@
-
+@import "variables";
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
 $footer-height: 35px;
@@ -14,8 +14,6 @@ $footer-height: 35px;
 	font-style: normal;
 }
 
-@import "variables";
-
 @mixin box-sizing($value){
 	box-sizing: $value;
 	-moz-box-sizing: $value;
@@ -24,8 +22,6 @@ $footer-height: 35px;
 
 
 /*-- GENERAL STYLES --*/
-
-
 a:before, a:after{
 	font-weight:normal;
 }
