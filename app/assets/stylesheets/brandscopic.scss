@@ -7101,6 +7101,16 @@ table td.sub-level-1 {
 						opacity: 0.8;
 					}
 				}
+				img {
+					opacity: 0;
+					width: 100%;
+					height: 100%;
+					position: absolute;
+					top: 0px;
+					bottom: 0px;
+					left: 0px;
+					right: 0px;
+				}
 				&.right{
 					right: 0;
 					//width: 80%;
