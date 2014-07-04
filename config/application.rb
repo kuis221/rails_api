@@ -75,6 +75,8 @@ module Brandscopic
       form_builder.css jquery.formBuilder.js
       ]
 
+    config.assets.paths << Rails.root.join("app", "assets", "stylesheets", "font")
+
     config.cache_store = :dalli_store
 
     I18n.enforce_available_locales = true

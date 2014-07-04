@@ -1,0 +1,88 @@
+/**
+ * default development theme for jQRangeSlider
+ * Using fam fam icon set from Mark James, http://www.famfamfam.com/lab/icons/silk/ (Creative Commons Attribution 2.5 License)
+ */
+
+.ui-rangeSlider {
+	height: 17px;
+	.ui-rangeSlider-innerBar {
+		height: 12px;
+		margin: 3px 6px;
+		background: #DDD;
+		-webkit-border-radius: 10px !important;
+		border-radius: 10px !important;
+	}
+	.ui-rangeSlider-handle {
+		width: 17px;
+		height: 17px;
+		-webkit-border-radius: 10px !important;
+		border-radius: 10px !important;
+		cursor: col-resize;
+		background: #7a7a7a !important;
+	}
+	.ui-rangeSlider-bar {
+		margin: 3px 0;
+		background: #989898;
+		height: 12px;
+		cursor: move;
+		cursor: grab;
+		cursor: -moz-grab;
+		border-radius: 10px !important;
+		-webkit-border-radius: 10px !important;
+		&.ui-draggable-dragging {
+			cursor: -moz-grabbing;
+			cursor: grabbing;
+		}
+	}
+}
+
+.ui-rangeSlider-arrow {
+	height: 16px;
+	margin: 2px 0;
+	width: 16px;
+	background-repeat: no-repeat;
+	&.ui-rangeSlider-leftArrow {
+		background-position: center left;
+	}
+	&.ui-rangeSlider-rightArrow {
+		background-position: center right;
+	}
+}
+
+.ui-rangeSlider-arrow-inner {
+	display: none;
+}
+
+.ui-rangeSlider-container {
+	height: 17px;
+}
+
+.ui-rangeSlider-withArrows .ui-rangeSlider-container {
+	margin: 0 11px;
+}
+
+.ui-rangeSlider-noArrow .ui-rangeSlider-container {
+	margin: 0;
+}
+
+.ui-rangeSlider-label {
+	margin: 0 2px;
+	white-space: nowrap;
+	bottom: -30px;
+	padding: 3px 6px 7px;
+	cursor: col-resize;
+}
+
+.ui-rangeSlider-label-inner {
+	display: none;
+}
+
+/*
+ * Edit slider
+ */
+
+input.ui-editRangeSlider-inputValue {
+	width: 3em;
+	vertical-align: middle;
+	text-align: center;
+}

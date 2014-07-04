@@ -20,7 +20,7 @@
 		.field {
 			float: left;
 			clear: both;
-			padding: 10px;
+			padding: 5px 10px 10px 10px;
 			border: 1px dashed #fff;
 			position: relative;
 			border-radius: 5px;
@@ -35,11 +35,30 @@
 			&:hover {
 				border: 1px dashed silver;
 			}
+			&[data-type="Percentage"], &[data-type="Photo"], &[data-type="Radio"]{
+				label{
+					font-weight: bold;
+					&.control-label{
+						color: $text;
+						font-size: 13px;
+					}
+				}
+				.controls label{
+					font-weight: normal;
+				}
+			}
+			label{
+				&.control-label{
+					color: $brand;
+					font-size: 11px;
+					min-width: 100%;
+				}
+			}
 			&.selected {
 				background-color: $app_bg;
 				border: 1px solid $app_bg;
 				a.close {
-					background: url(more_less_sprite.png) -40px 0 no-repeat;
+					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
 					display: inline-block;
 					width: 20px;
 					height: 20px;
@@ -53,6 +72,12 @@
 				.attachment-panel{
 					background-color: white;
 				}
+			}
+			h3{
+				color: $brand;
+				font-size: 21px;
+				font-weight: bold;
+				line-height: 10px;
 			}
 			&.ui-sortable-placeholder {
 				height: 2px !important;
@@ -164,6 +189,7 @@
 	.chzn-disabled {
 		opacity: 1 !important;
 	}
+	/*
 	input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
 		background-color: white !important;
 		border: 1px solid silver;
@@ -177,6 +203,7 @@
 			height: 33px;
 		}
 	}
+	*/
 }
 
 .field-attributes-panel {
@@ -228,6 +255,10 @@
 		height: 40px;
 	}
 
+	textarea{
+		padding-top: 10px;
+	}
+
 	label{
 		color: $brand;
 		font-size: 11px;
@@ -259,13 +290,13 @@
 				top:6px;
 			}
 			&.add-option-btn{
-				background: url(more_less_sprite.png) no-repeat 0 0 ;
+				background: image-url('more_less_sprite.png') no-repeat 0 0 ;
 				&:hover{
 					background-position: 0 -20px;
 				}
 			}
 			&.remove-option-btn{
-				background: url(more_less_sprite.png) no-repeat -20px 0 ;
+				background: image-url('more_less_sprite.png') no-repeat -20px 0 ;
 				&:hover{
 					background-position: -20px -20px;
 				}

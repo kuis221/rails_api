@@ -13,8 +13,6 @@ gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
 gem "cancan", ">= 1.6.8"
 gem "slim-rails"
-gem "annotate", ">=2.5.0",  group: :development
-gem "quiet_assets", ">= 1.0.1", group: :development
 gem 'inherited_resources'
 gem 'has_scope'
 gem 'clerk'
@@ -54,10 +52,19 @@ gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
+gem 'font_assets'
 
 #For memory debugging
 gem "oink"
 #gem "allocation_stats"
+
+group :development do
+  gem 'style-guide'
+  gem "rack-livereload"
+  gem "guard-livereload", :require => false
+  gem "annotate", ">=2.5.0"
+  gem "quiet_assets", ">= 1.0.1"
+end
 
 # Gems that are only required for the web process, to prevent
 # workers loading not needed libraries
