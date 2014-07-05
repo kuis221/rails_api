@@ -307,6 +307,7 @@ FormField = Class.extend {
 		])
 
 	optionsField: (type='option') ->
+		return if @attributes.kpi_id
 		list = if type is 'statement' then @attributes.statements else @attributes.options
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
@@ -335,23 +336,26 @@ FormField = Class.extend {
 							false
 
 						# Button for removing an option of the field
-						if @form.options.canEdit && visible_items.length <= min_fields_allowed then '' else $('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
-							option = $(e.target).closest('.field-option').data('option')
-							if option.id isnt null
-								bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
-									if result
-										option._destroy = '1'
-										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-										@refresh()
-										@form.setModified()
-							else
-								bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
-									if result
-										list.splice(list.indexOf(option),1)
-										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-										@refresh()
-										@form.setModified()
-							false
+						if @form.options.canEdit && visible_items.length > min_fields_allowed 
+							$('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
+								option = $(e.target).closest('.field-option').data('option')
+								if option.id isnt null
+									bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
+										if result
+											option._destroy = '1'
+											$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+											@refresh()
+											@form.setModified()
+								else
+									bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
+										if result
+											list.splice(list.indexOf(option),1)
+											$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+											@refresh()
+											@form.setModified()
+								false
+						else
+							null
 					)
 				]).css(display: (if option._destroy is '1' then 'none' else ''))
 		)
