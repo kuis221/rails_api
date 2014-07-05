@@ -57,4 +57,6 @@ Brandscopic::Application.configure do
 
   ENV["REDISTOGO_URL"] = 'redis://localhost:6379'
 
+  config.style_guide.paths << Rails.root.join("app/views/style-guide/**/*")
+  config.middleware.insert_before(::Rack::Lock, ::Rack::LiveReload, :min_delay => 500) if defined?(Rack::LiveReload)
 end

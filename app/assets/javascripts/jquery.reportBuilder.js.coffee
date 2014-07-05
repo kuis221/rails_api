@@ -11,7 +11,7 @@ $.widget 'nmk.reportBuilder',
 		@saved = true
 		@id = @options.id
 		# Fields search input
-		@element.find('#field-search-input').on 'keyup', (e) =>
+		@element.find('.field-search-input').on 'keyup', (e) =>
 			@searchFieldList $(e.target).val().toLowerCase()
 
 		@preview = @element.find('#report-container')

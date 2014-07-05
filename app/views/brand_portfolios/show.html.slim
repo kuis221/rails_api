@@ -19,7 +19,7 @@
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
   #brands.details_box
-    h3 Brands
+    h3 BRANDS
     #brands-list
       = render 'brands'
     = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'  if can?(:edit, resource)

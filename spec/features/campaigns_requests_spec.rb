@@ -20,6 +20,11 @@ feature "Campaigns", js: true, search: true do
       let(:fieldable_path) { campaign_path(fieldable) }
     end
 
+    it_behaves_like "a fieldable element that accept kpis" do
+      let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+      let(:fieldable_path) { campaign_path(fieldable) }
+    end
+
     feature "GET index" do
       scenario "should display a table with the campaigns" do
         campaigns = [

@@ -7,7 +7,7 @@
   h5 Getting Started: Events
   a.close.btn-dismiss-alert href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/gwF6WU0EvWs?rel=0" data-width="640" data-height="360"
-    img src="/assets/video_arrow.png" /
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
       'The Events module is your one-stop-shop for viewing and managing events - start to finish . Create events, track event status, fill out post event forms, as well as submit, reject, and approve your reports. Click on the video to the left for a quick overview or visit our
@@ -18,7 +18,7 @@
   #collection-list-filters
   #save-filters-btn.a.btn.btn-primary Save
 .main
-  
+
   #list-tools
     .pull-left
       = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event

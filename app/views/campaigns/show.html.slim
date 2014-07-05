@@ -58,29 +58,28 @@
       li
         a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents
 
-  .campaigns_box
-    .tab-content
-      - if can?(:view_event_form, resource)
-        #post_event_tab.tab-pane.active
-          = render 'post_event_form'
+  .tab-content
+    - if can?(:view_event_form, resource)
+      #post_event_tab.tab-pane.active
+        = render 'post_event_form'
 
-      - if can?(:view_kpis, resource)
-        #kpis_tab.tab-pane
+    - if can?(:view_kpis, resource)
+      #kpis_tab.tab-pane.campaigns_box
 
-      - if can?(:view_places, resource)
-        #campaign-places-list.tab-pane
+    - if can?(:view_places, resource)
+      #campaign-places-list.tab-pane.campaigns_box
 
-      - if can?(:view_staff, resource)
-        #staff_tab.tab-pane
+    - if can?(:view_staff, resource)
+      #staff_tab.tab-pane.campaigns_box
 
-      - if can?(:view_date_ranges, resource)
-        #date_ranges_tab.tab-pane
+    - if can?(:view_date_ranges, resource)
+      #date_ranges_tab.tab-pane.campaigns_box
 
-      - if can?(:view_day_parts, resource)
-        #day_parts_tab.tab-pane
+    - if can?(:view_day_parts, resource)
+      #day_parts_tab.tab-pane.campaigns_box
 
-      - if can?(:view_documents, resource)
-        #documents_tab.tab-pane
+    - if can?(:view_documents, resource)
+      #documents_tab.tab-pane.campaigns_box
 
 = render partial: 'help_tutorial'
 

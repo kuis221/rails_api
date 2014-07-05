@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import "variables";
 
 /*-- COLOR PALETTE --*/
 $completed: #90bf43;
@@ -47,7 +47,6 @@ ul.select2-results{
 					}
 					input[type="number"] {
 						background-color: white !important;
-						border:1px solid $user_menu !important;
 						box-shadow: none !important;
 						margin-right: 0 !important;
 						width: 158px;
@@ -67,7 +66,7 @@ ul.select2-results{
 						color: white;
 						display: inline-block;
 						-webkit-border-radius: 4px 0px 0px 4px;
-						padding: 10px 5px 12px 4px;
+						padding: 11px 5px 13px 4px;
 						text-align: center;
 						text-shadow: none !important;
 						width: 40px;
@@ -92,7 +91,7 @@ ul.select2-results{
 		}
 		.modal-body{
 			.control-group{
-				width: 220px;
+				width: 100%;
 				&.task_title{
 					label{
 						width: 40px;
@@ -173,20 +172,25 @@ ul.select2-results{
 				}
 				&.task_company_user{
 					margin: 0;
-					width: 250px;
+					width: 268px;
+					.task_company_user_id_chzn{
+					.chzn-container{
+						width: 100% !important;
+					}
+					}
 					.chzn-drop{
 						box-shadow: none;
-						width: 250px !important;
+						//width: 250px !important;
 					}
 					.chzn-results{
-						width: 248px !important;
+						//width: 248px !important;
 					}
 				}
 				&.task_due_at{
 					margin-left: 21px;
 					width: 110px;
 					input[type="text"]{
-						background: url('calendar.svg') no-repeat left !important;
+						background: image-url('calendar.svg') no-repeat left !important;
 						text-align: right;
 						width: 110px;
 					}
@@ -198,7 +202,7 @@ ul.select2-results{
 						width: 390px;
 					}
 					.chzn-drop{
-						width: 400px !important;
+						//width: 400px !important;
 					}
 				}
 			}
@@ -260,36 +264,29 @@ ul.select2-results{
 					margin: 0;
 					width: 558px;
 				}
-				#place_types_chzn{
-					&.chzn-container-single{
-						.chzn-single{
-							width: 548px !important;
-						}
-						.chzn-drop{
-							width: 558px !important;
-						}
-					}
-				}
 			}
 
 			.staff-table, .brands-table, .campaigns-modals, .places-modals, .contacts-modals{
 				input[type="text"]{
-					background-image: url('search2.svg') !important;
+					background-image: image-url('search2.svg') !important;
 					background-position: center right;
 					background-repeat: no-repeat;
 					-webkit-border-radius: 20px;
 					border-radius: 20px;
 					padding-left: 2%;
 					padding-right: 2%;
-					&#staff-search-item, &#brands-search-item{
+					&#staff-search-item, &#brands-search-item {
 						width: 95%;
 					}
 					&#place-search-box, &#contact-search-box, &#kpi-search-box {
 						width: 96%;
 					}
-					&.places-autocomplete{
+					&#staff-search-item, &#brands-search-item, &#place-search-box, &#contact-search-box {
+						width: 100%;
+					}
+					&.places-autocomplete {
 						padding-left: 8%;
-						width: 345px;
+						width: 385px !important;
 					}
 				}
 				.link-list{
@@ -299,51 +296,17 @@ ul.select2-results{
 			.users{
 				.span6{
 					margin-bottom: 8px;
-					.control-group{
-						width: 250px !important;
-					}
 					&:first-child{
 						margin-right: 31px !important;
 					}
 					.chozen-enabled{
 						width: 100px !important;
 					}
-					.chzn-container-single .chzn-single{
-						width: 251px !important;
-					}
 				}
-				input[type="text"]{
-					&.input-large{
-						margin-right: 20px;
-						width:250px !important;
-				    }
-			    }
-			}
-			.edit-event{
-				.chzn-container-single
-					.chzn-single{
-						width: 545px;
-					}
-					.chzn-drop{
-						width: 555px !important;
-					}
 			}
 			.users-teams-roles{
 				.control-group{
 					margin-right: 0;
-					width: 590px !important;
-				}
-				.chzn-container-single{
-					.chzn-single{
-						width: 548px !important;
-					}
-					.chzn-drop{
-						box-shadow: none;
-						width: 558px !important;
-					}
-					.chzn-results{
-						width: 552px !important;
-					}
 				}
 			}
 	    }
@@ -540,7 +503,7 @@ ul.select2-results{
 				padding: 0;
 				width: 20px;
 				span{
-					background: url('radio-unchecked.svg') no-repeat center center !important;
+					background: image-url('radio-unchecked.svg') no-repeat center center !important;
 					display: block;
 					height: 25px;
 					width: 25px;
@@ -560,7 +523,7 @@ ul.select2-results{
 					}
 				}
 				span.checked{
-					background: url('radio-checked.svg') no-repeat center center !important;
+					background: image-url('radio-checked.svg') no-repeat center center !important;
 					display: block;
 					height: 25px;
 					margin: 0;
@@ -652,7 +615,6 @@ ul.select2-results{
 			}
 			input[type="number"] {
 				background-color: white !important;
-				border:1px solid $user_menu !important;
 				box-shadow: none !important;
 				margin-right: 0 !important;
 				margin-top: 3px !important;
@@ -661,9 +623,6 @@ ul.select2-results{
 			.chzn-container-single{
 				.chzn-results{
 					margin: 0 0 4px 0;
-				}
-				.chzn-drop{
-					width: 400px !important;
 				}
 				.chzn-single{
 					width: 390px;
@@ -720,10 +679,8 @@ ul.select2-results{
 		input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"]{
 			background-color: white !important;
 			background-image: none !important;
-			border: 1px solid $user_menu;
 			box-shadow: none;
 			font-family: $baseFontFamily;
-			height: 30px;
 			margin-bottom: 0;
 			padding-left: 10px;
 			width: 97px;
@@ -732,22 +689,22 @@ ul.select2-results{
 				&.input-small{width:90px;}
 				&.input-medium{width:150px;}
 				&.input-large{width:210px;}
-				&.input-xlarge{width:382px;}
+				&.input-xlarge{width:100%;}
 				&.input-xxlarge{width:540px;
 			}
 		}
 		textarea{
 			background-color: white !important;
 			background-image: none !important;
-			border: 1px solid $user_menu;
 			box-shadow: none;
 			font-family: $baseFontFamily;
-			height: 78px;
+			font-size: 13px;
+			height: 136px;
 			margin-bottom: 0;
 			padding-top: 9px;
 			width: 100px;
 			&.input-large{width:210px;}
-			&.input-xlarge{width:385px;}
+			&.input-xlarge{width:100%;}
 			&.input-xxlarge{width:540px;}
 			&.valid{
 				color: $text;
@@ -767,9 +724,6 @@ ul.select2-results{
 					.chzn-single{
 						width: 390px;
 					}
-					.chzn-drop{
-						width: 400px !important;
-					}
 				}
 			}
 		}
@@ -788,19 +742,20 @@ ul.select2-results{
 		  color: $user_menu;
 		  font-weight: normal;
 		}
-		.chosen-campaign{
-			.control-group{
-				width: 300px;
-			}
-		}
 		.control-group{
 			display: inline-block;
-			width: 120px;
+			width: 100%;
+			&.hidden{
+				display: none;
+			}
+			input{
+				width: 100%;
+			}
 			label{
 				margin-bottom: 2px;
 			}
 			&.location, &.password {
-				width: auto;
+				width: 99,8%;
 			}
 		}
 		.control-group.event_start_date,
@@ -808,16 +763,19 @@ ul.select2-results{
 			margin-right: 17px;
 		}
 		.controls{
-			input[type="text"]{
-				color: $text !important;
-				&#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
-					background: url('calendar.svg') no-repeat left !important;
-					text-align: right;
-				}
-				&#event_start_time, &#event_end_time, &.field-type-time {
-					background: url('time.svg') no-repeat left !important;
-					padding-left:10px;
-					text-align: center;
+			input{
+				width: 100% !important;
+				&[type="text"]{
+					color: $text !important;
+					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
+						background: image-url('calendar.svg') no-repeat left !important;
+						text-align: right;
+					}
+					&#event_start_time, &#event_end_time, &.field-type-time {
+						background: image-url('time.svg') no-repeat left !important;
+						padding-left:10px;
+						text-align: center;
+					}
 				}
 			}
 		}
@@ -879,7 +837,7 @@ ul.select2-results{
 			margin: 0;
 			padding: 0;
 			position: relative;
-			width: 46%;
+			width: 47.2%;
 			.control-group:last-child{
 				margin: 0;
 			}
@@ -887,117 +845,11 @@ ul.select2-results{
 	}
 }
 
-// CHZN STYLES
-
-.chzn-container{
-	&.chzn-results{
-		padding: 0 !important;
-		width: 245px;
-		li{
-			&:hover{
-				background: $brand !important;
-			}
-			&.highlighted {
-				background: $brand !important;
-				background-image: none !important;
-			}
+.control-group{
+	&.event_start_date, &.event_start_time, &.event_end_date, &.event_end_time, &.campaign_start_date, &.campaign_end_date{
+		.controls{
+			width: 120px;
 		}
-	}
-	&.chzn-choices{
-		background: white !important;
-		border: 1px solid $user_menu;
-	}
-}
-
-.chzn-container-active{
-	.chzn-choices{
-		border:1px solid $user_menu !important;
-		box-shadow: none !important;
-	}
-		.chzn-drop{
-		width: 555px;
-	}
-}
-
-.chzn-container-multi{
-	.chzn-choices{
-		background-image: none !important;
-		border:1px solid $user_menu !important;
-		height: 40px !important;
-		padding-top: 6px !important;
-		width: 555px !important;
-		-webkit-border-radius: 4px !important;
-		-moz-border-radius: 4px !important;
-		border-radius: 4px !important;
-		li.search-choice{
-			color:$text !important;
-			background:none !important;
-			border:0 !important;
-			box-shadow: none !important;
-			line-height: 16px !important;
-		}
-	}
-	.chzn-drop{
-		border: 1px solid $user_menu !important;
-		box-shadow: none !important;
-		top:45px !important;
-		width: 555px !important;
-		-webkit-border-radius: 4px !important;
-		-moz-border-radius: 4px !important;
-		border-radius: 4px !important;
-		ul.chzn-results{
-			li{
-				padding: 8px 6px !important;
-			}
-			li.highlighted{
-				background-image: none;
-				background-color: $brand;
-			}
-		}
-	}
-}
-
-.chzn-container-single{
-	.chzn-single{
-		background:white !important;
-		border: 1px solid $user_menu !important;
-		box-shadow: none !important;
-		color: $text !important;
-		height: 37px !important;
-		outline:0;
-		width:242px;
-		span{
-			line-height: 36px;
-		}
-	}
-	.chzn-drop{
-		border: 1px solid $user_menu !important;
-		-webkit-border-radius: 6px !important;
-	    border-radius: 6px !important;
-		box-shadow:none;
-		margin-top: 3px !important;
-		width: 261px !important;
-		ul.chzn-results{
-			margin: 0;
-			padding: 0;
-			li{
-				padding: 8px 6px !important;
-			}
-			li.highlighted{
-				background-color: $brand;
-				background-image: none;
-			}
-		}
-	}
-	.chzn-search input{
-		border:0 !important;
-		bottom: 14px;
-		left:0;
-		position: absolute;
-		width: 92% !important;
-	}
-	.chzn-single div b {
-	background: url('triangle-down.svg') no-repeat 2px 15px !important;
 	}
 }
 
@@ -1166,11 +1018,11 @@ ul.select2-results{
 }
 
 .ui-timepicker-list{
-	border: 1px solid $user_menu;
+	border: 1px solid $brand;
 	-webkit-border-radius: 6px !important;
 	border-radius: 6px !important;
 	box-shadow: none;
-	width:112px !important;
+	width:118px;
 	li{
 		color: $text;
 		padding: 3px 0 3px 32px;
@@ -1325,7 +1177,7 @@ div#spin{
 				top: 38px !important;
 			}
 			.chzn-choices{
-				background: url('arrow.svg') no-repeat right !important;
+				background: image-url('arrow.svg') no-repeat right !important;
 				padding-top: 3px !important;
 				padding-bottom: 3px !important;
 				li.search-choice{
@@ -1333,7 +1185,7 @@ div#spin{
 					background-color: $brand !important;
 					color: white !important;
 					.search-choice-close{
-						background: url('cross.png') no-repeat right !important;
+						background: image-url('cross.png') no-repeat right !important;
 						top: 5px !important;
 						right: 4px !important;
 					}
@@ -1406,7 +1258,7 @@ div#spin{
 			z-index: 99999;
 			&:before{
 				content:"";
-				background:url('close-video.png') no-repeat right !important;
+				background: image-url('close-video.png') no-repeat right !important;
 				height: 30px;
 				width: 30px;
 			}
