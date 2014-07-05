@@ -2,6 +2,8 @@ class CampaignsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :new_date_range]
   respond_to :json, only: [:show, :update]
 
+  helper_method :grouped_assignable_kpis
+
   include DeactivableHelper
 
   # This helper provide the methods to add/remove campaigns members to the event
@@ -51,6 +53,10 @@ class CampaignsController < FilteredController
     else
       render text: ''
     end
+  end
+
+  def select_kpis
+    @kpis = (Kpi.campaign_assignable(resource) + ActivityType.active).sort_by(&:name)
   end
 
   def remove_activity_type
@@ -113,7 +119,7 @@ class CampaignsController < FilteredController
       p = [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}]
       if can?(:view_event_form, Campaign)
         p.push({form_fields_attributes: [
-            :id, :name, :field_type, :ordering, :required, :_destroy,
+            :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
             {settings: [:description]},
             {options_attributes: [:id, :name, :_destroy, :ordering]},
             {statements_attributes: [:id, :name, :_destroy, :ordering]}]})
@@ -160,6 +166,18 @@ class CampaignsController < FilteredController
         end
 
         @search_params
+      end
+    end
+
+    def grouped_assignable_kpis
+      @grouped_assignable_kpis ||= Hash.new.tap do |h|
+        labels = {}
+        Kpi.custom(current_company).each do |kpi|
+          type = kpi.form_field_type
+          labels[type] ||= I18n.translate("form_builder.field_types.#{type.split('::')[1].underscore}")
+          h[labels[type]] ||= []
+          h[labels[type]].push kpi
+        end
       end
     end
 end

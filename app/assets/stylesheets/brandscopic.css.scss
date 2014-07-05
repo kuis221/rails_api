@@ -1976,9 +1976,9 @@ li#user_menu{
 		margin-right: 0px;
 	}
 }
-#select-areas-table-wrapper{
+.select-list-table-wrapper{
 	.link-list{
-		margin-top: 25px;
+		margin-top: 25px !important;
 	}
 }
 .sidebar{
@@ -2357,7 +2357,7 @@ ul.kpis-list{
 			padding-left: 20px;
 		}
 	}
-	ul#areas-list{
+	ul.select-items-list{
 		li{
 			display: table;
 			height: 86px;
@@ -2372,10 +2372,10 @@ ul.kpis-list{
 					font-size: 11px;
 					margin: 8px 0 0 0;
 					width: 400px;
-					.area_name{
+					.area_name, .kpi_name{
 						font-size: 16px;
 					}
-					.area_description{
+					.area_description, .kpi_description{
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -6673,11 +6673,11 @@ body{
 		width: 100%;
 		li {
 			min-height: 65px;
-			.brand-data{
+			.brand-data, .kpi-data {
 				padding: 12px;
 			}
-			.member-data, .brand-data {
-				.member-name, .brand-name {
+			.member-data, .brand-data, .kpi-data {
+				.member-name, .brand-name, .kpi-name {
 					font-size: 16px;
 				}
 				.member-description {
@@ -7735,6 +7735,33 @@ table.table.likert-scale-table {
 				background-color: $brand;
 			}
 		}
+	}
+}
+
+.searchable-field-list {
+	.field-search-input {
+		background-color: white !important;
+		border: 1px solid $user_menu;
+		height: 37px;
+		width: 100%;
+		background-image: url("search2.svg") !important;
+		background-position: center right;
+		background-repeat: no-repeat;
+		-webkit-border-radius: 20px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		border-radius: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 2px;
+		padding-left: 7%;
+		padding-right: 17%;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+	.group-name {
+		font-weight: bold;
 	}
 }
 

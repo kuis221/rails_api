@@ -2,9 +2,9 @@
   p Add areas from the list below
 
   input type="text" name="q" id="place-search-box"
-  #select-areas-table-wrapper
+  .select-list-table-wrapper
     .link-list
-      ul#areas-list
+      ul.select-items-list
         - if @areas.present?
           - @areas.each do |area|
             li id="area-#{area.id}"
@@ -39,7 +39,7 @@ javascript:
 
   $('#place-search-box').on('keyup', function () {
     var value = $(this).val().toLowerCase();
-    $("#areas-list > li:not(.empty-list-message)").each(function() {
+    $(".select-items-list > li:not(.empty-list-message)").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
       }

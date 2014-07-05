@@ -60,6 +60,11 @@ class Kpi < ActiveRecord::Base
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
   scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
+  scope :campaign_assignable, ->(campaign) {
+    global_and_custom(campaign.company).
+    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours]).
+    reorder('name ASC')
+  }
 
   after_save :sync_segments_and_goals
 
@@ -112,6 +117,10 @@ class Kpi < ActiveRecord::Base
     when 'section'
       'FormField::Section'
     end
+  end
+
+  def form_field_options
+    {name: name, type: form_field_type.split('::')[1], kpi_id: self.id}
   end
 
   class << self
