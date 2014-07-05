@@ -865,6 +865,49 @@ RSpec.shared_examples "a fieldable element" do
   end
 end
 
+RSpec.shared_examples "a fieldable element that accept kpis" do
+  let(:fieldable_path) { url_for(fieldable, only_path: true) }
+
+  let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI',
+    description: 'my custom kpi description',
+    kpi_type: 'number', capture_mechanism: 'integer', company: fieldable.company) }
+
+
+  scenario "add a kpi to the form" do
+    kpi.save
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+    kpi_field(kpi).drag_to form_builder
+
+    within form_field_settings_for 'My Custom KPI' do
+      fill_in 'Field label', with: 'My Custom KPI'
+      unicheck('Required')
+    end
+
+    expect(form_builder).to have_form_field('My Custom KPI')
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+    expect(page).to have_no_selector('.field-attributes-panel')
+
+    # Save the form
+    expect {
+      click_js_button 'Save'
+      wait_for_ajax
+    }.to change(FormField, :count).by(1)
+    field = FormField.last
+    expect(field.name).to eql 'My Custom KPI'
+    expect(field.type).to eql 'FormField::Number'
+    expect(field.kpi_id).to eql field.kpi_id
+
+    within form_field_settings_for 'My Custom KPI' do
+      expect(find_field('Field label').value).to eql 'My Custom KPI'
+      expect(find_field('Required')['checked']).to be_true
+    end
+  end
+end
+
 def text_area_field
   find('.fields-wrapper .field', text: 'Paragraph')
 end
@@ -931,6 +974,10 @@ end
 
 def likert_scale_field
   find('.fields-wrapper .field', text: 'Likert scale')
+end
+
+def kpi_field(kpi)
+  find('.fields-wrapper .field', text: kpi.name)
 end
 
 def form_builder

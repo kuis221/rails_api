@@ -129,6 +129,27 @@
 		width: 210px;
 		padding: 10px;
 
+		.accordion-heading {
+			font-weight: bold;
+		}
+		.accordion-group {
+			border: none;
+
+			#kpis-fields.in {
+				border: 1px solid $grey_one;
+				padding: 3px;
+			}
+		}
+
+		.scrollable-list {
+			max-height: 200px;
+			min-height: 71px;
+			width: 200px;
+		}
+		.group-name {
+			margin-left: 10px;
+		}
+
 		.field {
 			border: 1px solid $user_menu;
 			border-radius: 5px;
@@ -166,11 +187,27 @@
 				}
 			}
 
+			&.flat {
+				display: block;
+				width: initial;
+				text-align: left;
+				height: 25px;
+				overflow: hidden;
+				width: 160px;
+				border: 0;
+				&:before {
+					display: none;
+				}
+			}
+
+
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
 				padding: 10px;
 				background-color: #fff;
 				text-align: left;
+				width: auto;
+				height: auto;
 				a.close {
 					display:none;
 				}

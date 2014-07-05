@@ -1,6 +1,6 @@
-#report-fields.field-list
+#report-fields.field-list.searchable-field-list
   .search-fields
-    input type="search" id="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
+    input type="search" class="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
   .fields-group.scrollable-list
     - available_field_list.each do |group_name, items|
       span.group-name data-group="#{group_name}"= group_name

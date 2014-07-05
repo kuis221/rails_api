@@ -217,6 +217,14 @@ en:
       photos: "Photos"
       videos: "Videos"
       comments: "Comments"
+    field_types:
+      text: 'Text'
+      number: 'Number'
+      percentage: 'Percentage'
+      currency: 'Currency'
+      checkbox: 'Checkbox'
+      dropdown: 'Dropdown'
+      radio: 'Radio'
 
   errors:
     result:

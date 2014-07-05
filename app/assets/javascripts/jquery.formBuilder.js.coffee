@@ -12,6 +12,11 @@ $.widget 'nmk.formBuilder', {
 		)
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
+		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
+
+		@element.find('.field-search-input').on 'keyup', (e) =>
+			@searchFieldList $(e.target).val().toLowerCase()
+
 		@attributesPanel = $('<div class="field-attributes-panel">').
 			css({position: 'absolute', display: 'none'}).
 			appendTo($('body')).
@@ -26,7 +31,9 @@ $.widget 'nmk.formBuilder', {
 				revert: true,
 				stop: (e, ui) =>
 					if ui.item.hasClass('ui-draggable')
-						fieldHtml = @buildField({type: ui.item.data('type')})
+						options = {type: ui.item.data('type')}
+						options = ui.item.data('options') if ui.item.data('options')
+						fieldHtml = @buildField(options)
 						ui.item.replaceWith fieldHtml
 						applyFormUiFormatsTo fieldHtml
 
@@ -51,8 +58,13 @@ $.widget 'nmk.formBuilder', {
 			@fieldsWrapper.find('.field').draggable
 				connectToSortable: ".form-fields"
 				revert: "invalid"
+				appendTo: @fieldsWrapper
 				helper: (a, b) =>
-					@buildField({type: $(a.target).data('type')})
+					$target = $(a.target)
+					options = {type: $target.data('type')}
+					if $target.data('options')
+						options = $target.data('options');
+					@buildField options
 				start: (e, ui) =>
 					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
 					applyFormUiFormatsTo(ui.helper)
@@ -76,6 +88,26 @@ $.widget 'nmk.formBuilder', {
 				if @modified
 					'You are leaving the activity type details page without saving your work.'
 
+		true
+
+	searchFieldList: (value) ->
+		$list = @element.find('.searchable-field-list')
+		for field in $list.find(".field:not(.hidden)")
+			if $(field).text().toLowerCase().search(value) > -1
+				$(field).show()
+			else
+				$(field).hide()
+
+		$list.find('.group-name').show()
+		for group in $('.group-name').get()
+			group_name = $(group).text()
+			if $list.find('.field[data-group="'+group_name+'"]:visible').length is 0
+				$(group).hide()
+				$list.find('.field[data-group="'+group_name+'"]').hide()
+			else
+				$(group).show()
+		scrollerApi = $('.searchable-field-list .scrollable-list').data('jsp')
+		scrollerApi.reinitialise()
 		true
 
 	_loadForm: () ->
@@ -244,7 +276,7 @@ FormField = Class.extend {
 		if @attributes._destroy? && @attributes._destroy is true
 			{id: @attributes.id, _destroy: true }
 		else if @attributes.kpi_id 
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering}
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType()}
 		else
 			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 

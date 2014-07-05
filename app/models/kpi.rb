@@ -114,6 +114,10 @@ class Kpi < ActiveRecord::Base
     end
   end
 
+  def form_field_options
+    {name: name, type: form_field_type.split('::')[1], kpi_id: self.id}
+  end
+
   class << self
     def events
       @events ||= where(company_id: nil).find_by_name_and_kpi_type('Events', 'events_count')
