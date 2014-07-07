@@ -52,7 +52,6 @@ gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
-gem 'font_assets'
 
 #For memory debugging
 gem "oink"
@@ -79,6 +78,7 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
+  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
   gem "twitter-bootstrap-rails"

@@ -14,6 +14,12 @@ PATH
       railties (~> 3)
       sentient_user (~> 0.3.2)
 
+PATH
+  remote: vendor/gems/font_assets
+  specs:
+    font_assets (0.1.11)
+      rack
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -146,8 +152,6 @@ GEM
       i18n (~> 0.5)
     fattr (2.2.1)
     ffi (1.9.3)
-    font_assets (0.1.11)
-      rack
     formatador (0.2.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
@@ -487,7 +491,7 @@ DEPENDENCIES
   email_spec (>= 1.4.0)
   factory_girl_rails (~> 4.3)
   faker
-  font_assets
+  font_assets!
   fuubar
   gctools
   geocoder
