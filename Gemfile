@@ -68,6 +68,7 @@ end
 # Gems that are only required for the web process, to prevent
 # workers loading not needed libraries
 group :web do
+  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin'
   gem "meta_search", '>= 1.1.0.pre'
   gem 'unicorn'
@@ -78,7 +79,6 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
   gem "twitter-bootstrap-rails"
