@@ -1,6 +1,6 @@
 object @campaign
 
-attributes :id, :name
+attributes :id, :name, :enabled_modules
 
 child :form_fields => :form_fields do
   attributes :id, :name, :type, :required, :settings, :ordering, :kpi_id, :min_options_allowed, :min_statements_allowed

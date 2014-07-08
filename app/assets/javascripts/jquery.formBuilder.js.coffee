@@ -6,11 +6,47 @@ $.widget 'nmk.formBuilder', {
 		@modified = false
 		@_updateSaveButtonState()
 
-		@element.find('.form-wrapper').append(
-			@formWrapper = $('<div class="form-fields clearfix">'),
-			( if @options.canEdit then $('<div class="form-actions">').append('<button id="save-report" class="btn btn-primary">Save</button>') else null )
+		@wrapper = @element.find('.form-wrapper')
+		@wrapper.append(
+			( if @options.canEdit then $('<div class="form-actions" data-spy="affix" data-offset-top="340">').append('<button id="save-report" class="btn btn-primary">Save</button>') else null ),
+			@formWrapper = $('<div class="form-fields clearfix form-section">')
 		)
+
+		@wrapper.find('form-actions').affix 
+			offset: () => @formWrapper.offset().top - ($('#resource-close-details').offset().top + $('#resource-close-details').height())
+
+		$(window).on 'resize scroll', () =>
+			@wrapper.find('.form-actions:not(.affix)').each (index, bar) =>
+				$(bar).css top: '0'
+
+			@wrapper.find('.form-actions.affix').each (index, bar) =>
+				$(bar).css 
+					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
+					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
+
+
+
+
 		@fieldsWrapper = @element.find('.fields-wrapper')
+
+		@fieldsWrapper.find('.field[data-title]').tooltip
+			html: true, container: @element, delay: 0, animation: false
+			title: (a, b) ->
+				$(this).data('title')
+			placement: (tooltip, field) ->
+				window.setTimeout ->
+					$(tooltip).css
+						left: (parseInt($(tooltip).css('left'))-15)+'px'
+				10
+
+				return 'left';
+
+		@wrapper.droppable
+			accept: ".field.module"
+			drop: (event, ui) =>
+				options = {type: ui.draggable.data('type')}
+				@_addModuleToForm options
+				true
 
 		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
 
@@ -27,7 +63,7 @@ $.widget 'nmk.formBuilder', {
 		if @options.canEdit
 			@formWrapper.sortable
 				items: "> div.field"
-				cancel: '.empty-form-legend'
+				cancel: '.empty-form-legend, .module'
 				revert: true,
 				stop: (e, ui) =>
 					if ui.item.hasClass('ui-draggable')
@@ -48,14 +84,15 @@ $.widget 'nmk.formBuilder', {
 
 				out: (event, ui) =>
 					@formWrapper.removeClass 'sorting'
-					# if @fieldsWrapper.find('.find').length is 0
-					# 	@element.find('.empty-form-legend').show()
 
-				receive: () =>
-					@element.find('.empty-form-legend').hide()
+				receive: (event, ui) =>
+					if ui.item.hasClass('module')
+						@formWrapper.sortable 'cancel'
+					else
+						@element.find('.empty-form-legend').hide()
 
 		if @options.canEdit
-			@fieldsWrapper.find('.field').draggable
+			@fieldsWrapper.find('.field:not(.module)').draggable
 				connectToSortable: ".form-fields"
 				revert: "invalid"
 				appendTo: @fieldsWrapper
@@ -64,6 +101,19 @@ $.widget 'nmk.formBuilder', {
 					options = {type: $target.data('type')}
 					if $target.data('options')
 						options = $target.data('options');
+					@buildField options
+				start: (e, ui) =>
+					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
+					applyFormUiFormatsTo(ui.helper)
+
+			@fieldsWrapper.find('.field.module').draggable
+				revert: "invalid"
+				appendTo: @fieldsWrapper
+				helper: (a, b) =>
+					$target = $(a.target)
+					options = {type: $target.data('type')}
+					if $target.data('options')
+						options = $target.data('options')
 					@buildField options
 				start: (e, ui) =>
 					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
@@ -116,9 +166,14 @@ $.widget 'nmk.formBuilder', {
 			@formWrapper.find('.field').remove()
 			@modified = false
 			@_updateSaveButtonState()
-			if response.form_fields.length > 0
-				for field in response.form_fields
-					@_addFieldToForm field
+			if response.form_fields.length > 0 || response.enabled_modules.length > 0
+				if response.form_fields.length > 0
+					for field in response.form_fields
+						@_addFieldToForm field
+				if response.enabled_modules && response.enabled_modules.length > 0
+					for moduleName in response.enabled_modules
+						@_addModuleToForm {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+						
 			else
 				@element.find('.empty-form-legend').show()
 
@@ -130,6 +185,13 @@ $.widget 'nmk.formBuilder', {
 
 		field
 
+	_addModuleToForm: (field) ->
+		moduleHtml = @buildField(field)
+		@wrapper.append moduleHtml
+		@fieldsWrapper.find('.module[data-type='+field.type+']').hide()
+
+		field
+
 	buildField: (options) ->
 		className = options.type.replace('FormField::', '');
 		className = className+'Field'
@@ -138,8 +200,8 @@ $.widget 'nmk.formBuilder', {
 
 	saveFields: () ->
 		data = {
-			form_fields_attributes: $.map @formFields(), (field, index) =>
-				field.getSaveAttributes()
+			form_fields_attributes: $.map(@formFields(), (field) => field.getSaveAttributes())
+			enabled_modules: $.map(@formModules(), (field) => field.getSaveAttributes().name)
 		}
 		@saveForm data
 
@@ -171,6 +233,10 @@ $.widget 'nmk.formBuilder', {
 
 	formFields: () ->
 		$.map @formWrapper.find('.field'), (element, index) =>
+			$(element).data('field')
+
+	formModules: () ->
+		$.map @wrapper.find('.module'), (element, index) =>
 			$(element).data('field')
 
 	placeFieldAttributes: (field) ->
@@ -225,6 +291,9 @@ $.widget 'nmk.formBuilder', {
 
 	_updateSaveButtonState: () ->
 		$('#save-report').attr('disabled', not @modified)
+
+	_capitalize: (string) ->
+		string.replace /(?:^|\s)\S/g, (a) -> a.toUpperCase()
 }
 
 
@@ -374,18 +443,24 @@ FormField = Class.extend {
 
 	remove: () ->
 		if @attributes.id # If this file already exists on the database
-			bootbox.confirm "Removing this field will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>", (result) =>
+			bootbox.confirm @_removeConfirmationMessage(true), (result) =>
 				if result
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
-					true
 		else
-			bootbox.confirm "Are you sure you want to remove this field?", (result) =>
+			bootbox.confirm @_removeConfirmationMessage(false), (result) =>
 				if result
 					@field.remove()
 					@form.setModified()
 					@form._hideFieldAttributes @field
+		false
+
+	_removeConfirmationMessage: (withData) ->
+		if withData
+			"Removing this field will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
+		else
+			"Are you sure you want to remove this field?"
 
 	refresh: () ->
 		@field.html('').append(
@@ -1101,6 +1176,118 @@ TimeField = FormField.extend {
 			@labelField(),
 			@requiredField()
 		]
+}
+
+Module =  FormField.extend {
+	getSaveAttributes: () ->
+		{field_type: 'module', name: @fieldType()}
+
+	fieldType: ->
+		@__proto__.type
+
+	render: () ->
+		@field ||= $('<div class="form-section module" data-type="' + @__proto__.type + '">')
+			.data('field', @)
+			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
+					@_renderField()
+
+	_removeConfirmationMessage: (withData) ->
+		if withData
+			"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
+		else
+			"Are you sure you want to remove this module?"
+}
+
+SurveysField = Module.extend {
+	type: 'surveys',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Surves'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h2>Surveys Module</h2>'),
+			$('<img src="/assets/surveys.png" width="363" height="237" />')
+		]
+
+	attributesForm: () ->
+		false
+}
+
+CommentsField = Module.extend {
+	type: 'comments',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Surveys'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h2>Comments Module</h2>'),
+			$('<img src="/assets/comments.png" width="363" height="337" />')
+		]
+
+	attributesForm: () ->
+		false
+}
+
+PhotosField = Module.extend {
+	type: 'photos',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Photos'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h2>Gallery Module</h2>'),
+			$('<img src="/assets/photos.png" width="363" height="337" />')
+		]
+
+	attributesForm: () ->
+		false
+}
+
+ExpensesField = Module.extend {
+	type: 'expenses',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Expenses'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h2>Expenses Module</h2>'),
+			$('<img src="/assets/expenses.png" width="363" height="337" />')
+		]
+
+	attributesForm: () ->
+		false
 }
 
 applyFormUiFormatsTo = (element) ->

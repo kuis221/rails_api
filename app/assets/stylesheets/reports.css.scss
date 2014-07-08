@@ -1,4 +1,5 @@
-@import "variables";
+@import "variables"; 
+@import "mixins"; 
 
 // REPORTS
 
@@ -81,29 +82,7 @@ ul.reports-list {
 	}
 
 	.tooltip {
-		opacity: 1;
-		.tooltip-inner {
-			background-color: $text;
-			text-align: left;
-			b{
-				color: #cccccc;
-			}
-		}
-		&.left{
-			.tooltip-arrow{
-				border-left-color: $text;
-			}
-		}
-		b {
-			margin-top: 10px;
-			display: block;
-			color: $grey_one;
-			font-weight: normal;
-			&:first-child {
-				margin-top: 0px;
-			}
-		}
-		width: 156px;
+		@include kpi-desc-tooltip;
 	}
 
 	.with-details-close-bar {

@@ -118,7 +118,9 @@ class CampaignsController < FilteredController
     def permitted_params
       p = [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}]
       if can?(:view_event_form, Campaign)
-        p.push({form_fields_attributes: [
+        p.push({
+          enabled_modules: [],
+          form_fields_attributes: [
             :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
             {settings: [:description]},
             {options_attributes: [:id, :name, :_destroy, :ordering]},
