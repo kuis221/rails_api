@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Campaigns", js: true, search: true do
+feature "Campaigns", js: true do
 
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
@@ -14,70 +14,58 @@ feature "Campaigns", js: true, search: true do
     Warden.test_reset!
   end
 
-  feature "/campaigns" do
-    it_behaves_like "a fieldable element" do
-      let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
-      let(:fieldable_path) { campaign_path(fieldable) }
+  feature "Index" , search: true  do
+    scenario "should display a table with the campaigns" do
+      campaigns = [
+        FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company),
+        FactoryGirl.create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: @company)
+      ]
+      Sunspot.commit
+      visit campaigns_path
+
+      within("ul#campaigns-list") do
+        # First Row
+        within("li:nth-child(1)") do
+          expect(page).to have_content(campaigns[0].name)
+          expect(page).to have_content(campaigns[0].description)
+        end
+        # Second Row
+        within("li:nth-child(2)") do
+          expect(page).to have_content(campaigns[1].name)
+          expect(page).to have_content(campaigns[1].description)
+        end
+      end
     end
 
-    it_behaves_like "a fieldable element that accept kpis" do
-      let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
-      let(:fieldable_path) { campaign_path(fieldable) }
+    scenario "should allow user to deactivate campaigns" do
+      FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      Sunspot.commit
+      visit campaigns_path
+
+      expect(page).to have_content('Cacique FY13')
+      within("ul#campaigns-list li:nth-child(1)") do
+        click_js_link('Deactivate')
+      end
+
+      confirm_prompt "Are you sure you want to deactivate this campaign?"
+
+      expect(page).to have_no_content('Cacique FY13')
     end
 
-    feature "GET index" do
-      scenario "should display a table with the campaigns" do
-        campaigns = [
-          FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company),
-          FactoryGirl.create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: @company)
-        ]
-        Sunspot.commit
-        visit campaigns_path
+    scenario "should allow user to activate campaigns" do
+      campaign = FactoryGirl.create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      Sunspot.commit
+      visit campaigns_path
 
-        within("ul#campaigns-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            expect(page).to have_content(campaigns[0].name)
-            expect(page).to have_content(campaigns[0].description)
-          end
-          # Second Row
-          within("li:nth-child(2)") do
-            expect(page).to have_content(campaigns[1].name)
-            expect(page).to have_content(campaigns[1].description)
-          end
-        end
-      end
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
 
-      scenario "should allow user to deactivate campaigns" do
-        FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
-        Sunspot.commit
-        visit campaigns_path
-
+      expect(page).to have_content('Cacique FY13')
+      within("ul#campaigns-list li:nth-child(1)") do
         expect(page).to have_content('Cacique FY13')
-        within("ul#campaigns-list li:nth-child(1)") do
-          click_js_link('Deactivate')
-        end
-
-        confirm_prompt "Are you sure you want to deactivate this campaign?"
-
-        expect(page).to have_no_content('Cacique FY13')
+        click_js_link('Activate')
       end
-
-      scenario "should allow user to activate campaigns" do
-        campaign = FactoryGirl.create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
-        Sunspot.commit
-        visit campaigns_path
-
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
-
-        expect(page).to have_content('Cacique FY13')
-        within("ul#campaigns-list li:nth-child(1)") do
-          expect(page).to have_content('Cacique FY13')
-          click_js_link('Activate')
-        end
-        expect(page).to have_no_content('Cacique FY13')
-      end
+      expect(page).to have_no_content('Cacique FY13')
     end
 
     scenario 'allows the user to create a new campaign' do
@@ -105,7 +93,7 @@ feature "Campaigns", js: true, search: true do
     end
   end
 
-  feature "Campaign details page", :js => true do
+  feature "Details page", :js => true do
     scenario "GET show should display the campaign details page" do
       campaign = FactoryGirl.create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
       visit campaign_path(campaign)

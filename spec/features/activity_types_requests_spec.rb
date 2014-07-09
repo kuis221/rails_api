@@ -1,8 +1,6 @@
 require 'spec_helper'
-require 'support/shared_examples_for_fieldables'
 
-feature "ActivityTypes", js: true do
-
+feature "Activity Types", js: true do
   before do
     Warden.test_mode!
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
@@ -15,12 +13,7 @@ feature "ActivityTypes", js: true do
     Warden.test_reset!
   end
 
-  it_behaves_like "a fieldable element" do
-    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: @company) }
-    let(:fieldable_path) { activity_type_path(fieldable) }
-  end
-
-  feature "/activity_types", search: true  do
+  feature "List view", search: true  do
     scenario "GET index should display a table with the day_parts" do
       activity_types = [
         FactoryGirl.create(:activity_type, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
@@ -114,7 +107,7 @@ feature "ActivityTypes", js: true do
     end
   end
 
-  feature "activity type details view" do
+  feature "Details view" do
     scenario "should allow user to edit an activity type" do
       activity_type = FactoryGirl.create(:activity_type, name: 'A test activity type', description: 'Algunos vinos de Costa Rica', company: @company)
       Sunspot.commit

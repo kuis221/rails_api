@@ -7,6 +7,10 @@
 		@include kpi-desc-tooltip;
 	}
 
+	.field-tooltip-trigger {
+		height: 30px;
+	}
+
 	.form-wrapper {
 		position: relative;
 		.form-actions {
@@ -19,6 +23,9 @@
 				top: 99px;
 				z-index: 99;
 				background-color: #fff;
+			}
+			.tooltip {
+				font-size: 13px;
 			}
 		}
 		.form-section {

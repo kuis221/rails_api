@@ -7,8 +7,13 @@ $.widget 'nmk.formBuilder', {
 		@_updateSaveButtonState()
 
 		@wrapper = @element.find('.form-wrapper')
+		if @options.canEdit
+			@wrapper.append $('<div class="form-actions" data-spy="affix" data-offset-top="340">')
+							 .append('<button id="save-report" class="btn btn-primary">Save</button>')
+							 .append('<div data-placement="left" title="Adding a new item<br />at the bottom..." class="invisible pull-right field-tooltip-trigger"></div>')
+
+			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip placement: 'left', html: true
 		@wrapper.append(
-			( if @options.canEdit then $('<div class="form-actions" data-spy="affix" data-offset-top="340">').append('<button id="save-report" class="btn btn-primary">Save</button>') else null ),
 			@formWrapper = $('<div class="form-fields clearfix form-section">')
 		)
 
@@ -17,14 +22,14 @@ $.widget 'nmk.formBuilder', {
 
 		$(window).on 'resize scroll', () =>
 			@wrapper.find('.form-actions:not(.affix)').each (index, bar) =>
-				$(bar).css top: '0'
+				$(bar).css 
+					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
+					top: '0'
 
 			@wrapper.find('.form-actions.affix').each (index, bar) =>
 				$(bar).css 
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
-
-
 
 
 		@fieldsWrapper = @element.find('.fields-wrapper')
@@ -60,6 +65,8 @@ $.widget 'nmk.formBuilder', {
 				e.stopPropagation()
 				true
 
+
+
 		if @options.canEdit
 			@formWrapper.sortable
 				items: "> div.field"
@@ -73,8 +80,7 @@ $.widget 'nmk.formBuilder', {
 						ui.item.replaceWith fieldHtml
 						applyFormUiFormatsTo fieldHtml
 
-					$.map @formWrapper.find("> div.field"), (field, index) =>
-						$(field).data('field').attributes.ordering = index
+					@_updateOrdering();
 
 					@setModified()
 					@formWrapper.find('.clearfix').appendTo(@formWrapper)
@@ -105,6 +111,22 @@ $.widget 'nmk.formBuilder', {
 				start: (e, ui) =>
 					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
 					applyFormUiFormatsTo(ui.helper)
+			.on 'click', (e) =>
+				return if e.target.adding
+				e.target.adding = setTimeout () -> 
+					e.target.adding = false
+				, 1000
+				target = $(e.target)
+				options = {type: target.data('type')}
+				options = target.data('options') if target.data('options')
+				@_addFieldToForm options
+				@setModified()
+				@_updateOrdering()
+				@fieldTooltip.tooltip 'show'
+				clearTimeout @_toolTipTimeout if @_toolTipTimeout
+				@_toolTipTimeout = setTimeout =>
+					@fieldTooltip.tooltip 'hide'
+				, 1000
 
 			@fieldsWrapper.find('.field.module').draggable
 				revert: "invalid"
@@ -159,6 +181,10 @@ $.widget 'nmk.formBuilder', {
 		scrollerApi = $('.searchable-field-list .scrollable-list').data('jsp')
 		scrollerApi.reinitialise()
 		true
+
+	_updateOrdering: () ->
+		$.map @formWrapper.find("> div.field"), (field, index) =>
+			$(field).data('field').attributes.ordering = index
 
 	_loadForm: () ->
 		@element.find('.empty-form-legend').hide()

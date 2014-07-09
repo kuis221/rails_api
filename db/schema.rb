@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(:version => 20140701022727) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
-  add_extension "postgres_fdw"
   add_extension "tablefunc"
 
   create_table "active_admin_comments", :force => true do |t|

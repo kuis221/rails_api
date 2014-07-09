@@ -1,5 +1,26 @@
+require 'spec_helper'
+
+
 RSpec.shared_examples "a fieldable element" do
   let(:fieldable_path) { url_for(fieldable, only_path: true) }
+
+  scenario "user can add a field to the form by clicking on it" do
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    text_field.click
+    expect(page).to have_content('Adding a new item at the bottom...')
+
+    expect(form_builder).to have_form_field('Single line text')
+
+    # Save the form
+    expect {
+      click_js_button 'Save'
+      wait_for_ajax
+    }.to change(FormField, :count).by(1)
+    field = FormField.last
+    expect(field.type).to eql 'FormField::Text'
+  end
+
   scenario "user can add paragraph fields to form" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
@@ -908,6 +929,49 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
   end
 end
 
+feature "Campaign Form Builder", js: true do
+  let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
+
+  before do
+    Warden.test_mode!
+    @company = user.companies.first
+    sign_in user
+  end
+
+  after do
+    Warden.test_reset!
+  end
+
+  it_behaves_like "a fieldable element" do
+    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable_path) { campaign_path(fieldable) }
+  end
+
+  it_behaves_like "a fieldable element that accept kpis" do
+    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable_path) { campaign_path(fieldable) }
+  end
+end
+
+feature "Activity Types", js: true do
+  let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
+
+  before do
+    Warden.test_mode!
+    @company = user.companies.first
+    sign_in user
+  end
+
+  after do
+    Warden.test_reset!
+  end
+
+  it_behaves_like "a fieldable element" do
+    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: @company) }
+    let(:fieldable_path) { activity_type_path(fieldable) }
+  end
+end
+
 def text_area_field
   find('.fields-wrapper .field', text: 'Paragraph')
 end
@@ -996,7 +1060,7 @@ def form_field(field_name)
   form_builder.all('.field').each do |wrapper|
     field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
   end
-  raise "Field #{field_name} not found" if field.nil?
+  raise "KPI #{field_name} not found" if field.nil?
   field
 end
 
