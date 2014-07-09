@@ -2265,7 +2265,7 @@ ul.kpis-list{
 		}
 		.remaining-label{
 			top: -7px !important;
-			span{
+			span {
 				margin-top: -1px;
 				font-size: 11px;
 			}
@@ -2451,6 +2451,9 @@ ul.kpis-list{
 			.kpi-name{
 				color: $user_menu;
 				line-height: 9px;
+			}
+			&.over-goal b {
+				color: $alert_red;
 			}
 		}
 	}

@@ -70,10 +70,10 @@ module DashboardHelper
         content_tag(:div, '', class: 'bar bar-remaining', style: "width: #{c['remaining_percentage']}%;")
       end +
       content_tag(:div, content_tag(:div, "<b>#{number_with_precision(c['goal'], strip_insignificant_zeros: true, delimiter: ',')}</b> GOAL".html_safe), class: 'goal-label')+
-      content_tag(:div, class: 'remaining-label') do
-        content_tag(:b, number_with_precision(c['remaining'], strip_insignificant_zeros: true, delimiter: ',')) +
+      content_tag(:div, class: 'remaining-label' + (c['remaining'] < 0 ? ' over-goal' : '')) do
+        content_tag(:b, number_with_precision(c['remaining'].abs, strip_insignificant_zeros: true, delimiter: ',')) +
         content_tag(:span, c['kpi'], class: 'kpi-name') +
-        content_tag(:span, 'REMAINING')
+        content_tag(:span, (c['remaining'] < 0 ? 'OVER' : 'REMAINING' ) )
       end
     end
   end
