@@ -954,12 +954,49 @@ class Api::V1::EventsController < Api::V1::FilteredController
             {id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}
           }
         })
+      elsif field.type == 'FormField::Checkbox'
+        r = resource.results_for([field]).first
+        p r.value.inspect
+        result.merge!({
+          id: r.id,
+          segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
+        })
+      elsif field.type == 'FormField::Brand'
+        r = resource.results_for([field]).first
+        result.merge!({
+          id: r.id,
+          value: r.value.to_i,
+          segments: field.brands_options(r).map{|s|
+            {id: s[:id], text: s[:name]}
+          }
+        })
+      elsif ['FormField::Date', 'FormField::Time'].include?(field.type)
+        r = resource.results_for([field]).first
+        result.merge!({
+          id: r.id,
+          value: r.value
+        })
+      elsif field.type == 'FormField::Summation'
+        r = resource.results_for([field]).first
+        result.merge!({
+          id: r.id,
+          value: r.value.map{|s| s[1].to_f}.reduce(0, :+),
+          segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value[s[1].to_s]}}
+        })
+      elsif field.type == 'FormField::LikertScale'
+        r = resource.results_for([field]).first
+        result.merge!({
+          id: r.id,
+          statements: field.statements.order(:ordering).map{|s| {id: s.id, text: s.name, value: r.value[s.id.to_s]}},
+          segments: field.options_for_input.map{|s| {id: s[1], text: s[0]}}
+        })
       else
         if field.is_optionable?
-          result.merge!({segments: field.options_for_input.map{|s| {id: s[1], text: s[0], goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}}})
+          result.merge!({segments: field.options_for_input.map{|s| {id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}}})
         end
         r = resource.results_for([field]).first
-        result.merge!({id: r.id, value: r.value})
+        v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
+        result.merge!({id: r.id, value: v})
       end
 
       result.merge!(description: field.kpi.description) if field.kpi.present?
@@ -1546,7 +1583,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
       allowed += [:summary, {results_attributes: [:value, :id, {value: []}]}] if can?(:edit_data, Event)
       allowed += [:active] if can?(:deactivate, Event)
       parameters = params.require(:event).permit(*allowed)
-      parameters
+      parameters.tap do |whielisted|
+        unless whielisted.nil? || whielisted[:results_attributes].nil?
+          whielisted[:results_attributes].each_with_index do |value, i|
+            value[:value] = params[:event][:results_attributes][i][:value]
+          end
+        end
+      end
     end
 
     def permitted_search_params

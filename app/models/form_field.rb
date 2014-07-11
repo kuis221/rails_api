@@ -109,4 +109,8 @@ class FormField < ActiveRecord::Base
   def min_statements_allowed
     MIN_STATEMENTS_ALLOWED
   end
+
+  def value_is_numeric?(value)
+    true if Float(value) rescue false
+  end
 end
