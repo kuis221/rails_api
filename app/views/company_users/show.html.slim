@@ -1,28 +1,58 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing user details. Click to close.")
 
-  .details_box.padding-top-close-bar
-    h2= resource.full_name
+  .details_box.user-view.padding-top-close-bar
+    .basic-info
+      .profile-pic.big
+        img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
+      .profile-data
+        h2= resource.full_name
 
-    - if resource.role.present?
-      .user-role
-        = resource.role.name
+        - if resource.role.present?
+          .user-role.label.label-default
+            = resource.role.name
+    .aditional-info 
+      - if resource.email.present?
+        .email-data
+          = resource.email
 
-    - if resource.email.present?
-      .email-data
-        = resource.email
+      - if resource.phone_number.present?
+        .phone-data
+          .number
+            = resource.phone_number 
+          .verify
+            a href="#" Get Verified
+          .info
+            a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
 
-    - if resource.phone_number.present?
-      .phone-data
-        = resource.phone_number
+          .verified
+            p Verified!
 
-    - if resource.full_address.present?
-      .place-data
-        = resource.full_address
+      - if resource.full_address.present?
+        .place-data
+          = resource.full_address
 
-    .links-data
-      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can?(:deactivate, resource)
+    .basic-info
+      .profile-pic.big.no-pic.icon-user
+      .edit-profile-pic.hide
+        ul
+          li 
+            a href="#" Upload photo
+          li 
+            a href="#" Take photo
+          li 
+            a href="#" Cancel
+        
+      .profile-data
+        h2= resource.full_name
+
+        - if resource.role.present?
+          .user-role.label.label-default
+            = resource.role.name
+
+      //.links-data
+        //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+        //= active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
@@ -30,26 +60,161 @@
       = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
-  #user-places.details_box
-    h3 PLACES
-    #company_user-areas-list
-      = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
+    .user-data
+      h3 CAMPAIGNS
 
-    #company_user-places-list
-      = render 'places'
+      .items-container
+        .box.special-icon.brand-icon
+          b example one - brand icon
 
-    .row-fluid.plus
-      = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
+        .box.special-icon.brand-icon
+          b example one - brand icon
 
-  #user-campaigns.details_box
-    h3 CAMPAIGNS
+      .items-container
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
 
-    = render 'campaigns'
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
 
-  #user-goals.details_box
-    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
-    #resource-goals-list.link-list
-      = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+
+
+      h3 PLACES
+      .items-container
+        .box.special-icon.area-icon
+          b example one - area icon
+
+        .box.special-icon.area-icon
+          b example one - area icon
+
+      .items-container
+        .box.special-icon.venue-icon
+          b example one - venue icon
+          p 6251 East Pacific Coast Highway, Long Beach
+
+        .box.special-icon.venue-icon
+          b Bar & Dinner "PPTH"
+          p 6251 East Pacific Coast Highway, Long Beach
+
+      h3 COMMUNICATION PREFERENCES
+      .row-fluid.communication-preferences
+        .span10
+          .span4
+            b 
+          .span2
+            p IN-APP
+          .span2
+            p SMS
+          .span2
+            p EMAIL
+
+        .span10
+          .span4
+            b Event Recaps Due
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+
+        .span10
+          .span4
+            b Late Event Recaps
+          .span2
+            .icon-ok
+          .span2
+          .span2
+            .icon-ok
+
+        .span10
+          .span4
+            b Event Recaps Pending Approval
+          .span2
+          .span2
+            .icon-ok
+          .span2
+
+        .span10
+          .span4
+            b Rejected Event Recaps
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+          .span2
+
+        .span10
+          .span4
+            b Late Team Tasks
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+
+        .span10
+          .span4
+            b New Comment
+          .span2
+          .span2
+          .span2
+            .icon-ok
+
+        .span10
+          .span4
+            b New Team Comment
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+          .span2
+
+        .span10
+          .span4
+            b New Unassigned Team Task
+          .span2
+            .icon-ok
+          .span2
+          .span2
+            .icon-ok
+
+        .span10
+          .span4
+            b New Campaign
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+          .span2
+            .icon-ok
+
+
+
+  
+  //#user-places.details_box
+    //h3 PLACES
+    //#company_user-areas-list
+    //  = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
+
+    //#company_user-places-list
+    //  = render 'places'
+
+    //.row-fluid.plus
+    //  = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
+
+  //#user-campaigns.details_box
+    //h3 CAMPAIGNS
+
+    //= render 'campaigns'
+
+  //#user-goals.details_box
+    // = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
+    //#resource-goals-list.link-list
+    //  = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+
+
 
 = render partial: 'help_tutorial'
 

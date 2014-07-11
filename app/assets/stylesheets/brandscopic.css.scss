@@ -1,7 +1,16 @@
 @import "variables";
+@import "mixins.scss";
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
 $footer-height: 35px;
+
+//
+// Brandscopic Specific Styles
+// --------------------------------------------------
+
+
+// Font Face
+// --------------------------------------------------
 
 @font-face {
 	font-family: 'icons';
@@ -14,66 +23,9 @@ $footer-height: 35px;
 	font-style: normal;
 }
 
-@mixin box-sizing($value){
-	box-sizing: $value;
-	-moz-box-sizing: $value;
-	-webkit-box-sizing: $value;
-}
 
-
-/*-- GENERAL STYLES --*/
-a:before, a:after{
-	font-weight:normal;
-}
-
-html {
-	min-height: 100%;
-	height:100%;
-}
-
-select,
-textarea, 
-input[type="text"], 
-input[type="password"], 
-input[type="datetime"], 
-input[type="datetime-local"], 
-input[type="date"], 
-input[type="month"], 
-input[type="time"], 
-input[type="week"], 
-input[type="number"], 
-input[type="email"], 
-input[type="url"], 
-input[type="search"], 
-input[type="tel"], 
-input[type="color"], 
-.uneditable-input{
-	background-color: white;
-	border: 1px solid $grey_four;
-	box-shadow: none;
-	box-sizing: border-box;
-	font-family: $baseFontFamily;
-	font-size: 13px;
-	font-weight: normal;
-	-webkit-box-shadow: none;
-	height:42px;
-	padding: 10px;
-	width: 380px;
-	&:focus{
-		border: 1px solid $brand;
-		box-shadow: none;
-		-webkit-box-shadow: none;
-		outline:0;
-	}
-}
-
-input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly]{
-	background-color: white;
-	border: 1px solid rgba(192, 192, 192, 0.6);
-	&:focus{
-		border: 1px solid rgba(192, 192, 192, 0.6)
-	}
-}
+// General Styles
+// --------------------------------------------------
 
 .help-inline.valid{
 	display:none !important;
@@ -104,15 +56,18 @@ body{
 	}
 }
 
-
 abbr[title]{
 	border:0;
 }
 
+/*
 label{
 	color: $brand;
 	font-size: 13px;
-}
+}*/
+
+// Rating for photos
+// --------------------------------------------------
 
 .rating{
 	margin-left: 8%;
@@ -129,9 +84,19 @@ label{
 	}
 }
 
-.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .member-data{
+.calendar-data, .email-data, .phone-data, .place-data, 
+.time-data, .description-data, .member-data{
 	margin:0 0 20px 30px;
 	width: 380px;
+}
+
+.communication-preferences{
+	.span10{
+		margin-left: 0;
+	}
+	.span2{
+		text-align: center;
+	}
 }
 
 .marques-data{
@@ -206,6 +171,19 @@ label{
 		text-align: center;
 		vertical-align: middle;
 	}
+	div{
+		display: inline-block;
+		width: auto;
+		&+div{
+			margin-left: 10px;
+			&.info{
+				margin-left: 5px;
+			}
+			&.verified{
+				margin-left: 30px;
+			}
+		}
+	}
 }
 .time-data{
 	&:before{
@@ -217,6 +195,146 @@ label{
 		vertical-align: middle;
 	}
 }
+
+
+
+// Profile Pic - User Pic Styles
+// --------------------------------------------------
+
+.edit-profile-pic{
+	background-color: white;
+	border: 1px solid $user_menu;
+	bottom: -100px;
+	position: absolute;
+	height: 90px;
+	left: -15px;
+	@include border-radius(6px);
+	width: 122px;
+	ul{
+		list-style: none;
+		margin:0;
+		position: absolute;
+		width: 100%;
+		z-index: 999999;
+		li {
+			border-bottom: 1px solid $user_menu;
+			padding: 5px 10px;
+			a{
+				color: $text;
+			}
+			&:last-child{
+				border-bottom: 0;
+			}
+			&:hover{
+				background-color: $brand;
+				a{
+					color: white;
+				}
+			}
+		}
+	}
+	&:before{
+		content: '';
+		background: white;
+		height: 15px;
+		width: 15px;
+		position: absolute;
+		top: -7px;
+		left: 45%;
+		z-index: 4;
+		-webkit-transform: rotate(45deg);
+		transform: rotate(45deg);
+		box-shadow: -1px -1px 0px $user_menu;
+	}
+}
+
+.profile-pic{
+	background-color: $grey_four;
+	display: inline-block;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	&.big{
+		height: 96px;
+		@include border-radius(50px);
+		width: 96px;
+		img{
+			height: 96px;
+			left: -25%;
+			position: absolute;
+			max-width: 200%;
+		}
+		&.icon-user:before{ 
+			font-size: 60px;
+			padding: 17px 21px;
+		}
+		&.icon-staff:before{
+			font-size: 60px;
+			padding: 20px 17px;
+		}
+		&:hover{
+			&:after{
+				content: " ";
+				background: image-url('update-photo.png') rgba(79,79,79,0.8);
+				@extend .profile-pic.big;
+				position: absolute;
+				top: 0;
+			}
+		}
+	}
+}
+
+.items-container{
+	margin-bottom: 40px;
+}
+
+// View Profile Styles
+// --------------------------------------------------
+
+.user-view{
+	.basic-info{
+		display: block;
+		float: left;
+		margin-bottom: 20px;
+		position: relative;
+		width: 100%;
+		h2{
+			margin: 0 0 15px 0 !important;
+		}
+		.profile-pic{
+			display: inline-block;
+			float: left;
+			overflow: hidden;
+			position: relative;
+		}
+		.profile-data{
+			float: left;
+			margin: 20px 0 0 20px;
+		}
+	}
+	.aditional-info{
+		float: left;
+		margin-bottom: 30px;
+		width: 100%;
+		.email-data, .phone-data, .place-data{
+			margin-bottom: 8px;
+		}
+	}
+	.user-data{
+		.box{
+			display: inline-block;
+			&.special-icon:before{
+				float: left;
+			}
+			b{
+				margin: 5px 0 0 15px;
+				display: inline-block;
+			}
+		}
+	}
+}
+
+
 
 .control-group{
 	&.percentage{
@@ -268,7 +386,9 @@ label{
 	color: $user_menu;
 }
 
-/*-- EVENT DETAILS PAGES __*/
+
+// Event Details Styles
+// --------------------------------------------------
 
 body.events.show{
 	ul{
@@ -396,7 +516,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	height: 21px;
 	padding: 9px 5px;
 }
-// PROGRESS BAR
+
+// Progress Bar Styles (Event Data)
+// --------------------------------------------------
+
 .counter{
 	color: $brand !important;
 }
@@ -485,7 +608,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	text-transform: uppercase;
 }
 
-/*-- Alert Messages -- */
+// Alert Messages
+// --------------------------------------------------
+
 .alert{
 	border: red;
 	border-radius: 0px 0px 8px 8px;
@@ -629,7 +754,8 @@ a.datepick-cmd:hover{
 }
 
 
-// Events Calendar picker
+// Events Calendar Datepicker
+// --------------------------------------------------
 
 .calendar-months-arrows{
 	a:hover{
@@ -748,22 +874,10 @@ a.more-options-link:after{
 	top:4px;
 }
 
-/*-- BUTTON STYLES --*/
+// Buttons styles
+// --------------------------------------------------
 
 .btn{
-	background-color: $user_menu;
-	background-image: none;
-	border: 0;
-	font-family: $baseFontFamily;
-	padding: 7px 17px;
-	text-shadow:none;
-	&[disabled]{
-		background-color: $grey_one;
-		opacity: 1;
-		&:hover{
-			background-color: $grey_one;
-		}
-	}
 	&.active{
 		background-color: $brand;
 		border: 0;
@@ -5504,6 +5618,10 @@ body.campaigns{
 		}
 	}
 
+	a{
+		font-weight: bold;
+	}
+
 	p{
 		margin-bottom: -1px;
 	}
@@ -5721,54 +5839,54 @@ body.campaigns{
 		}
 	}
 
-		&.first{
+	&.first{
 
-			.controls{
-				.chzn-container-single{
-					width: 300px	!important;
-					height: 31px !important;
-					.chzn-single{
-						height: 32px !important;
+		.controls{
+			.chzn-container-single{
+				width: 300px	!important;
+				height: 31px !important;
+				.chzn-single{
+					height: 32px !important;
+					padding-top: 0px !important;
+					width: 300px !important;
+					span{
+						color: $text;
+		    			line-height: 26px;
+						height: 26px !important;
 						padding-top: 0px !important;
-						width: 300px !important;
-						span{
-							color: $text;
-			    			line-height: 26px;
-							height: 26px !important;
-							padding-top: 0px !important;
-							margin-top: 3px !important;
-						}
-						b{
-							margin-top: -4px !important;
-							margin-right: 75px !important;
-							margin-left: -1px !important;
-						}
+						margin-top: 3px !important;
 					}
-					.chzn-drop{
-						margin-top: 6px !important;
-						width: 310px !important;
-						.chzn-search{
-							input{
-								bottom:9px;
-								height: 30px;
-								margin-left: 8px;
-								width: 90% !important;
-							}
+					b{
+						margin-top: -4px !important;
+						margin-right: 75px !important;
+						margin-left: -1px !important;
+					}
+				}
+				.chzn-drop{
+					margin-top: 6px !important;
+					width: 310px !important;
+					.chzn-search{
+						input{
+							bottom:9px;
+							height: 30px;
+							margin-left: 8px;
+							width: 90% !important;
 						}
 					}
 				}
 			}
-			label{
-				color: $brand;
-				font-size: 11px;
-			}
-			h3 + #list-tools{
-				margin: 10px 0 0px 0;
-			}
-			.simple_form{
-				display: inline-block;
-			}
 		}
+		label{
+			color: $brand;
+			font-size: 11px;
+		}
+		h3 + #list-tools{
+			margin: 10px 0 0px 0;
+		}
+		.simple_form{
+			display: inline-block;
+		}
+	}
 
 
 	label{
@@ -5963,7 +6081,7 @@ body.campaigns{
 		}
 	}
 	h2{
-		font-size: 30px;
+		font-size: 28px;
 		margin-top: 10px;
 		margin-bottom: 30px;
 		&.special{
@@ -5975,17 +6093,6 @@ body.campaigns{
 		font-weight: bold;
 		margin-bottom: 30px;
 	}
-	/*
-	input[type="text"], textarea{
-		background-color: white !important;
-		background-image: none !important;
-		border:1px solid $user_menu !important;
-		box-shadow: none;
-		width: 380px;
-		&:focus{
-			box-shadow: none !important;
-		}
-	}*/
 	textarea{
 		height: 130px;
 	}
@@ -7480,17 +7587,6 @@ table td.sub-level-1 {
 
 	address{
 		margin-bottom: 0px;
-	}
-}
-.phone-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 3px;
-		position: absolute;
-		speak: none;
-		left: 29px;
-		text-align: center;
-		vertical-align: middle;
 	}
 }
 
