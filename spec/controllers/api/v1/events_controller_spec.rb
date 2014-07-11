@@ -144,7 +144,7 @@ describe Api::V1::EventsController do
       result.value = 321
       event.save
 
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: {"0" => {id: result.id.to_s, value: '987'}}}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id.to_s, value: '987'}]}, format: :json
       result.reload
       result.value.should == '987'
     end
@@ -223,7 +223,7 @@ describe Api::V1::EventsController do
           'id' => result.id,
           'name' => '# of cats',
           'type' => 'FormField::Number',
-          'value' => '321'
+          'value' => 321
         )
       expect(groups.first['fields'].first.keys).to_not include('segments')
     end
@@ -246,7 +246,7 @@ describe Api::V1::EventsController do
           'id' => result.id,
           'name' => 'Are you tall?',
           'type' => 'FormField::Dropdown',
-          'value' => segments.first.id.to_s,
+          'value' => segments.first.id,
           'description' => 'some description to show',
           'segments' => [
               {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
