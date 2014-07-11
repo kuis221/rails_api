@@ -33,13 +33,12 @@ $.widget 'nmk.photoGallery', {
 		@
 
 	fillPhotoData: (currentImage) ->
-		$image = $(currentImage)
-		@image = $image
-		@setTitle $image.data('title'), @image.data('urls').event
-		@setDate $image.data('date')
-		@setAddress $image.data('address')
-		@setRating $image.data('rating'), $image.data('id')
-		@setTagList $image.data('tags')
+		@image = $(currentImage)
+		@setTitle @image.data('title'), @image.data('urls').event
+		@setDate @image.data('date')
+		@setAddress @image.data('address')
+		@setRating @image.data('rating'), @image.data('id')
+		@setTagList @image.data('tags')
 
 	setTagList: (tags) ->
 		if 'view_tag' in @image.data('permissions')
@@ -297,6 +296,8 @@ $.widget 'nmk.photoGallery', {
 
 		@_createPhotoToolbar()
 
+		@carousel.find('.carousel-control img').attr('src', image.data('src'))
+
 		# Preload the next image
 		nextItem = item.next('.item')
 		if nextItem.length
@@ -317,7 +318,7 @@ $.widget 'nmk.photoGallery', {
 				null
 			),
 			(if 'index_photo_results' in @image.data('permissions')
-				$('<a class="icon-plus photo-download-link" title="Select Photo"></a>').attr('href', urls.download)
+				$('<a class="photo-download-link" title="Select Photo"></a>').attr('href', urls.download)
 			else
 				null
 			)
@@ -325,11 +326,18 @@ $.widget 'nmk.photoGallery', {
 
 	_createCarousel: (carouselClass='') ->
 		id = "gallery-#{@_generateUid()}"
-		$('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append(
+		$carousel = $('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append(
 			$('<div class="carousel-inner">'),
-			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><span></span></a>'),
-			$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><span></span></a>')
+			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span></span></a>'),
+			$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span></span></a>')
 		)
+
+		$carousel
+
+	_findBaseName: (url) ->
+		fileName = url.substring(url.lastIndexOf('/') + 1)
+		questionMark = fileName.lastIndexOf('?')
+		if questionMark == -1 then fileName else fileName.substring(0, questionMark)
 
 	_updateSizes: () ->
 		# If the current image's height is greater than the carousel's height then
