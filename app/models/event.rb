@@ -377,7 +377,7 @@ class Event < ActiveRecord::Base
       [:age, :gender, :ethnicity].each do |kpi_name|
         kpi =  Kpi.send(kpi_name)
         result = result_for_kpi(kpi)
-        data[kpi_name] = Hash[kpi.kpis_segments.map{|s| [s.text, result.value[s.id.to_s].try(:to_f) || 0]}]
+        data[kpi_name] = Hash[kpi.kpis_segments.map{|s| [s.text, result.value[s.id.to_s].try(:to_f) || 0]}] if result.present?
       end
     end
   end

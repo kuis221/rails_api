@@ -24,6 +24,7 @@ class FormField::Percentage < FormField
       field_id: self.id,
       options: self.settings,
       required: self.required,
+      label_html: { class: 'control-group-label' },
       input_html: {
         value: result.value,
         class: field_classes,

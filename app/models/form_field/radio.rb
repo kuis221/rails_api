@@ -17,7 +17,17 @@
 
 class FormField::Radio < FormField
   def field_options(result)
-    {as: :radio_buttons, collection: options_for_input, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
+    {
+      as: :radio_buttons,
+      collection: options_for_input,
+      label: self.name,
+      field_id: self.id,
+      options: self.settings,
+      required: self.required,
+      label_html: { class: 'control-group-label' },
+      input_html: {
+        value: result.value,
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def is_optionable?

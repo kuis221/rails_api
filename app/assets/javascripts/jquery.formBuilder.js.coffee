@@ -65,8 +65,6 @@ $.widget 'nmk.formBuilder', {
 				e.stopPropagation()
 				true
 
-
-
 		if @options.canEdit
 			@formWrapper.sortable
 				items: "> div.field"
@@ -772,7 +770,7 @@ RadioField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
@@ -818,7 +816,7 @@ PercentageField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
@@ -857,7 +855,7 @@ PhotoField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
 					$('<div class="drag-box icon-drag">').append(
@@ -941,20 +939,18 @@ SummationField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
 						$('<div class="field-option">').append(
-							$('<label>').addClass('summation').text(option.name+ ' ').append(
-								$('<input type="number" readonly="readonly">')
-							)
+							$('<label>').addClass('summation').text(option.name+ ' '),
+							$('<input type="number" readonly="readonly">')
 						)
 			).append(
 				$('<div class="field-option summation-total-field">').append(
-					$('<label>').addClass('summation').text('TOTAL: ').append(
-						$('<input type="number" readonly="readonly">')
-					)
+					$('<label>').addClass('summation').text('TOTAL: '),
+					$('<input type="number" readonly="readonly">')
 				)
 			)
 		]
@@ -1006,7 +1002,7 @@ LikertScaleField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<table class="table likert-scale-table">').append(
 					$('<thead>').append(
@@ -1162,7 +1158,7 @@ DateField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="date" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="date_picker" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -1193,7 +1189,7 @@ TimeField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="time" value="hh:mm" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="time_picker" value="hh:mm" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
