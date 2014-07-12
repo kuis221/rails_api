@@ -70,8 +70,8 @@ describe Results::EventDataController do
           "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
            "Los Angeles", "California", "12345", "Active", "Approved", "Test User, zteam",
            "http://localhost:5100/events/#{event.id}", "2019-01-23T10:00", "2019-01-23T12:00",
-           "2.0", "10", "11", "12", "99.99", "0.600", "0.400", "18.00", "20.00", "21.00", "19.00",
-           "22.00"]
+           "2.0", "10", "11", "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190",
+           "0.220"]
         #1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0,"Active", "Approved","Test User, zteam",Rails.application.routes.url_helpers.event_url(event), "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%"]
       end
     end
@@ -133,8 +133,7 @@ describe Results::EventDataController do
           "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
           "Los Angeles", "California", "12345","Active", "Approved","Test User","http://localhost:5100/events/#{event.id}",
           "2019-01-23T10:00", "2019-01-23T12:00", "2.0", "10", "11",
-          "12", "99.99", "0.600", "0.400", "18.00", "20.00", "21.00", "19.00", "22.00",nil, nil,
-          nil, nil, nil, nil, nil, nil, '8899']
+          "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190", "0.220","0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", '8899']
       end
     end
 
@@ -206,7 +205,7 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('MY KPI: UNO', 'MY KPI: DOS')
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('63', '27')
+        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('0.63', '0.27')
       end
     end
   end

@@ -17,9 +17,15 @@ module Results
         @result.kpis_segment_id = row['kpis_segment_id']
         id = @result.form_field.kpi_id.nil? ? "field_#{@result.form_field_id}" : "kpi_#{@result.form_field.kpi_id}"
         unless @result.kpis_segment_id.nil?
-          event_values["#{id}-#{@result.kpis_segment_id}"] = @result.display_value
+          value = @result.value
+          event_values["#{id}-#{@result.kpis_segment_id}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0)/100]
         else
-          event_values[id] = @result.display_value
+          value = @result.display_value
+          event_values[id] = if value.is_a? Numeric
+            ['Number', 'normal', value]
+          else
+            ['String', 'normal', value]
+          end
         end
       end
       event_values.values
