@@ -1054,7 +1054,7 @@ CheckboxField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label">').text(@attributes.name),
+			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
