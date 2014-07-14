@@ -63,15 +63,14 @@ a, i, .btn, span{
 		font-size: 15px;
 		top: 2px;
 	}
-	&.enable:after{
-		content: "\e00d";
-		font-family: 'icons';
-		font-size: 18px;
-	}
-	&.icon-ok-circle:before{
+	&.icon-ok-circle:before {
 		color: $brand;
-		content: "\e00d";
+		content: "\e625";
 		font-size: 20px;
+	}
+	&.enable:after{
+		@extend .icon-ok-circle:before;
+		font-size: 18px;
 	}
 	&.icon-plus-sign:before{
 		color: $brand;
