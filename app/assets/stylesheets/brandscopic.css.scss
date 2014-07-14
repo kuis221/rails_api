@@ -3403,6 +3403,10 @@ textarea::-webkit-input-placeholder {
 			list-style: none;
 		}
 	}
+	input[type="text"]{
+		height: 37px;
+		width: 100%;
+	}
 
 	.filter-wrapper {
 		li ul {
