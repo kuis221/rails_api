@@ -4,7 +4,9 @@
 
 
 a{
-	color: $link-color;
+	&.special{
+		color: $link-color;
+	}
 	&:before, &:after{
 		font-weight:normal;
 	}

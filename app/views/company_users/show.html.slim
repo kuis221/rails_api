@@ -11,6 +11,13 @@
         - if resource.role.present?
           .user-role.label.label-default
             = resource.role.name
+
+    .team-assigned
+      b ASSIGNED TO:
+      span.label NYC Team
+      span.label Team Jameson
+      span.label Team Chicago
+
     .aditional-info 
       - if resource.email.present?
         .email-data
@@ -21,7 +28,7 @@
           .number
             = resource.phone_number 
           .verify
-            a href="#" Get Verified
+            a class="special" href="#" Get Verified
           .info
             a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
 
@@ -34,7 +41,7 @@
 
     .basic-info
       .profile-pic.big.no-pic.icon-user
-      .edit-profile-pic.hide
+      .edit-profile-pic
         ul
           li 
             a href="#" Upload photo
@@ -60,6 +67,7 @@
       = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
+  .details_box.user-view
     .user-data
       h3 CAMPAIGNS
 
@@ -68,6 +76,18 @@
           b example one - brand icon
 
         .box.special-icon.brand-icon
+          b Absolut Bloody Incremental FY14
+
+        .box.special-icon.brand-icon
+          b Absolut Texas Incremental Mini
+
+        .box.special-icon.brand-icon
+          b Jameson Black Barrel Summer MBN FY14
+
+        .box.special-icon.brand-icon
+          b Jameson FY14
+
+        .box.special-icon.brand-icon
           b example one - brand icon
 
       .items-container
@@ -77,15 +97,44 @@
         .box.special-icon.campaign-icon
           b example one - campaign icon
 
+        .box.special-icon.campaign-icon
+          b Jameson MBN FY14
 
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+        .box.special-icon.campaign-icon
+          b Kahla BA Incremental
+
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+    = link_to "Add Campaigns"
+
+  .details_box.user-view
+
+    .user-data
 
       h3 PLACES
       .items-container
         .box.special-icon.area-icon
-          b example one - area icon
+          b Madison Area
+
+        .box.special-icon.area-icon
+          b Boston Area
+
+        .box.special-icon.area-icon
+          b Houston Area
+
+        .box.special-icon.area-icon
+          b Denver Area
 
         .box.special-icon.area-icon
           b example one - area icon
+
+        .box.special-icon.area-icon
+          b Metro New York Area
+
 
       .items-container
         .box.special-icon.venue-icon
@@ -96,100 +145,117 @@
           b Bar & Dinner "PPTH"
           p 6251 East Pacific Coast Highway, Long Beach
 
-      h3 COMMUNICATION PREFERENCES
-      .row-fluid.communication-preferences
-        .span10
-          .span4
-            b 
-          .span2
-            p IN-APP
-          .span2
-            p SMS
-          .span2
-            p EMAIL
+        .box.special-icon.venue-icon
+          b example one - venue icon
+          p 6251 East Pacific Coast Highway, Long Beach
 
-        .span10
-          .span4
-            b Event Recaps Due
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
+        .box.special-icon.venue-icon
+          b Bar & Dinner "PPTH"
+          p 6251 East Pacific Coast Highway, Long Beach
 
-        .span10
-          .span4
-            b Late Event Recaps
-          .span2
-            .icon-ok
-          .span2
-          .span2
-            .icon-ok
+      = link_to "Add Places"
 
-        .span10
-          .span4
-            b Event Recaps Pending Approval
-          .span2
-          .span2
-            .icon-ok
-          .span2
 
-        .span10
-          .span4
-            b Rejected Event Recaps
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
-          .span2
+  .details_box
 
-        .span10
-          .span4
-            b Late Team Tasks
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
+    h3 COMMUNICATION PREFERENCES
+    .row-fluid.communication-preferences
+      .span10
+        .span4
+          b 
+        .span2
+          p IN-APP
+        .span2
+          p SMS
+        .span2
+          p EMAIL
 
-        .span10
-          .span4
-            b New Comment
-          .span2
-          .span2
-          .span2
-            .icon-ok
+      .span10
+        .span4
+          b Event Recaps Due
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
 
-        .span10
-          .span4
-            b New Team Comment
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
-          .span2
+      .span10
+        .span4
+          b Late Event Recaps
+        .span2
+          .icon-ok
+        .span2
+        .span2
+          .icon-ok
 
-        .span10
-          .span4
-            b New Unassigned Team Task
-          .span2
-            .icon-ok
-          .span2
-          .span2
-            .icon-ok
+      .span10
+        .span4
+          b Event Recaps Pending Approval
+        .span2
+        .span2
+          .icon-ok
+        .span2
 
-        .span10
-          .span4
-            b New Campaign
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
-          .span2
-            .icon-ok
+      .span10
+        .span4
+          b Rejected Event Recaps
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+        .span2
 
+      .span10
+        .span4
+          b Late Team Tasks
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+
+      .span10
+        .span4
+          b New Comment
+        .span2
+        .span2
+        .span2
+          .icon-ok
+
+      .span10
+        .span4
+          b New Team Comment
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+        .span2
+
+      .span10
+        .span4
+          b New Unassigned Team Task
+        .span2
+          .icon-ok
+        .span2
+        .span2
+          .icon-ok
+
+      .span10
+        .span4
+          b New Campaign
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+        .span2
+          .icon-ok
+
+  .details_box
+    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
+    #resource-goals-list.link-list
+    = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
 
 
   

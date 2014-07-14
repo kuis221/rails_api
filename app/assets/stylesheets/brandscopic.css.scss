@@ -294,8 +294,7 @@ label{
 .user-view{
 	.basic-info{
 		display: block;
-		float: left;
-		margin-bottom: 20px;
+		margin: 10px 0 30px 0;
 		position: relative;
 		width: 100%;
 		h2{
@@ -303,32 +302,50 @@ label{
 		}
 		.profile-pic{
 			display: inline-block;
-			float: left;
+			margin-right: 20px;
 			overflow: hidden;
 			position: relative;
+			top: -15px;
 		}
 		.profile-data{
-			float: left;
 			margin: 20px 0 0 20px;
 		}
 	}
+	.team-assigned{
+		height: 30px;
+		b{
+			color: silver;
+			display: inline-block;
+			font-weight: 400;
+			margin-right: 20px;
+			width: auto;
+		}
+		span.label{
+			background-color: silver;
+			display: inline-block;
+			margin-right: 5px;
+		}
+	}
 	.aditional-info{
-		float: left;
-		margin-bottom: 30px;
+		margin: 20px 0 30px 0;
 		width: 100%;
 		.email-data, .phone-data, .place-data{
 			margin-bottom: 8px;
 		}
 	}
 	.user-data{
-		.box{
-			display: inline-block;
-			&.special-icon:before{
-				float: left;
-			}
-			b{
-				margin: 5px 0 0 15px;
+		.items-container{
+			.box{
 				display: inline-block;
+				margin-bottom: 15px;
+				width: 45%;
+				&.special-icon:before{
+					float: left;
+				}
+				b{
+					margin: 5px 0 0 15px;
+					display: inline-block;
+				}
 			}
 		}
 	}
