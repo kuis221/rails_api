@@ -13,7 +13,9 @@ class Api::V1::ApiController < ActionController::Base
 
   before_filter :set_user
 
-  authorize_resource only: [:show, :create, :update, :destroy, :index], unless: :skip_default_validation
+  load_and_authorize_resource only: [:show, :edit, :update, :destroy], unless: :skip_default_validation
+  authorize_resource only: [:create, :index], unless: :skip_default_validation
+
   check_authorization
 
   def options

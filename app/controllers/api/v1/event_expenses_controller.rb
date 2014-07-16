@@ -4,6 +4,8 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
   belongs_to :event
 
+  authorize_resource only: [:show, :create, :update, :destroy]
+
   resource_description do
     short 'Expenses'
     formats ['json', 'xml']
@@ -89,6 +91,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     ]
   EOS
   def index
+    authorize!(:expenses, parent)
     @expenses = parent.event_expenses.sort_by {|e| e.id}
   end
 
@@ -193,5 +196,9 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
     def permitted_params
       params.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
+    end
+
+    def skip_default_validation
+      true
     end
 end
