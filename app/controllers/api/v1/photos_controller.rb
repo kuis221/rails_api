@@ -4,7 +4,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults :resource_class => AttachedAsset
 
-  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy, :index]
+  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy]
 
   resource_description do
     short 'Photos'
@@ -60,6 +60,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   }
   EOS
   def index
+    authorize!(:photos, parent)
     collection
   end
 
