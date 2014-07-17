@@ -2,6 +2,8 @@ doctype xml
 
 Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
   Styles
+    Style ss:ID="normal"
+      Font ss:Bold="0"
     Style ss:ID="s1"
       Font ss:Bold="1"
     Style ss:ID="s2"
@@ -10,11 +12,12 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Font ss:Underline="Single" ss:Color="#0000D4"
     Style ss:ID="s4" ss:Name="Currency"
       NumberFormat ss:Format='"$"#,##0.00'
-    Style ss:ID="s5"
+    Style ss:ID="percentage"
       NumberFormat ss:Format="Percent"
     Style ss:ID="s6" ss:Name="ZipCode"
       NumberFormat ss:Format="00000\-0000"
       Alignment ss:Horizontal="Left"
+
 
   Worksheet ss:Name="Event Data"
     Table
@@ -99,7 +102,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell
             Data ss:Type="String"= event.place_state
           Cell ss:StyleID="s6"
-            Data ss:Type="Number"= event.place_zipcode
+            Data ss:Type="String"= event.place_zipcode
           Cell
             Data ss:Type="String"= event.status
           Cell
@@ -123,23 +126,21 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="Number"= number_with_delimiter(event.samples, precision: 1)
           Cell ss:StyleID="s4"
             Data ss:Type="Number"= event.spent
-          Cell ss:StyleID="s5"
+          Cell ss:StyleID="percentage"
             Data ss:Type="Number"= number_with_precision(event.gender_female/100) unless event.gender_female.nil?
-          Cell ss:StyleID="s5"
+          Cell ss:StyleID="percentage"
             Data ss:Type="Number"= number_with_precision(event.gender_male/100) unless event.gender_male.nil?
-          Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian, precision: 2) unless event.ethnicity_asian.nil?
-          Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_black, precision: 2) unless event.ethnicity_black.nil?
-          Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_hispanic, precision: 2) unless event.ethnicity_hispanic.nil?
-          Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_native_american, precision: 2) unless event.ethnicity_native_american.nil?
-          Cell ss:StyleID="s5"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_white, precision: 2) unless event.ethnicity_white.nil?
+          Cell ss:StyleID="percentage"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian/100) unless event.ethnicity_asian.nil?
+          Cell ss:StyleID="percentage"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_black/100) unless event.ethnicity_black.nil?
+          Cell ss:StyleID="percentage"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_hispanic/100) unless event.ethnicity_hispanic.nil?
+          Cell ss:StyleID="percentage"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_native_american/100) unless event.ethnicity_native_american.nil?
+          Cell ss:StyleID="percentage"
+            Data ss:Type="Number"= number_with_precision(event.ethnicity_white/100) unless event.ethnicity_white.nil?
           - custom_fields_to_export_values(event).each do |v|
-            Cell
-              - if v.is_a? Numeric
-                Data ss:Type="Number"= v
-              - else
-                Data ss:Type="String"= v
+            Cell ss:StyleID=(v ? v[1] : 'normal')
+              Data ss:Type=(v ? v[0] : 'String')
+                = v[2] if v
