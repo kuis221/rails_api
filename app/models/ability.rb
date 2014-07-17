@@ -92,11 +92,15 @@ class Ability
 
       can :search, Place
 
-      can :index, Event if can?(:view_list, Event) || can?(:view_map, Event)
+      can :index, Event do
+        can?(:view_list, Event) || can?(:view_map, Event)
+      end
 
       can :index, Marque
 
-      can :form, Activity if can?(:create, Activity)
+      can :form, Activity do
+        can?(:create, Activity)
+      end
 
       can :places, Campaign do |campaign|
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
@@ -125,14 +129,16 @@ class Ability
 
       # cannot :create, Report unless user.current_company_user.role.has_permission?(:create, Report)
 
-      can :access, :results if user.current_company_user.role.has_permission?(:index, Report) ||
-                            user.current_company_user.role.has_permission?(:index_results, EventData) ||
-                            user.current_company_user.role.has_permission?(:index_results, Comment) ||
-                            user.current_company_user.role.has_permission?(:index_results, EventExpense) ||
-                            user.current_company_user.role.has_permission?(:index_results, Survey) ||
-                            user.current_company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
-                            user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
-                            user.current_company_user.role.has_permission?(:event_status, Campaign)
+      can :access, :results do
+        user.current_company_user.role.has_permission?(:index, Report) ||
+        user.current_company_user.role.has_permission?(:index_results, EventData) ||
+        user.current_company_user.role.has_permission?(:index_results, Comment) ||
+        user.current_company_user.role.has_permission?(:index_results, EventExpense) ||
+        user.current_company_user.role.has_permission?(:index_results, Survey) ||
+        user.current_company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
+        user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
+        user.current_company_user.role.has_permission?(:event_status, Campaign)
+      end
 
       can [:build, :preview, :update], Report do |report|
         user.current_company_user.role.has_permission?(:create, Report) &&
@@ -210,7 +216,9 @@ class Ability
         cannot?(:show, event)
       end
 
-      can [:add, :list], ContactEvent if user.role.has_permission?(:create_contacts, Event)
+      can [:add, :list], ContactEvent do
+        user.role.has_permission?(:create_contacts, Event)
+      end
       can [:new, :create], ContactEvent do |contact_event|
         can?(:show, contact_event.event) && can?(:create_contacts, contact_event.event)
       end
@@ -290,7 +298,10 @@ class Ability
         asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
       end
 
-      can :activate, Tag if can?(:create, Tag)
+      can :activate, Tag do
+        can?(:create, Tag)
+      end
+
       # Event Expenses permissions
       can :expenses, Event do |event|
         user.role.has_permission?(:index_expenses, Event) && can?(:show, event)
