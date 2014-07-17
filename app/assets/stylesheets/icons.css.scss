@@ -1,4 +1,4 @@
-
+@import "mixins.scss";
 @import "variables";
 
 /*-- ICONS STYLESHEET --*/
@@ -63,15 +63,14 @@ a, i, .btn, span{
 		font-size: 15px;
 		top: 2px;
 	}
-	&.enable:after{
-		content: "\e00d";
-		font-family: 'icons';
-		font-size: 18px;
-	}
-	&.icon-ok-circle:before{
+	&.icon-ok-circle:before {
 		color: $brand;
-		content: "\e00d";
+		content: "\e625";
 		font-size: 20px;
+	}
+	&.enable:after{
+		@extend .icon-ok-circle:before;
+		font-size: 18px;
 	}
 	&.icon-plus-sign:before{
 		color: $brand;
@@ -277,6 +276,40 @@ a, i, .btn, span{
 .icon-star:before {
 	content: "\e614";
 	font-size: 15px;
+}
+
+.icon-ok:before{
+	content: "\e624";
+	color: $light-blue;
+}
+
+.verified{
+	color: $green;
+	position:relative;
+	&:after{
+		@extend .icon-ok:before;
+		color: $green;
+		position: absolute;
+		left: -18px;
+		top:2px;
+	}
+}
+
+.icon-info:before{
+	content: "\e621";
+	color: $user_menu;
+	font-size: 20px;
+	top:4px;
+}
+
+.icon-user:before{
+	content: "\e61e";
+	color: $glyphs-color;
+}
+
+.icon-staff:before{
+	content: "\e61d";
+	color: $glyphs-color;
 }
 
 .calendar-data:before{
@@ -523,6 +556,64 @@ ul.nav {
 			&[data-type="LikertScale"]{
 				line-height:60px;
 			}
+		}
+	}
+}
+
+.special-icon{
+	position: relative;
+	&:before{
+		content: '';
+		background-color: $grey_four;
+		display: inline-block;
+		height: 32px;
+		@include border-radius(18px);
+		width: 32px;
+	}
+	&:after{
+		color: $glyphs-color;
+		position: absolute;
+	}
+	&.brand-icon{
+		&:after{
+			@extend .icon-star:before;
+			font-size: 16px;
+			top: 5px;
+			left: 8px;
+		}
+	}
+	&.campaign-icon{
+		&:after{
+			content: '\e623';
+			font-size: 16px;
+			top: 6px;
+			left: 8px;
+		}
+	}
+	&.brand-icon{
+		&:after{
+			@extend .icon-star:before;
+			font-size: 16px;
+			top: 5px;
+			left: 8px;
+		}
+	}
+	&.area-icon{
+		&:after{
+			@extend .area-user:before;
+			color: $glyphs-color;
+			font-size: 16px;
+			top: 6px;
+			left: 8px;
+		}
+	}
+	&.venue-icon{
+		&:after{
+			@extend i.map:after;
+			font-size: 16px;
+			position: absolute;
+			top: 6px;
+			left: 10px;
 		}
 	}
 }
