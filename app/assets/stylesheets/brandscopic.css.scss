@@ -236,7 +236,6 @@ label{
 		}
 		label.control-label{
 			display: inline-block;
-			float: right;
 			font-size: 13px;
 			margin-top: 12px;
 			margin-right: 5px;
@@ -3431,6 +3430,11 @@ textarea::-webkit-input-placeholder {
 		label.radio {
 			padding: 0;
 		}
+		label.checkbox {
+			display: block;
+			width: initial;
+			margin-bottom: 10px;
+		}
 	}
 
 	.fields-wrapper{
@@ -3463,7 +3467,7 @@ textarea::-webkit-input-placeholder {
 	.checkbox{
 		padding-left:0;
 		.checker{
-			margin-right: 10px;
+			margin-right: 15px;
 
 			span.checked:after {
 				top: -16px;

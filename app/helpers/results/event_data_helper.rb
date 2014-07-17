@@ -19,10 +19,15 @@ module Results
           values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
           # TODO: we have to correctly map values for hash_value here
           @result.form_field.options_for_input.each do |option|
-            event_values["#{id}-#{option[1]}"] = values[option[1].to_s]
+            value = values[option[1].to_s]
+            event_values["#{id}-#{option[1]}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0)/100]
           end
         else
-          event_values[id] = @result.to_html
+          event_values[id] = if @result.form_field.is_numeric?
+            ['Number', 'normal', Float(@result.to_html)]
+          else
+            ['String', 'normal', @result.to_html]
+          end
         end
       end
       event_values.values

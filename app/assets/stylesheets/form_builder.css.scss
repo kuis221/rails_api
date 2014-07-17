@@ -185,13 +185,6 @@
 				}
 			}
 			&[data-type="Checkbox"]{
-				.checkbox{
-					padding-left:0 !important;
-					margin-bottom: 10px !important;
-					.checker{
-						margin-right:10px !important;
-					}
-				}
 				&.selected{
 					.checker{
 						background-color: $user_menu;
@@ -294,10 +287,10 @@
 			font-size: 11px;
 			font-weight: bold;
 			height: 40px;
-			padding: 0 10px;
+			padding: 0;
 			text-align: center;
 			margin-bottom: 8px !important;
-			width: 37%;
+			width: 46%;
 			&:before{
 				color: $user_menu;
 				font-size: 13px;
@@ -333,8 +326,11 @@
 			&.module {
 				display: block;
 				width: initial;
-				text-align: center;
+				text-align: left;
 				margin: 0;
+				padding-left: 65px;
+				padding-top: 8px;
+				height: 30px;
 			}
 
 
