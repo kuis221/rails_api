@@ -418,6 +418,10 @@ class Api::V1::UsersController < Api::V1::FilteredController
   * _events_create_tasks_: Can create tasks for a event
   * _events_edit_tasks_: Can edit the tasks of a event
   * _events_tasks_: Can see a list of tasks for a event
+  * _events_comments_: Can see the list of comments of a event
+  * _events_create_comments_: Can create comments
+  * _events_edit_comments_: Can edit comments
+  * _events_deactivate_surveys_: Can deactivate comments
   * _tasks_own_: Can see his own tasks
   * _tasks_team_: Can see his team's taks
   * _tasks_comments_own_: Can see the comments on tasks assigned to him
