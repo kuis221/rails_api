@@ -23,7 +23,6 @@ class PlacesController < FilteredController
 
   def search
     results = Place.combined_search(company_id: current_company.id, q: params[:term], search_address: true)
-
     render json: results
   end
 

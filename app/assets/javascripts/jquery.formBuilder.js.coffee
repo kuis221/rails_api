@@ -938,14 +938,15 @@ SummationField = FormField.extend {
 		@
 
 	_renderField: () ->
+		fieldId = ''+ (Math.floor(Math.random() * 1000) + 1)
 		[
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
 						$('<div class="field-option">').append(
-							$('<label>').addClass('summation').text(option.name+ ' '),
-							$('<input type="number" readonly="readonly">')
+							$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' '),
+							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="number" readonly="readonly">')
 						)
 			).append(
 				$('<div class="field-option summation-total-field">').append(

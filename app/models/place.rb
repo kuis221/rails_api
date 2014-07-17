@@ -205,6 +205,12 @@ class Place < ActiveRecord::Base
       end
       results
     end
+
+    def find_tdlinx_place(binds)
+      connection.select_value(
+        sanitize_sql_array(["select find_tdlinx_place(:name, :street, :city, :state, :zipcode)", binds])
+      ).try(:to_i)
+    end
   end
 
   private
