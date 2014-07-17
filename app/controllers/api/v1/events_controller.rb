@@ -956,7 +956,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
         })
       elsif field.type == 'FormField::Checkbox'
         r = resource.results_for([field]).first
-        p r.value.inspect
         result.merge!({
           id: r.id,
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
@@ -969,12 +968,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
           segments: field.brands_options(r).map{|s|
             {id: s[:id], text: s[:name]}
           }
-        })
-      elsif ['FormField::Date', 'FormField::Time'].include?(field.type)
-        r = resource.results_for([field]).first
-        result.merge!({
-          id: r.id,
-          value: r.value
         })
       elsif field.type == 'FormField::Summation'
         r = resource.results_for([field]).first
