@@ -4,6 +4,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
 
   belongs_to :event
 
+  authorize_resource only: [:show, :create, :update]
+
   resource_description do
     short 'Comments'
     formats ['json', 'xml']
@@ -46,6 +48,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     ]
   EOS
   def index
+    authorize!(:comments, parent)
     @comments = parent.comments.order(:id)
   end
 
@@ -130,6 +133,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   }
   EOS
   def destroy
+    authorize!(:deactivate_comment, parent)
     destroy! do |success, failure|
       success.json { render json: {success: true, info: 'The comment was successfully deleted', data: {} } }
       success.xml  { render xml: {success: true, info: 'The comment was successfully deleted', data: {} } }
@@ -146,5 +150,9 @@ class Api::V1::CommentsController < Api::V1::ApiController
 
     def permitted_params
       params.permit(comment: [:content])[:comment]
+    end
+
+    def skip_default_validation
+      true
     end
 end
