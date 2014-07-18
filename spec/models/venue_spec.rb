@@ -96,8 +96,25 @@ describe Venue do
         campaign.assign_all_global_kpis
         event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
-          gender_male: 35,
-          gender_female: 65,
+          gender_male: 35,  gender_female: 65,
+          ethnicity_asian: 15,
+          ethnicity_native_american: 23,
+          ethnicity_black: 24,
+          ethnicity_hispanic: 26,
+          ethnicity_white: 12,
+          age_12: 1,
+          age_12_17: 2,
+          age_18_24: 4,
+          age_25_34: 8,
+          age_35_44: 16,
+          age_45_54: 32,
+          age_55_64: 24,
+          age_65: 13
+        )
+
+        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        set_event_results(event,
+          gender_male: 20,  gender_female: 80,
           ethnicity_asian: 15,
           ethnicity_native_american: 23,
           ethnicity_black: 24,
@@ -115,7 +132,7 @@ describe Venue do
         data = venue.overall_graphs_data
 
         data[:age].should == {"< 12"=>1.0, "12 – 17"=>2.0, "18 – 24"=>4.0, "25 – 34"=>8.0, "35 – 44"=>16.0, "45 – 54"=>32.0, "55 – 64"=>24.0, "65+"=>13.0}
-        data[:gender].should == {"Female"=>65.0, "Male"=>35.0}
+        data[:gender].should == {"Female"=>72.5, "Male"=>27.5}
         data[:ethnicity].should == {"Asian"=>15.0, "Black / African American"=>24.0, "Hispanic / Latino"=>26.0, "Native American"=>23.0, "White"=>12.0}
 
       end

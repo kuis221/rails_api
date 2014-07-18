@@ -120,10 +120,9 @@ jQuery ->
 				label = element.closest(".control-group").find("label.control-label") if label.length is 0
 				label.addClass('with_message')
 				if label.length > 0
-					if typeof element.data('segmentFieldId') isnt "undefined"
-						error.addClass('segment-title-label').insertBefore label
-					else
-						error.insertAfter label
+					error.insertAfter label
+				else if typeof element.data('segmentFieldId') isnt "undefined"
+					element.closest(".control-group").prepend error.addClass('segment-title-label')
 				else
 					error.addClass('segment-title-label').insertAfter element
 

@@ -12,12 +12,25 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Summation < FormField
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
-    {as: :summation, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :summation,
+      collection: self.options.order(:ordering),
+      label: self.name, field_id: self.id,
+      label_html: { class: 'control-group-label' },
+      options: self.settings,
+      required: self.required,
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        min: 0,
+        step: 'any',
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes

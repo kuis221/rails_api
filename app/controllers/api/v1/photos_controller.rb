@@ -4,7 +4,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults :resource_class => AttachedAsset
 
-  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy, :index]
+  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy]
 
   resource_description do
     short 'Photos'
@@ -60,6 +60,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   }
   EOS
   def index
+    authorize!(:photos, parent)
     collection
   end
 
@@ -130,7 +131,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   EOS
   def form
     authorize!(:create_photo, parent)
-    if parent.campaign.active_field_types.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
+    if parent.campaign.enabled_modules.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[S3_CONFIGS['bucket_name']]
       form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).
                   where(:key).starts_with("uploads/")

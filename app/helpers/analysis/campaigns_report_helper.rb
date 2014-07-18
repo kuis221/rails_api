@@ -36,16 +36,16 @@ module Analysis
 
         # Age results are not stored on Solr :(
         data['age'] = {}
-        age_results = EventResult.age.joins(:event).where(events: {aasm_state: 'approved', campaign_id: @campaign}).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id').all
+        age_results_scope = FormFieldResult.for_kpi(Kpi.age).for_event_campaign(@campaign).
+                        where(events: {aasm_state: 'approved'})
         segments = Kpi.age.kpis_segments
-        data['age'] = Hash[segments.map{|s| [s.text, age_results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+        data['age'] = Hash[segments.map do |s|
+          [s.text, age_results_scope.average("COALESCE(NULLIF(form_field_results.hash_value -> '#{s.id}', ''), '0')::NUMERIC") || 0]
+        end]
 
         data
       end
     end
-
-
-
 
     def vertical_progress_bar(complete, today)
       complete = 1 if complete < 1 and complete > 0

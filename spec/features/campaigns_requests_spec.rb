@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Campaigns", js: true, search: true do
+feature "Campaigns", js: true do
 
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
@@ -14,60 +14,58 @@ feature "Campaigns", js: true, search: true do
     Warden.test_reset!
   end
 
-  feature "/campaigns" do
-    feature "GET index" do
-      scenario "should display a table with the campaigns" do
-        campaigns = [
-          FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company),
-          FactoryGirl.create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: @company)
-        ]
-        Sunspot.commit
-        visit campaigns_path
+  feature "Index" , search: true  do
+    scenario "should display a table with the campaigns" do
+      campaigns = [
+        FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company),
+        FactoryGirl.create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: @company)
+      ]
+      Sunspot.commit
+      visit campaigns_path
 
-        within("ul#campaigns-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            expect(page).to have_content(campaigns[0].name)
-            expect(page).to have_content(campaigns[0].description)
-          end
-          # Second Row
-          within("li:nth-child(2)") do
-            expect(page).to have_content(campaigns[1].name)
-            expect(page).to have_content(campaigns[1].description)
-          end
+      within("ul#campaigns-list") do
+        # First Row
+        within("li:nth-child(1)") do
+          expect(page).to have_content(campaigns[0].name)
+          expect(page).to have_content(campaigns[0].description)
+        end
+        # Second Row
+        within("li:nth-child(2)") do
+          expect(page).to have_content(campaigns[1].name)
+          expect(page).to have_content(campaigns[1].description)
         end
       end
+    end
 
-      scenario "should allow user to deactivate campaigns" do
-        FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
-        Sunspot.commit
-        visit campaigns_path
+    scenario "should allow user to deactivate campaigns" do
+      FactoryGirl.create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      Sunspot.commit
+      visit campaigns_path
 
+      expect(page).to have_content('Cacique FY13')
+      within("ul#campaigns-list li:nth-child(1)") do
+        click_js_link('Deactivate')
+      end
+
+      confirm_prompt "Are you sure you want to deactivate this campaign?"
+
+      expect(page).to have_no_content('Cacique FY13')
+    end
+
+    scenario "should allow user to activate campaigns" do
+      campaign = FactoryGirl.create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      Sunspot.commit
+      visit campaigns_path
+
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Active')
+
+      expect(page).to have_content('Cacique FY13')
+      within("ul#campaigns-list li:nth-child(1)") do
         expect(page).to have_content('Cacique FY13')
-        within("ul#campaigns-list li:nth-child(1)") do
-          click_js_link('Deactivate')
-        end
-
-        confirm_prompt "Are you sure you want to deactivate this campaign?"
-
-        expect(page).to have_no_content('Cacique FY13')
+        click_js_link('Activate')
       end
-
-      scenario "should allow user to activate campaigns" do
-        campaign = FactoryGirl.create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
-        Sunspot.commit
-        visit campaigns_path
-
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
-
-        expect(page).to have_content('Cacique FY13')
-        within("ul#campaigns-list li:nth-child(1)") do
-          expect(page).to have_content('Cacique FY13')
-          click_js_link('Activate')
-        end
-        expect(page).to have_no_content('Cacique FY13')
-      end
+      expect(page).to have_no_content('Cacique FY13')
     end
 
     scenario 'allows the user to create a new campaign' do
@@ -95,7 +93,7 @@ feature "Campaigns", js: true, search: true do
     end
   end
 
-  feature "Campaign details page", :js => true do
+  feature "Details page", :js => true do
     scenario "GET show should display the campaign details page" do
       campaign = FactoryGirl.create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
       visit campaign_path(campaign)
@@ -135,7 +133,6 @@ feature "Campaigns", js: true, search: true do
       expect(page).to have_selector('div.description-data', text: 'edited campaign description')
     end
 
-
     scenario "should be able to assign areas to the campaign" do
       Kpi.create_global_kpis
       campaign = FactoryGirl.create(:campaign, company: @company)
@@ -162,7 +159,7 @@ feature "Campaigns", js: true, search: true do
       click_js_link 'Add Places'
 
       within visible_modal do
-        expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the user
+        expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the campaign
         expect(page).to have_selector("#area-#{area2.id}")
       end
       close_modal
@@ -177,33 +174,78 @@ feature "Campaigns", js: true, search: true do
       end
     end
 
-    feature "Create custom KPIs", search: false do
+    feature "Add KPIs", search: false do
 
       feature "with a non admin user", search: false do
         let(:company) { FactoryGirl.create(:company) }
         let(:user){ FactoryGirl.create(:user, company: company, role_id: FactoryGirl.create(:non_admin_role, company: company).id) }
         let(:company_user) { user.company_users.first }
 
-        scenario "User without permissions cannot add Custom KPIs" do
+        scenario "User without permissions cannot add KPIs" do
           company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
           company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
 
           campaign = FactoryGirl.create(:campaign, company: company)
           visit campaign_path(campaign)
 
-          expect(page).to_not have_content('Add Custom KPI')
+          open_tab('KPIs')
+
+          expect(page).to_not have_content('Add KPI')
         end
       end
 
-      scenario "Add Custom count KPI and set goals" do
+      scenario "Add existing KPI to campaign" do
+        Kpi.create_global_kpis
         campaign = FactoryGirl.create(:campaign, company: @company)
+
         visit campaign_path(campaign)
 
-        click_js_link 'Add Custom KPI'
+        tab = open_tab('KPIs')
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          fill_in 'kpi-search-box', with: 'Gender'
+          expect(page).to have_selector("li#kpi-#{Kpi.gender.id}")
+          expect(page).to have_no_selector("li#kpi-#{Kpi.comments.id}")
+          expect(page).to have_content('Gender')
+          expect(page).to have_no_content('Events')
+          find("#kpi-#{Kpi.gender.id}").click_js_link('Add KPI')
+          expect(page).to have_no_selector("#kpi-#{Kpi.gender.id}") # The KPI was removed from the available KPIs list
+        end
+        close_modal
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          expect(page).to have_no_selector("#kpi-#{Kpi.gender.id}") # The KPI does not longer appear on the list after it was added to the campaign
+          expect(page).to have_selector("#kpi-#{Kpi.comments.id}")
+        end
+        close_modal
+
+        within tab do
+          # Ensure the KPI now appears on the list of KPIs
+          expect(page).to have_content('Gender')
+        end
+      end
+
+      scenario "Add a new KPI to campaign and set the goal" do
+        Kpi.create_global_kpis
+        campaign = FactoryGirl.create(:campaign, company: @company)
+
+        visit campaign_path(campaign)
+
+        tab = open_tab('KPIs')
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          click_js_link 'Create New KPI'
+        end
 
         within visible_modal do
           fill_in 'Name', with: 'My Custom KPI'
-          fill_in 'Description', with: 'my custom kpi description'
+          fill_in 'Description', with: 'My custom KPI description'
           select_from_chosen('Count', from: 'Kpi type', match: :first)
           click_js_link 'Add a segment'
           fill_in 'Segment name', with: 'Option 1'
@@ -213,8 +255,9 @@ feature "Campaigns", js: true, search: true do
         ensure_modal_was_closed
 
         kpi = Kpi.last
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('My Custom KPI')
+          expect(page).to have_content('My custom KPI description')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
         end
 
@@ -225,16 +268,23 @@ feature "Campaigns", js: true, search: true do
 
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('223311.0')
         end
       end
 
-      scenario "Get errors when add a KPI without enough segments for the selected capture mechanism" do
+      scenario "Get errors when create a new KPI without enough segments for the selected capture mechanism" do
         campaign = FactoryGirl.create(:campaign, company: @company)
+
         visit campaign_path(campaign)
 
-        click_js_link 'Add Custom KPI'
+        click_js_link 'KPIs'
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          click_js_link 'Create New KPI'
+        end
 
         within visible_modal do
           fill_in 'Name', with: 'My Custom KPI'
@@ -249,6 +299,39 @@ feature "Campaigns", js: true, search: true do
       end
     end
 
+    feature "Remove KPIs", search: false do
+      scenario "Remove existing KPI from campaign" do
+        Kpi.create_global_kpis
+        campaign = FactoryGirl.create(:campaign, company: @company)
+        kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: @company)
+        campaign.add_kpi kpi
+
+        visit campaign_path(campaign)
+
+        open_tab('KPIs')
+
+        within "#global-kpis" do
+          expect(page).to have_content('My Custom KPI')
+          hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Remove')
+        end
+
+        confirm_prompt 'Please confirm you want to remove this KPI?'
+
+        within "#global-kpis" do
+          expect(page).to have_no_content('My Custom KPI')
+        end
+
+        #Ensure that Campaign-KPI association was removed
+        visit campaign_path(campaign)
+
+        open_tab('KPIs')
+
+        within "#global-kpis" do
+          expect(page).to have_no_content('My Custom KPI')
+        end
+      end
+    end
+
     feature "Edit custom KPIs", search: false do
 
       feature "with a non admin user", search: false do
@@ -259,6 +342,7 @@ feature "Campaigns", js: true, search: true do
         let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company) }
 
         scenario "User without permissions cannot edit Custom KPIs" do
+          Kpi.create_global_kpis
           company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
           company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
 
@@ -266,7 +350,7 @@ feature "Campaigns", js: true, search: true do
 
           visit campaign_path(campaign)
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('My Custom KPI')
             hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
           end
@@ -277,6 +361,7 @@ feature "Campaigns", js: true, search: true do
         end
 
         scenario "User without permissions to edit Custom KPIs and permission to edit goals" do
+          Kpi.create_global_kpis
           company_user.role.permissions.create({action: :show, subject_class: 'Campaign'}, without_protection: true)
           company_user.role.permissions.create({action: :view_kpis, subject_class: 'Campaign'}, without_protection: true)
           company_user.role.permissions.create({action: :edit_kpi_goals, subject_class: 'Campaign'}, without_protection: true)
@@ -286,7 +371,7 @@ feature "Campaigns", js: true, search: true do
 
           visit campaign_path(campaign)
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('My Custom KPI')
             expect(page).to have_content('100.0')
             expect(page).to have_content('my custom kpi description')
@@ -303,13 +388,14 @@ feature "Campaigns", js: true, search: true do
           end
           ensure_modal_was_closed
 
-          within "#custom-kpis" do
+          within "#global-kpis" do
             expect(page).to have_content('350.0')
           end
         end
       end
 
       scenario "Edit Custom KPI" do
+        Kpi.create_global_kpis
         campaign = FactoryGirl.create(:campaign, company: @company)
         kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: @company)
         campaign.add_kpi(kpi)
@@ -317,7 +403,9 @@ feature "Campaigns", js: true, search: true do
 
         visit campaign_path(campaign)
 
-        within "#custom-kpis" do
+        click_js_link 'KPIs'
+
+        within "#global-kpis" do
           expect(page).to have_content('My Custom KPI')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
         end
@@ -333,7 +421,7 @@ feature "Campaigns", js: true, search: true do
         end
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('My Modified KPI')
           expect(page).to have_content('my modified kpi description')
           hover_and_click('li#campaign-kpi-'+kpi.id.to_s, 'Edit')
@@ -345,7 +433,7 @@ feature "Campaigns", js: true, search: true do
         end
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('350.0')
         end
       end
@@ -354,11 +442,13 @@ feature "Campaigns", js: true, search: true do
     feature "Activity Types", search: false do
       scenario "Set goals for Activity Types" do
         campaign = FactoryGirl.create(:campaign, company: @company)
-        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company, campaign_ids: [campaign.id])
 
         visit campaign_path(campaign)
 
-        within "#custom-kpis" do
+        click_js_link 'KPIs'
+
+        within "#global-kpis" do
           expect(page).to have_content('Activity Type #1')
           hover_and_click('li#campaign-activity-type-'+activity_type.id.to_s, 'Edit')
         end
@@ -370,7 +460,7 @@ feature "Campaigns", js: true, search: true do
 
         ensure_modal_was_closed
 
-        within "#custom-kpis" do
+        within "#global-kpis" do
           expect(page).to have_content('123.0')
         end
       end

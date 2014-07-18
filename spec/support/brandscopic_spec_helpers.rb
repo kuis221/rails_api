@@ -15,26 +15,35 @@ module BrandscopiSpecHelpers
     event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.has_key?(:impressions)
     event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.has_key?(:interactions)
     event.result_for_kpi(Kpi.samples).value = results[:samples] if results.has_key?(:samples)
-    values = event.result_for_kpi(Kpi.gender)
-    values.detect{|r| r.kpis_segment.text == 'Male'}.value = results[:gender_male] if results.has_key?(:gender_male)
-    values.detect{|r| r.kpis_segment.text == 'Female'}.value = results[:gender_female] if results.has_key?(:gender_female)
+    result = event.result_for_kpi(Kpi.gender)
+    segments = Kpi.gender.kpis_segments
+    value = {}
+    value[segments.detect{|s| s.text == 'Male'}.id]  = results[:gender_male] if results.has_key?(:gender_male)
+    value[segments.detect{|s| s.text == 'Female'}.id] = results[:gender_female] if results.has_key?(:gender_female)
+    result.value = value
 
-    values = event.result_for_kpi(Kpi.ethnicity)
-    values.detect{|r| r.kpis_segment.text == 'Asian'}.value = results[:ethnicity_asian] if results.has_key?(:ethnicity_asian)
-    values.detect{|r| r.kpis_segment.text == 'Native American'}.value = results[:ethnicity_native_american] if results.has_key?(:ethnicity_native_american)
-    values.detect{|r| r.kpis_segment.text == 'Black / African American'}.value = results[:ethnicity_black] if results.has_key?(:ethnicity_black)
-    values.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'}.value = results[:ethnicity_hispanic] if results.has_key?(:ethnicity_hispanic)
-    values.detect{|r| r.kpis_segment.text == 'White'}.value = results[:ethnicity_white] if results.has_key?(:ethnicity_white)
+    result = event.result_for_kpi(Kpi.ethnicity)
+    segments = Kpi.ethnicity.kpis_segments
+    value = {}
+    value[segments.detect{|s| s.text == 'Asian'}.id] = results[:ethnicity_asian] if results.has_key?(:ethnicity_asian)
+    value[segments.detect{|s| s.text == 'Native American'}.id] = results[:ethnicity_native_american] if results.has_key?(:ethnicity_native_american)
+    value[segments.detect{|s| s.text == 'Black / African American'}.id] = results[:ethnicity_black] if results.has_key?(:ethnicity_black)
+    value[segments.detect{|s| s.text == 'Hispanic / Latino'}.id] = results[:ethnicity_hispanic] if results.has_key?(:ethnicity_hispanic)
+    value[segments.detect{|s| s.text == 'White'}.id] = results[:ethnicity_white] if results.has_key?(:ethnicity_white)
+    result.value = value
 
-    values = event.result_for_kpi(Kpi.age)
-    values.detect{|r| r.kpis_segment.text == '< 12'}.value = results[:age_12] if results.has_key?(:age_12)
-    values.detect{|r| r.kpis_segment.text == '12 – 17'}.value = results[:age_12_17] if results.has_key?(:age_12_17)
-    values.detect{|r| r.kpis_segment.text == '18 – 24'}.value = results[:age_18_24] if results.has_key?(:age_18_24)
-    values.detect{|r| r.kpis_segment.text == '25 – 34'}.value = results[:age_25_34] if results.has_key?(:age_25_34)
-    values.detect{|r| r.kpis_segment.text == '35 – 44'}.value = results[:age_35_44] if results.has_key?(:age_35_44)
-    values.detect{|r| r.kpis_segment.text == '45 – 54'}.value = results[:age_45_54] if results.has_key?(:age_45_54)
-    values.detect{|r| r.kpis_segment.text == '55 – 64'}.value = results[:age_55_64] if results.has_key?(:age_55_64)
-    values.detect{|r| r.kpis_segment.text == '65+'}.value = results[:age_65] if results.has_key?(:age_65)
+    result = event.result_for_kpi(Kpi.age)
+    segments = Kpi.age.kpis_segments
+    value = {}
+    value[segments.detect{|s| s.text == '< 12'}.id] = results[:age_12] if results.has_key?(:age_12)
+    value[segments.detect{|s| s.text == '12 – 17'}.id] = results[:age_12_17] if results.has_key?(:age_12_17)
+    value[segments.detect{|s| s.text == '18 – 24'}.id] = results[:age_18_24] if results.has_key?(:age_18_24)
+    value[segments.detect{|s| s.text == '25 – 34'}.id] = results[:age_25_34] if results.has_key?(:age_25_34)
+    value[segments.detect{|s| s.text == '35 – 44'}.id] = results[:age_35_44] if results.has_key?(:age_35_44)
+    value[segments.detect{|s| s.text == '45 – 54'}.id] = results[:age_45_54] if results.has_key?(:age_45_54)
+    value[segments.detect{|s| s.text == '55 – 64'}.id] = results[:age_55_64] if results.has_key?(:age_55_64)
+    value[segments.detect{|s| s.text == '65+'}.id] = results[:age_65] if results.has_key?(:age_65)
+    result.value = value
 
     event.save if autosave
   end

@@ -146,7 +146,7 @@ describe Api::V1::EventsController do
 
       put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: {"0" => {id: result.id.to_s, value: '987'}}}, format: :json
       result.reload
-      result.value.should == 987
+      result.value.should == '987'
     end
   end
 
@@ -163,7 +163,7 @@ describe Api::V1::EventsController do
 
     it "should not allow to submit the event if the event data is not valid" do
       campaign = FactoryGirl.create(:campaign, company_id: company)
-      field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+      field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
       event = FactoryGirl.create(:event, active: true, company: company, campaign: campaign)
       lambda {
         put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
@@ -222,8 +222,8 @@ describe Api::V1::EventsController do
       expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => '# of cats',
-          'field_type' => 'number',
-          'value' => 321
+          'type' => 'FormField::Number',
+          'value' => '321'
         )
       expect(groups.first['fields'].first.keys).to_not include('segments')
     end
@@ -245,8 +245,8 @@ describe Api::V1::EventsController do
       expect(groups.first["fields"].first).to include(
           'id' => result.id,
           'name' => 'Are you tall?',
-          'field_type' => 'count',
-          'value' => segments.first.id,
+          'type' => 'FormField::Dropdown',
+          'value' => segments.first.id.to_s,
           'description' => 'some description to show',
           'segments' => [
               {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
@@ -258,7 +258,8 @@ describe Api::V1::EventsController do
     it "should return the percentage fields as one single field" do
       kpi = FactoryGirl.create(:kpi, name: 'Age', kpi_type: 'percentage',
           kpis_segments: [
-            FactoryGirl.create(:kpis_segment, text: 'Uno'), FactoryGirl.create(:kpis_segment, text: 'Dos')
+            seg1 = FactoryGirl.create(:kpis_segment, text: 'Uno'),
+            seg2 = FactoryGirl.create(:kpis_segment, text: 'Dos')
           ]
       )
       campaign.add_kpi kpi
@@ -269,10 +270,10 @@ describe Api::V1::EventsController do
       groups = JSON.parse(response.body)
       expect(groups.first["fields"].first).to include(
           'name' => 'Age',
-          'field_type' => 'percentage',
+          'type' => 'FormField::Percentage',
           'segments' => [
-              {'id' => results.first.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
-              {'id' => results.last.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
+              {'id' => seg1.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
+              {'id' => seg2.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 

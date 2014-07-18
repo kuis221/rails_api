@@ -249,7 +249,7 @@ Brandscopic::Application.routes.draw do
   resources :campaigns do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
-    resources :activity_types do
+    resources :activity_types, only: [] do
       get :set_goal
     end
     resources :placeables, only: [:new] do
@@ -262,10 +262,6 @@ Brandscopic::Application.routes.draw do
     member do
       get :post_event_form
       post :update_post_event_form
-      post :kpi, to: :add_kpi
-      delete :kpi, to: :remove_kpi
-      post :activity_type, to: :add_activity_type
-      delete :activity_type, to: :remove_activity_type
       get :deactivate
       get :activate
       get :kpis
@@ -276,7 +272,7 @@ Brandscopic::Application.routes.draw do
       match 'members' => 'campaigns#add_members', via: :post, as: :add_member
       match 'members' => 'campaigns#members', via: :get, as: :members
       match 'teams' => 'campaigns#teams', via: :get, as: :teams
-      match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: {tab: /staff|places|date_ranges|day_parts|documents/}
+      match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: {tab: /staff|places|date_ranges|day_parts|documents|kpis/}
 
       match 'date_ranges/new' => 'campaigns#new_date_range', via: :get, as: :new_date_range
       match 'date_ranges' => 'campaigns#add_date_range', via: :post, as: :add_date_range
@@ -285,6 +281,13 @@ Brandscopic::Application.routes.draw do
       match 'day_parts/new' => 'campaigns#new_day_part', via: :get, as: :new_day_part
       match 'day_parts' => 'campaigns#add_day_part', via: :post, as: :add_day_part
       match 'day_parts/:day_part_id' => 'campaigns#delete_day_part', via: :delete, as: :delete_day_part
+
+      match 'kpis/select' => 'campaigns#select_kpis', via: :get, as: :select_kpis
+      match 'kpis/add' => 'campaigns#add_kpi', via: :post, as: :add_kpi
+      match 'kpis/:kpi_id' => 'campaigns#remove_kpi', via: :delete, as: :remove_kpi
+
+      match 'activity_types/add' => 'campaigns#add_activity_type', via: :post, as: :add_activity_type
+      match 'activity_types/:activity_type_id' => 'campaigns#remove_activity_type', via: :delete, as: :remove_activity_type
     end
 
     resources :documents, only: [:create, :new] do

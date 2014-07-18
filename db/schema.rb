@@ -48,21 +48,6 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
   add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
   add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
 
-  create_table "activity_results", :force => true do |t|
-    t.integer  "activity_id"
-    t.integer  "form_field_id"
-    t.text     "value"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.hstore   "hash_value"
-    t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
-  end
-
-  add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
-  add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
-  add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
-  add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
-
   create_table "activity_type_campaigns", :force => true do |t|
     t.integer  "activity_type_id"
     t.integer  "campaign_id"
@@ -225,29 +210,14 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
   add_index "brands_campaigns", ["brand_id"], :name => "index_brands_campaigns_on_brand_id"
   add_index "brands_campaigns", ["campaign_id"], :name => "index_brands_campaigns_on_campaign_id"
 
-  create_table "campaign_form_fields", :force => true do |t|
-    t.integer  "campaign_id"
-    t.integer  "kpi_id"
-    t.integer  "ordering"
-    t.string   "name"
-    t.string   "field_type"
-    t.text     "options"
-    t.integer  "section_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "campaign_form_fields", ["campaign_id"], :name => "index_campaign_form_fields_on_campaign_id"
-  add_index "campaign_form_fields", ["kpi_id"], :name => "index_campaign_form_fields_on_kpi_id"
-
   create_table "campaigns", :force => true do |t|
     t.string   "name"
     t.text     "description"
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
     t.integer  "company_id"
     t.integer  "first_event_id"
     t.integer  "last_event_id"
@@ -255,6 +225,7 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
+    t.string   "enabled_modules", :default => [],                 :array => true
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
@@ -491,6 +462,22 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
   add_index "form_field_options", ["form_field_id", "option_type"], :name => "index_form_field_options_on_form_field_id_and_option_type"
   add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
 
+  create_table "form_field_results", :force => true do |t|
+    t.integer  "form_field_id"
+    t.text     "value"
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+    t.hstore   "hash_value"
+    t.decimal  "scalar_value",    :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "resultable_id"
+    t.string   "resultable_type"
+  end
+
+  add_index "form_field_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+  add_index "form_field_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
+  add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], :name => "index_ff_results_on_resultable_and_form_field_id"
+  add_index "form_field_results", ["resultable_id", "resultable_type"], :name => "index_form_field_results_on_resultable_id_and_resultable_type"
+
   create_table "form_fields", :force => true do |t|
     t.integer  "fieldable_id"
     t.string   "fieldable_type"
@@ -501,6 +488,7 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
     t.boolean  "required"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "kpi_id"
   end
 
   add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"

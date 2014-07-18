@@ -12,6 +12,7 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 require 'spec_helper'
@@ -30,7 +31,7 @@ describe FormField::Brand do
       brands << FactoryGirl.create(:brand, company: company)
       brands << FactoryGirl.create(:brand, company: company)
       campaign = FactoryGirl.create(:campaign, brand_ids: brands.map(&:id), company: company)
-      activity_result = ActivityResult.new(form_field: field)
+      activity_result = FormFieldResult.new(form_field: field)
 
       options = field.field_options(activity_result)
       expect(options[:collection]).to match_array(brands)
@@ -43,7 +44,7 @@ describe FormField::Brand do
       campaign.activity_types << activity_type
       venue = FactoryGirl.create(:venue, place: FactoryGirl.create(:place), company: company)
       activity = FactoryGirl.create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
-      activity_result = FactoryGirl.create(:activity_result, activity: activity, form_field_id: field.id)
+      activity_result = FactoryGirl.create(:form_field_result, resultable: activity, form_field_id: field.id)
 
       options = field.field_options(activity_result)
       expect(options[:collection]).to match_array([brand1])
@@ -71,11 +72,11 @@ describe FormField::Brand do
 
   describe "#format_html" do
     it "should return the correct values" do
-      expect(field.format_html(FactoryGirl.build(:activity_result, value: nil, form_field_id: field.id))).to eql nil
-      expect(field.format_html(FactoryGirl.build(:activity_result, value: FactoryGirl.create(:brand, name: 'BrandT1').id, form_field_id: field.id))).to eql 'BrandT1'
-      expect(field.format_html(FactoryGirl.build(:activity_result, value: "", form_field_id: field.id))).to eql nil
-      expect(field.format_html(FactoryGirl.build(:activity_result, value: 123, form_field_id: field.id))).to eql ''
-      expect(field.format_html(FactoryGirl.build(:activity_result, value: [FactoryGirl.create(:brand, name: 'BrandT2').id, FactoryGirl.create(:brand, name: 'BrandT3').id], form_field_id: field.id))).to eql 'BrandT2, BrandT3'
+      expect(field.format_html(FactoryGirl.build(:form_field_result, value: nil, form_field_id: field.id))).to eql nil
+      expect(field.format_html(FactoryGirl.build(:form_field_result, value: FactoryGirl.create(:brand, name: 'BrandT1').id, form_field_id: field.id))).to eql 'BrandT1'
+      expect(field.format_html(FactoryGirl.build(:form_field_result, value: "", form_field_id: field.id))).to eql nil
+      expect(field.format_html(FactoryGirl.build(:form_field_result, value: 123, form_field_id: field.id))).to eql ''
+      expect(field.format_html(FactoryGirl.build(:form_field_result, value: [FactoryGirl.create(:brand, name: 'BrandT2').id, FactoryGirl.create(:brand, name: 'BrandT3').id], form_field_id: field.id))).to eql 'BrandT2, BrandT3'
     end
   end
 end

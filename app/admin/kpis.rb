@@ -11,7 +11,8 @@ ActiveAdmin.register Kpi do
       redirect_to collection_path, :alert => 'Please select more than one KPI to merge'
     else
       @kpis = Kpi.where(id: selection)
-      campaign_ids = @kpis.map{|k| CampaignFormField.where(kpi_id: k).map(&:campaign_id) }.flatten
+      campaign_ids = FormField.where(fieldable_type: 'Campaign', kpi_id: @kpis).pluck(:fieldable_id)
+      #campaign_ids = @kpis.map{|k| FormField.where(fieldable_type: 'Campaign', kpi_id: k).map(&:fieldable_id) }.flatten
       @campaigns = Campaign.where(id: campaign_ids.uniq)
       @conflict_campaigns = campaign_ids.select{|e| campaign_ids.rindex(e) != campaign_ids.index(e) }.uniq
       if @kpis.map(&:kpi_type).uniq.count > 1

@@ -42,10 +42,10 @@ end
 node :actions do |event|
   actions = []
   actions.push 'enter post event data' if can?(:view_data, event) && can?(:edit_data, event)
-  actions.push 'upload photos' if event.campaign.active_field_types.include?('photos') && can?(:photos, event) && can?(:create_photo, event)
-  actions.push 'conduct surveys' if event.campaign.active_field_types.include?('surveys') && can?(:surveys, event) && can?(:create_survey, event)
-  actions.push 'enter expenses' if event.campaign.active_field_types.include?('expenses') && can?(:expenses, event) && can?(:create_expense, event)
-  actions.push 'gather comments' if event.campaign.active_field_types.include?('comments') && can?(:comments, event) && can?(:create_comment, event)
+  actions.push 'upload photos' if event.campaign.enabled_modules.include?('photos') && can?(:photos, event) && can?(:create_photo, event)
+  actions.push 'conduct surveys' if event.campaign.enabled_modules.include?('surveys') && can?(:surveys, event) && can?(:create_survey, event)
+  actions.push 'enter expenses' if event.campaign.enabled_modules.include?('expenses') && can?(:expenses, event) && can?(:create_expense, event)
+  actions.push 'gather comments' if event.campaign.enabled_modules.include?('comments') && can?(:comments, event) && can?(:create_comment, event)
   actions
 end
 

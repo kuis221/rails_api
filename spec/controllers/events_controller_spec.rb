@@ -292,16 +292,16 @@ describe EventsController do
           put 'update', id: event.to_param,
             event: {
               summary: 'A summary of the events',
-              results_attributes: [
-                {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "100"},
-                {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "200"}
-              ]
+              results_attributes: {
+                '0' => {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "100"},
+                '1' => {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "200"}
+              }
             }
-        }.to change(EventResult, :count).by(2)
+        }.to change(FormFieldResult, :count).by(2)
         event.reload
         event.summary.should == 'A summary of the events'
-        event.result_for_kpi(Kpi.impressions).value.should == 100
-        event.result_for_kpi(Kpi.interactions).value.should == 200
+        event.result_for_kpi(Kpi.impressions).value.should == '100'
+        event.result_for_kpi(Kpi.interactions).value.should == '200'
       end
 
 
@@ -312,25 +312,25 @@ describe EventsController do
         impressions = event.result_for_kpi(Kpi.impressions)
         interactions = event.result_for_kpi(Kpi.interactions)
         expect {
-          event.result_for_kpi(Kpi.impressions).value = 100
-          event.result_for_kpi(Kpi.interactions).value = 200
+          event.result_for_kpi(Kpi.impressions).value = '100'
+          event.result_for_kpi(Kpi.interactions).value = '200'
           event.save
-        }.to change(EventResult, :count).by(2)
+        }.to change(FormFieldResult, :count).by(2)
 
         expect {
           put 'update', id: event.to_param,
             event: {
               summary: 'A summary of the events',
-              results_attributes: [
-                {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "1111", id: impressions.id},
-                {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "2222", id: interactions.id}
-              ]
+              results_attributes: {
+                '0' => {form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: "1111", id: impressions.id},
+                '1' => {form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: "2222", id: interactions.id}
+              }
             }
-        }.to_not change(EventResult, :count)
+        }.to_not change(FormFieldResult, :count)
         event.reload
         event.summary.should == 'A summary of the events'
-        event.result_for_kpi(Kpi.impressions).value.should == 1111
-        event.result_for_kpi(Kpi.interactions).value.should == 2222
+        event.result_for_kpi(Kpi.impressions).value.should == '1111'
+        event.result_for_kpi(Kpi.interactions).value.should == '2222'
       end
     end
 
@@ -562,7 +562,7 @@ describe EventsController do
 
       it "should not allow to submit the event if the event data is not valid" do
         campaign = FactoryGirl.create(:campaign, company_id: @company)
-        field = FactoryGirl.create(:campaign_form_field, campaign: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), field_type: 'number', options: {required: true})
+        field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
         event = FactoryGirl.create(:event, active: true, company: @company, campaign: campaign)
         lambda {
           put 'submit', id: event.to_param, format: :js

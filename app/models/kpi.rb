@@ -60,6 +60,11 @@ class Kpi < ActiveRecord::Base
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
   scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
+  scope :campaign_assignable, ->(campaign) {
+    global_and_custom(campaign.company).
+    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours]).
+    reorder('name ASC')
+  }
 
   after_save :sync_segments_and_goals
 
@@ -89,6 +94,33 @@ class Kpi < ActiveRecord::Base
         self.goals.where(kpis_segment_id: nil).delete_all
       end
     end
+  end
+
+  def form_field_type
+    case kpi_type
+    when 'text', 'textarea'
+      'FormField::Text'
+    when 'number'
+      if capture_mechanism == 'currency'
+        'FormField::Currency'
+      else
+        'FormField::Number'
+      end
+    when 'count'
+      case capture_mechanism
+      when 'radio' then 'FormField::Radio'
+      when 'checkbox' then 'FormField::Checkbox'
+      else 'FormField::Dropdown'
+      end
+    when 'percentage'
+      'FormField::Percentage'
+    when 'section'
+      'FormField::Section'
+    end
+  end
+
+  def form_field_options
+    {name: name, type: form_field_type.split('::')[1], kpi_id: self.id}
   end
 
   class << self
@@ -184,7 +216,7 @@ class Kpi < ActiveRecord::Base
       # this being called for more than one out-of-the-box KPIs
       return false if kpis.select{|k| k.out_of_the_box? }.count > 1
 
-      campaings = CampaignFormField.includes(:campaign).where(kpi_id: kpis).map(&:campaign)
+      campaings = FormField.includes(:fieldable).where(kpi_id: kpis, fieldable_type: 'Campaign').map(&:fieldable)
       Kpi.transaction do
 
         # STEP 1: merge the values of events if the campaign has more than one of the chosen KPIs
@@ -203,7 +235,7 @@ class Kpi < ActiveRecord::Base
                   event.campaign = campaign # To avoid each event to reload the campaign
                   if kpi_keep.kpi_type == 'percentage'
                     results = event.result_for_kpi(kpi_keep)
-                    if results.map(&:value).map(&:to_i).sum == 0
+                    if results.value.values.map(&:to_i).sum == 0
                       values_to_copy = kpis_to_remove.each do|k|
                         values_to_copy = event.result_for_kpi(k)
                         if values_to_copy.map(&:value).map(&:to_i) != 0
@@ -232,8 +264,8 @@ class Kpi < ActiveRecord::Base
                   end
                 end
               end
-              EventResult.joins(:event).where(events: {campaign_id: campaign.id}, kpi_id: kpis_to_remove).destroy_all
-              CampaignFormField.where(campaign_id: campaign.id, kpi_id: kpis_to_remove).destroy_all
+              FormFieldResult.where("id in (#{FormFieldResult.select('form_field_results.id').for_kpi(kpis_to_remove).for_event_campaign(campaign).to_sql})").delete_all
+              FormField.where(fieldable_type: 'Campaign', fieldable_id: campaign.id, kpi_id: kpis_to_remove).destroy_all
             else
 
             end
@@ -252,24 +284,25 @@ class Kpi < ActiveRecord::Base
       if remaining_kpis.count > 0
         kpi_keep = remaining_kpis.detect(Proc.new{ remaining_kpis.first}){|k| k.out_of_the_box? }
         remaining_kpis.reject!{|k| k == kpi_keep }
-        CampaignFormField.where(kpi_id: remaining_kpis).each do |field|
+        FormField.where(kpi_id: remaining_kpis).each do |field|
           if field.kpi.kpi_type == 'percentage'
             field.kpi.kpis_segments.each do |segment|
               if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
-                EventResult.where(kpi_id: field.kpi.id, kpis_segment_id: segment.id).update_all(kpi_id: kpi_keep.id, kpis_segment_id: new_segment.id)
+                #EventResult.where(kpi_id: field.kpi.id, kpis_segment_id: segment.id).update_all(kpi_id: kpi_keep.id, kpis_segment_id: new_segment.id)
+                FormFieldResult.for_kpi(field.kpi).update_all("hash_value = delete(hash_value || hstore(ARRAY['#{new_segment.id}', hash_value->'#{segment.id}']), '#{segment.id}')")
               end
             end
           elsif field.kpi.kpi_type == 'count'
             field.kpi.kpis_segments.each do |segment|
               if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
-                EventResult.where(kpi_id: field.kpi.id, value: segment.id.to_s).update_all(kpi_id: kpi_keep.id, value: new_segment.id)
+                FormFieldResult.for_kpi(field.kpi).where(value: segment.id.to_s).update_all(value: new_segment.id)
               end
             end
-          else
-            EventResult.joins(:event).where(events: {campaign_id: field.campaign_id}, kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+          # else
+          #   FormFieldResult.for_kpi(remaining_kpis).for_event_campaign(field.fieldable).update_all(kpi_id: kpi_keep)
           end
         end
-        CampaignFormField.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
+        FormField.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
         remaining_kpis.each{|k| k.destroy unless k.out_of_the_box? }
       else
         kpi_keep = remaining_kpis.first
@@ -279,7 +312,7 @@ class Kpi < ActiveRecord::Base
         kpi_keep.name = options['name']
         kpi_keep.description = options['description']
         kpi_keep.save
-        CampaignFormField.where(kpi_id: kpi_keep).update_all(name: options['name'])
+        FormField.where(kpi_id: kpi_keep).update_all(name: options['name'])
       end
     end
   end

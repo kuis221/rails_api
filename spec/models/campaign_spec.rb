@@ -2,21 +2,22 @@
 #
 # Table name: campaigns
 #
-#  id             :integer          not null, primary key
-#  name           :string(255)
-#  description    :text
-#  aasm_state     :string(255)
-#  created_by_id  :integer
-#  updated_by_id  :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  company_id     :integer
-#  first_event_id :integer
-#  last_event_id  :integer
-#  first_event_at :datetime
-#  last_event_at  :datetime
-#  start_date     :date
-#  end_date       :date
+#  id              :integer          not null, primary key
+#  name            :string(255)
+#  description     :text
+#  aasm_state      :string(255)
+#  created_by_id   :integer
+#  updated_by_id   :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  company_id      :integer
+#  first_event_id  :integer
+#  last_event_id   :integer
+#  first_event_at  :datetime
+#  last_event_at   :datetime
+#  start_date      :date
+#  end_date        :date
+#  enabled_modules :string(255)      default([])
 #
 
 require 'spec_helper'
@@ -79,39 +80,52 @@ describe Campaign do
     end
   end
 
-  describe "active_kpis" do
-    let(:campaign){ FactoryGirl.build(:campaign) }
-    it "should returns only evens and promo hours if no custom kpis have been created for campaign" do
-      Kpi.create_global_kpis
-      expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours]
-    end
+  describe "active_global_kpis" do
+    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['expenses', 'comments']) }
 
-    it "should returns all kpis + evens and promo hours" do
+    it "should returns global kpis + enabled modules" do
       Kpi.create_global_kpis
-      form_field  = FactoryGirl.create(:campaign_form_field,
-            campaign: campaign,
+      form_field  = FactoryGirl.create(:form_field_number,
+            fieldable: campaign,
             kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
 
-      expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours]
+      expect(campaign.active_global_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.expenses, Kpi.comments]
+    end
+  end
+
+  describe "active_kpis" do
+    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['surveys']) }
+    it "should returns only events, promo hours and surveys if no custom kpis have been created for campaign" do
+      Kpi.create_global_kpis
+      expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.surveys]
+    end
+
+    it "should returns all kpis + events, promo hours and surveys" do
+      Kpi.create_global_kpis
+      form_field  = FactoryGirl.create(:form_field_number,
+            fieldable: campaign,
+            kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
+
+      expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours, Kpi.surveys]
     end
   end
 
   describe "custom_kpis" do
-    let(:campaign){ FactoryGirl.build(:campaign) }
+    let(:campaign){ FactoryGirl.create(:campaign) }
     it "should returns empty if no custom kpis have been created for campaign" do
       Kpi.create_global_kpis
       expect(campaign.custom_kpis).to match_array []
     end
 
-    it "should returns all kpis + evens and promo hours" do
+    it "should returns all custom kpis" do
       Kpi.create_global_kpis
-      form_field  = FactoryGirl.create(:campaign_form_field,
-            campaign: campaign,
+      form_field  = FactoryGirl.create(:form_field_number,
+            fieldable: campaign,
             kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
 
       # Other field associated to another campaign
-      FactoryGirl.create(:campaign_form_field,
-            campaign: FactoryGirl.build(:campaign, company_id: campaign.company_id),
+      FactoryGirl.create(:form_field_number,
+            fieldable: FactoryGirl.create(:campaign, company_id: campaign.company_id),
             kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
 
       expect(campaign.custom_kpis).to match_array [form_field.kpi]

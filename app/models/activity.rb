@@ -20,7 +20,7 @@ class Activity < ActiveRecord::Base
   belongs_to :company_user
   belongs_to :campaign
 
-  has_many :results, class_name: 'ActivityResult', inverse_of: :activity
+  has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
 
   validates :activity_type_id, numericality: true, presence: true,
     :inclusion => { :in => proc { |activity| activity.campaign.present? ? activity.campaign.activity_type_ids : (activity.company.present? ? activity.company.activity_type_ids : []) } }
@@ -52,7 +52,7 @@ class Activity < ActiveRecord::Base
 
   def results_for_type
     activity_type.form_fields.map do |field|
-      result = results.detect{|r| r.form_field_id == field.id} || results.build({form_field_id: field.id}, without_protection: true)
+      result = results.detect{|r| r.form_field_id == field.id} || results.build(form_field_id: field.id)
       result.form_field = field
       result
     end
@@ -60,7 +60,7 @@ class Activity < ActiveRecord::Base
 
   def results_for(fields)
     fields.map do |field|
-      result = results.select{|r| r.form_field_id == field.id}.first || results.build({form_field_id: field.id}, without_protection: true)
+      result = results.select{|r| r.form_field_id == field.id}.first || results.build(form_field_id: field.id)
       result.form_field = field
       result
     end

@@ -156,7 +156,7 @@ class Venue < ActiveRecord::Base
       Venue.solr_search do
         with(:company_id, company_id)
         with(:location).in_radius(latitude, longitude, 5)
-        with(:types, types ) if types.any?
+        with(:types, types) if types.any?
         with(:avg_impressions_hour).greater_than(0)
 
         stat(:avg_impressions_hour, :type => "stddev")
@@ -187,13 +187,13 @@ class Venue < ActiveRecord::Base
   def overall_graphs_data
     return @overall_graphs_data if @overall_graphs_data
 
-    results_scope = EventResult.scoped_by_place_id_and_company_id(place_id, company_id).for_active_events
+    results_scope = FormFieldResult.for_place_in_company(place_id, company_id).where(events: {active: true})
     @overall_graphs_data = {}
     [:age, :gender, :ethnicity].each do |kpi|
       if Kpi.send(kpi).present?
-        results = results_scope.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
-        segments = Kpi.send(kpi).kpis_segments
-        @overall_graphs_data[kpi] = Hash[segments.map{|s| [s.text, results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+        @overall_graphs_data[kpi] = Hash[Kpi.send(kpi).kpis_segments.map do |s|
+          [s.text, results_scope.for_kpi(Kpi.send(kpi)).average("COALESCE(NULLIF(form_field_results.hash_value -> '#{s.id}', ''), '0')::NUMERIC") || 0]
+        end]
       end
     end
 

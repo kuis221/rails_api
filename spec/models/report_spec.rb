@@ -1048,13 +1048,13 @@ describe Report do
     it "should work when adding percentage KPIs as a value" do
       event = FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place))
       kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'percentage', kpis_segments: [
-        FactoryGirl.build(:kpis_segment, text: 'Segment 1', ordering: 1),
-        FactoryGirl.build(:kpis_segment, text: 'Segment 2', ordering: 2)
+        seg1 = FactoryGirl.build(:kpis_segment, text: 'Segment 1', ordering: 1),
+        seg2 = FactoryGirl.build(:kpis_segment, text: 'Segment 2', ordering: 2),
+        seg3 = FactoryGirl.build(:kpis_segment, text: 'Segment 3', ordering: 3)
       ])
       campaign.add_kpi kpi
       results = event.result_for_kpi(kpi)
-      results.first.value = 25
-      results.second.value = 75
+      results.value = {seg1.id => 25, seg2.id => 75, seg3.id => ''}
       event.save # Save the event results
 
       report = FactoryGirl.create(:report,
@@ -1065,9 +1065,11 @@ describe Report do
       )
 
       page = report.fetch_page
-      expect(report.report_columns).to eql ["Segmented Field: Segment 1", "Segmented Field: Segment 2"]
+      expect(report.report_columns).to eql [
+        "Segmented Field: Segment 1", "Segmented Field: Segment 2", "Segmented Field: Segment 3"
+      ]
       expect(page).to eql [
-       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[25.0, 75.0]}
+       {"campaign_name"=>"Guaro Cacique 2013", "values"=>[25.0, 75.0, 0.0]}
       ]
     end
 
@@ -1490,7 +1492,8 @@ describe Report do
           fieldable: FactoryGirl.create(:activity_type),
           options: [
             option1 = FactoryGirl.create(:form_field_option, name: 'Opt1', ordering: 1),
-            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2) ]
+            option2 = FactoryGirl.create(:form_field_option, name: 'Opt2', ordering: 2),
+            option3 = FactoryGirl.create(:form_field_option, name: 'Opt3', ordering: 3) ]
         )
         percentage_field = FormField.find(percentage_field.id)
         campaign.activity_types << percentage_field.fieldable
@@ -1507,12 +1510,12 @@ describe Report do
 
         activity = FactoryGirl.create(:activity, activitable: event,
           activity_type: percentage_field.fieldable, company_user: user)
-        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 80 }
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 80,  option3.id.to_s => ''}
         activity.save
 
         activity = FactoryGirl.create(:activity, activitable: event,
           activity_type: percentage_field.fieldable, company_user: user)
-        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 40, option2.id.to_s => 60 }
+        activity.results_for([percentage_field]).first.value = { option1.id.to_s => 40, option2.id.to_s => 60,  option3.id.to_s => '' }
         activity.save
 
         report = FactoryGirl.create(:report,
@@ -1523,9 +1526,9 @@ describe Report do
         )
 
         page = report.fetch_page
-        expect(report.report_columns).to eql ["Percentage Field: Opt1", "Percentage Field: Opt2"]
+        expect(report.report_columns).to eql ["Percentage Field: Opt1", "Percentage Field: Opt2", "Percentage Field: Opt3"]
         expect(page).to eql [
-         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[31.666666666666668, 68.33333333333333]},
+         {"campaign_name"=>"Guaro Cacique 2013", "values"=>[31.666666666666668, 68.33333333333333, 0.0]},
         ]
       end
 
@@ -1702,9 +1705,12 @@ describe Report do
       area2 = FactoryGirl.create(:area, name: 'Area2')
       chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
       los_angeles = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
-      venue_in_chicago = FactoryGirl.create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
-      venue_in_la = FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
-      venue_in_ny = FactoryGirl.create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      venue_in_chicago = FactoryGirl.create(:place, name: 'Place 001',
+        city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
+      venue_in_la = FactoryGirl.create(:place, name: 'Place 002',
+        city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
+      venue_in_ny = FactoryGirl.create(:place, name: 'Place 003',
+        city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
       area1.places << chicago
       area2.places << los_angeles
       area2.places << venue_in_la
@@ -1970,6 +1976,47 @@ describe Report do
     end
 
     it "can be filtered by promo hours" do
+      # Events on campaing
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300})
+
+      # Events on other campaing
+      campaign2 = FactoryGirl.create(:campaign, name: 'Zeta 2014', company: company)
+      campaign2.assign_all_global_kpis
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 200, interactions: 100})
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 300, interactions: 300})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.promo_hours.id}", "label"=>"Promo Hours"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]},
+        {"campaign_name"=>campaign2.name, "values" => [600.00]}
+      ]
+
+      # with filter
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"kpi:#{Kpi.promo_hours.id}", "label"=>"Promo Hours"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"kpi:#{Kpi.promo_hours.id}" => {'min' => '1', 'max' => '4'}}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]}
+      ]
+    end
+
+    it "can be filtered by event active state" do
       # Events on campaing
       FactoryGirl.create(:event, campaign: campaign, results: {impressions: 100, interactions: 50})
       FactoryGirl.create(:event, campaign: campaign, results: {impressions: 300, interactions: 300})

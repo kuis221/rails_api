@@ -16,8 +16,12 @@ feature "Photos", js: true do
     Warden.test_reset!
   end
 
+  let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
+  let(:event) { FactoryGirl.create(:late_event, company: @company, campaign:campaign) }
+
+  before { campaign.update_attribute :enabled_modules, ['photos']  }
+
   feature "Event Photo management" do
-    let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
     scenario "A user can select a photo and attach it to the event" do
       with_resque do
         visit event_path(event)
@@ -57,8 +61,6 @@ feature "Photos", js: true do
   end
 
   feature "Photo Gallery" do
-    let(:event) { FactoryGirl.create(:late_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}})) }
-
     scenario "can rate a photo" do
       photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
       visit event_path(event)
@@ -118,7 +120,7 @@ feature "Photos", js: true do
 
     scenario "a user can activate a photo", search: true do
       #This should be done from Photo Results section
-      event = FactoryGirl.create(:approved_event, company: @company, campaign: FactoryGirl.create(:campaign, company: @company, form_fields_attributes: {"0" => {"ordering"=>"5", "name"=>"Photos", "field_type"=>"photos", "kpi_id"=> Kpi.photos.id}}))
+      event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
       FactoryGirl.create(:photo, attachable: event, active: false)
       event.save
 

@@ -1,5 +1,6 @@
 @import "variables";
-@import "mixins.scss";
+@import "mixins";
+
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 
 $footer-height: 35px;
@@ -196,9 +197,52 @@ label{
 	}
 }
 
-// Event Details Styles
-// --------------------------------------------------
+.control-group{
+	&.percentage{
+		width:390px;
+		input[type="text"]{
+			-webkit-border-radius: 4px 0px 0px 4px;
+			border-radius: 4px 0px 0px 4px;
+			width: 172px !important;
+		}
+		span.add-on{
+			background-color: $user_menu;
+			border:0 !important;
+			border-radius: 0px 4px 4px 0px;
+			color: white;
+			display: inline-block;
+			-webkit-border-radius: 0px 4px 4px 0px;
+			padding: 10px 5px 11px 4px;
+			text-align: center;
+			text-shadow:none !important;
+			width: 40px;
+		}
+		label.control-label{
+			display: inline-block;
+			font-size: 13px;
+			margin-top: 12px;
+			margin-right: 5px;
+			width: 150px;
+		}
+	}
+	label.control-label{
+		color:$text;
+	}
+	&.error {
+		input, textarea {
+			&:focus {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
 
+.chzn-default span {
+	color: $user_menu;
+}
+
+/*-- EVENT DETAILS PAGES __*/
 body.events.show{
 	ul{
 		&.consumer-reach-metrics{
@@ -209,54 +253,6 @@ body.events.show{
 					text-overflow: ellipsis;
 					white-space: nowrap;
 				}
-			}
-		}
-	}
-
-	#event-results-form{
-		.control-group{
-			.segment-total{
-				display: none;
-			}
-			&.error{
-				.controls{
-					input[type="text"]{
-						border-color: $alert_red !important;
-					}
-					span.add-on{
-						background-color: $alert_red;
-					}
-				}
-			}
-		}
-		#event-custom{
-			label{
-				&.radio, &.checkbox{
-					display: block;
-					font-size: 13px;
-					margin-bottom: 10px;
-					padding-left: 0;
-					width: auto;
-					&:last-child{
-						margin-bottom: 20px;
-					}
-				}
-				&.checkbox{
-					.checker{
-						margin-right: 10px;
-					}
-				}
-			}
-			.control-group.radio_buttons label.radio_buttons{
-				font-size: 13px;
-				margin-bottom: 10px;
-				&:first-of-type{
-					margin-top: 15px;
-				}
-			}
-			.radio{
-				margin-right: 10px;
-				margin-bottom: 3px;
 			}
 		}
 	}
@@ -841,7 +837,7 @@ a.more-options-link:after{
 		left: auto;
 		position: absolute;
 		right: 0px;
-		top: -6px;	
+		top: -6px;
 		&.badge{
 			font-size: 11px;
 			line-height: 15px;
@@ -1944,9 +1940,9 @@ li#user_menu{
 		margin-right: 0px;
 	}
 }
-#select-areas-table-wrapper{
+.select-list-table-wrapper{
 	.link-list{
-		margin-top: 25px;
+		margin-top: 25px !important;
 	}
 }
 .sidebar{
@@ -1969,12 +1965,12 @@ ul.kpis-list{
 		padding:10px 0 10px 0;
 		.kpi-goal{
 			font-size: 16px;
-			margin-top: 15px;
+			margin-top: 10px;
 		}
 	}
 	.kpi-info{
 		font-size: 11px;
-		margin-top: 14px;
+		margin: 10px 0 0 10px;
 		.kpi-name{
 			font-size: 16px;
 		}
@@ -2325,7 +2321,7 @@ ul.kpis-list{
 			padding-left: 20px;
 		}
 	}
-	ul#areas-list{
+	ul.select-items-list{
 		li{
 			display: table;
 			height: 86px;
@@ -2340,10 +2336,10 @@ ul.kpis-list{
 					font-size: 11px;
 					margin: 8px 0 0 0;
 					width: 400px;
-					.area_name{
+					.area_name, .kpi_name{
 						font-size: 16px;
 					}
-					.area_description{
+					.area_description, .kpi_description{
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -3374,9 +3370,52 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
-/*-- ACTIVITY FORM STYLES --*/
+/*-- DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA) --*/
 
-.activity-form{
+.data-form-wrapper {
+	.control-group{
+		.segment-total{
+			display: none;
+		}
+		&.error{
+			.input-append{
+				input[type="text"]{
+					border-color: $alert_red !important;
+				}
+				span.add-on{
+					background-color: $alert_red;
+					color: #fff;
+				}
+			}
+		}
+		label.control-group-label{
+			font-weight: bold;
+			&.control-label{
+				color: $text;
+				font-size: 13px;
+			}
+		}
+		&.percentage,
+		&.summation {
+			.help-inline.valid {
+				display: none !important;
+			}
+		}
+		&.summation .field-option label {
+			width: 100px;
+			display: inline-block;
+			overflow: hidden;
+			height: 20px;
+		}
+		label.radio {
+			padding: 0;
+		}
+		label.checkbox {
+			display: block;
+			width: initial;
+			margin-bottom: 10px;
+		}
+	}
 
 	.fields-wrapper{
 		&>p{
@@ -3397,7 +3436,7 @@ textarea::-webkit-input-placeholder {
 	 	.add-on{
 			background-color: $user_menu;
 			color: white;
-			height: 19px;
+			height: 22px;
 			text-shadow: none;
 			width: 30px;
 		}
@@ -3408,7 +3447,7 @@ textarea::-webkit-input-placeholder {
 	.checkbox{
 		padding-left:0;
 		.checker{
-			margin-right: 10px;
+			margin-right: 15px;
 
 			span.checked:after {
 				top: -16px;
@@ -3429,141 +3468,19 @@ textarea::-webkit-input-placeholder {
 	table{
 		margin-bottom: 0;
 	}
-	[data-type="Summation"]{
-		.controls{
-			clear: both;
-			margin-top: 15px;
-		}
-		.field-option{
-			height: 50px;
-			width: 300px;
-		}
-		label{
-			margin-bottom: 15px;
-		}
-		.summation{
-			margin-bottom: 15px;
-			height: 40px;
-			line-height: 38px;
-			input{
-				float: right;
-				width: 200px;
-			}
-		}
-		.summation-total-field{
-			border-top: 2px solid $user_menu;
-			padding-top: 15px;
-			margin-top: 10px;
-			.summation{
-				margin-left: 15px;
-				&:first-of-type{
-					margin-top: 0;
-				}
-			}
-		}
+	input.date_picker {
+		text-align: right;
+		width: 120px;
+		background: image-url('calendar.svg') no-repeat 3px 8px;
+		height: 43px;
+		padding: 2px 0 2px 10px;
+		width: 140px;
 	}
-	.field{
-		display: inline-block;
-		float: left;
-		height: auto;
-		width: auto;
-		label.control-label{
-			margin-bottom: 5px;
-			margin-right: 10px;
-			min-width: 240px;
-			width: auto;
-		}
-		label.radio .radio{
-			margin-right: 10px;
-		}
-		&.ui-draggable-dragging{
-			height: auto !important;
-			width: auto !important;
-			input[type="date"], input[type="time"]{
-				text-align: right;
-				width: 120px;
-			}
-			input[type="date"]{
-				background: image-url('calendar.svg') no-repeat 3px 8px;
-				height: 33px;
-				padding: 2px 0 2px 10px;
-				width: 140px;
-			}
-		}
-	}
-	.form-fields{
-		[data-type="Dropdown"]{
-			label{
-				margin-bottom: 10px;
-			}
-			&.selected{
-				.icon-remove-circle:before{
-					font-size: 18px !important;
-				}
-			}
-		}
-		[data-type="Checkbox"]{
-			.checkbox{
-				padding-left:0 !important;
-				margin-bottom: 10px !important;
-				.checker{
-					margin-right:10px !important;
-				}
-			}
-			&.selected{
-				.checker{
-					background-color: $user_menu;
-				}
-			}
-		}
-		[data-type="Radio"]{
-			label.radio{
-				display:block;
-				margin-bottom: 8px;
-				.radio{
-					margin-right: 10px;
-				}
-			}
-		}
-		[data-type="Time"], [data-type="Date"], .date_picker {
-			input{
-				text-align: right;
-				width: 120px;
-				&[type="date"]{
-					background: image-url('calendar.svg') no-repeat 3px 8px;
-					width: 140px;
-				}
-				&[type="time"]{
-					background: image-url('time.svg') no-repeat 3px 8px;
-				}
-			}
-		}
-		[data-type="Percentage"]{
-			label.percentage{
-				margin-bottom: 10px;
-			}
-		}
-		[data-type="LikertScale"]{
-			table{
-				thead{
-					tr{
-						th:nth-child(2){
-							padding-left: 25px;
-						}
-					}
-				}
-				tbody{
-					tr{
-						td:first-of-type{
-							padding-left: 0;
-						}
-						td:nth-child(2){
-							padding-left: 25px;
-						}
-					}
-				}
-			}
-		}
+	input.time_picker {
+		text-align: right;
+		height: 43px;
+		width: 120px;
+		background: image-url('time.svg') no-repeat 3px 8px;
 	}
 }
 
@@ -4512,28 +4429,10 @@ body.roles{
 	}
 }
 
-// CAMPAIGNS POST EVENT FORM BUILDER
 
-#post-event-form-builder {
-	border:0 !important;
-	width: 100% !important;
-	#droppable {
-		min-height: 100px;
-	}
-	.widget-list {
-		.draggable {
-			height: 60px;
-			border: 1px solid #ccc;
-		}
-		.widget-media {
-
-		}
-	}
+.ui-rangeSlider-label{
+	padding: 13px 10px 7px 8px !important;
 }
-
-	.ui-rangeSlider-label{
-		padding: 13px 10px 7px 8px !important;
-	}
 
 // VENUES
 
@@ -5418,9 +5317,6 @@ svg{
 	padding: 30px 10px;
 	-webkit-border-radius: 0px 7px 7px 7px;
 	border-radius: 0px 7px 7px 7px;
-	.kpis-button{
-		margin: 70px 0 10px 0;
-	}
 }
 
 body.campaigns{
@@ -5597,7 +5493,6 @@ body.campaigns{
 			}
 			.segment-error-label {
 				margin-bottom: 0;
-				min-height: 22px;
 				display: block;
 			}
 			.help-inline {
@@ -5605,12 +5500,12 @@ body.campaigns{
 				padding-left: 5px;
 				&.segment-title-label, &.segment-error-label {
 					padding-left: 0;
-				}
-			}
-			.control-group.percentage {
-				span {
-					&.ok-message span {
-						display: none;
+					display:block;
+					&:after {
+						display: table;
+						content: "";
+						line-height: 0;
+						clear: both;
 					}
 				}
 			}
@@ -5793,14 +5688,6 @@ body.campaigns{
 			left: -30px;
 			margin: 0 13px 0 4px;
 			top: 15px;
-		}
-	}
-
-	#post-event-form-builder{
-		legend{
-			border:0;
-			color: $text;
-			font-size: 16px;
 		}
 	}
 
@@ -6650,11 +6537,11 @@ body{
 		width: 100%;
 		li {
 			min-height: 65px;
-			.brand-data{
+			.brand-data, .kpi-data {
 				padding: 12px;
 			}
-			.member-data, .brand-data {
-				.member-name, .brand-name {
+			.member-data, .brand-data, .kpi-data {
+				.member-name, .brand-name, .kpi-name {
 					font-size: 16px;
 				}
 				.member-description {
@@ -6781,7 +6668,6 @@ table td.sub-level-1 {
 #mobile-main-nav-bar-btn {
 	margin-top: 8px;
 }
-
 
 .event_place_reference .ui-autocomplete,
 .place_reference .ui-autocomplete {
@@ -7468,7 +7354,7 @@ table.table.likert-scale-table {
 
 /*-- RADIO BUTTONS STYLES --*/
 
-.radio{
+div.radio{
 	display: inline-block;
 	margin: 0 15px 5px 0;
 	padding: 0;
@@ -7714,6 +7600,33 @@ table.table.likert-scale-table {
 	}
 }
 
+.searchable-field-list {
+	.field-search-input {
+		background-color: white !important;
+		border: 1px solid $user_menu;
+		height: 37px;
+		width: 100%;
+		background-image: url("search2.svg") !important;
+		background-position: center right;
+		background-repeat: no-repeat;
+		-webkit-border-radius: 20px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		border-radius: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 2px;
+		padding-left: 7%;
+		padding-right: 17%;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+	.group-name {
+		font-weight: bold;
+	}
+}
+
 .close {
 	opacity: 1;
 	right: 25px;
@@ -7721,4 +7634,26 @@ table.table.likert-scale-table {
 	&:hover{
 		opacity: 1 !important;
 	}
+}
+
+
+.kpi-desc-tooltip {
+	opacity: 1;
+	.tooltip-inner {
+		background-color: $text;
+		text-align: left;
+		b{
+			color: #cccccc;
+		}
+	}
+	b {
+		margin-top: 10px;
+		display: block;
+		color: $grey_one;
+		font-weight: normal;
+		&:first-child {
+			margin-top: 0px;
+		}
+	}
+	width: 156px;
 }

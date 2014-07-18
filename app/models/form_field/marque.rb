@@ -12,19 +12,25 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Marque < FormField::Dropdown
   def field_options(result)
     marques = []
-    ff_brand = result.activity.activity_type.form_fields.select{|f| f.type == 'FormField::Brand' }
+    ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
+    # ff_brand = if result.resultable.is_a?(Activity)
+    #   result.resultable.activity_type.form_fields.select{|f| f.type == 'FormField::Brand' }
+    # elsif result.resultable.respond_to?
+    #   result.resultable.form_fields.select{|f| f.type == 'FormField::Brand' }
+    # end
     if ff_brand.present?
       if result.id
-        brand = result.activity.results_for(ff_brand)
-        brand_id = brand.first.value if brand.present?
-      elsif result.activity.campaign
-        brands = result.activity.campaign.brands
-        brand_id = brands.first.id if brands.count == 1
+        results = result.resultable.results_for([ff_brand])
+        brand_id = results.first.value if results.present? &&  results.any?
+      elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
+        ids = result.resultable.campaign.brand_ids
+        brand_id = ids.first if ids.count == 1
       end
 
       if brand_id.present?

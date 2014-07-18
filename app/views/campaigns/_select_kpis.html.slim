@@ -1,0 +1,37 @@
+.campaigns-modals
+  p Add an existing KPI from the list below
+
+  input type="text" name="q" id="kpi-search-box" placeholder="Search"
+  .select-list-table-wrapper
+    .link-list
+      ul.select-items-list
+        - if @kpis.present?
+          - @kpis.each do |kpi|
+            - type = kpi.is_a?(Kpi) ? 'kpi' : 'activity_type'
+            li id="#{type}-#{kpi.id}"
+              span
+                .kpi_name= kpi.name
+                .kpi_description= kpi.description
+              span.pull-right
+                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add KPI'
+        - else
+          li.empty-list-message
+            p There are not assignable KPIs
+
+    .row-fluid
+      .span12
+        .divider
+          | OR
+
+javascript:
+  $('#kpi-search-box').on('keyup', function () {
+    var value = $(this).val().toLowerCase();
+    $(".select-items-list > li:not(.empty-list-message)").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
+  });

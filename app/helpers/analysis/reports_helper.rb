@@ -155,17 +155,21 @@ module Analysis
     end
 
     def each_events_goal
-      fields_select_kpis = 'case when kpis.kpi_type=\'count\' then CAST(nullif(value, \'\') AS integer) else event_results.kpis_segment_id END AS kpis_segment_id, sum(scalar_value) as total_value, count(event_results.id) as total_count, event_results.kpi_id'
-      approved_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: 'approved')
-                          .select(fields_select_kpis)
-                          .group('1, event_results.kpi_id')
-      submitted_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['submitted'])
-                          .select(fields_select_kpis)
-                          .group('1, event_results.kpi_id')
-
-      rejected_totals_kpis = @events_scope.joins(results: :kpi).where(event_results:{ kpi_id: @goals.map(&:kpi)}).where(aasm_state: ['rejected'])
-                          .select(fields_select_kpis)
-                          .group('1, event_results.kpi_id')
+      fields_select_kpis = '(each(CASE
+            WHEN kpis.kpi_type=\'percentage\'
+                THEN hash_value
+            WHEN kpis.kpi_type=\'count\'
+                THEN hstore(value::VARCHAR, \'1\')
+            ELSE
+                hstore(\'\', scalar_value::VARCHAR)
+            END
+          )).*, form_fields.kpi_id, form_field_results.id'
+      scope =  @events_scope.joins(results: {form_field: :kpi}).
+                      select(fields_select_kpis).
+                      where(form_fields:{ kpi_id: @goals.map(&:kpi_id).uniq})
+      approved_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: 'approved'))
+      submitted_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: ['submitted']))
+      rejected_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: ['rejected']))
 
       fields_select_activities = 'count(activities.id) as total_count, activities.activity_type_id'
       approved_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: 'approved')
@@ -265,6 +269,14 @@ module Analysis
       goals_result
     end
 
+    def get_kpis_totals_for_scope(scope)
+      ActiveRecord::Base.connection.select_all("
+        SELECT h.key as kpis_segment_id, sum(h.value::NUMERIC) as total_value, count(h.kpi_id) as total_count, h.kpi_id
+        FROM (#{scope.to_sql}) AS h
+        GROUP BY h.key, h.kpi_id;
+      ")
+    end
+
     def get_total_by_status(goal_scope, goal, totals, status)
       case goal.kpi.kpi_type
       when 'expenses'
@@ -277,24 +289,25 @@ module Analysis
         AttachedAsset.photos.for_events(goal_scope).count
       else
         if goal.start_date.present? || goal.due_date.present?
-          data = goal_scope.joins(:results).where(aasm_state: status)
+          result = goal_scope.joins(results: :form_field).where(aasm_state: status)
                       .select('sum(scalar_value) as total_value')
-                      .where(event_results: {kpi_id: goal.kpi_id})
-                      .group('event_results.kpi_id').first
+                      .where(form_fields: {kpi_id: goal.kpi_id})
+                      .group('form_fields.kpi_id').first
+          data = {'total_value' => result.total_value, 'total_count' => result.total_count}
         else
-          data = totals.detect{|row| row.kpi_id.to_i == goal.kpi_id.to_i && row.kpis_segment_id.to_i == goal.kpis_segment_id.to_i }
+          data = totals.detect{|row| row['kpi_id'].to_i == goal.kpi_id.to_i && row['kpis_segment_id'].to_i == goal.kpis_segment_id.to_i }
         end
 
         unless data.nil?
           if goal.kpis_segment_id.nil?
             case goal.kpi.capture_mechanism
             when 'integer'
-              data.total_value.to_i
+              data['total_value'].to_i
             when 'decimal'
-              data.total_value.to_f
+              data['total_value'].to_f
             end
           else
-            data.total_count.to_i
+            data['total_count'].to_i
           end
         end
       end

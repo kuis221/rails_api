@@ -52,7 +52,6 @@ gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
-gem 'font_assets'
 
 #For memory debugging
 gem "oink"
@@ -69,6 +68,7 @@ end
 # Gems that are only required for the web process, to prevent
 # workers loading not needed libraries
 group :web do
+  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin'
   gem "meta_search", '>= 1.1.0.pre'
   gem 'unicorn'

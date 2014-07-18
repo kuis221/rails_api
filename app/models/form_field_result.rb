@@ -1,19 +1,21 @@
 # == Schema Information
 #
-# Table name: activity_results
+# Table name: form_field_results
 #
-#  id            :integer          not null, primary key
-#  activity_id   :integer
-#  form_field_id :integer
-#  value         :text
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  hash_value    :hstore
-#  scalar_value  :decimal(10, 2)   default(0.0)
+#  id              :integer          not null, primary key
+#  activity_id     :integer
+#  form_field_id   :integer
+#  value           :text
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  hash_value      :hstore
+#  scalar_value    :decimal(10, 2)   default(0.0)
+#  resultable_id   :integer
+#  resultable_type :string(255)
 #
 
-class ActivityResult < ActiveRecord::Base
-  belongs_to :activity
+class FormFieldResult < ActiveRecord::Base
+  belongs_to :resultable, polymorphic: true
   belongs_to :form_field
 
   validate :valid_value?
@@ -24,6 +26,12 @@ class ActivityResult < ActiveRecord::Base
   serialize :hash_value, ActiveRecord::Coders::Hstore
 
   before_validation :prepare_for_store
+
+  scope :for_kpi, -> (kpi){ joins(:form_field).where(form_fields: {kpi_id: kpi}) }
+
+  scope :for_event_campaign, -> (campaign){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {campaign_id: campaign}) }
+
+  scope :for_place_in_company, -> (place, company){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {company_id: company, place_id: place}) }
 
   def value
     if form_field.present? && form_field.is_hashed_value?

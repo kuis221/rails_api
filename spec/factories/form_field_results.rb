@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: activity_results
+# Table name: form_field_results
 #
 #  id            :integer          not null, primary key
 #  activity_id   :integer
@@ -15,8 +15,8 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :activity_result do
-    activity nil
+  factory :form_field_result do
+    resultable nil
     form_field nil
     value nil
   end

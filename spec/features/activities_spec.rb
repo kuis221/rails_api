@@ -289,7 +289,7 @@ feature 'Activities management' do
 
         activity = Activity.last
         photo = AttachedAsset.last
-        expect(photo.attachable).to be_a ActivityResult
+        expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'photo.jpg'
 
         # Change the photo
@@ -359,7 +359,7 @@ feature 'Activities management' do
 
         activity = Activity.last
         photo = AttachedAsset.last
-        expect(photo.attachable).to be_a ActivityResult
+        expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'file.pdf'
 
         within("#activities-list li") do

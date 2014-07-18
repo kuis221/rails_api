@@ -34,7 +34,7 @@ class Event < ActiveRecord::Base
   has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
   has_many :teamings, :as => :teamable, dependent: :destroy
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
-  has_many :results, dependent: :destroy, class_name: 'EventResult', inverse_of: :event do
+  has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
     def active
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
@@ -295,10 +295,12 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
+    # TODO: this should also check for values for hashed fields
     campaign_id.present? &&
     (
-      results.where(form_field_id: CampaignFormField.where(campaign_id: campaign_id).for_event_data.pluck(:id)).
-              where('event_results.value is not null AND event_results.value <> \'\'').count > 0
+      results.active.where(
+        '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
+         (form_field_results.hash_value is not null AND form_field_results.hash_value <> \'\')').count > 0
     )
   end
 
@@ -330,48 +332,17 @@ class Event < ActiveRecord::Base
   def results_for(fields)
     # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
     fields.map do |field|
-      result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id, kpi_id: field.kpi_id})
-      result.form_field = field
+      result = results.detect{|r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
+      result.form_field = field # Assign it so it won't be reloaded if requested.
       result
     end
-  end
-
-  def segments_results_for(field)
-    # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
-    if field.kpi.present?
-      fs = field.kpi.kpis_segments.map do |segment|
-        result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id == segment.id }.first || results.build({form_field_id: field.id, kpis_segment_id: segment.id, kpi_id: field.kpi_id})
-        result.form_field = field
-        result.kpis_segment = segment
-        result
-      end
-      fs
-    end
-  end
-
-  # This method is a combinations of results_for and segments_results_for where it will return all
-  # the segmented + non segmented results
-  def all_results_for(fields)
-    # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
-    fields.map do |field|
-      if field.is_segmented?
-        segments_results_for(field)
-      else
-        result = results.select{|r| (r.form_field_id == field.id || (field.kpi_id.present? && r.kpi_id == field.kpi_id)) && r.kpis_segment_id.nil? }.first || results.build({form_field_id: field.id, kpi_id: field.kpi_id})
-        result.form_field = field
-        result
-      end
-    end.flatten
   end
 
   def result_for_kpi(kpi)
     field = campaign.form_fields.detect{|f| f.kpi_id == kpi.id }
     if field.present?
-      if field.is_segmented?
-        segments_results_for(field)
-      else
-        results_for([field]).first
-      end
+      field.kpi = kpi # Assign it so it won't be reloaded if requested.
+      results_for([field]).first
     end
   end
 
@@ -402,15 +373,13 @@ class Event < ActiveRecord::Base
   end
 
   def demographics_graph_data
-    unless @demographics_graph_data
-      @demographics_graph_data = {}
-      [:age, :gender, :ethnicity].each do |kpi|
-        scoped_results = results.send(kpi).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg').group('event_results.kpis_segment_id')
-        segments = Kpi.send(kpi).kpis_segments
-        @demographics_graph_data[kpi] = Hash[segments.map{|s| [s.text, scoped_results.detect{|r| r.kpis_segment_id == s.id}.try(:segment_avg).try(:to_f) || 0]}]
+    @demographics_graph_data ||= Hash.new.tap do |data|
+      [:age, :gender, :ethnicity].each do |kpi_name|
+        kpi =  Kpi.send(kpi_name)
+        result = result_for_kpi(kpi)
+        data[kpi_name] = Hash[kpi.kpis_segments.map{|s| [s.text, result.value[s.id.to_s].try(:to_f) || 0]}] if result.present?
       end
     end
-    @demographics_graph_data
   end
 
   def survey_statistics
@@ -451,7 +420,7 @@ class Event < ActiveRecord::Base
   # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    all_results_for(campaign.form_fields.for_event_data).all?{|r| r.valid? } if campaign.present?
+    results_for(campaign.form_fields).all?{|r| r.valid? } if campaign.present?
   end
 
   class << self

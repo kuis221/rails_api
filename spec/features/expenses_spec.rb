@@ -24,7 +24,7 @@ feature 'Events section' do
 
     before do
       Kpi.create_global_kpis
-      event.campaign.add_kpi Kpi.expenses
+      event.campaign.update_attribute :enabled_modules, ['expenses']
     end
     scenario "can attach a expense to event" do
       with_resque do # So the document is processed

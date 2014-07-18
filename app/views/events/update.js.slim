@@ -1,7 +1,7 @@
 - render 'settings'
 - if resource.errors.any?
   - if params['partial'] == 'event_data'
-    - resource.results.each{|r| p r.inspect unless r.valid? } 
+    - resource.results.each{|r| p r.inspect unless r.valid? }
     | bootbox.alert('#{j resource.errors.full_messages.join("<br />").html_safe }')
   - else
     = render 'form_dialog'
@@ -9,7 +9,7 @@
   - if params['partial'] == 'event_data'
     |
       $('#edit_event_data_form').remove();
-      $('.box_event_data').html("#{escape_javascript(render(partial: 'results_event_data', locals: {active_kpis: resource.campaign.active_kpis, custom_kpis: resource.campaign.custom_kpis}))}").show();
+      $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
       smoothScrollTo($('.box_event_data'));
   - else
     |

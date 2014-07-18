@@ -4,4 +4,4 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('#custom-kpis').append($('#{j render(partial:'goalables/goalable', locals: {goalable: resource, resource: @campaign})}'));
+    $(document).trigger('kpis:change');

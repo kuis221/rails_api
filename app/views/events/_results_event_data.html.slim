@@ -1,4 +1,7 @@
 - event_data = resource.event_data
+- active_kpis = resource.campaign.active_kpis
+- custom_kpis = resource.campaign.custom_kpis
+- enabled_modules = resource.campaign.enabled_modules
 
 .row-fluid
   .box_summary
@@ -30,14 +33,14 @@
               span= number_with_delimiter(event_data.samples.round)
               = " Sampled"
 
-        - if active_kpis.include?(Kpi.expenses)
+        - if enabled_modules.include?('expenses')
           li
             = kpi_goal_progress_bar(resource.kpi_goals[Kpi.expenses.id], event_data.spent)
             div.metric
               span= number_to_currency(event_data.spent, precision: 2)
               = " Spent"
 
-      - if active_kpis.include?(Kpi.expenses)
+      - if enabled_modules.include?('expenses')
         ul.consumer-reach-metrics.pull-right
           - if active_kpis.include?(Kpi.impressions) && event_data.spent.present? && event_data.impressions > 0
             li
@@ -57,8 +60,8 @@
                 span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
                 = " / Sample"
       ul.consumer-reach-metrics.pull-right
-        - if active_kpis.include?(Kpi.photos)
-          - photo_count = resource.photos.count
+        - if enabled_modules.include?('photos')
+          - photo_count = resource.active_photos.count
           li
             div.metric
               span= photo_count
@@ -77,7 +80,7 @@
         - custom_kpis.each do |custom_kpi|
           - if ['number', 'count'].include?(custom_kpi.kpi_type)
             - if field = resource.campaign.form_field_for_kpi(custom_kpi)
-              - custom_kpi_value = resource.results_for([field]).first.try(:display_value)
+              - custom_kpi_value = resource.results_for([field]).first.try(:to_html)
               li
                 div.metric
                   span

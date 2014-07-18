@@ -1,0 +1,31 @@
+@mixin box-sizing($value){
+	box-sizing: $value;
+	-moz-box-sizing: $value;
+	-webkit-box-sizing: $value;
+}
+
+@mixin kpi-desc-tooltip {
+	opacity: 1;
+	.tooltip-inner {
+		background-color: $text;
+		text-align: left;
+		b{
+			color: #cccccc;
+		}
+	}
+	&.left{
+		.tooltip-arrow{
+			border-left-color: $text;
+		}
+	}
+	b {
+		margin-top: 10px;
+		display: block;
+		color: $grey_one;
+		font-weight: normal;
+		&:first-child {
+			margin-top: 0px;
+		}
+	}
+	width: 156px;
+}

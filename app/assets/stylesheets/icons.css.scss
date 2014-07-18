@@ -550,6 +550,38 @@ ul.nav {
 				font-size: 15px;
 				line-height: 22px;
 			}
+			&[data-type="Gallery"]:before{
+				display: inline-block;
+				margin-right: 10px;
+				margin-bottom: -2px;
+				content:"\e608";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Surveys"]:before{
+				display: inline-block;
+				margin-right: 10px;
+				margin-bottom: -2px;
+				content:"\e60d";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Comments"]:before{
+				display: inline-block;
+				margin-right: 10px;
+				margin-bottom: -2px;
+				content:"\e010";
+				font-size: 15px;
+				line-height: 22px;
+			}
+			&[data-type="Expenses"]:before{
+				display: inline-block;
+				margin-right: 10px;
+				margin-bottom: -2px;
+				content:"\e607";
+				font-size: 15px;
+				line-height: 22px;
+			}
 			&[data-type="Marque"]{
 				line-height: 60px;
 			}

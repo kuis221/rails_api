@@ -131,10 +131,16 @@ class EventsController < FilteredController
       else
         allowed = []
         allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
-        allowed += [:summary, {results_attributes: [:form_field_id, :kpi_id, :kpis_segment_id, :value, {value: []}, :id]}] if can?(:edit_data, Event)
+        allowed += [:summary, {results_attributes: [:id, :form_field_id, :value, {value: []}]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end
-      parameters
+      parameters.tap do |whielisted|
+        unless whielisted.nil? || whielisted[:results_attributes].nil?
+          whielisted[:results_attributes].each do |k, value|
+            value[:value] = params[:event][:results_attributes][k][:value]
+          end
+        end
+      end
     end
 
     def authorize_update

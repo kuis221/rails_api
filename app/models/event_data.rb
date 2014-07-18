@@ -36,16 +36,20 @@ class EventData < ActiveRecord::Base
   scope :for_active_events, lambda{ joins(:event).where(events: {active: true}) }
 
   def update_data
-    results = EventResult.scoped_by_event_id(event_id)
-    self.impressions  = (results.impressions.first.try(:scalar_value) || 0).round
-    self.interactions = (results.consumers_interactions.first.try(:scalar_value) || 0).round
-    self.samples      = (results.consumers_sampled.first.try(:scalar_value) || 0).round
-    self.spent = event.event_expenses.sum(:amount)
+    return if Kpi.impressions.nil?
+    e = Event.find(event_id)
+    results = e.results
+    [:impressions, :interactions, :samples].each do |kpi_name|
+      result = e.result_for_kpi(Kpi.send(kpi_name))
+      self.send("#{kpi_name}=",  result.value.to_i) unless result.nil?
+    end
+    self.spent = e.event_expenses.sum(:amount)
 
     #For gender and ethnicity
     [:gender, :ethnicity].each do |kpi|
       segments = Kpi.send(kpi).try(:kpis_segments)
-      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", results.detect{|r| r.kpis_segment_id == s.id}.try(:scalar_value))} if segments
+      result = e.result_for_kpi(Kpi.send(kpi))
+      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[], s.id.to_s).to_f) if result.value.has_key?(s.id.to_s)} if result.present? && segments
     end
 
     self

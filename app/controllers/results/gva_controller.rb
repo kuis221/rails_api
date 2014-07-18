@@ -163,7 +163,7 @@ class Results::GvaController < InheritedResources::Base
             elsif kpi == 'events'
               goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
             elsif kpi == 'samples'
-              goaleables_ids['samples'].any? ? query.joins(:results).where(event_results: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(event_results.scalar_value)') : nil
+              goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
             elsif kpi == 'expenses'
               goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
             end

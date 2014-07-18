@@ -1,5 +1,5 @@
 #form-container
-  .activity-form
+  .activity-form.data-form-wrapper
     = simple_form_for [resource.new_record? ? parent : nil, resource], remote: true do |f|
       - if activity_types.any?
         = f.error_notification

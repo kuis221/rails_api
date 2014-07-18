@@ -12,6 +12,7 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField < ActiveRecord::Base
@@ -21,6 +22,7 @@ class FormField < ActiveRecord::Base
 
   has_many :options, class_name: 'FormFieldOption', conditions: {option_type: 'option'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
   has_many :statements, class_name: 'FormFieldOption', conditions: {option_type: 'statement'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
+  belongs_to :kpi
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true
 
@@ -32,6 +34,12 @@ class FormField < ActiveRecord::Base
   validates :type, presence: true,
     format: { with: /\AFormField::/ }
   validates :ordering, presence: true, numericality: true
+
+  scope :for_events_in_company, ->(companies) { joins(
+      'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
+      form_fields.fieldable_type=\'Campaign\''
+    ).where(campaigns: {company_id: companies})
+  }
 
   def field_options(result)
     {as: :string}
@@ -77,6 +85,14 @@ class FormField < ActiveRecord::Base
   def validate_result(result)
     if required? && (result.value.nil? || (result.value.is_a?(String) && result.value.empty?))
       result.errors.add(:value, I18n.translate('errors.messages.blank'))
+    end
+  end
+
+  def options_for_input
+    if kpi_id.present?
+      kpi.kpis_segments.map{|s| [s.text, s.id]}
+    else
+      self.options.order(:ordering).map{|o| [o.name, o.id]}
     end
   end
 

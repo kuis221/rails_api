@@ -12,11 +12,22 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Radio < FormField
   def field_options(result)
-    {as: :radio_buttons, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
+    {
+      as: :radio_buttons,
+      collection: options_for_input,
+      label: self.name,
+      field_id: self.id,
+      options: self.settings,
+      required: self.required,
+      label_html: { class: 'control-group-label' },
+      input_html: {
+        value: result.value,
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def is_optionable?
@@ -25,7 +36,7 @@ class FormField::Radio < FormField
 
   def format_html(result)
     unless result.value.nil? || result.value.empty?
-      self.options.where(id: result.value).pluck(:name).join(', ')
+      options_for_input.select{|option| option[1] == result.value.to_i }.map{|option| option[0]}.join(', ')
     end
   end
 end

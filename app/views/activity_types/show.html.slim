@@ -24,28 +24,29 @@
       = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
-  .form-builder-wrapper.activity-form
-    .form-wrapper.activity-form
+  .form-builder-wrapper
+    .form-wrapper.data-form-wrapper
 
     .fields-wrapper
       p Drag fields to add
-      .field data-type="Dropdown" Dropdown
-      .field data-type="Section" Section
-      .field data-type="Checkbox" Checkboxes
-      .field data-type="Photo" Photo
-      .field data-type="Radio" Multiple Choice
-      .field data-type="Attachment" Attachment
-      .field data-type="Percentage" Percent
-      .field data-type="Summation" Summation
-      .field data-type="Number" Number
-      .field data-type="Date" Date
-      .field data-type="Currency" Price
-      .field data-type="Time" Time
-      .field data-type="Text" Single line text
-      .field data-type="LikertScale" Likert scale
-      .field data-type="TextArea" Paragraph
-      .field data-type="Brand" Brand
-      .field data-type="Marque" Marque
+      .custom
+        .field data-type="Dropdown" Dropdown
+        .field data-type="Section" Section
+        .field data-type="Checkbox" Checkboxes
+        .field data-type="Photo" Photo
+        .field data-type="Radio" Multiple Choice
+        .field data-type="Attachment" Attachment
+        .field data-type="Percentage" Percent
+        .field data-type="Summation" Summation
+        .field data-type="Number" Number
+        .field data-type="Date" Date
+        .field data-type="Currency" Price
+        .field data-type="Time" Time
+        .field data-type="Text" Single line text
+        .field data-type="LikertScale" Likert scale
+        .field data-type="TextArea" Paragraph
+        .field data-type="Brand" Brand
+        .field data-type="Marque" Marque
 
 = render partial: 'help_tutorial'
 
@@ -56,6 +57,7 @@ javascript:
     });
     $('.form-builder-wrapper').formBuilder({
       url: '#{activity_type_path(resource, format: :json)}',
+      resourceName: 'activity_type',
       canEdit: #{can?(:update, resource) ? 'true' : 'false'}
     });
   });
