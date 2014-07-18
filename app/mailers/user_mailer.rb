@@ -21,4 +21,10 @@ class UserMailer < ActionMailer::Base
     @url  = root_url
     mail(:to => @user.email, :subject => "Brandscopic Invitation")
   end
+
+  def notification(user, subject, message)
+    @user = user
+    @message = message
+    mail(:to => @user.email, :subject => "Brandscopic Alert: #{subject}")
+  end
 end

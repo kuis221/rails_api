@@ -105,7 +105,6 @@ describe CampaignsController do
     end
   end
 
-
   describe "GET 'new_day_part'" do
     it "returns http success" do
       day_part = FactoryGirl.create(:day_part, company: @company)
@@ -257,7 +256,6 @@ describe CampaignsController do
     end
   end
 
-
   describe "DELETE 'delete_member'" do
     it "should remove the team member from the campaign and remove any goal" do
       FactoryGirl.create(:goal, goalable: @company_user, parent: campaign, kpi: FactoryGirl.create(:kpi))
@@ -364,17 +362,22 @@ describe CampaignsController do
     end
   end
 
-
   describe "POST 'add_members" do
-
     it 'should assign the user to the campaign' do
-      lambda {
-        post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
-        campaign.reload
-      }.should change(campaign.users, :count).by(1)
-      campaign.users.should == [@company_user]
+      with_resque do
+        @company_user.update_attributes({notifications_settings: ['new_campaign_sms', 'new_campaign_email']}, without_protection: true)
+        message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
+        UserMailer.should_receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
+        expect {
+          post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
+          response.should be_success
+          assigns(:campaign).should == campaign
+          campaign.reload
+        }.to change(campaign.users, :count).by(1)
+        campaign.users.should == [@company_user]
+        open_last_text_message_for @user.phone_number
+        current_text_message.should have_body message
+      end
     end
 
     it 'should assign all the team\'s users to the campaign' do
@@ -456,8 +459,6 @@ describe CampaignsController do
       response.should render_template(:documents)
     end
   end
-
-
 
   describe "POST 'update_post_event_form'" do
     let(:campaign){ FactoryGirl.create(:campaign, company: @company) }

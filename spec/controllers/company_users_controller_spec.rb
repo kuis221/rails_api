@@ -129,9 +129,10 @@ describe CompanyUsersController do
         company_user = invited_user.company_users.first
         team = FactoryGirl.create(:team, company: @company)
         role = FactoryGirl.create(:role, company: @company)
-        put 'update', id: company_user.to_param, company_user: {team_ids: [team.id], role_id: role.id, user_attributes: {id: invited_user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com'}}, format: :js
+        put 'update', id: company_user.to_param, company_user: {team_ids: [team.id], role_id: role.id, notifications_settings: ["event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app"], user_attributes: {id: invited_user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com'}}, format: :js
         company_user.reload.role_id.should == role.id
         company_user.teams.should == [team]
+        company_user.notifications_settings.should include("event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app")
       end
     end
 

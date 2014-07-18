@@ -221,13 +221,19 @@ describe EventsController do
       end
 
       it "should assign current_company_user to the new event" do
-        expect {
-          post 'create', event: {
-            campaign_id: campaign.id, team_members: ["company_user:#{@company_user.id}"],
-            start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
-            end_time: '01:00pm'}, format: :js
-        }.to change(Event, :count).by(1)
-        expect(assigns(:event).users).to eql [@company_user]
+        with_resque do
+          @company_user.update_attributes({notifications_settings: ['new_event_team_sms', 'new_event_team_email']}, without_protection: true)
+          UserMailer.should_receive(:notification).with(@company_user, "Added to Event", /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
+          expect {
+            post 'create', event: {
+              campaign_id: campaign.id, team_members: ["company_user:#{@company_user.id}"],
+              start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
+              end_time: '01:00pm'}, format: :js
+          }.to change(Event, :count).by(1)
+          assigns(:event).users.last.user.id.should == @user.id
+          open_last_text_message_for @user.phone_number
+          current_text_message.should have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
+        end
       end
 
       it "should create the event with the correct dates" do
@@ -453,14 +459,14 @@ describe EventsController do
       it 'should assign the user to the event and create a notification for the new member' do
         other_user = FactoryGirl.create(:company_user, company_id: @company.id)
         other_user.places << place
-        lambda {
-          lambda {
+        expect {
+          expect {
             post 'add_members', id: event.id, member_id: other_user.to_param, format: :js
             response.should be_success
             assigns(:event).should == event
             event.reload
-          }.should change(event.users, :count).by(1)
-        }.should change(other_user.notifications, :count).by(1)
+          }.to change(event.users, :count).by(1)
+        }.to change(other_user.notifications, :count).by(1)
         event.users.should =~ [other_user]
         other_user.reload
         notification = other_user.notifications.last
@@ -536,12 +542,22 @@ describe EventsController do
 
     describe "PUT 'submit'" do
       it "should submit event" do
-        event = FactoryGirl.create(:event, active: true, company: @company)
-        lambda {
-          put 'submit', id: event.to_param, format: :js
-          response.should be_success
-          event.reload
-        }.should change(event, :submitted?).to(true)
+        Timecop.freeze do
+          with_resque do
+            event = FactoryGirl.create(:event, active: true, company: @company)
+            event.users << @company_user
+            @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_sms', 'event_recap_pending_approval_email']}, without_protection: true)
+            message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
+            UserMailer.should_receive(:notification).with(@company_user, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
+            expect {
+              put 'submit', id: event.to_param, format: :js
+              response.should be_success
+              event.reload
+            }.to change(event, :submitted?).to(true)
+            open_last_text_message_for @user.phone_number
+            current_text_message.should have_body message
+          end
+        end
       end
 
       it "should not allow to submit the event if the event data is not valid" do
@@ -569,13 +585,23 @@ describe EventsController do
 
     describe "PUT 'reject'" do
       it "should reject event" do
-        event = FactoryGirl.create(:submitted_event, active: true, company: @company)
-        lambda {
-          put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
-          response.should be_success
-          event.reload
-        }.should change(event, :rejected?).to(true)
-        event.reject_reason.should == 'blah blah blah'
+        Timecop.freeze do
+          with_resque do
+            event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+            event.users << @company_user
+            @company_user.update_attributes({notifications_settings: ['event_recap_rejected_sms', 'event_recap_rejected_email']}, without_protection: true)
+            message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
+            UserMailer.should_receive(:notification).with(@company_user, "Rejected Event Recaps", message).and_return(double(deliver: true))
+            expect {
+              put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
+              response.should be_success
+              event.reload
+            }.to change(event, :rejected?).to(true)
+            event.reject_reason.should == 'blah blah blah'
+            open_last_text_message_for @user.phone_number
+            current_text_message.should have_body message
+          end
+        end
       end
     end
   end

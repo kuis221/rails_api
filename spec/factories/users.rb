@@ -50,7 +50,7 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
-    phone_number '(506) 22124578'
+    phone_number '+14108675309'
     password 'Changeme123'
     password_confirmation 'Changeme123'
     city 'Curridabat'

@@ -60,10 +60,38 @@ class CompanyUser < ActiveRecord::Base
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
   delegate :is_admin?, to: :role, prefix: false
 
+  NOTIFICATION_SETTINGS_TYPES = [
+      'event_recap_due', 'event_recap_late', 'event_recap_pending_approval', 'event_recap_rejected',
+      'new_event_team', 'late_task', 'late_team_task', 'new_comment', 'new_team_comment',
+      'new_unassigned_team_task', 'new_task_assignment', 'new_campaign'
+  ]
+
+  NOTIFICATION_SETTINGS_PERMISSIONS = {
+      'event_recap_due' => [{action: :view_list, subject_class: Event}],
+      'event_recap_late' => [{action: :view_list, subject_class: Event}],
+      'event_recap_pending_approval' => [{action: :view_list, subject_class: Event}],
+      'event_recap_rejected' => [{action: :view_list, subject_class: Event}],
+      'new_event_team' => [{action: :view_list, subject_class: Event}],
+      'late_task' => [{action: :index_my, subject_class: Task}],
+      'late_team_task' => [{action: :index_team, subject_class: Task}],
+      'new_comment' => [{action: :index_my, subject_class: Task}, {action: :index_my_comments, subject_class: Task}],
+      'new_team_comment' => [{action: :index_team, subject_class: Task}, {action: :index_team_comments, subject_class: Task}],
+      'new_unassigned_team_task' => [{action: :index_team, subject_class: Task}],
+      'new_task_assignment' => [{action: :index_my, subject_class: Task}],
+      'new_campaign' => [{action: :read, subject_class: Campaign}]
+  }
+
   scope :active, where(:active => true)
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
+
+  # Returns all users that have at least one of the given notifications
+  scope :with_notifications, ->(notifications) { where(notifications.map{|n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
+
+  scope :with_confirmed_phone_number, -> { joins(:user).where('users.phone_number is not null') }
+
+  scope :with_timezone, -> { joins(:user).where('users.time_zone is not null') }
 
   scope :with_user_and_role, lambda{ joins([:role, :user]).includes([:role, :user]) }
 
@@ -186,7 +214,6 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
-
   def role_name
     if self.attributes.has_key?('role_name')
       self.read_attribute('role_name')
@@ -199,10 +226,24 @@ class CompanyUser < ActiveRecord::Base
     alerts.where(name: alert, version: version).any?
   end
 
+  def allow_notification?(type)
+     phone_number_confirmed? && notifications_settings.is_a?(Array) && notifications_settings.include?(type)
+  end
+
+  def phone_number_confirmed?
+    phone_number.present?
+  end
+
   def dismiss_alert(alert, version=1)
     alerts.find_or_create_by_name_and_version(alert, version)
   end
 
+  def notification_setting_permission?(type)
+    permissions = NOTIFICATION_SETTINGS_PERMISSIONS[type]
+    if permissions.present?
+      permissions.all?{|permission| self.role.has_permission?(permission[:action], permission[:subject_class])}
+    end
+  end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin

@@ -10,7 +10,7 @@ module UsersHelper
       events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
 
       # Due event recaps
-      if status_counts[:due] > 0
+      if status_counts[:due] > 0 && user.allow_notification?('event_recap_due_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_due', count: status_counts[:due]),
           level: 'grey', url: events_path(user: [user.id], status: ['Active'],
@@ -20,7 +20,7 @@ module UsersHelper
       end
 
       # Late event recaps
-      if status_counts[:late] > 0
+      if status_counts[:late] > 0 && user.allow_notification?('event_recap_late_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_late', count: status_counts[:late]),
           level: 'red', url: events_path(user: [user.id], status: ['Active'],
@@ -30,7 +30,7 @@ module UsersHelper
       end
 
       # Recaps pending approval
-      if status_counts[:submitted] > 0
+      if status_counts[:submitted] > 0 && user.allow_notification?('event_recap_pending_approval_app')
         alerts.push({
           message: I18n.translate('notifications.recaps_prending_approval', count: status_counts[:submitted]),
           level: 'blue', url: events_path(user: [user.id], status: ['Active'],
@@ -40,7 +40,7 @@ module UsersHelper
       end
 
       # Rejected recaps
-      if status_counts[:rejected] > 0
+      if status_counts[:rejected] > 0 && user.allow_notification?('event_recap_rejected_app')
         alerts.push({
           message: I18n.translate('notifications.rejected_recaps', count: status_counts[:rejected]),
           url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''),
@@ -50,7 +50,7 @@ module UsersHelper
     end
 
     # User's teams late tasks
-    if can?(:index_team, Task)
+    if can?(:index_team, Task) && user.allow_notification?('late_team_task_app')
       count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]}).total
       if count > 0
         alerts.push({
@@ -62,7 +62,7 @@ module UsersHelper
     end
 
     # User's late tasks
-    if can?(:index_my, Task)
+    if can?(:index_my, Task) && user.allow_notification?('late_task_app')
       count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], user: [user.id]}).total
       if count > 0
         alerts.push({
@@ -74,7 +74,7 @@ module UsersHelper
     end
 
     # Unread comments in user's tasks
-    if can?(:index_my, Task) && can?(:index_my_comments, Task)
+    if can?(:index_my, Task) && can?(:index_my_comments, Task) && user.allow_notification?('new_comment_app')
       tasks = Task.select('id, title').where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).to_sql})")
       user_tasks = [0]
       tasks.find_each do |task|
@@ -88,7 +88,7 @@ module UsersHelper
     end
 
     # Unread comments in user teams' tasks
-    if can?(:index_team, Task) && can?(:index_team_comments, Task)
+    if can?(:index_team, Task) && can?(:index_team_comments, Task) && user.allow_notification?('new_team_comment_app')
       user_tasks = user_tasks.presence || Task.select('id, title').where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_assigned_to(user).unread_by(user.user).to_sql})").map(&:id)+[0]
       tasks = Task.select('id, title').where("id not in (?)", user_tasks).where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_where_user_in_team(user).unread_by(user.user).to_sql})")
       tasks.find_each do |task|
@@ -104,7 +104,7 @@ module UsersHelper
 
     timestamp = Time.now.to_datetime.strftime('%Q').to_i
     # New events notifications
-    if grouped_notifications['new_event'].present? && grouped_notifications['new_event'].to_i > 0 && can?(:view_list, Event)
+    if grouped_notifications['new_event'].present? && grouped_notifications['new_event'].to_i > 0 && can?(:view_list, Event) && user.allow_notification?('new_event_team_app')
       alerts.push({
         message: I18n.translate("notifications.new_events", count: grouped_notifications['new_event'].to_i), level: 'grey',
         url: events_path(new_at: timestamp, start_date: '', end_date: ''),
@@ -113,7 +113,7 @@ module UsersHelper
     end
 
     # New team events notifications
-    if grouped_notifications['new_team_event'].present? && grouped_notifications['new_team_event'].to_i > 0 && can?(:view_list, Event)
+    if grouped_notifications['new_team_event'].present? && grouped_notifications['new_team_event'].to_i > 0 && can?(:view_list, Event) && user.allow_notification?('new_event_team_app')
       team_ids = user.notifications.new_team_events.map{|n| n.message_params[:team_id]}.sort.uniq
       team_names = user.notifications.new_team_events.map{|n| n.message_params[:team_name]}.uniq.sort.join(', ')
       events_count = grouped_notifications['new_team_event'].to_i
@@ -126,7 +126,7 @@ module UsersHelper
     end
 
     # New campaigns notifications
-    if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0 && can?(:read, Campaign)
+    if grouped_notifications['new_campaign'].present? && grouped_notifications['new_campaign'].to_i > 0 && can?(:read, Campaign) && user.allow_notification?('new_campaign_app')
       alerts.push({
         message: I18n.translate("notifications.new_campaigns", count: grouped_notifications['new_campaign'].to_i), level: 'grey',
         url: campaigns_path(new_at: timestamp),
@@ -135,7 +135,7 @@ module UsersHelper
     end
 
     # New user tasks notifications
-    if grouped_notifications['new_task'].present? && grouped_notifications['new_task'].to_i > 0 && can?(:index_my, Task)
+    if grouped_notifications['new_task'].present? && grouped_notifications['new_task'].to_i > 0 && can?(:index_my, Task) && user.allow_notification?('new_task_assignment_app')
       alerts.push({
         message: I18n.translate("notifications.new_tasks", count: grouped_notifications['new_task'].to_i), level: 'grey',
         url: mine_tasks_path(new_at: timestamp),
@@ -144,7 +144,7 @@ module UsersHelper
     end
 
     # New user team tasks notifications
-    # if grouped_notifications['new_team_task'].present? && grouped_notifications['new_team_task'].to_i > 0
+    # if grouped_notifications['new_team_task'].present? && grouped_notifications['new_team_task'].to_i > 0 && user.allow_notification?('new_unassigned_team_task_app')
     #   alerts.push({
     #     message: I18n.translate("notifications.my_teams_tasks_path", count: grouped_notifications['new_team_task'].to_i), level: 'grey',
     #     url: mine_tasks_path(new_at: timestamp),
@@ -161,5 +161,10 @@ module UsersHelper
     end
 
     alerts
+  end
+
+  def notification_setting_checkbox(type, subject)
+    field_id = "#{type}_#{subject}"
+    content_tag(:label, check_box_tag("company_user[notifications_settings][]", field_id, resource.allow_notification?(field_id), id: "notification_settings_#{field_id}"))
   end
 end

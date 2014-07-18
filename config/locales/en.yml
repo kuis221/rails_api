@@ -101,6 +101,56 @@ en:
     new_task: "You have been assigned a task: %{task}"
     new_team_task: "A new task was created for your event: %{task}"
 
+  notifications_sms:
+    event_recap_late: 
+      one: 'You have one late event recap'
+      other: 'You have %{count} late event recaps'
+    event_recap_due: 
+      one: 'You have one due event recap'
+      other: 'You have %{count} due event recaps'
+    event_recap_late_and_due: 'You have %{due_count} due and %{late_count} late event recaps'
+    event_recap_pending_approval: 'You have an event recap that is pending approval %{url}'
+    event_recap_rejected: 'You have a rejected event recap %{url}'
+    new_event: 'You have a new event %{url}'
+    new_event_team: 'Your team has a new event'
+    late_task: 'You have a late task'
+    late_team_task: 'You have a late team task'
+    new_comment: 'You have a new comment %{url}'
+    new_team_comment: 'You have a new team comment %{url}'
+    new_unassigned_team_task: 'Your team has a new unassigned task %{url}'
+    new_task_assignment: 'You have a new task %{url}'
+    new_campaign: 'You have a new campaign %{url}'
+
+  notifications_email:
+    event_recap_due: 'You have a due event recap'
+    event_recap_late: 'You have a late event recap'
+    event_recap_pending_approval: 'You have an event recap that is pending approval %{url}'
+    event_recap_rejected: 'You have a rejected event recap %{url}'
+    new_event: 'You have a new event %{url}'
+    new_event_team: 'Your team has a new event'
+    late_task: 'You have a late task'
+    late_team_task: 'You have a late team task'
+    new_comment: 'You have a new comment %{url}'
+    new_team_comment: 'You have a new team comment %{url}'
+    new_unassigned_team_task: 'Your team has a new unassigned task %{url}'
+    new_task_assignment: 'You have a new task %{url}'
+    new_campaign: 'You have a new campaign %{url}'
+
+  notification_types:
+    event_recap_due: 'Event Recaps Due'
+    event_recap_late: 'Late Event Recaps'
+    event_recap_pending_approval: 'Event Recaps Pending Approval'
+    event_recap_rejected: 'Rejected Event Recaps'
+    new_event: 'Added to Event'
+    new_event_team: 'Added to Event Team'
+    late_task: 'Late Tasks'
+    late_team_task: 'Late Team Tasks'
+    new_comment: 'New Comment'
+    new_team_comment: 'New Team Comment'
+    new_unassigned_team_task: 'New Unassigned Team Task'
+    new_task_assignment: 'New Task Assignment'
+    new_campaign: 'New Campaign'
+
   modals:
     title:
       new:
