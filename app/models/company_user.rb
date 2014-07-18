@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default([])
+#  notifications_settings :string(255)      default("{}")
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -22,6 +22,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
   has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
+  has_many :satisfaction_surveys
 
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}

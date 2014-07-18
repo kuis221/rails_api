@@ -1,9 +1,9 @@
 ## Welcome to Brandscopic
 
 
-Master Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=master)
+![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=master) Master Branch
 
-Development Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=development)
+![build status](https://www.codeship.io/projects/c908d6c0-3f66-0131-c536-0e9a90f6062f/status?branch=development) Development Branch
 
 ## Getting Started
 
@@ -75,15 +75,38 @@ Development Branch: ![build status](https://www.codeship.io/projects/c908d6c0-3f
 
         rake sunspot:solr:stop
 
-11. Start the local server
+12. Copy the following text in the .env in the project's root folder:
+    RACK_ENV=development
+    RAILS_ENV=development
+    PORT=5000
+    REDISTOGO_URL=redis://localhost:6379
+    TERM_CHILD=1
+
+13. Start the local server
 
         foreman start
 
-12. Go to http://localhost:5000/ and you should be able to login using:
+14. Go to http://localhost:5100/ and you should be able to login using:
 
         Email: admin@brandscopic.com
         Password: Adminpass12
 
+## Coding standards
+
+In order to keep or code clean and with the best practices, we should try to always follow the community practices:
+
+  * Ruby: [https://github.com/bbatsov/ruby-style-guide](https://github.com/bbatsov/ruby-style-guide)
+  * Rails: [https://github.com/bbatsov/rails-style-guide](https://github.com/bbatsov/rails-style-guide)
+  * JavaScript [https://github.com/airbnb/javascript](https://github.com/airbnb/javascript)
+  * CoffeeScriot [https://github.com/polarmobile/coffeescript-style-guide](https://github.com/polarmobile/coffeescript-style-guide)
+
+## Background Jobs
+
+Our application makes use of background jobs for tasks that require some time to process or that doesn't really need to happen at real time, like Solr indexing, photos thumbnail generation, list exports generation, sending SMSs and e-mails, etc. For such purpose, we are using Resque+Redis, you can see the background jobs queue in your local environment by going to: http://localhost:5100/resque
+
+## Memcachier
+
+Memcache is also used in several places to speed the the application. If you want to enable it in your development environment, [follow this steps](https://github.com/cjaskot/brandscopic/wiki/Use-Memcached-in-development).
 
 ## Rebuilding the Solr index
 

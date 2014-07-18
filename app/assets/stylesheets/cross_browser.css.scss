@@ -1,0 +1,117 @@
+
+/*Internet Explorer----------------------------------*/
+.msie{
+
+} 
+
+/*Mozilla Firefox----------------------------------*/
+.mozilla{
+	a{
+		&:focus{
+			text-decoration: none;
+		}
+		&.icon-notification-event:before{
+			top: 4px;
+		}
+	}
+	i.icon-notification-event:before{
+		top:4px;
+	}
+	.btn{
+		&.btn-primary, &.btn-cancel{
+			padding: 5px 25px;
+		}
+		&.calendar:after{
+			font-size: 14px;
+			top: 1px;
+		}
+		&.map:after{
+			font-size: 14px;
+		}
+	}
+	.datepick{
+		margin-bottom: 10px;
+	}
+	.filter-wrapper .checker span.checked:after{
+		top: -23px;
+	}
+	.goalable-list li{ 
+		.goals-controls{
+			a:hover, a:focus  {
+				text-decoration: none;
+			}
+		}
+		.goalable-name {
+			float: left;
+		}
+	}
+	li#notifications .dropdown-menu ul li a i.alert-icon {
+		top: 18px;
+	}
+	li#notifications .dropdown-menu ul li a i.icon-angle-right:before{
+		top:8px;
+	}
+	.link-list b{
+		top:0;
+	}
+	#list-tools .btn-primary {
+	    padding: 5px 25px;
+	}
+	.search-filter-label, input.search-query{
+		margin-bottom: 0;
+		&#search-box-filter{
+			margin-bottom: 10px;
+		}
+	}
+	#main:-moz-full-screen {
+	   .btn.fullscreen:after {
+	       content: "\e040";
+		   font-family: 'icons';
+	   } 
+	}
+	.field-attributes-panel input[type=text]{
+		height: 32px;
+	}
+	.activity-form{
+		.field{
+			&.ui-draggable{
+				padding: 0 !important;
+				width:46% !important;
+			}
+		}
+	}
+
+	#report-builder{
+		.report-field .field-settings-btn{
+			margin-top: 0;
+		}
+	}
+
+	@media (max-height: 810px) {
+
+		#report-builder{
+			#report-fields{
+				min-height: 108px;
+			}
+			.field-list { 
+				height: 48px;
+				.fields-group{
+					height: 70px;
+					margin-top: 0;
+				}
+			} 
+		}
+	}
+
+
+} 
+
+/*Webkit Browsers----------------------------------*/
+.webkit{
+
+} 
+
+/*Opera--------------------------------------------*/
+.opera{
+
+}

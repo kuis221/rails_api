@@ -5,7 +5,7 @@
     span.member-data
       .member-name= contact.full_name
       .member-description= contact.is_a?(Contact) ? contact.title : contact.role_name
-    span.add-button.pull-right
+    span.add-button
       = simple_form_for contact_event, url: form_path, remote: true,  html: { class: "button_to" } do |f|
         = f.hidden_field :contactable_id, :value => contact.id
         = f.hidden_field :contactable_type, :value => contact.class.name

@@ -1,0 +1,68 @@
+- current_rating = current_company_user.satisfaction_surveys.where(session_id: request.session_options[:id]).last.try(:rating)
+.survey
+  p
+    | Overall how do you feel about the app?
+
+  .survey-box style="display: none"
+    a.close.btn-close-survey href="#" title="Close"
+    p
+      | Would you like to give us
+      br>/
+      | some feedback?
+    .control-group
+      .control
+        textarea.feedback name="feedback"
+    input.btn.btn-primary.btn-send-feedback type="submit" value="Send"
+    input.btn.btn-cancel type="submit" value="No, thanks"
+
+  .thanks-box style="display: none"
+    a.close.btn-close-survey href="#" title="Close"
+    br>/
+    br>/
+    h3.title Thanks!
+    p
+      | Your feedback is
+      br>/
+      | succesfully submitted.
+
+  .emotions_select
+    .positive
+      = radio_button_tag('emotion', 'positive', current_rating == 'positive')
+    .neutral
+      = radio_button_tag('emotion', 'neutral', current_rating == 'neutral')
+    .negative
+      = radio_button_tag('emotion', 'negative', current_rating == 'negative')
+
+javascript:
+  $(".emotions_select input:radio[name='emotion']").click(function(){
+    $('.thanks-box').hide();
+    $.ajax({
+      type: "POST",
+      url: '#{satisfaction_surveys_path}',
+      data: {rating: $(this).val()},
+      success: function(response){
+        $('.survey-box').show();
+      }
+    });
+  });
+
+  $(".survey .btn-send-feedback").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '#{satisfaction_surveys_path}',
+      data: {feedback: $("textarea[class='feedback']").val()},
+      success: function(response){
+        $('.survey-box').hide();
+        $("textarea[class='feedback']").val('');
+        $('.thanks-box').show();
+      }
+    });
+  });
+
+  $('.survey .btn-close-survey, .survey .btn-cancel').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $('.survey-box').hide();
+    $("textarea[class='feedback']").val('');
+    $('.thanks-box').hide();
+  });

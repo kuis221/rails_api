@@ -31,22 +31,50 @@ feature "Areas", js: true, search: true  do
       expect(page).to have_selector('div.description-data', text: 'edited area description')
     end
 
-    scenario 'can add a place to the area' do
+    scenario 'can add an existing place to the area' do
+      venue = FactoryGirl.create(:venue,
+        company: company,
+        place: FactoryGirl.create(:place,
+          name: 'Guillermitos Bar', street_number: '98',
+          route: '3rd Ave', city: 'New York') )
+      Sunspot.commit
       visit area_path(area)
 
       click_js_link 'Add Place'
 
       within visible_modal do
-        select_from_autocomplete 'Enter a place', 'Bar None, 98 3rd Avenue'
+        select_from_autocomplete 'Enter a place', 'Guillermitos Bar'
         click_js_button 'Add Place'
       end
       ensure_modal_was_closed
-      expect(page).to have_content('Bar None')
+      expect(page).to have_content('Guillermitos Bar')
       expect(page).to have_content('98 3rd Ave New York')
       expect(area.places.count).to eql 1
+      expect(area.places.first).to eql venue.place
 
       hover_and_click '.area-place',  'Remove Place'
-      expect(page).to have_no_content('Bar None')
+      expect(page).to have_no_content('Guillermitos Bar')
+      expect(Area.last.places.count).to eql 0
+    end
+
+    scenario 'can add an NON existing place to the area. (place from Google\'s)' do
+      visit area_path(area)
+
+      click_js_link 'Add Place'
+
+      expect{
+        within visible_modal do
+          select_from_autocomplete 'Enter a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+          click_js_button 'Add Place'
+        end
+        ensure_modal_was_closed
+        expect(page).to have_content('Walt Disney World Dolphin')
+        expect(page).to have_content('1500 Epcot Resorts Blvd')
+        expect(area.places.count).to eql 1
+      }.to change(Place, :count).by(1)
+
+      hover_and_click '.area-place',  'Remove Place'
+      expect(page).to have_no_content('Walt Disney World Dolphin')
       expect(Area.last.places.count).to eql 0
     end
   end

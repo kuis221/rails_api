@@ -1,5 +1,9 @@
 Brandscopic::Application.routes.draw do
 
+  if ENV['WEB'] && Rails.env.development?
+    mount StyleGuide::Engine => "/style-guide"
+  end
+
   apipie if ENV['WEB']
 
   namespace :api do
@@ -440,6 +444,8 @@ Brandscopic::Application.routes.draw do
       get :activate
     end
   end
+
+  resources :satisfaction_surveys, path: 'satisfaction', only: [:create]
 
   resources :dashboard, only: [] do
     match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments|recent_photos|recent_comments/}

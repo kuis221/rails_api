@@ -1,0 +1,26 @@
+.day_parts.show {
+	.day-part-description {
+		margin-bottom:  30px;
+	}
+
+	#new_day_item {
+		margin: 0px;
+
+		.form-horizontal {
+			margin-right: 15px;
+
+		  .control-label {
+			  float: none;
+			  text-align: left;
+			}
+
+			.controls {
+				margin-left: 0px;
+			}
+		}
+
+		.action-buttons {
+			margin-top: 30px;
+		}
+	}
+}

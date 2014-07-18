@@ -11,11 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140604183223) do
-
-  add_extension "hstore"
-  add_extension "pg_stat_statements"
-  add_extension "tablefunc"
+ActiveRecord::Schema.define(:version => 20140717134846) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -216,6 +212,8 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
     t.integer  "company_id"
     t.boolean  "active",        :default => true
   end
+
+  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
 
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
@@ -718,6 +716,17 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
     t.boolean  "is_admin",    :default => false
   end
 
+  create_table "satisfaction_surveys", :force => true do |t|
+    t.integer  "company_user_id"
+    t.string   "session_id"
+    t.string   "rating"
+    t.text     "feedback"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "satisfaction_surveys", ["company_user_id"], :name => "index_satisfaction_surveys_on_company_user_id"
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -773,21 +782,6 @@ ActiveRecord::Schema.define(:version => 20140604183223) do
 
   add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
-
-  create_table "td_linxes", :force => true do |t|
-    t.string   "store_code"
-    t.string   "retailer_dba_name"
-    t.string   "retailer_address"
-    t.string   "retailer_city"
-    t.string   "retailer_state"
-    t.string   "retailer_trade_channel"
-    t.string   "license_type"
-    t.string   "fixed_address"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
-  end
-
-  add_index "td_linxes", ["store_code"], :name => "index_td_linxes_on_store_code", :unique => true
 
   create_table "teamings", :force => true do |t|
     t.integer "team_id"

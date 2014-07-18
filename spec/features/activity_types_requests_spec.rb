@@ -589,6 +589,37 @@ feature "ActivityTypes", js: true do
       end
     end
 
+    scenario "user can add section fields to form" do
+      visit activity_type_path activity_type
+      expect(page).to have_selector('h2', text: 'Drink Menu')
+      section_field.drag_to form_builder
+
+      expect(form_builder).to have_selector('h3', text: 'Section')
+
+      within form_field_settings_for form_section('Section') do
+        fill_in 'Description', with: 'This is the section description'
+      end
+
+      # Close the field settings form
+      form_builder.trigger 'click'
+      expect(page).to have_no_selector('.field-attributes-panel')
+
+      # Save the form
+      expect {
+        click_js_button 'Save'
+        wait_for_ajax
+      }.to change(FormField, :count).by(1)
+      field = FormField.last
+      expect(field.name).to eql 'Section'
+      expect(field.settings['description']).to eql 'This is the section description'
+      expect(field.ordering).to eql 1
+      expect(field.type).to eql 'FormField::Section'
+
+      within form_field_settings_for form_section('Section') do
+        expect(find_field('Description').value).to eql 'This is the section description'
+      end
+    end
+
     scenario "user can add marque fields to form" do
       visit activity_type_path activity_type
       expect(page).to have_selector('h2', text: 'Drink Menu')
@@ -990,6 +1021,10 @@ feature "ActivityTypes", js: true do
     find('.fields-wrapper .field', text: 'Number')
   end
 
+  def section_field
+    find('.fields-wrapper .field', text: 'Section')
+  end
+
   def price_field
     find('.fields-wrapper .field', text: 'Price')
   end
@@ -1051,7 +1086,9 @@ feature "ActivityTypes", js: true do
   end
 
   def form_field_settings_for(field_name)
-    form_field(field_name).trigger 'click'
+    field = field_name
+    field = form_field(field_name) if field_name.is_a?(String)
+    field.trigger 'click'
     find('.field-attributes-panel')
   end
 
@@ -1061,6 +1098,15 @@ feature "ActivityTypes", js: true do
       field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
     end
     raise "Field #{field_name} not found" if field.nil?
+    field
+  end
+
+  def form_section(section_name)
+    field = nil
+    form_builder.all('.field').each do |wrapper|
+      field = wrapper if wrapper.all('h3', :text => section_name).count > 0
+    end
+    raise "Section #{section_name} not found" if field.nil?
     field
   end
 end
