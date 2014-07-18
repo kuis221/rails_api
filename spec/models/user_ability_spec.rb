@@ -127,6 +127,9 @@ describe "User" do
         end
       end
 
+      it { should be_able_to(:verify_phone, company_user) }
+      it { should be_able_to(:send_code, company_user) }
+
       #     ___ __ __    ___  ____   ______      ___ ___    ___  ___ ___  ____     ___  ____    _____
       #    /  _]  |  |  /  _]|    \ |      |    |   |   |  /  _]|   |   ||    \   /  _]|    \  / ___/
       #   /  [_|  |  | /  [_ |  _  ||      |    | _   _ | /  [_ | _   _ ||  o  ) /  [_ |  D  )(   \_

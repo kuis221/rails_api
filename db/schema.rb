@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140717134846) do
+ActiveRecord::Schema.define(:version => 20140717214845) do
+
+  add_extension "hstore"
+  add_extension "pg_stat_statements"
+  add_extension "tablefunc"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -48,17 +52,15 @@ ActiveRecord::Schema.define(:version => 20140717134846) do
     t.integer  "activity_id"
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",                                                           :null => false
-    t.datetime "updated_at",                                                           :null => false
-    t.integer  "form_field_option_id"
+    t.datetime "created_at",                                                    :null => false
+    t.datetime "updated_at",                                                    :null => false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",         :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "scalar_value",  :precision => 10, :scale => 2, :default => 0.0
   end
 
   add_index "activity_results", ["activity_id", "form_field_id"], :name => "index_activity_results_on_activity_id_and_form_field_id"
   add_index "activity_results", ["activity_id"], :name => "index_activity_results_on_activity_id"
   add_index "activity_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
-  add_index "activity_results", ["form_field_option_id"], :name => "index_activity_results_on_form_field_option_id"
   add_index "activity_results", ["hash_value"], :name => "index_activity_results_on_hash_value", :using => :gist
 
   create_table "activity_type_campaigns", :force => true do |t|
@@ -523,8 +525,7 @@ ActiveRecord::Schema.define(:version => 20140717134846) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
-  create_table "kpi_reports", :id => false, :force => true do |t|
-    t.integer  "id",                :null => false
+  create_table "kpi_reports", :force => true do |t|
     t.integer  "company_user_id"
     t.text     "params"
     t.string   "aasm_state"
@@ -809,12 +810,12 @@ ActiveRecord::Schema.define(:version => 20140717134846) do
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "email",                               :default => "", :null => false
-    t.string   "encrypted_password",                  :default => ""
+    t.string   "email",                                  :default => "", :null => false
+    t.string   "encrypted_password",                     :default => ""
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                       :default => 0
+    t.integer  "sign_in_count",                          :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -823,9 +824,9 @@ ActiveRecord::Schema.define(:version => 20140717134846) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
-    t.string   "country",                :limit => 4
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
+    t.string   "country",                   :limit => 4
     t.string   "state"
     t.string   "city"
     t.integer  "created_by_id"
@@ -845,6 +846,12 @@ ActiveRecord::Schema.define(:version => 20140717134846) do
     t.string   "zip_code"
     t.string   "authentication_token"
     t.datetime "invitation_created_at"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.boolean  "phone_number_verified"
+    t.string   "phone_number_verification"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

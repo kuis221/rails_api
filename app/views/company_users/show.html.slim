@@ -3,10 +3,22 @@
 
   .details_box.user-view.padding-top-close-bar
     .basic-info
-      .profile-pic.big
-        img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
+      .profile-pic.big.icon-user.dropdown-toggle class="#{ resource.avatar.present? ? '' : '.no-pic'}" data-toggle="dropdown"
+        - if resource.avatar.present?
+          img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
+      .dropdown-menu.edit-profile-pic
+        ul
+          li
+            a href="#" Upload photo
+          li
+            a href="#" Take photo
+          li
+            a href="#" Cancel
+
       .profile-data
-        h2= resource.full_name
+        h2
+          = resource.full_name
+          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
 
         - if resource.role.present?
           .user-role.label.label-default
@@ -14,11 +26,10 @@
 
     .team-assigned
       b ASSIGNED TO:
-      span.label NYC Team
-      span.label Team Jameson
-      span.label Team Chicago
+      - resource.teams.pluck(:name).each do |team_name|
+        span.label= team_name
 
-    .aditional-info 
+    .aditional-info
       - if resource.email.present?
         .email-data
           = resource.email
@@ -26,36 +37,22 @@
       - if resource.phone_number.present?
         .phone-data
           .number
-            = resource.phone_number 
-          .verify
-            a class="special" href="#" Get Verified
-          .info
-            a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
+            = resource.phone_number
+          - if resource.user.phone_number_verified?
+            .verified
+              p Verified!
+          - elsif viewing_profile?
+            .verify
+              = link_to 'Get Verified', send_code_company_user_url(resource), class: "special", remote: true
 
-          .verified
-            p Verified!
+            .info
+              a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
+
+
 
       - if resource.full_address.present?
         .place-data
           = resource.full_address
-
-    .basic-info
-      .profile-pic.big.no-pic.icon-user
-      .edit-profile-pic
-        ul
-          li 
-            a href="#" Upload photo
-          li 
-            a href="#" Take photo
-          li 
-            a href="#" Cancel
-        
-      .profile-data
-        h2= resource.full_name
-
-        - if resource.role.present?
-          .user-role.label.label-default
-            = resource.role.name
 
       //.links-data
         //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
@@ -162,7 +159,7 @@
     .row-fluid.communication-preferences
       .span10
         .span4
-          b 
+          b
         .span2
           p IN-APP
         .span2
@@ -252,13 +249,14 @@
         .span2
           .icon-ok
 
-  .details_box
-    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
-    #resource-goals-list.link-list
-    = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+  - if viewing_profile?
+    .details_box
+      = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
+      #resource-goals-list.link-list
+      = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
 
 
-  
+
   //#user-places.details_box
     //h3 PLACES
     //#company_user-areas-list

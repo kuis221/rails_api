@@ -114,6 +114,14 @@ class Ability
          can?(:edit, object)
       end
 
+      can :profile, CompanyUser do |company_user|
+        user.current_company_user.id == company_user.id
+      end
+
+      can [:verify_phone, :send_code], CompanyUser do |company_user|
+        can?(:update, company_user)
+      end
+
       # Custom Reports
       # can :manage, Report do |report|
       #   report.created_by_id == user.id

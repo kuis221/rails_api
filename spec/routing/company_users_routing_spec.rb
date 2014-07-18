@@ -31,5 +31,17 @@ describe CompanyUsersController do
       get("/users/1/deactivate").should route_to("company_users#deactivate", :id => "1")
     end
 
+    it "routes to #profile" do
+      get("/users/profile").should route_to("company_users#profile")
+    end
+
+    it "routes to #verify_phone" do
+      post("/users/1/verify_phone").should route_to("company_users#verify_phone", :id => "1")
+    end
+
+    it "routes to #verify_phone" do
+      get("/users/1/send_code").should route_to("company_users#send_code", :id => "1")
+    end
+
   end
 end

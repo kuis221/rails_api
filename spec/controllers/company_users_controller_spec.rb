@@ -136,6 +136,34 @@ describe CompanyUsersController do
       end
     end
 
+    describe "GET 'profile'" do
+      it 'should render the correct template' do
+        get 'profile'
+        expect(assigns(:company_user)).to eql @company_user
+        response.should render_template 'show'
+      end
+    end
+
+    describe "GET 'send_code'" do
+      it 'should render the correct templates' do
+        get 'send_code', id: @company_user.to_param, format: :js
+        expect(assigns(:company_user)).to eql @company_user
+        response.should render_template 'send_code'
+        response.should render_template '_form_dialog'
+        response.should render_template '_send_code'
+      end
+    end
+
+    describe "POST 'verify_phone'" do
+      it 'should update the phone_number_verification for the user' do
+        expect(@company_user.user.phone_number_verification).to be_nil
+        get 'verify_phone', id: @company_user.to_param, format: :js
+        expect(assigns(:company_user)).to eql @company_user
+        response.should render_template 'verify_phone'
+        expect(@company_user.user.reload.phone_number_verification).to_not be_nil
+      end
+    end
+
     describe "GET 'select_company'" do
       it 'should update the session with the selected company_id' do
         another_company_id = FactoryGirl.create(:company).id

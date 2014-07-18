@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default("{}")
+#  notifications_settings :string(255)      default([])
 #
 
 require 'spec_helper'

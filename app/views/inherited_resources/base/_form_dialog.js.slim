@@ -15,6 +15,7 @@
         }
     });
   } else {
+    container.closest('.resource-form-modal').find('.modal-header h3').text('#{j modal_dialog_title }');
     container.html(content);
   }
   makeFormValidatable($('form', container));
