@@ -942,12 +942,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
     resource.results_for(fields).each{|r| r.save(validate: false) if r.new_record? }
 
     results = fields.map do |field|
+      r = resource.results_for([field]).first
       result = {name: field.name, ordering: field.ordering, type: field.type, required: field.required?, description: nil}
       result[:module] = field.kpi.module unless field.kpi.nil?
       result[:goal] = resource.kpi_goals[field.kpi_id] unless field.is_optionable?
       result[:module] ||= 'custom'
+      result[:id] = r.id
       if field.type == 'FormField::Percentage'
-        r = resource.results_for([field]).first
         result.merge!({
           segments: field.options_for_input.map{|s|
             #resource.results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}
@@ -955,31 +956,23 @@ class Api::V1::EventsController < Api::V1::FilteredController
           }
         })
       elsif field.type == 'FormField::Checkbox'
-        r = resource.results_for([field]).first
         result.merge!({
-          id: r.id,
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
         })
       elsif field.type == 'FormField::Brand'
-        r = resource.results_for([field]).first
         result.merge!({
-          id: r.id,
           value: r.value.to_i,
           segments: field.brands_options(r).map{|s|
             {id: s[:id], text: s[:name]}
           }
         })
       elsif field.type == 'FormField::Summation'
-        r = resource.results_for([field]).first
         result.merge!({
-          id: r.id,
           value: r.value.map{|s| s[1].to_f}.reduce(0, :+),
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value[s[1].to_s]}}
         })
       elsif field.type == 'FormField::LikertScale'
-        r = resource.results_for([field]).first
         result.merge!({
-          id: r.id,
           statements: field.statements.order(:ordering).map{|s| {id: s.id, text: s.name, value: r.value[s.id.to_s]}},
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0]}}
         })
@@ -987,9 +980,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
         if field.is_optionable?
           result.merge!({segments: field.options_for_input.map{|s| {id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}}})
         end
-        r = resource.results_for([field]).first
         v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
-        result.merge!({id: r.id, value: v})
+        result.merge!({value: v})
       end
 
       result.merge!(description: field.kpi.description) if field.kpi.present?

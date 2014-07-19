@@ -263,7 +263,7 @@ describe Api::V1::EventsController do
           ]
       )
       campaign.add_kpi kpi
-      results = event.result_for_kpi(kpi)
+      result = event.result_for_kpi(kpi)
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
@@ -271,13 +271,14 @@ describe Api::V1::EventsController do
       expect(groups.first["fields"].first).to include(
           'name' => 'Age',
           'type' => 'FormField::Percentage',
+          'id' => result.id,
+          'type' => 'FormField::Percentage',
           'segments' => [
               {'id' => seg1.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
               {'id' => seg2.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 
-      expect(groups.first['fields'].first.keys).to_not include('id', 'value')
     end
   end
 
