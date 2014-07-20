@@ -433,7 +433,15 @@ class Api::V1::UsersController < Api::V1::FilteredController
   * _tasks_edit_own_: Can edit his own tasks
   * _tasks_edit_team_: Can edit his team's tasks
   * _venues_: Can see the list of venues
+  * _venues_analysis_: Can see the analysis section of a venue
   * _venues_create_: Can create venues
+  * _venues_show_: Can access a venue's details view
+  * _venues_analysis_: Can see a venue's analysis data
+  * _venues_kpis_: Can see a venue's KPI data within the analysis data
+  * _venues_score_: Can see a venue's score within the analysis data
+  * _venues_trends_: Can see a venue's trends graph within the  analysis data
+  * _venues_photos_: Can see a venue's photos
+  * _venues_comment_: Can see a venue's photos
   EOS
   def permissions
     if current_user.present?
@@ -516,6 +524,13 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
       permissions.push 'venues' if can?(:index, Venue)
       permissions.push 'venues_create' if can?(:create, Venue)
+      permissions.push 'venues_show' if can?(:show, Venue)
+      permissions.push 'venues_analysis' if can?(:analysis, Venue.new)
+      permissions.push 'venues_kpis' if can?(:view_kpis, Venue)
+      permissions.push 'venues_score' if can?(:view_score, Venue)
+      permissions.push 'venues_trends' if can?(:view_trends_day_week, Venue)
+      permissions.push 'venues_photos' if can?(:view_photos, Venue)
+      permissions.push 'venues_comments' if can?(:view_comments, Venue)
 
       permissions.push 'tasks_own' if can?(:index_my, Task)
       permissions.push 'tasks_edit_own' if can?(:edit_my, Task)

@@ -141,6 +141,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   }
   EOS
   def analysis
+    authorize! :analysis, resource
     if resource.present?
       render
     end

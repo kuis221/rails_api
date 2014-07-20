@@ -119,6 +119,14 @@ class Ability
       #   report.created_by_id == user.id
       # end
 
+      can [:analysis], Venue do |venue|
+        user.current_company_user.role.has_permission?(:show, Venue) && (
+          user.current_company_user.role.has_permission?(:view_kpis, Venue) ||
+          user.current_company_user.role.has_permission?(:view_score, Venue) ||
+          user.current_company_user.role.has_permission?(:view_trends_day_week, Venue)
+        )
+      end
+
       can [:build, :preview, :rows], Report do |report|
         can? :edit, report
       end
