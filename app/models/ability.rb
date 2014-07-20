@@ -224,6 +224,10 @@ class Ability
         cannot?(:show, event)
       end
 
+      can(:show, Contact) do |contact|
+        user.current_company_user.company_id == contact.company_id
+      end
+
       can [:add, :list], ContactEvent do
         user.role.has_permission?(:create_contacts, Event)
       end
@@ -235,6 +239,10 @@ class Ability
       end
       can :update, ContactEvent do |contact_event|
         can?(:show, contact_event.event) && can?(:edit_contacts, contact_event.event)
+      end
+      can :update, Contact do |contact|
+        user.current_company_user.company_id == contact.company_id &&
+        user.current_company_user.role.has_permission?(:edit_contacts, Event)
       end
 
       # Allow users to create kpis if have permissions to create custom kpis,

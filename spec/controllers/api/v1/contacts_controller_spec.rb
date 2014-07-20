@@ -34,7 +34,8 @@ describe Api::V1::ContactsController do
         "city" => contact.city,
         "state" => contact.state,
         "zip_code" => contact.zip_code,
-        "country" => contact.country_name}]
+        "country" => contact.country,
+        "country_name" => contact.country_name}]
     end
   end
 
