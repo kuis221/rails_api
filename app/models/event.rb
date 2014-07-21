@@ -161,7 +161,7 @@ class Event < ActiveRecord::Base
   before_create :add_current_company_user
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, to: :place, prefix: true, allow_nil: true
+  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, :td_linx_code, to: :place, prefix: true, allow_nil: true
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
