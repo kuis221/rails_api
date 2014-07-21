@@ -951,8 +951,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       if field.type == 'FormField::Percentage'
         result.merge!({
           segments: field.options_for_input.map{|s|
-            #resource.results_for(field).map{|r| {id: r.id, text: r.kpis_segment.text, value: r.value, goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}}
-            {id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][r.kpis_segment_id] : nil)}
+            {id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}
           }
         })
       elsif field.type == 'FormField::Checkbox'
