@@ -23,9 +23,11 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
     Table
       Column ss:Width="160"
       Column ss:Width="100"
-      Column ss:Width="100"
+      Column ss:Width="70"
       Column ss:Width="100"
       Column ss:Width="150"
+      Column ss:Width="100"
+      Column ss:Width="100"
       Column ss:Width="120"
       Column ss:Width="120"
       Column ss:Width="80"
@@ -39,6 +41,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Row ss:StyleID="s1"
         Cell
           Data ss:Type="String" CAMPAIGN NAME
+        Cell
+          Data ss:Type="String" AREAS
+        Cell
+          Data ss:Type="String" TD LINX CODE
         Cell
           Data ss:Type="String" VENUE NAME
         Cell
@@ -93,6 +99,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
         Row
           Cell
             Data ss:Type="String"= event.campaign_name
+          Cell
+            Data ss:Type="String"= area_for_event(event)
+          Cell
+            Data ss:Type="String"= event.place_td_linx_code
           Cell
             Data ss:Type="String"= event.place_name
           Cell

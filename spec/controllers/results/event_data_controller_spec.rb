@@ -103,7 +103,8 @@ describe Results::EventDataController do
       area = FactoryGirl.create(:area, name: 'Angeles Area', company: @company)
       area.places << FactoryGirl.create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality'])
       campaign.areas << area
-      place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
+      place = FactoryGirl.create(:place, name: 'Bar Prueba',
+        city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '344221')
       event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
       event.users << @company_user
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
@@ -126,13 +127,13 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to match_array [
-          "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE",
+          "CAMPAIGN NAME","AREAS","TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE",
           "EVENT STATUS", "TEAM MEMBERS","URL","START", "END", "PROMO HOURS", "IMPRESSIONS",
           "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
           "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE","AGE: < 12", "AGE: 12 – 17", "AGE: 18 – 24",
           "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI"]
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to match_array [
-          "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
+          "Test Campaign FY01", "Angeles Area", "344221", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
           "Los Angeles", "California", "12345","Active", "Approved","Test User","http://localhost:5100/events/#{event.id}",
           "2019-01-23T10:00", "2019-01-23T12:00", "2.0", "10", "11",
           "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190", "0.220","0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", '8899']
