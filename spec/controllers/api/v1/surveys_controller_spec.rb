@@ -67,9 +67,8 @@ describe Api::V1::SurveysController do
       brand2 = FactoryGirl.create(:brand)
 
       # Assign the surveys module and brands to the campaign
-      campaign.update_attribute(:enabled_modules, ['surveys'])
-      # field.options['brands'] = [brand1.id, brand2.id]
-      # field.save
+      campaign.update_attributes enabled_modules: ['surveys'],
+          survey_brand_ids: [brand1.id, brand2.id]
 
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample

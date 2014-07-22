@@ -147,11 +147,11 @@ $.widget 'nmk.formBuilder', {
 					applyFormUiFormatsTo(ui.helper)
 
 			# Display Field Attributes Dialog
-			@formWrapper.on 'click', '.field', (e) =>
+			@wrapper.on 'click', '.field, .module', (e) =>
 				e.stopPropagation()
 				$field = $(e.target)
 				if not $field.hasClass('field')
-					$field = $field.closest('.field')
+					$field = $field.closest('.field, .module')
 				@_showFieldAttributes $field
 				false
 
@@ -194,7 +194,7 @@ $.widget 'nmk.formBuilder', {
 	_loadForm: () ->
 		@element.find('.empty-form-legend').hide()
 		$.getJSON "#{@options.url}", (response) =>
-			@formWrapper.find('.field').remove()
+			@wrapper.find('.field, .module').remove()
 			@modified = false
 			@_updateSaveButtonState()
 			if response.form_fields.length > 0 || response.enabled_modules.length > 0
@@ -203,7 +203,10 @@ $.widget 'nmk.formBuilder', {
 						@_addFieldToForm field
 				if response.enabled_modules && response.enabled_modules.length > 0
 					for moduleName in response.enabled_modules
-						@_addModuleToForm {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+						field = {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+						if moduleName is 'surveys'
+							field.settings = {brands: response.survey_brand_ids}
+						@_addModuleToForm field
 						
 			else
 				@element.find('.empty-form-legend').show()
@@ -239,6 +242,10 @@ $.widget 'nmk.formBuilder', {
 			form_fields_attributes: $.map(@formFields(), (field) => field.getSaveAttributes())
 			enabled_modules: $.map(@formModules(), (field) => field.getSaveAttributes().name)
 		}
+		$.map @formModules(), (field) => 
+			attributes = field.getSaveAttributes()
+			if attributes.name is 'surveys'
+				data.survey_brand_ids = attributes.settings.brands
 		@saveForm data
 
 	saveForm: (data) ->
@@ -314,7 +321,8 @@ $.widget 'nmk.formBuilder', {
 				e.ignoreClose = true
 
 			$(document).on 'click.fbuidler', (e) =>
-				if $('.modal.in:visible').length is 0 and not e.ignoreClose?
+				select2open = $('.select2-drop').css('display') is 'block'
+				if $('.modal.in:visible').length is 0 and not e.ignoreClose? and !select2open
 					@_hideFieldAttributes field
 		else
 			@_hideFieldAttributes field
@@ -324,6 +332,7 @@ $.widget 'nmk.formBuilder', {
 		@formWrapper.find('.selected').removeClass('selected')
 		field.off 'change.attrFrm'
 		@attributesPanel.hide()
+		$('.select2-drop, .select2-drop-mask, .select2-sizer').remove()
 
 	_updateSaveButtonState: () ->
 		$('#save-report').attr('disabled', not @modified)
@@ -1220,7 +1229,7 @@ TimeField = FormField.extend {
 
 Module =  FormField.extend {
 	getSaveAttributes: () ->
-		{field_type: 'module', name: @fieldType()}
+		{field_type: 'module', name: @fieldType(), settings: @attributes.settings }
 
 	fieldType: ->
 		@__proto__.type
@@ -1244,7 +1253,7 @@ SurveysField = Module.extend {
 	init: (form, attributes) ->
 		@form = form
 		@attributes = $.extend({
-			name: 'Surves'
+			name: 'Surveys'
 		}, attributes)
 
 		@attributes.settings ||= {}
@@ -1258,7 +1267,27 @@ SurveysField = Module.extend {
 		]
 
 	attributesForm: () ->
-		false
+		window.setTimeout () ->
+			$.get '/brands.json', (response) ->
+				tags = []
+				for result in response
+					tags.push {id: result.id, text: result.name }
+				$('input[name=brands].select2-field').show().select2
+					maximumSelectionSize: 5
+					tags: tags
+		, 100
+
+		[
+			$('<h4>').text('Surveys'),
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Brands'),
+				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').hide().val(if @attributes.settings? && @attributes.settings.brands  then  @attributes.settings.brands else '').on "change", (e) =>
+					input = $(e.target)
+					@attributes.settings.brands = input.select2("val")
+					@form.setModified()
+					true
+			]
+		]
 }
 
 CommentsField = Module.extend {

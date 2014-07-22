@@ -43,7 +43,7 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 1
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP","ACTIVE STATE",
+          "CAMPAIGN NAME", "AREAS", "TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP","ACTIVE STATE",
           "EVENT STATUS", "TEAM MEMBERS","URL", "START", "END", "PROMO HOURS", "IMPRESSIONS",
           "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
           "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE"]
@@ -53,7 +53,12 @@ describe Results::EventDataController do
     it "should include the event data results" do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
-      place = FactoryGirl.create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
+      area = FactoryGirl.create(:area, name: 'My area', company: @company)
+      place = FactoryGirl.create(:place, name: 'Bar Prueba',
+        city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '443321')
+      area.places << FactoryGirl.create(:place, name: 'Los Angeles', types: ['political'],
+        city: 'Los Angeles', state: 'California', country: 'US')
+      campaign.areas << area
       event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, place: place)
       event.users << @company_user
       team = FactoryGirl.create(:team, company: @company, name: "zteam")
@@ -68,7 +73,7 @@ describe Results::EventDataController do
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
+          "Test Campaign FY01",'My area', '443321', "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
            "Los Angeles", "California", "12345", "Active", "Approved", "Test User, zteam",
            "http://localhost:5100/events/#{event.id}", "2019-01-23T10:00", "2019-01-23T12:00",
            "2.0", "10", "11", "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190",

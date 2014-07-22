@@ -6,7 +6,6 @@ describe SurveysController do
     @company = @user.current_company
 
     Kpi.create_global_kpis
-    campaign.add_kpi Kpi.surveys
   end
 
   let(:campaign) {FactoryGirl.create(:campaign, company: @company)}
@@ -29,12 +28,12 @@ describe SurveysController do
     end
 
     it "should not render form_dialog if no errors" do
-      brand1 = FactoryGirl.create(:brand)
-      brand2 = FactoryGirl.create(:brand)
+      brand1 = FactoryGirl.create(:brand, company: @company)
+      brand2 = FactoryGirl.create(:brand, company: @company)
 
-      field = campaign.form_field_for_kpi (Kpi.surveys)
-      field.options['brands'] = [brand1.id, brand2.id]
-      field.save
+      campaign.enabled_modules = ['surveys']
+      campaign.survey_brand_ids = [brand1.id, brand2.id]
+      campaign.save
 
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample

@@ -119,6 +119,7 @@ class CampaignsController < FilteredController
       p = [:name, :start_date, :end_date, :description, :brands_list, {brand_portfolio_ids: []}]
       if can?(:view_event_form, Campaign)
         p.push({
+          survey_brand_ids: [],
           enabled_modules: [],
           form_fields_attributes: [
             :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
@@ -126,13 +127,23 @@ class CampaignsController < FilteredController
             {options_attributes: [:id, :name, :_destroy, :ordering]},
             {statements_attributes: [:id, :name, :_destroy, :ordering]}]})
       end
-      params.permit(campaign: p)[:campaign]
+      attrs = params.permit(campaign: p)[:campaign]
+      if attrs && attrs[:survey_brand_ids].present? && attrs[:survey_brand_ids].any?
+        normalize_brands attrs[:survey_brand_ids]
+      end
+      attrs
     end
 
     def normalize_brands(brands)
       unless brands.empty?
         brands.each_with_index do |b, index|
-          b = Brand.find_or_create_by_name(b).id unless  b.is_a?(Integer) || b =~ /\A[0-9]+\z/
+          unless b.is_a?(Integer) || b =~ /\A[0-9]+\z/
+            if brand = current_company.brands.where('lower(name) = ?', b.downcase).first
+              b = brand.id
+            else
+              b = current_company.brands.create(name: b).id
+            end
+          end
           brands[index] = b.to_i
         end
       end

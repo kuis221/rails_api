@@ -311,14 +311,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def survey_brands
-    @survey_brands ||= begin
-      field = form_fields.scoped_by_kpi_id(Kpi.surveys).first
-      brands = []
-      if field.present?
-        brands = Brand.where(id: field.options['brands']) if field.options.is_a?(Hash) && field.options.has_key?('brands')
-      end
-      brands || []
-    end
+    @survey_brands ||= Brand.where(id: survey_brand_ids)
   end
 
   def first_event=(event)
