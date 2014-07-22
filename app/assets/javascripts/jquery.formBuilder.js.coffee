@@ -116,7 +116,8 @@ $.widget 'nmk.formBuilder', {
 				start: (e, ui) =>
 					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
 					applyFormUiFormatsTo(ui.helper)
-			.on 'click', (e) =>
+			
+			@fieldsWrapper.find('.field, .module').on 'click', (e) =>
 				return if e.target.adding
 				e.target.adding = setTimeout () -> 
 					e.target.adding = false
@@ -124,10 +125,15 @@ $.widget 'nmk.formBuilder', {
 				target = $(e.target)
 				options = {type: target.data('type')}
 				options = target.data('options') if target.data('options')
-				field = @_addFieldToForm options
+				if target.hasClass('module')
+					field = @_addModuleToForm options
+					message = "Adding #{field.type} module at the bottom..."
+				else
+					field = @_addFieldToForm options
+					@_updateOrdering()
+					message = "Adding new #{field.attributes.name} field at the bottom..."
 				@setModified()
-				@_updateOrdering()
-				@fieldTooltip.data('title', "Adding new #{field.attributes.name} field at the bottom...").tooltip 'show'
+				@fieldTooltip.data('title', message).tooltip 'show'
 				clearTimeout @_toolTipTimeout if @_toolTipTimeout
 				@_toolTipTimeout = setTimeout =>
 					@fieldTooltip.tooltip 'hide'

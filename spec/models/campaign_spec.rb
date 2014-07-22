@@ -37,6 +37,13 @@ describe Campaign do
 
   before { Company.current = company }
 
+  describe "enabled_modules validations" do
+    it { should allow_value(['surveys', 'photos']).for(:enabled_modules) }
+    it { should allow_value([]).for(:enabled_modules) }
+    it { should allow_value(nil).for(:enabled_modules) }
+    it { should_not allow_value(['unknown', 'photos']).for(:enabled_modules) }
+  end
+
   describe "states" do
     before(:each) do
       @campaign = FactoryGirl.create(:campaign)
