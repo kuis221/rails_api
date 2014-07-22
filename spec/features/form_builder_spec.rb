@@ -8,7 +8,7 @@ RSpec.shared_examples "a fieldable element" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.click
-    expect(page).to have_content('Adding a new item at the bottom...')
+    expect(page).to have_content('Adding new Single line text field at the bottom...')
 
     expect(form_builder).to have_form_field('Single line text')
 
@@ -899,7 +899,18 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
     kpi_field(kpi).drag_to form_builder
+
+    # Make sure the KPI is not longer available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('My Custom KPI')
+    end
 
     within form_field_settings_for 'My Custom KPI' do
       fill_in 'Field label', with: 'My Custom KPI'
@@ -925,6 +936,19 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     within form_field_settings_for 'My Custom KPI' do
       expect(find_field('Field label').value).to eql 'My Custom KPI'
       expect(find_field('Required')['checked']).to be_true
+    end
+
+    # Remove the KPI form the form
+    form_field_settings_for 'My Custom KPI'
+    within form_builder.find('.field.selected') do
+      click_js_link 'Remove'
+    end
+
+    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+
+    # Make sure the KPI is again available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_content('My Custom KPI')
     end
   end
 end
@@ -1060,7 +1084,7 @@ def form_field(field_name)
   form_builder.all('.field').each do |wrapper|
     field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
   end
-  raise "KPI #{field_name} not found" if field.nil?
+  raise "Field #{field_name} not found" if field.nil?
   field
 end
 

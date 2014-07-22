@@ -44,7 +44,7 @@
               .group-name= group
               .fields-list
                 - kpis.each do |kpi|
-                  .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
+                  .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-kpi-id="#{kpi.id}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
 
       .accordion-group
         .accordion-heading

@@ -10,15 +10,19 @@ $.widget 'nmk.formBuilder', {
 		if @options.canEdit
 			@wrapper.append $('<div class="form-actions" data-spy="affix" data-offset-top="340">')
 							 .append('<button id="save-report" class="btn btn-primary">Save</button>')
-							 .append('<div data-placement="left" title="Adding a new item<br />at the bottom..." class="invisible pull-right field-tooltip-trigger"></div>')
+							 .append('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
 
-			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip placement: 'left', html: true
+			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip 
+				placement: 'left'
+				html: true
+				title: () ->
+					$(this).data('title')
 		@wrapper.append(
 			@formWrapper = $('<div class="form-fields clearfix form-section">')
 		)
 
 		@wrapper.find('form-actions').affix 
-			offset: () => @formWrapper.offset().top - ($('#resource-close-details').offset().top + $('#resource-close-details').height())
+			offset: () => @formWrapper.offset().top - ($('#resource-close-details').offset().top + $('#resource-close-details').outherHeight())
 
 		$(window).on 'resize scroll', () =>
 			@wrapper.find('.form-actions:not(.affix)').each (index, bar) =>
@@ -75,8 +79,11 @@ $.widget 'nmk.formBuilder', {
 						options = {type: ui.item.data('type')}
 						options = ui.item.data('options') if ui.item.data('options')
 						fieldHtml = @buildField(options)
+						field = fieldHtml.data('field')
 						ui.item.replaceWith fieldHtml
 						applyFormUiFormatsTo fieldHtml
+						if field.attributes.kpi_id?
+							@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
 
 					@_updateOrdering();
 
@@ -117,10 +124,10 @@ $.widget 'nmk.formBuilder', {
 				target = $(e.target)
 				options = {type: target.data('type')}
 				options = target.data('options') if target.data('options')
-				@_addFieldToForm options
+				field = @_addFieldToForm options
 				@setModified()
 				@_updateOrdering()
-				@fieldTooltip.tooltip 'show'
+				@fieldTooltip.data('title', "Adding new #{field.attributes.name} field at the bottom...").tooltip 'show'
 				clearTimeout @_toolTipTimeout if @_toolTipTimeout
 				@_toolTipTimeout = setTimeout =>
 					@fieldTooltip.tooltip 'hide'
@@ -207,7 +214,12 @@ $.widget 'nmk.formBuilder', {
 		@formWrapper.sortable "refresh" if @options.canEdit
 		applyFormUiFormatsTo fieldHtml
 
+		field = fieldHtml.data('field')
+		if field.attributes.kpi_id?
+			@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
+
 		field
+
 
 	_addModuleToForm: (field) ->
 		moduleHtml = @buildField(field)
@@ -472,12 +484,17 @@ FormField = Class.extend {
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
+					@form._hideFieldAttributes @field
+					if @attributes.kpi_id?
+						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
 		else
 			bootbox.confirm @_removeConfirmationMessage(false), (result) =>
 				if result
 					@field.remove()
 					@form.setModified()
 					@form._hideFieldAttributes @field
+					if @attributes.kpi_id?
+						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
 		false
 
 	_removeConfirmationMessage: (withData) ->
