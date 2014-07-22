@@ -28,21 +28,21 @@ html {
 }
 
 select,
-textarea, 
-input[type="text"], 
-input[type="password"], 
-input[type="datetime"], 
-input[type="datetime-local"], 
-input[type="date"], 
-input[type="month"], 
-input[type="time"], 
-input[type="week"], 
-input[type="number"], 
-input[type="email"], 
-input[type="url"], 
-input[type="search"], 
-input[type="tel"], 
-input[type="color"], 
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
 .uneditable-input{
 	background-color: white;
 	border: 1px solid $grey_four;
@@ -1216,9 +1216,12 @@ footer{
 		margin-left: 5px;
 		.positive, .neutral, .negative{
 			display: inline-block;
-			span{
-				height: 20px;
-				width: 20px;
+			.radio{
+				width: 15px;
+				span, input[type="radio"]{
+					height: 20px;
+					width: 20px;
+				}
 			}
 		}
 		.positive{
@@ -1281,8 +1284,8 @@ footer{
 			bottom: 32px;
 			padding: 13px 10px 3px 10px;
 			position: absolute;
-			height: 140px;
-			width: 175px;
+			height: 150px;
+			width: 190px;
 			&:after{
 			    content: '';
 			    background: $grey_one;
@@ -1310,8 +1313,9 @@ footer{
 				-webkit-border-radius: 6px;
 				-moz-border-radius: 6px;
 				border-radius: 6px;
-				height: 45px;
-				width: 90%;
+				height: 65px;
+				margin-bottom: 0px;
+				width: 95%;
 			}
 			h3{
 				&.title{
@@ -7556,9 +7560,9 @@ div.radio{
 			}
 			div{
 				z-index: 9999;
-				b{ 
+				b{
 					background: image-url('triangle-down.svg') no-repeat 0px 17px !important;
-				}				
+				}
 			}
 			span{
 				line-height: 40px;
@@ -7592,7 +7596,7 @@ div.radio{
 			position: absolute;
 			height: 38px;
 			width: 92% !important;
-		}	
+		}
 	}/*
 	.chzn-drop{
 		border-top: 1px solid $brand !important;
