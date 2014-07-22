@@ -6,44 +6,6 @@
 
 - results.each do |result|
   = f.simple_fields_for :results, result do |rf|
-    .large-inputs
+    .large-inputs class="#{result.form_field.css_class}"
       = rf.input :value, result.form_field.field_options(result)
-      = rf.input :form_field_id, as: :hidden, wrapper: false
-
-/ = f.simple_fields_for :results, results do |ff|
-/   - field = ff.object.form_field
-/   - if field.kpi_id.nil? || @rendered_modules[field.kpi.module].nil? || current_module == field.kpi.module
-/     - field_module = field.kpi_id.nil? ? ((field.is_section? || field.section_id.present?)  ? "section" : (field.field_type == 'comments' ? 'comments' : 'custom')) : field.kpi.module
-/     div class="box_#{field_module}" id="event-#{field_module}"
-/       - if field.kpi_id.present? and field.kpi.module != '' and field.kpi.module != 'custom' and @rendered_modules[field.kpi.module].nil?
-/         - @rendered_modules[field.kpi.module] = true
-/         - unless ['surveys', 'consumer_reach'].include? field.kpi.module
-/           h3=t "form_builder.modules.#{field.kpi.module}"
-/         = render partial: 'event_data', locals: {fields: results.select{|r| r.form_field.kpi_id.present? && r.form_field.kpi.module ==  field.kpi.module}.map(&:form_field), current_module: field.kpi.module, f: f}
-/       - elsif field.is_section?
-/         h3.section-title= field.name
-/         - if field.description
-/           p.section-description= field.options[:description]
-/       - elsif field.is_segmented? and ff.object.kpis_segment_id.nil?
-/         .control-group.segment-label
-/           label.field-label
-/             = field.name
-/           = text_field_tag "total-field-#{field.id}", '', class: 'segment-total'+ (field.is_required? ? '' : ' optional')
-/           - if field.field_type == 'percentage'
-/             span.help-inline.error.segment-error-label for="total-field-#{field.id}" id="progress-error-#{field.id}"
-/             .percentage-progress-bar id="progress-bar-field-#{field.id}"
-/               .progress.progress-info
-/                 .bar
-/               .counter
-/         = render partial: 'event_data', locals: {results: resource.segments_results_for(field), current_module: field.kpi.module, f: f}
-/       - elsif field.kpi_id.nil? || (current_module == field.kpi.module) || ('custom' == field.kpi.module)
-/         = ff.hidden_field :form_field_id
-/         = ff.hidden_field :kpi_id
-/         = ff.hidden_field :kpis_segment_id
-/         - if ff.object.kpis_segment_id.nil? && field.kpi_id
-/           .row-fluid.kpi-field
-/             .span8.kpi-field
-/               = ff.input :value, field.field_options(ff.object)
-/         - else
-/           = ff.input :value, field.field_options(ff.object)
-
+      = rf.input_field :form_field_id, as: :hidden

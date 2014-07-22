@@ -487,10 +487,13 @@ FormField = Class.extend {
 		@attributes.statements
 
 	render: () ->
-		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
-			.data('field', @)
-			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
-					@_renderField()
+		className = @attributes.type.replace(/(.)([A-Z](?=[a-z]))/,'$1_$2').replace('::','_').toLowerCase()
+		@field ||= $('<div class="field '+className+'">').data('field', @).append(
+			$('<div class="control-group" data-type="' + @__proto__.type + '">').append(
+				(if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
+				@_renderField()
+			)
+		)
 
 	remove: () ->
 		if @attributes.id # If this file already exists on the database
@@ -760,6 +763,7 @@ DropdownField = FormField.extend {
 		[
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append($('<select disabled="disabled">').append(
+				$('<option>').attr('value', '').text(''),
 				$.map @attributes.options, (option, index) =>
 					if option._destroy is '1'
 						''
@@ -848,13 +852,20 @@ PercentageField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label control-group-label">').text(@attributes.name),
+			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
+				$('<div class="percentage-progress-bar text-info">
+					<div class="progress progress-info">
+					<div class="bar" style="width: 0%;"></div>
+					</div>
+					<div class="counter">0%</div>
+				</div>'),
 				$.map @attributes.options, (option, index) =>
 					if option._destroy isnt '1'
-						$('<label>').addClass('percentage').append(
+						$('<div class="control-group">').append(
 							$('<div class="input-append"><input type="number" readonly="readonly"><span class="add-on">%</span>')
-						).append(' '+ option.name)
+							$('<label>').addClass('segment-label').text(' '+ option.name)
+						)
 			)
 		]
 
@@ -1191,7 +1202,7 @@ DateField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="text" class="date_picker" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="date_picker" value="dd/mm/yyyy" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -1222,7 +1233,7 @@ TimeField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="text" class="time_picker" value="hh:mm" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="time_picker" value="hh:mm pm" readonly="readonly">'))
 		]
 
 	attributesForm: () ->

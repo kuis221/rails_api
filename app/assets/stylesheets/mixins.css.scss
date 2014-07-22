@@ -15,7 +15,6 @@
 }
 
 // Border-sizing
-
 @mixin box-sizing($value){
 	box-sizing: $value;
 	-moz-box-sizing: $value;
