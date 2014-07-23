@@ -6,6 +6,7 @@ class PercentageInput < SimpleForm::Inputs::Base
       <div class="control-group">
         <input class="segment-total optional" id="total-field-'+field_id+'" name="total-field-'+field_id+'" type="text" value="">
         <span class="help-inline error segment-error-label" for="total-field-'+field_id+'" id="progress-error-'+field_id+'"></span>
+        <div class="clearfix"></div>
         <div class="percentage-progress-bar text-success" id="progress-bar-field-'+field_id+'">
           <div class="progress progress-success">
             <div class="bar"></div>
