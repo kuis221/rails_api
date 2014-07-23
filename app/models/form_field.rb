@@ -46,7 +46,7 @@ class FormField < ActiveRecord::Base
   end
 
   def field_classes
-    ['input-xlarge']
+    ['input-xlarge'] + (is_numeric? ? ['number'] : [])
   end
 
   def store_value(value)

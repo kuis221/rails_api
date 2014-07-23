@@ -19,4 +19,8 @@ class FormField::Currency < FormField
   def field_options(result)
     {as: :currency, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
   end
+
+  def is_numeric?
+    true
+  end
 end

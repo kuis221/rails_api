@@ -29,12 +29,12 @@ javascript:
       $('form#edit_event_#{resource.id}').submit();
     })
     $('.segment-field').keyup(function(e){
-      total = 0;
-      segmentFieldId = $(this).data('segment-field-id')
+      var total = 0;
+      segmentFieldId = $(this).data('segment-field-id');
 
       $.map($('[data-segment-field-id="' + segmentFieldId + '"].segment-field'), function(element, index){
         if ( $(element).val().match(/^[0-9]+$/) ){
-          total += parseInt($(element).val())
+          total += parseInt($(element).val(), 10);
         }
       });
 
@@ -50,9 +50,22 @@ javascript:
 
 
       $("#total-field-" + segmentFieldId).val(total ? total : '')
-      if (e.keyCode) {
-        $("#total-field-" + segmentFieldId).valid()
-      }
-    })
+      $("#total-field-" + segmentFieldId).valid()
+      return true;
+    });
     $('.segment-field').keyup();
+
+    $('.form_field_summation').each(function(index, wrapper){
+      var
+        $wrapper = $(wrapper),
+        $options = $wrapper.find('.field-option:not(.summation-total-field) input'),
+        $total   = $wrapper.find('.summation-total-field input');
+      $options.keyup(function(){
+        var total = $.map($options, function(input){
+          return parseFloat($(input).val(), 10) || 0;
+        }).reduce(function(a, b){ return a + b; }, 0);
+        $total.val(total);
+      });
+      return true;
+    });
   });

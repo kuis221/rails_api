@@ -19,6 +19,8 @@ class PercentageInput < SimpleForm::Inputs::Base
         field_name = "#{object_name}[#{attribute_name}][#{ffo[1]}]"
         field_id = field_name.gsub(/[\[\]]+\z/,'').gsub(/[\[\]]+/,'_')
         output_html << "<div class=\"control-group\">" +
+            "<span for=\"#{field_id}\" class=\"help-inline\" style=\"display:none;\"></span>" +
+            '<div class="clearfix"></div>' +
             "<div class=\"input-append\">#{@builder.text_field(nil, input_html_options.merge(name: field_name, id: field_id, data: {'segment-field-id' => options[:field_id]}, value: values.try(:[], ffo[1].to_s)))}"+
             "<span class=\"add-on\">%</span></div>" +
             "<label for=\"#{field_id}\" class=\"segment-label\">#{ERB::Util.html_escape(ffo[0])}</label></div>"

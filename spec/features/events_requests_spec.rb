@@ -1074,7 +1074,7 @@ feature 'Events section' do
                            FactoryGirl.create(:kpis_segment, text: 'Female') ] )
 
         field = campaign.add_kpi(kpi)
-        field.required = 'false'
+        field.required = true
         field.save
 
         event = FactoryGirl.create(:event,
@@ -1088,15 +1088,15 @@ feature 'Events section' do
         expect(find_field('Male')).to have_error('This field is required.')
         expect(find_field('Female')).to have_error('This field is required.')
 
-        fill_in('Male', with: 35)
-        fill_in('Female', with: 30)
+        fill_in 'Male', with: 35
+        fill_in 'Female', with: 30
         expect(page).to have_content("Field should sum 100%")
 
         within "#event-results-form" do
           expect(page).to have_content('65%')
         end
 
-        fill_in('Female', with: 65)
+        fill_in 'Female', with: 65
 
         click_js_button "Save"
 

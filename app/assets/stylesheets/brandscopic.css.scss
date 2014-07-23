@@ -3387,12 +3387,18 @@ textarea::-webkit-input-placeholder {
 			}
 		}
 	}
+	.form-actions {
+		margin-top: 20px;
+		input {
+			width: auto;
+		}
+	}
 	.control-group{
 		.segment-total{
 			display: none;
 		}
-		&.error{
-			.input-append{
+		&.error {
+			.input-append, .input-prepend {
 				input[type="text"]{
 					border-color: $alert_red !important;
 				}
@@ -3429,9 +3435,16 @@ textarea::-webkit-input-placeholder {
 	}
 	.form_field_percentage,
 	.form_field_summation {
+		.help-inline {
+			float: left;
+			padding-left: 0;
+			color: $alert_red;
+			font-size: 11px;
+		}
 		.help-inline.valid {
 			display: none !important;
 		}
+
 		.segment-label {
 			margin-bottom: 0;
 			display: inline-block;
@@ -3448,6 +3461,9 @@ textarea::-webkit-input-placeholder {
 			}
 			input {
 				text-align: left;
+			}
+			&.error input {
+				border-color: #B94A49;
 			}
 		}
 		.summation-total-field {

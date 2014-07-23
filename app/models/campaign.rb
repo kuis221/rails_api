@@ -41,7 +41,7 @@ class Campaign < ActiveRecord::Base
   validates :end_date, presence: true, if: :start_date
   validates :start_date, presence: true, if: :end_date
 
-  validates :enabled_modules, enum: { presence: false, inclusion: { in: %w{ surveys photos expenses comments } } }
+  validates :enabled_modules, enum: { presence: false, inclusion: { in: %w{ surveys photos expenses comments videos} } }
 
   validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
   validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
