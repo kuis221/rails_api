@@ -120,7 +120,12 @@ class Kpi < ActiveRecord::Base
   end
 
   def form_field_options
-    {name: name, type: form_field_type.split('::')[1], kpi_id: self.id}
+    {
+      name: name,
+      type: form_field_type.split('::')[1],
+      kpi_id: self.id,
+      options: (kpi_type == 'count' ? kpis_segments.pluck(:text).each_with_index.map{|text, i| {id: i, name: text, ordering: i} } : [])
+    }
   end
 
   class << self
