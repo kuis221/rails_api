@@ -7,7 +7,6 @@ $.widget 'nmk.activityForm', {
 			if $(e.target).val()
 				$.get "#{@options.formUrl}?activity[activity_type_id]=#{$(e.target).val()}", (result) =>
 					@element.html('').append $(result).find('.activity-form')
-					@_initializeFormElements()
 					return
 
 			return
@@ -64,11 +63,6 @@ $.widget 'nmk.activityForm', {
 		@element.parents('.modal').on 'hide', (e) =>
 			@element.find('.attached_asset_upload_form').each (index, form) ->
 				$(form).data("jqXHR").abort() if $(form).data("jqXHR")
-
-		@_initializeFormElements()
-
-	_initializeFormElements: () ->
-		@element.find("select.form-field-marque").select2()
 
 }
 

@@ -68,7 +68,7 @@ jQuery ->
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
 		$('input.timepicker').timepicker()
-		$('.chosen-enabled').chosen()
+		$('select.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()

@@ -8,7 +8,7 @@ $.widget 'nmk.formBuilder', {
 
 		@wrapper = @element.find('.form-wrapper')
 		if @options.canEdit
-			@wrapper.append $('<div class="form-actions" data-spy="affix" data-offset-top="340">')
+			@wrapper.append $('<div class="form-builder-actions" data-spy="affix" data-offset-top="340">')
 							 .append('<button id="save-report" class="btn btn-primary">Save</button>')
 							 .append('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
 
@@ -21,16 +21,19 @@ $.widget 'nmk.formBuilder', {
 			@formWrapper = $('<div class="form-fields clearfix form-section">')
 		)
 
-		@wrapper.find('form-actions').affix 
-			offset: () => @formWrapper.offset().top - ($('#resource-close-details').offset().top + $('#resource-close-details').outherHeight())
+		@wrapper.find('.form-builder-actions').affix 
+			offset: {
+				top: () => 
+					@formWrapper.offset().top - (parseInt($('#resource-close-details').css('top'),10) + $('#resource-close-details').outerHeight())
+			}
 
 		$(window).on 'resize scroll', () =>
-			@wrapper.find('.form-actions:not(.affix)').each (index, bar) =>
+			@wrapper.find('.form-builder-actions:not(.affix)').each (index, bar) =>
 				$(bar).css 
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: '0'
 
-			@wrapper.find('.form-actions.affix').each (index, bar) =>
+			@wrapper.find('.form-builder-actions.affix').each (index, bar) =>
 				$(bar).css 
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
@@ -488,8 +491,8 @@ FormField = Class.extend {
 
 	render: () ->
 		className = @attributes.type.replace(/(.)([A-Z](?=[a-z]))/,'$1_$2').replace('::','_').toLowerCase()
-		@field ||= $('<div class="field '+className+'">').data('field', @).append(
-			$('<div class="control-group" data-type="' + @__proto__.type + '">').append(
+		@field ||= $('<div class="field '+className+'" data-type="' + @__proto__.type + '">').data('field', @).append(
+			$('<div class="control-group">').append(
 				(if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
 				@_renderField()
 			)
@@ -861,10 +864,11 @@ PercentageField = FormField.extend {
 					<div class="counter">0%</div>
 				</div>'),
 				$.map @attributes.options, (option, index) =>
+					id = "form_field_option_#{Math.floor(Math.random() * 100) + 1}_#{index}"
 					if option._destroy isnt '1'
 						$('<div class="control-group">').append(
-							$('<div class="input-append"><input type="number" readonly="readonly"><span class="add-on">%</span>')
-							$('<label>').addClass('segment-label').text(' '+ option.name)
+							$('<div class="input-append"><input type="number" id="'+id+'" readonly="readonly"><span class="add-on">%</span>')
+							$('<label for="'+id+'">').addClass('segment-label').text(' '+ option.name)
 						)
 			)
 		]

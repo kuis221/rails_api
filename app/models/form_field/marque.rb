@@ -46,7 +46,7 @@ class FormField::Marque < FormField::Dropdown
       required: self.required,
       input_html: {
         value: result.value,
-        class: 'form-field-marque chosen-enabled',
+        class: field_classes.push('chosen-enabled form-field-marque'),
         multiple: self.multiple?,
         required: (self.required? ? 'required' : nil)
         }
