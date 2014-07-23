@@ -38,7 +38,8 @@ $.widget 'nmk.formBuilder', {
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
 
-
+		$(window).resize()
+		
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
 		@fieldsWrapper.find('.field[data-title]').tooltip
