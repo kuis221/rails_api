@@ -251,6 +251,10 @@ class Ability
         can?(:edit, Campaign) && user.role.has_permission?(:create_custom_kpis, Campaign)
       end
 
+      can [:select_kpis], Campaign do |campaign|
+        can?(:create_custom_kpis, campaign) || can?(:activate_kpis, campaign)
+      end
+
       # Allow users to update kpis if have permissions to edit custom kpis or edit goals for the kpis,
       # the controller will decide what permissions can be modified based on those permissions
       can [:edit, :update], Kpi do |kpi|
