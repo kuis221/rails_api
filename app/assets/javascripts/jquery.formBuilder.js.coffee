@@ -898,10 +898,11 @@ PhotoField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label control-group-label">').text(@attributes.name),
+			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
-					$('<div class="drag-box icon-drag">').append(
+					$('<div class="drag-box">').append(
+						$('<i class="icon-drag">'),
 						$('<h4>').text('DRAG & DROP'),
 						$('<p>').append('your image or ', $('<a href="#" class="file-browse">browse</a>'))
 					)
@@ -940,10 +941,11 @@ AttachmentField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
-					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for a file located on your computer'),
-					$('<p class="divider">').text('OR'),
-					$('<p>').text('Drag and drop file here to upload'),
-					$('<p class="small">').text('Maximum upload file size: 10MB')
+					$('<div class="drag-box">').append(
+						$('<i class="icon-drag">'),
+						$('<h4>').text('DRAG & DROP'),
+						$('<p>').append('your file or ', $('<a href="#" class="file-browse">browse</a>'))
+					)
 				)
 			)
 		]
@@ -1050,12 +1052,12 @@ LikertScaleField = FormField.extend {
 			$('<div class="controls">').append(
 				$('<table class="table likert-scale-table">').append(
 					$('<thead>').append(
-						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').text(option.name)))
+						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').append($('<label>').text(option.name))))
 					)
 				).append(
 					$('<tbody>').append(
 						$.map @attributes.statements, (statement, index) =>
-							$('<tr>').append($('<td>').text(statement.name)).append(
+							$('<tr>').append($('<td>').append($('<label>').text(statement.name))).append(
 								$.map @attributes.options, (option, index) =>
 									$('<td>').append($('<input type="radio">'))
 							)

@@ -52,7 +52,7 @@ input[type="color"],
 	font-size: 13px;
 	font-weight: normal;
 	-webkit-box-shadow: none;
-	height:42px;
+	height:39px;
 	padding: 10px;
 	width: 380px;
 	&:focus{
@@ -215,33 +215,6 @@ label{
 }
 
 .control-group{
-	&.percentage{
-		width:390px;
-		input[type="text"]{
-			-webkit-border-radius: 4px 0px 0px 4px;
-			border-radius: 4px 0px 0px 4px;
-			width: 172px !important;
-		}
-		span.add-on{
-			background-color: $user_menu;
-			border:0 !important;
-			border-radius: 0px 4px 4px 0px;
-			color: white;
-			display: inline-block;
-			-webkit-border-radius: 0px 4px 4px 0px;
-			padding: 10px 5px 11px 4px;
-			text-align: center;
-			text-shadow:none !important;
-			width: 40px;
-		}
-		label.control-label{
-			display: inline-block;
-			font-size: 13px;
-			margin-top: 12px;
-			margin-right: 5px;
-			width: 150px;
-		}
-	}
 	label.control-label{
 		color:$text;
 	}
@@ -3400,6 +3373,20 @@ textarea::-webkit-input-placeholder {
 /*-- DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA) --*/
 
 .data-form-wrapper {
+	.help-inline {
+		margin-bottom: 0;
+		padding-left: 5px;
+		&.segment-title-label, &.segment-error-label {
+			padding-left: 0;
+			display:block;
+			&:after {
+				display: table;
+				content: "";
+				line-height: 0;
+				clear: both;
+			}
+		}
+	}
 	.control-group{
 		.segment-total{
 			display: none;
@@ -3415,6 +3402,14 @@ textarea::-webkit-input-placeholder {
 				}
 			}
 		}
+		label.control-label {
+			color: $brand;
+			display: inline-block;
+			&.field-label{
+				color: $text;
+			}
+		}
+
 		label.control-group-label{
 			font-weight: bold;
 			margin-bottom: 10px;
@@ -3425,13 +3420,11 @@ textarea::-webkit-input-placeholder {
 		}
 		label.radio {
 			padding: 0;
-			color: $text;
 		}
 		label.checkbox {
 			display: block;
 			width: initial;
 			margin-bottom: 10px;
-			color: $text;
 		}
 	}
 	.form_field_percentage,
@@ -3442,7 +3435,24 @@ textarea::-webkit-input-placeholder {
 		.segment-label {
 			margin-bottom: 0;
 			display: inline-block;
-			color: $text;
+		}
+	}
+	.form_field_summation {
+		display: inline-block;
+		.field-option {
+			text-align: right;
+			width: auto;
+			label {
+				text-align: left;
+				color: text;
+			}
+			input {
+				text-align: left;
+			}
+		}
+		.summation-total-field {
+			border-top: 2px solid $grey_four;
+			padding-top: 10px;
 		}
 	}
 	.form_field_summation .field-option label {
@@ -3479,7 +3489,10 @@ textarea::-webkit-input-placeholder {
 		width: auto !important;
 	}
 	input, select, textarea{
-		width: 200px;
+		width: 220px;
+	}
+	textarea{
+		height: 80px;
 	}
 	.input-append, .input-prepend{
 		margin-right: 15px;
@@ -3487,12 +3500,12 @@ textarea::-webkit-input-placeholder {
 	 	.add-on{
 			background-color: $user_menu;
 			color: white;
-			height: 22px;
+			height: 19px;
 			text-shadow: none;
-			width: 30px;
+			width: 34px;
 		}
 		input{
-			width: 180px;
+			width: 175px;
 		}
 	}
 	.checkbox{
@@ -3548,21 +3561,24 @@ textarea::-webkit-input-placeholder {
 /*-- ATTACHMENT PANEL FOR PHOTOS UPLOAD --*/
 
 .attachment-panel{
+	@include box-sizing(border-box);
 	border: 2px dashed $grey_one;
 	border-radius: 4px 4px 4px 4px;
 	color: #C0C0C0;
-	font-size: 14px;
+	font-size: 12px;
 	line-height: 17px;
 	margin-top: 15px;
-	padding: 20px 30px;
+	padding: 30px 30px 20px;
 	text-align: center;
 	height: 150px;
-	width: 240px;
+	width: 237px;
 
 	&.big{
 		width: 100%;
 	}
-
+	a {
+		color: $text;
+	}
 	.drag-box{
 		h4, p{
 			color: $user_menu;
@@ -3570,7 +3586,7 @@ textarea::-webkit-input-placeholder {
 			text-align: left;
 		}
 		p{
-			a.file-browse {
+			span.file-browse {
 				text-decoration: underline;
 				position: relative;
 				color: $text;
@@ -3587,6 +3603,15 @@ textarea::-webkit-input-placeholder {
 					direction: ltr;
 					cursor: pointer;
 				}
+			}
+		}
+		.icon-drag{
+			float: left;
+			height: 50px;
+			margin-right: 10px;
+			&:before {
+				font-size: 30px;
+				margin-top: 5px;
 			}
 		}
 	}
@@ -5530,67 +5555,6 @@ body.campaigns{
 			margin-bottom: 50px;
 		}
 	}
-	&.box_event_data{
-		form {
-			[class^='box_']{
-				margin-top: 70px;
-				[class^='box_']{
-					margin-top: 0;
-				}
-			}
-			[class*='box_custom']{
-				margin-top: 10px;
-			}
-			.form-actions{
-				margin-top: 20px;
-			}
-			.segment-error-label {
-				margin-bottom: 0;
-				display: block;
-			}
-			.help-inline {
-				margin-bottom: 0;
-				padding-left: 5px;
-				&.segment-title-label, &.segment-error-label {
-					padding-left: 0;
-					display:block;
-					&:after {
-						display: table;
-						content: "";
-						line-height: 0;
-						clear: both;
-					}
-				}
-			}
-			.box_section {
-				margin: 20px 0;
-				h3 {
-					margin-bottom: 0;
-				}
-				p {
-					color: $brand;
-				}
-			}
-			label {
-				color: $brand;
-				display: inline-block;
-				&.field-label{
-					color: $text;
-				}
-				&.radio {
-					display: block;
-				}
-				&.percentage {
-					margin-right: 5px;
-				}
-			}
-			.percentage {
-				.help-inline.valid {
-					display: none !important;
-				}
-			}
-		}
-	}
 	#event-documents-list{
 		margin:0 -11% 0 0;
 	}
@@ -5876,21 +5840,6 @@ body.campaigns{
 		font-weight: bold;
 		margin-bottom: 30px;
 	}
-	/*
-	input[type="text"], textarea{
-		background-color: white !important;
-		background-image: none !important;
-		border:1px solid $user_menu !important;
-		box-shadow: none;
-		width: 380px;
-		&:focus{
-			box-shadow: none !important;
-		}
-	}*/
-	textarea{
-		height: 130px;
-	}
-
 	.links-data{
 		margin: 0 0 0 30px;
 	}
@@ -7575,7 +7524,6 @@ div.radio{
 		    border-radius: 6px !important;
 			box-shadow:none;
 			margin-top: 3px !important;
-			width: 100% !important;
 			ul.chzn-results{
 				margin: 0;
 				padding: 0;
@@ -7595,7 +7543,6 @@ div.radio{
 			left:0;
 			position: absolute;
 			height: 38px;
-			width: 92% !important;
 		}
 	}/*
 	.chzn-drop{
