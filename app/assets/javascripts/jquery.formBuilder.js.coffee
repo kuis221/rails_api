@@ -17,9 +17,7 @@ $.widget 'nmk.formBuilder', {
 				html: true
 				title: () ->
 					$(this).data('title')
-		@wrapper.append(
-			@formWrapper = $('<div class="form-fields clearfix form-section">')
-		)
+		@formWrapper = @wrapper.find('.form-fields')
 
 		@wrapper.find('.form-builder-actions').affix 
 			offset: {
@@ -659,8 +657,8 @@ UserDateField = FormField.extend {
 
 	_renderField: () ->
 		'<div class="row-fluid">'+
-			'<div class="span7"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
-			'<div class="span5"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="date" value=""></div></div></div>' +
+			'<div class="span8"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
+			'<div class="span4"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="text" value="mm/dd/yyyy"></div></div></div>' +
 		'</div>'
 
 	attributesForm: () ->

@@ -37,7 +37,7 @@
 			margin-bottom: 10px;
 		}
 		.form-fields {
-			padding-top: 70px;
+			padding-top: 80px;
 			min-height: 500px;
 			padding-bottom: 20px;
 			&.sorting {
@@ -212,6 +212,18 @@
 					}
 				}
 			}
+		}
+		.form_field_userdate {
+			width: 390px;
+		}
+		div.empty-form-legend {
+			display: none;
+			padding: 50px 30px;
+			text-align: center;
+		}
+
+		div.empty-form-legend:first-child:last-child {
+		    display: block;
 		}
 	}
 	.fields-wrapper {

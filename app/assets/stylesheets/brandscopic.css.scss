@@ -7504,7 +7504,7 @@ div.radio{
 /*-- CHZN STYLES --*/
 
 .chzn-container-active{
-	.chzn-choices{
+	.chzn-choices {
 		border:1px solid $user_menu !important;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 	}
@@ -7524,7 +7524,9 @@ div.radio{
 				border: 1px solid $brand !important;
 			}
 			div{
-				z-index: 9999;
+				/* This z-index is not right, commeted out to avoid things like this:
+				   http://screencast.com/t/6ZpiuRYKs2
+				z-index: 9999; */
 				b{
 					background: image-url('triangle-down.svg') no-repeat 0px 17px !important;
 				}
