@@ -329,9 +329,6 @@ $.widget 'nmk.formBuilder', {
 
 			@placeFieldAttributes field
 
-			field.on 'change.attrFrm', () =>
-				@placeFieldAttributes field
-
 			# Store the value of each text field to compare against on the blur event
 			$.each $('input[type=text]'), (index, elm) =>
 				$(elm).data 'saved-value', $(elm).val()
@@ -349,7 +346,6 @@ $.widget 'nmk.formBuilder', {
 	_hideFieldAttributes: (field) ->
 		$(document).off 'click.fbuidler'
 		@formWrapper.find('.selected').removeClass('selected')
-		field.off 'change.attrFrm'
 		@attributesPanel.hide()
 		$('.select2-drop, .select2-drop-mask, .select2-sizer').remove()
 
@@ -501,13 +497,9 @@ FormField = Class.extend {
 
 	render: () ->
 		className = @attributes.type.replace(/(.)([A-Z](?=[a-z]))/,'$1_$2').replace('::','_').toLowerCase()
-		showRemoveButton = (
-			(@form.options.canEdit && !@attributes.kpi_id) ||
-			(@form.options.canActivateKpis && @attributes.kpi_id)
-		)
 		@field ||= $('<div class="field '+className+'" data-type="' + @__proto__.type + '">').data('field', @).append(
 			$('<div class="control-group">').append(
-				(if showRemoveButton then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
+				@_removeButton(),
 				@_renderField()
 			)
 		)
@@ -539,8 +531,10 @@ FormField = Class.extend {
 
 	refresh: () ->
 		@field.html('').append(
-			$('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
-			@_renderField()
+			$('<div class="control-group">').append(
+				@_removeButton(),
+				@_renderField()
+			)
 		)
 		applyFormUiFormatsTo @field
 		@field.trigger 'change'
@@ -550,6 +544,9 @@ FormField = Class.extend {
 		if @attributes.kpi_id?
 			@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
 
+	_removeButton: ->
+		if (@form.options.canEdit && !@attributes.kpi_id) || (@form.options.canActivateKpis && @attributes.kpi_id)
+			$('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on 'click', => @remove()
 
 	_renderField: ->
 		''
