@@ -10,7 +10,7 @@
     #form-field-accordion.accordion
       .accordion-group
         .accordion-heading
-          .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#custom-fields" Fields
+          .accordion-toggle data-toggle="collapse" href="#custom-fields" Fields
 
         #custom-fields.custom.accordion-body.collapse.in
           .field data-type="Dropdown" Dropdown
@@ -35,7 +35,7 @@
       - if can?(:activate_kpis, resource)
         .accordion-group
           .accordion-heading
-            .accordion-toggle.collapsed data-toggle="collapse" data-parent="#form-field-accordion" href="#kpis-fields" KPIs
+            .accordion-toggle.collapsed data-toggle="collapse" href="#kpis-fields" KPIs
 
           #kpis-fields.accordion-body.collapse.searchable-field-list
             div class="search-fields"
@@ -50,7 +50,7 @@
 
       .accordion-group
         .accordion-heading
-          .accordion-toggle.collapsed data-toggle="collapse" data-parent="#form-field-accordion" href="#modules-fields" Modules
+          .accordion-toggle.collapsed data-toggle="collapse" href="#modules-fields" Modules
 
         #modules-fields.accordion-body.collapse
           .field.module data-type="Expenses" Expenses
