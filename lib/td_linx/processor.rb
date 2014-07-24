@@ -44,8 +44,14 @@ module TdLinxSynch
 
       # Search for establishments related to venues in LegacyCompany that doesn't
       # have a code and add it to missing.csv file
-      Place.joins(:venues).where('venues.company_id=2 AND td_linx_code is null').where('types like \'%establishment%\'').find_each do |place|
-        files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode]
+      files[:missing] << ['Venue Name', 'Street', 'City', 'State', 'Zip Code', '# Events']
+      Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
+           .select('places.*, count(events.id) as visits_count')
+           .group('places.id')
+           .where('venues.company_id=2 AND td_linx_code is null')
+           .where('types like \'%establishment%\'')
+           .find_each do |place|
+        files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
       end
 
       files.each{|k, file| file.close() }

@@ -155,12 +155,21 @@ class Ability
         Report.accessible_by_user(user.current_company_user).where(id: report.id).any?
       end
 
+      # Event permissions
+      can :access, Event do |event|
+        user.current_company_user.company_id == event.company_id &&
+        user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) &&
+        user.current_company_user.allowed_to_access_place?(event.place)
+      end
+
       # Event Data
       can :edit_data, Event do |event|
-       (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
-       (event.submitted? && can?(:edit_submitted_data, event)) ||
-       (event.approved? && can?(:edit_approved_data, event)) ||
-       (event.rejected? && can?(:edit_rejected_data, event))
+        can?(:access, event) && (
+          (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
+          (event.submitted? && can?(:edit_submitted_data, event)) ||
+          (event.approved? && can?(:edit_approved_data, event)) ||
+          (event.rejected? && can?(:edit_rejected_data, event))
+        )
       end
 
       can :view_data, Event do |event|
@@ -178,9 +187,8 @@ class Ability
         can?(:view_calendar, Event) && can?(:show, event)
       end
 
-      cannot [:show, :edit], Event do |event|
-        !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
-        !user.current_company_user.allowed_to_access_place?(event.place)
+      cannot :show, Event do |event|
+        cannot?(:access, event)
       end
 
       cannot :activate, Tag do |tag|
