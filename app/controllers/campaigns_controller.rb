@@ -131,6 +131,12 @@ class CampaignsController < FilteredController
       if attrs && attrs[:survey_brand_ids].present? && attrs[:survey_brand_ids].any?
         normalize_brands attrs[:survey_brand_ids]
       end
+
+      # Workaround to deal with jQuery not sending empty arrays
+      if attrs && attrs[:enabled_modules].present? && attrs[:enabled_modules] == ['empty']
+        attrs[:enabled_modules] = []
+      end
+
       attrs
     end
 

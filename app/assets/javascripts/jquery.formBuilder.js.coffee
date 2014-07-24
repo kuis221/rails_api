@@ -59,6 +59,7 @@ $.widget 'nmk.formBuilder', {
 			drop: (event, ui) =>
 				options = {type: ui.draggable.data('type')}
 				@_addModuleToForm options
+				@setModified()
 				true
 
 		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
@@ -252,6 +253,7 @@ $.widget 'nmk.formBuilder', {
 			form_fields_attributes: $.map(@formFields(), (field) => field.getSaveAttributes())
 			enabled_modules: $.map(@formModules(), (field) => field.getSaveAttributes().name)
 		}
+		data.enabled_modules = ['empty'] if data.enabled_modules.length is 0
 		$.map @formModules(), (field) => 
 			attributes = field.getSaveAttributes()
 			if attributes.name is 'surveys'
@@ -501,9 +503,13 @@ FormField = Class.extend {
 
 	render: () ->
 		className = @attributes.type.replace(/(.)([A-Z](?=[a-z]))/,'$1_$2').replace('::','_').toLowerCase()
+		showRemoveButton = (
+			(@form.options.canEdit && !@attributes.kpi_id) ||
+			(@form.options.canActivateKpis && @attributes.kpi_id)
+		)
 		@field ||= $('<div class="field '+className+'" data-type="' + @__proto__.type + '">').data('field', @).append(
 			$('<div class="control-group">').append(
-				(if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
+				(if showRemoveButton then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
 				@_renderField()
 			)
 		)
@@ -524,8 +530,7 @@ FormField = Class.extend {
 					@field.remove()
 					@form.setModified()
 					@form._hideFieldAttributes @field
-					if @attributes.kpi_id?
-						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
+					@_onRemove()
 		false
 
 	_removeConfirmationMessage: (withData) ->
@@ -542,6 +547,11 @@ FormField = Class.extend {
 		applyFormUiFormatsTo @field
 		@field.trigger 'change'
 		@
+
+	_onRemove: ->
+		if @attributes.kpi_id?
+			@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
+
 
 	_renderField: ->
 		''
@@ -1262,7 +1272,7 @@ TimeField = FormField.extend {
 
 Module =  FormField.extend {
 	getSaveAttributes: () ->
-		{field_type: 'module', name: @fieldType(), settings: @attributes.settings }
+		{field_type: 'module', name: @fieldType().toLowerCase(), settings: @attributes.settings }
 
 	fieldType: ->
 		@__proto__.type
@@ -1273,15 +1283,15 @@ Module =  FormField.extend {
 			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
 					@_renderField()
 
+	_onRemove: ->
+		@form.fieldsWrapper.find('.module[data-type='+@fieldType()+']').show()
+
 	_removeConfirmationMessage: (withData) ->
-		if withData
-			"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
-		else
-			"Are you sure you want to remove this module?"
+		"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
 }
 
 SurveysField = Module.extend {
-	type: 'surveys',
+	type: 'Surveys',
 
 	init: (form, attributes) ->
 		@form = form
@@ -1324,7 +1334,7 @@ SurveysField = Module.extend {
 }
 
 CommentsField = Module.extend {
-	type: 'comments',
+	type: 'Comments',
 
 	init: (form, attributes) ->
 		@form = form
@@ -1347,7 +1357,7 @@ CommentsField = Module.extend {
 }
 
 PhotosField = Module.extend {
-	type: 'photos',
+	type: 'Photos',
 
 	init: (form, attributes) ->
 		@form = form
@@ -1370,7 +1380,7 @@ PhotosField = Module.extend {
 }
 
 ExpensesField = Module.extend {
-	type: 'expenses',
+	type: 'Expenses',
 
 	init: (form, attributes) ->
 		@form = form

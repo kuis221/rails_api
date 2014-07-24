@@ -349,6 +349,18 @@
 				}
 			}
 		}
+		.module {
+			&.ui-draggable-dragging {
+				padding: 10px;
+				background-color: #fff;
+				text-align: left;
+				height: auto !important;
+				width: auto !important;
+				a.close {
+					display:none;
+				}
+			}
+		}
 	}
 	.radio {
 		width: auto;

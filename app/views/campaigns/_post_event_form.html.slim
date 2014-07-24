@@ -31,20 +31,21 @@
           .field data-type="Marque" Marque
 
 
-      .accordion-group
-        .accordion-heading
-          .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#kpis-fields" KPIs
+      - if can?(:activate_kpis, resource)
+        .accordion-group
+          .accordion-heading
+            .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#kpis-fields" KPIs
 
-        #kpis-fields.accordion-body.collapse.searchable-field-list
-          div class="search-fields"
-            input.field-search-input name="field_search" placeholder="Search for fields" title="Field Search" type="search"
+          #kpis-fields.accordion-body.collapse.searchable-field-list
+            div class="search-fields"
+              input.field-search-input name="field_search" placeholder="Search for fields" title="Field Search" type="search"
 
-          .searchable-field-list.scrollable-list
-            - grouped_assignable_kpis.each do |group, kpis|
-              .group-name= group
-              .fields-list
-                - kpis.each do |kpi|
-                  .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-kpi-id="#{kpi.id}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
+            .searchable-field-list.scrollable-list
+              - grouped_assignable_kpis.each do |group, kpis|
+                .group-name= group
+                .fields-list
+                  - kpis.each do |kpi|
+                    .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-kpi-id="#{kpi.id}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
 
       .accordion-group
         .accordion-heading
@@ -62,6 +63,7 @@ javascript:
     $('.form-builder-wrapper').formBuilder({
       url: '#{campaign_path(resource, format: :json)}',
       resourceName: 'campaign',
-      canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'}
+      canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'},
+      canActivateKpis: #{can?(:activate_kpis, resource) ? 'true' : 'false'}
     });
   });
