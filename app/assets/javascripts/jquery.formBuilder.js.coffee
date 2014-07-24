@@ -708,7 +708,7 @@ NumberField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="number" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -739,7 +739,7 @@ CurrencyField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<div class="input-prepend"><span class="add-on">$</span><input type="number" readonly="readonly"></div>'))
+			$('<div class="controls">').append($('<div class="input-prepend"><span class="add-on">$</span><input type="text" readonly="readonly"></div>'))
 		]
 
 	attributesForm: () ->
@@ -877,7 +877,7 @@ PercentageField = FormField.extend {
 					id = "form_field_option_#{Math.floor(Math.random() * 100) + 1}_#{index}"
 					if option._destroy isnt '1'
 						$('<div class="control-group">').append(
-							$('<div class="input-append"><input type="number" id="'+id+'" readonly="readonly"><span class="add-on">%</span>')
+							$('<div class="input-append"><input type="text" id="'+id+'" readonly="readonly"><span class="add-on">%</span>')
 							$('<label for="'+id+'">').addClass('segment-label').text(' '+ option.name)
 						)
 			)
@@ -1005,12 +1005,12 @@ SummationField = FormField.extend {
 					if option._destroy isnt '1'
 						$('<div class="field-option">').append(
 							$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' '),
-							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="number" readonly="readonly">')
+							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
 						)
 			).append(
 				$('<div class="field-option summation-total-field">').append(
 					$('<label>').addClass('summation').text('TOTAL: '),
-					$('<input type="number" readonly="readonly">')
+					$('<input type="text" readonly="readonly">')
 				)
 			)
 		]
