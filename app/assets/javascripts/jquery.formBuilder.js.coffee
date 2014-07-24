@@ -280,6 +280,15 @@ $.widget 'nmk.formBuilder', {
 				$('#save-report').text($('#save-report').data('text'))
 		}
 
+	removeKpi: (kpi_id) ->
+		$.each @formFields(), (index, field) =>
+			if field.attributes.kpi_id is kpi_id
+				field.field.remove()
+				@fieldsWrapper.find("[data-kpi-id=#{kpi_id}]").show()
+
+	addKpi: (options) ->
+		@_addFieldToForm options
+
 	setModified: () ->
 		@modified = true
 		@_updateSaveButtonState()

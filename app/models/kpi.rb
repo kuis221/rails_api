@@ -62,7 +62,7 @@ class Kpi < ActiveRecord::Base
   scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
   scope :campaign_assignable, ->(campaign) {
     global_and_custom(campaign.company).
-    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours]).
+    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours].compact + [0]).
     reorder('name ASC')
   }
 

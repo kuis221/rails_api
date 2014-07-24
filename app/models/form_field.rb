@@ -35,6 +35,9 @@ class FormField < ActiveRecord::Base
     format: { with: /\AFormField::/ }
   validates :ordering, presence: true, numericality: true
 
+  validates :kpi_id,
+    uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
+
   scope :for_events_in_company, ->(companies) { joins(
       'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
       form_fields.fieldable_type=\'Campaign\''

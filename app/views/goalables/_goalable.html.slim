@@ -22,7 +22,7 @@
             span.value= goal.try(:value)
         span.pull-right
           = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'edit', title: 'Edit'
-          = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'disable', title: 'Remove', confirm: 'Please confirm you want to remove this KPI?' unless [Kpi.events.id, Kpi.promo_hours.id].include? goalable.id
+          = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'disable', title: 'Remove', confirm: 'Please confirm you want to remove this KPI?' unless [Kpi.events, Kpi.promo_hours].include? goalable
         .clearfix
   - else
     li id="campaign-activity-type-#{goalable.id}"

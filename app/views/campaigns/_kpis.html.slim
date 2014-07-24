@@ -4,4 +4,4 @@
 
 .link-list
   ul#global-kpis.kpis-list
-    = render partial: 'goalables/goalable', collection: resource.active_global_kpis + (resource.custom_kpis + resource.activity_types).sort_by(&:name)
+    = render partial: 'goalables/goalable', collection: (resource.active_global_kpis + resource.custom_kpis + resource.activity_types).compact.sort_by(&:name)

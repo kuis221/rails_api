@@ -956,42 +956,89 @@ end
 feature "Campaign Form Builder", js: true do
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
-  before do
-    Warden.test_mode!
-    @company = user.companies.first
-    sign_in user
-  end
+  let(:company){  user.companies.first }
 
-  after do
-    Warden.test_reset!
-  end
+  before{ sign_in user }
 
   it_behaves_like "a fieldable element" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end
 
   it_behaves_like "a fieldable element that accept kpis" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
+  end
+
+  context "form builder and KPI list integration" do
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+
+    scenario "adding a KPI from the list" do
+      kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', company_id: company.id)
+      visit campaign_path(campaign)
+
+      # The kpi is in the list of KPIs in the sidebar
+      within('.fields-wrapper') do
+        expect(page).to have_content('My Custom KPI')
+      end
+
+      open_tab 'KPIs'
+      click_js_link 'Add KPI'
+      within visible_modal do
+        fill_in 'Search', with: 'custom'
+        expect(page).to have_content 'My Custom KPI'
+        click_js_link 'Add KPI'
+        expect(page).to have_no_content 'My Custom KPI'
+      end
+      close_modal
+
+      # Test the field is in the form builder and the KPI
+      # was removed from KPIs list in the sidebar
+      open_tab 'Post Event form'
+      expect(form_builder).to have_form_field 'My Custom KPI'
+
+      within('.fields-wrapper') do
+        expect(page).to have_no_content('My Custom KPI')
+      end
+
+      # reload page and test the field is still there...
+      visit campaign_path(campaign)
+      expect(form_builder).to have_form_field 'My Custom KPI'
+
+      # Now test the removal of the KPI from the list
+      open_tab 'KPIs'
+
+      within '.kpis-list' do
+        expect(page).to have_content 'My Custom KPI'
+        click_js_link 'Remove'
+      end
+
+      confirm_prompt 'Please confirm you want to remove this KPI?'
+      within '.kpis-list' do
+        expect(page).to have_no_content 'My Custom KPI'
+      end
+
+      open_tab 'Post Event form'
+
+      expect(form_builder).to_not have_form_field 'My Custom KPI'
+
+      # The KPI should be again available in the KPIs list
+      within('.fields-wrapper') do
+        expect(page).to have_content('My Custom KPI')
+      end
+    end
   end
 end
 
 feature "Activity Types", js: true do
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
-  before do
-    Warden.test_mode!
-    @company = user.companies.first
-    sign_in user
-  end
+  let(:company){ user.companies.first }
 
-  after do
-    Warden.test_reset!
-  end
+  before{ sign_in user }
 
   it_behaves_like "a fieldable element" do
-    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: @company) }
+    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: company) }
     let(:fieldable_path) { activity_type_path(fieldable) }
   end
 end
