@@ -899,6 +899,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -962,6 +963,7 @@ RSpec.shared_examples "a fieldable element that accept modules" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     find('.fields-wrapper .accordion-toggle', text: 'Modules').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -997,6 +999,8 @@ RSpec.shared_examples "a fieldable element that accept modules" do
 
     # open the Modules fields list
     find('.fields-wrapper .accordion-toggle', text: 'Modules').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
       expect(page).to have_no_content('Dropdown')
