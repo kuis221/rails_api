@@ -52,7 +52,7 @@ class CompanyUser < ActiveRecord::Base
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy
-  has_many :places, through: :placeables
+  has_many :places, through: :placeables, after_add: :places_changed
 
   delegate :name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
@@ -251,5 +251,12 @@ class CompanyUser < ActiveRecord::Base
     def campaigns_changed(campaign)
       @accessible_campaign_ids = nil
       Rails.cache.delete("user_accessible_campaigns_#{self.id}")
+    end
+
+    def places_changed(campaign)
+      # The cache is cleared in the placeable model
+      @accessible_places = nil
+      @accessible_locations = nil
+      @allowed_places_cache = nil
     end
 end
