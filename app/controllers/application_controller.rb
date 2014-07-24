@@ -72,7 +72,8 @@ class ApplicationController < ActionController::Base
       I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
     end
 
-    def access_denied
+    def access_denied(exception)
+      @exception = exception
       respond_to do |format|
         format.json { render text: 'Permission denied', status: 403 }
         format.js { render 'access_denied' }
