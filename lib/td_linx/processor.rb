@@ -66,7 +66,7 @@ module TdLinxSynch
       files = {}
       paths
     ensure
-      files.each{|k, file| file.close() }
+      files.each{|k, file| file.close rescue true }
     end
 
     def self.find_place_for_row(row)
