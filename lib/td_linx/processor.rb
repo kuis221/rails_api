@@ -1,4 +1,4 @@
-
+require 'net/ftp'
 require 'zip'
 
 module TdLinxSynch
