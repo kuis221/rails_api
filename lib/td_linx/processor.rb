@@ -85,7 +85,7 @@ module TdLinxSynch
 
       def self.download_file(path)
         ftp = Net::FTP.new(ENV['TDLINX_FTP_SERVER'])
-        tp.passive = true
+        ftp.passive = true
         ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
         file = ftp.list('Legacy_TDLINX_Store_Master*').map{|l| l.split(/\s+/, 4) }.sort{ |a, b| b[0] <=> a[0]}.first
         if file.present?
