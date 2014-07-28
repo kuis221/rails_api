@@ -114,6 +114,14 @@
 		}
 		.profile-data{
 			margin: 20px 0 0 20px;
+			h2 a{
+				margin-left: 10px;
+				&:after{
+					font-size: 16px;
+					color: $brand;
+					top: 0;
+				}
+			}
 		}
 	}
 	.team-assigned{
@@ -139,17 +147,52 @@
 		}
 	}
 	.user-data{
+		a{
+			color: $text;
+			margin-top: 0;
+			&:hover{
+				border-bottom: 1px solid $text;
+			}
+		}
 		.items-container{
 			.box{
 				display: inline-block;
+				height: 35px;
 				margin-bottom: 15px;
+				padding-left: 45px;
 				width: 45%;
-				&.special-icon:before{
-					float: left;
+				&.special-icon{
+					&:after{
+						top: 10px;
+					}
+					&:before{
+						left: 0;
+						position: absolute;
+						top: 4px;
+					}
+					&.venue-icon{
+						margin-bottom: 25px;
+						p{
+							color: $brand;
+						}
+					}
 				}
 				b{
-					margin: 5px 0 0 15px;
 					display: inline-block;
+					margin-top: 8px;
+				}
+			}
+			&+ a{
+				color: $brand;
+				margin-left: 28px;
+				position: relative;
+				&:before{
+					color: $brand;
+					content: "\e021";
+					font-size: 20px;
+					left: -24px;
+					position: absolute;
+					top: 2px;
 				}
 			}
 		}
