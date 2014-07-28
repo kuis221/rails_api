@@ -289,8 +289,9 @@ a{
 	overflow-x:hidden;
 	width: 100%;
 	.link-list{
-		&+h3{
-			margin-left: 25px !important;
+		&+h4{
+			font-size: 16px;
+	 		margin: 45px 0 25px 25px;
 		}
 	}
 }
