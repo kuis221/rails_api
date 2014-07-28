@@ -13,7 +13,7 @@
 
 	.form-wrapper {
 		position: relative;
-		.form-actions {
+		.form-builder-actions {
 			position: absolute;
 			top: 0;
 			border-top-right-radius: 5px;
@@ -26,6 +26,7 @@
 			}
 			.tooltip {
 				font-size: 13px;
+				width: 200px;
 			}
 		}
 		.form-section {
@@ -36,8 +37,8 @@
 			margin-bottom: 10px;
 		}
 		.form-fields {
-			padding-top: 70px;
-			min-height: 300px;
+			padding-top: 80px;
+			min-height: 550px;
 			padding-bottom: 20px;
 			&.sorting {
 				padding-bottom: 30px;
@@ -56,15 +57,6 @@
 			display: inline-block;
 			height: auto;
 			width: auto;
-			label.control-label{
-				margin-bottom: 5px;
-				margin-right: 10px;
-				min-width: 240px;
-				width: auto;
-				color: $brand;
-				font-size: 11px;
-				min-width: 100%;
-			}
 			label.radio .radio{
 				margin-right: 10px;
 			}
@@ -97,12 +89,6 @@
 				.attachment-panel{
 					background-color: white;
 				}
-			}
-			h3{
-				color: $brand;
-				font-size: 21px;
-				font-weight: bold;
-				line-height: 10px;
 			}
 			&.ui-sortable-placeholder {
 				height: 2px !important;
@@ -225,6 +211,18 @@
 				}
 			}
 		}
+		.form_field_userdate {
+			width: 390px;
+		}
+		div.empty-form-legend {
+			display: none;
+			padding: 50px 30px;
+			text-align: center;
+		}
+
+		div.empty-form-legend:first-child:last-child {
+		    display: block;
+		}
 	}
 	.fields-wrapper {
 		background-color: #fff;
@@ -259,6 +257,9 @@
 				padding: 3px;
 			}
 		}
+		.search-fields {
+			margin-top: 5px;
+		}
 
 		.scrollable-list {
 			max-height: 400px;
@@ -267,6 +268,8 @@
 		}
 		.group-name {
 			margin-left: 10px;
+			margin-bottom: 10px;
+			text-transform:uppercase;
 		}
 
 		.custom {
@@ -314,11 +317,18 @@
 				width: initial;
 				text-align: left;
 				height: 25px;
+				font-size: 12px;
 				overflow: hidden;
-				width: 160px;
+				width: 180px;
 				border: 0;
+				color: $text;
+				font-weight: normal;
+				padding: 0 10px;
 				&:before {
 					display: none;
+				}
+				&:hover {
+					background-color:$btnHover;
 				}
 			}
 			&.module {
@@ -330,7 +340,6 @@
 				padding-top: 8px;
 				height: 30px;
 			}
-
 
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
@@ -358,6 +367,18 @@
 				}
 				input.time_picker {
 					background: image-url('time.svg') no-repeat 3px 8px;
+				}
+			}
+		}
+		.module {
+			&.ui-draggable-dragging {
+				padding: 10px;
+				background-color: #fff;
+				text-align: left;
+				height: auto !important;
+				width: auto !important;
+				a.close {
+					display:none;
 				}
 			}
 		}
@@ -438,6 +459,7 @@
 
 	textarea{
 		padding-top: 10px;
+		height: 80px;
 	}
 
 	label{

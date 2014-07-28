@@ -1,3 +1,20 @@
+//
+// Mixins
+// --------------------------------------------------
+
+// CSS3 PROPERTIES
+// --------------------------------------------------
+
+// Border-radius
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+// Border-sizing
 @mixin box-sizing($value){
 	box-sizing: $value;
 	-moz-box-sizing: $value;

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140717214845) do
+ActiveRecord::Schema.define(:version => 20140722012255) do
 
   add_extension "hstore"
   add_extension "pg_stat_statements"
@@ -216,8 +216,8 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
     t.integer  "company_id"
     t.integer  "first_event_id"
     t.integer  "last_event_id"
@@ -225,7 +225,8 @@ ActiveRecord::Schema.define(:version => 20140717214845) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
-    t.string   "enabled_modules", :default => [],                 :array => true
+    t.string   "enabled_modules",  :default => [],                 :array => true
+    t.integer  "survey_brand_ids", :default => [],                 :array => true
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"

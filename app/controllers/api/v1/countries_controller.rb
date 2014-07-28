@@ -1,5 +1,6 @@
 class Api::V1::CountriesController < Api::V1::ApiController
   skip_authorization_check only: [:index, :states]
+  skip_authorize_resource only: [:index, :states]
 
   resource_description do
     short 'Countries'

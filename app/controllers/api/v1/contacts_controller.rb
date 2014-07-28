@@ -68,7 +68,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
             "street_address": "1st Young st., 4th floor, Aptm, #3",
             "city": "Toronto",
             "state": "ON",
-            "country": "Canada",
+            "country": "CA",
+            "country_name": "Canada",
             "zip_code": "12345"
         }
     ]
@@ -95,7 +96,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
       "street_address": "1st Young st., 2nd floor, #34"",
       "city": "Toronto",
       "state": "ON",
-      "country": "Canada",
+      "country": "CA",
+      "country_name": "Canada",
       "zip_code": "12345"
   }
   EOS
@@ -198,7 +200,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
         "street_address": "1st Young st., 2nd floor, #34"",
         "city": "Toronto",
         "state": "ON",
-        "country": "Canada",
+        "country": "CA",
+        "country_name": "Canada",
         "zip_code": "12345"
     }
   EOS

@@ -144,7 +144,7 @@ describe Api::V1::EventsController do
       result.value = 321
       event.save
 
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: {"0" => {id: result.id.to_s, value: '987'}}}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {results_attributes: [{id: result.id.to_s, value: '987'}]}, format: :json
       result.reload
       result.value.should == '987'
     end
@@ -223,7 +223,7 @@ describe Api::V1::EventsController do
           'id' => result.id,
           'name' => '# of cats',
           'type' => 'FormField::Number',
-          'value' => '321'
+          'value' => 321
         )
       expect(groups.first['fields'].first.keys).to_not include('segments')
     end
@@ -246,7 +246,7 @@ describe Api::V1::EventsController do
           'id' => result.id,
           'name' => 'Are you tall?',
           'type' => 'FormField::Dropdown',
-          'value' => segments.first.id.to_s,
+          'value' => segments.first.id,
           'description' => 'some description to show',
           'segments' => [
               {'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil},
@@ -263,7 +263,7 @@ describe Api::V1::EventsController do
           ]
       )
       campaign.add_kpi kpi
-      results = event.result_for_kpi(kpi)
+      result = event.result_for_kpi(kpi)
       event.save
 
       get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
@@ -271,13 +271,14 @@ describe Api::V1::EventsController do
       expect(groups.first["fields"].first).to include(
           'name' => 'Age',
           'type' => 'FormField::Percentage',
+          'id' => result.id,
+          'type' => 'FormField::Percentage',
           'segments' => [
               {'id' => seg1.id, 'text' => 'Uno', 'value' => nil, 'goal' => nil},
               {'id' => seg2.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil}
           ]
         )
 
-      expect(groups.first['fields'].first.keys).to_not include('id', 'value')
     end
   end
 
@@ -391,8 +392,8 @@ describe Api::V1::EventsController do
       result = JSON.parse(response.body)
 
       result.should =~ [
-        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"},
-        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"United States","type"=>"contact"}
+        {"id"=>contacts.first.id, "first_name"=>"Luis", "last_name"=>"Perez", "full_name"=>"Luis Perez", "title"=>"Field Ambassador", "email"=>"luis@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"US", "country_name"=>"United States","type"=>"contact"},
+        {"id"=>contacts.last.id, "first_name"=>"Pedro", "last_name"=>"Guerra", "full_name"=>"Pedro Guerra", "title"=>"Coach", "email"=>"pedro@gmail.com", "phone_number"=>"344-23333", "street1"=>"ABC", "street2"=>"1", "street_address"=>"ABC, 1", "city"=>"Hollywood", "state"=>"CA", "zip_code"=>"12345", "country"=>"US", "country_name"=>"United States","type"=>"contact"}
       ]
     end
 

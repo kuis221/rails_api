@@ -127,6 +127,14 @@ class Ability
       #   report.created_by_id == user.id
       # end
 
+      can [:analysis], Venue do |venue|
+        user.current_company_user.role.has_permission?(:show, Venue) && (
+          user.current_company_user.role.has_permission?(:view_kpis, Venue) ||
+          user.current_company_user.role.has_permission?(:view_score, Venue) ||
+          user.current_company_user.role.has_permission?(:view_trends_day_week, Venue)
+        )
+      end
+
       can [:build, :preview, :rows], Report do |report|
         can? :edit, report
       end
@@ -163,12 +171,21 @@ class Ability
         Report.accessible_by_user(user.current_company_user).where(id: report.id).any?
       end
 
+      # Event permissions
+      can :access, Event do |event|
+        user.current_company_user.company_id == event.company_id &&
+        user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) &&
+        user.current_company_user.allowed_to_access_place?(event.place)
+      end
+
       # Event Data
       can :edit_data, Event do |event|
-       (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
-       (event.submitted? && can?(:edit_submitted_data, event)) ||
-       (event.approved? && can?(:edit_approved_data, event)) ||
-       (event.rejected? && can?(:edit_rejected_data, event))
+        can?(:access, event) && (
+          (event.unsent? && can?(:edit_unsubmitted_data, event)) ||
+          (event.submitted? && can?(:edit_submitted_data, event)) ||
+          (event.approved? && can?(:edit_approved_data, event)) ||
+          (event.rejected? && can?(:edit_rejected_data, event))
+        )
       end
 
       can :view_data, Event do |event|
@@ -186,9 +203,8 @@ class Ability
         can?(:view_calendar, Event) && can?(:show, event)
       end
 
-      cannot [:show, :edit], Event do |event|
-        !user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) ||
-        !user.current_company_user.allowed_to_access_place?(event.place)
+      cannot :show, Event do |event|
+        cannot?(:access, event)
       end
 
       cannot :activate, Tag do |tag|
@@ -224,6 +240,10 @@ class Ability
         cannot?(:show, event)
       end
 
+      can(:show, Contact) do |contact|
+        user.current_company_user.company_id == contact.company_id
+      end
+
       can [:add, :list], ContactEvent do
         user.role.has_permission?(:create_contacts, Event)
       end
@@ -236,11 +256,19 @@ class Ability
       can :update, ContactEvent do |contact_event|
         can?(:show, contact_event.event) && can?(:edit_contacts, contact_event.event)
       end
+      can :update, Contact do |contact|
+        user.current_company_user.company_id == contact.company_id &&
+        user.current_company_user.role.has_permission?(:edit_contacts, Event)
+      end
 
       # Allow users to create kpis if have permissions to create custom kpis,
       # the controller will decide what permissions can be modified based on those permissions
       can [:new, :create], Kpi do |kpi|
         can?(:edit, Campaign) && user.role.has_permission?(:create_custom_kpis, Campaign)
+      end
+
+      can [:select_kpis], Campaign do |campaign|
+        can?(:create_custom_kpis, campaign) || can?(:activate_kpis, campaign)
       end
 
       # Allow users to update kpis if have permissions to edit custom kpis or edit goals for the kpis,

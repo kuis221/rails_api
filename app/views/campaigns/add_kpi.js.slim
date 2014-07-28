@@ -1,3 +1,4 @@
 |
-  $('.modal .select-items-list #kpi-#{params[:kpi_id]}').remove();
+  $('.modal .select-items-list #kpi-#{@kpi.id}').remove();
   $(document).trigger('kpis:change');
+  $('.form-builder-wrapper').formBuilder('addKpi', #{@kpi.form_field_options.merge({id: @field.id}).to_json.html_safe});

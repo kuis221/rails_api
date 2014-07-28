@@ -1,15 +1,16 @@
 .form-builder-wrapper
   .form-wrapper.data-form-wrapper
-    div.empty-form-legend
-      b No Fields! You should add a field.
-      p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
+    .form-fields.clearfix.form-section
+      div.empty-form-legend
+        b No Fields! You should add a field.
+        p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
 
   .fields-wrapper
     p Drag fields to add
     #form-field-accordion.accordion
       .accordion-group
         .accordion-heading
-          .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#custom-fields" Fields
+          .accordion-toggle data-toggle="collapse" href="#custom-fields" Fields
 
         #custom-fields.custom.accordion-body.collapse.in
           .field data-type="Dropdown" Dropdown
@@ -31,28 +32,29 @@
           .field data-type="Marque" Marque
 
 
+      - if can?(:activate_kpis, resource)
+        .accordion-group
+          .accordion-heading
+            .accordion-toggle.collapsed data-toggle="collapse" href="#kpis-fields" KPIs
+
+          #kpis-fields.accordion-body.collapse.searchable-field-list
+            div class="search-fields"
+              input.field-search-input name="field_search" placeholder="Search for fields" title="Field Search" type="search"
+
+            .searchable-field-list.scrollable-list
+              - grouped_assignable_kpis.each do |group, kpis|
+                .group-name= group
+                .fields-list
+                  - kpis.each do |kpi|
+                    .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-kpi-id="#{kpi.id}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
+
       .accordion-group
         .accordion-heading
-          .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#kpis-fields" KPIs
-
-        #kpis-fields.accordion-body.collapse.searchable-field-list
-          div class="search-fields"
-            input.field-search-input name="field_search" placeholder="Search for fields" title="Field Search" type="search"
-
-          .searchable-field-list.scrollable-list
-            - grouped_assignable_kpis.each do |group, kpis|
-              .group-name= group
-              .fields-list
-                - kpis.each do |kpi|
-                  .field.flat data-title="#{kpi_tooltip(kpi)}" data-group="#{group}" data-type="#{kpi.form_field_type.split('::')[1]}" data-options="#{kpi.form_field_options.to_json}"= kpi.name
-
-      .accordion-group
-        .accordion-heading
-          .accordion-toggle data-toggle="collapse" data-parent="#form-field-accordion" href="#modules-fields" Modules
+          .accordion-toggle.collapsed data-toggle="collapse" href="#modules-fields" Modules
 
         #modules-fields.accordion-body.collapse
           .field.module data-type="Expenses" Expenses
-          .field.module data-type="Gallery" Gallery
+          .field.module data-type="Photos" Gallery
           .field.module data-type="Surveys" Surveys
           .field.module data-type="Comments" Comments
 
@@ -62,6 +64,7 @@ javascript:
     $('.form-builder-wrapper').formBuilder({
       url: '#{campaign_path(resource, format: :json)}',
       resourceName: 'campaign',
-      canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'}
+      canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'},
+      canActivateKpis: #{can?(:activate_kpis, resource) ? 'true' : 'false'}
     });
   });

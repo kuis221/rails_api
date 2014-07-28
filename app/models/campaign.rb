@@ -41,6 +41,8 @@ class Campaign < ActiveRecord::Base
   validates :end_date, presence: true, if: :start_date
   validates :start_date, presence: true, if: :end_date
 
+  validates :enabled_modules, enum: { presence: false, inclusion: { in: %w{ surveys photos expenses comments videos} } }
+
   validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
   validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
@@ -311,14 +313,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def survey_brands
-    @survey_brands ||= begin
-      field = form_fields.scoped_by_kpi_id(Kpi.surveys).first
-      brands = []
-      if field.present?
-        brands = Brand.where(id: field.options['brands']) if field.options.is_a?(Hash) && field.options.has_key?('brands')
-      end
-      brands || []
-    end
+    @survey_brands ||= Brand.where(id: survey_brand_ids)
   end
 
   def first_event=(event)

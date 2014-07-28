@@ -8,30 +8,36 @@ $.widget 'nmk.formBuilder', {
 
 		@wrapper = @element.find('.form-wrapper')
 		if @options.canEdit
-			@wrapper.append $('<div class="form-actions" data-spy="affix" data-offset-top="340">')
+			@wrapper.append $('<div class="form-builder-actions" data-spy="affix" data-offset-top="340">')
 							 .append('<button id="save-report" class="btn btn-primary">Save</button>')
-							 .append('<div data-placement="left" title="Adding a new item<br />at the bottom..." class="invisible pull-right field-tooltip-trigger"></div>')
+							 .append('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
 
-			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip placement: 'left', html: true
-		@wrapper.append(
-			@formWrapper = $('<div class="form-fields clearfix form-section">')
-		)
+			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip 
+				placement: 'left'
+				html: true
+				title: () ->
+					$(this).data('title')
+		@formWrapper = @wrapper.find('.form-fields')
 
-		@wrapper.find('form-actions').affix 
-			offset: () => @formWrapper.offset().top - ($('#resource-close-details').offset().top + $('#resource-close-details').height())
+		@wrapper.find('.form-builder-actions').affix 
+			offset: {
+				top: () => 
+					@formWrapper.offset().top - (parseInt($('#resource-close-details').css('top'),10) + $('#resource-close-details').outerHeight())
+			}
 
 		$(window).on 'resize scroll', () =>
-			@wrapper.find('.form-actions:not(.affix)').each (index, bar) =>
+			@wrapper.find('.form-builder-actions:not(.affix)').each (index, bar) =>
 				$(bar).css 
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: '0'
 
-			@wrapper.find('.form-actions.affix').each (index, bar) =>
+			@wrapper.find('.form-builder-actions.affix').each (index, bar) =>
 				$(bar).css 
 					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
 					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
 
-
+		$(window).resize()
+		
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
 		@fieldsWrapper.find('.field[data-title]').tooltip
@@ -51,6 +57,7 @@ $.widget 'nmk.formBuilder', {
 			drop: (event, ui) =>
 				options = {type: ui.draggable.data('type')}
 				@_addModuleToForm options
+				@setModified()
 				true
 
 		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
@@ -75,8 +82,11 @@ $.widget 'nmk.formBuilder', {
 						options = {type: ui.item.data('type')}
 						options = ui.item.data('options') if ui.item.data('options')
 						fieldHtml = @buildField(options)
+						field = fieldHtml.data('field')
 						ui.item.replaceWith fieldHtml
 						applyFormUiFormatsTo fieldHtml
+						if field.attributes.kpi_id?
+							@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
 
 					@_updateOrdering();
 
@@ -109,7 +119,8 @@ $.widget 'nmk.formBuilder', {
 				start: (e, ui) =>
 					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
 					applyFormUiFormatsTo(ui.helper)
-			.on 'click', (e) =>
+			
+			@fieldsWrapper.find('.field, .module').on 'click', (e) =>
 				return if e.target.adding
 				e.target.adding = setTimeout () -> 
 					e.target.adding = false
@@ -117,10 +128,15 @@ $.widget 'nmk.formBuilder', {
 				target = $(e.target)
 				options = {type: target.data('type')}
 				options = target.data('options') if target.data('options')
-				@_addFieldToForm options
+				if target.hasClass('module')
+					field = @_addModuleToForm options
+					message = "Adding #{field.type} module at the bottom..."
+				else
+					field = @_addFieldToForm options
+					@_updateOrdering()
+					message = "Adding new #{field.attributes.name} field at the bottom..."
 				@setModified()
-				@_updateOrdering()
-				@fieldTooltip.tooltip 'show'
+				@fieldTooltip.data('title', message).tooltip 'show'
 				clearTimeout @_toolTipTimeout if @_toolTipTimeout
 				@_toolTipTimeout = setTimeout =>
 					@fieldTooltip.tooltip 'hide'
@@ -140,11 +156,11 @@ $.widget 'nmk.formBuilder', {
 					applyFormUiFormatsTo(ui.helper)
 
 			# Display Field Attributes Dialog
-			@formWrapper.on 'click', '.field', (e) =>
+			@wrapper.on 'click', '.field, .module', (e) =>
 				e.stopPropagation()
 				$field = $(e.target)
 				if not $field.hasClass('field')
-					$field = $field.closest('.field')
+					$field = $field.closest('.field, .module')
 				@_showFieldAttributes $field
 				false
 
@@ -187,7 +203,7 @@ $.widget 'nmk.formBuilder', {
 	_loadForm: () ->
 		@element.find('.empty-form-legend').hide()
 		$.getJSON "#{@options.url}", (response) =>
-			@formWrapper.find('.field').remove()
+			@wrapper.find('.field, .module').remove()
 			@modified = false
 			@_updateSaveButtonState()
 			if response.form_fields.length > 0 || response.enabled_modules.length > 0
@@ -196,7 +212,10 @@ $.widget 'nmk.formBuilder', {
 						@_addFieldToForm field
 				if response.enabled_modules && response.enabled_modules.length > 0
 					for moduleName in response.enabled_modules
-						@_addModuleToForm {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+						field = {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+						if moduleName is 'surveys'
+							field.settings = {brands: response.survey_brand_ids}
+						@_addModuleToForm field
 						
 			else
 				@element.find('.empty-form-legend').show()
@@ -207,7 +226,12 @@ $.widget 'nmk.formBuilder', {
 		@formWrapper.sortable "refresh" if @options.canEdit
 		applyFormUiFormatsTo fieldHtml
 
+		field = fieldHtml.data('field')
+		if field.attributes.kpi_id?
+			@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
+
 		field
+
 
 	_addModuleToForm: (field) ->
 		moduleHtml = @buildField(field)
@@ -227,6 +251,11 @@ $.widget 'nmk.formBuilder', {
 			form_fields_attributes: $.map(@formFields(), (field) => field.getSaveAttributes())
 			enabled_modules: $.map(@formModules(), (field) => field.getSaveAttributes().name)
 		}
+		data.enabled_modules = ['empty'] if data.enabled_modules.length is 0
+		$.map @formModules(), (field) => 
+			attributes = field.getSaveAttributes()
+			if attributes.name is 'surveys'
+				data.survey_brand_ids = attributes.settings.brands
 		@saveForm data
 
 	saveForm: (data) ->
@@ -250,6 +279,15 @@ $.widget 'nmk.formBuilder', {
 			complete: ( jqXHR, textStatus) =>
 				$('#save-report').text($('#save-report').data('text'))
 		}
+
+	removeKpi: (kpi_id) ->
+		$.each @formFields(), (index, field) =>
+			if field.attributes.kpi_id is kpi_id
+				field.field.remove()
+				@fieldsWrapper.find("[data-kpi-id=#{kpi_id}]").show()
+
+	addKpi: (options) ->
+		@_addFieldToForm options
 
 	setModified: () ->
 		@modified = true
@@ -291,9 +329,6 @@ $.widget 'nmk.formBuilder', {
 
 			@placeFieldAttributes field
 
-			field.on 'change.attrFrm', () =>
-				@placeFieldAttributes field
-
 			# Store the value of each text field to compare against on the blur event
 			$.each $('input[type=text]'), (index, elm) =>
 				$(elm).data 'saved-value', $(elm).val()
@@ -302,7 +337,8 @@ $.widget 'nmk.formBuilder', {
 				e.ignoreClose = true
 
 			$(document).on 'click.fbuidler', (e) =>
-				if $('.modal.in:visible').length is 0 and not e.ignoreClose?
+				select2open = $('.select2-drop').css('display') is 'block'
+				if $('.modal.in:visible').length is 0 and not e.ignoreClose? and !select2open
 					@_hideFieldAttributes field
 		else
 			@_hideFieldAttributes field
@@ -310,8 +346,8 @@ $.widget 'nmk.formBuilder', {
 	_hideFieldAttributes: (field) ->
 		$(document).off 'click.fbuidler'
 		@formWrapper.find('.selected').removeClass('selected')
-		field.off 'change.attrFrm'
 		@attributesPanel.hide()
+		$('.select2-drop, .select2-drop-mask, .select2-sizer').remove()
 
 	_updateSaveButtonState: () ->
 		$('#save-report').attr('disabled', not @modified)
@@ -460,10 +496,13 @@ FormField = Class.extend {
 		@attributes.statements
 
 	render: () ->
-		@field ||= $('<div class="field control-group" data-type="' + @__proto__.type + '">')
-			.data('field', @)
-			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
-					@_renderField()
+		className = @attributes.type.replace(/(.)([A-Z](?=[a-z]))/,'$1_$2').replace('::','_').toLowerCase()
+		@field ||= $('<div class="field '+className+'" data-type="' + @__proto__.type + '">').data('field', @).append(
+			$('<div class="control-group">').append(
+				@_removeButton(),
+				@_renderField()
+			)
+		)
 
 	remove: () ->
 		if @attributes.id # If this file already exists on the database
@@ -472,12 +511,16 @@ FormField = Class.extend {
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
+					@form._hideFieldAttributes @field
+					if @attributes.kpi_id?
+						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
 		else
 			bootbox.confirm @_removeConfirmationMessage(false), (result) =>
 				if result
 					@field.remove()
 					@form.setModified()
 					@form._hideFieldAttributes @field
+					@_onRemove()
 		false
 
 	_removeConfirmationMessage: (withData) ->
@@ -488,12 +531,22 @@ FormField = Class.extend {
 
 	refresh: () ->
 		@field.html('').append(
-			$('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()),
-			@_renderField()
+			$('<div class="control-group">').append(
+				@_removeButton(),
+				@_renderField()
+			)
 		)
 		applyFormUiFormatsTo @field
 		@field.trigger 'change'
 		@
+
+	_onRemove: ->
+		if @attributes.kpi_id?
+			@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
+
+	_removeButton: ->
+		if (@form.options.canEdit && !@attributes.kpi_id) || (@form.options.canActivateKpis && @attributes.kpi_id)
+			$('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on 'click', => @remove()
 
 	_renderField: ->
 		''
@@ -601,8 +654,8 @@ UserDateField = FormField.extend {
 
 	_renderField: () ->
 		'<div class="row-fluid">'+
-			'<div class="span7"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
-			'<div class="span5"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="date" value=""></div></div></div>' +
+			'<div class="span8"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
+			'<div class="span4"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="text" value="mm/dd/yyyy"></div></div></div>' +
 		'</div>'
 
 	attributesForm: () ->
@@ -660,7 +713,7 @@ NumberField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="number" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -691,7 +744,7 @@ CurrencyField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<div class="input-prepend"><span class="add-on">$</span><input type="number" readonly="readonly"></div>'))
+			$('<div class="controls">').append($('<div class="input-prepend"><span class="add-on">$</span><input type="text" readonly="readonly"></div>'))
 		]
 
 	attributesForm: () ->
@@ -728,6 +781,7 @@ DropdownField = FormField.extend {
 		[
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append($('<select disabled="disabled">').append(
+				$('<option>').attr('value', '').text(''),
 				$.map @attributes.options, (option, index) =>
 					if option._destroy is '1'
 						''
@@ -816,13 +870,21 @@ PercentageField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label control-group-label">').text(@attributes.name),
+			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
+				$('<div class="percentage-progress-bar text-info">
+					<div class="progress progress-info">
+					<div class="bar" style="width: 0%;"></div>
+					</div>
+					<div class="counter">0%</div>
+				</div>'),
 				$.map @attributes.options, (option, index) =>
+					id = "form_field_option_#{Math.floor(Math.random() * 100) + 1}_#{index}"
 					if option._destroy isnt '1'
-						$('<label>').addClass('percentage').append(
-							$('<div class="input-append"><input type="number" readonly="readonly"><span class="add-on">%</span>')
-						).append(' '+ option.name)
+						$('<div class="control-group">').append(
+							$('<div class="input-append"><input type="text" id="'+id+'" readonly="readonly"><span class="add-on">%</span>')
+							$('<label for="'+id+'">').addClass('segment-label').text(' '+ option.name)
+						)
 			)
 		]
 
@@ -855,10 +917,11 @@ PhotoField = FormField.extend {
 
 	_renderField: () ->
 		[
-			$('<label class="control-label control-group-label">').text(@attributes.name),
+			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
-					$('<div class="drag-box icon-drag">').append(
+					$('<div class="drag-box">').append(
+						$('<i class="icon-drag">'),
 						$('<h4>').text('DRAG & DROP'),
 						$('<p>').append('your image or ', $('<a href="#" class="file-browse">browse</a>'))
 					)
@@ -897,10 +960,11 @@ AttachmentField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
-					$('<p>').append($('<a href="#" class="file-browse">Browse</a>'), ' for a file located on your computer'),
-					$('<p class="divider">').text('OR'),
-					$('<p>').text('Drag and drop file here to upload'),
-					$('<p class="small">').text('Maximum upload file size: 10MB')
+					$('<div class="drag-box">').append(
+						$('<i class="icon-drag">'),
+						$('<h4>').text('DRAG & DROP'),
+						$('<p>').append('your file or ', $('<a href="#" class="file-browse">browse</a>'))
+					)
 				)
 			)
 		]
@@ -946,12 +1010,12 @@ SummationField = FormField.extend {
 					if option._destroy isnt '1'
 						$('<div class="field-option">').append(
 							$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' '),
-							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="number" readonly="readonly">')
+							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
 						)
 			).append(
 				$('<div class="field-option summation-total-field">').append(
 					$('<label>').addClass('summation').text('TOTAL: '),
-					$('<input type="number" readonly="readonly">')
+					$('<input type="text" readonly="readonly">')
 				)
 			)
 		]
@@ -1007,12 +1071,12 @@ LikertScaleField = FormField.extend {
 			$('<div class="controls">').append(
 				$('<table class="table likert-scale-table">').append(
 					$('<thead>').append(
-						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').text(option.name)))
+						$('<tr>').append($('<th>')).append($.map(@attributes.options, (option)-> $('<th>').append($('<label>').text(option.name))))
 					)
 				).append(
 					$('<tbody>').append(
 						$.map @attributes.statements, (statement, index) =>
-							$('<tr>').append($('<td>').text(statement.name)).append(
+							$('<tr>').append($('<td>').append($('<label>').text(statement.name))).append(
 								$.map @attributes.options, (option, index) =>
 									$('<td>').append($('<input type="radio">'))
 							)
@@ -1159,7 +1223,7 @@ DateField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="text" class="date_picker" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="date_picker" value="dd/mm/yyyy" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -1190,7 +1254,7 @@ TimeField = FormField.extend {
 	_renderField: () ->
 		[
 			$('<label class="control-label">').text(@attributes.name),
-			$('<div class="controls">').append($('<input type="text" class="time_picker" value="hh:mm" readonly="readonly">'))
+			$('<div class="controls">').append($('<input type="text" class="time_picker" value="hh:mm pm" readonly="readonly">'))
 		]
 
 	attributesForm: () ->
@@ -1203,7 +1267,7 @@ TimeField = FormField.extend {
 
 Module =  FormField.extend {
 	getSaveAttributes: () ->
-		{field_type: 'module', name: @fieldType()}
+		{field_type: 'module', name: @fieldType().toLowerCase(), settings: @attributes.settings }
 
 	fieldType: ->
 		@__proto__.type
@@ -1214,20 +1278,20 @@ Module =  FormField.extend {
 			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
 					@_renderField()
 
+	_onRemove: ->
+		@form.fieldsWrapper.find('.module[data-type='+@fieldType()+']').show()
+
 	_removeConfirmationMessage: (withData) ->
-		if withData
-			"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
-		else
-			"Are you sure you want to remove this module?"
+		"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
 }
 
 SurveysField = Module.extend {
-	type: 'surveys',
+	type: 'Surveys',
 
 	init: (form, attributes) ->
 		@form = form
 		@attributes = $.extend({
-			name: 'Surves'
+			name: 'Surveys'
 		}, attributes)
 
 		@attributes.settings ||= {}
@@ -1241,11 +1305,31 @@ SurveysField = Module.extend {
 		]
 
 	attributesForm: () ->
-		false
+		window.setTimeout () ->
+			$.get '/brands.json', (response) ->
+				tags = []
+				for result in response
+					tags.push {id: result.id, text: result.name }
+				$('input[name=brands].select2-field').show().select2
+					maximumSelectionSize: 5
+					tags: tags
+		, 100
+
+		[
+			$('<h4>').text('Surveys'),
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Brands'),
+				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').hide().val(if @attributes.settings? && @attributes.settings.brands  then  @attributes.settings.brands else '').on "change", (e) =>
+					input = $(e.target)
+					@attributes.settings.brands = input.select2("val")
+					@form.setModified()
+					true
+			]
+		]
 }
 
 CommentsField = Module.extend {
-	type: 'comments',
+	type: 'Comments',
 
 	init: (form, attributes) ->
 		@form = form
@@ -1268,7 +1352,7 @@ CommentsField = Module.extend {
 }
 
 PhotosField = Module.extend {
-	type: 'photos',
+	type: 'Photos',
 
 	init: (form, attributes) ->
 		@form = form
@@ -1291,7 +1375,7 @@ PhotosField = Module.extend {
 }
 
 ExpensesField = Module.extend {
-	type: 'expenses',
+	type: 'Expenses',
 
 	init: (form, attributes) ->
 		@form = form

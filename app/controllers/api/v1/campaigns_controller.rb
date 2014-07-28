@@ -2,7 +2,6 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
 
   skip_authorization_check :only => [:all, :overall_stats]
 
-
   resource_description do
     short 'Campaigns'
     formats ['json', 'xml']
@@ -167,63 +166,110 @@ api :GET, '/api/v1/campaigns/:id/stats', "Returns the stats of events and promo 
 
   example <<-EOS
   GET: /api/v1/campaigns/1/stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&company_id=1
-  [
-    {
-        "id": 14,
-        "name": "Los Angeles",
-        "goal": 3368,
-        "kpi": "EVENTS",
-        "executed": 1063,
-        "scheduled": 26,
-        "remaining": 2279,
-        "executed_percentage": 31,
-        "scheduled_percentage": 0,
-        "remaining_percentage": 69,
-        "today": 2123.963963963964,
-        "today_percentage": 63
-    },
-    {
-        "id": 57,
-        "name": "Chicago",
-        "goal": 429,
-        "kpi": "EVENTS",
-        "executed": 412,
-        "scheduled": 17.5,
-        "remaining": 0,
-        "executed_percentage": 96,
-        "scheduled_percentage": 4,
-        "remaining_percentage": 0
-    },
-    {
-        "id": 22,
-        "name": "Chicago",
-        "goal": 97,
-        "kpi": "PROMO HOURS",
-        "executed": 90.5,
-        "scheduled": 3,
-        "remaining": 3.5,
-        "executed_percentage": 93,
-        "scheduled_percentage": 3,
-        "remaining_percentage": 4
-    },
-    {
-        "id": 21,
-        "name": "New York",
-        "goal": 395,
-        "kpi": "PROMO HOURS",
-        "executed": 364.5,
-        "scheduled": 34.5,
-        "remaining": 0,
-        "executed_percentage": 92,
-        "scheduled_percentage": 8,
-        "remaining_percentage": 0
-    },
-    ...
-  ]
+  {
+    id: 14,
+    name: "ABSOLUT BA FY14",
+    overall: [
+        {
+            "id": 14,
+            "name": "ABSOLUT BA FY14",
+            "start_date": "2013-08-01",
+            "end_date": "2014-06-30",
+            "goal": 3368,
+            "kpi": "EVENTS",
+            "executed": 1063,
+            "scheduled": 26,
+            "remaining": 2279,
+            "executed_percentage": 31,
+            "scheduled_percentage": 0,
+            "remaining_percentage": 69,
+            "today": 2123.963963963964,
+            "today_percentage": 63
+        },
+        {
+            "id": 14,
+            "name": "ABSOLUT BA FY14",
+            "start_date": null,
+            "end_date": null,
+            "goal": 429,
+            "kpi": "PROMO HOURS",
+            "executed": 412,
+            "scheduled": 17.5,
+            "remaining": 0,
+            "executed_percentage": 96,
+            "scheduled_percentage": 4,
+            "remaining_percentage": 0
+        }
+  ],
+  areas: [
+      {
+          "id": 14,
+          "name": "Los Angeles",
+          "goal": 3368,
+          "kpi": "EVENTS",
+          "executed": 1063,
+          "scheduled": 26,
+          "remaining": 2279,
+          "executed_percentage": 31,
+          "scheduled_percentage": 0,
+          "remaining_percentage": 69,
+          "today": 2123.963963963964,
+          "today_percentage": 63
+      },
+      {
+          "id": 57,
+          "name": "Chicago",
+          "goal": 429,
+          "kpi": "EVENTS",
+          "executed": 412,
+          "scheduled": 17.5,
+          "remaining": 0,
+          "executed_percentage": 96,
+          "scheduled_percentage": 4,
+          "remaining_percentage": 0
+      },
+      {
+          "id": 22,
+          "name": "Chicago",
+          "goal": 97,
+          "kpi": "PROMO HOURS",
+          "executed": 90.5,
+          "scheduled": 3,
+          "remaining": 3.5,
+          "executed_percentage": 93,
+          "scheduled_percentage": 3,
+          "remaining_percentage": 4
+      },
+      {
+          "id": 21,
+          "name": "New York",
+          "goal": 395,
+          "kpi": "PROMO HOURS",
+          "executed": 364.5,
+          "scheduled": 34.5,
+          "remaining": 0,
+          "executed_percentage": 92,
+          "scheduled_percentage": 8,
+          "remaining_percentage": 0
+      },
+      ...
+    ]
+  }
   EOS
   def stats
     authorize! :view_promo_hours_data, resource
-    data = resource.promo_hours_graph_data
+    overall_data = current_company.campaigns.active
+                        .accessible_by_user(current_company_user)
+                        .where(id: resource.id)
+                        .order(:name)
+                        .promo_hours_graph_data
+    areas_data = resource.promo_hours_graph_data
+    data = {
+      id: resource.id,
+      name: resource.name,
+      overall: overall_data,
+      areas: areas_data
+    }
     respond_to do |format|
         format.json {
           render :status => 200,

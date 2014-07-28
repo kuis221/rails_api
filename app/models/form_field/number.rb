@@ -17,7 +17,19 @@
 
 class FormField::Number < FormField
   def field_options(result)
-    {as: :decimal, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :string,
+      label: self.name,
+      field_id: self.id,
+      options: self.settings,
+      required: self.required,
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        step: 'any',
+        required: (self.required? ? 'required' : nil)
+      }
+    }
   end
 
   def validate_result(result)

@@ -17,11 +17,11 @@
         - else
           li.empty-list-message
             p There are not assignable KPIs
-
-    .row-fluid
-      .span12
-        .divider
-          | OR
+    - if can?(:create_custom_kpis, resource)
+      .row-fluid
+        .span12
+          .divider
+            | OR
 
 javascript:
   $('#kpi-search-box').on('keyup', function () {

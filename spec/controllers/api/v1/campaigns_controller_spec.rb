@@ -57,18 +57,18 @@ describe Api::V1::CampaignsController do
       response.should be_success
       stats = JSON.parse(response.body)
 
-      expect(stats.first['id']).to eql area.id
-      expect(stats.first['name']).to eql 'California'
-      expect(stats.first['kpi']).to eql 'PROMO HOURS'
-      expect(stats.first['goal']).to eql '10.0'
-      expect(stats.first['executed']).to eql 0.0
-      expect(stats.first['scheduled']).to eql 0.0
-      expect(stats.first['remaining']).to eql '10.0'
-      expect(stats.first['executed_percentage']).to eql 0
-      expect(stats.first['scheduled_percentage']).to eql 0
-      expect(stats.first['remaining_percentage']).to eql 100
-      expect(stats.first.has_key?('today')).to be_false
-      expect(stats.first.has_key?('today_percentage')).to be_false
+      expect(stats['areas'].first['id']).to eql area.id
+      expect(stats['areas'].first['name']).to eql 'California'
+      expect(stats['areas'].first['kpi']).to eql 'PROMO HOURS'
+      expect(stats['areas'].first['goal']).to eql '10.0'
+      expect(stats['areas'].first['executed']).to eql 0.0
+      expect(stats['areas'].first['scheduled']).to eql 0.0
+      expect(stats['areas'].first['remaining']).to eql '10.0'
+      expect(stats['areas'].first['executed_percentage']).to eql 0
+      expect(stats['areas'].first['scheduled_percentage']).to eql 0
+      expect(stats['areas'].first['remaining_percentage']).to eql 100
+      expect(stats['areas'].first.has_key?('today')).to be_false
+      expect(stats['areas'].first.has_key?('today_percentage')).to be_false
      end
   end
 end

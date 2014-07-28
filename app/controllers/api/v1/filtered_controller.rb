@@ -3,7 +3,7 @@ class Api::V1::FilteredController < Api::V1::ApiController
   include FacetsHelper
   include AutocompleteHelper
 
-  helper_method :facets, :collection_count
+  helper_method :facets, :collection_count, :total_pages
 
   def collection
     @solr_search = resource_class.do_search(search_params)
@@ -14,6 +14,10 @@ class Api::V1::FilteredController < Api::V1::ApiController
 
   def collection_count
     @collection_count
+  end
+
+  def total_pages
+    @total_pages
   end
 
   protected

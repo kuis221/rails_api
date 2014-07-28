@@ -8,7 +8,7 @@ RSpec.shared_examples "a fieldable element" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.click
-    expect(page).to have_content('Adding a new item at the bottom...')
+    expect(page).to have_content('Adding new Single line text field at the bottom...')
 
     expect(form_builder).to have_form_field('Single line text')
 
@@ -899,7 +899,19 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
     kpi_field(kpi).drag_to form_builder
+
+    # Make sure the KPI is not longer available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('My Custom KPI')
+    end
 
     within form_field_settings_for 'My Custom KPI' do
       fill_in 'Field label', with: 'My Custom KPI'
@@ -926,48 +938,177 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
       expect(find_field('Field label').value).to eql 'My Custom KPI'
       expect(find_field('Required')['checked']).to be_true
     end
+
+    # Remove the KPI form the form
+    form_field_settings_for 'My Custom KPI'
+    within form_builder.find('.field.selected') do
+      click_js_link 'Remove'
+    end
+
+    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+
+    # Make sure the KPI is again available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_content('My Custom KPI')
+    end
+  end
+end
+
+
+RSpec.shared_examples "a fieldable element that accept modules" do
+  let(:fieldable_path) { url_for(fieldable, only_path: true) }
+
+  scenario "add/remove a module to the form" do
+
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    module_field('Gallery').drag_to form_builder
+
+    # Make sure the KPI is not longer available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Gallery')
+    end
+
+    expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
+
+    # Save the form
+    click_js_button 'Save'
+    wait_for_ajax
+    expect(fieldable.reload.enabled_modules).to include('photos')
+
+    visit fieldable_path
+
+    expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
+    within '.form-section.module[data-type=Photos]' do
+      click_js_link 'Remove'
+    end
+
+    confirm_prompt "Removing this module will remove all the entered data associated with it. Are you sure you want to do this?"
+
+    expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
+    click_js_button 'Save'
+    wait_for_ajax
+
+    # open the Modules fields list
+    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    # The changes were applied in the database
+    expect(fieldable.reload.enabled_modules).to be_empty
+
+    # the module should be available again in the list of modules
+    expect(find('.fields-wrapper')).to have_content('Gallery')
+
+    expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
+    # the module should be available again in the list of modules
+    expect(find('.fields-wrapper')).to have_content('Gallery')
   end
 end
 
 feature "Campaign Form Builder", js: true do
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
-  before do
-    Warden.test_mode!
-    @company = user.companies.first
-    sign_in user
-  end
+  let(:company){  user.companies.first }
 
-  after do
-    Warden.test_reset!
-  end
+  before{ sign_in user }
 
   it_behaves_like "a fieldable element" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end
 
   it_behaves_like "a fieldable element that accept kpis" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: @company) }
+    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
+  end
+
+  it_behaves_like "a fieldable element that accept modules" do
+    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
+    let(:fieldable_path) { campaign_path(fieldable) }
+  end
+
+  context "form builder and KPI list integration" do
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+
+    scenario "adding a KPI from the list" do
+      kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', company_id: company.id)
+      visit campaign_path(campaign)
+
+      # The kpi is in the list of KPIs in the sidebar
+      within('.fields-wrapper') do
+        expect(page).to have_content('My Custom KPI')
+      end
+
+      open_tab 'KPIs'
+      click_js_link 'Add KPI'
+      within visible_modal do
+        fill_in 'Search', with: 'custom'
+        expect(page).to have_content 'My Custom KPI'
+        click_js_link 'Add KPI'
+        expect(page).to have_no_content 'My Custom KPI'
+      end
+      close_modal
+
+      # Test the field is in the form builder and the KPI
+      # was removed from KPIs list in the sidebar
+      open_tab 'Post Event form'
+      expect(form_builder).to have_form_field 'My Custom KPI'
+
+      within('.fields-wrapper') do
+        expect(page).to have_no_content('My Custom KPI')
+      end
+
+      # reload page and test the field is still there...
+      visit campaign_path(campaign)
+      expect(form_builder).to have_form_field 'My Custom KPI'
+
+      # Now test the removal of the KPI from the list
+      open_tab 'KPIs'
+
+      within '.kpis-list' do
+        expect(page).to have_content 'My Custom KPI'
+        click_js_link 'Remove'
+      end
+
+      confirm_prompt 'Please confirm you want to remove this KPI?'
+      within '.kpis-list' do
+        expect(page).to have_no_content 'My Custom KPI'
+      end
+
+      open_tab 'Post Event form'
+
+      expect(form_builder).to_not have_form_field 'My Custom KPI'
+
+      # The KPI should be again available in the KPIs list
+      within('.fields-wrapper') do
+        expect(page).to have_content('My Custom KPI')
+      end
+    end
   end
 end
 
 feature "Activity Types", js: true do
   let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
 
-  before do
-    Warden.test_mode!
-    @company = user.companies.first
-    sign_in user
-  end
+  let(:company){ user.companies.first }
 
-  after do
-    Warden.test_reset!
-  end
+  before{ sign_in user }
 
   it_behaves_like "a fieldable element" do
-    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: @company) }
+    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: company) }
     let(:fieldable_path) { activity_type_path(fieldable) }
   end
 end
@@ -1044,6 +1185,10 @@ def kpi_field(kpi)
   find('.fields-wrapper .field', text: kpi.name)
 end
 
+def module_field(module_name)
+  find('.fields-wrapper .module', text: module_name)
+end
+
 def form_builder
   find('.form-fields')
 end
@@ -1060,7 +1205,7 @@ def form_field(field_name)
   form_builder.all('.field').each do |wrapper|
     field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
   end
-  raise "KPI #{field_name} not found" if field.nil?
+  raise "Field #{field_name} not found" if field.nil?
   field
 end
 

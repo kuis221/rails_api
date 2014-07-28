@@ -205,21 +205,19 @@ feature "Campaigns", js: true do
         click_js_link 'Add KPI'
 
         within visible_modal do
-          fill_in 'kpi-search-box', with: 'Gender'
-          expect(page).to have_selector("li#kpi-#{Kpi.gender.id}")
-          expect(page).to have_no_selector("li#kpi-#{Kpi.comments.id}")
+          fill_in 'Search', with: 'Gender'
           expect(page).to have_content('Gender')
           expect(page).to have_no_content('Events')
-          find("#kpi-#{Kpi.gender.id}").click_js_link('Add KPI')
-          expect(page).to have_no_selector("#kpi-#{Kpi.gender.id}") # The KPI was removed from the available KPIs list
+          click_js_link('Add KPI')
+          expect(page).to have_no_content("Gender") # The KPI was removed from the available KPIs list
         end
         close_modal
 
         click_js_link 'Add KPI'
 
         within visible_modal do
-          expect(page).to have_no_selector("#kpi-#{Kpi.gender.id}") # The KPI does not longer appear on the list after it was added to the campaign
-          expect(page).to have_selector("#kpi-#{Kpi.comments.id}")
+          expect(page).to have_no_content("Gender") # The KPI does not longer appear on the list after it was added to the campaign
+          expect(page).to have_content("Comments")
         end
         close_modal
 

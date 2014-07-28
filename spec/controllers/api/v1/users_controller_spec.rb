@@ -254,7 +254,8 @@ describe Api::V1::UsersController do
         "events_deactivate_photos", "events_deactivate_surveys", "events_delete_contacts", "events_delete_team_members", "events_documents", "events_edit_contacts",
         "events_edit_expenses", "events_edit_surveys", "events_edit_tasks", "events_expenses", "events_deactivate", "events_edit", "events_photos", "events_show", "events_surveys", "events_tasks",
         "events_team_members", "events_comments", "events_create_comments", "events_deactivate_comments", "events_edit_comments", "tasks_comments_own", "tasks_comments_team",
-        "tasks_create_comments_own", "tasks_create_comments_team", "tasks_deactivate_own", "tasks_deactivate_team", "tasks_edit_own", "tasks_edit_team", "tasks_own", "tasks_team", "venues", "venues_create"]
+        "tasks_create_comments_own", "tasks_create_comments_team", "tasks_deactivate_own", "tasks_deactivate_team", "tasks_edit_own", "tasks_edit_team", "tasks_own", "tasks_team", "venues", "venues_create",
+        "venues_comments", "venues_kpis", "venues_photos", "venues_score", "venues_show", "venues_trends"]
     end
 
     it "should return empty list if the user has no permissions" do

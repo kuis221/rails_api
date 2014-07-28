@@ -58,8 +58,8 @@ en:
   inputs:
     attached_asset:
       select_file:
-        photo: '%{browse} for an image located on your computer'
-        attachment: '%{browse} for a file located on your computer'
+        photo: 'your image or %{browse}'
+        attachment: 'your file or %{browse}'
 
   notifications:
     task_late_user:

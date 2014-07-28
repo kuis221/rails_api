@@ -68,7 +68,7 @@ jQuery ->
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
 		$('input.timepicker').timepicker()
-		$('.chosen-enabled').chosen()
+		$('select.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
@@ -113,7 +113,10 @@ jQuery ->
 				if !this.checkable(element)
 					this.element(element)
 			highlight: (element) ->
-				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
+				if $(element).closest('.field-option').length > 0
+					$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
+				else
+					$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
@@ -121,10 +124,6 @@ jQuery ->
 				label.addClass('with_message')
 				if label.length > 0
 					error.insertAfter label
-				else if typeof element.data('segmentFieldId') isnt "undefined"
-					element.closest(".control-group").prepend error.addClass('segment-title-label')
-				else
-					error.addClass('segment-title-label').insertAfter element
 
 			focusInvalid: false,
 			invalidHandler: (form, validator) ->
@@ -139,6 +138,7 @@ jQuery ->
 			success: (element) ->
 				element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
+				element.closest('.field-option').removeClass('error')
 		}
 
 	# Check what graph labels are colliding with others and adjust the position

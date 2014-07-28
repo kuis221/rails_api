@@ -1,7 +1,7 @@
 .row-fluid
   .pull-left.kpis-button
-    = link_to 'Add KPI', select_kpis_campaign_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_custom_kpis, resource)
+    = link_to 'Add KPI', select_kpis_campaign_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_custom_kpis, resource) || can?(:activate_kpis, resource)
 
 .link-list
   ul#global-kpis.kpis-list
-    = render partial: 'goalables/goalable', collection: resource.active_global_kpis + (resource.custom_kpis + resource.activity_types).sort_by(&:name)
+    = render partial: 'goalables/goalable', collection: (resource.active_global_kpis + resource.custom_kpis + resource.activity_types).compact.sort_by(&:name)

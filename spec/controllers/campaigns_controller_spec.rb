@@ -323,6 +323,23 @@ describe CampaignsController do
         }.to change(FormField, :count).by(-1)
       }.to_not change(Campaign, :count)
     end
+
+    it "should normalize survey brands" do
+      Kpi.create_global_kpis
+      brand = FactoryGirl.create(:brand, company: @company, name: 'A brand')
+      expect {
+        put 'update', id: campaign.to_param, campaign: {
+          enabled_modules: ['surveys'],
+          survey_brand_ids: ['A brand', 'Another brand']
+        }, format: :json
+      }.to change(Brand, :count).by(1)
+
+      expect(campaign.reload.enabled_modules.count).to eql 1
+      expect(campaign.survey_brand_ids.count).to eql 2
+      campaign.survey_brand_ids.should include(brand.id)
+
+      response.should be_success
+    end
   end
 
   describe "DELETE 'delete_member'" do

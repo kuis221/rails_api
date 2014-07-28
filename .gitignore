@@ -16,6 +16,7 @@
 /log/*.lck
 /tmp
 .env
+.envrc
 .rvmrc
 .vagrant
 Vagrantfile

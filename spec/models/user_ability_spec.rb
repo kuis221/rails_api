@@ -103,6 +103,36 @@ describe "User" do
 
       it { should be_able_to(:notifications, CompanyUser) }
 
+      describe "Event permissions" do
+        let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+        let(:event) { without_current_user { FactoryGirl.create(:event, campaign: campaign,
+          place: FactoryGirl.create(:place)) } }
+
+        it "should be able to update event if can see the event and has permission :edit_data" do
+          ability.should_not be_able_to(:update, event)
+          ability.should_not be_able_to(:edit_data, event)
+
+          user.role.permission_for(:edit_unsubmitted_data, Event).save
+
+          ability.should_not be_able_to(:edit, event)
+          ability.should_not be_able_to(:update, event)
+          ability.should_not be_able_to(:edit_data, event)
+
+          user.current_company_user.campaigns << campaign
+          user.current_company_user.places << event.place
+          ability.should be_able_to(:access, event)
+          ability.should be_able_to(:edit_data, event)
+          ability.should_not be_able_to(:update, event)
+          ability.should_not be_able_to(:edit, Event)
+        end
+
+        it "should be able to :edit Event if the role have the :update permission" do
+          ability.should_not be_able_to(:edit, Event)
+          user.role.permission_for(:update, Event).save
+          ability.should be_able_to(:edit, Event)
+        end
+      end
+
       describe "Campaign permissions" do
         it "should be able to activate kpis if has the :activate_kpis permission" do
           campaign = FactoryGirl.create(:campaign, company: company)

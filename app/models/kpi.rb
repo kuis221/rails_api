@@ -62,7 +62,7 @@ class Kpi < ActiveRecord::Base
   scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
   scope :campaign_assignable, ->(campaign) {
     global_and_custom(campaign.company).
-    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours]).
+    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours].compact + [0]).
     reorder('name ASC')
   }
 
@@ -120,7 +120,12 @@ class Kpi < ActiveRecord::Base
   end
 
   def form_field_options
-    {name: name, type: form_field_type.split('::')[1], kpi_id: self.id}
+    {
+      name: name,
+      type: form_field_type,
+      kpi_id: self.id,
+      options: (['count', 'percentage'].include?(kpi_type) ? kpis_segments.pluck(:text).each_with_index.map{|text, i| {id: i, name: text, ordering: i} } : [])
+    }
   end
 
   class << self

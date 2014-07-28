@@ -144,7 +144,10 @@ class EventsController < FilteredController
     end
 
     def authorize_update
-      authorize!(:update, resource) || authorize!(:edit_data, resource)
+      if cannot?(:update, resource) && cannot?(:edit_data, resource)
+        message ||= unauthorized_message(:update, resource)
+        raise CanCan::AccessDenied.new(message, :update, resource)
+      end
     end
 
     def calendar_brands_events

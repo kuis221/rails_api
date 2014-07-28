@@ -44,8 +44,14 @@ module TdLinxSynch
 
       # Search for establishments related to venues in LegacyCompany that doesn't
       # have a code and add it to missing.csv file
-      Place.joins(:venues).where('venues.company_id=2 AND td_linx_code is null').where('types like \'%establishment%\'').find_each do |place|
-        files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode]
+      files[:missing] << ['Venue Name', 'Street', 'City', 'State', 'Zip Code', '# Events']
+      Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
+           .select('places.*, count(events.id) as visits_count')
+           .group('places.id')
+           .where('venues.company_id=2 AND td_linx_code is null')
+           .where('types like \'%establishment%\'')
+           .find_each do |place|
+        files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
       end
 
       files.each{|k, file| file.close() }
@@ -60,7 +66,7 @@ module TdLinxSynch
       files = {}
       paths
     ensure
-      files.each{|k, file| file.close() }
+      files.each{|k, file| file.close rescue true }
     end
 
     def self.find_place_for_row(row)
@@ -79,6 +85,7 @@ module TdLinxSynch
 
       def self.download_file(path)
         ftp = Net::FTP.new(ENV['TDLINX_FTP_SERVER'])
+        ftp.passive = true
         ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
         file = ftp.list('Legacy_TDLINX_Store_Master*').map{|l| l.split(/\s+/, 4) }.sort{ |a, b| b[0] <=> a[0]}.first
         if file.present?

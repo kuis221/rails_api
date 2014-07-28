@@ -17,9 +17,22 @@
 
 class FormField::Brand < FormField
   def field_options(result)
-    brands = result.resultable.present? && result.resultable.campaign ? result.resultable.campaign.brands : ::Company.current.brands
+    brands = brands_options(result)
     selected = brands.count == 1 ? brands.first.id : result.value
-    {as: :select, collection: brands, selected: selected, include_blank: true, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes.push('chosen-enabled form-field-brand'), required: (self.required? ? 'required' : nil)}}
+    { as: :select,
+      collection: brands,
+      selected: selected,
+      include_blank: true,
+      label: self.name,
+      field_id: self.id,
+      options: self.settings,
+      required: self.required,
+      input_html: {
+        value: result.value,
+        class: field_classes.push('chosen-enabled form-field-brand'),
+        required: (self.required? ? 'required' : nil)
+      }
+    }
   end
 
   def format_html(result)
@@ -34,5 +47,9 @@ class FormField::Brand < FormField
     else
       value
     end
+  end
+
+  def brands_options(result)
+    result.resultable.present? && result.resultable.campaign ? result.resultable.campaign.brands : ::Company.current.brands
   end
 end
