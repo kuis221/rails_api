@@ -1,5 +1,7 @@
 /* @group Base */
 
+@import "variables";
+
 .chzn-container {
 	position: relative;
 	display: inline-block;
@@ -54,13 +56,17 @@
 	.chzn-default {
 		color: #999;
 	}
-	.chzn-single span {
-		color: $user_menu;
-		display: block;
-		overflow: hidden;
-		margin-right: 26px;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	.chzn-single{
+		span {
+			display: block;
+			overflow: hidden;
+			margin-right: 26px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		&.chzn-default span{
+			color: $user_menu;
+		}
 	}
 	.chzn-single-with-deselect span {
 		margin-right: 38px;
