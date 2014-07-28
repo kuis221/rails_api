@@ -235,12 +235,15 @@ class AttachedAsset < ActiveRecord::Base
     end
   end
 
+  # Moving the original file to final path
+  def move_uploaded_file
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
+    res = file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path], acl: :public_read)
+  end
+
   # Final upload processing step
   def transfer_and_cleanup
-    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
-
-    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-    file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     @processing = true
     if post_process_required?
       file.reprocess!
@@ -305,6 +308,7 @@ class AttachedAsset < ActiveRecord::Base
     # Queue file processing
     def queue_processing
       unless processed? || @processing
+        move_uploaded_file
         if direct_upload_url.present?
           if post_process_required?
             Resque.enqueue(AssetsUploadWorker, id)
