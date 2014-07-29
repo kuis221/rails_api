@@ -19,6 +19,6 @@
 
 require 'spec_helper'
 
-describe AdminUser do
-  it { should validate_presence_of(:email) }
+describe AdminUser, :type => :model do
+  it { is_expected.to validate_presence_of(:email) }
 end

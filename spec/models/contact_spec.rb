@@ -21,40 +21,40 @@
 
 require 'spec_helper'
 
-describe Contact do
-  it { should have_many(:contact_events) }
-  it { should validate_presence_of(:first_name) }
-  it { should validate_presence_of(:last_name) }
-  it { should validate_presence_of(:country) }
-  it { should validate_presence_of(:state) }
-  it { should validate_presence_of(:city) }
+describe Contact, :type => :model do
+  it { is_expected.to have_many(:contact_events) }
+  it { is_expected.to validate_presence_of(:first_name) }
+  it { is_expected.to validate_presence_of(:last_name) }
+  it { is_expected.to validate_presence_of(:country) }
+  it { is_expected.to validate_presence_of(:state) }
+  it { is_expected.to validate_presence_of(:city) }
 
-  it { should allow_value('guilleva@gmail.com').for(:email) }
-  it { should allow_value('').for(:email) }
-  it { should allow_value(nil).for(:email) }
-  it { should_not allow_value('guilleva').for(:email) }
-  it { should_not allow_value('guilleva@dsada').for(:email) }
+  it { is_expected.to allow_value('guilleva@gmail.com').for(:email) }
+  it { is_expected.to allow_value('').for(:email) }
+  it { is_expected.to allow_value(nil).for(:email) }
+  it { is_expected.not_to allow_value('guilleva').for(:email) }
+  it { is_expected.not_to allow_value('guilleva@dsada').for(:email) }
 
-  it {should allow_value('US').for(:country) }
-  it {should allow_value('CR').for(:country) }
-  it {should allow_value('CA').for(:country) }
-  it {should_not allow_value('ZZY').for(:country).with_message('is not valid') }
-  it {should_not allow_value('Costa Rica').for(:country).with_message('is not valid') }
-  it {should_not allow_value('United States').for(:country).with_message('is not valid') }
+  it {is_expected.to allow_value('US').for(:country) }
+  it {is_expected.to allow_value('CR').for(:country) }
+  it {is_expected.to allow_value('CA').for(:country) }
+  it {is_expected.not_to allow_value('ZZY').for(:country).with_message('is not valid') }
+  it {is_expected.not_to allow_value('Costa Rica').for(:country).with_message('is not valid') }
+  it {is_expected.not_to allow_value('United States').for(:country).with_message('is not valid') }
 
   describe "state validation" do
     describe "when country is nil" do
       subject{ Contact.new({country: nil}, without_protection: true) }
 
-      it {should_not allow_value('CA').for(:state).with_message('is not valid') }
-      it {should_not allow_value('ON').for(:state).with_message('is not valid') }
+      it {is_expected.not_to allow_value('CA').for(:state).with_message('is not valid') }
+      it {is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }
     end
 
     describe "with United States as country" do
       subject{ Contact.new({country: 'US'}, without_protection: true) }
 
-      it {should allow_value('CA').for(:state) }
-      it {should_not allow_value('ON').for(:state).with_message('is not valid') }
+      it {is_expected.to allow_value('CA').for(:state) }
+      it {is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }
     end
   end
 
@@ -62,46 +62,46 @@ describe Contact do
     let(:contact) { FactoryGirl.build(:contact, :first_name => 'Juanito', :last_name => 'Perez') }
 
     it "should return the first_name and last_name concatenated" do
-      contact.full_name.should == 'Juanito Perez'
+      expect(contact.full_name).to eq('Juanito Perez')
     end
 
     it "should return only the first_name if it doesn't have last_name" do
       contact.last_name = nil
-      contact.full_name.should == 'Juanito'
+      expect(contact.full_name).to eq('Juanito')
     end
 
     it "should return only the last_name if it doesn't have first_name" do
       contact.first_name = nil
-      contact.full_name.should == 'Perez'
+      expect(contact.full_name).to eq('Perez')
     end
   end
 
   describe "#country_name" do
     it "should return the correct country name" do
       contact = FactoryGirl.build(:contact, country: 'US')
-      contact.country_name.should == 'United States'
+      expect(contact.country_name).to eq('United States')
     end
 
     it "should return nil if the contact doesn't have a country" do
       contact = FactoryGirl.build(:contact, country: nil)
-      contact.country_name.should be_nil
+      expect(contact.country_name).to be_nil
     end
 
     it "should return nil if the contact has an invalid country" do
       contact = FactoryGirl.build(:contact, country: 'XYZ')
-      contact.country_name.should be_nil
+      expect(contact.country_name).to be_nil
     end
   end
 
   describe "#street_address" do
     it "should return both address1+address2" do
       contact = FactoryGirl.build(:contact, street1: 'some street', street2: '2nd floor')
-      contact.street_address.should == 'some street, 2nd floor'
+      expect(contact.street_address).to eq('some street, 2nd floor')
     end
 
     it "should return only address1+address2" do
       contact = FactoryGirl.build(:contact, street1: 'some street', street2: '')
-      contact.street_address.should == 'some street'
+      expect(contact.street_address).to eq('some street')
     end
   end
 end

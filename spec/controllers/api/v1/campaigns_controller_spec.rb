@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::CampaignsController do
+describe Api::V1::CampaignsController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
@@ -11,7 +11,7 @@ describe Api::V1::CampaignsController do
       FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
 
       get :all, auth_token: user.authentication_token, company_id: company.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result).to match_array([{"id"=> campaign.id, "name"=>'Cerveza Imperial FY14'}])
@@ -35,7 +35,7 @@ describe Api::V1::CampaignsController do
       goal.save
 
       get :overall_stats, auth_token: user.authentication_token, company_id: company.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       results = JSON.parse(response.body)
 
       expect(results.first).to include({"id"=> campaign.id, "name"=>'Cerveza Imperial FY14', "goal" => 100.0, "kpi" => 'PROMO HOURS'})
@@ -54,7 +54,7 @@ describe Api::V1::CampaignsController do
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
 
       get :stats, auth_token: user.authentication_token, company_id: company.to_param, id: campaign.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       stats = JSON.parse(response.body)
 
       expect(stats['areas'].first['id']).to eql area.id
@@ -67,8 +67,8 @@ describe Api::V1::CampaignsController do
       expect(stats['areas'].first['executed_percentage']).to eql 0
       expect(stats['areas'].first['scheduled_percentage']).to eql 0
       expect(stats['areas'].first['remaining_percentage']).to eql 100
-      expect(stats['areas'].first.has_key?('today')).to be_false
-      expect(stats['areas'].first.has_key?('today_percentage')).to be_false
+      expect(stats['areas'].first.has_key?('today')).to be_falsey
+      expect(stats['areas'].first.has_key?('today_percentage')).to be_falsey
      end
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BrandPortfoliosController, search: true do
+describe BrandPortfoliosController, type: :controller, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -11,10 +11,10 @@ describe BrandPortfoliosController, search: true do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'autocomplete'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      buckets.map{|b| b['label']}.should == ['Brands']
+      expect(buckets.map{|b| b['label']}).to eq(['Brands'])
     end
 
     it "should return the brands in the Brands Bucket" do
@@ -22,11 +22,11 @@ describe BrandPortfoliosController, search: true do
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+      expect(brands_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}])
     end
   end
 
@@ -34,10 +34,10 @@ describe BrandPortfoliosController, search: true do
     it "should return the correct filters in the right order" do
       Sunspot.commit
       get 'filters', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Brands", "Active State"]
+      expect(filters['filters'].map{|b| b['label']}).to eq(["Brands", "Active State"])
     end
   end
 end

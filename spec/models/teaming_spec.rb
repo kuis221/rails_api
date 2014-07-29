@@ -10,11 +10,11 @@
 
 require 'spec_helper'
 
-describe Teaming do
-  it { should belong_to(:team) }
-  it { should belong_to(:teamable) }
-  it { should validate_presence_of(:teamable_id) }
-  it { should validate_presence_of(:teamable_type) }
+describe Teaming, :type => :model do
+  it { is_expected.to belong_to(:team) }
+  it { is_expected.to belong_to(:teamable) }
+  it { is_expected.to validate_presence_of(:teamable_id) }
+  it { is_expected.to validate_presence_of(:teamable_type) }
 
   describe "new event notification" do
     let(:event) { FactoryGirl.create(:event) }

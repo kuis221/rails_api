@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TasksController, search: true do
+describe TasksController, type: :controller, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -11,18 +11,18 @@ describe TasksController, search: true do
   describe "GET 'autocomplete'" do
     it "should return the correct buckets in the right order" do
       get 'autocomplete', scope: :user
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      buckets.map{|b| b['label']}.should == ['Tasks', 'Campaigns']
+      expect(buckets.map{|b| b['label']}).to eq(['Tasks', 'Campaigns'])
     end
 
     it "should return the correct buckets in the right order when the user is in the 'teams' scope" do
       get 'autocomplete', scope: :teams
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      buckets.map{|b| b['label']}.should == ['Tasks', 'Campaigns', 'People']
+      expect(buckets.map{|b| b['label']}).to eq(['Tasks', 'Campaigns', 'People'])
     end
 
     it "should return the users in the People Bucket" do
@@ -31,11 +31,11 @@ describe TasksController, search: true do
       Sunspot.commit
 
       get 'autocomplete', scope: :teams, q: 'gu'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
     end
 
     it "should return the teams in the People Bucket" do
@@ -43,11 +43,11 @@ describe TasksController, search: true do
       Sunspot.commit
 
       get 'autocomplete', scope: :teams, q: 'sp'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value"=>team.id.to_s, "type"=>"team"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Sp</i>urs", "value"=>team.id.to_s, "type"=>"team"}])
     end
 
     it "should return the teams and users in the People Bucket" do
@@ -57,11 +57,11 @@ describe TasksController, search: true do
       Sunspot.commit
 
       get 'autocomplete', scope: :teams, q: 'va'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
     end
 
     it "should return the campaigns in the Campaigns Bucket" do
@@ -69,11 +69,11 @@ describe TasksController, search: true do
       Sunspot.commit
 
       get 'autocomplete', scope: :teams, q: 'cac'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+      expect(campaigns_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}])
     end
 
 
@@ -82,11 +82,11 @@ describe TasksController, search: true do
       Sunspot.commit
 
       get 'autocomplete', scope: :teams, q: 'Bri'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       tasks_bucket = buckets.select{|b| b['label'] == 'Tasks'}.first
-      tasks_bucket['value'].should == [{"label"=>"<i>Bri</i>ng the beers", "value"=>task.id.to_s, "type"=>"task"}]
+      expect(tasks_bucket['value']).to eq([{"label"=>"<i>Bri</i>ng the beers", "value"=>task.id.to_s, "type"=>"task"}])
     end
   end
 
@@ -94,19 +94,19 @@ describe TasksController, search: true do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'filters', format: :json, scope: :user
-      response.should be_success
+      expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Task Status", "Active State"]
+      expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Task Status", "Active State"])
     end
 
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'filters', format: :json, scope: :teams
-      response.should be_success
+      expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Campaigns","Task Status", "Staff", "Active State"]
+      expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns","Task Status", "Staff", "Active State"])
     end
   end
 end

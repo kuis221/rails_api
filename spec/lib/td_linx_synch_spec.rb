@@ -10,7 +10,7 @@ describe TdLinxSynch do
 
       it "should assign the code to the two places" do
 
-        TdlinxMailer.should_receive(:td_linx_process_completed).and_return(double(deliver: true))
+        expect(TdlinxMailer).to receive(:td_linx_process_completed).and_return(double(deliver: true))
         place1 = FactoryGirl.create(:place, name: 'Big Es Supermarket',
           city: 'Easthampton', state: 'Massachusetts', zipcode: '01027',
           street_number: '11', route: 'Union St', country: 'US')

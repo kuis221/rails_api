@@ -20,43 +20,43 @@
 
 require 'spec_helper'
 
-describe Goal do
+describe Goal, :type => :model do
 
-  it { should validate_presence_of(:goalable_id) }
-  it { should validate_presence_of(:goalable_type) }
+  it { is_expected.to validate_presence_of(:goalable_id) }
+  it { is_expected.to validate_presence_of(:goalable_type) }
 
-  it { should validate_numericality_of(:goalable_id) }
-  it { should validate_numericality_of(:kpi_id) }
-  it { should validate_numericality_of(:kpis_segment_id) }
-  it { should validate_numericality_of(:value) }
+  it { is_expected.to validate_numericality_of(:goalable_id) }
+  it { is_expected.to validate_numericality_of(:kpi_id) }
+  it { is_expected.to validate_numericality_of(:kpis_segment_id) }
+  it { is_expected.to validate_numericality_of(:value) }
 
-  it { should belong_to(:goalable) }
-  it { should belong_to(:parent) }
-  it { should belong_to(:kpi) }
-  it { should belong_to(:kpis_segment) }
+  it { is_expected.to belong_to(:goalable) }
+  it { is_expected.to belong_to(:parent) }
+  it { is_expected.to belong_to(:kpi) }
+  it { is_expected.to belong_to(:kpis_segment) }
 
   context do
     before { subject.activity_type_id = 1 }
-    it { should_not validate_presence_of(:kpi_id) }
-    it { should_not validate_numericality_of(:kpi_id) }
+    it { is_expected.not_to validate_presence_of(:kpi_id) }
+    it { is_expected.not_to validate_numericality_of(:kpi_id) }
   end
 
   context do
     before { subject.activity_type_id = nil }
-    it { should validate_presence_of(:kpi_id) }
-    it { should validate_numericality_of(:kpi_id) }
+    it { is_expected.to validate_presence_of(:kpi_id) }
+    it { is_expected.to validate_numericality_of(:kpi_id) }
   end
 
   context do
     before { subject.kpi_id = 1 }
-    it { should_not validate_presence_of(:activity_type_id) }
-    it { should_not validate_numericality_of(:activity_type_id) }
+    it { is_expected.not_to validate_presence_of(:activity_type_id) }
+    it { is_expected.not_to validate_numericality_of(:activity_type_id) }
   end
 
   context do
     before { subject.kpi_id = nil }
-    it { should validate_presence_of(:activity_type_id) }
-    it { should validate_numericality_of(:activity_type_id) }
+    it { is_expected.to validate_presence_of(:activity_type_id) }
+    it { is_expected.to validate_numericality_of(:activity_type_id) }
   end
 
 

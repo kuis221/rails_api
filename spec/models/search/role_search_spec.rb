@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Role, search: true do
+describe Role, type: :model, search: true do
   it "should search for roles" do
     # First populate the Database with some data
     role = FactoryGirl.create(:role)
@@ -12,13 +12,13 @@ describe Role, search: true do
     Sunspot.commit
 
     # Search for all Roles on a given Company
-    Role.do_search(company_id: 1).results.should =~ [role, role2]
-    Role.do_search(company_id: 2).results.should =~ [company2_role]
+    expect(Role.do_search(company_id: 1).results).to match_array([role, role2])
+    expect(Role.do_search(company_id: 2).results).to match_array([company2_role])
 
     # Search for a given Role
-    Role.do_search({company_id: 1, q: "role,#{role.id}"}, true).results.should =~ [role]
+    expect(Role.do_search({company_id: 1, q: "role,#{role.id}"}, true).results).to match_array([role])
 
     # Search for Roles on a given status
-    Role.do_search(company_id: 1, status: ['Active']).results.should =~ [role, role2]
+    expect(Role.do_search(company_id: 1, status: ['Active']).results).to match_array([role, role2])
   end
 end

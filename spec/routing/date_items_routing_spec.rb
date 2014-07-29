@@ -1,18 +1,18 @@
 require "spec_helper"
 
-describe DateItemsController do
+describe DateItemsController, :type => :routing do
   describe "routing" do
 
     it "routes to #new" do
-      get("/date_ranges/:range_id/dates/new").should route_to("date_items#new", :date_range_id => ':range_id')
+      expect(get("/date_ranges/:range_id/dates/new")).to route_to("date_items#new", :date_range_id => ':range_id')
     end
 
     it "routes to #create" do
-      post("/date_ranges/:range_id/dates").should route_to("date_items#create", :date_range_id => ':range_id')
+      expect(post("/date_ranges/:range_id/dates")).to route_to("date_items#create", :date_range_id => ':range_id')
     end
 
     it "routes to #destroy" do
-      delete("/date_ranges/:range_id/dates/1").should route_to("date_items#destroy", :id => "1", :date_range_id => ':range_id')
+      expect(delete("/date_ranges/:range_id/dates/1")).to route_to("date_items#destroy", :id => "1", :date_range_id => ':range_id')
     end
 
   end

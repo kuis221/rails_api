@@ -15,12 +15,12 @@
 
 require 'spec_helper'
 
-describe Team do
-  it { should belong_to(:company) }
-  it { should have_many(:memberships) }
-  it { should have_many(:users).through(:memberships) }
+describe Team, :type => :model do
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to have_many(:memberships) }
+  it { is_expected.to have_many(:users).through(:memberships) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
   describe "#activate" do
     let(:team) { FactoryGirl.build(:team, active: false) }
@@ -28,7 +28,7 @@ describe Team do
     it "should return the active value as true" do
       team.activate!
       team.reload
-      team.active.should be_true
+      expect(team.active).to be_truthy
     end
   end
 
@@ -38,7 +38,7 @@ describe Team do
     it "should return the active value as false" do
       team.deactivate!
       team.reload
-      team.active.should be_false
+      expect(team.active).to be_falsey
     end
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::EventDataController do
+describe Results::EventDataController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -10,15 +10,15 @@ describe Results::EventDataController do
   describe "GET 'index'" do
     it "should return http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'items'" do
     it "should return http success" do
       get 'items'
-      response.should be_success
-      response.should render_template('totals')
+      expect(response).to be_success
+      expect(response).to render_template('totals')
     end
   end
 
@@ -28,7 +28,7 @@ describe Results::EventDataController do
         get :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      ListExportWorker.should have_queued(export.id)
+      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
@@ -205,13 +205,13 @@ describe Results::EventDataController do
 
       expect{
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
-        event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '27'}
-        expect(event.save).to be_true
+        event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '37'}
+        expect(event.save).to be_truthy
 
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = nil
         event.result_for_kpi(another_kpi).value = 134
-        expect(event.save).to be_true
+        expect(event.save).to be_truthy
       }.to change(FormFieldResult, :count).by(3)
 
       Sunspot.commit
@@ -221,7 +221,7 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 3
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('MY KPI: UNO', 'MY KPI: DOS')
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('0.63', '0.27')
+        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('0.63', '0.37')
         expect(rows[2].elements.to_a('Cell/Data').map{|d| d.text }).to include('134.0')
       end
     end

@@ -24,16 +24,16 @@
 
 require 'spec_helper'
 
-describe Venue do
-  it { should belong_to(:place) }
-  it { should belong_to(:company) }
+describe Venue, :type => :model do
+  it { is_expected.to belong_to(:place) }
+  it { is_expected.to belong_to(:company) }
 
   describe "compute_stats" do
     let(:company) { FactoryGirl.create(:company) }
     let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place)) }
 
     it "return succeed if there are no events for this venue" do
-      venue.compute_stats.should be_true
+      expect(venue.compute_stats).to be_truthy
     end
 
     it "count the number of events for the company" do
@@ -44,8 +44,8 @@ describe Venue do
 
       venue.compute_stats
       venue.reload
-      venue.events_count.should == 1
-      venue.promo_hours.to_i.should == 3
+      expect(venue.events_count).to eq(1)
+      expect(venue.promo_hours.to_i).to eq(3)
 
       # TODO: test the values for impressions, interactions and other kpis values
     end
@@ -66,24 +66,24 @@ describe Venue do
       Sunspot.commit
 
       place1.compute_scoring
-      place1.score_impressions.should == 13
-      place1.score_cost.should == 63
-      place1.score.should == 38
+      expect(place1.score_impressions).to eq(13)
+      expect(place1.score_cost).to eq(63)
+      expect(place1.score).to eq(38)
 
       place2.compute_scoring
-      place2.score_impressions.should == 57
-      place2.score_cost.should == 10
-      place2.score.should == 33
+      expect(place2.score_impressions).to eq(57)
+      expect(place2.score_cost).to eq(10)
+      expect(place2.score).to eq(33)
 
       place3.compute_scoring
-      place3.score_impressions.should == 90
-      place3.score_cost.should == 43
-      place3.score.should == 66
+      expect(place3.score_impressions).to eq(90)
+      expect(place3.score_cost).to eq(43)
+      expect(place3.score).to eq(66)
 
       place4.compute_scoring
-      place4.score_impressions.should == 37
-      place4.score_cost.should == 87
-      place4.score.should == 62
+      expect(place4.score_impressions).to eq(37)
+      expect(place4.score_cost).to eq(87)
+      expect(place4.score).to eq(62)
 
     end
 
@@ -131,9 +131,9 @@ describe Venue do
         )
         data = venue.overall_graphs_data
 
-        data[:age].should == {"< 12"=>1.0, "12 – 17"=>2.0, "18 – 24"=>4.0, "25 – 34"=>8.0, "35 – 44"=>16.0, "45 – 54"=>32.0, "55 – 64"=>24.0, "65+"=>13.0}
-        data[:gender].should == {"Female"=>72.5, "Male"=>27.5}
-        data[:ethnicity].should == {"Asian"=>15.0, "Black / African American"=>24.0, "Hispanic / Latino"=>26.0, "Native American"=>23.0, "White"=>12.0}
+        expect(data[:age]).to eq({"< 12"=>1.0, "12 – 17"=>2.0, "18 – 24"=>4.0, "25 – 34"=>8.0, "35 – 44"=>16.0, "45 – 54"=>32.0, "55 – 64"=>24.0, "65+"=>13.0})
+        expect(data[:gender]).to eq({"Female"=>72.5, "Male"=>27.5})
+        expect(data[:ethnicity]).to eq({"Asian"=>15.0, "Black / African American"=>24.0, "Hispanic / Latino"=>26.0, "Native American"=>23.0, "White"=>12.0})
 
       end
 
@@ -147,13 +147,13 @@ describe Venue do
         set_event_results(event, impressions: 50)
 
         data = venue.overall_graphs_data
-        data[:impressions_promo][0].round.should == 0
-        data[:impressions_promo][1].round.should == 0
-        data[:impressions_promo][2].round.should == 33  # 100 impressions / 3h
-        data[:impressions_promo][3].round.should == 25  # 50 impressions / 2h
-        data[:impressions_promo][4].round.should == 0
-        data[:impressions_promo][5].round.should == 0
-        data[:impressions_promo][6].round.should == 0
+        expect(data[:impressions_promo][0].round).to eq(0)
+        expect(data[:impressions_promo][1].round).to eq(0)
+        expect(data[:impressions_promo][2].round).to eq(33)  # 100 impressions / 3h
+        expect(data[:impressions_promo][3].round).to eq(25)  # 50 impressions / 2h
+        expect(data[:impressions_promo][4].round).to eq(0)
+        expect(data[:impressions_promo][5].round).to eq(0)
+        expect(data[:impressions_promo][6].round).to eq(0)
 
       end
 
@@ -165,21 +165,21 @@ describe Venue do
         set_event_results(event, impressions: 100)
 
         data = venue.overall_graphs_data
-        data[:impressions_promo][0].round.should == 0
-        data[:impressions_promo][1].round.should == 0
-        data[:impressions_promo][2].round.should == 57   # 4h * 100 / 7h
-        data[:impressions_promo][3].round.should == 43   # 3h * 100 / 7h
-        data[:impressions_promo][4].round.should == 0
-        data[:impressions_promo][5].round.should == 0
-        data[:impressions_promo][6].round.should == 0
+        expect(data[:impressions_promo][0].round).to eq(0)
+        expect(data[:impressions_promo][1].round).to eq(0)
+        expect(data[:impressions_promo][2].round).to eq(57)   # 4h * 100 / 7h
+        expect(data[:impressions_promo][3].round).to eq(43)   # 3h * 100 / 7h
+        expect(data[:impressions_promo][4].round).to eq(0)
+        expect(data[:impressions_promo][5].round).to eq(0)
+        expect(data[:impressions_promo][6].round).to eq(0)
 
-        data[:cost_impression][0].round.should == 0
-        data[:cost_impression][1].round.should == 0
-        data[:cost_impression][2].round.should == 10   # 1000 / 100
-        data[:cost_impression][3].round.should == 10   # 1000 / 100
-        data[:cost_impression][4].round.should == 0
-        data[:cost_impression][5].round.should == 0
-        data[:cost_impression][6].round.should == 0
+        expect(data[:cost_impression][0].round).to eq(0)
+        expect(data[:cost_impression][1].round).to eq(0)
+        expect(data[:cost_impression][2].round).to eq(10)   # 1000 / 100
+        expect(data[:cost_impression][3].round).to eq(10)   # 1000 / 100
+        expect(data[:cost_impression][4].round).to eq(0)
+        expect(data[:cost_impression][5].round).to eq(0)
+        expect(data[:cost_impression][6].round).to eq(0)
       end
     end
   end

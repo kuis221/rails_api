@@ -22,12 +22,12 @@ RSpec::Matchers.define :have_filter_section do |filter|
   end
 
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     message = @errors.join("\n")
     message
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     message = @errors.join("\n")
     message
   end
@@ -47,12 +47,12 @@ RSpec::Matchers.define :have_file_in_queue do |file_name|
   end
 
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     message = "expected queue to include '#{file_name}' but have [#{@queued.join(',')}]"
     message
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     message = "expected queue to NOT include '#{file_name}' but it did"
     message
   end
@@ -81,11 +81,11 @@ RSpec::Matchers.define :have_photo_thumbnail do |photo|
   end
 
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected list have thumbnail for '#{photo.file_file_name}': #{@error.join('\n')}"
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     "expected list to not have thumbnail for '#{photo.file_file_name}'"
   end
 
@@ -132,12 +132,12 @@ RSpec::Matchers.define :have_form_field do |name, filter={}|
   end
 
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     message = @errors.join("\n")
     message
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     message = @errors.join("\n")
     message
   end
@@ -169,12 +169,12 @@ RSpec::Matchers.define :have_notification do |text, filter={}|
   end
 
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     message = "Expected to have " + @errors.join("\n")
     message
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     message = "Expected to not have #{filter[:count] == 1 ? 'a notification' :  filter[:count].to_s + ' notifications'} with text \"#{text}\", but it did"
     message
   end

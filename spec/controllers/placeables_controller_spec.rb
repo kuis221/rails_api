@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe PlaceablesController do
+describe PlaceablesController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -17,9 +17,9 @@ describe PlaceablesController do
 
       get :new, campaign_id: campaign.id, format: :js
 
-      response.should be_success
+      expect(response).to be_success
 
-      assigns(:areas).should == [area]
+      expect(assigns(:areas)).to eq([area])
     end
 
     it "do not include the areas that belongs to the campaign" do
@@ -28,9 +28,9 @@ describe PlaceablesController do
       campaign.areas << assigned_area
       get :new, campaign_id: campaign.id, format: :js
 
-      response.should be_success
+      expect(response).to be_success
 
-      assigns(:areas).should == [area]
+      expect(assigns(:areas)).to eq([area])
     end
 
     it "do not include the areas that belongs to the company user" do
@@ -39,9 +39,9 @@ describe PlaceablesController do
       company_user.areas << assigned_area
       get :new, company_user_id: company_user.id, format: :js
 
-      response.should be_success
+      expect(response).to be_success
 
-      assigns(:areas).should == [area]
+      expect(assigns(:areas)).to eq([area])
     end
   end
 
@@ -51,17 +51,17 @@ describe PlaceablesController do
       expect {
         post 'add_area', campaign_id: campaign.id, area: area.id, format: :js
       }.to change(campaign.areas, :count).by(1)
-      response.should be_success
-      response.should render_template('placeables/add_area')
+      expect(response).to be_success
+      expect(response).to render_template('placeables/add_area')
     end
 
     it "should add the area to the company user" do
       expect {
         post 'add_area', company_user_id: company_user.id, area: area.id, format: :js
       }.to change(company_user.areas, :count).by(1)
-      response.should be_success
-      response.should render_template('placeables/add_area')
-      response.should render_template('company_users/_add_area')
+      expect(response).to be_success
+      expect(response).to render_template('placeables/add_area')
+      expect(response).to render_template('company_users/_add_area')
     end
   end
 
@@ -82,8 +82,8 @@ describe PlaceablesController do
         }.to change(campaign.areas, :count).by(-1)
       }.to change(Goal, :count).by(-1)
 
-      response.should be_success
-      response.should render_template('placeables/remove_area')
+      expect(response).to be_success
+      expect(response).to render_template('placeables/remove_area')
     end
 
     it "should remove the area from the company user" do
@@ -99,8 +99,8 @@ describe PlaceablesController do
           delete 'remove_area', company_user_id: company_user.id, area: area.id, format: :js
         }.to change(company_user.areas, :count).by(-1)
       }.to change(Goal, :count).by(-1)
-      response.should be_success
-      response.should render_template('placeables/remove_area')
+      expect(response).to be_success
+      expect(response).to render_template('placeables/remove_area')
     end
   end
 end

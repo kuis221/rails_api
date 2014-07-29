@@ -259,6 +259,9 @@
 				padding: 3px;
 			}
 		}
+		.search-fields {
+			margin-top: 5px;
+		}
 
 		.scrollable-list {
 			max-height: 400px;
@@ -267,6 +270,8 @@
 		}
 		.group-name {
 			margin-left: 10px;
+			margin-bottom: 10px;
+			text-transform:uppercase;
 		}
 
 		.custom {
@@ -314,11 +319,18 @@
 				width: initial;
 				text-align: left;
 				height: 25px;
+				font-size: 12px;
 				overflow: hidden;
-				width: 160px;
+				width: 180px;
 				border: 0;
+				color: $text;
+				font-weight: normal;
+				padding: 0 10px;
 				&:before {
 					display: none;
+				}
+				&:hover {
+					background-color:$btnHover;
 				}
 			}
 			&.module {
@@ -330,7 +342,6 @@
 				padding-top: 8px;
 				height: 30px;
 			}
-
 
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
@@ -450,6 +461,7 @@
 
 	textarea{
 		padding-top: 10px;
+		height: 80px;
 	}
 
 	label{

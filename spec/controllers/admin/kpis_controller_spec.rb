@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::KpisController do
+describe Admin::KpisController, :type => :controller do
   before do
     @user = FactoryGirl.create(:admin_user)
     sign_in @user
@@ -11,15 +11,15 @@ describe Admin::KpisController do
   describe "GET 'index'" do
     it "returns http success" do
       get :index
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'show'" do
     it "returns http success" do
       get 'show', id: kpi.to_param
-      response.should be_success
-      assigns(:kpi).should == kpi
+      expect(response).to be_success
+      expect(assigns(:kpi)).to eq(kpi)
     end
   end
 
@@ -28,37 +28,37 @@ describe Admin::KpisController do
       kpi1 = FactoryGirl.create(:kpi)
       kpi2 = FactoryGirl.create(:kpi)
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: [kpi1.id, kpi2.id]
-      response.should be_success
-      response.should render_template('kpis/batch_action')
+      expect(response).to be_success
+      expect(response).to render_template('kpis/batch_action')
     end
 
     it "redirects to kpis with an error if no kpis where given" do
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: []
-      response.should redirect_to(admin_kpis_path)
-      flash[:alert].should == 'Please select more than one KPI to merge'
+      expect(response).to redirect_to(admin_kpis_path)
+      expect(flash[:alert]).to eq('Please select more than one KPI to merge')
     end
 
     it "redirects to kpis with an error if more than one global KPI was selected" do
       Kpi.create_global_kpis
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: [Kpi.impressions.id, Kpi.interactions.id]
-      response.should redirect_to(admin_kpis_path)
-      flash[:alert].should == 'It\'s not possible to merge two Out-of-the-box KPIs'
+      expect(response).to redirect_to(admin_kpis_path)
+      expect(flash[:alert]).to eq('It\'s not possible to merge two Out-of-the-box KPIs')
     end
 
     it "redirects to kpis with an error if two the KPIs are from different companies" do
       kpi1 = FactoryGirl.create(:kpi, company_id: 1)
       kpi2 = FactoryGirl.create(:kpi, company_id: 2)
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: [kpi1.id, kpi2.id]
-      response.should redirect_to(admin_kpis_path)
-      flash[:alert].should == 'Cannot merge KPIs of different companies'
+      expect(response).to redirect_to(admin_kpis_path)
+      expect(flash[:alert]).to eq('Cannot merge KPIs of different companies')
     end
 
     it "allows to select one global KPI with a custom KPI" do
       Kpi.create_global_kpis
       kpi1 = FactoryGirl.create(:kpi)
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: [Kpi.impressions.id, kpi1.id]
-      response.should be_success
-      response.should render_template('kpis/batch_action')
+      expect(response).to be_success
+      expect(response).to render_template('kpis/batch_action')
     end
 
     it "merges the KPIs and returns to the list page" do
@@ -70,9 +70,9 @@ describe Admin::KpisController do
 
       options  = {'confirm' => 'Merge', 'master_kpi' => {campaign.to_param => kpi1.id.to_s, campaign.to_param => kpi2.id.to_s} }
       post 'batch_action', batch_action: "merge", collection_selection_toggle_all: 'on', collection_selection: [kpi1.id, kpi2.id], merge: options
-      response.should redirect_to(admin_kpis_path)
-      KpiMergeWorker.should have_queued([kpi1.id, kpi2.id], options)
-      flash[:notice].should == 'A job have been queued to merge the KPIs. This can take up to 2 minutes depending of the number of events/campaigns those KPIs are used'
+      expect(response).to redirect_to(admin_kpis_path)
+      expect(KpiMergeWorker).to have_queued([kpi1.id, kpi2.id], options)
+      expect(flash[:notice]).to eq('A job have been queued to merge the KPIs. This can take up to 2 minutes depending of the number of events/campaigns those KPIs are used')
     end
   end
 end

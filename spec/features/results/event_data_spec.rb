@@ -9,7 +9,7 @@ feature "Results Event Data Page", js: true, search: true  do
     @company = @user.companies.first
     Kpi.create_global_kpis
     sign_in @user
-    Place.any_instance.stub(:fetch_place_data).and_return(true)
+    allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
   end
 
   let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }

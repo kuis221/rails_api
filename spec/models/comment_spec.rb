@@ -14,11 +14,11 @@
 
 require 'spec_helper'
 
-describe Comment do
-  it { should belong_to(:commentable) }
+describe Comment, :type => :model do
+  it { is_expected.to belong_to(:commentable) }
 
-  it { should validate_presence_of(:content) }
-  it { should validate_presence_of(:commentable_id) }
-  it { should validate_numericality_of(:commentable_id) }
-  it { should validate_presence_of(:commentable_type) }
+  it { is_expected.to validate_presence_of(:content) }
+  it { is_expected.to validate_presence_of(:commentable_id) }
+  it { is_expected.to validate_numericality_of(:commentable_id) }
+  it { is_expected.to validate_presence_of(:commentable_type) }
 end

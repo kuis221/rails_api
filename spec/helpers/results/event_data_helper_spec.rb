@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::EventDataHelper do
+describe Results::EventDataHelper, :type => :helper do
   let(:campaign) { FactoryGirl.create(:campaign, name: 'Test Campaign FY01') }
   before do
     helper.stubs(:current_company_user).returns(FactoryGirl.build(:company_user, company: campaign.company))
@@ -17,11 +17,11 @@ describe Results::EventDataHelper do
       campaign.add_kpi kpi
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
-      event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '22'}
-      expect(event.save).to be_true
+      event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '12'}
+      expect(event.save).to be_truthy
 
-      helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [["Number", "percentage", 0.88], ["Number", "percentage", 0.22]]
+      expect(helper.custom_fields_to_export_headers).to eq(['MY KPI: UNO', 'MY KPI: DOS'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["Number", "percentage", 0.88], ["Number", "percentage", 0.12]])
     end
 
     it "correctly include segmented kpis and non-segmented kpis together" do
@@ -38,18 +38,18 @@ describe Results::EventDataHelper do
       # Set the results for the event
       event = FactoryGirl.create(:approved_event, campaign: campaign)
 
-      helper.custom_fields_to_export_values(event).should == [nil, nil, nil]
+      expect(helper.custom_fields_to_export_values(event)).to eq([nil, nil, nil])
 
       event.result_for_kpi(kpi).value = {seg1.id.to_s => '66', seg2.id.to_s => '34'}
       event.save
 
-      helper.custom_fields_to_export_values(event).should == [nil, ["Number", "percentage", 0.66], ["Number", "percentage", 0.34]]
+      expect(helper.custom_fields_to_export_values(event)).to eq([nil, ["Number", "percentage", 0.66], ["Number", "percentage", 0.34]])
 
       event.result_for_kpi(kpi2).value = '666666'
       event.save
 
-      helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [["Number", "normal", 666666], ["Number", "percentage", 0.66], ["Number", "percentage", 0.34]]
+      expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["Number", "normal", 666666], ["Number", "percentage", 0.66], ["Number", "percentage", 0.34]])
     end
 
     it "returns nil for the fields that doesn't apply to the event's campaign" do
@@ -70,10 +70,10 @@ describe Results::EventDataHelper do
       event2.result_for_kpi(kpi2).value = '7654'
       event2.save
 
-      helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'ANOTHER KPI']
+      expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
-      helper.custom_fields_to_export_values(event).should == [["Number", "normal", 9876], nil]
-      helper.custom_fields_to_export_values(event2).should == [nil, ["Number", "normal", 7654]]
+      expect(helper.custom_fields_to_export_values(event)).to eq([["Number", "normal", 9876], nil])
+      expect(helper.custom_fields_to_export_values(event2)).to eq([nil, ["Number", "normal", 7654]])
     end
 
     it "returns the segment name for count kpis" do
@@ -91,9 +91,9 @@ describe Results::EventDataHelper do
       event2.result_for_kpi(kpi).value = answer.id
       event2.save
 
-      helper.custom_fields_to_export_headers.should == ['ARE YOU GREAT?']
-      helper.custom_fields_to_export_values(event).should == [["String", "normal", "Yes"]]
-      helper.custom_fields_to_export_values(event2).should == [["String", "normal", "Yes"]]
+      expect(helper.custom_fields_to_export_headers).to eq(['ARE YOU GREAT?'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "Yes"]])
+      expect(helper.custom_fields_to_export_values(event2)).to eq([["String", "normal", "Yes"]])
     end
 
 
@@ -121,10 +121,10 @@ describe Results::EventDataHelper do
       event2.result_for_kpi(kpi2).value = '4444'
       event2.save
 
-      helper.custom_fields_to_export_headers.should == ['A CUSTOM KPI', 'ANOTHER KPI']
+      expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
-      helper.custom_fields_to_export_values(event).should ==  [["Number", "normal", 1111], ["Number", "normal", 2222]]
-      helper.custom_fields_to_export_values(event2).should ==  [["Number", "normal", 3333], ["Number", "normal", 4444]]
+      expect(helper.custom_fields_to_export_values(event)).to eq([["Number", "normal", 1111], ["Number", "normal", 2222]])
+      expect(helper.custom_fields_to_export_values(event2)).to eq([["Number", "normal", 3333], ["Number", "normal", 4444]])
     end
   end
 end

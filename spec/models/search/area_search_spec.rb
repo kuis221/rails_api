@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Area, search: true do
+describe Area, type: :model, search: true do
   it "should search for areas" do
     # First populate the Database with some data
     area = FactoryGirl.create(:area)
@@ -12,13 +12,13 @@ describe Area, search: true do
     Sunspot.commit
 
     # Search for all Roles on a given Company
-    Area.do_search(company_id: 1).results.should =~ [area, area2]
-    Area.do_search(company_id: 2).results.should =~ [company2_area]
+    expect(Area.do_search(company_id: 1).results).to match_array([area, area2])
+    expect(Area.do_search(company_id: 2).results).to match_array([company2_area])
 
     # Search for a given Area
-    Area.do_search({company_id: 1, q: "area,#{area.id}"}, true).results.should =~ [area]
+    expect(Area.do_search({company_id: 1, q: "area,#{area.id}"}, true).results).to match_array([area])
 
     # Search for Areas on a given status
-    Area.do_search(company_id: 1, status: ['Active']).results.should =~ [area, area2]
+    expect(Area.do_search(company_id: 1, status: ['Active']).results).to match_array([area, area2])
   end
 end

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe CountriesController do
+describe CountriesController, :type => :controller do
 
   describe "GET 'states'" do
     it "returns http success" do
       get 'states', country: 'US', format: :json
-      response.should be_success
+      expect(response).to be_success
     end
   end
 end

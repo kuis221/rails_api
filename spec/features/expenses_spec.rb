@@ -37,7 +37,7 @@ feature 'Events section' do
 
           # Test validations
           click_js_button 'Save'
-          find_field('Name').should have_error('This field is required.')
+          expect(find_field('Name')).to have_error('This field is required.')
 
           fill_in 'Name', with: 'test expense'
           expect(page).to have_content('File attached: file.pdf')

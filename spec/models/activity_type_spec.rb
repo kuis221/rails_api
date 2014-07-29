@@ -13,13 +13,13 @@
 
 require 'spec_helper'
 
-describe ActivityType do
-  it { should belong_to(:company) }
-  it { should have_many(:form_fields) }
+describe ActivityType, :type => :model do
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to have_many(:form_fields) }
 
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:company_id) }
-  it { should validate_numericality_of(:company_id) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:company_id) }
+  it { is_expected.to validate_numericality_of(:company_id) }
 
   describe "ensure_user_date_field" do
     it 'should create a UserDate field by default' do
@@ -35,7 +35,7 @@ describe ActivityType do
       expect {
         type.name = 'Changed name'
         type.save
-      }.to_not change(type.form_fields, :count).by(1)
+      }.to_not change(type.form_fields, :count)
       expect(FormField.last.type).to eql 'FormField::UserDate'
     end
   end

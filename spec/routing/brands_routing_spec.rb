@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe BrandsController do
+describe BrandsController, :type => :routing do
   describe "routing" do
 
     describe "nested to campaigns" do
@@ -11,10 +11,10 @@ describe BrandsController do
 
     describe "nested to brand portfolios" do
       it "routes to #new" do
-        get("/brand_portfolios/:brand_portfolio_id/brands/new").should route_to("brands#new", brand_portfolio_id: ':brand_portfolio_id')
+        expect(get("/brand_portfolios/:brand_portfolio_id/brands/new")).to route_to("brands#new", brand_portfolio_id: ':brand_portfolio_id')
       end
       it "routes to #create" do
-        post("/brand_portfolios/:brand_portfolio_id/brands").should route_to("brands#create", brand_portfolio_id: ':brand_portfolio_id')
+        expect(post("/brand_portfolios/:brand_portfolio_id/brands")).to route_to("brands#create", brand_portfolio_id: ':brand_portfolio_id')
       end
     end
   end

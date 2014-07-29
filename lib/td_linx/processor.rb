@@ -66,7 +66,7 @@ module TdLinxSynch
       files = {}
       paths
     ensure
-      files.each{|k, file| file.close() }
+      files.each{|k, file| file.close rescue true }
     end
 
     def self.find_place_for_row(row)
@@ -85,6 +85,7 @@ module TdLinxSynch
 
       def self.download_file(path)
         ftp = Net::FTP.new(ENV['TDLINX_FTP_SERVER'])
+        ftp.passive = true
         ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
         file = ftp.list('Legacy_TDLINX_Store_Master*').map{|l| l.split(/\s+/, 4) }.sort{ |a, b| b[0] <=> a[0]}.first
         if file.present?

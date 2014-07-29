@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Analysis::StaffReportController do
+describe Analysis::StaffReportController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -15,8 +15,8 @@ describe Analysis::StaffReportController do
 
       get 'index'
 
-      response.should be_success
-      assigns(:users).should =~ users
+      expect(response).to be_success
+      expect(assigns(:users)).to match_array(users)
     end
   end
 
@@ -24,7 +24,7 @@ describe Analysis::StaffReportController do
 
     it "should render the user report" do
       get 'report', report: { user_id: @company_user.to_param }, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should assign the correct scope to @events_scope" do
@@ -36,8 +36,8 @@ describe Analysis::StaffReportController do
 
       get 'report', report: { user_id: company_user.to_param }, format: :js
 
-      response.should be_success
-      assigns(:events_scope).should =~ events
+      expect(response).to be_success
+      expect(assigns(:events_scope)).to match_array(events)
     end
 
     it "should load all the campaign's goals into @goals" do
@@ -50,8 +50,8 @@ describe Analysis::StaffReportController do
 
       get 'report', report: { user_id: @company_user.to_param }, format: :js
 
-      response.should be_success
-      assigns(:goals).should =~ goals
+      expect(response).to be_success
+      expect(assigns(:goals)).to match_array(goals)
     end
 
     it "should render the report partials" do
@@ -66,10 +66,10 @@ describe Analysis::StaffReportController do
 
       get 'report', report: { user_id: @company_user.to_param }, format: :js
 
-      response.should be_success
-      response.should render_template('report_section_events')
-      response.should render_template('report_section_promo_hours')
-      response.should render_template('report_section_objectives')
+      expect(response).to be_success
+      expect(response).to render_template('report_section_events')
+      expect(response).to render_template('report_section_promo_hours')
+      expect(response).to render_template('report_section_objectives')
     end
 
   end
