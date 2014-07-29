@@ -142,7 +142,7 @@ class Report < ActiveRecord::Base
       if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
         v.kpi.kpis_segments.each{ |s| values_label_map["#{v.label}: #{s.text}"] =  v }
       elsif v.form_field.present? && v.form_field.is_optionable?
-        v.form_field.options.each{ |o| p "#{v.label}: #{o.name}"; values_label_map["#{v.label}: #{o.name}"] =  v }
+        v.form_field.options.each{ |o| values_label_map["#{v.label}: #{o.name}"] =  v }
       else
         values_label_map[v.label] = v
       end

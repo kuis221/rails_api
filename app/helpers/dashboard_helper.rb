@@ -1,28 +1,4 @@
 module DashboardHelper
-  def dashboard_demographics_graph_data
-    @demographics_graph_data ||= Hash.new.tap do |data|
-      results_scope = EventResult.for_approved_events.scoped_by_company_id(current_company).scoped(event_data_scope_conditions)
-      [:age, :gender, :ethnicity].each do |kpi|
-        if segments = Kpi.send(kpi).try(:kpis_segments)
-          results = results_scope.send(kpi).where('kpis_segment_id in (?)', segments.map(&:id)).select('event_results.kpis_segment_id, sum(event_results.scalar_value) AS segment_sum, avg(event_results.scalar_value) AS segment_avg, count(event_results.id) as result_count').group('event_results.kpis_segment_id')
-          totals = results.sum{|r|r.segment_sum.to_f}
-          data[kpi] = Hash[segments.map do |s|
-            [s.text, if r = results.detect{|r| r.kpis_segment_id == s.id}
-              if totals > 0
-                r.segment_sum.to_f * 100 / totals
-              else
-                0
-              end
-            else
-              0
-            end
-            ]
-          end]
-        end
-      end
-    end
-  end
-
   def recent_photos_list
     AttachedAsset.do_search({company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc }).results
   end
