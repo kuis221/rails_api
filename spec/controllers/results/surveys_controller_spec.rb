@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::SurveysController do
+describe Results::SurveysController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -10,15 +10,15 @@ describe Results::SurveysController do
   describe "GET 'index'" do
     it "should return http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'items'" do
     it "should return http success" do
       get 'items'
-      response.should be_success
-      response.should render_template('results/surveys/items')
+      expect(response).to be_success
+      expect(response).to render_template('results/surveys/items')
     end
   end
 
@@ -28,7 +28,7 @@ describe Results::SurveysController do
         get :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      ListExportWorker.should have_queued(export.id)
+      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 

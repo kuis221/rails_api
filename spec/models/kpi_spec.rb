@@ -18,17 +18,17 @@
 
 require 'spec_helper'
 
-describe Kpi do
-  it { should belong_to(:company) }
-  it { should have_many(:kpis_segments) }
-  it { should have_many(:goals) }
+describe Kpi, :type => :model do
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to have_many(:kpis_segments) }
+  it { is_expected.to have_many(:goals) }
 
-  it { should validate_presence_of(:name) }
-  it { should validate_numericality_of(:company_id) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_numericality_of(:company_id) }
 
   # TODO: reject_if needs to be tested in the following line
-  it { should accept_nested_attributes_for(:kpis_segments) }
-  it { should accept_nested_attributes_for(:goals) }
+  it { is_expected.to accept_nested_attributes_for(:kpis_segments) }
+  it { is_expected.to accept_nested_attributes_for(:goals) }
 
   describe "invalid_goal?" do
     let(:company) { FactoryGirl.create(:company) }
@@ -37,21 +37,21 @@ describe Kpi do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', capture_mechanism: 'integer', company: company)
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
 
-      kpi.invalid_goal?(goal).should be_true
+      expect(kpi.invalid_goal?(goal)).to be_truthy
     end
 
     it "should return false if Goal has a kpis_segment_id for a Kpi of type count" do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 2))
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: 100)
 
-      kpi.invalid_goal?(goal).should be_false
+      expect(kpi.invalid_goal?(goal)).to be_falsey
     end
 
     it "should return false if Goal has a nil kpis_segment_id for a Kpi of type different to count or percentage" do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'number', capture_mechanism: 'currency', company: company)
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
 
-      kpi.invalid_goal?(goal).should be_false
+      expect(kpi.invalid_goal?(goal)).to be_falsey
     end
   end
 
@@ -61,28 +61,28 @@ describe Kpi do
     it "should return error if there are restrictions when capture_mechanism is radio and number od segments is less than 2" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 1))
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 2 segments for the selected capture mechanism")
     end
 
     it "should return error if there are restrictions when capture_mechanism is dropdown and number od segments is less than 1" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'dropdown', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 1 segments for the selected capture mechanism")
     end
 
     it "should return error if there are restrictions when capture_mechanism is checkbox and number od segments is less than 1" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'checkbox', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 1 segments for the selected capture mechanism")
     end
 
     it "should not return errors if capture_mechanism doesn't have segments quantity restrictions" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'number', capture_mechanism: 'decimal', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_true
+      expect(kpi.persisted?).to be_truthy
       expect(kpi.errors.full_messages).to be_empty
     end
   end
@@ -108,8 +108,8 @@ describe Kpi do
       }.to change(Kpi, :count).by(-1)
 
       kpi = Kpi.all.last # Get the resulting KPI
-      kpi.name.should == 'New Name'
-      kpi.description.should == 'a description'
+      expect(kpi.name).to eq('New Name')
+      expect(kpi.description).to eq('a description')
     end
 
     it "should update the events results by keeping the value of the master kpi" do
@@ -145,7 +145,7 @@ describe Kpi do
       event.reload
       result = event.result_for_kpi(kpi1)
       result.reload
-      result.value.should == '100'
+      expect(result.value).to eq('100')
     end
 
     it "should merge two kpis that are in different campaigns kpi" do
@@ -184,16 +184,16 @@ describe Kpi do
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
-      result.value.should == '100'
+      expect(result.value).to eq('100')
 
       field1 = event1.campaign.form_field_for_kpi(kpi1)
-      field1.should == result.form_field
+      expect(field1).to eq(result.form_field)
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
-      result.value.should == '200'
+      expect(result.value).to eq('200')
       field2 = event2.campaign.form_field_for_kpi(kpi1)
-      field2.should == result.form_field
+      expect(field2).to eq(result.form_field)
     end
 
 
@@ -239,17 +239,17 @@ describe Kpi do
       event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(kpi1)
       result.reload
-      result.value.should == '100'
+      expect(result.value).to eq('100')
 
       field1 = event1.campaign.form_field_for_kpi(kpi1)
-      field1.should == result.form_field
+      expect(field1).to eq(result.form_field)
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(kpi1)
       result.reload
-      result.value.should == '300'
+      expect(result.value).to eq('300')
       field2 = event2.campaign.form_field_for_kpi(kpi1)
-      field2.should == result.form_field
+      expect(field2).to eq(result.form_field)
     end
 
     it "correctly merge the values for events of fields of the type :percentage" do
@@ -277,7 +277,7 @@ describe Kpi do
         result.value = {seg11.id => '10', seg12.id => '90'}
 
         result = event.result_for_kpi(kpi2)
-        result.value = {seg11.id => '35', seg12.id => '65'}
+        result.value = {seg21.id => '35', seg22.id => '65'}
         event.save
       }.to change(FormFieldResult, :count).by(2)
 
@@ -294,9 +294,9 @@ describe Kpi do
       }.to change(FormFieldResult, :count).by(-1)
 
       event = Event.find(event.id)
-      event.result_for_kpi(kpi1).value.values.should == ['10', '90']
+      expect(event.result_for_kpi(kpi1).value.values).to eq(['10', '90'])
 
-      event.results.count.should == 1
+      expect(event.results.count).to eq(1)
     end
 
     it "correctly merge the values for events of fields of the type :count" do
@@ -339,9 +339,9 @@ describe Kpi do
       }.to change(FormFieldResult, :count).by(-1)
 
       event = Event.find(event.id)
-      event.result_for_kpi(kpi1).to_html.should == 'Dos'
+      expect(event.result_for_kpi(kpi1).to_html).to eq('Dos')
 
-      event.results.count.should == 1
+      expect(event.results.count).to eq(1)
     end
 
     it "correctly merge the values for events of fields of the type :count when the kpis are in differnet campaigns" do
@@ -387,10 +387,10 @@ describe Kpi do
       }.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
-      event1.result_for_kpi(kpi1).to_html.should == 'Uno'
+      expect(event1.result_for_kpi(kpi1).to_html).to eq('Uno')
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      event2.result_for_kpi(kpi1).to_html.should == 'Dos'
+      expect(event2.result_for_kpi(kpi1).to_html).to eq('Dos')
     end
 
 
@@ -437,12 +437,12 @@ describe Kpi do
       }.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
-      event1.result_for_kpi(kpi1).value.keys.should =~ [seg11.id.to_s, seg12.id.to_s]
-      event1.result_for_kpi(kpi1).value.values.should == ['33', '67']
+      expect(event1.result_for_kpi(kpi1).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event1.result_for_kpi(kpi1).value.values).to eq(['33', '67'])
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      event2.result_for_kpi(kpi1).value.keys.should =~ [seg11.id.to_s, seg12.id.to_s]
-      event2.result_for_kpi(kpi1).value.values.should == ['44', '56']
+      expect(event2.result_for_kpi(kpi1).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event2.result_for_kpi(kpi1).value.values).to eq(['44', '56'])
     end
 
     it "should allow custom kpis with a global kpi" do
@@ -486,12 +486,12 @@ describe Kpi do
       event1 = Event.find(event1.id) # Load a fresh copy of the event
       result = event1.result_for_kpi(Kpi.impressions)
       result.reload
-      result.value.should == '100'
+      expect(result.value).to eq('100')
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
       result = event2.result_for_kpi(Kpi.impressions)
       result.reload
-      result.value.should == '200'
+      expect(result.value).to eq('200')
     end
   end
 end

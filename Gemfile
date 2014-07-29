@@ -92,9 +92,8 @@ gem 'jquery-rails'
 group :test, :development do
   gem "spring"
   gem "spring-commands-rspec"
-  gem "factory_girl_rails", "~> 4.3"
-  gem "rspec"
-  gem "rspec-rails" #, "~> 2.0"
+  gem "factory_girl_rails"
+  gem "rspec-rails", '~> 3.0.0'
   gem 'populator'
   gem 'sunspot_solr'
   gem 'timecop'
@@ -116,7 +115,8 @@ group :test do
   gem 'capybara-screenshot'
   gem 'fuubar'
   gem 'database_cleaner'
-  gem 'sms-spec', '~> 0.1.9'
+  #gem 'sms-spec', '~> 0.1.9'
+  gem 'sms-spec'
 end
 
 gem 'airbrake'

@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe EventsHelper do
+describe EventsHelper, :type => :helper do
 
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::TasksController do
+describe Api::V1::TasksController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company_user) { user.company_users.first }
   let(:company) { company_user.company }
@@ -13,7 +13,7 @@ describe Api::V1::TasksController do
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, event_id: event.id, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 2
@@ -29,7 +29,7 @@ describe Api::V1::TasksController do
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, event_id: event.id, status: ['Active'], format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 1
@@ -45,7 +45,7 @@ describe Api::V1::TasksController do
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, scope: 'user', format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 2
@@ -65,7 +65,7 @@ describe Api::V1::TasksController do
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, scope: 'teams', format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 2
@@ -86,10 +86,10 @@ describe Api::V1::TasksController do
       Sunspot.commit
 
       get 'comments', auth_token: user.authentication_token, company_id: company.to_param, id: task.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result.count.should == 2
-      result.should == [{
+      expect(result.count).to eq(2)
+      expect(result).to eq([{
                          'id' => comment1.id,
                          'content' => 'Comment #1',
                          'created_at' => '2013-08-22T11:59:00-07:00',
@@ -106,7 +106,7 @@ describe Api::V1::TasksController do
                            'id' => comment2.created_by_id,
                            'full_name' => comment2.user.full_name
                           }
-                        }]
+                        }])
     end
   end
 end

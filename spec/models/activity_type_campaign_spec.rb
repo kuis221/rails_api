@@ -11,7 +11,7 @@
 
 require 'spec_helper'
 
-describe ActivityTypeCampaign do
-  it { should belong_to(:activity_type) }
-  it { should belong_to(:campaign) }
+describe ActivityTypeCampaign, :type => :model do
+  it { is_expected.to belong_to(:activity_type) }
+  it { is_expected.to belong_to(:campaign) }
 end

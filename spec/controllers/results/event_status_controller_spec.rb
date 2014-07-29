@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::EventStatusController do
+describe Results::EventStatusController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -10,7 +10,7 @@ describe Results::EventStatusController do
   describe "GET 'index'" do
     it "should return http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
   
@@ -19,7 +19,7 @@ describe Results::EventStatusController do
     it "should return http success" do
       Sunspot.commit
       post 'index', "report"=>{"campaign_id"=>campaign.id}
-      response.should be_success
+      expect(response).to be_success
     end
   end
 end

@@ -26,11 +26,11 @@ feature "Confirmations", :js => true do
     visit users_confirmation_path(confirmation_token: 'XYZ123')
 
     expect(page).to have_content('Your account was successfully confirmed.')
-    current_path.should == new_user_session_path
+    expect(current_path).to eq(new_user_session_path)
 
     @user.reload
-    @user.email.should == 'pedro123@rocadura.com'
-    @user.unconfirmed_email.should == nil
-    @user.confirmation_token.should == nil
+    expect(@user.email).to eq('pedro123@rocadura.com')
+    expect(@user.unconfirmed_email).to eq(nil)
+    expect(@user.confirmation_token).to eq(nil)
   end
 end

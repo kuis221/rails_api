@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ActivitiesController do
+describe ActivitiesController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -16,41 +16,41 @@ describe ActivitiesController do
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', venue_id: venue.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', venue_id: venue.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
-      lambda {
+      expect {
         post 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param}, format: :js
-      }.should change(Activity, :count).by(1)
-      response.should be_success
-      response.should render_template(:create)
-      response.should_not render_template(:form_dialog)
+      }.to change(Activity, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template(:create)
+      expect(response).not_to render_template(:form_dialog)
     end
 
     it "should render the form_dialog template if errors" do
-      lambda {
+      expect {
         post 'create', venue_id: venue.to_param, format: :js
-      }.should_not change(Activity, :count)
-      response.should render_template(:create)
-      response.should render_template(:form_dialog)
+      }.not_to change(Activity, :count)
+      expect(response).to render_template(:create)
+      expect(response).to render_template(:form_dialog)
       assigns(:venue).errors.count > 0
     end
 
     it "should assign the correct venue id" do
-      lambda {
+      expect {
         post 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param, activity_date: '05/23/2020'}, format: :js
-      }.should change(Activity, :count).by(1)
-      assigns(:venue).should == venue
-      assigns(:activity).activitable_id.should == venue.id
-      assigns(:activity).activity_date.to_s.should == '05/23/2020 00:00:00'
+      }.to change(Activity, :count).by(1)
+      expect(assigns(:venue)).to eq(venue)
+      expect(assigns(:activity).activitable_id).to eq(venue.id)
+      expect(assigns(:activity).activity_date.to_s).to eq('05/23/2020 00:00:00')
     end
 
     it "should correctly save all the values for percentage field" do
@@ -58,7 +58,7 @@ describe ActivitiesController do
         fieldable: activity_type, type: 'FormField::Percentage',
         options: [FactoryGirl.create(:form_field_option, name: 'Option 1', ordering: 0), FactoryGirl.create(:form_field_option, name: 'Option 1', ordering: 1)])
 
-      lambda {
+      expect {
         post 'create', venue_id: venue.to_param, activity: {
             activity_type_id: activity_type.to_param, campaign_id: campaign.to_param,
             company_user_id: @company_user.to_param, activity_date: '05/23/2020',
@@ -69,7 +69,7 @@ describe ActivitiesController do
               }}
             }
           }, format: :js
-      }.should change(Activity, :count).by(1)
+      }.to change(Activity, :count).by(1)
       activity = Activity.last
       expect(activity.results.count).to eql 1
       result = activity.results.first
@@ -83,7 +83,7 @@ describe ActivitiesController do
   describe "GET 'edit'" do
     it "returns http success" do
       get 'edit', venue_id: venue.to_param, id: activity.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -94,12 +94,12 @@ describe ActivitiesController do
     it "must update the activity attributes" do
       another_campaign.activity_types << activity_type
       put 'update', venue_id: venue.to_param, id: activity.to_param, activity: {campaign_id: another_campaign.id, company_user_id: another_user.id, activity_date: '12/31/2013'}, format: :js
-      assigns(:activity).should == activity
-      response.should be_success
+      expect(assigns(:activity)).to eq(activity)
+      expect(response).to be_success
       activity.reload
-      activity.campaign_id.should == another_campaign.id
-      activity.activity_date.should == Time.zone.parse('2013-12-31 00:00:00')
-      activity.company_user_id.should == another_user.id
+      expect(activity.campaign_id).to eq(another_campaign.id)
+      expect(activity.activity_date).to eq(Time.zone.parse('2013-12-31 00:00:00'))
+      expect(activity.company_user_id).to eq(another_user.id)
     end
   end
 
@@ -107,15 +107,15 @@ describe ActivitiesController do
     it "deactivates an active activity for a venue" do
       activity.update_attribute(:active, true)
       get 'deactivate', id: activity.to_param, format: :js
-      response.should be_success
-      activity.reload.active?.should be_false
+      expect(response).to be_success
+      expect(activity.reload.active?).to be_falsey
     end
 
     it "activates an inactive activity for a venue" do
       activity.update_attribute(:active, false)
       get 'activate', id: activity.to_param, format: :js
-      response.should be_success
-      activity.reload.active?.should be_true
+      expect(response).to be_success
+      expect(activity.reload.active?).to be_truthy
     end
   end
 end

@@ -11,8 +11,8 @@
 
 require 'spec_helper'
 
-describe Marque do
-  it { should belong_to(:brand) }
+describe Marque, :type => :model do
+  it { is_expected.to belong_to(:brand) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 end

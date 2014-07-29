@@ -6,7 +6,7 @@ feature "Activity Types", js: true do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
     sign_in @user
-    Place.any_instance.stub(:fetch_place_data).and_return(true)
+    allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
   end
 
   after do

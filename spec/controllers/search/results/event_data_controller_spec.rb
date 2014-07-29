@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::EventDataController, search: true do
+describe Results::EventDataController, type: :controller, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -32,21 +32,21 @@ describe Results::EventDataController, search: true do
       without_current_user { FactoryGirl.create(:event, company_id: @company.id + 1) } # An event in other company
 
       get 'items'
-      response.should be_success
-      response.should render_template('totals')
+      expect(response).to be_success
+      expect(response).to render_template('totals')
 
-      assigns(:data_totals)['events_count'].should == 1
-      assigns(:data_totals)['promo_hours'].should == 3
-      assigns(:data_totals)['impressions'].should == 100
-      assigns(:data_totals)['interactions'].should == 101
-      assigns(:data_totals)['samples'].should == 102
-      assigns(:data_totals)['gender_female'].should == 65
-      assigns(:data_totals)['gender_male'].should == 35
-      assigns(:data_totals)['ethnicity_asian'].should == 15
-      assigns(:data_totals)['ethnicity_black'].should == 24
-      assigns(:data_totals)['ethnicity_hispanic'].should == 26
-      assigns(:data_totals)['ethnicity_native_american'].should == 23
-      assigns(:data_totals)['ethnicity_white'].should == 12
+      expect(assigns(:data_totals)['events_count']).to eq(1)
+      expect(assigns(:data_totals)['promo_hours']).to eq(3)
+      expect(assigns(:data_totals)['impressions']).to eq(100)
+      expect(assigns(:data_totals)['interactions']).to eq(101)
+      expect(assigns(:data_totals)['samples']).to eq(102)
+      expect(assigns(:data_totals)['gender_female']).to eq(65)
+      expect(assigns(:data_totals)['gender_male']).to eq(35)
+      expect(assigns(:data_totals)['ethnicity_asian']).to eq(15)
+      expect(assigns(:data_totals)['ethnicity_black']).to eq(24)
+      expect(assigns(:data_totals)['ethnicity_hispanic']).to eq(26)
+      expect(assigns(:data_totals)['ethnicity_native_american']).to eq(23)
+      expect(assigns(:data_totals)['ethnicity_white']).to eq(12)
     end
   end
 

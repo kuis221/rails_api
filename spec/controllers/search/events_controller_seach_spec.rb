@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe EventsController, search: true do
+describe EventsController, type: :controller, search: true do
   describe "As Super User" do
     before(:each) do
       @user = sign_in_as_user
@@ -14,10 +14,10 @@ describe EventsController, search: true do
       it "should return the correct buckets in the right order" do
         Sunspot.commit
         get 'autocomplete'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        buckets.map{|b| b['label']}.should == ['Campaigns', 'Brands', 'Places', 'People']
+        expect(buckets.map{|b| b['label']}).to eq(['Campaigns', 'Brands', 'Places', 'People'])
       end
 
       it "should return the users in the People Bucket" do
@@ -26,11 +26,11 @@ describe EventsController, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'gu'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+        expect(people_bucket['value']).to eq([{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
       end
 
       it "should return the teams in the People Bucket" do
@@ -38,11 +38,11 @@ describe EventsController, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'sp'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+        expect(people_bucket['value']).to eq([{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}])
       end
 
       it "should return the teams and users in the People Bucket" do
@@ -52,11 +52,11 @@ describe EventsController, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'va'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+        expect(people_bucket['value']).to eq([{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
       end
 
       it "should return the campaigns in the Campaigns Bucket" do
@@ -64,11 +64,11 @@ describe EventsController, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'cac'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-        campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+        expect(campaigns_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}])
       end
 
       it "should return the brands in the Brands Bucket" do
@@ -76,24 +76,24 @@ describe EventsController, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'cac'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-        brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+        expect(brands_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}])
       end
 
       it "should return the venues in the Places Bucket" do
-        Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+        expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
         venue = FactoryGirl.create(:venue, company_id: @company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
         Sunspot.commit
 
         get 'autocomplete', q: 'mot'
-        response.should be_success
+        expect(response).to be_success
 
         buckets = JSON.parse(response.body)
         places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
-        places_bucket['value'].should == [{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}]
+        expect(places_bucket['value']).to eq([{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}])
       end
     end
 
@@ -102,10 +102,10 @@ describe EventsController, search: true do
       it "should return the correct buckets in the right order" do
         Sunspot.commit
         get 'filters', format: :json
-        response.should be_success
+        expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"]
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"])
       end
 
 
@@ -129,12 +129,12 @@ describe EventsController, search: true do
 
         get 'filters', with_event_data_only: true, format: :json
 
-        response.should be_success
+        expect(response).to be_success
         filters = JSON.parse(response.body)
 
-        filters['filters'].map{|b| b['label']}.should == ["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"]
-        filters['filters'][0]['items'].count.should == 1
-        filters['filters'][0]['items'].first['label'].should == campaign.name
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"])
+        expect(filters['filters'][0]['items'].count).to eq(1)
+        expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
       end
     end
 
@@ -144,14 +144,14 @@ describe EventsController, search: true do
         event = FactoryGirl.create(:event, start_date: '01/13/2013', end_date: '01/13/2013', campaign: campaign, company: @company)
         Sunspot.commit
         get 'calendar', start: DateTime.new(2013, 01, 01, 0, 0, 0).to_i.to_s, end: DateTime.new(2013, 01, 31, 23, 59, 59).to_i.to_s, format: :json
-        response.should be_success
+        expect(response).to be_success
         results = JSON.parse(response.body)
-        results.count.should == 1
+        expect(results.count).to eq(1)
         brand = results.first
-        brand['title'].should == 'Jose Cuervo'
-        brand['count'].should == 1
-        brand['start'].should == '2013-01-13'
-        brand['end'].should == '2013-01-13'
+        expect(brand['title']).to eq('Jose Cuervo')
+        expect(brand['count']).to eq(1)
+        expect(brand['start']).to eq('2013-01-13')
+        expect(brand['end']).to eq('2013-01-13')
       end
     end
   end
@@ -190,7 +190,7 @@ describe EventsController, search: true do
         @company_user.places << FactoryGirl.create(:place, name: "Texas", types: ["administrative_area_level_1", "political"], city: nil, state: "Texas", country: "US")
 
         get 'filters', format: :json
-        response.should be_success
+        expect(response).to be_success
 
         filters = JSON.parse(response.body)
         areas_filters = filters['filters'].detect{|f| f['label'] == 'Areas'}
@@ -228,7 +228,7 @@ describe EventsController, search: true do
                 city: nil, state: nil, country: "US")
 
           get 'filters', format: :json
-          response.should be_success
+          expect(response).to be_success
 
           filters = JSON.parse(response.body)
 

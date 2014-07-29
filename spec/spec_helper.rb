@@ -9,19 +9,17 @@ end
 
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-require 'rspec/autorun'
 require 'capybara/rails'
 require 'capybara/poltergeist'
 require 'database_cleaner'
 require 'capybara-screenshot/rspec'
 require 'sms-spec'
 
-require 'support/brandscopic_spec_helpers'
-include BrandscopiSpecHelpers
-
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+include BrandscopiSpecHelpers
 
 RSpec.configure do |config|
   # ## Mock Framework
@@ -39,6 +37,8 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
+
+  config.infer_spec_type_from_file_location!
 
   config.render_views
 
@@ -58,7 +58,6 @@ RSpec.configure do |config|
   #config.include Capybara::DSL, :type => :request
   config.include SignHelper, :type => :feature
   config.include RequestsHelper, :type => :feature
-  config.include BrandscopiSpecHelpers
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :deletion
@@ -74,8 +73,9 @@ RSpec.configure do |config|
     DeferredGarbageCollection.reconsider
   end
 
-  config.before(:each) do
-    Resque::Worker.stub(:working).and_return([])
+  config.before(:each) do |example|
+    #Resque::Worker.stub(:working).and_return([])
+    allow(Resque::Worker).to receive_messages(:working => [])
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
     Rails.logger.debug "**************************************************************************************"
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
@@ -85,7 +85,7 @@ RSpec.configure do |config|
 
   if ENV['CI']
     Capybara::Screenshot.autosave_on_failure = false
-    config.after(:each) do
+    config.after(:each) do |example|
       # Save screenshot to Amazon S3 on failure when running on the CI server
       if Capybara.page.current_url != '' && example.exception
         filename_prefix = Capybara::Screenshot.filename_prefix_for(:rspec, example)
@@ -101,7 +101,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each) do
+  config.after(:each) do |example|
     if example.metadata[:js]
       wait_for_ajax
       #Capybara.reset_sessions!

@@ -58,7 +58,7 @@ class FormFieldResult < ActiveRecord::Base
     end
 
     def prepare_for_store
-      unless form_field.nil?
+      if self.value_changed?
         self.value = form_field.store_value(self.attributes['value'])
         if form_field.is_hashed_value?
           (self.hash_value, self.value) = [self.attributes['value'], nil]

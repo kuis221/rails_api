@@ -363,9 +363,9 @@ feature "Reports", js: true do
       visit build_results_report_path(report)
       click_js_button 'Share'
       within visible_modal do
-        expect(find_field('report_sharing_custom')['checked']).to be_false
-        expect(find_field('report_sharing_everyone')['checked']).to be_false
-        expect(find_field('report_sharing_owner')['checked']).to be_true
+        expect(find_field('report_sharing_custom')['checked']).to be_falsey
+        expect(find_field('report_sharing_everyone')['checked']).to be_falsey
+        expect(find_field('report_sharing_owner')['checked']).to be_truthy
         choose('Share with Users, Teams and Roles')
         select_from_chosen('Guillermo Vargas', from: 'report_sharing_selections')
         select_from_chosen('Los Fantasticos', from: 'report_sharing_selections')
@@ -379,9 +379,9 @@ feature "Reports", js: true do
         expect(page).to have_content('Guillermo Vargas')
         expect(page).to have_content('Los Fantasticos')
         expect(page).to have_content('Super Hero')
-        expect(find_field('report_sharing_custom')['checked']).to be_true
-        expect(find_field('report_sharing_everyone')['checked']).to be_false
-        expect(find_field('report_sharing_owner')['checked']).to be_false
+        expect(find_field('report_sharing_custom')['checked']).to be_truthy
+        expect(find_field('report_sharing_everyone')['checked']).to be_falsey
+        expect(find_field('report_sharing_owner')['checked']).to be_falsey
 
         choose('Share with everyone')
         click_js_button 'Save'
@@ -570,7 +570,7 @@ feature "Reports", js: true do
       field_list('values').find('li').click
       within ".report-field-settings" do
         select_from_chosen('Average', from: 'Summarize by')
-        find_field('Label').value.should == 'Average of Impressions'
+        expect(find_field('Label').value).to eq('Average of Impressions')
       end
       find('body').click
       click_button 'Save'

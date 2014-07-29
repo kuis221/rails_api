@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::VenuesController do
+describe Api::V1::VenuesController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
@@ -17,7 +17,7 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 3
@@ -40,7 +40,7 @@ describe Api::V1::VenuesController do
       events = FactoryGirl.create(:event, company: company, campaign: campaign, place: place3)
       Sunspot.commit
       get :index, auth_token: user.authentication_token, page: 2, company_id: company.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eql 0
@@ -60,10 +60,10 @@ describe Api::V1::VenuesController do
         Sunspot.commit
 
         get :index, auth_token: user.authentication_token, company_id: company.to_param, campaign: [campaign.id], format: :json
-        response.should be_success
+        expect(response).to be_success
         result = JSON.parse(response.body)
 
-        result['results'].count.should == 1
+        expect(result['results'].count).to eq(1)
         expect(result['results'].first).to include({'id' => venue.id})
       end
     end
@@ -76,7 +76,7 @@ describe Api::V1::VenuesController do
         Sunspot.commit
 
         get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
-        response.should be_success
+        expect(response).to be_success
         result = JSON.parse(response.body)
 
         expect(result['results'].count).to eql 1
@@ -86,11 +86,11 @@ describe Api::V1::VenuesController do
 
     it "should not include the facets when the page is greater than 1" do
       get :index, auth_token: user.authentication_token, company_id: company.to_param, page: 2, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result['results'].should == []
-      result['facets'].should be_nil
-      result['page'].should == 2
+      expect(result['results']).to eq([])
+      expect(result['facets']).to be_nil
+      expect(result['page']).to eq(2)
     end
   end
 
@@ -103,8 +103,8 @@ describe Api::V1::VenuesController do
 
     it "returns http success" do
       get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: venue.to_param, format: :json
-      response.should be_success
-      response.should render_template('show')
+      expect(response).to be_success
+      expect(response).to render_template('show')
     end
   end
 
@@ -118,10 +118,10 @@ describe Api::V1::VenuesController do
 
       get 'photos', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.to_param, format: :json
       result = JSON.parse(response.body)
-      response.should be_success
-      response.should render_template('photos')
+      expect(response).to be_success
+      expect(response).to render_template('photos')
 
-      result.count.should == 3
+      expect(result.count).to eq(3)
     end
   end
 
@@ -136,11 +136,11 @@ describe Api::V1::VenuesController do
 
   describe "POST 'create'" do
     it "should create a new place that is no found in google places" do
-      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
-      GooglePlaces::Client.any_instance.should_receive(:spots).and_return([])
-      GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(opening_hours: {}))
-      HTTParty.should_receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
-      Api::V1::VenuesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(opening_hours: {}))
+      expect(HTTParty).to receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
+      expect_any_instance_of(Api::V1::VenuesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
       expect {
         post 'create', auth_token: user.authentication_token, company_id: company.to_param, venue: {name: "Guille's place", street_number: 'Tirrases', route: 'La Colina', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR', types: 'bar,restaurant'}, format: :json
         expect(response).to be_success
@@ -166,9 +166,9 @@ describe Api::V1::VenuesController do
       comment2 = FactoryGirl.create(:comment, content: 'Comment #2', commentable: event, created_at: Time.zone.local(2013, 8, 23, 9, 15))
 
       get 'comments', auth_token: user.authentication_token, company_id: company.to_param, id: event.venue.id, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result.count.should == 2
+      expect(result.count).to eq(2)
       expect(result).to match_array [{
                          'id' => comment2.id,
                          'content' => 'Comment #2',
@@ -191,7 +191,7 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get :search, auth_token: user.authentication_token, company_id: company.to_param, term: 'lela', format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result.first).to include("value"=>"Casa de Doña Lela, 1234 Tres Rios", "label"=> "Casa de Doña Lela, 1234 Tres Rios", "id"=>venue.place_id)
@@ -203,10 +203,10 @@ describe Api::V1::VenuesController do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: '', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      buckets.map{|b| b['label']}.should == ['Campaigns', 'Brands', 'Areas', 'People']
+      expect(buckets.map{|b| b['label']}).to eq(['Campaigns', 'Brands', 'Areas', 'People'])
     end
 
     it "should return the users in the People Bucket" do
@@ -215,11 +215,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gu', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
     end
 
     it "should return the teams in the People Bucket" do
@@ -227,11 +227,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'sp', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}])
     end
 
     it "should return the teams and users in the People Bucket" do
@@ -241,11 +241,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'va', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-      people_bucket['value'].should == [{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}]
+      expect(people_bucket['value']).to eq([{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
     end
 
     it "should return the campaigns in the Campaigns Bucket" do
@@ -253,11 +253,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-      campaigns_bucket['value'].should == [{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}]
+      expect(campaigns_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}])
     end
 
     it "should return the brands in the Brands Bucket" do
@@ -265,11 +265,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-      brands_bucket['value'].should == [{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}]
+      expect(brands_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}])
     end
 
     it "should return the venues in the Places Bucket" do
@@ -277,11 +277,11 @@ describe Api::V1::VenuesController do
       Sunspot.commit
 
       get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gua', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
       places_bucket = buckets.select{|b| b['label'] == 'Areas'}.first
-      places_bucket['value'].should == [{"label"=>"<i>Gua</i>nacaste", "value"=>area.id.to_s, "type"=>"area"}]
+      expect(places_bucket['value']).to eq([{"label"=>"<i>Gua</i>nacaste", "value"=>area.id.to_s, "type"=>"area"}])
     end
   end
 end

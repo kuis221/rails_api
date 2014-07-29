@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::CountriesController do
+describe Api::V1::CountriesController, :type => :controller do
   let(:user) { sign_in_as_user }
 
   describe "#index" do

@@ -11,7 +11,7 @@
 
 require 'spec_helper'
 
-describe FormField::Marque do
+describe FormField::Marque, :type => :model do
   describe "#field_options" do
     before(:each) do
       Company.current = FactoryGirl.create(:company)

@@ -1,25 +1,25 @@
 require 'spec_helper'
 
-describe Api::V1::ContactsController do
+describe Api::V1::ContactsController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:contact) { FactoryGirl.create(:contact, company: company) }
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
       get :index, company_id: company.id, auth_token: 'XXXXXXXXXXXXXXXX', format: :json
-      response.response_code.should == 401
+      expect(response.response_code).to eq(401)
       result = JSON.parse(response.body)
-      result['success'].should == false
-      result['info'].should == 'Invalid auth token'
-      result['data'].should be_empty
+      expect(result['success']).to eq(false)
+      expect(result['info']).to eq('Invalid auth token')
+      expect(result['data']).to be_empty
     end
 
     it "returns the current user in the results" do
       contact.reload
       get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result.should == [{
+      expect(result).to eq([{
         "id" => contact.id,
         "first_name" => contact.first_name,
         "last_name" => contact.last_name,
@@ -35,7 +35,7 @@ describe Api::V1::ContactsController do
         "state" => contact.state,
         "zip_code" => contact.zip_code,
         "country" => contact.country,
-        "country_name" => contact.country_name}]
+        "country_name" => contact.country_name}])
     end
   end
 
@@ -146,12 +146,12 @@ describe Api::V1::ContactsController do
     it "must update the event attributes" do
       place = FactoryGirl.create(:place)
       put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: contact.to_param, contact: {first_name: 'Updated Name', last_name: 'Updated Last Name'}, format: :json
-      assigns(:contact).should == contact
-      response.should be_success
+      expect(assigns(:contact)).to eq(contact)
+      expect(response).to be_success
 
       contact.reload
-      contact.first_name.should == 'Updated Name'
-      contact.last_name.should == 'Updated Last Name'
+      expect(contact.first_name).to eq('Updated Name')
+      expect(contact.last_name).to eq('Updated Last Name')
     end
   end
 end

@@ -85,7 +85,7 @@ feature "Results Expenses Page", js: true, search: true  do
 
       click_link("event-link-#{event.id}")
 
-      current_path.should == event_path(event.id)
+      expect(current_path).to eq(event_path(event.id))
     end
   end
 end

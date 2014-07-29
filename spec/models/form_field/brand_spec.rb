@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe FormField::Brand do
+describe FormField::Brand, :type => :model do
   let(:field) { FactoryGirl.create(:form_field_brand, settings: {}, fieldable: activity_type) }
   let(:activity_type) { FactoryGirl.create(:activity_type, company: company) }
   let(:company) { FactoryGirl.create(:company) }

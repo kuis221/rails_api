@@ -17,6 +17,6 @@
 
 require 'spec_helper'
 
-describe KpiReport do
-  it { should belong_to(:company_user) }
+describe KpiReport, :type => :model do
+  it { is_expected.to belong_to(:company_user) }
 end

@@ -13,7 +13,7 @@
 
 require 'spec_helper'
 
-describe SatisfactionSurvey do
-  it { should belong_to(:company_user) }
-  it { should validate_presence_of(:rating) }
+describe SatisfactionSurvey, :type => :model do
+  it { is_expected.to belong_to(:company_user) }
+  it { is_expected.to validate_presence_of(:rating) }
 end
