@@ -5644,8 +5644,11 @@ body.campaigns{
 				color: $brand;
 				font-size: 11px;
 			}
-			h3 + #list-tools{
-				margin: 10px 0 0px 0;
+			h3{
+				margin-top: 45px;
+				&+#list-tools{
+					margin: 10px 0 0px 0;
+				} 
 			}
 			.simple_form{
 				display: inline-block;
@@ -5847,7 +5850,7 @@ body.campaigns{
 	h3{
 		font-size: 16px;
 		font-weight: bold;
-		margin: 45px 0 30px;
+		margin: 0 0 30px;
 	}
 	.links-data{
 		margin: 0 0 0 30px;
