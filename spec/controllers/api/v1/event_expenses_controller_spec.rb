@@ -56,7 +56,14 @@ describe Api::V1::EventExpensesController, :type => :controller do
     let(:event) {FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)}
     it "create an expense and queue a job for processing the attached expense file" do
       ResqueSpec.reset!
-      expect_any_instance_of(AWS::S3).to receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      s3object = double()
+      allow(s3object).to receive(:copy_from).and_return(true)
+      expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
+        "brandscopic-test" => double(objects: {
+          'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
+          'attached_assets/original/test.jpg' => s3object
+        } ))
+      expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect {
         post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, event_expense: {name: 'Expense #1', amount: '350', receipt_attributes: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}}, format: :json
       }.to change(AttachedAsset, :count).by(1)
