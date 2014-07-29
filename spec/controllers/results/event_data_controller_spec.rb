@@ -205,7 +205,7 @@ describe Results::EventDataController do
 
       expect{
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
-        event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '27'}
+        event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '37'}
         expect(event.save).to be_true
 
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
@@ -221,7 +221,7 @@ describe Results::EventDataController do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 3
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('MY KPI: UNO', 'MY KPI: DOS')
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('0.63', '0.27')
+        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to include('0.63', '0.37')
         expect(rows[2].elements.to_a('Cell/Data').map{|d| d.text }).to include('134.0')
       end
     end

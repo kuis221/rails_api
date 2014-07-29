@@ -83,7 +83,7 @@ describe EventData do
       ethnicity_results.value = {segment1.id => '30',
                                  segment2.id => '20',
                                  segment3.id => '5',
-                                 segment4.id => '15',
+                                 segment4.id => '35',
                                  segment5.id => '10'}
 
       event.save
@@ -105,7 +105,7 @@ describe EventData do
       event.event_data.ethnicity_asian.should    == 30
       event.event_data.ethnicity_black.should    == 20
       event.event_data.ethnicity_hispanic.should    == 5
-      event.event_data.ethnicity_native_american.should    == 15
+      event.event_data.ethnicity_native_american.should    == 35
       event.event_data.ethnicity_white.should    == 10
     end
   end
