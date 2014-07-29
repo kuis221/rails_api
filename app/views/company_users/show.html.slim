@@ -25,9 +25,11 @@
             = resource.role.name
 
     .team-assigned
-      b ASSIGNED TO:
+      span.assigned-to 
       - resource.teams.pluck(:name).each do |team_name|
-        span.label= team_name
+        span.label.label-team= team_name
+
+        span.label.label-team= team_name
 
     .aditional-info
       - if resource.email.present?
@@ -106,7 +108,7 @@
         .box.special-icon.campaign-icon
           b example one - campaign icon
 
-    = link_to "Add campaigns"
+      = link_to "Add campaigns"
 
   .details_box.user-view
 
@@ -135,19 +137,19 @@
 
       .items-container
         .box.special-icon.venue-icon
-          b example one - venue icon
+          a href="#" example one - venue icon
           p 6251 East Pacific Coast Highway, Long Beach
 
         .box.special-icon.venue-icon
-          b Bar & Dinner "PPTH"
+          a href="#" Bar & Dinner "PPTH"
           p 6251 East Pacific Coast Highway, Long Beach
 
         .box.special-icon.venue-icon
-          b example one - venue icon
+          a href="#" example one - venue icon
           p 6251 East Pacific Coast Highway, Long Beach
 
         .box.special-icon.venue-icon
-          b Bar & Dinner "PPTH"
+          a href="#" Bar & Dinner "PPTH"
           p 6251 East Pacific Coast Highway, Long Beach
 
       = link_to "Add places"
