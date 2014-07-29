@@ -101,4 +101,29 @@ input[readonly], select[readonly], textarea[readonly]{
 	&.label-default{
 		background-color: $light-blue;
 	}
+	&.label-team{
+		background-color: $grey_four;
+		color: white;
+		@include border-radius(15px);
+		line-height: 24px;
+		padding: 0 15px 0 0;
+		position: relative;
+		&:after{
+			color: $glyphs-color;
+			content: "\e61d";
+			font-size: 14px;
+			left: 5px;
+			position: absolute;
+		}
+		&:before{
+			content: "";
+			background-color: $user_menu;
+			float: left;
+			height: 25px;
+			@include border-radius(15px);
+			margin-right: 6px;
+			position: relative;
+			width:25px;
+		}
+	}
 }
