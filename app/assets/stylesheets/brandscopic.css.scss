@@ -289,17 +289,11 @@ a{
 	overflow-x:hidden;
 	width: 100%;
 	.link-list{
-		&+h3{
-			margin-left: 25px !important;
+		&+h4{
+			font-size: 16px;
+	 		margin: 45px 0 25px 25px;
 		}
 	}
-	// Commented out because this is to generic. If you need to enable it again.. make sure it
-	// will be apply only to that element and not to ALL h3 within the tab-content
-	// - Guille: 22/07/2014
-	// h3{
-	// 	font-size: 16px;
-	// 	margin: 45px 0 25px 0;
-	// }
 }
 
 input{
@@ -5621,7 +5615,6 @@ body.campaigns{
 						padding-top: 0px !important;
 						width: 300px !important;
 						span{
-							color: $text;
 			    			line-height: 26px;
 							height: 26px !important;
 							padding-top: 0px !important;
@@ -5854,7 +5847,7 @@ body.campaigns{
 	h3{
 		font-size: 16px;
 		font-weight: bold;
-		margin-bottom: 30px;
+		margin: 45px 0 30px;
 	}
 	.links-data{
 		margin: 0 0 0 30px;
