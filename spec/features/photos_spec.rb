@@ -8,7 +8,7 @@ feature "Photos", js: true do
     @company = @user.companies.first
     sign_in @user
     Kpi.create_global_kpis
-    AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
+    allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
   end
 
   after do

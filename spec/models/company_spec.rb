@@ -11,13 +11,13 @@
 
 require 'spec_helper'
 
-describe Company do
-  it { should have_many(:company_users) }
-  it { should have_many(:teams) }
-  it { should have_many(:campaigns) }
-  it { should have_many(:roles) }
+describe Company, :type => :model do
+  it { is_expected.to have_many(:company_users) }
+  it { is_expected.to have_many(:teams) }
+  it { is_expected.to have_many(:campaigns) }
+  it { is_expected.to have_many(:roles) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
   describe "#team_member_options" do
     let(:company){ FactoryGirl.create(:company) }

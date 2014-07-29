@@ -14,7 +14,7 @@ RSpec::Matchers.define :accept_nested_attributes_for do |association|
     @nested_att_present && ( @reject.nil? || @reject_success ) && ( @accept.nil? || @accept_success )
   end
 
-  failure_message_for_should do
+  failure_message do
     messages = []
     messages << "expected #{@model.class} to accept nested attributes for #{association}" unless @nested_att_present
     messages << "expected #{@model.class} to reject values #{@reject.inspect} for association #{association}" unless @reject_success

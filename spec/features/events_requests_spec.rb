@@ -193,6 +193,11 @@ feature 'Events section' do
         end
 
         expect(page).to have_content('Edited summary content')
+
+        # Submit the event
+        visit event_path(event)
+        click_link 'submit'
+        expect(page).to have_content('Your post event report has been submitted for approval')
       end
 
       scenario "should allow 0 for not required percentage fields" do
@@ -263,7 +268,8 @@ feature 'Events section' do
       before { company_user.places << place }
       let(:permissions) { [
         [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
-        [:view_unsubmitted_data, 'Event'], [:edit_unsubmitted_data, 'Event']] }
+        [:view_unsubmitted_data, 'Event'], [:edit_unsubmitted_data, 'Event'],
+        [:submit, 'Event']] }
     end
   end
 
@@ -401,7 +407,7 @@ feature 'Events section' do
             expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
 
             select_filter_calendar_day("18")
-            find('#collection-list-filters').should have_content('Another Campaign April 03')
+            expect(find('#collection-list-filters')).to have_content('Another Campaign April 03')
             within("ul#events-list") do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
@@ -476,12 +482,12 @@ feature 'Events section' do
             end
 
             expect(page).to have_selector('h2', text: ev1.campaign_name)
-            current_path.should == event_path(ev1)
+            expect(current_path).to eq(event_path(ev1))
 
             close_resource_details
 
             expect(page).to have_content("1 Active event taking place today as part of Campaign FY2012")
-            current_path.should == events_path
+            expect(current_path).to eq(events_path)
 
             within("ul#events-list") do
               expect(page).to have_no_content('Another Campaign April 03')
@@ -545,7 +551,7 @@ feature 'Events section' do
               end
 
               # Just to make sure the current user is not in the same timezone
-              user.time_zone.should == 'Pacific Time (US & Canada)'
+              expect(user.time_zone).to eq('Pacific Time (US & Canada)')
 
               Sunspot.commit
               visit events_path
@@ -709,10 +715,10 @@ feature 'Events section' do
         end
 
         within visible_modal do
-          find_field('Start date').value.should == 3.days.from_now.to_s(:slashes)
-          find_field('End date').value.should == 3.days.from_now.to_s(:slashes)
-          find_field('Start time').value.should == '8:00pm'
-          find_field('End time').value.should == '11:00pm'
+          expect(find_field('Start date').value).to eq(3.days.from_now.to_s(:slashes))
+          expect(find_field('End date').value).to eq(3.days.from_now.to_s(:slashes))
+          expect(find_field('Start time').value).to eq('8:00pm')
+          expect(find_field('End time').value).to eq('11:00pm')
 
           select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
           click_js_button 'Save'
@@ -745,10 +751,10 @@ feature 'Events section' do
             end
 
             within visible_modal do
-              find_field('Start date').value.should == date
-              find_field('End date').value.should == date
-              find_field('Start time').value.should == '8:00pm'
-              find_field('End time').value.should == '11:00pm'
+              expect(find_field('Start date').value).to eq(date)
+              expect(find_field('End date').value).to eq(date)
+              expect(find_field('Start time').value).to eq('8:00pm')
+              expect(find_field('End time').value).to eq('11:00pm')
 
               fill_in('Start time', with: '10:00pm')
               fill_in('End time', with: '11:00pm')
@@ -854,7 +860,7 @@ feature 'Events section' do
           end
 
           # Just to make sure the current user is not in the same timezone
-          user.time_zone.should == 'Pacific Time (US & Canada)'
+          expect(user.time_zone).to eq('Pacific Time (US & Canada)')
 
           Sunspot.commit
           visit event_path(event)
@@ -910,7 +916,7 @@ feature 'Events section' do
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
-        all('#event-team-members .team-member').count.should == 0
+        expect(all('#event-team-members .team-member').count).to eq(0)
       end
 
 
@@ -1084,13 +1090,13 @@ feature 'Events section' do
         # Mark the tasks as completed
         within('#event-tasks-container') do
           checkbox = find('.task-completed-checkbox', visible: :false)
-          checkbox['checked'].should be_false
+          expect(checkbox['checked']).to be_falsey
           find('.task-completed-checkbox').trigger('click')
           wait_for_ajax
 
           # refresh the page to make sure the checkbox remains selected
           visit event_path(event)
-          find('.task-completed-checkbox', visible: :false)['checked'].should be_true
+          expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
         end
 
         # Check that the totals where properly updated

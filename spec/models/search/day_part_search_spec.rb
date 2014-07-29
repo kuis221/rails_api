@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe DayPart, search: true do
+describe DayPart, type: :model, search: true do
   it "should search for day parts" do
     # First populate the Database with some data
     day_part = FactoryGirl.create(:day_part)
@@ -12,13 +12,13 @@ describe DayPart, search: true do
     Sunspot.commit
 
     # Search for all Day Parts on a given Company
-    DayPart.do_search(company_id: 1).results.should =~ [day_part, day_part2]
-    DayPart.do_search(company_id: 2).results.should =~ [company2_day_part]
+    expect(DayPart.do_search(company_id: 1).results).to match_array([day_part, day_part2])
+    expect(DayPart.do_search(company_id: 2).results).to match_array([company2_day_part])
 
     # Search for a given Day Part
-    DayPart.do_search({company_id: 1, q: "day_part,#{day_part.id}"}, true).results.should =~ [day_part]
+    expect(DayPart.do_search({company_id: 1, q: "day_part,#{day_part.id}"}, true).results).to match_array([day_part])
 
     # Search for Day Parts on a given status
-    DayPart.do_search(company_id: 1, status: ['Active']).results.should =~ [day_part, day_part2]
+    expect(DayPart.do_search(company_id: 1, status: ['Active']).results).to match_array([day_part, day_part2])
   end
 end

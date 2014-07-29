@@ -50,7 +50,7 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -79,12 +79,12 @@ RSpec.shared_examples "a fieldable element" do
     }.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Text Field'
-    expect(field.required).to be_true
+    expect(field.required).to be_truthy
     expect(field.type).to eql 'FormField::Text'
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -117,7 +117,7 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Numeric Field' do
       expect(find_field('Field label').value).to eql 'My Numeric Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -151,7 +151,7 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Price Field' do
       expect(find_field('Field label').value).to eql 'My Price Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -401,7 +401,7 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Date Field' do
       expect(find_field('Field label').value).to eql 'My Date Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -434,7 +434,7 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Time Field' do
       expect(find_field('Field label').value).to eql 'My Time Field'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -465,7 +465,7 @@ RSpec.shared_examples "a fieldable element" do
     expect(field.type).to eql 'FormField::Brand'
 
     within form_field_settings_for 'Brand' do
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -526,7 +526,7 @@ RSpec.shared_examples "a fieldable element" do
     expect(field.type).to eql 'FormField::Marque'
 
     within form_field_settings_for 'Marque' do
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 
@@ -555,7 +555,7 @@ RSpec.shared_examples "a fieldable element" do
     }.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Photo Field'
-    expect(field.required).to be_true
+    expect(field.required).to be_truthy
     expect(field.type).to eql 'FormField::Photo'
   end
 
@@ -584,7 +584,7 @@ RSpec.shared_examples "a fieldable element" do
     }.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Attachment Field'
-    expect(field.required).to be_true
+    expect(field.required).to be_truthy
     expect(field.type).to eql 'FormField::Attachment'
   end
 
@@ -936,7 +936,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
 
     within form_field_settings_for 'My Custom KPI' do
       expect(find_field('Field label').value).to eql 'My Custom KPI'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
 
     # Remove the KPI form the form

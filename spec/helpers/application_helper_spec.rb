@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApplicationHelper do
+describe ApplicationHelper, :type => :helper do
   after do
     Timecop.return
   end
@@ -62,72 +62,72 @@ describe ApplicationHelper do
     it "should return the full date when it's older than 4 days" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 22, 11, 59))
-          helper.comment_date(comment).should == "Jul 22 @ 11:59 AM"
+          expect(helper.comment_date(comment)).to eq("Jul 22 @ 11:59 AM")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 19, 11, 59))
-          helper.comment_date(comment).should == "Jul 19 @ 11:59 AM"
+          expect(helper.comment_date(comment)).to eq("Jul 19 @ 11:59 AM")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 06, 19, 11, 59))
-          helper.comment_date(comment).should == "Jun 19 @ 11:59 AM"
+          expect(helper.comment_date(comment)).to eq("Jun 19 @ 11:59 AM")
       end
     end
 
     it "should return the day of the week if the comment is older than yesterday but newer than 4 days" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 23, 00, 00))
-          helper.comment_date(comment).should == "Tuesday @ 12:00 AM"
+          expect(helper.comment_date(comment)).to eq("Tuesday @ 12:00 AM")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 16, 40))
-          helper.comment_date(comment).should == "Wednesday @  4:40 PM"
+          expect(helper.comment_date(comment)).to eq("Wednesday @  4:40 PM")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 24, 23, 59))
-          helper.comment_date(comment).should == "Wednesday @ 11:59 PM"
+          expect(helper.comment_date(comment)).to eq("Wednesday @ 11:59 PM")
       end
     end
 
     it "should return 'Yesterday' plus the time if the date is older than 24 horus" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 11, 59))
-          helper.comment_date(comment).should == "Yesterday @ 11:59 AM"
+          expect(helper.comment_date(comment)).to eq("Yesterday @ 11:59 AM")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 00, 0))
-          helper.comment_date(comment).should == "Yesterday @ 12:00 AM"
+          expect(helper.comment_date(comment)).to eq("Yesterday @ 12:00 AM")
       end
     end
 
     it "should return the number of hours rounded to the lower number" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 59))
-          helper.comment_date(comment).should == "about an hour ago"
+          expect(helper.comment_date(comment)).to eq("about an hour ago")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 10, 22))
-          helper.comment_date(comment).should == "about an hour ago"
+          expect(helper.comment_date(comment)).to eq("about an hour ago")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 9, 0))
-          helper.comment_date(comment).should == "3 hours ago"
+          expect(helper.comment_date(comment)).to eq("3 hours ago")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 25, 12, 01))
-          helper.comment_date(comment).should == "23 hours ago"
+          expect(helper.comment_date(comment)).to eq("23 hours ago")
       end
     end
 
     it "should return the number of minutes" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 0)) do # Simulate current date to Jul 26th
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 59))
-          helper.comment_date(comment).should == "about 1 minute ago"
+          expect(helper.comment_date(comment)).to eq("about 1 minute ago")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 30))
-          helper.comment_date(comment).should == "about 30 minutes ago"
+          expect(helper.comment_date(comment)).to eq("about 30 minutes ago")
 
           comment = double(Comment, created_at: Time.zone.local(2013, 07, 26, 11, 01))
-          helper.comment_date(comment).should == "about 59 minutes ago"
+          expect(helper.comment_date(comment)).to eq("about 59 minutes ago")
       end
     end
   end
 
   describe "#format_date" do
     it "should return nil if date is nil" do
-      helper.format_date(nil).should be_nil
+      expect(helper.format_date(nil)).to be_nil
     end
 
     it "should return the formatted date without the year if the event is in the same year" do

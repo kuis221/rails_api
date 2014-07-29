@@ -12,6 +12,6 @@
 
 require 'spec_helper'
 
-describe AlertsUser do
-  it { should belong_to(:company_user) }
+describe AlertsUser, :type => :model do
+  it { is_expected.to belong_to(:company_user) }
 end

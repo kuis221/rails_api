@@ -22,8 +22,8 @@
 
 require 'spec_helper'
 
-describe AttachedAsset do
-  it { should belong_to(:attachable) }
+describe AttachedAsset, :type => :model do
+  it { is_expected.to belong_to(:attachable) }
 
   describe "#activate" do
     let(:attached_asset) { FactoryGirl.build(:attached_asset, active: false) }
@@ -31,7 +31,7 @@ describe AttachedAsset do
     it "should return the active value as true" do
       attached_asset.activate!
       attached_asset.reload
-      attached_asset.active.should be_true
+      expect(attached_asset.active).to be_truthy
     end
   end
 
@@ -41,7 +41,7 @@ describe AttachedAsset do
     it "should return the active value as false" do
       attached_asset.deactivate!
       attached_asset.reload
-      attached_asset.active.should be_false
+      expect(attached_asset.active).to be_falsey
     end
   end
 end

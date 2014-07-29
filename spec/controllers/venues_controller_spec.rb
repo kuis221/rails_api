@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'sunspot_test/rspec'
 
-describe VenuesController do
+describe VenuesController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -17,13 +17,13 @@ describe VenuesController do
 
     it "returns http success" do
       get 'show', id: venue.to_param
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should allow display info for places from Google Places" do
       get 'show', id: '24d9cbaf29793a503e9298ba48a343a9546549c2', ref: 'CnRvAAAAjP74ZS9G_HaiDn3kQcryi2SgpsXnCVpQuj5l9GYfadTCLTbvaYPKgFXwlQxgr_EKIQXSCRuErewJDLHRu8vWiDsrl4BAfBhT-xlfdDRb-46Vp3kxdmfv95DksRNvVPFta6MQ05afANalVoMguLrcsxIQGKjnFkjuN6-xGxl3gcVS6hoUIkM79cK4aOPYfPeweDuLkZUo4OE'
-      response.should be_success
-      assigns(:venue).new_record?.should be_true
+      expect(response).to be_success
+      expect(assigns(:venue).new_record?).to be_truthy
     end
   end
 
@@ -38,10 +38,10 @@ describe VenuesController do
 
       venue.place.areas << assigned_area
       get 'select_areas', id: venue.to_param, format: :js
-      response.should be_success
-      response.should render_template('select_areas')
+      expect(response).to be_success
+      expect(response).to render_template('select_areas')
 
-      assigns(:areas).should == [area]
+      expect(assigns(:areas)).to eq([area])
     end
   end
 
@@ -74,7 +74,7 @@ describe VenuesController do
         get :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      ListExportWorker.should have_queued(export.id)
+      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Event, search: true do
+describe Event, type: :model, search: true do
   after do
     Timecop.return
   end
@@ -38,66 +38,66 @@ describe Event, search: true do
     # Make some test searches
 
     # Search by event id
-    Event.do_search(company_id: company.id, id: [event.id, event2.id]).results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, id: [event.id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, id: [event2.id]).results.should =~ [event2]
+    expect(Event.do_search(company_id: company.id, id: [event.id, event2.id]).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, id: [event.id]).results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, id: [event2.id]).results).to match_array([event2])
 
     # Search for all Events on a given Company
-    Event.do_search(company_id: company.id).results.should =~ [event, event2]
-    Event.do_search(company_id: company2_campaign.company_id).results.should =~ [company2_event]
+    expect(Event.do_search(company_id: company.id).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company2_campaign.company_id).results).to match_array([company2_event])
 
-    Event.do_search({company_id: company.id, q: "team,#{team.id}"}, true).results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, q: "team,#{team2.id}").results.should =~ [event2]
+    expect(Event.do_search({company_id: company.id, q: "team,#{team.id}"}, true).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, q: "team,#{team2.id}").results).to match_array([event2])
 
     # Search for a specific user's Events
-    Event.do_search(company_id: company.id, q: "company_user,#{user3.id}").results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, q: "company_user,#{user4.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, user: [user3.id]).results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, user: [user4.id]).results.should =~ [event2]
-    Event.do_search(company_id: company.id, user: [user3.id,user4.id]).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, q: "company_user,#{user3.id}").results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, q: "company_user,#{user4.id}").results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, user: [user3.id]).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, user: [user4.id]).results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, user: [user3.id,user4.id]).results).to match_array([event, event2])
 
     # Search for a specific Event's place
-    Event.do_search(company_id: company.id, q: "place,#{place.id}").results.should =~ [event]
-    Event.do_search(company_id: company.id, q: "place,#{place2.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, place: [place.id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, place: [place2.id]).results.should =~ [event2]
-    Event.do_search(company_id: company.id, place: [place.id, place2.id]).results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, location: [place.location_id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, location: [place2.location_id]).results.should =~ [event2]
-    Event.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, q: "place,#{place.id}").results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, q: "place,#{place2.id}").results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, place: [place.id]).results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, place: [place2.id]).results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, place: [place.id, place2.id]).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, location: [place.location_id]).results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, location: [place2.location_id]).results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results).to match_array([event, event2])
 
     # Search for a events in an area
-    Event.do_search(company_id: company.id, q: "area,#{area.id}").results.should =~ [event]
-    Event.do_search(company_id: company.id, area: [area.id]).results.should =~ [event]
-    Event.do_search(company_id: company.id, q: "area,#{area2.id}").results.should =~ [event]
-    Event.do_search(company_id: company.id, area: [area2.id]).results.should =~ [event]
+    expect(Event.do_search(company_id: company.id, q: "area,#{area.id}").results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, area: [area.id]).results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, q: "area,#{area2.id}").results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, area: [area2.id]).results).to match_array([event])
 
     # Search for brands associated to the Events
-    Event.do_search(company_id: company.id, q: "brand,#{brand.id}").results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, q: "brand,#{brand2.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, brand: brand.id).results.should =~ [event, event2]
-    Event.do_search(company_id: company.id, brand: brand2.id).results.should =~ [event2]
-    Event.do_search(company_id: company.id, brand: [brand.id, brand2.id]).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, q: "brand,#{brand.id}").results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, q: "brand,#{brand2.id}").results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, brand: brand.id).results).to match_array([event, event2])
+    expect(Event.do_search(company_id: company.id, brand: brand2.id).results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, brand: [brand.id, brand2.id]).results).to match_array([event, event2])
 
     # Search for campaigns associated to the Events
-    Event.do_search(company_id: company.id, q: "campaign,#{campaign.id}").results.should =~ [event]
-    Event.do_search(company_id: company.id, q: "campaign,#{campaign2.id}").results.should =~ [event2]
-    Event.do_search(company_id: company.id, campaign: campaign.id).results.should =~ [event]
-    Event.do_search(company_id: company.id, campaign: campaign2.id).results.should =~ [event2]
-    Event.do_search(company_id: company.id, campaign: [campaign.id, campaign2.id]).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, q: "campaign,#{campaign.id}").results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, q: "campaign,#{campaign2.id}").results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, campaign: campaign.id).results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, campaign: campaign2.id).results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, campaign: [campaign.id, campaign2.id]).results).to match_array([event, event2])
 
     # Search for Events on a given date range
-    Event.do_search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013').results.should =~ [event]
-    Event.do_search(company_id: company.id, start_date: '02/22/2013').results.should =~ [event]
-    Event.do_search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013').results.should =~ [event2]
-    Event.do_search(company_id: company.id, start_date: '03/22/2013').results.should =~ [event2]
-    Event.do_search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013').results.should == []
+    expect(Event.do_search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013').results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, start_date: '02/22/2013').results).to match_array([event])
+    expect(Event.do_search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013').results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, start_date: '03/22/2013').results).to match_array([event2])
+    expect(Event.do_search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013').results).to eq([])
 
     # Search for Events on a given status
-    Event.do_search(company_id: company.id, status: ['Active']).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, status: ['Active']).results).to match_array([event, event2])
 
     # Search for Events on a given event status
-    Event.do_search(company_id: company.id, event_status: ['Unsent']).results.should =~ [event, event2]
+    expect(Event.do_search(company_id: company.id, event_status: ['Unsent']).results).to match_array([event, event2])
     Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
       dummy_event = FactoryGirl.create(:event)
       dummy_event.start_date = '07/18/2013'
@@ -105,17 +105,17 @@ describe Event, search: true do
       dummy_event.save
       Sunspot.commit
 
-      Event.do_search(company_id: dummy_event.company_id, event_status: ['Late']).results.should =~ [dummy_event]
+      expect(Event.do_search(company_id: dummy_event.company_id, event_status: ['Late']).results).to match_array([dummy_event])
 
       dummy_event.end_date = '07/25/2013'
       dummy_event.save
       Sunspot.commit
 
-      Event.do_search(company_id: dummy_event.company_id, event_status: ['Due']).results.should =~ [dummy_event]
+      expect(Event.do_search(company_id: dummy_event.company_id, event_status: ['Due']).results).to match_array([dummy_event])
     end
 
     #Search for Events with stats
-    Event.do_search({company_id: company.id, event_data_stats: true}).results.should =~ [event, event2]
+    expect(Event.do_search({company_id: company.id, event_data_stats: true}).results).to match_array([event, event2])
   end
 
   it "should not fail if a brand without campaings is given" do
@@ -124,10 +124,10 @@ describe Event, search: true do
 
     Sunspot.commit
     # Invalid brand
-    Event.do_search(company_id: company.id, brand: 1).results.should =~ []
+    expect(Event.do_search(company_id: company.id, brand: 1).results).to match_array([])
 
     # Brand without campaings
     brand = FactoryGirl.create(:brand)
-    Event.do_search(company_id: company.id, brand: brand.id).results.should =~ []
+    expect(Event.do_search(company_id: company.id, brand: brand.id).results).to match_array([])
   end
 end

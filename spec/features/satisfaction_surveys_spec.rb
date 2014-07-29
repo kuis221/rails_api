@@ -20,9 +20,9 @@ feature "SatisfactionSurvey", js: true do
       expect(page).to have_no_content("Would you like to give us some feedback?")
 
       within emotions_box do
-        find("input#emotion_positive").should_not be_checked
+        expect(find("input#emotion_positive")).not_to be_checked
         choose("emotion_positive")
-        find("input#emotion_positive").should be_checked
+        expect(find("input#emotion_positive")).to be_checked
       end
 
       expect(page).to have_content("Would you like to give us some feedback?")
@@ -38,7 +38,7 @@ feature "SatisfactionSurvey", js: true do
       visit root_path
 
       within emotions_box do
-        find("input#emotion_positive").should be_checked
+        expect(find("input#emotion_positive")).to be_checked
       end
     end
   end

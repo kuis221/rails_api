@@ -7,7 +7,7 @@ feature "DateRanges", search: true, js: true do
     @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
     @company = @user.companies.first
     sign_in @user
-    Place.any_instance.stub(:fetch_place_data).and_return(true)
+    allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
   end
 
   after do
@@ -120,7 +120,7 @@ feature "DateRanges", search: true, js: true do
     scenario 'allows the user to edit the date_range' do
       date_range = FactoryGirl.create(:date_range, name: 'Old name', company: @company)
       visit date_range_path(date_range)
-      page.should have_content('Old name')
+      expect(page).to have_content('Old name')
 
       find('.links-data').click_js_link('Edit')
 
@@ -130,7 +130,7 @@ feature "DateRanges", search: true, js: true do
         click_js_button 'Save'
       end
       ensure_modal_was_closed
-      page.should have_no_content('Old name')
+      expect(page).to have_no_content('Old name')
       page.find('h2', text: 'edited date range name') # Make su the page is reloaded
       expect(page).to have_selector('h2', text: 'edited date range name')
       expect(page).to have_selector('div.description-data', text: 'edited date range description')

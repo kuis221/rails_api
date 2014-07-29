@@ -25,7 +25,7 @@ feature "Users", :js => true do
         click_link('ABC inc.')
         find(".dropdown").click_link 'Tres Patitos S.A.'
       end
-      current_path.should == root_path
+      expect(current_path).to eq(root_path)
 
       within '.current-company-title' do
         expect(page).to have_content('Tres Patitos S.A.')
@@ -37,7 +37,7 @@ feature "Users", :js => true do
         click_link @company.name.to_s
       end
 
-      current_path.should == root_path
+      expect(current_path).to eq(root_path)
 
       within '.current-company-title' do
         expect(page).to have_content('ABC inc.')
@@ -190,13 +190,13 @@ feature "Users", :js => true do
         visit company_user_path(@company_user)
 
         @company_user.reload
-        @company_user.first_name.should == 'Pedro'
-        @company_user.last_name.should == 'Navaja'
-        @company_user.user.unconfirmed_email.should == 'pedro@navaja.com'
-        @company_user.country.should == 'CR'
-        @company_user.state.should == 'C'
-        @company_user.city.should == 'Tres Rios'
-        @company_user.notifications_settings.should include("event_recap_due_sms", "event_recap_late_sms", "event_recap_pending_approval_sms")
+        expect(@company_user.first_name).to eq('Pedro')
+        expect(@company_user.last_name).to eq('Navaja')
+        expect(@company_user.user.unconfirmed_email).to eq('pedro@navaja.com')
+        expect(@company_user.country).to eq('CR')
+        expect(@company_user.state).to eq('C')
+        expect(@company_user.city).to eq('Tres Rios')
+        expect(@company_user.notifications_settings).to include("event_recap_due_sms", "event_recap_late_sms", "event_recap_pending_approval_sms")
       end
     end
 

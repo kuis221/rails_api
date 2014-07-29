@@ -10,6 +10,6 @@
 
 require 'spec_helper'
 
-describe ReportSharing do
+describe ReportSharing, :type => :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end

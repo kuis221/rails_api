@@ -22,26 +22,26 @@
 
 require 'spec_helper'
 
-describe Campaign do
-  it { should belong_to(:company) }
-  it { should have_many(:memberships) }
-  it { should have_many(:users).through(:memberships) }
-  it { should have_and_belong_to_many(:brands) }
-  it { should have_and_belong_to_many(:brand_portfolios) }
-  it { should have_and_belong_to_many(:areas) }
-  it { should have_and_belong_to_many(:date_ranges) }
-  it { should have_and_belong_to_many(:day_parts) }
-  it { should validate_presence_of(:name) }
+describe Campaign, :type => :model do
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to have_many(:memberships) }
+  it { is_expected.to have_many(:users).through(:memberships) }
+  it { is_expected.to have_and_belong_to_many(:brands) }
+  it { is_expected.to have_and_belong_to_many(:brand_portfolios) }
+  it { is_expected.to have_and_belong_to_many(:areas) }
+  it { is_expected.to have_and_belong_to_many(:date_ranges) }
+  it { is_expected.to have_and_belong_to_many(:day_parts) }
+  it { is_expected.to validate_presence_of(:name) }
 
   let(:company) { FactoryGirl.create(:company) }
 
   before { Company.current = company }
 
   describe "enabled_modules validations" do
-    it { should allow_value(['surveys', 'photos']).for(:enabled_modules) }
-    it { should allow_value([]).for(:enabled_modules) }
-    it { should allow_value(nil).for(:enabled_modules) }
-    it { should_not allow_value(['unknown', 'photos']).for(:enabled_modules) }
+    it { is_expected.to allow_value(['surveys', 'photos']).for(:enabled_modules) }
+    it { is_expected.to allow_value([]).for(:enabled_modules) }
+    it { is_expected.to allow_value(nil).for(:enabled_modules) }
+    it { is_expected.not_to allow_value(['unknown', 'photos']).for(:enabled_modules) }
   end
 
   describe "states" do
@@ -51,18 +51,18 @@ describe Campaign do
 
     describe ":inactive" do
       it 'should be an initial state' do
-        @campaign.should be_active
+        expect(@campaign).to be_active
       end
 
       it 'should change to :inactive on :active' do
         @campaign.deactivate
-        @campaign.should be_inactive
+        expect(@campaign).to be_inactive
       end
 
       it 'should change to :active on :inactive or :closed' do
         @campaign.deactivate
         @campaign.activate
-        @campaign.should be_active
+        expect(@campaign).to be_active
       end
     end
   end
@@ -78,11 +78,11 @@ describe Campaign do
       end
 
       it "should return the first event related to the campaign" do
-        @campaign.first_event.should == @first_event
+        expect(@campaign.first_event).to eq(@first_event)
       end
 
       it "should return the last event related to the campaign" do
-        @campaign.last_event.should == @third_event
+        expect(@campaign.last_event).to eq(@third_event)
       end
     end
   end
@@ -145,7 +145,7 @@ describe Campaign do
       expect{
         campaign.save!
       }.to change(Brand, :count).by(3)
-      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2','Brand 3']
+      expect(campaign.reload.brands.map(&:name)).to eq(['Brand 1','Brand 2','Brand 3'])
     end
 
     it "should create only the brands that does not exists into the app" do
@@ -154,19 +154,19 @@ describe Campaign do
       expect{
         campaign.save!
       }.to change(Brand, :count).by(2)
-      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2','Brand 3']
-      Brand.all.map(&:name).should =~ ['Brand 1','Brand 2','Brand 3']
+      expect(campaign.reload.brands.map(&:name)).to eq(['Brand 1','Brand 2','Brand 3'])
+      expect(Brand.all.map(&:name)).to match_array(['Brand 1','Brand 2','Brand 3'])
     end
 
     it "should remove any other brand from the campaign not in the new list" do
       campaign = FactoryGirl.create(:campaign, brands_list: 'Brand 1,Brand 2,Brand 3')
-      campaign.reload.brands.count.should == 3
+      expect(campaign.reload.brands.count).to eq(3)
       expect{
         campaign.brands_list = 'Brand 2,Brand 1'
         campaign.save!
       }.to_not change(Brand, :count)
-      campaign.reload.brands.map(&:name).should == ['Brand 1','Brand 2']
-      Brand.all.map(&:name).should =~ ['Brand 1','Brand 2','Brand 3']
+      expect(campaign.reload.brands.map(&:name)).to eq(['Brand 1','Brand 2'])
+      expect(Brand.all.map(&:name)).to match_array(['Brand 1','Brand 2','Brand 3'])
     end
   end
 
@@ -176,7 +176,7 @@ describe Campaign do
       campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 1')
       campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 2')
       campaign.brands << FactoryGirl.create(:brand,  name: 'Brand 3')
-      campaign.brands_list.should == 'Brand 1,Brand 2,Brand 3'
+      expect(campaign.brands_list).to eq('Brand 1,Brand 2,Brand 3')
     end
   end
 
@@ -192,7 +192,7 @@ describe Campaign do
       # Create another user related to another brand
       FactoryGirl.create(:company_user, brand_ids: [FactoryGirl.create(:brand).id], company_id: 1)
 
-      campaign.staff_users.should == [user]
+      expect(campaign.staff_users).to eq([user])
     end
 
     it "should include users that have the brand portfolios assigned to" do
@@ -205,7 +205,7 @@ describe Campaign do
       # Create another user related to another brand portfolio
       FactoryGirl.create(:company_user, brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio).id], company_id: 1)
 
-      campaign.staff_users.should == [user]
+      expect(campaign.staff_users).to eq([user])
     end
 
     it "should include users that are directly assigned to the campaign" do
@@ -216,7 +216,7 @@ describe Campaign do
 
       campaign.users << user
 
-      campaign.staff_users.should == [user]
+      expect(campaign.staff_users).to eq([user])
     end
 
     it "mixup between the diferent sources" do
@@ -232,7 +232,7 @@ describe Campaign do
       # Create another user related to another brand portfolio
       FactoryGirl.create(:company_user, brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio).id], company_id: 1)
 
-      campaign.staff_users.should =~ [user, user2]
+      expect(campaign.staff_users).to match_array([user, user2])
     end
   end
 
@@ -241,7 +241,7 @@ describe Campaign do
 
     it "should return true if the campaing doesn't have areas or places assigned" do
       place = FactoryGirl.create(:place)
-      campaign.place_allowed_for_event?(place).should be_true
+      expect(campaign.place_allowed_for_event?(place)).to be_truthy
     end
 
     it "should return true if the place have been assigned to the campaign directly" do
@@ -249,11 +249,11 @@ describe Campaign do
       other_place = FactoryGirl.create(:place)
       campaign.places << other_place
 
-      campaign.place_allowed_for_event?(place).should be_false
+      expect(campaign.place_allowed_for_event?(place)).to be_falsey
 
       campaign.places << place
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      expect(campaign.reload.place_allowed_for_event?(place)).to be_truthy
     end
 
     it "should return true if the place is part of any of the campaigns" do
@@ -263,11 +263,11 @@ describe Campaign do
       area.places << other_place
       campaign.areas << area
 
-      campaign.place_allowed_for_event?(place).should be_false
+      expect(campaign.place_allowed_for_event?(place)).to be_falsey
 
       area.places << place
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      expect(campaign.reload.place_allowed_for_event?(place)).to be_truthy
     end
 
     it "should return true if the place is part of any city of an area associated to the campaign" do
@@ -278,13 +278,13 @@ describe Campaign do
       area.places << other_city
       campaign.areas << area
 
-      campaign.place_allowed_for_event?(place).should be_false
+      expect(campaign.place_allowed_for_event?(place)).to be_falsey
 
       # Assign San Francisco to the area
       area.places << city
 
       # Because the campaing cache the locations, load a new object with the same campaign ID
-      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
+      expect(Campaign.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
     end
 
     it "should work with places that are not yet saved" do
@@ -297,7 +297,7 @@ describe Campaign do
       area.places << city
 
       # Because the campaing cache the locations, load a new object with the same campaign ID
-      campaign.place_allowed_for_event?(place).should be_true
+      expect(campaign.place_allowed_for_event?(place)).to be_truthy
     end
   end
 
@@ -344,8 +344,8 @@ describe Campaign do
       expect(stats.first['executed_percentage']).to eql 0
       expect(stats.first['scheduled_percentage']).to eql 10
       expect(stats.first['remaining_percentage']).to eql 90
-      expect(stats.first.has_key?('today')).to be_false
-      expect(stats.first.has_key?('today_percentage')).to be_false
+      expect(stats.first.has_key?('today')).to be_falsey
+      expect(stats.first.has_key?('today_percentage')).to be_falsey
 
       expect(stats.last['id']).to eql area.id
       expect(stats.last['name']).to eql 'California'
@@ -357,8 +357,8 @@ describe Campaign do
       expect(stats.last['executed_percentage']).to eql 0
       expect(stats.last['scheduled_percentage']).to eql 10
       expect(stats.last['remaining_percentage']).to eql 90
-      expect(stats.last.has_key?('today')).to be_false
-      expect(stats.last.has_key?('today_percentage')).to be_false
+      expect(stats.last.has_key?('today')).to be_falsey
+      expect(stats.last.has_key?('today_percentage')).to be_falsey
 
     end
 
@@ -380,8 +380,8 @@ describe Campaign do
       expect(stats.first['executed_percentage']).to eql 0
       expect(stats.first['scheduled_percentage']).to eql 0
       expect(stats.first['remaining_percentage']).to eql 100
-      expect(stats.first.has_key?('today')).to be_false
-      expect(stats.first.has_key?('today_percentage')).to be_false
+      expect(stats.first.has_key?('today')).to be_falsey
+      expect(stats.first.has_key?('today_percentage')).to be_falsey
     end
 
     it "should set the today values correctly" do
@@ -652,28 +652,28 @@ describe Campaign do
   describe "#in_date_range?" do
     it "returns true if both dates are inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 1, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 1, 23))).to be_truthy
     end
 
     it "returns true if start date is inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 6, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 6, 23))).to be_truthy
     end
 
     it "returns true if end date is inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2014, 1, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2014, 1, 23))).to be_truthy
     end
 
     it "returns false if both dates are after the end date" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 3, 3), Date.new(2014, 3, 23))).to be_false
+      expect(campaign.in_date_range?(Date.new(2014, 3, 3), Date.new(2014, 3, 23))).to be_falsey
     end
 
 
     it "returns false if both dates are before the start date" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2013, 2, 23))).to be_false
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2013, 2, 23))).to be_falsey
     end
   end
 

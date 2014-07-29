@@ -16,16 +16,16 @@
 
 require 'spec_helper'
 
-describe Activity do
-  it { should belong_to(:activity_type) }
-  it { should belong_to(:activitable) }
-  it { should belong_to(:company_user) }
+describe Activity, :type => :model do
+  it { is_expected.to belong_to(:activity_type) }
+  it { is_expected.to belong_to(:activitable) }
+  it { is_expected.to belong_to(:company_user) }
 
-  it { should validate_presence_of(:activity_type_id) }
-  it { should validate_presence_of(:company_user_id) }
-  it { should validate_presence_of(:activity_date) }
-  it { should validate_numericality_of(:activity_type_id) }
-  it { should validate_numericality_of(:company_user_id) }
+  it { is_expected.to validate_presence_of(:activity_type_id) }
+  it { is_expected.to validate_presence_of(:company_user_id) }
+  it { is_expected.to validate_presence_of(:activity_date) }
+  it { is_expected.to validate_numericality_of(:activity_type_id) }
+  it { is_expected.to validate_numericality_of(:company_user_id) }
 
   describe "#activate" do
     let(:activity) { FactoryGirl.build(:activity, active: false) }
@@ -33,7 +33,7 @@ describe Activity do
     it "should return the active value as true" do
       activity.activate!
       activity.reload
-      activity.active.should be_true
+      expect(activity.active).to be_truthy
     end
   end
 
@@ -43,7 +43,7 @@ describe Activity do
     it "should return the active value as false" do
       activity.deactivate!
       activity.reload
-      activity.active.should be_false
+      expect(activity.active).to be_falsey
     end
   end
 end

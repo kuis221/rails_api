@@ -248,7 +248,7 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a photo to an activity" do
-      AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
+      allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Photo')
@@ -321,7 +321,7 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a document to an activity" do
-      AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
+      allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Attachment')

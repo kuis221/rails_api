@@ -12,9 +12,9 @@
 
 require 'spec_helper'
 
-describe KpisSegment do
-  it { should belong_to(:kpi) }
-  it { should have_many(:goals) }
+describe KpisSegment, :type => :model do
+  it { is_expected.to belong_to(:kpi) }
+  it { is_expected.to have_many(:goals) }
 
-  it { should accept_nested_attributes_for(:goals) }
+  it { is_expected.to accept_nested_attributes_for(:goals) }
 end

@@ -16,10 +16,10 @@
 
 require 'spec_helper'
 
-describe Area do
-  it { should belong_to(:company) }
+describe Area, :type => :model do
+  it { is_expected.to belong_to(:company) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
 
   describe "#activate" do
@@ -28,7 +28,7 @@ describe Area do
     it "should return the active value as true" do
       area.activate!
       area.reload
-      area.active.should be_true
+      expect(area.active).to be_truthy
     end
   end
 
@@ -38,7 +38,7 @@ describe Area do
     it "should return the active value as false" do
       area.deactivate!
       area.reload
-      area.active.should be_false
+      expect(area.active).to be_falsey
     end
   end
 
@@ -89,23 +89,23 @@ describe Area do
       place2 = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
       area.places << place
       area.places << place2
-      area.common_denominators.should == ["North America","United States","California","Los Angeles"]
+      expect(area.common_denominators).to eq(["North America","United States","California","Los Angeles"])
     end
 
     it "should include the up to the state if all the places are in the same state but different cities" do
       place  = FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles',   state: 'California', country: 'US')
       place2 = FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       area.places << place
-      area.reload.common_denominators.should == ["North America","United States","California", "Los Angeles"]
+      expect(area.reload.common_denominators).to eq(["North America","United States","California", "Los Angeles"])
       area.places << place2
-      area.reload.common_denominators.should == ["North America","United States","California"]
+      expect(area.reload.common_denominators).to eq(["North America","United States","California"])
     end
   end
 
   describe "#place_in_scope?" do
     it "should return false if place is nil" do
       area = FactoryGirl.create(:area)
-      area.place_in_scope?(nil).should be_false
+      expect(area.place_in_scope?(nil)).to be_falsey
     end
 
     it "should return true if the place belogns to the area" do
@@ -113,14 +113,14 @@ describe Area do
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
 
-      area.place_in_scope?(bar).should be_true
+      expect(area.place_in_scope?(bar)).to be_truthy
     end
 
     it "should return false if the place belogns to the area" do
       bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'San Francisco', state:'California', country:'US')
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
-      area.place_in_scope?(bar).should be_false
+      expect(area.place_in_scope?(bar)).to be_falsey
     end
 
     it "should return false if the place is a state and the area has cities of that state" do
@@ -129,7 +129,7 @@ describe Area do
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state:'California', country:'US')
 
-      area.place_in_scope?(california).should be_false
+      expect(area.place_in_scope?(california)).to be_falsey
     end
 
     it "should return true if the place is a neighborhood and the area includes the city" do
@@ -137,7 +137,7 @@ describe Area do
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Houston', state:'Texas', country:'US')
 
-      area.place_in_scope?(neighborhood).should be_true
+      expect(area.place_in_scope?(neighborhood)).to be_truthy
     end
   end
 end

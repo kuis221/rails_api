@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TeamsController do
+describe TeamsController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -12,67 +12,67 @@ describe TeamsController do
   describe "GET 'edit'" do
     it "returns http success" do
       get 'edit', id: team.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', format: :js
-      response.should be_success
-      response.should render_template('new')
-      response.should render_template('form')
+      expect(response).to be_success
+      expect(response).to render_template('new')
+      expect(response).to render_template('form')
     end
   end
 
   describe "GET 'items'" do
     it "returns http success" do
       get 'items'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'show'" do
     it "assigns the loads the correct objects and templates" do
       get 'show', id: team.id
-      assigns(:team).should == team
-      response.should render_template(:show)
+      expect(assigns(:team)).to eq(team)
+      expect(response).to render_template(:show)
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
-      lambda {
+      expect {
         post 'create', team: {name: 'Test Team', description: 'Test Team description'}, format: :js
-      }.should change(Team, :count).by(1)
-      response.should be_success
-      response.should render_template(:create)
-      response.should_not render_template(:form_dialog)
+      }.to change(Team, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template(:create)
+      expect(response).not_to render_template(:form_dialog)
 
       team = Team.last
-      team.name.should == 'Test Team'
-      team.description.should == 'Test Team description'
+      expect(team.name).to eq('Test Team')
+      expect(team.description).to eq('Test Team description')
     end
 
     it "should render the form_dialog template if errors" do
-      lambda {
+      expect {
         post 'create', format: :js
-      }.should_not change(Team, :count)
-      response.should render_template(:create)
-      response.should render_template(:form_dialog)
-      assigns(:team).errors.count.should > 0
+      }.not_to change(Team, :count)
+      expect(response).to render_template(:create)
+      expect(response).to render_template(:form_dialog)
+      expect(assigns(:team).errors.count).to be > 0
     end
   end
 
@@ -81,15 +81,15 @@ describe TeamsController do
     it "deactivates an active team" do
       team.update_attribute(:active, true)
       get 'deactivate', id: team.to_param, format: :js
-      response.should be_success
-      team.reload.active?.should be_false
+      expect(response).to be_success
+      expect(team.reload.active?).to be_falsey
     end
 
     it "activates an inactive team" do
       team.update_attribute(:active, false)
       get 'activate', id: team.to_param, format: :js
-      response.should be_success
-      team.reload.active?.should be_true
+      expect(response).to be_success
+      expect(team.reload.active?).to be_truthy
     end
   end
 
@@ -97,11 +97,11 @@ describe TeamsController do
     it "must update the team attributes" do
       t = FactoryGirl.create(:team)
       put 'update', id: team.to_param, team: {name: 'Test Team', description: 'Test Team description'}
-      assigns(:team).should == team
-      response.should redirect_to(team_path(team))
+      expect(assigns(:team)).to eq(team)
+      expect(response).to redirect_to(team_path(team))
       team.reload
-      team.name.should == 'Test Team'
-      team.description.should == 'Test Team description'
+      expect(team.name).to eq('Test Team')
+      expect(team.description).to eq('Test Team description')
     end
   end
 
@@ -109,28 +109,28 @@ describe TeamsController do
   describe "DELETE 'delete_member'" do
     it "should remove the team member from the team" do
       team.users << @company_user
-      lambda{
+      expect{
         delete 'delete_member', id: team.id, member_id: @company_user.id, format: :js
-        response.should be_success
-        assigns(:team).should == team
+        expect(response).to be_success
+        expect(assigns(:team)).to eq(team)
         team.reload
-      }.should change(team.users, :count).by(-1)
+      }.to change(team.users, :count).by(-1)
     end
 
     it "should not raise error if the user doesn't belongs to the team" do
       delete 'delete_member', id: team.id, member_id: @company_user.id, format: :js
       team.reload
-      response.should be_success
-      assigns(:team).should == team
+      expect(response).to be_success
+      expect(assigns(:team)).to eq(team)
     end
   end
 
   describe "GET 'new_member" do
     it 'correctly assign the team' do
       get 'new_member', id: team.id, format: :js
-      response.should be_success
-      assigns(:team).should == team
-      assigns(:staff).should == [{"id"=>@company_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}]
+      expect(response).to be_success
+      expect(assigns(:team)).to eq(team)
+      expect(assigns(:staff)).to eq([{"id"=>@company_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}])
     end
 
     it 'correctly assign the users' do
@@ -146,7 +146,7 @@ describe TeamsController do
       FactoryGirl.create(:company_user, company: @company, role_id: @company_user.role_id, active: false) # inactive user
       FactoryGirl.create(:company_user, company_id: @company.id+1, role_id: @company_user.role_id, active: true) # user from other company
       get 'new_member', id: team.id, format: :js
-      response.should be_success
+      expect(response).to be_success
       expect(assigns(:staff)).to  match_array users.map{|u| {'id' => u.id.to_s, 'name' => u.full_name, 'description' => u.role_name, 'type' => 'user'}}
     end
 
@@ -154,32 +154,32 @@ describe TeamsController do
       another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
       team.users << @company_user
       get 'new_member', id: team.id, format: :js
-      response.should be_success
-      assigns(:team).should == team
-      assigns(:staff).should == [{"id"=>another_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}]
+      expect(response).to be_success
+      expect(assigns(:team)).to eq(team)
+      expect(assigns(:staff)).to eq([{"id"=>another_user.id.to_s, "name"=>"Test User", "description"=>"Super Admin", "type"=>"user"}])
     end
   end
 
 
   describe "POST 'add_members" do
     it 'should assign the user to the team' do
-      lambda {
+      expect {
         post 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
-        response.should be_success
-        assigns(:team).should == team
+        expect(response).to be_success
+        expect(assigns(:team)).to eq(team)
         team.reload
-      }.should change(team.users, :count).by(1)
-      team.users.should == [@company_user]
+      }.to change(team.users, :count).by(1)
+      expect(team.users).to eq([@company_user])
     end
 
     it 'should not assign users to the team if they are already part of the team' do
       team.users << @company_user
-      lambda {
+      expect {
         post 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
-        response.should be_success
-        assigns(:team).should == team
+        expect(response).to be_success
+        expect(assigns(:team)).to eq(team)
         team.reload
-      }.should_not change(team.users, :count)
+      }.not_to change(team.users, :count)
     end
   end
 
